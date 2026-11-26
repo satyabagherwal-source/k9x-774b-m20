@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T21:52:54.742Z",
-  "total_cycles_completed": 12879,
-  "total_learnings_persisted": 12879,
-  "total_rules_promoted": 11687,
+  "last_updated": "2026-11-26T22:02:13.407Z",
+  "total_cycles_completed": 12881,
+  "total_learnings_persisted": 12881,
+  "total_rules_promoted": 11688,
   "history": [
-    {
-      "timestamp": "2026-11-26T11:39:50.267Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T11:39:52.754Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T11:39:55.046Z",
       "repository": "ydb-platform/ydb",
@@ -1403,6 +1389,20 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:02:05.774Z",
+      "repository": "Qwen/Qwen3-4B-Instruct-2507",
+      "learningId": "learn-huggingface-qwen-qwen3-4b-instruct-2507",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:02:13.407Z",
+      "repository": "margelo/react-native-vision-camera",
+      "learningId": "learn-github-margelo-react-native-vision-camera",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

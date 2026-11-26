@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-Z9ZZ",
-    "timestamp": "2026-11-25T10:45:28.799Z",
-    "repository": "ccore/Qwen3.5-4B-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-    "contentHash": "365a1731df476133cc3a7041482654c792d4e90960410abf611cefa27f8f61b9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-ZGXU",
-    "timestamp": "2026-11-25T10:45:37.794Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "09ed8f36177c8ffd29c7b2879f5a9c66df85d0397aeab739a7d3bd1bdce39057",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-EXGU",
     "timestamp": "2026-11-25T10:57:39.054Z",
     "repository": "LiquidAI/LFM3-1.7B",
@@ -7492,6 +7462,36 @@
     "contentHash": "204457053aa7735b562143d076e5d72adf9b0a0af82d05cf77c9e1b45c82798c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-L9H5",
+    "timestamp": "2026-11-26T22:02:05.753Z",
+    "repository": "Qwen/Qwen3-4B-Instruct-2507",
+    "learningId": "learn-huggingface-qwen-qwen3-4b-instruct-2507",
+    "contentHash": "9b2fca95dd76708b8c1725cbf89b2820141ecfc6bb4b28387d83fdd65f7130bd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LFCZ",
+    "timestamp": "2026-11-26T22:02:13.379Z",
+    "repository": "margelo/react-native-vision-camera",
+    "learningId": "learn-github-margelo-react-native-vision-camera",
+    "contentHash": "5baba2d13f30c00e39c5beda0873c4ee9e801faf0f5fb190adb710b27fe1685b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

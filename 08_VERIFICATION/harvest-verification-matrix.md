@@ -13569,3 +13569,5 @@
 | `CYCLE-20261126-95B7` | `2026-11-26T21:52:40.483Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`bf624b86...`) |
 | `CYCLE-20261126-96YO` | `2026-11-26T21:52:42.624Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10780` | Yes (`3484557a...`) |
 | `CYCLE-20261126-9G9X` | `2026-11-26T21:52:54.693Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`20445705...`) |
+| `CYCLE-20261126-L9H5` | `2026-11-26T22:02:05.753Z` | `Qwen/Qwen3-4B-Instruct-2507` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-instruct-2507-learnings.md` | Yes (`9b2fca95...`) |
+| `CYCLE-20261126-LFCZ` | `2026-11-26T22:02:13.379Z` | `margelo/react-native-vision-camera` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10781` | Yes (`5baba2d1...`) |

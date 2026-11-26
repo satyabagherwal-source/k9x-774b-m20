@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T21:53:00.955Z",
+  "last_updated": "2026-11-26T22:02:20.539Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T21:44:28.492Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-26T21:44:27.562Z",
+      "processed_at": "2026-11-26T22:02:19.299Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3338,7 +3338,7 @@
       "staged_for_review": 0
     },
     "margelo-react-native-vision-camera-learnings.md": {
-      "processed_at": "2026-11-17T16:54:59.265Z",
+      "processed_at": "2026-11-26T22:02:17.943Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3743,8 +3743,8 @@
       "staged_for_review": 1
     },
     "hf-qwen-qwen3-4b-instruct-2507-learnings.md": {
-      "processed_at": "2026-11-23T09:49:06.885Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-26T22:02:17.278Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "el4cteo-fast-anything-learnings.md": {
@@ -4008,7 +4008,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4686,
+  "total_dossiers_evaluated": 4689,
   "total_canonical_promoted": 568,
-  "total_staged_for_review": 3520
+  "total_staged_for_review": 3522
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T21:52:54.745Z",
+  "last_updated": "2026-11-26T22:02:13.412Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6426,14 +6426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-margelo-react-native-vision-camera",
-      "content_hash": "8607ee6414e646a379be77539449080d4772f6a59ddd4c07ff086341870fd4c1",
-      "verified_at": "2026-11-17T16:54:50.233Z",
+      "content_hash": "5baba2d13f30c00e39c5beda0873c4ee9e801faf0f5fb190adb710b27fe1685b",
+      "verified_at": "2026-11-26T22:02:13.411Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:54:50.233Z"
+      "last_updated": "2026-11-26T22:02:13.411Z"
     },
     "vinceanalytics/vince": {
       "repository": "vinceanalytics/vince",
@@ -19956,14 +19956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-4b-instruct-2507",
-      "content_hash": "8a7627ce53526b5858591b4ef233767a6a5e75ac61fa169379d64cf10ede5884",
-      "verified_at": "2026-11-23T09:48:26.183Z",
+      "content_hash": "9b2fca95dd76708b8c1725cbf89b2820141ecfc6bb4b28387d83fdd65f7130bd",
+      "verified_at": "2026-11-26T22:02:05.777Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T09:48:26.183Z"
+      "last_updated": "2026-11-26T22:02:05.777Z"
     },
     "EL4CTEO/fast-anything": {
       "repository": "EL4CTEO/fast-anything",

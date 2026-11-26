@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T21:53:00.167Z",
+  "updated_at": "2026-11-26T22:02:18.068Z",
   "stats": {
-    "total_discovered": 10066,
-    "approved_pending_harvest": 9543,
+    "total_discovered": 10067,
+    "approved_pending_harvest": 9544,
     "harvested_count": 0,
     "rejected_count": 523,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9546,
+      "COMMUNITY_AND_EXPERT": 9547,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -217818,6 +217818,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
         "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-3C0543F33CAC": {
+      "id": "SRC-3C0543F33CAC",
+      "url": "https://vercel.com/margelo/react-native-vision-camera-docs",
+      "title": "https://vercel.com/margelo/react-native-vision-camera-docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T22:02:18.068Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md",
+        "fileName": "margelo-react-native-vision-camera-learnings.md"
       }
     }
   }

@@ -13602,3 +13602,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-26T21:52:40.488Z |
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `24f28e0f` | Multi-dimensional audit evidence | 2026-11-26T21:52:42.629Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `e03ef4b2` | Multi-dimensional audit evidence | 2026-11-26T21:52:54.698Z |
+| `learn-huggingface-qwen-qwen3-4b-instruct-2507` | `https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T22:02:05.758Z |
+| `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `d54fc486` | Multi-dimensional audit evidence | 2026-11-26T22:02:13.384Z |

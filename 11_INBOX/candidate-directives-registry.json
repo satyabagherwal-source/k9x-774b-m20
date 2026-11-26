@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T21:53:00.411Z",
+  "last_updated": "2026-11-26T22:02:19.770Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56036,11 +56036,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-YL8D",
+      "id": "CD-LKAC",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-YL8D-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-LKAC-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -67293,6 +67293,35 @@
       "source_repo": "lioensky-vcptoolbox",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FC02F8-empirical-invariant-guard-in-readme-md.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-LJAW",
+      "directive_title": "release 5.2.5",
+      "source_repo": "margelo-react-native-vision-camera-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LJAW-release-5-2-5.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-564B9D",
+      "directive_title": "release 5.2.5",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "margelo-react-native-vision-camera",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-564B9D-release-5-2-5.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-A11907",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A11907-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-26"
     }
   ]
