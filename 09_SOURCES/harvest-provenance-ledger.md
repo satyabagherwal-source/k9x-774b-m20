@@ -13363,3 +13363,8 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `9bf01bef` | Multi-dimensional audit evidence | 2026-11-26T10:08:16.852Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `6715b60b` | Multi-dimensional audit evidence | 2026-11-26T10:08:29.346Z |
 | `learn-dom-d-439581ea` | `project://arangodb-arangodb` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md` | 2026-11-26T10:09:02.041Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T10:19:12.701Z |
+| `learn-github-planetable-planet` | `https://github.com/Planetable/Planet` | `d5f852df` | Multi-dimensional audit evidence | 2026-11-26T10:19:21.231Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `12a5e8c5` | Multi-dimensional audit evidence | 2026-11-26T10:19:22.753Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `e55d90ce` | Multi-dimensional audit evidence | 2026-11-26T10:19:25.340Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `c4f407dc` | Multi-dimensional audit evidence | 2026-11-26T10:19:29.834Z |

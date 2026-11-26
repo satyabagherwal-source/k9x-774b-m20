@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/planetable-planet-learnings.md`  
 > **Source**: github ([https://github.com/Planetable/Planet](https://github.com/Planetable/Planet))  
-> **Source Version**: `544b4253`  
+> **Source Version**: `d5f852df`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T13:20:30.757Z  
+> **Timestamp**: 2026-11-26T10:19:19.990Z  
 > **Learning ID**: `learn-github-planetable-planet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/planetable-planet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Planetable/Planet](https://github.com/Planetable/Planet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T13:20:30.749Z  
+> **Harvest Timestamp**: 2026-11-26T10:19:19.984Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build and host decentralized blogs and websites on your Mac
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1806 stars
+- **Stars / Engagement**: 1807 stars
 
 ---
 
@@ -1907,245 +1907,159 @@ struct PlanetAPIConsoleView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `544b4253` (2026-11-11)
-**Commit Message**: Link RSS items by slug
+### Incident Patch 1: `f435fa05` (2026-11-24)
+**Commit Message**: Add a script to release insider builds from a Mac
 
-Every page of a site links an article by its slug when it has one, but
-the feeds linked it by its UUID folder, so a reader who came from a feed
-saw the UUID in the address. Technotes/Slug.md already said the feed
-should use the slug.
+Releases now run from a Mac instead of the self-hosted GitHub runner,
+whose insider workflow is disabled. The script does what the workflow
+did, in separate steps so the local build can be checked before
+anything is published:
 
-An item's <link> in rss.xml and podcast.xml is now the slug folder when
-the article has a slug. The <guid> stays the UUID folder: a slug can
-change, and a feed reader that knows an item by its guid must not take
-an old article for a new one. The enclosure and the image addresses in
-the description stay under the UUID folder too. An article with no slug
-renders the same lines as before.
+- build: tags main, archives a clean checkout of the tag with the
+  insider feed, icon and API keys passed to xcodebuild, re-signs Sparkle
+  and CodeMirror with Developer ID, notarizes and staples, zips the app
+  and dSYM, and makes appcast.xml with Sparkle's own tools. It checks
+  the feed URL, icon, keys, signature, Gatekeeper, and the appcast's
+  URL, length, build and EdDSA signature.
+- push-tag, github, spaces, verify: push the tag, create the GitHub
+  prerelease, upload the zip and appcast to DigitalOcean Spaces and
+  purge the appcast from the CDN, then check the live feed.
 
-Planet itself knows an article of a feed by its link. A site followed
-or aggregated by the HTTP address of its feed shows each article that
-has a slug once more after the site is published with this change. A
-site followed by IPNS, ENS or DNSLink is read from planet.json, whose
-links were already slugs.
+Secrets stay in the keychain and in Planet/local.xcconfig.
 
-Rendered with the pinned Stencil revision for an article with a slug,
-with an empty slug and with none. The app was not built: the change is
-one template file.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `Planet/Templates/RSS.xml` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-     {% for article in planet.articles %}
-     <item>
-         <title>{{ article.title|escape }}</title>
--        <link>{{ root_prefix }}/{{ article.id }}/</link>
-+        <link>{{ root_prefix }}/{% if article.slug.count > 0 %}{{ article.slug }}{% else %}{{ article.id }}{% endif %}/</link>
-         <guid>{{ root_prefix }}/{{ article.id }}/</guid>
-         <pubDate>{{ article.created|rfc822 }}</pubDate>
-         {% if article.heroImage %}
-```
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `Planet/versioning.xcconfig` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2853
-+CURRENT_PROJECT_VERSION = 2854
+-CURRENT_PROJECT_VERSION = 2860
++CURRENT_PROJECT_VERSION = 2861
 ```
 
-**File**: `Technotes/Slug.md` (modified, +5/-1)
+**File**: `tools/release-insider.sh` (added, +263/-0)
 ```diff
-@@ -22,4 +22,8 @@ When publishing (saving for public), in addition to the original UUID folder, a
- 
- ## Index and RSS
- 
--The index page and the RSS feed should use the new slug for links if available.
-\ No newline at end of file
-+The index page and the RSS feed should use the new slug for links if available.
+@@ -0,0 +1,263 @@
++#!/bin/bash
++#
++# Build and publish a Planet insider release from this Mac.
++# Replaces .github/workflows/insider.yml (disabled on 2026-11-24).
++#
++#   tools/release-insider.sh build [tag]   Local only: tag main, archive, sign, notarize, zip, make the appcast.
++#   tools/release-insider.sh push-tag <tag>
++#   tools/release-insider.sh github <tag>  GitHub prerelease with the app and dSYM zips.
++#   tools/release-insider.sh spaces <tag>  Upload the zip and appcast.xml to DigitalOcean Spaces, purge the appcast from the CDN.
++#   tools/release-insider.sh verify <tag>  Check the live appcast and download.
++#
++# Everything after `build` publishes something; run those only after the build has been checked.
++#
++# Needs on this Mac:
++#   - Developer ID Application certificate and the "Developer ID Profile" provisioning profile
++#   - notarytool keychain profile "planet-notary"
++#   - Sparkle EdDSA private key in the login keychain (generate_keys -f)
++#   - Planet/local.xcconfig with WALLETCONNECTV2_PROJECT_ID and ETHERSCAN_API_TOKEN
++#   - keychain items planet-release.digitalocean-api (account planetable) and
++#     planet-release.spaces.planetable (accounts access_key and secret_key)
++#   - gh, git-lfs, rclone, xmlstarlet
 +
-+In the RSS feed and the podcast feed, an item's `<link>` is the slug folder when the article has a slug. Its `<guid>` stays the UUID folder: a slug can be changed or removed later, and a feed reader that identifies an item by its `<guid>` must not take an old article for a new one. The enclosure and the image addresses in the description also stay under the UUID folder.
++set -euo pipefail
 +
-+Planet itself identifies an article of a followed or aggregated feed by its `<link>`. A site that is followed or aggregated by the HTTP address of its feed therefore shows each article that has a slug once more after the site is published with this change. A site followed by its IPNS, ENS or DNSLink name is read from `planet.json`, whose links were already slugs.
-```
-
----
-
-### Incident Patch 2: `6d1a3c6c` (2026-11-03)
-**Commit Message**: Drop the IPFS peering list
-
-Two of the four peers no longer answer: the Pinnable node is retired,
-and node-1.ipfs.bit.site has no DNS record. The 4everland peer refused
-dials from two nodes, and Filebase still answers but Pinnable no longer
-uses it. Planet now writes an empty Peering.Peers on each start, because
-earlier builds wrote the old list into the Kubo repo and Kubo would keep
-dialing the dead addresses. Technotes/Peering.md says why, and how to
-bring peering back.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `Planet/IPFS/IPFSDaemon.swift` (modified, +7/-37)
-```diff
-@@ -222,16 +222,17 @@ actor IPFSDaemon {
-         }
-          */
- 
--        Self.logger.info("Updating peers")
--        if let result = try? IPFSCommand.setPeers(
--            peersJSON: String(data: IPFSDaemon.peers.rawData(), encoding: .utf8)!
--        ).run(),
-+        // Peering is off for now (Technotes/Peering.md): the nodes the old list
-+        // named no longer answer. Builds before 2026-11 wrote that list into the
-+        // repo, so clear it instead of leaving Kubo to dial dead addresses.
-+        Self.logger.info("Clearing peers")
-+        if let result = try? IPFSCommand.setPeers(peersJSON: "[]").run(),
-             result.ret == 0
-         {
--            Self.logger.info("Updated peers")
-+            Self.logger.info("Cleared peers")
-         }
-         else {
--            Self.logger.info("Unable to set peers for IPFS")
-+            Self.logger.info("Unable to clear peers for IPFS")
-         }
- 
-         Self.logger.info("Set DNS resolvers")
-@@ -997,37 +998,6 @@ actor IPFSDaemon {
- }
- 
- extension IPFSDaemon {
--    // IPFS peering
--    // peers from https://docs.ipfs.io/how-to/peering-with-content-providers/#content-provider-list
--    static let peers = JSON([
--        [
--            "ID": "12D3KooWBJY6ZVV8Tk8UDDFMEqWoxn89Xc8wnpm8uBFSR3ijDkui",
--            "Addrs": [
--                "/ip4/167.71.172.216/tcp/4001",
--                "/ip6/2604:a880:800:10::826:1/tcp/4001",
--                "/ip4/167.71.172.216/udp/4001/quic",
--                "/ip6/2604:a880:800:10::826:1/udp/4001/quic",
--            ],
--        ],  // Pinnable
--        [
--            "ID": "12D3KooWJ6MTkNM8Bu8DzNiRm1GY3Wqh8U8Pp1zRWap6xY3MvsNw",
--            "Addrs": [
--                "/dnsaddr/node-1.ipfs.bit.site"
--            ],
--        ],  // bit.site
--        [
--            "ID": "12D3KooWQ85aSCFwFkByr5e3pUCQeuheVhobVxGSSs1DrRQHGv1t",
--            "Addrs": [
--                "/dnsaddr/node-1.ipfs.4everland.net"
--            ],
--        ],  // 4everland.io
--        [
--            "ID": "12D3KooWGtYkBAaqJMJEmywMxaCiNP7LCEFUAFiLEBASe232c2VH",
--            "Addrs": [
--                "/dns4/bitswap.filebase.io/tcp/443/wss"
--            ],
--        ],  // Filebase
--    ])
-     // DoH resolvers
-     static let resolvers = JSON([
-         "bit.": "https://dweb-dns.v2ex.pro/dns-query",
-```
-
-**File**: `Planet/versioning.xcconfig` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2852
-+CURRENT_PROJECT_VERSION = 2853
-```
-
-**File**: `Technotes/Peering.md` (modified, +40/-43)
-```diff
-@@ -1,45 +1,42 @@
- # Peering
- 
--## Pinnable
--
--```json
--{
--    "ID": "12D3KooWLBMmT1dft1zcJvXNYkAfoUqj2RtRm7f9XkF17YmZsu4o",
--    "Addrs": [
--        "/ip4/167.71.172.216/tcp/4001",
--        "/ip6/2604:a880:800:10::826:1/tcp/4001"
--    ]
--}
--```
--
--## eth.limo
--
--```json
--{
--    "ID": "12D3KooWLBMmT1dft1zcJvXNYkAfoUqj2RtRm7f9XkF17YmZsu4o",
--    "Addrs": [
--        "/ip4/104.131.8.159/tcp/4001",
--        "/ip4/104.131.8.159/udp/4001/quic",
--        "/ip6/2604:a880:800:10::bc4:e001/tcp/4001",
--        "/ip6/2604:a880:800:10::bc4:e001/udp/4001/quic"
--    ]
--},
--{
--    "ID": "12D3KooWMHpq3mdygcbZWbjkuDdCsX5rjZHX31uRbCp9vAZXBxcD",
--    "Addrs": [
--        "/ip4/104.131.8.143/tcp/4001",
--        "/ip4/104.131.8.143/udp/4001/quic",
--        "/ip6/2604:a880:800:10::ac1:2001/tcp/4001",
--        "/ip6/2604:a880:800:10::ac1:2001/udp/4001/quic"
--    ]
--},
--{
--    "ID": "12D3KooWQ1b2WBM1NM1a5jWS5Kny3y93zyK6iPBuVAA6uk95zdyJ",
--    "Addrs": [
--        "/ip4/45.55.43.156/tcp/4001",
--        "/ip4/45.55.43.156/udp/4001/quic",
--        "/ip6/2604:a880:800:10::c59:6001/tcp/4001",
--        "/ip6/2604:a880:800:10::c59:6001/udp/4001/quic"
--    ]
--}
--```
-\ No newline at end of file
-+Planet sets no `Peering.Peers` since 2026-11-03. On each start, `setupIPFS` in
-+`Planet/IPFS/IPFSDaemon.swift` writes an empty list. Builds from 2022-06 to
-+2025-10 wrote a list of four peers into the Kubo repo. Without the empty write,
-+Kubo would keep dialing those addresses on every launch.
++REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
++WORKSPACE=${PLANET_RELEASE_DIR:-$HOME/Developer/planet-releases}
++SRC=$WORKSPACE/src
++DERIVED_DATA=$WORKSPACE/DerivedData
 +
-+## Why it is off
++if [ -d /Applications/Xcode.app/Contents/Developer ]; then
++  export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
++else
++  export DEVELOPER_DIR=/Applications/Xcode-16.4.0.app/Contents/Developer
++fi
 +
-+The old list named four nodes. On 2026-11-03, two of them no longer answered, one
-+refused peer dials, and one answers but Pinnable no longer uses it:
++SIGN_IDENTITY="Developer ID Application: Xin Liu (66KP7KX9MX)"
++NOTARY_PROFILE=planet-notary
++FEED_URL=https://opensource.planetable.xyz/planet-insider/appcast.xml
++DOWNLOAD_BASE=https://opensource.planetable.xyz/planet-insider
++WEBSITE_LINK=https://planetable.eth.limo/insider/
++RELEASE_NOTES_URL=https://insider.planetable.xyz/
++SPACE=planetable
++SPACE_ENDPOINT=sfo3.digitaloceanspaces.com
++CDN_ENDPOINT_ID=fc623564-5ed6-4a82-844c-d4faf3bde159
++APP_NAME=Planet-Insider
 +
-+| Peer | Address | State on 2026-11-03 |
-+| --- | --- | --- |
-+| Pinnable `12D3KooWBJY6ZVV8Tk8UDDFMEqWoxn89Xc8wnpm8uBFSR3ijDkui` | `/ip4/167.71.172.216/tcp/4001` and its IPv6 and QUIC forms | The server is retired. Port 4001 does not answer. |
-+| bit.site `12D3KooWJ6MTkNM8Bu8DzNiRm1GY3Wqh8U8Pp1zRWap6xY3MvsNw` | `/dnsaddr/node-1.ipfs.bit.site` | The name has no DNS record. |
-+| Filebase `12D3KooWGtYkBAaqJMJEmywMxaCiNP7LCEFUAFiLEBASe232c2VH` | `/dns4/bitswap.filebase.io/tcp/443/wss` | Answers. The name is a CNAME to an S3 endpoint now. Pinnable stopped using Filebase on 2026-11-03. |
-+| 4everland `12D3KooWQ85aSCFwFkByr5e3pUCQeuheVhobVxGSSs1DrRQHGv1t` | `/dnsaddr/node-1.ipfs.4everland.net` | Port 4001 answers a TCP probe, but peer dials from two nodes failed. |
++step() { printf '\n==> %s\n' "$*"; }
++die() { printf 'error: %s\n' "$*" >&2; exit 1; }
 +
-+One live peer that Pinnable no longer uses is not worth a config write on every
-+launch. So the list stays empty until Pinnable has a node with a public address
-+again. Pinnable's current
-+node has only relay addresses, so it cannot be a peer yet.
++xcconfig_value() {
++  sed -nE "s/^[[:space:]]*$2[[:space:]]*=[[:space:]]*\"?([^\";]*)\"?;?[[:space:]]*$/\1/p" "$1" | tail -1
++}
 +
-+## History
++sparkle_bin() {
++  local bin=$DERIVED_DATA/SourcePackages/artifacts/sparkle/Sparkle/bin
++  [ -x "$bin/generate_appcast" ] || die "Sparkle tools not found in $bin; run build first"
++  echo "$bin"
++}
 +
-+- 2022-06-01, `6edf06a0`: peering added, with the Pinnable node.
-+- 2023-10-19, `ac16b3ea`: eth.limo nodes added.
-+- 2024-07-09, `bbd1c1c8`: eth.limo and Cloudflare removed, UDP addresses added.
-+- 2026-04-10, `28df4c11`: the eth.sucks node removed.
-+- 2026-11-03: all peers removed. The old entries are in this file's history.
++next_tag() {
++  local today n=1
++  today=$(date +%Y%m%d)
++  git -C "$REPO" fetch -q --tags origin
++  while git -C "$REPO" rev-parse -q --verify "refs/tags/insider-$today-$n" >/dev/null; do
++    n=$((n + 1))
++  done
++  echo "insider-$today-$n"
++}
 +
-+## To bring it back
++out_dir() { echo "$WORKSPACE/$1"; }
 +
-+1. Make sure that the node answers on its swarm port from outside: `nc -z <ip> 4001`.
-+2. Get its ID and addresses from `ipfs id` on that node.
-+3. Add a `static let peers = JSON([...])` list of `{"ID": …, "Addrs": […]}` to
-+   `IPFSDaemon.swift`, and pass its JSON to `IPFSCommand.setPeers` in `setupIPFS`
-+   in place of `"[]"`.
++plist() { /usr/libexec/PlistBuddy -c "Print :$2" "$1" 2>/dev/null || true; }
 +
-+`tools/monitor-ipfs-peers/peers.txt` still lists the 2023 peers. It is a
-+monitor script's input, not app configuration.
++build() {
++  local tag=${1:-}
++
++  step "Checking the repository"
++  [ -z "$(git -C "$REPO" status --porcelain)" ] || die "working tree is not clean"
++  [ "$(git -C "$REPO" branch --show-current)" = main ] || die "not on main"
++  git -C "$REPO" fetch -q origin main
++  [ "$(git -C "$REPO" rev-parse main)" = "$(git -C "$REPO" rev-parse origin/main)" ] \
++    || die "main and origin/main differ; push or pull first"
++
++  [ -n "$tag" ] || tag=$(next_tag)
++  if git -C "$REPO" rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
++    echo "Using existing tag $tag at $(git -C "$REPO" rev-parse --short "$tag^{commit}")"
++  else
++    git -C "$REPO" tag -a "$tag" -m "Insider ${tag#insider-}" main
++    echo "Created local tag $tag at $(git -C "$REPO" rev-parse --short main)"
++  fi
++
++  local wc_id etherscan
++  wc_id=$(xcconfig_value "$REPO/Planet/local.xcconfig" WALLETCONNECTV2_PROJECT_ID)
++  etherscan=$(xcconfig_value "$REPO/Planet/local.xcconfig" ETHERSCAN_API_TOKEN)
++  [ -n "$wc_id" ] && [ -n "$etherscan" ] || die "WALLETCONNECTV2_PROJECT_ID or ETHERSCAN_API_TOKEN missing in Planet/local.xcconfig"
++
++  step "Checking out $tag in $SRC"
++  mkdir -p "$WORKSPACE"
++  if [ -d "$SRC" ]; then
++    git -C "$SRC" checkout -q --detach "$tag"
++    git -C "$SRC" clean -q -ffdx
++  else
++    git -C "$REPO" worktree add -q --detach "$SRC" "$tag"
++  fi
++  git -C "$SRC" lfs pull
++
++  local out
++  out=$(out_dir "$tag")
++  rm -rf "$out"
++  mkdir -p "$out"
++
++  step "Resolving packages"
++  xcodebuild -project "$SRC/Planet.xcodeproj" -scheme Planet -derivedDataPath "$DERIVED_DATA" \
++    -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile > "$out/resolve.log" 2>&1 \
++    || { tail -20 "$out/resolve.log"; die "package resolution failed"; }
++
++  step "Archiving (log: $out/archive.log)"
++  xcodebuild archive -project "$SRC/Planet.xcodeproj" -scheme Planet -configuration Release \
++    -destination 'generic/platform=macOS' -archivePath "$out/Planet.xcarchive" \
++    -derivedDataPath "$DERIVED_DATA" -allowProvisioningUpdates \
++    PLANET_ENABLE_
 ```
 
 #### Recent Merged Pull Requests:
@@ -2174,28 +2088,48 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Link RSS items by slug
+## X. Add a script to release insider builds from a Mac
 
 **RULE**:
-When implementing operations in `Planet/Templates/RSS.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Planetable/Planet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/release-insider.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Planetable/Planet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `544b4253`: Link RSS items by slug. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f435fa05`: Add a script to release insider builds from a Mac. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Planet/Templates/RSS.xml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/release-insider.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        <link>{{ root_prefix }}/{% if article.slug.count > 0 %}{{ article.slug }}{% else %}{{ article.id }}{% endif %}/</link>
+#!/bin/bash
+#
+# Build and publish a Planet insider release from this Mac.
+# Replaces .github/workflows/insider.yml (disabled on 2026-11-24).
+#
+#   tools/release-insider.sh build [tag]   Local only: tag main, archive, sign, notarize, zip, make the appcast.
+#   tools/release-insider.sh push-tag <tag>
+#   tools/release-insider.sh github <tag>  GitHub prerelease with the app and dSYM zips.
+#   tools/release-insider.sh spaces <tag>  Upload the zip and appcast.xml to DigitalOcean Spaces, purge the appcast from the CDN.
+#   tools/release-insider.sh verify <tag>  Check the live appcast and download.
+#
+# Everything after `build` publishes something; run those only after the build has been checked.
+#
+# Needs on this Mac:
+#   - Developer ID Application certificate and the "Developer ID Profile" provisioning profile
+#   - notarytool keychain profile "planet-notary"
+#   - Sparkle EdDSA private key in the login keychain (generate_keys -f)
+#   - Planet/local.xcconfig with WALLETCONNECTV2_PROJECT_ID and ETHERSCAN_API_TOKEN
+#   - keychain items planet-release.digitalocean-api (account planetable) and
+#     planet-release.spaces.planetable (accounts access_key and secret_key)
+#   - gh, git-lfs, rclo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-        <link>{{ root_prefix }}/{{ article.id }}/</link>
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `544b4253` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f435fa05` are properly handled with clean fallback behavior.

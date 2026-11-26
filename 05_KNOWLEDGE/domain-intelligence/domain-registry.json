@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T10:09:02.454Z",
-  "total_records": 2731,
+  "last_updated": "2026-11-26T10:19:35.793Z",
+  "total_records": 2733,
   "domains": {
     "A": {
       "total": 22,
@@ -1701,7 +1701,7 @@
       ]
     },
     "H": {
-      "total": 655,
+      "total": 657,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2357,7 +2357,9 @@
         "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-sentence-transformers-all-minilm-l6-v2-core-",
-        "domain_intelligence-technical-construction-intelligence-hf-sentence-transformers-all-minilm-l6-v2-le"
+        "domain_intelligence-technical-construction-intelligence-hf-sentence-transformers-all-minilm-l6-v2-le",
+        "domain_intelligence-technical-construction-intelligence-planetable-planet-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-planetable-planet-learnings-core-invariants"
       ]
     },
     "I": {
@@ -13145,8 +13147,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "repository": "nats-io/nats-server",
-      "content_hash": "66dab6ac7d348e345ae5aa79d3a7b376931fae05bb4927dd94655e2bedf19e66",
-      "created_at": "2026-11-24T16:19:55.253Z"
+      "content_hash": "0a593d41f2e6f3b4e663c8548d2d63ee7028f80e51d90c0fc85d83c07d69663f",
+      "created_at": "2026-11-26T10:19:23.203Z"
     },
     "DOM-D-3A6226D8": {
       "record_id": "DOM-D-3A6226D8",
@@ -16989,8 +16991,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "f65e7775ca012616a9852bc54847268fe4ee7d65955a9e87b2d44858dffdf5c8",
-      "created_at": "2026-11-25T08:29:29.686Z"
+      "content_hash": "502e6be93e0c72bd102437967d9862de706cadc9e77be906aebbebed363afa40",
+      "created_at": "2026-11-26T10:19:30.276Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -17613,8 +17615,8 @@
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "repository": "pola-rs/polars",
-      "content_hash": "6a251c9424a2bac3756b8f8ae67d7140b790b4cd208870bf6dab22a607d5d7c0",
-      "created_at": "2026-11-25T02:56:03.346Z"
+      "content_hash": "eabbd75abc1d12e90f00826619f51ce1a5ab677549de825e9c31d76fbb0e9252",
+      "created_at": "2026-11-26T10:19:25.821Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -17631,8 +17633,8 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
       "repository": "pola-rs-polars-learnings",
-      "content_hash": "4036f04a3898b72911e32fee5e6c06f601f2fcf71b43ad0e1068f0eff7f34402",
-      "created_at": "2026-11-25T02:56:17.943Z"
+      "content_hash": "c5b13aa3ee6fa675e9f9f0a207a176ac833fd19217ec81ffae4e34284cb47a88",
+      "created_at": "2026-11-26T10:19:33.887Z"
     },
     "DOM-D-A6170DB1": {
       "record_id": "DOM-D-A6170DB1",
@@ -29585,8 +29587,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-27b-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invari.md",
       "repository": "Qwen/Qwen3.8-27B",
-      "content_hash": "fae2a08ac0b84dde4b360f392c3813a97e2d6b62c01ed7da43b09078e6cef843",
-      "created_at": "2026-11-22T17:22:01.608Z"
+      "content_hash": "7a78d98a24b82059bc153b815e0f99c5dcbd9b01b705e52241c95b3fbd1b566f",
+      "created_at": "2026-11-26T10:19:12.940Z"
     },
     "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants",
@@ -29603,8 +29605,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-27b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-8-27.md",
       "repository": "hf-qwen-qwen3.8-27b-learnings",
-      "content_hash": "a85b8cefbbd27e470d54639d895a3a23fc5527f4d18558b20fd59edac649d22e",
-      "created_at": "2026-11-22T17:22:14.576Z"
+      "content_hash": "e926cc26bb94db3f8f1a5bed41298dd8a1841d18e3309d67425ca6a468a75884",
+      "created_at": "2026-11-26T10:19:34.516Z"
     },
     "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -46158,6 +46160,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T10:09:02.008Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-planetable-planet-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-planetable-planet-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Planetable/Planet Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-planetable-planet-technical-construction-intelligence-planetable-planet-core-inv.md",
+      "repository": "Planetable/Planet",
+      "content_hash": "44596e19f332f57a8b306b3289c64f5c6a8a4388952e19d760c9cd92c1593dc1",
+      "created_at": "2026-11-26T10:19:21.760Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-planetable-planet-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-planetable-planet-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: planetable-planet-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-planetable-planet-learnings-technical-construction-intelligence-planetable-plane.md",
+      "repository": "planetable-planet-learnings",
+      "content_hash": "7cc087c7af057acf99e727fea437940d5328d23b17950f390998fc05ccbd5183",
+      "created_at": "2026-11-26T10:19:35.793Z"
     }
   }
 }

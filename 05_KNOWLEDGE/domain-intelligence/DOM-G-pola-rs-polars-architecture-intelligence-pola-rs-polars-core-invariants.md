@@ -4,24 +4,24 @@
 {
   "source_repository": "pola-rs/polars",
   "source_url": "https://github.com/pola-rs/polars",
-  "source_version": "08b2814c",
+  "source_version": "e55d90ce",
   "license": "MIT",
-  "timestamp": "2026-11-25T02:56:03.170Z",
+  "timestamp": "2026-11-26T10:19:25.611Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pola-rs-polars",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `08b2814c`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T02:56:03.170Z`  
+> **Provenance**: Harvested from [pola-rs/polars](https://github.com/pola-rs/polars) (Revision: `e55d90ce`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T10:19:25.611Z`  
 > **Learning ID**: `learn-github-pola-rs-polars`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pola-rs/polars:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:56:01.685Z  
+> **Harvest Timestamp**: 2026-11-26T10:19:24.110Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40490 stars
+- **Stars / Engagement**: 40519 stars
 
 ---
 
@@ -1711,13 +1711,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31074** (2026-11-24): **`first()` of a struct with no fields panics on the streaming engine**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  lf = pl.LazyFrame({"a": ["ab", "cd"]}) q = lf.select(pl.col("a").str.extract_groups("x").first())  # no capture groups: struct[0]  print(q.collect(engine="in-memory"))  # one row: {} print(q.collect(engine="streaming"))  # PanicException: assertion `left == right` failed ```    ### Log output  ```shell total memory: 24.000 GiB (25769803776 bytes) async thread count: 8 blocking thread count: 512 polars-stream: updating graph state updating in-memory-sink, before: [Blocked] [] updating in-memory-sink, after: [Ready] [] (took 125ns) updating select, before: [Blocked] [Ready] updating select, after: [Ready] [Blocked] (took 41ns) updating reduce, before: [Blocked] [Ready] updating reduce, after: [Ready] [Blocked] (took 83ns) updating in-memory-source, before: [] [Ready] updating in-memory-source, after: [] [Ready] (took 1.833µs) updating reduce, before: [Ready] [Ready] updating reduce, after: [Ready] [Blocked] (took 83ns) polars-stream: running in-memory-source in subgraph polars-stream: running reduce in subgraph polars-stream: done running graph phase polars-stream: updating graph state updating in-memory-sink, before: [Blocked] [] updating in-memory-sink, after: [Ready] [] (took 375ns) updating select, before: [Blocked] [Ready] updating
-  **Post-Mortem & Fix Analysis**:
-  > I checked this against a build of the main branch at 08b2814 (2026-11-24): it no longer happens there, and both engines give one row {}. So it is fixed on main already; sorry for the noise.
+- **Issue #31100** (2026-11-26): **Table display misaligns borders for halfwidth katakana voiced sound marks (U+FF9E, U+FF9F)**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"a": ["ｶﾞ", "ab"]}) print(df) ```   ### Log output  ```shell shape: (2, 1) ┌─────┐ │ a   │ │ --- │ │ str │ ╞═════╡ │ ｶﾞ   │ │ ab  │ └─────┘ ```  ### Issue description  When a string contains the halfwidth katakana voiced sound mark `ﾞ` (U+FF9E) or semi-voiced sound mark `ﾟ` (U+FF9F), the table borders in `print(df)` are shifted one column to the right for each such character.  These two characters have East Asian Width `H` and take one cell in a terminal, but `unicode-width` 0.2.2, which Polars uses through `comfy-table`, returns width 0 for them. This was fixed in `unicode-width` 0.2.3 (unicode-rs/unicode-width#89); Polars' `Cargo.lock` on `main` still pins 0.2.2.  Also verified: - Other halfwidth katakana (e.g. `ｶﾀｶﾅ`) and fullwidth katakana align correctly. - A standalone Rust program using `comfy-table` 7.2.2 with `unicode-width` 0.2.2 shows the same misalignment; with `unicode-width` 0.2.3 the table aligns. - `unicode-width` returns 1 for these characters up to 0.1.11 and 0 from 0.1.12 to 0.2.2. - Reproduced on Polars 2.2.0 and 1.0.0.  This issue was drafted with help from Claude Code; I reviewed, edited and ran everything myself.  ### Expected behavior  The borders should line up, as they do for `ｶ` without th
 
-- **Issue #31010** (2026-11-24): **NumPy `int64`/`uint64` index arrays with positions >= 2^32 wrap around in `df[...]`, `s[...]` and `s[...] = value`, reading and overwriting the wrong rows instead of raising**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example   ```python import numpy as np import polars as pl  df = pl.DataFrame({"id": [0, 1, 2, 3, 4], "amount": [10, 11, 12, 13, 14]}) pos = np.array([2**32 + 3])  # int64; out of bounds for 5 rows  print(df[pos])                      # row 3 print(df["amount"][pos].to_list())  # [13]  s = df["amount"].clone() s[np.array([2**32 + 1])] = 0        # overwrites row 1 print(s.to_list())  # The same positions in other forms raise: try:     df[[2**32 + 3]] except ValueError as e:     print("list:", e) try:     df["amount"].gather(pos) except pl.exceptions.OutOfBoundsError as e:     print("gather:", str(e).splitlines()[0]) ```  Output:  ``` shape: (1, 2) ┌─────┬────────┐ │ id  ┆ amount │ │ --- ┆ ---    │ │ i64 ┆ i64    │ ╞═════╪════════╡ │ 3   ┆ 13     │ └─────┴────────┘ [13] [10, 0, 12, 13, 14] list: index positions should be smaller than 2^32 gather: gather indices are out of bounds ```   ### Log output  ```shell  ```  ### Issue description   With the default 32-bit index type (`pl.get_index_type()` is `UInt32`), a NumPy `int64` or `uint64` array of positions (`int64` is NumPy's default integer dtype) that contains a value of 2^32 or more is reduced modulo 2^32 instead of being rejected: position `2**32 + k` reads row `k` in `DataFrame.__getitem__` and `Series.__getitem__`, and 
+- **Issue #31076** (2026-11-25): **`round(mode="to_zero")` is documented and typed but refused by the binding**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"x": [0.9, -0.9, 1.29]})  print(df.select(pl.col("x").truncate()))  # 0.0, -0.0, 1.0 print(df.select(pl.col("x").round(0, mode="to_zero")))  # ValueError ```    ### Log output  ```shell total memory: 24.000 GiB (25769803776 bytes) async thread count: 8 blocking thread count: 512 ValueError: `mode` must be one of {'half_to_even', 'half_away_from_zero'}, got to_zero while processing 'mode' ```  ### Issue description  The docstring of `Expr.round` lists `mode : {'half_to_even', 'half_away_from_zero', 'to_zero'}` and describes `to_zero`, and the `RoundMode` type alias includes it. The Rust side has `RoundMode::ToZero`, which `truncate` uses (added in #26677). But passing `mode="to_zero"` raises a `ValueError` listing only the other two modes, so the binding's conversion of `mode` does not accept it. On the main branch, that conversion (`Wrap<RoundMode>` in `crates/polars-python/src/conversion/mod.rs`) still matches only `half_to_even` and `half_away_from_zero`.  *Bug found with Claude and fuzzing/shrinking.   ### Expected behavior  `round(0, mode="to_zero")` gives the same result as `truncate()`: `0.0, -0.0, 1.0`.   ### Installed versions  <details>  ``` --------Version info--------- Polars:              2.1.0 Build:   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1734,422 +1732,909 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0c7cdde1` (2026-11-24)
-**Commit Message**: fix: Numpy array index overflow (#31046)
+### Incident Patch 1: `c2bb320e` (2026-11-25)
+**Commit Message**: fix: Raise on non-numeric `hist` bins instead of panicking (#31069)
 
-**File**: `py-polars/src/polars/_utils/getitem.py` (modified, +1/-1)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/polars-ops/src/chunked_array/hist.rs` (modified, +5/-0)
 ```diff
-@@ -425,7 +425,7 @@ def _convert_np_ndarray_to_indices(arr: np.ndarray[Any, Any], size: int) -> Seri
-             raise TypeError(msg)
- 
-     if idx_type == UInt32:
--        if arr.dtype in {np.int64, np.uint64} and arr.max() >= U32_MAX:
-+        if arr.dtype in (np.int64, np.uint64) and arr.max() >= U32_MAX:
-             msg = "index positions should be smaller than 2^32"
-             raise ValueError(msg)
-         if arr.dtype == np.int64 and arr.min() < -U32_MAX:
+@@ -184,6 +184,11 @@ impl HistBreaks {
+     pub fn new(s: &Series, bin_count: Option<usize>, bins: Option<&Series>) -> PolarsResult<Self> {
+         let bins = bins
+             .map(|bins| {
++                // `Null` is the dtype of empty bins, e.g. `bins=[]` from Python.
++                polars_ensure!(
++                    bins.dtype().is_numeric() || bins.dtype().is_null(),
++                    InvalidOperation: "`hist` bins must be numeric, got dtype `{}`", bins.dtype()
++                );
+                 polars_ensure!(bins.null_count() == 0, InvalidOperation: "nulls not supported in 'bins' argument");
+                 Ok(bins.cast(&DataType::Float64)?.rechunk())
+             })
 ```
 
-**File**: `py-polars/src/polars/series/series.py` (modified, +3/-7)
+**File**: `py-polars/tests/unit/operations/test_hist.py` (modified, +26/-1)
 ```diff
-@@ -1405,7 +1405,7 @@ def __setitem__(
-             - ``Series`` (Boolean): a boolean mask.
-             - ``Series`` (Integer): an index array.
-             - ``ndarray``: a NumPy boolean mask or integer index array.
--            - ``list`` / ``tuple``: an index sequence (cast to UInt32).
-+            - ``list`` / ``tuple``: an index sequence.
-         value
-             Scalar or sequence of values to assign.
+@@ -1,10 +1,12 @@
+ from __future__ import annotations
  
-@@ -1464,13 +1464,9 @@ def __setitem__(
-                 # boolean numpy mask
-                 self._s = self.scatter(np.argwhere(key)[:, 0], value)._s
-             else:
--                s = self._from_pyseries(
--                    PySeries.new_u32("", np.array(key, np.uint32), _strict=True)
--                )
--                self.__setitem__(s, value)
-+                self.__setitem__(Series(key), value)
-         elif isinstance(key, (list, tuple)):
--            s = self._from_pyseries(sequence_to_pyseries("", key, dtype=UInt32))
--            self.__setitem__(s, value)
-+            self.scatter(key, value)  # pyrefly: ignore[bad-argument-type]
-         else:
-             msg = f'cannot use "{key!r}" for indexing'
-             raise TypeError(msg)
-```
-
-**File**: `py-polars/tests/unit/dataframe/test_getitem.py` (modified, +7/-0)
-```diff
-@@ -394,6 +394,13 @@ def test_df_getitem_numpy() -> None:
-         df[np.array([[0], [1]])]
++from decimal import Decimal
++
+ import numpy as np
+ import pytest
+ 
+ import polars as pl
+-from polars.exceptions import ComputeError
++from polars.exceptions import ComputeError, InvalidOperationError
+ from polars.testing import assert_frame_equal
+ 
+ inf = float("inf")
+@@ -160,6 +162,29 @@ def test_hist_invalid_bins() -> None:
+         s.hist(bins=[1, 0])  # invalid order
  
  
-+@pytest.mark.parametrize("np_dtype", [np.int64, np.uint64])
-+def test_df_getitem_numpy_large_index_31010(np_dtype: type) -> None:
-+    df = pl.DataFrame({"a": [10, 11, 12, 13, 14]})
-+    with pytest.raises((ValueError, pl.exceptions.OutOfBoundsError)):
-+        df[np.array([2**32 + 3], dtype=np_dtype)]
++@pytest.mark.parametrize(
++    "bins",
++    [
++        pl.Series(["a", "1"]),
++        pl.Series(["1", "2"]),
++        pl.Series([True, False]),
++    ],
++)
++def test_hist_non_numeric_bins(bins: pl.Series) -> None:
++    lf = pl.LazyFrame({"x": [1.0, 2.0]})
++    q = lf.select(pl.col("x").hist(bins=pl.lit(bins)))
++    with pytest.raises(InvalidOperationError, match="bins must be numeric"):
++        q.collect()
 +
 +
- def test_df_getitem_extended() -> None:
-     df = pl.DataFrame({"a": [1, 2, 3], "b": [1.0, 2.0, 3.0], "c": ["a", "b", "c"]})
- 
-```
-
-**File**: `py-polars/tests/unit/series/test_getitem.py` (modified, +7/-0)
-```diff
-@@ -93,6 +93,13 @@ def test_series_getitem_numpy() -> None:
-     assert s[np.array(-2)].to_list() == [8]
- 
- 
-+@pytest.mark.parametrize("np_dtype", [np.int64, np.uint64])
-+def test_series_getitem_numpy_large_index_31010(np_dtype: type) -> None:
-+    s = pl.Series("a", [10, 11, 12, 13, 14])
-+    with pytest.raises((ValueError, pl.exceptions.OutOfBoundsError)):
-+        s[np.array([2**32 + 3], dtype=np_dtype)]
++def test_hist_decimal_bins() -> None:
++    lf = pl.LazyFrame({"x": [1.0, 2.0]})
++    bins = pl.Series([Decimal("0.5"), Decimal("1.5")])
++    result = lf.select(pl.col("x").hist(bins=pl.lit(bins))).collect()
++    expected = pl.DataFrame({"x": pl.Series([1], dtype=pl.get_index_type())})
++    assert_frame_equal(result, expected)
 +
 +
- @pytest.mark.parametrize(
-     ("input", "match"),
-     [
-```
-
-**File**: `py-polars/tests/unit/series/test_series.py` (modified, +36/-0)
-```diff
-@@ -838,6 +838,42 @@ def test_set_np_array(dtype: Any) -> None:
-     assert_series_equal(a, pl.Series("a", [4, 2, 4]))
- 
- 
-+@pytest.mark.parametrize("dtype", [np.int64, np.uint64])
-+def test_set_np_array_large_index_31010(dtype: Any) -> None:
-+    s = pl.Series("a", [10, 11, 12, 13, 14])
-+    with pytest.raises(pl.exceptions.OutOfBoundsError):
-+        s[np.array([2**32 + 1], dtype=dtype)] = 0
-+    assert_series_equal(s, pl.Series("a", [10, 11, 12, 13, 14]))
-+
-+
-+def test_set_np_array_negative_index() -> None:
-+    s = pl.Series("a", [10, 11, 12, 13, 14])
-+    s[np.array([1, -1])] = 0
-+    assert_series_equal(s, pl.Series("a", [10, 0, 12, 13, 0]))
-+
-+
-+def test_set_np_array_float_key() -> None:
-+    s = pl.Series("a", [1, 2, 3])
-+    with pytest.raises(TypeError, match="cannot use Series of dtype"):
-+        s[np.array([1.0])] = 0
-+    assert_series_equal(s, pl.Series("a", [1, 2, 3]))
-+
-+
-+@pytest.mark.parametrize("idx", [[2**32 + 1], (2**32 + 1,)])
-+def test_set_list_and_tuple_large_index_31010(idx: list[int] | tuple[int]) -> None:
-+    s = pl.Series("a", [10, 11, 12, 13, 14])
-+    with pytest.raises(pl.exceptions.OutOfBoundsError):
-+        s[idx] = 0
-+    assert_series_equal(s, pl.Series("a", [10, 11, 12, 13, 14]))
-+
-+
-+@pytest.mark.parametrize("idx", [[1, -1], (1, -1)])
-+def test_set_list_and_tuple_negative_index(idx: list[int] | tuple[int, int]) -> None:
-+    s = pl.Series("a", [10, 11, 12, 13, 14])
-+    s[idx] = 0
-+    assert_series_equal(s, pl.Series("a", [10, 0, 12, 13, 0]))
-+
-+
- @pytest.mark.parametrize("idx", [[0, 2], (0, 2)])
- def test_set_list_and_tuple(idx: list[int] | tuple[int]) -> None:
-     a = pl.Series("a", [1, 2, 3])
+ def test_hist_bin_outside_data() -> None:
+     s = pl.Series([-5, 2, 0, 1, 99], dtype=pl.Int32)
+     result = s.hist(bins=[-10, -9])
 ```
 
 ---
 
-### Incident Patch 2: `26faee23` (2026-11-24)
-**Commit Message**: fix: Leave the string unchanged for an empty pattern in SQL `REPLACE` (#31039)
+### Incident Patch 2: `e55d90ce` (2026-11-26)
+**Commit Message**: feat: Add memory budget to pl.Config (#31122)
 
-**File**: `crates/polars-sql/src/functions.rs` (modified, +25/-8)
+**File**: `py-polars/docs/source/reference/config.rst` (modified, +1/-0)
 ```diff
-@@ -2128,6 +2128,16 @@ impl SQLFunctionVisitor<'_> {
-                                 .when(lit(false))
-                                 .then(read(new))
-                                 .otherwise(lit(LiteralValue::untyped_null()).cast(DataType::String))
-+                        } else if matches!(&old, Expr::Literal(lv) if lv.extract_str() == Some("")) {
-+                            // As in Postgres; the folded branch keeps the string type check.
-+                            let replaced = e.clone().str().replace_all(old, new.clone(), true);
-+                            let kept = when(lit(true)).then(e).otherwise(replaced);
-+                            match new {
-+                                Expr::Literal(_) => kept,
-+                                new => when(new.is_not_null())
-+                                    .then(kept)
-+                                    .otherwise(lit(LiteralValue::untyped_null())),
-+                            }
-                         } else if matches!((&old, &new), (Expr::Literal(_), Expr::Literal(_))) {
-                             e.str().replace_all(old, new, true)
-                         } else {
-@@ -2140,15 +2150,22 @@ impl SQLFunctionVisitor<'_> {
-                                 .map(|e| e.clone().is_not_null())
-                                 .reduce(Expr::and)
-                                 .unwrap();
--                            when(has_args)
-+                            let e = when(has_args)
-                                 .then(e)
--                                .otherwise(lit(LiteralValue::untyped_null()))
--                                .str()
--                                .replace_all(
--                                    old.cast(DataType::String).fill_null(lit("_")),
--                                    new.cast(DataType::String).fill_null(lit("")),
--                                    true,
--                                )
-+                                .otherwise(lit(LiteralValue::untyped_null()));
-+                            let pattern_is_literal = matches!(old, Expr::Literal(_));
-+                            let old = old.cast(DataType::String);
-+                            let replaced = e.clone().str().replace_all(
-+                                old.clone().fill_null(lit("_")),
-+                                new.cast(DataType::String).fill_null(lit("")),
-+                                true,
-+                            );
-+                            match pattern_is_literal {
-+                                true => replaced,
-+                                false => when(old.str().len_bytes().eq(lit(0)))
-+                                    .then(e)
-+                                    .otherwise(replaced),
-+                            }
-                         })
-                     }),
-                     _ => {
+@@ -18,6 +18,7 @@ Config options
+     Config.set_fmt_float
+     Config.set_fmt_str_lengths
+     Config.set_fmt_table_cell_list_len
++    Config.set_memory_budget
+     Config.set_streaming_chunk_size
+     Config.set_tbl_cell_alignment
+     Config.set_tbl_cell_numeric_alignment
 ```
 
-**File**: `py-polars/tests/unit/sql/test_strings.py` (modified, +7/-0)
+**File**: `py-polars/src/polars/config.py` (modified, +38/-0)
 ```diff
-@@ -136,6 +136,13 @@ def test_replace_null_pattern_aggregate() -> None:
-         assert pl.sql(query, eager=True).rows() == [(None,)]
+@@ -76,6 +76,7 @@
+     "POLARS_FMT_TABLE_INLINE_COLUMN_DATA_TYPE",
+     "POLARS_FMT_TABLE_ROUNDED_CORNERS",
+     "POLARS_IDEAL_MORSEL_SIZE",
++    "POLARS_OOC_MEMORY_BUDGET_MB",
+     "POLARS_TABLE_WIDTH",
+     "POLARS_VERBOSE",
+     "POLARS_MAX_EXPR_DEPTH",
+@@ -151,6 +152,7 @@ class ConfigParameters(TypedDict, total=False):
+     fmt_float: FloatFmt | None
+     fmt_str_lengths: int | None
+     fmt_table_cell_list_len: int | None
++    memory_budget: int | None
+     streaming_chunk_size: int | None
+     tbl_cell_alignment: Alignment | None
+     tbl_cell_numeric_alignment: Alignment | None
+@@ -178,6 +180,7 @@ class ConfigParameters(TypedDict, total=False):
+     set_fmt_float: FloatFmt | None
+     set_fmt_str_lengths: int | None
+     set_fmt_table_cell_list_len: int | None
++    set_memory_budget: int | None
+     set_streaming_chunk_size: int | None
+     set_tbl_cell_alignment: Alignment | None
+     set_tbl_cell_numeric_alignment: Alignment | None
+@@ -957,6 +960,41 @@ def set_streaming_chunk_size(cls, size: int | None) -> type[Config]:
+         plr.config_reload_env_var("POLARS_IDEAL_MORSEL_SIZE")
+         return cls
+ 
++    @classmethod
++    @unstable()
++    def set_memory_budget(cls, mb: int | None) -> type[Config]:
++        """
++        Set the memory budget of the streaming engine in megabytes.
++
++        When the streaming engine uses more memory than this budget, it spills
++        data to disk. The effective budget is the smaller of this value and
++        `POLARS_OOC_MEMORY_BUDGET_FRACTION` (default 0.8) times the total memory.
++
++        This can also be triggered by setting the `POLARS_OOC_MEMORY_BUDGET_MB` env var.
++
++        Parameters
++        ----------
++        mb
++            Memory budget in megabytes (1 MB = 1,000,000 bytes). Set to `None`
++            to only use the fraction of the total memory.
++
++        Examples
++        --------
++        >>> pl.Config.set_memory_budget(4_000)  # doctest: +SKIP
++        >>> with pl.Config(memory_budget=4_000):  # doctest: +SKIP
++        ...     lf.collect(engine="streaming")
++        """
++        if mb is None:
++            os.environ.pop("POLARS_OOC_MEMORY_BUDGET_MB", None)
++        else:
++            if mb < 0:
++                msg = "memory budget must be >= 0"
++                raise ValueError(msg)
++
++            os.environ["POLARS_OOC_MEMORY_BUDGET_MB"] = str(mb)
++        plr.config_reload_env_var("POLARS_OOC_MEMORY_BUDGET_MB")
++        return cls
++
+     @classmethod
+     def set_tbl_cell_alignment(cls, format: Alignment | None) -> type[Config]:
+         """
+```
+
+**File**: `py-polars/tests/unit/meta/test_config.py` (modified, +14/-0)
+```diff
+@@ -13,6 +13,7 @@
+ from polars._utils.unstable import issue_unstable_warning
+ from polars.config import _POLARS_CFG_ENV_VARS
+ from polars.exceptions import AttributeRemovedError
++from polars.testing import assert_frame_equal
+ 
+ if TYPE_CHECKING:
+     from collections.abc import Iterator
+@@ -847,6 +848,18 @@ def test_set_streaming_chunk_size() -> None:
+         cfg.set_streaming_chunk_size(0)
  
  
-+def test_replace_empty_pattern() -> None:
-+    # as in Postgres
-+    df = pl.DataFrame({"s": ["ab", "cd", None], "p": ["", "c", "a"]})
-+    res = df.sql("SELECT REPLACE(s, '', 'x') AS a, REPLACE(s, p, 'x') AS b FROM self")
-+    assert res.rows() == [("ab", "ab"), ("cd", "xd"), (None, None)]
++def test_set_memory_budget() -> None:
++    with pl.Config() as cfg:
++        cfg.set_memory_budget(0)
++        assert os.environ.get("POLARS_OOC_MEMORY_BUDGET_MB") == "0"
++        lf = pl.LazyFrame({"a": [3, 1, 2] * 20, "b": range(60)})
++        out = lf.sort("a", "b").collect(engine="streaming")
++        assert_frame_equal(out, lf.collect().sort("a", "b"))
++
++    with pytest.raises(ValueError), pl.Config() as cfg:
++        cfg.set_memory_budget(-1)
 +
 +
- def test_string_chr() -> None:
-     df = pl.DataFrame(
-         {
+ def test_set_fmt_str_lengths_invalid_length() -> None:
+     with pl.Config() as cfg:
+         with pytest.raises(ValueError):
+@@ -1001,6 +1014,7 @@ def test_warn_unstable(recwarn: pytest.WarningsRecorder) -> None:
+             "1",
+         ),
+         ("POLARS_IDEAL_MORSEL_SIZE", "set_streaming_chunk_size", 100, "100"),
++        ("POLARS_OOC_MEMORY_BUDGET_MB", "set_memory_budget", 4000, "4000"),
+         ("POLARS_TABLE_WIDTH", "set_tbl_width_chars", 80, "80"),
+         ("POLARS_VERBOSE", "set_verbose", True, "1"),
+         ("POLARS_WARN_UNSTABLE", "warn_unstable", True, "1"),
 ```
 
 ---
 
-### Incident Patch 3: `53b2fb68` (2026-11-24)
-**Commit Message**: fix: Allow a derived table in a correlated scalar SQL subquery to read the outer row (#31063)
+### Incident Patch 3: `4fd4e358` (2026-11-26)
+**Commit Message**: perf: Stream `drop_nulls` and `drop_nans` over non-elementwise inputs in group-by (#31096)
 
-**File**: `crates/polars-sql/src/subquery_outer_select.rs` (modified, +280/-9)
+**File**: `crates/polars-plan/src/dsl/meta.rs` (modified, +3/-2)
 ```diff
-@@ -12,31 +12,42 @@
- //! An `IN` over no rows is false; over rows that all hold `f` it is `lhs = f`. The
- //! scalar `(SELECT 1 ...)` has no row, one row or more rows exactly when the subquery
- //! has, so it is NULL, `f` or raises in the same cases.
-+//!
-+//! A scalar subquery whose only FROM item is a derived table that reads columns of the
-+//! queries around it is first merged with that table. It reads the table's FROM and
-+//! WHERE itself, with the table's SELECT items in place of its columns:
-+//!
-+//! ```sql
-+//! (SELECT MAX(d.v) FROM (SELECT x AS v FROM r WHERE r.k = o.k) AS d WHERE c)
-+//! -- (SELECT MAX(x) FROM r WHERE r.k = o.k AND c')
-+//! ```
- use std::ops::ControlFlow;
- 
- use polars_core::prelude::*;
- use sqlparser::ast::helpers::attached_token::AttachedToken;
- use sqlparser::ast::{
--    BinaryOperator as SQLBinaryOperator, CaseWhen, Expr as SQLExpr, GroupByExpr, Query, Select,
--    SelectItem, SetExpr, TableFactor, UnaryOperator as SQLUnaryOperator, Value as SQLValue,
--    VisitorMut,
-+    BinaryOperator as SQLBinaryOperator, CaseWhen, Distinct, Expr as SQLExpr, GroupByExpr, Query,
-+    Select, SelectItem, SetExpr, TableFactor, TableWithJoins, UnaryOperator as SQLUnaryOperator,
-+    Value as SQLValue, VisitorMut,
- };
- 
- use crate::SQLContext;
--use crate::context::{RelationName, match_qualifier};
-+use crate::context::{RelationName, combine_conditions, match_qualifier};
- use crate::dyn_visit::{self, visit_expressions};
- use crate::functions::PolarsSQLFunctions;
- use crate::sql_visitors::{
--    expr_contains_subquery, expr_has_window_functions, expr_references_any_column,
--    has_column_selector,
-+    contains_random, expr_contains_subquery, expr_has_window_functions, expr_references_any_column,
-+    has_column_selector, is_column_selector,
- };
--use crate::subquery::strip_nested;
-+use crate::subquery::{eligible_query_block, strip_nested};
-+use crate::subquery_group_by::is_count_star;
- use crate::subquery_pull_up::has_aggregate;
- 
- impl SQLContext {
-     /// `select` with the subqueries of its clauses whose SELECT item reads only columns of
--    /// queries around them rewritten to read those columns here, or `None` if there are none.
--    /// The subqueries of its derived tables are left to those tables.
-+    /// queries around them rewritten to read those columns here, and its scalar subqueries
-+    /// merged with a derived table as in the module docs, or `None` if there are none. The
-+    /// subqueries of its derived tables are left to those tables.
-     pub(crate) fn hoist_outer_select_items(&self, select: &Select) -> Option<Select> {
-         let has_candidate = visit_expressions(select, |e| match e {
-             SQLExpr::Subquery(_) | SQLExpr::InSubquery { .. } => ControlFlow::Break(()),
-@@ -79,6 +90,13 @@ impl SQLContext {
-                     self.query_depth += 1;
-                 }
-                 self.skips.push(skip);
-+                if self.query_depth == 0
-+                    && let SQLExpr::Subquery(subquery) = expr
-+                    && let Some(merged) = self.ctx.merge_outer_derived_table(subquery)
-+                {
-+                    **subquery = merged;
-+                    self.changed = true;
-+                }
-                 if self.query_depth == 0
-                     && let Some(hoisted) = self.ctx.hoist_outer_select_item(expr)
-                 {
-@@ -249,6 +267,179 @@ impl SQLContext {
-         }
-         Some((item.clone(), row_query))
+@@ -172,12 +172,13 @@ impl MetaNameSpace {
+         Ok(exprs.iter().all(|e| e.is_known_length(&expr_arena)))
      }
-+
-+    /// `subquery` merged with its only FROM item as in the module docs, or `None` if that
-+    /// item is not a derived table that reads a relation of a query further out, or either
-+    /// of them has another shape. The subquery may only read the derived table's columns,
-+    /// and each of those must be a plain expression of a column.
-+    fn merge_outer_derived_table(&self, subquery: &Query) -> Option<Query> {
-+        let select = eligible_query_block(subquery)?;
-+        let [
-+            TableWithJoins {
-+                relation:
-+                    TableFactor::Derived {
-+                        subquery: derived,
-+                        alias,
-+                        sample: None,
-+                        ..
-+                    },
-+                joins,
-+            },
-+        ] = select.from.as_slice()
-+        else {
-+            return None;
-+        };
-+        // ORDER BY and DISTINCT ON may read a SELECT item rather than a column.
-+        if !joins.is_empty()
-+            || subquery.order_by.is_some()
-+            || matches!(select.distinct, Some(Distinct::On(_)))
-+            || select.exclude.is_some()
-+            || !select.named_window.is_empty()
-+            || alias.as_ref().is_some_and(|a| !a.columns.is_empty())
-+            || contains_random(subquery, true)
-+            || has_unchecked_clauses(subquery, select)
-+            || !select.projection.iter().all(|item| {
-+                matches!(
-+                    item,
-+                    SelectItem::UnnamedExpr(_) | SelectIt
+ 
+-    /// Indicate if this expression as a whole is row-separable (see [`is_row_separable_rec`]).
++    /// Indicate if this expression as a whole is row-separable (see [`ExprProperties::is_row_separable`]).
+     pub fn is_row_separable(self, schema: Option<&Schema>) -> PolarsResult<bool> {
+         let has_schema = schema.is_some();
+         let (exprs, expr_arena) = self.into_expr_irs(schema)?;
++        let mut expr_props = ExprProperties::default();
+         Ok(exprs.iter().all(|e| {
+-            is_row_separable_rec(e.node(), &expr_arena)
++            expr_props.is_row_separable(e.node(), &expr_arena)
+                 && (has_schema || !has_unresolved_set_argument(e.node(), &expr_arena))
+         }))
+     }
 ```
 
-**File**: `py-polars/tests/unit/sql/test_correlated_subqueries.py` (modified, +84/-0)
+**File**: `crates/polars-plan/src/plans/aexpr/properties/expr_properties.rs` (added, +358/-0)
 ```diff
-@@ -2861,3 +2861,87 @@ def test_nested_subquery_reading_outermost_query() -> None:
-     with pytest.raises(pl.exceptions.SQLInterfaceError) as exc:
-         ctx.execute(query, eager=True)
-     assert "named 'a'" not in str(exc.value)
+@@ -0,0 +1,358 @@
++use std::ops::ControlFlow;
 +
++use polars_utils::aliases::PlIndexMap;
++use polars_utils::idx_vec::UnitVec;
++use polars_utils::scratch_vec::ScratchVec;
++use polars_utils::unitvec;
 +
-+@pytest.mark.parametrize(
-+    ("query", "expected"),
-+    [
-+        (
-+            "SELECT a, (SELECT b.v FROM (SELECT o.a * 10 AS v) AS b) AS r FROM t AS o",
-+            [(1, 10), (2, 20), (3, 30), (4, 40)],
-+        ),
-+        (
-+            """
-+            SELECT a, (SELECT MAX(s.x) FROM (SELECT x FROM u WHERE u.k = o.a) AS s) AS r
-+            FROM t AS o
-+            """,
-+            [(1, 6), (2, 7), (3, 8), (4, None)],
-+        ),
-+        (
-+            """
-+            SELECT a, (
-+                SELECT COUNT(*) FROM (SELECT x AS y FROM u WHERE u.k = o.a) AS s
-+                WHERE s.y > 5
-+            ) AS r FROM t AS o
-+            """,
-+            [(1, 1), (2, 1), (3, 1), (4, 0)],
-+        ),
-+        (
-+            "SELECT a, (SELECT MIN(x) FROM (SELECT u.x FROM u WHERE u.k = o.a) AS s) AS r FROM t AS o",
-+            [(1, 5), (2, 7), (3, 8), (4, None)],
-+        ),
-+        (
-+            """
-+            SELECT a, NULL AS r FROM t AS o
-+            WHERE (SELECT MAX(s.x) FROM (SELECT x FROM u WHERE u.k = o.a) AS s) > 6
-+            """,
-+            [(2, None), (3, None)],
-+        ),
-+    ],
-+)
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+def test_scalar_subquery_derived_table_reads_outer(
-+    query: str, expected: list[tuple[int, int | None]], engine: EngineType
-+) -> None:
-+    ctx = pl.SQLContext(
-+        t=pl.DataFrame({"a": [1, 2, 3, 4]}),
-+        u=pl.DataFrame({"k": [1, 1, 2, 3], "x": [5, 6, 7, 8]}),
-+    )
-+    res = ctx.execute(query).sort("a").collect(engine=engine)
-+    assert res.rows() == expected
++use super::super::*;
++use super::general::is_input_independent_scalar_top_level;
++use crate::plans::projection_height::{ExprHeightVisitor, ExprProjectionHeight};
++use crate::traversal::edge_provider::NodeEdgesProvider;
++use crate::traversal::visitor::{NodeVisitor, SubtreeVisit};
 +
++/// Memoized properties of the expressions in an `Arena<AExpr>`.
++///
++/// A `Node` must keep referring to the same expression for as long as `ExprProperties` is used.
++#[derive(Default)]
++pub struct ExprProperties {
++    is_elementwise: PlIndexMap<Node, bool>,
++    is_row_separable: PlIndexMap<Node, bool>,
++    is_input_independent: PlIndexMap<Node, bool>,
++    is_input_independent_scalar: PlIndexMap<Node, bool>,
++    is_frame_dependent: PlIndexMap<Node, bool>,
++    is_length_preserving: PlIndexMap<Node, bool>,
++    node_scratch: ScratchVec<Node>,
++    height_scratch: ScratchVec<ExprProjectionHeight>,
++}
 +
-+@pytest.mark.parametrize(
-+    "query",
-+    [
-+        # A limit of the derived table applies per outer row.
-+        """
-+        SELECT a, (
-+            SELECT SUM(s.x) FROM (SELECT x FROM u WHERE u.k = o.a ORDER BY x LIMIT 1) AS s
-+        ) AS r FROM t AS o
-+        """,
-+        # The aggregate of a value of the outer row would aggregate the outer query.
-+        "SELECT a, (SELECT MAX(b.v) FROM (SELECT o.a * 10 AS v FROM u) AS b) AS r FROM t AS o",
-+        # `u.k` reads the outer `u`, not the relation of the derived table.
-+        """
-+        SELECT o.a, (
-+            SELECT MAX(s.x) FROM (SELECT x FROM u WHERE u.k = o.a) AS s WHERE s.x > u.k
-+        ) AS r FROM t AS o CROSS JOIN (SELECT 5 AS k) AS u
-+        """,
-+        # An item that is not read must still resolve.
-+        "SELECT a, (SELECT COUNT(*) FROM (SELECT o.b AS v FROM u) AS d) AS r FROM t AS o",
-+        # The selector reads the columns of the derived table.
-+        """
-+        SELECT a, (
-+            SELECT MAX(COLUMNS('^x$')) FROM (SELECT k AS x FROM u WHERE u.k = o.a) AS d
-+        ) AS r FROM t AS o
-+        """,
-+    ],
-+)
-+def test_scalar_subquery_derived_table_reads_outer_unsupported(query: str) -> None:
-+    ctx = pl.SQLContext(
-+        t=pl.DataFrame({"a": [1, 2, 3, 4]}),
-+        u=pl.DataFrame({"k": [1, 1, 2, 3], "x": [5, 6, 7, 8]}),
-+    )
-+    with pytest.raises(pl.exceptions.SQLInterfaceError, match="named 'o'"):
-+        ctx.execute(query, eager=True)
++impl ExprProperties {
++    pub fn with_capacity(capacity: usize) -> Self {
++        Self {
++            is_elementwise: PlIndexMap::with_capacity(capacity),
++            is_row_separable: PlIndexMap::with_capacity(capacity),
++            is_input_independent: PlIndexMap::with_capacity(capacity),
++            is_input_independent_scalar: PlIndexMap::with_capacity(capacity),
++            is_frame_dependent: PlIndexMap::with_capacity(capacity),
++            is_length_preserving: PlIndexMap::with_capacity(capacity),
++            node_scratch: ScratchVec::default(),
++            height_scratch: ScratchVec::default(),
++        }
++    }
++
++    /// Return whether the expression at `node` is elementwise, as [`is_elementwise_rec`].
++    #[recursive::recursive]
++    pub fn is_elementwise(&mut self, node: Node, expr_arena: &Arena<AExpr>) -> bool {
++        if let Some(&ret) = self.is_elementwise.get(&node) {
++            return ret;
++        }
++
++        // `is_elementwise` skips the single-literal right-hand side of `is_in`.
++        let mut inputs = unitvec![];
++        let ret = is_elementwise(&mut inputs, expr_arena.get(node), expr_arena)
++            && inputs.iter().all(|&n| self.is_elementwise(n, expr_arena));
++
++        self.is_elementwise.insert(node, ret);
++        ret
++    }
++
++    /// Return whether the expression at `node` is row-separable: evaluating it on batches of rows
++    /// and concatenating the results gives the same output as evaluating it on the whole frame,
++    /// where a scalar result is broadcast to the frame's height.
++    ///
++    /// Every node must be row-separable, and the inputs it zips must line up within a batch (see
++    /// [`Self::zipped_inputs_line_up`]). A node that isn't elementwise must also have an input that
++    /// reads the frame: `lit([1, 2]).explode()` gives two rows per batch.
++    #[recursive::recursive]
++    pub fn is_row_separable(&mut self, node: Node, expr_arena: &Arena<AExpr>) -> bool {
++        if let Some(&ret) = self.is_row_separable.get(&node) {
++            return ret;
++        }
++
++        let ae = expr_arena.get(node);
++        let mut inputs = unitvec![];
++        ae.inputs_rev(&mut inputs);
++        let ret = ae.is_row_separable_top_level()
++            && inputs.iter().all(|&n| self.is_row_separable(n, expr_arena))
++            && self.zipped_inputs_line_up(&inputs, expr_arena)
++            && (ae.is_elementwise_top_level()
++                || inputs
++                    .iter()
++                    .any(|&n| self.is_frame_dependent(n, expr_arena)));
++
++        self.is_row_separable.insert(node, ret);
++        ret
++    }
++
++    /// Return whether `inputs`, zipped within a batch of rows, line up as they do over the whole
++    /// frame: all are elementwise, or all but one are input-independent scalars.
++    pub fn zipped_inputs_line_up(&mut self, inputs: &[Node], expr_arena: &Arena<AExpr>) -> bool {
++        let non_scalars: UnitVec<Node> = inputs
++            .iter()
++            .copied()
++            .filter(|&n| !self.is_input_independent_scalar(n, expr_arena))
++            .collect();
++        non_scalars.len() <= 1
++            || non_scalars
++                .iter()
++                .all(|&n| self.is_elementwise(n, expr_arena))
++    }
++
++    /// Return whether the expression at `node` reads a column or the frame's length.
++    #[recursive::recursive]
++    fn is_frame_dependent(&mut self, node: Node, expr_arena: &Arena<AExpr>) -> bool {
++        if let Some(&ret) = self.is_frame_dependent.get(&node) {
++            return ret;
++        }
++
++        let ae = expr_arena.get(node);
++        let ret = matches!(ae, AExpr::Column(_) | AExpr::Len) || {
++            let mut inputs: UnitVec<Node> = unitvec![];
++            ae.inputs_rev(&mut inputs);
++            inputs
++                .iter()
++                .any(|&n| self.is_frame_dependent(n, expr_arena))
++        };
++
++    
+```
+
+**File**: `crates/polars-plan/src/plans/aexpr/properties/general.rs` (modified, +1/-104)
+```diff
+@@ -1,4 +1,3 @@
+-use polars_utils::aliases::PlIndexMap;
+ use polars_utils::idx_vec::UnitVec;
+ use polars_utils::unitvec;
+ 
+@@ -242,7 +241,7 @@ pub fn is_input_independent_scalar_rec(node: Node, expr_arena: &Arena<AExpr>) ->
+ }
+ 
+ /// Whether `ae` yields an input-independent scalar when all its inputs do.
+-fn is_input_independent_scalar_top_level(ae: &AExpr) -> bool {
++pub(super) fn is_input_independent_scalar_top_level(ae: &AExpr) -> bool {
+     match ae {
+         AExpr::Literal(lv) => lv.is_scalar(),
+         AExpr::BinaryExpr { .. } | AExpr::Cast { .. } | AExpr::Ternary { .. } => true,
+@@ -251,108 +250,6 @@ fn is_input_independent_scalar_top_level(ae: &AExpr) -> bool {
+     }
+ }
+ 
+-/// Checks if the top-level expression node is row-separable. If this is the case, then `stack` will
+-/// be extended further with any nested expression nodes.
+-///
+-/// This doesn't check that the inputs it pushes line up within a batch, so walking it with
+-/// `property_rec` accepts `a.filter(p) + b.filter(q)`; use [`is_row_separable_rec`] for a whole
+-/// expression.
+-pub fn is_row_separable(stack: &mut UnitVec<Node>, ae: &AExpr, expr_arena: &Arena<AExpr>) -> bool {
+-    is_prop(stack, ae, expr_arena, |ae| ae.is_row_separable_top_level())
+-}
+-
+-/// Whether each expression in `nodes` on its own is row-separable, see [`is_row_separable_rec`].
+-/// Public API for downstream crates such as Polars Nanook.
+-///
+-/// This doesn't check that the outputs of several expressions line up with each other.
+-pub fn all_row_separable<'a, N>(nodes: &'a [N], expr_arena: &Arena<AExpr>) -> bool
+-where
+-    Node: From<&'a N>,
+-{
+-    let mut memo = PlIndexMap::default();
+-    nodes
+-        .iter()
+-        .all(|n| row_separability(n.into(), expr_arena, &mut memo).row_separable)
+-}
+-
+-/// Whether the expression at `node` as a whole is row-separable, see [`row_separability`].
+-pub fn is_row_separable_rec(node: Node, expr_arena: &Arena<AExpr>) -> bool {
+-    row_separability(node, expr_arena, &mut PlIndexMap::default()).row_separable
+-}
+-
+-/// The properties of an expression that decide whether it is row-separable.
+-#[derive(Clone, Copy, Debug)]
+-pub struct RowSeparability {
+-    /// Evaluating the expression on batches of rows and concatenating the results gives the same
+-    /// output as evaluating it on the whole frame, where a scalar result is broadcast to the
+-    /// frame's height.
+-    pub row_separable: bool,
+-    /// As [`is_elementwise_rec`].
+-    pub elementwise: bool,
+-    /// As [`is_input_independent_scalar_rec`].
+-    pub input_independent_scalar: bool,
+-    /// The expression reads a column or the frame's length.
+-    pub frame_dependent: bool,
+-}
+-
+-/// Derives the [`RowSeparability`] of the expression at `node`, memoizing it and that of the
+-/// subexpressions it visits in `memo`, so that sharing `memo` across calls visits each node once.
+-///
+-/// Every node must be row-separable, and the inputs it zips must line up within a batch (see
+-/// [`zipped_inputs_line_up`]). A node that isn't elementwise must also have an input that reads the
+-/// frame: `lit([1, 2]).explode()` gives two rows per batch.
+-#[recursive::recursive]
+-pub fn row_separability(
+-    node: Node,
+-    expr_arena: &Arena<AExpr>,
+-    memo: &mut PlIndexMap<Node, RowSeparability>,
+-) -> RowSeparability {
+-    if let Some(&props) = memo.get(&node) {
+-        return props;
+-    }
+-    let ae = expr_arena.get(node);
+-    let mut stack = unitvec![];
+-    ae.inputs_rev(&mut stack);
+-    let inputs: UnitVec<RowSeparability> = stack
+-        .iter()
+-        .map(|&n| row_separability(n, expr_arena, memo))
+-        .collect();
+-    let row_separable = ae.is_row_separable_top_level()
+-        && inputs.iter().all(|p| p.row_separable)
+-        && zipped_inputs_line_up(&inputs)
+-        && (ae.is_elementwise_top_level() || inputs.iter().any(|p| p.frame_dependent));
+-
+-    // `is_elementwise` skips the single-literal right-hand side of `is_in`, as
+-    // `is_elementwise_rec` does. Every input it pushes is in `memo` already.
+-    stack.clear();
+-    let elementwise =
+-        is_elementwise(&mut stack, ae, expr_arena) && stack.iter().all(|n| memo[n].elementwise);
+-
+-    let input_independent_scalar = is_input_independent_scalar_top_level(ae)
+-        && inputs.iter().all(|p| p.input_independent_scalar);
+-    let frame_dependent =
+-        matches!(ae, AExpr::Column(_) | AExpr::Len) || inputs.iter().any(|p| p.frame_dependent);
+-
+-    let props = RowSeparability {
+-        row_separable,
+-        elementwise,
+-        input_independent_scalar,
+-        frame_dependent,
+-    };
+-    memo.insert(node, props);
+-    props
+-}
+-
+-/// Whether `inputs`, zipped within a batch of rows, line up as they do over the whole frame: all
+-/// are elementwise, or all but one are input-independent scalars.
+-///
+-/// This is sufficient, not necessary: two filters on the same predicate line up, but are
+-/// rejected.
+-pub fn zipped_inputs_line_up(inputs: &[RowSeparability]) -> bool {
+-    let mu
+```
+
+**File**: `crates/polars-plan/src/plans/aexpr/properties/mod.rs` (modified, +2/-0)
+```diff
+@@ -1,3 +1,5 @@
++mod expr_properties;
+ mod general;
+ 
++pub use expr_properties::ExprProperties;
+ pub use general::*;
+```
+
+**File**: `crates/polars-plan/src/plans/optimizer/join_predicate_fusion.rs` (modified, +3/-3)
+```diff
+@@ -15,8 +15,8 @@ use crate::dsl::Operator;
+ use crate::plans::iterator::ArenaExprIter;
+ use crate::plans::options::JoinTypeOptionsIR;
+ use crate::plans::{
+-    AExpr, ExprIR, ExprPushdownGroup, IR, JoinOptionsIR, JoinType, MintermIter, OutputName,
+-    is_row_separable_rec,
++    AExpr, ExprIR, ExprProperties, ExprPushdownGroup, IR, JoinOptionsIR, JoinType, MintermIter,
++    OutputName,
+ };
+ use crate::utils::{aexpr_to_leaf_names_iter, rename_columns};
+ 
+@@ -58,7 +58,7 @@ pub(super) fn can_fuse_predicate(node: Node, expr_arena: &Arena<AExpr>) -> bool
+     group.update_with_expr_rec(expr_arena.get(node), expr_arena, None);
+ 
+     matches!(group, ExprPushdownGroup::Pushable)
+-        && is_row_separable_rec(node, expr_arena)
++        && ExprProperties::default().is_row_separable(node, expr_arena)
+         && !contains_dynamic_pred(node, expr_arena)
+ }
+ 
+```
+
+**File**: `crates/polars-stream/src/physical_plan/lower_expr.rs` (modified, +34/-305)
+```diff
+@@ -1,11 +1,10 @@
+-use std::ops::ControlFlow;
+ use std::sync::Arc;
+ 
+ use polars_core::chunked_array::cast::CastOptions;
+ use polars_core::datatypes::AnyValue;
+ use polars_core::frame::DataFrame;
+ use polars_core::prelude::{
+-    DataType, Field, IDX_DTYPE, InitHashMaps, PlHashMap, PlHashSet, PlIndexMap, PlIndexSet,
++    DataType, Field, IDX_DTYPE, InitHashMaps, PlHashSet, PlIndexMap, PlIndexSet,
+     SortMultipleOptions,
+ };
+ #[cfg(feature = "rolling_window")]
+@@ -20,13 +19,10 @@ use polars_expr::{ExpressionConversionState, create_physical_expr};
+ use polars_ops::series::{RLE_LENGTH_COLUMN_NAME, RLE_VALUE_COLUMN_NAME};
+ use polars_plan::plans::AExpr;
+ use polars_plan::plans::expr_ir::{ExprIR, OutputName};
+-use polars_plan::plans::projection_height::{ExprHeightVisitor, ExprProjectionHeight};
+ use polars_plan::prelude::*;
+-use polars_plan::traversal::visitor::{NodeVisitor, SubtreeVisit};
+ use polars_utils::arena::{Arena, Node};
+ use polars_utils::itertools::Itertools;
+ use polars_utils::pl_str::PlSmallStr;
+-use polars_utils::scratch_vec::ScratchVec;
+ use polars_utils::slice_enum::Slice;
+ use slotmap::DenseSlotMap;
+ 
+@@ -44,32 +40,12 @@ use crate::physical_plan::lower_ir::{
+ };
+ use crate::unique_column_name;
+ 
+-type ExprNodeKey = Node;
+-
+-pub(crate) struct ExprCache {
+-    is_elementwise: PlHashMap<Node, bool>,
+-    is_input_independent: PlHashMap<Node, bool>,
+-    is_length_preserving: PlHashMap<Node, bool>,
+-}
+-
+-impl ExprCache {
+-    pub fn with_capacity(capacity: usize) -> Self {
+-        Self {
+-            is_elementwise: PlHashMap::with_capacity(capacity),
+-            is_input_independent: PlHashMap::with_capacity(capacity),
+-            is_length_preserving: PlHashMap::with_capacity(capacity),
+-        }
+-    }
+-}
+-
+ pub(crate) struct LowerExprContext<'a> {
+     pub(crate) prepare_visualization: bool,
+     pub(crate) sortedness: &'a IRPlanSorted,
+     pub(crate) expr_arena: &'a mut Arena<AExpr>,
+     pub(crate) phys_sm: &'a mut DenseSlotMap<PhysNodeKey, PhysNode>,
+-    pub(crate) cache: &'a mut ExprCache,
+-    pub(crate) node_scratch: &'a mut ScratchVec<Node>,
+-    pub(crate) ae_height_scratch: &'a mut ScratchVec<ExprProjectionHeight>,
++    pub(crate) expr_props: &'a mut ExprProperties,
+ }
+ 
+ impl<'a> From<LowerExprContext<'a>> for StreamingLowerIRContext<'a> {
+@@ -91,174 +67,6 @@ impl<'a> From<&LowerExprContext<'a>> for StreamingLowerIRContext<'a> {
+     }
+ }
+ 
+-pub(crate) fn is_elementwise_rec_cached(
+-    expr_key: ExprNodeKey,
+-    arena: &Arena<AExpr>,
+-    cache: &mut ExprCache,
+-) -> bool {
+-    *cache
+-        .is_elementwise
+-        .entry(expr_key)
+-        .or_insert_with(|| is_elementwise_rec(expr_key, arena))
+-}
+-
+-#[recursive::recursive]
+-pub fn is_input_independent_rec(
+-    expr_key: ExprNodeKey,
+-    arena: &Arena<AExpr>,
+-    cache: &mut PlHashMap<ExprNodeKey, bool>,
+-) -> bool {
+-    if let Some(ret) = cache.get(&expr_key) {
+-        return *ret;
+-    }
+-
+-    let ret = match arena.get(expr_key) {
+-        // Handled separately in `Eval`.
+-        AExpr::Element | AExpr::EvalColumn(_) => unreachable!(),
+-        AExpr::StructField(_) => false,
+-        AExpr::Explode { expr: inner, .. }
+-        | AExpr::Cast {
+-            expr: inner,
+-            dtype: _,
+-            options: _,
+-        }
+-        | AExpr::Sort {
+-            expr: inner,
+-            options: _,
+-        } => is_input_independent_rec(*inner, arena, cache),
+-        AExpr::Column(_) => false,
+-
+-        AExpr::Literal(_) => true,
+-        AExpr::BinaryExpr { left, op: _, right } => {
+-            is_input_independent_rec(*left, arena, cache)
+-                && is_input_independent_rec(*right, arena, cache)
+-        },
+-        AExpr::Gather {
+-            expr,
+-            idx,
+-            returns_scalar: _,
+-            null_on_oob: _,
+-        } => {
+-            is_input_independent_rec(*expr, arena, cache)
+-                && is_input_independent_rec(*idx, arena, cache)
+-        },
+-        AExpr::SortBy {
+-            expr,
+-            by,
+-            sort_options: _,
+-        } => {
+-            is_input_independent_rec(*expr, arena, cache)
+-                && by
+-                    .iter()
+-                    .all(|expr| is_input_independent_rec(*expr, arena, cache))
+-        },
+-        AExpr::Filter { input, by } => {
+-            is_input_independent_rec(*input, arena, cache)
+-                && is_input_independent_rec(*by, arena, cache)
+-        },
+-        AExpr::Agg(agg_expr) => match agg_expr.get_input() {
+-            polars_plan::plans::NodeInputs::Leaf => true,
+-            polars_plan::plans::NodeInputs::Single(expr) => {
+-                is_input_independent_rec(expr, arena, cache)
+-            },
+-            polars_plan::plans::NodeInputs::Many(exprs) => exprs
+-                .iter()
+-                .all(|expr| is_input_independent_rec(*expr, arena, cache)),
+-        },
+-        AExpr::Ternary {
+-            predicate,
+-            truthy,
+-            falsy,
+-        } => {
+-
+```
+
+**File**: `crates/polars-stream/src/physical_plan/lower_group_by.rs` (modified, +71/-76)
+```diff
+@@ -25,10 +25,9 @@ use polars_utils::pl_str::PlSmallStr;
+ use recursive::recursive;
+ use slotmap::DenseSlotMap;
+ 
+-use super::{ExprCache, PhysNode, PhysNodeKey, PhysNodeKind, PhysStream, StreamingLowerIRContext};
++use super::{PhysNode, PhysNodeKey, PhysNodeKind, PhysStream, StreamingLowerIRContext};
+ use crate::physical_plan::lower_expr::{
+     build_hstack_stream, build_select_stream, build_sort_stream, compute_output_schema,
+-    is_elementwise_rec_cached, is_input_independent,
+ };
+ use crate::physical_plan::lower_ir::{
+     build_filter_stream, build_row_idx_stream, build_slice_stream,
+@@ -126,7 +125,7 @@ fn replace_agg_uniq(
+     expr: Node,
+     unique_of: Option<Node>,
+     canonical_exprs: &mut CanonicalExprMap,
+-    expr_cache: &mut ExprCache,
++    expr_props: &mut ExprProperties,
+     expr_arena: &mut Arena<AExpr>,
+     agg_exprs: &mut Vec<ExprIR>,
+     uniq_input_names: &mut PlIndexMap<CanonicalExprId, PlSmallStr>,
+@@ -151,7 +150,7 @@ fn replace_agg_uniq(
+                         let (Some(x_id), x_col) = replace_elementwise_components(
+                             x,
+                             canonical_exprs,
+-                            expr_cache,
++                            expr_props,
+                             expr_arena,
+                             uniq_input_names,
+                             uniq_elementwise_exprs,
+@@ -171,7 +170,7 @@ fn replace_agg_uniq(
+                     let (input_id, node) = replace_elementwise_components(
+                         *input,
+                         canonical_exprs,
+-                        expr_cache,
++                        expr_props,
+                         expr_arena,
+                         uniq_input_names,
+                         uniq_elementwise_exprs,
+@@ -211,14 +210,14 @@ fn replace_agg_uniq(
+ fn replace_elementwise_components(
+     expr: Node,
+     canonical_exprs: &mut CanonicalExprMap,
+-    expr_cache: &mut ExprCache,
++    expr_props: &mut ExprProperties,
+     expr_arena: &mut Arena<AExpr>,
+     uniq_input_names: &mut PlIndexMap<CanonicalExprId, PlSmallStr>,
+     uniq_elementwise_exprs: &mut PlIndexMap<CanonicalExprId, ExprIR>,
+     substream_input_ids: &mut PlIndexSet<CanonicalExprId>,
+ ) -> (Option<CanonicalExprId>, Node) {
+-    if is_elementwise_rec_cached(expr, expr_arena, expr_cache)
+-        || (is_input_independent(expr, expr_arena, expr_cache) && is_scalar_ae(expr, expr_arena))
++    if expr_props.is_elementwise(expr, expr_arena)
++        || (expr_props.is_input_independent(expr, expr_arena) && is_scalar_ae(expr, expr_arena))
+     {
+         let id = canonical_exprs.resolve(expr, expr_arena);
+         let name = uniq_input_names
+@@ -240,7 +239,7 @@ fn replace_elementwise_components(
+             let (input_id, node) = replace_elementwise_components(
+                 *input,
+                 canonical_exprs,
+-                expr_cache,
++                expr_props,
+                 expr_arena,
+                 uniq_input_names,
+                 uniq_elementwise_exprs,
+@@ -265,7 +264,7 @@ fn try_lower_elementwise_scalar_agg_expr(
+     gbl_kind: GroupByLowerKind,
+     input_schema: &Schema,
+     canonical_exprs: &mut CanonicalExprMap,
+-    expr_cache: &mut ExprCache,
++    expr_props: &mut ExprProperties,
+     expr_arena: &mut Arena<AExpr>,
+     agg_exprs: &mut Vec<ExprIR>,
+     uniq_input_names: &mut PlIndexMap<CanonicalExprId, PlSmallStr>,
+@@ -282,7 +281,7 @@ fn try_lower_elementwise_scalar_agg_expr(
+                 gbl_kind,
+                 input_schema,
+                 canonical_exprs,
+-                expr_cache,
++                expr_props,
+                 expr_arena,
+                 agg_exprs,
+                 uniq_input_names,
+@@ -303,7 +302,7 @@ fn try_lower_elementwise_scalar_agg_expr(
+                 $input,
+                 $x,
+                 canonical_exprs,
+-                expr_cache,
++                expr_props,
+                 expr_arena,
+                 agg_exprs,
+                 uniq_input_names,
+@@ -314,7 +313,7 @@ fn try_lower_elementwise_scalar_agg_expr(
+         };
+     }
+ 
+-    if is_input_independent(expr, expr_arena, expr_cache) {
++    if expr_props.is_input_independent(expr, expr_arena) {
+         if is_scalar_ae(expr, expr_arena) {
+             return Some(expr);
+         } else {
+@@ -328,7 +327,7 @@ fn try_lower_elementwise_scalar_agg_expr(
+ 
+     // Whether `x` can be the input of a unique reduction.
+     let mut unique_reducible = |x: Node, expr_arena: &Arena<AExpr>| {
+-        is_elementwise_rec_cached(x, expr_arena, expr_cache)
++        expr_props.is_elementwise(x, expr_arena)
+             && expr_arena
+                 .get(x)
+                 .to_dtype(&ToFieldContext::new(expr_arena, input_schema))
+@@ -774,10 +773,10 @@ fn try_lower_agg_input_expr(
+     expr: Node,
+     expr_arena: &mut Arena<AExpr>,
+     phys_sm: &mut DenseSlotMap<PhysNodeKey, PhysNode>,
+-    expr_cache: &mut ExprCache,
++    expr_props: &mut ExprProperties,
+     ctx: StreamingLowerIRContext<'_>,
+ ) -> PolarsR
+```
+
+**File**: `crates/polars-stream/src/physical_plan/lower_ir.rs` (modified, +36/-35)
+```diff
+@@ -54,8 +54,8 @@ use crate::nodes::io_sources::multi_scan::reader_interface::builder::FileReaderB
+ use crate::nodes::recursive::{RecursiveInputs, RecursiveStep};
+ use crate::physical_plan::ZipBehavior;
+ use crate::physical_plan::lower_expr::{
+-    ExprCache, LowerExprContext, build_hstack_stream_with_ctx, build_select_stream,
+-    input_height_expr, is_elementwise_rec_cached, lower_exprs,
++    LowerExprContext, build_hstack_stream_with_ctx, build_select_stream, input_height_expr,
++    lower_exprs,
+ };
+ use crate::physical_plan::lower_group_by::build_group_by_stream_with_key_ranges;
+ use crate::unique_column_name;
+@@ -88,17 +88,15 @@ pub fn build_filter_stream(
+     predicate: ExprIR,
+     expr_arena: &mut Arena<AExpr>,
+     phys_sm: &mut DenseSlotMap<PhysNodeKey, PhysNode>,
+-    expr_cache: &mut ExprCache,
++    expr_props: &mut ExprProperties,
+     ctx: StreamingLowerIRContext<'_>,
+ ) -> PolarsResult<PhysStream> {
+     let mut ctx = LowerExprContext {
+         expr_arena,
+         phys_sm,
+-        cache: expr_cache,
++        expr_props,
+         prepare_visualization: ctx.prepare_visualization,
+         sortedness: ctx.sortedness,
+-        node_scratch: &mut Default::default(),
+-        ae_height_scratch: &mut Default::default(),
+     };
+     build_filter_stream_with_ctx(input, predicate, &mut ctx)
+ }
+@@ -110,7 +108,10 @@ pub(crate) fn build_filter_stream_with_ctx(
+ ) -> PolarsResult<PhysStream> {
+     let input_schema = input.output_schema(ctx.phys_sm).clone();
+ 
+-    if is_elementwise_rec_cached(predicate.node(), ctx.expr_arena, ctx.cache) {
++    if ctx
++        .expr_props
++        .is_elementwise(predicate.node(), ctx.expr_arena)
++    {
+         let kind = PhysNodeKind::Filter {
+             input,
+             predicate,
+@@ -233,7 +234,7 @@ pub fn lower_ir(
+     phys_to_ir: &mut SecondaryMap<PhysNodeKey, Node>,
+     original_ir_len: usize,
+     schema_cache: &mut PlHashMap<Node, Arc<Schema>>,
+-    expr_cache: &mut ExprCache,
++    expr_props: &mut ExprProperties,
+     cache_nodes: &mut PlHashMap<UniqueId, PhysStream>,
+     ctx: StreamingLowerIRContext<'_>,
+     disable_morsel_split: Option<bool>,
+@@ -248,7 +249,7 @@ pub fn lower_ir(
+         phys_to_ir,
+         original_ir_len,
+         schema_cache,
+-        expr_cache,
++        expr_props,
+         cache_nodes,
+         ctx,
+         disable_morsel_split,
+@@ -276,7 +277,7 @@ fn lower_ir_inner(
+     phys_to_ir: &mut SecondaryMap<PhysNodeKey, Node>,
+     original_ir_len: usize,
+     schema_cache: &mut PlHashMap<Node, Arc<Schema>>,
+-    expr_cache: &mut ExprCache,
++    expr_props: &mut ExprProperties,
+     cache_nodes: &mut PlHashMap<UniqueId, PhysStream>,
+     ctx: StreamingLowerIRContext<'_>,
+     mut disable_morsel_split: Option<bool>,
+@@ -296,7 +297,7 @@ fn lower_ir_inner(
+                 phys_to_ir,
+                 original_ir_len,
+                 schema_cache,
+-                expr_cache,
++                expr_props,
+                 cache_nodes,
+                 ctx,
+                 disable_morsel_split,
+@@ -340,7 +341,7 @@ fn lower_ir_inner(
+ 
+             let phys_input = lower_ir!(*input)?;
+             return build_select_stream(
+-                phys_input, &selectors, expr_arena, phys_sm, expr_cache, ctx,
++                phys_input, &selectors, expr_arena, phys_sm, expr_props, ctx,
+             );
+         },
+ 
+@@ -391,7 +392,7 @@ fn lower_ir_inner(
+         IR::HStack { input, exprs, .. } | IR::Window { input, exprs, .. } => {
+             let exprs = exprs.to_vec();
+             let phys_input = lower_ir!(*input)?;
+-            return build_hstack_stream(phys_input, &exprs, expr_arena, phys_sm, expr_cache, ctx);
++            return build_hstack_stream(phys_input, &exprs, expr_arena, phys_sm, expr_props, ctx);
+         },
+ 
+         IR::Slice { input, slice } => {
+@@ -404,7 +405,7 @@ fn lower_ir_inner(
+             let predicate = predicate.clone();
+             let phys_input = lower_ir!(*input)?;
+             return build_filter_stream(
+-                phys_input, predicate, expr_arena, phys_sm, expr_cache, ctx,
++                phys_input, predicate, expr_arena, phys_sm, expr_props, ctx,
+             );
+         },
+ 
+@@ -609,7 +610,7 @@ fn lower_ir_inner(
+                     AExprBuilder::col(key[0].clone(), expr_arena).expr_ir(key_name.clone())
+                 };
+ 
+-                *s = build_hstack_stream(*s, &[key_expr], expr_arena, phys_sm, expr_cache, ctx)?;
++                *s = build_hstack_stream(*s, &[key_expr], expr_arena, phys_sm, expr_props, ctx)?;
+             }
+ 
+             PhysNodeKind::MergeSorted {
+@@ -757,7 +758,7 @@ fn lower_ir_inner(
+                 }));
+                 let trans_exprs;
+                 (stream, trans_exprs) =
+-                    lower_exprs(stream, &exprs, expr_arena, phys_sm, expr_cache, ctx)?;
++                    lower_exprs(stream, &exprs, expr_arena, phys_sm, expr_props, ctx)?;
+                 output_exprs = trans_exprs[..output_exprs.len()].to_vec();
+                 trans_expr
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31064** (2026-11-24): ci: Disable free-threaded Python 3.15t wheels and tests for now (@ritchie46)
-- **PR #31063** (2026-11-24): fix: Allow a derived table in a correlated scalar SQL subquery to read the outer row (@ritchie46)
-- **PR #31062** (2026-11-24): perf: Parallel streaming cumulative aggregations (@orlp)
-- **PR #31061** (2026-11-24): fix: Compile polars-sql without the semi_anti_join feature (@kdn36)
-- **PR #31060** (2026-11-24): fix: Allow deeper nesting in SQL and report the parser's recursion limit instead of a syntax error (@ritchie46)
-- **PR #31056** (2026-11-24): fix: Allow a correlated SQL `IN` whose subquery selects a constant or repeats a key name (@kdn36)
+- **PR #31122** (2026-11-26): feat: Add memory budget to pl.Config (@ritchie46)
+- **PR #31120** (closed): fix: Reject temporal duration bounds in is_between (@faizal4757)
+- **PR #31112** (2026-11-26): chore: Bump unicode-width to 0.2.3 (@orlp)
+- **PR #31111** (2026-11-26): perf: Improve Polars import time (@orlp)
+- **PR #31108** (2026-11-25): fix: Don't mark naive <-> tz-aware datetime cast as lossless (@orlp)
+- **PR #31106** (2026-11-25): perf: Use SIMD kernels for nan_min/nan_max, native skew/kurtosis and cheaper integer casts (@ritchie46)
 
 ---
 
@@ -2169,31 +2654,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Numpy array index overflow
+## X. Raise on non-numeric `hist` bins instead of panicking
 
 **RULE**:
-When implementing operations in `py-polars/src/polars/_utils/getitem.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-ops/src/chunked_array/hist.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0c7cdde1`: Numpy array index overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c2bb320e`: Raise on non-numeric `hist` bins instead of panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `py-polars/src/polars/_utils/getitem.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-ops/src/chunked_array/hist.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if arr.dtype in (np.int64, np.uint64) and arr.max() >= U32_MAX:
+                // `Null` is the dtype of empty bins, e.g. `bins=[]` from Python.
+                polars_ensure!(
+                    bins.dtype().is_numeric() || bins.dtype().is_null(),
+                    InvalidOperation: "`hist` bins must be numeric, got dtype `{}`", bins.dtype()
+                );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        if arr.dtype in {np.int64, np.uint64} and arr.max() >= U32_MAX:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0c7cdde1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c2bb320e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

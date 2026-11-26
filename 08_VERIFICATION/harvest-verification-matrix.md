@@ -13330,3 +13330,8 @@
 | `CYCLE-20261126-3AHC` | `2026-11-26T10:08:16.848Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10644` | Yes (`f4ba7dc2...`) |
 | `CYCLE-20261126-3K4D` | `2026-11-26T10:08:29.341Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md` | Yes (`c5a9b3e2...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T10:09:02.041Z` | `arangodb-arangodb` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-439581EA` [Domain D] | Yes (`51ade74a...`) |
+| `CYCLE-20261126-HCJC` | `2026-11-26T10:19:12.696Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`cedfa405...`) |
+| `CYCLE-20261126-HJ4B` | `2026-11-26T10:19:21.227Z` | `Planetable/Planet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10645` | Yes (`0af879bd...`) |
+| `CYCLE-20261126-HKAK` | `2026-11-26T10:19:22.748Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10646` | Yes (`668b0ede...`) |
+| `CYCLE-20261126-HMAE` | `2026-11-26T10:19:25.334Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10647` | Yes (`50e519a2...`) |
+| `CYCLE-20261126-HPRA` | `2026-11-26T10:19:29.830Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10648` | Yes (`8c5e26a4...`) |

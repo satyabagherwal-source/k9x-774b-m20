@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T10:08:32.602Z",
+  "updated_at": "2026-11-26T10:19:35.294Z",
   "stats": {
-    "total_discovered": 9726,
-    "approved_pending_harvest": 9226,
+    "total_discovered": 9730,
+    "approved_pending_harvest": 9230,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9213,
+      "COMMUNITY_AND_EXPERT": 9217,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210499,6 +210499,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
         "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-8D6DF7A33998": {
+      "id": "SRC-8D6DF7A33998",
+      "url": "https://opensource.planetable.xyz/planet-insider/appcast.xml",
+      "title": "https://opensource.planetable.xyz/planet-insider/appcast.xml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T10:19:35.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-C0A40C9211F6": {
+      "id": "SRC-C0A40C9211F6",
+      "url": "https://opensource.planetable.xyz/planet-insider",
+      "title": "https://opensource.planetable.xyz/planet-insider",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T10:19:35.162Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-5B2B5A054407": {
+      "id": "SRC-5B2B5A054407",
+      "url": "https://planetable.eth.limo/insider",
+      "title": "https://planetable.eth.limo/insider",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T10:19:35.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
+      }
+    },
+    "SRC-1B5E7C8B40FB": {
+      "id": "SRC-1B5E7C8B40FB",
+      "url": "https://insider.planetable.xyz/",
+      "title": "https://insider.planetable.xyz/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T10:19:35.294Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/planetable-planet-learnings.md",
+        "fileName": "planetable-planet-learnings.md"
       }
     }
   }

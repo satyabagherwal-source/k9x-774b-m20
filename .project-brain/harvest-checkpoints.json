@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T10:08:29.362Z",
+  "last_updated": "2026-11-26T10:19:29.854Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -215,14 +215,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-27b",
-      "content_hash": "ab711e34a7270d2552472eb0c7db455eec5942b34b1cf7ed1155c3c5d9e6468b",
-      "verified_at": "2026-11-22T17:22:01.395Z",
+      "content_hash": "cedfa40562bf3c03ce1b18d47ccd1bc9041dd9facac319459d1cc3f6b8dc3136",
+      "verified_at": "2026-11-26T10:19:12.717Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T17:22:01.395Z"
+      "last_updated": "2026-11-26T10:19:12.717Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "af8ee5533de1795056b9b9ca5f6daa178f2a8d961f04f2c880bb8fa9522eb547",
-      "verified_at": "2026-11-25T08:29:29.270Z",
+      "content_hash": "8c5e26a4fb7dffaa521a4758bd8a3fa0707837265914bea292b6bb89109e285b",
+      "verified_at": "2026-11-26T10:19:29.854Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T08:29:29.270Z"
+      "last_updated": "2026-11-26T10:19:29.854Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "d3b07a59d3f9d079698b037e882ccdad6afd1379a6d36eeffc791e4d3c6b6c2b",
-      "verified_at": "2026-11-24T16:19:54.850Z",
+      "content_hash": "668b0ede6e569e02511ee0cb7efbe1c4062ce226c62b3dc87f55400eb9c2a453",
+      "verified_at": "2026-11-26T10:19:22.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T16:19:54.850Z"
+      "last_updated": "2026-11-26T10:19:22.776Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "878bde50aa600eb533e55dad63dfe126a52aa9ecb76bfc02aa435dc125a77af0",
-      "verified_at": "2026-11-25T02:56:02.950Z",
+      "content_hash": "50e519a20977d38a4e7b02380b56643749b61d4673ec1252fe5640df8832b315",
+      "verified_at": "2026-11-26T10:19:25.370Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:56:02.950Z"
+      "last_updated": "2026-11-26T10:19:25.370Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -15261,14 +15261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-planetable-planet",
-      "content_hash": "b8adec3d614f250c86c6ba4a2e50189a103dfd25fdcd19a9ab5b6b6f45e562b5",
-      "verified_at": "2026-11-13T13:20:44.358Z",
+      "content_hash": "0af879bd13a74ea2b00d201918c740a18651002113d8e7f82c2afb96f9ef41b9",
+      "verified_at": "2026-11-26T10:19:21.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:20:44.358Z"
+      "last_updated": "2026-11-26T10:19:21.258Z"
     },
     "mswjs/msw": {
       "repository": "mswjs/msw",

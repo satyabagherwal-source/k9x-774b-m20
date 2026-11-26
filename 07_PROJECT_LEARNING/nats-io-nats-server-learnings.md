@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `44f6fc4d`  
+> **Source Version**: `12a5e8c5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:19:53.709Z  
+> **Timestamp**: 2026-11-26T10:19:21.437Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:19:53.703Z  
+> **Harvest Timestamp**: 2026-11-26T10:19:21.430Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21130 stars
+- **Stars / Engagement**: 21157 stars
 
 ---
 
@@ -2726,511 +2726,122 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `253bc39b` (2026-11-24)
-**Commit Message**: [FIXED] Replies to first concurrent requests on fresh server can be dropped (#8929)
+### Incident Patch 1: `12a5e8c5` (2026-11-25)
+**Commit Message**: Fix temporary directory usage for MQTT benchmarks (#8940)
 
-### Problem
-In `newServiceReply`, `a.mu` was unlocked after generating the wildcard
-prefix but before registering the `_R_.>` subscription in the internal
-client sublist. When multiple concurrent requests arrived on a freshly
-started server, the first caller returned the reply subject and
-published before the subscription was active, causing early replies to
-be dropped.
+These benchmarks were using `/tmp` and then failing to clean up after,
+as the deferred helper was reading a nil `StoreDir`. Using the test
+helpers to get a temporary directory instead ensures they clean up
+properly.
 
-### Solution
-- I added a `sync.Once` (`siReplyOnce`) on `Account` to synchronize the
-service import reply wildcard setup and subscription.
-- Concurrent callers now wait until the `_R_.>` subscription is fully
-registered before receiving their reply subject.
-- Added a regression test
-`TestAccountNewServiceReplyWaitsForSubscription` to verify concurrent
-callers block until the subscription is active.
+[skip ci]
 
-Resolves #8823
-
-**File**: `locksordering.txt` (modified, +9/-0)
+**File**: `server/mqtt_test.go` (modified, +4/-4)
 ```diff
-@@ -81,3 +81,12 @@ another account (which would take that account's locks in unknown order).
+@@ -10799,8 +10799,9 @@ func mqttBenchPubQoS0(b *testing.B, subject, payload string, numSubs int) {
+ 	b.StopTimer()
+ 	b.ReportAllocs()
+ 	o := testMQTTDefaultOptions()
++	o.StoreDir = b.TempDir()
+ 	s := RunServer(o)
+-	defer testMQTTShutdownServer(s)
++	defer s.Shutdown()
  
-     cmu -> Account
-     cmu -> client
-+
-+The "siReplyOnce" in the Account serializes the initialization of the service
-+reply wildcard prefix and its wildcard subscription for service import responses,
-+so that concurrent callers wait until the subscription is registered.
-+It must be acquired before the Account and client locks, and neither must be
-+held when calling newServiceReply.
-+
-+    siReplyOnce -> Account
-+    siReplyOnce -> client
-```
-
-**File**: `server/accounts.go` (modified, +15/-17)
-```diff
-@@ -100,6 +100,7 @@ type Account struct {
- 	srv          *Server // server this account is registered with (possibly nil)
- 	lds          string  // loop detection subject for leaf nodes
- 	siReply      []byte  // service reply prefix, will form wildcard subscription.
-+	siReplyOnce  sync.Once
- 	eventIds     *nuid.NUID
- 	eventIdsMu   sync.Mutex
- 	defaultPerms *Permissions
-@@ -2527,25 +2528,22 @@ func isTrackedReply(reply []byte) bool {
- // Generate a new service reply from the wildcard prefix.
- // FIXME(dlc) - probably do not have to use rand here. about 25ns per.
- func (a *Account) newServiceReply(tracking bool) []byte {
--	a.mu.Lock()
--	s := a.srv
--	rn := rand.Uint64()
-+	a.siReplyOnce.Do(func() {
-+		a.mu.Lock()
-+		if a.siReply == nil {
-+			a.createRespWildcard()
-+		}
-+		replyPre := a.siReply
-+		a.mu.Unlock()
-+		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
-+	})
- 
--	// Check if we need to create the reply here.
--	var createdSiReply bool
--	if a.siReply == nil {
--		a.createRespWildcard()
--		createdSiReply = true
--	}
-+	a.mu.RLock()
-+	s := a.srv
- 	replyPre := a.siReply
--	a.mu.Unlock()
--
--	// If we created the siReply and we are not bound to a leafnode
--	// we need to do the wildcard subscription.
--	if createdSiReply {
--		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
--	}
-+	a.mu.RUnlock()
- 
-+	rn := rand.Uint64()
- 	var b [replyLen]byte
- 	for i, l := 0, rn; i < len(b); i++ {
- 		b[i] = digits[l%base]
-@@ -2556,7 +2554,7 @@ func (a *Account) newServiceReply(tracking bool) []byte {
- 	reply = append(reply, replyPre...)
- 	reply = append(reply, b[:]...)
- 
--	if tracking {
-+	if tracking && s != nil {
- 		if shash := s.Node(); shash != _EMPTY_ {
- 			// Add in our tracking identifier. This allows the metrics to get back to only
- 			// this server without needless SUBS/UNSUBS.
-```
-
-**File**: `server/accounts_test.go` (modified, +60/-0)
-```diff
-@@ -3456,6 +3456,66 @@ func BenchmarkNewRouteReply(b *testing.B) {
+ 	ci := &mqttConnInfo{clientID: "pub", cleanSess: true}
+ 	c, br := testMQTTConnect(b, ci, o.MQTT.Host, o.MQTT.Port)
+@@ -10851,7 +10852,6 @@ func mqttBenchPubQoS0(b *testing.B, subject, payload string, numSubs int) {
  	}
+ 	b.StopTimer()
+ 	c.Close()
+-	s.Shutdown()
  }
  
-+// A reply prefix must not be handed out before the wildcard subscription
-+// for service import responses is registered, otherwise replies published
-+// to it are dropped.
-+func TestAccountNewServiceReplyWaitsForSubscription(t *testing.T) {
-+	opts := defaultServerOptions
-+	s := New(&opts)
-+	a, err := s.RegisterAccount("SVC_REPLY")
-+	require_NoError(t, err)
-+
-+	a.mu.Lock()
-+	require_True(t, a.siReply == nil)
-+	ic := a.internalClient()
-+	a.mu.Unlock()
-+	require_NotNil(t, ic)
-+
-+	// Block the first caller while it registers the subscription.
-+	ic.mu.Lock()
-+	unlocked := false
-+	defer func() {
-+		if !unlocked {
-+			ic.mu.Unlock()
-+		}
-+	}()
-+
-+	replies := make(chan []byte, 2)
-+	go func() { replies <- a.newServiceReply(false) }()
-+
-+	// Wait for the first caller to have created the prefix.
-+	checkFor(t, 2*time.Second, 5*time.Millisecond, func() error {
-+		a.mu.RLock()
-+		defer a.mu.RUnlock()
-+		if a.siReply == nil {
-+			return fmt.Errorf("reply prefix not created yet")
-+		}
-+		return nil
-+	})
-+
-+	// A second caller must wait, the subscription is not registered yet.
-+	go func() { replies <- a.newServiceReply(false) }()
-+	select {
-+	case r := <-replies:
-+		t.Fatalf("Got reply %q before the subscription was registered", r)
-+	case <-time.After(250 * time.Millisecond):
-+	}
-+
-+	ic.mu.Unlock()
-+	unlocked = true
-+
-+	for i := 0; i < 2; i++ {
-+		select {
-+		case r := <-replies:
-+			if res := a.sl.Match(string(r)); len(res.psubs) == 0 {
-+				t.Fatalf("No subscription for reply %q", r)
-+			}
-+		case <-time.After(5 * time.Second):
-+			t.Fatal("Timed out waiting for replies")
-+		}
-+	}
-+}
-+
- func TestSamplingHeader(t *testing.T) {
- 	test := func(expectSampling bool, h http.Header) {
- 		t.Helper()
+ func mqttBenchConsumeMsgQoS0(c net.Conn, total int64, dch chan<- error) {
+@@ -10871,9 +10871,10 @@ func mqttBenchConsumeMsgQoS0(c net.Conn, total int64, dch chan<- error) {
+ func mqttBenchPubQoS1(b *testing.B, subject, payload string, numSubs int) {
+ 	b.StopTimer()
+ 	o := testMQTTDefaultOptions()
++	o.StoreDir = b.TempDir()
+ 	o.MQTT.MaxAckPending = 0xFFFF
+ 	s := RunServer(o)
+-	defer testMQTTShutdownServer(s)
++	defer s.Shutdown()
+ 
+ 	ci := &mqttConnInfo{cleanSess: true}
+ 	c, br := testMQTTConnect(b, ci, o.MQTT.Host, o.MQTT.Port)
+@@ -10960,7 +10961,6 @@ func mqttBenchPubQoS1(b *testing.B, subject, payload string, numSubs int) {
+ 	}
+ 	b.StopTimer()
+ 	c.Close()
+-	s.Shutdown()
+ }
+ 
+ func mqttBenchConsumeMsgQos1(c net.Conn, total, size int, dch chan<- error) {
 ```
 
 ---
 
-### Incident Patch 2: `ed85c34e` (2026-11-23)
-**Commit Message**: [FIXED] Replies to the first concurrent requests on a new server can be dropped
+### Incident Patch 2: `0727a168` (2026-11-25)
+**Commit Message**: Fix temporary directory usage for MQTT benchmarks
 
-newServiceReply released the account lock before registering the _R_ wildcard subscription, so concurrent callers could get a reply prefix before it was subscribed. Use a sync.Once so they wait for the subscription.
+These benchmarks were using `/tmp` and then failing to clean up after,
+as the deferred helper was reading a nil `StoreDir`. Using the test helpers
+to get a temporary directory instead ensures they clean up properly.
 
-Resolves #8823
+[skip ci]
 
-Signed-off-by: Anshul Jagota <[REDACTED_EMAIL]>
+Signed-off-by: Neil Twigg <[REDACTED_EMAIL]>
 
-**File**: `locksordering.txt` (modified, +9/-0)
+**File**: `server/mqtt_test.go` (modified, +4/-4)
 ```diff
-@@ -81,3 +81,12 @@ another account (which would take that account's locks in unknown order).
+@@ -10799,8 +10799,9 @@ func mqttBenchPubQoS0(b *testing.B, subject, payload string, numSubs int) {
+ 	b.StopTimer()
+ 	b.ReportAllocs()
+ 	o := testMQTTDefaultOptions()
++	o.StoreDir = b.TempDir()
+ 	s := RunServer(o)
+-	defer testMQTTShutdownServer(s)
++	defer s.Shutdown()
  
-     cmu -> Account
-     cmu -> client
-+
-+The "siReplyOnce" in the Account serializes the initialization of the service
-+reply wildcard prefix and its wildcard subscription for service import responses,
-+so that concurrent callers wait until the subscription is registered.
-+It must be acquired before the Account and client locks, and neither must be
-+held when calling newServiceReply.
-+
-+    siReplyOnce -> Account
-+    siReplyOnce -> client
-```
-
-**File**: `server/accounts.go` (modified, +15/-17)
-```diff
-@@ -100,6 +100,7 @@ type Account struct {
- 	srv          *Server // server this account is registered with (possibly nil)
- 	lds          string  // loop detection subject for leaf nodes
- 	siReply      []byte  // service reply prefix, will form wildcard subscription.
-+	siReplyOnce  sync.Once
- 	eventIds     *nuid.NUID
- 	eventIdsMu   sync.Mutex
- 	defaultPerms *Permissions
-@@ -2527,25 +2528,22 @@ func isTrackedReply(reply []byte) bool {
- // Generate a new service reply from the wildcard prefix.
- // FIXME(dlc) - probably do not have to use rand here. about 25ns per.
- func (a *Account) newServiceReply(tracking bool) []byte {
--	a.mu.Lock()
--	s := a.srv
--	rn := rand.Uint64()
-+	a.siReplyOnce.Do(func() {
-+		a.mu.Lock()
-+		if a.siReply == nil {
-+			a.createRespWildcard()
-+		}
-+		replyPre := a.siReply
-+		a.mu.Unlock()
-+		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
-+	})
- 
--	// Check if we need to create the reply here.
--	var createdSiReply bool
--	if a.siReply == nil {
--		a.createRespWildcard()
--		createdSiReply = true
--	}
-+	a.mu.RLock()
-+	s := a.srv
- 	replyPre := a.siReply
--	a.mu.Unlock()
--
--	// If we created the siReply and we are not bound to a leafnode
--	// we need to do the wildcard subscription.
--	if createdSiReply {
--		a.subscribeServiceImportResponse(string(append(replyPre, '>')))
--	}
-+	a.mu.RUnlock()
- 
-+	rn := rand.Uint64()
- 	var b [replyLen]byte
- 	for i, l := 0, rn; i < len(b); i++ {
- 		b[i] = digits[l%base]
-@@ -2556,7 +2554,7 @@ func (a *Account) newServiceReply(tracking bool) []byte {
- 	reply = append(reply, replyPre...)
- 	reply = append(reply, b[:]...)
- 
--	if tracking {
-+	if tracking && s != nil {
- 		if shash := s.Node(); shash != _EMPTY_ {
- 			// Add in our tracking identifier. This allows the metrics to get back to only
- 			// this server without needless SUBS/UNSUBS.
-```
-
-**File**: `server/accounts_test.go` (modified, +60/-0)
-```diff
-@@ -3456,6 +3456,66 @@ func BenchmarkNewRouteReply(b *testing.B) {
+ 	ci := &mqttConnInfo{clientID: "pub", cleanSess: true}
+ 	c, br := testMQTTConnect(b, ci, o.MQTT.Host, o.MQTT.Port)
+@@ -10851,7 +10852,6 @@ func mqttBenchPubQoS0(b *testing.B, subject, payload string, numSubs int) {
  	}
+ 	b.StopTimer()
+ 	c.Close()
+-	s.Shutdown()
  }
  
-+// A reply prefix must not be handed out before the wildcard subscription
-+// for service import responses is registered, otherwise replies published
-+// to it are dropped.
-+func TestAccountNewServiceReplyWaitsForSubscription(t *testing.T) {
-+	opts := defaultServerOptions
-+	s := New(&opts)
-+	a, err := s.RegisterAccount("SVC_REPLY")
-+	require_NoError(t, err)
-+
-+	a.mu.Lock()
-+	require_True(t, a.siReply == nil)
-+	ic := a.internalClient()
-+	a.mu.Unlock()
-+	require_NotNil(t, ic)
-+
-+	// Block the first caller while it registers the subscription.
-+	ic.mu.Lock()
-+	unlocked := false
-+	defer func() {
-+		if !unlocked {
-+			ic.mu.Unlock()
-+		}
-+	}()
-+
-+	replies := make(chan []byte, 2)
-+	go func() { replies <- a.newServiceReply(false) }()
-+
-+	// Wait for the first caller to have created the prefix.
-+	checkFor(t, 2*time.Second, 5*time.Millisecond, func() error {
-+		a.mu.RLock()
-+		defer a.mu.RUnlock()
-+		if a.siReply == nil {
-+			return fmt.Errorf("reply prefix not created yet")
-+		}
-+		return nil
-+	})
-+
-+	// A second caller must wait, the subscription is not registered yet.
-+	go func() { replies <- a.newServiceReply(false) }()
-+	select {
-+	case r := <-replies:
-+		t.Fatalf("Got reply %q before the subscription was registered", r)
-+	case <-time.After(250 * time.Millisecond):
-+	}
-+
-+	ic.mu.Unlock()
-+	unlocked = true
-+
-+	for i := 0; i < 2; i++ {
-+		select {
-+		case r := <-replies:
-+			if res := a.sl.Match(string(r)); len(res.psubs) == 0 {
-+				t.Fatalf("No subscription for reply %q", r)
-+			}
-+		case <-time.After(5 * time.Second):
-+			t.Fatal("Timed out waiting for replies")
-+		}
-+	}
-+}
-+
- func TestSamplingHeader(t *testing.T) {
- 	test := func(expectSampling bool, h http.Header) {
- 		t.Helper()
-```
-
----
-
-### Incident Patch 3: `44f6fc4d` (2026-11-24)
-**Commit Message**: [FIXED] Deferred pull statuses lost on a shared reply subject (#8935)
-
-`waitingDelivery` held a single deferred pull status per reply subject,
-so a second status queued while replicated deliveries were still pending
-replaced the first. Clients like `jetstream` `Consume`/`Messages` reuse
-one inbox across pull requests, so a dropped status (e.g. `408 Request
-Timeout`) left the client's pending counts too high, stalling refills
-until the missed heartbeat reset them.
-
-This PR keeps all deferred statuses and sends them in order after the
-last pending delivery.
-
-**File**: `server/consumer.go` (modified, +6/-5)
-```diff
-@@ -3229,7 +3229,8 @@ func (o *consumer) addReplicatedQueuedMsg(pmsg *jsPubMsg) {
- // Lock should be held.
- func (o *consumer) sendPullStatus(reply string, hdr []byte) {
- 	if wd, ok := o.waitingDeliveries[reply]; ok {
--		wd.hdr = hdr
-+		// Pulls can share a reply subject, so keep every status.
-+		wd.hdrs = append(wd.hdrs, hdr)
- 		return
+ func mqttBenchConsumeMsgQoS0(c net.Conn, total int64, dch chan<- error) {
+@@ -10871,9 +10871,10 @@ func mqttBenchConsumeMsgQoS0(c net.Conn, total int64, dch chan<- error) {
+ func mqttBenchPubQoS1(b *testing.B, subject, payload string, numSubs int) {
+ 	b.StopTimer()
+ 	o := testMQTTDefaultOptions()
++	o.StoreDir = b.TempDir()
+ 	o.MQTT.MaxAckPending = 0xFFFF
+ 	s := RunServer(o)
+-	defer testMQTTShutdownServer(s)
++	defer s.Shutdown()
+ 
+ 	ci := &mqttConnInfo{cleanSess: true}
+ 	c, br := testMQTTConnect(b, ci, o.MQTT.Host, o.MQTT.Port)
+@@ -10960,7 +10961,6 @@ func mqttBenchPubQoS1(b *testing.B, subject, payload string, numSubs int) {
  	}
- 	o.outq.send(newJSPubMsg(reply, _EMPTY_, _EMPTY_, hdr, nil, nil, 0))
-@@ -4217,10 +4218,10 @@ func (wr *waitingRequest) recycle() {
- 	}
+ 	b.StopTimer()
+ 	c.Close()
+-	s.Shutdown()
  }
  
--// Tracks the last pending delivery for a reply and its optional pull status.
-+// Tracks the last pending delivery for a reply and its deferred pull statuses.
- type waitingDelivery struct {
--	seq uint64
--	hdr []byte
-+	seq  uint64
-+	hdrs [][]byte
- }
- 
- // sync.Pool for waiting deliveries.
-@@ -4233,7 +4234,7 @@ var wdPool = sync.Pool{
- // Force a recycle.
- func (wd *waitingDelivery) recycle() {
- 	if wd != nil {
--		wd.seq, wd.hdr = 0, nil
-+		wd.seq, wd.hdrs = 0, nil
- 		wdPool.Put(wd)
- 	}
- }
-```
-
-**File**: `server/jetstream_cluster.go` (modified, +2/-2)
-```diff
-@@ -9265,8 +9265,8 @@ func (js *jetStream) applyConsumerMsgOpLocked(o *consumer, buf []byte) (afterUnl
- 
- 			// Send any deferred pull status after the last replicated delivery.
- 			if wd, ok := o.waitingDeliveries[dsubj]; ok && wd.seq == seq {
--				if wd.hdr != nil {
--					o.outq.send(newJSPubMsg(dsubj, _EMPTY_, _EMPTY_, wd.hdr, nil, nil, 0))
-+				for _, hdr := range wd.hdrs {
-+					o.outq.send(newJSPubMsg(dsubj, _EMPTY_, _EMPTY_, hdr, nil, nil, 0))
- 				}
- 				wd.recycle()
- 				delete(o.waitingDeliveries, dsubj)
-```
-
-**File**: `server/jetstream_cluster_1_test.go` (modified, +2/-2)
-```diff
-@@ -12253,8 +12253,8 @@ func TestJetStreamClusterConsumerPendingDeliveriesOnMaxAckPendingUpdate(t *testi
- 	l = len(o.pendingDeliveries)
- 	wd := o.waitingDeliveries[reply]
- 	var queuedStatus string
--	if wd != nil {
--		queuedStatus = string(wd.hdr)
-+	if wd != nil && len(wd.hdrs) == 1 {
-+		queuedStatus = string(wd.hdrs[0])
- 	}
- 	o.mu.Unlock()
- 	require_Equal(t, l, 1)
-```
-
-**File**: `server/jetstream_consumer_test.go` (modified, +68/-1)
-```diff
-@@ -10267,7 +10267,7 @@ func TestJetStreamConsumerReplicatedPullStatusOrder(t *testing.T) {
- 	})
- 	require_NoError(t, err)
- 	data := bytes.Repeat([]byte("x"), 200)
--	for i := 0; i < 3; i++ {
-+	for range 3 {
- 		_, err := js.Publish("TEST", data)
- 		require_NoError(t, err)
- 	}
-@@ -10339,6 +10339,73 @@ func TestJetStreamConsumerReplicatedPullStatusOrder(t *testing.T) {
- 			require_Equal(t, status.Header.Get("Description"), test.description)
- 		})
- 	}
-+
-+	// Two pull requests on the same reply subject, each ending with a status.
-+	t.Run("Shared Reply", func(t *testing.T) {
-+		for range 2 {
-+			_, err := js.Publish("TEST", data)
-+			require_NoError(t, err)
-+		}
-+
-+		reply := nc.NewInbox()
-+		sub, err := nc.SubscribeSync(reply)
-+		require_NoError(t, err)
-+		defer sub.Unsubscribe()
-+
-+		o.mu.Lock()
-+		o.switching = true
-+		o.mu.Unlock()
-+		resumeProposals := func() {
-+			o.mu.Lock()
-+			defer o.mu.Unlock()
-+			o.switching = false
-+			select {
-+			case o.pch <- struct{}{}:
-+			default:
-+			}
-+		}
-+		defer resumeProposals()
-+
-+		for _, r := range []JSApiConsumerGetNextRequest{
-+			{Batch: 1, MaxBytes: 10_000, Expires: 2 * time.Second},
-+			{Batch: 2, Expires: 200 * time.Millisecond},
-+		} {
-+			req, err := json.Marshal(r)
-+			require_NoError(t, err)
-+			require_NoError(t, nc.PublishRequest(fmt.Sprintf(JSApiRequestNextT, "TEST", "C"), reply, req))
-+		}
-+
-+		checkFor(t, time.Second, 10*time.Millisecond, func() error {
-+			o.mu.RLock()
-+			defer o.mu.RUnlock()
-+			if wd := o.waitingDeliveries[reply]; wd == nil || len(wd.hdrs) != 2 {
-+				return errors.New("pull statuses have not finished queueing")
-+			}
-+			return nil
-+		})
-+		_, err = sub.NextMsg(100 * time.Millisecond)
-+		require_Error(t, err, nats.ErrTimeout)
-+
-+		resumeProposals()
-+		for range 2 {
-+			msg, err := sub.NextMsg(time.Second)
-+			require_NoError(t, err)
-+			require_Equal(t, msg.Header.Get("Description"), "")
-+			require_Equal(t, string(msg.Data), string(data))
-+		}
-+		for _, expected := range []struct {
-+			status      string
-+			description string
-+		}{
-+			{"409", "Batch Completed"},
-+			{"408", "Request Timeout"},
-+		} {
-+			status, err := sub.NextMsg(time.Second)
-+			require_NoError(t, err)
-+			require_Equal(t, status.Header.Get("Status"), expected.status)
-+			require_Equal(t, status.Header.Get("Description"), expected.description)
-+		}
-+	})
- }
- 
- func TestJetStreamConsumerPullMaxBytes(t *testing.T) {
+ func mqttBenchConsumeMsgQos1(c net.Conn, total, size int, dch chan<- error) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8940** (2026-11-25): Fix temporary directory usage for MQTT benchmarks (@neilalexander)
+- **PR #8938** (2026-11-25): Optimise update ack floor walk to bound by pending size (@neilalexander)
 - **PR #8935** (2026-11-24): [FIXED] Deferred pull statuses lost on a shared reply subject (@MauriceVanVeen)
 - **PR #8933** (closed): Fix typo in MQTT README (@Dani-Google)
 - **PR #8932** (2026-11-24): Data race on parse() max_control_line (@huynguyen7)
 - **PR #8930** (2026-11-23): [FIXED] Consumers not woken after stream catchup completes (@MauriceVanVeen)
-- **PR #8929** (2026-11-24): [FIXED] Replies to first concurrent requests on fresh server can be dropped (#8823) (@ansh0014)
-- **PR #8927** (2026-11-23): [FIXED] JetStream: Avoid stream option races during reload (@Zitniks)
 
 ---
 
@@ -3250,36 +2861,34 @@ last pending delivery.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Replies to first concurrent requests on fresh server can be dropped
+## X. temporary directory usage for MQTT benchmarks
 
 **RULE**:
-When implementing operations in `locksordering.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/mqtt_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `253bc39b`: [FIXED] Replies to first concurrent requests on fresh server can be dropped. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `12a5e8c5`: temporary directory usage for MQTT benchmarks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `locksordering.txt`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/mqtt_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-The "siReplyOnce" in the Account serializes the initialization of the service
-reply wildcard prefix and its wildcard subscription for service import responses,
-so that concurrent callers wait until the subscription is registered.
-It must be acquired before the Account and client locks, and neither must be
-held when calling newServiceReply.
-
-    siReplyOnce -> Account
-    siReplyOnce -> client
+	o.StoreDir = b.TempDir()
+	defer s.Shutdown()
+	o.StoreDir = b.TempDir()
+	defer s.Shutdown()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	defer testMQTTShutdownServer(s)
+	s.Shutdown()
+	defer testMQTTShutdownServer(s)
+	s.Shutdown()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `253bc39b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `12a5e8c5` are properly handled with clean fallback behavior.

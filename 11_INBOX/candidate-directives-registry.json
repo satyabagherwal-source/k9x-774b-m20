@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T10:08:32.868Z",
+  "last_updated": "2026-11-26T10:19:35.586Z",
   "directives": [
     {
       "id": "CD-001",
@@ -64320,6 +64320,68 @@
       "source_repo": "astral-sh-uv",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B4C58D-add-the-python-3-15-hardened-docker-imag.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-HU73",
+      "directive_title": "Add a script to release insider builds from a Mac",
+      "source_repo": "planetable-planet-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HU73-add-a-script-to-release-insider-builds-from-a-mac.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-HKHK",
+      "directive_title": "temporary directory usage for MQTT benchmarks",
+      "source_repo": "nats-io/nats-server",
+      "source_commit": "12a5e8c5",
+      "staged_file": "11_INBOX/candidate-directives/CD-HKHK-temporary-directory-usage-for-mqtt-benchmarks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-HSPY",
+      "directive_title": "Raise on non-numeric `hist` bins instead of panicking",
+      "source_repo": "pola-rs-polars-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HSPY-raise-on-non-numeric-hist-bins-instead-of-panicking.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-HPY5",
+      "directive_title": "race in BaseConnectorTest mock table listing",
+      "source_repo": "trinodb/trino",
+      "source_commit": "c4f407dc",
+      "staged_file": "11_INBOX/candidate-directives/CD-HPY5-race-in-baseconnectortest-mock-table-listing.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-5F5711",
+      "directive_title": "Raise on non-numeric `hist` bins instead of panicking",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pola-rs-polars",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F5711-raise-on-non-numeric-hist-bins-instead-o.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-22881B",
+      "directive_title": "Add a script to release insider builds from a Mac",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "planetable-planet",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-22881B-add-a-script-to-release-insider-builds-f.md",
       "staged_date": "2026-11-26"
     }
   ]

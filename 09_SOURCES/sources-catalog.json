@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "ab711e34a7270d2552472eb0c7db455eec5942b34b1cf7ed1155c3c5d9e6468b",
-    "lastHarvestedAt": "2026-11-22T17:22:01.386Z",
+    "contentHash": "cedfa40562bf3c03ce1b18d47ccd1bc9041dd9facac319459d1cc3f6b8dc3136",
+    "lastHarvestedAt": "2026-11-26T10:19:12.701Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "6af3a192",
+    "sourceVersion": "c4f407dc",
     "license": "Apache-2.0",
-    "contentHash": "af8ee5533de1795056b9b9ca5f6daa178f2a8d961f04f2c880bb8fa9522eb547",
-    "lastHarvestedAt": "2026-11-25T08:29:29.254Z",
+    "contentHash": "8c5e26a4fb7dffaa521a4758bd8a3fa0707837265914bea292b6bb89109e285b",
+    "lastHarvestedAt": "2026-11-26T10:19:29.834Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "44f6fc4d",
+    "sourceVersion": "12a5e8c5",
     "license": "Apache-2.0",
-    "contentHash": "d3b07a59d3f9d079698b037e882ccdad6afd1379a6d36eeffc791e4d3c6b6c2b",
-    "lastHarvestedAt": "2026-11-24T16:19:54.834Z",
+    "contentHash": "668b0ede6e569e02511ee0cb7efbe1c4062ce226c62b3dc87f55400eb9c2a453",
+    "lastHarvestedAt": "2026-11-26T10:19:22.753Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "08b2814c",
+    "sourceVersion": "e55d90ce",
     "license": "MIT",
-    "contentHash": "878bde50aa600eb533e55dad63dfe126a52aa9ecb76bfc02aa435dc125a77af0",
-    "lastHarvestedAt": "2026-11-25T02:56:02.935Z",
+    "contentHash": "50e519a20977d38a4e7b02380b56643749b61d4673ec1252fe5640df8832b315",
+    "lastHarvestedAt": "2026-11-26T10:19:25.340Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -10143,10 +10143,10 @@
     "repository": "Planetable/Planet",
     "platform": "github",
     "sourceUrl": "https://github.com/Planetable/Planet",
-    "sourceVersion": "544b4253",
+    "sourceVersion": "d5f852df",
     "license": "MIT",
-    "contentHash": "b8adec3d614f250c86c6ba4a2e50189a103dfd25fdcd19a9ab5b6b6f45e562b5",
-    "lastHarvestedAt": "2026-11-13T13:20:44.348Z",
+    "contentHash": "0af879bd13a74ea2b00d201918c740a18651002113d8e7f82c2afb96f9ef41b9",
+    "lastHarvestedAt": "2026-11-26T10:19:21.231Z",
     "learningId": "learn-github-planetable-planet"
   },
   "mswjs-msw": {

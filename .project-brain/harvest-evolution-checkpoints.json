@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T10:09:02.683Z",
+  "last_updated": "2026-11-26T10:19:36.169Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -108,7 +108,7 @@
       "staged_for_review": 1
     },
     "pola-rs-polars-learnings.md": {
-      "processed_at": "2026-11-25T02:56:17.464Z",
+      "processed_at": "2026-11-26T10:19:33.332Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1748,7 +1748,7 @@
       "staged_for_review": 1
     },
     "hf-qwen-qwen3.8-27b-learnings.md": {
-      "processed_at": "2026-11-22T17:22:14.358Z",
+      "processed_at": "2026-11-26T10:19:34.280Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -1833,7 +1833,7 @@
       "staged_for_review": 0
     },
     "planetable-planet-learnings.md": {
-      "processed_at": "2026-11-13T13:21:07.373Z",
+      "processed_at": "2026-11-26T10:19:34.736Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3963,7 +3963,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4470,
+  "total_dossiers_evaluated": 4473,
   "total_canonical_promoted": 559,
-  "total_staged_for_review": 3380
+  "total_staged_for_review": 3382
 }

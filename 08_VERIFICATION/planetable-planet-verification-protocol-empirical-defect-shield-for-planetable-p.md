@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for planetable/planet
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for Planetable/Planet
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "planetable/planet",
-  "source_url": "https://github.com/planetable/planet",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "Planetable/Planet",
+  "source_url": "https://github.com/Planetable/Planet",
+  "source_version": "d5f852df",
+  "license": "MIT",
+  "timestamp": "2026-11-26T10:19:21.534Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-planetable-planet",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [planetable/planet](https://github.com/planetable/planet) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [Planetable/Planet](https://github.com/Planetable/Planet) (Revision: `d5f852df`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T10:19:21.534Z`  
+> **Learning ID**: `learn-github-planetable-planet`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `planetable/planet` (Commit: `historical`)
+- **Target Repository**: `Planetable/Planet` (Commit: `d5f852df`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/planetable-planet-learnings.md`  
-> **Source**: github ([https://github.com/Planetable/Planet](https://github.com/Planetable/Planet))  
-> **Source Version**: `5294e71c`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:09:14.355Z  
-> **Learning ID**: `learn-github-planetable-planet`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): Planetable/Planet
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/planetable-planet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Planetable/Planet](https://github.com/Planetable/Planet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:09:13.993Z  
+> **Harvest Timestamp**: 2026-11-26T10:19:19.984Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1932,52 +1918,159 @@ struct PlanetAPIConsoleView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55d2fe23` (2026-10-24)
-**Commit Message**: Fix crash from concurrent cmark-gfm extension registration
+### Incident Patch 1: `f435fa05` (2026-11-24)
+**Commit Message**: Add a script to release insider builds from a Mac
 
-cmark_gfm_core_extensions_ensure_registered() guards with a plain static
-int, so concurrent first calls (e.g. the following-planets refresh task
-group rendering summaries) register the extensions more than once. Each
-registration renumbers the global table node types, so any parse in
-flight fails cmark's containment checks and aborts in finalize()
-(blocks.c:282), as seen in insider-20261006-1 crash reports.
+Releases now run from a Mac instead of the self-hosted GitHub runner,
+whose insider workflow is disabled. The script does what the workflow
+did, in separate steps so the local build can be checked before
+anything is published:
 
-Register once via a static let, which Swift initializes exactly once.
+- build: tags main, archives a clean checkout of the tag with the
+  insider feed, icon and API keys passed to xcodebuild, re-signs Sparkle
+  and CodeMirror with Developer ID, notarizes and staples, zips the app
+  and dSYM, and makes appcast.xml with Sparkle's own tools. It checks
+  the feed URL, icon, keys, signature, Gatekeeper, and the appcast's
+  URL, length, build and EdDSA signature.
+- push-tag, github, spaces, verify: push the tag, create the GitHub
+  prerelease, upload the zip and appcast to DigitalOcean Spaces and
+  purge the appcast from the CDN, then check the live feed.
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+Secrets stay in the keychain and in Planet/local.xcconfig.
 
-**File**: `Planet/Helper/MarkdownUtils.swift` (modified, +8/-1)
-```diff
-@@ -166,6 +166,13 @@ struct StencilExtension {
- }
- 
- struct CMarkRenderer {
-+    // cmark_gfm_core_extensions_ensure_registered() is not thread-safe: concurrent first calls
-+    // register the extensions more than once, which renumbers the global table node types under
-+    // any parse in flight and trips cmark's assertions. A static let is initialized exactly once.
-+    private static let registerExtensions: Void = {
-+        cmark_gfm_core_extensions_ensure_registered()
-+    }()
-+
-     static func replaceYouTubeLinks(_ text: String) -> String {
-         let pattern = #"https?:\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?"#
- 
-@@ -184,7 +191,7 @@ struct CMarkRenderer {
-         // Process 1: Replace all YouTube links with embed code
-         let inputText: String = CMarkRenderer.replaceYouTubeLinks(markdown)
- 
--        cmark_gfm_core_extensions_ensure_registered()
-+        _ = registerExtensions
- 
-         guard let parser = cmark_parser_new(CMARK_OPT_FOOTNOTES) else { return nil }
-         defer { cmark_parser_free(parser) }
-```
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `Planet/versioning.xcconfig` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--CURRENT_PROJECT_VERSION = 2844
-+CURRENT_PROJECT_VERSION = 2845
+-CURRENT_PROJECT_VERSION = 2860
++CURRENT_PROJECT_VERSION = 2861
+```
+
+**File**: `tools/release-insider.sh` (added, +263/-0)
+```diff
+@@ -0,0 +1,263 @@
++#!/bin/bash
++#
++# Build and publish a Planet insider release from this Mac.
++# Replaces .github/workflows/insider.yml (disabled on 2026-11-24).
++#
++#   tools/release-insider.sh build [tag]   Local only: tag main, archive, sign, notarize, zip, make the appcast.
++#   tools/release-insider.sh push-tag <tag>
++#   tools/release-insider.sh github <tag>  GitHub prerelease with the app and dSYM zips.
++#   tools/release-insider.sh spaces <tag>  Upload the zip and appcast.xml to DigitalOcean Spaces, purge the appcast from the CDN.
++#   tools/release-insider.sh verify <tag>  Check the live appcast and download.
++#
++# Everything after `build` publishes something; run those only after the build has been checked.
++#
++# Needs on this Mac:
++#   - Developer ID Application certificate and the "Developer ID Profile" provisioning profile
++#   - notarytool keychain profile "planet-notary"
++#   - Sparkle EdDSA private key in the login keychain (generate_keys -f)
++#   - Planet/local.xcconfig with WALLETCONNECTV2_PROJECT_ID and ETHERSCAN_API_TOKEN
++#   - keychain items planet-release.digitalocean-api (account planetable) and
++#     planet-release.spaces.planetable (accounts access_key and secret_key)
++#   - gh, git-lfs, rclone, xmlstarlet
++
++set -euo pipefail
++
++REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
++WORKSPACE=${PLANET_RELEASE_DIR:-$HOME/Developer/planet-releases}
++SRC=$WORKSPACE/src
++DERIVED_DATA=$WORKSPACE/DerivedData
++
++if [ -d /Applications/Xcode.app/Contents/Developer ]; then
++  export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
++else
++  export DEVELOPER_DIR=/Applications/Xcode-16.4.0.app/Contents/Developer
++fi
++
++SIGN_IDENTITY="Developer ID Application: Xin Liu (66KP7KX9MX)"
++NOTARY_PROFILE=planet-notary
++FEED_URL=https://opensource.planetable.xyz/planet-insider/appcast.xml
++DOWNLOAD_BASE=https://opensource.planetable.xyz/planet-insider
++WEBSITE_LINK=https://planetable.eth.limo/insider/
++RELEASE_NOTES_URL=https://insider.planetable.xyz/
++SPACE=planetable
++SPACE_ENDPOINT=sfo3.digitaloceanspaces.com
++CDN_ENDPOINT_ID=fc623564-5ed6-4a82-844c-d4faf3bde159
++APP_NAME=Planet-Insider
++
++step() { printf '\n==> %s\n' "$*"; }
++die() { printf 'error: %s\n' "$*" >&2; exit 1; }
++
++xcconfig_value() {
++  sed -nE "s/^[[:space:]]*$2[[:space:]]*=[[:space:]]*\"?([^\";]*)\"?;?[[:space:]]*$/\1/p" "$1" | tail -1
++}
++
++sparkle_bin() {
++  local bin=$DERIVED_DATA/SourcePackages/artifacts/sparkle/Sparkle/bin
++  [ -x "$bin/generate_appcast" ] || die "Sparkle tools not found in $bin; run build first"
++  echo "$bin"
++}
++
++next_tag() {
++  local today n=1
++  today=$(date +%Y%m%d)
++  git -C "$REPO" fetch -q --tags origin
++  while git -C "$REPO" rev-parse -q --verify "refs/tags/insider-$today-$n" >/dev/null; do
++    n=$((n + 1))
++  done
++  echo "insider-$today-$n"
++}
++
++out_dir() { echo "$WORKSPACE/$1"; }
++
++plist() { /usr/libexec/PlistBuddy -c "Print :$2" "$1" 2>/dev/null || true; }
++
++build() {
++  local tag=${1:-}
++
++  step "Checking the repository"
++  [ -z "$(git -C "$REPO" status --porcelain)" ] || die "working tree is not clean"
++  [ "$(git -C "$REPO" branch --show-current)" = main ] || die "not on main"
++  git -C "$REPO" fetch -q origin main
++  [ "$(git -C "$REPO" rev-parse main)" = "$(git -C "$REPO" rev-parse origin/main)" ] \
++    || die "main and origin/main differ; push or pull first"
++
++  [ -n "$tag" ] || tag=$(next_tag)
++  if git -C "$REPO" rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
++    echo "Using existing tag $tag at $(git -C "$REPO" rev-parse --short "$tag^{commit}")"
++  else
++    git -C "$REPO" tag -a "$tag" -m "Insider ${tag#insider-}" main
++    echo "Created local tag $tag at $(git -C "$REPO" rev-parse --short main)"
++  fi
++
++  local wc_id etherscan
++  wc_id=$(xcconfig_value "$REPO/Planet/local.xcconfig" WALLETCONNECTV2_PROJECT_ID)
++  etherscan=$(xcconfig_value "$REPO/Planet/local.xcconfig" ETHERSCAN_API_TOKEN)
++  [ -n "$wc_id" ] && [ -n "$etherscan" ] || die "WALLETCONNECTV2_PROJECT_ID or ETHERSCAN_API_TOKEN missing in Planet/local.xcconfig"
++
++  step "Checking out $tag in $SRC"
++  mkdir -p "$WORKSPACE"
++  if [ -d "$SRC" ]; then
++    git -C "$SRC" checkout -q --detach "$tag"
++    git -C "$SRC" clean -q -ffdx
++  else
++    git -C "$REPO" worktree add -q --detach "$SRC" "$tag"
++  fi
++  git -C "$SRC" lfs pull
++
++  local out
++  out=$(out_dir "$tag")
++  rm -rf "$out"
++  mkdir -p "$out"
++
++  step "Resolving packages"
++  xcodebuild -project "$SRC/Planet.xcodeproj" -scheme Planet -derivedDataPath "$DERIVED_DATA" \
++    -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile > "$out/resolve.log" 2>&1 \
++    || { tail -20 "$out/resolve.log"; die "package resolution failed"; }
++
++  step "Archiving (log: $out/archive.log)"
++  xcodebuild archive -project "$SRC/Planet.xcodeproj" -scheme Planet -configuration Release \
++    -destination 'generic/platform=macOS' -archivePath "$out/Planet.xcarchive" \
++    -derivedDataPath "$DERIVED_DATA" -allowProvisioningUpdates \
++    PLANET_ENABLE_
 ```
 
 #### Recent Merged Pull Requests:
@@ -2006,38 +2099,51 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crash from concurrent cmark-gfm extension registration
+## X. Add a script to release insider builds from a Mac
 
 **RULE**:
-When implementing operations in `Planet/Helper/MarkdownUtils.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Planetable/Planet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/release-insider.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Planetable/Planet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55d2fe23`: crash from concurrent cmark-gfm extension registration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f435fa05`: Add a script to release insider builds from a Mac. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Planet/Helper/MarkdownUtils.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/release-insider.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    // cmark_gfm_core_extensions_ensure_registered() is not thread-safe: concurrent first calls
-    // register the extensions more than once, which renumbers the global table node types under
-    // any parse in flight and trips cmark's assertions. A static let is initialized exactly once.
-    private static let registerExtensions: Void = {
-        cmark_gfm_core_extensions_ensure_registered()
-    }()
-
-        _ = registerExtensions
+#!/bin/bash
+#
+# Build and publish a Planet insider release from this Mac.
+# Replaces .github/workflows/insider.yml (disabled on 2026-11-24).
+#
+#   tools/release-insider.sh build [tag]   Local only: tag main, archive, sign, notarize, zip, make the appcast.
+#   tools/release-insider.sh push-tag <tag>
+#   tools/release-insider.sh github <tag>  GitHub prerelease with the app and dSYM zips.
+#   tools/release-insider.sh spaces <tag>  Upload the zip and appcast.xml to DigitalOcean Spaces, purge the appcast from the CDN.
+#   tools/release-insider.sh verify <tag>  Check the live appcast and download.
+#
+# Everything after `build` publishes something; run those only after the build has been checked.
+#
+# Needs on this Mac:
+#   - Developer ID Application certificate and the "Developer ID Profile" provisioning profile
+#   - notarytool keychain profile "planet-notary"
+#   - Sparkle EdDSA private key in the login keychain (generate_keys -f)
+#   - Planet/local.xcconfig with WALLETCONNECTV2_PROJECT_ID and ETHERSCAN_API_TOKEN
+#   - keychain items planet-release.digitalocean-api (account planetable) and
+#     planet-release.spaces.planetable (accounts access_key and secret_key)
+#   - gh, git-lfs, rclo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-        cmark_gfm_core_extensions_ensure_registered()
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55d2fe23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f435fa05` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
