@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T07:00:49.670Z",
+  "last_updated": "2026-11-26T07:10:28.148Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "a82a171ca1e60dd6a2f2e3854227849d5410f15965ffe21f54403c09ea8ea33c",
-      "verified_at": "2026-11-26T05:05:21.738Z",
+      "content_hash": "cdadba81ee8e33f4d6a16c0a3a9da765a9e66a1ca6b8215dbab1391179370aa4",
+      "verified_at": "2026-11-26T07:10:28.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T05:05:21.738Z"
+      "last_updated": "2026-11-26T07:10:28.148Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -9981,14 +9981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actions-actions-runner-controller",
-      "content_hash": "24f13b669c4b7a531fe19e68cae63a36dc731fd5cde0decf8cfbb5f415a6070b",
-      "verified_at": "2026-11-24T14:05:43.128Z",
+      "content_hash": "20c421dcba8a163d6c887b4bc5ff1714f7a302ccba895fd962ed0c1fc4e4f1c1",
+      "verified_at": "2026-11-26T07:10:25.533Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:05:43.128Z"
+      "last_updated": "2026-11-26T07:10:25.533Z"
     },
     "VectifyAI/PageIndex": {
       "repository": "VectifyAI/PageIndex",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "e6d287dbb7f138cf4caa502486ba873929fde494ac2095718e6e3e2309bb3485",
-      "verified_at": "2026-11-25T00:51:57.012Z",
+      "content_hash": "fb9168feccce442476d2669dc5f76f0c865a2ba2ba1da995b8f2389f54ec6a00",
+      "verified_at": "2026-11-26T07:10:17.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:51:57.012Z"
+      "last_updated": "2026-11-26T07:10:17.681Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -14781,14 +14781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wzh4869-appports",
-      "content_hash": "ae35633117a3974c1eb6eb339b93fbeac6da44105f451d8f3e265092addb7add",
-      "verified_at": "2026-11-23T21:23:10.928Z",
+      "content_hash": "1f6b5716516535e5626317593ce5c728daa776beb3e37d72b44d97117ec3e061",
+      "verified_at": "2026-11-26T07:10:23.252Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:23:10.928Z"
+      "last_updated": "2026-11-26T07:10:23.252Z"
     },
     "AndyTheFactory/newspaper4k": {
       "repository": "AndyTheFactory/newspaper4k",
@@ -19251,14 +19251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3-image-pe",
-      "content_hash": "24c873ac57ad005c77023b404865fc55479795566ef2a3ce416723ba5829d466",
-      "verified_at": "2026-11-22T12:37:34.803Z",
+      "content_hash": "a294b783166795a57c47a9ceef87c04f0b5591d944b411a2822313e7a088ec29",
+      "verified_at": "2026-11-26T07:10:15.070Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T12:37:34.803Z"
+      "last_updated": "2026-11-26T07:10:15.070Z"
     },
     "internlm/Sage-S2.1-Flash": {
       "repository": "internlm/Sage-S2.1-Flash",

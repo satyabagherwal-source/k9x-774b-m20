@@ -4,17 +4,17 @@
 {
   "source_repository": "agent-of-empires/agent-of-empires",
   "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-  "source_version": "a6717a44",
+  "source_version": "956d1300",
   "license": "MIT",
-  "timestamp": "2026-11-25T00:51:57.281Z",
+  "timestamp": "2026-11-26T07:10:17.978Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-of-empires-agent-of-empires",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `a6717a44`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T00:51:57.281Z`  
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `956d1300`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T07:10:17.978Z`  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`
 
 
@@ -30,7 +30,7 @@ During deep inspection of agent-of-empires/agent-of-empires, modular boundaries,
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:51:55.670Z  
+> **Harvest Timestamp**: 2026-11-26T07:10:16.782Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of agent-of-empires/agent-of-empires, modular boundaries,
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4847 stars
+- **Stars / Engagement**: 4902 stars
 
 ---
 
@@ -1796,1004 +1796,1246 @@ impl ConfigOptionDescriptor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5f7f027` (2026-11-24)
-**Commit Message**: perf(web): throttle structured view persistence and cache per-chunk work (#5928)
+### Incident Patch 1: `83161f1c` (2026-11-26)
+**Commit Message**: feat(web): suggested sessions dashboard, settings and guide (#5599)
 
-* test(web): add structured view streaming perf harness
+* feat(web): suggested sessions views, settings and first-run setup
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* perf(web): throttle acp state persistence
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* perf(web): hoist the assistant-ui convertMessage identity
+Adds the /suggestions page, the dashboard and sidebar Suggested sections,
+the first-run setup hint and sheet, the Settings > Suggestions tab with
+templates and project mapping, marketplace badge and filter, and the
+initial_prompt field in the session wizard.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* perf(web): cache shiki highlight results across remounts
+* docs(suggestions): user guide and dashboard docs for suggested sessions
+
+Adds the guide to the website docs sync and nav.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* perf(web): key the edit tool card diff stats on stable strings
+* fix(web): keep the started-row menu out of list clipping
+
+Drops overflow-hidden from the suggestion lists, rounds the row corners
+instead, and asserts the menu items are reachable on a sole started row.
+
+Addresses review comment from @jerome-benoit on #5599.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(web): read pending acp state after in-memory eviction
+* fix(web): keep a template edit typed during a pending save
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Clear the draft only when it still equals the submitted value, so an edit
+made while a save or reset is in flight survives and saves on its own blur.
 
-* refactor(web): drop incidental line moves in highlight cache change
+Addresses review comment from @jerome-be
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(web): fail perf harness when history never settles
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(web): keep typing for the whole measured turn in the perf harness
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* fix(web): keep cached highlight across theme switch
-
-Seed the highlight result
-
-**File**: `web/playwright.perf.config.ts` (added, +18/-0)
+**File**: `docs/guides/suggested-sessions.md` (added, +132/-0)
 ```diff
-@@ -0,0 +1,18 @@
-+import { defineConfig } from "@playwright/test";
+@@ -0,0 +1,132 @@
++# Suggested sessions
 +
-+// Perf harness: not picked up by playwright.config.ts (it only matches *.spec.ts).
-+export default defineConfig({
-+  testDir: "./tests/perf",
-+  testMatch: "**/*.perf.ts",
-+  globalSetup: "./tests/helpers/liveGlobalSetup.ts",
-+  timeout: 300_000,
-+  fullyParallel: false,
-+  workers: 1,
-+  retries: 0,
-+  reporter: "list",
-+  use: {
-+    headless: true,
-+    viewport: { width: 1440, height: 900 },
-+  },
-+  projects: [{ name: "chromium", use: { browserName: "chromium" } }],
-+});
++Suggested sessions are things worth starting a session for, such as a PR that wants your review or a failing check, published by installed plugins. AoE only lists them. Nothing runs until you start one, and **Start** launches right away with the [preset](#presets) of the suggestion's kind.
++
++Each item has a title, a reason, the plugin that proposed it, and a draft prompt. Plugins decide what to publish; this page covers using them. Writing a provider is covered in the [plugin contract](../plugin-api.md#suggested-sessions).
++
++Suggestions show up in the web dashboard (homepage section, `/suggestions`, and optionally the sidebar) and in the TUI. They are stored per [profile](configuration.md#profiles).
++
++## Setting up
++
++With no provider installed, the web homepage and the empty `/suggestions` view offer **Set up suggestions** when a featured plugin exists. The sheet installs the sources you tick, runs each plugin's setup checks (✓, `!`, ✕, with the plugin's fix text and **Check again**), and ends with "Suggestions are on". **Finish later** closes it; the plugin stays installed. **More sources in the Marketplace ›** opens Settings › Plugins › Marketplace filtered to plugins that work with suggestions.
++
++Providers are off until you turn one on, in the setup sheet, in Settings › Suggestions › Sources, or through the API (`PATCH /api/suggestions/prefs` with `provider_enabled`). The sheet turns on each source it installs, and no other. To skip the sheet, install a provider with `aoe plugin install` ([Plugins](../plugins.md)), then turn it on. While every installed provider is off, the homepage section and `/suggestions` say so and offer **Turn it on** (**Turn them on** for several); a read-only dashboard says it can't turn them on.
++
++## Web dashboard
++
++### Homepage and `/suggestions`
++
++The homepage shows up to 3 suggestions (2 on a narrow screen) under "Suggested sessions", with **View all (N)** linking to `/suggestions`. Turn the section off in Settings › Suggestions.
++
++The full view lists every suggestion, one line per row, grouped by repo:
++
++- Two header rows: the title with a status line (the count and each provider's "Updated 2 min ago", "Waiting for first results", "Nothing new", "Refreshing…" or "Couldn't refresh: <error>"), **Refresh** and the gear for Settings › Suggestions; then **Search**, **All repos ▾** and **All kinds ▾**. Items from a failing provider stay listed from the last fetch.
++- **Search** matches the title, source reference, reason and repo, ignoring case. **All repos ▾** lists the repos with counts. Keys of the form `org/repo` are grouped: the org row selects everything under that org, a repo row only that repository. **All kinds ▾** narrows to kinds such as Review requests. Selected rows combine, and **Clear filters** resets them.
++- Source chips (**All**, one per source) appear only with two or more sources, and **Dismissed** once something is dismissed.
++- Each repo group has a header with the count that collapses its rows. Rows show `#123` rather than `owner/repo#123`, then the reason once, such as "Review requested". A repo with no Project yet says so in its header.
++- On a phone each row takes two lines, and **Start**, **▾** and ✕ keep a 44px tap area. **▾** opens as a bottom sheet.
++
++### Starting one
++
++**Start** runs the suggestion's kind [preset](#presets) at once: agent, view, worktree, sandbox, Yolo mode and the prompt, in the Project the repo is linked to. There is no New session dialog and no prompt review. A toast names the Session ("Started “<title>”") with **Open**, and the other rows stay usable meanwhile.
++
++If the repo defines [hooks](repo-config.md) you have not approved, Start pauses on **Review this repo's hooks**. **Approve and start** trusts them and starts in one step. Start cannot skip this review, and it asks again when the hooks change.
++
++**▾** next to Start shows what Start will use for this suggestion (Project, agent, view, worktree) and offers:
++
++- **Start with changes**: opens the New session dialog prefilled from the preset, for this one only. A strip above the form names the source and says "issue text not included"; the source's own text is never added to the prompt for you. The dialog also shows "From the <kind> preset" with an **Edit preset** link.
++- **Copy prompt**, **Open in <provider> ↗**, and **Edit the <kind> preset** (Settings › Suggestions).
++
++If the repo has no Project yet, **Start in… ▾** replaces Start. Picking a Project links the repo to it, then starts, so later suggestions from that repo start in one click. It is off on read-only dashboards and in CityHall mode, which cannot save the link.
++
++### After starting
++
++The row stops offering Start. It shows "⠋ Running · started 3 min ago" (or "Idle", the session's other status, or "Archived") and an **Open** button. The **⋯** menu has **Start another Session…**, **Open in <provider> ↗** and **Dismiss**. Trashing the session removes the lin
 ```
 
-**File**: `web/src/components/__tests__/FilesPane.test.tsx` (modified, +1/-0)
+**File**: `docs/guides/web/dashboard.md` (modified, +2/-0)
 ```diff
-@@ -24,6 +24,7 @@ vi.mock("../../hooks/useShikiTheme", () => ({
-   useShikiTheme: () => ({ theme: "github-dark", appearance: "dark" }),
- }));
- vi.mock("../../lib/snippetHighlighter", () => ({
-+  peekHighlight: () => undefined,
-   highlightSnippet: vi.fn().mockResolvedValue(null),
- }));
+@@ -74,6 +74,8 @@ Once setup is out of the way, an interactive walkthrough highlights the major re
+ 
+ Completing or skipping the tour records `app_state.has_seen_web_tour` on the server, so it does not relaunch on reload or on another device pointed at the same server. That flag persists in the server's `state.toml` (a sibling of `config.toml`, see [Configuration Reference](../configuration.md#statetoml)); the `GET /api/settings` JSON key is unchanged, still `app_state.has_seen_web_tour`. To replay it, open the overflow menu and choose **Show tutorial**; re-triggering adapts to where you are (dashboard regions, or composer / mode picker / send controls inside a session). It does not auto-launch on touch devices, where it is menu-only.
+ 
++While no plugin that provides suggestions is installed and a featured one exists, the homepage shows a one-line hint under the action cards. **Set up suggestions** opens a sheet that installs the featured providers you pick, then shows each plugin's setup checks (with its fix text and **Check again**). **More sources in the Marketplace** opens Settings > Plugins > Marketplace with the Suggestions filter on (`/settings/plugins?marketplace=suggestions`). The hint is skipped during the tour, on read-only and CityHall dashboards, and when the homepage section is off in Settings > Suggestions. Dismissing it stores `aoe-suggestions-hint-dismissed` in the synced web UI state, so it stays hidden on your other devices.
++
+ ## Sidebar sort
+ 
+ By default the sidebar shows your manually-ordered list. Drag a row (press-and-hold) to move it; the order persists across browsers and devices via `workspace-ordering.json`. To reorder whole projects, press-and-drag the project/group header itself (there is no separate handle); this group order is per-browser (localStorage), not synced. Group drag is disabled while a filter is active or a computed sort mode is selected.
+```
+
+**File**: `docs/plugin-api.md` (modified, +2/-2)
+```diff
+@@ -478,7 +478,7 @@ Quotas per plugin: 64 keys, 256-byte keys, 64 KiB values. `cas` (compare-and-swa
+ 
+ > **Availability:** the `[suggestions]` manifest block, the `suggestions.*` worker RPCs and the `/api/suggestions` routes are served by this host. The web dashboard and TUI workflows described below arrive with their own changes (#5599, #5600).
+ 
+-For using suggestions from the web dashboard and the TUI, see the suggested sessions guide.
++For using suggestions from the web dashboard and the TUI, see the [suggested sessions guide](guides/suggested-sessions.md).
+ 
+ A worker declares the criteria it publishes in a `[suggestions]` block:
+ 
+@@ -574,7 +574,7 @@ An item has one primary Session. The first create that carries `suggestion` (`st
+ 
+ Errors: 404 `unknown_provider` (no active plugin provides suggestions under that id), 409 `stale_suggestion` (the item is no longer published, its source is disabled, or its source closed it; `prepare` and `start` answer all three the same way), 400 `validation_failed` (`criterion` not declared by the provider, an unknown preset agent, or a prompt or its expansion over 64 KiB), 403 `read_only`.
+ 
+-The TUI lists suggestions from Home with `S` (`Ctrl+S` in strict mode). The view shows each item's `preview` and prompt as plain text; the first Enter resolves `prepare` and shows its final `initial_prompt` (after the preset prompt); a second Enter opens the new-session dialog prefilled with it, and an item whose `project` is `null` cannot be started. The dialog's Prompt row, which is always present and editable, holds that prompt; for a suggestion it is labelled with the provider and Ctrl+P on it shows the item's `preview` as source text. `r` only asks providers to refresh; `l` reloads the list. Items keep the order of the snapshot. Home also lists a collapsed **Suggested (N)** group above Trash, absent when there are no open suggestions. Enter expands it to the first 3 items and a "View all" row that opens the view above; Enter on an item prepares it and opens the prefilled dialog directly, `z` (`Z` in strict mode) dismisses it, and `N` (`Ctrl+N`) starts a blank session. `Ctrl+K` lists "Suggested sessions"; on a suggestion row, or on the selected item in the view, it also lists "Open in <provider>", which opens the item's `source_url`. Every TUI key is provisional pending #4597: `S` / `Ctrl+S` to open, `z` / `N` on a Home row, and `x` (dismiss), `d` (dismissed), `r` and `l` inside the view may move.
++The TUI lists suggestions from Home with `S` (`Ctrl+S` in strict mode). The view shows each item's `preview` and prompt as plain text; the first Enter resolves `prepare` and shows its final `initial_prompt` (after the preset prompt); a second Enter opens the new-session dialog prefilled with it, and an item whose `project` is `null` cannot be started. The dialog's Prompt row, which is always present and editable, holds that prompt; for a suggestion it is labelled with the provider and Ctrl+P on it shows the item's `preview` as source text. `r` only asks providers to refresh; `l` reloads the list. Items keep the order of the snapshot. Home also lists a collapsed **Suggested (N)** group above Trash, absent when there are no open suggestions. Enter expands it to the first 3 items and a "View all" row that opens the view above; Enter on an item prepares it and opens the prefilled dialog directly, `z` (`Z` in strict mode) dismisses it, and `N` (`Ctrl+N`) starts a blank session. `Ctrl+K` lists "Suggested sessions"; on a suggestion row, or on the selected item in the view, it also lists "Open in <provider>", which opens the item's `source_url`. Every TUI key is provisional: `S` / `Ctrl+S` to open, `z` / `N` on a Home row, and `x` (dismiss), `d` (dismissed), `r` and `l` inside the view may move.
+ 
+ ### Project mappings
  
 ```
 
-**File**: `web/src/components/acp/AcpRuntime.tsx` (modified, +3/-1)
+**File**: `web/src/App.tsx` (modified, +113/-3)
 ```diff
-@@ -97,6 +97,8 @@ export interface AcpContext {
-   loadingEarlierHistory: boolean;
- }
+@@ -8,7 +8,7 @@ import {
+   type ComponentProps,
+   type ReactNode,
+ } from "react";
+-import { Puzzle } from "lucide-react";
++import { Puzzle, Sparkles } from "lucide-react";
+ import {
+   confirmFileEditNavigation,
+   confirmFileEditPanes,
+@@ -78,6 +78,7 @@ import { usePaneLayout, dockTabs, dockGroups, dockOf, isDockCollapsed, renderedG
+ import { isPluginPaneId, resolvePaneIcon, usePluginPanes, type PluginPane } from "./lib/pluginPanes";
+ import { PluginPaneBody } from "./components/plugin/PluginPane";
+ import { PluginPageView } from "./components/plugin/PluginPageView";
++import { SuggestionsView } from "./components/SuggestionsView";
+ import { PluginSessionMenu } from "./components/plugin/PluginSessionMenu";
+ import {
+   deleteWorkspaceSessions,
+@@ -136,7 +137,13 @@ import { toastBus, reportError } from "./lib/toastBus";
+ import { restartForUpdate } from "./lib/restartForUpdate";
+ import { startPendingCreates } from "./lib/pendingCreates";
+ import { isAbsolutePath, resolveToRepoRelative, type FileRef } from "./lib/fileRef";
+-import { NAVIGATE_EVENT, OPEN_SESSION_EVENT, openFocusWindow, replaceDocument } from "./lib/sessionRoute";
++import {
++  NAVIGATE_EVENT,
++  OPEN_SESSION_EVENT,
++  openFocusWindow,
++  replaceDocument,
++  requestNavigate,
++} from "./lib/sessionRoute";
+ import { dispatchFocusTerminal, requestSessionInputFocus, setPendingTerminalFocus } from "./lib/terminalFocus";
+ import {
+   bindHiddenInput,
+@@ -224,6 +231,7 @@ import { LOGIN_REQUIRED_EVENT, TOKEN_EXPIRED_EVENT, resetTokenExpired } from "./
+ import { AboutModal } from "./components/AboutModal";
+ import { TipsModal } from "./components/TipsModal";
+ import { useTips, shouldAutoPopTips } from "./hooks/useTips";
++import type { CommandAction } from "./components/command-palette/types";
+ import { useConversationSearch } from "./hooks/useConversationSearch";
+ import { BannerStack } from "./components/BannerStack";
+ import { ElevationPrompt } from "./components/ElevationPrompt";
+@@ -434,6 +442,7 @@ function AppContent({
+   const { focusSessionId, enterFocusMode, exitFocusMode } = useFocusMode(sessionMatch?.params.sessionId ?? null);
+   const focusMode = focusSessionId !== null;
+   useDashboardPresence(focusSessionId);
++  const suggestionsMatch = useMatch("/suggestions");
+   // A plugin page's split pane shows `?session=` as the routed session, docks and all.
+   const activeSessionId = sessionMatch?.params.sessionId ?? (pluginPageMatch ? searchParams.get("session") : null);
+   const selectPluginPageSession = useCallback(
+@@ -461,7 +470,7 @@ function AppContent({
+   }, [focusMode, onPluginPage, selectPluginPageSession, navigate]);
+   const showSettings = settingsRootMatch !== null || settingsTabMatch !== null;
+   // Settings and plugin pages take the full width, sidebar and session panels hidden.
+-  const fullPageView = showSettings || pluginPageMatch !== null;
++  const fullPageView = showSettings || pluginPageMatch !== null || suggestionsMatch !== null;
+   const settingsTab = settingsTabMatch?.params.tab ?? null;
  
-+const identityMessage: ExternalStoreAdapter<ThreadMessageLike>["convertMessage"] = (m) => m;
-+
- /** Owns the external store so a new `key` builds a fresh runtime. A `/clear`
-  *  shortens a kept message's parts, and assistant-ui's store would otherwise read
-  *  a stale part index and crash the view (assistant-ui#5708). */
-@@ -222,7 +224,7 @@ export function AcpRuntime({
-     // gate, or a background sub-agent with an idle main turn silently eats
-     // every keystroke.
-     isRunning: acp.state.turnActive,
--    convertMessage: (m) => m,
-+    convertMessage: identityMessage,
-     // The idle Enter path: text comes from the message, attachments from our staging.
-     onNew: async (msg) => {
-       const text = msg.content
-```
-
-**File**: `web/src/components/acp/CoreToolCards.test.tsx` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+// @vitest-environment jsdom
-+
-+import { afterEach, expect, it, vi } from "vitest";
-+import { cleanup, render } from "@testing-library/react";
-+
-+vi.mock("../../lib/diffPair", async (importOriginal) => {
-+  const actual = await importOriginal<typeof import("../../lib/diffPair")>();
-+  return { ...actual, diffPair: vi.fn(actual.diffPair) };
-+});
-+vi.mock("../../hooks/useShikiTheme", () => ({
-+  useShikiTheme: () => ({ theme: "dark-plus", appearance: "dark" }),
-+}));
-+
-+import { diffPair } from "../../lib/diffPair";
-+import { AgentProfileProvider } from "../../lib/agentProfileContext";
-+import { AcpFileRefContext } from "./AcpFileRefContext";
-+import { EditToolCard } from "./CoreToolCards";
-+import { makeToolCall } from "./__fixtures__/toolCalls";
-+
-+afterEach(cleanup);
-+
-+const edit = (text: string) => {
-+  const diffs = [{ path: "a.rs", old_text: "a", new_text: text, created_at: "t" }];
-+  return makeToolCall({ kind: "edit", args_preview: JSON.stringify({ _aoe_diffs: diffs }), diffs });
-+};
-+
-+const ui = (tool: ReturnType<typeof edit>) => (
-+  <AcpFileRefContext.Provider value={{ fileRefSession: null, onOpenFileRef: undefined }}>
-+    <AgentProfileProvider toolKey={null}>
-+      <EditToolCard tool={tool} />
-+    </AgentProfileProvider>
-+  </AcpFileRefContext.Provider>
-+);
-+
-+it("does not re-run diffPair for a new-but-equal diffs array, and does when args_preview changes", () => {
-+  const { rerender } = render(ui(edit("b")));
-+  expect(diffPair).toHaveBeenCalledTimes(1);
-+  rerender(ui(edit("b")));
-+  expect(diffPair).toHaveBeenCalledTimes(1);
-+  rerender(ui(edit("bc")));
-+  expect(diffPair).toHaveBeenCalledTimes(2);
-+});
-```
-
-**File**: `web/src/components/acp/CoreToolCards.tsx` (modified, +3/-1)
-```diff
-@@ -181,7 +181,9 @@ export function EditToolCard({ tool, result }: ToolCardProps) {
-       },
-       { adds: 0, dels: 0 },
-     );
--  }, [tool.diffs, legacyOld, legacyNew]);
-+    // `tool.diffs` is rebuilt every render from `args_preview` (its `_aoe_diffs` key), so the string is the stable key.
-+    // eslint-disable-next-line react-hooks/exhaustive-deps
-+  }, [tool.args_preview, legacyOld, legacyNew]);
- 
-   return (
-     <CardChrome
-```
-
-**File**: `web/src/components/acp/Markdown.test.tsx` (modified, +37/-2)
-```diff
-@@ -11,11 +11,16 @@ import remarkGfm from "remark-gfm";
- 
- import type { FileRefSession } from "../../lib/fileRef";
- 
-+const { shikiThemeRef } = vi.hoisted(() => ({
-+  shikiThemeRef: { current: { theme: "vitesse-dark", appearance: "dark" } },
-+}));
-+
- vi.mock("../../hooks/useShikiTheme", () => ({
--  useShikiTheme: () => ({ theme: "vitesse-dark", appearance: "dark" }),
-+  useShikiTheme: () => shikiThemeRef.current,
- }));
- 
- vi.mock("../../lib/snippetHighlighter", () => ({
-+  peekHighlight: vi.fn((): string | undefined => undefined),
-   highlightSnippet: vi.fn().mockResolvedValue("<pre><code>highlighted</code></pre>"),
- }));
- 
-@@ -59,7 +64,7 @@ vi.mock("../../lib/clipboard", () => ({
- 
- import { Markdown, remarkPluginsFor } from "./Markdown";
- import { AcpFileRefContext } from "./AcpFileRefContext";
--import { highlightSnippet } from "../../lib/snippetHighlighter";
-+import { highlightSnippet, peekHighlight } from "../../lib/snippetHighlighter";
- import { writeClipboard } from "../../lib/clipboard";
- import type { SyntaxHighlighterProps } from "@assistant-ui/react-markdown";
- import { renderWithLateResolution } from "../../__tests__/lateResolution";
-@@ -311,6 +316,36 @@ describe("ShikiSyntaxHighlighter stale-content transitions (#3974)", () => {
-   afterEach(() => {
-     vi.mocked(highlightSnippet).mockReset();
-     vi.mocked(highlightSnippet).mockResolvedValue("<pre><code>highlighted</code></pre>");
-+    vi.mocked(peekHighlight).mockReset();
-+    vi.mocked(peekHighlight).mockReturnValue(undefined);
-+    shikiThemeRef.current = { theme: "vitesse-dark", appearance: "dark" };
-+  });
-+
-+  it("keeps a mount-time cache hit while an uncached theme is pending", async () => {
-+    vi.mocked(peekHighlight).mockImplementation((_code, opts) =>
-+      opts?.theme === "vitesse-dark" ? '<pre class="shiki">theme A</pre>' : undefined,
-+    );
-+    const pending = Promise.withResolvers<string | null>();
-+    const started = Promise.withResolvers<void>();
-+    vi.mocked(highlightSnippet).mockImplementationOnce(() => {
-+      started.resolve();
-+      return pending.promise;
-+    });
-+    const Comp = getSyntaxHighlighter();
-+
-+    const { container, rerender } = render(<Comp language="rust" code="fn main() {}" />);
-+    expect(container.textContent).toContain("theme A");
-+
-+    shikiThemeRef.current = { theme: "vitesse-light", appearance: "light" };
-+    rerender(<Comp language="rust" code="fn main() {}" />);
-+    await started.promise;
-+    expect(container.textContent).toContain("theme A");
-+
-+    pending.resolve('<pre class="shiki">theme B</pre>');
-+    await waitFor(() => {
-+      expect(container.textContent).toContain("theme B");
-+    });
-+    expect(container.textContent).not.toContain("theme A");
-   });
- 
-   it("clears highlighted output when a reused block transitions to unfenced text", async () => {
-```
-
-**File**: `web/src/components/acp/Markdown.tsx` (modified, +16/-4)
-```diff
-@@ -12,7 +12,7 @@ import remarkGfm from "remark-gfm";
- 
- import { writeClipboard } from "../../lib/clipboard";
- import { tableSource } from "../../lib/tableMarkdown";
--import { highlightSnippet } from "../../lib/snippetHighlighter";
-+import { highlightSnippet, peekHighlight } from "../../lib/snippetHighlighter";
- import { useShikiTheme } from "../../hooks/useShikiTheme";
- import { parseFileRef, resolveArtifactUrl, resolveToRepoRelative } from "../../lib/fileRef";
- import { useAcpFileRef } from "./AcpFileRefContext";
-@@ -170,13 +170,25 @@ function ShikiSyntaxHighlighter({ language, code }: SyntaxHighlighterProps) {
-   // NUL-delimited (as the escape sequence: a raw NUL byte in source makes
-   // git treat the file as binary) so field concatenations cannot collide.
-   const inputKey = `${language ?? ""}\u0000${code}`;
--  const [result, setResult] = useState<{ key: string; html: string } | null>(null);
-   const shiki = useShikiTheme();
-+  // A cache hit renders highlighted on first paint, so a remounted block never flashes plain text.
-+  const cached = useMemo(
-+    () =>
-+      language
-+        ? peekHighlight(code, { langHint: language, theme: shiki.theme, appearance: shiki.appearance })
-+        : undefined,
-+    [language, code, shiki.theme, shiki.appearance],
+   const {
+@@ -565,6 +574,17 @@ function AppContent({
+   const pluginUiEntries = usePluginUiEntries();
+   const pluginPages = usePluginPages();
+   const pluginPageActions = useMemo(() => buildPluginPageActions(pluginPages ?? []), [pluginPages]);
++  const suggestionsAction = useMemo<CommandAction>(
++    () => ({
++      id: "page:suggestions",
++      title: "Suggested sessions",
++      group: "Pages",
++      keywords: ["page", "suggestions", "suggested", "start"],
++      icon: <Sparkles className="h-4 w-4" />,
++      perform: () => requestNavigate("/suggestions"),
++    }),
++    [],
 +  );
-+  // Seeded from a mount-time cache hit so a later theme switch keeps that palette.
-+  const [result, setResult] = useState<{ key: string; html: string } | null>(() =>
-+    cached !== undefined ? { key: inputKey, html: cached } : null,
-+  );
-   const [wrapped, toggleWrap] = useWrapState();
- 
-   useEffect(() => {
-     let cancelled = false;
-     if (!language) return;
-+    if (cached !== undefined) return;
-     (async () => {
-       try {
-         const out = await highlightSnippet(code, {
-@@ -193,9 +205,9 @@ function ShikiSyntaxHighlighter({ language, code }: SyntaxHighlighterProps) {
-     return () => {
-       cancelled = true;
-     };
--  }, [language, code, inputKey, shiki.theme, shiki.appearance]);
-+  }, [language, code, inputKey, shiki.theme, shiki.appearance, cached]);
- 
--  const html = result && result.key === inputKey ? result.html : null;
-+  const html = cached ?? (result && result.key === inputKey ? result.html : null);
- 
-   // The em-based size carries no line-height, so set it or code inherits the looser body leading.
-   return (
-```
-
-**File**: `web/src/components/acp/ReadFileResult.test.tsx` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
- import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
- 
- vi.mock("../../lib/snippetHighlighter", () => ({
-+  peekHighlight: () => undefined,
-   highlightSnippet: vi.fn().mockResolvedValue(null),
-   getSnippetHighlighter: vi.fn().mockResolvedValue(null),
-   langHintForPath: () => "",
-```
-
----
-
-### Incident Patch 2: `204b9f32` (2026-11-24)
-**Commit Message**: fix(plugin): journal default-mode publication (#5989)
-
-* fix(plugin): journal default-mode publication
-
-Record durable publication authority before installed-tree changes.
-Recover proven outcomes and retain ambiguous state for manual repair.
-
-* fix(plugin): distinguish pre-journal refusals
-
-Keep uncertain publication fenced and verify rename destinations.
-Exercise daemon startup with isolated cross-platform crash fixtures.
-
-* fix(plugin): preserve recovery for prior backups
-
-Clean the unjournaled copy before fencing an ambiguous prior backup.
-Isolate the restart fixture from the host tmux socket.
-
-**File**: `docs/plugins.md` (modified, +18/-0)
-```diff
-@@ -158,6 +158,24 @@ The previous tree stays backed up until both metadata writes commit. Restoration
- preserves the prior enabled, source, dev, grant, dismissal and settings values
- without overwriting unrelated config. A backup cleanup failure after commit is
- reported as recovery required; do not restore that backup over the committed tree.
-+
-+Default-mode remote installs and updates write
-+`<app_dir>/.plugin-publication-active` before changing the installed tree. On
-+writable Daemon startup, recovery takes the plugin operation lock. It can
-+restore the prior installation if no build or metadata write could have
-+started, or keep a committed installation and remove its owned backup if
-+both metadata entries and descriptor-derived directory birth identities
-+match the journal. Publication requires file birth and mount identity
-+support. Recovery never traverses a mounted directory during cleanup.
-+
-+An interrupted build, a partial metadata write, or conflicting evidence
-+still requires manual recovery. While the journal remains, plugin mutations
-+and external worker launches are fenced. Verify that owned commands have
-+exited and restore or confirm the intended tree and both metadata entries
-+before removing the journal. Recovery does not scan or delete abandoned
-+acquisition directories. Local sources and strict staging keep their
-+existing recovery rules.
-+
- Local release-binary targets must be regular executable files before publication.
- Release assets are streamed into staging and may only add files: an asset entry
- that would replace a file already in the source tree, or that is a symlink,
-```
-
-**File**: `src/plugin/fetch.rs` (modified, +17/-0)
-```diff
-@@ -183,6 +183,14 @@ fn cleanup_staging(
- }
- 
- impl FetchedPlugin {
-+    pub(super) fn journals_publication(&self) -> bool {
-+        matches!(&self.source, PluginSource::Github { .. })
-+            && self
-+                .staging
-+                .as_ref()
-+                .is_some_and(|stage| stage.marker.is_none())
-+    }
-+
-     pub(super) fn begin_publication(&self) -> Result<()> {
-         if let Some(marker) = self
-             .staging
-@@ -302,6 +310,15 @@ fn stage(
-     stage_with_limit(source, plugins_root, clone_url, STAGING_LIMIT)
- }
- 
-+#[cfg(test)]
-+pub(super) fn stage_remote_fixture(source: PluginSource, repo: &Path) -> Result<FetchedPlugin> {
-+    stage(
-+        source,
-+        super::plugins_dir()?,
-+        Some(format!("file://{}", repo.display())),
-+    )
-+}
-+
- fn stage_with_limit(
-     source: PluginSource,
-     plugins_root: PathBuf,
-```
-
-**File**: `src/plugin/install.rs` (modified, +722/-61)
-```diff
-@@ -21,6 +21,8 @@ use super::registry::ValidationState;
- use super::source::PluginSource;
- use super::NodeEnv;
- 
-+mod publication;
-+
- pub enum OperationLog {
-     Inherit,
-     File(std::fs::File),
-@@ -468,7 +470,7 @@ fn check_recovery_evidence_inner(allow_live_staging: bool) -> Result<()> {
-         bail!("plugin recovery is required in this Daemon process; stop the Daemon, verify owned commands have exited and restore the installation before restarting");
+   const pluginAttention = usePluginAttention();
+   const [pluginSortRef, setPluginSortRef] = useState<{ pluginId: string; entryId: string } | null>(null);
+   const activePluginSort = useMemo(() => {
+@@ -2389,6 +2409,38 @@ function AppContent({
+         />
+       );
      }
-     let live = LIVE_STAGING.lock();
--    for name in [RECOVERY_MARKER, STAGING_MARKER] {
-+    for name in [RECOVERY_MARKER, STAGING_MARKER, publication::MARKER] {
-         let evidence = root.join(name);
-         if name == STAGING_MARKER && allow_live_staging && live.contains(&evidence) {
-             continue;
-@@ -482,6 +484,16 @@ fn check_recovery_evidence_inner(allow_live_staging: bool) -> Result<()> {
-     Ok(())
++    if (suggestionsMatch) {
++      return (
++        <div className="flex-1 min-h-0 flex flex-col">
++          <div className="px-4 pt-3 md:px-8">
++            <button onClick={handleClosePluginPage} className="text-brand-500 cursor-pointer text-sm">
++              &larr; Back
++            </button>
++          </div>
++          <SuggestionsView
++            readOnly={caps.readOnly || !caps.canManageSuggestions}
++            cityhall={caps.cityhall}
++            onOpenMarketplace={
++              caps.canManageProjects ? () => requestNavigate("/settings/plugins?marketplace=suggestions") : undefined
++            }
++            initialDismissed={searchParams.get("dismissed") === "1"}
++            onPrepare={(prefill) => {
++              setWizardPrefill(prefill);
++              setShowSessionWizard(true);
++            }}
++            onOpenSession={(id) => requestNavigate(`/session/${encodeURIComponent(id)}`)}
++            onOpenSettings={caps.canManageSuggestions ? () => requestNavigate("/settings/suggestions") : undefined}
++            sessions={sessions}
++            canLink={!caps.nam
+```
+
+**File**: `web/src/components/Dashboard.tsx` (modified, +45/-1)
+```diff
+@@ -1,10 +1,13 @@
+-import { useMemo, type ReactNode } from "react";
++import { useMemo, useState, type ReactNode } from "react";
+ import type { SessionResponse } from "../lib/types";
+ import { getStatusTextClass, isSessionActive } from "../lib/session";
+ import { useIdleDecayWindowMs } from "../lib/idleDecay";
+ import { useIsWideViewport } from "../hooks/useIsWideViewport";
+ import { AOE_BRAND_MARK_COLORS, AOE_BRAND_MARK_TEXT_SHADOW } from "../lib/brandMark";
+ import { TOUR_ANCHORS, type TourAnchorId } from "../lib/tourSteps";
++import { DashboardSuggestions } from "./DashboardSuggestions";
++import { SuggestionsSetupHint } from "./SuggestionsSetupHint";
++import type { WizardPrefill } from "./session-wizard/SessionWizard";
+ import { PluginCards, PluginHomePanes } from "./plugin/PluginSlots";
+ import { StatusGlyph } from "./StatusGlyph";
+ import { StrokeIcon } from "./icons";
+@@ -21,6 +24,17 @@ interface Props {
+   readOnly?: boolean;
+   /** Shown above the action panes, e.g. the setup checklist. */
+   banner?: ReactNode;
++  /** Both required to show the Suggested sessions section. */
++  onPrepareSuggestion?: (prefill: WizardPrefill) => void;
++  onEditSuggestionPreset?: (providerId: string, criterion: string) => void;
++  canLinkSuggestions?: boolean;
++  /** False in CityHall: suggestions are read-only there. Defaults to true. */
++  canManageSuggestions?: boolean;
++  onViewAllSuggestions?: () => void;
++  /** The onboarding tour is running; the first-run hint stays out of it. */
++  tourActive?: boolean;
++  /** Opens Settings > Plugins > Marketplace filtered to Suggestions; the first-run hint shows only when set. */
++  onOpenSuggestionsMarketplace?: () => void;
  }
  
-+pub(crate) fn recover_stale_publication() -> Result<()> {
-+    let app = crate::session::get_app_dir()?;
-+    if !publication::exists(&app)? {
-+        return Ok(());
-+    }
-+    let _operation = crate::session::try_acquire_storage_flock(&app, OPERATION_LOCK)?
-+        .context("another plugin operation owns publication recovery")?;
-+    publication::recover(&app)
-+}
-+
- pub(crate) fn begin_operation() -> Result<Arc<StorageFlock>> {
-     let root = crate::session::get_app_dir()?;
-     #[cfg(test)]
-@@ -492,6 +504,7 @@ pub(crate) fn begin_operation() -> Result<Arc<StorageFlock>> {
-         .ok_or_else(|| {
-             anyhow!("another plugin operation is running; inspect its outcome before retrying")
-         })?;
-+    publication::recover(&root).context("recovering interrupted plugin publication")?;
-     if !LIVE_STAGING.lock().contains(&root.join(STAGING_MARKER))
-         && std::fs::symlink_metadata(root.join(STAGING_MARKER)).is_ok()
-     {
-@@ -800,6 +813,7 @@ async fn prepare_install(
-     result
- }
+ export function Dashboard({
+@@ -32,7 +46,16 @@ export function Dashboard({
+   readOnly,
+   canManageProjects = true,
+   banner,
++  onPrepareSuggestion,
++  onEditSuggestionPreset,
++  canLinkSuggestions,
++  canManageSuggestions = true,
++  onViewAllSuggestions,
++  onOpenSuggestionsMarketplace,
++  tourActive = false,
+ }: Props) {
++  // Bumped when the setup sheet finishes so the Suggested section refetches.
++  const [suggestionsEpoch, setSuggestionsEpoch] = useState(0);
+   const idleDecayWindowMs = useIdleDecayWindowMs();
+   const isWideViewport = useIsWideViewport();
+   const stats = useMemo(() => {
+@@ -143,6 +166,20 @@ export function Dashboard({
+         </div>
+       )}
  
-+#[derive(Serialize)]
- struct PriorMetadata {
-     config: Option<PluginConfig>,
-     locked: Option<LockedPlugin>,
-@@ -869,10 +883,43 @@ fn apply_prepared_install(
-         "installing {} {}",
-         p.id, p.fetched.manifest.version
-     ));
--    move_into_place(&p.fetched, &final_dir)?;
-+    if p.fetched.journals_publication() {
-+        with_publication_transaction(&p.fetched, &final_dir, &prior, false, |tree, journal| {
-+            place_publication_tree(journal.as_deref(), tree, &final_dir)?;
-+            settle_install(p, &final_dir, node_env, log, &prior, journal)
-+        })?;
-+    } else {
-+        move_into_place(&p.fetched, &final_dir)?;
-+        settle_install(p, &final_dir, node_env, log, &prior, None)?;
-+    }
-+    super::reload_registry();
-+    log.line(&format!(
-+        "installed {} {}",
-+        p.id, p.fetched.manifest.version
-+    ));
-+    tracing::info!(target: "plugin.install", plugin = %p.id, version = %p.fetched.manifest.version, "plugin installed");
++      {onPrepareSuggestion && onViewAllSuggestions && (
++        <DashboardSuggestions
++          key={suggestionsEpoch}
++          readOnly={readOnly || !canManageSuggestions}
++          cityhall={!canManageSuggestions}
++          onPrepare={onPrepareSuggestion}
++          onEditPreset={onEditSuggestionPreset}
++          canLink={canLinkSuggestions}
++          onViewAll={onViewAllSuggestions}
++          onOpenSession={onSelectSession}
++          sessions={sessions}
++        />
++      )}
 +
-+    Ok(InstallReport {
-+        id: p.id.clone(),
-+        version: p.fetched.manifest.version.clone(),
-+        capabilities: p.capabilities.clone(),
-+        granted: true,
-+        validation: p.validation,
-+    })
-+}
-+
-+fn settle_install(
-+    p: &PreparedInstall,
-+    final_dir: &Path,
-+    node_env: &NodeEnv,
-+    log: &OperationLog,
-+    prior: &PriorMetadata,
-+    mut journal: Option<&mut publication::Journal>,
-+) -> Result<()> {
-+    before_publication_build(&mut journal, final_dir, &p.fetched.manifest)?;
-     if let Err(e) = build_in_place(
-         &p.id,
--        &final_dir,
-+        final_dir,
-         &p.fetched.manifest,
-         node_env,
-         log,
-@@ -883,7 +930,7 @@ fn apply_prepared_install(
-         {
-             return Err(e);
-         }
--        remove_owned_tree(&final_dir).map_err(|error| {
-+        remove_published_tree(journal.as_deref(), final_dir).map_err(|error| {
-             super::execution::RecoveryRequired(format!(
-                 "removing failed install {}: {error}; original failure: {e:#}",
-                 final_dir.display()
-@@ -892,9 +939,10 @@ fn apply_prepared_install(
-         return Err(e);
-     }
+       {/* The desktop sidebar is always available, but mobile starts at this dashboard. */}
+       {!isWideViewport && recentSessions.length > 0 && (
+         <section className="md:hidden mb-4 w-full max-w-md" aria-labelledby="recent-sessions-heading">
+@@ -235,6 +272,13 @@ export function Dashboard({
+         </div>
+       )}
  
-+    #[cfg(test)]
-+    fetch::test_gate::reach(final_dir, "metadata-commit");
-+    publication_working(&mut journal, final_dir)?;
-     let persisted = (|| -> Result<()> {
--        #[cfg(test)]
--        fetch::test_gate::reach(&final_dir, "metadata-commit");
-         persist_install(
-             &p.persisted_source,
-             &p.id,
-@@ -911,30 +959,17 @@ fn apply_prepared_install(
-     })();
-     if let Err(e) = persisted {
-         #[cfg(test)]
--        fetch::test_gate::reach(&final_dir, "rollback");
-+        fetch::test_gate::reach(final_dir, "rollback");
-         let metadata = prior.restore(&p.id);
--        let tree = remove_owned_tree(&final_dir);
-+        let tree = remove_published_tree(journal.as_deref(), final_dir);
-         if metadata.is_err() || tree.is_err() {
-             return Err(super::execution::RecoveryRequired(format!(
-                 "install {} failed: {e:#}; metadata restoration
++      {!readOnly && canManageProjects && !tourActive && onOpenSuggestionsMarketplace && (
++        <SuggestionsSetupHint
++          onOpenMarketplace={onOpenSuggestionsMarketplace}
++          onFinished={() => setSuggestionsEpoch((n) => n + 1)}
++        />
++      )}
++
+       {/* Plugin-contributed dashboard cards (#2366). Renders nothing (and adds
+           no spacing) until a plugin pushes a card. */}
+       <PluginCards />
 ```
 
-**File**: `src/plugin/install/publication.rs` (added, +518/-0)
+**File**: `web/src/components/DashboardSuggestions.tsx` (added, +207/-0)
 ```diff
-@@ -0,0 +1,518 @@
-+use std::ffi::OsStr;
-+use std::io::{Read, Write};
-+use std::os::fd::{AsFd, BorrowedFd};
-+use std::os::unix::fs::MetadataExt;
-+use std::path::{Path, PathBuf};
-+use std::time::SystemTime;
+@@ -0,0 +1,207 @@
++import type { SessionResponse } from "../lib/types";
++import { liveSession } from "../lib/suggestionPlan";
++import { StartedPromptNote } from "./PromptBlockedNote";
++import { useAgentNames } from "../hooks/useAgentNames";
++import { useSuggestionPresets } from "../hooks/useSuggestionPresets";
++import { SuggestionItemActions } from "./SuggestionItemActions";
++import { SuggestionHooksReview } from "./SuggestionHooksReview";
++import { suggestionKey, useDismissUndo, useSuggestions } from "../hooks/useSuggestions";
++import { useIsWideViewport } from "../hooks/useIsWideViewport";
++import {
++  SUGGESTION_NOTE_CLASS,
++  SuggestionRow,
++  SuggestionStatusNotes,
++  SuggestionsOffNote,
++  UndoBar,
++} from "./SuggestionRow";
++import type { WizardPrefill } from "./session-wizard/SessionWizard";
 +
-+use anyhow::{ensure, Context, Result};
-+use serde::{Deserialize, Serialize};
-+use sha2::{Digest, Sha256};
-+
-+use crate::session::AnchoredDir;
-+
-+use super::{publication_error, remove_owned_tree_checked, PriorMetadata};
-+
-+pub(super) const MARKER: &str = ".plugin-publication-active";
-+const MAX_RECORD: usize = 4096;
-+
-+#[derive(Debug, thiserror::Error)]
-+#[error("publication backup already exists")]
-+pub(super) struct PriorBackup;
-+
-+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
-+pub(super) struct Identity {
-+    device: u64,
-+    inode: u64,
-+    birth: SystemTime,
++interface Props {
++  readOnly?: boolean;
++  /** Read-only because of CityHall mode, which the copy says. */
++  cityhall?: boolean;
++  onPrepare: (prefill: WizardPrefill) => void;
++  onEditPreset?: (providerId: string, criterion: string) => void;
++  canLink?: boolean;
++  onViewAll: () => void;
++  onOpenSession: (sessionId: string) => void;
++  /** Live sessions, so a started row follows its Session's state. */
++  sessions?: SessionResponse[];
 +}
 +
-+impl Identity {
-+    pub(super) fn capture(fd: BorrowedFd<'_>) -> Result<Self> {
-+        let metadata = std::fs::File::from(fd.try_clone_to_owned()?).metadata()?;
-+        ensure!(
-+            metadata.is_dir() && metadata.uid() == nix::unistd::geteuid().as_raw(),
-+            "publication path is not an owned directory"
-+        );
-+        Ok(Self {
-+            device: metadata.dev(),
-+            inode: metadata.ino(),
-+            birth: metadata
-+                .created()
-+                .context("publication directory birth is unproven")?,
-+        })
-+    }
-+}
++export function DashboardSuggestions({
++  readOnly = false,
++  cityhall = false,
++  onPrepare,
++  onEditPreset,
++  canLink = true,
++  onViewAll,
++  onOpenSession,
++  sessions,
++}: Props) {
++  const wide = useIsWideViewport();
++  const ctrl = useSuggestions(onPrepare, onOpenSession);
++  const { snapshot, loadFailed, busy, refreshing, notice, refreshFailed, failures, offline, act, refresh } = ctrl;
++  const agentName = useAgentNames();
++  const presetOf = useSuggestionPresets();
++  const { undo, dismiss, stop } = useDismissUndo(act);
 +
-+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
-+enum Phase {
-+    Ready,
-+    // The operation lock proves the publisher is gone, not its build children.
-+    Working,
-+    Committed { metadata: [u8; 32] },
-+}
-+
-+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
-+pub(super) struct Journal {
-+    schema: u32,
-+    id: String,
-+    directory: String,
-+    plugins: Identity,
-+    container: Identity,
-+    new_tree: Identity,
-+    old_tree: Option<Identity>,
-+    prior_metadata: [u8; 32],
-+    phase: Phase,
-+}
-+
-+fn metadata_digest(metadata: &PriorMetadata) -> Result<[u8; 32]> {
-+    Ok(Sha256::digest(toml::to_string(metadata)?).into())
-+}
-+
-+pub(super) fn exists(app: &Path) -> Result<bool> {
-+    marker_exists(app, MARKER)
-+}
-+
-+fn marker_exists(app: &Path, name: &str) -> Result<bool> {
-+    match std::fs::symlink_metadata(app.join(name)) {
-+        Ok(_) => Ok(true),
-+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
-+        Err(error) => Err(error).with_context(|| format!("inspecting plugin evidence {name}")),
-+    }
-+}
-+
-+fn read(app: &AnchoredDir) -> Result<Journal> {
-+    let file = app
-+        .open_regular(Path::new(MARKER), MAX_RECORD)?
-+        .context("publication journal is not a bounded regular file")?;
-+    crate::process::validate_recovery_file(&file)?;
-+    crate::process::prove_same_mount(app.descriptor(), file.as_fd())?;
-+    let mut bytes = Vec::new();
-+    file.take(MAX_RECORD as u64 + 1).read_to_end(&mut bytes)?;
-+    ensure!(
-+        bytes.len() <= MAX_RECORD && bytes.last() == Some(&b'\n'),
-+        "incomplete publication journal"
++  // Offline, the disconnect banner already explains a missing snapshot.
++  if (!snapshot && loadFailed && !offline)
++    return (
++      <section className="mb-4 mt-3 w-full max-w-2xl" aria-label="Suggested sessions">
++        <p role="alert" className="px-1 text-xs text-status-error">
++          Could not load suggestions.{" "}
++          <button
++            type="button"
++            onClick={() => void ctrl.load()}
++            className="cursor-pointer text-brand-500 hover:underline"
++          >
++            Try again
++          </button>
++        </p>
++      </section>
 +    );
-+    let record: Journal = serde_json::from_slice(&bytes).context("invalid publication journal")?;
-+    ensure!(record.schema == 1, "unsupported publication journal schema");
-+    aoe_plugin_api::PluginId::new(record.id.as_str())?;
-+    ensure!(
-+        record
-+            .directory
-+            .strip_prefix(".publish-")
-+            .is_some_and(|suffix| {
-+                !suffix.is_empty() && suffix.bytes().all(|byte| byte.is_ascii_alphanumeric())
-+            }),
-+        "invalid publication directory"
-+    );
-+    ensure!(
-+        record.container != record.new_tree
-+            && record.old_tree != Some(record.new_tree)
-+            && record.old_tree != Some(record.container)
-+            && [
-+                Some(record.container),
-+                Some(record.new_tree),
-+                record.old_tree
-+            ]
-+            .into_iter()
-+            .flatten()
-+            .all(|identity| identity.device == record.plugins.device && identity.inode != 0),
-+        "invalid publication tree identities"
-+    );
-+    Ok(record)
-+}
++  if (!snapshot || snapshot.providers.length === 0 || !snapshot.prefs.homepage) return null;
 +
-+fn directory_at(parent: &AnchoredDir, leaf: &Path) -> Result<Option<Identity>> {
-+    let Some(stat) = parent.entry_stat(leaf)? else {
-+        return Ok(None);
-+    };
-+    ensure!(
-+        stat.st_mode & libc::S_IFMT == libc::S_IFDIR
-+            && stat.st_uid == nix::unistd::geteuid().as_raw(),
-+        "publication path {} is not an owned directory",
-+        parent.path().join(leaf).display()
-+    );
-+    #[cfg(target_os = "macos")]
-+    let device = stat.st_dev as u64;
-+    #[cfg(not(target_os = "macos"))]
-+    let device = stat.st_dev;
-+    let child = parent.child(leaf)?;
-+    crate::process::prove_same_mount(parent.descriptor(), child.descriptor())?;
-+    let identity = Identity::capture(child.descriptor())?;
-+    ensure!(
-+        (identity.device, identity.inode) == (device, stat.st_ino),
++  const active = snapshot.items.filter((item) => !item.dismissed);
++  const rows = active.slice(0, wide ? 3 : 2);
++  // A provider that is off is never asked, so it stays "pending" forever.
++  const on = snapshot.providers.filter((p) => p.enabled);
++  const pending = on.filter((p) => p.status === "pending");
++  const errored = on.filter((p) => p.status === "error");
++  const kindOf = (item: { provider_id: string; criterion: string }) =>
++    snapshot.providers
++      .find((p) => p.id === item.provider_id)
++      ?.sources.find((src) => src.criterion === item.criterion)
++      ?.label.toLowerCase();
++  const alert = notice ?? (loadFailed ? "Could not load suggestions." : null);
 +
-```
-
-**File**: `src/process/linux.rs` (modified, +14/-5)
-```diff
-@@ -830,18 +830,27 @@ pub(super) fn prove_staging_host_mount_absent(mount: &Path) -> anyhow::Result<()
-         "/proc/self/fd/{}/..",
-         mount.as_raw_fd()
-     )))?;
--    let mount_id = |file: &fs::File| -> anyhow::Result<u64> {
--        let info = fs::read_to_string(format!("/proc/self/fdinfo/{}", file.as_raw_fd()))?;
-+    use std::os::fd::AsFd as _;
-+    prove_same_mount(parent.as_fd(), mount.as_fd()).context("staging path remains a host mount")
-+}
-+
-+pub(super) fn prove_same_mount(
-+    parent: std::os::fd::BorrowedFd<'_>,
-+    child: std::os::fd::BorrowedFd<'_>,
-+) -> anyhow::Result<()> {
-+    use std::os::fd::AsRawFd as _;
-+    let mount_id = |fd: std::os::fd::BorrowedFd<'_>| -> anyhow::Result<u64> {
-+        let info = fs::read_to_string(format!("/proc/self/fdinfo/{}", fd.as_raw_fd()))?;
-         Ok(info
-             .lines()
-             .find_map(|line| line.strip_prefix("mnt_id:"))
--            .context("staging host mount identity unavailable")?
-+            .context("host mount identity unavailable")?
-             .trim()
-             .parse()?)
-     };
-     anyhow::ensure!(
--        mount_id(&mount)? == mount_id(&parent)?,
--        "staging path remains a host mount"
-+        mount_id(child)? == mount_id(parent)?,
-+        "operation crosses a host mount"
-     );
-     Ok(())
- }
-```
-
-**File**: `src/process/macos.rs` (modified, +22/-0)
-```diff
-@@ -85,6 +85,28 @@ pub(super) fn prove_staging_host_mount_absent(mount: &std::path::Path) -> anyhow
-     Ok(())
- }
- 
-+pub(super) fn prove_same_mount(
-+    parent: std::os::fd::BorrowedFd<'_>,
-+    child: std::os::fd::BorrowedFd<'_>,
-+) -> anyhow::Result<()> {
-+    use std::os::fd::AsRawFd as _;
-+    let mount = |fd: std::os::fd::BorrowedFd<'_>| -> anyhow::Result<_> {
-+        let mut stat = std::mem::MaybeUninit::<libc::statfs>::uninit();
-+        // SAFETY: fd is borrowed and stat points to writable storage.
-+        if unsafe { libc::fstatfs(fd.as_raw_fd(), stat.as_mut_ptr()) } != 0 {
-+            return Err(std::io::Error::last_os_error()).context("inspecting host mount");
-+        }
-+        // SAFETY: successful fstatfs initialized stat.
-+        let stat = unsafe { stat.assume_init() };
-+        Ok((stat.f_mntonname, stat.f_mntfromname))
-+    };
-+    anyhow::ensure!(
-+        mount(parent)? == mount(child)?,
-+        "operation crosses a host mount"
-+    );
-+    Ok(())
-+}
-+
- impl StagingVolume {
-     #[cfg(test)]
-     pub(super) fn create(private_mount_path: &std::path::Path, limit: u64) -> anyhow::Result<Self> {
-```
-
-**File**: `src/process/mod.rs` (modified, +15/-0)
-```diff
-@@ -195,6 +195,21 @@ pub(crate) fn prove_staging_host_mount_absent(mount: &Path) -> anyhow::Result<()
-     }
- }
- 
-+pub(crate) fn prove_same_mount(
-+    parent: std::os::fd::BorrowedFd<'_>,
-+    child: std::os::fd::BorrowedFd<'_>,
-+) -> anyhow::Result<()> {
-+    #[cfg(any(target_os = "linux", target_os = "macos"))]
-+    {
-+        platform::prove_same_mount(parent, child)
-+    }
-+    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
-+    {
-+        let _ = (parent, child);
-+        anyhow::bail!("mount identity unavailable on this platform")
-+    }
-+}
-+
- /// A private filesystem with an enforced allocation ceiling. Unsupported hosts fail closed.
- pub(crate) struct StagingVolume {
-     #[cfg(any(target_os = "linux", target_os = "macos"))]
-```
-
-**File**: `src/server/startup.rs` (modified, +6/-0)
-```diff
-@@ -520,6 +520,12 @@ pub(crate) async fn start_server(
-     crate::process::systemd::mark_daemon();
-     raise_fd_limit();
- 
-+    if !read_only {
-+        if let Err(error) = crate::plugin::install::recover_stale_publication() {
-+            tracing::warn!(target: "plugin.install", %error, "plugin publication recovery is fenced");
-+        }
-+    }
-+
-     // Single live `FileWatchService` per daemon.
-     let file_watch = FileWatchService::new().unwrap_or_else(|e| {
-         tracing::warn!(
-```
-
----
-
-### Incident Patch 3: `121dc011` (2026-11-24)
-**Commit Message**: fix(web): show Trash as an icon with a count badge (#6006)
-
-* fix(web): show Trash as an icon with a count badge
-
-The footer Trash control showed an icon, a count pill and the word "Trash".
-It is now a 32px icon button beside Settings with a count badge (99+ above
-99), named "Trash, N sessions" for screen readers and the tooltip. The badge
-no longer collides with Settings on the compact rail.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(web): match the Trash badge to the activity bar badge
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(web): stack the rail footer so Trash and Settings fit with scaled text
-
-At a 24px root font the side-by-side 2rem controls overflowed the fixed
-88px compact rail, putting Settings over the resize handle. Stack them in
-rail mode and cover a 24px root font in the bounds test.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `web/src/components/WorkspaceSidebar.tsx` (modified, +6/-1)
-```diff
-@@ -466,7 +466,12 @@ export function WorkspaceSidebar(props: Props) {
- 
-         <SidebarSystemHealth />
- 
--        <div className="border-t border-surface-700/20 p-2 max-md:pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-center gap-1">
-+        {/* The rail is a fixed 88px, so its controls stack to fit a scaled root font. */}
-+        <div
-+          className={`border-t border-surface-700/20 p-2 max-md:pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-center ${
-+            compact ? "flex-col gap-2" : "gap-1"
-+          }`}
++  return (
++    <section className="mb-4 mt-3 w-full max-w-2xl" aria-labelledby="suggested-sessions-heading">
++      <div className="mb-2 flex items-baseline justify-between px-1">
++        <h2
++          id="suggested-sessions-heading"
++          className="text-[11px] font-mono uppercase tracking-[0.16em] text-text-muted"
 +        >
-           {(trashedWorkspaces.length > 0 || (props.trashedCount ?? 0) > 0) && (
-             <TrashMenu
-               trashedWorkspaces={trashedWorkspaces}
++          Suggested sessions
++        </h2>
++        <a
++          href="/suggestions"
++          onClick={(e) => {
++            if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
++            e.preventDefault();
++            onViewAll();
++          }}
++          className="text-xs text-brand-500 hover:underline"
++        >
++          {active.length > 0 ? `View all (${active.length})` : "View all"}
++        </a>
++      </div>
++      <ul className="rounded-lg border border-surface-700/40 bg-surface-900">
++        {rows.map((item) => (
++          <SuggestionRow
++            key={suggestionKey(item)}
++            title={item.title}
++            sourceRef={snapshot.prefs.show_source_ref ? item.source_ref : undefined}
++            reason={item.reason}
++            project={item.resolved_project?.name ?? item.project}
++            session={liveSession(item.started_session, sessions)}
++            stale={item.stale}
++            failure={failures[suggestionKey(item)]}
++            note={
++              <StartedPromptNote
++                session={liveSession(item.started_session, sessions)}
++                onTryAgain={() => ctrl.retryBlocked(item)}
++                disabled={readOnly || offline}
++              />
++            }
++            actions={
++              <SuggestionItemActions
++                item={item}
++                snapshot={snapshot}
++                ctrl={ctrl}
++                readOnly={readOnly}
++            
 ```
 
-**File**: `web/src/components/__tests__/WorkspaceSidebarTrash.test.tsx` (modified, +10/-7)
+**File**: `web/src/components/LiveTerminalView.tsx` (modified, +19/-5)
 ```diff
-@@ -184,14 +184,17 @@ describe("WorkspaceSidebar Trash control", () => {
-     ]);
-   });
+@@ -27,6 +27,7 @@ import { safeGetItem, safeRemoveItem, safeSetItem } from "../lib/safeStorage";
+ import { isSessionActive } from "../lib/session";
+ import { publishLivePane } from "../lib/liveControl";
+ import { LiveControlStrip } from "./LiveControlStrip";
++import { PromptBlockedNote } from "./PromptBlockedNote";
  
--  it("puts the count right after the Trash icon, not against Settings (#2574)", () => {
--    withTrash();
-+  it.each([
-+    [1, "1", "Trash, 1 session"],
-+    [4, "4", "Trash, 4 sessions"],
-+    [120, "99+", "Trash, 120 sessions"],
-+  ])("labels %i trashed sessions with an icon and a count badge, not a text label", (n, badge, name) => {
-+    renderSidebar([], { trashedWorkspaces: [], trashedCount: n, trashLoaded: false });
-     const toggle = screen.getByTestId("sidebar-trash-toggle");
--    const badge = screen.getByTestId("sidebar-trash-count");
--    expect(badge.textContent).toBe("1");
--    expect(toggle.contains(badge)).toBe(true);
--    const label = Array.from(toggle.querySelectorAll("span")).find((s) => s.textContent === "Trash")!;
--    expect(follows(badge, label)).toBe(true);
-+    expect(toggle.getAttribute("aria-label")).toBe(name);
-+    expect(toggle.getAttribute("title")).toBe(name);
-+    expect(toggle.textContent).toBe(badge);
-+    expect(screen.getByTestId("sidebar-trash-count").getAttribute("aria-hidden")).toBe("true");
-   });
+ interface Props {
+   readOnly: boolean;
+@@ -526,11 +527,24 @@ export function LiveTerminalView({ session, readOnly, active = true, surface = "
+         onRestart={readOnly ? undefined : retryEnsure}
+       />
  
-   it.each([
-```
-
-**File**: `web/src/components/sidebar/TrashMenu.tsx` (modified, +16/-11)
-```diff
-@@ -101,6 +101,7 @@ export function TrashMenu({
-   // Sessions, the unit the daemon reports before the rows load, so the badge does not change meaning when Trash opens.
-   const loadedCount = trashedWorkspaces.reduce((sum, ws) => sum + ws.sessions.length, 0);
-   const count = loaded ? loadedCount : loadedCount || trashedCount;
-+  const label = `Trash, ${count} ${count === 1 ? "session" : "sessions"}`;
-   const pendingMenu = menu?.ws.sessions.some(hasPendingTrash) ?? false;
-   const menuTargets = menu
-     ? menu.ws.sessions
-@@ -109,7 +110,7 @@ export function TrashMenu({
-     : [];
- 
-   return (
--    <div ref={ref} className="relative min-w-0 flex-1">
-+    <div ref={ref} className="relative shrink-0">
-       <button
-         onClick={() => {
-           if (!open) {
-@@ -121,18 +122,22 @@ export function TrashMenu({
-         aria-expanded={open}
-         aria-controls={open ? "sidebar-trash-panel" : undefined}
-         data-testid="sidebar-trash-toggle"
--        className="h-8 w-full min-w-0 flex items-center gap-2 rounded-md px-2.5 text-text-secondary hover:text-text-primary hover:bg-surface-800/50 cursor-pointer transition-colors"
--        title={`Trash (${count})`}
--        aria-label={`Trash (${count})`}
-+        className="relative w-8 h-8 flex items-center justify-center rounded-md text-text-secondary hover:text-text-primary hover:bg-surface-800/50 cursor-pointer transition-colors"
-+        title={label}
-+        aria-label={label}
-       >
--        <Trash2 className="h-4 w-4 shrink-0" />
--        <span
--          data-testid="sidebar-trash-count"
--          className="shrink-0 rounded-full bg-surface-900 px-1.5 py-0.5 text-[10px] font-mono tabular-nums text-text-dim leading-none"
--        >
--          {count}
-+        <span className="relative">
-+          <Trash2 className="h-4 w-4" />
-+          {count > 0 && (
-+            <span
-+              data-testid="sidebar-trash-count"
-+              aria-hidden="true"
-+              className="pointer-events-none absolute -top-1.5 -right-2.5 min-w-[1rem] rounded-full border border-surface-600 bg-surface-800 px-1 text-[10px] font-semibold leading-[0.875rem] tabular-nums text-text-secondary text-center"
-+            >
-+              {count > 99 ? "99+" : count}
+-      {ensureWarning && (
+-        <div className="absolute left-0 right-0 top-12 z-20 flex justify-center px-3 pointer-events-none">
+-          <span className="text-xs text-status-warning bg-surface-900/90 border border-surface-700/60 rounded-full px-4 py-2 max-w-md break-words text-center">
+-            {ensureWarning}
+-          </span>
++      {(ensureWarning || session.initial_prompt_error) && (
++        <div className="absolute left-0 right-0 top-12 z-20 flex flex-col items-center gap-2 px-3 pointer-events-none">
++          {ensureWarning && (
++            <span className="text-xs text-status-warning bg-surface-900/90 border border-surface-700/60 rounded-full px-4 py-2 max-w-md break-words text-center">
++              {ensureWarning}
 +            </span>
 +          )}
-         </span>
--        <span className="min-w-0 flex-1 truncate text-left text-[13px] font-medium">Trash</span>
-       </button>
-       {open &&
-         panelPosition &&
++          {session.initial_prompt_error && (
++            <div className="pointer-events-auto bg-surface-900/90 border border-surface-700/60 rounded-2xl px-4 py-2 max-w-md text-center">
++              <PromptBlockedNote
++                inSession
++                label="Initial prompt not sent"
++                code={session.initial_prompt_error_code}
++                message={session.initial_prompt_error}
++                disabled={readOnly}
++              />
++            </div>
++          )}
+         </div>
+       )}
+ 
 ```
 
-**File**: `web/tests/coverage-matrix.json` (modified, +3/-2)
+**File**: `web/src/components/PromptBlockedNote.tsx` (added, +152/-0)
 ```diff
-@@ -2390,8 +2390,9 @@
-       "id": "sidebar.trash-control",
-       "kind": "vitest",
-       "risk": "medium",
--      "specs": ["src/components/__tests__/WorkspaceSidebarTrash.test.tsx"],
--      "components": ["web/src/components/WorkspaceSidebar.tsx", "web/src/components/sidebar/TrashMenu.tsx"]
-+      "specs": ["src/components/__tests__/WorkspaceSidebarTrash.test.tsx", "tests/session-trash.spec.ts"],
-+      "components": ["web/src/components/WorkspaceSidebar.tsx", "web/src/components/sidebar/TrashMenu.tsx"],
-+      "notes": "The footer Trash control is an icon button beside Settings, shown only while something is trashed. Its count is a badge on the icon (99+ above 99) and its accessible name and tooltip read \"Trash, N sessions\". On the compact rail Trash stacks above Settings, so both stay inside the rail and the badge clear of Settings with a 24px root font."
-     },
-     {
-       "id": "sidebar.trash-on-demand",
-```
-
-**File**: `web/tests/live/session-actions.spec.ts` (modified, +1/-1)
-```diff
-@@ -166,7 +166,7 @@ test.describe("delete and trash (#1220, #2489)", () => {
-     await expect(row).toHaveCount(0, { timeout: 10_000 });
- 
-     const trashToggle = page.locator("[data-testid='sidebar-trash-toggle']");
--    await expect(trashToggle).toHaveAttribute("aria-label", "Trash (1)");
-+    await expect(trashToggle).toHaveAttribute("aria-label", "Trash, 1 session");
-     await trashToggle.click();
-     const restorePromise = page.waitForResponse(
-       (res) => res.url().endsWith(`/api/sessions/${sessionId}/restore`) && res.request().method() === "POST",
-```
-
-**File**: `web/tests/session-trash.spec.ts` (modified, +35/-0)
-```diff
-@@ -10,6 +10,7 @@ import {
-   trashRows,
-   trashToggle,
- } from "./helpers/trashMocks";
-+import { dragSidebarHandle } from "./helpers/sidebar";
- 
- test.use({ viewport: { width: 1280, height: 720 } });
- 
-@@ -65,6 +66,40 @@ test.describe("Session trash flow", () => {
-     await confirmDelete(dialog);
-     await expect.poll(() => handle.deletedIds.length, { timeout: 10_000 }).toBe(1);
-   });
+@@ -0,0 +1,152 @@
++import { useState } from "react";
++import { updateSettings } from "../lib/api";
++import { copyPrompt } from "../lib/suggestionPlan";
++import type { StartedSession } from "../lib/types";
 +
-+  // A 24px root font is browser text scaled to 150%.
-+  for (const rootFontPx of [16, 24]) {
-+    test(`the footer Trash and Settings controls stay inside the compact rail at a ${rootFontPx}px root font`, async ({
-+      page,
-+    }) => {
-+      await installTrashMocks(page, [{ ...SESSION, trashed: true }]);
-+      await page.addInitScript((px) => {
-+        document.addEventListener("DOMContentLoaded", () => {
-+          document.documentElement.style.fontSize = `${px}px`;
++const FOLDER = "agent_folder_not_trusted";
++
++/** The server's message names config keys; the codes it knows get one plain sentence instead. */
++const PLAIN: Record<string, string> = {
++  [FOLDER]: "Claude Code is asking whether to trust this folder, so the prompt was not typed.",
++  agent_bypass_not_accepted:
++    "Claude Code is waiting for Bypass Permissions to be accepted once. Open the Session and accept it.",
++};
++
++const LINK = "cursor-pointer text-brand-500 hover:underline disabled:opacity-50";
++
++/**
++ * Why a Session's initial prompt was not typed. For an untrusted folder it offers to turn on
++ * `pre_trust_agent_folders` after saying what that also allows, then Try again when given.
++ */
++export function PromptBlockedNote({
++  label,
++  code,
++  message,
++  onTryAgain,
++  inSession = false,
++  onCopyPrompt,
++  disabled = false,
++  live = "alert",
++}: {
++  label: string;
++  code?: string | null;
++  message: string;
++  /** Starts a fresh Session; without it the note says how to go on in this one. */
++  onTryAgain?: () => Promise<unknown> | void;
++  /** Shown on the Session page, where the terminal is right there. */
++  inSession?: boolean;
++  /** Copies the prompt to paste once the folder is trusted. */
++  onCopyPrompt?: () => void;
++  disabled?: boolean;
++  /** Rows re-render on every poll, so they announce politely. */
++  live?: "alert" | "status";
++}) {
++  const [step, setStep] = useState<"idle" | "confirm" | "saving" | "on" | "failed">("idle");
++  const [retrying, setRetrying] = useState(false);
++  const tryAgain = async () => {
++    if (retrying || !onTryAgain) return;
++    setRetrying(true);
++    try {
++      await onTryAgain();
++    } finally {
++      setRetrying(false);
++    }
++  };
++  const turnOn = async () => {
++    setStep("saving");
++    const outcome = await updateSettings({ session: { pre_trust_agent_folders: true } });
++    setStep(outcome === "committed" ? "on" : "failed");
++  };
++  const actions = code === FOLDER && !disabled;
++  return (
++    <div className="text-xs text-status-warning">
++      <p role={live} className="break-words">
++        {label}: {(code && PLAIN[code]) || message}
++      </p>
++      {code === FOLDER && (
++        <p>
++          {inSession
++            ? "Choose \u201cYes, I trust this folder\u201d in the terminal, then type the prompt."
++            : "Open the Session and choose \u201cYes, I trust this folder\u201d, then paste the prompt."}
++          {onCopyPrompt && !disabled && (
++            <>
++              {" "}
++              <button type="button" className={LINK} onClick={onCopyPrompt}>
++                Copy prompt
++              </button>
++            </>
++          )}
++        </p>
++      )}
++      {actions && (step === "idle" || step === "failed") && (
++        <p className="text-text-secondary">
++          {step === "failed" && <span>Couldn&apos;t turn on pre-trust. </span>}
++          Or trust every folder AoE starts Claude Code in:{" "}
++          <button type="button" className={LINK} onClick={() => setStep("confirm")}>
++            Turn on pre-trust
++          </button>
++        </p>
++      )}
++      {actions && (step === "confirm" || step === "saving") && (
++        <p className="text-text-secondary">
++          This turns on Pre-trust agent folders: Claude Code will trust each folder AoE starts it in, which also runs
++          the repo&apos;s own .claude/settings.json hooks.{" "}
++          {/* Focus follows the step, since the button that had it is gone. */}
++          <button type="button" className={LINK} disabled={step === "saving"} onClick={() => void turnOn()} autoFocus>
++            Turn on
++          </button>{" "}
++          <button type="button" className={LINK} disabled={step === "saving"} onClick={() => setStep("idle")}>
++            Cancel
++          </button>
++        </p>
++      )}
++      {actions &&
++        step === "on" &&
++        (onTryAgain ? (
++          <p className="text-text-secondary">
++            Pre-trust is on.{" "}
++            <button type="button" className={LINK} disabled={retrying} onClick={() => void tryAgain()} autoFocus>
++              Try again
++            </button>{" "}
++            moves this Session to Trash and starts a new one.
++          </p>
++        ) : (
++          <p className="text-text-secondary">
++            Pre-trust is on: new Sessions start trusted. Trust this folder in the terminal to go on.
++          </p>
++        ))}
++    </div>
++  );
++}
++
++/** A started suggestion's row note: nothing unless its Session's prompt was not typed. */
++export function StartedPromptNote({
++  session,
++  onTryAgain,
++  disabled,
++}: {
++  session?: StartedSession;
++  onTryAgain: () => Promise<unknown>;
++  disabled: boolean;
++}) {
++  if (!session?.initial_prompt_error) return null;
++  return (
++    
+```
+
+---
+
+### Incident Patch 2: `956d1300` (2026-11-26)
+**Commit Message**: feat(tui): suggested sessions view, Suggested group and one-line prompt (#5600)
+
+* feat(acp): client calls for the suggestions snapshot, refresh, dismiss and prepare
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* feat(tui): suggested sessions view, Suggested group and prompt row
+
+Adds the Suggestions view with Start into the prefilled new-session
+dialog, the collapsed Suggested group above Trash, the Prompt row in the
+new-session dialog, the open-source palette action, and the plugin
+manager Suggestions marker.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(tui): focus the Prompt row by mouse and ignore paste behind the source overlay
+
+Addresses review comments from @coderabbitai and @jerome-benoit on #5600.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(acp): keep the daemon's reason when a suggestion prepare is refused
+
+Addresses review comment from @coderabbitai on #5600.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(tui): tell offline from read-only by the latest runtime result
+
+The writer keeps its channel open after the read side drops, so channel
+liveness alone reported a gone daemon as read-only.
+
+Addresses review comment
+
+**File**: `docs/guides/suggested-sessions.md` (modified, +27/-19)
+```diff
+@@ -8,10 +8,12 @@ Suggestions show up in the web dashboard (homepage section, `/suggestions`, and
+ 
+ ## Setting up
+ 
+-With no provider installed, the web homepage and the empty `/suggestions` view offer **Set up suggestions** when a featured plugin exists. The sheet installs the sources you tick, runs each plugin's setup checks (✓, `!`, ✕, with the plugin's fix text and **Check again**), and ends with "Suggestions are on". **Finish later** closes it; the plugin stays installed. **More sources in the Marketplace ›** opens Settings › Plugins › Marketplace filtered to plugins that work with suggestions.
++With no provider installed, the web homepage and the empty `/suggestions` view offer **Set up suggestions** when a featured plugin exists. The sheet installs the sources you tick, runs each plugin's setup checks (✓, `!`, ✕, with the plugin's fix text and **Check again**), and ends with "Suggestions are on". **Finish later** closes it; the plugin stays installed. **More sources in the Marketplace ›** opens Settings › Plugins › Marketplace filtered to plugins that work with suggestions. With no provider, the TUI's list (`S`) says to run `aoe plugin install gh:agent-of-empires/plugin-github` and turn the provider on in the dashboard, and names **Set up suggestions** when the dashboard offers it. With every provider off, it says to turn one on in Settings › Suggestions.
+ 
+ Providers are off until you turn one on, in the setup sheet, in Settings › Suggestions › Sources, or through the API (`PATCH /api/suggestions/prefs` with `provider_enabled`). The sheet turns on each source it installs, and no other. To skip the sheet, install a provider with `aoe plugin install` ([Plugins](../plugins.md)), then turn it on. While every installed provider is off, the homepage section and `/suggestions` say so and offer **Turn it on** (**Turn them on** for several); a read-only dashboard says it can't turn them on.
+ 
++Suggestions stay off until you set them up. A **New: suggested sessions** tip shows once in the TUI and the dashboard, saying how to turn them on, while every installed provider is off, or while none is installed and a featured plugin offers them. The dashboard walkthrough also has a step on the homepage's Suggested section, skipped when the section is not on the page. The TUI intro's last page lists `S`.
++
+ ## Web dashboard
+ 
+ ### Homepage and `/suggestions`
+@@ -60,8 +62,8 @@ If a provider is switched off, its items are hidden and the view says "<provider
+ | Setting | What it does |
+ |---|---|
+ | Show on the homepage | The homepage section. |
+-| Show in the sidebar | A collapsed **Suggested (N)** group at the bottom of the web session sidebar, above Trash, absent when there are no open suggestions. Started suggestions are not listed, since the Session is already under its Project. Expanded, it lists 3 items and **View all**; clicking an item starts it like **Start**. Off by default. |
+-| Show where each one comes from | Shows where each suggestion comes from, such as `owner/repo#123`, on web rows and before the title on TUI rows. On by default. |
++| Show in the sidebar | A collapsed **Suggested (N)** group at the bottom of the web session sidebar, above Trash, and a **Suggested (N)** row in the TUI Home list, below the live sessions and above Archived and Trash. Both are absent when there are no open suggestions. Started suggestions are not counted, since the Session is already under its Project. Expanded, the web group lists 3 items and **View all**; clicking an item starts it like **Start**. Off by default. |
++| Show where each one comes from | Shows where each suggestion comes from, such as `owner/repo#123`, on web rows and after the title in the TUI list. On by default. |
+ | Sources | Drag to set which source comes first (Alt+↑/↓ on a focused row, a move-up button on a phone). Each has an on/off switch. A source that uses an agent says so, since it spends your agent usage. A source error can carry a fix button from the plugin. |
+ | *Source* · Kinds | One row per kind of suggestion, such as Review requests: what it starts with ("Claude Code · Structured view · worktree"), a switch to suggest it, and **Edit** for its [preset](#presets). |
+ | *Source* source settings | The plugin's own settings for its suggestions, such as the GitHub plugin's ignored organizations and repositories. The same settings, saved to the same place, also appear under Settings › Plugins. |
+@@ -95,31 +97,37 @@ Change any proposal with its select, then **Link N repos** stores every checked
+ 
+ > The TUI keys below are provisional until #4597 settles the key bindings.
+ 
+-**Home.** A collapsed **Suggested (N)** group sits above Trash and is absent when there are no open suggestions. Enter expands it to 3 items and a "View all" row. On an item, Enter prepares it and opens the prefilled dialog, `z` (`Z` in strict mode) dismisses it, and `Ctrl+K` lists "Open in <provider>". `N` (`Ctrl+N`) starts a blank session.
++**Home.** With **Show in the sidebar
+```
+
+**File**: `docs/plugin-api.md` (modified, +2/-2)
+```diff
+@@ -534,7 +534,7 @@ Suggestions are stored per profile. The routes below list and act on them; only
+ 
+ | Route | Body | Result |
+ |---|---|---|
+-| `GET /api/suggestions` | none | `{ providers: [{ id, name, enabled, status, error?, updated_at?, refreshing, sources: [{ criterion, label, description, variables, enabled, preset, customized }], checks: [{ id, label, status, detail, fix }] }], items, prefs: { homepage, sidebar, refresh_minutes, show_source_ref, provider_order } }` |
++| `GET /api/suggestions` | none | `{ profile?, providers: [{ id, name, enabled, status, error?, updated_at?, refreshing, sources: [{ criterion, label, description, variables, enabled, preset, customized }], checks: [{ id, label, status, detail, fix }] }], items, prefs: { homepage, sidebar, refresh_minutes, show_source_ref, provider_order } }` |
+ | `POST /api/suggestions/refresh` | none | `{ ok, notified }` |
+ | `POST /api/suggestions/checks/run` | none | `{ ok, notified }` |
+ | `POST /api/suggestions/dismiss` | `{ provider_id, id }` | `{ ok }` |
+@@ -574,7 +574,7 @@ An item has one primary Session. The first create that carries `suggestion` (`st
+ 
+ Errors: 404 `unknown_provider` (no active plugin provides suggestions under that id), 409 `stale_suggestion` (the item is no longer published, its source is disabled, or its source closed it; `prepare` and `start` answer all three the same way), 400 `validation_failed` (`criterion` not declared by the provider, an unknown preset agent, or a prompt or its expansion over 64 KiB), 403 `read_only`.
+ 
+-The TUI lists suggestions from Home with `S` (`Ctrl+S` in strict mode). The view shows each item's `preview` and prompt as plain text; the first Enter resolves `prepare` and shows its final `initial_prompt` (after the preset prompt); a second Enter opens the new-session dialog prefilled with it, and an item whose `project` is `null` cannot be started. The dialog's Prompt row, which is always present and editable, holds that prompt; for a suggestion it is labelled with the provider and Ctrl+P on it shows the item's `preview` as source text. `r` only asks providers to refresh; `l` reloads the list. Items keep the order of the snapshot. Home also lists a collapsed **Suggested (N)** group above Trash, absent when there are no open suggestions. Enter expands it to the first 3 items and a "View all" row that opens the view above; Enter on an item prepares it and opens the prefilled dialog directly, `z` (`Z` in strict mode) dismisses it, and `N` (`Ctrl+N`) starts a blank session. `Ctrl+K` lists "Suggested sessions"; on a suggestion row, or on the selected item in the view, it also lists "Open in <provider>", which opens the item's `source_url`. Every TUI key is provisional: `S` / `Ctrl+S` to open, `z` / `N` on a Home row, and `x` (dismiss), `d` (dismissed), `r` and `l` inside the view may move.
++The TUI shows suggestions in Home's preview pane and starts them with `start`, or with `prepare` and the new-session dialog for "Start with changes"; it shows each item's `preview` and `start.prompt` as plain text and sends the snapshot's `profile` as `expected_profile` on each suggestions request it posts. Keys and layout are in the [guide's TUI section](guides/suggested-sessions.md#tui).
+ 
+ ### Project mappings
+ 
+```
+
+**File**: `src/daemon/mod.rs` (modified, +22/-0)
+```diff
+@@ -22,6 +22,7 @@ pub(crate) mod transport;
+ pub(crate) mod websocket;
+ pub use websocket::WsError;
+ pub mod live;
++pub mod suggestions;
+ mod wire;
+ 
+ use std::fmt;
+@@ -419,6 +420,27 @@ impl DaemonClient {
+         Ok(snapshot)
+     }
+ 
++    /// `GET /api/settings`: the served profile resolved over the machine-wide values.
++    pub async fn settings(&self) -> Result<serde_json::Value, DaemonClientError> {
++        let url = self
++            .sessions_url
++            .join("settings")
++            .map_err(|_| DaemonClientError::Transport)?;
++        self.request_json(self.http.get(url)).await
++    }
++
++    /// `PATCH /api/settings`: the daemon routes each leaf to the layer it is read from.
++    pub async fn patch_settings(&self, patch: &serde_json::Value) -> Result<(), DaemonClientError> {
++        let url = self
++            .sessions_url
++            .join("settings")
++            .map_err(|_| DaemonClientError::Transport)?;
++        let mut response = self
++            .request_response(self.http.patch(url).json(patch))
++            .await?;
++        discard_bounded_body(&mut response).await
++    }
++
+     /// The daemon's own default profile, which can differ from this client's config.
+     pub async fn default_profile(&self) -> Result<String, DaemonClientError> {
+         let url = self
+```
+
+**File**: `src/daemon/suggestions.rs` (added, +525/-0)
+```diff
+@@ -0,0 +1,525 @@
++//! Client side of the daemon's suggestions API (`/api/suggestions`): the
++//! snapshot and prepare wire types and the [`DaemonClient`] calls that read
++//! and act on them.
++
++use std::time::Duration;
++
++use reqwest::StatusCode;
++use serde::Deserialize;
++
++use super::{transport, DaemonClient, DaemonClientError, DEFAULT_TIMEOUT};
++
++/// `POST /api/suggestions/start` answers after the create, which can take
++/// minutes for a sandbox; `POST /api/sessions` waits as long.
++const START_TIMEOUT: Duration = Duration::from_secs(30 * 60);
++/// A refusal's explanation is bounded before it reaches the screen.
++const MAX_REFUSAL_BYTES: usize = 4096;
++const MAX_REFUSAL_CHARS: usize = 200;
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Snapshot {
++    /// The profile the daemon publishes suggestions under.
++    #[serde(default)]
++    pub(crate) profile: Option<String>,
++    /// The daemon that served this snapshot; set by the loader, not the wire.
++    #[serde(skip)]
++    pub(crate) daemon: Option<String>,
++    /// The daemon's `pre_trust_agent_folders`; set by the loader, not the wire.
++    #[serde(skip)]
++    pub(crate) pre_trust: Option<bool>,
++    pub(crate) providers: Vec<Provider>,
++    pub(crate) items: Vec<Item>,
++    #[serde(default)]
++    pub(crate) prefs: Prefs,
++}
++
++#[derive(Debug, Clone, Deserialize)]
++#[serde(default)]
++pub struct Prefs {
++    pub(crate) show_source_ref: bool,
++    /// "Show in the sidebar": the web sidebar group and the TUI Home row.
++    pub(crate) sidebar: bool,
++}
++
++impl Default for Prefs {
++    fn default() -> Self {
++        Self {
++            show_source_ref: true,
++            sidebar: false,
++        }
++    }
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Provider {
++    pub(crate) id: String,
++    pub(crate) name: String,
++    #[serde(default)]
++    pub(crate) error: Option<String>,
++    #[serde(default = "enabled_by_default")]
++    pub(crate) enabled: bool,
++    /// Unix seconds of the last report.
++    #[serde(default)]
++    pub(crate) updated_at: Option<i64>,
++    #[serde(default)]
++    pub(crate) refreshing: bool,
++    #[serde(default)]
++    pub(crate) checks: Vec<Check>,
++}
++
++/// A provider's setup check; `fix` is the plugin's own untrusted advice.
++#[derive(Debug, Clone, Deserialize)]
++pub struct Check {
++    pub(crate) status: String,
++    #[serde(default)]
++    pub(crate) fix: String,
++}
++
++/// What Start creates an item with, resolved against its Project.
++#[derive(Debug, Clone, Deserialize)]
++pub struct ItemStart {
++    pub(crate) agent: String,
++    pub(crate) view: String,
++    #[serde(default)]
++    pub(crate) worktree: bool,
++    #[serde(default)]
++    pub(crate) sandbox: bool,
++    #[serde(default)]
++    pub(crate) yolo: bool,
++    /// The first prompt Start sends; absent when the expanded template is too long.
++    #[serde(default)]
++    pub(crate) prompt: Option<String>,
++}
++
++fn enabled_by_default() -> bool {
++    true
++}
++
++/// The registered Project an item resolves to.
++#[derive(Debug, Clone, Deserialize)]
++pub struct ResolvedProject {
++    pub(crate) name: String,
++    pub(crate) path: String,
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Item {
++    pub(crate) provider_id: String,
++    pub(crate) id: String,
++    pub(crate) title: String,
++    pub(crate) reason: String,
++    pub(crate) source_url: String,
++    pub(crate) source_ref: String,
++    pub(crate) preview: String,
++    #[serde(default)]
++    pub(crate) project: Option<String>,
++    #[serde(default)]
++    pub(crate) dismissed: bool,
++    pub(crate) draft: Draft,
++    #[serde(default)]
++    pub(crate) started_session: Option<Started>,
++    #[serde(default)]
++    pub(crate) resolved_project: Option<ResolvedProject>,
++    /// The repo the provider links to a Project, as `owner/repo` for GitHub.
++    #[serde(default)]
++    pub(crate) mapping_key: Option<String>,
++    #[serde(default)]
++    pub(crate) start: Option<ItemStart>,
++    /// The source closed or changed; the item cannot start.
++    #[serde(default)]
++    pub(crate) stale: bool,
++}
++
++/// The live Session an item was started as.
++#[derive(Debug, Clone, Deserialize)]
++pub struct Started {
++    pub(crate) id: String,
++    pub(crate) status: String,
++    #[serde(default)]
++    pub(crate) archived: bool,
++    /// `"start"` for a one-click Start; only those may be trashed and started again.
++    #[serde(default)]
++    pub(crate) started_via: Option<String>,
++}
++
++impl Started {
++    pub(crate) fn one_click(&self) -> bool {
++        self.started_via.as_deref() == Some("start")
++    }
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Draft {
++    pub(crate) prompt: String,
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct PreparedProject {
++    pub(crate) path: String,
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Prepared {
++    pub(crate) title: String,
++    pub(crate) initial_prompt: String,
++    pub(crate) tool: String,
++    pub(crate) project: Option<PreparedProject>,
++    #[serde(de
+```
+
+**File**: `src/plugin/featured.rs` (modified, +4/-0)
+```diff
+@@ -55,6 +55,10 @@ impl FeaturedIndex {
+             .any(|e| e.source.eq_ignore_ascii_case(slug))
+     }
+ 
++    pub fn offers_suggestions(&self) -> bool {
++        self.plugins.values().any(|e| e.suggestions)
++    }
++
+     pub fn declares_suggestions(&self, slug: &str) -> bool {
+         self.plugins
+             .values()
+```
+
+**File**: `src/server/api/suggestions.rs` (modified, +2/-0)
+```diff
+@@ -156,6 +156,7 @@ pub async fn get_suggestions(State(state): State<Arc<AppState>>) -> impl IntoRes
+     };
+     let profile = host.suggestions_profile();
+     let refreshing = host.refreshing_suggestions();
++    let reported_profile = profile.clone();
+     let result = tokio::task::spawn_blocking(move || {
+         let providers = suggestions::providers();
+         // Disk reads stay off the store lock.
+@@ -189,6 +190,7 @@ pub async fn get_suggestions(State(state): State<Arc<AppState>>) -> impl IntoRes
+             };
+             suggestions::attach_started(&mut snapshot, &started);
+             suggestions::attach_refreshing(&mut snapshot, &refreshing);
++            snapshot["profile"] = json!(reported_profile);
+             Json(snapshot).into_response()
+         }
+         Ok(Err(error)) => internal(error),
+```
+
+**File**: `src/server/api/suggestions_tests.rs` (modified, +4/-0)
+```diff
+@@ -225,6 +225,10 @@ async fn snapshot_and_refresh() {
+     assert_eq!(body["items"][0]["id"], "a");
+     assert_eq!(body["items"][0]["dismissed"], false);
+     assert_eq!(body["prefs"]["refresh_minutes"], 15);
++    assert!(
++        body["profile"].is_string(),
++        "clients check it against their own"
++    );
+ 
+     for uri in ["/api/suggestions/refresh", "/api/suggestions/checks/run"] {
+         let (status, _, body) = f.call(Method::POST, uri, json!({})).await;
+```
+
+**File**: `src/server/api/system.rs` (modified, +22/-3)
+```diff
+@@ -1443,10 +1443,29 @@ pub struct TipsResponse {
+ /// shared `crate::tips` catalog plus `app_state.tips_seen` and
+ /// `session.show_tips`. A read projection, so it stays a plain GET behind the
+ /// token wall like [`get_web_ui_state`]; the TUI-only tips never appear here.
+-pub async fn get_tips(State(_state): State<Arc<AppState>>) -> impl IntoResponse {
+-    let result = tokio::task::spawn_blocking(|| {
++pub async fn get_tips(State(state): State<Arc<AppState>>) -> impl IntoResponse {
++    let host = state.plugin_host.clone();
++    let result = tokio::task::spawn_blocking(move || {
+         let config = crate::session::Config::load()?;
+-        let signals = crate::tips::TipSignals::from(&config);
++        let mut signals = crate::tips::TipSignals::from(&config);
++        // The same providers and switches GET /api/suggestions reports. A store
++        // error only drops this tip.
++        let snapshot = host.as_ref().and_then(|host| {
++            let providers = crate::plugin::suggestions::providers();
++            host.with_suggestions_db(|conn, profile| {
++                crate::plugin::suggestions::snapshot(conn, profile, &providers)
++            })
++            .ok()
 +        });
-+      }, rootFontPx);
-+      await page.goto("/");
-+      await expect(trashToggle(page)).toHaveAccessibleName("Trash, 1 session");
-+      await dragSidebarHandle(page, 100);
-+      const panel = page.locator('[data-tour="sidebar"]');
-+      await expect(panel).toHaveAttribute("data-compact", "true");
-+
-+      const panelBox = (await panel.boundingBox())!;
-+      const toggle = (await trashToggle(page).boundingBox())!;
-+      const badge = (await page.getByTestId("sidebar-trash-count").boundingBox())!;
-+      const settings = (await page.getByRole("button", { name: "Settings" }).boundingBox())!;
-+      for (const box of [toggle, badge, settings]) {
-+        expect(box.x).toBeGreaterThanOrEqual(panelBox.x);
-+        expect(box.x + box.width).toBeLessThanOrEqual(panelBox.x + panelBox.width);
-+      }
-+      const overlaps =
-+        badge.x < settings.x + settings.width &&
-+        settings.x < badge.x + badge.width &&
-+        badge.y < settings.y + settings.height &&
-+        settings.y < badge.y + badge.height;
-+      expect(overlaps).toBe(false);
-+    });
-+  }
- });
++        signals.suggestions_setup_available = snapshot.is_some_and(|snapshot| {
++            let enabled: Vec<bool> = snapshot["providers"]
++                .as_array()
++                .into_iter()
++                .flatten()
++                .map(|p| p["enabled"].as_bool().unwrap_or(false))
++                .collect();
++            crate::tips::suggestions_setup_available(&enabled)
++        });
+         let seen = &config.app_state.tips_seen;
+         let tips = crate::tips::eligible(crate::tips::TipSurface::Web, &signals)
+             .into_iter()
+```
+
+---
+
+### Incident Patch 3: `8ec63fec` (2026-11-25)
+**Commit Message**: ci(tessl): set up Tessl loops, maintainer plugin and verifiers (#6017)
+
+* ci(tessl): set up Tessl loops, maintainer plugin and verifiers
+
+Castellan is gone, so issue triage moves to a Tessl loop: one run per
+opened issue plus a daily sweep. Add the aoe-maintainer plugin (triage,
+red-main, codeql-review, groom-ready skills, factory PR rules, AoE
+verifiers and review lens), a Code Review profile, a cloud setup hook
+and a token-free CI check for the Tessl config.
+
+Triage and flaky-hunt run in the aoe-issues environment with an
+issues-only token; analysis loops run read-only.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci(tessl): address review feedback
+
+- deflake rule covers nextest, Vitest and Playwright flakes with a stress
+  repro for each.
+- flaky-hunt dedupes against its own issues and reads web test failures.
+- red-main runs once per failing commit and bounds its culprit baseline to
+  an ancestor of the failure.
+- groom-ready treats open native blockers as not ready; aoe-triage requires
+  Roadmap state on enhancements.
+- settings verifier lists the documented exceptions.
+- cloud setup gates Node on the lockfile engines and reinstalls npm
+  dependencies when a lockfile
+
+**File**: `.agents/skills/.gitignore` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++# Managed by Tessl
++tessl__*
++tessl:*
+```
+
+**File**: `.codex/config.toml` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++[mcp_servers.tessl]
++type = "stdio"
++command = "tessl"
++args = [ "mcp", "start" ]
+```
+
+**File**: `.codex/skills/.gitignore` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++# Managed by Tessl
++tessl__*
++tessl:*
+```
+
+**File**: `.github/CODEOWNERS` (modified, +6/-0)
+```diff
+@@ -83,6 +83,12 @@ Cargo.lock                              @agent-of-empires/protected
+ /CLAUDE.md                              @agent-of-empires/protected
+ /DESIGN.md                              @agent-of-empires/protected
+ /MAINTAINERS.md                         @agent-of-empires/protected
++/tessl.json                             @agent-of-empires/protected
++/.tessl/                                @agent-of-empires/protected
++/.tessl-code-review.yml                 @agent-of-empires/protected
++/tessl-plugins/                         @agent-of-empires/protected
++/.mcp.json                              @agent-of-empires/protected
++/.codex/config.toml                     @agent-of-empires/protected
  
- // #2530, #2533: sessions on one `repoPath::branch` form one workspace even when
+ # Releases
+ /.github/workflows/release.yml          @agent-of-empires/release
+```
+
+**File**: `.github/workflows/tessl.yml` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++name: Tessl
++
++# Token-free checks for the Tessl config: a bad tessl.json block stops sync.
++# https://docs.tessl.io/schedules/validate-in-ci.md
++
++on:
++  pull_request:
++    paths:
++      - 'tessl.json'
++      - '.tessl/**'
++      - 'tessl-plugins/**'
++      - '.tessl-code-review.yml'
++      - '.github/workflows/tessl.yml'
++
++permissions:
++  contents: read
++
++concurrency:
++  group: tessl-${{ github.event.pull_request.number }}
++  cancel-in-progress: true
++
++jobs:
++  validate:
++    name: Validate Tessl config
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++      - uses: tesslio/setup-tessl@25ec223fc0da33b41b8044ff5ab2b85235f4f91e # v2
++        with:
++          version: '0.123.0'
++      - name: Validate schedules, triggers and actions
++        run: tessl schedule validate
++      - name: Lint aoe-maintainer plugin
++        run: tessl plugin lint tessl-plugins/aoe-maintainer
+```
+
+**File**: `.mcp.json` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{
++  "mcpServers": {
++    "tessl": {
++      "type": "stdio",
++      "command": "tessl",
++      "args": [
++        "mcp",
++        "start"
++      ]
++    }
++  }
++}
+```
+
+**File**: `.tessl-code-review.yml` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++# Tessl Code Review profile: the six tessl/code-review defaults, with the
++# security lens on every file, plus the AoE lenses. Keep every default
++# listed: this list replaces the built-in set.
++# https://docs.tessl.io/reference/configuration.md#tessl-code-reviewyml
++schemaVersion: 1
++effort: adaptive
++# Generated files; CI regenerates or checks them.
++ignore:
++  - docs/cli/reference.md
++  - web/src/lib/generated/**
++  - CHANGELOG.md
++lenses:
++  - ref: tessl/code-review@0.5.2#review-plugin-content
++    globs:
++      - tessl-plugins/aoe-maintainer/**
++  - ref: tessl/code-review@0.5.2#review-markdown
++    globs:
++      - '**/*.md'
++      - '!tessl-plugins/aoe-maintainer/**'
++  - ref: tessl/code-review@0.5.2#review-correctness-and-data-integrity
++    globs:
++      - '**'
++      - '!**/*.md'
++      - '!tessl-plugins/aoe-maintainer/**'
++  - ref: tessl/code-review@0.5.2#review-maintainability-and-code-quality
++    globs:
++      - '**'
++      - '!**/*.md'
++      - '!tessl-plugins/aoe-maintainer/**'
++  - ref: tessl/code-review@0.5.2#review-scale-and-resilience
++    globs:
++      - '**'
++      - '!**/*.md'
++      - '!tessl-plugins/aoe-maintainer/**'
++  # Skills, rules and agent instructions steer runs that hold write tokens.
++  - ref: tessl/code-review@0.5.2#review-security-and-privacy
++    globs:
++      - '**'
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-invariants/SKILL.md
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-test-evidence/SKILL.md
++    globs:
++      - src/**
++      - tests/**
++      - web/**
++      - acp-worker/**
++      - aoe-plugin-api/**
++      - xtask/**
++      - scripts/**
++      - '!**/*.md'
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-runtime-lifecycle/SKILL.md
++    globs:
++      - src/**
++      - web/src/**
++      - acp-worker/**
++      - '!src/migrations/**'
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-sandbox-boundary/SKILL.md
++    globs:
++      - src/**
++      - docker/**
++      - acp-worker/**
++      - '!src/tui/**'
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-keyboard-focus/SKILL.md
++    globs:
++      - web/src/**
++      - src/tui/**
++      - '!web/src/lib/generated/**'
++      - '!**/*.test.ts'
++      - '!**/*.test.tsx'
++      - '!**/__tests__/**'
++      - '!src/tui/**/tests/**'
++      - '!src/tui/**/tests.rs'
+```
+
+**File**: `.tessl/.gitignore` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++tiles/
++plugins/
++RULES.md
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6027** (2026-11-24): docs(agents): add a record-pr-demo skill for recording PR demo videos (@njbrake)
-- **PR #6022** (2026-11-24): ci(tessl): let the Tessl App's relabel wake Implement (@Seluj78)
-- **PR #6020** (2026-11-24): ci(tessl): move factory loops into tessl.json with maintainer allowlist (@tessl-app[bot])
-- **PR #6012** (2026-11-24): fix(server): refuse Agent default model writes while pin is on (@klubrake)
-- **PR #6011** (2026-11-24): refactor(server): call Instance::handoff_refused without a wrapper (@klubrake)
-- **PR #6007** (2026-11-24): feat(web): crisper terminal text and a font dropdown with JetBrains Mono (@njbrake)
+- **PR #6071** (2026-11-25): ci: attach PR demo media with gh --attach instead of the e2e-recordings branch (@njbrake)
+- **PR #6067** (2026-11-25): ci: remove GetMac runners from release builds (@njbrake)
+- **PR #6066** (2026-11-25): feat(tui): fold snoozed sessions into the hide-stopped filter (@athal7)
+- **PR #6057** (2026-11-25): feat(acp): show Codex native subagents in the Sub agents pane (@njbrake)
+- **PR #6056** (2026-11-25): fix(web): trim live terminal rows to the latest frame, not a stale one (@njbrake)
+- **PR #6052** (2026-11-25): feat(web): widen the structured view column on wide screens (#6019) (@tessl-app[bot])
 
 ---
 
@@ -2813,38 +3055,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): throttle structured view persistence and cache per-chunk work
+## X. web): suggested sessions dashboard, settings and guide
 
 **RULE**:
-When implementing operations in `web/playwright.perf.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guides/suggested-sessions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5f7f027`: web): throttle structured view persistence and cache per-chunk work. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83161f1c`: web): suggested sessions dashboard, settings and guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/playwright.perf.config.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/suggested-sessions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-import { defineConfig } from "@playwright/test";
+# Suggested sessions
 
-// Perf harness: not picked up by playwright.config.ts (it only matches *.spec.ts).
-export default defineConfig({
-  testDir: "./tests/perf",
-  testMatch: "**/*.perf.ts",
-  globalSetup: "./tests/helpers/liveGlobalSetup.ts",
-  timeout: 300_000,
-  fullyParallel: false,
-  workers: 1,
-  retries: 0,
-  reporter: "list",
-  use: {
-    headless: true,
-    viewport: { width: 1440, height: 900 },
-  },
-  projects: [{ name: "chromium", use: { browserName: "chromium" } }],
-});
+Suggested sessions are things worth starting a session for, such as a PR that wants your review or a failing check, published by installed plugins. AoE only lists them. Nothing runs until you start one, and **Start** launches right away with the [preset](#presets) of the suggestion's kind.
+
+Each item has a title, a reason, the plugin that proposed it, and a draft prompt. Plugins decide what to publish; this page covers using them. Writing a provider is covered in the [plugin contract](../plugin-api.md#suggested-sessions).
+
+Suggestions show up in the web dashboard (homepage section, `/suggestions`, and optionally the sidebar) and in the TUI. They are stored per [profile](configuration.md#profiles).
+
+## Setting up
+
+With no provider installed, the web homepage and the empty `/suggestions` view offer **Set up suggestions** when a featured plugin exists. The sheet installs the sources you tick, runs each plugin's setup checks (✓, `!`, ✕, with the plugin's fix text and **Check again**), and ends with "Suggestions are on". **Finish later** closes it; the plugin stays installed. **More sources in the Marketplace ›** opens Settings › Plugins › Marketplace filtered to p
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2854,7 +3089,7 @@ export default defineConfig({
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5f7f027` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83161f1c` are properly handled with clean fallback behavior.
 
 
 ## Consequences

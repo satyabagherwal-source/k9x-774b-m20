@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T07:01:04.031Z",
+  "last_updated": "2026-11-26T07:10:35.452Z",
   "total_verified_learnings": 9123,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25720,
+  "total_items": 25727,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "ecf5907c",
-      "content_hash": "295df7c6ceb5327a476cf994f668bb7b84a12fa668ee202f199b4a9207a535e7",
+      "content_hash": "66e67eac5adbe771c8b7a656fdb0339a598898708576a29a888e2a7758860c7d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T05:05:22.168Z"
+      "persisted_at": "2026-11-26T07:10:28.729Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "ecf5907c",
-      "content_hash": "cbfc477830cd01231f8c707b0bbdd43ee88afbe3c15673806f00e32c470395a6",
+      "content_hash": "66a672cbb1289a325f1ca4e13e3e232fda606e49f9f943e7c3f3b0332ae1eb44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:05:22.352Z"
+      "persisted_at": "2026-11-26T07:10:29.018Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -216198,13 +216198,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "ecf5907c",
-      "content_hash": "a82a171ca1e60dd6a2f2e3854227849d5410f15965ffe21f54403c09ea8ea33c",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "cdadba81ee8e33f4d6a16c0a3a9da765a9e66a1ca6b8215dbab1391179370aa4",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 3992,
@@ -216332,7 +216332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T05:05:21.477Z",
+      "verified_at": "2026-11-26T07:10:27.767Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216346,26 +216346,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "ecf5907c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-26T05:05:21.477Z"
+      "verified_at": "2026-11-26T07:10:27.767Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9V9A-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-QMOR-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
-      "source_version": "HEAD",
-      "content_hash": "6934f2a37c845ca6e3d42df24f8298e941388602c6c8ce355df95fdb5709b1fc",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "ecf5907c",
+      "content_hash": "defc873a9edc29dadbd73d01a56d5f1101bb63f0d6f08910edfdb07304e328b3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T05:05:27.938Z"
+      "persisted_at": "2026-11-26T07:10:28.447Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -231822,8 +231822,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "a6717a44",
-      "content_hash": "e6d287dbb7f138cf4caa502486ba873929fde494ac2095718e6e3e2309bb3485",
+      "source_version": "956d1300",
+      "content_hash": "fb9168feccce442476d2669dc5f76f0c865a2ba2ba1da995b8f2389f54ec6a00",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -231873,7 +231873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:51:56.761Z",
+      "verified_at": "2026-11-26T07:10:17.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231915,10 +231915,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "repository": "agent-of-empires/agent-of-empires",
-      "source_version": "b33999ea",
-      "content_hash": "ed2aacc8463bf22974c8c6ce465f072e42e0b4e348af8a443abc5d4fd0321626",
+      "source_version": "956d1300",
+      "content_hash": "91757c64b011531a0f4dbadc1b5140a4a3344045e9a29dcc511a952290249ea7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:57:00.902Z"
+      "persisted_at": "2026-11-26T07:10:18.282Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi",
@@ -231928,9 +231928,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-of-empires-agent-of-empires-learnings",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "86e500535d4aa890f6969f4b4d05dcec5e31ce3c5245cdf89d42047b8ecaa27d",
+      "content_hash": "1a78842aea0157e1d8e9cde404e444792fa9de5fcafef432bc110340cc08e7c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:52:07.737Z"
+      "persisted_at": "2026-11-26T07:10:33.486Z"
     },
     "learn-github-koderover-zadig": {
       "learning_id": "learn-github-koderover-zadig",
@@ -232240,9 +232240,9 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "df783be179f462cd8feaba48dde8202045bfb7f2c40c0c5cd27c14feacd8b210",
+      "content_hash": "7bba535543dbe457a72389cc0b25f6462facd52ec04c70f643901694d4b81284",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:57:09.923Z"
+      "persisted_at": "2026-11-26T07:10:32.938Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core",
@@ -266784,8 +266784,8 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "b74e3fe6",
-      "content_hash": "ae35633117a3974c1eb6eb339b93fbeac6da44105f451d8f3e265092addb7add",
+      "source_version": "d9294511",
+      "content_hash": "1f6b5716516535e5626317593ce5c728daa776beb3e37d72b44d97117ec3e061",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
@@ -266798,6 +266798,11 @@
           "number": 10127,
           "title": "将 AppPorts 2.4.0 构建号更新至 91",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10620,
+          "title": "将 AppPorts 2.4.0 构建号更新至 96",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -266805,7 +266810,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:23:10.699Z",
+      "verified_at": "2026-11-26T07:10:22.881Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266847,10 +266852,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
       "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
       "repository": "wzh4869/AppPorts",
-      "source_version": "b74e3fe6",
-      "content_hash": "f0ce0b32b4d23fb02f7b10c673c1774145c19da65e51ec7ba08ab6eb490c1cd1",
+      "source_version": "d9294511",
+      "content_hash": "98fb5d8af6531559f5351c48f4a31cc6f92919c4747dc86aa291aecdeb413d91",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:23:11.324Z"
+      "persisted_at": "2026-11-26T07:10:23.856Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports",
@@ -266859,10 +266864,10 @@
       "relative_path": "08_VERIFICATION/wzh4869-appports-verification-protocol-empirical-defect-shield-for-wzh4869-apppo.md",
       "title": "Verification Protocol: Empirical Defect Shield for wzh4869/AppPorts",
       "repository": "wzh4869/AppPorts",
-      "source_version": "b74e3fe6",
-      "content_hash": "a4a17cc234fab3a8ce2984a29148d2c5908fff47314a176a3a4a297cbf292169",
+      "source_version": "d9294511",
+      "content_hash": "1fec6ae6be8540b5e0733c67d0774e5f6667a2ff0725002f4a0604c60ebabb95",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:23:11.514Z"
+      "persisted_at": "2026-11-26T07:10:24.164Z"
     },
     "learn-github-kubeedge-kubeedge": {
       "learning_id": "learn-github-kubeedge-kubeedge",
@@ -267068,9 +267073,9 @@
       "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
       "repository": "wzh4869-appports-learnings",
       "source_version": "HEAD",
-      "content_hash": "80a08c35f9747c00dc22b7ee99ba3164e4d46e796b329c96b0ad6ff61065e43c",
+      "content_hash": "ede799fafc8422793753d45028629a8febf2c4e5fdd2ccd8d01a0a83cefbbcab",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:23:18.185Z"
+      "persisted_at": "2026-11-26T07:10:35.120Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wzh4869-appports-learnings",
@@ -267080,9 +267085,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for wzh4869-appports-learnings",
       "repository": "wzh4869-appports-learnings",
       "source_version": "HEAD",
-      "content_hash": "78cde0bbbf256883abefe8a07c155e698596e85460c721fac691d3fc4c4cdf8c",
+      "content_hash": "be9f0e47c81b44ad3262c1adbcfa982087f928f4f7f73aec5018afe320e1352c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:23:18.368Z"
+      "persisted_at": "2026-11-26T07:10:35.452Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
@@ -276958,7 +276963,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE",
       "source_version": "hf-minimaxai-minimax-h3-image-pe",
-      "content_hash": "24c873ac57ad005c77023b404865fc55479795566ef2a3ce416723ba5829d466",
+      "content_hash": "a294b783166795a57c47a9ceef87c04f0b5591d944b411a2822313e7a088ec29",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md",
       "promoted_rules": [],
@@ -276967,7 +276972,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T12:37:34.576Z",
+      "verified_at": "2026-11-26T07:10:14.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276984,9 +276989,9 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image-PE Core Invariants",
       "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
       "source_version": "hf-minimaxai-minimax-h3-image-pe",
-      "content_hash": "542adea244ae02629a379a18704f5c9edf3e1bd0842e660607f5f97adeee103e",
+      "content_hash": "f79b630c3deab0dff5c89ec19e5dad4354a3205e4dc5aa117ba9439b54f736cd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T12:37:34.991Z"
+      "persisted_at": "2026-11-26T07:10:15.343Z"
     },
     "learn-huggingface-internlm-sage-s2-1-flash": {
       "learning_id": "learn-huggingface-internlm-sage-s2-1-flash",
@@ -277156,9 +277161,9 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-pe-learnings Core Invariants",
       "repository": "hf-minimaxai-minimax-h3-image-pe-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f28cd157596aad30246349a0ab53c1b96f58a9e26e494dcade132977a0b8fb9",
+      "content_hash": "bc609d574e95c75412ac99f6b4589171aab9e13b91e95713d60f7205f7c19f7c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T12:37:38.007Z"
+      "persisted_at": "2026-11-26T07:10:34.069Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar",
@@ -308578,14 +308583,19 @@
       "slug": "actions-actions-runner-controller",
       "platform": "github",
       "source_url": "https://github.com/actions/actions-runner-controller",
-      "source_version": "50f96097",
-      "content_hash": "24f13b669c4b7a531fe19e68cae63a36dc731fd5cde0decf8cfbb5f415a6070b",
+      "source_version": "eca1a62a",
+      "content_hash": "20c421dcba8a163d6c887b4bc5ff1714f7a302ccba895fd962ed0c1fc4e4f1c1",
       "dossier_path": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actions-actions-runner-controller-learnings.md",
       "promoted_rules": [
         {
           "number": 9571,
           "title": "Bump the actions group across 1 directory with 8 updates",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10621,
+          "title": "Exit the listener with code 0 when it is stopped by a termination signal",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -308594,7 +308604,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:05:42.848Z",
+      "verified_at": "2026-11-26T07:10:25.146Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -308636,22 +308646,22 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-actions-actions-runner-controller-architecture-intelligence-actions-actions-runn.md",
       "title": "Architecture Intelligence: actions/actions-runner-controller Core Invariants",
       "repository": "actions/actions-runner-controller",
-      "source_version": "b27dac72",
-      "content_hash": "bb40628cc5c6f7ab28460380679c438953eb72869f80de20304a47d81d2ce1ac",
+      "source_version": "eca1a62a",
+      "content_hash": "488e6294e343250dc4884d8e1da7f354415993dabcdc21fcdb9e050e9bbd3439",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T13:08:25.390Z"
+      "persisted_at": "2026-11-26T07:10:26.136Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actions-actions-runner-control": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actions-actions-runner-control",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/actions-actions-runner-controller-learnings-verification-protocol-empirical-defe.md",
-      "title": "Verification Protocol: Empirical Defect Shield for actions-actions-runner-controller-learnings",
-      "repository": "actions-actions-runner-controller-learnings",
-      "source_version": "HEAD",
-      "content_hash": "7f2cb6bbf937c6f00e45607669bedc2629a2d9953240e2f12277caae1c186049",
+      "relative_path": "08_VERIFICATION/actions-actions-runner-controller-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for actions/actions-runner-controller",
+      "repository": "actions/actions-runner-controller",
+      "source_version": "eca1a62a",
+      "content_hash": "d6043510f99abed5e92c2a601ba2136f8bad3b7255cf457cc777617cf22e72b7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:13:24.023Z"
+      "persisted_at": "2026-11-26T07:10:26.478Z"
     },
     "rule-9572": {
       "learning_id": "rule-9572",
@@ -343826,10 +343836,10 @@
       "relative_path": "12_DECISIONS/ADR-agent-of-empires-agent-of-empires-adr-subsystem-boundary-modular-decoupling-in-a.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in agent-of-empires/agent-of-empires",
       "repository": "agent-of-empires/agent-of-empires",
-      "source_version": "a6717a44",
-      "content_hash": "017dc2e706de72ba1ae2e7de7c319f866dd3155ac24ad958078533671bf65efb",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:51:57.691Z"
+      "source_version": "956d1300",
+      "content_hash": "32beff936ed75d7b0779788123d971d5f628abaeb0d37bb22296f860630a4854",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T07:10:18.571Z"
     },
     "rule-10409": {
       "learning_id": "rule-10409",
@@ -343877,9 +343887,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in agent-of-empires-agent-of-empires-learnings",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba8c489bf726aa0e8d5b47e54e01d6092fbea53aa5bf6fdc7dd473b81d6b54cc",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-25T00:52:07.574Z"
+      "content_hash": "cef18d90991fa7fac13e46392fe8e1549314863b5cf6e9dca6bde6fe55d7e97a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T07:10:33.231Z"
     },
     "rule-10410": {
       "learning_id": "rule-10410",
@@ -352224,6 +352234,94 @@
       "content_hash": "44a57532d08b9cffe4b92201f19561751a8117b5e7f9605063e30e5ed87e2301",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T06:44:13.753Z"
+    },
+    "candidate_directive-suggested-sessions-dashboard-settings-and-guide": {
+      "item_id": "candidate_directive-suggested-sessions-dashboard-settings-and-guide",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QELZ-suggested-sessions-dashboard-settings-and-guide.md",
+      "title": "suggested sessions dashboard, settings and guide",
+      "repository": "agent-of-empires/agent-of-empires",
+      "source_version": "956d1300",
+      "content_hash": "6e1f97e4fe1a2634ea61a927a4ae0532a15336d77495cd9db8ac91e47d1ef86c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T07:10:17.980Z"
+    },
+    "rule-10620": {
+      "learning_id": "rule-10620",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10620,
+      "title": "将 AppPorts 2.4.0 构建号更新至 96",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "d9294511",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T07:10:22.881Z"
+    },
+    "candidate_directive-appports-2-4-0-96": {
+      "item_id": "candidate_directive-appports-2-4-0-96",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QIWX-appports-2-4-0-96.md",
+      "title": "将 AppPorts 2.4.0 构建号更新至 96",
+      "repository": "wzh4869/AppPorts",
+      "source_version": "d9294511",
+      "content_hash": "3ee2aecd011ff1dc0d56b4e77480510946e404db9267cf7e1da4e5ab3c9c823c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T07:10:23.558Z"
+    },
+    "rule-10621": {
+      "learning_id": "rule-10621",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10621,
+      "title": "Exit the listener with code 0 when it is stopped by a termination signal",
+      "source_url": "https://github.com/actions/actions-runner-controller",
+      "source_version": "eca1a62a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T07:10:25.146Z"
+    },
+    "candidate_directive-exit-the-listener-with-code-0-when-it-is-stopped-by-a-termination-signal": {
+      "item_id": "candidate_directive-exit-the-listener-with-code-0-when-it-is-stopped-by-a-termination-signal",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QKNW-exit-the-listener-with-code-0-when-it-is-stopped-by-a-termination-signal.md",
+      "title": "Exit the listener with code 0 when it is stopped by a termination signal",
+      "repository": "actions/actions-runner-controller",
+      "source_version": "eca1a62a",
+      "content_hash": "9a877c21fab0c5b380d1d4003e716d7c87963a97138b909cf3a35932fc4cd15f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T07:10:25.822Z"
+    },
+    "candidate_directive-web-suggested-sessions-dashboard-settings-and-guide": {
+      "item_id": "candidate_directive-web-suggested-sessions-dashboard-settings-and-guide",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QPWI-web-suggested-sessions-dashboard-settings-and-guide.md",
+      "title": "web): suggested sessions dashboard, settings and guide",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2cb6d02b43b2219fe566b798eed74c417cfe3c562d265fad3bbac9c843409c5d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T07:10:32.616Z"
+    },
+    "candidate_directive-build-appports-2-4-0-96": {
+      "item_id": "candidate_directive-build-appports-2-4-0-96",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QRLU-build-appports-2-4-0-96.md",
+      "title": "build): 将 AppPorts 2.4.0 构建号更新至 96",
+      "repository": "wzh4869-appports-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2986a882c1d8b3a0f4c9a1a1be9c33da9bf2156267202b78e5b239a3770f99ce",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T07:10:34.822Z"
     }
   },
   "ai-builder-brain": {

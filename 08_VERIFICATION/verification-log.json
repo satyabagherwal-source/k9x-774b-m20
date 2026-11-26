@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-F7VI",
-    "timestamp": "2026-11-24T16:46:07.518Z",
-    "repository": "DefGuard/defguard",
-    "learningId": "learn-github-defguard-defguard",
-    "contentHash": "41dfaafcd39438d47aba495fce7a55af305114b9f5d29565cea8917f7ced2890",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-FA92",
-    "timestamp": "2026-11-24T16:46:10.598Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "300f75052632077a92a1b3a348099f1fc1e9edc9d53dca5185f4992b5d377208",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-Q2KT",
-    "timestamp": "2026-11-24T16:54:33.869Z",
-    "repository": "indexable-inc/blaze",
-    "learningId": "learn-github-indexable-inc-blaze",
-    "contentHash": "0469ed4d1ad0b61bd916f1cf8682b312995c9c2f6c12bce1ac6d4cd973877ff0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-QDG2",
-    "timestamp": "2026-11-24T16:54:47.954Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "d16ec1131b66d5fb3f10fd542922236d39d2c88d07231a8adc8c9eeefbe20938",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-0ZFL",
-    "timestamp": "2026-11-24T17:03:03.009Z",
-    "repository": "apple/DepthPro2",
-    "learningId": "learn-huggingface-apple-depthpro2",
-    "contentHash": "e00ac44ab599a4c34e02c04f01445376538ec04ee81353e193c3af547d4b6b6e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-16WB",
     "timestamp": "2026-11-24T17:03:12.683Z",
     "repository": "higress-group/higress",
@@ -7492,6 +7417,81 @@
     "contentHash": "ac49f93f503bcc84931a5f982984eb4723b65b6b768a3c0ddbfb5fce64c38829",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QCCK",
+    "timestamp": "2026-11-26T07:10:15.044Z",
+    "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
+    "contentHash": "a294b783166795a57c47a9ceef87c04f0b5591d944b411a2822313e7a088ec29",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QEBU",
+    "timestamp": "2026-11-26T07:10:17.610Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "fb9168feccce442476d2669dc5f76f0c865a2ba2ba1da995b8f2389f54ec6a00",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QINV",
+    "timestamp": "2026-11-26T07:10:23.227Z",
+    "repository": "wzh4869/AppPorts",
+    "learningId": "learn-github-wzh4869-appports",
+    "contentHash": "1f6b5716516535e5626317593ce5c728daa776beb3e37d72b44d97117ec3e061",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QKF9",
+    "timestamp": "2026-11-26T07:10:25.509Z",
+    "repository": "actions/actions-runner-controller",
+    "learningId": "learn-github-actions-actions-runner-controller",
+    "contentHash": "20c421dcba8a163d6c887b4bc5ff1714f7a302ccba895fd962ed0c1fc4e4f1c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QMFV",
+    "timestamp": "2026-11-26T07:10:28.123Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "cdadba81ee8e33f4d6a16c0a3a9da765a9e66a1ca6b8215dbab1391179370aa4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

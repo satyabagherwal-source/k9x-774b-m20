@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE",
   "source_version": "hf-minimaxai-minimax-h3-image-pe",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T12:37:34.990Z",
+  "timestamp": "2026-11-26T07:10:15.341Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-minimaxai-minimax-h3-image-pe",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [MiniMaxAI/MiniMax-H3-Image-PE](https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE) (Revision: `hf-minimax`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T12:37:34.990Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T07:10:15.341Z`  
 > **Learning ID**: `learn-huggingface-minimaxai-minimax-h3-image-pe`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE](https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T12:37:18.123Z  
+> **Harvest Timestamp**: 2026-11-26T07:10:14.036Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4769 downloads | 115 likes
+- **Stars / Engagement**: 5489 downloads | 119 likes
 
 ---
 

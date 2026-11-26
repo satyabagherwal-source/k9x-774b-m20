@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T07:00:49.666Z",
-  "total_cycles_completed": 12604,
-  "total_learnings_persisted": 12604,
-  "total_rules_promoted": 11513,
+  "last_updated": "2026-11-26T07:10:28.144Z",
+  "total_cycles_completed": 12609,
+  "total_learnings_persisted": 12609,
+  "total_rules_promoted": 11516,
   "history": [
-    {
-      "timestamp": "2026-11-25T12:09:11.062Z",
-      "repository": "goodrain/rainbond",
-      "learningId": "learn-github-goodrain-rainbond",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T12:09:15.413Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T12:19:22.296Z",
-      "repository": "mistralai/Mistral-Large-4-1T-A52B",
-      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T12:19:34.028Z",
-      "repository": "RustCrypto/hashes",
-      "learningId": "learn-github-rustcrypto-hashes",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T12:19:38.899Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T12:19:39.714Z",
       "repository": "RediSearch/RediSearch",
@@ -1403,6 +1368,41 @@
       "repository": "maxwell-model/Maxwell-V1-Flash",
       "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:10:15.066Z",
+      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:10:17.677Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:10:23.248Z",
+      "repository": "wzh4869/AppPorts",
+      "learningId": "learn-github-wzh4869-appports",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:10:25.529Z",
+      "repository": "actions/actions-runner-controller",
+      "learningId": "learn-github-actions-actions-runner-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:10:28.144Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

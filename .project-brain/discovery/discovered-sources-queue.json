@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T06:35:33.298Z",
+  "updated_at": "2026-11-26T07:10:32.273Z",
   "stats": {
-    "total_discovered": 9666,
-    "approved_pending_harvest": 9166,
+    "total_discovered": 9668,
+    "approved_pending_harvest": 9168,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
       "COMMUNITY_AND_EXPERT": 9155,
-      "OFFICIAL_DOCUMENTATION": 283,
+      "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 54,
@@ -209179,6 +209179,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
         "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-636C25D4049F": {
+      "id": "SRC-636C25D4049F",
+      "url": "https://docs.tessl.io/schedules/validate-in-ci.md",
+      "title": "https://docs.tessl.io/schedules/validate-in-ci.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T07:10:32.175Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-DE5649A037E0": {
+      "id": "SRC-DE5649A037E0",
+      "url": "https://docs.tessl.io/reference/configuration.md",
+      "title": "https://docs.tessl.io/reference/configuration.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T07:10:32.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
       }
     }
   }

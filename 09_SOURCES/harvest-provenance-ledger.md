@@ -13316,3 +13316,8 @@ Every entry in this ledger must capture:
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `54f54578` | Multi-dimensional audit evidence | 2026-11-26T06:44:07.633Z |
 | `learn-huggingface-nex-agi-nex-n2-6` | `https://huggingface.co/nex-agi/Nex-N2.6` | `hf-nex-agi` | Multi-dimensional audit evidence | 2026-11-26T06:52:21.751Z |
 | `learn-huggingface-maxwell-model-maxwell-v1-flash` | `https://huggingface.co/maxwell-model/Maxwell-V1-Flash` | `hf-maxwell` | Multi-dimensional audit evidence | 2026-11-26T07:00:49.653Z |
+| `learn-huggingface-minimaxai-minimax-h3-image-pe` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-26T07:10:15.050Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `956d1300` | Multi-dimensional audit evidence | 2026-11-26T07:10:17.615Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `d9294511` | Multi-dimensional audit evidence | 2026-11-26T07:10:23.232Z |
+| `learn-github-actions-actions-runner-controller` | `https://github.com/actions/actions-runner-controller` | `eca1a62a` | Multi-dimensional audit evidence | 2026-11-26T07:10:25.514Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ecf5907c` | Multi-dimensional audit evidence | 2026-11-26T07:10:28.128Z |

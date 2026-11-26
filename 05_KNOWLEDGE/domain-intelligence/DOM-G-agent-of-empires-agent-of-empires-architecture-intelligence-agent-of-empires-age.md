@@ -4,24 +4,24 @@
 {
   "source_repository": "agent-of-empires/agent-of-empires",
   "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-  "source_version": "b33999ea",
+  "source_version": "956d1300",
   "license": "MIT",
-  "timestamp": "2026-11-23T21:57:00.733Z",
+  "timestamp": "2026-11-26T07:10:17.975Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-of-empires-agent-of-empires",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `b33999ea`).  
-> **License**: MIT | **Timestamp**: `2026-11-23T21:57:00.733Z`  
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `956d1300`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T07:10:17.975Z`  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from agent-of-empires/agent-of-empires:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:56:59.424Z  
+> **Harvest Timestamp**: 2026-11-26T07:10:16.782Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4758 stars
+- **Stars / Engagement**: 4902 stars
 
 ---
 
@@ -1773,14 +1773,14 @@ impl ConfigOptionDescriptor {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5965** (2026-11-23): **Correct false and stale claims on the website and in the docs**
-  *Symptoms*: > AI-assisted: Claude Code drafted this issue from decisions a maintainer made.  Part of #5964 (Phase 0).  ## Why  An audit of the website and the docs against the code found statements that are false or stale. Examples: marketing copy that describes behavior the product does not have, dead redirects, wrong example ports, an outdated key table, and a web UI link that returns 404. A reader who acts on these statements gets a different result from the one the text promises.  These corrections come before the redesign and before new docs pages, so that later work starts from accurate text. All items ship in one pull request.  ## Checklist  - [ ] T1: correct false claims on the home, tui and web pages - [ ] T2: fix the canonical host, dead redirects, social metadata and the docs title tag - [ ] T3: fix words glued to links on four pages - [ ] T13: keep docs code blocks dark in the light theme - [ ] T5: fix stale statements in the readme, introduction, install and quick start pages - [ ] T7: fix stale theme, tools, yolo and sandbox statements in the configuration reference - [ ] T8: fix stale statements in the sandbox, worktrees and web dashboard guides - [ ] T9: correct the mcp cli claims and the resume-only agent lists - [ ] T10: fix example ports and scope in the http api reference and two plugin internals lines - [ ] T12: correct command dispatch, status contributions and the featured plugin count - [ ] T11: correct the structured view key table, title and view defaults - [ ] 
-
-- **Issue #5937** (2026-11-23): **CLI cannot start a stopped structured-view session: aoe acp restart says 'No agent worker registry entry'**
-  *Symptoms*: **Version:** aoe 1.25.0, Linux  ## What happens  A structured-view session that was stopped cleanly cannot be started again from the CLI:  ``` $ aoe acp stop <session> Stopped agent worker for <session> (PID 2018489). $ aoe acp restart <session> Error: No agent worker registry entry for session <session> ```  `aoe session start <session>` doesn't bring the worker back either. The only way back is the web dashboard (Retry / Reconnect), which starts it fine and resumes the same conversation.  ## Expected  `aoe acp restart`'s help says "Restart a wedged worker after its runner and native workers have stopped". A worker stopped with `aoe acp stop` is that case, so it should start again. Alternatively there could be a CLI equivalent of the dashboard's Retry (`/api/sessions/{id}/acp/spawn`).  ## Why it matters  Scripts and agents that manage sessions from the CLI can stop a structured session but not start it again, so a person has to open the dashboard.  Possibly related: #4467 (`session start` is still a local path rather than going through the Daemon). 
+- **Issue #5984** (2026-11-24): **Plugin recovery: remove empty staging directories after reclaiming native resources**
+  *Symptoms*: ## What happened?  After a Daemon crash during strict remote plugin staging, successful startup recovery can leave an empty `.staging-*` directory behind after reclaiming the native resource.  Remove the empty directory associated with the recovered operation once resource absence and directory ownership are proven. Leave live, unowned, or non-empty directories untouched. Extend the crash/restart regression to assert that the recovered directory is gone.  Follow-up to #5759 ([review](https://github.com/agent-of-empires/agent-of-empires/pull/5759#pullrequestreview-6021907124)).  ## aoe version and OS  Reported in the review of #5759 against `8cb687e82`. Applies to strict native staging recovery; OS not specified in the review.  ## AI usage  Drafted with OpenAI Codex via omp. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit --> <details> <summary>🔗 Related PRs</summary> <dl> <dd> <br>  agent-of-empires/agent-of-empires#5379 - fix(acp): rearm explicitly started structured workers [merged] agent-of-empires/agent-of-empires#5282 - feat(web): restart a Structured view start in progress from the dashboard [merged] </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrichment, add the following
-  > **Castellan triage**  Applied: - Priority: P1 - Size: M  Reasons: - priority: Stop-the-bleeding regression: CLI workflow for session management is broken; users must resort to web UI workaround. - area: The issue manifests in CLI commands (aoe acp restart, aoe session start) failing to restart stopped workers. - type: Bug: documented CLI commands fail to perform their stated function after a clean stop operation. - size: Multi-file coordination needed between CLI, daemon, worker registry, and session lifecycle logic; likely requires state synchronization fixes.  Fit is not set by triage; it stays with maintainers.  <!-- castellan triage 9dba21b5258e12d26eefd472832bb4af90aa866acabc6259d594d1e9c550ee84 -->
+  > **Castellan triage**  Applied: - Label `P2` - Label `area:agents` - Priority: P2 - Size: S - Status: Backlog  Reasons: - priority: Real issue affecting resource cleanup after daemon recovery, but not a blocker or regression. - area: Plugin staging and resource recovery is part of the agent plugin system. - type: Bug fix to properly clean up empty staging directories left after crash recovery. - size: Single component change to add directory cleanup logic and extend existing regression tests.  Fit is not set by triage; it stays with maintainers.  <!-- castellan triage 0cae083c50d9c4a08332ab6c70872177e02bc660956d0328bd0af79b06f3ea35 -->
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit --> <details> <summary>🔗 Related PRs</summary> <dl> <dd> <br>  agent-of-empires/agent-of-empires#5759 - fix(plugin): bound pre-consent staging disk use [open] </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrichment, add the following to your `.coderabbit.yaml`: ```yaml issue_enrichment:   auto_enrich:     enabled: false ``` </dd> </dl> </details>  💬 Have feedbac
+
+- **Issue #5975** (2026-11-24): **Web dashboard: banner calls a stop-fenced Session a missing adapter, and a prompt to a stopped Session doesn't start it**
+  *Symptoms*: **Note:** Claude handled the investigation and prose via back-and-forth. Idea, decisions, and everything else are mine. — @Seluj78  ## Problem  After a durable stop (`aoe acp stop`, `aoe killall`), a message sent to the Session sits queued and the Web dashboard shows the banner "Claude Code couldn't start in Structured view. The ACP adapter, the program that connects AoE to Claude Code, didn't start. It's usually missing or out of date." with an `npm install -g @agentclientprotocol/claude-agent-acp@latest` command. The adapter is fine. The Session was stopped on purpose and waits for an explicit start. Clicking Retry fixes it, which makes the failure look random.  Two defects:  1. The banner describes the stop fence as a missing adapter. 2. A prompt sent to a stopped Session does not start it, while a prompt sent to an idle auto-stopped Session ("deep sleep") does. Both look the same in the UI, so the difference reads as randomness.  ## Evidence from the affected session  Session `03439a289b024085`, acp-workers log and `acp_events.db`:  - Idle auto-stop wakes normally: `auto-stopped idle structured view worker idle_secs=3600`, then `waking idle-dormant structured view session on prompt; spawning a fresh worker` (twice, Nov 22 20:57Z and Nov 23 06:04Z). - 08:02:35Z: a separate `aoe` CLI process (pid 63602) stops the worker: `acp.runner: shutdown signal received`, `restart_decision: registry entry gone, treating as user-initiated stop`. Event seq 3080 `Stopped {"reason":"user_s
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1797,1759 +1797,1246 @@ impl ConfigOptionDescriptor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c684cd29` (2026-11-23)
-**Commit Message**: fix(plugin): bound pre-consent staging disk use (#5759)
+### Incident Patch 1: `83161f1c` (2026-11-26)
+**Commit Message**: feat(web): suggested sessions dashboard, settings and guide (#5599)
 
-* fix(plugin): bound pre-consent staging disk use
+* feat(web): suggested sessions views, settings and first-run setup
 
-- Keep clone, downloads and extraction in a bounded private filesystem.
-- Retain recovery evidence until writer settlement and cleanup are proven.
-- Verify destination-filesystem copies before replacing installed plugins.
+Adds the /suggestions page, the dashboard and sidebar Suggested sections,
+the first-run setup hint and sheet, the Settings > Suggestions tab with
+templates and project mapping, marketplace badge and filter, and the
+initial_prompt field in the session wizard.
 
-Fixes #5687
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* test(plugin): isolate macOS quota probe control
+* docs(suggestions): user guide and dashboard docs for suggested sessions
 
-- Use the internal test-only environment namespace so host fixtures cannot leak the probe control.
+Adds the guide to the website docs sync and nav.
 
-* ci: run all bounded staging regressions
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-- Include publication and recovery tests alongside fetch and platform quota tests.
+* fix(web): keep the started-row menu out of list clipping
 
-* fix(process): import macOS allocation metadata
+Drops overflow-hidden from the suggestion lists, rounds the row corners
+instead, and asserts the menu items are reachable on a sole started row.
 
-- Bring the Unix metadata extension into the detach verification scope.
+Addresses review comment from @jerome-benoit on #5599.
 
-* fix(plugin): correct macOS staging execution
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-- Permit only null-device data writes required by Git's sandboxed I/O.
-- Use LibreSSL-compatible loopback TLS fixtures with bounded diagnostics.
-- Separate image acquisition from behavioral observation deadlines.
-- Surface the first failed cleanup instead of hiding it behind later contention.
+* fix(web): keep a template edit typed during a pending save
 
-* fix(process): verify staging images by file identity
+Clear the draft only when it still equals the submitted value, so an edit
+made while a save or reset is in flight survives and saves on its own blur.
 
-- Match attached image and mount aliases by anchored ide
+Addresses review comment from @jerome-be
 
-**File**: `.github/workflows/tests.yml` (modified, +10/-4)
+**File**: `docs/guides/suggested-sessions.md` (added, +132/-0)
 ```diff
-@@ -72,16 +72,19 @@ jobs:
-         if: matrix.leg == 'core-rest'
-         with:
-           tool: cargo-nextest
--      - name: Install tmux
-+      - name: Install runtime test prerequisites
-         run: sudo apt-get update && sudo apt-get install -y tmux
-+      - name: Install isolated namespace test prerequisites
-+        if: matrix.leg == 'core-rest' || matrix.leg == 'web-e2e'
-+        run: sudo apt-get install -y bubblewrap iproute2 apparmor
-       # RunsOn appends `. /etc/environment` to /etc/profile, so every login shell
-       # resets PATH and aoe's login-shell launches lose the e2e stub dirs.
-       - name: Keep inherited PATH in login shells
-         run: sudo sed -i '/runs-on\/env/d' /etc/profile
--      - name: Install confined Local test prerequisites
--        if: matrix.leg == 'web-e2e'
-+      - name: Enable isolated namespace tests
-+        if: matrix.leg == 'core-rest' || matrix.leg == 'web-e2e'
-         run: |
--          sudo apt-get install -y bubblewrap iproute2 apparmor
-+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-           # The packaged profile denies capabilities to bwrap children, including ip.
-           # Replace it only in memory on this disposable runner; keep network isolation.
-           sudo apparmor_parser -r -K <<'PROFILE'
-@@ -168,6 +171,9 @@ jobs:
-         run: |
-           echo "TMPDIR=${TMPDIR:-unset}"
-           cargo nextest run --no-fail-fast
-+      - name: Exercise bounded plugin staging
-+        if: matrix.leg == 'core-rest'
-+        run: cargo nextest run --run-ignored only --no-tests=fail -E 'test(staging_volume_) | test(startup_reclaims)'
-       - name: Require scoped cancellation coverage
-         if: matrix.leg == 'core-rest'
-         env:
+@@ -0,0 +1,132 @@
++# Suggested sessions
++
++Suggested sessions are things worth starting a session for, such as a PR that wants your review or a failing check, published by installed plugins. AoE only lists them. Nothing runs until you start one, and **Start** launches right away with the [preset](#presets) of the suggestion's kind.
++
++Each item has a title, a reason, the plugin that proposed it, and a draft prompt. Plugins decide what to publish; this page covers using them. Writing a provider is covered in the [plugin contract](../plugin-api.md#suggested-sessions).
++
++Suggestions show up in the web dashboard (homepage section, `/suggestions`, and optionally the sidebar) and in the TUI. They are stored per [profile](configuration.md#profiles).
++
++## Setting up
++
++With no provider installed, the web homepage and the empty `/suggestions` view offer **Set up suggestions** when a featured plugin exists. The sheet installs the sources you tick, runs each plugin's setup checks (✓, `!`, ✕, with the plugin's fix text and **Check again**), and ends with "Suggestions are on". **Finish later** closes it; the plugin stays installed. **More sources in the Marketplace ›** opens Settings › Plugins › Marketplace filtered to plugins that work with suggestions.
++
++Providers are off until you turn one on, in the setup sheet, in Settings › Suggestions › Sources, or through the API (`PATCH /api/suggestions/prefs` with `provider_enabled`). The sheet turns on each source it installs, and no other. To skip the sheet, install a provider with `aoe plugin install` ([Plugins](../plugins.md)), then turn it on. While every installed provider is off, the homepage section and `/suggestions` say so and offer **Turn it on** (**Turn them on** for several); a read-only dashboard says it can't turn them on.
++
++## Web dashboard
++
++### Homepage and `/suggestions`
++
++The homepage shows up to 3 suggestions (2 on a narrow screen) under "Suggested sessions", with **View all (N)** linking to `/suggestions`. Turn the section off in Settings › Suggestions.
++
++The full view lists every suggestion, one line per row, grouped by repo:
++
++- Two header rows: the title with a status line (the count and each provider's "Updated 2 min ago", "Waiting for first results", "Nothing new", "Refreshing…" or "Couldn't refresh: <error>"), **Refresh** and the gear for Settings › Suggestions; then **Search**, **All repos ▾** and **All kinds ▾**. Items from a failing provider stay listed from the last fetch.
++- **Search** matches the title, source reference, reason and repo, ignoring case. **All repos ▾** lists the repos with counts. Keys of the form `org/repo` are grouped: the org row selects everything under that org, a repo row only that repository. **All kinds ▾** narrows to kinds such as Review requests. Selected rows combine, and **Clear filters** resets them.
++- Source chips (**All**, one per source) appear only with two or more sources, and **Dismissed** once something is dismissed.
++- Each repo group has a header with the count that collapses its rows. Rows show `#123` rather than `owner/repo#123`, then the reason once, such as "Review requested". A repo with no Project yet says so in its header.
++- On a phone each row takes two lines, and **Start**, **▾** and ✕ keep a 44px tap area. **▾** opens as a bottom sheet.
++
++### Starting one
++
++**Start** runs the suggestion's kind [preset](#presets) at once: agent, view, worktree, sandbox, Yolo mode and the prompt, in the Project the repo is linked to. There is no New session dialog and no prompt review. A toast names the Session ("Started “<title>”") with **Open**, and the other rows stay usable meanwhile.
++
++If the repo defines [hooks](repo-config.md) you have not approved, Start pauses on **Review this repo's hooks**. **Approve and start** trusts them and starts in one step. Start cannot skip this review, and it asks again when the hooks change.
++
++**▾** next to Start shows what Start will use for this suggestion (Project, agent, view, worktree) and offers:
++
++- **Start with changes**: opens the New session dialog prefilled from the preset, for this one only. A strip above the form names the source and says "issue text not included"; the source's own text is never added to the prompt for you. The dialog also shows "From the <kind> preset" with an **Edit preset** link.
++- **Copy prompt**, **Open in <provider> ↗**, and **Edit the <kind> preset** (Settings › Suggestions).
++
++If the repo has no Project yet, **Start in… ▾** replaces Start. Picking a Project links the repo to it, then starts, so later suggestions from that repo start in one click. It is off on read-only dashboards and in CityHall mode, which cannot save the link.
++
++### After starting
++
++The row stops offering Start. It shows "⠋ Running · started 3 min ago" (or "Idle", the session's other status, or "Archived") and an **Open** button. The **⋯** menu has **Start another Session…**, **Open in <provider> ↗** and **Dismiss**. Trashing the session removes the lin
 ```
 
-**File**: `docs/guides/configuration.md` (modified, +1/-0)
+**File**: `docs/guides/web/dashboard.md` (modified, +2/-0)
 ```diff
-@@ -107,6 +107,7 @@ You can browse tips from **Ctrl+K > Show tips** even with the bar hidden.
- | `prevent_sleep_when_active` | `false` | Have the Daemon inhibit user-idle system sleep while sessions are active; the display can sleep. Global only. Uses `caffeinate -i` or `systemd-inhibit --what=idle:sleep`; missing tools or logind warn once and skip inhibition. |
- | `prevent_sleep_idle_grace_minutes` | `15` | Minutes a session must stay idle before the sleep-inhibit assertion may be released. Only consulted when `prevent_sleep_when_active` is on. Range `0` to `240`; `0` releases as soon as every session leaves an active status. The grace period only begins once a session goes `Idle`, so a session that never reaches `Idle` keeps holding the assertion: `Waiting` on an unanswered prompt, or `Creating` on a container, worktree, or submodule setup that never returns, can hold sleep indefinitely. A `Starting` session is bounded by a short (~3s) launch guard and then re-resolves. |
- | `session_id_poller_max_threads` | `50` | Ceiling on concurrent native-session-ID pollers per process. Overflow IDs stop refreshing until a poller is available, with a 5 s to 60 s retry backoff. `0` keeps the default. Global only; applied when the Daemon starts. |
-+| `plugin_staging_sandbox` | `false` | Strict plugin staging. Global only; profiles and repositories cannot override it. Disabled by default. Enabling requires native OS sandbox support and tools and fails closed when unavailable. Default streamed byte, archive-entry, and source snapshot accounting cannot hard-limit Git/helper filesystem writes. |
- | `row_tag` | `"branch"` | Controls the compact metadata shown next to each TUI session title: `none` shows nothing; `auto` shows the profile code only in all-profiles view; `profile` always shows the profile code; `sandbox` shows `sb` on sandboxed sessions; `branch` shows a compact worktree or workspace branch tag. |
- | `show_activity_age` | `true` | Show the age column at the right edge of each TUI session row: time since the agent stopped on `Idle` rows, time since last access on `Unknown` rows, and remaining snooze time under the Attention sort. |
- | `show_structured_badge` | `true` | Show the `[structured]` badge on Structured view rows in the TUI session list. Hiding it returns the width to the title and plugin row badges; the row still opens the Structured view. TUI only; the web session list never shows the badge. |
+@@ -74,6 +74,8 @@ Once setup is out of the way, an interactive walkthrough highlights the major re
+ 
+ Completing or skipping the tour records `app_state.has_seen_web_tour` on the server, so it does not relaunch on reload or on another device pointed at the same server. That flag persists in the server's `state.toml` (a sibling of `config.toml`, see [Configuration Reference](../configuration.md#statetoml)); the `GET /api/settings` JSON key is unchanged, still `app_state.has_seen_web_tour`. To replay it, open the overflow menu and choose **Show tutorial**; re-triggering adapts to where you are (dashboard regions, or composer / mode picker / send controls inside a session). It does not auto-launch on touch devices, where it is menu-only.
+ 
++While no plugin that provides suggestions is installed and a featured one exists, the homepage shows a one-line hint under the action cards. **Set up suggestions** opens a sheet that installs the featured providers you pick, then shows each plugin's setup checks (with its fix text and **Check again**). **More sources in the Marketplace** opens Settings > Plugins > Marketplace with the Suggestions filter on (`/settings/plugins?marketplace=suggestions`). The hint is skipped during the tour, on read-only and CityHall dashboards, and when the homepage section is off in Settings > Suggestions. Dismissing it stores `aoe-suggestions-hint-dismissed` in the synced web UI state, so it stays hidden on your other devices.
++
+ ## Sidebar sort
+ 
+ By default the sidebar shows your manually-ordered list. Drag a row (press-and-hold) to move it; the order persists across browsers and devices via `workspace-ordering.json`. To reorder whole projects, press-and-drag the project/group header itself (there is no separate handle); this group order is per-browser (localStorage), not synced. Group drag is disabled while a filter is active or a computed sort mode is selected.
 ```
 
-**File**: `docs/plugins.md` (modified, +66/-3)
+**File**: `docs/plugin-api.md` (modified, +2/-2)
 ```diff
-@@ -85,6 +85,9 @@ Daemon runtime workers. Started blocking work owns staging and mutation exclusio
- until it finishes, even when its observer disappears. Local staging rejects
- symlinks and special files through descriptor-anchored, nonblocking reads;
- `.git` is excluded, while empty directories and executable file modes survive.
-+Local paths use an ordinary owned staging directory, without the remote size,
-+entry-count or quota-backend requirements. The copied snapshot and publication
-+checks still apply.
- Explicit CLI updates reapply even unchanged sources, so they can restore missing
- plugin files. They use the preview fingerprint and preserve the enabled state.
+@@ -478,7 +478,7 @@ Quotas per plugin: 64 keys, 256-byte keys, 64 KiB values. `cas` (compare-and-swa
  
-@@ -132,8 +135,8 @@ physical birth across exec; each signal proves the current audit token against
- that birth. Recovered process identities do not gain this authority. Unproven
- custody requires manual recovery. Observation ending does
- not cancel an accepted mutation. This policy adds no cancellation endpoint,
--flag, or configurable timeout, and commands remain unsandboxed: it is not a
--guarantee against malicious commands escaping their owned process scope or
-+flag, or configurable timeout. Approved build commands remain unsandboxed;
-+process custody does not guarantee containment of malicious commands or
- arbitrary filesystem I/O stalls.
+ > **Availability:** the `[suggestions]` manifest block, the `suggestions.*` worker RPCs and the `/api/suggestions` routes are served by this host. The web dashboard and TUI workflows described below arrive with their own changes (#5599, #5600).
  
- If command settlement or restoration cannot be proven, the host retains
-@@ -149,7 +152,7 @@ and owned workers have physically exited, then restore the intended installation
- Remove any marker only after recovery, then restart the Daemon to release
- retained in-process ownership. If marker persistence failed, a new Daemon cannot
- reconstruct that memory fence: complete manual recovery before restarting.
--Restart alone is not recovery.
-+A restart does not clear unproven mutation ownership.
- Tree publication and target config/lock entries share one rollback boundary.
- The previous tree stays backed up until both metadata writes commit. Restoration
- preserves the prior enabled, source, dev, grant, dismissal and settings values
-@@ -161,6 +164,66 @@ that would replace a file already in the source tree, or that is a symlink,
- hardlink or special file, is rejected so the disclosed manifest and tree match
- what gets installed.
+-For using suggestions from the web dashboard and the TUI, see the suggested sessions guide.
++For using suggestions from the web dashboard and the TUI, see the [suggested sessions guide](guides/suggested-sessions.md).
  
-+Remote GitHub preparation defaults to an ordinary staging directory, without
-+requiring native sandbox tools. Downloads, expanded archives and the resulting
-+remote source tree have **1 GiB** byte limits. Remote source trees and extracted
-+assets allow at most 65,536 entries, including implicit directories. Archive
-+metadata read ahead by the tar parser has a separate 1 MiB limit. Standard
-+branches and tags clone shallow-first; other references may need more history.
-+
-+Default accounting is not a hard filesystem quota. Git clones and credential
-+helpers can write before the resulting source tree is checked, and helpers can
-+write outside staging. Reference checks and remote previews remain available on
-+hosts without a native quota backend.
-+
-+To require a native filesystem bound for remote preparation and reference checks,
-+enable **Strict plugin staging** in the machine-wide Session settings, or set:
-+
-+```toml
-+[session]
-+plugin_staging_sandbox = true
-+```
-+
-+Strict mode shares a private filesystem with a **1 GiB** ceiling across clone
-+data, downloaded archives and extracted files. Preview and apply operations share
-+exclusion, so concurrent previews cannot multiply this allowance. Linux uses
-+RAM/swap-backed tmpfs charged to the process's memory cgroup. Its data ceiling is
-+reduced to at most one quarter of available RAM or remaining visible cgroup
-+memory, whichever is lower, rounded down to whole pages. The inode budget reserves
-+1,024 entries beyond the source-entry ceiling when memory permits.
-+These are snapshots, not memory reservations: concurrent pressure or Git
-+allocations can still exhaust memory. The allowance is not a total process-memory
-+limit.
-+
-+With strict mode enabled, unavailable enforcement fails closed without switching
-+to an ordinary directory. Linux requires readable memory accounting,
-+unprivileged user/mount/PID namespaces, `mount`, `unshare`, `nsenter` and Bubblewrap.
-+macOS uses a fixed-size disk image through `hdiutil` and `sandbox-exec`.
-+Restricted hosts refuse remote preparation and reference checks in this mode.
-+Strict Git preparation cannot use host Unix sockets; credential helpers requiring
-+an SSH agent or desktop keyring may fail even when file-based credentials work.
-+
-+After consent, publication copies and verifies the prepared tree on the
-+installation filesystem before replacing an existing plugin. This copy and
-+approved build outputs are outside the preparation limits. In strict mode, an
-+uncertain mount or cleanup outcome requires manual recovery, not an unbounded
-+retry. The `<app_dir>/.plugin-staging-active` journal records native staging ownership.
-+Disabling strict mode does not clear existing recovery evidence.
-+Startup and worker
+ A worker declares the criteria it publishes in a `[suggestions]` block:
+ 
+@@ -574,7 +574,7 @@ An item has one primary Session. The first create that carries `suggestion` (`st
+ 
+ Errors: 404 `unknown_provider` (no active plugin provides suggestions under that id), 409 `stale_suggestion` (the item is no longer published, its source is disabled, or its source closed it; `prepare` and `start` answer all three the same way), 400 `validation_failed` (`criterion` not declared by the provider, an unknown preset agent, or a prompt or its expansion over 64 KiB), 403 `read_only`.
+ 
+-The TUI lists suggestions from Home with `S` (`Ctrl+S` in strict mode). The view shows each item's `preview` and prompt as plain text; the first Enter resolves `prepare` and shows its final `initial_prompt` (after the preset prompt); a second Enter opens the new-session dialog prefilled with it, and an item whose `project` is `null` cannot be started. The dialog's Prompt row, which is always present and editable, holds that prompt; for a suggestion it is labelled with the provider and Ctrl+P on it shows the item's `preview` as source text. `r` only asks providers to refresh; `l` reloads the list. Items keep the order of the snapshot. Home also lists a collapsed **Suggested (N)** group above Trash, absent when there are no open suggestions. Enter expands it to the first 3 items and a "View all" row that opens the view above; Enter on an item prepares it and opens the prefilled dialog directly, `z` (`Z` in strict mode) dismisses it, and `N` (`Ctrl+N`) starts a blank session. `Ctrl+K` lists "Suggested sessions"; on a suggestion row, or on the selected item in the view, it also lists "Open in <provider>", which opens the item's `source_url`. Every TUI key is provisional pending #4597: `S` / `Ctrl+S` to open, `z` / `N` on a Home row, and `x` (dismiss), `d` (dismissed), `r` and `l` inside the view may move.
++The TUI lists suggestions from Home with `S` (`Ctrl+S` in strict mode). The view shows each item's `preview` and prompt as plain text; the first Enter resolves `prepare` and shows its final `initial_prompt` (after the preset prompt); a second Enter opens the new-session dialog prefilled with it, and an item whose `project` is `null` cannot be started. The dialog's Prompt row, which is always present and editable, holds that prompt; for a suggestion it is labelled with the provider and Ctrl+P on it shows the item's `preview` as source text. `r` only asks providers to refresh; `l` reloads the list. Items keep the order of the snapshot. Home also lists a collapsed **Suggested (N)** group above Trash, absent when there are no open suggestions. Enter expands it to the first 3 items and a "View all" row that opens the view above; Enter on an item prepares it and opens the prefilled dialog directly, `z` (`Z` in strict mode) dismisses it, and `N` (`Ctrl+N`) starts a blank session. `Ctrl+K` lists "Suggested sessions"; on a suggestion row, or on the selected item in the view, it also lists "Open in <provider>", which opens the item's `source_url`. Every TUI key is provisional: `S` / `Ctrl+S` to open, `z` / `N` on a Home row, and `x` (dismiss), `d` (dismissed), `r` and `l` inside the view may move.
+ 
+ ### Project mappings
+ 
 ```
 
-**File**: `src/migrations/mod.rs` (modified, +7/-1)
+**File**: `web/src/App.tsx` (modified, +113/-3)
 ```diff
-@@ -70,6 +70,7 @@ mod v058_account_limits_window_shape;
- mod v059_owner_only_event_logs;
- mod v060_terminal_handoff_outcome;
- mod v061_unpin_default_sandbox_image;
-+mod v062_plugin_staging_evidence;
+@@ -8,7 +8,7 @@ import {
+   type ComponentProps,
+   type ReactNode,
+ } from "react";
+-import { Puzzle } from "lucide-react";
++import { Puzzle, Sparkles } from "lucide-react";
+ import {
+   confirmFileEditNavigation,
+   confirmFileEditPanes,
+@@ -78,6 +78,7 @@ import { usePaneLayout, dockTabs, dockGroups, dockOf, isDockCollapsed, renderedG
+ import { isPluginPaneId, resolvePaneIcon, usePluginPanes, type PluginPane } from "./lib/pluginPanes";
+ import { PluginPaneBody } from "./components/plugin/PluginPane";
+ import { PluginPageView } from "./components/plugin/PluginPageView";
++import { SuggestionsView } from "./components/SuggestionsView";
+ import { PluginSessionMenu } from "./components/plugin/PluginSessionMenu";
+ import {
+   deleteWorkspaceSessions,
+@@ -136,7 +137,13 @@ import { toastBus, reportError } from "./lib/toastBus";
+ import { restartForUpdate } from "./lib/restartForUpdate";
+ import { startPendingCreates } from "./lib/pendingCreates";
+ import { isAbsolutePath, resolveToRepoRelative, type FileRef } from "./lib/fileRef";
+-import { NAVIGATE_EVENT, OPEN_SESSION_EVENT, openFocusWindow, replaceDocument } from "./lib/sessionRoute";
++import {
++  NAVIGATE_EVENT,
++  OPEN_SESSION_EVENT,
++  openFocusWindow,
++  replaceDocument,
++  requestNavigate,
++} from "./lib/sessionRoute";
+ import { dispatchFocusTerminal, requestSessionInputFocus, setPendingTerminalFocus } from "./lib/terminalFocus";
+ import {
+   bindHiddenInput,
+@@ -224,6 +231,7 @@ import { LOGIN_REQUIRED_EVENT, TOKEN_EXPIRED_EVENT, resetTokenExpired } from "./
+ import { AboutModal } from "./components/AboutModal";
+ import { TipsModal } from "./components/TipsModal";
+ import { useTips, shouldAutoPopTips } from "./hooks/useTips";
++import type { CommandAction } from "./components/command-palette/types";
+ import { useConversationSearch } from "./hooks/useConversationSearch";
+ import { BannerStack } from "./components/BannerStack";
+ import { ElevationPrompt } from "./components/ElevationPrompt";
+@@ -434,6 +442,7 @@ function AppContent({
+   const { focusSessionId, enterFocusMode, exitFocusMode } = useFocusMode(sessionMatch?.params.sessionId ?? null);
+   const focusMode = focusSessionId !== null;
+   useDashboardPresence(focusSessionId);
++  const suggestionsMatch = useMatch("/suggestions");
+   // A plugin page's split pane shows `?session=` as the routed session, docks and all.
+   const activeSessionId = sessionMatch?.params.sessionId ?? (pluginPageMatch ? searchParams.get("session") : null);
+   const selectPluginPageSession = useCallback(
+@@ -461,7 +470,7 @@ function AppContent({
+   }, [focusMode, onPluginPage, selectPluginPageSession, navigate]);
+   const showSettings = settingsRootMatch !== null || settingsTabMatch !== null;
+   // Settings and plugin pages take the full width, sidebar and session panels hidden.
+-  const fullPageView = showSettings || pluginPageMatch !== null;
++  const fullPageView = showSettings || pluginPageMatch !== null || suggestionsMatch !== null;
+   const settingsTab = settingsTabMatch?.params.tab ?? null;
  
- /// Fixtures shared by migrations that rewrite agent hook files.
- #[cfg(test)]
-@@ -110,7 +111,7 @@ use anyhow::{Context, Result};
- use std::fs;
- use tracing::{debug, info};
- 
--const CURRENT_VERSION: u32 = 61;
-+const CURRENT_VERSION: u32 = 62;
- const VERSION_FILE: &str = ".schema_version";
- 
- /// Version, log name, and the one-time transformation to run.
-@@ -322,6 +323,11 @@ const MIGRATIONS: &[Migration] = &[
-         "unpin_default_sandbox_image",
-         v061_unpin_default_sandbox_image::run,
-     ),
-+    (
-+        62,
-+        "plugin_staging_evidence",
-+        v062_plugin_staging_evidence::run,
-+    ),
- ];
- 
- /// The data-schema version this build targets, i.e. the version every install
-```
-
-**File**: `src/migrations/v062_plugin_staging_evidence.rs` (added, +130/-0)
-```diff
-@@ -0,0 +1,130 @@
-+//! Preserve legacy staging evidence without manufacturing process ownership.
-+
-+use anyhow::{Context, Result};
-+use std::io::Write;
-+use std::path::Path;
-+
-+use crate::plugin::install::{OPERATION_LOCK, RECOVERY_MARKER, STAGING_MARKER};
-+use crate::session::AnchoredDir;
-+
-+const LEGACY_PREFIX: &[u8] =
-+    b"Plugin staging acquisition started; verify the volume and its writers before removing this marker.\nmount=";
-+const MAX_EVIDENCE_BYTES: usize = 1024 * 1024;
-+
-+pub fn run() -> Result<()> {
-+    migrate_root(&crate::session::get_app_dir()?)
-+}
-+
-+fn migrate_root(path: &Path) -> Result<()> {
-+    let root = AnchoredDir::open(path)?;
-+    let marker = Path::new(STAGING_MARKER);
-+    if root.entry_stat(marker)?.is_none() {
-+        return Ok(());
-+    }
-+    let bytes = root
-+        .read_regular(marker, MAX_EVIDENCE_BYTES)?
-+        .context("plugin staging evidence is not a bounded regular file")?;
-+    if !bytes.starts_with(LEGACY_PREFIX) {
-+        return Ok(());
-+    }
-+    let _operation = crate::session::try_acquire_storage_flock(path, OPERATION_LOCK)?
-+        .context("cannot migrate staging evidence while a plugin operation is active")?;
-+    anyhow::ensure!(
-+        root.read_regular(marker, MAX_EVIDENCE_BYTES)?.as_deref() == Some(bytes.as_slice()),
-+        "plugin staging evidence changed before migration"
-+    );
-+    let recovery = Path::new(RECOVERY_MARKER);
-+    if let Some(mut file) = root.create_new_regular(recovery)? {
-+        file.write_all(
-+            b"Legacy plugin staging evidence has no process-birth or native resource ownership proof. Preserve .plugin-staging-active and verify its resources before manual recovery.\n",
-+        )?;
-+        file.sync_all()?;
-+        root.sync()?;
-+    } else {
-+        root.open_regular(recovery, MAX_EVIDENCE_BYTES)?
-+            .context("existing plugin recovery evidence is not a bounded regular file")?;
-+    }
-+    tracing::info!(target: "migrations.v062", "Preserved legacy plugin staging evidence; explicit ownership recovery remains required");
-+    Ok(())
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use std::fs;
-+
-+    #[test]
-+    #[serial_test::serial]
-+    fn legacy_upgrade_preserves_resources_and_blocks_new_operations() {
-+        for prior_recovery in [None, Some(b"retained operator evidence\n".as_slice())] {
-+            let _home = crate::session::test_support::isolate_app_dir();
-+            let app = crate::session::get_app_dir().unwrap();
-+            let stage = app.join("plugins/.staging-legacy/volume");
-+            fs::create_dir_all(&stage).unwrap();
-+            fs::write(stage.join("retained"), b"unknown owner data").unwrap();
-+            let mut legacy = LEGACY_PREFIX.to_vec();
-+            legacy.extend_from_slice(stage.to_str().unwrap().as_bytes());
-+            legacy.push(b'\n');
-+            fs::write(app.join(STAGING_MARKER), &legacy).unwrap();
-+            if let Some(prior) = prior_recovery {
-+                fs::write(app.join(RECOVERY_MARKER), prior).unwrap();
-+            }
-+
-+            migrate_root(&app).unwrap();
-+            let recovery = fs::read(app.join(RECOVERY_MARKER)).unwrap();
-+            assert!(crate::plugin::install::begin_operation().is_err());
-+            assert_eq!(fs::read(app.join(STAGING_MARKER)).unwrap(), legacy);
-+            assert_eq!(
-+                fs::read(stage.join("retained")).unwrap(),
-+                b"unknown owner data"
-+            );
-+            if let Some(prior) = prior_recovery {
-+                assert_eq!(recovery, prior);
-+            }
-+            migrate_root(&app).unwrap();
-+            assert_eq!(fs::read(app.join(RECOVERY_MARKER)).unwrap(), recovery);
-+            assert_eq!(fs::read(app.join(STAGING_MARKER)).unwrap(), legacy);
-+        }
-+    }
-+
-+    #[test]
-+    fn active_operation_prevents_legacy_evidence_migration() {
-+        let temp = tempfile::tempdir().unwrap();
-+        let legacy = [LEGACY_PREFIX, b"/unproven/stage\n"].concat();
-+        fs::write(temp.path().join(STAGING_MARKER), &legacy).unwrap();
-+        let _operation = crate::session::try_acquire_storage_flock(temp.path(), OPERATION_LOCK)
-+            .unwrap()
-+            .unwrap();
-+        assert!(migrate_root(temp.path()).is_err());
-+        assert_eq!(fs::read(temp.path().join(STAGING_MARKER)).unwrap(), legacy);
-+        assert!(!temp.path().join(RECOVERY_MARKER).exists());
-+    }
-+
-+    #[test]
-+    fn current_or_unrecognized_evidence_is_not_rewritten() {
-+        let temp = tempfile::tempdir().unwrap();
-+        for evidence in [b"{\"schema\":1}\n".as_slice(), b"unrecognized evidence\n"] {
-+            fs::write(temp.path().join(STAGING_MARKER), evidence).unwrap();
-+            migrate_root(temp.path()).unwrap();
-+            assert_eq!(
-+                fs::read(temp.path().join(STAGING_MARKER)).unwrap(),
-+                evidence
-+            );
-+            assert!(!temp.path().join(RECOVERY_MARKER).exists());
-+        }
-+    }
-+
-+    #[cfg(unix
-```
-
-**File**: `src/plugin/fetch.rs` (modified, +1886/-147)
-```diff
-@@ -14,12 +14,14 @@ use crate::github::{GitHubClient, GitHubClientConfig, GitHubError, DEFAULT_USER_
- use super::source::PluginSource;
- 
- pub struct FetchedPlugin {
--    staging: Option<tempfile::TempDir>,
-+    staging: Option<Staging>,
-     operation: Option<Arc<crate::session::StorageFlock>>,
-+    cleanup_safe: bool,
-     pub tree: PathBuf,
-     pub manifest: PluginManifest,
-     pub manifest_bytes: Vec<u8>,
-     pub tree_hash: String,
-+    publication_hash: String,
-     pub source: PluginSource,
-     pub requested_ref: Option<String>,
-     pub resolved_commit: Option<String>,
-@@ -29,31 +31,217 @@ pub struct FetchedPlugin {
-     pub(super) budget: super::execution::Budget,
- }
- 
-+struct Staging {
-+    directory: PathBuf,
-+    mount: PathBuf,
-+    marker: Option<PathBuf>,
-+    volume: Option<crate::process::StagingVolume>,
-+}
-+
-+impl Staging {
-+    fn create_directory(plugins_root: &Path) -> Result<Self> {
-+        std::fs::create_dir_all(plugins_root)?;
-+        let directory = tempfile::Builder::new()
-+            .prefix(".staging-")
-+            .tempdir_in(plugins_root)
-+            .context("creating plugin staging dir")?
-+            .keep();
-+        Ok(Self {
-+            mount: directory.clone(),
-+            directory,
-+            marker: None,
-+            volume: None,
-+        })
-+    }
-+
-+    fn root(&self) -> &Path {
-+        self.volume
-+            .as_ref()
-+            .map_or(self.mount.as_path(), |volume| volume.root())
-+    }
-+
-+    fn create(plugins_root: &Path, limit: u64) -> Result<Self> {
-+        std::fs::create_dir_all(plugins_root)?;
-+        let app_root = plugins_root
-+            .parent()
-+            .ok_or_else(|| anyhow!("plugin staging has no application directory"))?;
-+        let marker = app_root.join(super::install::STAGING_MARKER);
-+        // This ordinary temporary directory is still empty and unmounted.
-+        let mut temporary = tempfile::Builder::new();
-+        temporary.prefix(".staging-");
-+        #[cfg(unix)]
-+        {
-+            use std::os::unix::fs::PermissionsExt;
-+            temporary.permissions(std::fs::Permissions::from_mode(0o700));
-+        }
-+        let directory = temporary.tempdir_in(plugins_root)?;
-+        let mount = directory.path().join("volume");
-+        let mut builder = std::fs::DirBuilder::new();
-+        #[cfg(unix)]
-+        {
-+            use std::os::unix::fs::DirBuilderExt;
-+            builder.mode(0o700);
-+        }
-+        builder.create(&mount)?;
-+        super::install::create_staging_marker(&marker, &mount)?;
-+        #[cfg(test)]
-+        test_gate::reach(&mount, "staging-acquisition");
-+        // From this point onward, no TempDir::drop may traverse the mount.
-+        let mut staging = Self {
-+            directory: directory.keep(),
-+            mount,
-+            marker: Some(marker),
-+            volume: None,
-+        };
-+        let acquisition = super::execution::catch_panic(|| {
-+            crate::process::StagingVolume::create(&staging.mount, limit)
-+        });
-+        match acquisition {
-+            Ok(volume) => {
-+                staging.volume = Some(volume);
-+                Ok(staging)
-+            }
-+            Err(error) => {
-+                if error
-+                    .downcast_ref::<crate::process::StagingAcquisitionUncertain>()
-+                    .is_some()
-+                    || error
-+                        .downcast_ref::<super::execution::RecoveryRequired>()
-+                        .is_some()
-+                {
-+                    std::mem::forget(staging);
-+                    return Err(super::execution::RecoveryRequired(format!(
-+                        "strict plugin staging acquisition failed: {error:#}"
-+                    ))
-+                    .into());
-+                }
-+                if let Err(cleanup) = staging.close() {
-+                    std::mem::forget(staging);
-+                    return Err(super::execution::RecoveryRequired(format!(
-+                        "strict plugin staging acquisition failed: {error:#}; cleanup unproven: {cleanup:#}"
-+                    )).into());
-+                }
-+                Err(error).context("acquiring strict plugin staging filesystem")
-+            }
-+        }
-+    }
-+
-+    fn limit(&self, requested: u64) -> u64 {
-+        self.volume
-+            .as_ref()
-+            .map_or(requested, crate::process::StagingVolume::limit)
-+    }
-+
-+    #[cfg(test)]
-+    fn volume(&self) -> &crate::process::StagingVolume {
-+        self.volume.as_ref().expect("live staging volume")
-+    }
-+
-+    fn close(&mut self) -> Result<()> {
-+        if let Some(volume) = &mut self.volume {
-+            volume
-+                .close()
-+                .context("proving plugin staging volume cleanup")?;
-+        }
-+        self.volume.take();
-+        super::install::remove_owned_tree(&self.directory)
-+            .context("removing detached plugin staging directory")?;
-+        if let Some(marker) = &self.marker {
-+            std:
-```
-
-**File**: `src/plugin/install.rs` (modified, +1557/-103)
-```diff
-@@ -80,7 +80,7 @@ pub(super) fn log_recovery<T>(result: &Result<T>) {
-     if let Err(error) = result {
-         let marker = match crate::session::get_app_dir() {
-             Ok(root) => {
--                let marker = root.join(".plugin-recovery-required");
-+                let marker = root.join(RECOVERY_MARKER);
-                 RECOVERY_STATE.lock().roots.insert(root);
-                 Some(marker)
-             }
-@@ -94,16 +94,371 @@ pub(super) fn log_recovery<T>(result: &Result<T>) {
-         tracing::error!(target: "plugin.install", error = %cause, "plugin mutation ownership retained for recovery");
-         cause.push('\n');
-         if let Some(marker) = marker {
--            if let Err(persist_error) = std::fs::write(marker, cause) {
-+            let persist = (|| -> Result<()> {
-+                let mut file = std::fs::File::create(&marker)?;
-+                file.write_all(cause.as_bytes())?;
-+                file.sync_all()?;
-+                std::fs::File::open(marker.parent().expect("recovery marker parent"))?
-+                    .sync_all()?;
-+                Ok(())
-+            })();
-+            if let Err(persist_error) = persist {
-                 tracing::error!(target: "plugin.install", %persist_error, "plugin recovery marker could not be persisted; manual recovery is required before restarting");
-             }
-         }
+   const {
+@@ -565,6 +574,17 @@ function AppContent({
+   const pluginUiEntries = usePluginUiEntries();
+   const pluginPages = usePluginPages();
+   const pluginPageActions = useMemo(() => buildPluginPageActions(pluginPages ?? []), [pluginPages]);
++  const suggestionsAction = useMemo<CommandAction>(
++    () => ({
++      id: "page:suggestions",
++      title: "Suggested sessions",
++      group: "Pages",
++      keywords: ["page", "suggestions", "suggested", "start"],
++      icon: <Sparkles className="h-4 w-4" />,
++      perform: () => requestNavigate("/suggestions"),
++    }),
++    [],
++  );
+   const pluginAttention = usePluginAttention();
+   const [pluginSortRef, setPluginSortRef] = useState<{ pluginId: string; entryId: string } | null>(null);
+   const activePluginSort = useMemo(() => {
+@@ -2389,6 +2409,38 @@ function AppContent({
+         />
+       );
      }
- }
- 
--const OPERATION_LOCK: &str = ".plugin-operation.lock";
-+pub(crate) const OPERATION_LOCK: &str = ".plugin-operation.lock";
-+pub(crate) const STAGING_MARKER: &str = ".plugin-staging-active";
-+pub(crate) const RECOVERY_MARKER: &str = ".plugin-recovery-required";
-+static LIVE_STAGING: parking_lot::Mutex<BTreeSet<PathBuf>> =
-+    parking_lot::Mutex::new(BTreeSet::new());
-+
-+#[cfg(test)]
-+fn register_staging(marker: &Path) {
-+    LIVE_STAGING.lock().insert(marker.to_path_buf());
-+}
-+
-+#[derive(Serialize, Deserialize)]
-+#[serde(deny_unknown_fields)]
-+struct StagingEvidence {
-+    schema: u32,
-+    owner_pid: u32,
-+    owner_birth: crate::process::ProcessBirthIdentity,
-+    #[cfg(target_os = "linux")]
-+    owner_scope: crate::process::StagingRecoveryScope,
-+    mount: PathBuf,
-+    directory_identity: (u64, u64),
-+    mount_identity: (u64, u64),
-+    custody: crate::process::StagingCustody,
-+}
-+
-+fn staging_directory_identity(directory: &crate::session::AnchoredDir) -> Result<(u64, u64)> {
-+    let (device, inode) = directory.identity()?;
-+    #[cfg(target_os = "macos")]
-+    let device = device as u64;
-+    Ok((device, inode))
-+}
-+
-+fn staging_evidence(
-+    root: &crate::session::AnchoredDir,
-+) -> Result<(StagingEvidence, Vec<crate::process::StagingProcess>)> {
-+    use std::io::Read as _;
-+    let file = root
-+        .open_regular(Path::new(STAGING_MARKER), 1024 * 1024)?
-+        .context("plugin staging evidence is missing or not a bounded regular file")?;
-+    crate::process::validate_recovery_file(&file)?;
-+    let mut bytes = Vec::new();
-+    file.take(1024 * 1024 + 1).read_to_end(&mut bytes)?;
-+    anyhow::ensure!(
-+        bytes.len() <= 1024 * 1024,
-+        "plugin staging journal exceeds its bound"
-+    );
-+    anyhow::ensure!(
-+        bytes.last() == Some(&b'\n'),
-+        "incomplete plugin staging journal"
-+    );
-+    let mut lines = bytes[..bytes.len() - 1].split(|byte| *byte == b'\n');
-+    let mut evidence: StagingEvidence =
-+        serde_json::from_slice(lines.next().context("missing plugin staging header")?)
-+            .context("plugin staging evidence has no complete ownership proof")?;
-+    anyhow::ensure!(
-+        evidence.schema == 1,
-+        "unsupported plugin staging evidence schema"
-+    );
-+    anyhow::ensure!(
-+        evidence.owner_pid > 1
-+            && evidence.owner_pid <= i32::MAX as u32
-+            && !evidence.owner_birth.boot_id.is_empty()
-+            && !evidence.owner_birth.start_id.is_empty(),
-+        "incomplete staging owner identity"
-+    );
-+    uuid::Uuid::parse_str(&evidence.owner_birth.boot_id)
-+        .context("invalid staging owner boot identity")?;
-+    #[cfg(target_os = "linux")]
-+    anyhow::ensure!(
-+        evidence
-+            .owner_birth
-+            .start_id
-+            .strip_prefix("proc:")
-+            .is_some_and(|start| start.parse::<u64>().is_ok_and(|start| start > 0)),
-+        "invalid staging owner birth identity"
-+    );
-+    #[cfg(target_os = "macos")]
-+    anyhow::ensure!(
-+        evidence
-+            .owner_birth
-+            .start_id
-+            .strip_prefix("audit:")
-+            .is_some_and(
-+                |token| token.len() == 64 && token.bytes().all(|byte| byte.is_ascii_hexdigit())
-+            ),
-+        "invalid staging owner birth identity"
-+    );
-+    let mut writers = Vec::new();
-+    for line in lines {
-+        let mut fields = std::str::from_utf8(line)?.split_ascii_whitespace();
-+        if line == b"U" {
-+            evidence.custody = crate::process::StagingCustody::Uncertain;
-+            continue;
-+        }
-+        anyhow::ensure!(fields.nex
++    if (suggestionsMatch) {
++      return (
++        <div className="flex-1 min-h-0 flex flex-col">
++          <div className="px-4 pt-3 md:px-8">
++            <button onClick={handleClosePluginPage} className="text-brand-500 cursor-pointer text-sm">
++              &larr; Back
++            </button>
++          </div>
++          <SuggestionsView
++            readOnly={caps.readOnly || !caps.canManageSuggestions}
++            cityhall={caps.cityhall}
++            onOpenMarketplace={
++              caps.canManageProjects ? () => requestNavigate("/settings/plugins?marketplace=suggestions") : undefined
++            }
++            initialDismissed={searchParams.get("dismissed") === "1"}
++            onPrepare={(prefill) => {
++              setWizardPrefill(prefill);
++              setShowSessionWizard(true);
++            }}
++            onOpenSession={(id) => requestNavigate(`/session/${encodeURIComponent(id)}`)}
++            onOpenSettings={caps.canManageSuggestions ? () => requestNavigate("/settings/suggestions") : undefined}
++            sessions={sessions}
++            canLink={!caps.nam
 ```
 
-**File**: `src/process/linux.rs` (modified, +1362/-1)
+**File**: `web/src/components/Dashboard.tsx` (modified, +45/-1)
 ```diff
-@@ -25,7 +25,7 @@ fn read_mount_points(
- /// The kernel escapes only space, tab, newline and backslash in a path
- /// (as `\ooo`), so fields split on a literal space and paths stay raw bytes.
- fn parse_mount_points(mountinfo: &[u8]) -> std::collections::HashSet<std::path::PathBuf> {
--    use std::os::unix::ffi::OsStringExt;
-+    use std::os::unix::ffi::OsStringExt as _;
+@@ -1,10 +1,13 @@
+-import { useMemo, type ReactNode } from "react";
++import { useMemo, useState, type ReactNode } from "react";
+ import type { SessionResponse } from "../lib/types";
+ import { getStatusTextClass, isSessionActive } from "../lib/session";
+ import { useIdleDecayWindowMs } from "../lib/idleDecay";
+ import { useIsWideViewport } from "../hooks/useIsWideViewport";
+ import { AOE_BRAND_MARK_COLORS, AOE_BRAND_MARK_TEXT_SHADOW } from "../lib/brandMark";
+ import { TOUR_ANCHORS, type TourAnchorId } from "../lib/tourSteps";
++import { DashboardSuggestions } from "./DashboardSuggestions";
++import { SuggestionsSetupHint } from "./SuggestionsSetupHint";
++import type { WizardPrefill } from "./session-wizard/SessionWizard";
+ import { PluginCards, PluginHomePanes } from "./plugin/PluginSlots";
+ import { StatusGlyph } from "./StatusGlyph";
+ import { StrokeIcon } from "./icons";
+@@ -21,6 +24,17 @@ interface Props {
+   readOnly?: boolean;
+   /** Shown above the action panes, e.g. the setup checklist. */
+   banner?: ReactNode;
++  /** Both required to show the Suggested sessions section. */
++  onPrepareSuggestion?: (prefill: WizardPrefill) => void;
++  onEditSuggestionPreset?: (providerId: string, criterion: string) => void;
++  canLinkSuggestions?: boolean;
++  /** False in CityHall: suggestions are read-only there. Defaults to true. */
++  canManageSuggestions?: boolean;
++  onViewAllSuggestions?: () => void;
++  /** The onboarding tour is running; the first-run hint stays out of it. */
++  tourActive?: boolean;
++  /** Opens Settings > Plugins > Marketplace filtered to Suggestions; the first-run hint shows only when set. */
++  onOpenSuggestionsMarketplace?: () => void;
+ }
  
-     mountinfo
-         .split(|&b| b == b'\n')
-@@ -59,6 +59,1252 @@ fn parse_mount_points(mountinfo: &[u8]) -> std::collections::HashSet<std::path::
+ export function Dashboard({
+@@ -32,7 +46,16 @@ export function Dashboard({
+   readOnly,
+   canManageProjects = true,
+   banner,
++  onPrepareSuggestion,
++  onEditSuggestionPreset,
++  canLinkSuggestions,
++  canManageSuggestions = true,
++  onViewAllSuggestions,
++  onOpenSuggestionsMarketplace,
++  tourActive = false,
+ }: Props) {
++  // Bumped when the setup sheet finishes so the Suggested section refetches.
++  const [suggestionsEpoch, setSuggestionsEpoch] = useState(0);
+   const idleDecayWindowMs = useIdleDecayWindowMs();
+   const isWideViewport = useIsWideViewport();
+   const stats = useMemo(() => {
+@@ -143,6 +166,20 @@ export function Dashboard({
+         </div>
+       )}
  
- pub(crate) const HAS_CODEX_MANAGED_PREFERENCES: bool = false;
++      {onPrepareSuggestion && onViewAllSuggestions && (
++        <DashboardSuggestions
++          key={suggestionsEpoch}
++          readOnly={readOnly || !canManageSuggestions}
++          cityhall={!canManageSuggestions}
++          onPrepare={onPrepareSuggestion}
++          onEditPreset={onEditSuggestionPreset}
++          canLink={canLinkSuggestions}
++          onViewAll={onViewAllSuggestions}
++          onOpenSession={onSelectSession}
++          sessions={sessions}
++        />
++      )}
++
+       {/* The desktop sidebar is always available, but mobile starts at this dashboard. */}
+       {!isWideViewport && recentSessions.length > 0 && (
+         <section className="md:hidden mb-4 w-full max-w-md" aria-labelledby="recent-sessions-heading">
+@@ -235,6 +272,13 @@ export function Dashboard({
+         </div>
+       )}
  
-+/// A private mount namespace holds the only writable filesystem used by Git.
-+/// Callers must stop and reap every Git command before calling `close`.
-+pub(super) struct StagingVolume {
-+    holder: Child,
-+    init: super::StagingProcess,
-+    journal: std::sync::Arc<fs::File>,
-+    root: std::path::PathBuf,
-+    mount: std::path::PathBuf,
-+    filter: std::sync::Arc<fs::File>,
-+    limit: u64,
-+    closed: bool,
++      {!readOnly && canManageProjects && !tourActive && onOpenSuggestionsMarketplace && (
++        <SuggestionsSetupHint
++          onOpenMarketplace={onOpenSuggestionsMarketplace}
++          onFinished={() => setSuggestionsEpoch((n) => n + 1)}
++        />
++      )}
++
+       {/* Plugin-contributed dashboard cards (#2366). Renders nothing (and adds
+           no spacing) until a plugin pushes a card. */}
+       <PluginCards />
+```
+
+**File**: `web/src/components/DashboardSuggestions.tsx` (added, +207/-0)
+```diff
+@@ -0,0 +1,207 @@
++import type { SessionResponse } from "../lib/types";
++import { liveSession } from "../lib/suggestionPlan";
++import { StartedPromptNote } from "./PromptBlockedNote";
++import { useAgentNames } from "../hooks/useAgentNames";
++import { useSuggestionPresets } from "../hooks/useSuggestionPresets";
++import { SuggestionItemActions } from "./SuggestionItemActions";
++import { SuggestionHooksReview } from "./SuggestionHooksReview";
++import { suggestionKey, useDismissUndo, useSuggestions } from "../hooks/useSuggestions";
++import { useIsWideViewport } from "../hooks/useIsWideViewport";
++import {
++  SUGGESTION_NOTE_CLASS,
++  SuggestionRow,
++  SuggestionStatusNotes,
++  SuggestionsOffNote,
++  UndoBar,
++} from "./SuggestionRow";
++import type { WizardPrefill } from "./session-wizard/SessionWizard";
++
++interface Props {
++  readOnly?: boolean;
++  /** Read-only because of CityHall mode, which the copy says. */
++  cityhall?: boolean;
++  onPrepare: (prefill: WizardPrefill) => void;
++  onEditPreset?: (providerId: string, criterion: string) => void;
++  canLink?: boolean;
++  onViewAll: () => void;
++  onOpenSession: (sessionId: string) => void;
++  /** Live sessions, so a started row follows its Session's state. */
++  sessions?: SessionResponse[];
 +}
 +
-+#[derive(serde::Serialize, serde::Deserialize)]
-+#[serde(deny_unknown_fields)]
-+pub(crate) struct StagingRecoveryScope {
-+    machine: Option<String>,
-+    pid_namespace: (u64, u64),
-+}
++export function DashboardSuggestions({
++  readOnly = false,
++  cityhall = false,
++  onPrepare,
++  onEditPreset,
++  canLink = true,
++  onViewAll,
++  onOpenSession,
++  sessions,
++}: Props) {
++  const wide = useIsWideViewport();
++  const ctrl = useSuggestions(onPrepare, onOpenSession);
++  const { snapshot, loadFailed, busy, refreshing, notice, refreshFailed, failures, offline, act, refresh } = ctrl;
++  const agentName = useAgentNames();
++  const presetOf = useSuggestionPresets();
++  const { undo, dismiss, stop } = useDismissUndo(act);
 +
-+impl StagingRecoveryScope {
-+    pub(crate) fn capture() -> anyhow::Result<Self> {
-+        use std::io::Read as _;
-+        use std::os::unix::fs::MetadataExt as _;
-+        let namespace = fs::metadata("/proc/self/ns/pid")?;
-+        let machine = fs::File::open("/etc/machine-id").ok().and_then(|file| {
-+            let mut machine = String::new();
-+            file.take(128).read_to_string(&mut machine).ok()?;
-+            machine.truncate(machine.trim_ascii_end().len());
-+            if machine.len() != 32
-+                || !machine.bytes().all(|byte| byte.is_ascii_hexdigit())
-+                || machine.bytes().all(|byte| byte == b'0')
-+            {
-+                return None;
++  // Offline, the disconnect banner already explains a missing snapshot.
++  if (!snapshot && loadFailed && !offline)
++    return (
++      <section className="mb-4 mt-3 w-full max-w-2xl" aria-label="Suggested sessions">
++        <p role="alert" className="px-1 text-xs text-status-error">
++          Could not load suggestions.{" "}
++          <button
++            type="button"
++            onClick={() => void ctrl.load()}
++            className="cursor-pointer text-brand-500 hover:underline"
++          >
++            Try again
++          </button>
++        </p>
++      </section>
++    );
++  if (!snapshot || snapshot.providers.length === 0 || !snapshot.prefs.homepage) return null;
++
++  const active = snapshot.items.filter((item) => !item.dismissed);
++  const rows = active.slice(0, wide ? 3 : 2);
++  // A provider that is off is never asked, so it stays "pending" forever.
++  const on = snapshot.providers.filter((p) => p.enabled);
++  const pending = on.filter((p) => p.status === "pending");
++  const errored = on.filter((p) => p.status === "error");
++  const kindOf = (item: { provider_id: string; criterion: string }) =>
++    snapshot.providers
++      .find((p) => p.id === item.provider_id)
++      ?.sources.find((src) => src.criterion === item.criterion)
++      ?.label.toLowerCase();
++  const alert = notice ?? (loadFailed ? "Could not load suggestions." : null);
++
++  return (
++    <section className="mb-4 mt-3 w-full max-w-2xl" aria-labelledby="suggested-sessions-heading">
++      <div className="mb-2 flex items-baseline justify-between px-1">
++        <h2
++          id="suggested-sessions-heading"
++          className="text-[11px] font-mono uppercase tracking-[0.16em] text-text-muted"
++        >
++          Suggested sessions
++        </h2>
++        <a
++          href="/suggestions"
++          onClick={(e) => {
++            if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
++            e.preventDefault();
++            onViewAll();
++          }}
++          className="text-xs text-brand-500 hover:underline"
++        >
++          {active.length > 0 ? `View all (${active.length})` : "View all"}
++        </a>
++      </div>
++      <ul className="rounded-lg border border-surface-700/40 bg-surface-900">
++        {rows.map((item) => (
++          <SuggestionRow
++            key={suggestionKey(item)}
++            title={item.title}
++            sourceRef={snapshot.prefs.show_source_ref ? item.source_ref : undefined}
++            reason={item.reason}
++            project={item.resolved_project?.name ?? item.project}
++            session={liveSession(item.started_session, sessions)}
++            stale={item.stale}
++            failure={failures[suggestionKey(item)]}
++            note={
++              <StartedPromptNote
++                session={liveSession(item.started_session, sessions)}
++                onTryAgain={() => ctrl.retryBlocked(item)}
++                disabled={readOnly || offline}
++              />
 +            }
-+            machine.make_ascii_lowercase();
-+            Some(machine)
-+        });
-+        Ok(Self {
-+            machine,
-+            pid_namespace: (namespace.dev(), namespace.ino()),
-+        })
-+    }
++            actions={
++              <SuggestionItemActions
++                item={item}
++                snapshot={snapshot}
++                ctrl={ctrl}
++                readOnly={readOnly}
++            
+```
+
+**File**: `web/src/components/LiveTerminalView.tsx` (modified, +19/-5)
+```diff
+@@ -27,6 +27,7 @@ import { safeGetItem, safeRemoveItem, safeSetItem } from "../lib/safeStorage";
+ import { isSessionActive } from "../lib/session";
+ import { publishLivePane } from "../lib/liveControl";
+ import { LiveControlStrip } from "./LiveControlStrip";
++import { PromptBlockedNote } from "./PromptBlockedNote";
+ 
+ interface Props {
+   readOnly: boolean;
+@@ -526,11 +527,24 @@ export function LiveTerminalView({ session, readOnly, active = true, surface = "
+         onRestart={readOnly ? undefined : retryEnsure}
+       />
+ 
+-      {ensureWarning && (
+-        <div className="absolute left-0 right-0 top-12 z-20 flex justify-center px-3 pointer-events-none">
+-          <span className="text-xs text-status-warning bg-surface-900/90 border border-surface-700/60 rounded-full px-4 py-2 max-w-md break-words text-center">
+-            {ensureWarning}
+-          </span>
++      {(ensureWarning || session.initial_prompt_error) && (
++        <div className="absolute left-0 right-0 top-12 z-20 flex flex-col items-center gap-2 px-3 pointer-events-none">
++          {ensureWarning && (
++            <span className="text-xs text-status-warning bg-surface-900/90 border border-surface-700/60 rounded-full px-4 py-2 max-w-md break-words text-center">
++              {ensureWarning}
++            </span>
++          )}
++          {session.initial_prompt_error && (
++            <div className="pointer-events-auto bg-surface-900/90 border border-surface-700/60 rounded-2xl px-4 py-2 max-w-md text-center">
++              <PromptBlockedNote
++                inSession
++                label="Initial prompt not sent"
++                code={session.initial_prompt_error_code}
++                message={session.initial_prompt_error}
++                disabled={readOnly}
++              />
++            </div>
++          )}
+         </div>
+       )}
+ 
+```
+
+**File**: `web/src/components/PromptBlockedNote.tsx` (added, +152/-0)
+```diff
+@@ -0,0 +1,152 @@
++import { useState } from "react";
++import { updateSettings } from "../lib/api";
++import { copyPrompt } from "../lib/suggestionPlan";
++import type { StartedSession } from "../lib/types";
 +
-+    pub(crate) fn prove_current(&self, previous_boot: bool) -> anyhow::Result<()> {
-+        let current = Self::capture()?;
-+        if previous_boot {
-+            anyhow::ensure!(
-+                self.machine.is_some() && self.machine == current.machine,
-+                "staging recovery belongs to an unproven host"
-+            );
-+        } else {
-+            anyhow::ensure!(
-+                self.pid_namespace == current.pid_namespace,
-+                "staging recovery belongs to a different PID namespace"
-+            );
-+        }
-+        Ok(())
++const FOLDER = "agent_folder_not_trusted";
++
++/** The server's message names config keys; the codes it knows get one plain sentence instead. */
++const PLAIN: Record<string, string> = {
++  [FOLDER]: "Claude Code is asking whether to trust this folder, so the prompt was not typed.",
++  agent_bypass_not_accepted:
++    "Claude Code is waiting for Bypass Permissions to be accepted once. Open the Session and accept it.",
++};
++
++const LINK = "cursor-pointer text-brand-500 hover:underline disabled:opacity-50";
++
++/**
++ * Why a Session's initial prompt was not typed. For an untrusted folder it offers to turn on
++ * `pre_trust_agent_folders` after saying what that also allows, then Try again when given.
++ */
++export function PromptBlockedNote({
++  label,
++  code,
++  message,
++  onTryAgain,
++  inSession = false,
++  onCopyPrompt,
++  disabled = false,
++  live = "alert",
++}: {
++  label: string;
++  code?: string | null;
++  message: string;
++  /** Starts a fresh Session; without it the note says how to go on in this one. */
++  onTryAgain?: () => Promise<unknown> | void;
++  /** Shown on the Session page, where the terminal is right there. */
++  inSession?: boolean;
++  /** Copies the prompt to paste once the folder is trusted. */
++  onCopyPrompt?: () => void;
++  disabled?: boolean;
++  /** Rows re-render on every poll, so they announce politely. */
++  live?: "alert" | "status";
++}) {
++  const [step, setStep] = useState<"idle" | "confirm" | "saving" | "on" | "failed">("idle");
++  const [retrying, setRetrying] = useState(false);
++  const tryAgain = async () => {
++    if (retrying || !onTryAgain) return;
++    setRetrying(true);
++    try {
++      await onTryAgain();
++    } finally {
++      setRetrying(false);
 +    }
++  };
++  const turnOn = async () => {
++    setStep("saving");
++    const outcome = await updateSettings({ session: { pre_trust_agent_folders: true } });
++    setStep(outcome === "committed" ? "on" : "failed");
++  };
++  const actions = code === FOLDER && !disabled;
++  return (
++    <div className="text-xs text-status-warning">
++      <p role={live} className="break-words">
++        {label}: {(code && PLAIN[code]) || message}
++      </p>
++      {code === FOLDER && (
++        <p>
++          {inSession
++            ? "Choose \u201cYes, I trust this folder\u201d in the terminal, then type the prompt."
++            : "Open the Session and choose \u201cYes, I trust this folder\u201d, then paste the prompt."}
++          {onCopyPrompt && !disabled && (
++            <>
++              {" "}
++              <button type="button" className={LINK} onClick={onCopyPrompt}>
++                Copy prompt
++              </button>
++            </>
++          )}
++        </p>
++      )}
++      {actions && (step === "idle" || step === "failed") && (
++        <p className="text-text-secondary">
++          {step === "failed" && <span>Couldn&apos;t turn on pre-trust. </span>}
++          Or trust every folder AoE starts Claude Code in:{" "}
++          <button type="button" className={LINK} onClick={() => setStep("confirm")}>
++            Turn on pre-trust
++          </button>
++        </p>
++      )}
++      {actions && (step === "confirm" || step === "saving") && (
++        <p className="text-text-secondary">
++          This turns on Pre-trust agent folders: Claude Code will trust each folder AoE starts it in, which also runs
++          the repo&apos;s own .claude/settings.json hooks.{" "}
++          {/* Focus follows the step, since the button that had it is gone. */}
++          <button type="button" className={LINK} disabled={step === "saving"} onClick={() => void turnOn()} autoFocus>
++            Turn on
++          </button>{" "}
++          <button type="button" className={LINK} disabled={step === "saving"} onClick={() => setStep("idle")}>
++            Cancel
++          </button>
++        </p>
++      )}
++      {actions &&
++        step === "on" &&
++        (onTryAgain ? (
++          <p className="text-text-secondary">
++            Pre-trust is on.{" "}
++            <button type="button" className={LINK} disabled={retrying} onClick={() => void tryAgain()} autoFocus>
++              Try again
++            </button>{" "}
++            moves this Session to Trash and starts a new one.
++          </p>
++        ) : (
++          <p className="text-text-secondary">
++            Pre-trust is on: new Sessions start trusted. Trust this folder in the terminal to go on.
++          </p>
++        ))}
++    </div>
++  );
 +}
 +
-+fn staging_memory_budget(requested: u64, page: u64, available: u64) -> anyhow::Result<(u64, u64)> {
-+    // tmpfs data and inode metadata consume cgroup memory. This leaves room for
-+    // both, the Daemon and Git, but does not reserve memory against other users.
-+    let share = available / 4;
-+    let bytes = requested.min(share) / page * page;
-+    let inodes = (share / page).min(super::super::plugin::fetch::STAGING_ENTRY_LIMIT as u64 + 1024);
-+    anyhow::ensure!(
-+        bytes >= page && inodes >= 16,
-+        "insufficient memory for strict tmpfs staging"
-+    );
-+    Ok((bytes, inodes))
-+}
-+
-+fn staging_memory_headroom() -> anyhow::Result<u64> {
-+    let meminfo = fs::read_to_string("/proc/meminfo").context("reading staging memory headroom")?;
-+    let groups =
-+        fs::read_to_string("/proc/self/cgroup").context("reading staging memory cgroups")?;
-+    let mounts =
-+        fs::read_to_string("/proc/self/mountinfo").context("reading staging cgroup mounts")?;
-+    let available = staging_memory_headroom_from(&meminfo, &groups, &mounts)?;
-+    anyhow::ensure!(
-+        fs::read_to_string("/proc/self/cgroup")? == groups,
-+        "memory cgroup changed while preparing strict staging"
-+    );
-+    Ok(available)
-+}
-+
-+fn staging_memory_headroom_from(meminfo: &str, groups: &str, mounts: &str) -> anyhow::Result<u64> {
-+    let mut available = parse_meminfo_field(meminfo, "MemAvailable")
-+        .map(kib_to_bytes)
-+        .context("available RAM is unknown; cannot size tmpfs staging safely")?;
-+    let mut membership = None;
-+    for line in groups.lines() {
-+        let mut fields = line.splitn(3, ':');
-+        let hierarchy = fields.next().context("missing memory cgroup hierarchy")?;
-+        let controllers = fields.next().context("missing memory cgroup controllers")?;
-+        let group = fields.next().context("missing memory cgroup path")?;
-+        if controllers
-+            .split(',')
-+            .any(|controller| controller == "memory")
-+        {
-+            membership = Some((group, false));
-+            break;
-+        }
-+        if hierarchy == "0" && controllers.is_empty() {
-+            membership = Some((group, true));
-+        }
-+    }
-+    let Some((group, unified)) = membership else {
-+        return Ok(available);
-+    }
++/** A started suggestion's row note: nothing unless its Session's prompt was not typed. */
++export function StartedPromptNote({
++  session,
++  onTryAgain,
++  disabled,
++}: {
++  session?: StartedSession;
++  onTryAgain: () => Promise<unknown>;
++  disabled: boolean;
++}) {
++  if (!session?.initial_prompt_error) return null;
++  return (
++    
 ```
 
 ---
 
-### Incident Patch 2: `43c8bdad` (2026-11-22)
-**Commit Message**: fix(sandbox): stop sandbox-written .git config and hooks running on the host (#5777)
+### Incident Patch 2: `956d1300` (2026-11-26)
+**Commit Message**: feat(tui): suggested sessions view, Suggested group and one-line prompt (#5600)
 
-* fix(sandbox): stop sandbox-written .git config and hooks running on the host
-
-Mount each repo's .git/config and .git/hooks read-only inside the sandbox,
-and run host git calls (run_git, fetch) with core.fsmonitor off, ext::
-transport denied, core.sshCommand and credential.helper pinned to the user's
-own values, and hooks off except for git worktree add.
+* feat(acp): client calls for the suggestions snapshot, refresh, dismiss and prepare
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(sandbox): resolve common git dir for overlays and keep included git config
+* feat(tui): suggested sessions view, Suggested group and prompt row
 
-Resolve each repo's common git dir (bare .git files, workspace-nested repos),
-create a missing hooks dir, read global config with includes, and teach the
-e2e git shim about the leading -c overrides.
-
-Addresses review comments from coderabbitai on #5777.
+Adds the Suggestions view with Start into the prefilled new-session
+dialog, the collapsed Suggested group above Trash, the Prompt row in the
+new-session dialog, the open-source palette action, and the plugin
+manager Suggestions marker.
 
 Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* fix(sandbox): protect worktree gitdir pointers and config.worktree
+* fix(tui): focus the Prompt row by mouse and ignore paste behind the source overlay
 
-Overlay read-only a linked worktree's .git file, the admin dir's commondir
-and gitdir, and config.worktree (created when absent), and include the
-project path as an overlay candidate so bare-layout worktrees are covered.
+Addresses review comments from @coderabbitai and @jerome-benoit on #5600.
 
-Addresses review c
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/guides/multi-repo-workspaces.md` (modified, +1/-1)
+* fix(acp): keep the daemon's reason when a suggestion prepare is refused
+
+Addresses review comment from @coderabbitai on #5600.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(tui): tell offline from read-only by the latest runtime result
+
+The writer keeps its channel open after the read side drops, so channel
+liveness alone reported a gone daemon as read-only.
+
+Addresses review comment
+
+**File**: `docs/guides/suggested-sessions.md` (modified, +27/-19)
 ```diff
-@@ -30,7 +30,7 @@ aoe add /path/to/backend --project frontend \
+@@ -8,10 +8,12 @@ Suggestions show up in the web dashboard (homepage section, `/suggestions`, and
  
- `<repo>` is the repo directory name or a `--repo` path; unmatched names fail rather than falling back. The web wizard exposes the same per-repo field. Each recorded base becomes its repo's diff comparison ref, changeable with `aoe session set-base --repo <name>`; see [Base override](diff-view.md#base-override).
+ ## Setting up
  
--Worktree creation runs concurrently. A failed post-checkout hook leaves the completed checkout usable and surfaces a warning rather than aborting the workspace. See [Post-checkout hooks](worktrees.md#post-checkout-hooks).
-+Worktree creation runs concurrently. A non-fatal failure such as a stale fetch surfaces a warning rather than aborting the workspace. Repo `post-checkout` hooks do not run: see [Repo hooks do not run](worktrees.md#repo-hooks-do-not-run).
+-With no provider installed, the web homepage and the empty `/suggestions` view offer **Set up suggestions** when a featured plugin exists. The sheet installs the sources you tick, runs each plugin's setup checks (✓, `!`, ✕, with the plugin's fix text and **Check again**), and ends with "Suggestions are on". **Finish later** closes it; the plugin stays installed. **More sources in the Marketplace ›** opens Settings › Plugins › Marketplace filtered to plugins that work with suggestions.
++With no provider installed, the web homepage and the empty `/suggestions` view offer **Set up suggestions** when a featured plugin exists. The sheet installs the sources you tick, runs each plugin's setup checks (✓, `!`, ✕, with the plugin's fix text and **Check again**), and ends with "Suggestions are on". **Finish later** closes it; the plugin stays installed. **More sources in the Marketplace ›** opens Settings › Plugins › Marketplace filtered to plugins that work with suggestions. With no provider, the TUI's list (`S`) says to run `aoe plugin install gh:agent-of-empires/plugin-github` and turn the provider on in the dashboard, and names **Set up suggestions** when the dashboard offers it. With every provider off, it says to turn one on in Settings › Suggestions.
  
- ### Workspace layout
+ Providers are off until you turn one on, in the setup sheet, in Settings › Suggestions › Sources, or through the API (`PATCH /api/suggestions/prefs` with `provider_enabled`). The sheet turns on each source it installs, and no other. To skip the sheet, install a provider with `aoe plugin install` ([Plugins](../plugins.md)), then turn it on. While every installed provider is off, the homepage section and `/suggestions` say so and offer **Turn it on** (**Turn them on** for several); a read-only dashboard says it can't turn them on.
+ 
++Suggestions stay off until you set them up. A **New: suggested sessions** tip shows once in the TUI and the dashboard, saying how to turn them on, while every installed provider is off, or while none is installed and a featured plugin offers them. The dashboard walkthrough also has a step on the homepage's Suggested section, skipped when the section is not on the page. The TUI intro's last page lists `S`.
++
+ ## Web dashboard
+ 
+ ### Homepage and `/suggestions`
+@@ -60,8 +62,8 @@ If a provider is switched off, its items are hidden and the view says "<provider
+ | Setting | What it does |
+ |---|---|
+ | Show on the homepage | The homepage section. |
+-| Show in the sidebar | A collapsed **Suggested (N)** group at the bottom of the web session sidebar, above Trash, absent when there are no open suggestions. Started suggestions are not listed, since the Session is already under its Project. Expanded, it lists 3 items and **View all**; clicking an item starts it like **Start**. Off by default. |
+-| Show where each one comes from | Shows where each suggestion comes from, such as `owner/repo#123`, on web rows and before the title on TUI rows. On by default. |
++| Show in the sidebar | A collapsed **Suggested (N)** group at the bottom of the web session sidebar, above Trash, and a **Suggested (N)** row in the TUI Home list, below the live sessions and above Archived and Trash. Both are absent when there are no open suggestions. Started suggestions are not counted, since the Session is already under its Project. Expanded, the web group lists 3 items and **View all**; clicking an item starts it like **Start**. Off by default. |
++| Show where each one comes from | Shows where each suggestion comes from, such as `owner/repo#123`, on web rows and after the title in the TUI list. On by default. |
+ | Sources | Drag to set which source comes first (Alt+↑/↓ on a focused row, a move-up button on a phone). Each has an on/off switch. A source that uses an agent says so, since it spends your agent usage. A source error can carry a fix button from the plugin. |
+ | *Source* · Kinds | One row per kind of suggestion, such as Review requests: what it starts with ("Claude Code · Structured view · worktree"), a switch to suggest it, and **Edit** for its [preset](#presets). |
+ | *Source* source settings | The plugin's own settings for its suggestions, such as the GitHub plugin's ignored organizations and repositories. The same settings, saved to the same place, also appear under Settings › Plugins. |
+@@ -95,31 +97,37 @@ Change any proposal with its select, then **Link N repos** stores every checked
+ 
+ > The TUI keys below are provisional until #4597 settles the key bindings.
+ 
+-**Home.** A collapsed **Suggested (N)** group sits above Trash and is absent when there are no open suggestions. Enter expands it to 3 items and a "View all" row. On an item, Enter prepares it and opens the prefilled dialog, `z` (`Z` in strict mode) dismisses it, and `Ctrl+K` lists "Open in <provider>". `N` (`Ctrl+N`) starts a blank session.
++**Home.** With **Show in the sidebar
+```
+
+**File**: `docs/plugin-api.md` (modified, +2/-2)
+```diff
+@@ -534,7 +534,7 @@ Suggestions are stored per profile. The routes below list and act on them; only
+ 
+ | Route | Body | Result |
+ |---|---|---|
+-| `GET /api/suggestions` | none | `{ providers: [{ id, name, enabled, status, error?, updated_at?, refreshing, sources: [{ criterion, label, description, variables, enabled, preset, customized }], checks: [{ id, label, status, detail, fix }] }], items, prefs: { homepage, sidebar, refresh_minutes, show_source_ref, provider_order } }` |
++| `GET /api/suggestions` | none | `{ profile?, providers: [{ id, name, enabled, status, error?, updated_at?, refreshing, sources: [{ criterion, label, description, variables, enabled, preset, customized }], checks: [{ id, label, status, detail, fix }] }], items, prefs: { homepage, sidebar, refresh_minutes, show_source_ref, provider_order } }` |
+ | `POST /api/suggestions/refresh` | none | `{ ok, notified }` |
+ | `POST /api/suggestions/checks/run` | none | `{ ok, notified }` |
+ | `POST /api/suggestions/dismiss` | `{ provider_id, id }` | `{ ok }` |
+@@ -574,7 +574,7 @@ An item has one primary Session. The first create that carries `suggestion` (`st
+ 
+ Errors: 404 `unknown_provider` (no active plugin provides suggestions under that id), 409 `stale_suggestion` (the item is no longer published, its source is disabled, or its source closed it; `prepare` and `start` answer all three the same way), 400 `validation_failed` (`criterion` not declared by the provider, an unknown preset agent, or a prompt or its expansion over 64 KiB), 403 `read_only`.
+ 
+-The TUI lists suggestions from Home with `S` (`Ctrl+S` in strict mode). The view shows each item's `preview` and prompt as plain text; the first Enter resolves `prepare` and shows its final `initial_prompt` (after the preset prompt); a second Enter opens the new-session dialog prefilled with it, and an item whose `project` is `null` cannot be started. The dialog's Prompt row, which is always present and editable, holds that prompt; for a suggestion it is labelled with the provider and Ctrl+P on it shows the item's `preview` as source text. `r` only asks providers to refresh; `l` reloads the list. Items keep the order of the snapshot. Home also lists a collapsed **Suggested (N)** group above Trash, absent when there are no open suggestions. Enter expands it to the first 3 items and a "View all" row that opens the view above; Enter on an item prepares it and opens the prefilled dialog directly, `z` (`Z` in strict mode) dismisses it, and `N` (`Ctrl+N`) starts a blank session. `Ctrl+K` lists "Suggested sessions"; on a suggestion row, or on the selected item in the view, it also lists "Open in <provider>", which opens the item's `source_url`. Every TUI key is provisional: `S` / `Ctrl+S` to open, `z` / `N` on a Home row, and `x` (dismiss), `d` (dismissed), `r` and `l` inside the view may move.
++The TUI shows suggestions in Home's preview pane and starts them with `start`, or with `prepare` and the new-session dialog for "Start with changes"; it shows each item's `preview` and `start.prompt` as plain text and sends the snapshot's `profile` as `expected_profile` on each suggestions request it posts. Keys and layout are in the [guide's TUI section](guides/suggested-sessions.md#tui).
+ 
+ ### Project mappings
  
 ```
 
-**File**: `docs/guides/sandbox.md` (modified, +10/-1)
+**File**: `src/daemon/mod.rs` (modified, +22/-0)
 ```diff
-@@ -62,7 +62,7 @@ environment = ["ANTHROPIC_API_KEY"]
- | `extra_run_args` | `[]` | Extra arguments passed to container run, before the image |
- | `shared_credential` | `"host_seed"` | `"host_seed"` or `"separate_login"`: where the credential an agent shares across its sandboxes comes from (see [Shared credentials](#shared-credentials)); applies to every agent with a sandbox login, today Claude. `"separate_login"` is not supported with Apple Container. Global only |
+@@ -22,6 +22,7 @@ pub(crate) mod transport;
+ pub(crate) mod websocket;
+ pub use websocket::WsError;
+ pub mod live;
++pub mod suggestions;
+ mod wire;
  
--Docker and Podman honor every run-policy option. Apple Container honors `cap_add` / `cap_drop` and ignores `privileged` and `security_opt` with a warning; `extra_run_args` is passed through everywhere.
-+Docker and Podman honor every run-policy option. Apple Container honors `cap_add` / `cap_drop` and ignores `privileged` and `security_opt` with a warning; `extra_run_args` is passed through everywhere. Apple Container also ignores read-only mounts, including the `.git` overlays described in [Git config and hooks](#git-config-and-hooks).
- 
- ## Volume mounts
- 
-@@ -71,12 +71,21 @@ Docker and Podman honor every run-policy option. Apple Container honors `cap_add
- | Host path | Container path | Mode |
- |-----------|----------------|------|
- | Project directory | `/workspace` | RW |
-+| `<repo>/.git/config`, `config.worktree`, `hooks` (bare repo: the same names in the bare dir); for a linked worktree also its `.git` file and the admin dir's `commondir`, `gitdir` and `config.worktree` | the same path under the repo's mount | RO (none on Apple Container) |
- | `~/.gitconfig` | `/root/.gitconfig` | RO |
- | `~/.ssh/` (with `mount_ssh`) | `/root/.ssh/` | RO |
- | The session's artifact dir | `/aoe/artifacts` | RW |
- | `<agent config>/sandbox-v2/<instance-id>/` | the agent's config path, e.g. `/root/.claude/` | RW |
- | `~/.claude/sandbox-v2/.credentials.json` | `/root/.claude/.credentials.json` | RW |
- 
-+### Git config and hooks
-+
-+Git runs a repo's hooks and config-defined commands (`core.sshCommand`, `credential.helper`, `core.fsmonitor`) on whichever machine invokes it. AoE and your own terminal run git on the host against the same repo the sandbox mounts, so a writable `.git/config` or `.git/hooks` would let code in the container execute on the host. AoE therefore mounts both read-only, over the writable repo mount, for the session's repo, including the main repo of a worktree. Apple Container cannot mount read-only, so it gets no overlays: the repo's `.git` stays writable from the container, and AoE never runs repo hooks on the host on any runtime, `git worktree add` included. Your own terminal still runs hooks the sandbox wrote, so on Apple Container treat the repo's `.git` as untrusted after a session.
-+
-+Inside the container, commands that write `.git/config` fail, for example `git remote add`, `git push -u` (the push succeeds, recording the upstream fails) and `git branch --set-upstream-to`, `git sparse-checkout` and `git worktree repair`. Run them on the host. Each overlay is a single-file bind mount and git writes files by rename, so after such a host-side change the container can keep showing the old config until the session restarts. Commits and refs are unaffected, and so are checkouts of existing local branches. Creating a branch with upstream tracking, for example `git checkout -b feature origin/main` or `git switch -c feature origin/feature`, can fail because git records the tracking setup in `.git/config`. Installing hooks from inside the container is not possible; install them on the host. Protection covers the session's repository, a worktree's main repo and each workspace repo. A repository nested inside the project directory (a submodule, a vendored clone, or one the sandbox creates) is not protected: running git inside it on the host can execute what the sandbox wrote. Hooks in a writable checkout path (`core.hooksPath=.githooks`) are not protected, so do not point `core.hooksPath` into the checkout of a sandboxed repo.
-+
-+Containers created by an older AoE keep a writable `.git` until you recreate the session. AoE's own host git calls also ignore repo-local `core.fsmonitor`, `core.sshCommand`, `credential.helper`, the `ext::` transport and, except for `git worktree add`, hooks. Set `core.sshCommand` and `credential.helper` in your global git config; repo-local values are not used by AoE.
-+
- ### Volume ignores
- 
- `volume_ignores` accepts literal paths relative to each workspace root, or glob patterns (`*`, `?`, `[` or `]`) expanded when the session is created. Literal mounts shadow paths even if they do not exist yet.
-```
-
-**File**: `docs/guides/worktrees.md` (modified, +3/-3)
-```diff
-@@ -111,11 +111,11 @@ An external `git worktree lock` is not a deletion guard: AoE unlocks worktrees b
- 
- ## Warnings during create
- 
--Two kinds of non-fatal failure surface through the same channel instead of aborting the session: a `⚠` line on stderr for `aoe add`, a **Worktree warnings** dialog in the TUI, and a toast plus `warnings: string[]` on the `POST /api/sessions` response for the web.
-+Non-fatal failures surface through one channel instead of aborting the session: a `⚠` line on stderr for `aoe add`, a **Worktree warnings** dialog in the TUI, and a toast plus `warnings: string[]` on the `POST /api/sessions` response for the web.
- 
--### Post-checkout hooks
-+### Repo hooks do not run
- 
--Some repos install pre-commit hooks at the `post-checkout` stage (`uv-sync`, `npm install`, LFS smudge) that fire when `git worktree add` checks out the branch. If one fails, the worktree and its `.git` pointer already exist and are usable. Usually the hook needs network access or credentials the new worktree does not have yet: re-run it by hand once the environment is set up, or set `core.hooksPath` per checkout.
-+AoE never runs the repo's git hooks when it creates a worktree, because a sandboxed session could have written them. That includes `post-checkout` hooks such as `uv-sync`, `npm install` or LFS smudge installed by pre-commit. Run that setup by hand in the new worktree, or from an [`on_create` hook](repo-config.md#hooks). See [Git config and hooks](sandbox.md#git-config-and-hooks).
- 
- ### Fetch failures
- 
-```
-
-**File**: `src/containers/runtime.rs` (modified, +5/-0)
-```diff
-@@ -66,6 +66,11 @@ impl ContainerRuntime {
-         self.base.name
+ use std::fmt;
+@@ -419,6 +420,27 @@ impl DaemonClient {
+         Ok(snapshot)
      }
  
-+    /// False when `read_only` volumes are mounted read-write instead.
-+    pub fn supports_read_only_volumes(&self) -> bool {
-+        self.base.supports_read_only_volumes
++    /// `GET /api/settings`: the served profile resolved over the machine-wide values.
++    pub async fn settings(&self) -> Result<serde_json::Value, DaemonClientError> {
++        let url = self
++            .sessions_url
++            .join("settings")
++            .map_err(|_| DaemonClientError::Transport)?;
++        self.request_json(self.http.get(url)).await
 +    }
 +
-     pub fn is_available(&self) -> bool {
-         self.base.is_available()
-     }
-```
-
-**File**: `src/daemon/wire.rs` (modified, +1/-1)
-```diff
-@@ -1317,7 +1317,7 @@ pub struct SessionResponse {
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-     pub workspace_cleanup_on_delete: Option<bool>,
-     /// Non-fatal warnings surfaced by a mutation response. On create these are
--    /// worktree-creation warnings (e.g. post-checkout hook failures where the
-+    /// worktree-creation warnings (e.g. a stale fetch where the
-     /// worktree was still created successfully). On rename these carry the
-     /// tmux rekey warning emitted when the title was persisted durably but the
-     /// live tmux session could not be renamed afterwards. Both live on the
-```
-
-**File**: `src/git/command.rs` (modified, +326/-8)
-```diff
-@@ -7,8 +7,124 @@
- use std::ffi::OsStr;
- use std::path::Path;
- use std::process::{Command, Output, Stdio};
-+use std::sync::{Mutex, TryLockError};
- use std::time::{Duration, Instant};
- 
-+/// The user's own system/global `core.sshCommand` and `credential.helper`,
-+/// as lowercase `(key, value)` pairs. `None` when git cannot answer within the
-+/// deadline (a stalled `include.path`, or the caller's `deadline`) or fails to spawn.
-+fn discover_user_config(
-+    envs: &[(&str, &Path)],
-+    deadline: Option<Instant>,
-+) -> Option<Vec<(String, String)>> {
-+    let mut found = Vec::new();
-+    for scope in ["--system", "--global"] {
-+        let mut cmd = Command::new("git");
-+        cmd.args([
-+            "config",
-+            scope,
-+            "--includes",
-+            "--null",
-+            "--get-regexp",
-+            r"^(core\.sshcommand|credential\.helper)$",
-+        ])
-+        .envs(envs.iter().copied())
-+        .stdin(Stdio::null());
-+        let mut limit = Duration::from_secs(2);
-+        if let Some(deadline) = deadline {
-+            limit = limit.min(deadline.checked_duration_since(Instant::now())?);
-+        }
-+        let out = crate::process::run_with_timeout(&mut cmd, limit).ok()??;
-+        // 1 is "no match"; anything else is an unreadable config.
-+        if !matches!(out.status.code(), Some(0 | 1)) {
-+            return None;
-+        }
-+        found.extend(
-+            String::from_utf8_lossy(&out.stdout)
-+                .split('\0')
-+                .filter_map(|record| record.split_once('\n'))
-+                .map(|(k, v)| (k.to_owned(), v.to_owned())),
-+        );
++    /// `PATCH /api/settings`: the daemon routes each leaf to the layer it is read from.
++    pub async fn patch_settings(&self, patch: &serde_json::Value) -> Result<(), DaemonClientError> {
++        let url = self
++            .sessions_url
++            .join("settings")
++            .map_err(|_| DaemonClientError::Transport)?;
++        let mut response = self
++            .request_response(self.http.patch(url).json(patch))
++            .await?;
++        discard_bounded_body(&mut response).await
 +    }
-+    Some(found)
++
+     /// The daemon's own default profile, which can differ from this client's config.
+     pub async fn default_profile(&self) -> Result<String, DaemonClientError> {
+         let url = self
+```
+
+**File**: `src/daemon/suggestions.rs` (added, +525/-0)
+```diff
+@@ -0,0 +1,525 @@
++//! Client side of the daemon's suggestions API (`/api/suggestions`): the
++//! snapshot and prepare wire types and the [`DaemonClient`] calls that read
++//! and act on them.
++
++use std::time::Duration;
++
++use reqwest::StatusCode;
++use serde::Deserialize;
++
++use super::{transport, DaemonClient, DaemonClientError, DEFAULT_TIMEOUT};
++
++/// `POST /api/suggestions/start` answers after the create, which can take
++/// minutes for a sandbox; `POST /api/sessions` waits as long.
++const START_TIMEOUT: Duration = Duration::from_secs(30 * 60);
++/// A refusal's explanation is bounded before it reaches the screen.
++const MAX_REFUSAL_BYTES: usize = 4096;
++const MAX_REFUSAL_CHARS: usize = 200;
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Snapshot {
++    /// The profile the daemon publishes suggestions under.
++    #[serde(default)]
++    pub(crate) profile: Option<String>,
++    /// The daemon that served this snapshot; set by the loader, not the wire.
++    #[serde(skip)]
++    pub(crate) daemon: Option<String>,
++    /// The daemon's `pre_trust_agent_folders`; set by the loader, not the wire.
++    #[serde(skip)]
++    pub(crate) pre_trust: Option<bool>,
++    pub(crate) providers: Vec<Provider>,
++    pub(crate) items: Vec<Item>,
++    #[serde(default)]
++    pub(crate) prefs: Prefs,
 +}
 +
-+/// `-c` overrides that pin what a repo-local config could use to run code on
-+/// the host: repo values never apply, the user's own do.
-+fn build_hardening_args(user: &[(String, String)]) -> Vec<String> {
-+    let values = |key: &str| -> Vec<String> {
-+        user.iter()
-+            .filter(|(k, _)| k == key)
-+            .map(|(_, v)| v.clone())
-+            .collect()
-+    };
-+    let mut kv = vec![
-+        "core.fsmonitor=false".to_owned(),
-+        "protocol.ext.allow=never".to_owned(),
-+    ];
-+    let ssh = values("core.sshcommand");
-+    if ssh.is_empty() {
-+        kv.push("core.sshCommand=ssh".to_owned());
++#[derive(Debug, Clone, Deserialize)]
++#[serde(default)]
++pub struct Prefs {
++    pub(crate) show_source_ref: bool,
++    /// "Show in the sidebar": the web sidebar group and the TUI Home row.
++    pub(crate) sidebar: bool,
++}
++
++impl Default for Prefs {
++    fn default() -> Self {
++        Self {
++            show_source_ref: true,
++            sidebar: false,
++        }
 +    }
-+    kv.extend(ssh.into_iter().map(|v| format!("core.sshCommand={v}")));
-+    // An empty `credential.helper` resets the list the repo config built up.
-+    kv.push("credential.helper=".to_owned());
-+    kv.extend(
-+        values("credential.helper")
-+            .into_iter()
-+            .map(|v| format!("credential.helper={v}")),
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Provider {
++    pub(crate) id: String,
++    pub(crate) name: String,
++    #[serde(default)]
++    pub(crate) error: Option<String>,
++    #[serde(default = "enabled_by_default")]
++    pub(crate) enabled: bool,
++    /// Unix seconds of the last report.
++    #[serde(default)]
++    pub(crate) updated_at: Option<i64>,
++    #[serde(default)]
++    pub(crate) refreshing: bool,
++    #[serde(default)]
++    pub(crate) checks: Vec<Check>,
++}
++
++/// A provider's setup check; `fix` is the plugin's own untrusted advice.
++#[derive(Debug, Clone, Deserialize)]
++pub struct Check {
++    pub(crate) status: String,
++    #[serde(default)]
++    pub(crate) fix: String,
++}
++
++/// What Start creates an item with, resolved against its Project.
++#[derive(Debug, Clone, Deserialize)]
++pub struct ItemStart {
++    pub(crate) agent: String,
++    pub(crate) view: String,
++    #[serde(default)]
++    pub(crate) worktree: bool,
++    #[serde(default)]
++    pub(crate) sandbox: bool,
++    #[serde(default)]
++    pub(crate) yolo: bool,
++    /// The first prompt Start sends; absent when the expanded template is too long.
++    #[serde(default)]
++    pub(crate) prompt: Option<String>,
++}
++
++fn enabled_by_default() -> bool {
++    true
++}
++
++/// The registered Project an item resolves to.
++#[derive(Debug, Clone, Deserialize)]
++pub struct ResolvedProject {
++    pub(crate) name: String,
++    pub(crate) path: String,
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Item {
++    pub(crate) provider_id: String,
++    pub(crate) id: String,
++    pub(crate) title: String,
++    pub(crate) reason: String,
++    pub(crate) source_url: String,
++    pub(crate) source_ref: String,
++    pub(crate) preview: String,
++    #[serde(default)]
++    pub(crate) project: Option<String>,
++    #[serde(default)]
++    pub(crate) dismissed: bool,
++    pub(crate) draft: Draft,
++    #[serde(default)]
++    pub(crate) started_session: Option<Started>,
++    #[serde(default)]
++    pub(crate) resolved_project: Option<ResolvedProject>,
++    /// The repo the provider links to a Project, as `owner/repo` for GitHub.
++    #[serde(default)]
++    pub(crate) mapping_key: Option<String>,
++    #[serde(default)]
++    pub(crate) start: Option<ItemStart>,
++    /// The source closed or changed; the item cannot start.
++    #[serde(default)]
++    pub(crate) stale: bool,
++}
++
++/// The live Session an item was started as.
++#[derive(Debug, Clone, Deserialize)]
++pub struct Started {
++    pub(crate) id: String,
++    pub(crate) status: String,
++    #[serde(default)]
++    pub(crate) archived: bool,
++    /// `"start"` for a one-click Start; only those may be trashed and started again.
++    #[serde(default)]
++    pub(crate) started_via: Option<String>,
++}
++
++impl Started {
++    pub(crate) fn one_click(&self) -> bool {
++        self.started_via.as_deref() == Some("start")
++    }
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Draft {
++    pub(crate) prompt: String,
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct PreparedProject {
++    pub(crate) path: String,
++}
++
++#[derive(Debug, Clone, Deserialize)]
++pub struct Prepared {
++    pub(crate) title: String,
++    pub(crate) initial_prompt: String,
++    pub(crate) tool: String,
++    pub(crate) project: Option<PreparedProject>,
++    #[serde(de
+```
+
+**File**: `src/plugin/featured.rs` (modified, +4/-0)
+```diff
+@@ -55,6 +55,10 @@ impl FeaturedIndex {
+             .any(|e| e.source.eq_ignore_ascii_case(slug))
+     }
+ 
++    pub fn offers_suggestions(&self) -> bool {
++        self.plugins.values().any(|e| e.suggestions)
++    }
++
+     pub fn declares_suggestions(&self, slug: &str) -> bool {
+         self.plugins
+             .values()
+```
+
+**File**: `src/server/api/suggestions.rs` (modified, +2/-0)
+```diff
+@@ -156,6 +156,7 @@ pub async fn get_suggestions(State(state): State<Arc<AppState>>) -> impl IntoRes
+     };
+     let profile = host.suggestions_profile();
+     let refreshing = host.refreshing_suggestions();
++    let reported_profile = profile.clone();
+     let result = tokio::task::spawn_blocking(move || {
+         let providers = suggestions::providers();
+         // Disk reads stay off the store lock.
+@@ -189,6 +190,7 @@ pub async fn get_suggestions(State(state): State<Arc<AppState>>) -> impl IntoRes
+             };
+             suggestions::attach_started(&mut snapshot, &started);
+             suggestions::attach_refreshing(&mut snapshot, &refreshing);
++            snapshot["profile"] = json!(reported_profile);
+             Json(snapshot).into_response()
+         }
+         Ok(Err(error)) => internal(error),
+```
+
+**File**: `src/server/api/suggestions_tests.rs` (modified, +4/-0)
+```diff
+@@ -225,6 +225,10 @@ async fn snapshot_and_refresh() {
+     assert_eq!(body["items"][0]["id"], "a");
+     assert_eq!(body["items"][0]["dismissed"], false);
+     assert_eq!(body["prefs"]["refresh_minutes"], 15);
++    assert!(
++        body["profile"].is_string(),
++        "clients check it against their own"
 +    );
-+    kv.into_iter()
-+        .flat_map(|kv| ["-c".to_owned(), kv])
-+        .collect()
-+}
-+
-+/// Cached only after a complete discovery, so a timed-out one is retried.
-+/// `None` means `deadline` passed while waiting for the cache or discovery.
-+fn hardening_args_in(
-+    cache: &Mutex<Option<Vec<String>>>,
-+    envs: &[(&str, &Path)],
-+    deadline: Option<Instant>,
-+) -> Option<Vec<String>> {
-+    let mut guard = loop {
-+        match cache.try_lock() {
-+            Ok(guard) => break guard,
-+            Err(TryLockError::Poisoned(e)) => break e.into_inner(),
-+            Err(TryLockError::WouldBlock) => match deadline {
-+                None => break cache.lock().unwrap_or_else(|e| e.into_inner()),
-+                Some(d) if Instant::now() >= d => return None,
-+                Some(_) => std::thread::sleep(Duration::from_millis(5)),
-+            },
-+        }
-+    };
-+    if let Some(args) = guard.as_ref() {
-+        return Some(args.clone());
-+    }
-+    match discover_user_config(envs, deadline) {
-+        Some(user) => Some(guard.insert(build_hardening_args(&user)).clone()),
-+        None if deadline.is_some_and(|d| Instant::now() >= d) => None,
-+        None => Some(build_hardening_args(&[])),
-+    }
-+}
-+
-+/// `git` with config a sandbox-written `.git/config` cannot steer: no
-+/// `core.fsmonitor`, repo-local `core.sshCommand` or `credential.helper`, or
-+/// `ext::` transport. Repo hooks never run.
-+pub fn hardened_git() -> Command {
-+    hardened_git_within(None).expect("discovery cannot time out without a deadline")
-+}
-+
-+/// [`hardened_git`] for a caller with a deadline: `None` once `deadline` passes
-+/// before the user's git config has been read.
-+pub fn hardened_git_within(deadline: Option<Instant>) -> Option<Command> {
-+    static CACHE: Mutex<Option<Vec<String>>> = Mutex::new(None);
-+    let mut cmd = Command::new("git");
-+    cmd.args(hardening_args_in(&CACHE, &[], deadline)?);
-+    cmd.args(["-c", "core.hooksPath=/dev/null"]);
-+    cmd.env("LC_ALL", "C");
-+    Some(cmd)
-+}
-+
- /// Run `git <args>` in `cwd`, instrumented with target `git.command`.
- /// Logs a debug line before, then debug (success) or warn (failure)
- /// after with exit code, duration, and a sanitized stderr summary.
-@@ -48,8 +164,8 @@ where
-     );
-     // Callers classify several Git failures. Keep diagnostics deterministic
-     // instead of d
+ 
+     for uri in ["/api/suggestions/refresh", "/api/suggestions/checks/run"] {
+         let (status, _, body) = f.call(Method::POST, uri, json!({})).await;
 ```
 
-**File**: `src/git/worktree/create.rs` (modified, +22/-22)
+**File**: `src/server/api/system.rs` (modified, +22/-3)
 ```diff
-@@ -47,13 +47,19 @@ impl GitWorktree {
-     /// `git fetch <remote> <branch>` with stdin nulled (no passphrase prompts)
-     /// and a 10 second bound.
-     fn fetch_branch(&self, remote: &str, branch: &str) -> FetchOutcome {
--        let mut cmd = std::process::Command::new("git");
--        cmd.args(["fetch", remote, branch])
--            .current_dir(&self.repo_path)
--            .stdin(std::process::Stdio::null());
-         let timeout = std::time::Duration::from_secs(10);
-         let start = Instant::now();
--        match crate::process::run_with_timeout(&mut cmd, timeout) {
-+        let result = match crate::git::command::hardened_git_within(Some(start + timeout)) {
-+            Some(mut cmd) => {
-+                cmd.args(["fetch", remote, branch])
-+                    .current_dir(&self.repo_path)
-+                    .stdin(std::process::Stdio::null());
-+                let remaining = timeout.saturating_sub(start.elapsed());
-+                crate::process::run_with_timeout(&mut cmd, remaining)
-+            }
-+            None => Ok(None),
-+        };
-+        match result {
-             Ok(Some(output)) if output.status.success() => {
-                 tracing::info!(target: "git.worktree", "git fetch {remote}/{branch} ok in {:?}", start.elapsed());
-                 FetchOutcome::Ok
-@@ -105,7 +111,7 @@ impl GitWorktree {
-     ///
-     /// With `create_branch`, the branch starts at `base_branch` (else the
-     /// detected default), resolved remote-first then local. Returns non-fatal
--    /// warnings (stale fetches, a failed post-checkout hook, a failed lock)
-+    /// warnings (stale fetches, a failed checkout step, a failed lock)
-     /// for the caller to show.
-     pub fn create_worktree(
-         &self,
-@@ -301,8 +307,9 @@ impl GitWorktree {
-         }
-     }
- 
--    /// `git worktree add`. A post-checkout hook can fail after the checkout
--    /// exists; that worktree is usable, so the failure becomes a warning.
-+    /// `git worktree add`. Repo hooks never run: a sandbox could have written
-+    /// them. A failure after the checkout exists leaves a usable worktree, so
-+    /// it becomes a warning.
-     fn add_worktree(&self, branch: &str, path: &Path, warnings: &mut Vec<String>) -> Result<()> {
-         let t = Instant::now();
-         let output = crate::git::command::run_git(
-@@ -323,7 +330,7 @@ impl GitWorktree {
-             let combined = sanitize_remote_credentials(&combined);
-             if path.exists() && path.join(".git").exists() {
-                 let warning = format!(
--                    "post-checkout hook failed for {} (worktree created, hook output below):\n{}",
-+                    "git worktree add failed for {} (worktree created, output below):\n{}",
-                     path.display(),
-                     combined.trim()
-                 );
-@@ -679,7 +686,7 @@ pub(super) mod tests {
- 
-     #[cfg(unix)]
-     #[test]
--    fn create_worktree_turns_fetch_and_hook_failures_into_warnings() {
-+    fn create_worktree_turns_fetch_failures_into_warnings_and_skips_repo_hooks() {
-         use std::os::unix::fs::PermissionsExt;
-         const CHILD: &str = "AOE_WORKTREE_HOOK_TEST_CHILD";
-         if std::env::var_os(CHILD).is_none() {
-@@ -689,7 +696,7 @@ pub(super) mod tests {
-                 .args([
-                     "--exact",
-                     &format!(
--                        "{module}::create_worktree_turns_fetch_and_hook_failures_into_warnings"
-+                        "{module}::create_worktree_turns_fetch_failures_into_warnings_and_skips_repo_hooks"
-                     ),
-                     "--nocapture",
-                     "--test-threads=1",
-@@ -718,16 +725,13 @@ pub(super) mod tests {
-             &["remote", "add", "origin", bogus.to_str().unwrap()],
-         );
-         let hook = dir.path().join(".git/hooks/post-checkout");
-+        let marker = dir.path().join("hook-ran");
-         repo.config()
-             .unwrap()
-             .set_str("core.hooksPath", hook.parent().unwrap().to_str().unwrap())
-             .unwrap();
-         std::fs::create_dir_all(hook.parent().unwrap()).unwrap();
--        std::fs::write(
--            &hook,
--            "#!/bin/sh\necho 'simulated hook failure' >&2\nexit 1\n",
--        )
--        .unwrap();
-+        std::fs::write(&hook, format!("#!/bin/sh\ntouch {}\n", marker.display())).unwrap();
-         std::fs::set_permissions(&hook, std::fs::Permissions::from_mode(0o755)).unwrap();
- 
-         let wt_parent = TempDir::new().unwrap();
-@@ -738,12 +742,8 @@ pub(super) mod tests {
-             .unwrap()
-             .join("\n");
-         assert!(wt_path.join(".git").exists());
--        for fragment in [
--            "git fetch",
--            "failed for",
--            "post-checkout hook failed",
--            "simulated hook failure",
--        ] {
-+        assert!(!marker.exists(), "a repo hook ran on the host");
-+        for fragment in ["git fetch", "failed for"] {
-             assert!(
-                 warnings.contains(frag
-```
-
-**File**: `src/git/worktree/mod.rs` (modified, +91/-2)
-```diff
-@@ -133,8 +133,14 @@ impl GitWorktree {
-             return Ok(main_repo);
-         }
-         let repo = open_repo_at(path).map_err(|_| GitError::NotAGitRepo)?;
-+        // libgit2 takes the workdir from the admin dir, so check against the path opened,
-+        // and keep that path when the link is rejected.
-         if let Some(main_repo) = Self::find_main_repo_from_worktree_gitdir(repo.path()) {
--            return Ok(main_repo);
-+            return Ok(if Self::admin_points_back_to(repo.path(), path) {
-+                main_repo
-+            } else {
-+                path.to_path_buf()
-+            });
-         }
-         if let Some(workdir) = repo.workdir() {
-             return Ok(workdir.to_path_buf());
-@@ -169,7 +175,35 @@ impl GitWorktree {
-         let gitdir = content
-             .lines()
-             .find_map(|line| line.strip_prefix("gitdir:").map(str::trim))?;
--        dir.join(gitdir).canonicalize().ok()
-+        let gitdir = dir.join(gitdir).canonicalize().ok()?;
-+        let linked = gitdir.parent().and_then(Path::file_name) == Some(OsStr::new("worktrees"));
-+        (!linked || Self::admin_points_back_to(&gitdir, dir)).then_some(gitdir)
-+    }
-+
-+    /// Whether the admin dir's `gitdir` file names `<workdir>/.git`. A worktree is
-+    /// mounted read-write into a sandbox, so its own `gitdir:` line proves nothing:
-+    /// only the admin dir, outside that mount, can vouch that the link is real.
-+    fn admin_points_back_to(admin: &Path, workdir: &Path) -> bool {
-+        let Ok(raw) = std::fs::read_to_string(admin.join("gitdir")) else {
-+            return false;
-+        };
-+        let back = Path::new(raw.trim());
-+        let back = if back.is_absolute() {
-+            back.to_path_buf()
-+        } else {
-+            admin.join(back)
-+        };
-+        let git_file = workdir.join(".git");
-+        matches!(
-+            (Self::without_final_link(&back), Self::without_final_link(&git_file)),
-+            (Some(a), Some(b)) if a == b
-+        )
-+    }
-+
-+    /// `path` with its parent canonicalized and its last component left alone, so a
-+    /// `.git` symlink to another worktree's gitfile does not borrow that file's identity.
-+    fn without_final_link(path: &Path) -> Option<PathBuf> {
-+        Some(path.parent()?.canonicalize().ok()?.join(path.file_name()?))
-     }
- 
-     /// The main repo of a linked worktree's canonical `gitdir`, or `None` if it is not one.
-@@ -540,6 +574,61 @@ mod tests {
-         (dir, bare)
-     }
- 
-+    /// A sandbox mounts its worktree read-write and can rewrite `<worktree>/.git`.
-+    /// A `gitdir:` line aimed at another host repo's `worktrees/<name>` admin dir
-+    /// must not make that repo the main repo, whichever way it is read.
-+    #[cfg(unix)]
-+    #[test]
-+    fn rewritten_gitdir_cannot_redirect_the_main_repo() {
-+        let (real, _repo) = init_repo();
-+        let real_main = real.path().canonicalize().unwrap();
-+        let worktree = real.path().join("wt");
-+        run_git(
-+            real.path(),
-+            &["worktree", "add", "-b", "wt", worktree.to_str().unwrap()],
-+        );
-+        assert_eq!(GitWorktree::find_main_repo(&worktree).unwrap(), real_main);
-+
-+        let (victim, _repo) = init_repo();
-+        let victim_wt = victim.path().join("vwt");
-+        run_git(
-+            victim.path(),
-+            &["worktree", "add", "-b", "vwt", victim_wt.to_str().unwrap()],
-+        );
-+        let admin = victim
-+            .path()
-+            .canonicalize()
-+            .unwrap()
-+            .join(".git/worktrees/vwt");
-+        assert!(admin.is_dir());
-+
-+        std::fs::write(
-+            worktree.join(".git"),
-+            format!("gitdir: {}\n", admin.display()),
-+        )
-+        .unwrap();
-+        let victim_main = victim.path().canonicalize().unwrap();
-+        let resolved = GitWorktree::find_main_repo(&worktree).unwrap();
-+        let victim_wt = victim_wt.canonicalize().unwrap();
-+        let foreign = |resolved: &Path| resolved == victim_main || resolved == victim_wt;
-+        assert!(!foreign(&resolved), "redirected to another host repo");
-+        assert!(GitWorktree::gitfile_target(
-+            &worktree,
-+            &std::fs::read_to_string(worktree.join(".git")).unwrap()
-+        )
-+        .and_then(|g| GitWorktree::find_main_repo_from_worktree_gitdir(&g))
-+        .is_none_or(|m| !foreign(&m)));
-+
-+        // A `.git` that is a symlink to the other worktree's gitfile carries its back-pointer.
-+        std::fs::remove_file(worktree.join(".git")).unwrap();
-+        std::os::unix::fs::symlink(victim_wt.join(".git"), worktree.join(".git")).unwrap();
-+        let resolved = GitWorktree::find_main_repo(&worktree).unwrap();
-+        assert!(
-+            !foreign(&resolved),
-+            "symlinked .git redirected: {resolved:?}"
-+        );
-+    }
-+
-     #[test]
-     fn find_main_repo_resolves_each_layout_without_walking_up() {
-         let plain = TempDir::new().unwrap();
-```
-
----
-
-### Incident Patch 3: `7b1c0145` (2026-11-23)
-**Commit Message**: fix(tui): mount the structured preview without blocking input (#5808)
-
-* fix(tui): mount the structured preview without blocking input
-
-Selecting a structured row debounced a connect and then awaited it inside
-the event loop. That connect opens the websocket and replays every
-transcript page, so seeking through the list with the cursor stalled render
-and input until it finished, while terminal rows stayed responsive. The
-connect now runs on its own task and the loop only polls for it, dropping a
-mount whose row the selection has left, and never replacing a view the user
-opened with Enter.
-
-Co-Authored-By: deepseek/deepseek-v4.1-flash <[REDACTED_EMAIL]>
-
-* fix(tui): keep the structured mount from outliving or replacing a live view
-
-An abandoned connect replayed the whole transcript for a consumer nobody
-held, because the spawned task only stopped when the sender failed; it now
-also stops when the receiver is dropped. Enter mounting the session itself
-drops any connect still queued for it, and a landing mount is refused whenever
-the target is already mounted, opened or not, so a view the user has typed
-into keeps its draft. A discarded mount reports a redraw so the placeholder
-and it
-
-**File**: `src/tui/app.rs` (modified, +1475/-141)
-```diff
-@@ -13,7 +13,7 @@ use std::process::Stdio;
- use std::time::Duration;
- 
- use super::home::update_bar::{DrawnBar, UpdateBar};
--use super::home::{bindings, HomeView, TerminalMode};
-+use super::home::{bindings, HomeView, PendingStructuredInput, TerminalMode};
- use super::styles::Theme;
- use crate::containers::image_update::ImageUpdate;
- use crate::session::config::AppStateConfig;
-@@ -120,7 +120,22 @@ pub struct App {
-     /// Debounce for structured preview-on-select, so fast navigation doesn't
-     /// connect a WebSocket per keystroke.
-     preview_mount_pending: Option<(String, std::time::Instant)>,
--    /// Cleared on failure so the user can retry.
-+    /// A preview mount in flight and the row it targets. Connecting replays the
-+    /// session's whole transcript, so it runs off the event loop.
-+    structured_mount: Option<(
-+        String,
-+        tokio::sync::oneshot::Receiver<
-+            Result<crate::tui::structured_view::embedded::EmbeddedView, String>,
-+        >,
-+    )>,
-+    /// The row whose mount failed, so reselecting it doesn't retry every tick.
-+    structured_mount_failed: Option<String>,
-+    /// Set when Enter asked for a row whose mount was already in flight: the
-+    /// completion takes over the screen instead of a second connect replaying it.
-+    structured_mount_activate: Option<String>,
-+    /// The row whose in-flight mount just took the screen for Enter: the run
-+    /// loop delivers paste buffered for it once the poll returns.
-+    structured_paste_drain: Option<String>,
-     pending_install_version: Option<String>,
-     /// The running binary keeps its old version until restart, so this stops
-     /// periodic re-checks from re-offering a release we already installed.
-@@ -319,6 +334,11 @@ impl App {
-             mosh_active,
-             pending_structured_view_open: None,
-             preview_mount_pending: None,
-+            structured_mount: None,
-+            structured_mount_failed: None,
-+            structured_mount_activate: None,
-+            structured_paste_drain: None,
-+
-             pending_view_switch: None,
-             pending_smart_rename: None,
-             dashboard_launch: None,
-@@ -784,26 +804,7 @@ impl App {
-                                             "paste-burst: routed {} chars via handle_paste (chars={:?})",
-                                             paste_text.len(), paste_text
-                                         );
--                                        // Only an ACTIVE structured view owns text input.
--                                        if let Some(view) = self
--                                            .home
--                                            .structured_preview
--                                            .as_mut()
--                                            .filter(|v| v.is_active())
--                                        {
--                                            if let Err(e) = view
--                                                .handle_event(Event::Paste(paste_text.clone()))
--                                                .await
--                                            {
--                                                self.close_embedded_structured();
--                                                self.update_status =
--                                                    Some(UpdateStatus::transient(format!(
--                                                        "structured view: {e}"
--                                                    )));
--                                            }
--                                        } else {
--                                            self.home.handle_paste(&paste_text);
--                                        }
-+                                        self.route_pasted_text(&paste_text).await;
-                                     }
-                                     if let Some(enter) = trailing_enter {
-                                         if !self.should_quit {
-@@ -820,7 +821,7 @@ impl App {
-                                     if let Some(evt) = deferred {
-                                         match evt {
-                                             Event::Key(k) => { self.handle_key(k, terminal).await?; }
--                                            Event::Paste(text) => { self.home.handle_paste(&text); }
-+                                            Event::Paste(text) => { self.route_pasted_text(&text).await; }
-                                             Event::Resize(_, _) => { terminal.autoresize()?; self.needs_redraw = true; }
-                                             Event::Mouse(mouse) => {
-                                                 let hit_list = self.home.hit_list(mouse.column, mouse.row);
-@@ -1166,23 +1167,7 @@ impl App {
-                         }
-                         Some(Ok(Event::Paste(text))) => {
-                             crate::session::write_tui_activity();
--                            // Only an ACTI
-```
-
-**File**: `src/tui/home/mod.rs` (modified, +51/-1)
-```diff
-@@ -230,6 +230,55 @@ pub(super) struct PassiveSynced {
-     pub(super) adopted_at: std::time::Instant,
- }
- 
-+/// Keys typed while a row's mount connects, kept in submit order. Each Enter
-+/// freezes the segment before it, so editing can only reach the draft after the
-+/// last one.
-+#[derive(Default)]
-+pub(super) struct PendingStructuredInput {
-+    completed: Vec<String>,
-+    draft: String,
-+}
-+
-+impl PendingStructuredInput {
-+    pub(super) fn push_str(&mut self, text: &str) {
-+        self.draft.push_str(text);
-+    }
-+
-+    pub(super) fn backspace(&mut self) {
-+        self.draft.pop();
-+    }
-+
-+    /// An empty Enter submits nothing, matching the composer it replays into,
-+    /// which trims the text before it decides.
-+    pub(super) fn submit(&mut self) {
-+        if !self.draft.trim().is_empty() {
-+            self.completed.push(std::mem::take(&mut self.draft));
-+        }
-+    }
-+
-+    pub(super) fn into_parts(self) -> (Vec<String>, String) {
-+        (self.completed, self.draft)
-+    }
-+
-+    pub(super) fn from_parts(completed: Vec<String>, draft: String) -> Self {
-+        Self { completed, draft }
-+    }
-+
-+    /// Every buffered prompt, one per line, the way the replay types them into
-+    /// the composer.
-+    #[cfg(test)]
-+    pub(super) fn text(&self) -> String {
-+        let mut text = self.completed.join("\n");
-+        if !self.draft.is_empty() {
-+            if !text.is_empty() {
-+                text.push('\n');
-+            }
-+            text.push_str(&self.draft);
-+        }
-+        text
-+    }
-+}
-+
- pub(in crate::tui) struct ReadyNativeAttachment {
-     pub id: String,
-     pub tmux_name: String,
-@@ -393,7 +442,8 @@ pub struct HomeView {
-     /// Resize only when geometry repeats on two refreshes, so a one-frame toast can't resize the agent twice.
-     pub(super) preview_pane_pending: Option<(String, u16, u16)>,
-     pub(super) pending_paste: Option<String>,
--    pub(super) pending_paste_for_structured_view: HashMap<String, String>,
-+    /// Input for a row whose mount is still connecting, split at each Enter.
-+    pub(super) pending_paste_for_structured_view: HashMap<String, PendingStructuredInput>,
-     pub(super) pending_attach_after_warning: Option<String>,
-     pub(super) pending_stop_session: Option<String>,
-     /// Target captured when the auxiliary stop confirmation opens.
-```
-
-**File**: `src/tui/home/tests/default_attach_mode.rs` (modified, +33/-8)
-```diff
-@@ -706,8 +706,11 @@ fn send_message_drains_pending_paste_for_structured_view() {
-         "pending_paste must be drained when routing to structured view"
-     );
-     assert_eq!(
--        env.view.pending_paste_for_structured_view.get(&id),
--        Some(&"cached text".to_string()),
-+        env.view
-+            .pending_paste_for_structured_view
-+            .get(&id)
-+            .map(crate::tui::home::PendingStructuredInput::text),
-+        Some("cached text".to_string()),
-         "drained text must land in pending_paste_for_structured_view, bound to the selected session"
-     );
- }
-@@ -723,12 +726,28 @@ fn send_message_merges_buffered_paste_for_same_session() {
-     env.view.pending_paste = Some("second".to_string());
-     env.view.handle_key(key(KeyCode::Char('m')), None);
-     assert_eq!(
--        env.view.pending_paste_for_structured_view.get(&id),
--        Some(&"first second".to_string()),
-+        env.view
-+            .pending_paste_for_structured_view
-+            .get(&id)
-+            .map(crate::tui::home::PendingStructuredInput::text),
-+        Some("first second".to_string()),
-         "same-target paste must merge into the buffered text"
-     );
- }
- 
-+/// A whitespace-only Enter freezes nothing: the composer trims the text and
-+/// sends nothing, so a frozen segment of spaces would stop the replay on every
-+/// mount and hold back the segments after it.
-+#[test]
-+fn a_whitespace_only_enter_freezes_no_segment() {
-+    let mut pending = crate::tui::home::PendingStructuredInput::default();
-+    pending.push_str("   ");
-+    pending.submit();
-+    let (completed, draft) = pending.into_parts();
-+    assert!(completed.is_empty(), "no segment for what submits nothing");
-+    assert_eq!(draft, "   ", "the text stays the draft the reader can edit");
-+}
-+
- /// A paste captured for another structured session gets its own entry, so the earlier
- /// target's unsent draft survives and neither session's draft leaks into the other.
- #[test]
-@@ -747,13 +766,19 @@ fn send_message_keeps_buffered_paste_per_session() {
-     env.view.select_session_by_id(&other);
-     env.view.handle_key(key(KeyCode::Char('m')), None);
-     assert_eq!(
--        env.view.pending_paste_for_structured_view.get(&other),
--        Some(&"session b draft".to_string()),
-+        env.view
-+            .pending_paste_for_structured_view
-+            .get(&other)
-+            .map(crate::tui::home::PendingStructuredInput::text),
-+        Some("session b draft".to_string()),
-         "the new target owns its own draft"
-     );
-     assert_eq!(
--        env.view.pending_paste_for_structured_view.get(&id_a),
--        Some(&"session a draft".to_string()),
-+        env.view
-+            .pending_paste_for_structured_view
-+            .get(&id_a)
-+            .map(crate::tui::home::PendingStructuredInput::text),
-+        Some("session a draft".to_string()),
-         "the previous target's unsent draft must survive the switch"
-     );
- }
-```
-
-**File**: `src/tui/structured_view/embedded.rs` (modified, +100/-0)
-```diff
-@@ -447,13 +447,113 @@ impl EmbeddedView {
-         }
-     }
- 
-+    /// Toast the view is showing, for the paste handoff's submit assertion.
-+    #[cfg(test)]
-+    pub(crate) fn toast_text(&self) -> Option<&str> {
-+        self.state.toast.as_ref().map(|toast| toast.text.as_str())
-+    }
-+
-+    /// Offer these slash commands to the composer, so a pasted `/` query opens
-+    /// the picker the replay has to get past.
-+    #[cfg(test)]
-+    pub(crate) fn offer_commands_for_test(&mut self, names: &[&str]) {
-+        self.state.transcript.available_commands = names
-+            .iter()
-+            .map(|name| crate::acp::state::AvailableCommand {
-+                name: (*name).to_string(),
-+                description: String::new(),
-+                accepts_input: false,
-+                input_hint: None,
+@@ -1443,10 +1443,29 @@ pub struct TipsResponse {
+ /// shared `crate::tips` catalog plus `app_state.tips_seen` and
+ /// `session.show_tips`. A read projection, so it stays a plain GET behind the
+ /// token wall like [`get_web_ui_state`]; the TUI-only tips never appear here.
+-pub async fn get_tips(State(_state): State<Arc<AppState>>) -> impl IntoResponse {
+-    let result = tokio::task::spawn_blocking(|| {
++pub async fn get_tips(State(state): State<Arc<AppState>>) -> impl IntoResponse {
++    let host = state.plugin_host.clone();
++    let result = tokio::task::spawn_blocking(move || {
+         let config = crate::session::Config::load()?;
+-        let signals = crate::tips::TipSignals::from(&config);
++        let mut signals = crate::tips::TipSignals::from(&config);
++        // The same providers and switches GET /api/suggestions reports. A store
++        // error only drops this tip.
++        let snapshot = host.as_ref().and_then(|host| {
++            let providers = crate::plugin::suggestions::providers();
++            host.with_suggestions_db(|conn, profile| {
++                crate::plugin::suggestions::snapshot(conn, profile, &providers)
 +            })
-+            .collect();
-+    }
-+
-+    /// Prompts the daemon took from this view. The paste drain advances its
-+    /// replay only when this grows, so a rejected prompt is not counted as sent.
-+    pub(crate) fn accepted_submits(&self) -> u64 {
-+        self.state.accepted_submits
-+    }
-+
-+    /// True when the last submit was refused and its text restored to the
-+    /// composer.
-+    pub(crate) fn last_submit_rejected(&self) -> bool {
-+        self.state.submit_rejected
-+    }
-+
-+    /// Prompts this view submitted, in order: test read for the paste-drain
-+    /// handoff's Enter boundary.
-+    #[cfg(test)]
-+    pub(crate) fn submitted_prompts(&self) -> &[String] {
-+        &self.state.submitted_prompts
-+    }
-+
-     /// Composer content, joined on newlines: test read for the paste-drain
-     /// handoff.
-     #[cfg(test)]
-     pub(crate) fn composer_text(&self) -> String {
-         self.state.composer.lines().join("\n")
-     }
++            .ok()
++        });
++        signals.suggestions_setup_available = snapshot.is_some_and(|snapshot| {
++            let enabled: Vec<bool> = snapshot["providers"]
++                .as_array()
++                .into_iter()
++                .flatten()
++                .map(|p| p["enabled"].as_bool().unwrap_or(false))
++                .collect();
++            crate::tips::suggestions_setup_available(&enabled)
++        });
+         let seen = &config.app_state.tips_seen;
+         let tips = crate::tips::eligible(crate::tips::TipSurface::Web, &signals)
+             .into_iter()
+```
+
+---
+
+### Incident Patch 3: `8ec63fec` (2026-11-25)
+**Commit Message**: ci(tessl): set up Tessl loops, maintainer plugin and verifiers (#6017)
+
+* ci(tessl): set up Tessl loops, maintainer plugin and verifiers
+
+Castellan is gone, so issue triage moves to a Tessl loop: one run per
+opened issue plus a daily sweep. Add the aoe-maintainer plugin (triage,
+red-main, codeql-review, groom-ready skills, factory PR rules, AoE
+verifiers and review lens), a Code Review profile, a cloud setup hook
+and a token-free CI check for the Tessl config.
+
+Triage and flaky-hunt run in the aoe-issues environment with an
+issues-only token; analysis loops run read-only.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* ci(tessl): address review feedback
+
+- deflake rule covers nextest, Vitest and Playwright flakes with a stress
+  repro for each.
+- flaky-hunt dedupes against its own issues and reads web test failures.
+- red-main runs once per failing commit and bounds its culprit baseline to
+  an ancestor of the failure.
+- groom-ready treats open native blockers as not ready; aoe-triage requires
+  Roadmap state on enhancements.
+- settings verifier lists the documented exceptions.
+- cloud setup gates Node on the lockfile engines and reinstalls npm
+  dependencies when a lockfile
+
+**File**: `.agents/skills/.gitignore` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++# Managed by Tessl
++tessl__*
++tessl:*
+```
+
+**File**: `.codex/config.toml` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++[mcp_servers.tessl]
++type = "stdio"
++command = "tessl"
++args = [ "mcp", "start" ]
+```
+
+**File**: `.codex/skills/.gitignore` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++# Managed by Tessl
++tessl__*
++tessl:*
+```
+
+**File**: `.github/CODEOWNERS` (modified, +6/-0)
+```diff
+@@ -83,6 +83,12 @@ Cargo.lock                              @agent-of-empires/protected
+ /CLAUDE.md                              @agent-of-empires/protected
+ /DESIGN.md                              @agent-of-empires/protected
+ /MAINTAINERS.md                         @agent-of-empires/protected
++/tessl.json                             @agent-of-empires/protected
++/.tessl/                                @agent-of-empires/protected
++/.tessl-code-review.yml                 @agent-of-empires/protected
++/tessl-plugins/                         @agent-of-empires/protected
++/.mcp.json                              @agent-of-empires/protected
++/.codex/config.toml                     @agent-of-empires/protected
  
-+    /// Take the prompt a refused send restored to the composer, so the replay
-+    /// submits it on its own Enter instead of appending the next segment to it.
-+    /// Empty once the composer holds anything else: that is the reader's own
-+    /// draft, not the refused segment.
-+    pub(crate) fn take_restored_prompt(&mut self) -> String {
-+        let restored = self.state.restored_prompt.take();
-+        self.state.submit_rejected = false;
-+        match restored {
-+            Some(text) if text == self.state.composer.lines().join("\n").trim() => {
-+                self.state.take_composer_text()
-+            }
-+            _ => String::new(),
-+        }
-+    }
-+
-+    /// Drain the composer into the caller's buffer, whitespace intact. The
-+    /// replay parks text the composer already holds, so it lands on an empty
-+    /// composer and a blocked send takes only the segment it pasted.
-+    pub(crate) fn take_held_text(&mut self) -> String {
-+        self.state.take_composer_raw()
-+    }
-+
-+    /// Submit one frozen replay segment as its own prompt. A paste can open the
-+    /// `/` or `@` completion pickers, whose Enter accepts the completion instead
-+    /// of sending, so the segment goes through the composer's submit path
-+    /// directly and the picker never sees the key.
-+    pub(crate) async fn submit_replayed_segment(&mut self, segment: &str) {
-+        self.paste_text_with_file_load(segment).await;
-+        let text = self.state.take_composer_text();
-+        // The submit lock holds the segment as a draft, matching a live Enter.
-+        if self.state.in_flight {
-+            self.state.set_composer_text(&text);
-+            return;
-+        }
-+        super::send_prompt_now(&mut self.state, &mut self.toast_deadline, &text).await;
-+    }
-+
-+    /// Take back whatever the view left in its composer after an Enter it did not
-+    /// submit, whether the daemon refused it or the submit lock held it, so the
-+    /// caller's buffer is the segment's only owner.
-+    pub(crate) fn take_unsubmitted_text(&mut self) {
-+        self.state.take_composer_text();
-+        self.state.submit_rejected = false;
-+        self.state.restored_prompt = None;
-+    }
-+
-+    /// Accept the next `count` submits without a daemon, holding the submit lock
-+    /// as a `Sent` response does until the turn-start echo clears it.
-+    #[cfg(test)]
-+    pub(crate) fn accept_submits_for_test(&mut self, count: usize) {
-+        self.state.accept_submits_for_test = count;
-+    }
-+
-+    /// The socket's turn-start echo releasing the submit lock, for tests with no
-+    /// connection to deliver it.
-+    #[cfg(test)]
-+    pub(crate) fn end_turn_for_test(&mut self) {
-+        self.state.in_flight = false;
-+    }
-+
-     /// The session this view is streaming.
-     pub fn session_id(&self) -> &str {
-         &self.state.session_id
+ # Releases
+ /.github/workflows/release.yml          @agent-of-empires/release
 ```
 
-**File**: `src/tui/structured_view/mod.rs` (modified, +47/-21)
+**File**: `.github/workflows/tessl.yml` (added, +37/-0)
 ```diff
-@@ -273,6 +273,11 @@ async fn setup_view(endpoint: DaemonEndpoint, session_id: &str) -> Result<ViewSe
-             ticker.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
-             loop {
-                 ticker.tick().await;
-+                // Checked before the poll so a view nobody holds stops here even
-+                // while every poll keeps failing.
-+                if plugin_tx.is_closed() {
-+                    break;
-+                }
-                 let snapshot = match http.plugin_ui_state().await {
-                     Ok(snapshot) => snapshot,
-                     // A fixed env credential cannot recover inside this view.
-@@ -1841,6 +1846,20 @@ async fn send_prompt_now(
-     text: &str,
- ) {
-     use crate::acp::client::http::PromptDispositionWire;
-+    // A test submit stands in for a `Sent` response: accepted, with the submit
-+    // lock still held until the turn-start echo arrives.
-+    #[cfg(test)]
-+    if state.accept_submits_for_test > 0 {
-+        state.accept_submits_for_test -= 1;
-+        state.submitted_prompts.push(text.to_owned());
-+        state.accepted_submits += 1;
-+        state.submit_rejected = false;
-+        state.restored_prompt = None;
-+        state.in_flight = true;
-+        return;
-+    }
-+    #[cfg(test)]
-+    state.submitted_prompts.push(text.to_owned());
-     state.in_flight = true;
-     match state
-         .http
-@@ -1852,30 +1871,37 @@ async fn send_prompt_now(
-         )
-         .await
-     {
--        Ok(dispatch) => match dispatch.disposition {
--            PromptDispositionWire::Queued => {
--                // A queued prompt starts no turn, so nothing will clear the
--                // submit lock for us.
--                state.in_flight = false;
--                refresh_queue(state).await;
--                set_toast(
--                    state,
--                    toast_deadline,
--                    format!("queued ({} waiting)", state.queue.len()),
--                    ToastKind::Info,
--                );
--            }
--            PromptDispositionWire::Sent | PromptDispositionWire::Steered => {
--                set_toast(
--                    state,
--                    toast_deadline,
--                    format!("prompt sent ({} bytes)", text.len()),
--                    ToastKind::Info,
--                );
-+        Ok(dispatch) => {
-+            state.accepted_submits += 1;
-+            state.submit_rejected = false;
-+            state.restored_prompt = None;
-+            match dispatch.disposition {
-+                PromptDispositionWire::Queued => {
-+                    // A queued prompt starts no turn, so nothing will clear the
-+                    // submit lock for us.
-+                    state.in_flight = false;
-+                    refresh_queue(state).await;
-+                    set_toast(
-+                        state,
-+                        toast_deadline,
-+                        format!("queued ({} waiting)", state.queue.len()),
-+                        ToastKind::Info,
-+                    );
-+                }
-+                PromptDispositionWire::Sent | PromptDispositionWire::Steered => {
-+                    set_toast(
-+                        state,
-+                        toast_deadline,
-+                        format!("prompt sent ({} bytes)", text.len()),
-+                        ToastKind::Info,
-+                    );
-+                }
-             }
--        },
-+        }
-         Err(e) => {
-             state.in_flight = false;
-+            state.submit_rejected = true;
-+            state.restored_prompt = Some(text.to_owned());
-             state.set_composer_text(text);
-             set_toast(
-                 state,
+@@ -0,0 +1,37 @@
++name: Tessl
++
++# Token-free checks for the Tessl config: a bad tessl.json block stops sync.
++# https://docs.tessl.io/schedules/validate-in-ci.md
++
++on:
++  pull_request:
++    paths:
++      - 'tessl.json'
++      - '.tessl/**'
++      - 'tessl-plugins/**'
++      - '.tessl-code-review.yml'
++      - '.github/workflows/tessl.yml'
++
++permissions:
++  contents: read
++
++concurrency:
++  group: tessl-${{ github.event.pull_request.number }}
++  cancel-in-progress: true
++
++jobs:
++  validate:
++    name: Validate Tessl config
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with:
++          persist-credentials: false
++      - uses: tesslio/setup-tessl@25ec223fc0da33b41b8044ff5ab2b85235f4f91e # v2
++        with:
++          version: '0.123.0'
++      - name: Validate schedules, triggers and actions
++        run: tessl schedule validate
++      - name: Lint aoe-maintainer plugin
++        run: tessl plugin lint tessl-plugins/aoe-maintainer
 ```
 
-**File**: `src/tui/structured_view/state.rs` (modified, +33/-1)
+**File**: `.mcp.json` (added, +12/-0)
 ```diff
-@@ -139,6 +139,25 @@ pub struct StructuredViewState {
-     /// or `None` when off or the fetch failed. Read from the daemon's `/api/about`,
-     /// not local config, so a remote-attached view honours that daemon (#3253).
-     pub compaction_reminder_percent: Option<u8>,
-+    /// Prompts the daemon took from this view. A caller replaying buffered input
-+    /// advances only when this grows: a rejected prompt comes back to the
-+    /// composer, and Enter can be consumed by the view without a submit.
-+    pub accepted_submits: u64,
-+    /// True when the last submit was refused and its text put back in the
-+    /// composer, so a replay knows that text is not lost.
-+    pub submit_rejected: bool,
-+    /// The text that refusal restored. A replay claims the composer only while
-+    /// it still holds exactly that, so a later edit is never submitted as a
-+    /// refused segment.
-+    pub restored_prompt: Option<String>,
-+    /// Test-only: submits to accept without a daemon, leaving the submit lock
-+    /// held as a real `Sent` response would until the turn-start echo clears it.
-+    #[cfg(test)]
-+    pub accept_submits_for_test: usize,
-+    /// Every prompt the composer submitted, in order. Test-only, so the paste
-+    /// handoff can assert what each Enter actually sent.
-+    #[cfg(test)]
-+    pub submitted_prompts: Vec<String>,
-     /// The wrapped transcript painted by the last frame. Wrapping a long
-     /// transcript costs far more than everything else in a frame, and most
-     /// frames repaint identical rows. Interior-mutable: the render borrows the
-@@ -440,6 +459,13 @@ impl StructuredViewState {
-             auto_presented_elicitation: None,
-             last_scroll_max: std::cell::Cell::new(0),
-             compaction_reminder_percent: None,
-+            accepted_submits: 0,
-+            submit_rejected: false,
-+            restored_prompt: None,
-+            #[cfg(test)]
-+            accept_submits_for_test: 0,
-+            #[cfg(test)]
-+            submitted_prompts: Vec::new(),
-             show_full_thinking: false,
-             transcript_cache: RefCell::new(None),
-         }
-@@ -496,7 +522,13 @@ impl StructuredViewState {
-     /// Drain the composer's current text and clear it so the user can
-     /// start the next prompt.
-     pub fn take_composer_text(&mut self) -> String {
--        let text = self.composer.lines().join("\n").trim().to_string();
-+        self.take_composer_raw().trim().to_string()
+@@ -0,0 +1,12 @@
++{
++  "mcpServers": {
++    "tessl": {
++      "type": "stdio",
++      "command": "tessl",
++      "args": [
++        "mcp",
++        "start"
++      ]
 +    }
-+
-+    /// `take_composer_text` without the trim, for a caller parking the text
-+    /// rather than sending it: the surrounding whitespace is the reader's.
-+    pub fn take_composer_raw(&mut self) -> String {
-+        let text = self.composer.lines().join("\n");
-         // Replace with a fresh textarea so cursor + selection state
-         // also reset; ratatui-textarea has no public "clear" today.
-         self.composer = new_composer_textarea();
++  }
++}
+```
+
+**File**: `.tessl-code-review.yml` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++# Tessl Code Review profile: the six tessl/code-review defaults, with the
++# security lens on every file, plus the AoE lenses. Keep every default
++# listed: this list replaces the built-in set.
++# https://docs.tessl.io/reference/configuration.md#tessl-code-reviewyml
++schemaVersion: 1
++effort: adaptive
++# Generated files; CI regenerates or checks them.
++ignore:
++  - docs/cli/reference.md
++  - web/src/lib/generated/**
++  - CHANGELOG.md
++lenses:
++  - ref: tessl/code-review@0.5.2#review-plugin-content
++    globs:
++      - tessl-plugins/aoe-maintainer/**
++  - ref: tessl/code-review@0.5.2#review-markdown
++    globs:
++      - '**/*.md'
++      - '!tessl-plugins/aoe-maintainer/**'
++  - ref: tessl/code-review@0.5.2#review-correctness-and-data-integrity
++    globs:
++      - '**'
++      - '!**/*.md'
++      - '!tessl-plugins/aoe-maintainer/**'
++  - ref: tessl/code-review@0.5.2#review-maintainability-and-code-quality
++    globs:
++      - '**'
++      - '!**/*.md'
++      - '!tessl-plugins/aoe-maintainer/**'
++  - ref: tessl/code-review@0.5.2#review-scale-and-resilience
++    globs:
++      - '**'
++      - '!**/*.md'
++      - '!tessl-plugins/aoe-maintainer/**'
++  # Skills, rules and agent instructions steer runs that hold write tokens.
++  - ref: tessl/code-review@0.5.2#review-security-and-privacy
++    globs:
++      - '**'
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-invariants/SKILL.md
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-test-evidence/SKILL.md
++    globs:
++      - src/**
++      - tests/**
++      - web/**
++      - acp-worker/**
++      - aoe-plugin-api/**
++      - xtask/**
++      - scripts/**
++      - '!**/*.md'
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-runtime-lifecycle/SKILL.md
++    globs:
++      - src/**
++      - web/src/**
++      - acp-worker/**
++      - '!src/migrations/**'
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-sandbox-boundary/SKILL.md
++    globs:
++      - src/**
++      - docker/**
++      - acp-worker/**
++      - '!src/tui/**'
++  - ref: ./tessl-plugins/aoe-maintainer/lenses/aoe-keyboard-focus/SKILL.md
++    globs:
++      - web/src/**
++      - src/tui/**
++      - '!web/src/lib/generated/**'
++      - '!**/*.test.ts'
++      - '!**/*.test.tsx'
++      - '!**/__tests__/**'
++      - '!src/tui/**/tests/**'
++      - '!src/tui/**/tests.rs'
+```
+
+**File**: `.tessl/.gitignore` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++tiles/
++plugins/
++RULES.md
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5974** (2026-11-23): fix(web): start side panels closed, with daemon-owned defaults (@njbrake)
-- **PR #5971** (2026-11-23): fix(test): stop restart admission tests leaking sandbox containers (@Seluj78)
-- **PR #5967** (2026-11-23): docs: correct false and stale claims on the website, docs and in-app help text (@Seluj78)
-- **PR #5966** (2026-11-23): chore(deps): bump @agentclientprotocol/codex-acp from 2.5.0 to 2.6.0 in /acp-worker/adapters/codex-acp (@dependabot[bot])
-- **PR #5961** (2026-11-22): docs(agents): require docs updates in the same PR (@athal7)
-- **PR #5959** (2026-11-23): docs(api): document the sandbox image endpoints (@klubrake)
+- **PR #6071** (2026-11-25): ci: attach PR demo media with gh --attach instead of the e2e-recordings branch (@njbrake)
+- **PR #6067** (2026-11-25): ci: remove GetMac runners from release builds (@njbrake)
+- **PR #6066** (2026-11-25): feat(tui): fold snoozed sessions into the hide-stopped filter (@athal7)
+- **PR #6057** (2026-11-25): feat(acp): show Codex native subagents in the Sub agents pane (@njbrake)
+- **PR #6056** (2026-11-25): fix(web): trim live terminal rows to the latest frame, not a stale one (@njbrake)
+- **PR #6052** (2026-11-25): feat(web): widen the structured view column on wide screens (#6019) (@tessl-app[bot])
 
 ---
 
@@ -3569,43 +3056,41 @@ and it
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plugin): bound pre-consent staging disk use
+## X. web): suggested sessions dashboard, settings and guide
 
 **RULE**:
-When implementing operations in `.github/workflows/tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guides/suggested-sessions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c684cd29`: plugin): bound pre-consent staging disk use. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83161f1c`: web): suggested sessions dashboard, settings and guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/suggested-sessions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - name: Install runtime test prerequisites
-      - name: Install isolated namespace test prerequisites
-        if: matrix.leg == 'core-rest' || matrix.leg == 'web-e2e'
-        run: sudo apt-get install -y bubblewrap iproute2 apparmor
-      - name: Enable isolated namespace tests
-        if: matrix.leg == 'core-rest' || matrix.leg == 'web-e2e'
-          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-      - name: Exercise bounded plugin staging
-        if: matrix.leg == 'core-rest'
-        run: cargo nextest run --run-ignored only --no-tests=fail -E 'test(staging_volume_) | test(startup_reclaims)'
+# Suggested sessions
+
+Suggested sessions are things worth starting a session for, such as a PR that wants your review or a failing check, published by installed plugins. AoE only lists them. Nothing runs until you start one, and **Start** launches right away with the [preset](#presets) of the suggestion's kind.
+
+Each item has a title, a reason, the plugin that proposed it, and a draft prompt. Plugins decide what to publish; this page covers using them. Writing a provider is covered in the [plugin contract](../plugin-api.md#suggested-sessions).
+
+Suggestions show up in the web dashboard (homepage section, `/suggestions`, and optionally the sidebar) and in the TUI. They are stored per [profile](configuration.md#profiles).
+
+## Setting up
+
+With no provider installed, the web homepage and the empty `/suggestions` view offer **Set up suggestions** when a featured plugin exists. The sheet installs the sources you tick, runs each plugin's setup checks (✓, `!`, ✕, with the plugin's fix text and **Check again**), and ends with "Suggestions are on". **Finish later** closes it; the plugin stays installed. **More sources in the Marketplace ›** opens Settings › Plugins › Marketplace filtered to p
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      - name: Install tmux
-      - name: Install confined Local test prerequisites
-        if: matrix.leg == 'web-e2e'
-          sudo apt-get install -y bubblewrap iproute2 apparmor
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c684cd29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83161f1c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

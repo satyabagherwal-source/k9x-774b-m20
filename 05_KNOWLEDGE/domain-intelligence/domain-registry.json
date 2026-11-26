@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T07:01:03.816Z",
+  "last_updated": "2026-11-26T07:10:35.120Z",
   "total_records": 2717,
   "domains": {
     "A": {
@@ -8821,10 +8821,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "295df7c6ceb5327a476cf994f668bb7b84a12fa668ee202f199b4a9207a535e7",
-      "created_at": "2026-11-26T05:05:22.168Z"
+      "content_hash": "66e67eac5adbe771c8b7a656fdb0339a598898708576a29a888e2a7758860c7d",
+      "created_at": "2026-11-26T07:10:28.729Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -16048,8 +16048,8 @@
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "repository": "agent-of-empires/agent-of-empires",
-      "content_hash": "ed2aacc8463bf22974c8c6ce465f072e42e0b4e348af8a443abc5d4fd0321626",
-      "created_at": "2026-11-23T21:57:00.902Z"
+      "content_hash": "91757c64b011531a0f4dbadc1b5140a4a3344045e9a29dcc511a952290249ea7",
+      "created_at": "2026-11-26T07:10:18.282Z"
     },
     "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants",
@@ -16075,8 +16075,8 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-learnings-architecture-intelligence-agent-of-e.md",
       "repository": "agent-of-empires-agent-of-empires-learnings",
-      "content_hash": "df783be179f462cd8feaba48dde8202045bfb7f2c40c0c5cd27c14feacd8b210",
-      "created_at": "2026-11-23T21:57:09.923Z"
+      "content_hash": "7bba535543dbe457a72389cc0b25f6462facd52ec04c70f643901694d4b81284",
+      "created_at": "2026-11-26T07:10:32.938Z"
     },
     "DOM-D-C580DAE3": {
       "record_id": "DOM-D-C580DAE3",
@@ -25575,8 +25575,8 @@
       "title": "Architecture Intelligence: wzh4869/AppPorts Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-architecture-intelligence-wzh4869-appports-core-invariants.md",
       "repository": "wzh4869/AppPorts",
-      "content_hash": "f0ce0b32b4d23fb02f7b10c673c1774145c19da65e51ec7ba08ab6eb490c1cd1",
-      "created_at": "2026-11-23T21:23:11.324Z"
+      "content_hash": "98fb5d8af6531559f5351c48f4a31cc6f92919c4747dc86aa291aecdeb413d91",
+      "created_at": "2026-11-26T07:10:23.856Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants",
@@ -25602,8 +25602,8 @@
       "title": "Architecture Intelligence: wzh4869-appports-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wzh4869-appports-learnings-architecture-intelligence-wzh4869-appports-learnings-.md",
       "repository": "wzh4869-appports-learnings",
-      "content_hash": "80a08c35f9747c00dc22b7ee99ba3164e4d46e796b329c96b0ad6ff61065e43c",
-      "created_at": "2026-11-23T21:23:18.185Z"
+      "content_hash": "ede799fafc8422793753d45028629a8febf2c4e5fdd2ccd8d01a0a83cefbbcab",
+      "created_at": "2026-11-26T07:10:35.120Z"
     },
     "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
@@ -27980,8 +27980,8 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image-PE Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-pe-research-knowledge-intelligence-minimaxai-minim.md",
       "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
-      "content_hash": "542adea244ae02629a379a18704f5c9edf3e1bd0842e660607f5f97adeee103e",
-      "created_at": "2026-11-22T12:37:34.991Z"
+      "content_hash": "f79b630c3deab0dff5c89ec19e5dad4354a3205e4dc5aa117ba9439b54f736cd",
+      "created_at": "2026-11-26T07:10:15.343Z"
     },
     "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants",
@@ -28049,8 +28049,8 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-pe-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-pe-learnings-research-knowledge-intelligence-hf-mi.md",
       "repository": "hf-minimaxai-minimax-h3-image-pe-learnings",
-      "content_hash": "0f28cd157596aad30246349a0ab53c1b96f58a9e26e494dcade132977a0b8fb9",
-      "created_at": "2026-11-22T12:37:38.007Z"
+      "content_hash": "bc609d574e95c75412ac99f6b4589171aab9e13b91e95713d60f7205f7c19f7c",
+      "created_at": "2026-11-26T07:10:34.069Z"
     },
     "DOM-D-84284456": {
       "record_id": "DOM-D-84284456",
@@ -36462,8 +36462,8 @@
       "title": "Architecture Intelligence: actions/actions-runner-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-actions-actions-runner-controller-architecture-intelligence-actions-actions-runn.md",
       "repository": "actions/actions-runner-controller",
-      "content_hash": "bb40628cc5c6f7ab28460380679c438953eb72869f80de20304a47d81d2ce1ac",
-      "created_at": "2026-11-20T13:08:25.390Z"
+      "content_hash": "488e6294e343250dc4884d8e1da7f354415993dabcdc21fcdb9e050e9bbd3439",
+      "created_at": "2026-11-26T07:10:26.136Z"
     },
     "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-actions-actions-runner-controller-learnings-core-invar",

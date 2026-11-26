@@ -13283,3 +13283,8 @@
 | `CYCLE-20261126-SQX9` | `2026-11-26T06:44:07.629Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10619` | Yes (`a6af0992...`) |
 | `CYCLE-20261126-3C6Q` | `2026-11-26T06:52:21.746Z` | `nex-agi/Nex-N2.6` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nex-agi-nex-n2.6-learnings.md` | Yes (`3ee16bd0...`) |
 | `CYCLE-20261126-E835` | `2026-11-26T07:00:49.649Z` | `maxwell-model/Maxwell-V1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md` | Yes (`ac49f93f...`) |
+| `CYCLE-20261126-QCCK` | `2026-11-26T07:10:15.044Z` | `MiniMaxAI/MiniMax-H3-Image-PE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md` | Yes (`a294b783...`) |
+| `CYCLE-20261126-QEBU` | `2026-11-26T07:10:17.610Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md` | Yes (`fb9168fe...`) |
+| `CYCLE-20261126-QINV` | `2026-11-26T07:10:23.227Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10620` | Yes (`1f6b5716...`) |
+| `CYCLE-20261126-QKF9` | `2026-11-26T07:10:25.509Z` | `actions/actions-runner-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10621` | Yes (`20c421dc...`) |
+| `CYCLE-20261126-QMFV` | `2026-11-26T07:10:28.123Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`cdadba81...`) |

@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "9c02ea4e",
+    "sourceVersion": "ecf5907c",
     "license": "Apache-2.0",
-    "contentHash": "58a9d2032bac4fee15bf0f9ca058fd7e3ea530bcbf156f65978ed5f8b3c00c0e",
-    "lastHarvestedAt": "2026-11-26T03:04:41.100Z",
+    "contentHash": "cdadba81ee8e33f4d6a16c0a3a9da765a9e66a1ca6b8215dbab1391179370aa4",
+    "lastHarvestedAt": "2026-11-26T07:10:28.128Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -6603,10 +6603,10 @@
     "repository": "actions/actions-runner-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/actions/actions-runner-controller",
-    "sourceVersion": "50f96097",
+    "sourceVersion": "eca1a62a",
     "license": "Apache-2.0",
-    "contentHash": "24f13b669c4b7a531fe19e68cae63a36dc731fd5cde0decf8cfbb5f415a6070b",
-    "lastHarvestedAt": "2026-11-24T14:05:43.109Z",
+    "contentHash": "20c421dcba8a163d6c887b4bc5ff1714f7a302ccba895fd962ed0c1fc4e4f1c1",
+    "lastHarvestedAt": "2026-11-26T07:10:25.514Z",
     "learningId": "learn-github-actions-actions-runner-controller"
   },
   "vectifyai-pageindex": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "a6717a44",
+    "sourceVersion": "956d1300",
     "license": "MIT",
-    "contentHash": "e6d287dbb7f138cf4caa502486ba873929fde494ac2095718e6e3e2309bb3485",
-    "lastHarvestedAt": "2026-11-25T00:51:56.995Z",
+    "contentHash": "fb9168feccce442476d2669dc5f76f0c865a2ba2ba1da995b8f2389f54ec6a00",
+    "lastHarvestedAt": "2026-11-26T07:10:17.615Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {
@@ -9823,10 +9823,10 @@
     "repository": "wzh4869/AppPorts",
     "platform": "github",
     "sourceUrl": "https://github.com/wzh4869/AppPorts",
-    "sourceVersion": "b74e3fe6",
+    "sourceVersion": "d9294511",
     "license": "Apache-2.0",
-    "contentHash": "ae35633117a3974c1eb6eb339b93fbeac6da44105f451d8f3e265092addb7add",
-    "lastHarvestedAt": "2026-11-23T21:23:10.920Z",
+    "contentHash": "1f6b5716516535e5626317593ce5c728daa776beb3e37d72b44d97117ec3e061",
+    "lastHarvestedAt": "2026-11-26T07:10:23.232Z",
     "learningId": "learn-github-wzh4869-appports"
   },
   "andythefactory-newspaper4k": {
@@ -12775,8 +12775,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE",
     "sourceVersion": "hf-minimaxai-minimax-h3-image-pe",
     "license": "Open-Source",
-    "contentHash": "24c873ac57ad005c77023b404865fc55479795566ef2a3ce416723ba5829d466",
-    "lastHarvestedAt": "2026-11-22T12:37:34.795Z",
+    "contentHash": "a294b783166795a57c47a9ceef87c04f0b5591d944b411a2822313e7a088ec29",
+    "lastHarvestedAt": "2026-11-26T07:10:15.050Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe"
   },
   "hf-internlm-sage-s2.1-flash": {
