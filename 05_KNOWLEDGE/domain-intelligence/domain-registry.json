@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T06:10:44.792Z",
+  "last_updated": "2026-11-26T06:18:35.743Z",
   "total_records": 2713,
   "domains": {
     "A": {
@@ -11459,8 +11459,8 @@
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "repository": "prometheus/prometheus",
-      "content_hash": "f900da247ffdaa3e620f5064e3ace7eddd1955ef09d21dea6b047f52a1473f8a",
-      "created_at": "2026-11-24T13:12:40.476Z"
+      "content_hash": "ae1c04d71d23b92fd9a268fbe09219425da8692bd095b8501602e1642ba72714",
+      "created_at": "2026-11-26T06:18:25.697Z"
     },
     "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
@@ -24511,8 +24511,8 @@
       "title": "Research & Knowledge Intelligence: IFM/PAN2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ifm-pan2-research-knowledge-intelligence-ifm-pan2-core-invariants.md",
       "repository": "IFM/PAN2",
-      "content_hash": "6947a27e732f1ba32445b5d888ced7365af7e813e0bdc5bdfdf0fe22f004c4eb",
-      "created_at": "2026-11-22T10:29:45.343Z"
+      "content_hash": "8f3815ccd3cc9aefebe5e40ab9829df4e8e69aa05d3c9f57ec8bb162153b3fb9",
+      "created_at": "2026-11-26T06:18:14.654Z"
     },
     "domain_intelligence-content-information-intelligence-vectifyai-pageindex-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-vectifyai-pageindex-core-invariants",
@@ -24571,8 +24571,8 @@
       "title": "Research & Knowledge Intelligence: hf-ifm-pan2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ifm-pan2-learnings-research-knowledge-intelligence-hf-ifm-pan2-learnings-core.md",
       "repository": "hf-ifm-pan2-learnings",
-      "content_hash": "ca676a3407ad58dd186404e7432f8ffdeea07cfb924cbe7ed9e120cbd791a72f",
-      "created_at": "2026-11-22T10:30:03.431Z"
+      "content_hash": "1ee3d8904da9343eea293c06aba4541ecf02d818ebb3252b32199c3d703f47ba",
+      "created_at": "2026-11-26T06:18:34.101Z"
     },
     "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants",
@@ -24776,8 +24776,8 @@
       "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-learnings-content-information-intelligence-prometheus-prom.md",
       "repository": "prometheus-prometheus-learnings",
-      "content_hash": "5effe94c1569f0b658d15f89e8e059fea8631159e1e5e6a2e83c927877b96d2b",
-      "created_at": "2026-11-24T13:12:44.809Z"
+      "content_hash": "5c699da77bccff6517ba1733e4dbb20eb824207053474aa461570881275575bd",
+      "created_at": "2026-11-26T06:18:34.849Z"
     },
     "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
@@ -32571,8 +32571,8 @@
       "title": "Architecture Intelligence: trailbaseio/trailbase Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-architecture-intelligence-trailbaseio-trailbase-core-invar.md",
       "repository": "trailbaseio/trailbase",
-      "content_hash": "ccf33d27311f9a83eb1f2750e12239a265f6f2ac5e3cab1292bf0d885642fb3f",
-      "created_at": "2026-11-21T03:44:47.438Z"
+      "content_hash": "5f5ecd4e1eda91f3d17e81c2d6dbb7a9318cd1a6aef717a0084012e11cfbb98d",
+      "created_at": "2026-11-26T06:18:30.840Z"
     },
     "DOM-H-26FD692A": {
       "record_id": "DOM-H-26FD692A",
@@ -32622,8 +32622,8 @@
       "title": "Architecture Intelligence: trailbaseio-trailbase-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-learnings-architecture-intelligence-trailbaseio-trailbase-.md",
       "repository": "trailbaseio-trailbase-learnings",
-      "content_hash": "7b104aef216e9eb3fece2688e5d2f9ab45cae2b89097070b19ce62be447b0ed7",
-      "created_at": "2026-11-18T19:52:46.034Z"
+      "content_hash": "3337afbe72e532f9512c9ecb4076eb1b28355ff2624910d4689e2c6c8503d085",
+      "created_at": "2026-11-26T06:18:35.743Z"
     },
     "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants",

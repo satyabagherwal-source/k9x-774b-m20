@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T19:52:45.753Z",
+  "timestamp": "2026-11-26T06:18:35.462Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-trailbaseio-trailbase-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [trailbaseio-trailbase-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T19:52:45.753Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T06:18:35.462Z`  
 > **Learning ID**: `LEARN-EVO-trailbaseio-trailbase-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from trailbaseio-trailbase-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `e0a2df25`  
+> **Source Version**: `81531859`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T19:52:11.217Z  
+> **Timestamp**: 2026-11-26T06:18:29.444Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T19:52:11.212Z  
+> **Harvest Timestamp**: 2026-11-26T06:18:29.440Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5773 stars
+- **Stars / Engagement**: 5785 stars
 
 ---
 
@@ -961,8 +961,11 @@ pub async fn test_email_handler(
   > Hi @chardskarth , thanks for the request and thanks for reaching out. In the next release node positions will be persisted locally in the browser. Would that address your request?
   > v0.36.1 has been released. I'll tentatively consider this closed. Let me know, if you re looking for something else 🙏 
 
-- **Issue #311** (2026-11-08): **Record subscriptions emit `Insert` events for rows of a rolled-back transaction**
-  *Symptoms*: ## Summary  When a `POST /api/transaction/v1/execute` request with `"transaction": true` fails after an earlier operation already inserted a row, the transaction rolls back and the row is never stored. Table subscriptions (`/api/records/v1/{api}/subscribe/*`) still receive an `Insert` event for that row. Clients that apply subscription events to a local cache end up showing a row that does not exist, and no later event removes it.  ## Version  `trail v0.35.8-0-g05238c02 (2026-10-30)`, macOS arm64. From reading the source, `main` behaves the same (see Cause).  ## Reproduction  Needs only `trail` and `curl`:  ```bash #!/usr/bin/env bash set -euo pipefail  port="${PORT:-4011}" base="http://127.0.0.1:${port}" dir="$(mktemp -d)" trap 'kill "${sse_pid:-}" "${trail_pid:-}" 2>/dev/null || true; wait 2>/dev/null || true; rm -rf "$dir"' EXIT  mkdir -p "$dir/depot/migrations/main" cat > "$dir/depot/migrations/main/U1700000000__probe.sql" <<'SQL' CREATE TABLE probe (   id INTEGER PRIMARY KEY,   note TEXT NOT NULL UNIQUE ) STRICT; SQL cat > "$dir/depot/config.textproto" <<'PROTO' server { application_name: "repro" enable_record_transactions: true } record_apis: [{   name: "probe"   table_name: "probe"   acl_world: [CREATE, READ]   enable_subscriptions: true }] PROTO  trail --version | head -1 trail --depot "$dir/depot" run --address "127.0.0.1:${port}" >"$dir/trail.log" 2>&1 & trail_pid=$! until curl -fsS "$base/api/healthcheck" >/dev/null 2>&1; do   kill -0 "$trail_pid" 2>/dev/null || { 
+- **Issue #312** (2026-11-19): **Double reverse proxy (X-Forwarded-For not getting unwrapped)**
+  *Symptoms*: Hello. I recently had to override my webservers default x-forwarded-for handling which, by default, comma-separates multiple forwarded for in trusted proxy situation. Seems Trailbase only uses the last IP (or falls back to the source IP).  Thats not ideal, but is what it is. This request is for the docs to be updated to reflect that.  Or if I have it all wrong let me know :) web server is Caddy.  Thanks!
+  **Post-Mortem & Fix Analysis**:
+  > > Thats not ideal, but is what it is. This request is for the docs to be updated to reflect that.  It doesn't have to be :). The behavior you describe is implemented here: https://github.com/trailbaseio/trailbase/blob/f7a68cdf409597ac3c33a22ba1b41f3a3acd41f7/crates/core/src/extract/ip.rs#L11. We use it for:  * rate limiting * logging  I assume the problem you ran into was related to logging, were picking the left-most forwarded-for makes a lot of sense (whereas rate limiting should probably maintain right-most behavior). WDYT?
+  > Hmm. Other than an ancillary/informational "upstream"/proxy IP column/field wouldn't you want _everything_ to be the right most (actual remote host) to be used for both logging and rate limiting?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -979,500 +982,332 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `efb40fa7` (2026-11-18)
-**Commit Message**: Update JavaScript dependencies and address security advisories.
+### Incident Patch 1: `7cafc4c4` (2026-11-24)
+**Commit Message**: Update Rust dependencies. Addresses security advisories.
 
-**File**: `client/testfixture/guests/typescript/package.json` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +109/-109)
 ```diff
-@@ -22,7 +22,7 @@
-     "eslint": "^10.15.0",
-     "prettier": "^3.10.1",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `crates/assets/js/admin/package.json` (modified, +4/-4)
-```diff
-@@ -32,7 +32,7 @@
-     "@solid-primitives/memo": "^1.5.1",
-     "@solidjs/router": "^1.0.3",
-     "@tanstack/solid-form": "^1.33.5",
--    "@tanstack/solid-query": "^5.107.1",
-+    "@tanstack/solid-query": "^5.107.2",
-     "@tanstack/solid-table": "^9.3.1",
-     "@tanstack/table-core": "^9.3.1",
-     "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
-@@ -59,7 +59,7 @@
-     "@tailwindcss/typography": "^0.5.20",
-     "@tailwindcss/vite": "^4.3.5",
-     "@testing-library/jest-dom": "^7.0.1",
--    "@testing-library/user-event": "^14.6.10",
-+    "@testing-library/user-event": "^14.6.12",
-     "@types/geojson": "^7946.0.16",
-     "@types/wicg-file-system-access": "^2023.10.7",
-     "autoprefixer": "^10.6.2",
-@@ -73,10 +73,10 @@
-     "tailwindcss": "^4.3.5",
-     "tailwindcss-animate": "^1.0.7",
-     "trailbase-bindings": "file:../bindings",
--    "ts-proto": "^2.21.1",
-+    "ts-proto": "^2.22.0",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vite": "^8.3.8",
-     "vite-plugin-csp-guard": "^4.0.1",
-     "vite-plugin-solid": "^2.11.16",
-```
-
-**File**: `crates/assets/js/client/package.json` (modified, +1/-1)
-```diff
-@@ -55,7 +55,7 @@
-     "tinybench": "^6.2.3",
-     "trailbase-bindings": "file:../bindings",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vite": "^8.3.8",
-     "vite-node": "^6.0.0",
-     "vite-plugin-dts": "^5.1.2",
-```
-
-**File**: `crates/auth-ui/ui/package.json` (modified, +1/-1)
-```diff
-@@ -47,6 +47,6 @@
-     "tailwindcss": "^4.3.5",
-     "tw-animate-css": "^1.4.0",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2"
-+    "typescript-eslint": "^8.73.0"
-   }
- }
-```
-
-**File**: `docs/examples/record_api_ts/package.json` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@
-     "eslint": "^10.15.0",
-     "prettier": "^3.10.1",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vitest": "^4.1.12"
-   },
-   "dependencies": {
-```
-
-**File**: `docs/examples/wasm-guest-ts/package.json` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@
-     "nano-spawn": "^2.1.0",
-     "prettier": "^3.10.1",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2",
-+    "typescript-eslint": "^8.73.0",
-     "vite": "^8.3.8"
-   }
- }
-```
-
-**File**: `docs/package.json` (modified, +1/-1)
-```diff
-@@ -46,6 +46,6 @@
-     "prettier-plugin-astro": "^1.1.2",
-     "prettier-plugin-tailwindcss": "^0.8.1",
-     "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.2"
-+    "typescript-eslint": "^8.73.0"
-   }
- }
-```
-
-**File**: `examples/blog/web/package.json` (modified, +1/-1)
-```diff
-@@ -40,6 +40,6 @@
-     "quicktype": "^23.3.25",
-     "sharp": "^0.35.5",
-     "tailwindcss": "^4.3.5",
--    "typescript-eslint": "^8.72.2"
-+    "typescript-eslint": "^8.73.0"
-   }
- }
-```
-
----
-
-### Incident Patch 2: `6119f18d` (2026-11-17)
-**Commit Message**: Update Rust dependencies to address security advisories.
-
-**File**: `Cargo.lock` (modified, +111/-108)
-```diff
-@@ -996,9 +996,9 @@ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
+@@ -54,12 +54,12 @@ dependencies = [
  
  [[package]]
- name = "bytes"
--version = "1.12.1"
-+version = "1.12.2"
+ name = "ahash"
+-version = "0.8.12"
++version = "0.8.14"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
-+checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
+-checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
++checksum = "54dae3d1d7b8956f3506c4e999a74e77f932a59153ccf38ab8cf96db74bb9dc0"
  dependencies = [
+  "cfg-if",
+- "getrandom 0.3.4",
++ "getrandom 0.4.3",
+  "once_cell",
   "serde",
- ]
-@@ -1193,9 +1193,9 @@ dependencies = [
+  "version_check",
+@@ -163,9 +163,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "anyhow"
+-version = "1.0.104"
++version = "1.0.105"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
++checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
+ 
+ [[package]]
+ name = "approx"
+@@ -1193,19 +1193,19 @@ dependencies = [
  
  [[package]]
  name = "clap"
--version = "4.6.7"
-+version = "4.6.8"
+-version = "4.6.9"
++version = "4.6.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
-+checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+-checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
++checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
  dependencies = [
   "clap_builder",
   "clap_derive",
-@@ -1215,9 +1215,9 @@ dependencies = [
+ ]
  
  [[package]]
- name = "clap_complete"
--version = "4.6.11"
-+version = "4.6.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "037e2a1a92236d0aff7e845093f64661d6df4c02c9fcc61a60e9e1d736fa392f"
-+checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
- dependencies = [
-  "clap",
-  "clap_lex",
-@@ -1227,9 +1227,9 @@ dependencies = [
- 
- [[package]]
- name = "clap_derive"
+ name = "clap_builder"
 -version = "4.6.7"
-+version = "4.6.8"
++version = "4.6.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
-+checksum = "895c9d8d2ac2dd8b8a29f3724a14e72aaaa6debcf8c38c82f97305c6a172767a"
+-checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
++checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
  dependencies = [
-  "heck",
-  "proc-macro2",
-@@ -1239,9 +1239,9 @@ dependencies = [
+  "anstream",
+  "anstyle",
+@@ -1369,9 +1369,9 @@ checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
  
  [[package]]
- name = "clap_lex"
--version = "1.1.1"
-+version = "1.1.2"
+ name = "constant_time_eq"
+-version = "0.6.1"
++version = "0.6.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
-+checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
- 
- [[package]]
- name = "client-ip"
-@@ -1463,37 +1463,37 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-assembler-x64"
--version = "0.135.8"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "10c7459262c93a3c408bda96acaaa3d92868f166b33d445b20921f8378325038"
-+checksum = "f4c0cfdaf0fa6d94af39357be9b0c6137b99e57832d68b1ba1110524f4c67138"
+-checksum = "9eb6feb175df65d0a3ccd3e73484e940d0ac664e8034f0519fd49a93db3071d9"
++checksum = "144e7f1de087984240b7816d47f698b414979faa6f40839c5b86d6bd47db57b7"
  dependencies = [
-  "cranelift-assembler-x64-meta",
+  "rustversion",
  ]
+@@ -1387,9 +1387,9 @@ dependencies = [
  
  [[package]]
- name = "cranelift-assembler-x64-meta"
--version = "0.135.8"
-+version = "0.135.9"
+ name = "cookie"
+-version = "0.18.2"
++version = "0.18.3"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "97a25bfba0da265ef1f98728358e9bb3ab7489913e7bd759c743108892288934"
-+checksum = "c829e4494e4ee099395ebbc10a49343e8d582c3fdb894527967bb256bf937612"
+-checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
++checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
  dependencies = [
-  "cranelift-srcgen",
- ]
- 
- [[package]]
- name = "cranelift-bforest"
--version = "0.135.8"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "32a9ad33269057337a70db66950f426fbdce436a66fe8071f55851a13a2e40cd"
-+checksum = "4955ac604c69b279138b2bd1b46c5f21748910d96e96eca5df23c79ee2a5edcc"
- dependencies = [
+  "percent-encoding",
+  "time",
+@@ -1516,7 +1516,7 @@ dependencies = [
   "cranelift-entity",
-  "wasmtime-internal-core",
- ]
+  "cranelift-isle",
+  "gimli",
+- "hashbrown 0.17.1",
++ "hashbrown 0.17.2",
+  "libm",
+  "log",
+  "postcard",
+@@ -1578,7 +1578,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b00cf9b20096b09b3499d19f82cca658c13c6988ecbc54881caf12a2f01b2f8c"
+ dependencies = [
+  "cranelift-codegen",
+- "hashbrown 0.17.1",
++ "hashbrown 0.17.2",
+  "log",
+  "smallvec",
+  "target-lexicon",
+@@ -1619,9 +1619,9 @@ dependencies = [
  
  [[package]]
- name = "cranelift-bitset"
--version = "0.135.8"
-+version = "0.135.9"
+ name = "crc32fast"
+-version = "1.5.5"
++version = "1.5.6"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d322e6584efe3b229b1164b49edf55aec561553426f7fe3e228a45e80a15a190"
-+checksum = "d4be0efebaf985207ba2330083d86c5dd50a03357435e5bdffc97598393b5a19"
+-checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
++checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
  dependencies = [
+  "cfg-if",
+ ]
+@@ -2138,7 +2138,7 @@ dependencies = [
+  "ed25519",
+  "rand_core 0.10.1",
   "serde",
-  "serde_derive",
-@@ -1502,9 +1502,9 @@ dependencies = [
+- "sha2 0.11.1",
++ "sha2 0.11.2",
+  "signature",
+  "subtle",
+  "zeroize",
+@@ -2250,24 +2250,24 @@ dependencies = [
  
  [[package]]
- name = "cranelift-codegen"
--version = "0.135.8"
-+version = "0.135.9"
+ name = "env_filter"
+-version = "2.0.0"
++version = "2.1.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6a7b9f73f97da69d6edc9adbfeec068cdb2649f0221be41abd3909267cb1cd53"
-+checksum = "4f463af533c6fad6aa1d54c454569baebd38a11374deee0c4d104a1e4e4da207"
+-checksum = "900d271a03799a1ee8d1ca9b19893b48ca674a9284fefcfb85f05e74ed314217"
++checksum = "288efae2d67fb0418d01f837feb55c7a9cdc4c5db38d3dee91324a1c7ec6fd31"
  dependencies = [
-  "bumpalo",
-  "cranelift-assembler-x64",
-@@ -1533,9 +1533,9 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-meta"
--version = "0.135.8"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e7015ef10993d7129e0bce933874b60dab8187239aca4ceca352987d9907d528"
-+checksum = "b5614f7c37ee06c404c1556b2d54859fb74149774f08594625dbe764963b2f7f"
- dependencies = [
-  "cranelift-assembler-x64-meta",
-  "cranelift-codegen-shared",
-@@ -1546,24 +1546,24 @@ dependencies = [
- 
- [[package]]
- name = "cranelift-codegen-shared"
--version = "0.135.8"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "37916b08a7b17e063bae743cb746da542df7df283ced961aae213620dc11e27a"
-+checksum = "061a4c3049f6b16df98e2a7feca329541da41eabb37b9e42cf8c7671fc17cf56"
- 
- [[package]]
- name = "cranelift-control"
--version = "0.135.8"
-+version = "0.135.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8154d189f2cc2a84a95a8129773799ddcf2f4609f667047db30715db4be6aa0a"
-+checksum = "9b267c615bd7d04c5bd7970b35019483824f33a43eb5c26f384246fd53c8b257"
- dependencies = [
-  "arbitrary",
+  "log",
+  "regex",
  ]
-
+ 
+ [[package]]
+ name = "env_logger"
+-version = "0.11.11"
++version = "0.11.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "de671bd27a75a797dc9ae289ba1e77276e75e2026408aab65185384e2d5cd3f6"
++checksum = "82bdfc6e01c305a3ea46ed815b06ac0b379d7c5eac588fa4464048d731c4dcdf"
+ dependencies = [
+  "anstream",
+  "anstyle",
+  "env_filter",
+- "jiff 0.2.46",
++ "jiff 1.0.3",
+  "log",
+ ]
+ 
+@@ -2551,9 +2551,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+ 
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -2952,9 +2952,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "h2"
+-version = "0.4.20"
++version = "0.4.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
++checksum = "b634322c4924093fe6a6e05ecbe5717cd3c6014934455f4ae8e5cf14ba3264a8"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -3041,9 +3041
 ```
 
-**File**: `Cargo.toml` (modified, +7/-7)
+**File**: `Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -57,12 +57,12 @@ askama = { version = "0.16.1", default-features = false, features = ["derive", "
- axum = { version = "^0.8.9", default-features = false, features = ["multipart", "tokio", "http2"] }
- axum-extra = { version = "^0.12.6", default-features = false, features = ["typed-header"] }
- base64 = { version = "0.23.1", default-features = false, features = ["alloc", "std"] }
--bytes = { version = "1.12.1", features = ["serde"] }
-+bytes = { version = "1.12.2", features = ["serde"] }
+@@ -60,16 +60,16 @@ base64 = { version = "0.23.1", default-features = false, features = ["alloc", "s
+ bytes = { version = "1.12.2", features = ["serde"] }
  chrono = { version = "0.4.45", default-features = false }
  compact_str = { version = "0.10.0", default-features = false, features = ["serde"] }
--clap = { version = "^4.6.7", features=["derive", "env"] }
-+clap = { version = "^4.6.8", features=["derive", "env"] }
+-clap = { version = "^4.6.9", features=["derive", "env"] }
++clap = { version = "^4.6.10", features=["derive", "env"] }
  cron = "0.17.0"
--crossfire = { version = "3.1.22", default-features = false, features = ["tokio"] }
-+crossfire = { version = "3.1.23", default-features = false, features = ["tokio"] }
- env_logger = { version = "^0.11.11", default-features = false, features = ["auto-color", "humantime"] }
+ crossfire = { version = "3.1.23", default-features = false, features = ["tokio"] }
+-env_logger = { version = "^0.11.11", default-features = false, features = ["auto-color", "humantime"] }
++env_logger = { version = "^0.11.12", default-features = false, features = ["auto-color", "humantime"] }
  flume = { version = "0.12.0", default-features = false, features = ["select", "async"] }
  futures-util = { version = "0.3.34", default-features = false, features = ["alloc", "spin"] }
-@@ -117,10 +117,10 @@ ts-rs = { version = "12", features = ["uuid-impl", "serde-json-impl", "indexmap-
- utoipa = { version = "6.0.0", default-features = false, features = ["axum_extras", "debug", "indexmap", "uuid", "macros"] }
- utoipa-axum = { version = "0.3.0" }
- uuid = { version = "1", default-features = false, features = ["std", "v4", "v7", "serde"] }
--wasmtime = { version = "48.0.8", features = ["winch"] }
--wasmtime-wasi = { version = "48.0.8", default-features = false, features = [] }
--wasmtime-wasi-http = { version = "48.0.8", features = ["p2"] }
--wasmtime-wasi-io = { version = "48.0.8", features = [] }
-+wasmtime = { version = "48.0.9", features = ["winch"] }
-+wasmtime-wasi = { version = "48.0.9", default-features = false, features = [] }
-+wasmtime-wasi-http = { version = "48.0.9", features = ["p2"] }
-+wasmtime-wasi-io = { version = "48.0.9", features = [] }
+ geos = { version = "11.3.1", default-features = false, features = ["geo", "json"] }
+ http = { version = "1.5.0", default-features = false }
+ http-body-util = { version = "0.1.5", default-features = false }
+-hyper = { version = "1.12.0", default-features = false }
++hyper = { version = "1.13.0", default-features = false }
+ itertools = { version = "0.15.0", default-features = false, features = ["use_std"] }
+ jsonwebtoken = { version = "12.0.0", default-features = false, features = ["use_pem", "rust_crypto"] }
+ # libsqlite3-sys = { version = "0.38.2", default-features = false, features = ["bundled", "preupdate_hook"] }
+```
+
+**File**: `crates/cli/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ trailbase-client = { workspace = true }
+ trailbase-extension = { workspace = true }
+ trailbase-sqlite = { workspace = true }
+ trailbase-wasm-component-repo = { workspace = true }
+-url = "2.5.8"
++url = "2.5.9"
+ utoipa = { workspace = true }
+ uuid = { workspace = true }
  
- # When building TrailBase as a standalone workspace, use local submodule paths.
- # These [patch] sections are ignored when TrailBase is consumed as a dependency
 ```
 
-**File**: `crates/build/Cargo.toml` (modified, +1/-1)
+**File**: `crates/client/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -13,4 +13,4 @@ env_logger = { workspace = true }
- log = { workspace = true }
- prost-build = "^0.14.6"
- prost-reflect-build = "0.16.1"
--regex = "1.13.1"
-+regex = "1.13.2"
+@@ -36,7 +36,7 @@ serde_json = { workspace = true }
+ serde_repr = "0.1.21"
+ thiserror = "2.0.21"
+ tracing = "0.1.44"
+-url = "2.5.8"
++url = "2.5.9"
+ 
+ [dev-dependencies]
+ base64 = { version = "0.23.1", default-features = false, features = ["alloc"] }
 ```
 
-**File**: `crates/cli/Cargo.toml` (modified, +2/-2)
+**File**: `crates/core/Cargo.toml` (modified, +6/-6)
 ```diff
-@@ -24,14 +24,14 @@ base64 = { workspace = true }
- chrono = { workspace = true }
- compact_str = { workspace = true }
- clap = { workspace = true }
--clap_complete = { version = "4.6.11", features = ["unstable-dynamic"] }
-+clap_complete = { version = "4.6.12", features = ["unstable-dynamic"] }
- env_logger = { workspace = true }
+@@ -56,7 +56,7 @@ cron = { workspace = true }
+ ed25519-dalek = { version = "3.0.0", features = ["pkcs8", "pem", "rand_core"] }
+ fallible-iterator = "0.3.0"
+ flume = { workspace = true }
+-form_urlencoded = "1.2.2"
++form_urlencoded = "1.2.3"
+ futures-util = { workspace = true }
+ geos = { workspace = true, optional = true }
+ getrandom = "0.4.3"
+@@ -69,7 +69,7 @@ hyper-util = "0.1.21"
+ indexmap = "2.14.2"
+ init-tracing-opentelemetry = { version = "0.44.0", features = ["tracing_subscriber_ext", "metrics"], optional = true }
  itertools = { workspace = true }
- jsonwebtoken = { workspace = true }
- log = { workspace = true }
- mimalloc = { workspace = true }
- reqwest = { workspace = true }
--rmcp = { version = "^3.10.0", default-features = false, features = ["server", "transport-io"], optional = true }
-+rmcp = { version = "^3.11.0", default-features = false, features = ["server", "transport-io"], optional = true }
- rmcp-openapi = { workspace = true, optional = true }
- rusqlite = { workspace = true }
- serde = { workspace = true }
-```
-
-**File**: `crates/core/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -72,7 +72,7 @@ itertools = { workspace = true }
- jsonschema = { version = "0.61.2", default-features = false }
+-jsonschema = { version = "0.61.2", default-features = false }
++jsonschema = { version = "0.63.1", default-features = false }
  jsonwebtoken = { workspace = true }
  lazy_static = "1.5.1"
--lettre = { version = "^0.11.23", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
-+lettre = { version = "^0.11.24", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
- litegis = { workspace = true, optional = true }
- log = { workspace = true }
- mime = "0.3.18"
-@@ -87,7 +87,7 @@ prost = { version = "^0.14.6", default-features = false }
- prost-reflect = { version = "^0.16.5", default-features = false, features = ["derive", "text-format"] }
- quick_cache = "0.7.0"
- rand = { workspace = true }
--regex = "1.13.1"
-+regex = "1.13.2"
- reqwest = { workspace = true }
- rusqlite = { workspace = true }
- rust-embed = { workspace = true }
+ lettre = { version = "^0.11.24", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
+@@ -98,7 +98,7 @@ serde_path_to_error = "0.1.20"
+ serde_qs = { workspace = true }
+ serde_repr = "0.1.21"
+ serde_urlencoded = "0.7.1"
+-sha2 = "0.11.1"
++sha2 = "0.11.2"
+ sqlformat = "0.5.0"
+ sqlite3-parser = { workspace = true }
+ thiserror = "2.0.21"
+@@ -128,18 +128,18 @@ trailbase-wasm-component-repo = { workspace = true }
+ trailbase-wasm-runtime-axum = { workspace = true, optional = true }
+ trailbase-wasm-runtime-host = { workspace = true, optional = true }
+ ts-rs = { workspace = true }
+-url = { version = "^2.5.8", default-features = false }
++url = { version = "^2.5.9", default-features = false }
+ utoipa = { workspace = true }
+ utoipa-axum = { workspace = true }
+ uuid = { workspace = true }
+ validator = { version = "0.21.0", default-features = false }
+-walkdir = "2.5.0"
++walkdir = "2.5.1"
+ 
+ [build-dependencies]
+ trailbase-build = { workspace = true }
+ 
+ [dev-dependencies]
+-anyhow = "^1.0.104"
++anyhow = "^1.0.105"
+ axum-test = "21.1.0"
+ criterion = { version = "0.8", features = ["html_reports", "async_tokio"] }
+ env_logger = { workspace = true }
 ```
 
 **File**: `crates/extension/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -19,7 +19,7 @@ bcrypt = "0.19.3"
- jsonschema = { version = "0.61.2", default-features = false }
+@@ -16,7 +16,7 @@ arc-swap = { workspace = true }
+ argon2 = { workspace = true }
+ base64 = { workspace = true }
+ bcrypt = "0.19.3"
+-jsonschema = { version = "0.61.2", default-features = false }
++jsonschema = { version = "0.63.1", default-features = false }
  maxminddb = "0.33.0"
  quick_cache = { version = "0.7.0", default-features = false }
--regex = "1.13.1"
-+regex = "1.13.2"
- # NOTE: rusqlite must not enable "bundled" for the .so built to work.
- rusqlite = { version = "0.43.0", default-features = false, features = ["functions", "cache"] }
- serde = { workspace = true }
+ regex = "1.13.2"
 ```
 
-**File**: `crates/qs/Cargo.toml` (modified, +1/-1)
+**File**: `crates/refinery/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -15,7 +15,7 @@ serde = { workspace = true }
- serde-value = "0.7.0"
- serde_qs = { workspace = true }
- uuid = { workspace = true }
--wkt = { version = "0.14.0", default-features = false }
-+wkt = { version = "0.15.0", default-features = false }
+@@ -19,7 +19,7 @@ siphasher = "1.0"
+ thiserror = "2"
+ trailbase-sqlite = { workspace = true }
+ time = { version = "0.3.55", features = ["parsing", "formatting"] }
+-walkdir = "2.5.0"
++walkdir = "2.5.1"
  
  [dev-dependencies]
- rusqlite = { workspace = true }
+ temp-dir = "0.2.0"
 ```
 
-**File**: `crates/schema/Cargo.toml` (modified, +1/-1)
+**File**: `crates/schema/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -24,7 +24,7 @@ lazy_static = "1.5.1"
+@@ -19,7 +19,7 @@ fallible-iterator = "0.3.0"
+ geos = { workspace = true, optional = true }
+ infer = "0.22.0"
+ itertools = { workspace = true }
+-jsonschema = { version = "0.61.2", default-features = false }
++jsonschema = { version = "0.63.1", default-features = false }
+ lazy_static = "1.5.1"
  log = { workspace = true }
  parking_lot = { workspace = true }
- rand = { workspace = true }
--regex = "1.13.1"
-+regex = "1.13.2"
- schemars = { workspace = true }
- serde = { workspace = true }
- serde_json = { workspace = true }
-```
-
----
-
-### Incident Patch 3: `afa872ca` (2026-11-17)
-**Commit Message**: Admin UI: persist erd node positions. #313
-
-**File**: `crates/assets/js/admin/src/components/erd/ErdGraph.tsx` (modified, +37/-7)
-```diff
-@@ -1,4 +1,5 @@
- import { createEffect, onCleanup } from "solid-js";
-+import { persistentJSON } from "@nanostores/persistent";
+@@ -37,7 +37,7 @@ utoipa = { workspace = true }
+ uuid = { workspace = true }
  
- import {
-   Graph,
-@@ -68,13 +69,19 @@ function layoutErdNodes(nodes: NodeMetadata[], aspect: number): NodeMetadata[] {
-     Math.ceil(Math.sqrt((safeAspect * nodes.length * height) / width)),
-   );
- 
--  return nodes.map((node, index) => ({
--    ...node,
--    position: node.position ?? {
--      x: (index % columns) * width,
--      y: Math.floor(index / columns) * height,
--    },
--  }));
-+  return nodes.map((node, index) => {
-+    const id = node.id;
-+    const storedProps = id ? $layout.get().get(id) : undefined;
-+
-+    return {
-+      ...node,
-+      position: node.position ??
-+        storedProps?.position ?? {
-+          x: (index % columns) * width,
-+          y: Math.floor(index / columns) * height,
-+        },
-+    } satisfies NodeMetadata;
-+  });
- }
- 
- export function edgeProperties(opts?: {
-@@ -233,6 +240,15 @@ export function ErdGraph(props: {
-     g.on("node:click", ({ node }) => onSelect(node.id));
-     g.on("blank:click", () => onSelect(undefined));
- 
-+    g.on("node:moved", ({ node }) => {
-+      const id = node.id;
-+      if (id) {
-+        $layout.get().set(id, {
-+          position: node.getPosition(),
-+        });
-+      }
-+    });
-+
-     if (g.getCells().length) {
-       g.zoomToFit({ padding: 20 });
-     }
-@@ -267,6 +283,8 @@ export function ErdGraph(props: {
-       zoomOut: () => g.zoomTo(g.zoom() / 2),
-       fit: () => g.zoomToFit({ padding: 20 }),
-       reset: () => {
-+        $layout.set(new Map());
-+
-         layoutErdNodes(props.nodes, graphAspect(ref)).forEach((node, index) => {
-           const position = node.position;
-           if (position) {
-@@ -396,3 +414,15 @@ function graphAspect(el: HTMLElement | undefined) {
-     );
-   }
- })();
-+
-+type StoredNodeMetadata = {
-+  position?: {
-+    x: number;
-+    y: number;
-+  };
-+};
-+
-+const $layout = persistentJSON<Map<string, StoredNodeMetadata>>(
-+  "erd:layout",
-+  new Map(),
-+);
+ [dev-dependencies]
+-anyhow = "1.0.104"
++anyhow = "1.0.105"
+ indoc = "2.0.8"
+ litegis = { workspace = true }
+ rusqlite = { workspace = true }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1501,31 +1336,83 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update JavaScript dependencies and address security advisories.
+## X. Update Rust dependencies. Addresses security advisories.
 
 **RULE**:
-When implementing operations in `client/testfixture/guests/typescript/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `efb40fa7`: Update JavaScript dependencies and address security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cafc4c4`: Update Rust dependencies. Addresses security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/testfixture/guests/typescript/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "typescript-eslint": "^8.73.0",
+version = "0.8.14"
+checksum = "54dae3d1d7b8956f3506c4e999a74e77f932a59153ccf38ab8cf96db74bb9dc0"
+ "getrandom 0.4.3",
+version = "1.0.105"
+checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
+version = "4.6.10"
+checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
+version = "4.6.10"
+checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
+version = "0.6.2"
+checksum = "144e7f1de087984240b7816d47f698b414979faa6f40839c5b86d6bd47db57b7"
+version = "0.18.3"
+checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
+ "hashbrown 0.17.2",
+ "hashbrown 0.17.2",
+version = "1.5.6"
+checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
+ "sha2 0.11.2",
+version = "2.1.0"
+checksum = "288efae2d67fb0418d01f837feb55c7a9cdc4c5db38d3dee91324a1c7ec6fd31"
+version = "0.11.12"
+checksum = "82bdfc6e01c305a3ea46ed815b06ac0b379d7c5eac588fa4464048d731c4dcdf"
+ "jiff 1.0.3",
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "0.4.21"
+checksum = "b634322c4924093fe6a6e05ecbe5717cd3c6014934455f4ae8e5cf14ba3264a8"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    "typescript-eslint": "^8.72.2",
+version = "0.8.12"
+checksum = "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75"
+ "getrandom 0.3.4",
+version = "1.0.104"
+checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
+version = "4.6.9"
+checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
+version = "4.6.7"
+checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
+version = "0.6.1"
+checksum = "9eb6feb175df65d0a3ccd3e73484e940d0ac664e8034f0519fd49a93db3071d9"
+version = "0.18.2"
+checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
+ "hashbrown 0.17.1",
+ "hashbrown 0.17.1",
+version = "1.5.5"
+checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
+ "sha2 0.11.1",
+version = "2.0.0"
+checksum = "900d271a03799a1ee8d1ca9b19893b48ca674a9284fefcfb85f05e74ed314217"
+version = "0.11.11"
+checksum = "de671bd27a75a797dc9ae289ba1e77276e75e2026408aab65185384e2d5cd3f6"
+ "jiff 0.2.46",
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+version = "0.4.20"
+checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `efb40fa7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cafc4c4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

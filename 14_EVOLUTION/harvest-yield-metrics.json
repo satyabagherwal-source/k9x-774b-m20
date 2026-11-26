@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:10:38.624Z",
-  "total_cycles_completed": 12591,
-  "total_learnings_persisted": 12591,
-  "total_rules_promoted": 11506,
+  "last_updated": "2026-11-26T06:18:30.457Z",
+  "total_cycles_completed": 12594,
+  "total_learnings_persisted": 12594,
+  "total_rules_promoted": 11508,
   "history": [
-    {
-      "timestamp": "2026-11-25T11:42:22.892Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:42:38.533Z",
-      "repository": "MariaDB/server",
-      "learningId": "learn-github-mariadb-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:42:39.804Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T11:51:09.388Z",
       "repository": "LiquidAI/LFM3-Omni-2B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T06:10:38.624Z",
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:18:14.446Z",
+      "repository": "IFM/PAN2",
+      "learningId": "learn-huggingface-ifm-pan2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:18:25.288Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:18:30.457Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

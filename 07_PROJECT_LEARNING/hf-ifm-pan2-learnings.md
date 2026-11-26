@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ifm-pan2`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T10:29:44.656Z  
+> **Timestamp**: 2026-11-26T06:18:13.954Z  
 > **Learning ID**: `learn-huggingface-ifm-pan2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/IFM/PAN2](https://huggingface.co/IFM/PAN2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T10:29:44.469Z  
+> **Harvest Timestamp**: 2026-11-26T06:18:13.784Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 809 downloads | 327 likes
+- **Stars / Engagement**: 928 downloads | 360 likes
 
 ---
 

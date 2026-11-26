@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T06:10:44.371Z",
+  "updated_at": "2026-11-26T06:18:35.310Z",
   "stats": {
-    "total_discovered": 9633,
-    "approved_pending_harvest": 9134,
+    "total_discovered": 9635,
+    "approved_pending_harvest": 9136,
     "harvested_count": 0,
     "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9123,
-      "OFFICIAL_DOCUMENTATION": 282,
+      "COMMUNITY_AND_EXPERT": 9124,
+      "OFFICIAL_DOCUMENTATION": 283,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 54,
@@ -208460,6 +208460,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
         "fileName": "k3s-io-k3s-learnings.md"
+      }
+    },
+    "SRC-22359F98B949": {
+      "id": "SRC-22359F98B949",
+      "url": "https://docs.renovatebot.com/configuration-options",
+      "title": "https://docs.renovatebot.com/configuration-options",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:18:34.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-68E8E0D61985": {
+      "id": "SRC-68E8E0D61985",
+      "url": "https://github.com/trailbaseio/trailbase/blob/f7a68cdf409597ac3c33a22ba1b41f3a3acd41f7/crates/core/src/extract/ip.rs",
+      "title": "https://github.com/trailbaseio/trailbase/blob/f7a68cdf409597ac3c33a22ba1b41f3a3acd41f7/crates/core/src/extract/ip.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T06:18:35.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
+        "fileName": "trailbaseio-trailbase-learnings.md"
       }
     }
   }

@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "b9e8acb7",
+    "sourceVersion": "81531859",
     "license": "OSL-3.0",
-    "contentHash": "847c30c8b5a80db34ffaee204cd57deb3bf540259533ac405aa152b38752feb7",
-    "lastHarvestedAt": "2026-11-21T03:44:47.106Z",
+    "contentHash": "dabac014dc998032dea13334eb33c741891335fc6cddd79c2d3c4a34069f390b",
+    "lastHarvestedAt": "2026-11-26T06:18:30.445Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "ad8f26ee",
+    "sourceVersion": "e56aabdc",
     "license": "Apache-2.0",
-    "contentHash": "eb005ef67f1d2c79d6e65c27810f29acfe71b2198434350de331893ff8a22628",
-    "lastHarvestedAt": "2026-11-24T13:12:40.031Z",
+    "contentHash": "ba2fd7026ca982a2aa451eb82005e41427da3bfa95098dd714a6454ecb0823d9",
+    "lastHarvestedAt": "2026-11-26T06:18:25.276Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -12695,8 +12695,8 @@
     "sourceUrl": "https://huggingface.co/IFM/PAN2",
     "sourceVersion": "hf-ifm-pan2",
     "license": "Open-Source",
-    "contentHash": "cb88b1080596debb8ac25658808b831ab941d1d60443114f8e74e5f73ee22a93",
-    "lastHarvestedAt": "2026-11-22T10:29:45.140Z",
+    "contentHash": "70fbc8823b2f82934c9dffa9e1e7f91b593b760e2892e1b53b69e7691e6445f7",
+    "lastHarvestedAt": "2026-11-26T06:18:14.434Z",
     "learningId": "learn-huggingface-ifm-pan2"
   },
   "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf": {

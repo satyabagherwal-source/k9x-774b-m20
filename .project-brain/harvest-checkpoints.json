@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T06:10:38.628Z",
+  "last_updated": "2026-11-26T06:18:30.461Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "847c30c8b5a80db34ffaee204cd57deb3bf540259533ac405aa152b38752feb7",
-      "verified_at": "2026-11-21T03:44:47.114Z",
+      "content_hash": "dabac014dc998032dea13334eb33c741891335fc6cddd79c2d3c4a34069f390b",
+      "verified_at": "2026-11-26T06:18:30.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T03:44:47.114Z"
+      "last_updated": "2026-11-26T06:18:30.460Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "eb005ef67f1d2c79d6e65c27810f29acfe71b2198434350de331893ff8a22628",
-      "verified_at": "2026-11-24T13:12:40.048Z",
+      "content_hash": "ba2fd7026ca982a2aa451eb82005e41427da3bfa95098dd714a6454ecb0823d9",
+      "verified_at": "2026-11-26T06:18:25.290Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T13:12:40.048Z"
+      "last_updated": "2026-11-26T06:18:25.290Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -19131,14 +19131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ifm-pan2",
-      "content_hash": "cb88b1080596debb8ac25658808b831ab941d1d60443114f8e74e5f73ee22a93",
-      "verified_at": "2026-11-22T10:29:45.148Z",
+      "content_hash": "70fbc8823b2f82934c9dffa9e1e7f91b593b760e2892e1b53b69e7691e6445f7",
+      "verified_at": "2026-11-26T06:18:14.448Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:29:45.148Z"
+      "last_updated": "2026-11-26T06:18:14.448Z"
     },
     "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF": {
       "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",

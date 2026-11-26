@@ -13303,3 +13303,6 @@ Every entry in this ledger must capture:
 | `learn-github-iplug2-iplug2` | `https://github.com/iPlug2/iPlug2` | `a6186c7a` | Multi-dimensional audit evidence | 2026-11-26T06:10:30.901Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `9b575d91` | Multi-dimensional audit evidence | 2026-11-26T06:10:32.935Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `03c4e07f` | Multi-dimensional audit evidence | 2026-11-26T06:10:38.612Z |
+| `learn-huggingface-ifm-pan2` | `https://huggingface.co/IFM/PAN2` | `hf-ifm-pan` | Multi-dimensional audit evidence | 2026-11-26T06:18:14.434Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `e56aabdc` | Multi-dimensional audit evidence | 2026-11-26T06:18:25.276Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `81531859` | Multi-dimensional audit evidence | 2026-11-26T06:18:30.445Z |

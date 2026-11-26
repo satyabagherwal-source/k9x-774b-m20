@@ -13270,3 +13270,6 @@
 | `CYCLE-20261126-LISX` | `2026-11-26T06:10:30.897Z` | `iPlug2/iPlug2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10610` | Yes (`554a559b...`) |
 | `CYCLE-20261126-LKDF` | `2026-11-26T06:10:32.931Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10611` | Yes (`59229656...`) |
 | `CYCLE-20261126-LOR4` | `2026-11-26T06:10:38.608Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10612` | Yes (`9de75ac2...`) |
+| `CYCLE-20261126-VGGU` | `2026-11-26T06:18:14.430Z` | `IFM/PAN2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md` | Yes (`70fbc882...`) |
+| `CYCLE-20261126-VOU0` | `2026-11-26T06:18:25.272Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10613` | Yes (`ba2fd702...`) |
+| `CYCLE-20261126-VSTM` | `2026-11-26T06:18:30.442Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10614` | Yes (`dabac014...`) |

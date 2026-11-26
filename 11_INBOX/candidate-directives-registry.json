@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:10:44.640Z",
+  "last_updated": "2026-11-26T06:18:35.563Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5906,13 +5906,15 @@
       "staged_date": "2026-11-12"
     },
     {
-      "id": "CD-REV-07FACC",
+      "id": "CD-VW3H",
       "directive_title": "deps): update module golang.org/x/crypto to v0.59.0 [security]",
-      "status": "STAGED_FOR_HUMAN_REVIEW",
-      "source_repo": "cilium-cilium",
-      "domain_letter": "G",
-      "staged_file": "11_INBOX/candidate-directives/CD-REV-07FACC-deps-update-module-golang-org-x-crypto-t.md",
-      "staged_date": "2026-11-12"
+      "source_repo": "prometheus-prometheus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VW3H-deps-update-module-golang-org-x-crypto-to-v0-59-0-security.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
     },
     {
       "id": "CD-REV-9565F5",
@@ -63544,6 +63546,46 @@
       "source_repo": "k3s-io-k3s",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6BF8C5-wait-for-the-image-being-processed-befor.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-VP0M",
+      "directive_title": "update module golang.org/x/crypto to v0.59.0 [security]",
+      "source_repo": "prometheus/prometheus",
+      "source_commit": "e56aabdc",
+      "staged_file": "11_INBOX/candidate-directives/CD-VP0M-update-module-golang-org-x-crypto-to-v0-59-0-security.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-VWRU",
+      "directive_title": "Update Rust dependencies. Addresses security advisories.",
+      "source_repo": "trailbaseio-trailbase-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VWRU-update-rust-dependencies-addresses-security-advisories.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-F80660",
+      "directive_title": "deps): update module golang.org/x/crypto to v0.59.0 [security]",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "prometheus-prometheus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F80660-deps-update-module-golang-org-x-crypto-t.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-AB015E",
+      "directive_title": "Update Rust dependencies. Addresses security advisories.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trailbaseio-trailbase",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AB015E-update-rust-dependencies-addresses-secur.md",
       "staged_date": "2026-11-26"
     }
   ]
