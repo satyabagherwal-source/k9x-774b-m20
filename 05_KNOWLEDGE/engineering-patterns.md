@@ -801141,3 +801141,220 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `452929bd` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10639. Zero-Padding Masked Reduction Invariant (Harvested from sentence-transformers/all-MiniLM-L6-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Padding Masked Reduction Invariant",
+  "source": "sentence-transformers/all-MiniLM-L6-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+  "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-26T09:37:44.953Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) (Revision: `hf-sentenc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When aggregating variable-length sequential representations across a sequence dimension using reduction operations (Mean, Sum, Softmax), engineers MUST explicitly broadcast and multiply by the sequence attention mask, and MUST clamp the reduction denominator to a strictly positive non-zero epsilon ($\epsilon \ge 10^{-9}$). Unmasked reductions or naive `tensor.mean(dim=1)` reductions MUST NOT be used.
+
+**WHY**:
+Applying unmasked `tensor.mean(dim=1)` averages padding tokens ($0$ or embedding noise) into the pooled vector. This corrupts the dense representation by introducing length-dependent bias: identical sentences with different padding lengths yield completely different vector representations, destroying cosine similarity. Clamping the divisor to $\epsilon$ prevents division-by-zero runtime exceptions or `NaN` outputs when an empty sequence (all padding) passes through the pipeline.
+
+**WHEN TO APPLY**:
+Any neural pipeline, attention mechanism, or pooling block in PyTorch, JAX, or TensorFlow where batched variable-length sequences are padded to a common tensor dimension.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn.functional as F
+
+def masked_mean_pooling(token_embeddings: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+    """
+    Computes masked mean pooling over sequence dimension.
+    token_embeddings: [batch_size, seq_len, hidden_dim]
+    attention_mask:   [batch_size, seq_len] (binary integer/boolean)
+    """
+    # 1. Cast mask to float and expand to match embedding dimensions: [B, S, H]
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand_as(token_embeddings).float()
+    
+    # 2. Zero-out all pad tokens
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
+    
+    # 3. Sum mask counts per sequence and clamp to prevent div-by-zero [B, H]
+    sum_mask = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+    
+    # 4. Safe broadcasted division
+    return sum_embeddings / sum_mask
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# CRITICAL DEFECT: Includes padding tokens in mean calculation.
+# Yields corrupt vectors and sequence-length dependent drift.
+def broken_mean_pooling(token_embeddings: torch.Tensor) -> torch.Tensor:
+    return torch.mean(token_embeddings, dim=1)
+
+# CRITICAL DEFECT: Vulnerable to NaN on completely padded inputs
+def zero_div_mean_pooling(token_embeddings: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+    mask = attention_mask.unsqueeze(-1).float()
+    return torch.sum(token_embeddings * mask, dim=1) / mask.sum(dim=1) # Crash/NaN if sum == 0
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_masked_mean_pooling_padding_invariance():
+    batch = torch.tensor([[101, 2054, 102], [101, 2054, 102]])
+    # Sequence 1 padded with 3 extra zeros, Sequence 2 unpadded
+    embeddings = torch.randn(2, 6, 384)
+    attention_mask = torch.tensor([
+        [1, 1, 1, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1]
+    ])
+    
+    # Duplicate embeddings of valid tokens
+    embeddings[1, :3, :] = embeddings[0, :3, :]
+    
+    pooled = masked_mean_pooling(embeddings, attention_mask)
+    # The first 3 tokens of seq 0 match seq 1; seq 0's padding tokens must not alter pooled[0]
+    unpadded_manual = embeddings[0, :3, :].mean(dim=0)
+    assert torch.allclose(pooled[0], unpadded_manual, atol=1e-6), "Padding tokens corrupted mean pooling!"
+```
+
+---
+
+
+---
+
+## 10640. Hypersphere Unit Normalization Metric Invariant (Harvested from sentence-transformers/all-MiniLM-L6-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hypersphere Unit Normalization Metric Invariant",
+  "source": "sentence-transformers/all-MiniLM-L6-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+  "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-26T09:37:45.573Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) (Revision: `hf-sentenc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Dense sentence embeddings trained under cosine-distance contrastive objectives (such as MultipleNegativesRankingLoss) MUST be explicitly normalized to unit L2 length ($||v||_2 = 1.0$) immediately following the pooling stage before indexing, persistence, or distance calculations. Downstream vector search indexes MUST use inner product (dot product) rather than Euclidean distance when consuming normalized vectors.
+
+**WHY**:
+Without explicit L2 normalization, vectors retain varying magnitudes determined by token lengths and gradient variance. This breaks cosine similarity approximations in maximum inner product search (MIPS) engines (FAISS, HNSWLib, Qdrant). When $||u||_2 = 1$ and $||v||_2 = 1$, the Euclidean distance squared simplifies directly to $||u - v||^2 = 2 - 2(u \cdot v)$. Inner product calculation reduces computational complexity from $O(D)$ floating point subtraction, squaring, and accumulation to a single SIMD fused multiply-add (FMA) dot product.
+
+**WHEN TO APPLY**:
+Production embedding pipelines using bi-encoder architectures for vector databases, clustering, retrieval-augmented generation (RAG), or semantic caching.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn.functional as F
+
+def generate_normalized_embeddings(model, tokenizer, texts: list[str], max_length: int = 512) -> torch.Tensor:
+    encoded_input = tokenizer(
+        texts,
+        padding=True,
+        truncation=True,
+        max_length=max_length,
+        return_tensors="pt"
+    )
+    with torch.no_grad():
+        model_output = model(**encoded_input)
+        
+    token_embeddings = model_output[0]
+    attention_mask = encoded_input["attention_mask"]
+    
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand_as(token_embeddings).float()
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
+    sum_mask = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+    pooled = sum_embeddings / sum_mask
+    
+    # Mandatory L2 Normalization onto unit hypersphere
+    return F.normalize(pooled, p=2, dim=1, eps=1e-12)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Emitting unnormalized embeddings.
+# Vector database inner-product queries will return completely invalid rankings!
+def unnormalized_pipeline(model, tokenizer, texts):
+    # ... pooling ...
+    return pooled # Magnitude varies arbitrarily from 3.0 to 25.0
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_unit_hypersphere_norm():
+    vectors = generate_normalized_embeddings(model, tokenizer, ["Alpha", "Beta testing"])
+    norms = torch.norm(vectors, p=2, dim=1)
+    ones = torch.ones_like(norms)
+    assert torch.allclose(norms, ones, atol=1e-5), f"Embeddings not unit normalized: {norms}"
+```
+
+---

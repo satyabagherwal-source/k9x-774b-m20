@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-WWD3",
-    "timestamp": "2026-11-24T18:51:50.871Z",
-    "repository": "kubearmor/KubeArmor",
-    "learningId": "learn-github-kubearmor-kubearmor",
-    "contentHash": "43ae716ea099f8e5770291871368fc433139a7a7d377c0dcf6e7c5c08d5f4857",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-X67G",
-    "timestamp": "2026-11-24T18:52:03.628Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "f0da7d6f717fc371205b4df2d4b9d1a3b0614728b019df30fd0c33ceafe9409d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-X6E7",
     "timestamp": "2026-11-24T18:52:03.871Z",
     "repository": "cilium/cilium",
@@ -7492,6 +7462,36 @@
     "contentHash": "46da9f3618239aa5d707a11b8cee3e5e76357b8f504c44fb34af02833ece44d4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-XK9O",
+    "timestamp": "2026-11-26T09:35:49.980Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "9618417981c2f7d54e7ec50b32670a28de73aa6a5a6a8174b10cbc6387825e8b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-01XB",
+    "timestamp": "2026-11-26T09:37:46.175Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "36e77c7e99b3fac9ff0ebab7d8eb034b096b2f019ade32a321fe4aa320fbd4a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

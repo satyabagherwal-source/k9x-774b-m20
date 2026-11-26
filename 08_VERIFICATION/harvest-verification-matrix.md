@@ -13320,3 +13320,5 @@
 | `CYCLE-20261126-FQTM` | `2026-11-26T09:21:58.666Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`f3569245...`) |
 | `CYCLE-20261126-FSFZ` | `2026-11-26T09:22:00.767Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10637` | Yes (`4743a21c...`) |
 | `CYCLE-20261126-FZ2A` | `2026-11-26T09:22:09.346Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10638` | Yes (`46da9f36...`) |
+| `CYCLE-20261126-XK9O` | `2026-11-26T09:35:49.980Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7863` | Yes (`96184179...`) |
+| `CYCLE-20261126-01XB` | `2026-11-26T09:37:46.175Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10639, Rule 10640` | Yes (`36e77c7e...`) |

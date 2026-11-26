@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T09:22:15.163Z",
+  "last_updated": "2026-11-26T09:37:52.814Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5886,14 +5886,14 @@
       "staged_date": "2026-11-12"
     },
     {
-      "id": "CD-O2TN",
+      "id": "CD-068H",
       "directive_title": "Update SECURITY.md",
-      "source_repo": "rqlite/rqlite",
-      "source_commit": "a7a54625",
-      "staged_file": "11_INBOX/candidate-directives/CD-O2TN-update-security-md.md",
-      "status": "STAGED_FOR_REVIEW",
-      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-25",
+      "source_repo": "rqlite-rqlite-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-068H-update-security-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
       "domain_letter": "G"
     },
     {
@@ -63405,11 +63405,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-FT1I",
+      "id": "CD-071Q",
       "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-FT1I-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-071Q-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -64221,6 +64221,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "I"
+    },
+    {
+      "id": "CD-053S",
+      "directive_title": "Hypersphere Unit Normalization Metric Invariant",
+      "source_repo": "hf-sentence-transformers-all-minilm-l6-v2-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-053S-hypersphere-unit-normalization-metric-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-ACF772",
+      "directive_title": "Update SECURITY.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rqlite-rqlite",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ACF772-update-security-md.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-6AD7C4",
+      "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6AD7C4-daemon-drain-buffered-watcher-changes-be.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }

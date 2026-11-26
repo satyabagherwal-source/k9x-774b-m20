@@ -13353,3 +13353,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-26T09:21:58.671Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `cde61b53` | Multi-dimensional audit evidence | 2026-11-26T09:22:00.771Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `adfdb353` | Multi-dimensional audit evidence | 2026-11-26T09:22:09.350Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `5ca337e7` | Multi-dimensional audit evidence | 2026-11-26T09:35:49.985Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-26T09:37:46.179Z |

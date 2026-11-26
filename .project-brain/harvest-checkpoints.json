@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T09:22:09.371Z",
+  "last_updated": "2026-11-26T09:37:46.197Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "06fa42f092d2c4156d71359ceb716c0d0e8174231564b7cfeb1a6036cb458252",
-      "verified_at": "2026-11-22T16:48:06.876Z",
+      "content_hash": "36e77c7e99b3fac9ff0ebab7d8eb034b096b2f019ade32a321fe4aa320fbd4a4",
+      "verified_at": "2026-11-26T09:37:46.197Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:48:06.876Z"
+      "last_updated": "2026-11-26T09:37:46.197Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "22cee83c7c0df2786625f8758514d5e13a1a70eb08d2338eb932efb1f4edd800",
-      "verified_at": "2026-11-25T07:48:48.276Z",
+      "content_hash": "9618417981c2f7d54e7ec50b32670a28de73aa6a5a6a8174b10cbc6387825e8b",
+      "verified_at": "2026-11-26T09:35:50.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:48:48.276Z"
+      "last_updated": "2026-11-26T09:35:50.004Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",

@@ -145,8 +145,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "06fa42f092d2c4156d71359ceb716c0d0e8174231564b7cfeb1a6036cb458252",
-    "lastHarvestedAt": "2026-11-22T16:48:06.868Z",
+    "contentHash": "36e77c7e99b3fac9ff0ebab7d8eb034b096b2f019ade32a321fe4aa320fbd4a4",
+    "lastHarvestedAt": "2026-11-26T09:37:46.179Z",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "a7a54625",
+    "sourceVersion": "5ca337e7",
     "license": "MIT",
-    "contentHash": "22cee83c7c0df2786625f8758514d5e13a1a70eb08d2338eb932efb1f4edd800",
-    "lastHarvestedAt": "2026-11-25T07:48:48.257Z",
+    "contentHash": "9618417981c2f7d54e7ec50b32670a28de73aa6a5a6a8174b10cbc6387825e8b",
+    "lastHarvestedAt": "2026-11-26T09:35:49.985Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {

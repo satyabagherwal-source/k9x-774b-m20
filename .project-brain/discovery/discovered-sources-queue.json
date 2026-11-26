@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T09:22:14.918Z",
+  "updated_at": "2026-11-26T09:37:51.504Z",
   "stats": {
-    "total_discovered": 9723,
-    "approved_pending_harvest": 9223,
+    "total_discovered": 9724,
+    "approved_pending_harvest": 9224,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9210,
+      "COMMUNITY_AND_EXPERT": 9211,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210433,6 +210433,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
         "fileName": "pingcap-tidb-learnings.md"
+      }
+    },
+    "SRC-32293D9B31C8": {
+      "id": "SRC-32293D9B31C8",
+      "url": "https://github.com/rqlite/rqlite/security",
+      "title": "https://github.com/rqlite/rqlite/security",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:37:51.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
+        "fileName": "rqlite-rqlite-learnings.md"
       }
     }
   }

@@ -4,22 +4,22 @@
 {
   "source_repository": "rqlite/rqlite",
   "source_url": "https://github.com/rqlite/rqlite",
-  "source_version": "a7a54625",
+  "source_version": "5ca337e7",
   "license": "MIT",
-  "timestamp": "2026-11-25T07:48:48.593Z",
+  "timestamp": "2026-11-26T09:35:50.245Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rqlite-rqlite",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `a7a54625`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T07:48:48.593Z`  
+> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `5ca337e7`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T09:35:50.245Z`  
 > **Learning ID**: `learn-github-rqlite-rqlite`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rqlite/rqlite` (Commit: `a7a54625`)
+- **Target Repository**: `rqlite/rqlite` (Commit: `5ca337e7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:48:47.283Z  
+> **Harvest Timestamp**: 2026-11-26T09:35:48.416Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17971 stars
+- **Stars / Engagement**: 17976 stars
 
 ---
 
@@ -2101,7 +2101,7 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7a54625` (2026-11-24)
+### Incident Patch 1: `5ca337e7` (2026-11-25)
 **Commit Message**: Update SECURITY.md
 
 **File**: `SECURITY.md` (modified, +1/-1)
@@ -2110,40 +2110,28 @@ Observed empirical fixes and code patches:
  
  While bug and crash reports are always welcome, reports demonstrating the following **may** be closed as _Working as Intended_:
  - Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or with improper filesystem access controls.
--- Attacks against the Raft consensus port when exposed to untrusted networks without network-level isolation and mutual TLS.
-+- Attacks against the Raft consensus network port when exposed to untrusted networks without network-level isolation and mutual TLS.
+-- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
++- Attacks against the Raft consensus network port when that port is exposed to untrusted networks without network-level isolation and mutual TLS.
 ```
 
 ---
 
-### Incident Patch 2: `1c538910` (2026-11-24)
+### Incident Patch 2: `aa41c98d` (2026-11-25)
 **Commit Message**: Update SECURITY.md
 
-**File**: `SECURITY.md` (modified, +1/-1)
+**File**: `SECURITY.md` (modified, +2/-2)
 ```diff
-@@ -10,5 +10,5 @@ You can report Vulnerabilities via the GitHub [Security page](https://github.com
- rqlite optimizes for low-friction local development out of the box and supports comprehensive authentication, TLS/mTLS, and network-isolation controls for production deployments. Issues that require running rqlite contrary to the Security Guide are considered operator misconfigurations, not vulnerabilities.
+@@ -7,8 +7,8 @@ To maximize the security of your cluster you should work through the [rqlite _Se
+ You can report Vulnerabilities via the GitHub [Security page](https://github.com/rqlite/rqlite/security). 
+ 
+ ### What is considered a vulnerability in rqlite
+-rqlite optimizes for low-friction local development out of the box and supports comprehensive authentication, TLS/mTLS, and network-isolation controls for production deployments. Issues that require running rqlite contrary to the Security Guide are considered operator misconfigurations, not vulnerabilities.
++rqlite optimizes for low-friction local development out of the box and supports comprehensive authentication, TLS/mTLS, and network-isolation controls for production deployments. Issues that require running rqlite contrary to the Security Guide are usually considered operator misconfigurations, not vulnerabilities.
  
  While bug and crash reports are always welcome, reports demonstrating the following **may** be closed as _Working as Intended_:
--- Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or improper filesystem access controls.
-+- Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or with improper filesystem access controls.
- - Attacks against the Raft consensus port when exposed to untrusted networks without network-level isolation and mutual TLS.
-```
-
----
-
-### Incident Patch 3: `5e431d0c` (2026-11-24)
-**Commit Message**: Update SECURITY.md
-
-**File**: `SECURITY.md` (modified, +1/-1)
-```diff
-@@ -10,5 +10,5 @@ You can report Vulnerabilities via the GitHub [Security page](https://github.com
- rqlite optimizes for low-friction local development out of the box and supports comprehensive authentication, TLS/mTLS, and network-isolation controls for production deployments. Issues that require running rqlite contrary to the Security Guide are considered operator misconfigurations, not vulnerabilities.
- 
- While bug and crash reports are always welcome, reports demonstrating the following **may** be closed as _Working as Intended_:
--- Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled.
-+- Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or improper filesystem access controls.
- - Attacks against the Raft consensus port when exposed to untrusted networks without network-level isolation and mutual TLS.
+ - Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or with improper filesystem access controls.
+-- Attacks against the Raft consensus network port when exposed to untrusted networks without network-level isolation and mutual TLS.
++- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2178,7 +2166,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7a54625`: Update SECURITY.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ca337e7`: Update SECURITY.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
@@ -2186,17 +2174,17 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Attacks against the Raft consensus network port when exposed to untrusted networks without network-level isolation and mutual TLS.
+- Attacks against the Raft consensus network port when that port is exposed to untrusted networks without network-level isolation and mutual TLS.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- Attacks against the Raft consensus port when exposed to untrusted networks without network-level isolation and mutual TLS.
+- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7a54625` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ca337e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T09:22:15.345Z",
-  "total_records": 2726,
+  "last_updated": "2026-11-26T09:37:53.013Z",
+  "total_records": 2728,
   "domains": {
     "A": {
       "total": 22,
@@ -1700,7 +1700,7 @@
       ]
     },
     "H": {
-      "total": 653,
+      "total": 655,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2354,7 +2354,9 @@
         "domain_intelligence-technical-construction-intelligence-sozercan-kaset-core-invariants",
         "domain_intelligence-technical-construction-intelligence-sozercan-kaset-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-nexu-io-openmotion-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-sentence-transformers-all-minilm-l6-v2-core-",
+        "domain_intelligence-technical-construction-intelligence-hf-sentence-transformers-all-minilm-l6-v2-le"
       ]
     },
     "I": {
@@ -8496,8 +8498,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "0d6a005265fb7aa8ce9607919e78b9469c12d359dfbfb7d97a8cf30846729fe5",
-      "created_at": "2026-11-26T07:58:02.966Z"
+      "content_hash": "569a818cb152ffaac4664e96a9d884b553e56a697f6fe378206a41c6806518a7",
+      "created_at": "2026-11-26T09:37:53.013Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -16603,8 +16605,8 @@
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "repository": "rqlite/rqlite",
-      "content_hash": "236862e155acbc0b7254b7299ab034aa29dcd2d6690f1467e32c039e933610b8",
-      "created_at": "2026-11-25T07:48:48.826Z"
+      "content_hash": "c79c4b7cfcff11650c5628ec9b4db105fabed5d02e9da5afaa4e532a0179280d",
+      "created_at": "2026-11-26T09:35:50.453Z"
     },
     "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
@@ -23603,8 +23605,8 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-learnings-architecture-intelligence-rqlite-rqlite-learnings-core-i.md",
       "repository": "rqlite-rqlite-learnings",
-      "content_hash": "39617f10e8d8d8cf05f00e00a58df6e7c116ec19433b314bb10619a55647b952",
-      "created_at": "2026-11-24T13:56:49.203Z"
+      "content_hash": "20507091b8165b9bb01d0cc4bb136c2bd6744c01de2319655076576ef1c75e03",
+      "created_at": "2026-11-26T09:37:51.954Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants",
@@ -46075,6 +46077,24 @@
       "repository": "hf-sand-ai-magi-2-preview-learnings",
       "content_hash": "24134c8e4f2a43f32fa67f32e2ac2391b24860010fc8e665802ff99a3a784a23",
       "created_at": "2026-11-26T09:13:05.800Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sentence-transformers-all-minilm-l6-v2-core-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sentence-transformers-all-minilm-l6-v2-core-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sentence-transformers/all-MiniLM-L6-v2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-sentence-transformers-all-minilm-l6-v2-technical-construction-intelligence-se.md",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "content_hash": "e2e7db045d475e4de381ad6730af5618f79b0363d56f136b47f5c2ef3baed68d",
+      "created_at": "2026-11-26T09:37:46.628Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-sentence-transformers-all-minilm-l6-v2-le": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-sentence-transformers-all-minilm-l6-v2-le",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-sentence-transformers-all-minilm-l6-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-sentence-transformers-all-minilm-l6-v2-learnings-technical-construction-intel.md",
+      "repository": "hf-sentence-transformers-all-minilm-l6-v2-learnings",
+      "content_hash": "28a092fd83ea860e440ed5139d9e28542f5fee247fa8c2d99b264a580068d2aa",
+      "created_at": "2026-11-26T09:37:50.708Z"
     }
   }
 }

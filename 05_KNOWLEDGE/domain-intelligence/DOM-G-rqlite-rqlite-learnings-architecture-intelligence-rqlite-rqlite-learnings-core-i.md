@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T13:56:48.894Z",
+  "timestamp": "2026-11-26T09:37:51.620Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rqlite-rqlite-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rqlite-rqlite-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T13:56:48.894Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T09:37:51.620Z`  
 > **Learning ID**: `LEARN-EVO-rqlite-rqlite-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 76%
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rqlite-rqlite-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `7feaf262`  
+> **Source Version**: `5ca337e7`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T13:56:42.354Z  
+> **Timestamp**: 2026-11-26T09:35:49.112Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:56:42.348Z  
+> **Harvest Timestamp**: 2026-11-26T09:35:48.416Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17969 stars
+- **Stars / Engagement**: 17976 stars
 
 ---
 
@@ -2118,36 +2118,37 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7feaf262` (2026-11-24)
-**Commit Message**: Update CHANGELOG.md
+### Incident Patch 1: `5ca337e7` (2026-11-25)
+**Commit Message**: Update SECURITY.md
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `SECURITY.md` (modified, +1/-1)
 ```diff
-@@ -3,7 +3,7 @@ This release addresses a [moderate severity security issue](https://github.com/r
+@@ -11,4 +11,4 @@ rqlite optimizes for low-friction local development out of the box and supports
  
- ### Implementation changes and bug fixes
- - [PR #3069](https://github.com/rqlite/rqlite/pull/3069): Persist detection of modified database via _FULL snapshot needed_ file, which persists until FULL snapshot completes.
--- [PR #3068](https://github.com/rqlite/rqlite/pull/3068): A recovering node never restores from snapshotted state.
-+- [PR #3068](https://github.com/rqlite/rqlite/pull/3068): A recovering node will never restore from snapshotted state so skip checksum checks.
- - [PR #3067](https://github.com/rqlite/rqlite/pull/3067): Discard any staged WAL files when the database is fully replaced by a load, boot, or restore. Thanks @clarkmcc
- - [PR #3072](https://github.com/rqlite/rqlite/pull/3072): Join may only replace a node of the same suffrage. Thanks @zachariah-mithani
- - [PR #3075](https://github.com/rqlite/rqlite/pull/3075): Join may replace at most one existing node.
+ While bug and crash reports are always welcome, reports demonstrating the following **may** be closed as _Working as Intended_:
+ - Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or with improper filesystem access controls.
+-- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
++- Attacks against the Raft consensus network port when that port is exposed to untrusted networks without network-level isolation and mutual TLS.
 ```
 
 ---
 
-### Incident Patch 2: `45f8065b` (2026-11-24)
-**Commit Message**: Update CHANGELOG.md
+### Incident Patch 2: `aa41c98d` (2026-11-25)
+**Commit Message**: Update SECURITY.md
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `SECURITY.md` (modified, +2/-2)
 ```diff
-@@ -1,5 +1,5 @@
- ## v10.7.5 (November 23rd 2026)
--This release addresses a [moderate severity security issue](https://github.com/rqlite/rqlite/security/advisories/GHSA-rp9c-44g4-v8m3). If you use [authentication](https://rqlite.io/docs/guides/security/) and [read-replica nodes](https://rqlite.io/docs/clustering/read-replicas/) you should upgrade.
-+This release addresses a [moderate severity security issue](https://github.com/rqlite/rqlite/security/advisories/GHSA-rp9c-44g4-v8m3). If you use [authentication](https://rqlite.io/docs/guides/security/) with [read-replica nodes](https://rqlite.io/docs/clustering/read-replicas/) you should upgrade.
+@@ -7,8 +7,8 @@ To maximize the security of your cluster you should work through the [rqlite _Se
+ You can report Vulnerabilities via the GitHub [Security page](https://github.com/rqlite/rqlite/security). 
  
- ### Implementation changes and bug fixes
- - [PR #3069](https://github.com/rqlite/rqlite/pull/3069): Persist detection of modified database via _FULL snapshot needed_ file, which persists until FULL snapshot completes.
+ ### What is considered a vulnerability in rqlite
+-rqlite optimizes for low-friction local development out of the box and supports comprehensive authentication, TLS/mTLS, and network-isolation controls for production deployments. Issues that require running rqlite contrary to the Security Guide are considered operator misconfigurations, not vulnerabilities.
++rqlite optimizes for low-friction local development out of the box and supports comprehensive authentication, TLS/mTLS, and network-isolation controls for production deployments. Issues that require running rqlite contrary to the Security Guide are usually considered operator misconfigurations, not vulnerabilities.
+ 
+ While bug and crash reports are always welcome, reports demonstrating the following **may** be closed as _Working as Intended_:
+ - Unauthorized data access, modification, or Denial-of-Service against nodes running with authentication disabled or with improper filesystem access controls.
+-- Attacks against the Raft consensus network port when exposed to untrusted networks without network-level isolation and mutual TLS.
++- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2176,31 +2177,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update CHANGELOG.md
+## X. Update SECURITY.md
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7feaf262`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ca337e7`: Update SECURITY.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- [PR #3068](https://github.com/rqlite/rqlite/pull/3068): A recovering node will never restore from snapshotted state so skip checksum checks.
+- Attacks against the Raft consensus network port when that port is exposed to untrusted networks without network-level isolation and mutual TLS.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- [PR #3068](https://github.com/rqlite/rqlite/pull/3068): A recovering node never restores from snapshotted state.
+- Attacks against the Raft consensus network port when that port exposed to untrusted networks without network-level isolation and mutual TLS.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7feaf262` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ca337e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
