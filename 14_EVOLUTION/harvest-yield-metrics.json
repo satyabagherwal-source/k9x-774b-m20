@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:52:21.765Z",
-  "total_cycles_completed": 12603,
-  "total_learnings_persisted": 12603,
+  "last_updated": "2026-11-26T07:00:49.666Z",
+  "total_cycles_completed": 12604,
+  "total_learnings_persisted": 12604,
   "total_rules_promoted": 11513,
   "history": [
-    {
-      "timestamp": "2026-11-25T12:09:03.602Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T12:09:11.062Z",
       "repository": "goodrain/rainbond",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-26T06:52:21.765Z",
       "repository": "nex-agi/Nex-N2.6",
       "learningId": "learn-huggingface-nex-agi-nex-n2-6",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T07:00:49.666Z",
+      "repository": "maxwell-model/Maxwell-V1-Flash",
+      "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

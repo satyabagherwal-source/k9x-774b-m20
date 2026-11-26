@@ -13315,3 +13315,4 @@ Every entry in this ledger must capture:
 | `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `49c8bb52` | Multi-dimensional audit evidence | 2026-11-26T06:44:05.032Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `54f54578` | Multi-dimensional audit evidence | 2026-11-26T06:44:07.633Z |
 | `learn-huggingface-nex-agi-nex-n2-6` | `https://huggingface.co/nex-agi/Nex-N2.6` | `hf-nex-agi` | Multi-dimensional audit evidence | 2026-11-26T06:52:21.751Z |
+| `learn-huggingface-maxwell-model-maxwell-v1-flash` | `https://huggingface.co/maxwell-model/Maxwell-V1-Flash` | `hf-maxwell` | Multi-dimensional audit evidence | 2026-11-26T07:00:49.653Z |

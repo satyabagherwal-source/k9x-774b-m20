@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T06:52:21.768Z",
+  "last_updated": "2026-11-26T07:00:49.670Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19236,14 +19236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-maxwell-model-maxwell-v1-flash",
-      "content_hash": "af21d8cb936515816ae1ec028e6b37deef92a65527f4e39c918be0dfdee1eacb",
-      "verified_at": "2026-11-22T12:19:18.975Z",
+      "content_hash": "ac49f93f503bcc84931a5f982984eb4723b65b6b768a3c0ddbfb5fce64c38829",
+      "verified_at": "2026-11-26T07:00:49.669Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T12:19:18.975Z"
+      "last_updated": "2026-11-26T07:00:49.669Z"
     },
     "MiniMaxAI/MiniMax-H3-Image-PE": {
       "repository": "MiniMaxAI/MiniMax-H3-Image-PE",

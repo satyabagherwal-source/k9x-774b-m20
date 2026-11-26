@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/maxwell-model/Maxwell-V1-Flash",
   "source_version": "hf-maxwell-model-maxwell-v1-flash",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T12:19:19.185Z",
+  "timestamp": "2026-11-26T07:00:49.917Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-maxwell-model-maxwell-v1-flash",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [maxwell-model/Maxwell-V1-Flash](https://huggingface.co/maxwell-model/Maxwell-V1-Flash) (Revision: `hf-maxwell`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T12:19:19.185Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T07:00:49.917Z`  
 > **Learning ID**: `learn-huggingface-maxwell-model-maxwell-v1-flash`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/maxwell-model/Maxwell-V1-Flash](https://huggingface.co/maxwell-model/Maxwell-V1-Flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T12:19:18.407Z  
+> **Harvest Timestamp**: 2026-11-26T07:00:48.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3317 downloads | 332 likes
+- **Stars / Engagement**: 4344 downloads | 443 likes
 
 ---
 

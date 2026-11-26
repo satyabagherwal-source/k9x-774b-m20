@@ -12765,8 +12765,8 @@
     "sourceUrl": "https://huggingface.co/maxwell-model/Maxwell-V1-Flash",
     "sourceVersion": "hf-maxwell-model-maxwell-v1-flash",
     "license": "Open-Source",
-    "contentHash": "af21d8cb936515816ae1ec028e6b37deef92a65527f4e39c918be0dfdee1eacb",
-    "lastHarvestedAt": "2026-11-22T12:19:18.966Z",
+    "contentHash": "ac49f93f503bcc84931a5f982984eb4723b65b6b768a3c0ddbfb5fce64c38829",
+    "lastHarvestedAt": "2026-11-26T07:00:49.653Z",
     "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash"
   },
   "hf-minimaxai-minimax-h3-image-pe": {

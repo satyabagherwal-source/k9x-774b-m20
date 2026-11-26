@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-F5OX",
-    "timestamp": "2026-11-24T16:46:04.689Z",
-    "repository": "siderolabs/talos",
-    "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "c918c460b4fdc785061fe49f9aff0b19c935d3cc01facd742042680531d90eab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-F7VI",
     "timestamp": "2026-11-24T16:46:07.518Z",
     "repository": "DefGuard/defguard",
@@ -7490,6 +7475,21 @@
     "repository": "nex-agi/Nex-N2.6",
     "learningId": "learn-huggingface-nex-agi-nex-n2-6",
     "contentHash": "3ee16bd06020a07b3c061ac6fd382342249c68194d834d118135908e6967afc2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-E835",
+    "timestamp": "2026-11-26T07:00:49.649Z",
+    "repository": "maxwell-model/Maxwell-V1-Flash",
+    "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash",
+    "contentHash": "ac49f93f503bcc84931a5f982984eb4723b65b6b768a3c0ddbfb5fce64c38829",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
