@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T13:44:59.208Z",
+  "last_updated": "2026-11-26T13:55:32.925Z",
   "total_records": 2753,
   "domains": {
     "A": {
@@ -8496,8 +8496,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "356de6da05d3246828b6ebe33d60c6f16e4e207881673ef706617322732e5a52",
-      "created_at": "2026-11-26T08:57:36.123Z"
+      "content_hash": "8b318e04f9241a686d8c450f768e4908401a898ce3bfdc3f22b649a78705045e",
+      "created_at": "2026-11-26T13:55:25.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8649,8 +8649,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "fd3cd2c0aa7a5fbf6b29073a3456379c71c05f606474d70260ac507287331eae",
-      "created_at": "2026-11-25T12:39:24.849Z"
+      "content_hash": "8fae972e1828abd54fb6e268867ec2190f0e5ae7a08ab395a885759d39742e01",
+      "created_at": "2026-11-26T13:55:27.867Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -9234,8 +9234,8 @@
       "title": "Research & Knowledge Intelligence: TaichuAI/ZDTaichu5.0-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-taichuai-zdtaichu5-0-9b-research-knowledge-intelligence-taichuai-zdtaichu5-0-.md",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "content_hash": "29d6d1a9610c0a0e61b368c8f48e64bd86fcf96fc60cad724fe2e286362a1d01",
-      "created_at": "2026-11-22T20:46:47.720Z"
+      "content_hash": "b38205cdcce47e71049c8c2ec1584e13ea0a9f5b396b60aa9e9d7f2aebe8f316",
+      "created_at": "2026-11-26T13:55:13.215Z"
     },
     "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants",
@@ -9294,8 +9294,8 @@
       "title": "Research & Knowledge Intelligence: hf-taichuai-zdtaichu5.0-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-taichuai-zdtaichu5-0-9b-learnings-research-knowledge-intelligence-hf-taichuai.md",
       "repository": "hf-taichuai-zdtaichu5.0-9b-learnings",
-      "content_hash": "75d609b8e60a32b5e731c26e449995bfe9618fcf026ab1c928a8f11925c0dd6d",
-      "created_at": "2026-11-22T20:46:58.591Z"
+      "content_hash": "7c0d5f04153d024f4643b4c405e5c4bafbac93b970e0e518f6cd748d708ed4e7",
+      "created_at": "2026-11-26T13:55:32.184Z"
     },
     "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva": {
       "record_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
@@ -18605,8 +18605,8 @@
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "repository": "Automattic/harper",
-      "content_hash": "31098eac64dcde2f360d9e404628ec593f22cfbe7775b360db79da69cc9de368",
-      "created_at": "2026-11-22T20:09:00.452Z"
+      "content_hash": "180be8f867f5d1aba736db344e87d6c873a225b2f6364773200c7d207234e5fc",
+      "created_at": "2026-11-26T13:55:14.411Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
@@ -18632,8 +18632,8 @@
       "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-learnings-quality-verification-intelligence-automattic-harper-.md",
       "repository": "automattic-harper-learnings",
-      "content_hash": "82676aa8ec697d528a351055d5040d2994af6db576af7b6bd15de6c76d105ac0",
-      "created_at": "2026-11-22T20:09:09.836Z"
+      "content_hash": "f5b8e4dc83b0d4726e52bc6308a2c891e2f9fa9a129ea14037cea646ef6d1168",
+      "created_at": "2026-11-26T13:55:31.607Z"
     },
     "DOM-D-04705777": {
       "record_id": "DOM-D-04705777",
@@ -19314,10 +19314,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-architecture-intelligence-shifthackz-sdai-kmp-co.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-architecture-intelligence-shifthackz-sdai-kmp-core-invariant.md",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "content_hash": "a564970faacf6ae3aa99ea063c6f90e43f1960d495350ac56ff4e00040f72f96",
-      "created_at": "2026-11-25T15:00:37.933Z"
+      "content_hash": "aa4f2d5beef969fcd58c4ca1a765728a18e8ccf1f36b412fcc9ec41562b448d0",
+      "created_at": "2026-11-26T13:55:19.388Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-core-invariants",
@@ -19385,8 +19385,8 @@
       "title": "Architecture Intelligence: shifthackz-sdai-kmp-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-learnings-architecture-intelligence-shifthackz-sdai-kmp-lear.md",
       "repository": "shifthackz-sdai-kmp-learnings",
-      "content_hash": "8afc57eb8b7c70293d0680ca358666f0aa3506f493a06a6addb8e3ea19e3cd06",
-      "created_at": "2026-11-21T06:01:33.853Z"
+      "content_hash": "25e52fa78e72c1562451d49f422f4fe56c69a46a18892c1d4c40143b2f6597ef",
+      "created_at": "2026-11-26T13:55:32.925Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-1b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-1b-core-invariants",

@@ -13407,3 +13407,8 @@
 | `CYCLE-20261126-TI06` | `2026-11-26T13:44:36.966Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10692` | Yes (`1783d183...`) |
 | `CYCLE-20261126-TLS8` | `2026-11-26T13:44:41.864Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10693` | Yes (`8fae3cfa...`) |
 | `CYCLE-20261126-TSQG` | `2026-11-26T13:44:50.872Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10694` | Yes (`8ba9ecb9...`) |
+| `CYCLE-20261126-74PI` | `2026-11-26T13:55:12.918Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`eb21fb27...`) |
+| `CYCLE-20261126-75J1` | `2026-11-26T13:55:13.981Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10695` | Yes (`20044ab6...`) |
+| `CYCLE-20261126-79DG` | `2026-11-26T13:55:18.964Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10545` | Yes (`a2f2e44c...`) |
+| `CYCLE-20261126-7E49` | `2026-11-26T13:55:25.113Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10696` | Yes (`29ba5ab7...`) |
+| `CYCLE-20261126-7FWD` | `2026-11-26T13:55:27.421Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10697` | Yes (`fae6131f...`) |

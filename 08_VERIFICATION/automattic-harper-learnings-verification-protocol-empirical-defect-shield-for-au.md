@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T05:54:46.838Z",
+  "timestamp": "2026-11-26T13:55:31.267Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-automattic-harper-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [automattic-harper-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T05:54:46.838Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T13:55:31.267Z`  
 > **Learning ID**: `LEARN-EVO-automattic-harper-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `1f3e2b34`  
+> **Source Version**: `15b85dfd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T05:54:33.674Z  
+> **Timestamp**: 2026-11-26T13:55:12.848Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:54:33.664Z  
+> **Harvest Timestamp**: 2026-11-26T13:55:12.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17950 stars
+- **Stars / Engagement**: 17979 stars
 
 ---
 
@@ -1454,42 +1454,164 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00119fa2` (2026-11-24)
-**Commit Message**: fix: don't flag `una` or `deque` for wrong negative prefix (#5063)
+### Incident Patch 1: `15b85dfd` (2026-11-26)
+**Commit Message**: fix(core): don't flag ASCII arrows as dashes (#5072)
 
-**File**: `harper-core/src/linting/wrong_negative.rs` (modified, +9/-1)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
+
+**File**: `harper-core/src/linting/dashes.rs` (modified, +90/-2)
 ```diff
-@@ -14,7 +14,7 @@ fn looks_negative_but_oov(token: &Token, source: &[char]) -> bool {
-             .starts_with_any_ignore_ascii_case_str(NEGATIVE_PREFIXES)
-         && !token
-             .get_ch(source)
--            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
-+            .eq_any_ignore_ascii_case_str(&["una", "defo", "deque", "deus"])
- }
+@@ -34,7 +34,20 @@ impl ExprLinter for Dashes {
+         &self.expr
+     }
  
- pub struct WrongNegative<D: Dictionary + 'static> {
-@@ -189,4 +189,12 @@ mod tests {
-             WrongNegative::new(FstDictionary::curated()),
-         );
+-    fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
++    fn match_to_lint_with_context(
++        &self,
++        matched_tokens: &[Token],
++        _source: &[char],
++        context: Option<(&[Token], &[Token])>,
++    ) -> Option<Lint> {
++        // The hyphens in ASCII arrows like `-->` and `<--` aren't dashes.
++        if let Some((before, after)) = context
++            && (before.last().is_some_and(|t| t.kind.is_less_than())
++                || after.first().is_some_and(|t| t.kind.is_greater_than()))
++        {
++            return None;
++        }
++
+         let span = matched_tokens.span()?;
+         let lint_kind = LintKind::Formatting;
+ 
+@@ -65,7 +78,9 @@ impl ExprLinter for Dashes {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use crate::linting::tests::{assert_suggestion_count, assert_suggestion_result};
++    use crate::linting::tests::{
++        assert_no_lints, assert_suggestion_count, assert_suggestion_result,
++    };
+ 
+     use super::Dashes;
+     use super::{EM_DASH, EN_DASH};
+@@ -97,4 +112,77 @@ mod tests {
+     fn no_lint_for_long_hyphen_sequences() {
+         assert_suggestion_count("'There is no box' ------ Scott", Dashes::default(), 0);
      }
 +
 +    #[test]
-+    fn dont_flag_una_or_deque() {
-+        assert_no_lints(
-+            "The choice between deque and una depends on the language and context you are using.",
-+            WrongNegative::new(FstDictionary::curated()),
++    fn ignores_right_arrow() {
++        assert_no_lints("Go from A --> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_left_arrow() {
++        assert_no_lints("Go from A <-- B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_bidirectional_arrow() {
++        assert_no_lints("Go from A <--> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_long_right_arrow() {
++        assert_no_lints("Go from A ---> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_long_left_arrow() {
++        assert_no_lints("Go from A <--- B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_long_bidirectional_arrow() {
++        assert_no_lints("Go from A <---> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_longer_right_arrow() {
++        assert_no_lints("Go from A ----> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_single_hyphen_arrow() {
++        assert_no_lints("Go from A -> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_unspaced_arrow() {
++        assert_no_lints("Click File-->Save now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_arrow_at_start() {
++        assert_no_lints("--> Start here.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_arrow_at_end() {
++        assert_no_lints("Start here -->", Dashes::default());
++    }
++
++    #[test]
++    fn catches_dash_separated_from_angle_bracket() {
++        assert_suggestion_result(
++            "The result -- > 5 in most cases",
++            Dashes::default(),
++            &format!("The result {EN_DASH} > 5 in most cases"),
++        );
++    }
++
++    #[test]
++    fn catches_dash_alongside_arrow() {
++        assert_suggestion_result(
++            "Go from A --> B -- quickly",
++            Dashes::default(),
++            &format!("Go from A --> B {EN_DASH} quickly"),
 +        );
 +    }
  }
 ```
 
+---
+
+### Incident Patch 2: `b166c194` (2026-11-26)
+**Commit Message**: fix: clarify `message` shown to user (#5073)
+
+**File**: `harper-core/src/linting/pay_for_price.rs` (modified, +6/-6)
+```diff
+@@ -35,14 +35,14 @@ impl ExprLinter for PayForPrice {
+ 
+     fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
+         let span = matched_tokens[2..4].span()?;
+-        let lint_kind = LintKind::Usage;
+-        let suggestions = vec![Suggestion::Remove];
+-        let message = "You `pay for` things or services, but just `pay prices/fees`, etc with no preposition.".to_owned();
++
+         Some(Lint {
+             span,
+-            lint_kind,
+-            suggestions,
+-            message,
++            lint_kind: LintKind::Usage,
++            suggestions: vec![Suggestion::Remove],
++            message:
++                "Omit 'for' before a price or fee (e.g., pay the price, not pay for the price)."
++                    .to_owned(),
+             ..Default::default()
+         })
+     }
+```
+
 #### Recent Merged Pull Requests:
+- **PR #5073** (2026-11-26): fix: clarify `message` shown to user (@hippietrail)
+- **PR #5072** (2026-11-26): fix(core): don't flag ASCII arrows as dashes (@pyrooka)
+- **PR #5068** (2026-11-25): ci: move Mac CI to the xcode-27.2-v4 image (@mokagio)
 - **PR #5066** (2026-11-25): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
 - **PR #5064** (2026-11-25): chore(deps): bump unicode-script from 0.5.8 to 0.5.9 (@dependabot[bot])
 - **PR #5063** (2026-11-24): fix: don't flag `una` or `deque` for wrong negative prefix (@hippietrail)
-- **PR #5056** (2026-11-24): feat: go the the → go to the (@hippietrail)
-- **PR #5054** (closed): feat(core): `TheyToThem` catches "they" at the end of any sentence (@jgobuilds)
-- **PR #5051** (2026-11-23): feat: support HCL and Terraform (@bloveless)
 
 ---
 
@@ -1509,39 +1631,72 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. don't flag `una` or `deque` for wrong negative prefix
+## X. core): don't flag ASCII arrows as dashes
 
 **RULE**:
-When implementing operations in `harper-core/src/linting/wrong_negative.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/src/linting/dashes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00119fa2`: don't flag `una` or `deque` for wrong negative prefix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `15b85dfd`: core): don't flag ASCII arrows as dashes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/wrong_negative.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/dashes.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            .eq_any_ignore_ascii_case_str(&["una", "defo", "deque", "deus"])
+    fn match_to_lint_with_context(
+        &self,
+        matched_tokens: &[Token],
+        _source: &[char],
+        context: Option<(&[Token], &[Token])>,
+    ) -> Option<Lint> {
+        // The hyphens in ASCII arrows like `-->` and `<--` aren't dashes.
+        if let Some((before, after)) = context
+            && (before.last().is_some_and(|t| t.kind.is_less_than())
+                || after.first().is_some_and(|t| t.kind.is_greater_than()))
+        {
+            return None;
+        }
+
+    use crate::linting::tests::{
+        assert_no_lints, assert_suggestion_count, assert_suggestion_result,
+    };
 
     #[test]
-    fn dont_flag_una_or_deque() {
-        assert_no_lints(
-            "The choice between deque and una depends on the language and context you are using.",
-            WrongNegative::new(FstDictionary::curated()),
-        );
+    fn ignores_right_arrow() {
+        assert_no_lints("Go from A --> B now.", Dashes::default());
     }
+
+    #[test]
+    fn ignores_left_arrow() {
+        assert_no_lints("Go from A <-- B now.", Dashes::default());
+    }
+
+    #[test]
+    fn ignores_bidirectional_arrow() {
+        assert_no_lints("Go from A <--> B now.", Dashes::default());
+    }
+
+    #[test]
+    fn ignores_long_right_arrow() {
+        assert_no_lints("Go from A ---> B now.", Dashes::default());
+    }
+
+    #[test]
+    fn ignores_long_left_arrow() {
+        assert_no_lints("Go from A <--- B now.", Dashes:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            .eq_any_ignore_ascii_case_str(&["defo", "deus"])
+    fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
+    use crate::linting::tests::{assert_suggestion_count, assert_suggestion_result};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00119fa2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `15b85dfd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

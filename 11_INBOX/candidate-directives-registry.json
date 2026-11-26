@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:44:58.986Z",
+  "last_updated": "2026-11-26T13:55:32.741Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61671,14 +61671,14 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-3N3M",
+      "id": "CD-7K05",
       "directive_title": "Add hosted upscaler model catalogs",
-      "source_repo": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_repo": "shifthackz-sdai-kmp-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-3N3M-add-hosted-upscaler-model-catalogs.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-7K05-add-hosted-upscaler-model-catalogs.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-25",
+      "date_staged": "2026-11-26",
       "domain_letter": "G"
     },
     {
@@ -65269,6 +65269,59 @@
       "source_repo": "a2ui-project-a2ui",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-896D05-spec-python-give-the-v0-9-1-schemas-thei.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-75PY",
+      "directive_title": "don't flag ASCII arrows as dashes",
+      "source_repo": "Automattic/harper",
+      "source_commit": "15b85dfd",
+      "staged_file": "11_INBOX/candidate-directives/CD-75PY-don-t-flag-ascii-arrows-as-dashes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-7EAN",
+      "directive_title": "Read the Hubble CLI job's kind config from KIND_CONFIG",
+      "source_repo": "cilium/cilium",
+      "source_commit": "c330d437",
+      "staged_file": "11_INBOX/candidate-directives/CD-7EAN-read-the-hubble-cli-job-s-kind-config-from-kind_config.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-7G3A",
+      "directive_title": "read_duckdb filters on columns that are converted for the scan",
+      "source_repo": "duckdb/duckdb",
+      "source_commit": "c826f8f7",
+      "staged_file": "11_INBOX/candidate-directives/CD-7G3A-read_duckdb-filters-on-columns-that-are-converted-for-the-scan.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7IZ2",
+      "directive_title": "core): don't flag ASCII arrows as dashes",
+      "source_repo": "automattic-harper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7IZ2-core-don-t-flag-ascii-arrows-as-dashes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-D13127",
+      "directive_title": "Add hosted upscaler model catalogs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "shifthackz-sdai-kmp",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D13127-add-hosted-upscaler-model-catalogs.md",
       "staged_date": "2026-11-26"
     }
   ]

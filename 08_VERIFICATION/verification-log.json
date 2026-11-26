@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-VQY4",
-    "timestamp": "2026-11-25T00:26:52.588Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "1ec39489f42249c153e218b1c8f93e77295303415e0d19b591076fa8cd9d38be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-6IBA",
-    "timestamp": "2026-11-25T00:35:14.614Z",
-    "repository": "vitest-dev/vitest",
-    "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "84de2b0643e1d58f089026cb067ed5165edf20bee8538fbafe4a3302ba0cdd41",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-6LX9",
-    "timestamp": "2026-11-25T00:35:19.293Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "261f39e6463f05d072dcd4c576c0841869bc9a4bb2d13362200f7d210571b1d0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-H5QR",
-    "timestamp": "2026-11-25T00:43:31.539Z",
-    "repository": "cypress-io/cypress",
-    "learningId": "learn-github-cypress-io-cypress",
-    "contentHash": "ccd359dc8353e7a612a1cf16dfc2721bb93539c503f8147eebf2349140bd36fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-H6SY",
-    "timestamp": "2026-11-25T00:43:32.914Z",
-    "repository": "abue-ammar/tinycast",
-    "learningId": "learn-github-abue-ammar-tinycast",
-    "contentHash": "eabdc0d592fbf9fcecce6f0dbea0f0a2337b4e5b2a9ae8dfcda1abc95d84b9da",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-H915",
     "timestamp": "2026-11-25T00:43:35.801Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7415,81 @@
     "repository": "dragonflydb/dragonfly",
     "learningId": "learn-github-dragonflydb-dragonfly",
     "contentHash": "8ba9ecb975b18080f8663e49e759088e7dd7a04ade88397cbeb40b3ea6fed238",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-74PI",
+    "timestamp": "2026-11-26T13:55:12.918Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "eb21fb27cc3545f8f1059eacb28e6d5b17637bee1c51f943c6f18523dd6d6dce",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-75J1",
+    "timestamp": "2026-11-26T13:55:13.981Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "20044ab61070f3a1924dfeae15231c802824008f632fe6590b8a60e2936827ca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-79DG",
+    "timestamp": "2026-11-26T13:55:18.964Z",
+    "repository": "ShiftHackZ/SDAI-KMP",
+    "learningId": "learn-github-shifthackz-sdai-kmp",
+    "contentHash": "a2f2e44c1f0e06e7b833d81c0c970fbc32cd4ae9c3331901f7644f92e4a59ba6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-7E49",
+    "timestamp": "2026-11-26T13:55:25.113Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "29ba5ab778e3f53023141dfe425605525dd9f9c37e2b2e9bc55cd5078b50b7ec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-7FWD",
+    "timestamp": "2026-11-26T13:55:27.421Z",
+    "repository": "duckdb/duckdb",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "fae6131f9a9bca6a2e140bd177c35f805534f4e98c73ebdd56f37150056ef922",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

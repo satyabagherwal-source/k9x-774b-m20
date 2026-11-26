@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T13:44:59.442Z",
+  "last_updated": "2026-11-26T13:55:33.111Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25951,
+  "total_items": 25959,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "410c10f3",
-      "content_hash": "356de6da05d3246828b6ebe33d60c6f16e4e207881673ef706617322732e5a52",
+      "source_version": "c330d437",
+      "content_hash": "8b318e04f9241a686d8c450f768e4908401a898ce3bfdc3f22b649a78705045e",
       "domain_letter": "B",
-      "persisted_at": "2026-11-26T08:57:36.123Z"
+      "persisted_at": "2026-11-26T13:55:25.525Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "410c10f3",
-      "content_hash": "95d71e420b59939e1700db7bc4c9d4db958892302082af8a328d50906fc33229",
+      "source_version": "c330d437",
+      "content_hash": "3e0420130cc16c42b2d6d0ecf2e4fe4f49aedf1e6a38cea73fdf145c74ffe97a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:57:36.331Z"
+      "persisted_at": "2026-11-26T13:55:25.705Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112449,10 +112449,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "repository": "duckdb/duckdb",
-      "source_version": "bdc96af9",
-      "content_hash": "fd3cd2c0aa7a5fbf6b29073a3456379c71c05f606474d70260ac507287331eae",
+      "source_version": "c826f8f7",
+      "content_hash": "8fae972e1828abd54fb6e268867ec2190f0e5ae7a08ab395a885759d39742e01",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:39:24.849Z"
+      "persisted_at": "2026-11-26T13:55:27.867Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb",
@@ -112461,10 +112461,10 @@
       "relative_path": "08_VERIFICATION/duckdb-duckdb-verification-protocol-empirical-defect-shield-for-duckdb-duckdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for duckdb/duckdb",
       "repository": "duckdb/duckdb",
-      "source_version": "bdc96af9",
-      "content_hash": "5361457e62bddfce282f406b0891be78e0f30706b72c974320054e5b1747ff75",
+      "source_version": "c826f8f7",
+      "content_hash": "7e797c1e99ea0f84f6e211273f675c3fc623547cab5477ffa7b4adbec5eed4f4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:39:25.095Z"
+      "persisted_at": "2026-11-26T13:55:28.250Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants",
@@ -113386,9 +113386,9 @@
       "title": "Research & Knowledge Intelligence: TaichuAI/ZDTaichu5.0-9B Core Invariants",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "29d6d1a9610c0a0e61b368c8f48e64bd86fcf96fc60cad724fe2e286362a1d01",
+      "content_hash": "b38205cdcce47e71049c8c2ec1584e13ea0a9f5b396b60aa9e9d7f2aebe8f316",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:46:47.720Z"
+      "persisted_at": "2026-11-26T13:55:13.215Z"
     },
     "candidate_directive-deps-dev-bump-hono-4574": {
       "item_id": "candidate_directive-deps-dev-bump-hono-4574",
@@ -113446,9 +113446,9 @@
       "title": "Research & Knowledge Intelligence: hf-taichuai-zdtaichu5.0-9b-learnings Core Invariants",
       "repository": "hf-taichuai-zdtaichu5.0-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "75d609b8e60a32b5e731c26e449995bfe9618fcf026ab1c928a8f11925c0dd6d",
+      "content_hash": "7c0d5f04153d024f4643b4c405e5c4bafbac93b970e0e518f6cd748d708ed4e7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:46:58.591Z"
+      "persisted_at": "2026-11-26T13:55:32.184Z"
     },
     "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva": {
       "item_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
@@ -214402,8 +214402,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "410c10f3",
-      "content_hash": "26783d36fa73f82ab8c903ace32d51c327a4e68461ecff443bc7600d4e42ff49",
+      "source_version": "c330d437",
+      "content_hash": "29ba5ab778e3f53023141dfe425605525dd9f9c37e2b2e9bc55cd5078b50b7ec",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214541,6 +214541,11 @@
           "number": 10636,
           "title": "maps/egressmap: leverage map registry to configure and create policy maps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10696,
+          "title": "Read the Hubble CLI job's kind config from KIND_CONFIG",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214548,7 +214553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T08:57:35.387Z",
+      "verified_at": "2026-11-26T13:55:24.825Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240194,8 +240199,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "1f3e2b34",
-      "content_hash": "bba99e9de9ebe6cff7595c1d2bc25f6ba86633f0f6bbc87f4143c0c157257876",
+      "source_version": "15b85dfd",
+      "content_hash": "20044ab61070f3a1924dfeae15231c802824008f632fe6590b8a60e2936827ca",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -240238,6 +240243,11 @@
           "number": 10466,
           "title": "don't flag `una` or `deque` for wrong negative prefix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10695,
+          "title": "don't flag ASCII arrows as dashes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240245,7 +240255,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T05:54:34.826Z",
+      "verified_at": "2026-11-26T13:55:13.755Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240287,10 +240297,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "repository": "Automattic/harper",
-      "source_version": "6cb8d82a",
-      "content_hash": "31098eac64dcde2f360d9e404628ec593f22cfbe7775b360db79da69cc9de368",
+      "source_version": "15b85dfd",
+      "content_hash": "180be8f867f5d1aba736db344e87d6c873a225b2f6364773200c7d207234e5fc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:09:00.452Z"
+      "persisted_at": "2026-11-26T13:55:14.411Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper",
@@ -240299,10 +240309,10 @@
       "relative_path": "08_VERIFICATION/automattic-harper-verification-protocol-empirical-defect-shield-for-automattic-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for Automattic/harper",
       "repository": "Automattic/harper",
-      "source_version": "1f3e2b34",
-      "content_hash": "cb1dc459dcaeb2c75b0fb3175e570256cd025546209a93a6ab9290baf4f40fb5",
+      "source_version": "15b85dfd",
+      "content_hash": "9d9d5963bf35568b50b32ceff3fff43e725e5652679536a7a79441a755eb6c81",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:54:35.907Z"
+      "persisted_at": "2026-11-26T13:55:14.589Z"
     },
     "learn-github-kotest-kotest": {
       "learning_id": "learn-github-kotest-kotest",
@@ -240566,9 +240576,9 @@
       "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "82676aa8ec697d528a351055d5040d2994af6db576af7b6bd15de6c76d105ac0",
+      "content_hash": "f5b8e4dc83b0d4726e52bc6308a2c891e2f9fa9a129ea14037cea646ef6d1168",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:09:09.836Z"
+      "persisted_at": "2026-11-26T13:55:31.607Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper-learnings",
@@ -240578,9 +240588,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for automattic-harper-learnings",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bc3798e54b5a44eb0160fb71194d2db85e64619bde2357f452a5cf4917be15d",
+      "content_hash": "fd16fefa397227ad6efe12666d6291f362c6835129c133efa291a5be532242ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:54:47.499Z"
+      "persisted_at": "2026-11-26T13:55:31.788Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
@@ -241287,8 +241297,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "bdc96af9",
-      "content_hash": "1ef51afcf4650aff2ca063572a5c3cf2f5e0d0af675af220d84f58d3f3adfd53",
+      "source_version": "c826f8f7",
+      "content_hash": "fae6131f9a9bca6a2e140bd177c35f805534f4e98c73ebdd56f37150056ef922",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -241331,6 +241341,11 @@
           "number": 10527,
           "title": "Keep the type of the constant when constant_or_null has an untyped NULL child",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10697,
+          "title": "read_duckdb filters on columns that are converted for the scan",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241338,7 +241353,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T12:39:23.934Z",
+      "verified_at": "2026-11-26T13:55:27.185Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242514,13 +242529,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-stable-diffusion-kmp",
+      "slug": "shifthackz-sdai-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
       "source_version": "7d074972",
-      "content_hash": "16d8784f4dabf21140c4b6ce086e6f7020593a816d958f2d95b41ec4223fa9b9",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "content_hash": "a2f2e44c1f0e06e7b833d81c0c970fbc32cd4ae9c3331901f7644f92e4a59ba6",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": 8552,
@@ -242545,7 +242560,7 @@
         {
           "number": 10545,
           "title": "Add hosted upscaler model catalogs",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242553,7 +242568,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T15:00:37.054Z",
+      "verified_at": "2026-11-26T13:55:18.743Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242592,25 +242607,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-stable-diffusion-kmp-architecture-intelligence-shifthackz-sdai-kmp-co.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-shifthackz-sdai-kmp-architecture-intelligence-shifthackz-sdai-kmp-core-invariant.md",
       "title": "Architecture Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
       "repository": "ShiftHackZ/SDAI-KMP",
       "source_version": "7d074972",
-      "content_hash": "a564970faacf6ae3aa99ea063c6f90e43f1960d495350ac56ff4e00040f72f96",
+      "content_hash": "aa4f2d5beef969fcd58c4ca1a765728a18e8ccf1f36b412fcc9ec41562b448d0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T15:00:37.933Z"
+      "persisted_at": "2026-11-26T13:55:19.388Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shifthackz-stable-diffusion-kmp-verification-protocol-empirical-defect-shield-fo.md",
+      "relative_path": "08_VERIFICATION/shifthackz-sdai-kmp-verification-protocol-empirical-defect-shield-for-shifthackz.md",
       "title": "Verification Protocol: Empirical Defect Shield for ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
       "source_version": "7d074972",
-      "content_hash": "3d294bdfe904c5c957e2580dfb65a71af7596826b48d3317ad227c1fc54260ed",
+      "content_hash": "a5b37f74206412689617826e76e5b37e580efef8ee44e594e5c7819ee0fb439b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:00:38.177Z"
+      "persisted_at": "2026-11-26T13:55:19.580Z"
     },
     "learn-github-nolabs-ai-nono": {
       "learning_id": "learn-github-nolabs-ai-nono",
@@ -242785,9 +242800,9 @@
       "title": "Architecture Intelligence: shifthackz-sdai-kmp-learnings Core Invariants",
       "repository": "shifthackz-sdai-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "8afc57eb8b7c70293d0680ca358666f0aa3506f493a06a6addb8e3ea19e3cd06",
+      "content_hash": "25e52fa78e72c1562451d49f422f4fe56c69a46a18892c1d4c40143b2f6597ef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T06:01:33.853Z"
+      "persisted_at": "2026-11-26T13:55:32.925Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp-learnings",
@@ -242797,9 +242812,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for shifthackz-sdai-kmp-learnings",
       "repository": "shifthackz-sdai-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "53789f409e86f9e0fe2bc7c9f72e04cbb6e618d084497d9b3d60d039464f48ab",
+      "content_hash": "7390ad160c93cd550722349c5bfadc347e0b96862c05cd37f43159615bff5e55",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:33:36.807Z"
+      "persisted_at": "2026-11-26T13:55:33.111Z"
     },
     "candidate_directive-nix-update-prebuilt-hashes-for-v0-82-0": {
       "item_id": "candidate_directive-nix-update-prebuilt-hashes-for-v0-82-0",
@@ -287823,7 +287838,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "bcb3546d1b57878d5bc5a57791fda18eb5ab00555c2a9fbbbdc3a600c7a92978",
+      "content_hash": "eb21fb27cc3545f8f1059eacb28e6d5b17637bee1c51f943c6f18523dd6d6dce",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [],
@@ -287832,7 +287847,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:46:47.178Z",
+      "verified_at": "2026-11-26T13:55:12.683Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -349573,26 +349588,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 10545,
       "title": "Add hosted upscaler model catalogs",
-      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
       "source_version": "7d074972",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-25T15:00:37.054Z"
+      "verified_at": "2026-11-26T13:55:18.743Z"
     },
     "candidate_directive-add-hosted-upscaler-model-catalogs": {
       "item_id": "candidate_directive-add-hosted-upscaler-model-catalogs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3N3M-add-hosted-upscaler-model-catalogs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7K05-add-hosted-upscaler-model-catalogs.md",
       "title": "Add hosted upscaler model catalogs",
-      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "repository": "shifthackz-sdai-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b7f28bec940c4f2e470488c64d425e32a6e266418660238fa6d391d1aafe5d4",
+      "content_hash": "2cbd6774fcfdbe7ab600902289f575eebc66b5ee5f78b50a29b41dea1934df8f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T15:00:48.946Z"
+      "persisted_at": "2026-11-26T13:55:32.741Z"
     },
     "candidate_directive-nuc-146-reactive-cubing": {
       "item_id": "candidate_directive-nuc-146-reactive-cubing",
@@ -355622,6 +355637,108 @@
       "content_hash": "75be1800f05b22ca0972bed821ad8fcdcff6a058ae1055e3447773550aa72cd1",
       "domain_letter": "I",
       "persisted_at": "2026-11-26T13:44:59.208Z"
+    },
+    "rule-10695": {
+      "learning_id": "rule-10695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10695,
+      "title": "don't flag ASCII arrows as dashes",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "15b85dfd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:55:13.755Z"
+    },
+    "candidate_directive-don-t-flag-ascii-arrows-as-dashes": {
+      "item_id": "candidate_directive-don-t-flag-ascii-arrows-as-dashes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-75PY-don-t-flag-ascii-arrows-as-dashes.md",
+      "title": "don't flag ASCII arrows as dashes",
+      "repository": "Automattic/harper",
+      "source_version": "15b85dfd",
+      "content_hash": "2e4daba783a8db23a5538ee5bf0d29fdb285969e48040c95970480fbdda44963",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T13:55:14.231Z"
+    },
+    "rule-10696": {
+      "learning_id": "rule-10696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10696,
+      "title": "Read the Hubble CLI job's kind config from KIND_CONFIG",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "c330d437",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:55:24.825Z"
+    },
+    "candidate_directive-read-the-hubble-cli-job-s-kind-config-from-kind_config": {
+      "item_id": "candidate_directive-read-the-hubble-cli-job-s-kind-config-from-kind_config",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7EAN-read-the-hubble-cli-job-s-kind-config-from-kind_config.md",
+      "title": "Read the Hubble CLI job's kind config from KIND_CONFIG",
+      "repository": "cilium/cilium",
+      "source_version": "c330d437",
+      "content_hash": "a36a8c6f53b5443ffc717e19682d6878295ba5cefeed66e301ed9a3e696ef062",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-26T13:55:25.344Z"
+    },
+    "rule-10697": {
+      "learning_id": "rule-10697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10697,
+      "title": "read_duckdb filters on columns that are converted for the scan",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "c826f8f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:55:27.185Z"
+    },
+    "candidate_directive-read_duckdb-filters-on-columns-that-are-converted-for-the-scan": {
+      "item_id": "candidate_directive-read_duckdb-filters-on-columns-that-are-converted-for-the-scan",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7G3A-read_duckdb-filters-on-columns-that-are-converted-for-the-scan.md",
+      "title": "read_duckdb filters on columns that are converted for the scan",
+      "repository": "duckdb/duckdb",
+      "source_version": "c826f8f7",
+      "content_hash": "7f9d187718c65b8efbdedfe27287833a413718e17b9ca9672cf2ac368cb8b30b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T13:55:27.677Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-duckdb-duckdb": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-duckdb-duckdb",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-duckdb-duckdb-adr-subsystem-boundary-modular-decoupling-in-duckdb-duckdb.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in duckdb/duckdb",
+      "repository": "duckdb/duckdb",
+      "source_version": "c826f8f7",
+      "content_hash": "fe276bfd48e0dca0f7f5d54730b87179b549a48e683ef2092fbf1bdebf689c87",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T13:55:28.090Z"
+    },
+    "candidate_directive-core-don-t-flag-ascii-arrows-as-dashes": {
+      "item_id": "candidate_directive-core-don-t-flag-ascii-arrows-as-dashes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7IZ2-core-don-t-flag-ascii-arrows-as-dashes.md",
+      "title": "core): don't flag ASCII arrows as dashes",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "72f9b92ae4f495be9340582010b0edaba61d2324999583622c6667713c67f820",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T13:55:31.407Z"
     }
   },
   "ai-builder-brain": {

@@ -13440,3 +13440,8 @@ Every entry in this ledger must capture:
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `f06f7917` | Multi-dimensional audit evidence | 2026-11-26T13:44:36.970Z |
 | `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `36725eee` | Multi-dimensional audit evidence | 2026-11-26T13:44:41.869Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `cb5fcfa0` | Multi-dimensional audit evidence | 2026-11-26T13:44:50.876Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-26T13:55:12.923Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `15b85dfd` | Multi-dimensional audit evidence | 2026-11-26T13:55:13.985Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `7d074972` | Multi-dimensional audit evidence | 2026-11-26T13:55:18.968Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `c330d437` | Multi-dimensional audit evidence | 2026-11-26T13:55:25.116Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `c826f8f7` | Multi-dimensional audit evidence | 2026-11-26T13:55:27.425Z |

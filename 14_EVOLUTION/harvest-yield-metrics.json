@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:44:50.891Z",
-  "total_cycles_completed": 12724,
-  "total_learnings_persisted": 12724,
-  "total_rules_promoted": 11592,
+  "last_updated": "2026-11-26T13:55:27.439Z",
+  "total_cycles_completed": 12729,
+  "total_learnings_persisted": 12729,
+  "total_rules_promoted": 11596,
   "history": [
-    {
-      "timestamp": "2026-11-26T01:45:06.085Z",
-      "repository": "Viggle/Viggle-Remake",
-      "learningId": "learn-huggingface-viggle-viggle-remake",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:53:24.117Z",
-      "repository": "audio-cpp/audio.cpp-gguf",
-      "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:53:33.378Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:53:35.801Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:53:37.926Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T02:01:08.593Z",
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-26T13:44:50.891Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:55:12.937Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:55:13.997Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:55:18.981Z",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:55:25.129Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:55:27.439Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

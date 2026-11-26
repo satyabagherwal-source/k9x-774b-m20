@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T13:44:50.901Z",
+  "last_updated": "2026-11-26T13:55:27.447Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -560,14 +560,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "content_hash": "bcb3546d1b57878d5bc5a57791fda18eb5ab00555c2a9fbbbdc3a600c7a92978",
-      "verified_at": "2026-11-22T20:46:47.459Z",
+      "content_hash": "eb21fb27cc3545f8f1059eacb28e6d5b17637bee1c51f943c6f18523dd6d6dce",
+      "verified_at": "2026-11-26T13:55:12.940Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:46:47.459Z"
+      "last_updated": "2026-11-26T13:55:12.940Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "bba99e9de9ebe6cff7595c1d2bc25f6ba86633f0f6bbc87f4143c0c157257876",
-      "verified_at": "2026-11-25T05:54:35.128Z",
+      "content_hash": "20044ab61070f3a1924dfeae15231c802824008f632fe6590b8a60e2936827ca",
+      "verified_at": "2026-11-26T13:55:14.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T05:54:35.128Z"
+      "last_updated": "2026-11-26T13:55:14.004Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "26783d36fa73f82ab8c903ace32d51c327a4e68461ecff443bc7600d4e42ff49",
-      "verified_at": "2026-11-26T08:57:35.678Z",
+      "content_hash": "29ba5ab778e3f53023141dfe425605525dd9f9c37e2b2e9bc55cd5078b50b7ec",
+      "verified_at": "2026-11-26T13:55:25.136Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T08:57:35.678Z"
+      "last_updated": "2026-11-26T13:55:25.136Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "1ef51afcf4650aff2ca063572a5c3cf2f5e0d0af675af220d84f58d3f3adfd53",
-      "verified_at": "2026-11-25T12:39:24.254Z",
+      "content_hash": "fae6131f9a9bca6a2e140bd177c35f805534f4e98c73ebdd56f37150056ef922",
+      "verified_at": "2026-11-26T13:55:27.446Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T12:39:24.254Z"
+      "last_updated": "2026-11-26T13:55:27.446Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -18306,14 +18306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shifthackz-sdai-kmp",
-      "content_hash": "16d8784f4dabf21140c4b6ce086e6f7020593a816d958f2d95b41ec4223fa9b9",
-      "verified_at": "2026-11-25T15:00:37.380Z",
+      "content_hash": "a2f2e44c1f0e06e7b833d81c0c970fbc32cd4ae9c3331901f7644f92e4a59ba6",
+      "verified_at": "2026-11-26T13:55:18.989Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:00:37.380Z"
+      "last_updated": "2026-11-26T13:55:18.989Z"
     },
     "qybaihe/bla": {
       "repository": "qybaihe/bla",

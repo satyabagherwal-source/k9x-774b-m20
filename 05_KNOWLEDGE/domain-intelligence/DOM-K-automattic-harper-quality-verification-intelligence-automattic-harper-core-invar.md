@@ -4,24 +4,24 @@
 {
   "source_repository": "Automattic/harper",
   "source_url": "https://github.com/Automattic/harper",
-  "source_version": "6cb8d82a",
+  "source_version": "15b85dfd",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T20:09:00.226Z",
+  "timestamp": "2026-11-26T13:55:14.230Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-automattic-harper",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Automattic/harper](https://github.com/Automattic/harper) (Revision: `6cb8d82a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T20:09:00.226Z`  
+> **Provenance**: Harvested from [Automattic/harper](https://github.com/Automattic/harper) (Revision: `15b85dfd`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T13:55:14.230Z`  
 > **Learning ID**: `learn-github-automattic-harper`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Automattic/harper:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:08:58.631Z  
+> **Harvest Timestamp**: 2026-11-26T13:55:12.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17902 stars
+- **Stars / Engagement**: 17979 stars
 
 ---
 
@@ -1443,178 +1443,164 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6cb8d82a` (2026-11-22)
-**Commit Message**: fix(core): add 'waiters', 'instinctually', and 'unholster' to dictionary (#4973) (#5040)
+### Incident Patch 1: `15b85dfd` (2026-11-26)
+**Commit Message**: fix(core): don't flag ASCII arrows as dashes (#5072)
 
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
 
-**File**: `harper-core/dictionary.dict` (modified, +3/-2)
+**File**: `harper-core/src/linting/dashes.rs` (modified, +90/-2)
 ```diff
-@@ -30624,7 +30624,7 @@ instilled/Vj
- instilling/V6
- instinct/~NgSJv
- instinctive/JY
--instinctual/J
-+instinctual/JY
- institute/~NgSVGd>JXZn
- instituter/Ng
- institution/~Ng
-@@ -51474,6 +51474,7 @@ unhealthful/J
- unhealthy/~J^
- unhistorical/J
- unholy/~J^
-+unholster/VGdS
- unhurt/J
- # uni               # prefixes that are not also words in their own right don't belong in the dictionary
- unibody/NSg
-@@ -52668,7 +52669,7 @@ waistband/NgS
- waistcoat/NgS
- waistline/NgS
- wait/~VdGSNg
--waiter/~NgV
-+waiter/~NgSV
- waiting/~V6Ng
- waitperson/N0gS
- waitress/~NgSV
-```
-
-**File**: `harper-core/src/spell/mutable_dictionary.rs` (modified, +12/-0)
-```diff
-@@ -405,6 +405,18 @@ mod tests {
-         assert!(dict.contains_word_str("repo's"));
+@@ -34,7 +34,20 @@ impl ExprLinter for Dashes {
+         &self.expr
      }
  
-+    #[test]
-+    fn curated_contains_waiters_instinctually_and_unholstered() {
-+        let dict = MutableDictionary::curated();
-+
-+        assert!(dict.contains_word_str("waiters"));
-+        assert!(dict.contains_word_str("instinctually"));
-+        assert!(dict.contains_word_str("unholster"));
-+        assert!(dict.contains_word_str("unholstered"));
-+        assert!(dict.contains_word_str("unholsters"));
-+        assert!(dict.contains_word_str("unholstering"));
-+    }
-+
-     #[test]
-     fn curated_contains_possessive_abandonment() {
-         assert!(
-```
-
----
-
-### Incident Patch 2: `5252d3d4` (2026-11-22)
-**Commit Message**: fix(core): add 'teardown' and remove stray verb flag from 'fallback' (#5006, #5008) (#5035)
-
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
-
-**File**: `harper-core/dictionary.dict` (modified, +2/-1)
-```diff
-@@ -24614,7 +24614,7 @@ fall/~VbGSNwg
- fall back/V/
- fallacious/JY
- fallacy/~NSg
--fallback/NgSJV
-+fallback/NgSJ
- fallen/VTJ
- fallibility/Nmgi
- fallible/Jp
-@@ -49079,6 +49079,7 @@ teamwork/~Ng
- teapot/NgS
- tear/~VGdSNg
- tearaway/NS
-+teardown/~NSg
- teardrop/~NSg
- tearful/JY
- teargas/NwgSVb
-```
-
-**File**: `harper-core/src/linting/phrasal_verb_as_compound_noun.rs` (modified, +35/-0)
-```diff
-@@ -404,6 +404,41 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn flag_fallback_used_as_a_verb_issue_5006() {
-+        assert_suggestion_result(
-+            "We should fallback to the older version.",
-+            PhrasalVerbAsCompoundNoun::default(),
-+            "We should fall back to the older version.",
-+        );
-+    }
-+
-+    #[test]
-+    fn flag_teardown_all_caps_issue_5008() {
-+        assert_suggestion_result(
-+            "I FINALLY TEARDOWN A VR6!",
-+            PhrasalVerbAsCompoundNoun::default(),
-+            "I FINALLY TEAR DOWN A VR6!",
-+        );
-+    }
-+
-+    #[test]
-+    fn flag_teardown_lowercase_issue_5008() {
-+        assert_suggestion_result(
-+            "We need to teardown the old server before tomorrow.",
-+            PhrasalVerbAsCompoundNoun::default(),
-+            "We need to tear down the old server before tomorrow.",
-+        );
-+    }
-+
-+    #[test]
-+    fn dont_flag_fallback_or_teardown_as_nouns() {
-+        assert_no_lints(
-+            "We have a fallback in place for the server. The teardown went smoothly.",
-+            PhrasalVerbAsCompoundNoun::default(),
-+        );
-+    }
-+
-     #[test]
-     fn dont_flag_random_words_that_happen_to_end_like_a_particle() {
-         assert_no_lints("I like bacon.", test_linter());
-```
-
----
-
-### Incident Patch 3: `2954aa92` (2026-11-22)
-**Commit Message**: fix(core): avoid flagging "if need be" in MissingTo (#5002) (#5032)
-
-Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
-
-**File**: `harper-core/src/linting/missing_to.rs` (modified, +10/-0)
-```diff
-@@ -459,6 +459,10 @@ impl ExprLinter for MissingTo {
- 
-         let next_text = next_token.get_str(source).to_lowercase();
- 
-+        if controller_text == "need" && next_text == "be" && previous_word == Some("if") {
+-    fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
++    fn match_to_lint_with_context(
++        &self,
++        matched_tokens: &[Token],
++        _source: &[char],
++        context: Option<(&[Token], &[Token])>,
++    ) -> Option<Lint> {
++        // The hyphens in ASCII arrows like `-->` and `<--` aren't dashes.
++        if let Some((before, after)) = context
++            && (before.last().is_some_and(|t| t.kind.is_less_than())
++                || after.first().is_some_and(|t| t.kind.is_greater_than()))
++        {
 +            return None;
 +        }
 +
-         if controller_text.starts_with("try") && next_text == "and" {
-             return None;
-         }
-@@ -913,4 +917,10 @@ mod tests {
-             test_linter(),
-         );
+         let span = matched_tokens.span()?;
+         let lint_kind = LintKind::Formatting;
+ 
+@@ -65,7 +78,9 @@ impl ExprLinter for Dashes {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use crate::linting::tests::{assert_suggestion_count, assert_suggestion_result};
++    use crate::linting::tests::{
++        assert_no_lints, assert_suggestion_count, assert_suggestion_result,
++    };
+ 
+     use super::Dashes;
+     use super::{EM_DASH, EN_DASH};
+@@ -97,4 +112,77 @@ mod tests {
+     fn no_lint_for_long_hyphen_sequences() {
+         assert_suggestion_count("'There is no box' ------ Scott", Dashes::default(), 0);
      }
 +
 +    #[test]
-+    fn no_lint_if_need_be() {
-+        assert_no_lints("We can improve it if need be.", test_linter());
-+        assert_no_lints("If need be, we can improve it.", test_linter());
++    fn ignores_right_arrow() {
++        assert_no_lints("Go from A --> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_left_arrow() {
++        assert_no_lints("Go from A <-- B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_bidirectional_arrow() {
++        assert_no_lints("Go from A <--> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_long_right_arrow() {
++        assert_no_lints("Go from A ---> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_long_left_arrow() {
++        assert_no_lints("Go from A <--- B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_long_bidirectional_arrow() {
++        assert_no_lints("Go from A <---> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_longer_right_arrow() {
++        assert_no_lints("Go from A ----> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_single_hyphen_arrow() {
++        assert_no_lints("Go from A -> B now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_unspaced_arrow() {
++        assert_no_lints("Click File-->Save now.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_arrow_at_start() {
++        assert_no_lints("--> Start here.", Dashes::default());
++    }
++
++    #[test]
++    fn ignores_arrow_at_end() {
++        assert_no_lints("Start here -->", Dashes::default());
++    }
++
++    #[test]
++    fn catches_dash_separated_from_angle_bracket() {
++        assert_suggestion_result(
++            "The result -- > 5 in most cases",
++            Dashes::default(),
++            &format!("The result {EN_DASH} > 5 in most cases"),
++        );
++    }
++
++    #[test]
++    fn catches_dash_alongside_arrow() {
++        assert_suggestion_result(
++            "Go from A --> B -- quickly",
++            Dashes::default(),
++            &format!("Go from A --> B {EN_DASH} quickly"),
++        );
 +    }
  }
 ```
 
+---
+
+### Incident Patch 2: `b166c194` (2026-11-26)
+**Commit Message**: fix: clarify `message` shown to user (#5073)
+
+**File**: `harper-core/src/linting/pay_for_price.rs` (modified, +6/-6)
+```diff
+@@ -35,14 +35,14 @@ impl ExprLinter for PayForPrice {
+ 
+     fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
+         let span = matched_tokens[2..4].span()?;
+-        let lint_kind = LintKind::Usage;
+-        let suggestions = vec![Suggestion::Remove];
+-        let message = "You `pay for` things or services, but just `pay prices/fees`, etc with no preposition.".to_owned();
++
+         Some(Lint {
+             span,
+-            lint_kind,
+-            suggestions,
+-            message,
++            lint_kind: LintKind::Usage,
++            suggestions: vec![Suggestion::Remove],
++            message:
++                "Omit 'for' before a price or fee (e.g., pay the price, not pay for the price)."
++                    .to_owned(),
+             ..Default::default()
+         })
+     }
+```
+
 #### Recent Merged Pull Requests:
-- **PR #5040** (2026-11-22): fix(core): add 'waiters', 'instinctually', and 'unholster' to dictionary (#4973) (@abdul-karim-mia)
-- **PR #5035** (2026-11-22): fix(core): add 'teardown' and remove stray verb flag from 'fallback' (#5006, #5008) (@abdul-karim-mia)
-- **PR #5032** (2026-11-22): fix(core): avoid flagging 'if need be' in MissingTo (#5002) (@abdul-karim-mia)
-- **PR #5025** (2026-11-21): Many linters' `message` and `description` fields lacked a sentence-final punctuation (@hippietrail)
-- **PR #5023** (2026-11-21): feat: a same way→the same way / the similar way→a similar way (@hippietrail)
-- **PR #5019** (2026-11-20): feat(desktop): add Coffee as a default app (@PTthe13)
+- **PR #5073** (2026-11-26): fix: clarify `message` shown to user (@hippietrail)
+- **PR #5072** (2026-11-26): fix(core): don't flag ASCII arrows as dashes (@pyrooka)
+- **PR #5068** (2026-11-25): ci: move Mac CI to the xcode-27.2-v4 image (@mokagio)
+- **PR #5066** (2026-11-25): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
+- **PR #5064** (2026-11-25): chore(deps): bump unicode-script from 0.5.8 to 0.5.9 (@dependabot[bot])
+- **PR #5063** (2026-11-24): fix: don't flag `una` or `deque` for wrong negative prefix (@hippietrail)
 
 ---
 
@@ -1634,34 +1620,72 @@ Signed-off-by: Abdul karim mia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): add 'waiters', 'instinctually', and 'unholster' to dictionary
+## X. core): don't flag ASCII arrows as dashes
 
 **RULE**:
-When implementing operations in `harper-core/dictionary.dict`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/src/linting/dashes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6cb8d82a`: core): add 'waiters', 'instinctually', and 'unholster' to dictionary. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `15b85dfd`: core): don't flag ASCII arrows as dashes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/dictionary.dict`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/src/linting/dashes.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-instinctual/JY
-unholster/VGdS
-waiter/~NgSV
+    fn match_to_lint_with_context(
+        &self,
+        matched_tokens: &[Token],
+        _source: &[char],
+        context: Option<(&[Token], &[Token])>,
+    ) -> Option<Lint> {
+        // The hyphens in ASCII arrows like `-->` and `<--` aren't dashes.
+        if let Some((before, after)) = context
+            && (before.last().is_some_and(|t| t.kind.is_less_than())
+                || after.first().is_some_and(|t| t.kind.is_greater_than()))
+        {
+            return None;
+        }
+
+    use crate::linting::tests::{
+        assert_no_lints, assert_suggestion_count, assert_suggestion_result,
+    };
+
+    #[test]
+    fn ignores_right_arrow() {
+        assert_no_lints("Go from A --> B now.", Dashes::default());
+    }
+
+    #[test]
+    fn ignores_left_arrow() {
+        assert_no_lints("Go from A <-- B now.", Dashes::default());
+    }
+
+    #[test]
+    fn ignores_bidirectional_arrow() {
+        assert_no_lints("Go from A <--> B now.", Dashes::default());
+    }
+
+    #[test]
+    fn ignores_long_right_arrow() {
+        assert_no_lints("Go from A ---> B now.", Dashes::default());
+    }
+
+    #[test]
+    fn ignores_long_left_arrow() {
+        assert_no_lints("Go from A <--- B now.", Dashes:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-instinctual/J
-waiter/~NgV
+    fn match_to_lint(&self, matched_tokens: &[Token], _source: &[char]) -> Option<Lint> {
+    use crate::linting::tests::{assert_suggestion_count, assert_suggestion_result};
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6cb8d82a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `15b85dfd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

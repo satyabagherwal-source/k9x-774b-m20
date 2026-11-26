@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "bcb3546d1b57878d5bc5a57791fda18eb5ab00555c2a9fbbbdc3a600c7a92978",
-    "lastHarvestedAt": "2026-11-22T20:46:47.448Z",
+    "contentHash": "eb21fb27cc3545f8f1059eacb28e6d5b17637bee1c51f943c6f18523dd6d6dce",
+    "lastHarvestedAt": "2026-11-26T13:55:12.923Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "1f3e2b34",
+    "sourceVersion": "15b85dfd",
     "license": "Apache-2.0",
-    "contentHash": "bba99e9de9ebe6cff7595c1d2bc25f6ba86633f0f6bbc87f4143c0c157257876",
-    "lastHarvestedAt": "2026-11-25T05:54:35.108Z",
+    "contentHash": "20044ab61070f3a1924dfeae15231c802824008f632fe6590b8a60e2936827ca",
+    "lastHarvestedAt": "2026-11-26T13:55:13.985Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "410c10f3",
+    "sourceVersion": "c330d437",
     "license": "Apache-2.0",
-    "contentHash": "26783d36fa73f82ab8c903ace32d51c327a4e68461ecff443bc7600d4e42ff49",
-    "lastHarvestedAt": "2026-11-26T08:57:35.663Z",
+    "contentHash": "29ba5ab778e3f53023141dfe425605525dd9f9c37e2b2e9bc55cd5078b50b7ec",
+    "lastHarvestedAt": "2026-11-26T13:55:25.116Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "bdc96af9",
+    "sourceVersion": "c826f8f7",
     "license": "MIT",
-    "contentHash": "1ef51afcf4650aff2ca063572a5c3cf2f5e0d0af675af220d84f58d3f3adfd53",
-    "lastHarvestedAt": "2026-11-25T12:39:24.234Z",
+    "contentHash": "fae6131f9a9bca6a2e140bd177c35f805534f4e98c73ebdd56f37150056ef922",
+    "lastHarvestedAt": "2026-11-26T13:55:27.425Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -12163,10 +12163,10 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiftHackZ/SDAI-KMP",
-    "sourceVersion": "30461ed9",
+    "sourceVersion": "7d074972",
     "license": "AGPL-3.0",
-    "contentHash": "7d894040763e6a9c06b2deb56ecc4c6c10f8487791d46503c32c2fd117fe7bcf",
-    "lastHarvestedAt": "2026-11-24T03:33:30.273Z",
+    "contentHash": "a2f2e44c1f0e06e7b833d81c0c970fbc32cd4ae9c3331901f7644f92e4a59ba6",
+    "lastHarvestedAt": "2026-11-26T13:55:18.968Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
   },
   "qybaihe-bla": {

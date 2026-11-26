@@ -4,24 +4,24 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "410c10f3",
+  "source_version": "c330d437",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T08:57:35.912Z",
+  "timestamp": "2026-11-26T13:55:25.343Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `410c10f3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T08:57:35.912Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `c330d437`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T13:55:25.343Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cilium/cilium:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T08:57:34.427Z  
+> **Harvest Timestamp**: 2026-11-26T13:55:23.996Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25917 stars
+- **Stars / Engagement**: 25919 stars
 
 ---
 
@@ -1273,13 +1273,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #50280** (2026-11-26): **ci: Read the Hubble CLI job's kind config from KIND_CONFIG**
+  *Symptoms*: The Hubble CLI integration test has always declared kind_config at the workflow level, but passes ${{ env.KIND_CONFIG }} to helm/kind-action. The env context is case sensitive, so the expression expands to the empty string and kind creates its default single-node cluster with kindnet. Cilium installs on top of it and both IPAMs then hand out addresses from 10.244.0.0/24. kindnet wires hubble-relay sequentially before Cilium's CNI config exists, while Cilium picks its router IP at random among 254 addresses. In 1 run out of 254, cilium_host takes the relay's address and its local route shadows the pod's route, so the kubelet probes and DNS replies for the relay reach the host stack. The relay never connects to hubble-peer and `cilium status --wait` gives up after 5 minutes:    Deployment             hubble-relay             Desired: 1, Unavailable: 1/1   Errors:                hubble-relay       hubble-relay    1 pods of Deployment hubble-relay are not ready  This commit renames the key to KIND_CONFIG, the spelling the other kind workflows use. .github/kind-config.yaml then applies, so the cluster comes up without a CNI on the control-plane and worker it declares, and Cilium is the only IPAM on each node.  This PR was prepared with AIL:3. I personally checked the kind-action inputs in run 37774557276.  Fixes: bc294a83d5a1 ("Add hubble CLI integration tests") 
+
 - **Issue #50268** (2026-11-25): **.github: don't use ubuntu-slim for labeling External Contributions**
   *Symptoms*: This part needs to run a `docker pull`, which doesn't seem to work from the slim runner. See for instance https://github.com/cilium/cilium/actions/runs/45520933278/job/138892286504?pr=50263  Fixes: 1e538a99c38d (".github: Run labeler on ubuntu-slim")
-  **Post-Mortem & Fix Analysis**:
-  > /test
-
-- **Issue #50266** (2026-11-26): **[v1.19] loadbalancer: preserve sockets to shared live backends**
-  *Symptoms*:  * [ ] #49936  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  49936 ```
   **Post-Mortem & Fix Analysis**:
   > /test
 
@@ -1298,410 +1296,154 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `410c10f3` (2026-11-12)
-**Commit Message**: maps/egressmap: leverage map registry to configure and create policy maps
+### Incident Patch 1: `c330d437` (2026-10-12)
+**Commit Message**: ci: Read the Hubble CLI job's kind config from KIND_CONFIG
 
-This lets us get rid of the corresponding `EGRESS_POLICY_MAP_SIZE` C
-macro that used to represent the number of max entries for
-`cilium_egress_gw_policy_v4_v2` and `cilium_egress_gw_policy_v6`.
+The Hubble CLI integration test has always declared kind_config at the
+workflow level, but passes ${{ env.KIND_CONFIG }} to helm/kind-action.
+The env context is case sensitive, so the expression expands to the
+empty string and kind creates its default single-node cluster with
+kindnet. Cilium installs on top of it and both IPAMs then hand out
+addresses from 10.244.0.0/24. kindnet wires hubble-relay sequentially
+before Cilium's CNI config exists, while Cilium picks its router IP at
+random among 254 addresses. In 1 run out of 254, cilium_host takes the
+relay's address and its local route shadows the pod's route, so the
+kubelet probes and DNS replies for the relay reach the host stack. The
+relay never connects to hubble-peer and `cilium status --wait` gives up
+after 5 minutes:
 
-Flags and max entries are configured by leveraging the
-`MapRegistry.Modify()` API. The C code retains
-`BPF_F_NO_PREALLOC | BPF_F_RDONLY_PROG_COND` as default map flags.
+  Deployment             hubble-relay             Desired: 1, Unavailable: 1/1
+  Errors:                hubble-relay       hubble-relay    1 pods of Deployment hubble-relay are not ready
 
-Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
+This commit renames the key to KIND_CONFIG, the spelling the other kind
+workflows use. .github/kind-config.yaml then applies, so the cluster
+comes up without a CNI on 
 
-**File**: `bpf/lib/egress_gateway.h` (modified, +2/-2)
+**File**: `.github/workflows/hubble-cli-integration-test.yaml` (modified, +1/-1)
 ```diff
-@@ -47,7 +47,7 @@ struct {
- 	__type(key, struct egress_gw_policy_key);
- 	__type(value, struct egress_gw_policy_entry_v2);
- 	__uint(pinning, LIBBPF_PIN_BY_NAME);
--	__uint(max_entries, EGRESS_POLICY_MAP_SIZE);
-+	__uint(max_entries, 16384);
- 	__uint(map_flags, BPF_F_NO_PREALLOC | BPF_F_RDONLY_PROG_COND);
- } cilium_egress_gw_policy_v4_v2 __section_maps_btf;
+@@ -49,7 +49,7 @@ concurrency:
+   cancel-in-progress: true
  
-@@ -56,7 +56,7 @@ struct {
- 	__type(key, struct egress_gw_policy_key6);
- 	__type(value, struct egress_gw_policy_entry6);
- 	__uint(pinning, LIBBPF_PIN_BY_NAME);
--	__uint(max_entries, EGRESS_POLICY_MAP_SIZE);
-+	__uint(max_entries, 16384);
- 	__uint(map_flags, BPF_F_NO_PREALLOC | BPF_F_RDONLY_PROG_COND);
- } cilium_egress_gw_policy_v6 __section_maps_btf;
+ env:
+-  kind_config: .github/kind-config.yaml
++  KIND_CONFIG: .github/kind-config.yaml
  
-```
-
-**File**: `bpf/node_config.h` (modified, +0/-1)
-```diff
-@@ -28,7 +28,6 @@
- #define CILIUM_LB_MAGLEV_MAP_MAX_ENTRIES	65536
- #define CILIUM_LB_SKIP_MAP_MAX_ENTRIES		100
- #define IPCACHE_MAP_SIZE 512000
--#define EGRESS_POLICY_MAP_SIZE 16384
- 
- #define LB4_SRC_RANGE_MAP_SIZE	1000
- #define LB6_SRC_RANGE_MAP_SIZE	1000
-```
-
-**File**: `pkg/egressgateway/manager_privileged_test.go` (modified, +20/-2)
-```diff
-@@ -33,6 +33,7 @@ import (
- 	k8sTypes "github.com/cilium/cilium/pkg/k8s/types"
- 	"github.com/cilium/cilium/pkg/labels"
- 	"github.com/cilium/cilium/pkg/maps/egressmap"
-+	"github.com/cilium/cilium/pkg/maps/registry"
- 	"github.com/cilium/cilium/pkg/node/addressing"
- 	nodeTypes "github.com/cilium/cilium/pkg/node/types"
- 	"github.com/cilium/cilium/pkg/option"
-@@ -143,6 +144,22 @@ type EgressGatewayTestSuite struct {
- 	sysctl    sysctl.Sysctl
- }
- 
-+func newTestRegistry(tb testing.TB, config egressmap.PolicyConfig) *registry.MapRegistry {
-+	var reg *registry.MapRegistry
-+	h := hive.New(
-+		cell.Config(config),
-+		registry.Cell,
-+		cell.Invoke(func(r *registry.MapRegistry) {
-+			reg = r
-+		}),
-+		egressmap.ConfigurePolicyMapsCell,
-+	)
-+	logger := hivetest.Logger(tb)
-+	require.NoError(tb, h.Start(logger, context.TODO()))
-+	tb.Cleanup(func() { require.NoError(tb, h.Stop(logger, context.TODO())) })
-+	return reg
-+}
-+
- func setupEgressGatewayTestSuite(t *testing.T) *EgressGatewayTestSuite {
- 	testutils.PrivilegedTest(t)
- 	logger := hivetest.Logger(t)
-@@ -161,8 +178,9 @@ func setupEgressGatewayTestSuite(t *testing.T) *EgressGatewayTestSuite {
- 	k.sysctl = sysctl.NewDirectSysctl(afero.NewOsFs(), "/proc")
- 
- 	lc := hivetest.Lifecycle(t)
--	policyMap4V2 := egressmap.CreatePrivatePolicyMap4V2(lc, nil, egressmap.DefaultPolicyConfig)
--	policyMap6 := egressmap.CreatePrivatePolicyMap6(lc, nil, egressmap.DefaultPolicyConfig)
-+	mapRegistry := newTestRegistry(t, egressmap.DefaultPolicyConfig)
-+	policyMap4V2 := egressmap.CreatePrivatePolicyMap4V2(lc, mapRegistry, nil)
-+	policyMap6 := egressmap.CreatePrivatePolicyMap6(lc, mapRegistry, nil)
- 
- 	var (
- 		db          *statedb.DB
-```
-
-**File**: `pkg/egressgateway/script_test.go` (modified, +3/-1)
-```diff
-@@ -36,6 +36,7 @@ import (
- 	"github.com/cilium/cilium/pkg/labels"
- 	"github.com/cilium/cilium/pkg/loadbalancer"
- 	"github.com/cilium/cilium/pkg/maps/egressmap"
-+	"github.com/cilium/cilium/pkg/maps/registry"
- 	"github.com/cilium/cilium/pkg/metrics"
- 	"github.com/cilium/cilium/pkg/monitor/agent"
- 	"github.com/cilium/cilium/pkg/node"
-@@ -64,7 +65,7 @@ func TestPrivilegedScripts(t *testing.T) {
- 				daemonk8s.ResourcesCell,
- 				k8sTables.NamespaceTableCell,
- 				agent.Cell,
--
-+				registry.Cell,
- 				Cell,
- 				sysctl.Cell,
- 				tables.NodeAddressCell,
-@@ -166,6 +167,7 @@ var testCell = cell.Group(
- 		egressmap.CreatePrivatePolicyMap4V2,
- 		egressmap.CreatePrivatePolicyMap6,
- 	),
-+	egressmap.ConfigurePolicyMapsCell,
- )
- 
- type mockNodeSync struct{}
-```
-
-**File**: `pkg/maps/egressmap/egress.go` (modified, +4/-0)
-```diff
-@@ -5,9 +5,13 @@ package egressmap
- 
- import "github.com/cilium/hive/cell"
- 
-+// ConfigurePolicyMapsCell is exported to make policy maps configurable from tests.
-+var ConfigurePolicyMapsCell = cell.Invoke(configurePolicyMaps)
-+
- var Cell = cell.Module(
- 	"egressmaps",
- 	"Egressmaps provide access to the egress gateway datapath maps",
- 	cell.Config(DefaultPolicyConfig),
- 	cell.Provide(createPolicyMaps),
-+	ConfigurePolicyMapsCell,
- )
-```
-
-**File**: `pkg/maps/egressmap/egress_test.go` (modified, +2/-1)
-```diff
-@@ -9,10 +9,11 @@ import (
- 	"github.com/cilium/hive/hivetest"
- 
- 	"github.com/cilium/cilium/pkg/hive"
-+	mapregistry "github.com/cilium/cilium/pkg/maps/registry"
- )
- 
- func TestCell(t *testing.T) {
--	err := hive.New(Cell).Populate(hivetest.Logger(t))
-+	err := hive.New(mapregistry.Cell, Cell).Populate(hivetest.Logger(t))
- 	if err != nil {
- 		t.Fatal(err)
- 	}
-```
-
-**File**: `pkg/maps/egressmap/policy.go` (modified, +65/-38)
-```diff
-@@ -15,7 +15,7 @@ import (
- 	"golang.org/x/sys/unix"
- 
- 	"github.com/cilium/cilium/pkg/bpf"
--	"github.com/cilium/cilium/pkg/datapath/linux/config/defines"
-+	mapregistry "github.com/cilium/cilium/pkg/maps/registry"
- 	"github.com/cilium/cilium/pkg/metrics"
- 	"github.com/cilium/cilium/pkg/option"
- 	"github.com/cilium/cilium/pkg/types"
-@@ -110,6 +110,7 @@ type createPolicyMapsParams struct {
- 	Lifecycle cell.Lifecycle
- 	*option.DaemonConfig
- 	PolicyConfig
-+	MapRegistry     *mapregistry.MapRegistry
- 	MetricsRegistry *metrics.Registry
- }
- 
-@@ -118,97 +119,123 @@ func createPolicyMaps(in createPolicyMapsParams) (out struct {
- 
- 	IPv4MapV2 bpf.MapOut[PolicyMap4V2]
- 	IPv6Map   bpf.MapOut[PolicyMap6]
--	defines.NodeOut
- }) {
--	out.NodeDefines = map[string]string{
--		"EGRESS_POLICY_MAP_SIZE": fmt.Sprint(in.EgressGatewayPolicyMapMax),
--	}
--
- 	if !in.EnableEgressGateway {
- 		return
- 	}
- 
- 	if in.EnableIPv4 {
--		m := createPolicyMap4V2(in.Lifecycle, in.MetricsRegistry, in.PolicyConfig, ebpf.PinByName)
-+		m := createPolicyMap4V2(in.Lifecycle, in.MapRegistry, in.MetricsRegistry, ebpf.PinByName)
- 		out.IPv4MapV2 = bpf.NewMapOut(PolicyMap4V2(m))
- 	}
- 
- 	if in.EnableIPv6 {
--		m := createPolicyMap6(in.Lifecycle, in.MetricsRegistry, in.PolicyConfig, ebpf.PinByName)
-+		m := createPolicyMap6(in.Lifecycle, in.MapRegistry, in.MetricsRegistry, ebpf.PinByName)
- 		out.IPv6Map = bpf.NewMapOut(PolicyMap6(m))
- 	}
- 
- 	return
- }
- 
-+func configurePolicyMaps(reg *mapregistry.MapRegistry, cfg PolicyConfig) error {
-+	flags := bpf.GetMapMemoryFlags(ebpf.LPMTrie) | unix.BPF_F_RDONLY_PROG
-+	maxEntries := uint32(cfg.EgressGatewayPolicyMapMax)
-+	if err := configurePolicyMap(reg, PolicyMapName4V2, flags, maxEntries); err != nil {
-+		return err
-+	}
-+	if err := configurePolicyMap(reg, PolicyMapName6, flags, maxEntries); err != nil {
-+		return err
-+	}
-+	return nil
-+}
-+
-+func configurePolicyMap(reg *mapregistry.MapRegistry, mapName string, flags,
-+	maxEntries uint32) error {
-+	if err := reg.Modify(mapName, func(patch *mapregistry.MapSpecPatch) {
-+		patch.Flags = flags
-+		patch.MaxEntries = maxEntries
-+	}); err != nil {
-+		return fmt.Errorf("error setting %s map flags and max entries: %w", mapName, err)
-+	}
-+	return nil
-+}
-+
- // CreatePrivatePolicyMap4V2 creates an unpinned IPv4 policy map.
- //
- // Useful for testing.
--func CreatePrivatePolicyMap4V2(lc cell.Lifecycle, registry *metrics.Registry, cfg PolicyConfig) PolicyMap4V2 {
--	return createPolicyMap4V2(lc, registry, cfg, ebpf.PinNone)
-+func CreatePrivatePolicyMap4V2(lc cell.Lifecycle, mapRegistry *mapregistry.MapRegistry,
-+	metricsRegistry *metrics.Registry) PolicyMap4V2 {
-+	return createPolicyMap4V2(lc, mapRegistry, metricsRegistry, ebpf.PinNone)
- }
- 
- // CreatePrivatePolicyMap6 creates an unpinned IPv6 policy map.
- //
- // Useful for testing.
--func CreatePrivatePolicyMap6(lc cell.Lifecycle, registry *metrics.Registry, cfg PolicyConfig) PolicyMap6 {
--	return createPolicyMap6(lc, registry, cfg, ebpf.PinNone)
-+func CreatePrivatePolicyMap6(lc cell.Lifecycle, mapRegistry *mapregistry.MapRegistry,
-+	metricsRegistry *metrics.Registry) PolicyMap6 {
-+	return createPolicyMap6(lc, mapRegistry, metricsRegistry, ebpf.PinNone)
- }
- 
--func createPolicyMap4V2(lc cell.Lifecycle, registry *metrics.Registry, cfg PolicyConfig, pinning ebpf.PinType) *policyMap4V2 {
--	m := bpf.NewMap(
--		PolicyMapName4V2,
--		ebpf.LPMTrie,
--		&EgressPolicyKey4{},
--		&EgressPolicyVal4V2{},
--		cfg.EgressGatewayPolicyMapMax,
--		unix.BPF_F_RDONLY_PROG,
--	).WithPressureMetric(registry)
-+func createPolicyMap4V2(lc cell.Lifecycle, mapRegistry *mapregistry.MapRegistry,
-+	metricsRegistry *metrics.Registry, pinning ebpf.PinType) *policyMap4V2 {
-+	ipv4PolicyMap := &policyMap4V2{}
- 
- 	lc.Append(cell.Hook{
- 		OnStart: func(cell.HookContext) error {
-+			var err error
-+			if ipv4PolicyMap.m, err = bpf.NewMapFromRegistry(mapRegistry, PolicyMapName4V2,
-+				&EgressPolicyKey4{}, &EgressPolicyVal4V2{}); err != nil {
-+				return fmt.Errorf("pull %s map from registry: %w", PolicyMapName4V2, err)
-+			}
-+			ipv4PolicyMap.m.WithPressureMetric(metricsRegistry)
- 			switch pinning {
- 			case ebpf.PinNone:
--				return m.CreateUnpinned()
-+				return ipv4PolicyMap.m.CreateUnpinned()
- 			case ebpf.PinByName:
--				return m.OpenOrCreate()
-+				return ipv4PolicyMap.m.OpenOrCreate()
- 			}
- 			return fmt.Errorf("received unexpected pin type: %d", pinning)
- 		},
- 		OnStop: func(cell.HookContext) error {
--			return m.Close()
-+			if err := ipv4PolicyMap.m.Close(); err != nil {
-+				return fmt.Errorf("close %s map: %w", PolicyMapName4V2, err)
-+			}
-+			return nil
- 		},
- 	})
- 
--	return &policyMap4V2{m}
-+	return ipv4PolicyMap
- }
- 
--func createPolicyMap6(lc cell.Lifecycle, registry *metrics.Registry, cfg PolicyConfig, pinning ebpf.PinType) *policyMap6 {
--	m := bpf.NewMap(
--		PolicyMapName6,
--		ebpf.LPMTrie,
--		&EgressPolicyKey6{},
--		&EgressPolicyVal6{},
--		cfg.EgressGatewayPolicyMapMax,
--		unix.BPF_F_RDONLY_PROG,
--	).WithPressureMetric(registry)
-+func createPolicyMap6(lc cell.Lifecy
-```
-
-**File**: `pkg/maps/egressmap/policy_test.go` (modified, +26/-2)
-```diff
-@@ -4,18 +4,40 @@
- package egressmap
- 
- import (
-+	"context"
- 	"net/netip"
- 	"testing"
- 
- 	"github.com/cilium/ebpf"
- 	"github.com/cilium/ebpf/rlimit"
-+	"github.com/cilium/hive/cell"
- 	"github.com/cilium/hive/hivetest"
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- 
- 	"github.com/cilium/cilium/pkg/bpf"
-+	"github.com/cilium/cilium/pkg/hive"
-+	mapregistry "github.com/cilium/cilium/pkg/maps/registry"
- 	"github.com/cilium/cilium/pkg/testutils"
- )
- 
-+func newTestRegistry(tb testing.TB, cfg PolicyConfig) *mapregistry.MapRegistry {
-+	var reg *mapregistry.MapRegistry
-+	h := hive.New(
-+		mapregistry.Cell,
-+		cell.Invoke(func(r *mapregistry.MapRegistry) error {
-+			reg = r
-+			return configurePolicyMaps(r, cfg)
-+		}),
-+	)
-+
-+	logger := hivetest.Logger(tb)
-+	require.NoError(tb, h.Start(logger, context.TODO()))
-+	tb.Cleanup(func() { require.NoError(tb, h.Stop(logger, context.TODO())) })
-+
-+	return reg
-+}
-+
- func TestPrivilegedPolicyMap(t *testing.T) {
- 	testutils.PrivilegedTest(t)
- 
-@@ -24,7 +46,8 @@ func TestPrivilegedPolicyMap(t *testing.T) {
- 	assert.NoError(t, rlimit.RemoveMemlock())
- 
- 	t.Run("IPv4 policies", func(t *testing.T) {
--		egressPolicyMap := createPolicyMap4V2(hivetest.Lifecycle(t), nil, DefaultPolicyConfig, ebpf.PinNone)
-+		egressPolicyMap := createPolicyMap4V2(hivetest.Lifecycle(t),
-+			newTestRegistry(t, DefaultPolicyConfig), nil, ebpf.PinNone)
- 
- 		sourceIP1 := netip.MustParseAddr("1.1.1.1")
- 		sourceIP2 := netip.MustParseAddr("1.1.1.2")
-@@ -73,7 +96,8 @@ func TestPrivilegedPolicyMap(t *testing.T) {
- 	})
- 
- 	t.Run("IPv6 policies", func(t *testing.T) {
--		egressPolicyMap := createPolicyMap6(hivetest.Lifecycle(t), nil, DefaultPolicyConfig, ebpf.PinNone)
-+		egressPolicyMap := createPolicyMap6(hivetest.Lifecycle(t),
-+			newTestRegistry(t, DefaultPolicyConfig), nil, ebpf.PinNone)
- 
- 		sourceIP1 := netip.MustParseAddr("2001:db8:1::1")
- 		sourceIP2 := netip.MustParseAddr("2001:db8:1::2")
+ jobs:
+   echo-inputs:
 ```
 
 ---
 
-### Incident Patch 2: `b53e87fd` (2026-11-11)
-**Commit Message**: bpf/map: honor will to not pin in `openOrCreate()`
+### Incident Patch 2: `f631e869` (2026-11-19)
+**Commit Message**: loadbalancer/redirectpolicy: reject addressMatchers with unspecified IPs
 
-`openOrCreate()` sets `m.spec.Pinning` to `ebpf.PinByName` in case the
-provided `pin` boolean value is true; however, it leaves
-`m.spec.Pinning` untouched in case it is false. If the original spec
-set `m.spec.Pining` to `ebpf.PinByName`, a call to
-`openOrCreate(false)` would ignore the user will and pin the map. Set
-`m.spec.Pinning` to `ebpf.PinNone` allows `OpenOrCreateMap()` to have
-the correct information and honor the user request.
+Currently, an addressMatcher LRP configured on an unspecified IP address
+would be accepted, and programmed into the data path, but the socketLB
+wildcard lookup would ignore the entry due to type mismatch.
 
-Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
+This commit modifies the LRP parser to reject such an LRP, and updates
+script tests to verify the behaviour.
 
-**File**: `pkg/bpf/map_linux.go` (modified, +1/-0)
+Signed-off-by: Alasdair McWilliam <[REDACTED_EMAIL]>
+
+**File**: `pkg/loadbalancer/redirectpolicy/redirectpolicy.go` (modified, +5/-1)
 ```diff
-@@ -642,6 +642,7 @@ func (m *Map) openOrCreate(pin bool) error {
- 		m.spec.InnerMap.Flags |= GetMapMemoryFlags(m.spec.InnerMap.Type)
- 	}
+@@ -182,7 +182,11 @@ func getSanitizedLocalRedirectPolicy(cfg Config, log *slog.Logger, name, namespa
+ 			return nil, fmt.Errorf("invalid address matcher IP %v: %w", addrMatcher.IP, err)
+ 		}
  
-+	m.spec.Pinning = ebpf.PinNone
- 	if pin {
- 		m.spec.Pinning = ebpf.PinByName
- 	}
+-		if !cfg.AddressAllowed(addrCluster.Addr()) {
++		addr := addrCluster.Addr()
++		if addr.IsUnspecified() {
++			return nil, fmt.Errorf("unspecified address %q not allowed in AddressMatcher", addrMatcher.IP)
++		}
++		if !cfg.AddressAllowed(addr) {
+ 			return nil, fmt.Errorf("address %q in AddressMatcher disallowed by --"+AddressMatcherCIDRsName, addrMatcher.IP)
+ 		}
+ 
+```
+
+**File**: `pkg/loadbalancer/redirectpolicy/testdata/address-malformed.txtar` (modified, +51/-1)
+```diff
+@@ -1,4 +1,5 @@
+-# Verifies that malformed AddressMatcher LRPs are not applied
++# Verifies that malformed AddressMatcher LRPs are not applied. This
++# includes unspecified addresses.
+ 
+ hive start
+ 
+@@ -18,6 +19,13 @@ k8s/add lrp-addr-malformed.yaml
+ # Tables and maps should still be empty.
+ * db/empty services frontends backends localredirectpolicies
+ 
++# Unspecified IPv4 and IPv6 addressMatchers should also be rejected.
++k8s/add lrp-addr-unspecified-v4.yaml lrp-addr-unspecified-v6.yaml pod.yaml
++* db/empty services frontends backends localredirectpolicies
++
++k8s/delete lrp-addr-unspecified-v4.yaml lrp-addr-unspecified-v6.yaml pod.yaml
++* db/empty services frontends backends localredirectpolicies
++
+ -- lrp-addr-malformed.yaml --
+ apiVersion: "cilium.io/v2"
+ kind: CiliumLocalRedirectPolicy
+@@ -46,6 +54,48 @@ spec:
+         name: "test1"
+         protocol: TCP
+ 
++-- lrp-addr-unspecified-v4.yaml --
++apiVersion: "cilium.io/v2"
++kind: CiliumLocalRedirectPolicy
++metadata:
++  name: "lrp-addr-unspecified-v4"
++  namespace: test
++spec:
++  redirectFrontend:
++    addressMatcher:
++      ip: "0.0.0.0"
++      toPorts:
++        - port: "5050"
++          protocol: TCP
++  redirectBackend:
++    localEndpointSelector:
++      matchLabels:
++        app: proxy
++    toPorts:
++      - port: "80"
++        protocol: TCP
++
++-- lrp-addr-unspecified-v6.yaml --
++apiVersion: "cilium.io/v2"
++kind: CiliumLocalRedirectPolicy
++metadata:
++  name: "lrp-addr-unspecified-v6"
++  namespace: test
++spec:
++  redirectFrontend:
++    addressMatcher:
++      ip: "::"
++      toPorts:
++        - port: "5050"
++          protocol: TCP
++  redirectBackend:
++    localEndpointSelector:
++      matchLabels:
++        app: proxy
++    toPorts:
++      - port: "80"
++        protocol: TCP
++
+ -- lrp-addr.yaml --
+ apiVersion: "cilium.io/v2"
+ kind: CiliumLocalRedirectPolicy
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50280** (2026-11-26): ci: Read the Hubble CLI job's kind config from KIND_CONFIG (@aanm)
 - **PR #50268** (2026-11-25): .github: don't use ubuntu-slim for labeling External Contributions (@julianwiedmann)
 - **PR #50266** (2026-11-26): [v1.19] loadbalancer: preserve sockets to shared live backends (@ysksuzuki)
 - **PR #50264** (2026-11-25): [v1.18] proxy: Update quay.io/cilium/cilium-envoy to latest v1.39.x (@sayboras)
 - **PR #50263** (closed): Update quay.io/cilium/cilium-envoy Docker tag to v1.39.6-1795562505-2cd7b93ce3f7c9645c511c84c494e47e264de4e1 (v1.18) - autoclosed (@cilium-renovate[bot])
 - **PR #50258** (2026-11-24): Update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
-- **PR #50257** (2026-11-25): Update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
 
 ---
 
@@ -1721,33 +1463,31 @@ Signed-off-by: Leonardo Di Giovanna <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. maps/egressmap: leverage map registry to configure and create policy maps
+## X. ci: Read the Hubble CLI job's kind config from KIND_CONFIG
 
 **RULE**:
-When implementing operations in `bpf/lib/egress_gateway.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/hubble-cli-integration-test.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `410c10f3`: maps/egressmap: leverage map registry to configure and create policy maps. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c330d437`: ci: Read the Hubble CLI job's kind config from KIND_CONFIG. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/lib/egress_gateway.h`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/hubble-cli-integration-test.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	__uint(max_entries, 16384);
-	__uint(max_entries, 16384);
+  KIND_CONFIG: .github/kind-config.yaml
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	__uint(max_entries, EGRESS_POLICY_MAP_SIZE);
-	__uint(max_entries, EGRESS_POLICY_MAP_SIZE);
+  kind_config: .github/kind-config.yaml
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `410c10f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c330d437` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:44:59.635Z",
+  "last_updated": "2026-11-26T13:55:33.311Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -288,7 +288,7 @@
       "staged_for_review": 1
     },
     "automattic-harper-learnings.md": {
-      "processed_at": "2026-11-25T05:54:46.575Z",
+      "processed_at": "2026-11-26T13:55:31.065Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -303,7 +303,7 @@
       "staged_for_review": 0
     },
     "shifthackz-sdai-kmp-learnings.md": {
-      "processed_at": "2026-11-24T03:33:36.025Z",
+      "processed_at": "2026-11-26T13:55:32.407Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1978,7 +1978,7 @@
       "staged_for_review": 1
     },
     "hf-taichuai-zdtaichu5.0-9b-learnings.md": {
-      "processed_at": "2026-11-22T20:46:58.299Z",
+      "processed_at": "2026-11-26T13:55:31.966Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3978,7 +3978,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4533,
+  "total_dossiers_evaluated": 4536,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3420
+  "total_staged_for_review": 3422
 }
