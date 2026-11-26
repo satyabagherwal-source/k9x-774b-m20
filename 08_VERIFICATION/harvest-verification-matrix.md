@@ -13159,3 +13159,7 @@
 | `CYCLE-20261125-PF2J` | `2026-11-25T23:41:38.059Z` | `nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | Yes (`08325155...`) |
 | `CYCLE-20261125-PJX3` | `2026-11-25T23:41:44.343Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10561` | Yes (`feed1273...`) |
 | `CYCLE-20261125-06JS` | `2026-11-25T23:50:00.232Z` | `ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-coder-gguf-learnings.md` | Yes (`34be4abc...`) |
+| `CYCLE-20261125-BZHO` | `2026-11-25T23:59:10.956Z` | `PrunaAI/P-Image-OSS-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | Yes (`49260281...`) |
+| `CYCLE-20261125-C4KQ` | `2026-11-25T23:59:17.546Z` | `Kianuni/Erosion-CN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10562` | Yes (`ce887e46...`) |
+| `CYCLE-20261125-C8NS` | `2026-11-25T23:59:22.840Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10563` | Yes (`9fa33049...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T00:00:02.900Z` | `hf-prunaai-p-h3-image-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-760DF4AB` [Domain D] | Yes (`82c69841...`) |

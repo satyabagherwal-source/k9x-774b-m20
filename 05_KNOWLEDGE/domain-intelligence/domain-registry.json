@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-25T23:50:13.816Z",
-  "total_records": 2689,
+  "last_updated": "2026-11-26T00:00:06.740Z",
+  "total_records": 2693,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1012,
+      "total": 1014,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1084,7 +1084,9 @@
         "DOM-D-67959B26",
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-labs-image-30b-a3b-learnings-",
         "DOM-D-0A1336C6",
-        "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-comfy-core-invariants",
+        "DOM-D-760DF4AB"
       ]
     },
     "E": {
@@ -1215,7 +1217,7 @@
       ]
     },
     "G": {
-      "total": 465,
+      "total": 467,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1681,7 +1683,9 @@
         "domain_intelligence-architecture-intelligence-rmax-scrapy-redis-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-authzed-spicedb-core-invariants",
         "domain_intelligence-architecture-intelligence-authzed-spicedb-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-pimalaya-himalaya-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-pimalaya-himalaya-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-core-invariants",
+        "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10538,8 +10542,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "aec89716ea3270db45f126ecdb881c28f92aef5a99f775fb3e297e570a527922",
-      "created_at": "2026-11-25T12:56:41.486Z"
+      "content_hash": "1e8fcd1b797f0529bd142dfba00de2f694cd7d9581842be37156e2f7a6345a78",
+      "created_at": "2026-11-25T23:59:23.416Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -10694,8 +10698,8 @@
       "title": "Research & Knowledge Intelligence: hf-prunaai-p-h3-image-comfy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-comfy-learnings-research-knowledge-intelligence-hf-prunaai.md",
       "repository": "hf-prunaai-p-h3-image-comfy-learnings",
-      "content_hash": "210b5382b37261ce5e81f74648d3256550e0b2716c2cb643dcb5e1d5efa9e7d4",
-      "created_at": "2026-11-18T06:58:00.554Z"
+      "content_hash": "52e4974e0b2d11d8d8847c8d5ceaf294f9e9ff1f5e78fa1f0b2be683d2b73c4f",
+      "created_at": "2026-11-26T00:00:03.273Z"
     },
     "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants",
@@ -27685,8 +27689,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "c1dd0c53378d174b40e57649f4b9e88370fe88499ee889e61566818951802d47",
-      "created_at": "2026-11-25T12:56:47.354Z"
+      "content_hash": "028d9427d2d140de1f3f500fb7124815c59429391de743a85f20fb511966afb7",
+      "created_at": "2026-11-26T00:00:06.740Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -45342,6 +45346,75 @@
       "repository": "hf-krafton-raon-1-mini-learnings",
       "content_hash": "cb9b3c103167bf2b8ab2ee7d801a4b8281b6439e37f1003751dbbfc70ed0a66d",
       "created_at": "2026-11-25T23:03:04.092Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-comfy-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: PrunaAI/P-Image-OSS-Comfy Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-comfy-research-knowledge-intelligence-prunaai-p-image-oss-.md",
+      "repository": "PrunaAI/P-Image-OSS-Comfy",
+      "content_hash": "b6baaa633753ca3ae6780c57761de6c24382c06a93a5ffa230430c40493d0f6a",
+      "created_at": "2026-11-25T23:59:11.280Z"
+    },
+    "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Kianuni/Erosion-CN Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kianuni-erosion-cn-architecture-intelligence-kianuni-erosion-cn-core-invariants.md",
+      "repository": "Kianuni/Erosion-CN",
+      "content_hash": "b22a410492571da757386718c4c0d19a06caed7c26153155ce85adaf67faef33",
+      "created_at": "2026-11-25T23:59:18.129Z"
+    },
+    "DOM-D-760DF4AB": {
+      "record_id": "DOM-D-760DF4AB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): PrunaAI/P-Image-OSS-Comfy",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/PrunaAI/P-H3-Image-Comfy](https://huggingface.co/PrunaAI/P-H3-Image-Comfy))  \n> **Source Version**: `hf-prunaai-p`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "82c6984173f11332454f8af2bc97cca6f25f7f29a01b0a12e4d24993b1f33c21",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-prunaai-p-h3-image-comfy/hf-prunaai-p-h3-image-comfy-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-25T23:59:26.580Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prunaai-p-h3-image-comfy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-prunaai-p-h3-image-comfy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T00:00:02.848Z"
+    },
+    "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-kianuni-erosion-cn-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kianuni-erosion-cn-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kianuni-erosion-cn-learnings-architecture-intelligence-kianuni-erosion-cn-learni.md",
+      "repository": "kianuni-erosion-cn-learnings",
+      "content_hash": "b9a5195d365eb4bf274f92b1247fd6884c676942cf836cd257e585ea6bacbd80",
+      "created_at": "2026-11-26T00:00:05.521Z"
     }
   }
 }

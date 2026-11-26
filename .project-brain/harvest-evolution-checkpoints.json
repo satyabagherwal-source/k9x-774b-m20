@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:50:14.183Z",
+  "last_updated": "2026-11-26T00:00:07.216Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-25T23:50:13.238Z",
@@ -73,7 +73,7 @@
       "staged_for_review": 1
     },
     "zama-ai-tfhe-rs-learnings.md": {
-      "processed_at": "2026-11-25T12:56:46.745Z",
+      "processed_at": "2026-11-26T00:00:06.036Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2108,7 +2108,7 @@
       "staged_for_review": 1
     },
     "hf-prunaai-p-h3-image-comfy-learnings.md": {
-      "processed_at": "2026-11-22T02:42:32.154Z",
+      "processed_at": "2026-11-26T00:00:02.900Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -3558,7 +3558,7 @@
       "staged_for_review": 0
     },
     "kianuni-erosion-cn-learnings.md": {
-      "processed_at": "2026-11-20T11:09:10.904Z",
+      "processed_at": "2026-11-26T00:00:03.578Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3943,7 +3943,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4284,
-  "total_canonical_promoted": 547,
-  "total_staged_for_review": 3256
+  "total_dossiers_evaluated": 4287,
+  "total_canonical_promoted": 548,
+  "total_staged_for_review": 3258
 }

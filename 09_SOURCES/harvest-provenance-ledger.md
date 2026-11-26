@@ -13192,3 +13192,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-25T23:41:38.066Z |
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `9427b3a2` | Multi-dimensional audit evidence | 2026-11-25T23:41:44.349Z |
 | `learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-25T23:50:00.236Z |
+| `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-25T23:59:10.961Z |
+| `learn-github-kianuni-erosion-cn` | `https://github.com/Kianuni/Erosion-CN` | `094df45d` | Multi-dimensional audit evidence | 2026-11-25T23:59:17.551Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `aba54549` | Multi-dimensional audit evidence | 2026-11-25T23:59:22.845Z |
+| `learn-dom-d-760df4ab` | `project://hf-prunaai-p-h3-image-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | 2026-11-26T00:00:02.900Z |

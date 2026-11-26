@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T06:58:00.459Z",
+  "timestamp": "2026-11-26T00:00:03.122Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-prunaai-p-h3-image-comfy-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-prunaai-p-h3-image-comfy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T06:58:00.459Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:00:03.122Z`  
 > **Learning ID**: `LEARN-EVO-hf-prunaai-p-h3-image-comfy-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-prunaai-p`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T06:57:41.104Z  
+> **Timestamp**: 2026-11-25T23:59:10.304Z  
 > **Learning ID**: `learn-huggingface-prunaai-p-h3-image-comfy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -40,22 +40,22 @@ The following architectural invariants have been empirically discovered and reco
 
 ---
 
-# Forensic Learning Record (Deep Inspection): PrunaAI/P-H3-Image-Comfy
+# Forensic Learning Record (Deep Inspection): PrunaAI/P-Image-OSS-Comfy
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/PrunaAI/P-H3-Image-Comfy](https://huggingface.co/PrunaAI/P-H3-Image-Comfy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:57:40.882Z  
+> **Harvest Timestamp**: 2026-11-25T23:59:10.167Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `PrunaAI/P-H3-Image-Comfy`
+- **Repository / Resource**: `PrunaAI/P-Image-OSS-Comfy`
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1238173 downloads | 473 likes
+- **Stars / Engagement**: 1421674 downloads | 419 likes
 
 ---
 

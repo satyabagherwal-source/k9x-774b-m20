@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T12:56:46.954Z",
+  "timestamp": "2026-11-26T00:00:06.328Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zama-ai-tfhe-rs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zama-ai-tfhe-rs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T12:56:46.954Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:00:06.328Z`  
 > **Learning ID**: `LEARN-EVO-zama-ai-tfhe-rs-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `eaac04df`  
+> **Source Version**: `aba54549`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:56:39.764Z  
+> **Timestamp**: 2026-11-25T23:59:21.406Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:56:39.759Z  
+> **Harvest Timestamp**: 2026-11-25T23:59:21.399Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1963,630 +1963,83 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eaac04df` (2026-11-25)
-**Commit Message**: fix(gpu): support more than 512 radix blocks in partial sum index kernels (#4185)
+### Incident Patch 1: `83659c4c` (2026-11-25)
+**Commit Message**: fix: remove in python ci parser the slab.toml parsing
 
-* fix(gpu): support more than 512 radix blocks in partial sum index kernels
-
-* test(gpu): check sum_ciphertexts on more than 512 radix blocks
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh` (modified, +91/-55)
+**File**: `ci/parse_benchmark_profile.py` (modified, +2/-35)
 ```diff
-@@ -78,84 +78,100 @@ static __global__ void radix_vec_to_columns(uint32_t *const *const columns,
-                                             const uint32_t num_radix_blocks,
-                                             const uint32_t num_radix_in_vec) {
+@@ -1,7 +1,6 @@
+ #!/usr/bin/env python3
+ import argparse
+ import sys
+-import tomllib
  
--  const uint32_t idx = threadIdx.x;
--  size_t cnt = 0;
--  for (int i = 0; i < num_radix_in_vec; i++) {
--    size_t ct_id = i * num_radix_blocks + idx;
--    if (degrees[ct_id] != 0) {
--      columns[idx][cnt] = ct_id;
--      ++cnt;
-+  const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
-+  if (idx < num_radix_blocks) {
-+    size_t cnt = 0;
-+    for (int i = 0; i < num_radix_in_vec; i++) {
-+      size_t ct_id = i * num_radix_blocks + idx;
-+      if (degrees[ct_id] != 0) {
-+        columns[idx][cnt] = ct_id;
-+        ++cnt;
-+      }
-     }
-+    columns_counter[idx] = cnt;
-   }
--  columns_counter[idx] = cnt;
+ 
+ BACKEND_MAP = {
+@@ -14,7 +13,7 @@
  }
  
-+// Runs in a single CUDA block: all message PBS indexes must be assigned
-+// (through the shared counter) before the carry ones. Each thread handles the
-+// columns threadIdx.x, threadIdx.x + blockDim.x, ... so that more than 1024
-+// columns are supported.
- template <typename Torus>
- static __global__ void prepare_new_columns_and_pbs_indexes(
-     uint32_t *const *const new_columns, uint32_t *const new_columns_counter,
-     Torus *const pbs_indexes_in, Torus *const pbs_indexes_out,
-     Torus *const lut_indexes, const uint32_t *const *const columns,
--    const uint32_t *const columns_counter, const uint32_t chunk_size) {
-+    const uint32_t *const columns_counter, const uint32_t chunk_size,
-+    const uint32_t num_radix_blocks) {
-   __shared__ uint32_t counter;
  
-   if (threadIdx.x == 0) {
-     counter = 0;
-   }
-   __syncthreads();
+-def parse_profile(profile_string, output_file, slab_toml):
++def parse_profile(profile_string, output_file):
+     parts = profile_string.split("::", 1)
+     if len(parts) != 2:
+         print(
+@@ -50,33 +49,6 @@ def parse_profile(profile_string, output_file, slab_toml):
+     else:
+         profile = profile_name
  
--  const uint32_t base_id = threadIdx.x;
--  const uint32_t column_len = columns_counter[base_id];
+-    with open(slab_toml, "rb") as f:
+-        slab = tomllib.load(f)
 -
--  uint32_t ct_count = 0;
--  for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
--    // those indexes are for message ciphertexts
--    // for message ciphertexts in and out index should be same
--    const uint32_t in_index = columns[base_id][i];
--    new_columns[base_id][ct_count] = in_index;
--    const uint32_t pbs_index = atomicAdd(&counter, 1);
--    pbs_indexes_in[pbs_index] = in_index;
--    pbs_indexes_out[pbs_index] = in_index;
--    lut_indexes[pbs_index] = 0;
--    ++ct_count;
--  }
--  __syncthreads();
+-    available = slab.get("backend", {}).get(slab_backend, {})
+-    if profile not in available:
+-        print(
+-            f"Error: profile '{profile}' not found under [backend.{slab_backend}] in {slab_toml}.\n"
+-            f"Known profiles: {', '.join(sorted(available.keys()))}",
+-            file=sys.stderr,
+-        )
+-        sys.exit(1)
 -
--  if (base_id > 0) {
--    const uint32_t prev_base_id = base_id - 1;
--    const uint32_t prev_column_len = columns_counter[prev_base_id];
+-    entry = available[profile]
+-    expected_hardware = (
+-        entry.get("hardware_name") or entry.get("flavor_name") or entry.get("instance_type")
+-    )
+-    assert expected_hardware is not None, (
+-        f"profile '{profile}' in {slab_toml} has none of 'hardware_name', 'flavor_name' or 'instance_type'"
+-    )
+-    if hardware_name != expected_hardware:
+-        print(
+-            f"Error: hardware '{hardware_name}' does not match expected '{expected_hardware}' "
+-            f"for profile '{profile}' in {slab_toml}.",
+-            file=sys.stderr,
+-        )
+-        sys.exit(1)
 -
--    for (uint32_t i = 0; i + chunk_size <= prev_column_len; i += chunk_size) {
--      // those indexes are for carry ciphertexts
--      // for carry ciphertexts input is same as for message
--      // output will be placed to next block in the column
--      const uint32_t in_index = columns[prev_base_id][i];
--      const uint32_t out_index = columns[prev_base_id][i + 1];
--      new_columns[base_id][ct_count] = out_index;
-+  for (uint32_t base_id = threadIdx.x; base_id < num_radix_blocks;
-+       base_id += blockDim.x) {
-+    const uint32_t column_len = columns_counter[base_id];
-+    uint32_t ct_count = 0;
-+    for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
-+      // those indexes are for message ciphertexts
-+      // for message ciphertexts in and out index should be same
-+      const uint32_t in_index = columns[base_id][i];
-+      new_columns[base_id][ct_count] = in_index;
-       const uint32_t pbs_index = atomicAdd(&counter, 1);
-       pbs_indexes_in[pbs_index] = in_index;
--      pbs_indexes_out[pbs_index] = out_index;
--      lut_indexes[pbs_index] = 1;
-+      pbs_indexes_out[pbs_index] = in_index;
-+      lut_indexes[pbs_index] = 0;
-       ++ct_count;
-     }
-   }
-+  __syncthreads();
- 
--  const uint32_t start_index = column_len - column_len % chunk_size;
--  for (uint32_t i = start_index; i < column_len; ++i) {
--    new_columns[base_id][ct_count] = columns[base_id][i];
--    ++ct_count;
--  }
-+  for (uint32_t base_id = threadIdx.x; base_id < num_radix_blocks;
-+       base_id += blockDim.x) {
-+    const uint32_t column_len = columns_counter[base_id];
-+    // number of message ciphertexts written to this column above
-+    uint32_t ct_count = column_len / chunk_size;
-+    if (base_id > 0) {
-+      const uint32_t prev_base_id = base_id - 1;
-+      const uint32_t prev_column_len = columns_counter[prev_base_id];
-+
-+      for (uint32_t i = 0; i + chunk_size <= prev_column_len; i += chunk_size) {
-+        // those indexes are for carry ciphertexts
-+        // for carry ciphertexts input is same as for message
-+        // output will be placed to next block in the column
-+        const uint32_t in_index = columns[prev_base_id][i];
-+        const uint32_t out_index = columns[prev_base_id][i + 1];
-+        new_columns[base_id][ct_count] = out_index;
-+        const uint32_t pbs_index = atomicAdd(&counter, 1);
-+        pbs_indexes_in[pbs_index] = in_index;
-+        pbs_indexes_out[pbs_index] = out_index;
-+        lut_indexes[pbs_index] = 1;
-+  
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_unsigned/test_add.rs` (modified, +38/-0)
-```diff
-@@ -3,17 +3,21 @@ use super::legacy_default_tests::{
-     legacy_default_sum_ciphertexts_vec_test,
- };
- use crate::core_crypto::gpu::{get_number_of_gpus, CudaStreams};
-+use crate::integer::bigint::U4096;
- use crate::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
- use crate::integer::gpu::server_key::radix::tests_signed::GpuMultiDeviceFunctionExecutor;
- use crate::integer::gpu::server_key::radix::tests_unsigned::{
-     create_gpu_parameterized_test, GpuFunctionExecutor,
- };
- use crate::integer::gpu::CudaServerKey;
-+use crate::integer::keycache::KEY_CACHE;
- use crate::integer::server_key::radix_parallel::tests_cases_unsigned::{
-     unchecked_add_assign_test, unchecked_add_test,
- };
-+use crate::integer::{IntegerKeyKind, RadixClientKey};
- use crate::shortint::parameters::test_params::*;
- use crate::shortint::parameters::*;
-+use rand::Rng;
- 
- create_gpu_parameterized_test!(integer_unchecked_add {
-     PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-@@ -44,6 +48,9 @@ create_gpu_parameterized_test!(multi_device_integer_add {
-     TEST_PARAM_GPU_MULTI_BIT_GROUP_3_MESSAGE_2_CARRY_2_KS_PBS_GAUSSIAN_2M64,
- });
- create_gpu_parameterized_test!(integer_sum_ciphertexts_vec);
-+create_gpu_parameterized_test!(integer_sum_ciphertexts_many_blocks {
-+    PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+});
- create_gpu_parameterized_test!(integer_default_overflowing_add);
- create_gpu_parameterized_test!(multi_device_integer_default_overflowing_add);
- 
-@@ -99,6 +106,37 @@ where
-     legacy_default_sum_ciphertexts_vec_test(param, executor);
- }
- 
-+fn integer_sum_ciphertexts_many_blocks<P>(param: P)
-+where
-+    P: Into<TestParameters>,
-+{
-+    let param = param.into();
-+    let (cks, _) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+    let streams = CudaStreams::new_multi_gpu();
-+    let sks = CudaServerKey::new(&cks, &streams);
-+
-+    let mut rng = rand::thread_rng();
-+    let num_ctxts = 16;
-+    let bits_per_block = param.message_modulus().0.ilog2();
-+    for num_blocks in [512, 1024, 2048] {
-+        let cks = RadixClientKey::from((cks.clone(), num_blocks));
-+        let mask = U4096::MAX >> (U4096::BITS - bits_per_block * num_blocks as u32);
-+        let clears: Vec<U4096> = (0..num_ctxts).map(|_| rng.gen::<U4096>() & mask).collect();
-+        let d_ctxts: Vec<CudaUnsignedRadixCiphertext> = clears
-+            .iter()
-+            .map(|&clear| {
-+                CudaUnsignedRadixCiphertext::from_radix_ciphertext(&cks.encrypt(clear), &streams)
-+            })
-+            .collect();
-+
-+        let d_result = sks.sum_ciphertexts(d_ctxts, &streams).unwrap();
-+        let result = d_result.to_radix_ciphertext(&streams);
-+        let decrypted: U4096 = cks.decrypt(&result);
-+        let expected = clears.iter().fold(U4096::ZERO, |acc, &x| acc + x) & mask;
-+        assert_eq!(decrypted, expected, "num_blocks = {num_blocks}");
-+    }
-+}
-+
- fn integer_default_overflowing_add<P>(param: P)
- where
-     P: Into<TestParameters>,
-```
-
----
-
-### Incident Patch 2: `4d482447` (2026-11-25)
-**Commit Message**: fix(gpu): improve noise squash validations (#4196)
-
-**File**: `tfhe/src/integer/gpu/noise_squashing/keys.rs` (modified, +137/-12)
-```diff
-@@ -10,6 +10,7 @@ use crate::integer::gpu::ciphertext::squashed_noise::{
- use crate::integer::gpu::ciphertext::{CudaRadixCiphertext, CudaSignedRadixCiphertext};
- use crate::integer::gpu::server_key::CudaBootstrappingKey;
- use crate::integer::gpu::CudaServerKey;
-+use crate::integer::noise_squashing::check_blocks_can_be_packed_and_squashed;
- use crate::shortint::parameters::CoreCiphertextModulus;
- 
- use crate::shortint::{CarryModulus, MessageModulus};
-@@ -29,18 +30,6 @@ impl CudaNoiseSquashingKey {
-         streams: &CudaStreams,
-     ) -> crate::Result<CudaSquashedNoiseRadixCiphertext> {
-         for block in ciphertext.info.blocks.iter() {
--            if src_server_key
--                .max_noise_level
--                .validate(block.noise_level)
--                .is_err()
--            {
--                return Err(crate::error!(
--                        "squash_ciphertext_noise requires the input Ciphertext to have at most {:?} noise \
--                        got {:?}.",
--                        src_server_key.max_noise_level,
--                        block.noise_level
--                    ));
--            }
-             if block.message_modulus != self.message_modulus {
-                 return Err(crate::error!(
-                     "Mismatched MessageModulus between Ciphertext {:?} and NoiseSquashingKey {:?}.",
-@@ -57,6 +46,19 @@ impl CudaNoiseSquashingKey {
-             }
-         }
- 
-+        // The CUDA backend packs blocks by pairs before the noise squashing PBS, the checks on
-+        // carries and noise must be done on the packed chunks, same as on the CPU
-+        check_blocks_can_be_packed_and_squashed(
-+            ciphertext
-+                .info
-+                .blocks
-+                .iter()
-+                .map(|block| (block.degree, block.noise_level)),
-+            self.message_modulus,
-+            self.carry_modulus,
-+            src_server_key.max_noise_level,
-+        )?;
-+
-         Ok(self.unchecked_squash_ciphertext_noise(ciphertext, src_server_key, streams))
-     }
- 
-@@ -128,6 +130,16 @@ impl CudaNoiseSquashingKey {
-         ciphertext: &CudaBooleanBlock,
-         streams: &CudaStreams,
-     ) -> crate::Result<CudaSquashedNoiseBooleanBlock> {
-+        let blocks = &ciphertext.as_ref().ciphertext.info.blocks;
-+        if blocks.len() != 1 {
-+            return Err(crate::error!(
-+                "A CudaBooleanBlock must contain exactly 1 block, got {}",
-+                blocks.len()
-+            ));
-+        }
-+        // The boolean block is checked as a single, unpacked block by the radix checks: its carry
-+        // must be empty as the squashed boolean is decrypted as `value != 0` over the whole
-+        // message and carry space
-         let squashed_output = self.checked_squash_ciphertext_noise(
-             &ciphertext.as_ref().ciphertext,
-             src_server_key,
-@@ -138,3 +150,116 @@ impl CudaNoiseSquashingKey {
-         })
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use crate::core_crypto::gpu::CudaStreams;
-+    use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
-+    use crate::integer::gpu::ciphertext::{CudaSignedRadixCiphertext, CudaUnsignedRadixCiphertext};
-+    use crate::integer::gpu::CudaServerKey;
-+    use crate::integer::noise_squashing::NoiseSquashingPrivateKey;
-+    use crate::integer::{ClientKey, CompressedServerKey, IntegerCiphertext, ServerKey};
-+    use crate::shortint::ciphertext::NoiseLevel;
-+    use crate::shortint::parameters::test_params::{
-+        TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+        TEST_PARAM_NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-+    };
-+
-+    /// The checked GPU noise squashing must reject the same inputs as the CPU one
-+    #[test]
-+    fn test_cuda_noise_squashing_rejects_unpackable_inputs() {
-+        let param = TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
-+        let noise_squashing_parameters =
-+            TEST_PARAM_NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128;
-+        let streams = CudaStreams::new_multi_gpu();
-+
-+        let cks = ClientKey::new(param);
-+        let compressed_sks = CompressedServerKey::new_radix_compressed_server_key(&cks);
-+        let cuda_sks = CudaServerKey::decompress_from_cpu(&compressed_sks, &streams);
-+        let shortint_sks = ServerKey::new_radix_server_key(&cks).into_raw_parts();
-+        let max_noise_level = shortint_sks.max_noise_level;
-+
-+        let nspk = NoiseSquashingPrivateKey::new(noise_squashing_parameters);
-+        let cuda_nsk = cks
-+            .new_compressed_noise_squashing_key(&nspk)
-+            .decompress_to_cuda(&streams);
-+
-+        // Unclean pair, previously packed to 1 + 4 * 4 = 17 >= 16 (padding bit)
-+        {
-+            let mut ct = cks.encrypt_signed_radix(1i8, 4);
-+            shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[1], 4);
-+            let d_ct = CudaSignedRadixCiphertext::from_signed_radix_ciphertext(&ct, &streams);
-+            assert!(cuda_nsk
-+ 
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/tests_noise_distribution/dp_ks_pbs_128_packingks.rs` (modified, +7/-0)
-```diff
-@@ -354,6 +354,13 @@ fn sanity_check_encrypt_dp_ks_standard_pbs128_gpu(
-                 params.carry_modulus(),
-             );
- 
-+            // The scalar mul makes the tracked degree go over the message modulus, but the
-+            // encrypted value is 0, so set the degree to its actual value to go through the
-+            // checked version, which still validates the noise
-+            for block in d_ct_input2.ciphertext.info.blocks.iter_mut() {
-+                block.degree = crate::shortint::ciphertext::Degree::new(0);
-+            }
-+
-             let squashed = cuda_noise_squashing_key
-                 .squash_radix_ciphertext_noise(&cuda_sks, &d_ct_input2.ciphertext, local_streams)
-                 .unwrap();
-```
-
-**File**: `tfhe/src/integer/noise_squashing/keys.rs` (modified, +11/-0)
-```diff
-@@ -6,6 +6,7 @@ use crate::integer::ciphertext::{
-     BooleanBlock, RadixCiphertext, SignedRadixCiphertext, SquashedNoiseBooleanBlock,
-     SquashedNoiseRadixCiphertext, SquashedNoiseSignedRadixCiphertext,
- };
-+use crate::integer::noise_squashing::check_blocks_can_be_packed_and_squashed;
- use crate::integer::server_key::ServerKey;
- use crate::integer::ClientKey;
- use crate::named::Named;
-@@ -344,6 +345,16 @@ impl NoiseSquashingKey {
-         src_server_key: &ServerKey,
-         boolean_block: &BooleanBlock,
-     ) -> crate::Result<SquashedNoiseBooleanBlock> {
-+        // A boolean block goes through the same checks as the last block of a radix with an odd
-+        // block count, its carry must be empty as the squashed boolean is decrypted as
-+        // `value != 0` over the whole message and carry space
-+        check_blocks_can_be_packed_and_squashed(
-+            [(boolean_block.0.degree, boolean_block.0.noise_level())],
-+            self.key.message_modulus(),
-+            self.key.carry_modulus(),
-+            src_server_key.key.max_noise_level,
-+        )?;
-+
-         Ok(SquashedNoiseBooleanBlock {
-             ciphertext: self
-                 .key
-```
-
-**File**: `tfhe/src/integer/noise_squashing/mod.rs` (modified, +80/-0)
-```diff
-@@ -3,3 +3,83 @@ mod keys;
- mod tests;
- 
- pub use keys::*;
-+
-+use crate::shortint::ciphertext::{Degree, MaxNoiseLevel, NoiseLevel};
-+use crate::shortint::{CarryModulus, MessageModulus};
-+
-+/// Checks that a chunk of radix blocks (described by their degree and noise level) can be packed
-+/// and then noise squashed.
-+///
-+/// Integer noise squashing packs blocks by pairs as `low + message_modulus * high` before the
-+/// 128 bits PBS, `high` being `None` for the last block of a radix with an odd block count. This
-+/// requires:
-+/// - room for two messages in a block (carry modulus >= message modulus) when packing a pair;
-+/// - empty carries on every block, so that the packed value fits in the message and carry space and
-+///   does not reach the padding bit;
-+/// - a noise level for the packed block within the max noise level of the source server key.
-+///
-+/// Boolean blocks are checked as a single unpacked block (`high` is `None`). Their degree may be
-+/// above 1, but their carry must be empty as the squashed boolean is decrypted as `value != 0` over
-+/// the whole message and carry space.
-+///
-+/// This is shared between the CPU and GPU backends so both enforce the same invariants.
-+pub(crate) fn check_blocks_can_be_packed_and_squashed(
-+    blocks: impl IntoIterator<Item = (Degree, NoiseLevel)>,
-+    message_modulus: MessageModulus,
-+    carry_modulus: CarryModulus,
-+    max_noise_level: MaxNoiseLevel,
-+) -> crate::Result<()> {
-+    // Chunk the blocks by pairs here, so that both backends check the same chunks
-+    let mut blocks = blocks.into_iter();
-+    while let Some(low) = blocks.next() {
-+        check_block_chunk_can_be_packed_and_squashed(
-+            low,
-+            blocks.next(),
-+            message_modulus,
-+            carry_modulus,
-+            max_noise_level,
-+        )?;
-+    }
-+    Ok(())
-+}
-+
-+fn check_block_chunk_can_be_packed_and_squashed(
-+    low: (Degree, NoiseLevel),
-+    high: Option<(Degree, NoiseLevel)>,
-+    message_modulus: MessageModulus,
-+    carry_modulus: CarryModulus,
-+    max_noise_level: MaxNoiseLevel,
-+) -> crate::Result<()> {
-+    if high.is_some() && carry_modulus.0 < message_modulus.0 {
-+        return Err(crate::error!(
-+            "Cannot pack if carry modulus ({carry_modulus:?}) is smaller than message modulus \
-+            ({message_modulus:?})"
-+        ));
-+    }
-+
-+    let carry_is_empty = |degree: Degree| degree.get() < message_modulus.0;
-+
-+    let (low_degree, low_noise) = low;
-+    let packed_noise = if let Some((high_degree, high_noise)) = high {
-+        if !carry_is_empty(low_degree) || !carry_is_empty(high_degree) {
-+            return Err(crate::error!(
-+                "Cannot pack blocks: need both carries to be empty \
-+                (got degrees {low_degree:?} and {high_degree:?}, \
-+                message modulus {message_modulus:?})."
-+            ));
-+        }
-+        high_noise * message_modulus.0 + low_noise
-+    } else {
-+        if !carry_is_empty(low_degree) {
-+            return Err(crate::error!(
-+                "Cannot squash block: need carry to be empty \
-+                (got degree {low_degree:?}, message modulus {message_modulus:?})."
-+            ));
-+        }
-+        low_noise
-+    };
-+
-+    max_noise_level
-+        .validate(packed_noise)
-+        .map_err(|e| crate::error!("{}", e))
-+}
-```
-
-**File**: `tfhe/src/integer/noise_squashing/tests.rs` (modified, +99/-0)
-```diff
-@@ -141,3 +141,102 @@ fn test_repro_noise_squashing_degree_handling() {
-         assert!(should_fail_unsigned.is_err());
-     }
- }
-+
-+#[test]
-+fn test_noise_squashing_rejects_unpackable_inputs() {
-+    use crate::integer::noise_squashing::{NoiseSquashingKey, NoiseSquashingPrivateKey};
-+    use crate::integer::{gen_keys_radix, ClientKey, IntegerCiphertext};
-+    use crate::shortint::ciphertext::NoiseLevel;
-+    use crate::shortint::parameters::{
-+        NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128 as NSP,
-+        PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128 as P22,
-+    };
-+
-+    let (rck, sks) = gen_keys_radix(P22, 3);
-+    let cks: &ClientKey = rck.as_ref();
-+    let shortint_sks = sks.clone().into_raw_parts();
-+    let max_noise_level = shortint_sks.max_noise_level;
-+    let nspk = NoiseSquashingPrivateKey::new(NSP);
-+    let nsk = NoiseSquashingKey::new(cks, &nspk);
-+
-+    // Odd block count: the last block is not packed but its carry must still be empty
-+    {
-+        let mut ct = cks.encrypt_radix(16u8, 3);
-+        shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[2], 4);
-+        assert!(nsk.squash_radix_ciphertext_noise(&sks, &ct).is_err());
-+    }
-+    {
-+        let mut ct = cks.encrypt_signed_radix(17i8, 3);
-+        shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[2], 16);
-+        let dec: i8 = cks.decrypt_signed_radix(&ct);
-+        assert_eq!(dec, 17);
-+        assert!(nsk.squash_signed_radix_ciphertext_noise(&sks, &ct).is_err());
-+    }
-+    // Single block radix
-+    {
-+        let mut ct = cks.encrypt_radix(1u8, 1);
-+        shortint_sks.unchecked_scalar_add_assign(&mut ct.blocks_mut()[0], 4);
-+        assert!(nsk.squash_radix_ciphertext_noise(&sks, &ct).is_err());
-+    }
-+
-+    // Clean carries but the noise of the packed block exceeds the max noise level
-+    for (low_noise, high_noise) in [
-+        (NoiseLevel(1), NoiseLevel(2)),
-+        (NoiseLevel(5), NoiseLevel(1)),
-+    ] {
-+        let mut ct = cks.encrypt_radix(5u8, 2);
-+        ct.blocks_mut()[0].set_noise_level(low_noise, max_noise_level);
-+        ct.blocks_mut()[1].set_noise_level(high_noise, max_noise_level);
-+        assert!(ct.blocks().iter().all(|b| b.carry_is_empty()));
-+        assert!(nsk.squash_radix_ciphertext_noise(&sks, &ct).is_err());
-+    }
-+
-+    // BooleanBlock with a non empty carry
-+    {
-+        let mut b = cks.encrypt_bool(false);
-+        shortint_sks.unchecked_scalar_add_assign(&mut b.0, 4);
-+        assert!(!cks.decrypt_bool(&b));
-+        assert!(nsk.squash_boolean_block_noise(&sks, &b).is_err());
-+    }
-+    // BooleanBlock with degree 2 but an empty carry: accepted, both decryptions agree
-+    {
-+        let mut b = cks.encrypt_bool(true);
-+        shortint_sks.unchecked_scalar_add_assign(&mut b.0, 1);
-+        assert!(b.0.degree.get() > 1 && b.0.carry_is_empty());
-+        assert!(cks.decrypt_bool(&b));
-+        let squashed = nsk.squash_boolean_block_noise(&sks, &b).unwrap();
-+        assert!(nspk.decrypt_bool(&squashed).unwrap());
-+    }
-+    // BooleanBlock from a list expanded without key keeps the degree of the list blocks
-+    // (message_modulus - 1) while holding a value in {0, 1}, it must be accepted
-+    {
-+        use crate::integer::ciphertext::CompactCiphertextList;
-+        use crate::integer::{BooleanBlock, CompactPublicKey};
-+
-+        let pk = CompactPublicKey::new(cks);
-+        let list = CompactCiphertextList::builder(&pk)
-+            .push(false)
-+            .push(true)
-+            .build();
-+        let expander = list.expand_without_key().unwrap();
-+        for (i, expected) in [false, true].into_iter().enumerate() {
-+            let b: BooleanBlock = expander.get(i).unwrap().unwrap();
-+            assert!(b.0.degree.get() > 1 && b.0.carry_is_empty());
-+            let squashed = nsk.squash_boolean_block_noise(&sks, &b).unwrap();
-+            assert_eq!(nspk.decrypt_bool(&squashed).unwrap(), expected);
-+        }
-+    }
-+
-+    // Sanity check: clean inputs with odd block counts still work
-+    for num_blocks in [1, 3] {
-+        let ct = cks.encrypt_radix(2u8, num_blocks);
-+        let squashed = nsk.squash_radix_ciphertext_noise(&sks, &ct).unwrap();
-+        let d: u8 = nspk.decrypt_radix(&squashed).unwrap();
-+        assert_eq!(d, 2);
-+
-+        let ct = cks.encrypt_signed_radix(-1i8, num_blocks);
-+        let squashed = nsk.squash_signed_radix_ciphertext_noise(&sks, &ct).unwrap();
-+        let d: i8 = nspk.decrypt_signed_radix(&squashed).unwrap();
-+        assert_eq!(d, -1);
-+    }
-+}
-```
-
-**File**: `tfhe/src/shortint/noise_squashing/server_key.rs` (modified, +8/-3)
-```diff
-@@ -473,9 +473,14 @@ impl<AP: NoiseSquashingAtomicPattern> GenericNoiseSquashingKey<AP> {
-         });
- 
-         // If the number of ciphertexts is odd, the last one is squashed on its own
--        let last = remainder
--            .par_iter()
--            .map(|ct| self.checked_squash_ciphertext_noise(ct, src_server_key));
-+        let last = remainder.par_iter().map(|ct| {
-+            if !ct.carry_is_empty() {
-+                return Err(crate::error!(
-+                    "Cannot squash unpaired block: need carry to be empty."
-+                ));
-+            }
-+            self.checked_squash_ciphertext_noise(ct, src_server_key)
-+        });
- 
-         packed.chain(last).collect()
-     }
-```
-
----
-
-### Incident Patch 3: `9e4bb422` (2026-11-25)
-**Commit Message**: chore: update requests in slab requirements
-
-Co-authored-by: Arthur Meyre <[REDACTED_EMAIL]>
-
-**File**: `ci/slab_send_data_requirements.in` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--requests==2.32.4
-+requests==2.34.2
-```
-
-**File**: `ci/slab_send_data_requirements.txt` (modified, +3/-3)
-```diff
-@@ -182,9 +182,9 @@ idna==3.20 \
-     --hash=sha256:a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44 \
-     --hash=sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c
-     # via requests
--requests==2.32.4 \
--    --hash=sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c \
--    --hash=sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422
-+requests==2.34.2 \
-+    --hash=sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0 \
-+    --hash=sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed
-     # via -r ci/slab_send_data_requirements.in
- urllib3==2.8.0 \
-     --hash=sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3 \
+     with open(output_file, "a") as f:
+         for var_name, value in [
+             ("backend", slab_backend),
+@@ -99,10 +71,5 @@ def parse_profile(profile_string, output_file, slab_toml):
+         "output_file",
+         help="File to append the parsed key=value pairs to (e.g. $GITHUB_OUTPUT)",
+     )
+-    parser.add_argument(
+-        "--slab-toml",
+-        default="ci/slab.toml",
+-        help="Path to slab.toml (default: ci/slab.toml)",
+-    )
+     args = parser.parse_args()
+-    parse_profile(args.profile_string, args.output_file, args.slab_toml)
++    parse_profile(args.profile_string, args.output_file)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4220** (2026-11-25): fix: remove in python ci parser the slab.toml parsing (@SouchonTheo)
 - **PR #4218** (2026-11-25): chore(deps): bump requests from 2.32.4 to 2.33.0 in /ci (@dependabot[bot])
 - **PR #4217** (2026-11-24): chore(ci): remove ci file not used anymore (@SouchonTheo)
 - **PR #4215** (2026-11-24): HPU bench numbers for v1.9 doc (@pgardratzama)
 - **PR #4214** (2026-11-23): chore: move gpu scripts to dedicated dir with gpu team as codewoners (@IceTDrinker)
 - **PR #4212** (2026-11-23): chore(data-extractor): bump url to 2.5.9 (@nsarlin-zama)
-- **PR #4201** (2026-11-24): fix(zk): handle the identity point in bls12_446 Gt::pairing on the GPU (@pdroalves)
 
 ---
 
@@ -2606,87 +2059,64 @@ Co-authored-by: Arthur Meyre <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): support more than 512 radix blocks in partial sum index kernels
+## X. remove in python ci parser the slab.toml parsing
 
 **RULE**:
-When implementing operations in `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/parse_benchmark_profile.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eaac04df`: gpu): support more than 512 radix blocks in partial sum index kernels. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83659c4c`: remove in python ci parser the slab.toml parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/parse_benchmark_profile.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  const uint32_t idx = blockIdx.x * blockDim.x + threadIdx.x;
-  if (idx < num_radix_blocks) {
-    size_t cnt = 0;
-    for (int i = 0; i < num_radix_in_vec; i++) {
-      size_t ct_id = i * num_radix_blocks + idx;
-      if (degrees[ct_id] != 0) {
-        columns[idx][cnt] = ct_id;
-        ++cnt;
-      }
-    columns_counter[idx] = cnt;
-// Runs in a single CUDA block: all message PBS indexes must be assigned
-// (through the shared counter) before the carry ones. Each thread handles the
-// columns threadIdx.x, threadIdx.x + blockDim.x, ... so that more than 1024
-// columns are supported.
-    const uint32_t *const columns_counter, const uint32_t chunk_size,
-    const uint32_t num_radix_blocks) {
-  for (uint32_t base_id = threadIdx.x; base_id < num_radix_blocks;
-       base_id += blockDim.x) {
-    const uint32_t column_len = columns_counter[base_id];
-    uint32_t ct_count = 0;
-    for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
-      // those indexes are for message ciphertexts
-      // for message ciphertexts in and out index should be same
-      const uint32_t in_index = columns[base_id][i];
-      new_columns[base_id][ct_count] = in_index;
-      pbs_indexes_out[pbs
+def parse_profile(profile_string, output_file):
+    parse_profile(args.profile_string, args.output_file)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  const uint32_t idx = threadIdx.x;
-  size_t cnt = 0;
-  for (int i = 0; i < num_radix_in_vec; i++) {
-    size_t ct_id = i * num_radix_blocks + idx;
-    if (degrees[ct_id] != 0) {
-      columns[idx][cnt] = ct_id;
-      ++cnt;
-  columns_counter[idx] = cnt;
-    const uint32_t *const columns_counter, const uint32_t chunk_size) {
-  const uint32_t base_id = threadIdx.x;
-  const uint32_t column_len = columns_counter[base_id];
+import tomllib
+def parse_profile(profile_string, output_file, slab_toml):
+    with open(slab_toml, "rb") as f:
+        slab = tomllib.load(f)
 
-  uint32_t ct_count = 0;
-  for (uint32_t i = 0; i + chunk_size <= column_len; i += chunk_size) {
-    // those indexes are for message ciphertexts
-    // for message ciphertexts in and out index should be same
-    const uint32_t in_index = columns[base_id][i];
-    new_columns[base_id][ct_count] = in_index;
-    const uint32_t pbs_index = atomicAdd(&counter, 1);
-    pbs_indexes_in[pbs_index] = in_index;
-    pbs_indexes_out[pbs_index] = in_index;
-    lut_indexes[pbs_index] = 0;
-    ++ct_count;
-  }
-  __syncthreads();
+    available = slab.get("backend", {}).get(slab_backend, {})
+    if profile not in available:
+        print(
+            f"Error: profile '{profile}' not found under [backend.{slab_backend}] in {slab_toml}.\n"
+            f"Known profiles: {', '.join(sorted(available.keys()))}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
-  if (base_id > 0) {
-    const uint32_t prev_base_id = base_id - 1;
-    const uint32_t prev_column_len = columns_counter[prev_base_id];
+    entry = available[profile]
+    expected_hardware = (
+        entry.get("hardware_name") or entry.get("flavor_name") or entry.get("instance_type")
+    )
+    assert expected_hardware is not None, (
+        f"profile '{profile}' in {slab_toml} has none of 'hardware_name', 'flavor_name' or 'instance_type'"
+    )
+    if hardware_name != expected_hardware:
+        print(
+            f"Error: hardware '{hardware_name}' does not match expected '{expected_hardware}' "
+            f"for profile '{profile}' in {slab_toml}.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
-    for (uint32_t i = 0; i + chunk_size <= prev_column_len; i += chunk_size) {
-      // those indexes are for carry ciph
+    parser.add_argument(
+        "--slab-toml",
+        default="ci/slab.toml",
+        help="Path to slab.toml (default: ci/slab.to
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eaac04df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83659c4c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "eaac04df",
+    "sourceVersion": "aba54549",
     "license": "NOASSERTION",
-    "contentHash": "b60be4bec25ba35becccf0d37491c7eb71c5fa80339231fee3e7e82a75d981f2",
-    "lastHarvestedAt": "2026-11-25T12:56:41.005Z",
+    "contentHash": "9fa330493200d7b457460eb06bc104398acb8b1482959025f0e589c84ea5ffe1",
+    "lastHarvestedAt": "2026-11-25T23:59:22.845Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -11925,8 +11925,8 @@
     "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
     "sourceVersion": "hf-prunaai-p-h3-image-comfy",
     "license": "Open-Source",
-    "contentHash": "85823549651172920a845ad97bde0d3f6ffdd99d326535c4ae80766081eb0999",
-    "lastHarvestedAt": "2026-11-22T02:42:05.499Z",
+    "contentHash": "49260281d1ac9bd0ac60722c4cd86d244e5ded9960c9c2c18679b3d38a84e470",
+    "lastHarvestedAt": "2026-11-25T23:59:10.961Z",
     "learningId": "learn-huggingface-prunaai-p-h3-image-comfy"
   },
   "jarvis322-macos-sysdata": {
@@ -13013,10 +13013,10 @@
     "repository": "Kianuni/Erosion-CN",
     "platform": "github",
     "sourceUrl": "https://github.com/Kianuni/Erosion-CN",
-    "sourceVersion": "8ef12aa5",
+    "sourceVersion": "094df45d",
     "license": "GPL-3.0",
-    "contentHash": "ee27e1b8eddc1fa87e9521fe0ad563933fb46b89efc342901d8fa15ab068dcc5",
-    "lastHarvestedAt": "2026-11-20T11:08:49.873Z",
+    "contentHash": "ce887e46e49efcd39562e6fda0adde9d84d7cc9ba4958bf5de6b46f913f979a3",
+    "lastHarvestedAt": "2026-11-25T23:59:17.551Z",
     "learningId": "learn-github-kianuni-erosion-cn"
   },
   "hf-tencent-hy4": {

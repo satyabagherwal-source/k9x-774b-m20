@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-25T23:50:00.242Z",
-  "total_cycles_completed": 12490,
-  "total_learnings_persisted": 12490,
-  "total_rules_promoted": 11450,
+  "last_updated": "2026-11-25T23:59:22.852Z",
+  "total_cycles_completed": 12493,
+  "total_learnings_persisted": 12493,
+  "total_rules_promoted": 11452,
   "history": [
-    {
-      "timestamp": "2026-11-25T05:00:30.759Z",
-      "repository": "openai/clip-vit-large-patch14",
-      "learningId": "learn-huggingface-openai-clip-vit-large-patch14",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T05:00:34.725Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T05:00:50.364Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T05:10:27.577Z",
       "repository": "Comfy-Org/MOSS-Image",
@@ -1403,6 +1382,27 @@
       "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:59:10.968Z",
+      "repository": "PrunaAI/P-Image-OSS-Comfy",
+      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:59:17.558Z",
+      "repository": "Kianuni/Erosion-CN",
+      "learningId": "learn-github-kianuni-erosion-cn",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-25T23:59:22.852Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

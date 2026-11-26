@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-F64M",
-    "timestamp": "2026-11-24T06:30:13.702Z",
-    "repository": "expo/expo",
-    "learningId": "learn-github-expo-expo",
-    "contentHash": "9b5fea2d363eff5ea37cfa556947151796c8af3394dbaeb69541942953f86dea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-PLIN",
-    "timestamp": "2026-11-24T06:38:20.207Z",
-    "repository": "unhappychoice/gitlogue",
-    "learningId": "learn-github-unhappychoice-gitlogue",
-    "contentHash": "6df6245408101b4b49df8ed3ac4ff4cbb8dc3af02d0caf675ab5b179cbddfe5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-PP8Y",
-    "timestamp": "2026-11-24T06:38:25.042Z",
-    "repository": "dkhamsing/open-source-ios-apps",
-    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
-    "contentHash": "93bec2770c031591bcbc0d09ebbf5d1e187c2419b2f3922db06fef5e391e895b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-PS1Q",
     "timestamp": "2026-11-24T06:38:28.670Z",
     "repository": "encoredev/encore",
@@ -7492,6 +7447,51 @@
     "contentHash": "34be4abc281f762ea7a8b27c1725724509506ea2cd38f438a33a59c485e3cbd5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-BZHO",
+    "timestamp": "2026-11-25T23:59:10.956Z",
+    "repository": "PrunaAI/P-Image-OSS-Comfy",
+    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+    "contentHash": "49260281d1ac9bd0ac60722c4cd86d244e5ded9960c9c2c18679b3d38a84e470",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-C4KQ",
+    "timestamp": "2026-11-25T23:59:17.546Z",
+    "repository": "Kianuni/Erosion-CN",
+    "learningId": "learn-github-kianuni-erosion-cn",
+    "contentHash": "ce887e46e49efcd39562e6fda0adde9d84d7cc9ba4958bf5de6b46f913f979a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261125-C8NS",
+    "timestamp": "2026-11-25T23:59:22.840Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "9fa330493200d7b457460eb06bc104398acb8b1482959025f0e589c84ea5ffe1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
