@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T05:30:04.651Z",
+  "updated_at": "2026-11-26T05:57:47.112Z",
   "stats": {
-    "total_discovered": 9610,
-    "approved_pending_harvest": 9111,
+    "total_discovered": 9613,
+    "approved_pending_harvest": 9114,
     "harvested_count": 0,
     "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9100,
+      "COMMUNITY_AND_EXPERT": 9103,
       "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -207954,6 +207954,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
         "fileName": "risingwavelabs-risingwave-learnings.md"
+      }
+    },
+    "SRC-562C5D67310D": {
+      "id": "SRC-562C5D67310D",
+      "url": "https://github.com/envoyproxy/envoy/blob/main/source/common/network/io_socket_handle_impl.h",
+      "title": "https://github.com/envoyproxy/envoy/blob/main/source/common/network/io_socket_handle_impl.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:57:46.061Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-C13C66216249": {
+      "id": "SRC-C13C66216249",
+      "url": "https://linear.app/materializeinc/issue/SS-563",
+      "title": "https://linear.app/materializeinc/issue/SS-563",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:57:47.046Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-492405EAB733": {
+      "id": "SRC-492405EAB733",
+      "url": "https://linear.app/materializeinc/issue/SQL-948",
+      "title": "https://linear.app/materializeinc/issue/SQL-948",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:57:47.112Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
       }
     }
   }

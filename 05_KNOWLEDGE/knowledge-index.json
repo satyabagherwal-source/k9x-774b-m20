@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T05:48:52.500Z",
+  "last_updated": "2026-11-26T05:57:47.941Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25684,
+  "total_items": 25690,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216068,8 +216068,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "a7ae7600",
-      "content_hash": "d3ad89768da387ce9600a50bc1e0348243d23cda588801602cd492e6df4cf33f",
+      "source_version": "baf651b8",
+      "content_hash": "362c15df676b0a38fd764a0a30d947d960d6f75c913b5daa0e470313ca9ea197",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -216122,6 +216122,11 @@
           "number": 10465,
           "title": "Do not check for zero memory use where it cannot be measured",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10608,
+          "title": "fix cluster async host selection threading and handle lifetime",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216129,7 +216134,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T05:45:34.343Z",
+      "verified_at": "2026-11-26T05:57:09.990Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216171,10 +216176,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "repository": "envoyproxy/envoy",
-      "source_version": "a7ae7600",
-      "content_hash": "43dd4883b32363c1362d9aa4046e3193c314931d3f998110fb08a4bee725a018",
+      "source_version": "baf651b8",
+      "content_hash": "209e5a5005d589512f943d058c5e81ab83fb467b25e298d7e15ba529acef4e40",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T05:45:34.946Z"
+      "persisted_at": "2026-11-26T05:57:10.635Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy",
@@ -216183,10 +216188,10 @@
       "relative_path": "08_VERIFICATION/envoyproxy-envoy-verification-protocol-empirical-defect-shield-for-envoyproxy-en.md",
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy/envoy",
       "repository": "envoyproxy/envoy",
-      "source_version": "a7ae7600",
-      "content_hash": "64336330d7a620ac999b00eb786bd103ae2fcf80ff44907c612de35cea2c49aa",
+      "source_version": "baf651b8",
+      "content_hash": "a128cc4a4bcc6b52e64b781d6c04a22cd98bef39fc08f32861b6017539fd8799",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:45:35.133Z"
+      "persisted_at": "2026-11-26T05:57:10.823Z"
     },
     "learn-github-aleo-labs-protocol-snarkos": {
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
@@ -216512,9 +216517,9 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "7963f1493e5b862562678b706bbb95539789fb105dd433bac4e58b2e42e032e2",
+      "content_hash": "b57f66b9aa7e75a640983b4962b7eb5cbb504c37db26524f9a241541fefa8b37",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T05:45:39.967Z"
+      "persisted_at": "2026-11-26T05:57:46.508Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings",
@@ -216524,9 +216529,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy-envoy-learnings",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "04009a03fc4dd2206d8068cccc759d0cf2ec4cfebb287282bf54690b3a6d58d0",
+      "content_hash": "0e58b74bca44b13d98fe4987f368d9bee21365560b3bc638d7c270dec053cde8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:45:40.147Z"
+      "persisted_at": "2026-11-26T05:57:46.699Z"
     },
     "learn-huggingface-google-bert-bert-base-uncased": {
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
@@ -228094,8 +228099,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "f9a1fd2d",
-      "content_hash": "4288a4696eea12412caad65d715b7773c661ff484f3088d3e30962b4070a588c",
+      "source_version": "2a7e1bd4",
+      "content_hash": "a5ece367776b58dc0e4f6442671e501a7cffbf1f4d749e4fbee95b2efac1ff74",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -228148,6 +228153,11 @@
           "number": 10458,
           "title": "lint docs before deploying them, and fix the deploy build",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10609,
+          "title": "free unused memory after start",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228155,7 +228165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T04:52:10.339Z",
+      "verified_at": "2026-11-26T05:57:15.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228209,10 +228219,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-agent-contract-materializeinc-materialize-autonomous-.md",
       "title": "Agent Contract: MaterializeInc/materialize Autonomous Specialist Persona",
       "repository": "MaterializeInc/materialize",
-      "source_version": "f9a1fd2d",
-      "content_hash": "8689d5ac3aa0da4cd5ac641138cc81bc1c37aa37d16aa0806a6f3846ff24ab0b",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-25T04:52:11.449Z"
+      "source_version": "2a7e1bd4",
+      "content_hash": "9335a1d3fca14434b80d3b2d38bd872264a37a7d3f4e98f23e66475f5ca7f592",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T05:57:15.817Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize",
@@ -228221,10 +228231,10 @@
       "relative_path": "08_VERIFICATION/materializeinc-materialize-verification-protocol-empirical-defect-shield-for-mat.md",
       "title": "Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize",
       "repository": "MaterializeInc/materialize",
-      "source_version": "f9a1fd2d",
-      "content_hash": "bb9dfcf414bb1776aa88cb8fa4265d9c23dbf9fbb94e415860cdbf7c0490d4f1",
+      "source_version": "2a7e1bd4",
+      "content_hash": "5b6994c3926a8848dc7ae05ca06d1dcfc2b7b5306bd71a95ebe2f0d1c60a5403",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:52:11.648Z"
+      "persisted_at": "2026-11-26T05:57:15.955Z"
     },
     "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100": {
       "item_id": "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100",
@@ -249221,7 +249231,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF",
       "source_version": "hf-abiray-minimax-h3-image-gguf",
-      "content_hash": "3a7c056720d0350344298e9ee85667a854a130f723f223e433f62e5f52496a1a",
+      "content_hash": "cb3d3604b2fd1858cee0cf1b83cc08d1aa6c3251d3ad7eade44b9b70c63ab6d8",
       "dossier_path": "07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md",
       "promoted_rules": [],
@@ -249230,7 +249240,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T10:03:41.527Z",
+      "verified_at": "2026-11-26T05:57:00.417Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249247,9 +249257,9 @@
       "title": "Research & Knowledge Intelligence: Abiray/MiniMax-H3-Image-GGUF Core Invariants",
       "repository": "Abiray/MiniMax-H3-Image-GGUF",
       "source_version": "hf-abiray-minimax-h3-image-gguf",
-      "content_hash": "d38df608fbd680a347eee7e0309c5ab3c7ef6f7c0ed5c150feec6f7f637a9130",
+      "content_hash": "b04b225ec53f17dbc045bf2bee8938e7628d1cbd41d332f85fbc4f5f67031a5b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T10:03:42.017Z"
+      "persisted_at": "2026-11-26T05:57:00.869Z"
     },
     "learn-huggingface-xiaomi-research-xiaomi-ocr-0": {
       "learning_id": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
@@ -249417,9 +249427,9 @@
       "title": "Research & Knowledge Intelligence: hf-abiray-minimax-h3-image-gguf-learnings Core Invariants",
       "repository": "hf-abiray-minimax-h3-image-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e591fc85c74ad7a2bb2e91c3308f350a882533447967f3421623a79ef586985",
+      "content_hash": "0d794838222f2bd10a9b51e70f78dcd9a0b59504c4eab1beaebe09c9c9813ae9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T10:04:00.323Z"
+      "persisted_at": "2026-11-26T05:57:18.993Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xiaomi-research-xiaomi-ocr-0-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomi-research-xiaomi-ocr-0-learnings-core-i",
@@ -253131,9 +253141,9 @@
       "title": "Agent Contract: materializeinc-materialize-learnings Autonomous Specialist Persona",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "665056b00f78f96dc76fd9801260a8f6e3bcbb4edd40e64f2b37723464d4ee1a",
+      "content_hash": "117a59bea6d314d38ea1929554488f864f84f546fd315042c9be35c6b9f62805",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T04:52:18.685Z"
+      "persisted_at": "2026-11-26T05:57:47.778Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea",
@@ -253143,9 +253153,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for materializeinc-materialize-learnings",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "10edd457d8ee93f98d43657f08bab63ebc46bb6fee03b4e437ec809fa4d86201",
+      "content_hash": "8bb1aa161009081ac68acbca0251c2ce65c02adeef824c55b6b30e4c85741a86",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:52:18.877Z"
+      "persisted_at": "2026-11-26T05:57:47.941Z"
     },
     "learn-github-mlua-rs-mlua": {
       "learning_id": "learn-github-mlua-rs-mlua",
@@ -270028,10 +270038,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
       "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
       "repository": "MaterializeInc/materialize",
-      "source_version": "116bffc3",
-      "content_hash": "a9f8acefbd0ef82206c564e93f8b2488b6e6769cad2785ad6b34c33d832ccb0c",
+      "source_version": "2a7e1bd4",
+      "content_hash": "73cad3dbe60dd76562a49bfbbc34f7d1f47bf417ab825a59b38c3cf17a516b8b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T01:20:34.625Z"
+      "persisted_at": "2026-11-26T05:57:15.647Z"
     },
     "candidate_directive-docs-document-the-use-of-merman-for-mermaid-graphs": {
       "item_id": "candidate_directive-docs-document-the-use-of-merman-for-mermaid-graphs",
@@ -270113,9 +270123,9 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b8d05d943c80d6c4e3fee12d21b7764af94c433cc0e5a045b575597e51aba02",
+      "content_hash": "545b89573cbabe50aeed7a3b330371acd1ec3b37150cfdb0ded8a38ab7ba2ca5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T04:52:18.440Z"
+      "persisted_at": "2026-11-26T05:57:47.578Z"
     },
     "learn-github-solidjs-solid": {
       "learning_id": "learn-github-solidjs-solid",
@@ -351692,6 +351702,82 @@
       "content_hash": "43ace5105f74e4de3b78f14539dc95152a6377a03fb8e5b8e89ac7ac32fb61f2",
       "domain_letter": "J",
       "persisted_at": "2026-11-26T05:48:50.727Z"
+    },
+    "rule-10608": {
+      "learning_id": "rule-10608",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10608,
+      "title": "fix cluster async host selection threading and handle lifetime",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "baf651b8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T05:57:09.990Z"
+    },
+    "candidate_directive-fix-cluster-async-host-selection-threading-and-handle-lifetime": {
+      "item_id": "candidate_directive-fix-cluster-async-host-selection-threading-and-handle-lifetime",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4D6I-fix-cluster-async-host-selection-threading-and-handle-lifetime.md",
+      "title": "fix cluster async host selection threading and handle lifetime",
+      "repository": "envoyproxy/envoy",
+      "source_version": "baf651b8",
+      "content_hash": "1d165da605f9ac79b4e148ff3c6554f4ec5c2af3647abc868a88f23041ad8a4e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T05:57:10.462Z"
+    },
+    "rule-10609": {
+      "learning_id": "rule-10609",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10609,
+      "title": "free unused memory after start",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "2a7e1bd4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T05:57:15.032Z"
+    },
+    "candidate_directive-free-unused-memory-after-start": {
+      "item_id": "candidate_directive-free-unused-memory-after-start",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4H1R-free-unused-memory-after-start.md",
+      "title": "free unused memory after start",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "2a7e1bd4",
+      "content_hash": "d67663141d7ed6c4df195d82b37fa9fb506bb2216f55e52a190eced762035427",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T05:57:15.475Z"
+    },
+    "candidate_directive-dynamic_modules-fix-cluster-async-host-selection-threading-and-handle-lifetime": {
+      "item_id": "candidate_directive-dynamic_modules-fix-cluster-async-host-selection-threading-and-handle-lifetime",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-54UM-dynamic_modules-fix-cluster-async-host-selection-threading-and-handle-lifetime.md",
+      "title": "dynamic_modules: fix cluster async host selection threading and handle lifetime",
+      "repository": "envoyproxy-envoy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c89a41f31128ce2c7f86529580ca804a61b1ec413adbe74800b3b44a08c30429",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T05:57:46.319Z"
+    },
+    "candidate_directive-reclock-free-unused-memory-after-start": {
+      "item_id": "candidate_directive-reclock-free-unused-memory-after-start",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-55NS-reclock-free-unused-memory-after-start.md",
+      "title": "reclock: free unused memory after start",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "73273eeb25db6f751878ca3ff28c93608c4898f61d55e3efe8785181d7015522",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T05:57:47.376Z"
     }
   },
   "ai-builder-brain": {

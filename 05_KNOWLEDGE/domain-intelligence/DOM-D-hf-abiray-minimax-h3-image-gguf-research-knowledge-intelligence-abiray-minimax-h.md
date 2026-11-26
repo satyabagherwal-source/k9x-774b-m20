@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF",
   "source_version": "hf-abiray-minimax-h3-image-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T10:03:42.016Z",
+  "timestamp": "2026-11-26T05:57:00.868Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Abiray/MiniMax-H3-Image-GGUF](https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF) (Revision: `hf-abiray-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T10:03:42.016Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T05:57:00.868Z`  
 > **Learning ID**: `learn-huggingface-abiray-minimax-h3-image-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF](https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T10:03:41.047Z  
+> **Harvest Timestamp**: 2026-11-26T05:57:00.039Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 288737 downloads | 359 likes
+- **Stars / Engagement**: 317457 downloads | 364 likes
 
 ---
 

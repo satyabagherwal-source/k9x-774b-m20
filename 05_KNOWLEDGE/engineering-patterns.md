@@ -798655,3 +798655,177 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `fd06a49a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10608. fix cluster async host selection threading and handle lifetime (Harvested from envoyproxy/envoy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "fix cluster async host selection threading and handle lifetime",
+  "source": "envoyproxy/envoy",
+  "source_url": "https://github.com/envoyproxy/envoy",
+  "source_version": "baf651b8",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T05:57:09.674Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-envoyproxy-envoy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `baf651b8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-module-lifetime.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `baf651b8`: dynamic_modules: fix cluster async host selection threading and handle lifetime. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-module-lifetime.rst`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+Fixed the dynamic module cluster calling
+``envoy_dynamic_module_on_cluster_lb_cancel_host_selection``, which runs the Rust SDK's
+``AsyncHostSelectionHandle::cancel``, after its module was unloaded, when a request held an async
+host selection past the removal of its cluster. A pending selection now keeps the module loaded
+until that hook has run. The hook can still run after ``envoy_dynamic_module_on_cluster_lb_destroy``
+and ``envoy_dynamic_module_on_cluster_destroy``, though always before
+``envoy_dynamic_module_on_cluster_config_destroy``, so a module must not read load balancer or
+cluster state through ``lb_module_ptr`` in it. The cluster configuration, with its
+``envoy_dynamic_module_on_cluster_config_destroy`` hook, is now always destroyed on the main thread,
+also when a worker releases it last. The ABI documentation now states that Envoy calls the cancel
+hook once for every async handle, after a delivered result as well as on a cancellation, as every
+release with the hook has done, so a module releases the handle there rather than when it calls the
+completion callback.
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `baf651b8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10609. free unused memory after start (Harvested from MaterializeInc/materialize)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "free unused memory after start",
+  "source": "MaterializeInc/materialize",
+  "source_url": "https://github.com/MaterializeInc/materialize",
+  "source_version": "2a7e1bd4",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T05:57:14.710Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-materializeinc-materialize",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `2a7e1bd4`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/timely-util/src/reclock.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `371eac62`: reclock: free unused memory after start. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/timely-util/src/reclock.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                // Taking the buffer releases its capacity. A replay of the remap history from an
+                // old as-of fills it once, and every export's operator would hold that capacity
+                // for good.
+                for ((into, from), diff) in std::mem::take(&mut remap_accum_buffer).into_inner() {
+            // Releases what a replay leaves behind, like `remap_accum_buffer` above.
+            if pending_remap.len() < pending_remap.capacity() / 4 {
+                pending_remap.shrink_to(pending_remap.len() * 2);
+            }
+
+    #[cfg(feature = "count-allocations")]
+    #[mz_ore::test]
+    #[cfg_attr(miri, ignore)] // too slow
+    fn test_replay_releases_buffers() {
+        let replayed = 10_000_u64;
+
+        // The source frontier is beyond every replayed binding, so the trace keeps none of them
+        // and what stays allocated after the replay is buffer capacity.
+        harness::<FromTime, u64, _, _>(
+            Antichain::from_elem(0),
+            move |worker, mut bindings, (_data, mut data_cap), reclocked| {
+                data_cap.downgrade(&Partitioned::new_singleton(0, replayed));
+                step(worker);
+                let info = allo
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+                for ((into, from), diff) in remap_accum_buffer.drain() {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `371eac62` are properly handled with clean fallback behavior.

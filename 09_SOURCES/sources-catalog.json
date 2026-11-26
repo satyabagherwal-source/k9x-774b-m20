@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "f9a1fd2d",
+    "sourceVersion": "2a7e1bd4",
     "license": "NOASSERTION",
-    "contentHash": "4288a4696eea12412caad65d715b7773c661ff484f3088d3e30962b4070a588c",
-    "lastHarvestedAt": "2026-11-25T04:52:10.619Z",
+    "contentHash": "a5ece367776b58dc0e4f6442671e501a7cffbf1f4d749e4fbee95b2efac1ff74",
+    "lastHarvestedAt": "2026-11-26T05:57:15.242Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "a7ae7600",
+    "sourceVersion": "baf651b8",
     "license": "Apache-2.0",
-    "contentHash": "d3ad89768da387ce9600a50bc1e0348243d23cda588801602cd492e6df4cf33f",
-    "lastHarvestedAt": "2026-11-25T05:45:34.545Z",
+    "contentHash": "362c15df676b0a38fd764a0a30d947d960d6f75c913b5daa0e470313ca9ea197",
+    "lastHarvestedAt": "2026-11-26T05:57:10.221Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -12605,8 +12605,8 @@
     "sourceUrl": "https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF",
     "sourceVersion": "hf-abiray-minimax-h3-image-gguf",
     "license": "Open-Source",
-    "contentHash": "3a7c056720d0350344298e9ee85667a854a130f723f223e433f62e5f52496a1a",
-    "lastHarvestedAt": "2026-11-22T10:03:41.781Z",
+    "contentHash": "cb3d3604b2fd1858cee0cf1b83cc08d1aa6c3251d3ad7eade44b9b70c63ab6d8",
+    "lastHarvestedAt": "2026-11-26T05:57:00.647Z",
     "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf"
   },
   "tencent-loopforge": {

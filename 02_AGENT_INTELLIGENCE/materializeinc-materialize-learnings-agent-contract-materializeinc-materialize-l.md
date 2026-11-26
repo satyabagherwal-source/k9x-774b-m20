@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T04:52:18.036Z",
+  "timestamp": "2026-11-26T05:57:47.240Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-materializeinc-materialize-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [materializeinc-materialize-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T04:52:18.036Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T05:57:47.240Z`  
 > **Learning ID**: `LEARN-EVO-materializeinc-materialize-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `f9a1fd2d`  
+> **Source Version**: `2a7e1bd4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T04:52:09.169Z  
+> **Timestamp**: 2026-11-26T05:57:14.146Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T04:52:09.162Z  
+> **Harvest Timestamp**: 2026-11-26T05:57:14.140Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6413 stars
+- **Stars / Engagement**: 6415 stars
 
 ---
 
@@ -1107,11 +1107,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #41066** (2026-11-24): **Language adjustment**
-  *Symptoms*: Minor change in language
+- **Issue #41088** (2026-11-26): **release: mark v26.51, v26.52 as released**
+  *Symptoms*: Opened and merged by the Complete release workflow in MaterializeInc/release, which marks shipped releases as released in the user-facing docs.
 
-- **Issue #41061** (2026-11-24): **v26.52.0 release notes**
-  *Symptoms*: Release notes for v26.52.0.  Dates in RC snapshots are provisional until the release ships. One commit is added per snapshot; the final snapshot sets the real dates.  Snapshot drafts (with PR links) in mz-skills: - rc.1: [release_notes.md](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/release_notes.md) / [omitted.md](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/omitted.md) - final: [release_notes.md](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/release_notes.md) / [omitted.md](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/omitted.md)  **Borderline PRs omitted:** rc.1: 19 — [omitted.md#borderline](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/rc.1/omitted.md#borderline), final: 0 — [omitted.md#borderline](https://github.com/MaterializeInc/mz-skills/blob/main/data/mz-release-notes/v26.52.0/final/omitted.md#borderline)  The `final` snapshot's increment is empty — `v26.52.0-rc.1...v26.52.0` is a single version-bump commit — and the real dates match rc.1's cadence estimate, so its commit changes no files.  **For the release owner — three open questions, all carried from rc.1:** - **2026-11-26 is US Thanksgiving**, 2026-11-27 the day after. The dates are what the cadence rule produces (first Thursday on or after the 2026-11-24 ship tag), but the rule knows nothing ab
+- **Issue #41083** (2026-11-25): **deps: bump zstd-sys to 2.2.0+zstd.1.6.0**
+  *Symptoms*: Bump `zstd-sys` to pick up upstream zstd 1.6.0. Only `zstd-sys` changes in `Cargo.lock`.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1128,367 +1128,936 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `35a338a1` (2026-11-24)
-**Commit Message**: ci: lint docs before deploying them, and fix the deploy build (#41030)
-
-The docs deploy workflow now runs only for `main`. A `lint` job runs
-`ci/test/lint-docs.sh` in the same ci-builder image as the Buildkite
-`lint-docs` step, and `deploy` needs it to pass. The lint job has
-`contents: read` only, with no `id-token` permission or environment, and
-runs ci-builder with `--no-secrets`. It passes nothing to the deploy
-job, so a bad ci-builder image can at worst produce a wrong lint result.
-It cannot reach the website.
-
-The deploy job installs Hugo and Dart Sass from the `HUGO_AMD64` and
-`DART_SASS_AMD64` pins in `ci/builder/Dockerfile`
-(`ci/deploy_website/install-tools.sh`), with checksums verified. It does
-not run the ci-builder image. Renovate bumps reach the deploy and lint
-together, and a Dockerfile change triggers a deploy.
-
-The SQL keyword table on `sql/identifiers` is mounted into Hugo's assets
-from `src/sql-lexer/src/keywords.txt`, replacing the read through
-`doc/user/sql-grammar/keywords.txt`. Hugo 0.170 renders an empty table
-through that symlink and still exits 0. With the mount, the build fails
-if the file is missing.
-
-## Why
-
-- The keyword table is empty in production. The
-
-**File**: `.github/workflows/deploy-docs.yml` (modified, +22/-11)
-```diff
-@@ -13,9 +13,11 @@ name: Deploy docs
- 
- on:
-   push:
--    branches: [main, "self-managed-docs/*"]
-+    branches: [main]
-     paths:
-       - doc/user/**
-+      - src/sql-lexer/src/keywords.txt
-+      - ci/builder/Dockerfile
-       - ci/deploy_website/**
-       - .github/workflows/deploy-docs.yml
-   workflow_dispatch:
-@@ -27,12 +29,25 @@ concurrency:
- permissions: {}
- 
- jobs:
-+  lint:
-+    name: Lint docs
-+    runs-on: ubuntu-26.04
-+    timeout-minutes: 30
-+    permissions:
-+      contents: read # check out the repository
-+    steps:
-+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-+        with:
-+          persist-credentials: false
-+      # Same check and image as the Buildkite lint-docs step.
-+      - run: bin/ci-builder run stable --no-secrets ci/test/lint-docs.sh
-+
-   deploy:
-     name: Deploy docs
--    runs-on: ubuntu-24.04
-+    needs: lint
-+    runs-on: ubuntu-26.04
-     timeout-minutes: 30
--    # Restricted to main and self-managed-docs/*; the AWS role trusts only
--    # this environment on those refs.
-+    # Restricted to main; the AWS role trusts only this environment.
-     environment: docs-production
-     permissions:
-       contents: read # check out the docs
-@@ -42,16 +57,12 @@ jobs:
-         with:
-           persist-credentials: false
-           sparse-checkout: |
-+            ci/builder
-             ci/deploy_website
-             doc/user
-             misc/shlib
--      # Keep in sync with the Hugo version in ci/builder/Dockerfile.
--      - name: Install Hugo
--        run: |
--          curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_extended_withdeploy_0.152.2_Linux-64bit.tar.gz > hugo.tar.gz
--          echo '08200e4d82f086c94c301e8ba08102f9e23f38774ad949bb3251cac76283684a hugo.tar.gz' | sha256sum --check
--          sudo tar -xzf hugo.tar.gz -C /usr/local/bin hugo
--          rm hugo.tar.gz
-+            src/sql-lexer
-+      - run: ci/deploy_website/install-tools.sh
-       - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
-         with:
-           role-to-assume: arn:aws:iam::834237029485:role/GithubActionsDocsDeploy
-```
-
-**File**: `ci/deploy_website/install-tools.sh` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+#!/bin/sh
-+
-+# Copyright Materialize, Inc. and contributors. All rights reserved.
-+#
-+# Use of this software is governed by the Business Source License
-+# included in the LICENSE file at the root of this repository.
-+#
-+# As of the Change Date specified in that file, in accordance with
-+# the Business Source License, use of this software will be governed
-+# by the Apache License, Version 2.0.
-+#
-+# install-tools.sh — installs the Hugo and Dart Sass builds pinned in
-+# ci/builder/Dockerfile, so the deploy builds with the same tools as lint-docs
-+# without running the ci-builder image.
-+
-+set -eu
-+
-+dockerfile=ci/builder/Dockerfile
-+
-+pin() {
-+    sed -n "s/^ARG $1=//p" "$dockerfile"
-+}
-+
-+fetch() {
-+    curl -fsSL "$1" > "$2"
-+    echo "$3  $2" | sha256sum --check
-+}
-+
-+hugo=$(pin HUGO_AMD64)
-+hugo_version=${hugo%@*}
-+fetch "https://github.com/gohugoio/hugo/releases/download/$hugo_version/hugo_withdeploy_${hugo_version#v}_linux-amd64.tar.gz" hugo.tar.gz "${hugo#*@}"
-+sudo tar -xzf hugo.tar.gz -C /usr/local/bin hugo
-+rm hugo.tar.gz
-+
-+sass=$(pin DART_SASS_AMD64)
-+sass_version=${sass%@*}
-+fetch "https://github.com/sass/dart-sass/releases/download/$sass_version/dart-sass-$sass_version-linux-x64.tar.gz" dart-sass.tar.gz "${sass#*@}"
-+sudo tar -xzf dart-sass.tar.gz -C /opt
-+sudo ln -sf /opt/dart-sass/sass /usr/local/bin/sass
-+rm dart-sass.tar.gz
-```
-
-**File**: `ci/deploy_website/website.sh` (modified, +3/-8)
-```diff
-@@ -48,14 +48,9 @@ declare -A external_redirects=(
- )
- 
- cd doc/user
--if [[ "$GITHUB_REPOSITORY" == "MaterializeInc/materialize" ]] && [[ "$GITHUB_REF_NAME" == self-managed-docs/* ]]; then
--    VERSION=${GITHUB_REF_NAME#self-managed-docs/}
--    hugo --gc --baseURL "/docs/self-managed/$VERSION" --destination "public/docs/self-managed/$VERSION"
--else
--    hugo --gc --baseURL /docs --destination public/docs
--    # Build skill docs to public/docs/markdown-docs/.
--    hugo --gc --baseURL /docs --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination public/docs/markdown-docs
--fi
-+hugo --gc --baseURL /docs --destination public/docs
-+# Build skill docs to public/docs/markdown-docs/.
-+hugo --gc --baseURL /docs --config config.toml,config.skill.toml --disableKinds 404,sitemap,robotsTXT,taxonomy --destination public/docs/markdown-docs
- hugo deploy --maxDeletes -1
- 
- touch empty
-```
-
-**File**: `doc/user/config.skill.toml` (modified, +9/-0)
-```diff
-@@ -30,6 +30,15 @@ disable = true
-   target = "static"
-   files = ["! **", "! *"]
- 
-+# This list replaces the one in config.toml, so its mounts are repeated.
-+[[module.mounts]]
-+  source = "assets"
-+  target = "assets"
-+
-+[[module.mounts]]
-+  source = "../../src/sql-lexer/src/keywords.txt"
-+  target = "assets/sql-keywords.txt"
-+
- # Skill-specific parameters
- [params]
-   # Sections to exclude from skill generation
-```
-
-**File**: `doc/user/config.toml` (modified, +11/-0)
-```diff
-@@ -148,6 +148,17 @@ unsafe = true
-     startLevel = 2
-     endLevel = 4
- 
-+# Hugo does not read files through a symlink that leaves the project, so the
-+# lexer's keyword list is mounted instead. Declaring any assets mount drops the
-+# default one, so it is restated.
-+[[module.mounts]]
-+source = "assets"
-+target = "assets"
-+
-+[[module.mounts]]
-+source = "../../src/sql-lexer/src/keywords.txt"
-+target = "assets/sql-keywords.txt"
-+
- # hugo deploy sets each file's Content-Type from the first Hugo media type with
- # its suffix, and for ".xml" that is RSS, so the sitemap was served as
- # application/rss+xml. Matchers are tried in order; the first match wins.
-```
-
-**File**: `doc/user/layouts/shortcodes/kwlist.html` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- 
- <table border="0" style="width:100%; border-collapse: collapse;">
-   <tr>
--{{range $index, $keyword := split (readFile ("sql-grammar/keywords.txt")) "\n"}}
-+{{range $index, $keyword := split (resources.Get "sql-keywords.txt").Content "\n"}}
-   {{if and (not (hasPrefix $keyword "#")) $keyword}}
-     {{ if eq (mod $index 4) 0 }}
-       </tr><tr>
-```
-
-**File**: `doc/user/layouts/shortcodes/kwlist.skill.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {{- /* Skill output: list SQL keywords from keywords.txt */ -}}
- {{- $keywords := slice -}}
--{{- range $line := split (readFile "sql-grammar/keywords.txt") "\n" -}}
-+{{- range $line := split (resources.Get "sql-keywords.txt").Content "\n" -}}
-   {{- if and (not (hasPrefix $line "#")) $line -}}
-     {{- $keywords = $keywords | append ($line | upper) -}}
-   {{- end -}}
-```
-
-**File**: `doc/user/sql-grammar/keywords.txt` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--../../../src/sql-lexer/src/keywords.txt
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `5f0551b4` (2026-11-24)
-**Commit Message**: ci-builder: pass proxy settings into the container (#40973)
-
-Forwards `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY` and their lowercase
-forms into the ci-builder container.
-
-Agents that route egress through an HTTP proxy set these in the job
-environment. Without forwarding, commands inside ci-builder bypass the
-proxy. `docker run --env VAR` skips unset variables, so nothing changes
-on agents without a proxy or locally.
-
-Needed by MaterializeInc/i2#4576 and MaterializeInc/i2#4578.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-authored-by: Jason Hernandez <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `bin/ci-builder` (modified, +8/-0)
-```diff
-@@ -278,6 +278,14 @@ case "$cmd" in
-             --env BUILDKITE_BRANCH
-             --env BUILDKITE_ORGANIZATION_SLUG
-             --env BUILDKITE_PULL_REQUEST
-+            # Agents that route egress through a proxy set these. Elsewhere
-+            # they are unset, and `--env VAR` skips unset variables.
-+            --env HTTP_PROXY
-+            --env HTTPS_PROXY
-+            --env NO_PROXY
-+            --env http_proxy
-+            --env https_proxy
-+            --env no_proxy
-         )
- 
-         if [[ $secrets == "true" ]]; then
-```
-
----
-
-### Incident Patch 3: `085e6c72` (2026-11-24)
-**Commit Message**: storage: [SS-550] Log IDs and counts at INFO and large fields at TRACE (#41057)
+### Incident Patch 1: `371eac62` (2026-11-25)
+**Commit Message**: reclock: free unused memory after start (#40715)
 
 ### Motivation
 
-Closes [SS-550](https://linear.app/materializeinc/issue/SS-550).
-Closes [SS-612](https://linear.app/materializeinc/issue/SS-612).
+When an ingestion starts, every export's reclock operator replays the
+remap collection from the ingestion's as-of. The as-of is the minimum
+over all exports. Because a new export has no upper yet, adding a table
+pulls the as-of back to the remap since for every export.
 
-Two INFO log calls in storage write lines longer than 240 KiB. Alloy
-cuts these lines before Loki stores them, and the
-`oversized-log-lines-tier-3` alert fires several times each day in
-production.
+The replay arrives in one burst. Each operator holds it in
+`remap_accum_buffer` and then in `pending_remap` before it moves into
+the trace. Neither buffer gave its capacity back after draining. An
+export that has caught up compacts its trace right away, but it still
+kept buffers sized for the whole replay for as long as it ran.
 
-1. `src/storage/src/storage_state.rs` logs the `Debug` form of the
-`RunIngestionCommand` with `?ingestion` in `reconcile: received
-RunIngestion command`.
-2. `src/storage-operators/src/oneshot_source.rs` logs every included and
-excluded object in `listed objects`.
+In one incident the remap since had been held back for months. Adding a
+table made 14 exports on 2 workers replay that history, and the retained
+buffers grew to about 45 GB.
 
-On 2026-11-24, Loki showed 197 cut `listed objects` lines between 07:00
-and 07:25 UTC. Loki also showed 12 and 17 cut `RunIngestion` lines
-before the alerts at 12:55 and 14:19 UTC.
+relates to: [SS-563](https://linear.app/materializeinc/issue/SS-563)
 
 ### Description
 
-`doc/developer/style.md` (section "Log message style") sets the standard
-for each level:
+* `remap_accum_buffer` is taken with `mem::take` before it drains, which
+frees its allocation. Steady state doesn't pay for this. A tick that
+advances one element brings two updates, and those fit inline in the
+`ChangeBatch`.
+* `pending_remap` shrinks to twice its lengt
 
-* `INFO` reports normal system status changes that support or
-engineering can use in an investigation.
-* `DEBUG` is for events whose likelihood of usefulness is too low to
-emit by default. An engineer enables it for one
-
-**File**: `src/storage-operators/src/oneshot_source.rs` (modified, +7/-1)
+**File**: `src/timely-util/src/reclock.rs` (modified, +45/-1)
 ```diff
-@@ -302,7 +302,13 @@ where
-                 let (include, exclude): (Vec<_>, Vec<_>) = objects
-                     .into_iter()
-                     .partition(|(o, _checksum)| filter.filter::<S>(o));
--                tracing::info!(%worker_id, ?include, ?exclude, "listed objects");
-+                tracing::info!(
-+                    %worker_id,
-+                    include_count = include.len(),
-+                    exclude_count = exclude.len(),
-+                    "listed objects"
+@@ -281,7 +281,10 @@ where
+             // Only do this once any of the `remap_input` frontier has passed `as_of`.
+             // For as long as the input frontier is less-equal `as_of`, we have no finalized times.
+             if !PartialOrder::less_equal(&frontiers[0].frontier(), &as_of.borrow()) {
+-                for ((into, from), diff) in remap_accum_buffer.drain() {
++                // Taking the buffer releases its capacity. A replay of the remap history from an
++                // old as-of fills it once, and every export's operator would hold that capacity
++                // for good.
++                for ((into, from), diff) in std::mem::take(&mut remap_accum_buffer).into_inner() {
+                     pending_remap.push(Reverse((into, from, diff)));
+                 }
+             }
+@@ -303,6 +306,10 @@ where
+                 });
+                 remap_trace.push(into.clone(), updates);
+             }
++            // Releases what a replay leaves behind, like `remap_accum_buffer` above.
++            if pending_remap.len() < pending_remap.capacity() / 4 {
++                pending_remap.shrink_to(pending_remap.len() * 2);
++            }
+ 
+             // STEP 3. Receive new data updates
+             //         The `events` input describes arbitrary progress and data over `FromTime`,
+@@ -1901,4 +1908,41 @@ mod test {
+             },
+         );
+     }
++
++    #[cfg(feature = "count-allocations")]
++    #[mz_ore::test]
++    #[cfg_attr(miri, ignore)] // too slow
++    fn test_replay_releases_buffers() {
++        let replayed = 10_000_u64;
++
++        // The source frontier is beyond every replayed binding, so the trace keeps none of them
++        // and what stays allocated after the replay is buffer capacity.
++        harness::<FromTime, u64, _, _>(
++            Antichain::from_elem(0),
++            move |worker, mut bindings, (_data, mut data_cap), reclocked| {
++                data_cap.downgrade(&Partitioned::new_singleton(0, replayed));
++                step(worker);
++                let info = allocation_counter::measure(|| {
++                    for ts in 0..replayed {
++                        if ts > 0 {
++                            bindings.update_at(
++                                Partitioned::new_singleton(0, ts - 1),
++                                ts,
++                                Diff::MINUS_ONE,
++                            );
++                        }
++                        bindings.update_at(Partitioned::new_singleton(0, ts), ts, Diff::ONE);
++                    }
++                    bindings.advance_to(replayed);
++                    bindings.flush();
++                    step(worker);
++                    reclocked.try_iter().for_each(drop);
++                });
++                assert!(
++                    info.bytes_current < i64::try_from(info.bytes_max / 10).expect("fits"),
++                    "replay buffers kept their capacity: {info:?}"
 +                );
-+                tracing::trace!(%worker_id, ?include, ?exclude, "listed objects");
-                 if include.is_empty() {
-                     let err = StorageErrorXKind::NoMatchingFiles.with_context("discover");
-                     start_handle.give(&start_cap, Err(err));
++            },
++        );
++    }
+ }
 ```
 
-**File**: `src/storage/src/storage_state.rs` (modified, +7/-2)
+---
+
+### Incident Patch 2: `01a264e6` (2026-11-25)
+**Commit Message**: reclock: implement keyframes to improve reclock performance with large traces (#40714)
+
+### Motivation
+
+The reclock operator keeps the remap collection as a list of updates. On
+every activation it rebuilt the binding frontier by replaying those
+updates from the since forward.
+
+That is cheap while the since keeps up. It is not when an export
+snapshots while CDC runs concurrently. The snapshot holds the since
+back, the trace keeps growing, and every activation replays all of it.
+The cost per activation grows with the history held, which makes the
+whole snapshot quadratic.
+
+In a replay test that held about 1M bindings and then added a 1M row
+table, reclock was 3.9 s of worker CPU on main, about half of what the
+worker spent.
+
+There are 2 commits - one for the code changes + unit tests, and the
+other for the benchmarks.
+
+Closes: [SS-563](https://linear.app/materializeinc/issue/SS-563)
+
+### Description
+
+The trace now stores some bindings whole, as keyframes, and only the
+updates for the times between them.
+
+* A keyframe starts once the updates since the last one reach the width
+of the frontier. A source with a totally ordered time gets a keyframe at
+every binding. A wide frontier where 
+
+**File**: `src/timely-util/benches/reclock.rs` (modified, +258/-1)
 ```diff
-@@ -110,7 +110,7 @@ use timely::worker::Worker as TimelyWorker;
- use tokio::sync::mpsc::error::TryRecvError;
- use tokio::sync::{mpsc, watch};
- use tokio::time::Instant;
--use tracing::{debug, info, warn};
-+use tracing::{debug, info, trace, warn};
- use uuid::Uuid;
+@@ -9,6 +9,7 @@
  
- use crate::internal_control::{
-@@ -1152,7 +1152,12 @@ impl<'w> Worker<'w> {
-                     }
-                 }
-                 StorageCommand::RunIngestion(ingestion) => {
--                    info!(%worker_id, ?ingestion, "reconcile: received RunIngestion command");
-+                    info!(
-+                        %worker_id,
-+                        id = %ingestion.id,
-+                        "reconcile: received RunIngestion command"
-+                    );
-+                    trace!(%worker_id, ?ingestion, "reconcile: received RunIngestion command");
+ use mz_alloc_default as _;
+ use std::sync::mpsc::Receiver;
++use std::time::Instant;
  
-                     // Ensure that ingestions are forward-rolling alter compatible.
-                     let prev = running_ingestion_descriptions
+ use differential_dataflow::{
+     ExchangeData,
+@@ -17,6 +18,7 @@ use differential_dataflow::{
+ use mz_bench_util::{BenchmarkId, Criterion, criterion_group, criterion_main};
+ 
+ use mz_ore::Overflowing;
++use mz_ore::cast::CastFrom;
+ use mz_timely_util::capture::PusherCapture;
+ use mz_timely_util::order::Partitioned;
+ use mz_timely_util::reclock::reclock;
+@@ -124,5 +126,260 @@ fn bench_reclock_simple(c: &mut Criterion) {
+     }
+ }
+ 
+-criterion_group!(benches, bench_reclock_simple);
++/// The partition that the bindings `mint` creates advance, and that reclocked updates belong to.
++const PID: u64 = 1;
++
++/// The shape of the bindings [`mint`] creates.
++#[derive(Clone, Copy)]
++enum Shape {
++    /// Partition `PID` alone.
++    Partition,
++    /// A GTID set with `uuids` server UUIDs and ranges filling the gaps around them. Only the
++    /// UUID at `PID` advances, the way a source with idle UUIDs from passive masters or past
++    /// failovers does.
++    Gtid { uuids: u64 },
++}
++
++/// Inserts the elements of `shape` that never advance, at time 0.
++fn mint_idle(bindings: &mut BindingHandle<FromTime>, shape: Shape) {
++    let Shape::Gtid { uuids } = shape else {
++        return;
++    };
++    // The UUIDs sit at the odd partitions from `PID` up, and the ranges at the partitions
++    // between them.
++    for pid in (PID..).step_by(2).take(usize::cast_from(uuids)) {
++        bindings.update_at(Partitioned::new_range(pid - 1, pid - 1, 0), 0, Diff::ONE);
++        if pid != PID {
++            bindings.update_at(Partitioned::new_singleton(pid, 1), 0, Diff::ONE);
++        }
++    }
++    let last = PID + 2 * uuids - 1;
++    bindings.update_at(Partitioned::new_range(last, u64::MAX, 0), 0, Diff::ONE);
++}
++
++/// Mints the binding at time `t`, which covers the offsets of partition `PID` below `t`.
++fn mint_binding(bindings: &mut BindingHandle<FromTime>, t: u64) {
++    if t > 0 {
++        bindings.update_at(Partitioned::new_singleton(PID, t - 1), t, Diff::MINUS_ONE);
++    }
++    bindings.update_at(Partitioned::new_singleton(PID, t), t, Diff::ONE);
++}
++
++/// Mints bindings of `shape` at times `0..=count`. Offset `o` of `PID` reclocks to `o + 1`.
++fn mint(bindings: &mut BindingHandle<FromTime>, count: u64, shape: Shape) {
++    mint_idle(bindings, shape);
++    for t in 0..=count {
++        mint_binding(bindings, t);
++    }
++    bindings.advance_to(count + 1);
++    bindings.flush();
++}
++
++/// The binding counts most benchmarks of a pinned since run at.
++const COUNTS: &[u64] = &[1, 10, 100, 1_000, 10_000, 100_000, 1_000_000];
++
++/// Times one activation of the reclock operator over each of `counts` bindings of `shape`, while
++/// `data_cap` holds the since at the as_of the way a snapshotting export does. Each activation
++/// reclocks one update at each offset `batch` returns. Setup runs outside the timed loop.
++fn bench_pinned_since(
++    c: &mut Criterion,
++    group: &str,
++    counts: &[u64],
++    shape: Shape,
++    batch: fn(u64) -> Vec<u64>,
++) {
++    let mut group = c.benchmark_group(group);
++    group.sample_size(10);
++    for &count in counts {
++        group.bench_with_input(BenchmarkId::from_parameter(count), &count, |b, &count| {
++            b.iter_custom(|iters| {
++                harness::<FromTime, u64, _, _>(
++                    Antichain::from_elem(0),
++                    move |worker, mut bindings, (mut data, data_cap), reclocked| {
++                        mint(&mut bindings, count, shape);
++                        step(worker);
++                        let offsets = batch(count);
++                        let mut activate = || {
++                            data.activate().session(&data_cap).give_iterator(
++                                offsets.iter().enumerate().map(|(d, offset)| {
++                                    (
++                                        u64::cast_from(d),
++                                        Partitioned::new_singleton(PID, *offset),
++                                        Diff::ONE,
++                                    )
++                                }),
++                            );
++                            step(worker);
++                            reclocked
++                                .try_iter()
++                                .map(|event| match event {
++                                    Event::Messages(_, updates) => updates.len(),
++                                    Event::Progress(_) => 0,
++                                })
++                                .sum::<usize>()
++                        };
++                        // Every update must reclock to a binding, or the benchmark measures
++                        // deferred updates instead.
++                        assert_eq!(activate(), offsets.len());
++
++                        let start = Instant::now();
++                        for _ in 0..iters {
++                            activate();
++     
+```
+
+**File**: `src/timely-util/src/reclock.rs` (modified, +711/-144)
+```diff
+@@ -177,7 +177,7 @@ use std::iter::FromIterator;
+ 
+ use differential_dataflow::difference::Semigroup;
+ use differential_dataflow::lattice::Lattice;
+-use differential_dataflow::{AsCollection, ExchangeData, VecCollection, consolidation};
++use differential_dataflow::{AsCollection, ExchangeData, VecCollection};
+ use mz_ore::Overflowing;
+ use mz_ore::collections::CollectionExt;
+ use timely::communication::{Pull, Push};
+@@ -237,22 +237,15 @@ where
+         // frontier. As the input frontier advances, we drop elements out of this priority queue
+         // and mint new associations.
+         let mut pending_remap: BinaryHeap<Reverse<(IntoTime, FromTime, i64)>> = BinaryHeap::new();
+-        // A trace of `remap_input` that accumulates correctly for all times that are beyond
+-        // `remap_since` and not beyond `remap_upper`. The updates in `remap_trace` are maintained
+-        // in time order. An actual DD trace could be used here at the expense of a more
+-        // complicated API to traverse it. This is left for future work if the naive trace
+-        // maintenance implemented in this operator becomes problematic.
+-        let mut remap_upper = Antichain::from_elem(IntoTime::minimum());
+-        let mut remap_since = as_of.clone();
+-        let mut remap_trace = VecDeque::new();
++        // The bindings of `remap_input` at times beyond its since and not beyond the input
++        // frontier.
++        let mut remap_trace = RemapTrace::new(as_of.clone());
+ 
+         // A stash of source updates for which we don't know the corresponding binding yet.
+         let mut deferred_source_updates: Vec<ChainBatch<_, _, _>> = Vec::new();
+         // The frontier of the `events` input
+         let mut source_frontier = MutableAntichain::from_elem(FromTime::minimum());
+ 
+-        let mut binding_buffer = Vec::new();
+-
+         // Accumulation buffer for `remap_input` updates.
+         use timely::progress::ChangeBatch;
+         let mut remap_accum_buffer: ChangeBatch<(IntoTime, FromTime)> = ChangeBatch::new();
+@@ -294,15 +287,21 @@ where
+             }
+ 
+             // STEP 2. Extract bindings not beyond `remap_frontier` and commit them into `remap_trace`.
+-            let prev_remap_upper =
+-                std::mem::replace(&mut remap_upper, frontiers[0].frontier().to_owned());
+-            while let Some(update) = pending_remap.peek_mut() {
+-                if !remap_upper.less_equal(&update.0.0) {
+-                    let Reverse((into, from, diff)) = PeekMut::pop(update);
+-                    remap_trace.push_back((from, into, diff));
+-                } else {
+-                    break;
+-                }
++            let remap_upper = frontiers[0].frontier().to_owned();
++            while let Some(Reverse((into, _, _))) = pending_remap.peek()
++                && !remap_upper.less_equal(into)
++            {
++                // The heap yields the updates of a time together, and all of them are in it
++                // because the remap frontier has passed that time.
++                let into = into.clone();
++                let updates = std::iter::from_fn(|| {
++                    let update = pending_remap.peek_mut()?;
++                    (update.0.0 == into).then(|| {
++                        let Reverse((_, from, diff)) = PeekMut::pop(update);
++                        (from, diff)
++                    })
++                });
++                remap_trace.push(into.clone(), updates);
+             }
+ 
+             // STEP 3. Receive new data updates
+@@ -330,139 +329,57 @@ where
+             stash.sort_unstable_by(|(_, t1, _): &(D, FromTime, R), (_, t2, _)| t1.cmp(t2));
+             let mut new_source_updates = ChainBatch::from_iter(stash);
+ 
+-            // STEP 4: Reclock new and deferred updates
+-            //         We are now ready to step through the remap bindings in time order and
+-            //         perform the following actions:
+-            //         4.1. Match `new_source_updates` against the entirety of bindings contained
+-            //              in the trace.
+-            //         4.2. Match `deferred_source_updates` against the bindings that were just
+-            //              added in the trace.
+-            //         4.3. Reclock `source_frontier` to calculate the new since frontier of the
+-            //              remap trace.
++            // STEP 4: Reclock the source frontier and the new and deferred updates
++            //         This only makes sense if there are any times for which we can correctly
++            //         accumulate the remap trace, which is what we check here.
+             //
+-            //         The steps above only make sense to perform if there are any times for which
+-            //         we can correctly accumulate the remap trace, which is what we check here.
+-            if remap_since.iter().all(|t| !remap_upper.less_equal(t)) {
+-                let mut cur_binding = MutableAntichain::new();
+-
+-                let mut remap = remap_trace
+```
+
+---
+
+### Incident Patch 3: `8327b66e` (2026-11-25)
+**Commit Message**: adapter: hydrate new builtin collections before 0dt promotion (#40903)
+
+Closes: [SQL-948](https://linear.app/materializeinc/issue/SQL-948)
+
+### Motivation
+
+During a 0dt upgrade, a builtin storage collection that is new in the
+target version gets its shard inside the read-only process's catalog
+savepoint, which is never committed, and the promoted leader allocates a
+different one. So dataflows that hydrated while read-only are rebuilt at
+cut-over, and anything reading a new collection cannot hydrate before
+promotion.
+
+On main this hits the three query-policy materialized views from #38762,
+which are small leaves. If #40067's `mz_catalog_items` and #40843 on top
+of it ship in one upgrade, the 12 catalog-server indexes that depend on
+`mz_types` only hydrate after cut-over.
+
+### Description
+
+Reviewable commit by commit:
+
+1. **Shards from the migration shard.** Builtin tables, sources and
+materialized views without a shard get theirs from the builtin migration
+shard, as `Replacement`-migrated collections do, and the read-only
+process writes them the same way.
+- An entry is only reused for the same `GlobalId` and builtin. A new
+builtin's `GlobalId` exists only in the uncommitted savepoin
+
+**File**: `doc/developer/design/20251015_builtin_schema_migration.md` (modified, +9/-0)
+```diff
+@@ -71,6 +71,7 @@ The general approach to shard replacement matches the existing implementation, b
+ 
+ To support schema migration by shard replacement, we need a place to store new shard IDs across restarts, and we will keep using the migration shard for this.
+ The migration shard contains entries of the form `(GlobalId, Version, DeployGeneration) -> ShardId`.
++Entries for collections that had no shard also carry the builtin's schema name, object name and type (see below).
+ 
+ A read-only process performing shard replacement reads the migration shard to collect all existing entries at its version and deploy generation.
+ Notably, it ignores any entries at different versions or deploy generations, to avoid any interference with concurrent in-progress upgrades.
+@@ -86,6 +87,14 @@ First, the leader must be at v26.17 or later, because every builtin materialized
+ Second, the `enable_0dt_hydrate_migrated_builtin_mvs` feature flag must be on; it exists as a break-glass revert.
+ When either condition does not hold, the migrated materialized views and their dependents are instead excluded from the 0dt caught-up check, which is the older behaviour: promotion proceeds without them and they hydrate at cut-over.
+ 
++Builtin storage collections that have no shard yet, in practice those added since the version being upgraded from, get their shards from the migration shard in the same way, without a migration step.
++Otherwise the read-only process would only have a shard in its uncommitted catalog savepoint, and the promoted leader would allocate a different one.
++The read-only process also allocates a new builtin's `GlobalId` only in that savepoint, and a later boot can give that `GlobalId` to another builtin, for example after another deploy generation was promoted.
++So their entries also record the builtin's schema name, object name and type, and are only reused for the same `GlobalId` and builtin.
++On a mismatch, a fresh shard is allocated.
++The read-only process writes new tables and sources as it writes `Replacement`-migrated ones, whether or not the two conditions above hold.
++When either does not hold, every new builtin and its dependents are excluded from the caught-up check, as are the migrated materialized views.
++
+ A leader process performing shard replacement performs the same steps as in read-only mode.
+ Additionally, it cleans up durable state written by earlier versions and/or deploy generations by:
+   - arranging for the previous shards used by the migrated storage collections to be finalized
+```
+
+**File**: `src/adapter-dyncfgs/src/dyncfgs.rs` (modified, +8/-7)
+```diff
+@@ -93,13 +93,14 @@ pub const WITH_0DT_CAUGHT_UP_CHECK_STABILITY_PERIOD: Config<Duration> = Config::
+ pub const ENABLE_0DT_HYDRATE_MIGRATED_BUILTIN_MVS: Config<bool> = Config::new(
+     "enable_0dt_hydrate_migrated_builtin_mvs",
+     true,
+-    "Write-enable replacement-migrated builtin materialized views while read-only during a 0dt \
+-     deployment, so they hydrate before cut-over and keep gating promotion. Emergency break-glass \
+-     flag: disabling excludes migrated MVs (and their dependents) from the caught-up check again, \
+-     so promotion proceeds with them unhydrated. Not an exact revert: a collection with no live \
+-     leader frontier must be hydrated either way. Only takes effect when the leader is new enough \
+-     for the write to make progress, and is read once at startup, so changing it means setting it \
+-     on the leader and restarting the new deployment.",
++    "Write-enable replacement-migrated and new builtin materialized views while read-only during \
++     a 0dt deployment, so they hydrate before cut-over and gate promotion. Emergency break-glass \
++     flag: disabling excludes these MVs and every other new builtin (and their dependents) from \
++     the caught-up check, so promotion proceeds with them unhydrated. Not an exact revert: a \
++     collection with no live leader frontier must be hydrated either way, and new builtin tables \
++     and sources are written either way. Only takes effect when the leader is new enough for the \
++     write to make progress, and is read once at startup, so changing it means setting it on the \
++     leader and restarting the new deployment.",
+     ParameterScope::Environment,
+ );
+ 
+```
+
+**File**: `src/adapter/src/catalog/open.rs` (modified, +9/-9)
+```diff
+@@ -75,14 +75,15 @@ use crate::catalog::{BuiltinTableUpdate, Catalog, CatalogState, Config, is_reser
+ pub struct InitializeStateResult {
+     /// An initialized [`CatalogState`].
+     pub state: CatalogState,
+-    /// Items whose builtin schema migration allocated a fresh, self-owned persist shard. Only used
+-    /// by 0dt migration.
++    /// Items whose builtin schema migration allocated a fresh, self-owned persist shard from the
++    /// migration shard: `Replacement`-migrated items and builtin storage collections that had no
++    /// shard yet, in practice new ones. Only used by 0dt migration.
+     ///
+-    /// `Replacement`-migrated items only: derived by filtering to items with a global id in
+-    /// `MigrationRunResult::new_shards`, which only `migrate_replace` populates. `Evolution`
+-    /// migrates in place and reuses the leader's shard, so it never lands here. Read-only write
+-    /// paths depend on that: force-writing a shard while read-only is safe only because we
+-    /// exclusively own it (see `ComputeController::allow_writes_in_read_only`).
++    /// Derived by filtering to items with a global id in `MigrationRunResult::new_shards`, which
++    /// only `get_or_insert_shards` populates. `Evolution` migrates in place and reuses the leader's
++    /// shard, so it never lands here. Read-only write paths depend on that: force-writing a shard
++    /// while read-only is safe only because we exclusively own it (see
++    /// `ComputeController::allow_writes_in_read_only`).
+     pub migrated_storage_collections_0dt: BTreeSet<CatalogItemId>,
+     /// A set of new builtin items.
+     pub new_builtin_collections: BTreeSet<GlobalId>,
+@@ -108,8 +109,7 @@ pub struct OpenCatalogResult {
+     pub catalog: Catalog,
+     /// See [`InitializeStateResult::last_seen_version`].
+     pub last_seen_version: Option<Version>,
+-    /// See [`InitializeStateResult::migrated_storage_collections_0dt`]; `Replacement`-migrated
+-    /// items only.
++    /// See [`InitializeStateResult::migrated_storage_collections_0dt`].
+     pub migrated_storage_collections_0dt: BTreeSet<CatalogItemId>,
+     /// A set of new builtin items.
+     pub new_builtin_collections: BTreeSet<GlobalId>,
+```
+
+**File**: `src/adapter/src/catalog/open/builtin_schema_migration.rs` (modified, +121/-44)
+```diff
+@@ -25,6 +25,10 @@
+ //! Which mechanism to use is selected through entries in the `MIGRATIONS` list. In general, the
+ //! `Evolution` mechanism should be used when possible, as it avoids data loss.
+ //!
++//! Builtin storage collections that have no shard yet, in practice new ones, get their shards from
++//! the migration shard that `Replacement` uses, so that a read-only environment can write them
++//! (see `Migration::plan_allocation`).
++//!
+ //! For more context and details on the implementation, see
+ //! `doc/developer/design/20251015_builtin_schema_migration.md`.
+ 
+@@ -658,7 +662,8 @@ enum Mechanism {
+ 
+ /// The result of a builtin schema migration.
+ pub(super) struct MigrationResult {
+-    /// IDs of items whose shards have been replaced using the `Replacement` mechanism.
++    /// IDs of items that got a new shard from the migration shard: `Replacement`-migrated items
++    /// and builtin storage collections that had none.
+     pub replaced_items: BTreeSet<CatalogItemId>,
+     /// A cleanup action to take once the migration has been made durable.
+     pub cleanup_action: BoxFuture<'static, ()>,
+@@ -838,6 +843,18 @@ struct Migration {
+     config: BuiltinItemMigrationConfig,
+ }
+ 
++/// Whether `builtin` is a storage collection with a shard of its own.
++fn has_own_shard(builtin: &Builtin<NameReference>) -> bool {
++    use Builtin::*;
++    match builtin {
++        Table(..) | MaterializedView(..) => true,
++        // `mz_catalog_raw`'s shard is the catalog shard, which
++        // `Catalog::initialize_storage_state` registers.
++        Source(source) => **source != *MZ_CATALOG_RAW,
++        Log(..) | View(..) | Type(..) | Func(..) | Index(..) | Connection(..) => false,
++    }
++}
++
+ /// Whether `builtin` participates in a forced migration using `mechanism`.
+ fn participates_in_forced_migration(
+     builtin: &Builtin<NameReference>,
+@@ -862,9 +879,7 @@ fn participates_in_forced_migration(
+                     || (**table != *MZ_OBJECT_HYDRATION_HISTORY
+                         && **table != *MZ_REPLICA_HYDRATION_HISTORY))
+         }
+-        MaterializedView(..) => true,
+-        Source(source) => **source != *MZ_CATALOG_RAW,
+-        Log(..) | View(..) | Type(..) | Func(..) | Index(..) | Connection(..) => false,
++        _ => has_own_shard(builtin),
+     }
+ }
+ 
+@@ -910,10 +925,14 @@ impl Migration {
+             self.upgrade_migration_shard_version().await;
+         }
+ 
+-        info!("executing migration plan: {plan:?}");
++        let allocate = self.plan_allocation();
++
++        info!(?allocate, "executing migration plan: {plan:?}");
+ 
+         self.migrate_evolve(&plan.evolve).await?;
+-        let new_shards = self.migrate_replace(&plan.replace).await?;
++        let new_shards = self
++            .get_or_insert_shards(&[plan.replace.as_slice(), &allocate].concat())
++            .await?;
+ 
+         let mut migrated_objects = BTreeSet::new();
+         migrated_objects.extend(plan.evolve);
+@@ -1011,9 +1030,8 @@ impl Migration {
+             };
+ 
+             let builtin = object_info.builtin;
+-            use Builtin::*;
+             assert!(
+-                matches!(builtin, Table(..) | Source(..) | MaterializedView(..)),
++                has_own_shard(builtin),
+                 "schema migration not supported for builtin: {builtin:?}",
+             );
+         }
+@@ -1075,10 +1093,10 @@ impl Migration {
+     /// A builtin without a shard does not exist in persist yet: either it was added in the target
+     /// version, or the source version predates it entirely (an upgrade from before the builtin
+     /// was introduced can reach an `Evolution` step registered for a later version). In both
+-    /// cases the leader allocates the shard during bootstrap, at the target schema, and there is
+-    /// nothing to evolve or replace. Applied to every plan, forced or versioned, so that both
+-    /// paths agree; a read-only process that reached `migrate_evolve_one` with such an object
+-    /// would otherwise bail out and crash-loop.
++    /// cases the shard gets allocated at the target schema, from the migration shard (see
++    /// `plan_allocation`), and there is nothing to evolve or replace. Applied to every plan,
++    /// forced or versioned, so that both paths agree; a read-only process that reached
++    /// `migrate_evolve_one` with such an object would otherwise bail out and crash-loop.
+     fn drop_shardless(&self, mut plan: Plan) -> Plan {
+         let has_shard = |object: &SystemObjectDescription| {
+             self.system_objects
+@@ -1090,6 +1108,22 @@ impl Migration {
+         plan
+     }
+ 
++    /// Select the builtin storage collections that get a shard allocated from the migration shard:
++    /// those without a registered shard, in practice those added since the source version.
++    ///
++    /// A read-only process never commits the shard the storage controller would allocate for
++    /// them, so the promoted leader would allocate another. From the migration shard, every
++    /// process of this v
+```
+
+**File**: `src/adapter/src/catalog/open/builtin_schema_migration_tests.rs` (modified, +226/-6)
+```diff
+@@ -14,7 +14,7 @@
+ use std::cell::RefCell;
+ use std::rc::Rc;
+ 
+-use mz_catalog::builtin::{BuiltinSource, BuiltinTable};
++use mz_catalog::builtin::{BuiltinMaterializedView, BuiltinSource, BuiltinTable};
+ use mz_persist_client::cache::PersistClientCache;
+ use mz_persist_types::PersistLocation;
+ use mz_repr::{RelationDesc, SqlScalarType};
+@@ -47,10 +47,10 @@ fn hydration_history_forced_migration_policy() {
+ }
+ 
+ /// A builtin that the source version never had has no shard registered. An `Evolution` step for
+-/// it, registered at a version above the source, must be skipped rather than bail out: the leader
+-/// allocates the shard at the target schema during bootstrap, and a read-only process that bailed
+-/// here would crash-loop. Regression test for SQL-713 (upgrade from before
+-/// `mz_replica_hydration_history` existed to a version that evolves it).
++/// it, registered at a version above the source, must be skipped rather than bail out, since there
++/// is nothing to evolve: a read-only process that bailed here would crash-loop. Regression test
++/// for SQL-713 (upgrade from before `mz_replica_hydration_history` existed to a version that
++/// evolves it).
+ #[test] // allow(test-attribute)
+ #[cfg_attr(miri, ignore)] // too slow
+ fn test_evolution_skips_builtin_without_shard() {
+@@ -158,6 +158,201 @@ fn test_evolution_skips_builtin_without_shard() {
+     }
+ }
+ 
++/// A target version replaces a builtin MV and adds a builtin table, MV and source. The boots, in
++/// order: a read-only boot, a read-only boot of another deploy generation that is then aborted, a
++/// leader that gives the replaced MV, the new table and the new MV each other's global ids, the
++/// promoted leader, and a leader of the next version.
++#[test] // allow(test-attribute)
++#[cfg_attr(miri, ignore)] // too slow
++fn test_shardless_builtin_collections_get_migration_shards() {
++    configure_tracing_for_turmoil();
++
++    let mut sim = turmoil::Builder::new().build();
++    let persist_location = init_persist(&mut sim);
++    let migration_shard_id = ShardId::new();
++    let (v1, v2, v3) = (
++        Version::new(0, 1, 0),
++        Version::new(0, 2, 0),
++        Version::new(0, 3, 0),
++    );
++
++    let info = |global_id: u64,
++                shard_id: Option<ShardId>,
++                builtin: &'static Builtin<NameReference>| ObjectInfo {
++        global_id: GlobalId::System(global_id),
++        shard_id,
++        builtin,
++        fingerprint: builtin.fingerprint(),
++    };
++    let (replaced_object, replaced_builtin) = make_builtin_mv("replaced_mv".into());
++    let (old_table_object, old_table_builtin) = make_builtin_table("old_table".into());
++    let (table_object, table_builtin) = make_builtin_table("new_table".into());
++    let (mv_object, mv_builtin) = make_builtin_mv("new_mv".into());
++    let (source_object, source_builtin) = make_builtin_source("new_source".into());
++    let catalog_raw_object = MZ_CATALOG_RAW_DESCRIPTION.clone();
++    let catalog_raw_builtin: &'static Builtin<NameReference> =
++        leak(Builtin::Source(&*MZ_CATALOG_RAW));
++    let replaced_shard = ShardId::new();
++    let old_table_shard = ShardId::new();
++    let steps = [MigrationStep {
++        version: v2.clone(),
++        object: replaced_object.clone(),
++        mechanism: Mechanism::Replacement,
++    }];
++
++    // `ids` are the global ids of the replaced MV, the new table and the new MV. `shards`, if
++    // given, holds the shards that the replaced MV and the new collections already have, by
++    // global id.
++    let mut boot = |name: &'static str,
++                    (source, target): (&Version, &Version),
++                    deploy_generation: u64,
++                    read_only: bool,
++                    ids: [u64; 3],
++                    shards: Option<&BTreeMap<GlobalId, ShardId>>| {
++        let shard = |id| shards.map(|shards| shards[&GlobalId::System(id)]);
++        let [replaced_id, table_id, mv_id] = ids;
++        let system_objects = BTreeMap::from([
++            (
++                replaced_object.clone(),
++                info(
++                    replaced_id,
++                    shard(replaced_id).or(Some(replaced_shard)),
++                    replaced_builtin,
++                ),
++            ),
++            (
++                old_table_object.clone(),
++                info(6, Some(old_table_shard), old_table_builtin),
++            ),
++            (
++                table_object.clone(),
++                info(table_id, shard(table_id), table_builtin),
++            ),
++            (mv_object.clone(), info(mv_id, shard(mv_id), mv_builtin)),
++            (source_object.clone(), info(4, shard(4), source_builtin)),
++            (
++                catalog_raw_object.clone(),
++                info(5, None, catalog_raw_builtin),
++            ),
++        ]);
++        let (source, target) = (source.clone(), target.clone());
++        let steps = steps.to_vec();
++        let persist_location = persist_location.clone();
++        let result = Rc::
+```
+
+**File**: `src/adapter/src/coord.rs` (modified, +31/-36)
+```diff
+@@ -261,8 +261,8 @@ where
+     future.boxed_local()
+ }
+ 
+-/// The oldest leader version against which a replacement-migrated builtin materialized view may
+-/// write its new persist shard while this environment is still read-only.
++/// The oldest leader version against which a replacement-migrated or new builtin materialized
++/// view may write its persist shard while this environment is still read-only.
+ ///
+ /// Every builtin materialized view reads `mz_internal.mz_catalog_raw`, so its dataflow only makes
+ /// progress up to the catalog shard's frontier. Holding that frontier at the current time is the
+@@ -2605,15 +2605,9 @@ impl Coordinator {
+                         if hydrate_migrated_mvs
+                             && migrated_storage_collections_0dt.contains(&entry.id())
+                         {
+-                            // `migrated_storage_collections_0dt` is `Replacement`-migrated items
+-                            // only, so this is a fresh shard we own: nothing else writes it, and
+-                            // writing it while read-only hydrates the MV and its dependents before
+-                            // cut-over. An `Evolution`-migrated MV reuses the leader's live shard
+-                            // and must never reach here.
+-                            //
+-                            // A *new* builtin MV gets no such treatment: its shard allocation
+-                            // lives only in this read-only savepoint, so the promoted leader
+-                            // allocates a different shard and discards whatever we wrote.
++                            // The shard came from the builtin migration shard, so the current
++                            // leader does not write it, and it survives promotion. Writing it
++                            // while read-only hydrates the MV and its dependents before cut-over.
+                             self.controller
+                                 .compute
+                                 .allow_writes_in_read_only(mview.cluster_id, gid)
+@@ -4892,16 +4886,16 @@ pub fn serve(
+             catalog_open_start.elapsed()
+         );
+ 
+-        // Whether replacement-migrated builtin MVs may write their new shards before cut-over.
+-        // Both `bootstrap` and the readiness gate below read this, and they have to agree.
+-        // `MIN_LEADER_VERSION_FOR_MIGRATED_MV_WRITES` explains why the leader's version settles it.
++        // Whether builtin MVs whose shard came from the builtin migration shard may write it before
++        // cut-over. Both `bootstrap` and the readiness gate below read this, and they have to
++        // agree. `MIN_LEADER_VERSION_FOR_MIGRATED_MV_WRITES` explains why the leader's version
++        // settles it.
+         //
+         // While we are read-only, `last_seen_version` is that leader's version: our catalog
+         // transaction is a savepoint, so our own bump of the setting never lands. `None` means a
+         // freshly initialized catalog, with nothing migrated and no leader to be compatible with.
+         //
+-        // `ENABLE_0DT_HYDRATE_MIGRATED_BUILTIN_MVS` is the break-glass revert: off falls back to
+-        // excluding migrated MVs from the caught-up gate, no redeploy needed.
++        // `ENABLE_0DT_HYDRATE_MIGRATED_BUILTIN_MVS` turns this off as a break-glass.
+         let hydrate_migrated_mvs = ENABLE_0DT_HYDRATE_MIGRATED_BUILTIN_MVS
+             .get(catalog.system_config().dyncfgs())
+             && last_seen_version
+@@ -4933,36 +4927,37 @@ pub fn serve(
+ 
+         let clusters_caught_up_check =
+             clusters_caught_up_trigger.map(|trigger| {
+-                let mut exclude_collections: BTreeSet<GlobalId> =
+-                    new_builtin_collections.iter().copied().collect();
+-
+-                // A collection that can't advance its write frontier in read-only mode
+-                // stalls its transitive dependents too, so exclude those from the caught-up
+-                // check as well. That's every *new* builtin collection, whose fresh shard has no
+-                // writer until this deployment promotes, plus migrated MVs whenever the leader is
+-                // too old for them to write. An excluded dependent may still be hydrating right
+-                // after promotion, a brief blip we accept because these collections are small and
+-                // get a writer at cut-over.
++                // A collection that can't advance its write frontier in read-only mode stalls its
++                // transitive dependents too, so exclude those from the caught-up check as well. An
++                // excluded dependent may still be hydrating right after promotion, a brief blip we
++                // accept because these collections are small and get a writer at cut-over.
+                 //
+-                // Seeded from all of `new_builtin_collections`, not just the MVs: a new builtin
+-                // table or source has no read-only writer either (`register_tab
+```
+
+**File**: `src/adapter/src/coord/caught_up.rs` (modified, +77/-10)
+```diff
+@@ -123,10 +123,8 @@ pub struct CaughtUpCheckContext {
+     /// A trigger that signals that all clusters/collections have been caught
+     /// up.
+     pub trigger: Trigger,
+-    /// Collections to exclude from the caught up check.
+-    ///
+-    /// When a caught up check is performed as part of a 0dt upgrade, it makes sense to exclude
+-    /// collections of newly added builtin objects, as these might not hydrate in read-only mode.
++    /// Collections to exclude from the caught up check, such as collections that can't advance
++    /// their write frontier in read-only mode during a 0dt upgrade.
+     pub exclude_collections: BTreeSet<GlobalId>,
+ }
+ 
+@@ -147,6 +145,16 @@ struct CaughtUpCheck {
+ 
+ struct LeaderSnapshot {
+     frontiers: BTreeMap<GlobalId, Antichain<Timestamp>>,
++    /// The leader's clock: the upper of `mz_cluster_replica_frontiers`, the collection that
++    /// `frontiers` is read from.
++    ///
++    /// The leader advances that upper to its wall clock every second, even when it has nothing to
++    /// write. A read-only process never advances it (see the storage controller's
++    /// `collection_mgmt`). So while the leader is down, this stays at the leader's last second.
++    ///
++    /// NOTE: the newest of `frontiers` is no substitute: a collection such as a `REFRESH` MV holds
++    /// its frontier at its next refresh, which can be far ahead of the leader's clock.
++    clock: Timestamp,
+     hydration: LeaderHydration,
+     unhydrated_collections: BTreeSet<GlobalId>,
+     problematic_replicas: BTreeSet<ReplicaId>,
+@@ -687,6 +695,12 @@ impl LeaderSnapshot {
+             .snapshot_latest(replica_frontier_gid)
+             .await
+             .context("cannot read mz_cluster_replica_frontiers")?;
++        let clock = storage_collections
++            .collection_frontiers(replica_frontier_gid)
++            .context("cannot read the upper of mz_cluster_replica_frontiers")?
++            .write_frontier
++            .into_option()
++            .context("mz_cluster_replica_frontiers has an empty upper")?;
+ 
+         let live_frontiers = live_frontiers
+             .into_iter()
+@@ -758,6 +772,7 @@ impl LeaderSnapshot {
+         };
+         Ok(Self {
+             frontiers: live_collection_frontiers,
++            clock,
+             hydration: leader_hydration,
+             unhydrated_collections: leader_unhydrated_collections,
+             problematic_replicas,
+@@ -769,6 +784,7 @@ impl CaughtUpCheck {
+     async fn run(mut self, leader: LeaderSnapshot) -> CaughtUpSnapshot {
+         let LeaderSnapshot {
+             frontiers,
++            clock,
+             hydration,
+             unhydrated_collections,
+             problematic_replicas,
+@@ -801,6 +817,7 @@ impl CaughtUpCheck {
+                 allowed_lag.into(),
+                 cutoff.into(),
+                 now.into(),
++                clock,
+                 &frontiers,
+                 &unhydrated_collections,
+                 &problematic_replicas,
+@@ -880,7 +897,8 @@ impl CaughtUpCheck {
+     ///      returned by [`LeaderHydration::collections_unhydrated_on_all_hosting_replicas`]),
+     ///      and (b) its write frontier is within
+     ///      `allowed_lag` of the "live" frontier, the collection's frontier reported by the leader
+-    ///      environment.
++    ///      environment. For a collection without one, `leader_clock` stands in (see
++    ///      `LeaderSnapshot::clock`).
+     ///  (3) A collection is ignored if its "live" frontier is behind `now` by more than `cutoff`.
+     ///      Such a collection is unhealthy in the leader environment, so we don't care about its
+     ///      health in the read-only environment either.
+@@ -896,6 +914,7 @@ impl CaughtUpCheck {
+         allowed_lag: Timestamp,
+         cutoff: Timestamp,
+         now: Timestamp,
++        leader_clock: Timestamp,
+         live_frontiers: &BTreeMap<GlobalId, Antichain<Timestamp>>,
+         leader_unhydrated_collections: &BTreeSet<GlobalId>,
+         problematic_replicas: &BTreeSet<ReplicaId>,
+@@ -910,6 +929,7 @@ impl CaughtUpCheck {
+                         allowed_lag.clone(),
+                         cutoff.clone(),
+                         now.clone(),
++                        leader_clock,
+                         live_frontiers,
+                         leader_unhydrated_collections,
+                         problematic_replicas,
+@@ -946,6 +966,7 @@ impl CaughtUpCheck {
+         allowed_lag: Timestamp,
+         cutoff: Timestamp,
+         now: Timestamp,
++        leader_clock: Timestamp,
+         live_frontiers: &BTreeMap<GlobalId, Antichain<Timestamp>>,
+         leader_unhydrated_collections: &BTreeSet<GlobalId>,
+         problematic_replicas: &BTreeSet<ReplicaId>,
+@@ -1032,24 +1053,26 @@ impl CaughtUpCheck {
+                     // sink reaches frontier 1 after one batch, which would otherwise look caught
+                     // up mid-hydration and bring back the cut-over spike this gate prevents.
+                     // Also require the frontier to
+```
+
+**File**: `src/compute-client/src/controller.rs` (modified, +9/-8)
+```diff
+@@ -1257,10 +1257,10 @@ impl ComputeController {
+     /// Like [`Self::allow_writes`], but takes effect even in read-only mode.
+     ///
+     /// The caller must guarantee that no leader environment writes the collection's output shard.
+-    /// In a 0dt deployment that means a shard this environment created for itself, the replacement
+-    /// shard of a `Replacement`-migrated builtin collection, never one the leader is still serving
+-    /// from. `Evolution` migrates in place and reuses the leader's shard, so it must not reach this
+-    /// path. Violating the guarantee races two writers on one shard.
++    /// In a 0dt deployment that means a shard this environment created for itself, such as the
++    /// replacement shard of a `Replacement`-migrated builtin collection, never one the leader is
++    /// still serving from. `Evolution` migrates in place and reuses the leader's shard, so it must
++    /// not reach this path. Violating the guarantee races two writers on one shard.
+     ///
+     /// NOTE: ownership is exclusive per (build version, deploy generation), not per process: the
+     /// migration shard entry naming the shard is keyed by that pair and a read-only catalog open is
+@@ -1272,7 +1272,7 @@ impl ComputeController {
+     /// of migrated storage collections. Migrated builtin tables are storage collections that
+     /// storage force-writes read-only; migrated builtin MVs are compute collections that only this
+     /// path can force-write. Both rest on the same guarantee (this environment exclusively owns the
+-    /// replacement shard) but run on separate write paths, so each needs its own bypass.
++    /// shard) but run on separate write paths, so each needs its own bypass.
+     ///
+     /// NOTE: the replica-side handler enables persist compaction process-wide on the clusterd
+     /// (`ComputeState::handle_allow_writes`), which this path is the first to trigger inside a
+@@ -1283,9 +1283,10 @@ impl ComputeController {
+         collection_id: GlobalId,
+     ) -> Result<(), CollectionUpdateError> {
+         // Every builtin eligible for this bypass has a system id, so a non-system id means the
+-        // caller's `Replacement`-only invariant broke. No-op rather than risk writing a shard the
+-        // leader still serves. The collection then sits in the caught-up gate on an unwritten
+-        // shard and blocks promotion, which is the loud, safe direction to fail.
++        // caller's invariant (only shards from the builtin migration shard) broke. No-op rather
++        // than risk writing a shard the leader still serves. The collection then sits in the
++        // caught-up gate on an unwritten shard and blocks promotion, which is the loud, safe
++        // direction to fail.
+         //
+         // Storage asserts the same invariant hard, in
+         // `StorageController::register_introspection_collection`. The asymmetry is deliberate: a
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #41066** (2026-11-24): Language adjustment (@maheshwarip)
-- **PR #41061** (2026-11-24): v26.52.0 release notes (@bosconi)
-- **PR #41057** (2026-11-24): storage: [SS-550] Log IDs and counts at INFO and large fields at TRACE (@rjimeno-mz)
-- **PR #41044** (2026-11-24): testdrive: Unflake source-statistics.td (@def-)
-- **PR #41041** (2026-11-24): ore: Optimize dropping SegmentedBytes segments (@def-)
-- **PR #41037** (2026-11-24): orchestratord: Re-send skip-catchup before each forced promotion (@alex-hunt-materialize)
+- **PR #41088** (2026-11-26): release: mark v26.51, v26.52 as released (@materialize-bot)
+- **PR #41083** (2026-11-25): deps: bump zstd-sys to 2.2.0+zstd.1.6.0 (@jasonhernandez)
+- **PR #41081** (2026-11-25): ci: Nightly fixes (2026-11-25) (@def-)
+- **PR #41079** (2026-11-25): mcp: test MCP tool routing edge cases (@bobbyiliev)
+- **PR #41078** (2026-11-25): mcp: test the /api/mcp HTTP surface like the agent and developer routes (@bobbyiliev)
+- **PR #41077** (2026-11-25): mcp: fix stale comments in OAuth discovery and MCP tests (@bobbyiliev)
 
 ---
 
@@ -1508,62 +2077,53 @@ emit by default. An engineer enables it for one
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: lint docs before deploying them, and fix the deploy build
+## X. reclock: free unused memory after start
 
 **RULE**:
-When implementing operations in `.github/workflows/deploy-docs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/timely-util/src/reclock.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `35a338a1`: ci: lint docs before deploying them, and fix the deploy build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `371eac62`: reclock: free unused memory after start. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/deploy-docs.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/timely-util/src/reclock.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    branches: [main]
-      - src/sql-lexer/src/keywords.txt
-      - ci/builder/Dockerfile
-  lint:
-    name: Lint docs
-    runs-on: ubuntu-26.04
-    timeout-minutes: 30
-    permissions:
-      contents: read # check out the repository
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      # Same check and image as the Buildkite lint-docs step.
-      - run: bin/ci-builder run stable --no-secrets ci/test/lint-docs.sh
+                // Taking the buffer releases its capacity. A replay of the remap history from an
+                // old as-of fills it once, and every export's operator would hold that capacity
+                // for good.
+                for ((into, from), diff) in std::mem::take(&mut remap_accum_buffer).into_inner() {
+            // Releases what a replay leaves behind, like `remap_accum_buffer` above.
+            if pending_remap.len() < pending_remap.capacity() / 4 {
+                pending_remap.shrink_to(pending_remap.len() * 2);
+            }
 
-    needs: lint
-    runs-on: ubuntu-26.04
-    # Restricted to main; the AWS role trusts only this environment.
-            ci/builder
-            src/sql-lexer
-      - run: ci/deploy_website/install-tools.sh
+    #[cfg(feature = "count-allocations")]
+    #[mz_ore::test]
+    #[cfg_attr(miri, ignore)] // too slow
+    fn test_replay_releases_buffers() {
+        let replayed = 10_000_u64;
+
+        // The source frontier is beyond every replayed binding, so the trace keeps none of them
+        // and what stays allocated after the replay is buffer capacity.
+        harness::<FromTime, u64, _, _>(
+            Antichain::from_elem(0),
+            move |worker, mut bindings, (_data, mut data_cap), reclocked| {
+                data_cap.downgrade(&Partitioned::new_singleton(0, replayed));
+                step(worker);
+                let info = allo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    branches: [main, "self-managed-docs/*"]
-    runs-on: ubuntu-24.04
-    # Restricted to main and self-managed-docs/*; the AWS role trusts only
-    # this environment on those refs.
-      # Keep in sync with the Hugo version in ci/builder/Dockerfile.
-      - name: Install Hugo
-        run: |
-          curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_extended_withdeploy_0.152.2_Linux-64bit.tar.gz > hugo.tar.gz
-          echo '08200e4d82f086c94c301e8ba08102f9e23f38774ad949bb3251cac76283684a hugo.tar.gz' | sha256sum --check
-          sudo tar -xzf hugo.tar.gz -C /usr/local/bin hugo
-          rm hugo.tar.gz
+                for ((into, from), diff) in remap_accum_buffer.drain() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `35a338a1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `371eac62` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

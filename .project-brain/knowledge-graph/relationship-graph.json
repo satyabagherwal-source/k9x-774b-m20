@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T05:30:03.085Z",
+  "updated_at": "2026-11-26T05:57:45.930Z",
   "statistics": {
-    "total_nodes": 556,
+    "total_nodes": 557,
     "total_edges": 229,
     "domain_distribution": {
       "D": 335,
       "M": 1,
-      "H": 101,
+      "H": 102,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -12407,6 +12407,28 @@
       ],
       "created_at": "2026-11-26T05:30:03.085Z",
       "updated_at": "2026-11-26T05:30:03.085Z"
+    },
+    "DOM-H-F039AD05": {
+      "id": "DOM-H-F039AD05",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "dynamic_modules: fix cluster async host selection threading and handle lifetime",
+      "summary": "Prevents defects observed in production commit `baf651b8`: dynamic_modules: fix cluster async host selection threading and handle lifetime.  -> When implementing operations in `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-module-lifetime.rst`, engineers ",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://envoyproxy-envoy/envoyproxy-envoy-learnings.md",
+        "source_version": "baf651b8",
+        "observed_at": "2026-11-26T05:57:09.130Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (envoyproxy-envoy)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-26T05:57:45.930Z",
+      "updated_at": "2026-11-26T05:57:45.930Z"
     }
   },
   "edges": [

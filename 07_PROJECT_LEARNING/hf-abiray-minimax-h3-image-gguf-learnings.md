@@ -3,7 +3,7 @@
 > **Source Version**: `hf-abiray-mi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T10:03:41.225Z  
+> **Timestamp**: 2026-11-26T05:57:00.148Z  
 > **Learning ID**: `learn-huggingface-abiray-minimax-h3-image-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF](https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T10:03:41.047Z  
+> **Harvest Timestamp**: 2026-11-26T05:57:00.039Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 288737 downloads | 359 likes
+- **Stars / Engagement**: 317457 downloads | 364 likes
 
 ---
 

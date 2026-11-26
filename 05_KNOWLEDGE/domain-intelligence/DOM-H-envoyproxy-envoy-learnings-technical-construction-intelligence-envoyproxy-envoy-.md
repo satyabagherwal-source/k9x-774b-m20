@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T05:45:39.655Z",
+  "timestamp": "2026-11-26T05:57:46.188Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-envoyproxy-envoy-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [envoyproxy-envoy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T05:45:39.655Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T05:57:46.188Z`  
 > **Learning ID**: `LEARN-EVO-envoyproxy-envoy-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from envoyproxy-envoy-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `a7ae7600`  
+> **Source Version**: `baf651b8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T05:45:33.477Z  
+> **Timestamp**: 2026-11-26T05:57:09.130Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:45:33.472Z  
+> **Harvest Timestamp**: 2026-11-26T05:57:09.125Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29291 stars
+- **Stars / Engagement**: 29297 stars
 
 ---
 
@@ -1075,432 +1075,1040 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4c3cc20` (2026-11-24)
-**Commit Message**: test: Do not check for zero memory use where it cannot be measured (#49597)
+### Incident Patch 1: `baf651b8` (2026-11-26)
+**Commit Message**: dynamic_modules: fix cluster async host selection threading and handle lifetime (#49634)
 
-
-`EXPECT_MEMORY_EQ(x, 0)` was checked with every allocator, where any
-other expected value is only checked on canonical tcmalloc builds.
-
-With jemalloc, `Memory::Stats::totalCurrentlyAllocated()` is the process
-wide `stats.allocated`, which changes when a thread cache is refilled.
-An allocation that is freed again can then be reported as consumed
-memory, depending on what the process allocated before.
-
-This makes
-`Http1ClientConnectionImplTest.ShouldDumpCorrespondingRequestWithoutAllocatingMemory`
-order dependent in the jemalloc compile time options build
-(`cto.jemalloc`): it passes when it is run on its own, but can fail
-every time, with 96 bytes reported as consumed, when the tests that run
-before it in `codec_impl_test` change. Even the length of the
-`--gtest_filter` string is enough to flip the result.
-
-Only check the zero case where `MemoryTest::mode()` says that memory
-usage can be measured, which is unchanged for tcmalloc builds. The
-consumed bytes are also read before `MemoryTest::mode()` is called, as
-that allocates.
-
-Additional Description: gperftools builds still enforce the zero check.
-Risk Lev
-
-**File**: `test/common/memory/memory_test_utility.h` (modified, +17/-7)
+**File**: `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-module-lifetime.rst` (added, +13/-0)
 ```diff
-@@ -55,19 +55,29 @@ class MemoryTest {
- };
- 
- // Compares the memory consumed against an exact expected value, but only on
--// canonical platforms, or when the expected value is zero. Canonical platforms
--// currently include only for 'release' tests in ci. On other platforms an info
--// log is emitted, indicating that the test is being skipped.
-+// canonical platforms, or when the expected value is zero and memory usage can
-+// be measured. Canonical platforms currently include only for 'release' tests in
-+// ci. On other platforms an info log is emitted, indicating that the test is
-+// being skipped.
-+//
-+// The zero case is not checked where memory usage cannot be measured (see
-+// `MemoryTest::mode()`). In particular, with jemalloc the total changes when a
-+// thread cache is refilled, so an allocation that is freed again can still be
-+// reported as consumed memory, depending on what the process allocated before.
- #define EXPECT_MEMORY_EQ(consumed_bytes, expected_value)                                           \
-   do {                                                                                             \
--    if (expected_value == 0 || ::Envoy::Memory::TestUtil::MemoryTest::mode() ==                    \
--                                   ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {       \
--      EXPECT_EQ(consumed_bytes, expected_value);                                                   \
-+    /* Read the memory consumed first: `MemoryTest::mode()` allocates. */                          \
-+    const auto memory_test_consumed_bytes = consumed_bytes;                                        \
-+    const auto memory_test_mode = ::Envoy::Memory::TestUtil::MemoryTest::mode();                   \
-+    if ((expected_value == 0 &&                                                                    \
-+         memory_test_mode != ::Envoy::Memory::TestUtil::MemoryTest::Mode::Disabled) ||             \
-+        memory_test_mode == ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {              \
-+      EXPECT_EQ(memory_test_consumed_bytes, expected_value) << #consumed_bytes;                    \
-     } else {                                                                                       \
-       ENVOY_LOG_MISC(info,                                                                         \
-                      "Skipping exact memory test of actual={} versus expected={} "                 \
-                      "bytes as platform is non-canonical",                                         \
--                     consumed_bytes, expected_value);                                              \
-+                     memory_test_consumed_bytes, expected_value);                                  \
-     }                                                                                              \
-   } while (false)
- 
+@@ -0,0 +1,13 @@
++Fixed the dynamic module cluster calling
++``envoy_dynamic_module_on_cluster_lb_cancel_host_selection``, which runs the Rust SDK's
++``AsyncHostSelectionHandle::cancel``, after its module was unloaded, when a request held an async
++host selection past the removal of its cluster. A pending selection now keeps the module loaded
++until that hook has run. The hook can still run after ``envoy_dynamic_module_on_cluster_lb_destroy``
++and ``envoy_dynamic_module_on_cluster_destroy``, though always before
++``envoy_dynamic_module_on_cluster_config_destroy``, so a module must not read load balancer or
++cluster state through ``lb_module_ptr`` in it. The cluster configuration, with its
++``envoy_dynamic_module_on_cluster_config_destroy`` hook, is now always destroyed on the main thread,
++also when a worker releases it last. The ABI documentation now states that Envoy calls the cancel
++hook once for every async handle, after a delivered result as well as on a cancellation, as every
++release with the hook has done, so a module releases the handle there rather than when it calls the
++completion callback.
 ```
 
----
-
-### Incident Patch 2: `ef520a59` (2026-11-24)
-**Commit Message**: mcp_json_rest_bridge: fix notification HTTP responses (#48784)
-
-Commit Message: mcp_json_rest_bridge: fix incorrect HTTP response
-handling and request-ID validation for MCP notifications in the
-JSON-REST Bridge. Unsupported legacy notifications now return HTTP 400
-instead of HTTP 200, while unsupported MCP 2026-07-28 notifications
-retain their existing HTTP 404 behavior where applicable. The change
-also ensures that `notifications/initialized` messages containing an ID
-are handled as regular requests rather than incorrectly receiving HTTP
-202. Existing legacy notification behavior is preserved without
-introducing additional notification support.
-Risk Level: Low
-Testing: Added and updated unit tests covering unsupported
-notifications, request-ID validation, and protocol-version
-compatibility.
-Docs Changes: NA
-Release Notes: Fixed the `mcp_json_rest_bridge` HTTP filter to return
-appropriate HTTP error statuses for unsupported JSON-RPC notifications
-and prevent ID-bearing `notifications/initialized` requests from
-incorrectly receiving HTTP 202 Accepted.
-Platform Specific Features: NA
-
----------
-
-Signed-off-by: Wenwei Zhao <[REDACTED_EMAIL]>
-
-**File**: `changelogs/current/bug_fixes/mcp_json_rest_bridge__notification-http-status.rst` (added, +6/-0)
+**File**: `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-thread.rst` (added, +11/-0)
 ```diff
-@@ -0,0 +1,6 @@
-+Fixed the ``mcp_json_rest_bridge`` HTTP filter to reject unsupported JSON-RPC notifications, i.e. messages without an
-+``id`` whose method starts with ``notifications/``, as unsupported methods with an HTTP error status, as required by the
-+Streamable HTTP transport. Previously, they got HTTP ``200 OK`` with a JSON-RPC ``-32600`` error for the missing ``id``.
-+Rejected legacy notifications now get HTTP ``400 Bad Request``, and MCP ``2026-07-28`` notifications keep the existing
-+HTTP ``404 Not Found`` for unsupported methods. A ``notifications/initialized`` message with an ``id`` is now validated
-+as a request instead of getting ``202 Accepted``.
+@@ -0,0 +1,11 @@
++Fixed the dynamic module cluster delivering an async host selection inline, on the thread that
++called ``envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete``, which the Rust
++SDK's ``EnvoyAsyncHostSelectionComplete::complete`` calls, when its load balancer had not yet served
++a request with a downstream connection, such as the main thread's load balancer or a worker's that
++only served async client streams. The router then ran on a module thread, and a completion made
++inside ``envoy_dynamic_module_on_cluster_lb_choose_host`` reached the router before it was ready.
++Envoy now delivers the result later, never inline, on the thread that owns the load balancer. It
++drops a completion made inside ``envoy_dynamic_module_on_cluster_lb_choose_host`` when that call
++answers synchronously, a second completion of a selection whose result it already delivered, unless
++another selection with the same context pointer has started on the same load balancer by then, and
++a completion for a load balancer that is already gone.
 ```
 
-**File**: `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.cc` (modified, +14/-6)
+**File**: `source/extensions/clusters/dynamic_modules/BUILD` (modified, +1/-0)
 ```diff
-@@ -1672,7 +1672,8 @@ void McpJsonRestBridgeFilter::handleMcpMethod(
-         json_rpc.contains(McpConstants::PARAMS_FIELD) ? json_rpc[McpConstants::PARAMS_FIELD]
-                                                       : json::object());
+@@ -20,6 +20,7 @@ envoy_cc_library(
+     ],
+     deps = [
+         ":persistent_host_set_lib",
++        "//envoy/event:dispatcher_interface",
+         "//envoy/event:dispatcher_thread_deletable",
+         "//envoy/http:async_client_interface",
+         "//envoy/stats:stats_interface",
+```
+
+**File**: `source/extensions/clusters/dynamic_modules/abi_impl.cc` (modified, +41/-38)
+```diff
+@@ -1730,7 +1730,7 @@ void envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete(
+     envoy_dynamic_module_type_cluster_lb_context_envoy_ptr context_envoy_ptr,
+     envoy_dynamic_module_type_cluster_host_envoy_ptr host,
+     envoy_dynamic_module_type_module_buffer details) {
+-  using Envoy::Extensions::Clusters::DynamicModules::DynamicModuleClusterHandleSharedPtr;
++  using Envoy::Extensions::Clusters::DynamicModules::DynamicModuleCluster;
+   using Envoy::Extensions::Clusters::DynamicModules::DynamicModuleLoadBalancer;
+   auto* lb_raw = static_cast<DynamicModuleLoadBalancer*>(lb_envoy_ptr);
  
--  } else if (method == McpConstants::Methods::NOTIFICATION_INITIALIZED && !is_stateless_request_) {
-+  } else if (method == McpConstants::Methods::NOTIFICATION_INITIALIZED && is_notification_ &&
-+             !is_stateless_request_) {
-     mcp_operation_ = McpOperation::InitializationAck;
-     setParsingMetadata(method, json_rpc.contains(McpConstants::PARAMS_FIELD)
-                                    ? json_rpc[McpConstants::PARAMS_FIELD]
-@@ -1980,7 +1981,12 @@ void McpJsonRestBridgeFilter::sendErrorResponse(
+@@ -1740,60 +1740,63 @@ void envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete(
+     details_str.assign(details.ptr, details.length);
    }
-   setParsingMetadata(method, params);
  
--  decoder_callbacks_->sendLocalReply(response_code, response_body, modify_headers, grpc_status,
-+  // The Streamable HTTP transport requires an HTTP error status for a rejected notification:
-+  // https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
-+  const Http::Code code = (is_notification_ && response_code == Http::Code::OK)
-+                              ? Http::Code::BadRequest
-+                              : response_code;
-+  decoder_callbacks_->sendLocalReply(code, response_body, modify_headers, grpc_status,
-                                      bridgeStatusToString(status));
- }
+-  // The module may invoke this callback on any thread and race the load balancer destructor.
+-  // Validate the raw pointer against the live registry and snapshot the state we need under the
+-  // registry lock.
++  // The module may invoke this callback on any thread and race the load balancer destructor, so
++  // the raw pointer is validated against the live registry before anything is read through it.
+   Envoy::Extensions::Clusters::DynamicModules::DynamicModuleAsyncHostSelectionRegistrySharedPtr
+       selections;
+-  Envoy::Event::Dispatcher* dispatcher = nullptr;
+-  DynamicModuleClusterHandleSharedPtr handle;
++  std::weak_ptr<DynamicModuleCluster> cluster;
+   const bool found = DynamicModuleLoadBalancer::withActiveInstance(
+       lb_raw, [&](const DynamicModuleLoadBalancer& lb) {
+         selections = lb.asyncSelections();
+-        dispatcher = lb.workerDispatcher();
+-        handle = lb.handle();
++        cluster = lb.handle()->cluster()->weak_from_this();
+       });
+   if (!found) {
++    ENVOY_LOG_TO_LOGGER(Envoy::Logger::Registry::getLog(Envoy::Logger::Id::dynamic_modules), debug,
++                        "async host selection for context {} completed after its load balancer "
++                        "was destroyed, dropped",
++                        context_envoy_ptr);
+     return;
+   }
  
-@@ -2136,10 +2142,12 @@ absl::Status McpJsonRestBridgeFilter::validateJsonRpcIdAndMethod(const nlohmann:
-     sendErrorResponse(Http::Code::OK, BridgeStatus::RequestMcpMethodMalformed,
-                       generateErrorJsonResponse(-32600, "MCP method field is not a string").dump());
-     return absl::InvalidArgumentError("MCP method field is not a string");
--  } else if (McpConstants::Methods::NOTIFICATION_INITIALIZED ==
--             json_rpc[McpConstants::METHOD_FIELD].get_ref<const nlohmann::json::string_t&>()) {
--    // The notifications/initialized request is not required to have an ID
--    // field.
-+  } else if (!json_rpc.contains(McpConstants::ID_FIELD) &&
-+             absl::StartsWith(json_rpc[McpConstants::METHOD_FIELD].get<absl::string_view>(),
-+                              McpConstants::Methods::NOTIFICATION_PREFIX)) {
-+    // A notification, i.e. a message without an "id" member whose method is an MCP notification,
-+    // is not required to have an ID field.
-+    is_notification_ = true;
-   } else if (!session_id.ok()) {
-     sendErrorResponse(Http::Code::OK, BridgeStatus::RequestIdNotFound,
-                       generateErrorJsonResponse(-32600, "Missing ID field").dump(), nullptr,
+   // Look the completing selection up by its own context. A load balancer serves many concurrent
+-  // selections, so reading a single shared flag here would let a cancellation on one selection drop
+-  // the completion of another. An absent entry means this selection was already completed or
++  // selections, so reading a single shared flag here would let a cancellation on one selection
++  // drop the completion of another. An absent entry means this selection was already completed or
+   // cancelled and its `cancelable` destroyed, so the context must not be touched.
+   std::shared_ptr<std::atomic<bool>> cancelled = selections->find(context_envoy_ptr);
+   if (cancelled == nullptr) {
++    ENVOY_LOG_TO_LOGGER(Envoy::Logger::Registry::getLog(Envoy::Logger::Id::dynamic_modules), debug,
++                        "async host selection for context {} completed with no selection in "
++                        "flight, dropped",
++                        context_envoy_ptr);
+     return;
+   }
+ 
+-  if (dispatcher != nullptr) {
+-    // Post to the worker thread. The handle keeps the cluster alive until the callback runs. The
+-    // flag is re-read inside the post because the router may cancel between the post and the run.
+-    dispatcher->post([context_envoy_ptr, host, details_str = std::move(details_str),
+-                      cancelled = std::move(cancelled), handle = std::move(handle)]() {
+-      if (cancelled->load(std::memory_order_acquire)) {
+-        return;
+-      }
+-      auto* context = getContext(context_envoy_ptr);
+-      Envoy::Upstream::HostConstSharedPtr host_shared;
+-      if (host != nullptr) {
+-        host_shared = handle->cluster()->findHost(host);
+-      }
+-      context->onAsyncHostSelection(std::move(host_shared), std::string(details_str));
+-    });
+-    return;
+-  }
+-
+-  // No worker dispatcher. Complete inline on the calling thread.
+-  if (cancelled->load(std::memory_order_acquire)) {
+-    return;
+-  }
+-  auto* context = getContext(context_envoy_ptr);
+-  Envoy::Upstream::HostConstSharedPtr host_shared;
+-  if (host != nullptr) {
+-    host_shared = handle->cluster()->findHost(host);
+-  }
+-  context->onAsyncHostSelection(std::move(host_shared), std::move(details_str));
++  // Post even when the module completes on the load balancer's thread, so the router never runs on
++  // a module thread or inside choose_host. The post claims the selection when it runs, since the
++  // router may cancel first and the module may complete twice, and the cluster is held weakly, so a
++  // post destroyed unrun at server teardown cannot tear it down.
++  selections->postToLoadBalancerThread(
++      [context_envoy_ptr, host, details_str = std::move(details_str),
++       cancelled = std::move(cancelled), cluster = std::move(cluster)]() mutable {
++        if (cancelled->exchange(true, std::memory_order_acq_rel)) {
++          ENVOY_LOG_TO_LOGGER(
++             
 ```
 
-**File**: `source/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter.h` (modified, +6/-1)
+**File**: `source/extensions/clusters/dynamic_modules/cluster.cc` (modified, +47/-27)
 ```diff
-@@ -317,6 +317,9 @@ class McpJsonRestBridgeFilter : public Http::PassThroughFilter,
-   //      * 404 Not Found with -32601 (Method not found), as required by the Streamable HTTP
-   //        transport:
-   //        https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http
-+  //    - Rejected JSON-RPC notifications (generated by this filter). A notification has no JSON-RPC
-+  //      response, so the Streamable HTTP transport requires an HTTP error status. 200 OK is
-+  //      replaced with 400 Bad Request for them.
-   //    - Authorization errors preserved from upstream (401 Unauthorized, 403 Forbidden):
-   //      * 401 and 403 from upstream are preserved as non-200 HTTP responses as required by the MCP
-   //        authorization spec:
-@@ -335,7 +338,8 @@ class McpJsonRestBridgeFilter : public Http::PassThroughFilter,
+@@ -70,10 +70,22 @@ class MainThreadCleanup : public Event::DispatcherThreadDeletable, public Cleanu
+ absl::StatusOr<std::shared_ptr<DynamicModuleClusterConfig>> DynamicModuleClusterConfig::create(
+     const std::string& cluster_name, const std::string& cluster_config,
+     Envoy::Extensions::DynamicModules::DynamicModulePtr module, Stats::Scope& stats_scope,
+-    bool persistent_host_partitions_allowed) {
++    bool persistent_host_partitions_allowed, Event::Dispatcher& main_thread_dispatcher) {
++  // A worker slot payload or a pending async host selection can release the last reference on a
++  // worker, after the cluster is gone. The config's destroy hook and the module's unload then run
++  // on the main thread, where the config was created. The main dispatcher outlives every config,
++  // since the server stops its workers and destroys its cluster manager before the dispatcher.
+   auto config = std::shared_ptr<DynamicModuleClusterConfig>(
+       new DynamicModuleClusterConfig(cluster_name, cluster_config, std::move(module), stats_scope,
+-                                     persistent_host_partitions_allowed));
++                                     persistent_host_partitions_allowed),
++      [&main_thread_dispatcher](DynamicModuleClusterConfig* config) {
++        if (Thread::MainThread::isMainOrTestThread()) {
++          delete config;
++          return;
++        }
++        main_thread_dispatcher.deleteInDispatcherThread(
++            std::make_unique<MainThreadCleanup>([config]() { delete config; }));
++      });
  
-   // Validates the "id" and "method" fields of a JSON-RPC request.
-   // It sends local error response and return an error status if the validation
--  // fails. Otherwise, it returns OK status.
-+  // fails. Otherwise, it returns OK status. A JSON-RPC notification, i.e. a message without an "id"
-+  // member whose method is an MCP notification, does not need an ID and sets is_notification_.
-   absl::Status validateJsonRpcIdAndMethod(const nlohmann::json& json_rpc);
+   // Resolve all required function pointers from the dynamic module.
+ #define RESOLVE_SYMBOL(name, type, member)                                                         \
+@@ -949,7 +961,9 @@ bool DynamicModuleLoadBalancer::withActiveInstance(
  
-   // Sets dynamic metadata for the filter based on the MCP request method and parameters.
-@@ -378,6 +382,7 @@ class McpJsonRestBridgeFilter : public Http::PassThroughFilter,
-   McpOperation mcp_operation_ = McpOperation::Unspecified;
-   std::optional<nlohmann::json> session_id_;
-   bool is_stateless_request_{false};
-+  bool is_notification_{false};
-   std::string server_name_;
-   std::string path_;
-   Buffer::OwnedImpl request_body_;
+ DynamicModuleLoadBalancer::DynamicModuleLoadBalancer(
+     const DynamicModuleClusterHandleSharedPtr& handle, const Upstream::PrioritySet& priority_set)
+-    : handle_(handle), priority_set_(priority_set) {
++    : handle_(handle), priority_set_(priority_set),
++      async_selections_(std::make_shared<DynamicModuleAsyncHostSelectionRegistry>(
++          handle->cluster_->server_context_.threadLocal().dispatcher())) {
+   // Register before invoking any module hook so a concurrent async host selection completion can
+   // validate its raw pointer against a live instance.
+   registerActiveDynamicModuleLoadBalancer(this);
+@@ -1008,6 +1022,7 @@ DynamicModuleLoadBalancer::~DynamicModuleLoadBalancer() {
+   // Unregister before tearing down module-side state so any concurrent async host selection
+   // completion observes the instance as gone and drops the event.
+   unregisterActiveDynamicModuleLoadBalancer(this);
++  async_selections_->onLoadBalancerDestroyed();
+   if (in_module_lb_ != nullptr && handle_->cluster_->config()->on_cluster_lb_destroy_ != nullptr) {
+     handle_->cluster_->config()->on_cluster_lb_destroy_(in_module_lb_);
+   }
+@@ -1019,20 +1034,21 @@ DynamicModuleLoadBalancer::chooseHost(Upstream::LoadBalancerContext* context) {
+     return {nullptr};
+   }
+ 
+-  // Pre-capture the worker dispatcher and register the per-selection cancellation flag before
+-  // calling into the module. The module's choose_host may spawn a background thread that calls
+-  // async_host_selection_complete, which reads both. Publishing them beforehand establishes a
+-  // happens-before relationship via the thread::spawn synchronization in the module.
+-  //
+-  // The flag and the registry entry are keyed by `context`, not held in a single slot on this load
+-  // balancer, because a worker serves many concurrent async selections. A single slot would let a
+-  // cancellation on one selection suppress the completion of an unrelated one.
++  // Capture the worker dispatcher for the worker timer callbacks. Sticky: keep any previously
++  // captured dispatcher when this call has no connection, since the worker dispatcher is stable for
++  // the worker's life.
+   const auto* connection = context != nullptr ? context->downstreamConnection() : nullptr;
+-  // Sticky: keep any previously captured dispatcher when this call has no connection, since the
+-  // worker dispatcher is stable for the worker's life.
+   if (connection != nullptr) {
+     worker_dispatcher_.store(&connection->dispatcher(), std::memory_order_release);
+   }
++  // Register the per-selection cancellation flag before calling into the module. The module's
++  // choose_host may spawn a background thread that calls async_host_selection_complete, which reads
++  // it. Publishing it beforehand establishes a happens-before relationship via the thread::spawn
++  // synchronization in the module.
++  //
++  // The flag and the registry entry are keyed by `context`, not held in a single slot on this load
++  // balancer, because a worker serves many concurrent async selections. A single slot would let a
++  // cancellation on one selection suppress the completion of an unrelated one.
+   auto cancelled = std::make_shared<std::atomic
 ```
 
-**File**: `test/extensions/filters/http/mcp_json_rest_bridge/mcp_json_rest_bridge_filter_test.cc` (modified, +66/-1)
+**File**: `source/extensions/clusters/dynamic_modules/cluster.h` (modified, +50/-19)
 ```diff
-@@ -813,6 +813,71 @@ TEST_F(McpJsonRestBridgeFilterTest, IdFieldWithFloatReturnsError) {
-           R"json({"error":{"code":-32600,"message":"Missing ID field"},"id":null,"jsonrpc":"2.0"})json"));
+@@ -8,6 +8,7 @@
+ #include "envoy/common/callback.h"
+ #include "envoy/common/optref.h"
+ #include "envoy/config/cluster/v3/cluster.pb.h"
++#include "envoy/event/dispatcher.h"
+ #include "envoy/event/dispatcher_thread_deletable.h"
+ #include "envoy/event/timer.h"
+ #include "envoy/extensions/clusters/dynamic_modules/v3/cluster.pb.h"
+@@ -82,12 +83,14 @@ class DynamicModuleClusterConfig {
+    * @param stats_scope the stats scope for creating custom metrics.
+    * @param persistent_host_partitions_allowed whether the module may opt the cluster into
+    * persistent host partitions, which requires lb_policy CLUSTER_PROVIDED.
++   * @param main_thread_dispatcher the main thread's dispatcher, which destroys the config when its
++   * last reference is released on another thread.
+    * @return a shared pointer to the config, or an error status.
+    */
+   static absl::StatusOr<std::shared_ptr<DynamicModuleClusterConfig>>
+   create(const std::string& cluster_name, const std::string& cluster_config,
+          Envoy::Extensions::DynamicModules::DynamicModulePtr module, Stats::Scope& stats_scope,
+-         bool persistent_host_partitions_allowed);
++         bool persistent_host_partitions_allowed, Event::Dispatcher& main_thread_dispatcher);
+ 
+   ~DynamicModuleClusterConfig();
+ 
+@@ -452,6 +455,12 @@ class DynamicModuleClusterWorkerTimer {
+  */
+ class DynamicModuleAsyncHostSelectionRegistry {
+ public:
++  // `dispatcher` belongs to the load balancer's thread. The registry holds no reference to the
++  // cluster, its handle or its config, since a module thread can hold it for a whole completion
++  // call. A `cancelable` pins only the config.
++  explicit DynamicModuleAsyncHostSelectionRegistry(Event::Dispatcher& dispatcher)
++      : dispatcher_(&dispatcher) {}
++
+   /**
+    * Records a new in-flight selection. The caller keeps a copy of `cancelled` in the `cancelable`
+    * it returns to the router, so cancellation state outlives this entry.
+@@ -480,13 +489,33 @@ class DynamicModuleAsyncHostSelectionRegistry {
+     return it == entries_.end() ? nullptr : it->second;
+   }
+ 
++  /**
++   * Posts `callback` to the load balancer's thread, or drops it once the load balancer is gone,
++   * since that thread may destroy its dispatcher next.
++   */
++  void postToLoadBalancerThread(Event::PostCb callback) {
++    absl::MutexLock lock(&dispatcher_mutex_);
++    if (dispatcher_ != nullptr) {
++      dispatcher_->post(std::move(callback));
++    }
++  }
++
++  /** Called by the load balancer's destructor, after which nothing is posted to its thread. */
++  void onLoadBalancerDestroyed() {
++    absl::MutexLock lock(&dispatcher_mutex_);
++    dispatcher_ = nullptr;
++  }
++
+   /** Number of in-flight selections. */
+   size_t sizeForTest() const {
+     absl::MutexLock lock(&mutex_);
+     return entries_.size();
+   }
+ 
+ private:
++  // Separate from `mutex_`, so the entry updates every chooseHost makes never wait behind a post.
++  absl::Mutex dispatcher_mutex_;
++  Event::Dispatcher* dispatcher_ ABSL_GUARDED_BY(dispatcher_mutex_);
+   mutable absl::Mutex mutex_;
+   absl::flat_hash_map<envoy_dynamic_module_type_cluster_lb_context_envoy_ptr,
+                       std::shared_ptr<std::atomic<bool>>>
+@@ -499,20 +528,21 @@ using DynamicModuleAsyncHostSelectionRegistrySharedPtr =
+ /**
+  * Async host selection handle that bridges the dynamic module's async host selection to Envoy's
+  * LoadBalancerContext::onAsyncHostSelection. This is created when the module returns an async
+- * pending result from choose_host, and destroyed after the module delivers the result or the
+- * selection is canceled.
++ * pending result from choose_host, and destroyed after Envoy delivers the result or the selection
++ * is canceled.
+  */
+ class DynamicModuleAsyncHostSelectionHandle : public Upstream::AsyncHostSelectionHandle {
+ public:
+-  // `registry` and `context` drop this selection's entry on destruction. Both may be null or unset
+-  // in unit tests that exercise cancellation without a registry.
++  // `config` supplies the module's cancel hook. `registry` and `context` drop this selection's
++  // entry on destruction. Each may be null or unset in unit tests that exercise cancellation
++  // without a module or a registry.
+   DynamicModuleAsyncHostSelectionHandle(
+       envoy_dynamic_module_type_cluster_lb_async_handle_module_ptr async_handle,
+       envoy_dynamic_module_type_cluster_lb_module_ptr in_module_lb,
+-      OnClusterLbCancelHostSelectionType cancel_fn, std::shared_ptr<std::atomic<bool>> cancelled,
++      DynamicModuleClusterConfigSharedPtr config, std::shared_ptr<std::atomic<bool>> cancelled,
+       DynamicModuleAsyncHostSelectionRegistrySharedPtr registry = nullptr,
+       envoy_dynamic_module_type_cluster_lb_context_envoy_ptr context = nullptr)
+-      : async_handle_(async_handle), in_module_lb_(in_module_lb), cancel_fn_(cancel_fn),
++      : async_handle_(async_handle), in_module_lb_(in_module_lb), config_(std::move(config)),
+         cancelled_(std::move(cancelled)), registr
+```
+
+**File**: `source/extensions/dynamic_modules/abi/abi.h` (modified, +53/-15)
+```diff
+@@ -11694,7 +11694,10 @@ typedef void* envoy_dynamic_module_type_cluster_host_envoy_ptr;
+  * OWNERSHIP: Envoy owns the pointer. The pointer is valid only during the
+  * envoy_dynamic_module_on_cluster_lb_choose_host call, unless async host selection is used. When
+  * async host selection is used, the context remains valid until the async completion callback is
+- * called or the selection is canceled.
++ * called or the selection is canceled. Envoy tells a module of a cancellation only when it calls
++ * envoy_dynamic_module_on_cluster_lb_cancel_host_selection, so a module that completes from another
++ * thread copies what it needs from the context inside
++ * envoy_dynamic_module_on_cluster_lb_choose_host.
+  */
+ typedef void* envoy_dynamic_module_type_cluster_lb_context_envoy_ptr;
+ 
+@@ -11719,10 +11722,12 @@ typedef void* envoy_dynamic_module_type_cluster_scheduler_module_ptr;
+  * envoy_dynamic_module_on_cluster_lb_choose_host when the module needs to perform asynchronous
+  * work (e.g., DNS resolution) before selecting a host.
+  *
+- * OWNERSHIP: The module owns the pointer. The module must keep it valid until either
+- * envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete is called or
+- * envoy_dynamic_module_on_cluster_lb_cancel_host_selection is called. After either event, the
+- * module may release the handle.
++ * OWNERSHIP: The module owns the pointer. The module must keep it valid until Envoy calls
++ * envoy_dynamic_module_on_cluster_lb_cancel_host_selection for it. Envoy calls that hook once for
++ * every handle, after it has delivered the result the module passed to
++ * envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete as well as when the
++ * request gives the selection up first, so the module releases the handle in that hook and not
++ * when it calls the completion callback.
+  */
+ typedef void* envoy_dynamic_module_type_cluster_lb_async_handle_module_ptr;
+ 
+@@ -11773,7 +11778,9 @@ envoy_dynamic_module_type_cluster_config_module_ptr envoy_dynamic_module_on_clus
+ 
+ /**
+  * envoy_dynamic_module_on_cluster_config_destroy is called when the cluster configuration is
+- * destroyed. The module should release any resources associated with the configuration.
++ * destroyed. The module should release any resources associated with the configuration. Envoy
++ * calls this on the main thread, once nothing that uses the configuration remains, which can be
++ * after the cluster when a worker slot payload or a pending async host selection outlives it.
+  *
+  * @param config_module_ptr is the pointer to the in-module cluster configuration.
+  */
+@@ -11869,13 +11876,30 @@ void envoy_dynamic_module_on_cluster_lb_choose_host(
+     envoy_dynamic_module_type_cluster_lb_async_handle_module_ptr* async_handle_out);
+ 
+ /**
+- * envoy_dynamic_module_on_cluster_lb_cancel_host_selection is called when the stream is destroyed
+- * before async host selection completes (e.g., stream timeout). After this call, the module must
+- * not call envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete for this handle.
++ * envoy_dynamic_module_on_cluster_lb_cancel_host_selection is called once for every async handle
++ * that envoy_dynamic_module_on_cluster_lb_choose_host returned, when Envoy is done with the
++ * selection. That happens when the request gives the selection up before the result arrives, such
++ * as on a stream timeout, and also after Envoy has delivered the result the module passed to
++ * envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete. The module releases the
++ * handle here, and a module that must know whether it already completed the selection records
++ * whether it called the completion callback for the handle. After this call, the module must not
++ * call envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete for this handle.
++ *
++ * Envoy calls this on the thread that called envoy_dynamic_module_on_cluster_lb_choose_host for
++ * the selection, and a module thread can be inside
++ * envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete for the same handle at
++ * that moment. A request can hold the selection after its cluster was removed or replaced, so
++ * Envoy can call this after envoy_dynamic_module_on_cluster_lb_destroy and
++ * envoy_dynamic_module_on_cluster_destroy, though always before
++ * envoy_dynamic_module_on_cluster_config_destroy. The module therefore releases the handle here
++ * and touches only state it owns. It uses neither the load balancer nor the cluster through
++ * ``lb_module_ptr`` or any Envoy pointer it kept, and it does not read the selection's context,
++ * which may already be gone.
+  *
+  * This is optional. Only modules that use asynchronous host selection need to implement this.
+  *
+- * @param lb_module_ptr is the pointer to the in-module load balancer.
++ * @param lb_module_ptr is the pointer to the in-module load balancer, which
++ * envoy_dynamic_module_on_cluster_lb_destroy may already have de
+```
+
+**File**: `source/extensions/dynamic_modules/sdk/rust/src/abi.rs` (modified, +53/-15)
+```diff
+@@ -12027,7 +12027,10 @@ pub type envoy_dynamic_module_type_cluster_host_envoy_ptr = *mut ::std::os::raw:
+  OWNERSHIP: Envoy owns the pointer. The pointer is valid only during the
+  envoy_dynamic_module_on_cluster_lb_choose_host call, unless async host selection is used. When
+  async host selection is used, the context remains valid until the async completion callback is
+- called or the selection is canceled.*/
++ called or the selection is canceled. Envoy tells a module of a cancellation only when it calls
++ envoy_dynamic_module_on_cluster_lb_cancel_host_selection, so a module that completes from another
++ thread copies what it needs from the context inside
++ envoy_dynamic_module_on_cluster_lb_choose_host.*/
+ pub type envoy_dynamic_module_type_cluster_lb_context_envoy_ptr = *mut ::std::os::raw::c_void;
+ /** envoy_dynamic_module_type_cluster_scheduler_envoy_ptr is a raw pointer to the
+  DynamicModuleClusterScheduler class in Envoy. This is used to schedule events to the main thread
+@@ -12046,10 +12049,12 @@ pub type envoy_dynamic_module_type_cluster_scheduler_module_ptr = *mut ::std::os
+  envoy_dynamic_module_on_cluster_lb_choose_host when the module needs to perform asynchronous
+  work (e.g., DNS resolution) before selecting a host.
+ 
+- OWNERSHIP: The module owns the pointer. The module must keep it valid until either
+- envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete is called or
+- envoy_dynamic_module_on_cluster_lb_cancel_host_selection is called. After either event, the
+- module may release the handle.*/
++ OWNERSHIP: The module owns the pointer. The module must keep it valid until Envoy calls
++ envoy_dynamic_module_on_cluster_lb_cancel_host_selection for it. Envoy calls that hook once for
++ every handle, after it has delivered the result the module passed to
++ envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete as well as when the
++ request gives the selection up first, so the module releases the handle in that hook and not
++ when it calls the completion callback.*/
+ pub type envoy_dynamic_module_type_cluster_lb_async_handle_module_ptr = *mut ::std::os::raw::c_void;
+ /** envoy_dynamic_module_type_cluster_worker_slot_data_module_ptr is a module-owned opaque pointer
+  stored in the cluster's worker thread-local slot. Envoy treats the value as opaque and never
+@@ -12091,7 +12096,9 @@ unsafe extern "C" {
+ #[cfg_attr(envoy_dynamic_module_dll, link(name = "envoy", kind = "raw-dylib"))]
+ unsafe extern "C" {
+     /** envoy_dynamic_module_on_cluster_config_destroy is called when the cluster configuration is
+- destroyed. The module should release any resources associated with the configuration.
++ destroyed. The module should release any resources associated with the configuration. Envoy
++ calls this on the main thread, once nothing that uses the configuration remains, which can be
++ after the cluster when a worker slot payload or a pending async host selection outlives it.
+ 
+  @param config_module_ptr is the pointer to the in-module cluster configuration.*/
+     pub fn envoy_dynamic_module_on_cluster_config_destroy(
+@@ -12194,13 +12201,30 @@ unsafe extern "C" {
  }
- 
-+TEST_F(McpJsonRestBridgeFilterTest, UnsupportedNotificationReturnsBadRequest) {
-+  ASSERT_OK(makeFilter());
+ #[cfg_attr(envoy_dynamic_module_dll, link(name = "envoy", kind = "raw-dylib"))]
+ unsafe extern "C" {
+-    /** envoy_dynamic_module_on_cluster_lb_cancel_host_selection is called when the stream is destroyed
+- before async host selection completes (e.g., stream timeout). After this call, the module must
+- not call envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete for this handle.
++    /** envoy_dynamic_module_on_cluster_lb_cancel_host_selection is called once for every async handle
++ that envoy_dynamic_module_on_cluster_lb_choose_host returned, when Envoy is done with the
++ selection. That happens when the request gives the selection up before the result arrives, such
++ as on a stream timeout, and also after Envoy has delivered the result the module passed to
++ envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete. The module releases the
++ handle here, and a module that must know whether it already completed the selection records
++ whether it called the completion callback for the handle. After this call, the module must not
++ call envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete for this handle.
 +
-+  request_headers_ = {{":method", "POST"}, {":path", "/mcp"}};
-+  EXPECT_EQ(filter_->decodeHeaders(request_headers_, /*end_stream=*/false),
-+            Http::FilterHeadersStatus::StopIteration);
-+
-+  // A notification without an ID is rejected as an unsupported method rather than for the missing
-+  // ID, and with an HTTP error status since it has no JSON-RPC response.
-+  EXPECT_CALL(
-+      decoder_callbacks_,
-+      sendLocalReply(
-+          Eq(Http::Code::BadRequest),
-+          StrEq(
-+              R"json({"code":-32601,"message":"MCP method notifications/cancelled is not supported"})json"),
-+          _, _, StrEq("mcp_json_rest_bridge_request_mcp_method_not_supported")));
-+
-+  Buffer::OwnedImpl body(
-+      R"json({"jsonrpc":"2.0","method":"notifications/cancelled","params":{"requestId":1}})json");
-+  EXPECT_EQ(filter_->decodeData(body, /*end_stream=*/true),
-+            Http::FilterDataStatus::StopIterationNoBuffer);
-+}
-+
-+TEST_F(McpJsonRestBridgeFilterTest, NotificationsInitializedWithIdReturnsUnsupportedMethodError) {
-+  ASSERT_OK(makeFilter());
-+
-+  request_headers_ = {{":method", "POST"}, {":path", "/mcp"}};
-+  EXPECT_EQ(filter_->decodeHeaders(request_headers_, /*end_stream=*/false),
-+            Http::FilterHeadersStatus::StopIteration);
-+
-+  // With an ID, the message is a request rather than a notification, so it does not get an empty
-+  // 202 Accepted response.
-+  EXPECT_CALL(
-+      decoder_callbacks_,
-+      sendLocalReply(
-+          Eq(Http::Code::OK),
-+          StrEq(
-+              R"json({"code":-32601,"message":"MCP method notifications/initialized is not supported"})json"),
-+          _, _, StrEq("mcp_json_rest_bridge_request_mcp_method_not_supported")));
-+
-+  Buffer::OwnedImpl body(
-+      R"json({"jsonrpc":"2.0","id":1,"method":"notifications/initialized"})json");
-+  EXPECT_EQ(filter_->decodeData(body, /*end_stream=*/true),
-+            Http::FilterDataStatus::StopIterationNoBuffer);
-+}
-+
-+TEST_F(McpJsonRestBridgeFilterTest, NotificationsInitializedWithNullIdReturnsError) {
-+  ASSERT_OK(makeFilter());
-+
-+  request_headers_ = {{":method", "POST"}, {":path", "/mcp"}};
-+  EXPECT_EQ(filter_->decodeHeaders(request_headers_, /*end_stream=*/false),
-+            Http::FilterHeadersStatus::StopIteration);
-+
-+  // A message with an "id" member, even a null one, is not a notification, so its ID is validated.
-+  EXPECT_CALL(decoder_callbacks_,
-+              sendLocalReply(Eq(Http::Code::OK),
-+                             StrEq(R"json({"code":-32600,"message":"Missing ID field"})json"), _, _,
-+                             StrEq("mcp_json_rest_bridge_request_id_not_found")));
-+
-+  Buffer::OwnedImpl body(
-+      R"json({"jsonrpc":"2.0","id":null,"method":"notifications/initialized"})json");
-+  EXPECT_EQ(filter_->decodeData(body, /*end_stream=*/true),
-+            Http::FilterDataStatus::StopIterationNoBuffer);
-+}
-+
- TEST_F(McpJsonRestBridgeFilterTest, InvalidInputJsonReturnsError) {
-   ASSERT_OK(makeFilter());
- 
-@@ -3637,7 +3702,7 @@ TEST_F(McpJsonRestBridgeFilterTest,
- 
-   EXPECT_CALL(
-       decoder_callbacks_,
--      sendLocalReply(Eq(Http::Code::OK),
-+      sendLocalReply(Eq(Http::Code::BadRequest),
-                      StrEq(R"json({"code":-32602,"message":"Unsupported MCP version"})json"), _, _,
-                      StrEq("mcp_json_rest_bridge_request_unsupported_mcp_version")));
-   Buffer::OwnedImpl body(R"json({"jsonrpc":"2.0","method":"notifications/initialized"})json");
++ Envoy calls this on the thread that called envoy_dynamic_module_on_cluster_lb_choose_host for
++ the selection, and a module thread can be inside
++ envoy_dynamic_module_callback_cluster_lb_async_host_selection_complete for the same handle at
++ that moment. A request can hold the selection after its cluster was removed or replaced, so
++ Envoy can call this after envoy_dynamic_module_on_cluster_lb_destroy and
++ envoy_dynamic_module_on_cluster_destroy, though always before
++ envoy_dynamic_module_on_cluster_config_destroy. The module therefore releases the handle here
++ and touches only state it owns. It uses neither the load balancer nor the cluster through
++ ``l
 ```
 
 ---
 
-### Incident Patch 3: `1e013e6b` (2026-11-24)
-**Commit Message**: Enable envoy.reloadable_features.unified_mux by default (#49412)
+### Incident Patch 2: `e9ebe070` (2026-11-25)
+**Commit Message**: quic: honor upstream network namespace for HTTP/3 (#48950)
 
-envoy.reloadable_features.unified_mux has been tested in Google prod for
-some time without problems.
+Commit Message: quic: honor upstream network namespace for HTTP/3
+Create QUIC sockets in the configured source network namespace, return a
+closed socket if namespace entry fails, and preserve namespace metadata
+for port migration.
+Additional Description: Support Linux NNS
+Risk Level: Medium
+Testing: Added coverage for NNS entry/socket creation/restore ordering,
+failed namespace entry, and IPv4/IPv6 metadata preservation.
+Docs Changes: N/A
+Release Notes: Added a QUIC bug-fix fragment.
+Platform Specific Features: Network namespace switching is Linux-only.
 
-The change is larger because test/common/config/xds_manager_impl_test.cc
-was hardcoded to only test with `envoy.reloadable_features.unified_mux
-== false`. The test was parameterized to test with unified_mux true and
-false, which resulted in a lot of small changes to the test file.
 
-Risk Level: medium
-Testing: unit tests
-Docs Changes: no
-Release Notes: yes
-Platform Specific Features: no
+## What changed
 
----------
+```mermaid
+flowchart TD
+    A["createConnectionSocket()<br/>(envoy_quic_utils.cc)"] --> B{"local_addr has<br/>networkNamespace()?"}
+    B -- "yes" --> C["execInNetworkNamespace()<br/>create socket inside upstream netns"]
+    B -- "no" --> D["create socket normally"]
+    C -- "success" --> E["socket created in netns"]
+    C -- "failure" --> F["closed IoSocketHandleImpl fallback<br/>+ error log with status"]
+    E --> G["apply options, bind, connect"]
+    F --> G
+    D --> G
+    G --> H["getAddressWithPort()<br/>updates port after getsockname()"]
+    H --> 
 
-Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
-
-**File**: `changelogs/changelogs.yaml` (modified, +3/-0)
+**File**: `changelogs/current/bug_fixes/quic__upstream_network_namespace.rst` (added, +2/-0)
 ```diff
-@@ -280,6 +280,9 @@ areas:
-   websocket:
-     title: websocket
- 
-+  xds:
-+    title: xds
-+
-   zipkin:
-     title: zipkin
-   zstd:
+@@ -0,0 +1,2 @@
++Fixed HTTP/3 upstream sockets ignoring the configured source address network namespace, including
++port migration.
 ```
 
-**File**: `changelogs/current/behavior_changes/xds__enabled_envoy_reloadable_features_unified_mux.rst` (added, +1/-0)
+**File**: `source/common/network/utility.cc` (modified, +4/-2)
 ```diff
-@@ -0,0 +1 @@
-+The ``envoy_reloadable_features_unified_mux`` is enabled by default after prod testing.
+@@ -321,14 +321,16 @@ Address::InstanceConstSharedPtr Utility::getAddressWithPort(const Address::Insta
+     // Copy the sockaddr and update the port to preserve all address properties.
+     sockaddr_in addr = *reinterpret_cast<const sockaddr_in*>(address.sockAddr());
+     addr.sin_port = htons(static_cast<uint16_t>(port));
+-    return std::make_shared<Address::Ipv4Instance>(&addr, &address.socketInterface());
++    return std::make_shared<Address::Ipv4Instance>(&addr, &address.socketInterface(),
++                                                   address.networkNamespace());
+   }
+   case Address::IpVersion::v6: {
+     // Copy the sockaddr and update the port to preserve all address properties including scope ID.
+     sockaddr_in6 addr = *reinterpret_cast<const sockaddr_in6*>(address.sockAddr());
+     addr.sin6_port = htons(static_cast<uint16_t>(port));
+     return std::make_shared<Address::Ipv6Instance>(addr, address.ip()->ipv6()->v6only(),
+-                                                   &address.socketInterface());
++                                                   &address.socketInterface(),
++                                                   address.networkNamespace());
+   }
+   }
+   PANIC("not handled");
 ```
 
-**File**: `mobile/envoy_build_config/BUILD` (modified, +1/-0)
+**File**: `source/common/quic/BUILD` (modified, +2/-0)
 ```diff
-@@ -62,6 +62,7 @@ envoy_cc_library(
-         "@envoy//source/extensions/config_subscription/grpc:grpc_collection_subscription_lib",
-         "@envoy//source/extensions/config_subscription/grpc:grpc_mux_lib",
-         "@envoy//source/extensions/config_subscription/grpc:grpc_subscription_lib",
-+        "@envoy//source/extensions/config_subscription/grpc/xds_mux:grpc_mux_lib",
-     ]),
- )
- 
+@@ -547,7 +547,9 @@ envoy_cc_library(
+         "//source/common/http:header_utility_lib",
+         "//source/common/network:address_lib",
+         "//source/common/network:connection_socket_lib",
++        "//source/common/network:default_socket_interface_lib",
+         "//source/common/network:socket_option_factory_lib",
++        "//source/common/network:utility_lib",
+         "//source/common/protobuf:utility_lib",
+         "//source/common/quic:quic_io_handle_wrapper_lib",
+         "//source/common/runtime:runtime_lib",
 ```
 
-**File**: `mobile/envoy_build_config/extension_registry.cc` (modified, +3/-0)
+**File**: `source/common/quic/envoy_quic_utils.cc` (modified, +35/-3)
 ```diff
-@@ -50,6 +50,7 @@
- #include "source/extensions/config_subscription/grpc/grpc_mux_impl.h"
- #include "source/extensions/config_subscription/grpc/grpc_subscription_factory.h"
- #include "source/extensions/config_subscription/grpc/new_grpc_mux_impl.h"
-+#include "source/extensions/config_subscription/grpc/xds_mux/grpc_mux_impl.h"
- #include "source/common/tls/cert_validator/default_validator.h"
- #endif // ENVOY_MOBILE_XDS
- 
-@@ -208,6 +209,8 @@ void ExtensionRegistry::registerFactories() {
-   Config::forceRegisterAdsCollectionConfigSubscriptionFactory();
-   Config::forceRegisterGrpcMuxFactory();
-   Config::forceRegisterNewGrpcMuxFactory();
-+  Config::XdsMux::forceRegisterDeltaGrpcMuxFactory();
-+  Config::XdsMux::forceRegisterSotwGrpcMuxFactory();
-   Extensions::TransportSockets::Tls::forceRegisterDefaultCertValidatorFactory();
- #endif // ENVOY_MOBILE_XDS
+@@ -23,7 +23,9 @@
+ #include "source/common/http/http_option_limits.h"
+ #include "source/common/network/address_impl.h"
+ #include "source/common/network/connection_socket_impl.h"
++#include "source/common/network/io_socket_handle_impl.h"
+ #include "source/common/network/socket_option_factory.h"
++#include "source/common/network/utility.h"
+ #include "source/common/protobuf/utility.h"
+ #include "source/common/quic/quic_io_handle_wrapper.h"
+ #include "source/common/runtime/runtime_features.h"
+@@ -65,6 +67,31 @@ getLoopbackAddress(Network::Address::InstanceConstSharedPtr peer_address) {
+                                                           &peer_address->socketInterface());
  }
-```
-
-**File**: `mobile/test/common/integration/BUILD` (modified, +1/-0)
-```diff
-@@ -219,6 +219,7 @@ envoy_cc_test_library(
-         "@envoy//source/extensions/config_subscription/grpc:grpc_collection_subscription_lib",
-         "@envoy//source/extensions/config_subscription/grpc:grpc_mux_lib",
-         "@envoy//source/extensions/config_subscription/grpc:grpc_subscription_lib",
-+        "@envoy//source/extensions/config_subscription/grpc/xds_mux:grpc_mux_lib",
-         "@envoy//test/integration:autonomous_upstream_lib",
-         "@envoy//test/integration:utility_lib",
-         "@envoy//test/mocks/server:server_factory_context_mocks",
-```
-
-**File**: `mobile/test/common/integration/xds_integration_test.cc` (modified, +3/-4)
-```diff
-@@ -31,10 +31,9 @@ void XdsIntegrationTest::initialize() {
-   // For server TLS.
-   Extensions::TransportSockets::Tls::forceRegisterServerContextFactoryImpl();
  
--  if (sotw_or_delta_ == Grpc::SotwOrDelta::UnifiedSotw ||
--      sotw_or_delta_ == Grpc::SotwOrDelta::UnifiedDelta) {
--    config_helper_.addRuntimeOverride("envoy.reloadable_features.unified_mux", "true");
++Network::ConnectionSocketPtr
++createDatagramSocket(const Network::Address::InstanceConstSharedPtr& local_addr,
++                     const Network::Address::InstanceConstSharedPtr& peer_addr,
++                     [[maybe_unused]] const std::optional<std::string>& netns,
++                     const Network::SocketCreationOptions& options) {
++  auto create_socket = [&]() {
++    return std::make_unique<Network::ConnectionSocketImpl>(Network::Socket::Type::Datagram,
++                                                           local_addr, peer_addr, options);
++  };
++#if defined(__linux__)
++  if (netns.has_value()) {
++    auto result = Network::Utility::execInNetworkNamespace(create_socket, netns->c_str());
++    if (!result.ok()) {
++      ENVOY_LOG_MISC(error, "Failed to create quic socket in network namespace {}: {}", *netns,
++                     result.status().ToString());
++      // The packet writer requires a non-null socket even on namespace failure.
++      return std::make_unique<Network::ConnectionSocketImpl>(
++          std::make_unique<Network::IoSocketHandleImpl>(), local_addr, peer_addr);
++    }
++    return *std::move(result);
++  }
++#endif
++  return create_socket();
++}
++
+ } // namespace
+ 
+ // TODO(danzh): this is called on each write. Consider to return an address instance on the stack if
+@@ -226,18 +253,18 @@ Network::ConnectionSocketPtr createConnectionSocket(
+     const Network::ConnectionSocket::OptionsSharedPtr& options, quic::QuicNetworkHandle network,
+     std::function<void(Network::ConnectionSocket&, quic::QuicNetworkHandle)> custom_bind_func) {
+   ASSERT(peer_addr != nullptr);
++  const auto netns = local_addr ? local_addr->networkNamespace() : std::nullopt;
+   // NOTE: If changing the default cache size from 4 entries, make sure to profile it using
+   // the benchmark test: //test/common/network:io_socket_handle_impl_benchmark
+   //
+   // If setting a higher cache size, try profiling std::deque instead of std::vector for the
+   // `recent_received_addresses_` cache in
+   // https://github.com/envoyproxy/envoy/blob/main/source/common/network/io_socket_handle_impl.h.
+   constexpr size_t max_addresses_cache_size = 4u;
+-  auto connection_socket = std::make_unique<Network::ConnectionSocketImpl>(
+-      Network::Socket::Type::Datagram,
++  auto connection_socket = createDatagramSocket(
+       // Use the loopback address if `local_addr` is null, to pass in the socket interface used to
+       // create the IoHandle, without having to make the more expensive `getifaddrs` call.
+-      local_addr ? local_addr : getLoopbackAddress(peer_addr), peer_addr,
++      local_addr ? local_addr : getLoopbackAddress(peer_addr), peer_addr, netns,
+       Network::SocketCreationOptions{false, max_addresses_cache_size});
+   connection_socket->setDetectedTransportProtocol("quic");
+   if (!connection_socket->isOpen()) {
+@@ -304,6 +331,11 @@ Network::ConnectionSocketPtr createConnectionSocket(
+   }
+ 
+   local_addr = connection_socket->connectionInfoProvider().localAddress();
++  if (local_addr && netns.has_value()) {
++    // Port migration creates new sockets from this address and must retain the namespace.
++    local_addr = local_addr->withNetworkNamespace(netns.value());
++    connection_socket->connectionInfoProvider().setLocalAddress(local_addr);
++  }
+   ENVOY_LOG_MISC(trace, "connected to local address: {}",
+                  local_addr != nullptr ? local_addr->asString() : "<none>");
+   if (!Network::Socket::applyOptions(connection_socket->options(), *connection_socket,
+```
+
+**File**: `test/common/network/utility_test.cc` (modified, +5/-0)
+```diff
+@@ -391,6 +391,11 @@ TEST(NetworkUtility, GetAddressWithPort) {
+       std::make_shared<Address::Ipv6Instance>("::1", 80, &custom_socket_interface);
+   auto addr_v6_custom_sock_new_port = Utility::getAddressWithPort(*addr_v6_custom_sock, 8080);
+   EXPECT_EQ(&custom_socket_interface, &addr_v6_custom_sock_new_port->socketInterface());
++
++  for (const auto& address : {addr_v4_custom_sock->withNetworkNamespace("/test/netns"),
++                              addr_v6_custom_sock->withNetworkNamespace("/test/netns")}) {
++    EXPECT_EQ("/test/netns", Utility::getAddressWithPort(*address, 0)->networkNamespace());
++  }
+ }
+ 
+ class NetworkUtilityGetLocalAddress : public testing::TestWithParam<Address::IpVersion> {};
+```
+
+**File**: `test/common/quic/BUILD` (modified, +1/-0)
+```diff
+@@ -502,6 +502,7 @@ envoy_cc_test(
+         "//source/common/quic:envoy_quic_utils_lib",
+         "//source/common/runtime:runtime_lib",
+         "//test/mocks/api:api_mocks",
++        "//test/mocks/network:network_mocks",
+         "//test/test_common:threadsafe_singleton_injector_lib",
+         "@quiche//:quic_test_tools_test_utils_lib",
+     ]),
+```
+
+**File**: `test/common/quic/envoy_quic_utils_test.cc` (modified, +35/-0)
+```diff
+@@ -2,6 +2,7 @@
+ #include "source/common/runtime/runtime_features.h"
+ 
+ #include "test/mocks/api/mocks.h"
++#include "test/mocks/network/mocks.h"
+ #include "test/test_common/threadsafe_singleton_injector.h"
+ #include "test/test_common/utility.h"
+ 
+@@ -343,6 +344,40 @@ TEST(EnvoyQuicUtilsTest, QuicResetErrorToEnvoyResetReason) {
+             Http::StreamResetReason::RemoteReset);
+ }
+ 
++#if defined(__linux__)
++TEST(EnvoyQuicUtilsTest, CreateConnectionSocketInNetworkNamespace) {
++  testing::StrictMock<Network::MockSocketInterface> socket_interface(
++      std::vector<Network::Address::IpVersion>{Network::Address::IpVersion::v4});
++  Network::Address::InstanceConstSharedPtr local_addr =
++      std::make_shared<Network::Address::Ipv4Instance>("127.0.0.1", &socket_interface,
++                                                       "/proc/thread-self/ns/net");
++  const auto bind_addr = local_addr;
++  const auto peer_addr = std::make_shared<Network::Address::Ipv4Instance>("127.0.0.1", 54321);
++  testing::StrictMock<Api::MockLinuxOsSysCalls> netns_syscalls;
++  TestThreadsafeSingletonInjector<Api::LinuxOsSysCallsImpl> netns_injector{&netns_syscalls};
++  testing::InSequence sequence;
++  EXPECT_CALL(netns_syscalls, setns(_, CLONE_NEWNET)).WillOnce(Return(Api::SysCallIntResult{0, 0}));
++  EXPECT_CALL(socket_interface, socket(Network::Socket::Type::Datagram, local_addr, _))
++      .WillOnce([&](Network::Socket::Type type, Network::Address::InstanceConstSharedPtr address,
++                    const Network::SocketCreationOptions& options) {
++        return socket_interface.SocketInterfaceImpl::socket(type, address, options);
++      });
++  EXPECT_CALL(netns_syscalls, setns(_, CLONE_NEWNET)).WillOnce(Return(Api::SysCallIntResult{0, 0}));
++
++  auto connection_socket = createConnectionSocket(peer_addr, local_addr, nullptr);
++  EXPECT_TRUE(connection_socket->isOpen());
++  EXPECT_EQ(bind_addr->networkNamespace(), local_addr->networkNamespace());
++  EXPECT_EQ(local_addr, connection_socket->connectionInfoProvider().localAddress());
++  EXPECT_NE(0, local_addr->ip()->port());
++
++  local_addr = bind_addr;
++  EXPECT_CALL(netns_syscalls, setns(_, CLONE_NEWNET))
++      .WillOnce(Return(Api::SysCallIntResult{-1, EPERM}));
++  connection_socket = createConnectionSocket(peer_addr, local_addr, nullptr);
++  EXPECT_FALSE(connection_socket->isOpen());
++}
++#endif
++
+ TEST(EnvoyQuicUtilsTest, CreateConnectionSocket) {
+   Network::Address::InstanceConstSharedPtr local_addr =
+       std::make_shared<Network::Address::Ipv4Instance>("127.0.0.1");
+```
+
+**File**: `test/integration/protocol_integration_test.cc` (modified, +0/-7)
+```diff
+@@ -249,13 +249,6 @@ TEST_P(ProtocolIntegrationTest, UpstreamRequestsPerConnectionMetricHandshakeFail
+ // configured network namespace fails at connection time (the namespace file cannot be opened),
+ // the request fails gracefully with a 503 instead of crashing on a null connection.
+ TEST_P(ProtocolIntegrationTest, UpstreamConnectionCreationFailure) {
+-  if (upstreamProtocol() == Http::CodecType::HTTP3) {
+-    // QUIC upstream connections are created through a different code path which does not support
+-    // binding to a network namespace, so the connection-time failure exercised here does not
+-    // apply.
+-    return;
 -  }
-+  const bool use_unified_mux = sotw_or_delta_ == Grpc::SotwOrDelta::UnifiedSotw ||
-+                               sotw_or_delta_ == Grpc::SotwOrDelta::UnifiedDelta;
-+  builder_.addRuntimeGuard("unified_mux", use_unified_mux);
- 
-   // xDS upstream is created separately in the test infra, and there's only one non-xDS cluster.
-   setUpstreamCount(1);
+-
+   // This test intentionally fails to create the upstream connection, so bypass the check that
+   // the test used upstream connections.
+   testing_upstream_intentionally_ = true;
 ```
 
-**File**: `mobile/test/common/integration/xds_test_server.cc` (modified, +3/-0)
+---
+
+### Incident Patch 3: `d2d5ae33` (2026-11-25)
+**Commit Message**: stats: extract Google gRPC client prefixes from xDS subscription counters (#49461)
+
+## Problem
+
+Google gRPC creates `grpc.<stat_prefix>` inside the subscription's stats
+scope. The top-level extractor misses client counters under LDS, SDS and
+ECDS. A dotted client prefix can also end up partly embedded in a
+Prometheus metric family. Part of #21595.
+
+## Solution
+
+| Field | Change |
+|---|---|
+| Commit Message | stats: extract Google gRPC client prefixes from xDS
+subscription counters |
+| Additional Description | Match `google_grpc_client_creation`,
+`streams_total` and `streams_closed_<code>` under the three subscription
+scopes. Each rule is indexed by its first component and captures the
+full prefix. The four xDS fixtures exercise extraction, including the
+same dotted SDS client in both store modes. |
+| Risk Level | Low. Tagged sinks use the extracted family name. The raw
+counter can still be looked up by its full path. |
+| Docs Changes / Release Notes |
+`changelogs/current/minor_behavior_changes/stats__grpc-stat-prefix-tag-extraction.rst`
+describes the counters and legacy name ambiguity. |
+
+The LDS test that rejects an unknown protobuf Any still verifies the
+rejection counter. It ski
+
+**File**: `changelogs/current/minor_behavior_changes/stats__grpc-stat-prefix-tag-extraction.rst` (added, +4/-0)
 ```diff
-@@ -14,6 +14,7 @@
- #include "source/extensions/config_subscription/grpc/grpc_mux_impl.h"
- #include "source/extensions/config_subscription/grpc/grpc_subscription_factory.h"
- #include "source/extensions/config_subscription/grpc/new_grpc_mux_impl.h"
-+#include "source/extensions/config_subscription/grpc/xds_mux/grpc_mux_impl.h"
- 
- #include "test/integration/fake_upstream.h"
- #include "test/test_common/environment.h"
-@@ -62,6 +63,8 @@ XdsTestServer::XdsTestServer()
-   Config::forceRegisterAdsCollectionConfigSubscriptionFactory();
-   Config::forceRegisterGrpcMuxFactory();
-   Config::forceRegisterNewGrpcMuxFactory();
-+  Config::XdsMux::forceRegisterDeltaGrpcMuxFactory();
-+  Config::XdsMux::forceRegisterSotwGrpcMuxFactory();
- 
-   envoy::extensions::transport_sockets::tls::v3::DownstreamTlsContext tls_context;
-   auto* common_tls_context = tls_context.mutable_common_tls_context();
+@@ -0,0 +1,4 @@
++The default tag extractor now uses the full Google gRPC client stat prefix as
++``envoy.google_grpc_client_prefix`` for LDS, SDS and ECDS ``google_grpc_client_creation``, ``streams_total`` and
++``streams_closed_<code>`` counters. In legacy tag extraction, SDS and ECDS flat names with
++two possible ``.grpc.`` separators are left without a client tag. Flat counter names are preserved.
 ```
 
-**File**: `source/common/runtime/runtime_features.cc` (modified, +1/-2)
+**File**: `source/common/config/well_known_names.cc` (modified, +15/-0)
 ```diff
-@@ -228,6 +228,7 @@ RUNTIME_GUARD(envoy_reloadable_features_udp_send_zero_length_datagrams);
- RUNTIME_GUARD(envoy_reloadable_features_udp_set_do_not_fragment);
- RUNTIME_GUARD(envoy_reloadable_features_uhv_allow_malformed_url_encoding);
- RUNTIME_GUARD(envoy_reloadable_features_unambiguous_tls_session_context_id);
-+RUNTIME_GUARD(envoy_reloadable_features_unified_mux);
- RUNTIME_GUARD(envoy_reloadable_features_upstream_bind_config_fix_port_exhaustion);
- RUNTIME_GUARD(envoy_reloadable_features_upstream_http_filters_correct_stats_prefix);
- RUNTIME_GUARD(envoy_reloadable_features_upstream_wasm_filter_uses_root_scope);
-@@ -276,8 +277,6 @@ FALSE_RUNTIME_GUARD(envoy_reloadable_features_enable_stats_explicit_tags);
- // descriptor_value fields by default.
- FALSE_RUNTIME_GUARD(
-     envoy_reloadable_features_enable_formatter_for_ratelimit_action_descriptor_value);
--// TODO(adisuissa) reset to true to enable unified mux by default
--FALSE_RUNTIME_GUARD(envoy_reloadable_features_unified_mux);
- // OAuth2 filter cookie encryption: when true, encrypt() emits AES-256-GCM ciphertexts with a
- // "gcm." marker; when false (the default), it emits the legacy AES-256-CBC format with no
- // marker. The default is false so that newly upgraded instances stay wire-compatible with
+@@ -9,6 +9,10 @@ namespace {
+ 
+ const absl::string_view TAG_VALUE_REGEX = R"([^\.]+)";
+ 
++// Counters created by Grpc::GoogleAsyncClientImpl in the client scope.
++constexpr absl::string_view GOOGLE_GRPC_STAT_REGEX =
++    R"((?:google_grpc_client_creation|streams_(?:total|closed_[0-9]+)))";
++
+ // To allow for more readable regular expressions to be declared below, and to
+ // reduce duplication, define a few common pattern substitutions for regex
+ // segments.
+@@ -23,6 +27,10 @@ std::string expandRegex(const std::string& regex) {
+               {"<TLS_VERSION>", R"(TLSv\d\.\d)"},
+               // A generic name can contain any character except dots.
+               {"<TAG_VALUE>", TAG_VALUE_REGEX},
++              {"<GOOGLE_GRPC_STAT>", GOOGLE_GRPC_STAT_REGEX},
++              // Both the resource and client names may contain ".grpc.". If a second delimiter
++              // could also introduce a client, the first alternative leaves the capture empty.
++              {"<RESOURCE_GRPC_CLIENT>", R"(.+?\.grpc\.(?:(?:.*\.)?grpc\..+\.|((.+)\.)))"},
+               // Route names may contain dots and slashes in addition to
+               // alphanumerics, underscores, and dashes.
+               {"<ROUTE_CONFIG_NAME>", R"([\w-\./]+)"},
+@@ -257,6 +265,13 @@ TagNameValues::TagNameValues() {
+ 
+   // grpc.(<stat_prefix>).**
+   addTokenized(GOOGLE_GRPC_CLIENT_PREFIX, "grpc.$.**");
++  // Capture the full client prefix before the counter in a subscription scope.
++  addRe2(GOOGLE_GRPC_CLIENT_PREFIX, R"(^listener_manager\.lds\.grpc\.((.+)\.)<GOOGLE_GRPC_STAT>$)",
++         ".grpc.");
++  addRe2(GOOGLE_GRPC_CLIENT_PREFIX, R"(^sds\.<RESOURCE_GRPC_CLIENT><GOOGLE_GRPC_STAT>$)", ".grpc.");
++  addRe2(GOOGLE_GRPC_CLIENT_PREFIX,
++         R"(^extension_config_discovery\.<TAG_VALUE>\.<RESOURCE_GRPC_CLIENT><GOOGLE_GRPC_STAT>$)",
++         ".grpc.");
+ 
+   // listener.[<address>.]ssl.certificate.(<cert_name>).<metric_name> or
+   // cluster.[<cluster_name>.]ssl.certificate.(<cert_name>).<metric_name>
+```
+
+**File**: `test/common/stats/tag_extractor_impl_test.cc` (modified, +36/-0)
+```diff
+@@ -636,6 +636,42 @@ TEST(TagExtractorTest, ExtAuthzTagExtractors) {
+                          {grpc_cluster, ext_authz_prefix});
+ }
+ 
++TEST(TagExtractorTest, GoogleGrpcClientPrefixTagExtractors) {
++  DefaultTagRegexTester tester;
++  const auto& names = Config::TagNames::get();
++  const Tag client{names.GOOGLE_GRPC_CLIENT_PREFIX, "control.example"};
++  const Tag secret{names.XDS_RESOURCE_NAME, "cert"};
++
++  tester.testRegex("grpc.accesslog.streams_closed_14", "grpc.streams_closed_14",
++                   {{names.GOOGLE_GRPC_CLIENT_PREFIX, "accesslog"}});
++  tester.testRegex("listener_manager.lds.grpc.control.example.streams_total",
++                   "listener_manager.lds.grpc.streams_total", {client});
++  tester.testRegex("sds.cert.grpc.control.example.streams_closed_12", "sds.grpc.streams_closed_12",
++                   {secret, client});
++  tester.testRegex(
++      "extension_config_discovery.http_filter.payments.v1.grpc.control.example.streams_total",
++      "extension_config_discovery.http_filter.payments.v1.grpc.streams_total", {client});
++
++  tester.testRegex("listener_manager.lds.grpc.control.example.google_grpc_client_creation",
++                   "listener_manager.lds.grpc.google_grpc_client_creation", {client});
++
++  // A resource can contain ".grpc." even when the metric is unrelated to the gRPC client.
++  tester.testRegex("sds.cert.grpc.prod.key_rotation_failed", "sds.grpc.prod.key_rotation_failed",
++                   {secret});
++  tester.testRegex("extension_config_discovery.http_filter.payments.grpc.prod.config_reload",
++                   "extension_config_discovery.http_filter.payments.grpc.prod.config_reload", {});
++  tester.testRegex("listener_manager.lds.grpc.control.example.streams_closed_invalid",
++                   "listener_manager.lds.grpc.control.example.streams_closed_invalid", {});
++
++  // The flat name cannot distinguish resource "cert" / client "prod.grpc.control" from
++  // resource "cert.grpc.prod" / client "control".
++  tester.testRegex("sds.cert.grpc.prod.grpc.control.streams_total",
++                   "sds.grpc.prod.grpc.control.streams_total", {secret});
++  tester.testRegex(
++      "extension_config_discovery.http_filter.payments.grpc.grpc.control.streams_closed_0",
++      "extension_config_discovery.http_filter.payments.grpc.grpc.control.streams_closed_0", {});
++}
++
+ TEST(TagExtractorTest, ExtractRegexPrefix) {
+   TagExtractorPtr tag_extractor; // Keep tag_extractor in this scope to prolong prefix lifetime.
+   auto extractRegexPrefix = [&tag_extractor](const std::string& regex) -> absl::string_view {
+```
+
+**File**: `test/integration/BUILD` (modified, +2/-0)
+```diff
+@@ -2684,7 +2684,9 @@ envoy_cc_test(
+         "//source/common/event:dispatcher_lib",
+         "//source/common/network:connection_lib",
+         "//source/common/network:utility_lib",
++        "//source/common/runtime:runtime_features_lib",
+         "//source/common/ssl:ssl_lib",
++        "//source/common/stats:thread_local_store_lib",
+         "//source/common/tls:context_config_lib",
+         "//source/common/tls:context_lib",
+         "//source/common/tls:utility_lib",
+```
+
+**File**: `test/integration/extension_discovery_integration_test.cc` (modified, +1/-4)
+```diff
+@@ -61,10 +61,7 @@ class ExtensionDiscoveryIntegrationTest : public Grpc::GrpcClientIntegrationPara
+                                           public HttpIntegrationTest {
+ public:
+   ExtensionDiscoveryIntegrationTest() : HttpIntegrationTest(Http::CodecType::HTTP1, ipVersion()) {
+-    // TODO(ggreenway): add tag extraction rules.
+-    // Missing stat tag-extraction rule for stat
+-    // 'listener_manager.lds.grpc.lds_cluster.streams_closed_10' and stat_prefix 'lds_cluster'.
+-    skip_tag_extraction_rule_check_ = true;
++    skip_tag_extraction_rule_check_ = false;
+   }
+ 
+   void addDynamicFilter(const std::string& name, bool apply_without_warming,
+```
+
+**File**: `test/integration/listener_extension_discovery_integration_test.cc` (modified, +1/-5)
+```diff
+@@ -30,11 +30,7 @@ class ListenerExtensionDiscoveryIntegrationTestBase : public Grpc::GrpcClientInt
+                                                 const std::string& listener_filter_name)
+       : HttpIntegrationTest(downstream_type, ipVersion(), config),
+         filter_name_(listener_filter_name), port_name_("http") {
+-    // TODO(ggreenway): add tag extraction rules.
+-    // Missing stat tag-extraction rule for stat
+-    // 'extension_config_discovery.tcp_listener_filter.foo.grpc.ecds_cluster.streams_closed_7' and
+-    // stat_prefix 'ecds_cluster'.
+-    skip_tag_extraction_rule_check_ = true;
++    skip_tag_extraction_rule_check_ = false;
+   }
+ 
+   void addDynamicFilterWithType(const std::string& filter_name,
+```
+
+**File**: `test/integration/listener_lds_integration_test.cc` (modified, +5/-8)
+```diff
+@@ -40,10 +40,7 @@ class ListenerIntegrationTestBase : public HttpIntegrationTest {
+ 
+   ListenerIntegrationTestBase(Network::Address::IpVersion version, const std::string& config)
+       : HttpIntegrationTest(Http::CodecType::HTTP1, version, config) {
+-    // TODO(ggreenway): add tag extraction rules.
+-    // Missing stat tag-extraction rule for stat
+-    // 'listener_manager.lds.grpc.lds_cluster.streams_closed_1' and stat_prefix 'lds_cluster'.
+-    skip_tag_extraction_rule_check_ = true;
++    skip_tag_extraction_rule_check_ = false;
+   }
+ 
+   ~ListenerIntegrationTestBase() override { resetConnections(); }
+@@ -379,6 +376,9 @@ INSTANTIATE_TEST_SUITE_P(IpVersionsAndGrpcTypes, ListenerMultiAddressesIntegrati
+ 
+ // Tests that an update with an unknown filter config proto is rejected.
+ TEST_P(ListenerIntegrationTest, CleanlyRejectsUnknownFilterConfigProto) {
++  // The rejected listener contains an unknown Any. The fixture's tag check reads /config_dump,
++  // which cannot serialize that Any to JSON.
++  skip_tag_extraction_rule_check_ = true;
+   on_server_init_function_ = [&]() {
+     createLdsStream();
+     envoy::config::listener::v3::Listener listener =
+@@ -1618,10 +1618,7 @@ class ListenerFilterIntegrationTest : public BaseIntegrationTest,
+           stat_prefix: tcp_stats
+           cluster: cluster_0
+ )EOF") {
+-    // TODO(ggreenway): add tag extraction rules.
+-    // Missing stat tag-extraction rule for stat
+-    // 'listener_manager.lds.grpc.lds_cluster.streams_closed_1' and stat_prefix 'lds_cluster'.
+-    skip_tag_extraction_rule_check_ = true;
++    skip_tag_extraction_rule_check_ = false;
+   }
+ 
+   ~ListenerFilterIntegrationTest() override {
+```
+
+**File**: `test/integration/sds_dynamic_integration_test.cc` (modified, +24/-11)
+```diff
+@@ -14,6 +14,8 @@
+ #include "source/common/http/utility.h"
+ #include "source/common/network/connection_impl.h"
+ #include "source/common/network/utility.h"
++#include "source/common/runtime/runtime_features.h"
++#include "source/common/stats/thread_local_store.h"
+ 
+ #ifdef ENVOY_ENABLE_QUIC
+ #include "source/common/quic/client_connection_factory_impl.h"
+@@ -96,22 +98,14 @@ class SdsDynamicIntegrationBaseTest : public Grpc::BaseGrpcClientIntegrationPara
+   SdsDynamicIntegrationBaseTest()
+       : HttpIntegrationTest(Http::CodecType::HTTP1, GetParam().ip_version),
+         test_quic_(GetParam().test_quic) {
+-    // TODO(ggreenway): add tag extraction rules.
+-    // Missing stat tag-extraction rule for stat
+-    // 'sds.client_cert.grpc.sds_cluster.lyft.com.streams_closed_12' and stat_prefix
+-    // 'sds_cluster.lyft.com'.
+-    skip_tag_extraction_rule_check_ = true;
++    skip_tag_extraction_rule_check_ = false;
+   }
+ 
+   SdsDynamicIntegrationBaseTest(Http::CodecType downstream_protocol,
+                                 Network::Address::IpVersion version, const std::string& config)
+       : HttpIntegrationTest(downstream_protocol, version, config),
+         test_quic_(GetParam().test_quic) {
+-    // TODO(ggreenway): add tag extraction rules.
+-    // Missing stat tag-extraction rule for stat
+-    // 'sds.client_cert.grpc.sds_cluster.lyft.com.streams_closed_12' and stat_prefix
+-    // 'sds_cluster.lyft.com'.
+-    skip_tag_extraction_rule_check_ = true;
++    skip_tag_extraction_rule_check_ = false;
+   }
+ 
+   Network::Address::IpVersion ipVersion() const override { return GetParam().ip_version; }
+@@ -756,6 +750,9 @@ TEST_P(SdsDynamicDownstreamIntegrationTest, RotatedCertificateReleasedByLastConn
+ // A test that SDS server send a good server secret for a static listener.
+ // The first ssl request should be OK.
+ TEST_P(SdsDynamicDownstreamIntegrationTest, BasicSuccess) {
++  // The mode is selected at startup. Exercise both paths using the existing IP-version matrix.
++  Runtime::maybeSetRuntimeGuard("envoy.reloadable_features.enable_stats_explicit_tags",
++                                useExplicitStatsTags());
+   on_server_init_function_ = [this]() {
+     createSdsStream(*sdsUpstream());
+     sendSdsResponse(getServerSecretRsa());
+@@ -767,6 +764,19 @@ TEST_P(SdsDynamicDownstreamIntegrationTest, BasicSuccess) {
+   };
+   testRouterHeaderOnlyRequestAndResponse(&creator, dataPlaneUpstreamIndex());
+ 
++  if (clientType() == Grpc::ClientType::GoogleGrpc) {
++    auto* store = dynamic_cast<Stats::ThreadLocalStoreImpl*>(&test_server_->statStore());
++    ASSERT_NE(nullptr, store);
++    EXPECT_EQ(useExplicitStatsTags(), store->useExplicitTags());
++    for (const auto* counter :
++         {"google_grpc_client_creation", "streams_total", "streams_closed_12"}) {
++      expectStatTags(fmt::format("sds.server_cert_rsa.grpc.sds_cluster.lyft.com.{}", counter),
++                     fmt::format("sds.grpc.{}", counter),
++                     {{"envoy.xds_resource_name", server_cert_rsa_},
++                      {"envoy.google_grpc_client_prefix", "sds_cluster.lyft.com"}});
++    }
++  }
++
+   // Success
+   EXPECT_EQ(1, test_server_->counter("sds.server_cert_rsa.update_success")->value());
+   EXPECT_EQ(0, test_server_->counter("sds.server_cert_rsa.update_rejected")->value());
+@@ -1804,6 +1814,9 @@ TEST_P(SdsDynamicClusterIntegrationTest, ClusterRefersNonExistentSdsCluster) {
+ // Validate that Envoy starts fine with a cyclic dependency between CDS and SDS clusters
+ // i.e. CDS cluster refers to dynamic SDS cluster and SDS cluster refers to the same CDS cluster.
+ TEST_P(SdsDynamicClusterIntegrationTest, CdsSdsCyclicDependency) {
++  // Google gRPC also uses this name as a stat prefix. Distinguish it from
++  // server.dynamic_unknown_fields.
++  sds_cluster_name_ = "cyclic_sds_cluster";
+   on_server_init_function_ = [this]() {
+     {
+       // CDS.
+@@ -1812,10 +1825,10 @@ TEST_P(SdsDynamicClusterIntegrationTest, CdsSdsCyclicDependency) {
+       result = xds_connection_->waitForNewStream(*dispatcher_, xds_stream_);
+       RELEASE_ASSERT(result, result.message());
+       xds_stream_->startGrpcStream();
++      dynamic_cluster_.set_name(sds_cluster_name_);
+       sendCdsResponse(true);
+     }
+   };
+-  sds_cluster_name_ = "dynamic";
+   valid_sds_cluster_ = false;
+   // The secret can never be fetched: the dynamic cluster warms once the SDS initial fetch times
+   // out, which is what lets the server start. Keep that short.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49597** (2026-11-24): test: Do not check for zero memory use where it cannot be measured (@phlax)
-- **PR #49595** (2026-11-24): test: Harden open_telemetry_integration_test against failure-path UAF (@phlax)
-- **PR #49586** (2026-11-24): gcp_authn: Let gcp_authn_filter_test use the default (medium) size (@phlax)
-- **PR #49584** (2026-11-24): deps: Bump `bazel-registry` -> 2297928 (+envoy-examples) (@dependency-envoy[bot])
-- **PR #49566** (2026-11-24): ai_protocol_manager: give each AI filter its own configuration page (@botengyao)
-- **PR #49563** (2026-11-24): network: fail listener filter buffer drain beyond buffered data (@basundhara-c)
+- **PR #49634** (2026-11-26): dynamic_modules: fix cluster async host selection threading and handle lifetime (@agrawroh)
+- **PR #49617** (2026-11-25): [bp/v1.40] Dynamic modules fixes (@dcillera)
+- **PR #49614** (2026-11-25): deps: Bump toolshed actions -> actions-v0.4.34 (@dependency-envoy[bot])
+- **PR #49610** (closed): rust: use the sysroot directory consistently as a bazel input (@dcillera)
+- **PR #49608** (closed): quic: Report a zero stream limit before sending 0-RTT early data (@phlax)
+- **PR #49605** (2026-11-25): [bp/1.40] flakes: Stack (@phlax)
 
 ---
 
@@ -1520,52 +2128,43 @@ Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: Do not check for zero memory use where it cannot be measured
+## X. dynamic_modules: fix cluster async host selection threading and handle lifetime
 
 **RULE**:
-When implementing operations in `test/common/memory/memory_test_utility.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-module-lifetime.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d4c3cc20`: test: Do not check for zero memory use where it cannot be measured. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `baf651b8`: dynamic_modules: fix cluster async host selection threading and handle lifetime. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/common/memory/memory_test_utility.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-module-lifetime.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-// canonical platforms, or when the expected value is zero and memory usage can
-// be measured. Canonical platforms currently include only for 'release' tests in
-// ci. On other platforms an info log is emitted, indicating that the test is
-// being skipped.
-//
-// The zero case is not checked where memory usage cannot be measured (see
-// `MemoryTest::mode()`). In particular, with jemalloc the total changes when a
-// thread cache is refilled, so an allocation that is freed again can still be
-// reported as consumed memory, depending on what the process allocated before.
-    /* Read the memory consumed first: `MemoryTest::mode()` allocates. */                          \
-    const auto memory_test_consumed_bytes = consumed_bytes;                                        \
-    const auto memory_test_mode = ::Envoy::Memory::TestUtil::MemoryTest::mode();                   \
-    if ((expected_value == 0 &&                                                                    \
-         memory_test_mode != ::Envoy::Memory::TestUtil::MemoryTest::Mode::Disabled) ||             \
-        memory_test_mode == ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {              \
-      EXPECT_EQ(mem
+Fixed the dynamic module cluster calling
+``envoy_dynamic_module_on_cluster_lb_cancel_host_selection``, which runs the Rust SDK's
+``AsyncHostSelectionHandle::cancel``, after its module was unloaded, when a request held an async
+host selection past the removal of its cluster. A pending selection now keeps the module loaded
+until that hook has run. The hook can still run after ``envoy_dynamic_module_on_cluster_lb_destroy``
+and ``envoy_dynamic_module_on_cluster_destroy``, though always before
+``envoy_dynamic_module_on_cluster_config_destroy``, so a module must not read load balancer or
+cluster state through ``lb_module_ptr`` in it. The cluster configuration, with its
+``envoy_dynamic_module_on_cluster_config_destroy`` hook, is now always destroyed on the main thread,
+also when a worker releases it last. The ABI documentation now states that Envoy calls the cancel
+hook once for every async handle, after a delivered result as well as on a cancellation, as every
+release with the hook has done, so a module releases the handle there rather than when it calls the
+completion callback.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// canonical platforms, or when the expected value is zero. Canonical platforms
-// currently include only for 'release' tests in ci. On other platforms an info
-// log is emitted, indicating that the test is being skipped.
-    if (expected_value == 0 || ::Envoy::Memory::TestUtil::MemoryTest::mode() ==                    \
-                                   ::Envoy::Memory::TestUtil::MemoryTest::Mode::Canonical) {       \
-      EXPECT_EQ(consumed_bytes, expected_value);                                                   \
-                     consumed_bytes, expected_value);                                              \
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d4c3cc20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `baf651b8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

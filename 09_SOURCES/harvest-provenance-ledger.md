@@ -13295,3 +13295,7 @@ Every entry in this ledger must capture:
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `bdcb14a4` | Multi-dimensional audit evidence | 2026-11-26T05:38:33.048Z |
 | `learn-huggingface-conceptcountry-qwen-concept-27b` | `https://huggingface.co/ConceptCountry/qwen-concept-27b` | `hf-concept` | Multi-dimensional audit evidence | 2026-11-26T05:48:34.745Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `67959df6` | Multi-dimensional audit evidence | 2026-11-26T05:48:45.867Z |
+| `learn-huggingface-abiray-minimax-h3-image-gguf` | `https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF` | `hf-abiray-` | Multi-dimensional audit evidence | 2026-11-26T05:57:00.647Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `baf651b8` | Multi-dimensional audit evidence | 2026-11-26T05:57:10.221Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `2a7e1bd4` | Multi-dimensional audit evidence | 2026-11-26T05:57:15.242Z |
+| `learn-dom-h-f039ad05` | `project://envoyproxy-envoy` | `baf651b8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | 2026-11-26T05:57:45.933Z |

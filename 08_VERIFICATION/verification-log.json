@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-95GW",
-    "timestamp": "2026-11-24T15:17:25.617Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "1c06d402d67ef0412c0448b8c93533cb3ebffff519901e731a85e27d7e1046e0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-9996",
-    "timestamp": "2026-11-24T15:17:30.522Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "e13d2f047234f2d80cbc06c8379a80702d309247c2964185136853989abf454a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-LJ2Q",
-    "timestamp": "2026-11-24T15:27:03.122Z",
-    "repository": "Sentinel7/h3",
-    "learningId": "learn-huggingface-sentinel7-h3",
-    "contentHash": "68db5097139f73fbb1b358ff134c67ca333056bb3f45e81cd3d7827fe394f424",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-LPXP",
     "timestamp": "2026-11-24T15:27:12.013Z",
     "repository": "wcandillon/react-native-skia",
@@ -7490,6 +7445,51 @@
     "repository": "temporalio/temporal",
     "learningId": "learn-github-temporalio-temporal",
     "contentHash": "6b2a06bbc80a011b875ac3b17917a316a42843d4c39146421508cbf11e21b5ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-45LV",
+    "timestamp": "2026-11-26T05:57:00.643Z",
+    "repository": "Abiray/MiniMax-H3-Image-GGUF",
+    "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
+    "contentHash": "cb3d3604b2fd1858cee0cf1b83cc08d1aa6c3251d3ad7eade44b9b70c63ab6d8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-4CZS",
+    "timestamp": "2026-11-26T05:57:10.216Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "362c15df676b0a38fd764a0a30d947d960d6f75c913b5daa0e470313ca9ea197",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-4GVA",
+    "timestamp": "2026-11-26T05:57:15.238Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "a5ece367776b58dc0e4f6442671e501a7cffbf1f4d749e4fbee95b2efac1ff74",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

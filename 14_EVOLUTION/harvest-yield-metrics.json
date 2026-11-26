@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T05:48:45.890Z",
-  "total_cycles_completed": 12584,
-  "total_learnings_persisted": 12584,
-  "total_rules_promoted": 11501,
+  "last_updated": "2026-11-26T05:57:15.254Z",
+  "total_cycles_completed": 12587,
+  "total_learnings_persisted": 12587,
+  "total_rules_promoted": 11503,
   "history": [
-    {
-      "timestamp": "2026-11-25T11:11:14.614Z",
-      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:11:28.417Z",
-      "repository": "apache/incubator-pegasus",
-      "learningId": "learn-github-apache-incubator-pegasus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:19:54.766Z",
-      "repository": "prithivMLmods/Gender-Classifier-Mini",
-      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T11:20:08.417Z",
       "repository": "StarTrail-org/LEANN",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T05:48:45.890Z",
       "repository": "temporalio/temporal",
       "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:57:00.658Z",
+      "repository": "Abiray/MiniMax-H3-Image-GGUF",
+      "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:57:10.233Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:57:15.254Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

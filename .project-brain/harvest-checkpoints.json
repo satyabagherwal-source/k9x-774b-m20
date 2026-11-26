@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T05:48:45.897Z",
+  "last_updated": "2026-11-26T05:57:15.257Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "4288a4696eea12412caad65d715b7773c661ff484f3088d3e30962b4070a588c",
-      "verified_at": "2026-11-25T04:52:10.638Z",
+      "content_hash": "a5ece367776b58dc0e4f6442671e501a7cffbf1f4d749e4fbee95b2efac1ff74",
+      "verified_at": "2026-11-26T05:57:15.257Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:52:10.638Z"
+      "last_updated": "2026-11-26T05:57:15.257Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "d3ad89768da387ce9600a50bc1e0348243d23cda588801602cd492e6df4cf33f",
-      "verified_at": "2026-11-25T05:45:34.560Z",
+      "content_hash": "362c15df676b0a38fd764a0a30d947d960d6f75c913b5daa0e470313ca9ea197",
+      "verified_at": "2026-11-26T05:57:10.236Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T05:45:34.560Z"
+      "last_updated": "2026-11-26T05:57:10.236Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -19011,14 +19011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
-      "content_hash": "3a7c056720d0350344298e9ee85667a854a130f723f223e433f62e5f52496a1a",
-      "verified_at": "2026-11-22T10:03:41.791Z",
+      "content_hash": "cb3d3604b2fd1858cee0cf1b83cc08d1aa6c3251d3ad7eade44b9b70c63ab6d8",
+      "verified_at": "2026-11-26T05:57:00.661Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:03:41.791Z"
+      "last_updated": "2026-11-26T05:57:00.661Z"
     },
     "Tencent/LoopForge": {
       "repository": "Tencent/LoopForge",

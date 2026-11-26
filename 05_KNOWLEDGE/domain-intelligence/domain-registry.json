@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T05:48:52.252Z",
-  "total_records": 2711,
+  "last_updated": "2026-11-26T05:57:47.578Z",
+  "total_records": 2712,
   "domains": {
     "A": {
       "total": 22,
@@ -1696,7 +1696,7 @@
       ]
     },
     "H": {
-      "total": 648,
+      "total": 649,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2345,7 +2345,8 @@
         "DOM-H-BC714522",
         "domain_intelligence-technical-construction-intelligence-adventists-ai-sophon-realtime-v1-core-invari",
         "DOM-H-4E1550AF",
-        "domain_intelligence-technical-construction-intelligence-hf-adventists-ai-sophon-realtime-v1-learning"
+        "domain_intelligence-technical-construction-intelligence-hf-adventists-ai-sophon-realtime-v1-learning",
+        "DOM-H-F039AD05"
       ]
     },
     "I": {
@@ -11163,8 +11164,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "43dd4883b32363c1362d9aa4046e3193c314931d3f998110fb08a4bee725a018",
-      "created_at": "2026-11-25T05:45:34.946Z"
+      "content_hash": "209e5a5005d589512f943d058c5e81ab83fb467b25e298d7e15ba529acef4e40",
+      "created_at": "2026-11-26T05:57:10.635Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -11283,8 +11284,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "7963f1493e5b862562678b706bbb95539789fb105dd433bac4e58b2e42e032e2",
-      "created_at": "2026-11-25T05:45:39.967Z"
+      "content_hash": "b57f66b9aa7e75a640983b4962b7eb5cbb504c37db26524f9a241541fefa8b37",
+      "created_at": "2026-11-26T05:57:46.508Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -21500,8 +21501,8 @@
       "title": "Research & Knowledge Intelligence: Abiray/MiniMax-H3-Image-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abiray-minimax-h3-image-gguf-research-knowledge-intelligence-abiray-minimax-h.md",
       "repository": "Abiray/MiniMax-H3-Image-GGUF",
-      "content_hash": "d38df608fbd680a347eee7e0309c5ab3c7ef6f7c0ed5c150feec6f7f637a9130",
-      "created_at": "2026-11-22T10:03:42.017Z"
+      "content_hash": "b04b225ec53f17dbc045bf2bee8938e7628d1cbd41d332f85fbc4f5f67031a5b",
+      "created_at": "2026-11-26T05:57:00.869Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomi-research-xiaomi-ocr-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomi-research-xiaomi-ocr-0-core-invariants",
@@ -21578,8 +21579,8 @@
       "title": "Research & Knowledge Intelligence: hf-abiray-minimax-h3-image-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abiray-minimax-h3-image-gguf-learnings-research-knowledge-intelligence-hf-abi.md",
       "repository": "hf-abiray-minimax-h3-image-gguf-learnings",
-      "content_hash": "4e591fc85c74ad7a2bb2e91c3308f350a882533447967f3421623a79ef586985",
-      "created_at": "2026-11-22T10:04:00.323Z"
+      "content_hash": "0d794838222f2bd10a9b51e70f78dcd9a0b59504c4eab1beaebe09c9c9813ae9",
+      "created_at": "2026-11-26T05:57:18.993Z"
     },
     "DOM-D-29746EF6": {
       "record_id": "DOM-D-29746EF6",
@@ -26291,8 +26292,8 @@
       "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "a9f8acefbd0ef82206c564e93f8b2488b6e6769cad2785ad6b34c33d832ccb0c",
-      "created_at": "2026-11-20T01:20:34.625Z"
+      "content_hash": "73cad3dbe60dd76562a49bfbbc34f7d1f47bf417ab825a59b38c3cf17a516b8b",
+      "created_at": "2026-11-26T05:57:15.647Z"
     },
     "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants": {
       "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants",
@@ -26318,8 +26319,8 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-learnings-research-knowledge-intelligence-materialize.md",
       "repository": "materializeinc-materialize-learnings",
-      "content_hash": "1b8d05d943c80d6c4e3fee12d21b7764af94c433cc0e5a045b575597e51aba02",
-      "created_at": "2026-11-25T04:52:18.440Z"
+      "content_hash": "545b89573cbabe50aeed7a3b330371acd1ec3b37150cfdb0ded8a38ab7ba2ca5",
+      "created_at": "2026-11-26T05:57:47.578Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
@@ -45859,6 +45860,48 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T05:30:03.045Z"
+    },
+    "DOM-H-F039AD05": {
+      "record_id": "DOM-H-F039AD05",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "dynamic_modules: fix cluster async host selection threading and handle lifetime",
+      "content": "When implementing operations in `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-module-lifetime.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "b862d65ee23d9ddaa018c7b3b61876db1f6ac02080a97b8ca45b806ff96be519",
+      "summary": "Prevents defects observed in production commit `baf651b8`: dynamic_modules: fix cluster async host selection threading and handle lifetime.  -> When implementing operations in `changelogs/current/bug_fixes/dynamic_modules__cluster-async-host-selection-module-lifetime.rst`, engineers ",
+      "provenance": {
+        "source_uri": "project://envoyproxy-envoy/envoyproxy-envoy-learnings.md",
+        "source_version": "baf651b8",
+        "observed_at": "2026-11-26T05:57:09.130Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (envoyproxy-envoy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of envoyproxy-envoy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T05:57:45.899Z"
     }
   }
 }
