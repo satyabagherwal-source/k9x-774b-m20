@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T12:39:29.645Z",
+  "timestamp": "2026-11-26T12:59:40.415Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-karmada-io-karmada-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [karmada-io-karmada-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T12:39:29.645Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T12:59:40.415Z`  
 > **Learning ID**: `LEARN-EVO-karmada-io-karmada-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `fd68f330`  
+> **Source Version**: `6d007132`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:39:17.406Z  
+> **Timestamp**: 2026-11-26T12:59:29.697Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:39:17.400Z  
+> **Harvest Timestamp**: 2026-11-26T12:59:29.692Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1033,33 +1033,175 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd68f330` (2026-11-25)
-**Commit Message**: Merge pull request #8086 from brenth-monad/fix/helm-etcd-multi-replica
+### Incident Patch 1: `6d007132` (2026-11-26)
+**Commit Message**: Merge pull request #8021 from xiangji2333/feat/search-proxy-streaming-list
 
-fix(helm): let a multi-replica internal etcd bootstrap
+perf(search): stream JSON list responses from cache proxy
 
-**File**: `charts/karmada/templates/etcd.yaml` (modified, +6/-0)
+**File**: `pkg/search/proxy/framework/plugins/cache/cache.go` (modified, +20/-1)
 ```diff
-@@ -18,6 +18,10 @@ metadata:
- spec:
-   replicas: {{ .Values.etcd.internal.replicaCount }}
-   serviceName: etcd
-+  {{- if gt (int .Values.etcd.internal.replicaCount) 1 }}
-+  # Members only become ready once the cluster has quorum, so they must start together.
-+  podManagementPolicy: Parallel
-+  {{- end }}
-   selector:
-     matchLabels:
-       {{- include "karmada.etcd.labels" . | nindent 6 }}
-@@ -173,6 +177,8 @@ spec:
-       protocol: TCP
-       targetPort: 2380
-   clusterIP: None
-+  # Members must resolve each other's peer address before any of them is ready.
-+  publishNotReadyAddresses: true
-   selector:
-   {{- include "karmada.etcd.labels" . | nindent 4 }}
- {{- end }}
+@@ -28,6 +28,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructuredscheme"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
++	jsonserializer "k8s.io/apimachinery/pkg/runtime/serializer/json"
+ 	"k8s.io/apimachinery/pkg/watch"
+ 	"k8s.io/apiserver/pkg/endpoints/handlers"
+ 	"k8s.io/apiserver/pkg/registry/rest"
+@@ -130,10 +131,28 @@ func (c *Cache) Connect(_ context.Context, request framework.ProxyRequest) (http
+ var (
+ 	cacheSerializer = &customSerializer{
+ 		NegotiatedSerializer: scheme.Codecs.WithoutConversion(),
+-		supportedMediaTypes:  unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaTypes(),
++		supportedMediaTypes:  newCacheMediaTypes(),
+ 	}
+ )
+ 
++func newCacheMediaTypes() []runtime.SerializerInfo {
++	mediaTypes := unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaTypes()
++	for i := range mediaTypes {
++		if mediaTypes[i].MediaType != "application/json" {
++			continue
++		}
++		// Stream LIST items instead of buffering the entire JSON response. Keep
++		// the upstream pretty, YAML, and watch serializers unchanged.
++		mediaTypes[i].Serializer = jsonserializer.NewSerializerWithOptions(
++			jsonserializer.DefaultMetaFactory,
++			unstructuredscheme.NewUnstructuredCreator(),
++			unstructuredscheme.NewUnstructuredObjectTyper(),
++			jsonserializer.SerializerOptions{StreamingCollectionsEncoding: true},
++		)
++	}
++	return mediaTypes
++}
++
+ type customSerializer struct {
+ 	runtime.NegotiatedSerializer
+ 	supportedMediaTypes []runtime.SerializerInfo
+```
+
+**File**: `pkg/search/proxy/framework/plugins/cache/serializer_test.go` (added, +149/-0)
+```diff
+@@ -0,0 +1,149 @@
++/*
++Copyright 2026 The Karmada Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package cache
++
++import (
++	"bytes"
++	"io"
++	"net/http/httptest"
++	"testing"
++
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructuredscheme"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apiserver/pkg/endpoints/handlers/negotiation"
++	"k8s.io/client-go/kubernetes/scheme"
++)
++
++func TestCacheSerializerStreamsJSONLists(t *testing.T) {
++	tests := []struct {
++		name   string
++		object *unstructured.UnstructuredList
++	}{
++		{
++			name: "pods with list metadata",
++			object: &unstructured.UnstructuredList{
++				Object: map[string]any{
++					"apiVersion": "v1", "kind": "PodList",
++					"metadata": map[string]any{"resourceVersion": "123", "continue": "next-page"},
++				},
++				Items: []unstructured.Unstructured{
++					{Object: map[string]any{"apiVersion": "v1", "kind": "Pod", "metadata": map[string]any{"name": "pod-a", "annotations": map[string]any{"example.com/source": "cluster-a"}}}},
++					{Object: map[string]any{"apiVersion": "v1", "kind": "Pod", "metadata": map[string]any{"name": "pod-b"}}},
++				},
++			},
++		},
++		{name: "nil items", object: &unstructured.UnstructuredList{Object: map[string]any{"apiVersion": "v1", "kind": "PodList"}}},
++		{name: "empty items", object: &unstructured.UnstructuredList{Object: map[string]any{"apiVersion": "v1", "kind": "PodList"}, Items: []unstructured.Unstructured{}}},
++		{
++			name: "custom resource list",
++			object: &unstructured.UnstructuredList{
++				Object: map[string]any{"apiVersion": "example.com/v1", "kind": "WidgetList", "extra": "preserved"},
++				Items:  []unstructured.Unstructured{{Object: map[string]any{"apiVersion": "example.com/v1", "kind": "Widget", "spec": map[string]any{"count": int64(42), "text": "<value>&中文"}}}},
++			},
++		},
++	}
++	upstream := originalCacheSerializer()
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			for _, accept := range []string{"", "application/json"} {
++				var want bytes.Buffer
++				encodeNegotiatedObject(t, upstream, accept, "", tt.object, &want)
++				got := &writeTrackingBuffer{}
++				encodeNegotiatedObject(t, cacheSerializer, accept, "", tt.object, got)
++				if !bytes.Equal(got.Bytes(), want.Bytes()) {
++					t.Fatalf("LIST response changed for Accept %q:\nwant: %s\ngot: %s", accept, want.Bytes(), got.Bytes())
++				}
++				if got.writes < 2 || got.maxWrite >= got.Len() {
++					t.Fatalf("LIST was buffered as a single write: writes=%d, maxWrite=%d, total=%d", got.writes, got.maxWrite, got.Len())
++				}
++			}
++		})
++	}
++}
++
++func TestCacheSerializerPreservesOtherFormats(t *testing.T) {
++	upstream := originalCacheSerializer()
++	pod := &unstructured.Unstructured{Object: map[string]any{"apiVersion": "v1", "kind": "Pod", "metadata": map[string]any{"name": "pod-a"}}}
++	list := &unstructured.UnstructuredList{Object: map[string]any{"apiVersion": "v1", "kind": "PodList"}, Items: []unstructured.Unstructured{*pod}}
++	for _, tt := range []struct {
++		name, accept, query string
++		object              runtime.Object
++	}{
++		{"single object", "application/json", "", pod},
++		{"pretty list", "application/json", "?pretty=true", list},
++		{"yaml list", "application/yaml", "", list},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			var want, got bytes.Buffer
++			encodeNegotiatedObject(t, upstream, tt.accept, tt.query, tt.object, &want)
++			encodeNegotiatedObject(t, cacheSerializer, tt.accept, tt.query, tt.object, &got)
++			if !bytes.Equal(got.Bytes(), want.Bytes()) {
++				t.Fatalf("response changed:\nwant: %s\ngot: %s", want.Bytes(), got.Bytes())
++			}
++		})
++	}
++	t.Run("watch event", func(t *testing.T) {
++		wantInfo := upstream.SupportedMediaTypes()[0].StreamSerializer
++		gotInfo := cacheSerializer.SupportedMediaTypes()[0].StreamSerializer
++		var want, got bytes.Buffer
++		if err := wantInfo.Serializer.Encode(pod, &want); err != nil {
++			t.Fatal(err)
++		}
++		if err := gotInfo.Serializer.Encode(pod, &got); err != nil {
++			t.Fatal(err)
++		}
++		if !bytes.Equal(got.Bytes(), want.Bytes()) || gotInfo.Framer != wantInfo.Framer || gotInfo.EncodesAsText != wantInfo.EncodesAsText {
++			t.Fatal("watch serialization changed")
++		}
++	})
++}
++
++func originalCacheSerializer() runtime.NegotiatedSerializer {
++	return &customSerializer{
++		NegotiatedSerializer: scheme.Codecs.WithoutConversion(),
++		supportedMediaTypes:  unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaType
 ```
 
 #### Recent Merged Pull Requests:
@@ -1088,36 +1230,50 @@ fix(helm): let a multi-replica internal etcd bootstrap
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in etcd.yaml
+## X. Empirical Invariant Guard in cache.go
 
 **RULE**:
-When implementing operations in `charts/karmada/templates/etcd.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/search/proxy/framework/plugins/cache/cache.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd68f330`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d007132`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/karmada/templates/etcd.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/search/proxy/framework/plugins/cache/cache.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  {{- if gt (int .Values.etcd.internal.replicaCount) 1 }}
-  # Members only become ready once the cluster has quorum, so they must start together.
-  podManagementPolicy: Parallel
-  {{- end }}
-  # Members must resolve each other's peer address before any of them is ready.
-  publishNotReadyAddresses: true
+	jsonserializer "k8s.io/apimachinery/pkg/runtime/serializer/json"
+		supportedMediaTypes:  newCacheMediaTypes(),
+func newCacheMediaTypes() []runtime.SerializerInfo {
+	mediaTypes := unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaTypes()
+	for i := range mediaTypes {
+		if mediaTypes[i].MediaType != "application/json" {
+			continue
+		}
+		// Stream LIST items instead of buffering the entire JSON response. Keep
+		// the upstream pretty, YAML, and watch serializers unchanged.
+		mediaTypes[i].Serializer = jsonserializer.NewSerializerWithOptions(
+			jsonserializer.DefaultMetaFactory,
+			unstructuredscheme.NewUnstructuredCreator(),
+			unstructuredscheme.NewUnstructuredObjectTyper(),
+			jsonserializer.SerializerOptions{StreamingCollectionsEncoding: true},
+		)
+	}
+	return mediaTypes
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		supportedMediaTypes:  unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaTypes(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd68f330` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d007132` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

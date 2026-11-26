@@ -22387,5 +22387,20 @@
     "qualityScore": 1053,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-26T11:14:40.530Z"
+  },
+  {
+    "name": "magpie",
+    "fullName": "yetone/magpie",
+    "url": "https://github.com/yetone/magpie",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Pool every plan you pay for — Claude, ChatGPT, Copilot, GLM Coding Plan, Kimi Code and more — and use them in any agent: Claude Code, Codex, Claude Desktop… When one runs out, the next takes over.",
+    "stars": 41879,
+    "forks": 3839,
+    "openIssues": 5228,
+    "language": "Go",
+    "qualityScore": 22541,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-26T12:55:32.493Z"
   }
 ]

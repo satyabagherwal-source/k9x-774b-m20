@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T12:50:58.586Z",
+  "updated_at": "2026-11-26T12:59:38.621Z",
   "stats": {
-    "total_discovered": 9760,
-    "approved_pending_harvest": 9259,
+    "total_discovered": 9765,
+    "approved_pending_harvest": 9264,
     "harvested_count": 0,
     "rejected_count": 501,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9246,
+      "COMMUNITY_AND_EXPERT": 9251,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -211240,6 +211240,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
         "fileName": "makecindy-cindy-learnings.md"
+      }
+    },
+    "SRC-4683CD570EF3": {
+      "id": "SRC-4683CD570EF3",
+      "url": "https://github.com/yetone/magpie",
+      "title": "https://github.com/yetone/magpie",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T12:59:38.360Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yetone-magpie-learnings.md",
+        "fileName": "yetone-magpie-learnings.md"
+      }
+    },
+    "SRC-E90C284FE124": {
+      "id": "SRC-E90C284FE124",
+      "url": "https://www.volcengine.com/docs/82379/1541523",
+      "title": "https://www.volcengine.com/docs/82379/1541523",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T12:59:38.427Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yetone-magpie-learnings.md",
+        "fileName": "yetone-magpie-learnings.md"
+      }
+    },
+    "SRC-21751547670D": {
+      "id": "SRC-21751547670D",
+      "url": "https://github.com/user-attachments/assets/30658cf7-e5b0-4dcd-8f84-4ec5c8a2313a",
+      "title": "https://github.com/user-attachments/assets/30658cf7-e5b0-4dcd-8f84-4ec5c8a2313a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T12:59:38.494Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yetone-magpie-learnings.md",
+        "fileName": "yetone-magpie-learnings.md"
+      }
+    },
+    "SRC-9114E534593F": {
+      "id": "SRC-9114E534593F",
+      "url": "https://github.com/user-attachments/assets/e3bd4f55-cf73-4090-af0d-7d8446d962fd",
+      "title": "https://github.com/user-attachments/assets/e3bd4f55-cf73-4090-af0d-7d8446d962fd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T12:59:38.556Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yetone-magpie-learnings.md",
+        "fileName": "yetone-magpie-learnings.md"
+      }
+    },
+    "SRC-AB1918A1F22A": {
+      "id": "SRC-AB1918A1F22A",
+      "url": "https://github.com/user-attachments/assets/5b4be2b2-61ce-468c-90ce-f7c576b6082c",
+      "title": "https://github.com/user-attachments/assets/5b4be2b2-61ce-468c-90ce-f7c576b6082c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T12:59:38.621Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yetone-magpie-learnings.md",
+        "fileName": "yetone-magpie-learnings.md"
       }
     }
   }

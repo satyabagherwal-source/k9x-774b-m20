@@ -13385,3 +13385,7 @@
 | `CYCLE-20261126-GRCU` | `2026-11-26T12:38:43.326Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10679` | Yes (`0f52ac72...`) |
 | `CYCLE-20261126-W8NG` | `2026-11-26T12:50:45.580Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`2c610fd1...`) |
 | `CYCLE-20261126-WF33` | `2026-11-26T12:50:53.919Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10680` | Yes (`c75d2c88...`) |
+| `CYCLE-20261126-772N` | `2026-11-26T12:59:16.751Z` | `yetone/magpie` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10681` | Yes (`dd82e8c1...`) |
+| `CYCLE-20261126-79D4` | `2026-11-26T12:59:19.720Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`f37b18a6...`) |
+| `CYCLE-20261126-7HZI` | `2026-11-26T12:59:30.894Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10682` | Yes (`2eaa5721...`) |
+| `CYCLE-20261126-7L0A` | `2026-11-26T12:59:34.810Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10683` | Yes (`084ff4c7...`) |

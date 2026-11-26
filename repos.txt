@@ -5438,3 +5438,7 @@ https://huggingface.co/sand-ai/MAGI-2-preview
 # --- Automatically Discovered by AI Scout Engine [2026-11-26T11:15:26.734Z] ---
 # [DATABASE-STORAGE-ENGINES] kividbio/kividb (1053 score) - A fast, multi-threaded Redis® and Valkey alternative written in Rust: drop-in co
 https://github.com/kividbio/kividb
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-26T12:59:10.568Z] ---
+# [AI-AGENTS] yetone/magpie (22541 score) - Pool every plan you pay for — Claude, ChatGPT, Copilot, GLM Coding Plan, Kimi Co
+https://github.com/yetone/magpie

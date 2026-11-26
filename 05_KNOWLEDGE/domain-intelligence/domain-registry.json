@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T12:51:00.729Z",
-  "total_records": 2747,
+  "last_updated": "2026-11-26T12:59:40.751Z",
+  "total_records": 2749,
   "domains": {
     "A": {
       "total": 23,
@@ -1708,7 +1708,7 @@
       ]
     },
     "H": {
-      "total": 662,
+      "total": 664,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2371,7 +2371,9 @@
         "DOM-H-D48F999D",
         "domain_intelligence-technical-construction-intelligence-higress-group-higress-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-saffsanity-sill-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-saffsanity-sill-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-saffsanity-sill-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-yetone-magpie-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-yetone-magpie-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8571,8 +8573,8 @@
       "title": "Research & Knowledge Intelligence: SupersonicLabs/Julia-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-research-knowledge-intelligence-supersoniclabs-julia-1.md",
       "repository": "SupersonicLabs/Julia-1",
-      "content_hash": "51bc391ac0f7b1fffe72894f3c903b912473b9c8e88aeb6d416483123eb1faec",
-      "created_at": "2026-11-22T19:52:11.177Z"
+      "content_hash": "70a54391eac799d142173f17b423127e374518a082c692f4eef7a54ef71d7ddf",
+      "created_at": "2026-11-26T12:59:19.968Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
@@ -8589,8 +8591,8 @@
       "title": "Research & Knowledge Intelligence: hf-supersoniclabs-julia-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-learnings-research-knowledge-intelligence-hf-supersoni.md",
       "repository": "hf-supersoniclabs-julia-1-learnings",
-      "content_hash": "10f066d0418c6934beb5cd0dc8b0e390028061f6323e95ba8b2c15d9e6026903",
-      "created_at": "2026-11-22T19:52:31.167Z"
+      "content_hash": "be6dfec939a9b93e924487f0aacbe8f8dc32d66e76f8118b016f7de612ce7d46",
+      "created_at": "2026-11-26T12:59:39.689Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
@@ -24224,8 +24226,8 @@
       "title": "Architecture Intelligence: MariaDB/server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
       "repository": "MariaDB/server",
-      "content_hash": "90ad5ed56a7cdb45ab4ab0a32de31127ccdbf39cae255761c3d3acdde154d462",
-      "created_at": "2026-11-25T11:42:38.974Z"
+      "content_hash": "b74a3f342375d2bd0869cd288ff91310eaf27a93a3d7cebbcd8758cd34e1fbf6",
+      "created_at": "2026-11-26T12:59:35.258Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
@@ -41563,8 +41565,8 @@
       "title": "Technical Construction Intelligence: karmada-io/karmada Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karmada-io-karmada-technical-construction-intelligence-karmada-io-karmada-core-i.md",
       "repository": "karmada-io/karmada",
-      "content_hash": "82d91bdc1e858d5c438b68e0e6f5a75570f7307f1045178d1428dc2fafc06aaf",
-      "created_at": "2026-11-23T23:09:58.685Z"
+      "content_hash": "5214c5c826d61b722cdcbb01e00e2e73698c8ab19fb33d3d78be2574c2ca731a",
+      "created_at": "2026-11-26T12:59:31.354Z"
     },
     "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karmada-io-karmada-learnings-core-invariants",
@@ -41572,8 +41574,8 @@
       "title": "Technical Construction Intelligence: karmada-io-karmada-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karmada-io-karmada-learnings-technical-construction-intelligence-karmada-io-karm.md",
       "repository": "karmada-io-karmada-learnings",
-      "content_hash": "9b5b096c470a56265684659cf80b112ecbc4efc48681a954c5bbebed8732ff8e",
-      "created_at": "2026-11-23T23:10:07.067Z"
+      "content_hash": "03563b06c7ced3037469d0f2ad8a1ffd4b9c7278be5d3f2bb68469cfee1e8ecf",
+      "created_at": "2026-11-26T12:59:40.751Z"
     },
     "DOM-D-E322F459": {
       "record_id": "DOM-D-E322F459",
@@ -46384,6 +46386,24 @@
       "repository": "goodrain/rainbond",
       "content_hash": "af34ec0c02166330f6c2003a0d0daab02e820258f8d5c8f3758cb0afe78e54b0",
       "created_at": "2026-11-26T12:29:06.782Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yetone-magpie-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-yetone-magpie-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: yetone/magpie Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yetone-magpie-technical-construction-intelligence-yetone-magpie-core-invariants.md",
+      "repository": "yetone/magpie",
+      "content_hash": "76a318a2a9882365a0d13277b834f9e29b54611bb10fafa94f0ede97d0637a0f",
+      "created_at": "2026-11-26T12:59:17.188Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yetone-magpie-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-yetone-magpie-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: yetone-magpie-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yetone-magpie-learnings-technical-construction-intelligence-yetone-magpie-learni.md",
+      "repository": "yetone-magpie-learnings",
+      "content_hash": "c634cfa47d5c9dbe7709d8bbab9a4d1fdf2128fbe5eb42f9dae4cada4913a53c",
+      "created_at": "2026-11-26T12:59:39.086Z"
     }
   }
 }

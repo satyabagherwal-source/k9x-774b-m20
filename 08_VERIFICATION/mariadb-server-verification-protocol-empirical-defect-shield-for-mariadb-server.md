@@ -4,22 +4,22 @@
 {
   "source_repository": "MariaDB/server",
   "source_url": "https://github.com/MariaDB/server",
-  "source_version": "b800539d",
+  "source_version": "e6521ee6",
   "license": "GPL-2.0",
-  "timestamp": "2026-11-25T11:42:38.784Z",
+  "timestamp": "2026-11-26T12:59:35.059Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mariadb-server",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MariaDB/server](https://github.com/MariaDB/server) (Revision: `b800539d`).  
-> **License**: GPL-2.0 | **Timestamp**: `2026-11-25T11:42:38.784Z`  
+> **Provenance**: Harvested from [MariaDB/server](https://github.com/MariaDB/server) (Revision: `e6521ee6`).  
+> **License**: GPL-2.0 | **Timestamp**: `2026-11-26T12:59:35.059Z`  
 > **Learning ID**: `learn-github-mariadb-server`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `MariaDB/server` (Commit: `b800539d`)
+- **Target Repository**: `MariaDB/server` (Commit: `e6521ee6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T11:42:37.388Z  
+> **Harvest Timestamp**: 2026-11-26T12:59:33.632Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8655 stars
+- **Stars / Engagement**: 8664 stars
 
 ---
 
@@ -1625,13 +1625,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6221** (2026-11-25): **MDEV-42420 Use two applier threads in tests that pause the applier**
-  *Symptoms*: Galera periodically delivers a COMMIT_CUT action. It has only a local seqno and must pass the local monitor in an applier thread. Tests that paused the only applier of a node, and then waited for a local transaction on that node to certify or reach a later sync point, could hang until timeout when a COMMIT_CUT was ordered before the local transaction. These hangs are sporadic because a COMMIT_CUT comes only about every 128 transactions.  Fix the affected tests in the same way as galera_sr.mysql-wsrep#215: set wsrep_slave_threads = 2 on the paused node for the duration of the test, so the second applier can process the COMMIT_CUT. At the end, restore the original value and run a DDL from the other node. The extra applier exits only after it applies a writeset, and that DDL brings the applier count back down before the next test.  Fixed tests:   galera.MDEV-29512   galera.galera_MDEV-29512   galera.MW-292   galera.galera_as_slave_replay   galera.galera_ddl_fk_conflict   galera.galera_insert_bulk   galera.galera_savepoint_replay   galera.galera_sequences_bf_kill   galera.galera_sequences_bf_kill_sr   galera.galera_slave_replay   galera.galera_sp_bf_abort   galera.galera_transaction_replay   galera.mysql-wsrep-bugs-607   galera_sr.MDEV-25717   galera_sr.galera_sr_bf_abort  In galera.MW-292, also replace the 3 second sleep and the TIMEDIFF(SYSDATE(), NOW()) < 2 check with two consecutive NOW(6) reads. A stuck timestamp returns the same value in both, so the test no longer needs to
+- **Issue #6233** (2026-11-26): **MDEV-40794: Dynamic Column Aggregate Name Pool Overflow**
+  *Symptoms*: The named dynamic-column format serializes the aggregate name-pool size and every name offset in two bytes (max 65535 = MAX_TOTAL_NAME_LENGTH). calc_var_sizes() accumulated the total name length in size_t without checking against MAX_TOTAL_NAME_LENGTH. When the aggregate exceeded 65535, set_fixed_header_named() truncated the size via int2store() and put_header_entry_named() truncated each offset, producing a malformed blob. In Debug builds the DBUG_ASSERT in put_header_entry_named() aborted the server; in Release builds the malformed blob was silently returned, and a fresh reader saw the wrapped name-pool size causing COLUMN_CHECK to fail and COLUMN_LIST/COLUMN_JSON to reject the object.  Fix: add an aggregate name-pool length check in dynamic_new_column_store() (after individual name checks via check_limit_named()) and in dynamic_column_update_many_fmt() (update path). Both return ER_DYNCOL_LIMIT when the total exceeds MAX_TOTAL_NAME_LENGTH.  Any authenticated user can trigger this with a plain SET statement (COLUMN_CREATE with multiple names whose total length exceeds 65535), requiring no table, database, or administrative privileges.
 
-- **Issue #6219** (2026-11-25): **MDEV-42354 SET GLOBAL innodb_log_file_size=OFF may break recovery**
-  *Symptoms*: `log_t::set_archive()`: Enforce the strictest `checkpoint_age_max()` limit before switching to `innodb_log_archive=OFF`.  Assisted-by: Claude:claude-opus-5-5
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/MariaDB/server?pullRequest=6219) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/MariaDB/server?pullRequest=6219) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/MariaDB/server?pullRequest=6219) it.</sub>
+- **Issue #6225** (2026-11-25): **MDEV-42444 mariabackup SST fails with "Donor does not know my secret!"**
+  *Symptoms*: When ssl-mode is DISABLED or REQUIRED, a mariabackup SST fails on the joiner with "Donor does not know my secret!" and the joiner node does not start. The joiner sends its secret to the donor as "<CN>:<secret>@<address>". The CN is set only when ssl-mode is VERIFY_CA or VERIFY_IDENTITY. Since MDEV-41158 the joiner sends a secret in every ssl-mode, so in the other modes the CN part is empty.  write_auth_info() gives the remote credentials to the donor script only when the remote user name is not empty. With an empty CN the secret is not given to the donor, the donor does not send it back, and the joiner stops the SST.  Give the remote credentials to the donor script when the user name or the password is not empty.  Assisted-by: Claude:claude-4.6-sonnet
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1648,30 +1646,304 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0676a13d` (2026-11-24)
-**Commit Message**: MDEV-42350 fixup: innodb_log_recovery_target blocks writes
+### Incident Patch 1: `2cd1e495` (2026-11-25)
+**Commit Message**: MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
 
-**File**: `storage/innobase/log/log0recv.cc` (modified, +2/-1)
+buf_page_init_for_read() buffer-fixed a page that already exists in
+buf_pool.page_hash. An asynchronous read and buf_read_recover() released
+that buffer-fix without accessing the page. buf_read_ahead_random() and
+buf_read_ahead_linear() invoke buf_read_page_low() for every page of the
+read-ahead area, so each resident page got a short buffer-fix. If such a
+page had been freed and was being allocated again, buf_page_create_low()
+could count this buffer-fix together with another one (for example, of
+btr_blob_free()), and the debug assertion buf_fix_count(state) <= 2
+failed. Release builds were not affected.
+
+buf_page_init_for_read(): Add the parameter fix. Only buffer-fix an
+existing page if fix holds. Otherwise, return nullptr | 1. Add the
+DEBUG_SYNC point buf_page_init_for_read_freed for a freed page.
+
+buf_read_page_low(): Only request a buffer-fix for a synchronous read.
+
+buf_read_recover(): Do not request a buffer-fix.
+
+btr_blob_free(): Add the DEBUG_SYNC point btr_blob_free_after_commit.
+
+The test innodb.read_ahead_freed_page stops a ROLLBACK in
+btr_blob_free() after it freed a BLOB page, and a random read-ahead whe
+
+**File**: `mysql-test/suite/innodb/r/read_ahead_freed_page.result` (added, +40/-0)
 ```diff
-@@ -6102,7 +6102,8 @@ dberr_t recv_recovery_from_checkpoint_start()
- 			ut_ad(!log_sys.archive
- 			      || log_sys.next_checkpoint_no
- 			      >= uint16_t(4 * log_sys.is_encrypted()));
--			if (log_sys.archive && log_sys.is_encrypted()
-+			if (!recv_sys.rpo
-+			    && log_sys.archive && log_sys.is_encrypted()
- 			    && log_sys.next_checkpoint_no
- 			    <= uint16_t(4 * log_sys.is_encrypted())) {
- 				ut_ad(log_sys.next_checkpoint_no == 4);
+@@ -0,0 +1,40 @@
++#
++# MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
++#
++CREATE TABLE t1(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
++INSERT INTO t1 VALUES (1, REPEAT('a', 10000));
++CREATE TABLE t3(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
++INSERT INTO t3 SELECT seq, REPEAT(CHAR(64 + seq % 26), 10000)
++FROM seq_1_to_30;
++# restart
++SELECT SUM(LENGTH(b)) FROM t3 WHERE id BETWEEN 12 AND 28;
++SUM(LENGTH(b))
++170000
++connect con1,localhost,root;
++BEGIN;
++UPDATE t1 SET b = REPEAT('z', 10000) WHERE id = 1;
++SET DEBUG_SYNC = 'btr_blob_free_after_commit SIGNAL freed WAIT_FOR go_free';
++ROLLBACK;
++connection default;
++SET DEBUG_SYNC = 'now WAIT_FOR freed';
++connect con2,localhost,root;
++SET @save_random_read_ahead = @@GLOBAL.innodb_random_read_ahead;
++SET GLOBAL innodb_random_read_ahead = ON;
++SET DEBUG_SYNC = 'buf_page_init_for_read_freed SIGNAL ra_found WAIT_FOR go_ra';
++SELECT SUM(LENGTH(b)) FROM t3 WHERE id >= 29;
++connection default;
++SET DEBUG_SYNC = 'now WAIT_FOR ra_found';
++CREATE TABLE t2(a INT PRIMARY KEY) ENGINE=InnoDB;
++SET DEBUG_SYNC = 'now SIGNAL go_ra';
++connection con2;
++SUM(LENGTH(b))
++20000
++SET GLOBAL innodb_random_read_ahead = @save_random_read_ahead;
++disconnect con2;
++connection default;
++SET DEBUG_SYNC = 'now SIGNAL go_free';
++connection con1;
++disconnect con1;
++connection default;
++SET DEBUG_SYNC = 'RESET';
++DROP TABLE t1, t2, t3;
+```
+
+**File**: `mysql-test/suite/innodb/t/read_ahead_freed_page.opt` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++--innodb-file-per-table=0
++--innodb-buffer-pool-size=32M
++--innodb-buffer-pool-load-at-startup=0
++--innodb-buffer-pool-dump-at-shutdown=0
+```
+
+**File**: `mysql-test/suite/innodb/t/read_ahead_freed_page.test` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++--source include/have_innodb.inc
++--source include/have_innodb_16k.inc
++--source include/have_debug_sync.inc
++--source include/have_sequence.inc
++--source include/not_embedded.inc
++
++--echo #
++--echo # MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
++--echo #
++
++# All tables are in the system tablespace (innodb_file_per_table=0), so
++# that the BLOB page that the ROLLBACK on t1 frees is in the read-ahead
++# area of the BLOB pages of t3, and CREATE TABLE t2 allocates it again.
++CREATE TABLE t1(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
++INSERT INTO t1 VALUES (1, REPEAT('a', 10000));
++CREATE TABLE t3(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
++INSERT INTO t3 SELECT seq, REPEAT(CHAR(64 + seq % 26), 10000)
++FROM seq_1_to_30;
++
++# Empty the buffer pool.
++--source include/restart_mysqld.inc
++
++# Access enough BLOB pages of t3 to enable a random read-ahead
++# in their area.
++SELECT SUM(LENGTH(b)) FROM t3 WHERE id BETWEEN 12 AND 28;
++
++connect con1,localhost,root;
++BEGIN;
++# Allocate a new BLOB page.
++UPDATE t1 SET b = REPEAT('z', 10000) WHERE id = 1;
++# The ROLLBACK frees the BLOB page. btr_blob_free() keeps a buffer-fix
++# on it after the mini-transaction commit.
++SET DEBUG_SYNC = 'btr_blob_free_after_commit SIGNAL freed WAIT_FOR go_free';
++send ROLLBACK;
++
++connection default;
++SET DEBUG_SYNC = 'now WAIT_FOR freed';
++
++connect con2,localhost,root;
++SET @save_random_read_ahead = @@GLOBAL.innodb_random_read_ahead;
++SET GLOBAL innodb_random_read_ahead = ON;
++# A BLOB page of t3 that is not in the buffer pool triggers a random
++# read-ahead. It finds the freed page in the buffer pool and must not
++# keep a buffer-fix on it.
++SET DEBUG_SYNC = 'buf_page_init_for_read_freed SIGNAL ra_found WAIT_FOR go_ra';
++send SELECT SUM(LENGTH(b)) FROM t3 WHERE id >= 29;
++
++connection default;
++SET DEBUG_SYNC = 'now WAIT_FOR ra_found';
++
++# buf_page_create_low() finds the freed page with the buffer-fix of
++# btr_blob_free() in addition to its own.
++CREATE TABLE t2(a INT PRIMARY KEY) ENGINE=InnoDB;
++
++SET DEBUG_SYNC = 'now SIGNAL go_ra';
++connection con2;
++reap;
++SET GLOBAL innodb_random_read_ahead = @save_random_read_ahead;
++disconnect con2;
++
++connection default;
++SET DEBUG_SYNC = 'now SIGNAL go_free';
++connection con1;
++reap;
++disconnect con1;
++
++connection default;
++SET DEBUG_SYNC = 'RESET';
++DROP TABLE t1, t2, t3;
+```
+
+**File**: `storage/innobase/btr/btr0cur.cc` (modified, +1/-0)
+```diff
+@@ -5584,6 +5584,7 @@ static void btr_blob_free(buf_block_t *block, bool all, mtr_t *mtr)
+   buf_pool_t::hash_chain &chain= buf_pool.page_hash.cell_get(page_id.fold());
+ #endif
+   mtr->commit();
++  DEBUG_SYNC_C("btr_blob_free_after_commit");
+ 
+   mysql_mutex_lock(&buf_pool.mutex);
+   block->page.unfix();
+```
+
+**File**: `storage/innobase/buf/buf0rea.cc` (modified, +41/-20)
+```diff
+@@ -69,13 +69,16 @@ and the lock released later.
+                   bitwise-ORed with 1 in recovery
+ @param chain      buf_pool.page_hash cell for page_id
+ @param block      preallocated buffer block (set to nullptr if consumed)
++@param fix        whether to buffer-fix the block if the page already exists
+ @return pointer to the block
+ @retval nullptr in case of an error
+-@retval pointer to block | 1 if the page already exists in buf_pool */
++@retval pointer to block | 1 if the page already exists in buf_pool
++(buffer-fixed if fix holds, else nullptr | 1) */
+ static buf_page_t *buf_page_init_for_read(const page_id_t page_id,
+                                           ulint zip_size,
+                                           buf_pool_t::hash_chain &chain,
+-                                          buf_block_t *&block) noexcept
++                                          buf_block_t *&block,
++                                          bool fix) noexcept
+ {
+   buf_page_t *bpage= !zip_size || (zip_size & 1) ? &block->page : nullptr;
+   constexpr uint32_t READ_BUF_FIX{buf_page_t::READ_FIX + 1};
+@@ -85,21 +88,44 @@ static buf_page_t *buf_page_init_for_read(const page_id_t page_id,
+   if (hash_page)
+   {
+   page_exists:
+-    /* The page is already in the buffer pool. */
+-    ut_d(const uint32_t state=) hash_page->fix();
+-    ut_ad(state >= buf_page_t::FREED);
++    /* The page is already in the buffer pool. Only buffer-fix it for
++    a caller that will access it. buf_page_create_low() may observe
++    any buffer-fix on a page that is being allocated again. */
++#if defined UNIV_DEBUG || defined ENABLED_DEBUG_SYNC
++    uint32_t state;
++#endif
++    if (fix)
++    {
++#if defined UNIV_DEBUG || defined ENABLED_DEBUG_SYNC
++      state=
++#endif
++        hash_page->fix();
++      ut_ad(state >= buf_page_t::FREED);
++    }
++    else
++    {
++#ifdef ENABLED_DEBUG_SYNC
++      state= hash_page->state();
++#endif
++      hash_page= nullptr;
++    }
+     hash_lock.unlock();
++#ifdef ENABLED_DEBUG_SYNC
++    if (buf_page_t::is_freed(state))
++      DEBUG_SYNC_C("buf_page_init_for_read_freed");
++#endif
+     return reinterpret_cast<buf_page_t*>(uintptr_t(hash_page) | 1);
+   }
+ 
+   if (UNIV_UNLIKELY(mysql_mutex_trylock(&buf_pool.mutex)))
+   {
+     hash_lock.unlock();
+     mysql_mutex_lock(&buf_pool.mutex);
+-    hash_lock.lock();
+     hash_page= buf_pool.page_hash.get(page_id, chain);
+-    if (hash_page)
++    hash_lock.lock();
++    if (UNIV_LIKELY_NULL(hash_page))
+     {
++    unlock_and_fix:
+       mysql_mutex_unlock(&buf_pool.mutex);
+       goto page_exists;
+     }
+@@ -157,11 +183,9 @@ static buf_page_t *buf_page_init_for_read(const page_id_t page_id,
+       if (UNIV_LIKELY_NULL(hash_page))
+       {
+         /* The block was added by some other thread. */
+-        ut_d(const uint32_t state=) hash_page->fix();
+-        ut_ad(state >= buf_page_t::FREED);
+         buf_buddy_free(data, zip_size);
+-        mysql_mutex_unlock(&buf_pool.mutex);
+-        return reinterpret_cast<buf_page_t*>(uintptr_t(hash_page) | 1);
++        hash_lock.lock();
++        goto unlock_and_fix;
+       }
+     }
+ 
+@@ -273,7 +297,8 @@ buf_read_page_low(
+     return nullptr;
+   }
+ 
+-  buf_page_t *bpage= buf_page_init_for_read(page_id, zip_size, chain, block);
++  buf_page_t *bpage= buf_page_init_for_read(page_id, zip_size, chain, block,
++                                            err != nullptr);
+   if (UNIV_UNLIKELY(!bpage))
+     goto fail;
+   const bool exist(uintptr_t(bpage) & 1);
+@@ -283,7 +308,7 @@ buf_read_page_low(
+   {
+     if (!err)
+     {
+-      bpage->unfix();
++      ut_ad(!bpage);
+       bpage= reinterpret_cast<buf_page_t*>(-2);
+     }
+     else
+@@ -791,15 +816,11 @@ void buf_read_recover(fil_space_t *space, const page_id_t page_id,
+ 
+   if (init_lsn)
+   {
+-    buf_page_t *bpage= buf_page_init_for_read(page_id, zip_size, chain, block);
++    buf_page_t *bpage= buf_page_init_for_read(page_id, zip_size, chain, block,
++                                              false);
+     if (UNIV_UNLIKELY(!bpage))
+       goto fail;
+-    const bool exist(uintptr_t(bpage) & 1);
+-    bpage= reinterpret_cast<buf_page_t*>(uintptr_t(bpage) & ~uintptr_t{1});
+-
+-    if (exist)
+-      bpage->unfix();
+-    else
++    if (!(uintptr_t(bpage) & 1))
+       os_fake_read(IORequest{bpage, (buf_tmp_buffer_t*) &recs,
+                              UT_LIST_GET_FIRST(space->chain),
+                              IORequest::READ_ASYNC}, init_lsn);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6233** (closed): MDEV-40794: Dynamic Column Aggregate Name Pool Overflow (@immortal-jelly)
+- **PR #6225** (2026-11-25): MDEV-42444 mariabackup SST fails with "Donor does not know my secret!" (@janlindstrom)
+- **PR #6224** (2026-11-25): MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead (@iMineLink)
+- **PR #6222** (2026-11-25): MDEV-42446: Galera test failure on galera_sst_mariabackup_plugin_dir (@hemantdangi-gc)
 - **PR #6221** (2026-11-25): MDEV-42420 Use two applier threads in tests that pause the applier (@sjaakola)
 - **PR #6219** (2026-11-25): MDEV-42354 SET GLOBAL innodb_log_file_size=OFF may break recovery (@dr-m)
-- **PR #6209** (2026-11-24): MDEV-42383 sporadic hangs with galera_sr.mysql-wsrep#215 test (@sjaakola)
-- **PR #6197** (closed): MDEV-31956 SSD based InnoDB buffer pool extension (@mariadb-andrzejjarzabek)
-- **PR #6196** (2026-11-24): MDEV-42367 : Galera test failure on galera_as_slave_wsrep_error (@janlindstrom)
-- **PR #6188** (2026-11-23): MDEV-42350 innodb_log_archive=ON recovery fails at the end of the log file (@dr-m)
 
 ---
 
@@ -1691,32 +1963,65 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-42350 fixup: innodb_log_recovery_target blocks writes
+## X. MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
 
 **RULE**:
-When implementing operations in `storage/innobase/log/log0recv.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mysql-test/suite/innodb/r/read_ahead_freed_page.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0676a13d`: MDEV-42350 fixup: innodb_log_recovery_target blocks writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2cd1e495`: MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `storage/innobase/log/log0recv.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/innodb/r/read_ahead_freed_page.result`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-			if (!recv_sys.rpo
-			    && log_sys.archive && log_sys.is_encrypted()
+#
+# MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
+#
+CREATE TABLE t1(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
+INSERT INTO t1 VALUES (1, REPEAT('a', 10000));
+CREATE TABLE t3(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
+INSERT INTO t3 SELECT seq, REPEAT(CHAR(64 + seq % 26), 10000)
+FROM seq_1_to_30;
+# restart
+SELECT SUM(LENGTH(b)) FROM t3 WHERE id BETWEEN 12 AND 28;
+SUM(LENGTH(b))
+170000
+connect con1,localhost,root;
+BEGIN;
+UPDATE t1 SET b = REPEAT('z', 10000) WHERE id = 1;
+SET DEBUG_SYNC = 'btr_blob_free_after_commit SIGNAL freed WAIT_FOR go_free';
+ROLLBACK;
+connection default;
+SET DEBUG_SYNC = 'now WAIT_FOR freed';
+connect con2,localhost,root;
+SET @save_random_read_ahead = @@GLOBAL.innodb_random_read_ahead;
+SET GLOBAL innodb_random_read_ahead = ON;
+SET DEBUG_SYNC = 'buf_page_init_for_read_freed SIGNAL ra_found WAIT_FOR go_ra';
+SELECT SUM(LENGTH(b)) FROM t3 WHERE id >= 29;
+connection default;
+SET DEBUG_SYNC = 'now WAIT_FOR ra_found';
+CREATE TABLE t2(a INT PRIMARY KEY) ENGINE=InnoDB;
+SET DEBUG_SYNC = 'now SIGNAL go_ra';
+connection con2;
+SUM(LENGTH(b))
+20000
+SET GLOBAL innodb_random_read_ahead = @save_random_read_ahead;
+disconnect con2;
+connection default;
+SET DE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-			if (log_sys.archive && log_sys.is_encrypted()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0676a13d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2cd1e495` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

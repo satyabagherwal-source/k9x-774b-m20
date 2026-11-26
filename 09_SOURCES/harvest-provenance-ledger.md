@@ -13418,3 +13418,7 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `83f2cb7e` | Multi-dimensional audit evidence | 2026-11-26T12:38:43.331Z |
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-26T12:50:45.585Z |
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `bba889a9` | Multi-dimensional audit evidence | 2026-11-26T12:50:53.924Z |
+| `learn-github-yetone-magpie` | `https://github.com/yetone/magpie` | `e6d3acaf` | Multi-dimensional audit evidence | 2026-11-26T12:59:16.755Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-26T12:59:19.725Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `6d007132` | Multi-dimensional audit evidence | 2026-11-26T12:59:30.899Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `e6521ee6` | Multi-dimensional audit evidence | 2026-11-26T12:59:34.815Z |

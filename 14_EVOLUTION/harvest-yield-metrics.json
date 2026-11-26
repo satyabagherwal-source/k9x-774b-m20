@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:50:53.940Z",
-  "total_cycles_completed": 12702,
-  "total_learnings_persisted": 12702,
-  "total_rules_promoted": 11578,
+  "last_updated": "2026-11-26T12:59:34.828Z",
+  "total_cycles_completed": 12706,
+  "total_learnings_persisted": 12706,
+  "total_rules_promoted": 11581,
   "history": [
-    {
-      "timestamp": "2026-11-26T00:34:44.983Z",
-      "repository": "microsoft/Florence-2-base",
-      "learningId": "learn-huggingface-microsoft-florence-2-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T00:34:46.693Z",
-      "repository": "indexable-inc/blaze",
-      "learningId": "learn-github-indexable-inc-blaze",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T00:34:58.217Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T00:46:23.595Z",
-      "repository": "webAI-Official/TwIL-8B",
-      "learningId": "learn-huggingface-webai-official-twil-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T00:46:34.119Z",
       "repository": "hashicorp/terraform",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T12:50:53.940Z",
       "repository": "makecindy/cindy",
       "learningId": "learn-github-makecindy-cindy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:59:16.769Z",
+      "repository": "yetone/magpie",
+      "learningId": "learn-github-yetone-magpie",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:59:19.737Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:59:30.916Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:59:34.828Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

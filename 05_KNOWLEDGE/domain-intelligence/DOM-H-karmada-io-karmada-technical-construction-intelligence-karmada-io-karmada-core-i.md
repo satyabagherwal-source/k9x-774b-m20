@@ -4,24 +4,24 @@
 {
   "source_repository": "karmada-io/karmada",
   "source_url": "https://github.com/karmada-io/karmada",
-  "source_version": "39fe0cb3",
+  "source_version": "6d007132",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T23:09:58.531Z",
+  "timestamp": "2026-11-26T12:59:31.159Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-karmada-io-karmada",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [karmada-io/karmada](https://github.com/karmada-io/karmada) (Revision: `39fe0cb3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T23:09:58.531Z`  
+> **Provenance**: Harvested from [karmada-io/karmada](https://github.com/karmada-io/karmada) (Revision: `6d007132`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T12:59:31.159Z`  
 > **Learning ID**: `learn-github-karmada-io-karmada`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from karmada-io/karmada:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T23:09:57.606Z  
+> **Harvest Timestamp**: 2026-11-26T12:59:29.692Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5774 stars
+- **Stars / Engagement**: 5775 stars
 
 ---
 
@@ -998,11 +998,14 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8115** (2026-11-24): **Request for a private security contact**
+  *Symptoms*: Hi! I believe I have found a security issue in this project and would like to report it privately rather than in a public issue.  Could you enable [private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/working-with-repository-security-advisories/configuring-private-vulnerability-reporting-for-a-repository) for this repository, or share a security contact (for example in a SECURITY.md)? I won't post any details here.  Thanks — @orshih6 
+  **Post-Mortem & Fix Analysis**:
+  > You can contact the Security Team through https://github.com/karmada-io/community/blob/main/security-team/SECURITY.md
+  > Let's keep in touch over email~  /close
+
 - **Issue #8112** (2026-11-23): **build(deps): bump actions/setup-go from 7.0.0 to 7.1.0**
   *Symptoms*: Bumps [actions/setup-go](https://github.com/actions/setup-go) from 7.0.0 to 7.1.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/actions/setup-go/releases">actions/setup-go's releases</a>.</em></p> <blockquote> <h2>v7.1.0</h2> <h2>What's Changed</h2> <h3>Enhancements</h3> <ul> <li>Expose go env variables as action outputs by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/791">actions/setup-go#791</a></li> <li>Preserve native Go environment names in action outputs by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/793">actions/setup-go#793</a></li> <li>Add support for native Go version syntax in go-version input by <a href="https://github.com/v-jitenderpalsingh"><code>@​v-jitenderpalsingh</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/804">actions/setup-go#804</a></li> <li>Add support for rc and beta versions in go.mod file by <a href="https://github.com/arnested"><code>@​arnested</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/701">actions/setup-go#701</a></li> <li>Clarify description of go-bin-path output and its fallback behavior by <a href="https://github.com/v-mahabaleshwars"><code>@​v-mahabaleshwars</code></a> in <a href="https://redirect.github.com/actions/setup-go/pull/803">actions/set
-
-- **Issue #8106** (2026-11-21): **fix: remove all auto-generated token secrets when pruning a ServiceAccount**
-  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  `removeServiceAccountIrrelevantField` in `pkg/resourceinterpreter/default/native/prune/prune.go` removes the auto-generated `<name>-token-*` entries from a ServiceAccount's `secrets`. It deleted elements from the slice while iterating over it by index:  ```go for idx := 0; idx < len(secrets); idx++ { 	if strings.HasPrefix(..., tokenPrefix) { 		secrets = append(secrets[:idx], secrets[idx+1:]...) 	} } ```  After a removal the next element moves into `idx`, the loop then increments `idx` and skips it. A ServiceAccount with two token secrets next to each other (`foo-token-6pgxf`, `foo-token-9hk2d`) keeps the second one.  This PR builds the list of retained secrets instead of deleting in place, and adds `TestRemoveServiceAccountIrrelevantField` with cases for a single token secret, consecutive token secrets, only token secrets and no token secret.  **Which issue(s) this PR fixes**:  No linked issue, I found this while reading the code.  **Special notes for your reviewer**:  - Without the fix the new test fails for two cases: `consecutive token secrets are all removed` (got `[foo-token-9hk2d foo-dockercfg-zdr2j]`) and `only token secrets` (got `[foo-token-9hk2d]`). With the fix `go test ./pkg/resourceinterpreter/default/native/prune/` passes; `gofmt` and `go vet` are clean for the package. - When every entry is removed, `secrets` is still set to an empty list, as before. - AI disclosure: an AI assista
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1019,179 +1022,184 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ccf0b8b7` (2026-11-23)
-**Commit Message**: build(deps): bump actions/setup-go from 7.0.0 to 7.1.0
+### Incident Patch 1: `6d007132` (2026-11-26)
+**Commit Message**: Merge pull request #8021 from xiangji2333/feat/search-proxy-streaming-list
 
-Bumps [actions/setup-go](https://github.com/actions/setup-go) from 7.0.0 to 7.1.0.
-- [Release notes](https://github.com/actions/setup-go/releases)
-- [Commits](https://github.com/actions/setup-go/compare/b7ad1dad31e06c5925ef5d2fc7ad053ef454303e...d8cbb8045d7f43706b9177cceb36c1f91a6644d5)
+perf(search): stream JSON list responses from cache proxy
 
----
-updated-dependencies:
-- dependency-name: actions/setup-go
-  dependency-version: 7.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/ci-image-scanning-on-schedule.yml` (modified, +1/-1)
+**File**: `pkg/search/proxy/framework/plugins/cache/cache.go` (modified, +20/-1)
 ```diff
-@@ -34,7 +34,7 @@ jobs:
-         with:
-           ref: ${{ matrix.karmada-version }}
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - id: gen_git_info
-```
-
-**File**: `.github/workflows/ci-image-scanning.yaml` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ jobs:
-           # 0 indicates all history for all branches and tags.
-           fetch-depth: 0
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: Build an image from Dockerfile
-```
-
-**File**: `.github/workflows/ci-performance-compare.yaml` (modified, +2/-2)
-```diff
-@@ -47,7 +47,7 @@ jobs:
-           ref: ${{ env.BASE_BRANCH }}
-           
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
+@@ -28,6 +28,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructuredscheme"
+ 	"k8s.io/apimachinery/pkg/runtime"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
++	jsonserializer "k8s.io/apimachinery/pkg/runtime/serializer/json"
+ 	"k8s.io/apimachinery/pkg/watch"
+ 	"k8s.io/apiserver/pkg/endpoints/handlers"
+ 	"k8s.io/apiserver/pkg/registry/rest"
+@@ -130,10 +131,28 @@ func (c *Cache) Connect(_ context.Context, request framework.ProxyRequest) (http
+ var (
+ 	cacheSerializer = &customSerializer{
+ 		NegotiatedSerializer: scheme.Codecs.WithoutConversion(),
+-		supportedMediaTypes:  unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaTypes(),
++		supportedMediaTypes:  newCacheMediaTypes(),
+ 	}
+ )
  
-@@ -107,7 +107,7 @@ jobs:
-           ref: refs/pull/${{ env.TARGET_PR_NUMBER }}/head
-           
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
- 
++func newCacheMediaTypes() []runtime.SerializerInfo {
++	mediaTypes := unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaTypes()
++	for i := range mediaTypes {
++		if mediaTypes[i].MediaType != "application/json" {
++			continue
++		}
++		// Stream LIST items instead of buffering the entire JSON response. Keep
++		// the upstream pretty, YAML, and watch serializers unchanged.
++		mediaTypes[i].Serializer = jsonserializer.NewSerializerWithOptions(
++			jsonserializer.DefaultMetaFactory,
++			unstructuredscheme.NewUnstructuredCreator(),
++			unstructuredscheme.NewUnstructuredObjectTyper(),
++			jsonserializer.SerializerOptions{StreamingCollectionsEncoding: true},
++		)
++	}
++	return mediaTypes
++}
++
+ type customSerializer struct {
+ 	runtime.NegotiatedSerializer
+ 	supportedMediaTypes []runtime.SerializerInfo
 ```
 
-**File**: `.github/workflows/ci-schedule-compatibility.yaml` (modified, +1/-1)
+**File**: `pkg/search/proxy/framework/plugins/cache/serializer_test.go` (added, +149/-0)
 ```diff
-@@ -45,7 +45,7 @@ jobs:
-           fetch-depth: 0
-           ref: ${{ matrix.karmada-version }}
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: setup e2e test environment
-```
-
-**File**: `.github/workflows/ci-schedule.yml` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-           # We need to guess version via git tags.
-           fetch-depth: 0
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: setup e2e test environment
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +5/-5)
-```diff
-@@ -22,7 +22,7 @@ jobs:
-       - name: checkout code
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: verify license
-@@ -40,7 +40,7 @@ jobs:
-       - name: checkout code
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: verify codegen
-@@ -67,7 +67,7 @@ jobs:
-           # We need to guess version via git tags.
-           fetch-depth: 0
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: compile
-@@ -82,7 +82,7 @@ jobs:
-       - name: checkout code
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: make test
-@@ -133,7 +133,7 @@ jobs:
-           # We need to guess version via git tags.
-           fetch-depth: 0
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: setup e2e test environment
-```
-
-**File**: `.github/workflows/dockerhub-latest-chart.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-           # for `git describe --tags` in Makefile.
-           fetch-depth: 0
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: login to DockerHub
-```
-
-**File**: `.github/workflows/dockerhub-latest-image.yml` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ jobs:
-           # for `git describe --tags` in Makefile.
-           fetch-depth: 0
-       - name: install Go
--        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-+        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
-         with:
-           go-version-file: go.mod
-       - name: Install Cosign
+@@ -0,0 +1,149 @@
++/*
++Copyright 2026 The Karmada Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package cache
++
++import (
++	"bytes"
++	"io"
++	"net/http/httptest"
++	"testing"
++
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured/unstructuredscheme"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apiserver/pkg/endpoints/handlers/negotiation"
++	"k8s.io/client-go/kubernetes/scheme"
++)
++
++func TestCacheSerializerStreamsJSONLists(t *testing.T) {
++	tests := []struct {
++		name   string
++		object *unstructured.UnstructuredList
++	}{
++		{
++			name: "pods with list metadata",
++			object: &unstructured.UnstructuredList{
++				Object: map[string]any{
++					"apiVersion": "v1", "kind": "PodList",
++					"metadata": map[string]any{"resourceVersion": "123", "continue": "next-page"},
++				},
++				Items: []unstructured.Unstructured{
++					{Object: map[string]any{"apiVersion": "v1", "kind": "Pod", "metadata": map[string]any{"name": "pod-a", "annotations": map[string]any{"example.com/source": "cluster-a"}}}},
++					{Object: map[string]any{"apiVersion": "v1", "kind": "Pod", "metadata": map[string]any{"name": "pod-b"}}},
++				},
++			},
++		},
++		{name: "nil items", object: &unstructured.UnstructuredList{Object: map[string]any{"apiVersion": "v1", "kind": "PodList"}}},
++		{name: "empty items", object: &unstructured.UnstructuredList{Object: map[string]any{"apiVersion": "v1", "kind": "PodList"}, Items: []unstructured.Unstructured{}}},
++		{
++			name: "custom resource list",
++			object: &unstructured.UnstructuredList{
++				Object: map[string]any{"apiVersion": "example.com/v1", "kind": "WidgetList", "extra": "preserved"},
++				Items:  []unstructured.Unstructured{{Object: map[string]any{"apiVersion": "example.com/v1", "kind": "Widget", "spec": map[string]any{"count": int64(42), "text": "<value>&中文"}}}},
++			},
++		},
++	}
++	upstream := originalCacheSerializer()
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			for _, accept := range []string{"", "application/json"} {
++				var want bytes.Buffer
++				encodeNegotiatedObject(t, upstream, accept, "", tt.object, &want)
++				got := &writeTrackingBuffer{}
++				encodeNegotiatedObject(t, cacheSerializer, accept, "", tt.object, got)
++				if !bytes.Equal(got.Bytes(), want.Bytes()) {
++					t.Fatalf("LIST response changed for Accept %q:\nwant: %s\ngot: %s", accept, want.Bytes(), got.Bytes())
++				}
++				if got.writes < 2 || got.maxWrite >= got.Len() {
++					t.Fatalf("LIST was buffered as a single write: writes=%d, maxWrite=%d, total=%d", got.writes, got.maxWrite, got.Len())
++				}
++			}
++		})
++	}
++}
++
++func TestCacheSerializerPreservesOtherFormats(t *testing.T) {
++	upstream := originalCacheSerializer()
++	pod := &unstructured.Unstructured{Object: map[string]any{"apiVersion": "v1", "kind": "Pod", "metadata": map[string]any{"name": "pod-a"}}}
++	list := &unstructured.UnstructuredList{Object: map[string]any{"apiVersion": "v1", "kind": "PodList"}, Items: []unstructured.Unstructured{*pod}}
++	for _, tt := range []struct {
++		name, accept, query string
++		object              runtime.Object
++	}{
++		{"single object", "application/json", "", pod},
++		{"pretty list", "application/json", "?pretty=true", list},
++		{"yaml list", "application/yaml", "", list},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			var want, got bytes.Buffer
++			encodeNegotiatedObject(t, upstream, tt.accept, tt.query, tt.object, &want)
++			encodeNegotiatedObject(t, cacheSerializer, tt.accept, tt.query, tt.object, &got)
++			if !bytes.Equal(got.Bytes(), want.Bytes()) {
++				t.Fatalf("response changed:\nwant: %s\ngot: %s", want.Bytes(), got.Bytes())
++			}
++		})
++	}
++	t.Run("watch event", func(t *testing.T) {
++		wantInfo := upstream.SupportedMediaTypes()[0].StreamSerializer
++		gotInfo := cacheSerializer.SupportedMediaTypes()[0].StreamSerializer
++		var want, got bytes.Buffer
++		if err := wantInfo.Serializer.Encode(pod, &want); err != nil {
++			t.Fatal(err)
++		}
++		if err := gotInfo.Serializer.Encode(pod, &got); err != nil {
++			t.Fatal(err)
++		}
++		if !bytes.Equal(got.Bytes(), want.Bytes()) || gotInfo.Framer != wantInfo.Framer || gotInfo.EncodesAsText != wantInfo.EncodesAsText {
++			t.Fatal("watch serialization changed")
++		}
++	})
++}
++
++func originalCacheSerializer() runtime.NegotiatedSerializer {
++	return &customSerializer{
++		NegotiatedSerializer: scheme.Codecs.WithoutConversion(),
++		supportedMediaTypes:  unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaType
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #8112** (2026-11-23): build(deps): bump actions/setup-go from 7.0.0 to 7.1.0 (@dependabot[bot])
 - **PR #8106** (closed): fix: remove all auto-generated token secrets when pruning a ServiceAccount (@bhavishyajain545)
+- **PR #8086** (2026-11-25): fix(helm): let a multi-replica internal etcd bootstrap (@brenth-monad)
 - **PR #8082** (2026-11-17): [release-1.19] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
 - **PR #8081** (2026-11-17): [release-1.18] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
 - **PR #8080** (2026-11-17): [release-1.17] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
-- **PR #8072** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
 
 ---
 
@@ -1211,31 +1219,50 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump actions/setup-go from 7.0.0 to 7.1.0
+## X. Empirical Invariant Guard in cache.go
 
 **RULE**:
-When implementing operations in `.github/workflows/ci-image-scanning-on-schedule.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/search/proxy/framework/plugins/cache/cache.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ccf0b8b7`: build(deps): bump actions/setup-go from 7.0.0 to 7.1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d007132`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci-image-scanning-on-schedule.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/search/proxy/framework/plugins/cache/cache.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+	jsonserializer "k8s.io/apimachinery/pkg/runtime/serializer/json"
+		supportedMediaTypes:  newCacheMediaTypes(),
+func newCacheMediaTypes() []runtime.SerializerInfo {
+	mediaTypes := unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaTypes()
+	for i := range mediaTypes {
+		if mediaTypes[i].MediaType != "application/json" {
+			continue
+		}
+		// Stream LIST items instead of buffering the entire JSON response. Keep
+		// the upstream pretty, YAML, and watch serializers unchanged.
+		mediaTypes[i].Serializer = jsonserializer.NewSerializerWithOptions(
+			jsonserializer.DefaultMetaFactory,
+			unstructuredscheme.NewUnstructuredCreator(),
+			unstructuredscheme.NewUnstructuredObjectTyper(),
+			jsonserializer.SerializerOptions{StreamingCollectionsEncoding: true},
+		)
+	}
+	return mediaTypes
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+		supportedMediaTypes:  unstructuredscheme.NewUnstructuredNegotiatedSerializer().SupportedMediaTypes(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ccf0b8b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d007132` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

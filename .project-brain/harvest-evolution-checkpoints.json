@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:51:01.484Z",
+  "last_updated": "2026-11-26T12:59:41.263Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -1583,7 +1583,7 @@
       "staged_for_review": 1
     },
     "karmada-io-karmada-learnings.md": {
-      "processed_at": "2026-11-25T12:39:28.728Z",
+      "processed_at": "2026-11-26T12:59:39.919Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1893,7 +1893,7 @@
       "staged_for_review": 1
     },
     "hf-supersoniclabs-julia-1-learnings.md": {
-      "processed_at": "2026-11-22T19:52:30.945Z",
+      "processed_at": "2026-11-26T12:59:39.453Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3966,9 +3966,14 @@
       "processed_at": "2026-11-26T11:15:54.582Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "yetone-magpie-learnings.md": {
+      "processed_at": "2026-11-26T12:59:38.324Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4515,
+  "total_dossiers_evaluated": 4518,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3408
+  "total_staged_for_review": 3410
 }

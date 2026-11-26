@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T12:51:01.243Z",
-  "total_verified_learnings": 9127,
+  "last_updated": "2026-11-26T12:59:41.104Z",
+  "total_verified_learnings": 9128,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25905,
+  "total_items": 25916,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112222,9 +112222,9 @@
       "title": "Research & Knowledge Intelligence: SupersonicLabs/Julia-1 Core Invariants",
       "repository": "SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "51bc391ac0f7b1fffe72894f3c903b912473b9c8e88aeb6d416483123eb1faec",
+      "content_hash": "70a54391eac799d142173f17b423127e374518a082c692f4eef7a54ef71d7ddf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:52:11.177Z"
+      "persisted_at": "2026-11-26T12:59:19.968Z"
     },
     "candidate_directive-search-drain-pending-vector-updates-safely-across-suspensions-8810": {
       "item_id": "candidate_directive-search-drain-pending-vector-updates-safely-across-suspensions-8810",
@@ -112270,9 +112270,9 @@
       "title": "Research & Knowledge Intelligence: hf-supersoniclabs-julia-1-learnings Core Invariants",
       "repository": "hf-supersoniclabs-julia-1-learnings",
       "source_version": "HEAD",
-      "content_hash": "10f066d0418c6934beb5cd0dc8b0e390028061f6323e95ba8b2c15d9e6026903",
+      "content_hash": "be6dfec939a9b93e924487f0aacbe8f8dc32d66e76f8118b016f7de612ce7d46",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:52:31.167Z"
+      "persisted_at": "2026-11-26T12:59:39.689Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
@@ -258796,8 +258796,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "b800539d",
-      "content_hash": "e0b4f48781507f71520eb71b89e9fa190c8bc422cb21108bd1163cfdd273c18a",
+      "source_version": "e6521ee6",
+      "content_hash": "084ff4c713f8ae5e9bae4075b6c44f0417bbab2dccdd0917897097c1c6e7805e",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -258815,6 +258815,11 @@
           "number": 10514,
           "title": "MDEV-42350 fixup: innodb_log_recovery_target blocks writes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10683,
+          "title": "MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258822,7 +258827,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T11:42:38.297Z",
+      "verified_at": "2026-11-26T12:59:34.565Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -258864,10 +258869,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
       "title": "Architecture Intelligence: MariaDB/server Core Invariants",
       "repository": "MariaDB/server",
-      "source_version": "b800539d",
-      "content_hash": "90ad5ed56a7cdb45ab4ab0a32de31127ccdbf39cae255761c3d3acdde154d462",
+      "source_version": "e6521ee6",
+      "content_hash": "b74a3f342375d2bd0869cd288ff91310eaf27a93a3d7cebbcd8758cd34e1fbf6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:42:38.974Z"
+      "persisted_at": "2026-11-26T12:59:35.258Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server",
@@ -258876,10 +258881,10 @@
       "relative_path": "08_VERIFICATION/mariadb-server-verification-protocol-empirical-defect-shield-for-mariadb-server.md",
       "title": "Verification Protocol: Empirical Defect Shield for MariaDB/server",
       "repository": "MariaDB/server",
-      "source_version": "b800539d",
-      "content_hash": "c0d47f87f75bff8ba6351b40b0f2f24ab2ecf5a2210870867b02ad88bc1b90b3",
+      "source_version": "e6521ee6",
+      "content_hash": "f456f23819ebdc20d22bb3640ab859b1b5b02061e38ba5527beabecdace7e747",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:42:39.164Z"
+      "persisted_at": "2026-11-26T12:59:35.476Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
@@ -268194,8 +268199,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "fd68f330",
-      "content_hash": "39129b04ccf96b8a27de1fc4a1d07580937c5e37d6bc50093806ca00ad5c168f",
+      "source_version": "6d007132",
+      "content_hash": "2eaa572194eceb9d4d209f4013f5849e6e8f379a7d7c97596bd0c3d37d480266",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -268223,6 +268228,11 @@
           "number": 10526,
           "title": "Empirical Invariant Guard in etcd.yaml",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10682,
+          "title": "Empirical Invariant Guard in cache.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -268230,7 +268240,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T12:39:18.622Z",
+      "verified_at": "2026-11-26T12:59:30.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268284,10 +268294,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/karmada-io-karmada-agent-contract-karmada-io-karmada-autonomous-specialist-perso.md",
       "title": "Agent Contract: karmada-io/karmada Autonomous Specialist Persona",
       "repository": "karmada-io/karmada",
-      "source_version": "fd68f330",
-      "content_hash": "233e6a1fcb02074693b040456e649514ed377ef3632da292a6fe519f6c71d733",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:39:19.768Z"
+      "source_version": "6d007132",
+      "content_hash": "ed49c5729b20648f6be3d9df20ad9bbb7d7eff4379474cc4d5329f45336370e8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:59:31.552Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada",
@@ -268296,10 +268306,10 @@
       "relative_path": "08_VERIFICATION/karmada-io-karmada-verification-protocol-empirical-defect-shield-for-karmada-io-.md",
       "title": "Verification Protocol: Empirical Defect Shield for karmada-io/karmada",
       "repository": "karmada-io/karmada",
-      "source_version": "fd68f330",
-      "content_hash": "7f0def3d1e22fccc0ded4e7f932b926045c45d7331f5df50474621b8f49bfb8b",
+      "source_version": "6d007132",
+      "content_hash": "5d28909adbbce4ae2e0bf10e4f8043c867f6d210a63f064145cf87e5d3d713f7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:39:19.979Z"
+      "persisted_at": "2026-11-26T12:59:31.749Z"
     },
     "rule-8831": {
       "learning_id": "rule-8831",
@@ -268347,9 +268357,9 @@
       "title": "Agent Contract: karmada-io-karmada-learnings Autonomous Specialist Persona",
       "repository": "karmada-io-karmada-learnings",
       "source_version": "HEAD",
-      "content_hash": "4db42b359ca46d4dd09f8055cd162ef83a8e1da502bbe8dc9ce4b5e0d040091d",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:39:30.317Z"
+      "content_hash": "2a5ccd4d7830e829e218b1c6989c3b1dc519861789d243f44a9d7c5d0b894976",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:59:40.945Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada-learnings",
@@ -268359,9 +268369,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for karmada-io-karmada-learnings",
       "repository": "karmada-io-karmada-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5108bad97ed02621f231183a471a6ecbed000fc2a112e1611189b0ce4daf248",
+      "content_hash": "06faae12ec7ed64a749e125ecc9f28d46c9ee8f4178b0c7242cb44497609ddc6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T12:39:30.520Z"
+      "persisted_at": "2026-11-26T12:59:41.104Z"
     },
     "learn-github-digitalbazaar-pyld": {
       "learning_id": "learn-github-digitalbazaar-pyld",
@@ -287103,7 +287113,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "2ea052d2401442783da8407e75360c186033fb007a6e04137f0c7451b2669bee",
+      "content_hash": "f37b18a69382e9790202e6688ab496ddf386944f579bd7c8a24a4233484657ea",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [],
@@ -287112,7 +287122,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:52:10.722Z",
+      "verified_at": "2026-11-26T12:59:19.460Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -333312,10 +333322,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-karmada-io-karmada-technical-construction-intelligence-karmada-io-karmada-core-i.md",
       "title": "Technical Construction Intelligence: karmada-io/karmada Core Invariants",
       "repository": "karmada-io/karmada",
-      "source_version": "39fe0cb3",
-      "content_hash": "82d91bdc1e858d5c438b68e0e6f5a75570f7307f1045178d1428dc2fafc06aaf",
+      "source_version": "6d007132",
+      "content_hash": "5214c5c826d61b722cdcbb01e00e2e73698c8ab19fb33d3d78be2574c2ca731a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:09:58.685Z"
+      "persisted_at": "2026-11-26T12:59:31.354Z"
     },
     "rule-10141": {
       "learning_id": "rule-10141",
@@ -333351,9 +333361,9 @@
       "title": "Technical Construction Intelligence: karmada-io-karmada-learnings Core Invariants",
       "repository": "karmada-io-karmada-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b5b096c470a56265684659cf80b112ecbc4efc48681a954c5bbebed8732ff8e",
+      "content_hash": "03563b06c7ced3037469d0f2ad8a1ffd4b9c7278be5d3f2bb68469cfee1e8ecf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:10:07.067Z"
+      "persisted_at": "2026-11-26T12:59:40.751Z"
     },
     "rule-10142": {
       "learning_id": "rule-10142",
@@ -354940,6 +354950,165 @@
       "content_hash": "e9a37fda005b741a143d8b65a93dafcf77df06dd7ffc01f3de4de538ea4a748b",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T12:50:58.972Z"
+    },
+    "learn-github-yetone-magpie": {
+      "learning_id": "learn-github-yetone-magpie",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yetone/magpie",
+      "repository": "yetone/magpie",
+      "slug": "yetone-magpie",
+      "platform": "github",
+      "source_url": "https://github.com/yetone/magpie",
+      "source_version": "e6d3acaf",
+      "content_hash": "dd82e8c1d98318347ec6e917e2385a62ccfa463a809df9d845040666e9f4d7e1",
+      "dossier_path": "07_PROJECT_LEARNING/yetone-magpie-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yetone-magpie-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10681,
+          "title": "proc, gui: background magpie and magpie-bun run in Efficiency Mode on Windows ba",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-26T12:59:16.500Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10681": {
+      "learning_id": "rule-10681",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10681,
+      "title": "proc, gui: background magpie and magpie-bun run in Efficiency Mode on Windows ba",
+      "source_url": "https://github.com/yetone/magpie",
+      "source_version": "e6d3acaf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:59:16.500Z"
+    },
+    "candidate_directive-proc-gui-background-magpie-and-magpie-bun-run-in-efficiency-mode-on-windows-ba": {
+      "item_id": "candidate_directive-proc-gui-background-magpie-and-magpie-bun-run-in-efficiency-mode-on-windows-ba",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7O56-proc-gui-background-magpie-and-magpie-bun-run-in-efficiency-mode-on-windows-ba.md",
+      "title": "proc, gui: background magpie and magpie-bun run in Efficiency Mode on Windows ba",
+      "repository": "yetone-magpie-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33fabf1f02964e8b0b497846d94def077f1bede770b5945f2690b546262378be",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:59:38.879Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yetone-magpie-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-yetone-magpie-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yetone-magpie-technical-construction-intelligence-yetone-magpie-core-invariants.md",
+      "title": "Technical Construction Intelligence: yetone/magpie Core Invariants",
+      "repository": "yetone/magpie",
+      "source_version": "e6d3acaf",
+      "content_hash": "76a318a2a9882365a0d13277b834f9e29b54611bb10fafa94f0ede97d0637a0f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:59:17.188Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yetone-magpie": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yetone-magpie",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yetone-magpie-verification-protocol-empirical-defect-shield-for-yetone-magpie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yetone/magpie",
+      "repository": "yetone/magpie",
+      "source_version": "e6d3acaf",
+      "content_hash": "38303e2ce8da9276dbe7aecb70024969d9f98b7c71d1587d2a4440250a41baa9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T12:59:17.402Z"
+    },
+    "rule-10682": {
+      "learning_id": "rule-10682",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10682,
+      "title": "Empirical Invariant Guard in cache.go",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "6d007132",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:59:30.641Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-cache-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-cache-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7PFI-empirical-invariant-guard-in-cache-go.md",
+      "title": "Empirical Invariant Guard in cache.go",
+      "repository": "karmada-io-karmada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b91e32a25c35cf5578b8f2250ccddc1bdc8c97f40bc8ad91d93a2cc5082a4de",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T12:59:40.543Z"
+    },
+    "rule-10683": {
+      "learning_id": "rule-10683",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10683,
+      "title": "MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "e6521ee6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:59:34.565Z"
+    },
+    "candidate_directive-mdev-42454-assertion-buf_fix_count-state-2-with-read-ahead": {
+      "item_id": "candidate_directive-mdev-42454-assertion-buf_fix_count-state-2-with-read-ahead",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7L76-mdev-42454-assertion-buf_fix_count-state-2-with-read-ahead.md",
+      "title": "MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead",
+      "repository": "MariaDB/server",
+      "source_version": "e6521ee6",
+      "content_hash": "a149fe0c97c9d8e85fb3e02c44050ec75722cb6fc305688df0186adb27294b5d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T12:59:35.059Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-yetone-magpie-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-yetone-magpie-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yetone-magpie-learnings-technical-construction-intelligence-yetone-magpie-learni.md",
+      "title": "Technical Construction Intelligence: yetone-magpie-learnings Core Invariants",
+      "repository": "yetone-magpie-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c634cfa47d5c9dbe7709d8bbab9a4d1fdf2128fbe5eb42f9dae4cada4913a53c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:59:39.086Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-yetone-magpie-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yetone-magpie-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/yetone-magpie-learnings-verification-protocol-empirical-defect-shield-for-yetone.md",
+      "title": "Verification Protocol: Empirical Defect Shield for yetone-magpie-learnings",
+      "repository": "yetone-magpie-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b626a73bea0fd9d9d1faf214c3cc25dfbd85ad0a7cc58fe60992eb51b9413aad",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T12:59:39.274Z"
     }
   },
   "ai-builder-brain": {

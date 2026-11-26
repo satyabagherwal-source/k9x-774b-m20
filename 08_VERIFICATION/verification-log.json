@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-YXXV",
-    "timestamp": "2026-11-24T23:33:22.387Z",
-    "repository": "rollup/rollup",
-    "learningId": "learn-github-rollup-rollup",
-    "contentHash": "f57ea7152a5989c5e1e8fdce1f78ddd368b322d723acefc9df44877d342d5f87",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-Z0R6",
-    "timestamp": "2026-11-24T23:33:26.034Z",
-    "repository": "apollographql/apollo-kotlin",
-    "learningId": "learn-github-apollographql-apollo-kotlin",
-    "contentHash": "a7a9b316e94705cc74dd154863d15d62872750a5282a47ff3cf115b5e5e67d78",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-9W5D",
-    "timestamp": "2026-11-24T23:41:53.281Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "8feceb942d8fa4b0e2d29ec50b2bd7cbbeb311e55cee7a010d94cb4b03a1168a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-9X2G",
-    "timestamp": "2026-11-24T23:41:54.472Z",
-    "repository": "databendlabs/databend",
-    "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "ccce81f3b10454ae92a25230109e5a9f84c657893d7cc29b3fd96d5992264aeb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-LHHT",
     "timestamp": "2026-11-24T23:50:54.161Z",
     "repository": "parcel-bundler/parcel",
@@ -7490,6 +7430,66 @@
     "repository": "makecindy/cindy",
     "learningId": "learn-github-makecindy-cindy",
     "contentHash": "c75d2c88532892dd2ea0d993d7d32df4ad051d9d1de31d48b10935bdd01e5772",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-772N",
+    "timestamp": "2026-11-26T12:59:16.751Z",
+    "repository": "yetone/magpie",
+    "learningId": "learn-github-yetone-magpie",
+    "contentHash": "dd82e8c1d98318347ec6e917e2385a62ccfa463a809df9d845040666e9f4d7e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-79D4",
+    "timestamp": "2026-11-26T12:59:19.720Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "f37b18a69382e9790202e6688ab496ddf386944f579bd7c8a24a4233484657ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-7HZI",
+    "timestamp": "2026-11-26T12:59:30.894Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "2eaa572194eceb9d4d209f4013f5849e6e8f379a7d7c97596bd0c3d37d480266",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-7L0A",
+    "timestamp": "2026-11-26T12:59:34.810Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "084ff4c713f8ae5e9bae4075b6c44f0417bbab2dccdd0917897097c1c6e7805e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
