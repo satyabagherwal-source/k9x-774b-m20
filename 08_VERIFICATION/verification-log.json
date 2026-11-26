@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-VIHC",
-    "timestamp": "2026-11-24T23:58:42.000Z",
-    "repository": "necolas/react-native-web",
-    "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "2c1711a315d21b9849c27a268d1cff25ed52a84edb8d97deb34702da4fb2dfab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-VOOB",
-    "timestamp": "2026-11-24T23:58:50.027Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "04a833a51cdb8b1343fe5097963bc8b6a0eb65644e44cbbd4d687f9ba532e931",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-7XAB",
-    "timestamp": "2026-11-25T00:08:21.059Z",
-    "repository": "TanStack/query",
-    "learningId": "learn-github-tanstack-query",
-    "contentHash": "6909c36bca375dc9937a3733cd6563da1169332ea96767bbb9add9c3584b3cec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-835N",
     "timestamp": "2026-11-25T00:08:28.667Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7445,51 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "e9694e1c8fb735a3dbb160128766b0ee3ea36b7a8a719240ad9636e27d93ce11",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-663S",
+    "timestamp": "2026-11-26T13:26:28.456Z",
+    "repository": "zhouxiaoka/autoclip",
+    "learningId": "learn-github-zhouxiaoka-autoclip",
+    "contentHash": "40497fb07b871195d2a681cf6f606f0d42a60b03cee14788f208fd2369807faa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-68LI",
+    "timestamp": "2026-11-26T13:26:31.686Z",
+    "repository": "HemmingwayAI/Hemmingway-1",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "198c968955b9cbdf5fe3b0325bb3f672621601d1732f812a913b22799df7434a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-6JQJ",
+    "timestamp": "2026-11-26T13:26:46.123Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "f529789080e29ac9bdbdef4b31c6d47d232f234ec70abde0b53e235b119079c0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

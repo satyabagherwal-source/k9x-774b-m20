@@ -13427,3 +13427,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-26T13:17:49.065Z |
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `3edb89b3` | Multi-dimensional audit evidence | 2026-11-26T13:17:57.523Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8fd5aa1b` | Multi-dimensional audit evidence | 2026-11-26T13:18:06.912Z |
+| `learn-github-zhouxiaoka-autoclip` | `https://github.com/zhouxiaoka/autoclip` | `2f511907` | Multi-dimensional audit evidence | 2026-11-26T13:26:28.460Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-26T13:26:31.690Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `4537d179` | Multi-dimensional audit evidence | 2026-11-26T13:26:46.127Z |

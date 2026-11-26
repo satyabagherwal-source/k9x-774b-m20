@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:18:14.420Z",
+  "last_updated": "2026-11-26T13:26:51.511Z",
   "directives": [
     {
       "id": "CD-001",
@@ -65109,6 +65109,48 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-66A2",
+      "directive_title": "guard optional numpy in dissolve cuts, closed SSE peek, Proactor shutdo",
+      "source_repo": "zhouxiaoka/autoclip",
+      "source_commit": "2f511907",
+      "staged_file": "11_INBOX/candidate-directives/CD-66A2-guard-optional-numpy-in-dissolve-cuts-closed-sse-peek-proactor-shutdo.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6NW4",
+      "directive_title": "go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability",
+      "source_repo": "genkit-ai-genkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6NW4-go-ai-exp-add-agent-deletesession-and-the-sessiondeleter-store-capability.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6MPN",
+      "directive_title": "sentry): guard optional numpy in dissolve cuts, closed SSE peek, Proactor shutdo",
+      "source_repo": "zhouxiaoka-autoclip-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6MPN-sentry-guard-optional-numpy-in-dissolve-cuts-closed-sse-peek-proactor-shutdo.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-CF4A43",
+      "directive_title": "go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "genkit-ai-genkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CF4A43-go-ai-exp-add-agent-deletesession-and-th.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
   "source_version": "hf-altworld-hemmingway-1",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T20:16:53.182Z",
+  "timestamp": "2026-11-26T13:26:31.905Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-altworld-hemmingway-1",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [HemmingwayAI/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T20:16:53.182Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T13:26:31.905Z`  
 > **Learning ID**: `learn-huggingface-altworld-hemmingway-1`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:16:52.325Z  
+> **Harvest Timestamp**: 2026-11-26T13:26:31.156Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3054 downloads | 911 likes
+- **Stars / Engagement**: 2733 downloads | 914 likes
 
 ---
 

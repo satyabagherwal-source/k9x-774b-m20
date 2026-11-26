@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T13:18:14.082Z",
+  "updated_at": "2026-11-26T13:26:51.289Z",
   "stats": {
-    "total_discovered": 9778,
-    "approved_pending_harvest": 9277,
+    "total_discovered": 9783,
+    "approved_pending_harvest": 9282,
     "harvested_count": 0,
     "rejected_count": 501,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9263,
+      "COMMUNITY_AND_EXPERT": 9268,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -211636,6 +211636,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-CE3BF530C355": {
+      "id": "SRC-CE3BF530C355",
+      "url": "https://github.com/zhouxiaoka/autoclip",
+      "title": "https://github.com/zhouxiaoka/autoclip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:26:49.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zhouxiaoka-autoclip-learnings.md",
+        "fileName": "zhouxiaoka-autoclip-learnings.md"
+      }
+    },
+    "SRC-15512C0FDCEB": {
+      "id": "SRC-15512C0FDCEB",
+      "url": "https://88api.ai/zh/docs/api/audio/openai-audio",
+      "title": "https://88api.ai/zh/docs/api/audio/openai-audio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:26:49.680Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zhouxiaoka-autoclip-learnings.md",
+        "fileName": "zhouxiaoka-autoclip-learnings.md"
+      }
+    },
+    "SRC-D6FA4E66E86F": {
+      "id": "SRC-D6FA4E66E86F",
+      "url": "https://github.com/zhouxiaoka/autoclip/releases/tag/v1.5.9",
+      "title": "https://github.com/zhouxiaoka/autoclip/releases/tag/v1.5.9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:26:49.739Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zhouxiaoka-autoclip-learnings.md",
+        "fileName": "zhouxiaoka-autoclip-learnings.md"
+      }
+    },
+    "SRC-C2C3B48BE6D1": {
+      "id": "SRC-C2C3B48BE6D1",
+      "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+      "title": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:26:51.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
+      }
+    },
+    "SRC-7804D5C8252C": {
+      "id": "SRC-7804D5C8252C",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+      "title": "https://platform.claude.com/docs/en/build-with-claude/effort",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:26:51.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
+        "fileName": "genkit-ai-genkit-learnings.md"
       }
     }
   }

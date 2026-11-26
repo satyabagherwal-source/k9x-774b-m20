@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T17:03:22.404Z",
+  "timestamp": "2026-11-26T13:26:51.393Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-genkit-ai-genkit-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [genkit-ai-genkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T17:03:22.404Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T13:26:51.393Z`  
 > **Learning ID**: `LEARN-EVO-genkit-ai-genkit-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `76f631c6`  
+> **Source Version**: `4537d179`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T17:03:15.938Z  
+> **Timestamp**: 2026-11-26T13:26:45.015Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:03:15.932Z  
+> **Harvest Timestamp**: 2026-11-26T13:26:45.010Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6620 stars
+- **Stars / Engagement**: 6624 stars
 
 ---
 
@@ -668,6 +668,37 @@ export function parseJson(value: string): any {
     const detail = e instanceof Error ? e.message : String(e);
     throw new InvalidArgumentError(`Must be valid JSON (${detail}).`);
   }
+}
+
+```
+
+### Core Architecture Module: `genkit-tools/cli/src/utils/output.ts`
+```
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Writes a line of primary command output to `stdout` (appending a trailing newline).
+ *
+ * Use this for intentional CLI payload output (such as JSON, JSONL, tables, or
+ * formatted command results) rather than diagnostic messages, which belong on
+ * `logger.*`.
+ */
+export function writeStdout(text = ''): void {
+  process.stdout.write(`${text}\n`);
 }
 
 ```
@@ -1760,7 +1791,7 @@ export async function notifyAnalyticsIfFirstRun(
     return;
   }
 
-  console.log(ANALYTICS_NOTIFICATION);
+  logger.info(ANALYTICS_NOTIFICATION);
 
   const readline = createInterface({
     input: process.stdin,
@@ -1906,52 +1937,17 @@ async function recordInternal(
             .r
 ```
 
-### Core Architecture Module: `genkit-tools/common/src/utils/configstore.ts`
-```
-/**
- * Copyright 2024 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import Configstore from 'configstore';
-import { toolsPackage } from './package.js';
-
-const USER_SETTINGS_TAG = 'userSettings';
-
-export const configstore = new Configstore(toolsPackage.name);
-
-export function getUserSettings(): Record<string, string | boolean | number> {
-  return configstore.get(USER_SETTINGS_TAG) || {};
-}
-
-export function setUserSettings(s: Record<string, string | boolean | number>) {
-  configstore.set(USER_SETTINGS_TAG, s);
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7340** (2026-11-24): **[JS] Nest types under import/require in remaining 10 package.json exports**
+  *Symptoms*: ### Summary  Follow-up to #7323 (and #1589).  In #7323, 16 `js/plugins/*/package.json` files were updated to nest `"types"` inside `"import"` (`.d.mts` + `.mjs`) and `"require"` (`.d.ts` + `.js`), with `"default"` last:  ```json "exports": {   ".": {     "import": {       "types": "./lib/index.d.mts",       "default": "./lib/index.mjs"     },     "require": {       "types": "./lib/index.d.ts",       "default": "./lib/index.js"     },     "default": "./lib/index.js"   } } ```  The remaining **10** `js/` packages still use the flat condition map (`"types": "./lib/*.d.ts"` before `"import"` / `"require"`). Because all `js/` packages declare `"type": "commonjs"`, TypeScript under `moduleResolution: "Node16"` / `"NodeNext"` treats `.d.ts` as a CommonJS declaration file, causing ESM imports to resolve CJS types ("Masquerading as CJS" / `FalseCJS`).  ### Impact  1. **Active `Node16` / `NodeNext` ESM breakage (3 plugins with `export default` on `"."`):**    - `js/plugins/anthropic/package.json` (`export default anthropic`)    - `js/plugins/dev-local-vectorstore/package.json` (`export default devLocalVectorstore`)    - `js/plugins/fastify/package.json` (`export default genkitFastify`)     ESM callers using `moduleResolution: "Node16"` or `"NodeNext"` who import the default export (e.g., `import anthropic from '@genkit-ai/anthropic'; anthropic();`) hit `TS2349: This expression is not callable`.  2. **Latent `FalseCJS` & repo inconsistency (7 packages with named-only public exports):** 
+
 - **Issue #7277** (2026-11-23): **[PY] genkit-ollama drops tool requests from chat messages, so tool calls loop until max_turns**
   *Symptoms*: **Describe the bug**  `genkit-ollama` drops the model's tool requests when it converts a Genkit request into Ollama chat messages. `OllamaModel.build_chat_messages` (`py/packages/genkit-ollama/src/genkit_ollama/_models.py`) copies only text, tool-response output and images into each `ollama.Message`:  ```python for text_part in message.content:     if text_part.text is not None:         item.content = (item.content or '') + text_part.text     elif text_part.tool_response is not None:         item.content = (item.content or '') + str(text_part.tool_response.output)     elif text_part.media is not None:         ... ```  A `tool_request` part is ignored, so the assistant message that asked for the tool reaches Ollama with empty content and no `tool_calls`, and the tool message that follows has no `tool_name`. The model receives a tool result for a call it never made, calls the tool again, and the generate loop ends with `ABORTED` / `Exceeded maximum tool call iterations`.  Any tool use through the Ollama plugin is affected: `ai.generate(tools=...)`, prompts with tools, and agents (`genkit.exp`), where every tool turn aborts.  **To Reproduce**  Ollama running locally with `gemma4:e4b` pulled.  ```python import asyncio  from genkit import Genkit, Message, Part, Role from genkit.model import ModelRequest from genkit_ollama import Ollama from genkit_ollama._models import OllamaModel from pydantic import BaseModel  ai = Genkit(plugins=[Ollama()]) calls = 0   class NoInput(BaseModel):
-
-- **Issue #6994** (2026-11-01): **[Go] Filesystem middleware: queued read_file injection breaks interrupt resume — "cannot resume generation unless the last message is by a model"**
-  *Symptoms*: **Describe the bug**  The `Filesystem` middleware queues `read_file`'s file contents and appends them to `params.Request.Messages` as a user message at the **entry of the next Generate**. When a Generate ends with an interrupt (e.g. a `ToolApproval` hold) while an injection is still queued, the resume Generate injects that user message at its entry — **after** the model message carrying the tool requests. The turn-0 resume validation in `handleResumeOption` then fails, because it validates against the hook-revised message list (`turnOpts.Messages = req.Messages`):  ``` FAILED_PRECONDITION: handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request ```  The injected message already carries the `filesystemMiddlewareTool` metadata, but the resume validation does not skip it (unlike the `ToolApproval` judge, which deliberately does).  **To Reproduce**  Self-contained program below — no API key, no network: a stub OpenAI-compatible server scripts the model to answer one response with two parallel tool calls (`read_file go.mod`, pre-approved, runs and queues its contents; `edit_file go.mod`, held by `ToolApproval`). The caller then approves and resumes the edit.  ``` go mod tidy && go run . ```  Observed on genkit v1.14.0:  ``` handleResumeOption: cannot resume generation unless the last message is by a model with at least one tool request exit status 1 ```  Setting `applyWorkaround = true` in the same program (strip the messag
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1968,1082 +1964,1157 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa34700a` (2026-11-24)
-**Commit Message**: fix(genkit-tools): tag first_visit runtime and skip CI analytics (#7174)
+### Incident Patch 1: `4537d179` (2026-11-25)
+**Commit Message**: feat(go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability (#6858)
 
-**File**: `.github/workflows/build-cli-binaries.yml` (modified, +6/-10)
+**File**: `go/ai/exp/agent.go` (modified, +60/-5)
 ```diff
-@@ -176,8 +176,8 @@ jobs:
-         run: |
-           echo "Testing genkit ui:start"
-           
--          # Start UI in background, piping any prompts to accept them
--          (echo "" | ./genkit-${{ matrix.target }} ui:start 2>&1 | tee ui_output.log) &
-+          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
-+          ./genkit-${{ matrix.target }} --non-interactive ui:start > ui_output.log 2>&1 &
-           UI_PID=$!
-           
-           # Give it time to start
-@@ -190,7 +190,7 @@ jobs:
-             
-             # Try to stop it gracefully
-             echo "Testing genkit ui:stop"
--            ./genkit-${{ matrix.target }} ui:stop || true
-+            ./genkit-${{ matrix.target }} --non-interactive ui:stop || true
-             
-             # Give it time to stop
-             sleep 2
-@@ -216,13 +216,9 @@ jobs:
-         run: |
-           Write-Host "Testing genkit ui:start"
-           
--          # Create empty input file first for redirecting stdin
--          "" | Out-File -FilePath ".\empty.txt"
--          
--          # Start UI in background, redirecting input to handle prompts
-+          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
-           $process = Start-Process -FilePath ".\genkit-${{ matrix.target }}.exe" `
--            -ArgumentList "ui:start" `
--            -RedirectStandardInput ".\empty.txt" `
-+            -ArgumentList "--non-interactive", "ui:start" `
-             -RedirectStandardOutput ".\ui_output.log" `
-             -RedirectStandardError ".\ui_error.log" `
-             -PassThru `
-@@ -242,7 +238,7 @@ jobs:
-             
-             # Try to stop it gracefully
-             Write-Host "Testing genkit ui:stop"
--            & ".\genkit-${{ matrix.target }}.exe" ui:stop
-+            & ".\genkit-${{ matrix.target }}.exe" --non-interactive ui:stop
-             
-             Start-Sleep -Seconds 2
-           } else {
-```
-
-**File**: `genkit-tools/cli/src/cli.ts` (modified, +7/-5)
-```diff
-@@ -108,17 +108,19 @@ export async function startCLI(): Promise<void> {
-         commandName = 'unknown';
-       }
+@@ -707,9 +707,13 @@ func (s *SessionRunner[State]) snapshotTurnEnd(ctx context.Context, finishReason
+ 			}, nil
+ 		})
+ 	if err != nil {
+-		logger.Error(ctx, "agent failed to save snapshot",
+-			"parentId", parentID,
+-			"error", err)
++		// A deleted session is not a failure: the work simply stops being
++		// persisted.
++		if !errors.Is(err, ErrSessionDeleted) {
++			logger.Error(ctx, "agent failed to save snapshot",
++				"parentId", parentID,
++				"error", err)
++		}
+ 		return ""
+ 	}
  
-+      const { isCompiledBinary } = detectCLIRuntime();
-+      const projectRoot = await findProjectRoot();
-+      const projectRuntime = await detectRuntime(projectRoot);
-+
-       if (
-         !process.argv.includes('--non-interactive') &&
-         commandName !== 'config' &&
--        commandName !== 'mcp'
-+        commandName !== 'mcp' &&
-+        actionCommand.name() !== SERVER_HARNESS_COMMAND
-       ) {
--        await notifyAnalyticsIfFirstRun();
-+        await notifyAnalyticsIfFirstRun(projectRuntime);
-       }
- 
--      const { isCompiledBinary } = detectCLIRuntime();
--      const projectRoot = await findProjectRoot();
--      const projectRuntime = await detectRuntime(projectRoot);
-       if (
-         process.stdout.isTTY &&
-         !process.argv.includes('--non-interactive') &&
-```
-
-**File**: `genkit-tools/cli/tests/cli.test.ts` (modified, +51/-0)
-```diff
-@@ -26,6 +26,7 @@ const {
-   mockStartMcpServer,
-   mockWarnIfLegacyGenkitContext,
-   mockLoadDocs,
-+  mockServerHarnessAction,
- } = vi.hoisted(() => ({
-   mockNotifyAnalyticsIfFirstRun: vi.fn(() => Promise.resolve()),
-   mockRecord: vi.fn(() => Promise.resolve()),
-@@ -36,6 +37,7 @@ const {
-   mockStartMcpServer: vi.fn(() => Promise.resolve()),
-   mockWarnIfLegacyGenkitContext: vi.fn(() => Promise.resolve()),
-   mockLoadDocs: vi.fn(() => Promise.resolve({})),
-+  mockServerHarnessAction: vi.fn(),
- }));
- 
- vi.mock('@genkit-ai/tools-common/utils', async (importOriginal) => {
-@@ -82,6 +84,19 @@ vi.mock('../src/commands/plugins.js', () => ({
-   getPluginSubCommand: vi.fn(() => Promise.resolve(undefined)),
- }));
- 
-+vi.mock('../src/commands/server-harness.js', async () => {
-+  const { Command } = await import('commander');
-+  return {
-+    SERVER_HARNESS_COMMAND: '__server-harness',
-+    serverHarness: new Command('__server-harness')
-+      .argument('<port>')
-+      .argument('<logFile>')
-+      .action((port: string, logFile: string) => {
-+        mockServerHarnessAction(port, logFile);
-+      }),
-+  };
-+});
-+
- describe('startCLI', () => {
-   const originalArgv = process.argv;
-   let startCLI: typeof import('../src/cli.js').startCLI;
-@@ -132,4 +147,40 @@ describe('startCLI', () => {
-     expect(mockShowUpdateNotification).toHaveBeenCalledOnce();
-     expect(mockLoadDocs).toHaveBeenCalledOnce();
-   });
-+
-+  it('passes the detected projectRuntime to notifyAnalyticsIfFirstRun', async () => {
-+    mockDetectRuntime.mockResolvedValueOnce('go');
-+    process.argv = ['node', 'genkit', 'docs:list', 'js'];
-+
-+    await startCLI();
-+
-+    expect(mockNotifyAnalyticsIfFirstRun).toHaveBeenCalledExactlyOnceWith('go');
-+  });
-+
-+  it('skips first-run analytics prompt when --non-interactive is set', async () => {
-+    process.argv = ['node', 'genkit', '--non-interactive', 'docs:list', 'js'];
-+
-+    await startCLI();
-+
-+    expect(mockNotifyAnalyticsIfFirstRun).not.toHaveBeenCalled();
-+    expect(mockLoadDocs).toHaveBeenCalledOnce();
-+  });
-+
-+  it('skips first-run analytics prompt for __server-harness daemon process', async () => {
-+    process.argv = [
-+      'node',
-+      'genkit',
-+      '__server-harness',
-+      '4000',
-+      '/tmp/devui.log',
-+    ];
-+
-+    await startCLI();
-+
-+    expect(mockNotifyAnalyticsIfFirstRun).not.toHaveBeenCalled();
-+    expect(mockServerHarnessAction).toHaveBeenCalledExactlyOnceWith(
-+      '4000',
-+      '/tmp/devui.log'
-+    );
-+  });
- });
-```
-
-**File**: `genkit-tools/common/src/utils/analytics.ts` (modified, +8/-3)
-```diff
-@@ -76,8 +76,11 @@ export class FirstUsageEvent extends GAEvent {
-   name = 'first_visit';
-   duration = 1;
- 
--  constructor() {
-+  constructor(project_runtime?: string) {
-     super();
-+    this.parameters = {
-+      project_runtime: project_runtime || 'unknown',
-+    };
-   }
+@@ -967,6 +971,51 @@ func (a *Agent[State]) Abort(ctx context.Context, snapshotID string) (SnapshotSt
+ 	return abortPendingSnapshot(ctx, a.store, snapshotID)
  }
  
-@@ -180,7 +183,9 @@ export function extractActionType(key?: unknown): string {
- }
++// DeleteSession permanently removes every persisted snapshot of a session. A
++// detached run still in flight is aborted first, so the work stops rather than
++// continuing against data that is going away. It reports whether anything was
++// removed and is idempotent: a session with no persisted data is not an error.
++//
++// Resuming by session ID afterwards starts a fresh session, and resuming by
++// snapshot ID fails with [ErrSnapshotNotFound]. A run that is still going when
++// the session is deleted stops persisting instead of failing; it cannot bring
++// the session back. Traces, logs, and durable streams live outside the store
++// and are not touched.
++//
++// This is an in-process API only: no companion action or route is registered
++// for it, so put it behind your own authorization.
++//
++// It returns FAILED_PRECONDITION on a client-managed agent or when the store
++// does not implement [SessionDeleter], and INVALID_ARGUMENT when sessionID is
++// empty.
++func (a *Agent[State]) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
++	if a.store == nil {
++		return false, status.Errorf(ErrSessionStoreNotConfigured, "agent %q: DeleteSession requires a session store", a.Name())
++	}
++	if sessionID == "" {
++		return false, status.Errorf(status.ErrInvalidArgument, "agent %q: DeleteSession: sessionID is required", a.Name())
++	}
++	deleter, ok := a.store.(SessionDeleter)
++	if !ok {
++		return false, status.Errorf(status.ErrFailedPrecondition, "agent %q: the session store does not support DeleteSession", a.Name())
++	}
++	// Stop an in-flight detached run first. Best effort: a failure here is
++	// logged and the delete goes on, because the store also tells the run's
++	// subscription its row is gone and rejects writers that continue the
++	// deleted chain.
++	latest, err := getLatestSnapshotMetadata(ctx, a.store, sessionID)
++	if err != nil {
++		logger.Warn(ctx, "agent: could not look up the session's latest snapshot before deleting it",
++			"sessionId", sessionID, "error", err)
++	} else if latest != nil && latest.Status == SnapshotStatusPending {
++		if _, err := abortPendingSnapshot(ctx, a.store, latest.SnapshotID); err != nil {
++			logger.Warn(ctx, "agent: could not abort the session's pending snapshot before deleting it",
++				"snapshotId", latest.SnapshotID, "error", err)
++		}
++	}
++	return deleter.DeleteSession(ctx, sessionID)
++}
++
+ // --- api.BidiAction implementation ---
  
- /** Displays a notification that analytics are in use. */
--export async function notifyAnalyticsIfFirstRun(): Promise<void> {
-+export async function notifyAnalyticsIfFirstRun(
-+  projectRuntime?: string
-+): Promise<void> {
-   if (isAnalyticsOptedOut()) return;
+ // Agent is itself an [api.BidiAction]: transports that accept an
+@@ -2214,7 +2263,12 @@ func (rt *agentRuntime[State]) finalizePendingSnapshot(
  
-   if (configstore.get(NOTIFICATION_ACKED)) {
-@@ -198,7 +203,7 @@ export async function notifyAnalyticsIfFirstRun(): Promise<void> {
- 
-   configstore.set(NOTIFICATION_ACKED, true);
- 
--  await record(new FirstUsageEvent());
-+  await record(new FirstUsageEvent(projectRuntime));
- }
- 
- /** Gets session information for the UI. */
+ 	_, err := rt.cfg.store.SaveSnapshot(ctx, pending.SnapshotID,
+ 		func(existing *SessionSnapshot[State]) (*SessionSnapshot[State], error) {
+-			if existing != nil && existing.Status.Terminal() {
++			if existing == nil {
++				// The pending row is gone: its session was deleted while the
++				// work ran. Writing would bring the session back.
++				return nil, nil
++			}
++			if existing.Status.Terminal() {
+ 				// Already settled (a retried finalize, or a writer that
+ 				// landed a terminal status directly): the row describes
+ 				// itself, so leave it.
+@@ -2235,7 +2289,8 @@ func (rt *agentRuntime[State]) finalizePendingSnapshot(
+ 				UpdatedAt:    now,
+ 			}, nil
+ 		})
+-	if err != nil {
++	// A deleted session is not a failure: the run simply stops persisting.
++	if err != nil && !errors.Is(err, ErrSessionDeleted) {
+ 		logger.Error(ctx, "agent: failed to finalize pending snapshot",
+ 			"snapshotId", pending.SnapshotID, "error", err)
+ 	}
 ```
 
-**File**: `genkit-tools/common/tests/utils/analytics.test.ts` (modified, +89/-19)
+**File**: `go/ai/exp/agent_test.go` (modified, +166/-0)
 ```diff
-@@ -14,31 +14,38 @@
-  * limitations under the License.
-  */
- 
-+import * as readlinePromises from 'readline/promises';
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- 
-+vi.mock('readline/promises', () => ({
-+  createInterface: vi.fn(),
-+}));
+@@ -9431,3 +9431,169 @@ func TestAgent_Usage(t *testing.T) {
+ 		}
+ 	})
+ }
 +
- const UUID_V4_REGEX =
-   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
- 
- describe('analytics', () => {
--  const store = new Map<string, any>();
-+  const store = new Map<string, unknown>();
-+  let analyticsModule: typeof import('../../src/utils/analytics.js');
-   let getAnalyticsSettings: typeof import('../../src/utils/analytics.js').getAnalyticsSettings;
-   let configstoreModule: typeof import('../../src/utils/configstore.js');
- 
-   beforeEach(async () => {
-     vi.resetModules();
-     configstoreModule = await import('../../src/utils/configstore.js');
--    ({ getAnalyticsSettings } = await import('../../src/utils/analytics.js'));
-+    analyticsModule = await import('../../src/utils/analytics.js');
-+    ({ getAnalyticsSettings } = analyticsModule);
- 
-     store.clear();
-     vi.spyOn(configstoreModule.configstore, 'get').mockImplementation(
-       (key: string) => store.get(key)
-     );
-     vi.spyOn(configstoreModule.configstore, 'set').mockImplementation(((
-       key: string,
--      value?: any
-+      value?: unknown
-     ) => {
-       store.set(key, value);
--    }) as any);
-+    }) as typeof configstoreModule.configstore.set);
-     vi.spyOn(configstoreModule, 'getUserSettings').mockReturnValue({});
-   });
- 
-@@ -56,16 +63,11 @@ describe('analytics', () => {
- 
-       const settings = getAnalyticsSettings();
- 
--      expect(settings.enabled).toBe(true);
--      if (!settings.enabled) {
--        throw new Error('Expected analytics settings to be enabled');
--      }
--      expect(settings.clientId).toMatch(UUID_V4_REGEX);
--      expect(configstoreModule.configstore.set).toHaveBeenCalledWith(
--        'genkit-tools-ga-id',
--        settings.clientId
--      );
--      expect(store.get('genkit-tools-ga-id')).toBe(settings.clientId);
-+      expect(settings).toMatchObject({
-+        enabled: true,
-+        clientId: expect.stringMatching(UUID_V4_REGEX),
-+      });
-+      expect(store.get('genkit-tools-ga-id')).toMatch(UUID_V4_REGEX);
-     });
- 
-     it('reuses existing clientId from configstore when present', () => {
-@@ -74,12 +76,80 @@ describe('analytics', () => {
- 
-       const settings = getAnalyticsSettings();
- 
--      expect(settings.enabled).toBe(true);
--      if (!settings.enabled) {
--        throw new Error('Expected analytics settings to be enabled');
--      }
--      expect(settings.clientId).toBe('existing-client-id');
-+      expect(settings).toMatchObject({
-+        enabled: true,
-+        clientId: 'existing-client-id',
-+      });
-       expect(configstoreModule.configstore.set).not.toHaveBeenCalled();
-     });
-   });
++// defineQuickDeleteAgent registers a trivial agent that completes each turn at once.
++func defineQuickDeleteAgent(t *testing.T, name string, store SessionStore[testState]) *Agent[testState] {
++	t.Helper()
++	opts := []AgentOption[testState]{}
++	if store != nil {
++		opts = append(opts, WithSessionStore(store))
++	}
++	return DefineCustomAgent(newTestRegistry(t), name,
++		func(ctx context.Context, resp Responder, sess *SessionRunner[testState]) (*AgentResult, error) {
++			return nil, sess.Run(ctx, func(ctx context.Context, input *AgentInput) (*TurnResult, error) {
++				sess.AddMessages(ai.NewModelTextMessage("done"))
++				return nil, nil
++			})
++		},
++		opts...,
++	)
++}
 +
-+  describe('FirstUsageEvent', () => {
-+    it('sets project_runtime when provided', () => {
-+      const event = new analyticsModule.FirstUsageEvent('go');
++func TestAgent_DeleteSession_CompletedSession(t *testing.T) {
++	ctx := context.Background()
++	store := newTestInMemStore[testState]()
++	agent := defineQuickDeleteAgent(t, "deleteCompleted", store)
 +
-+      expect(event.parameters).toEqual({ project_runtime: 'go' });
-+    });
++	out, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("hi")})
++	if err != nil {
++		t.Fatalf("Run: %v", err)
++	}
++	if out.SessionID == "" || out.SnapshotID == "" {
++		t.Fatalf("output has no session/snapshot ID: %+v", out)
++	}
 +
-+    it('falls back to unknown when project_runtime is omitted', () => {
-+      const event = new analyticsModule.FirstUsageEvent();
++	removed, err := agent.DeleteSession(ctx, out.SessionID)
++	if err != nil || !removed {
++		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
++	}
++	if got, err := store.GetSnapshot(ctx, out.SnapshotID); err != nil || got != nil {
++		t.Errorf("snapshot survived the delete: %v, %v", got, err)
++	}
++	// Idempotent.
++	if removed, err := agent.DeleteSession(ctx, out.SessionID); err != nil || removed {
++		t.Errorf("second DeleteSession = %v, %v; want false, nil", removed, err)
++	}
++	// Resuming by snapshot ID now fails; by session ID it starts fresh.
++	if _, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("again")}, WithSnapshotID[testState](out.SnapshotID)); err == nil {
++		t.Error("resume by snapshot ID after delete succeeded, want an error")
++	}
++	fresh, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("again")}, WithSessionID[testState](out.SessionID))
++	if err != nil {
++		t.Fatalf("resume by session ID: %v", err)
++	}
++	row, err := store.GetSnapshot(ctx, fresh.SnapshotID)
++	if err != nil || row == nil || row.ParentID != "" {
++		t.Errorf("resumed session row = %+v, %v; want a fresh root", row, err)
++	}
++}
 +
-+      expect(event.parameters).toEqual({ project_runtime: 'unknown' });
-+    });
-+  });
++func TestAgent_DeleteSession_AbortsPendingRunAndDoesNotResurrect(t *testing.T) {
++	ctx := context.Background()
++	reg := newTestRegistry(t)
++	store := newTestInMemStore[testState]()
++	store.saved = make(chan string, 64)
++	agent, entered, release := defineGatedAgent(t, reg, "deletePending", store)
 +
-+  describe('notifyAnalyticsIfFirstRun', () => {
-+    it.each([
-+      ['go', 'go'],
-+      [undefined, 'unknown'],
-+    ])(
-+      'acknowledges notification and sends first_visit with project_runtime=%s as %s',
-+      async (runtime, expected) => {
-+        vi.mocked(readlinePromises.createInterface).mockReturnValue({
-+          question: vi.fn().mockResolvedValue(''),
-+          close: vi.fn(),
-+        } as unknown as readlinePromises.Interface);
-+        const fetchSpy = vi
-+          .spyOn(globalThis, 'fetch')
-+          .mockResolvedValue(new Response(null, { status: 204 }));
-+        vi.spyOn(console, 'log').mockImplementation(() => {});
++	task, err := agent.RunDetached(ctx, &AgentInput{Message: ai.NewUserTextMessage("go")})
++	if err != nil {
++		t.Fatalf("RunDetached: %v", err)
++	}
++	select {
++	case <-entered:
++	case <-time.After(2 * time.Second):
++		t.Fatal("background work did not start")
++	}
++	pending, err := store.GetSnapshot(ctx, task.SnapshotID())
++	if err != nil || pending == nil || pending.Status != SnapshotStatusPending {
++		t.Fatalf("pending row = %+v, %v", pending, err)
++	}
 +
-+        await analyticsModule.notifyAnalyticsIfFirstRun(runtime);
++	if removed, err := agent.DeleteSession(ctx, pending.SessionID); err != nil || !removed {
++		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
++	}
 +
-+        expect(store.get('analytics_notification')).toBe(true);
-+        expect(fetchSpy).toHaveBeenCalledOnce();
-+        const [, init] = fetchSpy.mock.calls[0];
-+        expect(JSON.parse(String(init?.body))).toMatchObject({
-+          events: [
-+            {
-+              name: 'first_visit',
-+              params: { project_runtime: expected },
-+            },
-+          ],
-+        });
-+      }
-+    );
++	// Let the worker finish whichever way it will. Its last write is the
++	// finalize of the pending row, so wait for that attempt rather than sleeping;
++	// nothing may be written back.
++	for len(store.saved) > 0 {
++		<-store.saved
++	}
++	close(release)
++	deadline := time.After(5 * time.Second)
++settled:
++	for {
++		select {
++		case id := <-store.saved:
++			if id == task.SnapshotID() {
++				break settled
++			}
++		case <-deadline:
++			t.Fatal("worker never finalized the deleted pending row")
++		}
++	}
++	if n := store.snapshotCount(); n != 0 {
++		t.Errorf("store holds %d rows after the delete, want 0 (session came back)", n)
++	}
++}
 +
-+    it('skips prompt and event when notification is already acknowledged', async () => {
-+      store.set('analytics_notification', true);
-+      const fetchSpy = vi.spyOn(globalThis, 'fetch');
++func TestAgent_DeleteSession_Errors(t *testing.T) {
++	ctx := context.Background()
 +
-+      await analyticsModule.notifyAnalyticsIfFirstRun('go');
++	t.Run("client-managed agent", func(t *testing.T) {
++		agent := defineQuickDeleteAgent(t, "deleteNoStore", nil)
++		if _, err := agent.DeleteSession(ctx, "s"); !errors.Is(err, ErrSessionStoreNotConfigured) {
++			t.Errorf("error = %v, want ErrSessionStoreNotConfigured", err)
++		}
++	})
 +
-+      expect(readlinePromises.createInterface).not.toHaveBeenCalled();
-+      expect(fetchSpy).not.toHaveBeenCalled();
-+    });
++	t.Run("store without the capability", func(t *testing.T) {
++		// Embedding the interface hides DeleteSession.
++		agent := defineQuickDeleteAgent(t, "deleteUnsupported", struct{ SessionStore[testState] }{newTestInMemStore[testState]()})
++		if _, err := agent.DeleteSession(ctx, "s"); !errors.Is(err, status.ErrFailedPrecondition) {
++			t.Errorf("error = %v, want FAILED_PRECONDITION", err)
++		}
++	})
 +
-+    it('skips prompt and event when analyticsOptOut is enabled', async () => {
-+      vi.spyOn(configstoreModule, 'getUserSettin
++	t.Run("empty session ID", func(t *testing.T) {
++		agent := defineQuickDeleteAgent(t, "deleteEmptyID", newTestInMemStore[testState]())
++		if _, err := agent.DeleteSession(ctx, ""); !errors.Is(err, status.ErrInvalidArgument) {
++			t.Errorf("error = %v, want INVALID_ARGUMENT", err)
++		}
++	})
++}
++
+
 ```
 
-**File**: `tests/src/utils.ts` (modified, +7/-3)
+**File**: `go/ai/exp/errors.go` (modified, +6/-0)
 ```diff
-@@ -113,19 +113,23 @@ export async function genkitStart(
-         'exec',
-         '--prefix',
-         cliInstallRoot,
-+        '--',
-         'genkit',
-+        '--non-interactive',
-+        '--no-update-notification',
-         'start',
-         '--',
-         ...appCmd.split(' '),
-       ],
-       {
-         cwd: testRoot,
-+        env: {
-+          ...process.env,
-+          XDG_CONFIG_HOME: path.join(cliInstallRoot, '.config'),
-+        },
-       }
-     );
+@@ -34,4 +34,10 @@ var (
+ 	// Every store implementation rejects this: a snapshot with no session cannot
+ 	// be resolved back to a conversation.
+ 	ErrSessionIDRequired = status.ErrInvalidArgument.Subtype("session ID is required")
++
++	// ErrSessionDeleted means a snapshot was written that continues the chain
++	// of a session removed with [Agent.DeleteSession]. Stores reject it so a
++	// late writer cannot bring the session back; the runtime treats it as "stop
++	// persisting" rather than a failure.
++	ErrSessionDeleted = status.ErrFailedPrecondition.Subtype("session deleted")
+ )
+```
+
+**File**: `go/ai/exp/handle.go` (modified, +47/-0)
+```diff
+@@ -104,6 +104,15 @@ type AgentTransport interface {
+ 	Run(ctx context.Context, input *AgentInput, init *AgentInit[json.RawMessage], cb func(context.Context, json.RawMessage) error) (*AgentOutput[json.RawMessage], error)
+ }
  
--    // Press enter in case of cookie ack prompt.
--    appProcess.stdin.write('\n');
--
-     var done = false;
-     setTimeout(() => {
-       if (!done) {
++// SessionDeleteTransport is the optional part of an [AgentTransport] that can
++// delete a session. Only an in-process transport offers it: deletion has no
++// companion action, so nothing serves it over the wire. A handle whose
++// transport lacks it refuses [AgentHandle.DeleteSession] with
++// FAILED_PRECONDITION.
++type SessionDeleteTransport interface {
++	DeleteSession(ctx context.Context, sessionID string) (bool, error)
++}
++
+ // SnapshotTransport is the optional part of an [AgentTransport] that reaches
+ // the agent's snapshot lifecycle. A handle whose transport lacks it refuses
+ // snapshot operations with FAILED_PRECONDITION. A method may also refuse with
+@@ -215,6 +224,8 @@ func (a *Agent[State]) Handle() *AgentHandle {
+ 			getSnapshot: a.getSnapshot,
+ 			wait:        a.wait,
+ 			abort:       a.abort,
++
++			deleteSession: a.DeleteSession,
+ 		},
+ 	}
+ }
+@@ -533,6 +544,29 @@ func (h *AgentHandle) Abort(ctx context.Context, snapshotID string) (SnapshotSta
+ 	return resp.Status, nil
+ }
+ 
++// DeleteSession permanently removes every persisted snapshot of a session, as
++// [Agent.DeleteSession] does, and reports whether anything was removed. It
++// works only on a handle for an agent in this process ([Agent.Handle]): the
++// operation has no companion action on purpose, so a handle from [LookupAgent]
++// or a remote one returns FAILED_PRECONDITION.
++//
++// It also returns FAILED_PRECONDITION when the agent has no session store or
++// its store cannot delete, and INVALID_ARGUMENT when sessionID is empty.
++func (h *AgentHandle) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
++	if h == nil {
++		return false, nilHandleError("DeleteSession")
++	}
++	if sessionID == "" {
++		return false, status.Errorf(status.ErrInvalidArgument, "agent %q: DeleteSession: sessionID is required", h.name)
++	}
++	dt, ok := h.transport.(SessionDeleteTransport)
++	if !ok {
++		return false, status.Errorf(status.ErrFailedPrecondition,
++			"agent %q: its transport cannot delete a session", h.name)
++	}
++	return dt.DeleteSession(ctx, sessionID)
++}
++
+ // snapshotTransport returns the handle's transport as a [SnapshotTransport],
+ // or the refusal for one that reaches no snapshot lifecycle. verb names what
+ // the caller wanted to do with a snapshot.
+@@ -566,6 +600,10 @@ type actionTransport struct {
+ 	getSnapshot api.Action
+ 	wait        api.Action
+ 	abort       api.Action
++	// deleteSession is set only for an in-process agent ([Agent.Handle]): no
++	// companion action exists for deletion on purpose, so a handle that
++	// reaches the agent through actions cannot delete a session.
++	deleteSession func(ctx context.Context, sessionID string) (bool, error)
+ }
+ 
+ func (t *actionTransport) Run(ctx context.Context, input *AgentInput, init *AgentInit[json.RawMessage], cb func(context.Context, json.RawMessage) error) (*AgentOutput[json.RawMessage], error) {
+@@ -632,6 +670,15 @@ func (t *actionTransport) Abort(ctx context.Context, req *AgentAbortRequest) (*A
+ 	return callJSON[AgentAbortResponse](ctx, t.name, t.abort, "abort", req)
+ }
+ 
++// DeleteSession implements [SessionDeleteTransport].
++func (t *actionTransport) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
++	if t.deleteSession == nil {
++		return false, status.Errorf(status.ErrFailedPrecondition,
++			"agent %q: deleting a session is not available through this handle: it is an in-process API with no companion action", t.name)
++	}
++	return t.deleteSession(ctx, sessionID)
++}
++
+ // callJSON dispatches req to act, one of the agent's companion actions, and
+ // decodes the result into Resp. what names the exchange in the marshal and
+ // unmarshal errors; a dispatch error is returned as is, so its status stays
+```
+
+**File**: `go/ai/exp/handle_test.go` (modified, +43/-0)
+```diff
+@@ -1009,3 +1009,46 @@ func TestAgentHandle_MetadataOnlyPrefersTheStoreCapability(t *testing.T) {
+ 			store.metadataReads, store.latestMetadataReads, store.fullReads, store.latestFullReads)
+ 	}
+ }
++
++func TestAgentHandle_DeleteSession(t *testing.T) {
++	ctx := context.Background()
++
++	t.Run("local handle deletes through the agent", func(t *testing.T) {
++		store := newTestInMemStore[testState]()
++		agent := defineQuickDeleteAgent(t, "handleDelete", store)
++		out, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("hi")})
++		if err != nil {
++			t.Fatalf("Run: %v", err)
++		}
++		removed, err := agent.Handle().DeleteSession(ctx, out.SessionID)
++		if err != nil || !removed {
++			t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
++		}
++		if n := store.snapshotCount(); n != 0 {
++			t.Errorf("store holds %d rows, want 0", n)
++		}
++	})
++
++	t.Run("registry handle has no route", func(t *testing.T) {
++		reg := newTestRegistry(t)
++		defineGatedAgent(t, reg, "handleDeleteRemote", newTestInMemStore[testState]())
++		_, err := LookupAgent(reg, "handleDeleteRemote").DeleteSession(ctx, "s")
++		if !errors.Is(err, status.ErrFailedPrecondition) {
++			t.Errorf("error = %v, want FAILED_PRECONDITION", err)
++		}
++	})
++
++	t.Run("empty session ID", func(t *testing.T) {
++		agent := defineQuickDeleteAgent(t, "handleDeleteEmpty", newTestInMemStore[testState]())
++		if _, err := agent.Handle().DeleteSession(ctx, ""); !errors.Is(err, status.ErrInvalidArgument) {
++			t.Errorf("error = %v, want INVALID_ARGUMENT", err)
++		}
++	})
++
++	t.Run("nil handle", func(t *testing.T) {
++		var h *AgentHandle
++		if _, err := h.DeleteSession(ctx, "s"); err == nil {
++			t.Error("nil handle returned no error")
++		}
++	})
++}
+```
+
+**File**: `go/ai/exp/localstore/file.go` (modified, +100/-3)
+```diff
+@@ -94,6 +94,13 @@ type FileSessionStore[State any] struct {
+ 	// snapshot files to detect cross-process status changes; <= 0 disables it.
+ 	poll time.Duration
+ 	subs map[string]*snapshotSubs
++	// deleted holds the snapshots removed by DeleteSession, keyed by prefix and
++	// snapshot ID, so a late writer continuing a deleted chain is rejected even
++	// after a fresh root snapshot reuses the session ID; see SaveSnapshot. It
++	// grows by one entry per deleted snapshot for the life of the store.
++	// In-process only: a writer in another process sharing the directory is not
++	// stopped.
++	deleted map[string]struct{}
+ 	// pollCancel stops the background poller. It is non-nil exactly while the
+ 	// poller runs: while at least one subscription is active and poll > 0.
+ 	pollCancel context.CancelFunc
+@@ -166,6 +173,7 @@ func NewFileSessionStore[State any](dir string, opts ...FileStoreOption) (*FileS
+ 		prefixFn: resolved.prefixFn,
+ 		poll:     poll,
+ 		subs:     make(map[string]*snapshotSubs),
++		deleted:  make(map[string]struct{}),
+ 	}, nil
+ }
+ 
+@@ -255,6 +263,14 @@ func (s *FileSessionStore[State]) SaveSnapshot(
+ 	if next.Status == "" {
+ 		next.Status = exp.SnapshotStatusCompleted
+ 	}
++	// A late writer continuing a deleted chain (or rewriting one of its rows)
++	// must not bring the session back, even if a fresh root has since reused the
++	// session ID.
++	_, rowGone := s.deleted[tombstoneKey(prefix, id)]
++	_, parentGone := s.deleted[tombstoneKey(prefix, next.ParentID)]
++	if rowGone || (next.ParentID != "" && parentGone) {
++		return nil, status.Errorf(exp.ErrSessionDeleted, "session %q was deleted", next.SessionID)
++	}
+ 
+ 	if err := s.writeAt(prefix, next); err != nil {
+ 		return nil, err
+@@ -275,6 +291,61 @@ func (s *FileSessionStore[State]) SaveSnapshot(
+ 	return next, nil
+ }
+ 
++// tombstoneKey identifies a deleted snapshot within its tenant prefix.
++func tombstoneKey(prefix, snapshotID string) string {
++	return prefix + "\x00" + snapshotID
++}
++
++// DeleteSession removes every snapshot file of the session, and its pointer,
++// under the call's prefix directory, per [exp.SessionDeleter]. Matching rows
++// are found by scanning the prefix directory, so the cost grows with the
++// number of rows in the prefix. Subscribers of a removed snapshot see
++// [exp.SnapshotStatusAborted] before their channel closes. Deletion across
++// processes sharing the directory is best effort: a row another process writes
++// after the scan is not removed.
++func (s *FileSessionStore[State]) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
++	if sessionID == "" {
++		return false, status.Errorf(exp.ErrSessionIDRequired, "DeleteSession requires a session ID")
++	}
++	if err := validateSessionID(sessionID); err != nil {
++		return false, err
++	}
++	prefix, err := s.derivePrefix(ctx)
++	if err != nil {
++		return false, err
++	}
++
++	s.mu.Lock()
++	defer s.mu.Unlock()
++
++	names, err := s.snapshotFileNames(s.prefixDir(prefix))
++	if err != nil {
++		return false, err
++	}
++	removed := false
++	for _, name := range names {
++		path := filepath.Join(s.prefixDir(prefix), name)
++		var header snapshotHeader
++		if ok, err := readJSONAt(path, &header); err != nil || !ok || header.SessionID != sessionID {
++			// Unreadable, vanished, or another session's row: not ours to remove.
++			continue
++		}
++		if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
++			return removed, fmt.Errorf("FileSessionStore: remove %s: %w", path, err)
++		}
++		removed = true
++		snapshotID := strings.TrimSuffix(name, ".json")
++		s.deleted[tombstoneKey(prefix, snapshotID)] = struct{}{}
++		s.endSubsLocked(snapshotID, exp.SnapshotStatusAborted)
++	}
++	if err := os.Remove(s.pointerPathFor(prefix, sessionID)); err == nil {
++		removed = true
++	} else if !errors.Is(err, os.ErrNotExist) {
++		return removed, fmt.Errorf("FileSessionStore: remove pointer: %w", err)
++	}
++	return removed, nil
++}
++
+ // snapshotHeader is the subset of snapshot fields needed to pick a session's
+ // latest row during the scan. Decoding only these avoids materializing every
+ // row's full conversation state; only the winning row is fully decoded.
+@@ -746,6 +817,25 @@ func (s *FileSessionStore[State]) removeSub(snapshotID string, ch chan exp.Snaps
+ 	close(ch)
+ }
+ 
++// endSubsLocked delivers a final status to every subscriber of snapshotID and
++// closes their channels, dropping the snapshot's bookkeeping (and stopping the
++// poller once no subscriptions remain). Used when the row is gone. Caller must
++// hold s.mu.
++func (s *FileSessionStore[State]) endSubsLocked(snapshotID string, status exp.SnapshotStatus) {
++	sub := s.subs[snapshotID]
++	if sub == nil {
++		return
++	}
++	for _, ch := range sub.chans {
++		coalesceSend(ch, status)
++		close(ch)
++	}
++	delete(s.subs, snapshotID)
++	if len(s.subs) == 0 {
++		s.stopPollerLocked()
++	}
++}
++
+ // maybeNotifyLocked fans status out to snapshotID's subscribers, but only when
+ // it differs from the value they last saw. It is the shared dedup gate
+```
+
+**File**: `go/ai/exp/localstore/file_test.go` (modified, +75/-0)
+```diff
+@@ -771,3 +771,78 @@ func TestFileSessionStore_PathUnsafeSessionIDRejected(t *testing.T) {
+ 		})
+ 	}
+ }
++
++type deleteTenantKey struct{}
++
++func TestFileSessionStore_Delete_TenantPrefix(t *testing.T) {
++	// The same session ID under two tenants: deleting it for one must not touch
++	// the other.
++	store, err := NewFileSessionStore[testState](t.TempDir(), WithSnapshotPathPrefix(func(ctx context.Context) string {
++		tenant, _ := ctx.Value(deleteTenantKey{}).(string)
++		return tenant
++	}))
++	if err != nil {
++		t.Fatalf("NewFileSessionStore: %v", err)
++	}
++	alice := context.WithValue(context.Background(), deleteTenantKey{}, "alice")
++	bob := context.WithValue(context.Background(), deleteTenantKey{}, "bob")
++	for _, ctx := range []context.Context{alice, bob} {
++		now := time.Now()
++		if _, err := store.SaveSnapshot(ctx, "snap",
++			func(_ *exp.SessionSnapshot[testState]) (*exp.SessionSnapshot[testState], error) {
++				return &exp.SessionSnapshot[testState]{SessionID: "shared", CreatedAt: now, UpdatedAt: now}, nil
++			}); err != nil {
++			t.Fatalf("SaveSnapshot: %v", err)
++		}
++	}
++
++	if removed, err := store.DeleteSession(alice, "shared"); err != nil || !removed {
++		t.Fatalf("DeleteSession(alice) = %v, %v; want true, nil", removed, err)
++	}
++	if got, err := store.GetLatestSnapshot(alice, "shared"); err != nil || got != nil {
++		t.Errorf("alice still sees the session: %v, %v", got, err)
++	}
++	if got, err := store.GetLatestSnapshot(bob, "shared"); err != nil || got == nil {
++		t.Errorf("bob lost his session: %v, %v", got, err)
++	}
++}
++
++func TestFileSessionStore_Delete_SeenByAnotherStoreInstance(t *testing.T) {
++	// A delete made through one store instance (standing in for another
++	// process) ends a subscription held on a different instance: the poller
++	// sees the file vanish and reports the run as aborted.
++	dir := t.TempDir()
++	watcher, err := NewFileSessionStore[testState](dir, WithPollInterval(10*time.Millisecond))
++	if err != nil {
++		t.Fatalf("NewFileSessionStore: %v", err)
++	}
++	deleter, err := NewFileSessionStore[testState](dir)
++	if err != nil {
++		t.Fatalf("NewFileSessionStore: %v", err)
++	}
++	ctx := context.Background()
++	now := time.Now()
++	if _, err := watcher.SaveSnapshot(ctx, "p1",
++		func(_ *exp.SessionSnapshot[testState]) (*exp.SessionSnapshot[testState], error) {
++			return &exp.SessionSnapshot[testState]{SessionID: "sess", Status: exp.SnapshotStatusPending, CreatedAt: now, UpdatedAt: now}, nil
++		}); err != nil {
++		t.Fatalf("SaveSnapshot: %v", err)
++	}
++
++	subCtx, cancel := context.WithCancel(ctx)
++	defer cancel()
++	ch := watcher.OnSnapshotStatusChange(subCtx, "p1")
++	<-ch // pending
++
++	if removed, err := deleter.DeleteSession(ctx, "sess"); err != nil || !removed {
++		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
++	}
++	select {
++	case got := <-ch:
++		if got != exp.SnapshotStatusAborted {
++			t.Errorf("status = %q, want aborted", got)
++		}
++	case <-time.After(5 * time.Second):
++		t.Fatal("the other instance's subscription was not ended by the delete")
++	}
++}
+```
+
+**File**: `go/ai/exp/localstore/inmemory.go` (modified, +54/-1)
+```diff
+@@ -47,21 +47,28 @@ var (
+ // is lost when the process exits; use [FileSessionStore] or a real backend
+ // when persistence is needed.
+ //
+-// It implements [exp.SessionStore] and [exp.SnapshotSubscriber].
++// It implements [exp.SessionStore], [exp.SnapshotSubscriber] and
++// [exp.SessionDeleter].
+ type InMemorySessionStore[State any] struct {
+ 	// mu is RWMutex so GetSnapshot (which JSON-marshals while holding the
+ 	// lock) can run concurrently with other readers. All writers (Save,
+ 	// Abort, OnSnapshotStatusChange, removeSub) take the full Lock().
+ 	mu        sync.RWMutex
+ 	snapshots map[string]*exp.SessionSnapshot[State]
+ 	subs      map[string][]chan exp.SnapshotStatus
++	// deleted holds the IDs of snapshots removed by DeleteSession, so a late
++	// writer continuing a deleted chain is rejected even after a fresh root
++	// snapshot reuses the session ID; see SaveSnapshot. It grows by one ID per
++	// deleted snapshot for the life of the store, which is the process.
++	deleted map[string]struct{}
+ }
+ 
+ // NewInMemorySessionStore creates a new in-memory snapshot store.
+ func NewInMemorySessionStore[State any]() *InMemorySessionStore[State] {
+ 	return &InMemorySessionStore[State]{
+ 		snapshots: make(map[string]*exp.SessionSnapshot[State]),
+ 		subs:      make(map[string][]chan exp.SnapshotStatus),
++		deleted:   make(map[string]struct{}),
+ 	}
+ }
+ 
+@@ -216,6 +223,12 @@ func (s *InMemorySessionStore[State]) SaveSnapshot(
+ 	if next.Status == "" {
+ 		next.Status = exp.SnapshotStatusCompleted
+ 	}
++	// A late writer continuing a deleted chain (or rewriting one of its rows)
++	// must not bring the session back, even if a fresh root has since reused the
++	// session ID.
++	if s.isDeleted(id, next.ParentID) {
++		return nil, status.Errorf(exp.ErrSessionDeleted, "session %q was deleted", next.SessionID)
++	}
+ 
+ 	copied, err := copySnapshot(next)
+ 	if err != nil {
+@@ -252,6 +265,46 @@ func (s *InMemorySessionStore[State]) OnSnapshotStatusChange(ctx context.Context
+ 	return ch
+ }
+ 
++// DeleteSession removes every snapshot of the session, per
++// [exp.SessionDeleter]. Subscribers of a removed snapshot see
++// [exp.SnapshotStatusAborted] before their channel closes.
++func (s *InMemorySessionStore[State]) DeleteSession(_ context.Context, sessionID string) (bool, error) {
++	if sessionID == "" {
++		return false, status.Errorf(exp.ErrSessionIDRequired, "DeleteSession requires a session ID")
++	}
++	s.mu.Lock()
++	defer s.mu.Unlock()
++
++	removed := false
++	for id, snap := range s.snapshots {
++		if snap.SessionID != sessionID {
++			continue
++		}
++		delete(s.snapshots, id)
++		s.deleted[id] = struct{}{}
++		removed = true
++		for _, ch := range s.subs[id] {
++			coalesceSend(ch, exp.SnapshotStatusAborted)
++			close(ch)
++		}
++		delete(s.subs, id)
++	}
++	return removed, nil
++}
++
++// isDeleted reports whether a write for snapshot id with the given parent
++// touches a snapshot removed by DeleteSession. Caller must hold s.mu.
++func (s *InMemorySessionStore[State]) isDeleted(id, parentID string) bool {
++	if _, gone := s.deleted[id]; gone {
++		return true
++	}
++	if parentID == "" {
++		return false
++	}
++	_, gone := s.deleted[parentID]
++	return gone
++}
++
+ // removeSub detaches a subscriber and closes its channel.
+ func (s *InMemorySessionStore[State]) removeSub(snapshotID string, ch chan exp.SnapshotStatus) {
+ 	s.mu.Lock()
 ```
 
 ---
 
-### Incident Patch 2: `9d45c6c0` (2026-11-23)
-**Commit Message**: fix(genkit-tools/telemetry-server): accept OTLP protobuf on /api/otlp/v1/* (#7319)
+### Incident Patch 2: `78a83b38` (2026-11-25)
+**Commit Message**: feat(js/plugins/anthropic): add Claude 5.5 and Fable models, drop retired ones (#7311)
 
-Co-authored-by: Pavel Jbanov <[REDACTED_EMAIL]>
-
-**File**: `genkit-tools/cli/src/utils/manager-utils.ts` (modified, +9/-7)
+**File**: `js/plugins/anthropic/README.md` (modified, +50/-22)
 ```diff
-@@ -206,11 +206,13 @@ export async function getDevEnvVars(
+@@ -15,10 +15,30 @@ It supersedes the earlier community package `genkitx-anthropic` and is now maint
  
-   if (useOtel) {
-     // Drive the app's own OTel SDK to the dev telemetry server's OTLP endpoints.
--    // The server only parses JSON bodies (express.json), so http/json is
--    // required; per-signal endpoints are used verbatim (no /v1/* appended), so
--    // the full path is spelled out. Metrics are deliberately not redirected:
--    // the server doesn't ingest them, so they go wherever the app's own OTel
--    // config sends them.
-+    // The protocol is set explicitly to http/protobuf (the OTLP spec default,
-+    // supported by Go autoexport, Python, Java, and JS NodeSDK) so a shell
-+    // OTEL_EXPORTER_OTLP_*_PROTOCOL=grpc or Python opentelemetry-distro's grpc
-+    // default cannot leak in; per-signal endpoints are used verbatim (no /v1/*
-+    // appended), so the full path is spelled out. Metrics are deliberately not
-+    // redirected: the server doesn't ingest them, so they go wherever the app's
-+    // own OTel config sends them.
-     //
-     // GENKIT_TELEMETRY_SERVER is blanked rather than omitted: the child
-     // inherits process.env, so a value exported in the shell (the
-@@ -223,9 +225,9 @@ export async function getDevEnvVars(
-     // with one, and naive concatenation would yield a double slash.
-     const baseUrl = telemetryServerUrl.replace(/\/+$/, '');
-     envVars.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = `${baseUrl}/api/otlp/v1/traces`;
--    envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = 'http/json';
-+    envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL = 'http/protobuf';
-     envVars.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT = `${baseUrl}/api/otlp/v1/logs`;
--    envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL = 'http/json';
-+    envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL = 'http/protobuf';
-   } else {
-     envVars.GENKIT_TELEMETRY_SERVER = telemetryServerUrl;
-     if (!disableRealtimeTelemetry) {
-```
-
-**File**: `genkit-tools/cli/tests/commands/start.test.ts` (modified, +7/-2)
-```diff
-@@ -231,7 +231,10 @@ describe('start command', () => {
-       GENKIT_TELEMETRY_SERVER: '',
-       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:
-         'http://localhost:4033/api/otlp/v1/traces',
--      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: 'http/json',
-+      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: 'http/protobuf',
-+      OTEL_EXPORTER_OTLP_LOGS_ENDPOINT:
-+        'http://localhost:4033/api/otlp/v1/logs',
-+      OTEL_EXPORTER_OTLP_LOGS_PROTOCOL: 'http/protobuf',
-     };
+ ## Supported models
  
-     beforeEach(() => {
-@@ -283,7 +286,9 @@ describe('start command', () => {
-       expect(logger.warn).toHaveBeenCalledWith(
-         expect.stringContaining(
-           '  export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4033/api/otlp/v1/traces\n' +
--            '  export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/json'
-+            '  export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf\n' +
-+            '  export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:4033/api/otlp/v1/logs\n' +
-+            '  export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL=http/protobuf'
-         )
-       );
-       expect(logger.warn).toHaveBeenCalledWith(
-```
-
-**File**: `genkit-tools/cli/tests/utils/manager-utils.test.ts` (modified, +2/-2)
-```diff
-@@ -180,11 +180,11 @@ describe('getDevEnvVars', () => {
-     expect(envVars.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT).toBe(
-       `${TELEMETRY_URL}/api/otlp/v1/traces`
-     );
--    expect(envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL).toBe('http/json');
-+    expect(envVars.OTEL_EXPORTER_OTLP_TRACES_PROTOCOL).toBe('http/protobuf');
-     expect(envVars.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT).toBe(
-       `${TELEMETRY_URL}/api/otlp/v1/logs`
-     );
--    expect(envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL).toBe('http/json');
-+    expect(envVars.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL).toBe('http/protobuf');
-   });
+-The plugin supports the most recent Anthropic models like **Claude Haiku 4.5**,
+-**Claude Sonnet 4.5**, and **Claude Opus 4.5**. Additionally, the plugin
+-supports all of the
+-[non-retired older models](https://platform.claude.com/docs/en/about-claude/model-deprecations#model-status).
++The plugin ships model definitions for every generally available Claude model
++on the Claude API. (The Claude Mythos models, which are limited to verified
++organizations, aren't listed; you can still use them by ID.)
++
++| Family | Model IDs |
++| ------ | --------- |
++| Claude Fable | `claude-fable-5-2`, `claude-fable-5-1`, `claude-fable-5` |
++| Claude Opus | `claude-opus-5-5`, `claude-opus-5`, `claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-6`, `claude-opus-4-5` |
++| Claude Sonnet | `claude-sonnet-5-5`, `claude-sonnet-5`, `claude-sonnet-4-6` |
++| Claude Haiku | `claude-haiku-5-5`, `claude-haiku-4-5` |
++
++All of them accept text and image input, tools, system prompts and multi-turn
++conversations. Native structured (JSON) output needs the beta API surface
++(`apiVersion: 'beta'`); on the stable surface, asking a listed model for JSON or
++schema output throws an error.
++
++Retired models (Claude Sonnet 4.5, Claude Opus 4.1, Claude Opus 4, Claude
++Sonnet 4 and older) are no longer listed. You can still pass any other model
++ID, for example `anthropic.model("claude-some-new-model")`; IDs the plugin
++doesn't know are
++treated as text-only, so schema output for them is done through prompt
++instructions. See
++[model deprecations](https://platform.claude.com/docs/en/about-claude/model-deprecations#model-status)
++for lifecycle dates.
  
-   it('normalizes a trailing slash on the telemetry server URL for OTLP endpoints', async () => {
-```
-
-**File**: `genkit-tools/pnpm-lock.yaml` (modified, +121/-7)
-```diff
-@@ -69,7 +69,7 @@ importers:
-         version: 10.0.1(eslint@10.14.0)
-       '@vitest/eslint-plugin':
-         specifier: ^1.6.28
--        version: 1.6.28(@typescript-eslint/eslint-plugin@8.72.1(@typescript-eslint/parser@8.72.1(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3)(vitest@4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))
-+        version: 1.6.28(@typescript-eslint/eslint-plugin@8.72.1(@typescript-eslint/parser@8.72.1(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3))(eslint@10.14.0)(typescript@5.9.3)(vitest@4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)))
-       eslint:
-         specifier: ^10.14.0
-         version: 10.14.0
-@@ -148,7 +148,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: 'catalog:'
--        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+ ## Installation
  
-   common:
-     dependencies:
-@@ -242,7 +242,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: 'catalog:'
--        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+@@ -39,7 +59,7 @@ import { anthropic } from "@genkit-ai/anthropic";
+ const ai = genkit({
+   plugins: [anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })],
+   // specify a default model for generate here if you wish:
+-  model: anthropic.model("claude-sonnet-4-5"),
++  model: anthropic.model("claude-sonnet-5-5"),
+ });
+ ```
  
-   telemetry-server:
-     dependencies:
-@@ -265,6 +265,21 @@ importers:
-         specifier: 'catalog:'
-         version: 3.25.76
-     devDependencies:
-+      '@opentelemetry/api':
-+        specifier: 1.9.1
-+        version: 1.9.1
-+      '@opentelemetry/api-logs':
-+        specifier: 0.222.0
-+        version: 0.222.0
-+      '@opentelemetry/otlp-transformer':
-+        specifier: 0.222.0
-+        version: 0.222.0(@opentelemetry/api@1.9.1)
-+      '@opentelemetry/sdk-logs':
-+        specifier: 0.222.0
-+        version: 0.222.0(@opentelemetry/api@1.9.1)
-+      '@opentelemetry/sdk-trace':
-+        specifier: 2.11.0
-+        version: 2.11.0(@opentelemetry/api@1.9.1)
-       '@types/cors':
-         specifier: 'catalog:'
-         version: 2.8.19
-@@ -291,7 +306,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: 'catalog:'
--        version: 4.1.12(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 4.1.12(@opentelemetry/api@1.9.1)(@types/node@20.19.43)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+@@ -49,7 +69,7 @@ The simplest way to generate text is by using the `generate` method:
  
- packages:
+ ```typescript
+ const response = await ai.generate({
+-  model: anthropic.model("claude-haiku-4-5"),
++  model: anthropic.model("claude-haiku-5-5"),
+   prompt: "Tell me a joke.",
+ });
  
-@@ -690,6 +705,54 @@ packages:
-       '@cfworker/json-schema':
-         optional: true
+@@ -70,30 +90,38 @@ const response = await ai.generate({
+ console.log(response.text);
+ ```
  
-+  '@opentelemetry/api-logs@0.222.0':
-+    resolution: {integrity: sha512-9mb1If+IF6u0ZVXkHQ6ogEae5HwA6ajIVUgpSDQyRASxft6BSXHvBvPooRle3yFN/fKnCdSOnuu0OC3PLcF6+g==}
-+    engines: {node: '>=8.0.0'}
-+
-+  '@opentelemetry/api@1.9.1':
-+    resolution: {integrity: sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q==}
-+    engines: {node: '>=8.0.0'}
-+
-+  '@opentelemetry/core@2.11.0':
-+    resolution: {integrity: sha512-7YP44XH0tV6+Mb54x2YGf84i7yi+31MBZlE8JwvozkxyTvXbSp10X7cI7YE49ChJ3shMJoBmCJF3+1QFBJctGA==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.0.0 <1.10.0'
-+
-+  '@opentelemetry/otlp-transformer@0.222.0':
-+    resolution: {integrity: sha512-/F3BZ89+CJQnZkMh2tCrtcdB+XT2Dxhj4FFE+WPQ//413hmFL0/RfEX6vgOIWGhiSzrkHWTK3+6SiT7K5/g/jQ==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': ^1.3.0
-+
-+  '@opentelemetry/resources@2.11.0':
-+    resolution: {integrity: sha512-Ie7+8q8MDF4FAEQCKVMTx3ReUvxiIAgIiiW3c9JdmP8+HMcDy20puT+AHjexnExgnbvBxjQ9fjkFDWrikJ2jQA==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.3.0 <1.10.0'
-+
-+  '@opentelemetry/sdk-logs@0.222.0':
-+    resolution: {integrity: sha512-+19YHODIjaUCArxleaJtuufFZVpz/xvvK+VllQqE+W8hHolxdoRwHfK/s667zezwh1hkx6FFF+oYzetYgqK+Bg==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.4.0 <1.10.0'
-+
-+  '@opentelemetry/sdk-metrics@2.11.0':
-+    resolution: {integrity: sha512-7GXXcObyHyDUUSG+L+kJoquty01bzm7ivE7+SSgXXJcHuPzGviptxwARmI2c+bnnxjexGQbJnyNlN8HxBP/Y7A==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.9.0 <1.10.0'
-+
-+  '@opentelemetry/sdk-trace@2.11.0':
-+    resolution: {integrity: sha512-fFnTqGm8/G73GQVnxYi7LXa1ZVYEUvgL6XI1LpvV0bPC7WQ/ZGgKxCSl8FnlZBKto9JHHEFTO6s6CUpvvtwFrA==}
-+    engines: {node: ^18.19.0 || >=20.6.0}
-+    peerDependencies:
-+      '@opentelemetry/api': '>=1.3.0 <1.10.0'
-+
-+  '@opentelemetry/semantic-conventions@1.44.0':
-+    resolution: {integrity: sha512-E3JkOlMB
-```
-
-**File**: `genkit-tools/telemetry-server/package.json` (modified, +5/-0)
-```diff
-@@ -40,6 +40,11 @@
-     "zod": "catalog:"
+-### Extended thinking
++### Thinking
+ 
+-Claude 4.5 models can expose their internal reasoning. Enable it per-request
+-with the Anthropic thinking config and read the reasoning from the response:
++Claude models can expose a summary of their reasoning. On current models
++(Claude Opus 4.6 and later, Claude Sonnet 4.6 and later, the Fable models and
++Claude Haiku 5.5), use adaptive thinking and steer how much the model thinks
++with `output_config.effort`: `low`, `medium`, `high`, `xhigh` or `max`. See
++[effort](https://platform.claude.com/docs/en/build-with-claude/effort) for
++per-model support.
+ 
+ ```typescript
+ const response = await ai.generate({
+   prompt: "Walk me through your reasoning for Fermat’s little theorem.",
+   config: {
+     thinking: {
+-      enabled: true,
+-      budgetTokens: 4096, // Must be >= 1024 and less than max_tokens
++      adaptive: true,
++      display: "summarized", // return a readable summary of the reasoning
+     },
++    output_config: { effort: "high" },
    },
-   "devDependencies": {
-+    "@opentelemetry/api": "1.9.1",
-+    "@opentelemetry/api-logs": "0.222.0",
-+    "@opentelemetry/otlp-transformer": "0.222.0",
-+    "@opentelemetry/sdk-logs": "0.222.0",
-+    "@opentelemetry/sdk-trace": "2.11.0",
-     "@types/cors": "catalog:",
-     "@types/express": "catalog:",
-     "@types/lockfile": "^1.0.4",
+ });
+ 
+ console.log(response.text); // Final assistant answer
+ console.log(response.reasoning); // Summarized thinking steps
+ ```
+ 
+-When thinking is enabled, request bodies sent through the plugin include the
+-`thinking` payload (`{ type: 'enabled', budget_tokens: … }`) that Anthropic's
+-API expects, and streamed responses deliver `reasoning` parts as they arrive so
+-you can render the chain-of-thought incrementally.
++Older models (Claude Haiku 4.5, Claude Opus 4.5) use a
++fixed thinking budget instead: `thinking: { enabled: true, budgetTokens: 2048 }`
++(at least 1024 and less than `max_tokens`). Claude Opus 4.7, Claude Sonnet 5
++and every later model reject `budgetTokens`.
++
++Streamed responses deliver `reasoning` parts as they arrive so you can render
++the reasoning incrementally.
+ 
+ ### Document Citations
+ 
+@@ -106,7 +134,7 @@ helper to create citable documents. For more details, see the
+ import { anthropic, anthropicDocument } from "@genkit-ai/anthropic";
+ 
+ const response = await ai.generate({
+-  model: anthropic.model("claude-sonnet-4-5"),
++  model: anthropic.model("claude-sonnet-5-5"),
+   messages: [
+     {
+       role: "user",
+@@ -161,7 +189,7 @@ messages, user messages, tools, and media.
+ import { anthropic, cacheControl } from "@genkit-ai/anthropic";
+ 
+ const response = await ai.generate({
+-  model: anthropic.model("claude-sonnet-4-5"),
++  model: anthropic.model("claude-sonnet-5-5"),
+   system: {
+     text: longSystemPrompt,
+     metadata: { ...cacheControl() }, // default: ephemeral
 ```
 
-**File**: `genkit-tools/telemetry-server/src/index.ts` (modified, +79/-11)
+**File**: `js/plugins/anthropic/src/index.ts` (modified, +3/-3)
 ```diff
-@@ -26,7 +26,11 @@ import express from 'express';
- import type * as http from 'http';
- import { BroadcastManager } from './broadcast-manager.js';
- import type { TraceStore } from './types.js';
--import { logDataFromOtlp, traceDataFromOtlp } from './utils/otlp.js';
-+import {
-+  decodeOtlpProtobuf,
-+  logDataFromOtlp,
-+  traceDataFromOtlp,
-+} from './utils/otlp.js';
- 
- export { LocalFileLogStore } from './file-log-store.js';
- export { LocalFileTraceStore } from './file-trace-store.js';
-@@ -159,7 +163,15 @@ export async function startTelemetryServer(params: {
-     })
-   );
- 
--  api.use(express.json({ limit: params.maxRequestBodySize ?? '100mb' }));
-+  const bodyLimit = params.maxRequestBodySize ?? '100mb';
-+  api.use(express.json({ limit: bodyLimit }));
-+  api.use(
-+    '/api/otlp',
-+    express.raw({
-+      type: 'application/x-protobuf',
-+      limit: bodyLimit,
-+    })
-+  );
- 
-   api.get('/api/__health', async (_, response) => {
-     response.status(200).send('OK');
-@@ -287,6 +299,7 @@ export async function startTelemetryServer(params: {
-     }
-   );
- 
-+  let warnedUnsupportedContentType = false;
-   api.post<{ parentTraceId?: string; parentSpanId?: string }>(
-     [
-       '/api/otlp',
-@@ -297,17 +310,72 @@ export async function startTelemetryServer(params: {
-     ],
-     async (request, response) => {
-       try {
-+        const contentTypeHeader = request.headers['content-type'];
-+        const mediaType =
-+          typeof contentTypeHeader === 'string'
-+            ? contentTypeHeader.split(';')[0].trim().toLowerCase()
-+            : '';
-+        const isProtobuf = mediaType === 'application/x-protobuf';
-+        const isJson = mediaType === 'application/json';
-+        if (!isJson && !isProtobuf) {
-+          if (!warnedUnsupportedContentType) {
-+            warnedUnsupportedContentType = true;
-+            logger.warn(
-+              `Unsupported OTLP Content-Type "${contentTypeHeader ?? 'none'}" on ${request.path}; expected application/json or application/x-protobuf.`
-+            );
-+          }
-+          response.status(415).json({
-+            code: 3, // INVALID_ARGUMENT
-+            message:
-+              'Unsupported Content-Type. Expected application/json or application/x-protobuf.',
-+          });
-+          return;
-+        }
-+
-+        const sendOtlpOk = () => {
-+          if (isProtobuf) {
-+            response
-+              .status(200)
-+              .type('application/x-protobuf')
-+              .send(Buffer.alloc(0));
-+          } else {
-+            response.status(200).json({});
-+          }
-+        };
-+
-+        const normalizedPath = request.path.replace(/\/+$/, '');
-+        if (normalizedPath === '/api/otlp/v1/metrics') {
-+          sendOtlpOk();
-+          return;
-+        }
-+
-         const { parentTraceId, parentSpanId } = request.params;
-+        const signal: 'traces' | 'logs' | undefined =
-+          normalizedPath === '/api/otlp/v1/logs'
-+            ? 'logs'
-+            : normalizedPath === '/api/otlp/v1/traces' || parentTraceId
-+              ? 'traces'
-+              : undefined;
-+        if (isProtobuf && !signal) {
-+          response.status(400).json({
-+            code: 3, // INVALID_ARGUMENT
-+            message:
-+              'Protobuf payloads require a signal-specific endpoint (/api/otlp/v1/traces or /api/otlp/v1/logs).',
-+          });
-+          return;
-+        }
-+
-+        const payload =
-+          Buffer.isBuffer(request.body) && signal
-+            ? decodeOtlpProtobuf(request.body, signal)
-+            : request.body;
- 
--        if (
--          !request.body?.resourceSpans?.length &&
--          !request.body?.resourceLogs?.length
--        ) {
-+        if (!payload?.resourceSpans?.length && !payload?.resourceLogs?.length) {
-           // Acknowledge and ignore empty payloads.
--          response.status(200).json({});
-+          sendOtlpOk();
-           return;
-         }
--        const traces = traceDataFromOtlp(request.body);
-+        const traces = traceDataFromOtlp(payload);
-         for (const trace of traces) {
-           if (parentTraceId) {
-             trace.traceId = parentTraceId;
-@@ -338,14 +406,14 @@ export async function startTelemetryServer(params: {
-         }
- 
-         // TODO: Add real time support and broadcast log events
--        if (request.body.resourceLogs?.length) {
--          const logs = logDataFromOtlp(request.body);
-+        if (payload.resourceLogs?.length) {
-+          const logs = logDataFromOtlp(payload);
-           if (logs.length > 0) {
-             await params.logStore.save(logs);
-           }
-         }
- 
--        response.status(200).json({});
-+        sendOtlpOk();
-       } catch (err) {
-         logger.error(`Error processing OTLP payload: ${err}`);
-         response.status(500).json({
-```
-
-**File**: `genkit-tools/telemetry-server/src/utils/otlp.ts` (modified, +636/-17)
-```diff
-@@ -32,6 +32,10 @@ interface OtlpValue {
-   arrayValue?: {
-     values: OtlpValue[];
-   };
-+  kvlistValue?: {
-+    values: OtlpAttribute[];
-+  };
-+  bytesValue?: string;
- }
- 
- interface OtlpAttribute {
-@@ -62,7 +66,7 @@ interface OtlpSpan {
- interface OtlpScopeSpan {
-   scope: {
-     name: string;
--    version: string;
-+    version?: string;
-   };
-   spans: OtlpSpan[];
- }
-@@ -77,6 +81,7 @@ interface OtlpResourceSpan {
- 
- interface OtlpLogRecord {
-   timeUnixNano: string;
-+  observedTimeUnixNano?: string;
-   severityNumber?: number;
-   severityText?: string;
-   body?: OtlpValue;
-@@ -88,7 +93,7 @@ interface OtlpLogRecord {
- interface OtlpScopeLog {
-   scope: {
-     name: string;
--    version: string;
-+    version?: string;
-   };
-   logRecords: OtlpLogRecord[];
- }
-@@ -106,23 +111,633 @@ export interface OtlpPayload {
-   resourceLogs?: OtlpResourceLog[];
- }
- 
-+const textDecoder = new TextDecoder('utf-8');
-+
-+class ProtoReader {
-+  private readonly view: DataView;
-+  private pos = 0;
-+  private readonly len: number;
-+
-+  constructor(private readonly buf: Uint8Array) {
-+    this.view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
-+    this.len = buf.byteLength;
-+  }
-+
-+  eof(): boolean {
-+    return this.pos >= this.len;
-+  }
-+
-+  readVarint(): bigint {
-+    let result = 0n;
-+    let shift = 0n;
-+    while (this.pos < this.len) {
-+      const byte = this.buf[this.pos++];
-+      result |= BigInt(byte & 0x7f) << shift;
-+      if ((byte & 0x80) === 0) {
-+        return result;
-+      }
-+      shift += 7n;
-+      if (shift >= 70n) {
-+        throw new Error('Invalid protobuf payload: varint too long');
-+      }
-+    }
-+    throw new Error('Invalid protobuf payload: unexpected EOF in varint');
-+  }
-+
-+  readTag(): { fieldNumber: number; wireType: number } {
-+    const tag = this.readVarint();
-+    const fieldNumber = Number(tag >> 3n);
-+    const wireType = Number(tag & 0x07n);
-+    if (fieldNumber <= 0) {
-+      throw new Error(
-+        `Invalid protobuf payload: invalid field number ${fieldNumber}`
-+      );
-+    }
-+    return { fieldNumber, wireType };
-+  }
-+
-+  readUint32(wireType: number): number {
-+    if (wireType === 0) {
-+      return Number(BigInt.asUintN(32, this.readVarint()));
-+    }
-+    if (wireType === 5) {
-+      if (this.pos + 4 > this.len) {
-+        throw new Error('Invalid protobuf payload: unexpected EOF in fixed32');
-+      }
-+      const val = this.view.getUint32(this.pos, true);
-+      this.pos += 4;
-+      return val;
-+    }
-+    throw new Error(
-+      `Invalid protobuf payload: expected uint32 wire type, got ${wireType}`
-+    );
-+  }
-+
-+  readInt64Number(wireType: number): number {
-+    if (wireType !== 0) {
-+      throw new Error(
-+        `Invalid protobuf payload: expected varint wire type, got ${wireType}`
-+      );
-+    }
-+    return Number(BigInt.asIntN(64, this.readVarint()));
-+  }
-+
-+  readFixed64String(wireType: number): string {
-+    if (wireType === 1) {
-+      if (this.pos + 8 > this.len) {
-+        throw new Error('Invalid protobuf payload: unexpected EOF in fixed64');
-+      }
-+      const val = this.view.getBigUint64(this.pos, true);
-+      this.pos += 8;
-+      return val.toString();
-+    }
-+    if (wireType === 0) {
-+      return BigInt.asUintN(64, this.readVarint()).toString();
-+    }
-+    throw new Error(
-+      `Invalid protobuf payload: expected fixed64 wire type, got ${wireType}`
-+    );
-+  }
-+
-+  readDouble(wireType: number): number {
-+    if (wireType !== 1) {
-+      throw new Error(
-+        `Invalid protobuf payload: expected 64-bit wire type for double, got ${wireType}`
-+      );
-+    }
-+    if (this.pos + 8 > this.len) {
-+      throw new Error('Invalid protobuf payload: unexpected EOF in double');
-+    }
-+    const val = this.view.getFloat64(this.pos, true);
-+    this.pos += 8;
-+    return val;
-+  }
-+
-+  readBytes(wireType: number): Uint8Array {
-+    if (wireType !== 2) {
-+      throw new Error(
-+        `Invalid protobuf payload: expected length-delimited wire type, got ${wireType}`
-+      );
-+    }
-+    const length = Number(this.readVarint());
-+    if (length < 0 || this.pos + length > this.len) {
-+      throw new Error('Invalid protobuf payload: length out of bounds');
-+    }
-+    const slice = this.buf.subarray(this.pos, this.pos + length);
-+    this.pos += length;
-+    return slice;
-+  }
-+
-+  readString(wireType: number): string {
-+    return textDecoder.decode(this.readBytes(wireType));
-+  }
-+
-+  skipField(wireType: number, fieldNumber?: number): void {
-+    switch (wireType) {
-+      case 0:
-+        this.readVarint();
-+        break;
-+      case 1:
-+        if (this.pos + 8 > this.len) {
-+          throw new Error(
-+            'Invalid protobuf payload: unexpected EOF in 64-bit field'
-+          );
-+        }
-+        this.pos += 8;
-+        break;
-+      case 2:
-+        this.readBytes(2);
-+        break;
-+      case 3:
-+        while (!this.eof()) {
-+          const { fieldNumber: innerField, wireType: innerWire } =
-+            this.rea
-```
-
-**File**: `genkit-tools/telemetry-server/tests/file-store.test.ts` (modified, +423/-1)
-```diff
-@@ -15,11 +15,29 @@
+@@ -104,7 +104,7 @@ function validateApiKey(options?: PluginOptions): void {
+  * });
+  *
+  * // Access models via the plugin's model() method:
+- * const model = anthropic.model('claude-sonnet-4');
++ * const model = anthropic.model('claude-sonnet-5-5');
+  * ```
   */
+ function anthropicPlugin(options?: PluginOptions): GenkitPluginV2 {
+@@ -168,7 +168,7 @@ export type AnthropicPlugin = {
  
- import type { TraceData, TraceQueryFilter } from '@genkit-ai/tools-common';
-+import { logger } from '@genkit-ai/tools-common/utils';
-+import { SpanKind, SpanStatusCode, context, trace } from '@opentelemetry/api';
-+import { SeverityNumber } from '@opentelemetry/api-logs';
-+import {
-+  ProtobufLogsSerializer,
-+  ProtobufTraceSerializer,
-+} from '@opentelemetry/otlp-transformer';
-+import {
-+  InMemoryLogRecordExporter,
-+  LoggerProvider,
-+  SimpleLogRecordProcessor,
-+} from '@opentelemetry/sdk-logs';
-+import {
-+  InMemorySpanExporter,
-+  SimpleSpanProcessor,
-+  TracerProvider,
-+} from '@opentelemetry/sdk-trace';
- import fs from 'fs';
- import getPort from 'get-port';
-+import net from 'net';
- import os from 'os';
- import path from 'path';
--import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- import { Index } from '../src/file-trace-store.js';
- import {
-   LocalFileLogStore,
-@@ -1314,6 +1332,410 @@ describe('otlp-endpoint', () => {
-     });
-     expect(res.status).toBe(500);
+ /**
+  * Anthropic AI plugin for Genkit.
+- * Includes Claude models (3, 3.5, and 4 series).
++ * Includes the current Claude models.
+  */
+ export const anthropic = anthropicPlugin as AnthropicPlugin;
+ (anthropic as any).model = (
+@@ -189,7 +189,7 @@ export const anthropic = anthropicPlugin as AnthropicPlugin;
+  * import { anthropic, anthropicDocument } from '@genkit-ai/anthropic';
+  *
+  * const { text } = await ai.generate({
+- *   model: anthropic.model('claude-sonnet-4-5'),
++ *   model: anthropic.model('claude-sonnet-5-5'),
+  *   messages: [{
+  *     role: 'user',
+  *     content: [
+```
+
+**File**: `js/plugins/anthropic/src/models.ts` (modified, +11/-8)
+```diff
+@@ -61,8 +61,8 @@ function parseRetryAfterMs(value: string): number | undefined {
+ type ConfigSchemaType = AnthropicConfigSchemaType;
+ 
+ /**
+- * Generic Claude model info for unknown/unsupported models.
+- * Used when a model name is not in KNOWN_CLAUDE_MODELS.
++ * Model info for model names that are not in KNOWN_MODELS. Output is text
++ * only, so Genkit puts any output schema into the prompt as instructions.
+  */
+ export const GENERIC_MODEL_INFO: ModelInfo = {
+   supports: {
+@@ -75,7 +75,8 @@ export const GENERIC_MODEL_INFO: ModelInfo = {
+ };
+ 
+ /**
+- * Advanced Claude model info for models that support JSON output.
++ * Model info for the models in KNOWN_MODELS: text and image input, tool use,
++ * system prompts, multi-turn, and native structured (JSON) output.
+  */
+ export const ADVANCED_MODEL_INFO: ModelInfo = {
+   supports: {
+@@ -104,18 +105,20 @@ function commonRef(
+ }
+ 
+ const KNOWN_MODELS = {
++  'claude-fable-5-2': commonRef('claude-fable-5-2', ADVANCED_MODEL_INFO),
++  'claude-fable-5-1': commonRef('claude-fable-5-1', ADVANCED_MODEL_INFO),
+   'claude-fable-5': commonRef('claude-fable-5', ADVANCED_MODEL_INFO),
++  'claude-opus-5-5': commonRef('claude-opus-5-5', ADVANCED_MODEL_INFO),
++  'claude-opus-5': commonRef('claude-opus-5', ADVANCED_MODEL_INFO),
+   'claude-opus-4-8': commonRef('claude-opus-4-8', ADVANCED_MODEL_INFO),
+   'claude-opus-4-7': commonRef('claude-opus-4-7', ADVANCED_MODEL_INFO),
+   'claude-opus-4-6': commonRef('claude-opus-4-6', ADVANCED_MODEL_INFO),
+   'claude-opus-4-5': commonRef('claude-opus-4-5', ADVANCED_MODEL_INFO),
+-  'claude-haiku-4-5': commonRef('claude-haiku-4-5', ADVANCED_MODEL_INFO),
++  'claude-sonnet-5-5': commonRef('claude-sonnet-5-5', ADVANCED_MODEL_INFO),
+   'claude-sonnet-5': commonRef('claude-sonnet-5', ADVANCED_MODEL_INFO),
+   'claude-sonnet-4-6': commonRef('claude-sonnet-4-6', ADVANCED_MODEL_INFO),
+-  'claude-sonnet-4-5': commonRef('claude-sonnet-4-5', ADVANCED_MODEL_INFO),
+-  'claude-opus-4-1': commonRef('claude-opus-4-1', ADVANCED_MODEL_INFO),
+-  'claude-sonnet-4': commonRef('claude-sonnet-4'),
+-  'claude-opus-4': commonRef('claude-opus-4'),
++  'claude-haiku-5-5': commonRef('claude-haiku-5-5', ADVANCED_MODEL_INFO),
++  'claude-haiku-4-5': commonRef('claude-haiku-4-5', ADVANCED_MODEL_INFO),
+ } as const;
+ export type KnownClaudeModels = keyof typeof KNOWN_MODELS;
+ export type ClaudeModelName = `claude-${string}`;
+```
+
+**File**: `js/plugins/anthropic/src/types.ts` (modified, +1/-1)
+```diff
+@@ -175,7 +175,7 @@ export const AnthropicConfigSchema = GenerationCommonConfigSchema.extend({
+   ),
+   output_config: z
+     .object({
+-      effort: z.enum(['low', 'medium', 'high', 'xhigh']).optional(),
++      effort: z.enum(['low', 'medium', 'high', 'xhigh', 'max']).optional(),
+       task_budget: z
+         .object({
+           type: z.literal('tokens').default('tokens'),
+```
+
+**File**: `js/plugins/anthropic/src/utils.ts` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ import type { CacheControlEphemeral } from '@anthropic-ai/sdk/resources/messages
+  * import { anthropic, cacheControl } from '@genkit-ai/anthropic';
+  *
+  * const response = await ai.generate({
+- *   model: anthropic.model('claude-sonnet-4-5'),
++ *   model: anthropic.model('claude-sonnet-5-5'),
+  *   system: {
+  *     text: longSystemPrompt,
+  *     metadata: { ...cacheControl() }  // default ephemeral
+```
+
+**File**: `js/plugins/anthropic/tests/effort_param_test.ts` (modified, +35/-0)
+```diff
+@@ -171,6 +171,41 @@ describe('Effort Parameter Tests', () => {
+     );
    });
-+
-+  it('saves protobuf traces on /api/otlp/v1/traces', async () => {
-+    const traceIdHex = '0102030405060708090a0b0c0d0e0f10';
-+    const spanIdHex = '1112131415161718';
-+    const startTimeBuf = Buffer.alloc(8);
-+    startTimeBuf.writeBigUInt64LE(1760827335359000000n, 0);
-+    const endTimeBuf = Buffer.alloc(8);
-+    endTimeBuf.writeBigUInt64LE(1760827336695000000n, 0);
-+
-+    const spanBuf = Buffer.concat([
-+      Buffer.from([0x0a, 0x10]),
-+      Buffer.from(traceIdHex, 'hex'),
-+      Buffer.from([0x12, 0x08]),
-+      Buffer.from(spanIdHex, 'hex'),
-+      Buffer.from([0x2a, 0x05]),
-+      Buffer.from('span1'),
-+      Buffer.from([0x30, 0x01]),
-+      Buffer.from([0x39]),
-+      startTimeBuf,
-+      Buffer.from([0x41]),
-+      endTimeBuf,
-+    ]);
-+    const scopeBuf = Buffer.concat([
-+      Buffer.from([0x0a, 0x0a]),
-+      Buffer.from('test-scope'),
-+    ]);
-+    const scopeSpansBuf = Buffer.concat([
-+      Buffer.from([0x0a, scopeBuf.length]),
-+      scopeBuf,
-+      Buffer.from([0x12, spanBuf.length]),
-+      spanBuf,
-+    ]);
-+    const resourceSpansBuf = Buffer.concat([
-+      Buffer.from([0x12, scopeSpansBuf.length]),
-+      scopeSpansBuf,
-+    ]);
-+    const reqBuf = Buffer.concat([
-+      Buffer.from([0x0a, resourceSpansBuf.length]),
-+      resourceSpansBuf,
-+    ]);
-+
-+    const res = await fetch(`${url}/api/otlp/v1/traces`, {
-+      method: 'POST',
-+      headers: { 'Content-Type': 'application/x-protobuf' },
-+      body: reqBuf,
+ 
++  test('should pass output_config.effort with max value', async () => {
++    const mockClient = createMockAnthropicClient({
++      messageResponse: createMockAnthropicMessage({
++        text: 'Response with max effort',
++      }),
 +    });
-+    expect(res.status).toBe(200);
-+    expect(res.headers.get('content-type') ?? '').toMatch(
-+      /^application\/x-protobuf\b/
-+    );
-+    expect((await res.arrayBuffer()).byteLength).toBe(0);
 +
-+    const getResp = await fetch(`${url}/api/traces/${traceIdHex}`);
-+    expect(getResp.status).toBe(200);
-+    const trace = await getResp.json();
-+    expect(trace.traceId).toBe(traceIdHex);
-+    expect(trace.spans[spanIdHex].spanId).toBe(spanIdHex);
-+    expect(trace.spans[spanIdHex].displayName).toBe('span1');
-+    expect(trace.spans[spanIdHex].startTime).toBe(1760827335359);
-+    expect(trace.spans[spanIdHex].endTime).toBe(1760827336695);
++    const plugin = createPlugin({
++      apiVersion: 'beta',
++      mockClient,
++    });
++
++    const ai = createGenkitInstance(plugin);
++
++    await ai.generate({
++      model: 'anthropic/claude-opus-5-5',
++      prompt: 'Generate the most thorough response',
++      config: {
++        output_config: {
++          effort: 'max',
++        },
++      },
++    });
++
++    verifyApiCalled(mockClient, 'beta');
++    const apiRequest = getApiRequest(mockClient, 'beta');
++
++    assert.ok(apiRequest.output_config, 'Request should have output_config');
++    assert.strictEqual(
++      apiRequest.output_config.effort,
++      'max',
++      'effort should be set to max'
++    );
 +  });
 +
-+  it('saves protobuf logs on /api/otlp/v1/logs', async () => {
-+    const traceIdHex = '0102030405060708090a0b0c0d0e0f10';
-+    const spanIdHex = '1112131415161718';
-+    const timeBuf = Buffer.alloc(8);
-+    timeBuf.writeBigUInt64LE(1760827335359000000n, 0);
-+    const bodyValueBuf = Buffer.concat([
-+      Buffer.from([0x0a, 0x09]),
-+      Buffer.from('hello log'),
-+    ]);
-+
-+    const logRecordBuf = Buffer.concat([
-+      Buffer.from([0x09]),
-+      timeBuf,
-+      Buffer.from([0x10, 0x09]), // severity_number = 9
-+      Buffer.from([0x1a, 0x04]),
-+      Buffer.from('INFO'),
-+      Buffer.from([0x2a, bodyValueBuf.length]),
-+      bodyValueBuf,
-+      Buffer.from([0x4a, 0x10]),
-+      Buffer.from(traceIdHex, 'hex'),
-+      Buffer.from([0x52, 0x08]),
-+      Buffer.from(spanIdHex, 'hex'),
-+    ]);
-+    const scopeBuf = Buffer.concat([
-+      Buffer.from([0x0a, 0x0a]),
-+      Buffer.from('test-scope'),
-+    ]);
-+    const scopeLogsBuf = Buffer.concat([
-+      Buffer.from([0x0a, scopeBuf.length]),
-+      scopeBuf,
-+      Buffer.from([0x12, logRecordBuf.length]),
-+      logRecordBuf,
-+    ]);
-+    const resourceLogsBuf = Buffer.concat([
-+      Buffer.from([0x12, scopeLogsBuf.length]),
-+      scopeLogsBuf,
-+    ]);
-+    const reqBuf = Buffer.concat([
-+      Buffer.from([0x0a, resourceLogsBuf.length]),
-+      resourceLogsBuf,
-+    ]);
-+
-+    const res = await fetch(`${url}/api/otlp/v1/logs`, {
-+      method: 'POST',
-+      headers: { 'Content-Type': 'application/x-protobuf' },
-+      body: reqBuf,
-+    });
-+    expect(res.status).toBe(200);
-+    expect(res.headers.get('content-type') ?? '').toMatch(
-+      /^application\/x-protobuf\b/
+   test('should pass output_config.effort with medium value', async () => {
+     const mockClient = createMockAnthropicClient({
+       messageResponse: createMockAnthropicMessage({
+```
+
+**File**: `js/plugins/anthropic/tests/index_test.ts` (modified, +40/-7)
+```diff
+@@ -19,7 +19,7 @@ import { genkit, type ActionMetadata } from 'genkit';
+ import type { ModelInfo } from 'genkit/model';
+ import { describe, it } from 'node:test';
+ import anthropic from '../src/index.js';
+-import { TEST_ONLY } from '../src/models.js';
++import { TEST_ONLY, type KnownClaudeModels } from '../src/models.js';
+ import { PluginOptions, __testClient } from '../src/types.js';
+ 
+ import { createMockAnthropicClient } from './mocks/anthropic-client.js';
+@@ -133,8 +133,8 @@ describe('Anthropic Plugin', () => {
+           id: 'claude-haiku-4-5-latest',
+           display_name: 'Claude 4.5 Haiku Latest',
+         },
+-        { id: 'claude-sonnet-4-5', display_name: 'Claude 4.5 Sonnet' },
+-        { id: 'claude-sonnet-4', display_name: 'Claude 4 Sonnet' },
++        { id: 'claude-sonnet-4-6', display_name: 'Claude Sonnet 4.6' },
++        { id: 'claude-opus-5-5', display_name: 'Claude Opus 5.5' },
+         { id: 'claude-new-5-20251212', display_name: 'Claude New 5' },
+         { id: 'claude-experimental-latest' },
+       ],
+@@ -159,12 +159,12 @@ describe('Anthropic Plugin', () => {
+       'Latest variant should be listed separately'
+     );
+     assert.ok(
+-      names.includes('anthropic/claude-sonnet-4-5'),
+-      'Unknown Claude 4.5 Sonnet should be listed with full model ID'
++      names.includes('anthropic/claude-sonnet-4-6'),
++      'Known Claude Sonnet 4.6 model should be listed with full model ID'
+     );
+     assert.ok(
+-      names.includes('anthropic/claude-sonnet-4'),
+-      'Known Claude Sonnet 4 model should be listed with full model ID'
++      names.includes('anthropic/claude-opus-5-5'),
++      'Known Claude Opus 5.5 model should be listed with full model ID'
+     );
+     assert.ok(
+       names.includes('anthropic/claude-new-5-20251212'),
+@@ -186,6 +186,13 @@ describe('Anthropic Plugin', () => {
+       (model) => model.name === 'anthropic/claude-new-5-20251212'
+     );
+     assert.ok(newModelMetadata, 'New model metadata should exist');
++    const newModelInfo = getModelInfo(newModelMetadata);
++    assert.deepStrictEqual(
++      newModelInfo?.supports?.output,
++      ['text'],
++      'Unknown models should fall back to text-only output'
 +    );
-+    expect((await res.arrayBuffer()).byteLength).toBe(0);
++    assert.strictEqual(newModelInfo?.supports?.constrained, undefined);
+ 
+     const experimentalMetadata = models.find(
+       (model) => model.name === 'anthropic/claude-experimental-latest'
+@@ -234,6 +241,32 @@ describe('Anthropic Plugin', () => {
+   });
+ });
+ 
++describe('Known model list', () => {
++  const CURRENT_MODELS: KnownClaudeModels[] = [
++    'claude-fable-5-2',
++    'claude-fable-5-1',
++    'claude-fable-5',
++    'claude-opus-5-5',
++    'claude-opus-5',
++    'claude-opus-4-8',
++    'claude-opus-4-7',
++    'claude-opus-4-6',
++    'claude-opus-4-5',
++    'claude-sonnet-5-5',
++    'claude-sonnet-5',
++    'claude-sonnet-4-6',
++    'claude-haiku-5-5',
++    'claude-haiku-4-5',
++  ];
 +
-+    const getResp = aw
++  it('lists exactly the current models', () => {
++    assert.deepStrictEqual(
++      Object.keys(KNOWN_MODELS).sort(),
++      [...CURRENT_MODELS].sort()
++    );
++  });
++});
++
+ describe('Per-request API key support', () => {
+   it('should not throw when initialized with apiKey: false', () => {
+     const originalApiKey = process.env.ANTHROPIC_API_KEY;
+```
+
+**File**: `js/plugins/anthropic/tests/live_test.ts` (modified, +8/-8)
+```diff
+@@ -76,7 +76,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: 'anthropic/claude-sonnet-4-5',
++      model: 'anthropic/claude-sonnet-5-5',
+       prompt:
+         'Generate a fictional person with name "Alice", age 30, and city "New York". Return only the JSON.',
+       output: { schema, format: 'json', constrained: true },
+@@ -111,7 +111,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -170,7 +170,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     const streamedChunks: string[] = [];
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -218,7 +218,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -270,7 +270,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -363,7 +363,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -478,7 +478,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     await assert.rejects(
+       async () => {
+         await ai.generate({
+-          model: anthropic.model('claude-sonnet-4-5'),
++          model: anthropic.model('claude-sonnet-5-5'),
+           messages: [
+             {
+               role: 'user',
+@@ -537,7 +537,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7324** (2026-11-24): docs(genkit-tools): clarify when to use it.each vs separate tests (@MichaelDoyle)
-- **PR #7319** (2026-11-23): fix(genkit-tools/telemetry-server): accept OTLP protobuf on /api/otlp/v1/* (@genkit-bot)
-- **PR #7317** (2026-11-24): docs(js/genkit): add end-to-end JSDoc usage examples to genkit entrypoint (@genkit-bot)
-- **PR #7304** (2026-11-23): chore(genkit-tools): enforce consistent type imports (@MichaelDoyle)
-- **PR #7303** (2026-11-23): chore(genkit-tools): enable switch, throw, equality, and return-await ESLint rules (@MichaelDoyle)
-- **PR #7302** (2026-11-23): chore(genkit-tools): use pnpm catalog for shared dependencies (@MichaelDoyle)
+- **PR #7355** (2026-11-25): fix(go/plugins/compat_oai): filter unlabelled SSE streams and bare CR line endings (@adesinah)
+- **PR #7346** (closed): feat(js)!: make packages ESM-only and build with TypeScript 7 tsc (drop tsup) (@pavelgj)
+- **PR #7335** (closed): build(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 in /go (@dependabot[bot])
+- **PR #7334** (closed): build(deps): bump go.opentelemetry.io/otel/sdk from 1.36.0 to 1.47.0 in /go/samples/mcp-git-pr-explainer (@dependabot[bot])
+- **PR #7333** (closed): build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 in /go (@dependabot[bot])
+- **PR #7330** (2026-11-24): fix(tests): await streaming assertions in flow_server_test (@MichaelDoyle)
 
 ---
 
@@ -3063,45 +3134,59 @@ Co-authored-by: Pavel Jbanov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. genkit-tools): tag first_visit runtime and skip CI analytics
+## X. go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability
 
 **RULE**:
-When implementing operations in `.github/workflows/build-cli-binaries.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go/ai/exp/agent.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa34700a`: genkit-tools): tag first_visit runtime and skip CI analytics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4537d179`: go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-cli-binaries.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/ai/exp/agent.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
-          ./genkit-${{ matrix.target }} --non-interactive ui:start > ui_output.log 2>&1 &
-            ./genkit-${{ matrix.target }} --non-interactive ui:stop || true
-          # Start UI in background in non-interactive mode so CI doesn't opt into analytics
-            -ArgumentList "--non-interactive", "ui:start" `
-            & ".\genkit-${{ matrix.target }}.exe" --non-interactive ui:stop
+		// A deleted session is not a failure: the work simply stops being
+		// persisted.
+		if !errors.Is(err, ErrSessionDeleted) {
+			logger.Error(ctx, "agent failed to save snapshot",
+				"parentId", parentID,
+				"error", err)
+		}
+// DeleteSession permanently removes every persisted snapshot of a session. A
+// detached run still in flight is aborted first, so the work stops rather than
+// continuing against data that is going away. It reports whether anything was
+// removed and is idempotent: a session with no persisted data is not an error.
+//
+// Resuming by session ID afterwards starts a fresh session, and resuming by
+// snapshot ID fails with [ErrSnapshotNotFound]. A run that is still going when
+// the session is deleted stops persisting instead of failing; it cannot bring
+// the session back. Traces, logs, and durable streams live outside the store
+// and are not touched.
+//
+// This is an in-process API only: no companion action or route is registered
+// for it, so put it behind your own authorization.
+//
+// It returns FAILED_PRECONDITION on a client-managed agent or when the store
+// does not implement [SessionDeleter], and INVALID_ARGUMENT when sessionID is
+// empty.
+func (a *A
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-          # Start UI in background, piping any prompts to accept them
-          (echo "" | ./genkit-${{ matrix.target }} ui:start 2>&1 | tee ui_output.log) &
-            ./genkit-${{ matrix.target }} ui:stop || true
-          # Create empty input file first for redirecting stdin
-          "" | Out-File -FilePath ".\empty.txt"
-          
-          # Start UI in background, redirecting input to handle prompts
-            -ArgumentList "ui:start" `
-            -RedirectStandardInput ".\empty.txt" `
-            & ".\genkit-${{ matrix.target }}.exe" ui:stop
+		logger.Error(ctx, "agent failed to save snapshot",
+			"parentId", parentID,
+			"error", err)
+			if existing != nil && existing.Status.Terminal() {
+	if err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa34700a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4537d179` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13394,3 +13394,6 @@
 | `CYCLE-20261126-V1C4` | `2026-11-26T13:17:49.060Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`05546c80...`) |
 | `CYCLE-20261126-V7V2` | `2026-11-26T13:17:57.518Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md` | Yes (`09cdafbb...`) |
 | `CYCLE-20261126-VF3U` | `2026-11-26T13:18:06.906Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10685` | Yes (`e9694e1c...`) |
+| `CYCLE-20261126-663S` | `2026-11-26T13:26:28.456Z` | `zhouxiaoka/autoclip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10686` | Yes (`40497fb0...`) |
+| `CYCLE-20261126-68LI` | `2026-11-26T13:26:31.686Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | Yes (`198c9689...`) |
+| `CYCLE-20261126-6JQJ` | `2026-11-26T13:26:46.123Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10687` | Yes (`f5297890...`) |

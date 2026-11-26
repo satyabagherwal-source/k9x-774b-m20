@@ -4,22 +4,22 @@
 {
   "source_repository": "genkit-ai/genkit",
   "source_url": "https://github.com/genkit-ai/genkit",
-  "source_version": "5f4d54a0",
+  "source_version": "4537d179",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T12:09:15.657Z",
+  "timestamp": "2026-11-26T13:26:46.369Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-genkit-ai-genkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `5f4d54a0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T12:09:15.657Z`  
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `4537d179`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T13:26:46.369Z`  
 > **Learning ID**: `learn-github-genkit-ai-genkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `genkit-ai/genkit` (Commit: `5f4d54a0`)
+- **Target Repository**: `genkit-ai/genkit` (Commit: `4537d179`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:09:14.252Z  
+> **Harvest Timestamp**: 2026-11-26T13:26:45.010Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6622 stars
+- **Stars / Engagement**: 6624 stars
 
 ---
 
@@ -1950,1046 +1950,1157 @@ async function recordInternal(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9f68fdb` (2026-11-24)
-**Commit Message**: fix(js): fix package exports and prevent tarball file leaks (#7175)
+### Incident Patch 1: `4537d179` (2026-11-25)
+**Commit Message**: feat(go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability (#6858)
 
-**File**: `js/ai/package.json` (modified, +127/-46)
+**File**: `go/ai/exp/agent.go` (modified, +60/-5)
 ```diff
-@@ -52,93 +52,168 @@
-   "types": "lib/index.d.ts",
-   "exports": {
-     ".": {
--      "types": "./lib/index.d.ts",
--      "require": "./lib/index.js",
--      "import": "./lib/index.mjs",
-+      "import": {
-+        "types": "./lib/index.d.mts",
-+        "default": "./lib/index.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/index.d.ts",
-+        "default": "./lib/index.js"
-+      },
-       "default": "./lib/index.js"
-     },
-     "./retriever": {
--      "types": "./lib/retriever.d.ts",
--      "require": "./lib/retriever.js",
--      "import": "./lib/retriever.mjs",
-+      "import": {
-+        "types": "./lib/retriever.d.mts",
-+        "default": "./lib/retriever.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/retriever.d.ts",
-+        "default": "./lib/retriever.js"
-+      },
-       "default": "./lib/retriever.js"
-     },
-     "./embedder": {
--      "types": "./lib/embedder.d.ts",
--      "require": "./lib/embedder.js",
--      "import": "./lib/embedder.mjs",
-+      "import": {
-+        "types": "./lib/embedder.d.mts",
-+        "default": "./lib/embedder.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/embedder.d.ts",
-+        "default": "./lib/embedder.js"
-+      },
-       "default": "./lib/embedder.js"
-     },
-     "./evaluator": {
--      "types": "./lib/evaluator.d.ts",
--      "require": "./lib/evaluator.js",
--      "import": "./lib/evaluator.mjs",
-+      "import": {
-+        "types": "./lib/evaluator.d.mts",
-+        "default": "./lib/evaluator.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/evaluator.d.ts",
-+        "default": "./lib/evaluator.js"
-+      },
-       "default": "./lib/evaluator.js"
-     },
-     "./model": {
--      "types": "./lib/model.d.ts",
--      "require": "./lib/model.js",
--      "import": "./lib/model.mjs",
-+      "import": {
-+        "types": "./lib/model.d.mts",
-+        "default": "./lib/model.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/model.d.ts",
-+        "default": "./lib/model.js"
-+      },
-       "default": "./lib/model.js"
-     },
-     "./model/middleware": {
--      "types": "./lib/model/middleware.d.ts",
--      "require": "./lib/model/middleware.js",
--      "import": "./lib/model/middleware.mjs",
-+      "import": {
-+        "types": "./lib/model/middleware.d.mts",
-+        "default": "./lib/model/middleware.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/model/middleware.d.ts",
-+        "default": "./lib/model/middleware.js"
-+      },
-       "default": "./lib/model/middleware.js"
-     },
-     "./extract": {
--      "types": "./lib/extract.d.ts",
--      "require": "./lib/extract.js",
--      "import": "./lib/extract.mjs",
-+      "import": {
-+        "types": "./lib/extract.d.mts",
-+        "default": "./lib/extract.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/extract.d.ts",
-+        "default": "./lib/extract.js"
-+      },
-       "default": "./lib/extract.js"
-     },
-     "./tool": {
--      "types": "./lib/tool.d.ts",
--      "require": "./lib/tool.js",
--      "import": "./lib/tool.mjs",
-+      "import": {
-+        "types": "./lib/tool.d.mts",
-+        "default": "./lib/tool.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/tool.d.ts",
-+        "default": "./lib/tool.js"
-+      },
-       "default": "./lib/tool.js"
-     },
-     "./testing": {
--      "types": "./lib/testing/index.d.ts",
--      "require": "./lib/testing/index.js",
--      "import": "./lib/testing/index.mjs",
-+      "import": {
-+        "types": "./lib/testing/index.d.mts",
-+        "default": "./lib/testing/index.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/testing/index.d.ts",
-+        "default": "./lib/testing/index.js"
-+      },
-       "default": "./lib/testing/index.js"
-     },
-     "./reranker": {
--      "types": "./lib/reranker.d.ts",
--      "require": "./lib/reranker.js",
--      "import": "./lib/reranker.mjs",
-+      "import": {
-+        "types": "./lib/reranker.d.mts",
-+        "default": "./lib/reranker.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/reranker.d.ts",
-+        "default": "./lib/reranker.js"
-+      },
-       "default": "./lib/reranker.js"
-     },
-     "./session": {
--      "types": "./lib/session.d.ts",
--      "require": "./lib/session.js",
--      "import": "./lib/session.mjs",
-+      "import": {
-+        "types": "./lib/session.d.mts",
-+        "default": "./lib/session.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/session.d.ts",
-+        "default": "./lib/session.js"
-+      },
-       "default": "./lib/session.js"
-     },
-     "./session-stores": {
--      "types": "./lib/session-stores.d.ts",
--      "require": "./lib/session-stores.js",
--      "import": "./lib/session-stores.mjs",
-+      "import": {
-+        "types": "./lib/session-stores.d.mts",
-+        "default": "./lib/session-stores.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/session-stores.d.ts",
-+        "default": "./lib/session-stores.js"
-+      },
-       "default": "./lib/session
-```
-
-**File**: `js/core/package.json` (modified, +63/-22)
-```diff
-@@ -64,45 +64,80 @@
-   "types": "lib/index.d.ts",
-   "exports": {
-     ".": {
--      "types": "./lib/index.d.ts",
--      "require": "./lib/index.js",
--      "import": "./lib/index.mjs",
-+      "import": {
-+        "types": "./lib/index.d.mts",
-+        "default": "./lib/index.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/index.d.ts",
-+        "default": "./lib/index.js"
-+      },
-       "default": "./lib/index.js"
-     },
-     "./async": {
--      "types": "./lib/async.ts",
--      "require": "./lib/async.js",
--      "import": "./lib/async.mjs",
-+      "import": {
-+        "types": "./lib/async.d.mts",
-+        "default": "./lib/async.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/async.d.ts",
-+        "default": "./lib/async.js"
-+      },
-       "default": "./lib/async.js"
-     },
-     "./registry": {
--      "types": "./lib/registry.d.ts",
--      "require": "./lib/registry.js",
--      "import": "./lib/registry.mjs",
-+      "import": {
-+        "types": "./lib/registry.d.mts",
-+        "default": "./lib/registry.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/registry.d.ts",
-+        "default": "./lib/registry.js"
-+      },
-       "default": "./lib/registry.js"
-     },
-     "./tracing": {
--      "types": "./lib/tracing.d.ts",
--      "require": "./lib/tracing.js",
--      "import": "./lib/tracing.mjs",
-+      "import": {
-+        "types": "./lib/tracing.d.mts",
-+        "default": "./lib/tracing.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/tracing.d.ts",
-+        "default": "./lib/tracing.js"
-+      },
-       "default": "./lib/tracing.js"
-     },
-     "./logging": {
--      "types": "./lib/logging.d.ts",
--      "require": "./lib/logging.js",
--      "import": "./lib/logging.mjs",
-+      "import": {
-+        "types": "./lib/logging.d.mts",
-+        "default": "./lib/logging.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/logging.d.ts",
-+        "default": "./lib/logging.js"
-+      },
-       "default": "./lib/logging.js"
-     },
-     "./schema": {
--      "types": "./lib/schema.d.ts",
--      "require": "./lib/schema.js",
--      "import": "./lib/schema.mjs",
-+      "import": {
-+        "types": "./lib/schema.d.mts",
-+        "default": "./lib/schema.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/schema.d.ts",
-+        "default": "./lib/schema.js"
-+      },
-       "default": "./lib/schema.js"
-     },
-     "./node": {
--      "types": "./lib/node.d.ts",
--      "require": "./lib/node.js",
--      "import": "./lib/node.mjs",
-+      "import": {
-+        "types": "./lib/node.d.mts",
-+        "default": "./lib/node.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/node.d.ts",
-+        "default": "./lib/node.js"
-+      },
-       "default": "./lib/node.js"
-     }
-   },
-@@ -131,7 +166,13 @@
-       ],
-       "node": [
-         "lib/node"
-+      ],
-+      "async": [
-+        "lib/async"
-       ]
-     }
--  }
-+  },
-+  "files": [
-+    "lib"
-+  ]
+@@ -707,9 +707,13 @@ func (s *SessionRunner[State]) snapshotTurnEnd(ctx context.Context, finishReason
+ 			}, nil
+ 		})
+ 	if err != nil {
+-		logger.Error(ctx, "agent failed to save snapshot",
+-			"parentId", parentID,
+-			"error", err)
++		// A deleted session is not a failure: the work simply stops being
++		// persisted.
++		if !errors.Is(err, ErrSessionDeleted) {
++			logger.Error(ctx, "agent failed to save snapshot",
++				"parentId", parentID,
++				"error", err)
++		}
+ 		return ""
+ 	}
+ 
+@@ -967,6 +971,51 @@ func (a *Agent[State]) Abort(ctx context.Context, snapshotID string) (SnapshotSt
+ 	return abortPendingSnapshot(ctx, a.store, snapshotID)
  }
-```
-
-**File**: `js/genkit/package.json` (modified, +157/-62)
-```diff
-@@ -9,7 +9,7 @@
-   ],
-   "version": "1.44.0",
-   "type": "commonjs",
--  "main": "./lib/cjs/index.js",
-+  "main": "./lib/index.js",
-   "scripts": {
-     "check": "tsc -p tsconfig.test.json",
-     "compile": "tsup-node",
-@@ -43,125 +43,217 @@
-     "typescript": "^5.9.3"
-   },
-   "files": [
--    "genkit-ui",
--    "lib",
--    "src",
--    "*"
-+    "lib"
-   ],
-   "types": "lib/index.d.ts",
-   "exports": {
-     ".": {
--      "types": "./lib/index.d.ts",
--      "require": "./lib/index.js",
--      "import": "./lib/index.mjs",
-+      "import": {
-+        "types": "./lib/index.d.mts",
-+        "default": "./lib/index.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/index.d.ts",
-+        "default": "./lib/index.js"
-+      },
-       "default": "./lib/index.js"
-     },
-     "./registry": {
--      "types": "./lib/registry.d.ts",
--      "require": "./lib/registry.js",
--      "import": "./lib/registry.mjs",
-+      "import": {
-+        "types": "./lib/registry.d.mts",
-+        "default": "./lib/registry.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/registry.d.ts",
-+        "default": "./lib/registry.js"
-+      },
-       "default": "./lib/registry.js"
-     },
-     "./beta": {
--      "types": "./lib/beta.d.ts",
--      "require": "./lib/beta.js",
--      "import": "./lib/beta.mjs",
-+      "import": {
-+        "types": "./lib/beta.d.mts",
-+        "default": "./lib/beta.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/beta.d.ts",
-+        "default": "./lib/beta.js"
-+      },
-       "default": "./lib/beta.js"
-     },
-     "./tracing": {
--      "types": "./lib/tracing.d.ts",
--      "require": "./lib/tracing.js",
--      "import": "./lib/tracing.mjs",
-+      "import": {
-+        "types": "./lib/tracing.d.mts",
-+        "default": "./lib/tracing.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/tracing.d.ts",
-+        "default": "./lib/tracing.js"
-+      },
-       "default": "./lib/tracing.js"
-     },
-     "./logging": {
--      "types": "./lib/logging.d.ts",
--      "require": "./lib/logging.js",
--      "import": "./lib/logging.mjs",
-+      "import": {
-+        "types": "./lib/logging.d.mts",
-+        "default": "./lib/logging.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/logging.d.ts",
-+        "default": "./lib/logging.js"
-+      },
-       "default": "./lib/logging.js"
-     },
-     "./schema": {
--      "types": "./lib/schema.d.ts",
--      "require": "./lib/schema.js",
--      "import": "./lib/schema.mjs",
-+      "import": {
-+        "types": "./lib/schema.d.mts",
-+        "default": "./lib/schema.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/schema.d.ts",
-+        "default": "./lib/schema.js"
-+      },
-       "default": "./lib/schema.js"
-     },
-     "./formats": {
--      "types": "./lib/formats.d.ts",
--      "require": "./lib/formats.js",
--      "import": "./lib/formats.mjs",
-+      "import": {
-+        "types": "./lib/formats.d.mts",
-+        "default": "./lib/formats.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/formats.d.ts",
-+        "default": "./lib/formats.js"
-+      },
-       "default": "./lib/formats.js"
-     },
-     "./retriever": {
--      "types": "./lib/retriever.d.ts",
--      "require": "./lib/retriever.js",
--      "import": "./lib/retriever.mjs",
-+      "import": {
-+        "types": "./lib/retriever.d.mts",
-+        "default": "./lib/retriever.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/retriever.d.ts",
-+        "default": "./lib/retriever.js"
-+      },
-       "default": "./lib/retriever.js"
-     },
-     "./reranker": {
--      "types": "./lib/reranker.d.ts",
--      "require": "./lib/reranker.js",
--      "import": "./lib/reranker.mjs",
-+      "import": {
-+        "types": "./lib/reranker.d.mts",
-+        "default": "./lib/reranker.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/reranker.d.ts",
-+        "default": "./lib/reranker.js"
-+      },
-       "default": "./lib/reranker.js"
-     },
-     "./embedder": {
--      "types": "./lib/embedder.d.ts",
--      "require": "./lib/embedder.js",
--      "import": "./lib/embedder.mjs",
-+      "import": {
-+        "types": "./lib/embedder.d.mts",
-+        "default": "./lib/embedder.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/embedder.d.ts",
-+        "default": "./lib/embedder.js"
-+      },
-       "default": "./lib/embedder.js"
-     },
-     "./evaluator": {
--      "types": "./lib/evaluator.d.ts",
--      "require": "./lib/evaluator.js",
--      "import": "./lib/evaluator.mjs",
-+      "import": {
-+        "types": "./lib/evaluator.d.mts",
-+        "default": "./lib/evaluator.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/evaluator.d.ts",
-+        "default": "./lib/evaluator.js"
-+      },
-       "default": "./lib/evaluator.js"
-     },
-     "./model": {
--      "types": "./lib/model.d.ts",
--      "require": "./lib/model.js",
--      "import": "./lib/model.mjs",
-+      "import": {
-+        "types": "./lib/model.d.mts",
-+        "default": "./lib/model
-```
-
-**File**: `js/plugins/a2ui/package.json` (modified, +1/-3)
-```diff
-@@ -60,9 +60,7 @@
-     }
-   },
-   "files": [
--    "lib",
--    "README.md",
--    "LICENSE"
-+    "lib"
-   ],
-   "scripts": {
-     "check": "tsc",
-```
-
-**File**: `js/plugins/anthropic/package.json` (modified, +8/-3)
-```diff
-@@ -43,9 +43,14 @@
-   "types": "./lib/index.d.ts",
-   "exports": {
-     ".": {
--      "types": "./lib/index.d.ts",
--      "require": "./lib/index.js",
--      "import": "./lib/index.mjs",
-+      "import": {
-+        "types": "./lib/index.d.mts",
-+        "default": "./lib/index.mjs"
-+      },
-+      "require": {
-+        "types": "./lib/index.d.ts",
-+        "default": "./lib/index.js"
-+      },
-       "default": "./lib/index.js"
-     }
-   },
-```
-
-**File**: `js/plugins/checks/package.json` (modified, +4/-1)
-```diff
-@@ -57,5 +57,8 @@
-       },
-       "default": "./lib/index.js"
-     }
--  }
-+  },
-+  "files": [
-+    "lib"
-+  ]
- }
-```
-
-**File**: `js/plugins/chroma/package.json` (modified, +4/-1)
-```diff
-@@ -56,5 +56,8 @@
-       },
-       "default": "./lib/index.js"
-     }
--  }
-+  },
-+  "files": [
-+    "lib"
-+  ]
- }
-```
-
-**File**: `js/plugins/cloud-sql-pg/package.json` (modified, +4/-1)
-```diff
-@@ -66,5 +66,8 @@
-       },
-       "default": "./lib/index.js"
-     }
--  }
-+  },
-+  "files": [
-+    "lib"
-+  ]
- }
-```
-
----
-
-### Incident Patch 2: `4e126d42` (2026-11-24)
-**Commit Message**: fix(genkit-tools/cli): migrate console.* usage and enable no-console ESLint rule (#7328)
-
-**File**: `genkit-tools/cli/src/commands/flow-run.ts` (modified, +2/-1)
-```diff
-@@ -24,6 +24,7 @@ import {
-   runWithManager,
- } from '../utils/manager-utils.js';
- import { parseJson } from '../utils/option-parsers.js';
-+import { writeStdout } from '../utils/output.js';
  
- interface FlowRunOptions {
-   /** --experimental-auth. */
-@@ -100,7 +101,7 @@ export const flowRun = new Command('flow:run')
-           context: options.context,
-         },
-         options.stream
--          ? (chunk) => console.log(JSON.stringify(chunk, undefined, '  '))
-+          ? (chunk) => writeStdout(JSON.stringify(chunk, undefined, '  '))
-           : undefined,
-         (tid) => {
-           traceId = tid;
-```
-
-**File**: `genkit-tools/cli/src/commands/log-list.ts` (modified, +12/-11)
-```diff
-@@ -24,6 +24,7 @@ import {
- import { Command, Option } from 'commander';
- import { runWithManager } from '../utils/manager-utils.js';
- import { parsePositiveInt } from '../utils/option-parsers.js';
-+import { writeStdout } from '../utils/output.js';
- 
- export interface LogListOptions {
-   limit: number;
-@@ -108,10 +109,10 @@ export const logList = new Command('log:list')
- 
-         if (options.format === 'jsonl') {
-           logs.forEach((log) => {
--            console.log(JSON.stringify(log));
-+            writeStdout(JSON.stringify(log));
-           });
-         } else {
--          console.log(
-+          writeStdout(
-             `Found ${logs.length} log${logs.length === 1 ? '' : 's'}:\n`
-           );
-           logs.forEach((log) => {
-@@ -132,17 +133,17 @@ export const logList = new Command('log:list')
-             const message = formatBody(log.body);
-             const attributes = formatAttributes(log.attributes);
- 
--            console.log(`ID:       ${id}`);
-+            writeStdout(`ID:       ${id}`);
-             if (!options.traceId && log.traceId)
--              console.log(`Trace ID: ${log.traceId}`);
-+              writeStdout(`Trace ID: ${log.traceId}`);
-             if (!options.spanId && log.spanId)
--              console.log(`Span ID:  ${log.spanId}`);
--            console.log(`Severity: ${severity}`);
--            console.log(`Time:     ${time}`);
--            if (message) console.log(`Message:  ${message}`);
--            if (attributes) console.log(`Attrs:    ${attributes}`);
-+              writeStdout(`Span ID:  ${log.spanId}`);
-+            writeStdout(`Severity: ${severity}`);
-+            writeStdout(`Time:     ${time}`);
-+            if (message) writeStdout(`Message:  ${message}`);
-+            if (attributes) writeStdout(`Attrs:    ${attributes}`);
- 
--            console.log('---');
-+            writeStdout('---');
-           });
-         }
- 
-@@ -152,7 +153,7 @@ export const logList = new Command('log:list')
-               `To get the next page, use: --continuation-token ${response.continuationToken}`
-             );
-           } else {
--            console.log(
-+            writeStdout(
-               `\nTo get the next page, use: --continuation-token ${response.continuationToken}`
-             );
-           }
-```
-
-**File**: `genkit-tools/cli/src/commands/trace-get.ts` (modified, +4/-3)
-```diff
-@@ -23,6 +23,7 @@ import {
- import { yellow } from 'colorette';
- import { Command, Option } from 'commander';
- import { runWithManager } from '../utils/manager-utils.js';
-+import { writeStdout } from '../utils/output.js';
- import { cleanTraceJson, formatTraceTree } from '../utils/trace-formatter.js';
- 
- /**
-@@ -63,14 +64,14 @@ export const traceGet = new Command('trace:get')
-         const processedTrace = cleanTraceJson(response, keepBase64);
- 
-         if (options.format === 'json') {
--          console.log(JSON.stringify(processedTrace, undefined, 2));
-+          writeStdout(JSON.stringify(processedTrace, undefined, 2));
-         } else {
--          console.log(
-+          logger.info(
-             yellow(
-               'Hint: pass `--format json` flag to get trace data in JSON format\n'
-             )
-           );
--          console.log(formatTraceTree(processedTrace));
-+          writeStdout(formatTraceTree(processedTrace));
-         }
-       } catch (e) {
-         logger.error(`Error retrieving trace: ${e}`);
-```
-
-**File**: `genkit-tools/cli/src/commands/trace-list.ts` (modified, +13/-12)
-```diff
-@@ -24,6 +24,7 @@ import {
- import { Command } from 'commander';
- import { runWithManager } from '../utils/manager-utils.js';
- import { parsePositiveInt, parseTraceStatus } from '../utils/option-parsers.js';
-+import { writeStdout } from '../utils/output.js';
- 
- function formatTruncated(val: any, maxLen = 100): string {
-   if (val === undefined) return '';
-@@ -96,7 +97,7 @@ export const traceList = new Command('trace:list')
-           return;
-         }
- 
--        console.log(
-+        writeStdout(
-           `Found ${response.traces.length} trace${response.traces.length === 1 ? '' : 's'}:\n`
-         );
- 
-@@ -132,25 +133,25 @@ export const traceList = new Command('trace:list')
-             outputStr = formatTruncated(attrs['genkit:output']);
-           }
- 
--          console.log(`ID:       ${trace.traceId}`);
--          console.log(`Type:     ${type}`);
--          console.log(`Name:     ${trace.displayName || 'unknown'}`);
--          console.log(`Status:   ${status}`);
--          console.log(`Time:     ${time}`);
--          console.log(`Duration: ${duration}`);
--          if (inputStr) console.log(`Input:    ${inputStr}`);
--          if (outputStr) console.log(`Output:   ${outputStr}`);
-+          writeStdout(`ID:       ${trace.traceId}`);
-+          writeStdout(`Type:     ${type}`);
-+          writeStdout(`Name:     ${trace.displayName || 'unknown'}`);
-+          writeStdout(`Status:   ${status}`);
-+          writeStdout(`Time:     ${time}`);
-+          writeStdout(`Duration: ${duration}`);
-+          if (inputStr) writeStdout(`Input:    ${inputStr}`);
-+          if (outputStr) writeStdout(`Output:   ${outputStr}`);
- 
--          console.log('---');
-+          writeStdout('---');
-         });
- 
-         if (response.continuationToken) {
--          console.log(
-+          writeStdout(
-             `\nTo get the next page, use: --continuation-token ${response.continuationToken}`
-           );
-         }
- 
--        console.log(
-+        writeStdout(
-           `\nTip: Use "genkit trace:get <traceId>" to view full trace details.`
-         );
-       } catch (e) {
-```
-
-**File**: `genkit-tools/cli/src/utils/output.ts` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+/**
-+ * Copyright 2026 Google LLC
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
++// DeleteSession permanently removes every persisted snapshot of a session. A
++// detached run still in flight is aborted first, so the work stops rather than
++// continuing against data that is going away. It reports whether anything was
++// removed and is idempotent: a session with no persisted data is not an error.
++//
++// Resuming by session ID afterwards starts a fresh session, and resuming by
++// snapshot ID fails with [ErrSnapshotNotFound]. A run that is still going when
++// the session is deleted stops persisting instead of failing; it cannot bring
++// the session back. Traces, logs, and durable streams live outside the store
++// and are not touched.
++//
++// This is an in-process API only: no companion action or route is registered
++// for it, so put it behind your own authorization.
++//
++// It returns FAILED_PRECONDITION on a client-managed agent or when the store
++// does not implement [SessionDeleter], and INVALID_ARGUMENT when sessionID is
++// empty.
++func (a *Agent[State]) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
++	if a.store == nil {
++		return false, status.Errorf(ErrSessionStoreNotConfigured, "agent %q: DeleteSession requires a session store", a.Name())
++	}
++	if sessionID == "" {
++		return false, status.Errorf(status.ErrInvalidArgument, "agent %q: DeleteSession: sessionID is required", a.Name())
++	}
++	deleter, ok := a.store.(SessionDeleter)
++	if !ok {
++		return false, status.Errorf(status.ErrFailedPrecondition, "agent %q: the session store does not support DeleteSession", a.Name())
++	}
++	// Stop an in-flight detached run first. Best effort: a failure here is
++	// logged and the delete goes on, because the store also tells the run's
++	// subscription its row is gone and rejects writers that continue the
++	// deleted chain.
++	latest, err := getLatestSnapshotMetadata(ctx, a.store, sessionID)
++	if err != nil {
++		logger.Warn(ctx, "agent: could not look up the session's latest snapshot before deleting it",
++			"sessionId", sessionID, "error", err)
++	} else if latest != nil && latest.Status == SnapshotStatusPending {
++		if _, err := abortPendingSnapshot(ctx, a.store, latest.SnapshotID); err != nil {
++			logger.Warn(ctx, "agent: could not abort the session's pending snapshot before deleting it",
++				"snapshotId", latest.SnapshotID, "error", err)
++		}
++	}
++	return deleter.DeleteSession(ctx, sessionID)
++}
 +
-+/**
-+ * Writes a line of primary command output to `stdout` (appending a trailing newline).
-+ *
-+ * Use this for intentional CLI payload output (such as JSON, JSONL, tables, or
-+ * formatted command results) rather than diagnostic messages, which belong on
-+ * `logger.*`.
-+ */
-+export function writeStdout(text = ''): void {
-+  process.stdout.write(`${text}\n`);
+ // --- api.BidiAction implementation ---
+ 
+ // Agent is itself an [api.BidiAction]: transports that accept an
+@@ -2214,7 +2263,12 @@ func (rt *agentRuntime[State]) finalizePendingSnapshot(
+ 
+ 	_, err := rt.cfg.store.SaveSnapshot(ctx, pending.SnapshotID,
+ 		func(existing *SessionSnapshot[State]) (*SessionSnapshot[State], error) {
+-			if existing != nil && existing.Status.Terminal() {
++			if existing == nil {
++				// The pending row is gone: its session was deleted while the
++				// work ran. Writing would bring the session back.
++				return nil, nil
++			}
++			if existing.Status.Terminal() {
+ 				// Already settled (a retried finalize, or a writer that
+ 				// landed a terminal status directly): the row describes
+ 				// itself, so leave it.
+@@ -2235,7 +2289,8 @@ func (rt *agentRuntime[State]) finalizePendingSnapshot(
+ 				UpdatedAt:    now,
+ 			}, nil
+ 		})
+-	if err != nil {
++	// A deleted session is not a failure: the run simply stops persisting.
++	if err != nil && !errors.Is(err, ErrSessionDeleted) {
+ 		logger.Error(ctx, "agent: failed to finalize pending snapshot",
+ 			"snapshotId", pending.SnapshotID, "error", err)
+ 	}
+```
+
+**File**: `go/ai/exp/agent_test.go` (modified, +166/-0)
+```diff
+@@ -9431,3 +9431,169 @@ func TestAgent_Usage(t *testing.T) {
+ 		}
+ 	})
+ }
++
++// defineQuickDeleteAgent registers a trivial agent that completes each turn at once.
++func defineQuickDeleteAgent(t *testing.T, name string, store SessionStore[testState]) *Agent[testState] {
++	t.Helper()
++	opts := []AgentOption[testState]{}
++	if store != nil {
++		opts = append(opts, WithSessionStore(store))
++	}
++	return DefineCustomAgent(newTestRegistry(t), name,
++		func(ctx context.Context, resp Responder, sess *SessionRunner[testState]) (*AgentResult, error) {
++			return nil, sess.Run(ctx, func(ctx context.Context, input *AgentInput) (*TurnResult, error) {
++				sess.AddMessages(ai.NewModelTextMessage("done"))
++				return nil, nil
++			})
++		},
++		opts...,
++	)
++}
++
++func TestAgent_DeleteSession_CompletedSession(t *testing.T) {
++	ctx := context.Background()
++	store := newTestInMemStore[testState]()
++	agent := defineQuickDeleteAgent(t, "deleteCompleted", store)
++
++	out, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("hi")})
++	if err != nil {
++		t.Fatalf("Run: %v", err)
++	}
++	if out.SessionID == "" || out.SnapshotID == "" {
++		t.Fatalf("output has no session/snapshot ID: %+v", out)
++	}
++
++	removed, err := agent.DeleteSession(ctx, out.SessionID)
++	if err != nil || !removed {
++		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
++	}
++	if got, err := store.GetSnapshot(ctx, out.SnapshotID); err != nil || got != nil {
++		t.Errorf("snapshot survived the delete: %v, %v", got, err)
++	}
++	// Idempotent.
++	if removed, err := agent.DeleteSession(ctx, out.SessionID); err != nil || removed {
++		t.Errorf("second DeleteSession = %v, %v; want false, nil", removed, err)
++	}
++	// Resuming by snapshot ID now fails; by session ID it starts fresh.
++	if _, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("again")}, WithSnapshotID[testState](out.SnapshotID)); err == nil {
++		t.Error("resume by snapshot ID after delete succeeded, want an error")
++	}
++	fresh, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("again")}, WithSessionID[testState](out.SessionID))
++	if err != nil {
++		t.Fatalf("resume by session ID: %v", err)
++	}
++	row, err := store.GetSnapshot(ctx, fresh.SnapshotID)
++	if err != nil || row == nil || row.ParentID != "" {
++		t.Errorf("resumed session row = %+v, %v; want a fresh root", row, err)
++	}
++}
++
++func TestAgent_DeleteSession_AbortsPendingRunAndDoesNotResurrect(t *testing.T) {
++	ctx := context.Background()
++	reg := newTestRegistry(t)
++	store := newTestInMemStore[testState]()
++	store.saved = make(chan string, 64)
++	agent, entered, release := defineGatedAgent(t, reg, "deletePending", store)
++
++	task, err := agent.RunDetached(ctx, &AgentInput{Message: ai.NewUserTextMessage("go")})
++	if err != nil {
++		t.Fatalf("RunDetached: %v", err)
++	}
++	select {
++	case <-entered:
++	case <-time.After(2 * time.Second):
++		t.Fatal("background work did not start")
++	}
++	pending, err := store.GetSnapshot(ctx, task.SnapshotID())
++	if err != nil || pending == nil || pending.Status != SnapshotStatusPending {
++		t.Fatalf("pending row = %+v, %v", pending, err)
++	}
++
++	if removed, err := agent.DeleteSession(ctx, pending.SessionID); err != nil || !removed {
++		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
++	}
++
++	// Let the worker finish whichever way it will. Its last write is the
++	// finalize of the pending row, so wait for that attempt rather than sleeping;
++	// nothing may be written back.
++	for len(store.saved) > 0 {
++		<-store.saved
++	}
++	close(release)
++	deadline := time.After(5 * time.Second)
++settled:
++	for {
++		select {
++		case id := <-store.saved:
++			if id == task.SnapshotID() {
++				break settled
++			}
++		case <-deadline:
++			t.Fatal("worker never finalized the deleted pending row")
++		}
++	}
++	if n := store.snapshotCount(); n != 0 {
++		t.Errorf("store holds %d rows after the delete, want 0 (session came back)", n)
++	}
++}
++
++func TestAgent_DeleteSession_Errors(t *testing.T) {
++	ctx := context.Background()
++
++	t.Run("client-managed agent", func(t *testing.T) {
++		agent := defineQuickDeleteAgent(t, "deleteNoStore", nil)
++		if _, err := agent.DeleteSession(ctx, "s"); !errors.Is(err, ErrSessionStoreNotConfigured) {
++			t.Errorf("error = %v, want ErrSessionStoreNotConfigured", err)
++		}
++	})
++
++	t.Run("store without the capability", func(t *testing.T) {
++		// Embedding the interface hides DeleteSession.
++		agent := defineQuickDeleteAgent(t, "deleteUnsupported", struct{ SessionStore[testState] }{newTestInMemStore[testState]()})
++		if _, err := agent.DeleteSession(ctx, "s"); !errors.Is(err, status.ErrFailedPrecondition) {
++			t.Errorf("error = %v, want FAILED_PRECONDITION", err)
++		}
++	})
++
++	t.Run("empty session ID", func(t *testing.T) {
++		agent := defineQuickDeleteAgent(t, "deleteEmptyID", newTestInMemStore[testState]())
++		if _, err := agent.DeleteSession(ctx, ""); !errors.Is(err, status.ErrInvalidArgument) {
++			t.Errorf("error = %v, want INVALID_ARGUMENT", err)
++		}
++	})
++}
++
+
+```
+
+**File**: `go/ai/exp/errors.go` (modified, +6/-0)
+```diff
+@@ -34,4 +34,10 @@ var (
+ 	// Every store implementation rejects this: a snapshot with no session cannot
+ 	// be resolved back to a conversation.
+ 	ErrSessionIDRequired = status.ErrInvalidArgument.Subtype("session ID is required")
++
++	// ErrSessionDeleted means a snapshot was written that continues the chain
++	// of a session removed with [Agent.DeleteSession]. Stores reject it so a
++	// late writer cannot bring the session back; the runtime treats it as "stop
++	// persisting" rather than a failure.
++	ErrSessionDeleted = status.ErrFailedPrecondition.Subtype("session deleted")
+ )
+```
+
+**File**: `go/ai/exp/handle.go` (modified, +47/-0)
+```diff
+@@ -104,6 +104,15 @@ type AgentTransport interface {
+ 	Run(ctx context.Context, input *AgentInput, init *AgentInit[json.RawMessage], cb func(context.Context, json.RawMessage) error) (*AgentOutput[json.RawMessage], error)
+ }
+ 
++// SessionDeleteTransport is the optional part of an [AgentTransport] that can
++// delete a session. Only an in-process transport offers it: deletion has no
++// companion action, so nothing serves it over the wire. A handle whose
++// transport lacks it refuses [AgentHandle.DeleteSession] with
++// FAILED_PRECONDITION.
++type SessionDeleteTransport interface {
++	DeleteSession(ctx context.Context, sessionID string) (bool, error)
++}
++
+ // SnapshotTransport is the optional part of an [AgentTransport] that reaches
+ // the agent's snapshot lifecycle. A handle whose transport lacks it refuses
+ // snapshot operations with FAILED_PRECONDITION. A method may also refuse with
+@@ -215,6 +224,8 @@ func (a *Agent[State]) Handle() *AgentHandle {
+ 			getSnapshot: a.getSnapshot,
+ 			wait:        a.wait,
+ 			abort:       a.abort,
++
++			deleteSession: a.DeleteSession,
+ 		},
+ 	}
+ }
+@@ -533,6 +544,29 @@ func (h *AgentHandle) Abort(ctx context.Context, snapshotID string) (SnapshotSta
+ 	return resp.Status, nil
+ }
+ 
++// DeleteSession permanently removes every persisted snapshot of a session, as
++// [Agent.DeleteSession] does, and reports whether anything was removed. It
++// works only on a handle for an agent in this process ([Agent.Handle]): the
++// operation has no companion action on purpose, so a handle from [LookupAgent]
++// or a remote one returns FAILED_PRECONDITION.
++//
++// It also returns FAILED_PRECONDITION when the agent has no session store or
++// its store cannot delete, and INVALID_ARGUMENT when sessionID is empty.
++func (h *AgentHandle) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
++	if h == nil {
++		return false, nilHandleError("DeleteSession")
++	}
++	if sessionID == "" {
++		return false, status.Errorf(status.ErrInvalidArgument, "agent %q: DeleteSession: sessionID is required", h.name)
++	}
++	dt, ok := h.transport.(SessionDeleteTransport)
++	if !ok {
++		return false, status.Errorf(status.ErrFailedPrecondition,
++			"agent %q: its transport cannot delete a session", h.name)
++	}
++	return dt.DeleteSession(ctx, sessionID)
++}
++
+ // snapshotTransport returns the handle's transport as a [SnapshotTransport],
+ // or the refusal for one that reaches no snapshot lifecycle. verb names what
+ // the caller wanted to do with a snapshot.
+@@ -566,6 +600,10 @@ type actionTransport struct {
+ 	getSnapshot api.Action
+ 	wait        api.Action
+ 	abort       api.Action
++	// deleteSession is set only for an in-process agent ([Agent.Handle]): no
++	// companion action exists for deletion on purpose, so a handle that
++	// reaches the agent through actions cannot delete a session.
++	deleteSession func(ctx context.Context, sessionID string) (bool, error)
+ }
+ 
+ func (t *actionTransport) Run(ctx context.Context, input *AgentInput, init *AgentInit[json.RawMessage], cb func(context.Context, json.RawMessage) error) (*AgentOutput[json.RawMessage], error) {
+@@ -632,6 +670,15 @@ func (t *actionTransport) Abort(ctx context.Context, req *AgentAbortRequest) (*A
+ 	return callJSON[AgentAbortResponse](ctx, t.name, t.abort, "abort", req)
+ }
+ 
++// DeleteSession implements [SessionDeleteTransport].
++func (t *actionTransport) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
++	if t.deleteSession == nil {
++		return false, status.Errorf(status.ErrFailedPrecondition,
++			"agent %q: deleting a session is not available through this handle: it is an in-process API with no companion action", t.name)
++	}
++	return t.deleteSession(ctx, sessionID)
++}
++
+ // callJSON dispatches req to act, one of the agent's companion actions, and
+ // decodes the result into Resp. what names the exchange in the marshal and
+ // unmarshal errors; a dispatch error is returned as is, so its status stays
+```
+
+**File**: `go/ai/exp/handle_test.go` (modified, +43/-0)
+```diff
+@@ -1009,3 +1009,46 @@ func TestAgentHandle_MetadataOnlyPrefersTheStoreCapability(t *testing.T) {
+ 			store.metadataReads, store.latestMetadataReads, store.fullReads, store.latestFullReads)
+ 	}
+ }
++
++func TestAgentHandle_DeleteSession(t *testing.T) {
++	ctx := context.Background()
++
++	t.Run("local handle deletes through the agent", func(t *testing.T) {
++		store := newTestInMemStore[testState]()
++		agent := defineQuickDeleteAgent(t, "handleDelete", store)
++		out, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("hi")})
++		if err != nil {
++			t.Fatalf("Run: %v", err)
++		}
++		removed, err := agent.Handle().DeleteSession(ctx, out.SessionID)
++		if err != nil || !removed {
++			t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
++		}
++		if n := store.snapshotCount(); n != 0 {
++			t.Errorf("store holds %d rows, want 0", n)
++		}
++	})
++
++	t.Run("registry handle has no route", func(t *testing.T) {
++		reg := newTestRegistry(t)
++		defineGatedAgent(t, reg, "handleDeleteRemote", newTestInMemStore[testState]())
++		_, err := LookupAgent(reg, "handleDeleteRemote").DeleteSession(ctx, "s")
++		if !errors.Is(err, status.ErrFailedPrecondition) {
++			t.Errorf("error = %v, want FAILED_PRECONDITION", err)
++		}
++	})
++
++	t.Run("empty session ID", func(t *testing.T) {
++		agent := defineQuickDeleteAgent(t, "handleDeleteEmpty", newTestInMemStore[testState]())
++		if _, err := agent.Handle().DeleteSession(ctx, ""); !errors.Is(err, status.ErrInvalidArgument) {
++			t.Errorf("error = %v, want INVALID_ARGUMENT", err)
++		}
++	})
++
++	t.Run("nil handle", func(t *testing.T) {
++		var h *AgentHandle
++		if _, err := h.DeleteSession(ctx, "s"); err == nil {
++			t.Error("nil handle returned no error")
++		}
++	})
 +}
 ```
 
-**File**: `genkit-tools/cli/tests/commands/flow-run.test.ts` (modified, +25/-0)
+**File**: `go/ai/exp/localstore/file.go` (modified, +100/-3)
 ```diff
-@@ -27,6 +27,7 @@ import {
- import { flowBatchRun } from '../../src/commands/flow-batch-run.js';
- import { flowRun } from '../../src/commands/flow-run.js';
- import { runWithManager } from '../../src/utils/manager-utils.js';
-+import * as output from '../../src/utils/output.js';
+@@ -94,6 +94,13 @@ type FileSessionStore[State any] struct {
+ 	// snapshot files to detect cross-process status changes; <= 0 disables it.
+ 	poll time.Duration
+ 	subs map[string]*snapshotSubs
++	// deleted holds the snapshots removed by DeleteSession, keyed by prefix and
++	// snapshot ID, so a late writer continuing a deleted chain is rejected even
++	// after a fresh root snapshot reuses the session ID; see SaveSnapshot. It
++	// grows by one entry per deleted snapshot for the life of the store.
++	// In-process only: a writer in another process sharing the directory is not
++	// stopped.
++	deleted map[string]struct{}
+ 	// pollCancel stops the background poller. It is non-nil exactly while the
+ 	// poller runs: while at least one subscription is active and poll > 0.
+ 	pollCancel context.CancelFunc
+@@ -166,6 +173,7 @@ func NewFileSessionStore[State any](dir string, opts ...FileStoreOption) (*FileS
+ 		prefixFn: resolved.prefixFn,
+ 		poll:     poll,
+ 		subs:     make(map[string]*snapshotSubs),
++		deleted:  make(map[string]struct{}),
+ 	}, nil
+ }
  
- vi.mock('@genkit-ai/tools-common/utils');
- vi.mock('../../src/utils/manager-utils.js');
-@@ -41,6 +42,8 @@ describe('flow:run and flow:batchRun validation', () => {
+@@ -255,6 +263,14 @@ func (s *FileSessionStore[State]) SaveSnapshot(
+ 	if next.Status == "" {
+ 		next.Status = exp.SnapshotStatusCompleted
+ 	}
++	// A late writer continuing a deleted chain (or rewriting one of its rows)
++	// must not bring the session back, even if a fresh root has since reused the
++	// session ID.
++	_, rowGone := s.deleted[tombstoneKey(prefix, id)]
++	_, parentGone := s.deleted[tombstoneKey(prefix, next.ParentID)]
++	if rowGone || (next.ParentID != "" && parentGone) {
++		return nil, status.Errorf(exp.ErrSessionDeleted, "session %q was deleted", next.SessionID)
++	}
  
-   afterEach(() => {
-     process.exitCode = undefined;
-+    flowRun.setOptionValue('stream', false);
-+    vi.restoreAllMocks();
-   });
+ 	if err := s.writeAt(prefix, next); err != nil {
+ 		return nil, err
+@@ -275,6 +291,61 @@ func (s *FileSessionStore[State]) SaveSnapshot(
+ 	return next, nil
+ }
  
-   it('rejects invalid --context JSON in flow:run before starting manager', async () => {
-@@ -115,4 +118,26 @@ describe('flow:run and flow:batchRun validation', () => {
-     );
-     expect(runWithManager).not.toHaveBeenCalled();
-   });
++// tombstoneKey identifies a deleted snapshot within its tenant prefix.
++func tombstoneKey(prefix, snapshotID string) string {
++	return prefix + "\x00" + snapshotID
++}
 +
-+  it('writes streamed chunks via writeStdout when --stream is enabled', async () => {
-+    vi.spyOn(output, 'writeStdout').mockImplementation(() => {});
-+    vi.spyOn(logger, 'info').mockImplementation((() => {}) as any);
-+    vi.mocked(runWithManager).mockImplementation(async (_root, action) => {
-+      const mockManager = {
-+        runAction: vi.fn(
-+          (_req: unknown, onChunk?: (chunk: unknown) => void) => {
-+            onChunk?.({ step: 1 });
-+            return Promise.resolve({ result: 'done' });
-+          }
-+        ),
-+      };
-+      await action(mockManager as any);
-+    });
++// DeleteSession removes every snapshot file of the session, and its pointer,
++// under the call's prefix directory, per [exp.SessionDeleter]. Matching rows
++// are found by scanning the prefix directory, so the cost grows with the
++// number of rows in the prefix. Subscribers of a removed snapshot see
++// [exp.SnapshotStatusAborted] before their channel closes. Deletion across
++// processes sharing the directory is best effort: a row another process writes
++// after the scan is not removed.
++func (s *FileSessionStore[State]) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
++	if sessionID == "" {
++		return false, status.Errorf(exp.ErrSessionIDRequired, "DeleteSession requires a session ID")
++	}
++	if err := validateSessionID(sessionID); err != nil {
++		return false, err
++	}
++	prefix, err := s.derivePrefix(ctx)
++	if err != nil {
++		return false, err
++	}
 +
-+    await flowRun.parseAsync(['node', 'flow:run', 'myFlow', '--stream']);
++	s.mu.Lock()
++	defer s.mu.Unlock()
 +
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-+      JSON.stringify({ step: 1 }, undefined, '  ')
-+    );
-+  });
- });
++	names, err := s.snapshotFileNames(s.prefixDir(prefix))
++	if err != nil {
++		return false, err
++	}
++	removed := false
++	for _, name := range names {
++		path := filepath.Join(s.prefixDir(prefix), name)
++		var header snapshotHeader
++		if ok, err := readJSONAt(path, &header); err != nil || !ok || header.SessionID != sessionID {
++			// Unreadable, vanished, or another session's row: not ours to remove.
++			continue
++		}
++		if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
++			return removed, fmt.Errorf("FileSessionStore: remove %s: %w", path, err)
++		}
++		removed = true
++		snapshotID := strings.TrimSuffix(name, ".json")
++		s.deleted[tombstoneKey(prefix, snapshotID)] = struct{}{}
++		s.endSubsLocked(snapshotID, exp.SnapshotStatusAborted)
++	}
++	if err := os.Remove(s.pointerPathFor(prefix, sessionID)); err == nil {
++		removed = true
++	} else if !errors.Is(err, os.ErrNotExist) {
++		return removed, fmt.Errorf("FileSessionStore: remove pointer: %w", err)
++	}
++	return removed, nil
++}
++
+ // snapshotHeader is the subset of snapshot fields needed to pick a session's
+ // latest row during the scan. Decoding only these avoids materializing every
+ // row's full conversation state; only the winning row is fully decoded.
+@@ -746,6 +817,25 @@ func (s *FileSessionStore[State]) removeSub(snapshotID string, ch chan exp.Snaps
+ 	close(ch)
+ }
+ 
++// endSubsLocked delivers a final status to every subscriber of snapshotID and
++// closes their channels, dropping the snapshot's bookkeeping (and stopping the
++// poller once no subscriptions remain). Used when the row is gone. Caller must
++// hold s.mu.
++func (s *FileSessionStore[State]) endSubsLocked(snapshotID string, status exp.SnapshotStatus) {
++	sub := s.subs[snapshotID]
++	if sub == nil {
++		return
++	}
++	for _, ch := range sub.chans {
++		coalesceSend(ch, status)
++		close(ch)
++	}
++	delete(s.subs, snapshotID)
++	if len(s.subs) == 0 {
++		s.stopPollerLocked()
++	}
++}
++
+ // maybeNotifyLocked fans status out to snapshotID's subscribers, but only when
+ // it differs from the value they last saw. It is the shared dedup gate
 ```
 
-**File**: `genkit-tools/cli/tests/commands/log-list.test.ts` (modified, +20/-14)
+**File**: `go/ai/exp/localstore/file_test.go` (modified, +75/-0)
 ```diff
-@@ -26,6 +26,7 @@ import {
- } from 'vitest';
- import { logList } from '../../src/commands/log-list.js';
- import { runWithManager } from '../../src/utils/manager-utils.js';
-+import * as output from '../../src/utils/output.js';
- 
- vi.mock('@genkit-ai/tools-common/utils');
- vi.mock('../../src/utils/manager-utils.js');
-@@ -51,11 +52,12 @@ describe('log:list command', () => {
- 
-     vi.spyOn(logger, 'info').mockImplementation((() => {}) as any);
-     vi.spyOn(logger, 'error').mockImplementation((() => {}) as any);
--    vi.spyOn(console, 'log').mockImplementation(() => {});
-+    vi.spyOn(output, 'writeStdout').mockImplementation(() => {});
-   });
- 
-   afterEach(() => {
-     process.exitCode = undefined;
-+    vi.restoreAllMocks();
-   });
- 
-   it('should list logs with default limit', async () => {
-@@ -81,12 +83,14 @@ describe('log:list command', () => {
-       continuationToken: undefined,
-       filter: undefined,
-     });
--    expect(console.log).toHaveBeenCalledWith('Found 1 log:\n');
--    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('INFO'));
--    expect(console.log).toHaveBeenCalledWith(
-+    expect(output.writeStdout).toHaveBeenCalledWith('Found 1 log:\n');
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-+      expect.stringContaining('INFO')
-+    );
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-       expect.stringContaining('Hello World')
-     );
--    expect(console.log).toHaveBeenCalledWith(
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-       expect.stringContaining('Attrs:    genkit:name=test-log')
-     );
-   });
-@@ -122,7 +126,7 @@ describe('log:list command', () => {
-       continuationToken: 'some-token',
-       filter: undefined,
-     });
--    expect(console.log).toHaveBeenCalledWith(
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-       '\nTo get the next page, use: --continuation-token next-page-token'
-     );
-   });
-@@ -194,15 +198,17 @@ describe('log:list command', () => {
-       '',
-     ]);
- 
--    expect(console.log).toHaveBeenCalledWith('ID:       log-123');
--    expect(console.log).toHaveBeenCalledWith('Trace ID: trace-123');
--    expect(console.log).toHaveBeenCalledWith('Span ID:  span-123');
--    expect(console.log).toHaveBeenCalledWith('Severity: WARN');
--    expect(console.log).toHaveBeenCalledWith(
-+    expect(output.writeStdout).toHaveBeenCalledWith('ID:       log-123');
-+    expect(output.writeStdout).toHaveBeenCalledWith('Trace ID: trace-123');
-+    expect(output.writeStdout).toHaveBeenCalledWith('Span ID:  span-123');
-+    expect(output.writeStdout).toHaveBeenCalledWith('Severity: WARN');
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-       `Time:     ${new Date(1718302195000).toLocaleString()}`
-     );
--    expect(console.log).toHaveBeenCalledWith(`Message:  ${'A'.repeat(100)}...`);
--    expect(console.log).toHaveBeenCalledWith('Attrs:    key=value');
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-+      `Message:  ${'A'.repeat(100)}...`
-+    );
-+    expect(output.writeStdout).toHaveBeenCalledWith('Attrs:    key=value');
-   });
- 
-   it('should output logs in jsonl format', async () => {
-@@ -238,7 +244,7 @@ describe('log:list command', () => {
-       filter: undefined,
-     });
- 
--    expect(console.log).toHaveBeenCalledWith(
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-       JSON.stringify({ timestamp: 1718302195000, body: 'JSONL log' })
-     );
-   });
+@@ -771,3 +771,78 @@ func TestFileSessionStore_PathUnsafeSessionIDRejected(t *testing.T) {
+ 		})
+ 	}
+ }
++
++type deleteTenantKey struct{}
++
++func TestFileSessionStore_Delete_TenantPrefix(t *testing.T) {
++	// The same session ID under two tenants: deleting it for one must not touch
++	// the other.
++	store, err := NewFileSessionStore[testState](t.TempDir(), WithSnapshotPathPrefix(func(ctx context.Context) string {
++		tenant, _ := ctx.Value(deleteTenantKey{}).(string)
++		return tenant
++	}))
++	if err != nil {
++		t.Fatalf("NewFileSessionStore: %v", err)
++	}
++	alice := context.WithValue(context.Background(), deleteTenantKey{}, "alice")
++	bob := context.WithValue(context.Background(), deleteTenantKey{}, "bob")
++	for _, ctx := range []context.Context{alice, bob} {
++		now := time.Now()
++		if _, err := store.SaveSnapshot(ctx, "snap",
++			func(_ *exp.SessionSnapshot[testState]) (*exp.SessionSnapshot[testState], error) {
++				return &exp.SessionSnapshot[testState]{SessionID: "shared", CreatedAt: now, UpdatedAt: now}, nil
++			}); err != nil {
++			t.Fatalf("SaveSnapshot: %v", err)
++		}
++	}
++
++	if removed, err := store.DeleteSession(alice, "shared"); err != nil || !removed {
++		t.Fatalf("DeleteSession(alice) = %v, %v; want true, nil", removed, err)
++	}
++	if got, err := store.GetLatestSnapshot(alice, "shared"); err != nil || got != nil {
++		t.Errorf("alice still sees the session: %v, %v", got, err)
++	}
++	if got, err := store.GetLatestSnapshot(bob, "shared"); err != nil || got == nil {
++		t.Errorf("bob lost his session: %v, %v", got, err)
++	}
++}
++
++func TestFileSessionStore_Delete_SeenByAnotherStoreInstance(t *testing.T) {
++	// A delete made through one store instance (standing in for another
++	// process) ends a subscription held on a different instance: the poller
++	// sees the file vanish and reports the run as aborted.
++	dir := t.TempDir()
++	watcher, err := NewFileSessionStore[testState](dir, WithPollInterval(10*time.Millisecond))
++	if err != nil {
++		t.Fatalf("NewFileSessionStore: %v", err)
++	}
++	deleter, err := NewFileSessionStore[testState](dir)
++	if err != nil {
++		t.Fatalf("NewFileSessionStore: %v", err)
++	}
++	ctx := context.Background()
++	now := time.Now()
++	if _, err := watcher.SaveSnapshot(ctx, "p1",
++		func(_ *exp.SessionSnapshot[testState]) (*exp.SessionSnapshot[testState], error) {
++			return &exp.SessionSnapshot[testState]{SessionID: "sess", Status: exp.SnapshotStatusPending, CreatedAt: now, UpdatedAt: now}, nil
++		}); err != nil {
++		t.Fatalf("SaveSnapshot: %v", err)
++	}
++
++	subCtx, cancel := context.WithCancel(ctx)
++	defer cancel()
++	ch := watcher.OnSnapshotStatusChange(subCtx, "p1")
++	<-ch // pending
++
++	if removed, err := deleter.DeleteSession(ctx, "sess"); err != nil || !removed {
++		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
++	}
++	select {
++	case got := <-ch:
++		if got != exp.SnapshotStatusAborted {
++			t.Errorf("status = %q, want aborted", got)
++		}
++	case <-time.After(5 * time.Second):
++		t.Fatal("the other instance's subscription was not ended by the delete")
++	}
++}
 ```
 
-**File**: `genkit-tools/cli/tests/commands/trace-get.test.ts` (modified, +9/-5)
+**File**: `go/ai/exp/localstore/inmemory.go` (modified, +54/-1)
 ```diff
-@@ -35,6 +35,7 @@ import {
- } from 'vitest';
- import { traceGet } from '../../src/commands/trace-get.js';
- import { runWithManager } from '../../src/utils/manager-utils.js';
-+import * as output from '../../src/utils/output.js';
+@@ -47,21 +47,28 @@ var (
+ // is lost when the process exits; use [FileSessionStore] or a real backend
+ // when persistence is needed.
+ //
+-// It implements [exp.SessionStore] and [exp.SnapshotSubscriber].
++// It implements [exp.SessionStore], [exp.SnapshotSubscriber] and
++// [exp.SessionDeleter].
+ type InMemorySessionStore[State any] struct {
+ 	// mu is RWMutex so GetSnapshot (which JSON-marshals while holding the
+ 	// lock) can run concurrently with other readers. All writers (Save,
+ 	// Abort, OnSnapshotStatusChange, removeSub) take the full Lock().
+ 	mu        sync.RWMutex
+ 	snapshots map[string]*exp.SessionSnapshot[State]
+ 	subs      map[string][]chan exp.SnapshotStatus
++	// deleted holds the IDs of snapshots removed by DeleteSession, so a late
++	// writer continuing a deleted chain is rejected even after a fresh root
++	// snapshot reuses the session ID; see SaveSnapshot. It grows by one ID per
++	// deleted snapshot for the life of the store, which is the process.
++	deleted map[string]struct{}
+ }
  
- vi.mock('@genkit-ai/tools-common/utils');
- vi.mock('../../src/utils/manager-utils.js');
-@@ -83,8 +84,8 @@ describe('trace:get', () => {
-     traceGet.setOptionValue('format', undefined);
-     traceGet.setOptionValue('keepBase64', undefined);
+ // NewInMemorySessionStore creates a new in-memory snapshot store.
+ func NewInMemorySessionStore[State any]() *InMemorySessionStore[State] {
+ 	return &InMemorySessionStore[State]{
+ 		snapshots: make(map[string]*exp.SessionSnapshot[State]),
+ 		subs:      make(map[string][]chan exp.SnapshotStatus),
++		deleted:   make(map[string]struct{}),
+ 	}
+ }
  
--    // Mock console.log to avoid spamming test output
--    vi.spyOn(console, 'log').mockImplementation(() => {});
-+    // Mock writeStdout to avoid spamming test output
-+    vi.spyOn(output, 'writeStdout').mockImplementation(() => {});
+@@ -216,6 +223,12 @@ func (s *InMemorySessionStore[State]) SaveSnapshot(
+ 	if next.Status == "" {
+ 		next.Status = exp.SnapshotStatusCompleted
+ 	}
++	// A late writer continuing a deleted chain (or rewriting one of its rows)
++	// must not bring the session back, even if a fresh root has since reused the
++	// session ID.
++	if s.isDeleted(id, next.ParentID) {
++		return nil, status.Errorf(exp.ErrSessionDeleted, "session %q was deleted", next.SessionID)
++	}
  
-     // Provide a default implementation for runWithManager
-     mockedRunWithManager.mockImplementation(async (projectRoot, fn) => {
-@@ -110,7 +111,10 @@ describe('trace:get', () => {
-     expect(mockedFindProjectRoot).toHaveBeenCalled();
-     expect(mockedRunWithManager).toHaveBeenCalled();
+ 	copied, err := copySnapshot(next)
+ 	if err != nil {
+@@ -252,6 +265,46 @@ func (s *InMemorySessionStore[State]) OnSnapshotStatusChange(ctx context.Context
+ 	return ch
+ }
  
--    expect(console.log).toHaveBeenCalledWith(
-+    expect(mockedLogger.info).toHaveBeenCalledWith(
-+      expect.stringContaining('Hint: pass `--format json` flag')
-+    );
-+    expect(output.writeStdout).toHaveBeenCalledWith(
-       expect.stringContaining('Trace ID: test-id')
-     );
-   });
-@@ -142,7 +146,7 @@ describe('trace:get', () => {
-       'json',
-     ]);
- 
--    const loggedStr = (console.log as Mock).mock.calls[0][0] as string;
-+    const loggedStr = (output.writeStdout as Mock).mock.calls[0][0] as string;
-     const parsed = JSON.parse(loggedStr);
-     expect(parsed.spans.s1.attributes['genkit:input']).toEqual({
-       query: 'hello',
-@@ -179,7 +183,7 @@ describe('trace:get', () => {
-       '--keep-base64',
-     ]);
- 
--    const loggedStr = (console.log as Mock).mock.calls[0][0] as string;
-+    const loggedStr = (output.writeStdout as Mock).mock.calls[0][0] as string;
-     const parsed = JSON.parse(loggedStr);
-     expect(parsed.spans.s1.attributes.img).toEqual(rawImage);
-   });
++// DeleteSession removes every snapshot of the session, per
++// [exp.SessionDeleter]. Subscribers of a removed snapshot see
++// [exp.SnapshotStatusAborted] before their channel closes.
++func (s *InMemorySessionStore[State]) DeleteSession(_ context.Context, sessionID string) (bool, error) {
++	if sessionID == "" {
++		return false, status.Errorf(exp.ErrSessionIDRequired, "DeleteSession requires a session ID")
++	}
++	s.mu.Lock()
++	defer s.mu.Unlock()
++
++	removed := false
++	for id, snap := range s.snapshots {
++		if snap.SessionID != sessionID {
++			continue
++		}
++		delete(s.snapshots, id)
++		s.deleted[id] = struct{}{}
++		removed = true
++		for _, ch := range s.subs[id] {
++			coalesceSend(ch, exp.SnapshotStatusAborted)
++			close(ch)
++		}
++		delete(s.subs, id)
++	}
++	return removed, nil
++}
++
++// isDeleted reports whether a write for snapshot id with the given parent
++// touches a snapshot removed by DeleteSession. Caller must hold s.mu.
++func (s *InMemorySessionStore[State]) isDeleted(id, parentID string) bool {
++	if _, gone := s.deleted[id]; gone {
++		return true
++	}
++	if parentID == "" {
++		return false
++	}
++	_, gone := s.deleted[parentID]
++	return gone
++}
++
+ // removeSub detaches a subscriber and closes its channel.
+ func (s *InMemorySessionStore[State]) removeSub(snapshotID string, ch chan exp.SnapshotStatus) {
+ 	s.mu.Lock()
 ```
 
 ---
 
-### Incident Patch 3: `1bbd0919` (2026-11-24)
-**Commit Message**: fix(tests): await streaming assertions in flow_server_test (#7330)
+### Incident Patch 2: `78a83b38` (2026-11-25)
+**Commit Message**: feat(js/plugins/anthropic): add Claude 5.5 and Fable models, drop retired ones (#7311)
 
-**File**: `tests/src/flow_server_test.ts` (modified, +24/-26)
+**File**: `js/plugins/anthropic/README.md` (modified, +50/-22)
 ```diff
-@@ -43,7 +43,7 @@ async function testFlowServer() {
-           data: 1,
-         }),
-       });
--      if (res.status != 200) {
-+      if (res.status !== 200) {
-         throw new Error(`timed out waiting for flow server to become healthy`);
-       }
-     },
-@@ -62,34 +62,32 @@ async function testFlowServer() {
-       result: test.response.result,
-     };
-     console.log(`checking stream for: ${test.path}`);
--    (async () => {
--      const response = await streamFlow({
--        url: `${url}/${test.path}`,
--        input: test.post.data,
--      });
-+    const response = streamFlow({
-+      url: `${url}/${test.path}`,
-+      input: test.post.data,
-+    });
+@@ -15,10 +15,30 @@ It supersedes the earlier community package `genkitx-anthropic` and is now maint
  
--      for await (const chunk of response.stream) {
--        expected = want.message.replace('{count}', chunkCount.toString());
--        const chunkJSON = JSON.stringify(await chunk);
--        if (chunkJSON != expected) {
--          throw new Error(
--            `unexpected chunk data received, got: ${chunkJSON}, want: ${want.message}`
--          );
--        }
--        chunkCount++;
--      }
--      if (chunkCount != test.post.data) {
--        throw new Error(
--          `unexpected number of stream chunks received: got ${chunkCount}, want: ${test.post.data}`
--        );
--      }
--      const out = await response.output;
--      want.result = want.result.replace(/\{count\}/g, chunkCount.toString());
--      if (out != want.result) {
-+    for await (const chunk of response.stream) {
-+      expected = want.message.replace('{count}', chunkCount.toString());
-+      const chunkJSON = JSON.stringify(chunk);
-+      if (chunkJSON !== expected) {
-         throw new Error(
--          `unexpected output received, got: ${out}, want: ${want.result}`
-+          `unexpected chunk data received, got: ${chunkJSON}, want: ${want.message}`
-         );
-       }
--    })();
-+      chunkCount++;
-+    }
-+    if (chunkCount !== test.post.data) {
-+      throw new Error(
-+        `unexpected number of stream chunks received: got ${chunkCount}, want: ${test.post.data}`
-+      );
-+    }
-+    const out = await response.output;
-+    want.result = want.result.replace(/\{count\}/g, chunkCount.toString());
-+    if (out !== want.result) {
-+      throw new Error(
-+        `unexpected output received, got: ${out}, want: ${want.result}`
-+      );
-+    }
-   }
+ ## Supported models
+ 
+-The plugin supports the most recent Anthropic models like **Claude Haiku 4.5**,
+-**Claude Sonnet 4.5**, and **Claude Opus 4.5**. Additionally, the plugin
+-supports all of the
+-[non-retired older models](https://platform.claude.com/docs/en/about-claude/model-deprecations#model-status).
++The plugin ships model definitions for every generally available Claude model
++on the Claude API. (The Claude Mythos models, which are limited to verified
++organizations, aren't listed; you can still use them by ID.)
++
++| Family | Model IDs |
++| ------ | --------- |
++| Claude Fable | `claude-fable-5-2`, `claude-fable-5-1`, `claude-fable-5` |
++| Claude Opus | `claude-opus-5-5`, `claude-opus-5`, `claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-6`, `claude-opus-4-5` |
++| Claude Sonnet | `claude-sonnet-5-5`, `claude-sonnet-5`, `claude-sonnet-4-6` |
++| Claude Haiku | `claude-haiku-5-5`, `claude-haiku-4-5` |
++
++All of them accept text and image input, tools, system prompts and multi-turn
++conversations. Native structured (JSON) output needs the beta API surface
++(`apiVersion: 'beta'`); on the stable surface, asking a listed model for JSON or
++schema output throws an error.
++
++Retired models (Claude Sonnet 4.5, Claude Opus 4.1, Claude Opus 4, Claude
++Sonnet 4 and older) are no longer listed. You can still pass any other model
++ID, for example `anthropic.model("claude-some-new-model")`; IDs the plugin
++doesn't know are
++treated as text-only, so schema output for them is done through prompt
++instructions. See
++[model deprecations](https://platform.claude.com/docs/en/about-claude/model-deprecations#model-status)
++for lifecycle dates.
+ 
+ ## Installation
+ 
+@@ -39,7 +59,7 @@ import { anthropic } from "@genkit-ai/anthropic";
+ const ai = genkit({
+   plugins: [anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })],
+   // specify a default model for generate here if you wish:
+-  model: anthropic.model("claude-sonnet-4-5"),
++  model: anthropic.model("claude-sonnet-5-5"),
+ });
+ ```
+ 
+@@ -49,7 +69,7 @@ The simplest way to generate text is by using the `generate` method:
+ 
+ ```typescript
+ const response = await ai.generate({
+-  model: anthropic.model("claude-haiku-4-5"),
++  model: anthropic.model("claude-haiku-5-5"),
+   prompt: "Tell me a joke.",
+ });
+ 
+@@ -70,30 +90,38 @@ const response = await ai.generate({
+ console.log(response.text);
+ ```
+ 
+-### Extended thinking
++### Thinking
+ 
+-Claude 4.5 models can expose their internal reasoning. Enable it per-request
+-with the Anthropic thinking config and read the reasoning from the response:
++Claude models can expose a summary of their reasoning. On current models
++(Claude Opus 4.6 and later, Claude Sonnet 4.6 and later, the Fable models and
++Claude Haiku 5.5), use adaptive thinking and steer how much the model thinks
++with `output_config.effort`: `low`, `medium`, `high`, `xhigh` or `max`. See
++[effort](https://platform.claude.com/docs/en/build-with-claude/effort) for
++per-model support.
+ 
+ ```typescript
+ const response = await ai.generate({
+   prompt: "Walk me through your reasoning for Fermat’s little theorem.",
+   config: {
+     thinking: {
+-      enabled: true,
+-      budgetTokens: 4096, // Must be >= 1024 and less than max_tokens
++      adaptive: true,
++      display: "summarized", // return a readable summary of the reasoning
+     },
++    output_config: { effort: "high" },
+   },
+ });
+ 
+ console.log(response.text); // Final assistant answer
+ console.log(response.reasoning); // Summarized thinking steps
+ ```
+ 
+-When thinking is enabled, request bodies sent through the plugin include the
+-`thinking` payload (`{ type: 'enabled', budget_tokens: … }`) that Anthropic's
+-API expects, and streamed responses deliver `reasoning` parts as they arrive so
+-you can render the chain-of-thought incrementally.
++Older models (Claude Haiku 4.5, Claude Opus 4.5) use a
++fixed thinking budget instead: `thinking: { enabled: true, budgetTokens: 2048 }`
++(at least 1024 and less than `max_tokens`). Claude Opus 4.7, Claude Sonnet 5
++and every later model reject `budgetTokens`.
++
++Streamed responses deliver `reasoning` parts as they arrive so you can render
++the reasoning incrementally.
+ 
+ ### Document Citations
+ 
+@@ -106,7 +134,7 @@ helper to create citable documents. For more details, see the
+ import { anthropic, anthropicDocument } from "@genkit-ai/anthropic";
+ 
+ const response = await ai.generate({
+-  model: anthropic.model("claude-sonnet-4-5"),
++  model: anthropic.model("claude-sonnet-5-5"),
+   messages: [
+     {
+       role: "user",
+@@ -161,7 +189,7 @@ messages, user messages, tools, and media.
+ import { anthropic, cacheControl } from "@genkit-ai/anthropic";
+ 
+ const response = await ai.generate({
+-  model: anthropic.model("claude-sonnet-4-5"),
++  model: anthropic.model("claude-sonnet-5-5"),
+   system: {
+     text: longSystemPrompt,
+     metadata: { ...cacheControl() }, // default: ephemeral
+```
+
+**File**: `js/plugins/anthropic/src/index.ts` (modified, +3/-3)
+```diff
+@@ -104,7 +104,7 @@ function validateApiKey(options?: PluginOptions): void {
+  * });
+  *
+  * // Access models via the plugin's model() method:
+- * const model = anthropic.model('claude-sonnet-4');
++ * const model = anthropic.model('claude-sonnet-5-5');
+  * ```
+  */
+ function anthropicPlugin(options?: PluginOptions): GenkitPluginV2 {
+@@ -168,7 +168,7 @@ export type AnthropicPlugin = {
+ 
+ /**
+  * Anthropic AI plugin for Genkit.
+- * Includes Claude models (3, 3.5, and 4 series).
++ * Includes the current Claude models.
+  */
+ export const anthropic = anthropicPlugin as AnthropicPlugin;
+ (anthropic as any).model = (
+@@ -189,7 +189,7 @@ export const anthropic = anthropicPlugin as AnthropicPlugin;
+  * import { anthropic, anthropicDocument } from '@genkit-ai/anthropic';
+  *
+  * const { text } = await ai.generate({
+- *   model: anthropic.model('claude-sonnet-4-5'),
++ *   model: anthropic.model('claude-sonnet-5-5'),
+  *   messages: [{
+  *     role: 'user',
+  *     content: [
+```
+
+**File**: `js/plugins/anthropic/src/models.ts` (modified, +11/-8)
+```diff
+@@ -61,8 +61,8 @@ function parseRetryAfterMs(value: string): number | undefined {
+ type ConfigSchemaType = AnthropicConfigSchemaType;
+ 
+ /**
+- * Generic Claude model info for unknown/unsupported models.
+- * Used when a model name is not in KNOWN_CLAUDE_MODELS.
++ * Model info for model names that are not in KNOWN_MODELS. Output is text
++ * only, so Genkit puts any output schema into the prompt as instructions.
+  */
+ export const GENERIC_MODEL_INFO: ModelInfo = {
+   supports: {
+@@ -75,7 +75,8 @@ export const GENERIC_MODEL_INFO: ModelInfo = {
+ };
+ 
+ /**
+- * Advanced Claude model info for models that support JSON output.
++ * Model info for the models in KNOWN_MODELS: text and image input, tool use,
++ * system prompts, multi-turn, and native structured (JSON) output.
+  */
+ export const ADVANCED_MODEL_INFO: ModelInfo = {
+   supports: {
+@@ -104,18 +105,20 @@ function commonRef(
  }
+ 
+ const KNOWN_MODELS = {
++  'claude-fable-5-2': commonRef('claude-fable-5-2', ADVANCED_MODEL_INFO),
++  'claude-fable-5-1': commonRef('claude-fable-5-1', ADVANCED_MODEL_INFO),
+   'claude-fable-5': commonRef('claude-fable-5', ADVANCED_MODEL_INFO),
++  'claude-opus-5-5': commonRef('claude-opus-5-5', ADVANCED_MODEL_INFO),
++  'claude-opus-5': commonRef('claude-opus-5', ADVANCED_MODEL_INFO),
+   'claude-opus-4-8': commonRef('claude-opus-4-8', ADVANCED_MODEL_INFO),
+   'claude-opus-4-7': commonRef('claude-opus-4-7', ADVANCED_MODEL_INFO),
+   'claude-opus-4-6': commonRef('claude-opus-4-6', ADVANCED_MODEL_INFO),
+   'claude-opus-4-5': commonRef('claude-opus-4-5', ADVANCED_MODEL_INFO),
+-  'claude-haiku-4-5': commonRef('claude-haiku-4-5', ADVANCED_MODEL_INFO),
++  'claude-sonnet-5-5': commonRef('claude-sonnet-5-5', ADVANCED_MODEL_INFO),
+   'claude-sonnet-5': commonRef('claude-sonnet-5', ADVANCED_MODEL_INFO),
+   'claude-sonnet-4-6': commonRef('claude-sonnet-4-6', ADVANCED_MODEL_INFO),
+-  'claude-sonnet-4-5': commonRef('claude-sonnet-4-5', ADVANCED_MODEL_INFO),
+-  'claude-opus-4-1': commonRef('claude-opus-4-1', ADVANCED_MODEL_INFO),
+-  'claude-sonnet-4': commonRef('claude-sonnet-4'),
+-  'claude-opus-4': commonRef('claude-opus-4'),
++  'claude-haiku-5-5': commonRef('claude-haiku-5-5', ADVANCED_MODEL_INFO),
++  'claude-haiku-4-5': commonRef('claude-haiku-4-5', ADVANCED_MODEL_INFO),
+ } as const;
+ export type KnownClaudeModels = keyof typeof KNOWN_MODELS;
+ export type ClaudeModelName = `claude-${string}`;
+```
+
+**File**: `js/plugins/anthropic/src/types.ts` (modified, +1/-1)
+```diff
+@@ -175,7 +175,7 @@ export const AnthropicConfigSchema = GenerationCommonConfigSchema.extend({
+   ),
+   output_config: z
+     .object({
+-      effort: z.enum(['low', 'medium', 'high', 'xhigh']).optional(),
++      effort: z.enum(['low', 'medium', 'high', 'xhigh', 'max']).optional(),
+       task_budget: z
+         .object({
+           type: z.literal('tokens').default('tokens'),
+```
+
+**File**: `js/plugins/anthropic/src/utils.ts` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ import type { CacheControlEphemeral } from '@anthropic-ai/sdk/resources/messages
+  * import { anthropic, cacheControl } from '@genkit-ai/anthropic';
+  *
+  * const response = await ai.generate({
+- *   model: anthropic.model('claude-sonnet-4-5'),
++ *   model: anthropic.model('claude-sonnet-5-5'),
+  *   system: {
+  *     text: longSystemPrompt,
+  *     metadata: { ...cacheControl() }  // default ephemeral
+```
+
+**File**: `js/plugins/anthropic/tests/effort_param_test.ts` (modified, +35/-0)
+```diff
+@@ -171,6 +171,41 @@ describe('Effort Parameter Tests', () => {
+     );
+   });
+ 
++  test('should pass output_config.effort with max value', async () => {
++    const mockClient = createMockAnthropicClient({
++      messageResponse: createMockAnthropicMessage({
++        text: 'Response with max effort',
++      }),
++    });
++
++    const plugin = createPlugin({
++      apiVersion: 'beta',
++      mockClient,
++    });
++
++    const ai = createGenkitInstance(plugin);
++
++    await ai.generate({
++      model: 'anthropic/claude-opus-5-5',
++      prompt: 'Generate the most thorough response',
++      config: {
++        output_config: {
++          effort: 'max',
++        },
++      },
++    });
++
++    verifyApiCalled(mockClient, 'beta');
++    const apiRequest = getApiRequest(mockClient, 'beta');
++
++    assert.ok(apiRequest.output_config, 'Request should have output_config');
++    assert.strictEqual(
++      apiRequest.output_config.effort,
++      'max',
++      'effort should be set to max'
++    );
++  });
++
+   test('should pass output_config.effort with medium value', async () => {
+     const mockClient = createMockAnthropicClient({
+       messageResponse: createMockAnthropicMessage({
+```
+
+**File**: `js/plugins/anthropic/tests/index_test.ts` (modified, +40/-7)
+```diff
+@@ -19,7 +19,7 @@ import { genkit, type ActionMetadata } from 'genkit';
+ import type { ModelInfo } from 'genkit/model';
+ import { describe, it } from 'node:test';
+ import anthropic from '../src/index.js';
+-import { TEST_ONLY } from '../src/models.js';
++import { TEST_ONLY, type KnownClaudeModels } from '../src/models.js';
+ import { PluginOptions, __testClient } from '../src/types.js';
+ 
+ import { createMockAnthropicClient } from './mocks/anthropic-client.js';
+@@ -133,8 +133,8 @@ describe('Anthropic Plugin', () => {
+           id: 'claude-haiku-4-5-latest',
+           display_name: 'Claude 4.5 Haiku Latest',
+         },
+-        { id: 'claude-sonnet-4-5', display_name: 'Claude 4.5 Sonnet' },
+-        { id: 'claude-sonnet-4', display_name: 'Claude 4 Sonnet' },
++        { id: 'claude-sonnet-4-6', display_name: 'Claude Sonnet 4.6' },
++        { id: 'claude-opus-5-5', display_name: 'Claude Opus 5.5' },
+         { id: 'claude-new-5-20251212', display_name: 'Claude New 5' },
+         { id: 'claude-experimental-latest' },
+       ],
+@@ -159,12 +159,12 @@ describe('Anthropic Plugin', () => {
+       'Latest variant should be listed separately'
+     );
+     assert.ok(
+-      names.includes('anthropic/claude-sonnet-4-5'),
+-      'Unknown Claude 4.5 Sonnet should be listed with full model ID'
++      names.includes('anthropic/claude-sonnet-4-6'),
++      'Known Claude Sonnet 4.6 model should be listed with full model ID'
+     );
+     assert.ok(
+-      names.includes('anthropic/claude-sonnet-4'),
+-      'Known Claude Sonnet 4 model should be listed with full model ID'
++      names.includes('anthropic/claude-opus-5-5'),
++      'Known Claude Opus 5.5 model should be listed with full model ID'
+     );
+     assert.ok(
+       names.includes('anthropic/claude-new-5-20251212'),
+@@ -186,6 +186,13 @@ describe('Anthropic Plugin', () => {
+       (model) => model.name === 'anthropic/claude-new-5-20251212'
+     );
+     assert.ok(newModelMetadata, 'New model metadata should exist');
++    const newModelInfo = getModelInfo(newModelMetadata);
++    assert.deepStrictEqual(
++      newModelInfo?.supports?.output,
++      ['text'],
++      'Unknown models should fall back to text-only output'
++    );
++    assert.strictEqual(newModelInfo?.supports?.constrained, undefined);
+ 
+     const experimentalMetadata = models.find(
+       (model) => model.name === 'anthropic/claude-experimental-latest'
+@@ -234,6 +241,32 @@ describe('Anthropic Plugin', () => {
+   });
+ });
+ 
++describe('Known model list', () => {
++  const CURRENT_MODELS: KnownClaudeModels[] = [
++    'claude-fable-5-2',
++    'claude-fable-5-1',
++    'claude-fable-5',
++    'claude-opus-5-5',
++    'claude-opus-5',
++    'claude-opus-4-8',
++    'claude-opus-4-7',
++    'claude-opus-4-6',
++    'claude-opus-4-5',
++    'claude-sonnet-5-5',
++    'claude-sonnet-5',
++    'claude-sonnet-4-6',
++    'claude-haiku-5-5',
++    'claude-haiku-4-5',
++  ];
++
++  it('lists exactly the current models', () => {
++    assert.deepStrictEqual(
++      Object.keys(KNOWN_MODELS).sort(),
++      [...CURRENT_MODELS].sort()
++    );
++  });
++});
++
+ describe('Per-request API key support', () => {
+   it('should not throw when initialized with apiKey: false', () => {
+     const originalApiKey = process.env.ANTHROPIC_API_KEY;
+```
+
+**File**: `js/plugins/anthropic/tests/live_test.ts` (modified, +8/-8)
+```diff
+@@ -76,7 +76,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: 'anthropic/claude-sonnet-4-5',
++      model: 'anthropic/claude-sonnet-5-5',
+       prompt:
+         'Generate a fictional person with name "Alice", age 30, and city "New York". Return only the JSON.',
+       output: { schema, format: 'json', constrained: true },
+@@ -111,7 +111,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -170,7 +170,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     const streamedChunks: string[] = [];
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -218,7 +218,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -270,7 +270,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -363,7 +363,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     });
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
+@@ -478,7 +478,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+     await assert.rejects(
+       async () => {
+         await ai.generate({
+-          model: anthropic.model('claude-sonnet-4-5'),
++          model: anthropic.model('claude-sonnet-5-5'),
+           messages: [
+             {
+               role: 'user',
+@@ -537,7 +537,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
+       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+ 
+     const result = await ai.generate({
+-      model: anthropic.model('claude-sonnet-4-5'),
++      model: anthropic.model('claude-sonnet-5-5'),
+       messages: [
+         {
+           role: 'user',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7355** (2026-11-25): fix(go/plugins/compat_oai): filter unlabelled SSE streams and bare CR line endings (@adesinah)
+- **PR #7346** (closed): feat(js)!: make packages ESM-only and build with TypeScript 7 tsc (drop tsup) (@pavelgj)
 - **PR #7335** (closed): build(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 in /go (@dependabot[bot])
 - **PR #7334** (closed): build(deps): bump go.opentelemetry.io/otel/sdk from 1.36.0 to 1.47.0 in /go/samples/mcp-git-pr-explainer (@dependabot[bot])
 - **PR #7333** (closed): build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 in /go (@dependabot[bot])
 - **PR #7330** (2026-11-24): fix(tests): await streaming assertions in flow_server_test (@MichaelDoyle)
-- **PR #7328** (2026-11-24): fix(genkit-tools/cli): migrate console.* usage and enable no-console ESLint rule (@genkit-bot)
-- **PR #7324** (2026-11-24): docs(genkit-tools): clarify when to use it.each vs separate tests (@MichaelDoyle)
 
 ---
 
@@ -3009,106 +3120,59 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. js): fix package exports and prevent tarball file leaks
+## X. go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability
 
 **RULE**:
-When implementing operations in `js/ai/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go/ai/exp/agent.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9f68fdb`: js): fix package exports and prevent tarball file leaks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4537d179`: go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/ai/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/ai/exp/agent.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      "import": {
-        "types": "./lib/index.d.mts",
-        "default": "./lib/index.mjs"
-      },
-      "require": {
-        "types": "./lib/index.d.ts",
-        "default": "./lib/index.js"
-      },
-      "import": {
-        "types": "./lib/retriever.d.mts",
-        "default": "./lib/retriever.mjs"
-      },
-      "require": {
-        "types": "./lib/retriever.d.ts",
-        "default": "./lib/retriever.js"
-      },
-      "import": {
-        "types": "./lib/embedder.d.mts",
-        "default": "./lib/embedder.mjs"
-      },
-      "require": {
-        "types": "./lib/embedder.d.ts",
-        "default": "./lib/embedder.js"
-      },
-      "import": {
-        "types": "./lib/evaluator.d.mts",
-        "default": "./lib/evaluator.mjs"
-      },
-      "require": {
-        "types": "./lib/evaluator.d.ts",
-        "default": "./lib/evaluator.js"
-      },
-      "import": {
-        "types": "./lib/model.d.mts",
-        "default": "./lib/model.mjs"
-      },
-      "require": {
-        "types": "./lib/model.d.ts",
-        "default": "./lib/model.js"
-      },
-      "import": {
-        "types": "./lib/model/middleware.d.mts",
-        "default": "./lib/model/middleware.mjs"
-      },
-      "require": 
+		// A deleted session is not a failure: the work simply stops being
+		// persisted.
+		if !errors.Is(err, ErrSessionDeleted) {
+			logger.Error(ctx, "agent failed to save snapshot",
+				"parentId", parentID,
+				"error", err)
+		}
+// DeleteSession permanently removes every persisted snapshot of a session. A
+// detached run still in flight is aborted first, so the work stops rather than
+// continuing against data that is going away. It reports whether anything was
+// removed and is idempotent: a session with no persisted data is not an error.
+//
+// Resuming by session ID afterwards starts a fresh session, and resuming by
+// snapshot ID fails with [ErrSnapshotNotFound]. A run that is still going when
+// the session is deleted stops persisting instead of failing; it cannot bring
+// the session back. Traces, logs, and durable streams live outside the store
+// and are not touched.
+//
+// This is an in-process API only: no companion action or route is registered
+// for it, so put it behind your own authorization.
+//
+// It returns FAILED_PRECONDITION on a client-managed agent or when the store
+// does not implement [SessionDeleter], and INVALID_ARGUMENT when sessionID is
+// empty.
+func (a *A
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      "types": "./lib/index.d.ts",
-      "require": "./lib/index.js",
-      "import": "./lib/index.mjs",
-      "types": "./lib/retriever.d.ts",
-      "require": "./lib/retriever.js",
-      "import": "./lib/retriever.mjs",
-      "types": "./lib/embedder.d.ts",
-      "require": "./lib/embedder.js",
-      "import": "./lib/embedder.mjs",
-      "types": "./lib/evaluator.d.ts",
-      "require": "./lib/evaluator.js",
-      "import": "./lib/evaluator.mjs",
-      "types": "./lib/model.d.ts",
-      "require": "./lib/model.js",
-      "import": "./lib/model.mjs",
-      "types": "./lib/model/middleware.d.ts",
-      "require": "./lib/model/middleware.js",
-      "import": "./lib/model/middleware.mjs",
-      "types": "./lib/extract.d.ts",
-      "require": "./lib/extract.js",
-      "import": "./lib/extract.mjs",
-      "types": "./lib/tool.d.ts",
-      "require": "./lib/tool.js",
-      "import": "./lib/tool.mjs",
-      "types": "./lib/testing/index.d.ts",
-      "require": "./lib/testing/index.js",
-      "import": "./lib/testing/index.mjs",
-      "types": "./lib/reranker.d.ts",
-      "require": "./lib/reranker.js",
-      "import": "./lib/reranker.mjs",
-      "types": "./lib/session.d.ts",
-      "requ
+		logger.Error(ctx, "agent failed to save snapshot",
+			"parentId", parentID,
+			"error", err)
+			if existing != nil && existing.Status.Terminal() {
+	if err != nil {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9f68fdb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4537d179` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

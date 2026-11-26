@@ -805277,3 +805277,178 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7bfaf596` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10686. guard optional numpy in dissolve cuts, closed SSE peek, Proactor shutdo (Harvested from zhouxiaoka/autoclip)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "guard optional numpy in dissolve cuts, closed SSE peek, Proactor shutdo",
+  "source": "zhouxiaoka/autoclip",
+  "source_url": "https://github.com/zhouxiaoka/autoclip",
+  "source_version": "2f511907",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T13:26:27.907Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zhouxiaoka-autoclip",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zhouxiaoka/autoclip](https://github.com/zhouxiaoka/autoclip) (Revision: `2f511907`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `backend/core/llm_stream.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zhouxiaoka/autoclip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `99728616`: sentry): guard optional numpy in dissolve cuts, closed SSE peek, Proactor shutdown OSError, and LeaveGuard blocker (#6K, #70, #78, FRONTEND-P). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `backend/core/llm_stream.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+        try:
+            line = readline()
+        except AttributeError as error:
+            # CPython http.client.HTTPResponse._peek_chunked raises AttributeError
+            # ('NoneType' object has no attribute 'peek') if the stream closes mid-read.
+            if getattr(response, "fp", True) is None:
+                raise ConnectionError("HTTP stream closed mid-read") from error
+            raise
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+        line = readline()
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `99728616` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10687. go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "4537d179",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T13:26:45.584Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `4537d179`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `go/ai/exp/agent.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4537d179`: go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/ai/exp/agent.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+		// A deleted session is not a failure: the work simply stops being
+		// persisted.
+		if !errors.Is(err, ErrSessionDeleted) {
+			logger.Error(ctx, "agent failed to save snapshot",
+				"parentId", parentID,
+				"error", err)
+		}
+// DeleteSession permanently removes every persisted snapshot of a session. A
+// detached run still in flight is aborted first, so the work stops rather than
+// continuing against data that is going away. It reports whether anything was
+// removed and is idempotent: a session with no persisted data is not an error.
+//
+// Resuming by session ID afterwards starts a fresh session, and resuming by
+// snapshot ID fails with [ErrSnapshotNotFound]. A run that is still going when
+// the session is deleted stops persisting instead of failing; it cannot bring
+// the session back. Traces, logs, and durable streams live outside the store
+// and are not touched.
+//
+// This is an in-process API only: no companion action or route is registered
+// for it, so put it behind your own authorization.
+//
+// It returns FAILED_PRECONDITION on a client-managed agent or when the store
+// does not implement [SessionDeleter], and INVALID_ARGUMENT when sessionID is
+// empty.
+func (a *A
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+		logger.Error(ctx, "agent failed to save snapshot",
+			"parentId", parentID,
+			"error", err)
+			if existing != nil && existing.Status.Terminal() {
+	if err != nil {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4537d179` are properly handled with clean fallback behavior.

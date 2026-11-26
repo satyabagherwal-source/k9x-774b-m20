@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:18:15.205Z",
+  "last_updated": "2026-11-26T13:26:52.020Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -953,7 +953,7 @@
       "staged_for_review": 1
     },
     "genkit-ai-genkit-learnings.md": {
-      "processed_at": "2026-11-24T17:03:21.821Z",
+      "processed_at": "2026-11-26T13:26:50.879Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1943,7 +1943,7 @@
       "staged_for_review": 1
     },
     "hf-altworld-hemmingway-1-learnings.md": {
-      "processed_at": "2026-11-22T20:17:13.599Z",
+      "processed_at": "2026-11-26T13:26:50.480Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3971,9 +3971,14 @@
       "processed_at": "2026-11-26T12:59:38.324Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "zhouxiaoka-autoclip-learnings.md": {
+      "processed_at": "2026-11-26T13:26:49.585Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4524,
+  "total_dossiers_evaluated": 4527,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3414
+  "total_staged_for_review": 3416
 }

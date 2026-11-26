@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T13:18:06.945Z",
+  "last_updated": "2026-11-26T13:26:46.145Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "38cac47798884e565d370340d2105bd180c3cf694eabdac7123e881a3cd1e2cd",
-      "verified_at": "2026-11-25T12:09:15.423Z",
+      "content_hash": "f529789080e29ac9bdbdef4b31c6d47d232f234ec70abde0b53e235b119079c0",
+      "verified_at": "2026-11-26T13:26:46.144Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T12:09:15.423Z"
+      "last_updated": "2026-11-26T13:26:46.144Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -15636,14 +15636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
-      "content_hash": "6fcb9e01cb5887a492a9d0afe175bde1b05cc2a4e6c4408a0351da76d5246b49",
-      "verified_at": "2026-11-22T20:16:52.976Z",
+      "content_hash": "198c968955b9cbdf5fe3b0325bb3f672621601d1732f812a913b22799df7434a",
+      "verified_at": "2026-11-26T13:26:31.702Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:16:52.976Z"
+      "last_updated": "2026-11-26T13:26:31.702Z"
     },
     "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16": {
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
@@ -20429,6 +20429,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-26T12:59:16.776Z"
+    },
+    "zhouxiaoka/autoclip": {
+      "repository": "zhouxiaoka/autoclip",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-zhouxiaoka-autoclip",
+      "content_hash": "40497fb07b871195d2a681cf6f606f0d42a60b03cee14788f208fd2369807faa",
+      "verified_at": "2026-11-26T13:26:28.478Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-26T13:26:28.478Z"
     }
   },
   "repos": {

@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T13:18:10.595Z",
-    "lastVerified": "2026-11-26T13:18:10.595Z",
+    "lastChecked": "2026-11-26T13:26:49.412Z",
+    "lastVerified": "2026-11-26T13:26:49.412Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T12:50:57.198Z",
+    "lastChecked": "2026-11-26T13:26:42.668Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T12:50:57.198Z"
+    "lastVerified": "2026-11-26T13:26:42.668Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1690,9 +1690,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-26T08:10:06.431Z",
+    "lastChecked": "2026-11-26T13:26:37.799Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-26T08:10:06.431Z"
+    "lastVerified": "2026-11-26T13:26:37.799Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2188,12 +2188,12 @@
     "officialUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T20:16:52.325Z",
-    "lastVerified": "2026-11-22T20:16:52.325Z",
+    "lastChecked": "2026-11-26T13:26:31.156Z",
+    "lastVerified": "2026-11-26T13:26:31.156Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "6fcb9e01cb5887a492a9d0afe175bde1b05cc2a4e6c4408a0351da76d5246b49",
+    "contentHash": "198c968955b9cbdf5fe3b0325bb3f672621601d1732f812a913b22799df7434a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -3065,8 +3065,8 @@
     "officialUrl": "https://github.com/openkruise/kruise",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T13:05:52.136Z",
-    "lastVerified": "2026-11-25T13:05:52.136Z",
+    "lastChecked": "2026-11-26T13:26:35.226Z",
+    "lastVerified": "2026-11-26T13:26:35.226Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openkruise-kruise",
@@ -7077,14 +7077,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T12:09:14.252Z",
-    "lastVerified": "2026-11-25T12:09:14.252Z",
+    "lastChecked": "2026-11-26T13:26:45.010Z",
+    "lastVerified": "2026-11-26T13:26:45.010Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "38cac47798884e565d370340d2105bd180c3cf694eabdac7123e881a3cd1e2cd",
+    "contentHash": "f529789080e29ac9bdbdef4b31c6d47d232f234ec70abde0b53e235b119079c0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12524,9 +12524,9 @@
   "krishhgg-insomnia": {
     "name": "Insomnia",
     "officialUrl": "https://github.com/krishhgg/Insomnia",
-    "lastChecked": "2026-11-24T03:05:17.589Z",
+    "lastChecked": "2026-11-26T13:26:32.795Z",
     "revisionIdentifier": "3f474ff2",
-    "lastVerified": "2026-11-24T03:05:17.589Z"
+    "lastVerified": "2026-11-26T13:26:32.795Z"
   },
   "pallets-flask": {
     "name": "flask",
@@ -15552,6 +15552,23 @@
     "contentHash": "dd82e8c1d98318347ec6e917e2385a62ccfa463a809df9d845040666e9f4d7e1",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zhouxiaoka-autoclip": {
+    "name": "zhouxiaoka/autoclip",
+    "officialUrl": "https://github.com/zhouxiaoka/autoclip",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-11-26T13:26:27.163Z",
+    "lastVerified": "2026-11-26T13:26:27.163Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zhouxiaoka-autoclip",
+    "contentHash": "40497fb07b871195d2a681cf6f606f0d42a60b03cee14788f208fd2369807faa",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -415,8 +415,8 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "6fcb9e01cb5887a492a9d0afe175bde1b05cc2a4e6c4408a0351da76d5246b49",
-    "lastHarvestedAt": "2026-11-22T20:16:52.968Z",
+    "contentHash": "198c968955b9cbdf5fe3b0325bb3f672621601d1732f812a913b22799df7434a",
+    "lastHarvestedAt": "2026-11-26T13:26:31.690Z",
     "learningId": "learn-huggingface-altworld-hemmingway-1"
   },
   "hf-fastino-gliner2.5-decide": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "5f4d54a0",
+    "sourceVersion": "4537d179",
     "license": "Apache-2.0",
-    "contentHash": "38cac47798884e565d370340d2105bd180c3cf694eabdac7123e881a3cd1e2cd",
-    "lastHarvestedAt": "2026-11-25T12:09:15.407Z",
+    "contentHash": "f529789080e29ac9bdbdef4b31c6d47d232f234ec70abde0b53e235b119079c0",
+    "lastHarvestedAt": "2026-11-26T13:26:46.127Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -13538,5 +13538,15 @@
     "contentHash": "dd82e8c1d98318347ec6e917e2385a62ccfa463a809df9d845040666e9f4d7e1",
     "lastHarvestedAt": "2026-11-26T12:59:16.755Z",
     "learningId": "learn-github-yetone-magpie"
+  },
+  "zhouxiaoka-autoclip": {
+    "repository": "zhouxiaoka/autoclip",
+    "platform": "github",
+    "sourceUrl": "https://github.com/zhouxiaoka/autoclip",
+    "sourceVersion": "2f511907",
+    "license": "MIT",
+    "contentHash": "40497fb07b871195d2a681cf6f606f0d42a60b03cee14788f208fd2369807faa",
+    "lastHarvestedAt": "2026-11-26T13:26:28.460Z",
+    "learningId": "learn-github-zhouxiaoka-autoclip"
   }
 }
