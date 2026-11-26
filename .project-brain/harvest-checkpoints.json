@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T11:03:51.318Z",
+  "last_updated": "2026-11-26T11:15:51.074Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -335,14 +335,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "content_hash": "fdd861ee8905e334efc5a88e99e6b708f1b1f181020da3c9062b0545c7b9e298",
-      "verified_at": "2026-11-22T18:12:22.256Z",
+      "content_hash": "fb055bb7303214537894751f484dcd4f2893faceb037c771c9c334c12b916a1b",
+      "verified_at": "2026-11-26T11:15:35.527Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T18:12:22.256Z"
+      "last_updated": "2026-11-26T11:15:35.527Z"
     },
     "XingChen-AGI/TeleOCR": {
       "repository": "XingChen-AGI/TeleOCR",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "aee1178c5e6e8a42519096a9873b1a96f7b693f9479c3d7828c30d29362d424a",
-      "verified_at": "2026-11-24T17:03:12.703Z",
+      "content_hash": "550b364cea175cc3737e23443ea913963ddb12fc0152db63752bae38acd570ea",
+      "verified_at": "2026-11-26T11:15:44.334Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:03:12.703Z"
+      "last_updated": "2026-11-26T11:15:44.334Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -8106,14 +8106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yugabyte-yugabyte-db",
-      "content_hash": "00e4498f93ba3c78df4c46c5c197d8ff05912be43a77aa8a012dd3cf3d20cea4",
-      "verified_at": "2026-11-25T09:37:30.695Z",
+      "content_hash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
+      "verified_at": "2026-11-26T11:15:51.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T09:37:30.695Z"
+      "last_updated": "2026-11-26T11:15:51.073Z"
     },
     "React95/React95": {
       "repository": "React95/React95",
@@ -20399,6 +20399,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-26T09:12:19.808Z"
+    },
+    "kividbio/kividb": {
+      "repository": "kividbio/kividb",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-kividbio-kividb",
+      "content_hash": "b0ab3752cb79c1dfc4de6f634f9d88362c514dc097fa35c07fe2a3c72b3ee6ba",
+      "verified_at": "2026-11-26T11:15:37.426Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-26T11:15:37.426Z"
     }
   },
   "repos": {

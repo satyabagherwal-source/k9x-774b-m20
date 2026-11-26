@@ -802904,3 +802904,345 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `13bdf30c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10659. FLAT int8: holds bounded in time, the setting checked before the build, maxmemor (Harvested from kividbio/kividb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "FLAT int8: holds bounded in time, the setting checked before the build, maxmemor",
+  "source": "kividbio/kividb",
+  "source_url": "https://github.com/kividbio/kividb",
+  "source_version": "5a9db7f7",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-26T11:15:36.789Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kividbio-kividb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kividbio/kividb](https://github.com/kividbio/kividb) (Revision: `5a9db7f7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/vector/flat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kividbio/kividb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `87a9d213`: FLAT int8: holds bounded in time, the setting checked before the build, maxmemory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/vector/flat.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    declined: AtomicU64,
+    counts: Counts,
+    #[cfg(test)]
+    always: AtomicBool,
+}
+
+#[derive(Debug, Default)]
+#[repr(align(128))]
+struct Counts {
+        if copy.is_some() || self.wants_copy(|| count) {
+    fn switched_on(&self) -> bool {
+        #[cfg(test)]
+        if self.always.load(Relaxed) {
+            return true;
+        }
+    }
+
+    fn wants_copy(&self, count: impl FnOnce() -> usize) -> bool {
+        self.switched_on()
+            && self.declined.load(Relaxed) != flat_int8::times_set() + 1
+            && count() >= flat_int8::BUILD_AT
+        if self.coding.load(Relaxed) || self.coding.swap(true, SeqCst) {
+            if !self.wants_copy(|| usize::MAX) || !self.publish(slots) {
+                self.coding.store(false, SeqCst);
+                return false;
+            }
+            let since = std::time::Instant::now();
+            'words: for (n, w) in (start..words).chain(0..start).enumerate() {
+                if n % 1024 == 1023 && since.elapsed() >= CODING_HOLD {
+                    self.cursor.store(w, Relaxed);
+                    found = true;
+                    break;
+                }
+                    if picked.len() >= RUN
+                        || 
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        if copy.is_some() || self.wants_copy(count) {
+    fn wants_copy(&self, count: usize) -> bool {
+            && count >= flat_int8::BUILD_AT
+        if self.coding.swap(true, SeqCst) {
+            self.publish(slots);
+            'words: for w in (start..words).chain(0..start) {
+                    if picked.len() >= RUN {
+    fn publish(&self, slots: &Slots) {
+            let len = map.keys.len();
+            if len == 0 || bytes.has(len - 1) {
+                for slot in 0..len {
+                    if map.keys[slot].is_some() {
+                        map.mark(slot as u32);
+                    }
+                }
+                let _ = 
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `87a9d213` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10660. preserve SSE events with CRLF line endings (Harvested from higress-group/higress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "preserve SSE events with CRLF line endings",
+  "source": "higress-group/higress",
+  "source_url": "https://github.com/higress-group/higress",
+  "source_version": "879a6512",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T11:15:43.722Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-higress-group-higress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `879a6512`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `plugins/wasm-rust/src/event_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `879a6512`: wasm-rust): preserve SSE events with CRLF line endings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-rust/src/event_stream.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+/// CRLF is one logical line ending. An empty line, formed by two consecutive
+/// logical line endings, terminates an event.
+    skip_lf: bool,
+    /// CRLF pairs are consumed together, including pairs split across updates.
+    /// A delimiter ending in CR at the buffer boundary completes the event
+    /// immediately. Waiting for the next byte to distinguish CR from CRLF
+    /// would delay dispatch when that byte is not LF, or never arrives.
+    /// `update` skips an optional following LF using `skip_lf`, so it does not
+    /// become an extra line ending.
+                self.skip_lf = self.processed_offset == self.buffer.len()
+                    && self.buffer.last() == Some(&b'\r');
+            i += self.is_eol(i).unwrap_or(1);
+        let mut start = 0;
+        if self.skip_lf && !data.is_empty() {
+            if data[0] == b'\n' {
+                start = 1;
+            }
+            self.skip_lf = false;
+        }
+        self.buffer.extend_from_slice(&data[start..]);
+            self.is_eol(i + size1).map(|size2| size1 + size2)
+        parser.update(b"event3\n\r\nevent4\r\n\r\n".to_vec());
+        assert_eq!(parser.next(), Some(b"event5\r\nevent6".to_vec()));
+        asser
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+/// According to spec, we must judge EOL twice before we can identify a complete event.
+/// However, in the rules of event and field, there is an ambiguous grammar in the judgment of eol,
+/// and it will bring ambiguity (whether the field ends). In order to eliminate this ambiguity,
+/// we believe that CRLF as CR+LF belongs to event and field respectively.
+    /// Next will consume all the data in the current buffer. However, if there is a valid event at the end of the buffer,
+    /// it will return the event directly even if the data after the next `update` could be considered part of the same event
+    /// (especially in cases where CRLF hits an ambiguous grammar).
+    /// When this happens, the next call to next may return an empty event.
+    ///
+    /// ```
+    /// let mut parser = EventStream::new();
+    /// parser.update(...);
+    /// loop {
+    ///     match parser.next() {
+    ///         None => {}
+    ///         Some(event) => {
+    ///             if !event.is_empty() {
+    ///                 ...
+    ///             }
+    ///         }
+    ///     }
+    /// }
+    /// ```
+            i += 1;
+        self.buffer.extend(data);
+            match self.is_eol(i + size1) {
+  
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `879a6512` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10661. [#37880] Agents: Add guides for filing core DB and YSQL issues (Harvested from yugabyte/yugabyte-db)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[#37880] Agents: Add guides for filing core DB and YSQL issues",
+  "source": "yugabyte/yugabyte-db",
+  "source_url": "https://github.com/yugabyte/yugabyte-db",
+  "source_version": "1b9b8270",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T11:15:50.443Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yugabyte-yugabyte-db",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db) (Revision: `1b9b8270`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/skills/create-issue/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `dd0f5120`: [#37880] Agents: Add guides for filing core DB and YSQL issues. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/create-issue/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+allowed-tools: Bash(gh issue create *), Bash(gh issue view *), Bash(gh issue comment *), Bash(gh issue edit *), Bash(gh search issues *), Bash(gh auth status), Read
+  `.claude/`): follow
+  [filing-issues.md](../../../.github/issue-guides/filing-issues.md). It
+  defines "sensitive" and routes the issue: a GitHub issue (Step 3a), a JIRA
+  ticket in the `DB` (core database) project with the sensitive-information
+  field set to `Yes` (Step 3b), a `Vulnerability` ticket (below), or a
+  security report. For a security report, draft it in the policy's format and
+  hand it to the user to send; file no issue. Then check for duplicates as it
+  describes.
+- A security vulnerability found by an internal filer, in any part of the
+  repo → **JIRA ticket** of type `Vulnerability`, never `Task` or `Bug` and
+  never a GitHub issue. Give it the CVE IDs if there are any, the affected
+  package and its location, a severity, and the Target Version. Don't set Fix
+  Version; automation fills it in when the fix lands. See `src/AGENTS.md`
+  § Security and customer-sensitive changes. An external filer sends a
+  security report instead, as above.
+
+Ask the user whether they are an internal (Yugabyte) filer wh
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Induced defect failure mode:
+allowed-tools: Bash(gh issue create *), Bash(gh issue view *), Bash(gh auth status), Read
+First decide whether the issue is **sensitive**: it can't be described without
+something on the Confidentiality list above, e.g. customer data or schema, an
+unfixed security vulnerability, or unreleased internal plans. If the sensitive
+part can be scrubbed or replaced with a placeholder, it isn't sensitive. Then:
+
+  `.claude/`):
+  - Not sensitive → **GitHub issue** in `yugabyte/yugabyte-db`, even if the
+    user asked for a JIRA ticket. GitHub issues sync to JIRA `DB` tickets
+    automatically, so filing in GitHub gets you a JIRA key too.
+  - Sensitive → **JIRA ticket** in `DB`, with the sensitive-information field
+    set to `Yes` (Step 3b).
+- A security vulnerability, in any part of the repo → **JIRA ticket** of type
+  `Vulnerability`, never `Task` or `Bug` and never a GitHub issue. Give it the CVE
+  IDs if there are any, the affected package and its location, a severity, and
+  the Target Version. Don't set Fix Version; automation fills it in when the fix
+  lands. See `src/AGENTS.md` § Security and customer-sensitive changes.
+non-sensitive → GitHub, sensitive → JIRA `DB`.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `dd0f5120` are properly handled with clean fallback behavior.

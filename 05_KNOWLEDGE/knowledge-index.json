@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T11:03:58.295Z",
-  "total_verified_learnings": 9126,
+  "last_updated": "2026-11-26T11:16:25.022Z",
+  "total_verified_learnings": 9127,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25840,
+  "total_items": 25855,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224708,8 +224708,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "c4c537f3",
-      "content_hash": "aee1178c5e6e8a42519096a9873b1a96f7b693f9479c3d7828c30d29362d424a",
+      "source_version": "879a6512",
+      "content_hash": "550b364cea175cc3737e23443ea913963ddb12fc0152db63752bae38acd570ea",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -224737,6 +224737,11 @@
           "number": 10310,
           "title": "run C++ candidate native tests in pinned builder",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10660,
+          "title": "preserve SSE events with CRLF line endings",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224744,7 +224749,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:03:12.479Z",
+      "verified_at": "2026-11-26T11:15:44.056Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224798,10 +224803,10 @@
       "relative_path": "08_VERIFICATION/higress-group-higress-verification-protocol-empirical-defect-shield-for-higress-.md",
       "title": "Verification Protocol: Empirical Defect Shield for higress-group/higress",
       "repository": "higress-group/higress",
-      "source_version": "c4c537f3",
-      "content_hash": "5c43e32f239bb5563c59a5a2ad1c4466ea47cd7814ea5208b93059e9171ca901",
+      "source_version": "879a6512",
+      "content_hash": "39e85ed397d6c1f1783a3842256d0354be573c89ca1d9eb6b36740f0e695687d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:03:13.290Z"
+      "persisted_at": "2026-11-26T11:15:44.989Z"
     },
     "learn-github-mitmproxy-mitmproxy": {
       "learning_id": "learn-github-mitmproxy-mitmproxy",
@@ -225102,9 +225107,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for higress-group-higress-learnings",
       "repository": "higress-group-higress-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d7c18a1accc5e9bfe104eb0e18ce81ae0c2fc3aa2756fd903116528b30c6907",
+      "content_hash": "05bb9a27963a86d707c0117b4530db4f8a3eb5f2dfd2a6066f8e798134ebd705",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:03:21.648Z"
+      "persisted_at": "2026-11-26T11:16:25.022Z"
     },
     "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized": {
       "learning_id": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
@@ -236615,8 +236620,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "7da6b2d3",
-      "content_hash": "00e4498f93ba3c78df4c46c5c197d8ff05912be43a77aa8a012dd3cf3d20cea4",
+      "source_version": "1b9b8270",
+      "content_hash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -236669,6 +236674,11 @@
           "number": 10498,
           "title": "[DB-26245] YSQL: Fix pg_duckdb lake_io concurrent spill issue",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10661,
+          "title": "[#37880] Agents: Add guides for filing core DB and YSQL issues",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236676,7 +236686,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T09:37:30.406Z",
+      "verified_at": "2026-11-26T11:15:50.789Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236742,10 +236752,10 @@
       "relative_path": "08_VERIFICATION/yugabyte-yugabyte-db-verification-protocol-empirical-defect-shield-for-yugabyte-.md",
       "title": "Verification Protocol: Empirical Defect Shield for yugabyte/yugabyte-db",
       "repository": "yugabyte/yugabyte-db",
-      "source_version": "7da6b2d3",
-      "content_hash": "eebf7297b072fb3043daa31d0ddc062535e9a11bf2c415596cb9db35ecfcf417",
+      "source_version": "1b9b8270",
+      "content_hash": "3d35e4ede209e83f57a7da32267f92fa57776997b01419e8eb8414bc8515db97",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:37:31.517Z"
+      "persisted_at": "2026-11-26T11:15:51.726Z"
     },
     "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-pola-rs-polars-learnings-core-invariants",
@@ -285504,7 +285514,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "fdd861ee8905e334efc5a88e99e6b708f1b1f181020da3c9062b0545c7b9e298",
+      "content_hash": "fb055bb7303214537894751f484dcd4f2893faceb037c771c9c334c12b916a1b",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [],
@@ -285513,7 +285523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T18:12:21.891Z",
+      "verified_at": "2026-11-26T11:15:35.239Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -285530,9 +285540,9 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-3.1-8B-Instruct Core Invariants",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "59dd8f28b3892ad7bff69c9c9d83956ead5c85eda8295ca4455f39b40425c894",
+      "content_hash": "a5d66e3fdbc2f78dee0f770f99b284c3538683e6f68c69ae720ddf40b7c7717a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T18:12:22.504Z"
+      "persisted_at": "2026-11-26T11:15:35.754Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co",
@@ -285542,9 +285552,9 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-3.1-8b-instruct-learnings Core Invariants",
       "repository": "hf-meta-llama-llama-3.1-8b-instruct-learnings",
       "source_version": "HEAD",
-      "content_hash": "256deb294851cdc2e48e1267aaad93d49d17f134088f2d9f29e4fb302f128b77",
+      "content_hash": "aec16d442307fafba08a5a56af63e15633d874c65ce08bb78b0518a44895a825",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T18:12:34.256Z"
+      "persisted_at": "2026-11-26T11:15:55.742Z"
     },
     "learn-huggingface-xingchen-agi-teleocr": {
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
@@ -353990,6 +354000,213 @@
       "content_hash": "3fd7c335ec6b938bfda7fe2d76c01172b4bd7bdb6dfef4809c1c94e2fe03f3cf",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T11:03:56.438Z"
+    },
+    "learn-github-kividbio-kividb": {
+      "learning_id": "learn-github-kividbio-kividb",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kividbio/kividb",
+      "repository": "kividbio/kividb",
+      "slug": "kividbio-kividb",
+      "platform": "github",
+      "source_url": "https://github.com/kividbio/kividb",
+      "source_version": "5a9db7f7",
+      "content_hash": "b0ab3752cb79c1dfc4de6f634f9d88362c514dc097fa35c07fe2a3c72b3ee6ba",
+      "dossier_path": "07_PROJECT_LEARNING/kividbio-kividb-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kividbio-kividb-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10659,
+          "title": "FLAT int8: holds bounded in time, the setting checked before the build, maxmemor",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-26T11:15:37.149Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10659": {
+      "learning_id": "rule-10659",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10659,
+      "title": "FLAT int8: holds bounded in time, the setting checked before the build, maxmemor",
+      "source_url": "https://github.com/kividbio/kividb",
+      "source_version": "5a9db7f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:15:37.149Z"
+    },
+    "candidate_directive-flat-int8-holds-bounded-in-time-the-setting-checked-before-the-build-maxmemor": {
+      "item_id": "candidate_directive-flat-int8-holds-bounded-in-time-the-setting-checked-before-the-build-maxmemor",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I9OT-flat-int8-holds-bounded-in-time-the-setting-checked-before-the-build-maxmemor.md",
+      "title": "FLAT int8: holds bounded in time, the setting checked before the build, maxmemor",
+      "repository": "kividbio-kividb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e65eab6907caae72e8383957fb0456eff86880cfa3492981038db224d3458e8",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-26T11:15:54.897Z"
+    },
+    "domain_intelligence-design-intelligence-kividbio-kividb-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-kividbio-kividb-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kividbio-kividb-design-intelligence-kividbio-kividb-core-invariants.md",
+      "title": "Design Intelligence: kividbio/kividb Core Invariants",
+      "repository": "kividbio/kividb",
+      "source_version": "5a9db7f7",
+      "content_hash": "86a4a063a4873780561dd6ad89da194850fa2b9b1e1fb01e6b75bbfb8e8876fc",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-26T11:15:37.862Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kividbio-kividb": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kividbio-kividb",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kividbio-kividb-verification-protocol-empirical-defect-shield-for-kividbio-kivid.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kividbio/kividb",
+      "repository": "kividbio/kividb",
+      "source_version": "5a9db7f7",
+      "content_hash": "46e4a947b6552debdba4ec1e1f9f05acbd98738f9e6ec42648cb14a93d78b466",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T11:15:38.068Z"
+    },
+    "rule-10660": {
+      "learning_id": "rule-10660",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10660,
+      "title": "preserve SSE events with CRLF line endings",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "879a6512",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:15:44.056Z"
+    },
+    "candidate_directive-preserve-sse-events-with-crlf-line-endings": {
+      "item_id": "candidate_directive-preserve-sse-events-with-crlf-line-endings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I1Q1-preserve-sse-events-with-crlf-line-endings.md",
+      "title": "preserve SSE events with CRLF line endings",
+      "repository": "higress-group/higress",
+      "source_version": "879a6512",
+      "content_hash": "86d34e12dc3dbd597c9b98f4f642be64042a53d408ec2733fb7a4eb7af103ba2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T11:15:44.570Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-higress-group-higress-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-higress-group-higress-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-higress-group-higress-technical-construction-intelligence-higress-group-higress-.md",
+      "title": "Technical Construction Intelligence: higress-group/higress Core Invariants",
+      "repository": "higress-group/higress",
+      "source_version": "879a6512",
+      "content_hash": "bda31016f964adb3740c0ce83a821e132c3e9afdf6a26bbffcb30d5fd6fe247b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T11:15:44.773Z"
+    },
+    "rule-10661": {
+      "learning_id": "rule-10661",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10661,
+      "title": "[#37880] Agents: Add guides for filing core DB and YSQL issues",
+      "source_url": "https://github.com/yugabyte/yugabyte-db",
+      "source_version": "1b9b8270",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T11:15:50.789Z"
+    },
+    "candidate_directive-37880-agents-add-guides-for-filing-core-db-and-ysql-issues": {
+      "item_id": "candidate_directive-37880-agents-add-guides-for-filing-core-db-and-ysql-issues",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-I6WZ-37880-agents-add-guides-for-filing-core-db-and-ysql-issues.md",
+      "title": "[#37880] Agents: Add guides for filing core DB and YSQL issues",
+      "repository": "yugabyte/yugabyte-db",
+      "source_version": "1b9b8270",
+      "content_hash": "99736a81a1e18a4a754ed73157390b79209c07434c078d9fb2089cf6b6d4b560",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-26T11:15:51.303Z"
+    },
+    "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-yugabyte-yugabyte-db-human-need-intelligence-yugabyte-yugabyte-db-core-invariant.md",
+      "title": "Human & Need Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "repository": "yugabyte/yugabyte-db",
+      "source_version": "1b9b8270",
+      "content_hash": "70f2b8fa15c216883be5e15cdd400216255792dfcc22c4b14a326a78a35d41a0",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-26T11:15:51.508Z"
+    },
+    "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kividbio-kividb-learnings-design-intelligence-kividbio-kividb-learnings-core-inv.md",
+      "title": "Design Intelligence: kividbio-kividb-learnings Core Invariants",
+      "repository": "kividbio-kividb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "46cf2f5f2ca721bbb3672ca710db3534e10585ffe963b92d087d38f23d4e51e0",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-26T11:15:55.112Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kividbio-kividb-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kividbio-kividb-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kividbio-kividb-learnings-verification-protocol-empirical-defect-shield-for-kivi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kividbio-kividb-learnings",
+      "repository": "kividbio-kividb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "64f2625da1ebe5f15e37708caa8c40f99e1264ab6622323fb06cf7d1fa4d4684",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T11:15:55.314Z"
+    },
+    "candidate_directive-wasm-rust-preserve-sse-events-with-crlf-line-endings": {
+      "item_id": "candidate_directive-wasm-rust-preserve-sse-events-with-crlf-line-endings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IWL6-wasm-rust-preserve-sse-events-with-crlf-line-endings.md",
+      "title": "wasm-rust): preserve SSE events with CRLF line endings",
+      "repository": "higress-group-higress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28ed293cc9ed357a58927db49e5a5f057fa10e274f4aaf1fc9e4022ff06ebdcf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T11:16:24.570Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-higress-group-higress-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-higress-group-higress-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-higress-group-higress-learnings-technical-construction-intelligence-higress-grou.md",
+      "title": "Technical Construction Intelligence: higress-group-higress-learnings Core Invariants",
+      "repository": "higress-group-higress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2244da006ac4239b6b029dd767f04405ac674a3112e821624b08092aafcfc165",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T11:16:24.804Z"
     }
   },
   "ai-builder-brain": {

@@ -13384,3 +13384,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-26T11:03:38.849Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `007a518f` | Multi-dimensional audit evidence | 2026-11-26T11:03:50.935Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `d0e4075f` | Multi-dimensional audit evidence | 2026-11-26T11:03:51.285Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-26T11:15:35.512Z |
+| `learn-github-kividbio-kividb` | `https://github.com/kividbio/kividb` | `5a9db7f7` | Multi-dimensional audit evidence | 2026-11-26T11:15:37.406Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `879a6512` | Multi-dimensional audit evidence | 2026-11-26T11:15:44.313Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `1b9b8270` | Multi-dimensional audit evidence | 2026-11-26T11:15:51.051Z |
+| `learn-dom-h-d48f999d` | `project://higress-group-higress` | `879a6512` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md` | 2026-11-26T11:16:24.150Z |

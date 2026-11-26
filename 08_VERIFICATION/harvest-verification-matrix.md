@@ -13351,3 +13351,8 @@
 | `CYCLE-20261126-2HQZ` | `2026-11-26T11:03:38.843Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`e9796a17...`) |
 | `CYCLE-20261126-2R2P` | `2026-11-26T11:03:50.929Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10657` | Yes (`5e80004c...`) |
 | `CYCLE-20261126-2RCG` | `2026-11-26T11:03:51.280Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10658` | Yes (`381414aa...`) |
+| `CYCLE-20261126-HUQB` | `2026-11-26T11:15:35.507Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`fb055bb7...`) |
+| `CYCLE-20261126-HW6X` | `2026-11-26T11:15:37.401Z` | `kividbio/kividb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10659` | Yes (`b0ab3752...`) |
+| `CYCLE-20261126-I1IS` | `2026-11-26T11:15:44.308Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10660` | Yes (`550b364c...`) |
+| `CYCLE-20261126-I6PY` | `2026-11-26T11:15:51.046Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10661` | Yes (`44eb813a...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T11:16:24.150Z` | `higress-group-higress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D48F999D` [Domain H] | Yes (`21f7f77e...`) |

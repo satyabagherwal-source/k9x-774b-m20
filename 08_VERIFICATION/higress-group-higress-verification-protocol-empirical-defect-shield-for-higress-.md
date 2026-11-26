@@ -4,22 +4,22 @@
 {
   "source_repository": "higress-group/higress",
   "source_url": "https://github.com/higress-group/higress",
-  "source_version": "c4c537f3",
+  "source_version": "879a6512",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T17:03:12.924Z",
+  "timestamp": "2026-11-26T11:15:44.569Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-higress-group-higress",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `c4c537f3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T17:03:12.924Z`  
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `879a6512`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T11:15:44.569Z`  
 > **Learning ID**: `learn-github-higress-group-higress`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `higress-group/higress` (Commit: `c4c537f3`)
+- **Target Repository**: `higress-group/higress` (Commit: `879a6512`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:03:11.580Z  
+> **Harvest Timestamp**: 2026-11-26T11:15:43.099Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9836 stars
+- **Stars / Engagement**: 9856 stars
 
 ---
 
@@ -1747,11 +1747,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5420** (2026-11-24): **fix(release): run C++ candidate native tests in pinned builder**
-  *Symptoms*: ## I. Summary  Run the native C++ tests in both release-preparation workflows inside the digest-pinned builder read from `plugins/wasm-cpp/Dockerfile`, rather than the GitHub runner's host Bazel/compiler. This follows the existing `wasm-cpp-2.0.1-verification.yaml` pattern and addresses the observed `std::optional`/C++17 failure for `basic_auth`.  Both C++ branches reject an unpinned builder, bind-mount the source at `/workspace`, pass the plugin name as a positional argument, and retain the existing `make -C plugins/wasm-cpp PLUGIN_NAME="$build_name" build` Wasm path. The shared contract test checks both workflows and rejects the old `(cd plugins/wasm-cpp && bazel test` invocation.  Only the two release workflows and `tools/plugin-release/hotfix_workflow_contract_test.go` change. No C++ source, versions, catalog, plans, snapshots, promotion logic, production pins, public tags, or `latest` change.  ## II. Related issue  N/A: no issue is closed or edited. This is the bounded follow-up to #5399, #5400, and higress-group/plugin-server#15, under maintainer authorization in Discord message `1574604348468633711` for **non-public candidates + non-production 18/18**, not public release or promotion.  Observed failure: https://github.com/higress-group/higress/actions/runs/45314468250/job/138177918921  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-s
+- **Issue #5433** (2026-11-26): **fix(wasm-rust): preserve SSE events with CRLF line endings**
+  *Symptoms*: ## I. Summary  CRLF 按一个逻辑换行处理，遇到空行才结束 SSE 事件。跨更新的 CR/LF 也会成对处理，避免 event 与 data 分离、多行 data 被拆开；新增所有切分位置和逐字节输入回归。  ## II. Related issue  Fixes #5407  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace, or formatting with no substantive choice or behavioral effect. - [ ] **Verified maintainer/administrator exception:** Material participation occurred and the canonical repository role and PR author were verified. - [x] **Material agent participation:** An AI or coding agent materially participated in analysis, design, implementation, testing, or PR preparation.  - [ ] **Before implementation began:** A Higress maintainer had approved the Proposal and Design Issues, and authorized implementation TASKs linked the work to the applicable SPECs. - [ ] **Before verification began:** The Design contained a concrete Verification Plan. - [ ] **Before requesting maintainer review or acceptance:** Applicable implementation and verification TASKs were done with exact commands, results, evidence links, and hashes.  - [ ] Complete: all three timed obligations above were satisfied. - [x] Noncompliant: one or more obligations were not satisfied; explain below. - [ ] Verified exception: material partic
 
-- **Issue #5419** (2026-11-24): **Provide a trusted client IP capability to prevent IP spoofing**
-  *Symptoms*: ## Why do you need it?  Higress 的多个插件需要获取客户端 IP，但目前分别实现了来源选择和解析：  | 插件 | 当前获取方式 | 请求头模式 | | --- | --- | --- | | `ip-restriction` | 默认读取连接对端 `source.address`；也可配置请求头来源 | 默认请求头为 `X-Forwarded-For`，取逗号分隔的第一个值 | | `geo-ip` | 默认读取 `source.address`；也可配置请求头来源 | 默认请求头为 `X-Forwarded-For`，取第一个值 | | `cluster-key-rate-limit` | 按 IP 限流时可选择 `from-remote-addr` 或 `from-header-<header>` | 取指定请求头中第一个值 | | `ai-token-ratelimit` | 按 IP 限流时可选择 `from-remote-addr` 或 `from-header-<header>` | 取指定请求头中第一个值 |  当 Higress 前面存在代理时，连接对端可能是代理地址。请求头模式下，如果前置代理保留客户端传入的 XFF 并追加来源地址，客户端可能在最左侧伪造 IP。例如攻击者传入白名单 IP，插件选择该值后可能错误放行；基于 IP 的限流和地域识别也可能使用错误地址。能否利用取决于实际网络链路和代理的请求头处理方式。  目前上述插件各自处理 IP，未提供按右侧深度或可信代理链统一选择来源 IP 的能力；使用其他自定义 IP 请求头同样需要信任其设置方。  希望提供统一的客户端 IP 获取能力，供 IP 限制、地域识别和限流等插件复用。  ## How could it be?  建议参考 APISIX 的 `real-ip` 插件，讨论在 Higress 中提供统一的 `real-ip` 能力，例如：  - 支持从连接对端或配置的请求头获取 IP。 - 对包含多个地址的请求头，支持按右侧深度选取，或配置可信代理 IP/CIDR，从右向左跳过可信代理并选取第一个不可信地址。 - 使用可信代理链时先验证连接对端；对端不可信时不信任其转发头。明确缺失、无效地址和无法确定来源时的处理方式。 - 让 IP 限制、地域识别和按 IP 限流等插件能够复用计算结果；已有插件配置和默认行为保持兼容，新策略显式启用。  希望社区讨论独立插件是否适合，以及应如何在 Envoy/Proxy-Wasm 中安全地共享结果、保证执行顺序和防止请求头伪造。具体实现方式需要先验证，不预设一定可以修改 Envoy 的来源地址。  插件执行顺序也需要纳入设计：现有文档中 `geo-ip` 为 `AUTHN` / 440，`ip-restriction` 为 `AUTHN` / 210，`ai-token-ratelimit` 和 `cluster-key-rate-limit` 分别为默认阶段 / 600 和 20。建议初步考虑将 `real-ip` 放在 `AUTHN` 阶段、优先级设为 500，使其在这些默认配置下先于上述消费者执行；具体值需结合其他插件、用户自定义排序及真实 Envoy 过滤器链验证。同一阶段优先级越大越靠前，跨阶段先按阶段排序。  右侧深度依赖固定且正确配置的代理层数；可信代理链依赖对端识别准确、可信代理正确维护转发头，且需要防止绕过这些代理。选出的地址是可信链能够确定的来源，未必是最终用户设备。  ## Oth
+- **Issue #5428** (2026-11-26): **feat: define managed C++ release contracts and generalized verification**
+  *Symptoms*: ## I. Summary  Phase 1 only: TASK-5427001 (T01 then T02), implementing D7–D9/D13–D16 contracts and D10 generalized verification. Production catalog activation and release operations remain unauthorized and unchanged.  - Fixed-nine C++ catalog identities/states, explicit hash-bound candidate/history imports, effective artifact source distinct from release freeze and preparation/merge heads. - Optional generic Wasm byte hashes/history, calibrated structured publication evidence, offline derivation and live classification/byte replay, first-import immutable conflict rejection. - Catalog-derived nine-native/nine-Wasm CI, three existing final-byte e2e cases, pinned builder/runtime, complete run/head/artifact accounting, failure logs and cleanup. - Read-only imported-candidate preparation/PR wiring, C++/imports staging and Q verification; existing promotion helper keeps M verification.  Exact base: `c4c537f37175befc375e65ba059e8df477dc52a4`. Current implementation head: `0065667362bd3fbec0cf5ce01c8ab5f43ecfa260`; 13 DCO commits, 25 files, 3392 insertions/96 deletions. T01 was implemented and focused-tested before T02. Corrective commits and superseded failures remain recorded in external evidence.  ## II. Related issue  Refs #5426 Refs #5427  Canonical implementation TASK: TASK-5427001; no issue closure or TASK status transition is requested.  ## III. Change type  - [ ] Bug fix - [x] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maint
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1768,1084 +1768,151 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4c537f3` (2026-11-24)
-**Commit Message**: fix(release): run C++ candidate native tests in pinned builder
+### Incident Patch 1: `879a6512` (2026-11-26)
+**Commit Message**: fix(wasm-rust): preserve SSE events with CRLF line endings (#5433)
 
-Squash merge authorized for the non-public candidate acceptance path. C++ native tests now run in the digest-pinned builder from plugins/wasm-cpp/Dockerfile in both prepare and preparation-PR validation; host Bazel is rejected by contract tests. Public promotion, tags, and production pins remain unchanged and unauthorized.
+Signed-off-by: zhihao-yuan <[REDACTED_EMAIL]>
+Co-authored-by: zhihao-yuan <[REDACTED_EMAIL]>
+Co-authored-by: 纪卓志 <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/prepare-plugin-release.yaml` (modified, +11/-1)
+**File**: `plugins/wasm-rust/src/event_stream.rs` (modified, +67/-45)
 ```diff
-@@ -277,7 +277,17 @@ jobs:
-                 make -C plugins/wasm-rust PLUGIN_NAME="$build_name" test build
-                 ;;
-               cpp)
--                (cd plugins/wasm-cpp && bazel test --test_output=errors "//extensions/$build_name:${build_name}_test")
-+                local builder
-+                builder="$(sed -n 's/^ARG BUILDER=//p' plugins/wasm-cpp/Dockerfile)"
-+                case "$builder" in
-+                  *@sha256:*) ;;
-+                  *) echo 'Builder must be pinned by digest' >&2; return 1 ;;
-+                esac
-+                docker run --rm \
-+                  -v "$GITHUB_WORKSPACE/plugins/wasm-cpp:/workspace" \
-+                  -w /workspace \
-+                  "$builder" \
-+                  bash -euo pipefail -c 'bazel test --test_output=errors "//extensions/$1:$1_test"' -- "$build_name"
-                 make -C plugins/wasm-cpp PLUGIN_NAME="$build_name" build
-                 ;;
-               *) echo "unsupported planned implementation: $implementation" >&2; return 1 ;;
-```
-
-**File**: `.github/workflows/validate-plugin-preparation-pr.yaml` (modified, +11/-1)
-```diff
-@@ -107,7 +107,17 @@ jobs:
-                 make -C plugins/wasm-rust PLUGIN_NAME="$build_name" test build
-                 ;;
-               cpp)
--                (cd plugins/wasm-cpp && bazel test --test_output=errors "//extensions/$build_name:${build_name}_test")
-+                local builder
-+                builder="$(sed -n 's/^ARG BUILDER=//p' plugins/wasm-cpp/Dockerfile)"
-+                case "$builder" in
-+                  *@sha256:*) ;;
-+                  *) echo 'Builder must be pinned by digest' >&2; return 1 ;;
-+                esac
-+                docker run --rm \
-+                  -v "$GITHUB_WORKSPACE/plugins/wasm-cpp:/workspace" \
-+                  -w /workspace \
-+                  "$builder" \
-+                  bash -euo pipefail -c 'bazel test --test_output=errors "//extensions/$1:$1_test"' -- "$build_name"
-                 make -C plugins/wasm-cpp PLUGIN_NAME="$build_name" build
-                 ;;
-               *) echo "unsupported planned implementation: $implementation" >&2; return 1 ;;
-```
-
-**File**: `tools/plugin-release/hotfix_workflow_contract_test.go` (modified, +30/-2)
-```diff
-@@ -30,7 +30,6 @@ func TestCPPHotfixPrepareUsesStableInterfaceAndSeparateReleaseID(t *testing.T) {
- 		"render-snapshot --catalog",
- 		"args+=(--mode=cpp-hotfix)",
- 		"release_id=cpp-hotfix-2.0.1",
--		`bazel test --test_output=errors "//extensions/$build_name:${build_name}_test"`,
- 		`make -C plugins/wasm-cpp PLUGIN_NAME="$build_name" build`,
- 		`test "$(git rev-parse refs/remotes/origin/main)" = "$TARGET_REF"`,
- 	} {
-@@ -42,13 +41,42 @@ func TestCPPHotfixPrepareUsesStableInterfaceAndSeparateReleaseID(t *testing.T) {
- 		t.Fatal("prepare workflow contains an out-of-scope C++ plugin")
- 	}
- 	validate := mustWorkflow(t, "validate-plugin-preparation-pr.yaml")
--	for _, required := range []string{"cpp-hotfix-2.0.1", "args+=(--mode=cpp-hotfix)", `bazel test --test_output=errors "//extensions/$build_name:${build_name}_test"`} {
-+	for _, required := range []string{"cpp-hotfix-2.0.1", "args+=(--mode=cpp-hotfix)"} {
- 		if !strings.Contains(validate, required) {
- 			t.Fatalf("preparation validation workflow lacks %q", required)
- 		}
- 	}
+@@ -24,51 +24,39 @@
+ /// |field   |= 1*name-char [ colon [ space ] *any-char ] eol |
+ /// |eol     |= ( cr lf / cr / lf )      |
+ ///
+-/// According to spec, we must judge EOL twice before we can identify a complete event.
+-/// However, in the rules of event and field, there is an ambiguous grammar in the judgment of eol,
+-/// and it will bring ambiguity (whether the field ends). In order to eliminate this ambiguity,
+-/// we believe that CRLF as CR+LF belongs to event and field respectively.
++/// CRLF is one logical line ending. An empty line, formed by two consecutive
++/// logical line endings, terminates an event.
+ 
+ #[derive(Default)]
+ pub struct EventStream {
+     buffer: Vec<u8>,
+     processed_offset: usize,
++    skip_lf: bool,
  }
  
-+func TestCPPReleaseNativeTestsUsePinnedBuilder(t *testing.T) {
-+	for _, name := range []string{"prepare-plugin-release.yaml", "validate-plugin-preparation-pr.yaml"} {
-+		t.Run(name, func(t *testing.T) {
-+			workflow := mustWorkflow(t, name)
-+			build := workflowShellContract(t, name, "plugin-build-contract")
-+			for _, required := range []string{
-+				`builder="$(sed -n 's/^ARG BUILDER=//p' plugins/wasm-cpp/Dockerfile)"`,
-+				`case "$builder" in
-+                  *@sha256:*) ;;
-+                  *) echo 'Builder must be pinned by digest' >&2; return 1 ;;
-+                esac`,
-+				`docker run --rm \
-+                  -v "$GITHUB_WORKSPACE/plugins/wasm-cpp:/workspace" \
-+                  -w /workspace \
-+                  "$builder" \
-+                  bash -euo pipefail -c 'bazel test --test_output=errors "//extensions/$1:$1_test"' -- "$build_name"`,
-+				`make -C plugins/wasm-cpp PLUGIN_NAME="$build_name" build`,
-+			} {
-+				if !strings.Contains(build, required) {
-+					t.Fatalf("%s build contract lacks %q", name, required)
-+				}
-+			}
-+			if strings.Contains(workflow, "(cd plugins/wasm-cpp && bazel test") {
-+				t.Fatalf("%s still runs native C++ tests with host bazel", name)
-+			}
-+		})
-+	}
-+}
-+
- func TestCPPHotfixPromotionIsDryRunOnlyAndHashesRawBytes(t *testing.T) {
- 	promote := mustWorkflow(t, "promote-plugin-release.yaml")
- 	for _, required := range []string{
-```
-
----
-
-### Incident Patch 2: `0036e349` (2026-11-24)
-**Commit Message**: feat: add restricted C++ 2.0.1 hotfix release adapter
-
-Squash merge authorized by maintainer for non-public release acceptance. Exact head 3ff6e7d772a22a7b3d067a8e873de70fe5660224; required checks and C++ Hotfix Release Contract passed after freezing the pre-rebase regression baseline as testdata. Public 2.0.1/latest promotion remains disabled and separately unauthorized.
-
-**File**: `.github/workflows/cpp-hotfix-release-contract.yaml` (added, +129/-0)
-```diff
-@@ -0,0 +1,129 @@
-+# Copyright 2026 Higress Authors
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+name: C++ Hotfix Release Contract
-+
-+on:
-+  pull_request:
-+    paths:
-+      - .github/workflows/cpp-hotfix-release-contract.yaml
-+      - .github/workflows/prepare-plugin-release.yaml
-+      - .github/workflows/promote-plugin-release.yaml
-+      - .github/workflows/validate-plugin-preparation-pr.yaml
-+      - plugins/release/catalog.json
-+      - tools/plugin-release/**
-+  workflow_dispatch:
-+    inputs:
-+      target_ref:
-+        description: "Exact full 40-hex Higress commit to verify"
-+        required: true
-+        type: string
-+      plugin_server_ref:
-+        description: "Exact full 40-hex plugin-server commit for the history contract"
-+        required: true
-+        type: string
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: cpp-hotfix-release-contract-${{ github.event.pull_request.head.sha || inputs.target_ref || github.sha }}
-+  cancel-in-progress: false
-+
-+jobs:
-+  contract:
-+    name: ${{ github.event_name == 'workflow_dispatch' && 'Two-SHA release and history contract' || 'Higress release contract only' }}
-+    runs-on: ubuntu-22.04
-+    steps:
-+      - name: Validate immutable source inputs
-+        env:
-+          EXPECTED_HEAD: ${{ inputs.target_ref || github.event.pull_request.head.sha }}
-+          PLUGIN_SERVER_REF: ${{ inputs.plugin_server_ref }}
-+          EVENT_NAME: ${{ github.event_name }}
-+        run: |
-+          set -euo pipefail
-+          [[ "$EXPECTED_HEAD" =~ ^[0-9a-f]{40}$ ]]
-+          if [ "$EVENT_NAME" = workflow_dispatch ]; then
-+            [[ "$PLUGIN_SERVER_REF" =~ ^[0-9a-f]{40}$ ]]
-+          fi
-+      - name: Check out exact Higress source
-+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-+        with:
-+          ref: ${{ inputs.target_ref || github.event.pull_request.head.sha }}
-+          fetch-depth: 0
-+          persist-credentials: false
-+      - name: Record exact source identities
-+        env:
-+          EXPECTED_HEAD: ${{ inputs.target_ref || github.event.pull_request.head.sha }}
-+        run: |
-+          set -euo pipefail
-+          mkdir -p /tmp/cpp-hotfix-contract
-+          [[ "$EXPECTED_HEAD" =~ ^[0-9a-f]{40}$ ]]
-+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
-+          printf 'higress=%s\n' "$EXPECTED_HEAD" | tee /tmp/cpp-hotfix-contract/source-commits.txt
-+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
-+        with:
-+          go-version: "1.24.0"
-+      - name: Verify formatting and release contracts
-+        env:
-+          CPP_HOTFIX_CONTRACT_EVIDENCE: /tmp/cpp-hotfix-contract/step-body-spy
-+        run: |
-+          set -euo pipefail
-+          cd tools/plugin-release
-+          unformatted=$(gofmt -l .)
-+          test -z "$unformatted" || { printf 'gofmt required:\n%s\n' "$unformatted"; exit 1; }
-+          GOMAXPROCS=1 go test -v -p 1 -count=1 ./... 2>&1 | tee /tmp/cpp-hotfix-contract/go-test.log
-+          go run . validate-catalog --root ../.. --catalog ../../plugins/release/catalog.json 2>&1 | tee /tmp/cpp-hotfix-contract/validate-catalog.log
-+      - name: Check out requested plugin-server source
-+        if: ${{ github.event_name == 'workflow_dispatch' }}
-+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-+        with:
-+          repository: higress-group/plugin-server
-+          ref: ${{ inputs.plugin_server_ref }}
-+          path: plugin-server
-+          fetch-depth: 0
-+          persist-credentials: false
-+      - name: Verify plugin-server history contract
-+        if: ${{ github.event_name == 'workflow_dispatch' }}
-+        env:
-+          PLUGIN_SERVER_REF: ${{ inputs.plugin_server_ref }}
-+        run: |
-+          set -euo pipefail
-+          cd plugin-server
-+          [[ "$PLUGIN_SERVER_REF" =~ ^[0-9a-f]{40}$ ]]
-+          test "$(git rev-parse HEAD)" = "$PLUGIN_SERVER_REF"
-+          printf 'plugin-server=%s\n' "$(git rev-parse HEAD)" | tee -a /tmp/cpp-hotfix-contract/source-commits.txt
-+          python3 -m unittest -v test_pull_plugins.py 2>&1 | tee /tmp/cpp-hotfix-contract/plugin-server-test.log
-+      - name: Record non-production boundaries
-+        env:
-+          EVENT_NAME: ${{ github.event_name }}
-+        run: |
-+          set -euo pipefail
-+          {
-+            if [ "$EVENT_NAME" = workflow_dispatch ]; then
-+              echo "Two exact SHA contract: source-commits.txt binds both verified check
-```
-
-**File**: `.github/workflows/prepare-plugin-release.yaml` (modified, +74/-11)
-```diff
-@@ -3,6 +3,14 @@ name: Prepare Immutable Plugin Release
- on:
-   workflow_dispatch:
-     inputs:
-+      release_mode:
-+        description: "Ordinary managed release or the restricted nine-plugin C++ hotfix"
-+        required: true
-+        default: "standard"
-+        type: choice
-+        options:
-+          - standard
-+          - cpp-hotfix
-       gateway_version:
-         description: "Stable Higress version for the reviewed preparation PR"
-         required: true
-@@ -38,7 +46,22 @@ concurrency:
-   cancel-in-progress: false
+ impl Iterator for EventStream {
+     type Item = Vec<u8>;
+     /// Get the next event from the event stream. Return the event data if available, otherwise return None.
+-    /// Next will consume all the data in the current buffer. However, if there is a valid event at the end of the buffer,
+-    /// it will return the event directly even if the data after the next `update` could be considered part of the same event
+-    /// (especially in cases where CRLF hits an ambiguous grammar).
+-    /// When this happens, the next call to next may return an empty event.
+-    ///
+-    /// ```
+-    /// let mut parser = EventStream::new();
+-    /// parser.update(...);
+-    /// loop {
+-    ///     match parser.next() {
+-    ///         None => {}
+-    ///         Some(event) => {
+-    ///             if !event.is_empty() {
+-    ///                 ...
+-    ///             }
+-    ///         }
+-    ///     }
+-    /// }
+-    /// ```
++    /// CRLF pairs are consumed together, including pairs split across updates.
+     ///
++    /// A delimiter ending in CR at the buffer boundary completes the event
++    /// immediately. Waiting for the next byte to distinguish CR from CRLF
++    /// would delay dispatch when that byte is not LF, or never arrives.
++    /// `update` skips an optional following LF using `skip_lf`, so it does not
++    /// become an extra line ending.
+     fn next(&mut self) -> Option<Self::Item> {
+         let mut i = self.processed_offset;
  
- jobs:
-+  input-guard:
-+    runs-on: ubuntu-22.04
-+    steps:
-+      - name: Reject disabled hotfix candidate preparation
-+        env:
-+          RELEASE_MODE: ${{ inputs.release_mode }}
-+          DRY_RUN: ${{ inputs.dry_run }}
-+        run: |
-+          set -euo pipefail
-+          if [ "$RELEASE_MODE" = cpp-hotfix ] && [ "$DRY_RUN" != true ]; then
-+            echo "cpp-hotfix is dry-run-only; candidate preparation is pending separate authorization" >&2
-+            exit 1
-+          fi
-+
-   preflight:
-+    needs: input-guard
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-@@ -49,6 +72,7 @@ jobs:
-         with:
-           version: 1.2.3
-       - name: Preflight ORAS public manifest resolution
-+        if: ${{ inputs.release_mode != 'cpp-hotfix' }}
-         env:
-           TARGET_REF: ${{ inputs.target_ref }}
-         run: |
-@@ -148,6 +172,7 @@ jobs:
-           version: 1.2.3
-       - name: Validate immutable inputs
-         env:
-+          RELEASE_MODE: ${{ inputs.release_mode }}
-           GATEWAY_VERSION: ${{ inputs.gateway_version }}
-           TARGET_REF: ${{ inputs.target_ref }}
-           PREVIOUS: ${{ inputs.previous_snapshot }}
-@@ -160,7 +185,12 @@ jobs:
-           test "$(git rev-parse HEAD)" = "$TARGET_REF"
-           git fetch --no-tags origin main
-           test "$(git rev-parse refs/remotes/origin/main)" = "$TARGET_REF"
--          if [ -n "$PREVIOUS" ]; then
-+          if [ "$RELEASE_MODE" = cpp-hotfix ]; then
-+            test -z "$PREVIOUS"
-+            test -z "$BOOTSTRAP_BASE"
-+            test "$OVERRIDES" = '{}'
-+            git merge-base --is-ancestor 392b64e8cce43e63d3207f00ba5c8fe2ff8921d9 "$TARGET_REF"
-+          elif [ -n "$PREVIOUS" ]; then
-             [[ "$PREVIOUS" =~ ^plugins/release/snapshots/[0-9]+\.[0-9]+\.[0-9]+\.json$ ]]
-             test -f "$PREVIOUS"
-             test -z "$BOOTSTRAP_BASE"
-@@ -174,6 +204,7 @@ jobs:
-           printf '%s' "$OVERRIDES" | jq -Rse -cS 'fromjson | if type == "object" and all(to_entries[]; (.key | test("^[a-z0-9][a-z0-9._-]*$")) and (.value | type == "string" and test("^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"))) then . else error("version_overrides must map safe logical plugin IDs to stable SemVer strings") end' > /tmp/overrides.json
-       - name: Validate catalog and deterministically plan
-         env:
-+          RELEASE_MODE: ${{ inputs.release_mode }}
-           GATEWAY_VERSION: ${{ inputs.gateway_version }}
-           TARGET_REF: ${{ inputs.target_ref }}
-           PREVIOUS: ${{ inputs.previous_snapshot }}
-@@ -186,7 +217,11 @@ jobs:
-           source tools/hack/oras-retry.sh
-           (cd tools/plugin-release && go run . validate-catalog --root ../.. --catalog ../../plugins/release/catalog.json)
-           mkdir -p plugins/release/snapshots plugins/release/plans plugins/release/evidence plugins/release/bootstrap-evidence
--          if [ -z "$PREVIOUS" ]; then
-+          if [ "$RELEASE_MODE" = cpp-hotfix ]; then
-+            release_id=cpp-hotfix-2.0.1
-+            (cd tools/plugin-release && go run . plan --mode=cpp-hotfix --root ../.. --catalog ../../plugins/release/catalog.json --gateway-version "$GATEWAY_VERSION" --target "$TARGET_REF" --base 392b64e8cce43e63d3207f00ba5c8fe2ff8921d9 --output /tmp/plan.json)
-+          elif [ -z "$PREVIOUS" ]; then
-+            release_id="$GATEWAY_VERSION"
-             # The bootstrap capture resolves the complete public catalog
-             # read-only. A 401/403 there is an authorization/configuration
-             # error, never an absent artifact. Reuse the existing protected
-@@ -203,10 +238,11 @@ jobs:
-             (cd tools/plugin-release && go run . "${args[@]}")
-             cp /tmp/bootstrap-evidence.json "plugins/release/bootstrap-evidence/$GATEWAY_VERSION.json"
-           else
-+            release_id="$GATEWAY_VERSION"
-             args=(plan --root ../.. --catalog ../../plugins/release/catalog.json --gateway-version "$GATEWAY_VERSION" --target "$TARGET_REF" --overrides /tmp/overrides.json --output /tmp/plan.json --previous "../../$PREVIOUS")
-             (cd tools/plugin-release && go run . "${args[@]}")
-           fi
--          cp /tmp/plan.json "plugins/release/plans/$GATEWAY_VERSION.json"
-+          cp /tmp/plan.json "plugins/release/plans/$release_id.json"
-           sha256sum /tmp/plan.json | tee -a "$GITHUB_STEP_SUMMARY"
-       - name: Confirm dry-run boundary
-         i
-```
-
-**File**: `.github/workflows/promote-plugin-release.yaml` (modified, +58/-26)
-```diff
-@@ -3,6 +3,14 @@ name: Promote Immutable Plugin Release
- on:
-   workflow_dispatch:
-     inputs:
-+      release_mode:
-+        description: "Ordinary managed release or restricted C++ version-only hotfix"
-+        required: true
-+        default: "standard"
-+        type: choice
-+        options:
-+          - standard
-+          - cpp-hotfix
-       source_commit:
-         description: "Exact merged preparation commit"
-         required: true
-@@ -37,7 +45,22 @@ concurrency:
-   cancel-in-progress: false
+         while i < self.buffer.len() {
+             if let Some(size) = self.is_2eol(i) {
+                 let event = self.buffer[self.processed_offset..i].to_vec();
+                 self.processed_offset = i + size;
++                self.skip_lf = self.processed_offset == self.buffer.len()
++                    && self.buffer.last() == Some(&b'\r');
+                 return Some(event);
+             }
  
- jobs:
-+  input-guard:
-+    runs-on: ubuntu-22.04
-+    steps:
-+      - name: Reject disabled hotfix public promotion
-+        env:
-+          RELEASE_MODE: ${{ inputs.release_mode }}
-+          DRY_RUN: ${{ inputs.dry_run }}
-+        run: |
-+          set -euo pipefail
-+          if [ "$RELEASE_MODE" = cpp-hotfix ] && [ "$DRY_RUN" != true ]; then
-+            echo "cpp-hotfix is dry-run-only; public promotion is pending separate authorization" >&2
-+            exit 1
-+          fi
-+
-   verify-and-promote:
-+    needs: input-guard
-     runs-on: ubuntu-latest
-     # No environment gate: the human approval for this phase is the merged
-     # preparation PR labeled release/<gateway_version>, verified by the first
-@@ -55,14 +78,25 @@ jobs:
-           GH_TOKEN: ${{ github.token }}
-           SOURCE_COMMIT: ${{ inputs.source_commit }}
-           SNAPSHOT_PATH: ${{ inputs.snapshot_path }}
-+          RELEASE_MODE: ${{ inputs.release_mode }}
-+          ADOPT_UNANNOTATED_LATEST: ${{ inputs.adopt_unannotated_latest }}
-         run: |
-           set -euo pipefail
-           # BEGIN promotion-authorization-contract
-+          RELEASE_MODE="${RELEASE_MODE:-standard}"
-+          ADOPT_UNANNOTATED_LATEST="${ADOPT_UNANNOTATED_LATEST:-false}"
-           [[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
--          [[ "$SNAPSHOT_PATH" =~ ^plugins/release/snapshots/([0-9]+\.[0-9]+\.[0-9]+)\.json$ ]]
--          gateway_version="${BASH_REMATCH[1]}"
-+          if [ "$RELEASE_MODE" = cpp-hotfix ]; then
-+            test "$SNAPSHOT_PATH" = plugins/release/snapshots/cpp-hotfix-2.0.1.json
-+            test "$ADOPT_UNANNOTATED_LATEST" = false
-+            release_id=cpp-hotfix-2.0.1
-+          else
-+            [[ "$SNAPSHOT_PATH" =~ ^plugins/release/snapshots/([0-9]+\.[0-9]+\.[0-9]+)\.json$ ]]
-+            release_id="${BASH_REMATCH[1]}"
-+            test "$(jq -er .gatewayVersion "$SNAPSHOT_PATH")" = "$release_id"
-+          fi
-+          gateway_version=$(jq -er .gatewayVersion "$SNAPSHOT_PATH")
-           test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
--          test "$(jq -er .gatewayVersion "$SNAPSHOT_PATH")" = "$gateway_version"
-           # snapshot.sourceCommit is the exact main/code-freeze commit the
-           # preparation PR was generated from, so the merged commit promote was
-           # given must descend from it.
-@@ -77,7 +111,7 @@ jobs:
-             echo "promotion is not authorized: $SOURCE_COMMIT is not reachable from main, so no preparation PR was merged at it" >&2
-             exit 1
-           fi
--          label="release/$gateway_version"
-+          label="release/$release_id"
-           # Authorization rests on immutable merge evidence: exactly one PR
-           # merged into main at source_commit carrying the release label a
-           # maintainer set. PR authorship metadata (author login, branch name,
-@@ -92,7 +126,7 @@ jobs:
-           ' <<<"$pulls")
-           candidate_count=$(jq -r 'length' <<<"$candidates")
-           if [ "$candidate_count" != 1 ]; then
--            echo "promotion is not authorized: expected exactly one PR merged into main at $SOURCE_COMMIT, found $candidate_count; review and merge the preparation PR for $gateway_version, then re-run promote" >&2
-+            echo "promotion is not authorized: expected exactly one PR merged into main at $SOURCE_COMMIT, found $candidate_count; review and merge the preparation PR for $release_id, then re-run promote" >&2
-             exit 1
-           fi
-           pr_number=$(jq -r '.[0].number // ""' <<<"$candidates")
-@@ -104,7 +138,7 @@ jobs:
-             echo "promotion is not authorized: preparation PR #$pr_number does not carry the label $label that authorizes this release" >&2
-             exit 1
-           fi
--          echo "Promotion of $gateway_version authorized by merged preparation PR #$pr_number (label $label) at $SOURCE_COMMIT." >> "$GITHUB_STEP_SUMMARY"
-+          echo "Promotion of $release_id authorized by merged preparation PR #$pr_number (label $label) at $SOURCE_COMMIT." >> "$GITHUB_STEP_SUMMARY"
-           # END promotion-authorization-contract
-       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
-         with:
-@@ -117,25 +151,23 @@ jobs:
-           SOURCE_COMMIT: ${{ inputs.source_commit }}
-           SNAPSHOT_PATH: ${{ inputs.snapshot_path }}
-           SNAPSHOT_SHA256: ${{ inputs.snapshot_sha256 }}
-+          RELEASE_MODE: ${{ inputs.release_mode }}
-         run: |
-           set -euo pipefail
-+          RELEASE_MO
-```
-
-**File**: `.github/workflows/validate-plugin-preparation-pr.yaml` (modified, +13/-4)
-```diff
-@@ -6,6 +6,7 @@ on:
-       - 'plugins/release/**'
-       - 'plugins/wasm-go/extensions/**'
-       - 'plugins/wasm-rust/extensions/**'
-+      - 'plugins/wasm-cpp/extensions/**'
+-            i += 1;
++            i += self.is_eol(i).unwrap_or(1);
+         }
  
- permissions:
-   contents: read
-@@ -32,16 +33,18 @@ jobs:
-         run: |
-           set -euo pipefail
-           (cd tools/plugin-release && go test ./... && go run . validate-catalog --root ../.. --catalog ../../plugins/release/catalog.json)
--          git diff --name-only "$BASE_SHA" "$GITHUB_SHA" | grep -E '^plugins/release/snapshots/[0-9]+\.[0-9]+\.[0-9]+\.json$' > /tmp/changed-snapshots || true
-+          git diff --name-only "$BASE_SHA" "$GITHUB_SHA" | grep -E '^plugins/release/snapshots/([0-9]+\.[0-9]+\.[0-9]+|cpp-hotfix-2\.0\.1)\.json$' > /tmp/changed-snapshots || true
-           test -s /tmp/changed-snapshots || { echo "No snapshot changed; catalog-only validation complete."; exit 0; }
-           while read -r snapshot; do
-             mode=$(jq -r .provenanceMode "$snapshot")
-             source=$(jq -r .sourceCommit "$snapshot")
-             gateway=$(jq -r .gatewayVersion "$snapshot")
-             case "$mode" in
-               candidate | mixed)
--                plan="plugins/release/plans/$gateway.json"
--                evidence="plugins/release/evidence/$gateway.json"
-+                release_id="$gateway"
-+                if [ "$snapshot" = plugins/release/snapshots/cpp-hotfix-2.0.1.json ]; then release_id=cpp-hotfix-2.0.1; fi
-+                plan="plugins/release/plans/$release_id.json"
-+                evidence="plugins/release/evidence/$release_id.json"
-                 test -f "$plan"; test -f "$evidence"
-                 test "$(jq -r .sourceCommit "$plan")" = "$source"
-                 test "$(jq -r .planId "$plan")" = "$(jq -r .planId "$snapshot")"
-@@ -60,7 +63,9 @@ jobs:
-                   )' "$snapshot" >/dev/null
-                 args=(verify-snapshot --root ../.. --catalog ../../plugins/release/catalog.json --snapshot "../../$snapshot" --plan "../../$plan" --expected-source "$source" --committed-source "$GITHUB_SHA" --resolve --oci-source candidate)
-                 marker=$(jq -r '.bootstrapEvidence.path // empty' "$snapshot")
--                if [ -n "$marker" ]; then
-+                if [ "$release_id" = cpp-hotfix-2.0.1 ]; then
-+                  args+=(--mode=cpp-hotfix)
-+                elif [ -n "$marker" ]; then
-                   # First managed release: bootstrap mode is explicit snapshot
-                   # provenance, never inferred from a missing previous-snapshot
-                   # file. The release tool recomputes the committed evidence
-@@ -101,6 +106,10 @@ jobs:
-               rust)
-                 make -C plugins/wasm-rust PLUGIN_NAME="$build_name" test build
-                 ;;
-+              cpp)
-+                (cd plugins/wasm-cpp && bazel test --test_output=errors "//extensions/$build_name:${build_name}_test")
-+                make -C plugins/wasm-cpp PLUGIN_NAME="$build_name" build
-+                ;;
-               *) echo "unsupported planned implementation: $implementation" >&2; return 1 ;;
-             esac
-           }
-```
-
-**File**: `plugins/release/catalog.json` (modified, +20/-1)
-```diff
-@@ -50,6 +50,16 @@
+         None
+@@ -83,7 +71,14 @@ impl EventStream {
+             self.processed_offset = 0;
+         }
+ 
+-        self.buffer.extend(data);
++        let mut start = 0;
++        if self.skip_lf && !data.is_empty() {
++            if data[0] == b'\n' {
++                start = 1;
++            }
++            self.skip_lf = false;
++        }
++        self.buffer.extend_from_slice(&data[start..]);
      }
-   },
-   "sharedInputGroups": {
-+    "cpp-workspace": [
-+      "plugins/wasm-cpp/.bazelrc",
-+      "plugins/wasm-cpp/.bazelversion",
-+      "plugins/wasm-cpp/BUILD",
-+      "plugins/wasm-cpp/Dockerfile",
-+      "plugins/wasm-cpp/Makefile",
-+      "plugins/wasm-cpp/WORKSPACE",
-+      "plugins/wasm-cpp/bazel/**",
-+      "plugins/wasm-cpp/common/**"
-+    ],
-     "go-builder": [
-       "plugins/wasm-go/Dockerfile",
-       "plugins/wasm-go/DockerfileBuilder",
-@@ -222,6 +232,15 @@
-     { "logicalId": "traffic-editor", "implementation": "go", "sourceDir": "plugins/wasm-go/extensions/traffic-editor", "image": "plugins/traffic-editor", "releaseEligible": false, "unmanagedReason": "Experimental extension is not in either reviewed production inventory", "artifactInputs": ["plugins/wasm-go/extensions/traffic-editor/**"] },
-     { "logicalId": "traffic-tag", "implementation": "go", "sourceDir": "plugins/wasm-go/extensions/traffic-tag", "image": "plugins/traffic-tag", "releaseEligible": true, "artifactInputs": ["plugins/wasm-go/extensions/traffic-tag/**"], "sharedInputGroups": ["go-builder"], "consumers": { "console": { "propertyKey": "traffic-tag", "resourceDir": "traffic-tag", "urlForm": "oci" }, "pluginServer": { "inventoryKey": "traffic-tag", "httpPath": "traffic-tag" } } },
-     { "logicalId": "transformer", "implementation": "go", "sourceDir": "plugins/wasm-go/extensions/transformer", "image": "plugins/transformer", "releaseEligible": true, "artifactInputs": ["plugins/wasm-go/extensions/transformer/**"], "sharedInputGroups": ["go-builder"], "consumers": { "console": { "propertyKey": "transformer", "resourceDir": "transformer", "urlForm": "oci" }, "pluginServer": { "inventoryKey": "transformer", "httpPath": "transformer" } } },
--    { "logicalId": "waf", "implementation": "go", "sourceDir": "plugins/wasm-go/extensions/waf", "image": "plugins/waf", "releaseEligible": true, "artifactInputs": ["plugins/wasm-go/extensions/waf/**"], "sharedInputGroups": ["go-builder"], "consumers": { "console": { "propertyKey": "waf", "resourceDir": "waf", "urlForm": "oci" }, "pluginServer": { "inventoryKey": "waf", "httpPath": "waf" } } }
-+    { "logicalId": "waf", "implementation": "go", "sourceDir": "plugins/wasm-go/extensions/waf", "image": "plugins/waf", "releaseEligible": true, "artifactInputs": ["plugins/wasm-go/extensions/waf/**"], "sharedInputGroups": ["go-builder"], "consumers": { "console": { "propertyKey": "waf", "resourceDir": "waf", "urlForm": "oci" }, "pluginServer": { "inventoryKey": "waf", "httpPath": "waf" } } },
-+    { "logicalId": "basic-auth", "implementation": "cpp", "sourceDir": "plugins/wasm-cpp/extensions/basic_auth", "image": "plugins/basic-auth", "releaseEligible": false, "unmanagedReason": "C++ hotfix-only artifact; excluded from ordinary Go/Rust planning", "artifactInputs": ["plugins/wasm-cpp/extensions/basic_auth/**"], "sharedInputGroups": ["cpp-workspace"] },
-+    { "logicalId": "bot-detect", "implementation": "cpp", "sourceDir": "plugins/wasm-cpp/extensions/bot_detect", "image": "plugins/bot-detect", "releaseEligible": false, "unmanagedReason": "C++ hotfix-only artifact; excluded from ordinary Go/Rust planning", "artifactInputs": ["plugins/wasm-cpp/extensions/bot_detect/**"], "sharedInputGroups": ["cpp-workspace"] },
-+    { "logicalId": "custom-response", "implementation": "cpp", "sourceDir": "plugins/wasm-cpp/extensions/custom_response", "image": "plugins/custom-response", "releaseEligible": false, "unmanagedReason": "C++ hotfix-only artifact; excluded from ordinary Go/Rust planning", "artifactInputs": ["plugins/wasm-cpp/extensions/custom_response/**"], "sharedInputGroups": ["cpp-workspace"] },
-+    { "logicalId": "hmac-auth", "implementation": "cpp", "sourceDir": "plugins/wasm-cpp/extensions/hmac_auth", "image": "plugins/hmac-auth", "releaseEligible": false, "unmanagedReason": "C++ hotfix-only artifact; excluded from ordinary Go/Rust planning", "artifactInputs": ["plugins/wasm-cpp/extensions/hmac_auth/**"], "sharedInputGroups": ["cpp-workspace"] },
-+    { "logicalId": "jwt-auth", "implementation": "cpp", "sourceDir": "plugins/wasm-cpp/extensions/jwt_auth", "image": "plugins/jwt-auth", "releaseEligible": false, "unmanagedReason": "C++ hotfix-only artifact; excluded from ordinary Go/Rust planning", "artifactInputs": ["plugins/wasm-cpp/extensions/jwt_auth/**"], "sharedInputGroups": ["cpp-workspace"] },
-+    { "logicalId": "key-auth", "implementation": "cpp", "sourceDir": "plugins/wasm-cpp/extensions/key_auth", "image": "plugins/key-auth", "releaseEligible": false, "unmanagedReason": "C++ hotfix-only artifact; excluded from ordinary Go/Rust planning", "artifactInputs": ["plugins/wasm-cpp/extensions/key_auth/**"], "sharedInputGroups": ["cpp-workspace"] },
-+    { "logicalId": "key-rate-limit", "implementation": "cpp", "sourceDir": "plugins/wasm-cpp/extensions/key_rate_limit", "image": "plugins/key-rate-limit", "releaseEligible": false, "unmanagedReason": "C++ hotfix-only artifact; exc
-```
-
-**File**: `tools/plugin-release/commands.go` (modified, +105/-16)
-```diff
-@@ -133,12 +133,17 @@ func validateCatalog(root, path string) error {
- 		}
- 		seenImage[p.Image] = true
- 		expectedPrefix := "plugins/wasm-" + p.Implementation + "/extensions/"
--		if p.Implementation != "go" && p.Implementation != "rust" {
--			return fmt.Errorf("%s: implementation must be go or rust", p.LogicalID)
-+		if p.Implementation != "go" && p.Implementation != "rust" && p.Implementation != "cpp" {
-+			return fmt.Errorf("%s: implementation must be go, rust, or cpp", p.LogicalID)
- 		}
- 		if !strings.HasPrefix(p.SourceDir, expectedPrefix) || strings.Contains(p.SourceDir, "/examples/") || strings.Contains(p.SourceDir, "/example/") {
- 			return fmt.Errorf("%s: sourceDir %q is outside the official %s extension root", p.LogicalID, p.SourceDir, p.Implementation)
- 		}
-+		if p.Implementation == "cpp" {
-+			if _, ok := cppHotfixSources[p.LogicalID]; !ok {
-+				return fmt.Errorf("%s: C++ catalog entries are restricted to the approved cpp-hotfix set", p.LogicalID)
-+			}
-+		}
- 		if _, err := os.Stat(filepath.Join(root, p.SourceDir)); err != nil {
- 			return fmt.Errorf("%s: sourceDir: %w", p.LogicalID, err)
- 		}
-@@ -285,6 +290,17 @@ func validateCatalog(root, path string) error {
- 			}
- 		}
- 	}
-+	cppEntries := 0
-+	for _, p := range c.Plugins {
-+		if p.Implementation == "cpp" {
-+			cppEntries++
-+		}
-+	}
-+	if cppEntries > 0 {
-+		if err := validateCPPHotfixCatalog(c); err != nil {
-+			return err
-+		}
-+	}
- 	return nil
- }
  
-@@ -415,13 +431,24 @@ func safeRepositoryPath(path string) bool {
- }
+     /// Flush the event stream and return any remaining unprocessed event data. Return None if there is none.
+@@ -110,18 +105,7 @@ impl EventStream {
+     fn is_2eol(&self, i: usize) -> Option<usize> {
+         let size1 = self.is_eol(i)?;
+         if i + size1 < self.buffer.len() {
+-            match self.is_eol(i + size1) {
+-                None => {
+-                    if size1 == 2 {
+-                        Some(2)
+-                    } else {
+-                        None
+-                    }
+-                }
+-                Some(size2) => Some(size1 + size2),
+-            }
+-        } else if size1 == 2 {
+-            Some(2)
++            self.is_eol(i + size1).map(|size2| size1 + size2)
+         } else {
+             None
+         }
+@@ -144,7 +128,7 @@ mod tests {
+     #[test]
+     fn test_lf_events() {
+         let mut parser = EventStream::default();
+-        parser.update(b"event3\n\r\nevent4\r\n".to_vec());
++        parser.update(b"event3\n\r\nevent4\r\n\r\n".to_vec());
  
- func buildPlan(root, catalogPath, previousPath, baseRef, targetRef, gatewayVersion, overridesPath string) (Plan, error) {
-+	return buildPlanWithMode(root, catalogPath, previousPath, baseRef, targetRef, gatewayVersion, overridesPath, releaseModeDefault)
-+}
-+
-+func buildPlanWithMode(root, catalogPath, previousPath, baseRef, targetRef, gatewayVersion, overridesPath, mode string) (Plan, error) {
-+	if err := validateReleaseMode(mode); err != nil {
-+		return Plan{}, err
-+	}
- 	if _, err := parseSemver(gatewayVersion); err != nil {
- 		return Plan{}, fmt.Errorf("gateway version: %w", err)
- 	}
- 	if err := validateCatalog(root, catalogPath); err != nil {
- 		return Plan{}, err
- 	}
--	if previousPath == "" {
-+	if isCPPHotfix(mode) {
-+		if previousPath != "" || overridesPath != "" || !commitPattern.MatchString(baseRef) {
-+			return Plan{}, errors.New("cpp-hotfix requires one exact --base and forbids --previous and --overrides")
-+		}
-+	} else if previousPath == "" {
- 		return Plan{}, errors.New("no previous snapshot: import a reviewed digest baseline with bootstrap-snapshot before planning; bootstrap never rebuilds existing public tags")
- 	}
- 	c, catalogData, err := loadCatalog(catalogPath)
-@@ -486,7 +513,7 @@ func buildPlan(root, catalogPath, previousPath, baseRef, targetRef, gatewayVersi
- 		// iteration over .plugins[] fails on null.
- 		Plugins: []PlanEntry{}, Deferred: []DeferredPlugin{}}
- 	for _, p := range plugins {
--		if !p.ReleaseEligible {
-+		if !pluginSelectedForMode(p, mode) {
- 			continue
- 		}
- 		currentRaw, err := fileAtCommit(root, target, p.SourceDir+"/VERSION")
-@@ -498,10 +525,13 @@ func buildPlan(root, catalogPath, previousPath, baseRef, targetRef, gatewayVersi
- 		if err != nil {
- 			return Plan{}, fmt.Errorf("%s: %w", p.LogicalID, err)
- 		}
-+		if isCPPHotfix(mode) && current != cppHotfixVersion {
-+			return Plan{}, fmt.Errorf("%s: cpp-hotfix VERSION must be %s at the prepared source, got %q", p.LogicalID, cppHotfixVersion, current)
-+		}
- 		// An alpha VERSION is a development build: it is deferred from release
- 		// selection and never creates candidates, public tags, latest movement,
- 		// or a new snapshot entry.
--		if isAlphaPrerelease(currentVersion.prerelease) {
-+		if !isCPPHotfix(mode) && isAlphaPrerelease(currentVersion.prerelease) {
- 			plan.Deferred = append(plan.Deferred, DeferredPlugin{LogicalID: p.LogicalID, Version: current, Reason: "alpha-prerelease"})
- 			continue
- 		}
-@@ -522,7 +552,7 @@ func buildPlan(root, catalogPath, previousPath, baseRef, targetRef, gatewayVersi
- 		// A hand-edited VERSION (differing from the recorded version) and
- 		// bootstrap-public baselines keep the historical behavior.
- 		restatePrevious := hasPrevious && previous.ProvenanceMode != "bootstrap-public" && current == prev.Version
--		affected := base == "" || hasOverride
-+		affected := isCPPHotfix(mode) || base == "" || hasOverride
- 		for _, path := range changed {
- 			if restatePrevious && path == p.SourceDir+"/VERSION" {
- 				continue
-@@ -598,6 +628,14 @@ func buildPlan(root, catalogPath, previousPath, baseRef, targetRef, gatewayVersi
- 			return Plan{}, fmt.Errorf("override references unknown or release-ineligible plugin %q", id)
- 		}
- 	}
-+	if isCPPHotfix(mode) {
-+		if err := validateCPPHotfixCatalog(c); err != nil {
-+			return Plan{}, err
-+		}
-+		if err := validateCPPHotfixPlan(plan); err != nil {
-+			return Plan{}, err
-+		}
-+	}
- 	plan.PlanID = "sha256:" + canonicalObjectHash(plan, true)
- 	return plan, nil
- }
-@@ -624,6 +662,16 @@ func 
-```
-
-**File**: `tools/plugin-release/hotfix.go` (added, +129/-0)
-```diff
-@@ -0,0 +1,129 @@
-+// Copyright 2026 Higress Authors
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package main
-+
-+import (
-+	"errors"
-+	"fmt"
-+	"reflect"
-+	"sort"
-+)
-+
-+const (
-+	releaseModeDefault   = ""
-+	releaseModeCPPHotfix = "cpp-hotfix"
-+	cppHotfixVersion     = "2.0.1"
-+)
-+
-+var cppHotfixSources = map[string]string{
-+	"basic-auth":      "basic_auth",
-+	"bot-detect":      "bot_detect",
-+	"custom-response": "custom_response",
-+	"hmac-auth":       "hmac_auth",
-+	"jwt-auth":        "jwt_auth",
-+	"key-auth":        "key_auth",
-+	"key-rate-limit":  "key_rate_limit",
-+	"oauth":           "oauth",
-+	"request-block":   "request_block",
-+}
-+
-+func validateReleaseMode(mode string) error {
-+	if mode != releaseModeDefault && mode != releaseModeCPPHotfix {
-+		return fmt.Errorf("unsupported release mode %q", mode)
-+	}
-+	return nil
-+}
-+
-+func isCPPHotfix(mode string) bool {
-+	return mode == releaseModeCPPHotfix
-+}
-+
-+func pluginSelectedForMode(p Plugin, mode string) bool {
-+	if isCPPHotfix(mode) {
-+		_, ok := cppHotfixSources[p.LogicalID]
-+		return ok && p.Implementation == "cpp"
-+	}
-+	return p.ReleaseEligible
-+}
-+
-+func consumersForMode(c Catalog, p Plugin, mode string) PluginConsumers {
-+	if isCPPHotfix(mode) {
-+		return PluginConsumers{}
-+	}
-+	return catalogConsumers(c, p)
-+}
-+
-+func validateCPPHotfixCatalog(c Catalog) error {
-+	seen := map[string]bool{}
-+	for _, p := range c.Plugins {
-+		source, ok := cppHotfixSources[p.LogicalID]
-+		if !ok {
-+			continue
-+		}
-+		expectedSource := "plugins/wasm-cpp/extensions/" + source
-+		if p.Implementation != "cpp" || p.SourceDir != expectedSource || p.Image != "plugins/"+p.LogicalID || p.ReleaseEligible {
-+			return fmt.Errorf("%s: invalid cpp-hotfix catalog identity or ordinary release eligibility", p.LogicalID)
-+		}
-+		if !reflect.DeepEqual(p.ArtifactInputs, []string{expectedSource + "/**"}) || !reflect.DeepEqual(p.SharedInputGroups, []string{"cpp-workspace"}) {
-+			return fmt.Errorf("%s: cpp-hotfix must hash its complete extension and cpp-workspace inputs", p.LogicalID)
-+		}
-+		seen[p.LogicalID] = true
-+	}
-+	if len(seen) != len(cppHotfixSources) {
-+		missing := []string{}
-+		for id := range cppHotfixSources {
-+			if !seen[id] {
-+				missing = append(missing, id)
-+			}
-+		}
-+		sort.Strings(missing)
-+		return fmt.Errorf("cpp-hotfix catalog is incomplete: missing %v", missing)
-+	}
-+	return nil
-+}
-+
-+func validateCPPHotfixPlan(plan Plan) error {
-+	if plan.PreviousRelease != "" || len(plan.Deferred) != 0 || len(plan.Plugins) != len(cppHotfixSources) {
-+		return errors.New("cpp-hotfix plan must contain exactly nine new 2.0.1 entries without previous or deferred entries")
-+	}
-+	seen := map[string]bool{}
-+	for _, entry := range plan.Plugins {
-+		source, ok := cppHotfixSources[entry.LogicalID]
-+		if !ok || seen[entry.LogicalID] || entry.Version != cppHotfixVersion || entry.Implementation != "cpp" ||
-+			entry.SourceDir != "plugins/wasm-cpp/extensions/"+source || entry.Image != "plugins/"+entry.LogicalID ||
-+			entry.PreviousVersion != "" || entry.Backfill || !digestPattern.MatchString(entry.InputHash) {
-+			return fmt.Errorf("invalid cpp-hotfix plan entry %q", entry.LogicalID)
-+		}
-+		seen[entry.LogicalID] = true
-+	}
-+	return nil
-+}
-+
-+func validateCPPHotfixSnapshot(snapshot Snapshot) error {
-+	if snapshot.ProvenanceMode != "candidate" || snapshot.PreviousRelease != "" || snapshot.BootstrapEvidence != nil ||
-+		snapshot.MigrationPreflight != nil || len(snapshot.Plugins) != len(cppHotfixSources) {
-+		return errors.New("cpp-hotfix snapshot must contain exactly nine candidate entries without ordinary release state")
-+	}
-+	seen := map[string]bool{}
-+	for _, entry := range snapshot.Plugins {
-+		if !pluginSelectedForMode(Plugin{LogicalID: entry.LogicalID, Implementation: entry.Implementation}, releaseModeCPPHotfix) ||
-+			seen[entry.LogicalID] || entry.Version != cppHotfixVersion || entry.ProvenanceMode != "candidate" ||
-+			entry.Backfill || entry.Migration != nil || !reflect.DeepEqual(entry.Consumers, PluginConsumers{}) {
-+			return fmt.Errorf("invalid cpp-hotfix snapshot entry %q", entry.LogicalID)
-+		}
-+		seen[entry.LogicalID] = true
-+	}
-+	return nil
-+}
-```
-
-**File**: `tools/plugin-release/hotfix_promotion_step_test.go` (added, +348/-0)
-```diff
-@@ -0,0 +1,348 @@
-+// Copyright 2026 Higress Authors
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package main
-+
-+import (
-+	"encoding/json"
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"reflect"
-+	"sort"
-+	"strings"
-+	"testing"
-+)
-+
-+const (
-+	hotfixReworkBaseline       = "cbe73567ab2e2092761d169c3c9418e9a5d7165e"
-+	hotfixReworkPromoteSHA256  = "25641862a33c4e09c74404c7a2f1a1739d55f3edc36ee672d29a5f5437e1b518"
-+	hotfixReworkContractSHA256 = "9c29a4245862eaa87f5832966c538f5bdccdba0a68c4095bd250302bd278a8cd"
-+	hotfixReworkDeliverySHA256 = "17282997eec2bb8d52ff33a398612b543977f5afbb570869385666aba8838e53"
-+	hotfixReworkSourceSHA256   = "e92381fb9f6ca37fe52840c97738a299058a717fbf2f3d771353d3945bc058b3"
-+)
-+
-+func mustHotfixReworkBaseline(t *testing.T, name string) string {
-+	t.Helper()
-+	hashes := map[string]string{
-+		"promote-plugin-release.yaml":      hotfixReworkPromoteSHA256,
-+		"cpp-hotfix-release-contract.yaml": hotfixReworkContractSHA256,
-+		"delivery-files.txt":               hotfixReworkDeliverySHA256,
-+		"SOURCE.md":                        hotfixReworkSourceSHA256,
-+	}
-+	want, ok := hashes[name]
-+	if !ok {
-+		t.Fatalf("unknown hotfix rework baseline fixture %q", name)
-+	}
-+	data := mustRead(t, filepath.Join("testdata", "hotfix-rework-baseline", name))
-+	if got := sha256Hex(data); got != want {
-+		t.Fatalf("baseline %s from %s: SHA-256 got %s, want %s", name, hotfixReworkBaseline, got, want)
-+	}
-+	return string(data)
-+}
-+
-+type hotfixSpyCall struct {
-+	Tool string   `json:"tool"`
-+	Args []string `json:"args"`
-+}
-+
-+type hotfixStepResult struct {
-+	Err      error
-+	Output   string
-+	Calls    []hotfixSpyCall
-+	Journal  map[string]any
-+	ExitCode int
-+}
-+
-+func workflowRunBody(t *testing.T, workflow, stepName string) string {
-+	t.Helper()
-+	marker := "      - name: " + stepName + "\n"
-+	start := strings.Index(workflow, marker)
-+	if start < 0 {
-+		t.Fatalf("workflow lacks step %s", stepName)
-+	}
-+	remaining := workflow[start+len(marker):]
-+	if next := strings.Index(remaining, "\n      - "); next >= 0 {
-+		remaining = remaining[:next]
-+	}
-+	runStart := strings.Index(remaining, "        run: |\n")
-+	if runStart < 0 {
-+		t.Fatalf("step %s has no literal run body", stepName)
-+	}
-+	lines := strings.Split(remaining[runStart+len("        run: |\n"):], "\n")
-+	body := []string{}
-+	for _, line := range lines {
-+		if line == "" {
-+			body = append(body, "")
-+			continue
-+		}
-+		if !strings.HasPrefix(line, "          ") {
-+			break
-+		}
-+		body = append(body, strings.TrimPrefix(line, "          "))
-+	}
-+	return strings.Join(body, "\n") + "\n"
-+}
-+
-+func TestCPPHotfixStepBodyReworkRedGreen(t *testing.T) {
-+	previous := mustHotfixReworkBaseline(t, "promote-plugin-release.yaml")
-+	for _, fixture := range []struct {
-+		name     string
-+		workflow string
-+		wantPass bool
-+	}{
-+		{name: "before-H02-red", workflow: previous},
-+		{name: "after-H02-green", workflow: mustWorkflow(t, "promote-plugin-release.yaml"), wantPass: true},
-+	} {
-+		t.Run(fixture.name, func(t *testing.T) {
-+			result := runHotfixStepBodies(t, fixture.workflow, "success", []string{"Verify exact snapshot provenance", "Promote candidate manifests by digest"})
-+			verifies := [][]string{}
-+			for _, call := range result.Calls {
-+				if call.Tool == "go" {
-+					verifies = append(verifies, call.Args)
-+				}
-+			}
-+			if len(verifies) != 2 {
-+				t.Fatalf("want two real step-body verify invocations, got %+v", result.Calls)
-+			}
-+			if !fixture.wantPass {
-+				if result.Err == nil || reflect.DeepEqual(verifies[0], verifies[1]) {
-+					t.Fatalf("old second verify did not reproduce H02: %+v", result)
-+				}
-+				t.Logf("H02 RED reproduced: exit=%d; first/second verification differ", result.ExitCode)
-+				return
-+			}
-+			if result.Err != nil || !reflect.DeepEqual(verifies[0], verifies[1]) {
-+				t.Fatalf("real write-step verification differs or failed: %+v\n%s", result, result.Output)
-+			}
-+			if result.Journal["phase"] != "version-complete" || len(versionJournalEntries(t, result.Journal)) != 9 {
-+				t.Fatalf("write-step did not complete the synthetic nine-version journal: %+v", result.Journal)
-+			}
-+			for _, call := range result.Calls {
-+				if strings.Contains(strings.Join(call.Args, " "), ":latest") || strings.Contains(strings.Join(call.Args, " "), "plugin-release-batches") {
-+					t.Fatalf("hotfix entered a latest phase: %+v", call)
-+				}
-+			}
-+			t.Log("H02 GREEN: both actual step bodies share exact cpp-hotfix plan/mode; version-complete
-```
-
----
-
-### Incident Patch 3: `22915ae3` (2026-11-24)
-**Commit Message**: ci: allow non-public C++ hotfix candidate preparation
-
-Squash merge authorized by maintainer for non-public release acceptance. Removes only prepare's cpp-hotfix non-dry-run guard and preserves the unconditional public promotion rejection in promote. Required checks and C++ Hotfix Release Contract passed. Public 2.0.1/latest promotion remains unauthorized.
-
-**File**: `.github/workflows/prepare-plugin-release.yaml` (modified, +0/-15)
-```diff
-@@ -46,22 +46,7 @@ concurrency:
-   cancel-in-progress: false
+         assert_eq!(parser.next(), Some(b"event3".to_vec()));
+         assert_eq!(parser.next(), Some(b"event4".to_vec()));
+@@ -166,20 +150,20 @@ mod tests {
+         let mut parser = EventStream::default();
+         parser.update(b"event5\r\nevent6\r\n\r\nevent7\r\n".to_vec());
  
- jobs:
--  input-guard:
--    runs-on: ubuntu-22.04
--    steps:
--      - name: Reject disabled hotfix candidate preparation
--        env:
--          RELEASE_MODE: ${{ inputs.release_mode }}
--          DRY_RUN: ${{ inputs.dry_run }}
--        run: |
--          set -euo pipefail
--          if [ "$RELEASE_MODE" = cpp-hotfix ] && [ "$DRY_RUN" != true ]; then
--            echo "cpp-hotfix is dry-run-only; candidate preparation is pending separate authorization" >&2
--            exit 1
--          fi
--
-   preflight:
--    needs: input-guard
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-```
-
-**File**: `tools/plugin-release/hotfix_promotion_step_test.go` (modified, +77/-31)
-```diff
-@@ -161,43 +161,89 @@ func TestCPPHotfixActualWriteStepFailsBeforeLoginOrCopy(t *testing.T) {
- }
+-        assert_eq!(parser.next(), Some(b"event5".to_vec()));
+-        assert_eq!(parser.next(), Some(b"event6".to_vec()));
+-        assert_eq!(parser.next(), Some(b"event7".to_vec()));
++        assert_eq!(parser.next(), Some(b"event5\r\nevent6".to_vec()));
++        assert_eq!(parser.next(), None);
++        assert_eq!(parser.flush(), Some(b"event7\r\n".to_vec()));
+     }
  
- func TestCPPHotfixActualInputGuardRejectsNonDryRun(t *testing.T) {
--	for _, workflowName := range []string{"prepare-plugin-release.yaml", "promote-plugin-release.yaml"} {
--		workflow := mustWorkflow(t, workflowName)
--		step := "Reject disabled hotfix public promotion"
--		if workflowName == "prepare-plugin-release.yaml" {
--			step = "Reject disabled hotfix candidate preparation"
--		}
--		guardStart := strings.Index(workflow, "  input-guard:\n")
--		if guardStart < 0 {
--			t.Fatal("workflow lacks an independent first input guard")
--		}
--		guardEnd := strings.Index(workflow[guardStart:], "\n  "+map[string]string{"prepare-plugin-release.yaml": "preflight", "promote-plugin-release.yaml": "verify-and-promote"}[workflowName]+":\n")
--		if guardEnd < 0 {
--			t.Fatal("workflow lacks an independent first input guard")
-+	workflow := mustWorkflow(t, "promote-plugin-release.yaml")
-+	guardStart := strings.Index(workflow, "  input-guard:\n")
-+	if guardStart < 0 {
-+		t.Fatal("workflow lacks an independent first input guard")
-+	}
-+	guardEnd := strings.Index(workflow[guardStart:], "\n  verify-and-promote:\n")
-+	if guardEnd < 0 {
-+		t.Fatal("workflow lacks an independent first input guard")
-+	}
-+	guard := workflow[guardStart : guardStart+guardEnd]
-+	for _, forbidden := range []string{"environment:", "secrets.", "oras ", "always()"} {
-+		if strings.Contains(guard, forbidden) {
-+			t.Fatalf("input guard contains %s", forbidden)
- 		}
--		guard := workflow[guardStart : guardStart+guardEnd]
--		for _, forbidden := range []string{"environment:", "secrets.", "oras ", "always()"} {
--			if strings.Contains(guard, forbidden) {
--				t.Fatalf("input guard contains %s", forbidden)
-+	}
-+	if !strings.Contains(workflow, "    needs: input-guard\n") {
-+		t.Fatal("credential job lacks the success dependency")
-+	}
-+	for _, scenario := range []struct {
-+		mode string
-+		dry  string
-+		pass bool
-+	}{{"cpp-hotfix", "false", false}, {"cpp-hotfix", "true", true}, {"standard", "false", true}, {"standard", "true", true}} {
-+		t.Run(scenario.mode+"/"+scenario.dry, func(t *testing.T) {
-+			result := runHotfixStepBodiesWithEnv(t, workflow, "guard", []string{"Reject disabled hotfix public promotion"}, []string{"RELEASE_MODE=" + scenario.mode, "DRY_RUN=" + scenario.dry})
-+			if (result.Err == nil) != scenario.pass {
-+				t.Fatalf("guard mode=%s dry=%s: %+v", scenario.mode, scenario.dry, result)
- 			}
-+			assertNoHotfixLoginOrWrite(t, result.Calls)
-+		})
-+	}
-+}
-+
-+func TestCPPHotfixPrepareAllowsNonDryRunCandidatesOnly(t *testing.T) {
-+	prepare := mustWorkflow(t, "prepare-plugin-release.yaml")
-+	for _, forbidden := range []string{
-+		"  input-guard:\n", "needs: input-guard", "cpp-hotfix is dry-run-only",
-+		":latest", "PLUGIN_PUBLIC_REGISTRY", "oras cp ", "oras tag ", "go run . promote",
-+	} {
-+		if strings.Contains(prepare, forbidden) {
-+			t.Fatalf("candidate-only preparation contains %q", forbidden)
- 		}
--		if !strings.Contains(workflow, "    needs: input-guard\n") {
--			t.Fatal("credential job lacks the success dependency")
-+	}
-+	for _, required := range []string{
-+		"jobs:\n  preflight:\n    runs-on: ubuntu-latest\n",
-+		"  prepare:\n    needs: preflight\n",
-+		"CANDIDATE_REGISTRY: ${{ vars.PLUGIN_CANDIDATE_REGISTRY }}",
-+		`candidate="$CANDIDATE_REGISTRY/candidates/$id:${plan_id}${input_hash#sha256:}"`,
-+		`publish_plugin_manifest "$candidate"`,
-+		"release_id=cpp-hotfix-2.0.1",
-+		`branch="release/plugin-snapshot-$release_id"`,
-+	} {
-+		if !strings.Contains(prepare, required) {
-+			t.Fatalf("candidate-only preparation lacks %q", required)
- 		}
--		for _, scenario := range []struct {
--			mode string
--			dry  string
--			pass bool
--		}{{"cpp-hotfix", "false", false}, {"cpp-hotfix", "true", true}, {"standard", "false", true}, {"standard", "true", true}} {
--			t.Run(workflowName+"/"+scenario.mode+"/"+scenario.dry, func(t *testing.T) {
--				result := runHotfixStepBodiesWithEnv(t, workflow, "guard", []string{step}, []string{"RELEASE_MODE=" + scenario.mode, "DRY_RUN=" + scenario.dry})
--				if (result.Err == nil) != scenario.pass {
--					t.Fatalf("guard mode=%s dry=%s: %+v", scenario.mode, scenario.dry, result)
--				}
--				assertNoHotfixLoginOrWrite(t, result.Calls)
--			})
-+	}
-+	for _, step := range []string{
-+		"Build and publish content-addressed candidates",
-+		"Render canonical snapshot",
-+		"Create or update deterministic preparation PR",
-+	} {
-+		if !strings.Contains(prepare, "      - name: "+step+"\n        if: ${{ !inputs.dry_run }}\n") {
-+			t.Fatalf("candidate-only step %q must allow non-dry-run cpp-hotfix", step)
- 		}
- 	}
-+	t.Cleanup(func() { _ = os.Remove("/tmp/overrides.json") })
-+	result := runHotfixStepBodiesWithEnv(t, prepare, "candidate-only", []string{"Validate immutable inputs"}, []string{
-+		"RELEASE_MODE=cpp-hotfix", "DRY_RUN=false", "GATEWAY_VERSION=2.2.7",
-+		"TARGET_REF=" + strings.Repeat("a", 40), "PREVIOUS=", "BOOTSTRAP_BASE=", "OVERRIDES={}",
+     #[test]
+     fn test_mixed2_eol_events() {
+         let mut parser = EventStream::default();
+         parser.update(b"event5\r\nevent6\r\n".to_vec());
+-        assert_eq!(parser.next(), Some(b"event5".to_vec()));
+-        assert_
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5433** (2026-11-26): fix(wasm-rust): preserve SSE events with CRLF line endings (@zhihao-yuan)
+- **PR #5428** (2026-11-26): feat: define managed C++ release contracts and generalized verification (@johnlanni)
 - **PR #5420** (2026-11-24): fix(release): run C++ candidate native tests in pinned builder (@johnlanni)
 - **PR #5417** (2026-11-24): ci: allow non-public C++ hotfix candidate preparation (@johnlanni)
 - **PR #5400** (2026-11-24): feat: add restricted C++ 2.0.1 hotfix release adapter (@johnlanni)
 - **PR #5399** (2026-11-24): fix(wasm-cpp): prepare 2.0.1 hotfix verification (@johnlanni)
-- **PR #5374** (2026-11-18): fix(wasm-cpp): align domain matching for ASCII case (@johnlanni)
-- **PR #5373** (2026-11-18): chore(plugins): bump wasm-go to v1.2.1 (@johnlanni)
 
 ---
 
@@ -2865,41 +1932,80 @@ Squash merge authorized by maintainer for non-public release acceptance. Removes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): run C++ candidate native tests in pinned builder
+## X. wasm-rust): preserve SSE events with CRLF line endings
 
 **RULE**:
-When implementing operations in `.github/workflows/prepare-plugin-release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-rust/src/event_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4c537f3`: release): run C++ candidate native tests in pinned builder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `879a6512`: wasm-rust): preserve SSE events with CRLF line endings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/prepare-plugin-release.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-rust/src/event_stream.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-                local builder
-                builder="$(sed -n 's/^ARG BUILDER=//p' plugins/wasm-cpp/Dockerfile)"
-                case "$builder" in
-                  *@sha256:*) ;;
-                  *) echo 'Builder must be pinned by digest' >&2; return 1 ;;
-                esac
-                docker run --rm \
-                  -v "$GITHUB_WORKSPACE/plugins/wasm-cpp:/workspace" \
-                  -w /workspace \
-                  "$builder" \
-                  bash -euo pipefail -c 'bazel test --test_output=errors "//extensions/$1:$1_test"' -- "$build_name"
+/// CRLF is one logical line ending. An empty line, formed by two consecutive
+/// logical line endings, terminates an event.
+    skip_lf: bool,
+    /// CRLF pairs are consumed together, including pairs split across updates.
+    /// A delimiter ending in CR at the buffer boundary completes the event
+    /// immediately. Waiting for the next byte to distinguish CR from CRLF
+    /// would delay dispatch when that byte is not LF, or never arrives.
+    /// `update` skips an optional following LF using `skip_lf`, so it does not
+    /// become an extra line ending.
+                self.skip_lf = self.processed_offset == self.buffer.len()
+                    && self.buffer.last() == Some(&b'\r');
+            i += self.is_eol(i).unwrap_or(1);
+        let mut start = 0;
+        if self.skip_lf && !data.is_empty() {
+            if data[0] == b'\n' {
+                start = 1;
+            }
+            self.skip_lf = false;
+        }
+        self.buffer.extend_from_slice(&data[start..]);
+            self.is_eol(i + size1).map(|size2| size1 + size2)
+        parser.update(b"event3\n\r\nevent4\r\n\r\n".to_vec());
+        assert_eq!(parser.next(), Some(b"event5\r\nevent6".to_vec()));
+        asser
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-                (cd plugins/wasm-cpp && bazel test --test_output=errors "//extensions/$build_name:${build_name}_test")
+/// According to spec, we must judge EOL twice before we can identify a complete event.
+/// However, in the rules of event and field, there is an ambiguous grammar in the judgment of eol,
+/// and it will bring ambiguity (whether the field ends). In order to eliminate this ambiguity,
+/// we believe that CRLF as CR+LF belongs to event and field respectively.
+    /// Next will consume all the data in the current buffer. However, if there is a valid event at the end of the buffer,
+    /// it will return the event directly even if the data after the next `update` could be considered part of the same event
+    /// (especially in cases where CRLF hits an ambiguous grammar).
+    /// When this happens, the next call to next may return an empty event.
+    ///
+    /// ```
+    /// let mut parser = EventStream::new();
+    /// parser.update(...);
+    /// loop {
+    ///     match parser.next() {
+    ///         None => {}
+    ///         Some(event) => {
+    ///             if !event.is_empty() {
+    ///                 ...
+    ///             }
+    ///         }
+    ///     }
+    /// }
+    /// ```
+            i += 1;
+        self.buffer.extend(data);
+            match self.is_eol(i + size1) {
+  
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4c537f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `879a6512` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

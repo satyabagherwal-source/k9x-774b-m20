@@ -295,8 +295,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "fdd861ee8905e334efc5a88e99e6b708f1b1f181020da3c9062b0545c7b9e298",
-    "lastHarvestedAt": "2026-11-22T18:12:22.245Z",
+    "contentHash": "fb055bb7303214537894751f484dcd4f2893faceb037c771c9c334c12b916a1b",
+    "lastHarvestedAt": "2026-11-26T11:15:35.512Z",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct"
   },
   "hf-xingchen-agi-teleocr": {
@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "c4c537f3",
+    "sourceVersion": "879a6512",
     "license": "Apache-2.0",
-    "contentHash": "aee1178c5e6e8a42519096a9873b1a96f7b693f9479c3d7828c30d29362d424a",
-    "lastHarvestedAt": "2026-11-24T17:03:12.687Z",
+    "contentHash": "550b364cea175cc3737e23443ea913963ddb12fc0152db63752bae38acd570ea",
+    "lastHarvestedAt": "2026-11-26T11:15:44.313Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "7da6b2d3",
+    "sourceVersion": "1b9b8270",
     "license": "NOASSERTION",
-    "contentHash": "00e4498f93ba3c78df4c46c5c197d8ff05912be43a77aa8a012dd3cf3d20cea4",
-    "lastHarvestedAt": "2026-11-25T09:37:30.675Z",
+    "contentHash": "44eb813aa09e81afe28f21db83ac62fc8c5fd23a78b4afe4efc727e1fdcd7fc9",
+    "lastHarvestedAt": "2026-11-26T11:15:51.051Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -13518,5 +13518,15 @@
     "contentHash": "f9a901171a071639dd086322732769283383812c6478099d27e6411be8b70b4c",
     "lastHarvestedAt": "2026-11-26T09:12:19.785Z",
     "learningId": "learn-huggingface-sand-ai-magi-2-preview"
+  },
+  "kividbio-kividb": {
+    "repository": "kividbio/kividb",
+    "platform": "github",
+    "sourceUrl": "https://github.com/kividbio/kividb",
+    "sourceVersion": "5a9db7f7",
+    "license": "AGPL-3.0",
+    "contentHash": "b0ab3752cb79c1dfc4de6f634f9d88362c514dc097fa35c07fe2a3c72b3ee6ba",
+    "lastHarvestedAt": "2026-11-26T11:15:37.406Z",
+    "learningId": "learn-github-kividbio-kividb"
   }
 }

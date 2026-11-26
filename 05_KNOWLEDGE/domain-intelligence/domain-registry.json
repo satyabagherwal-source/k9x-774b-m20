@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T11:03:58.032Z",
-  "total_records": 2736,
+  "last_updated": "2026-11-26T11:16:24.804Z",
+  "total_records": 2742,
   "domains": {
     "A": {
-      "total": 22,
+      "total": 23,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -28,7 +28,8 @@
         "domain_intelligence-human-need-intelligence-tw93-mole-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants",
         "domain_intelligence-human-need-intelligence-meshery-meshery-core-invariants",
-        "domain_intelligence-human-need-intelligence-meshery-meshery-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-meshery-meshery-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants"
       ]
     },
     "B": {
@@ -1106,7 +1107,7 @@
       ]
     },
     "F": {
-      "total": 116,
+      "total": 118,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1223,7 +1224,9 @@
         "DOM-F-BD142F65",
         "DOM-F-4026A5FE",
         "DOM-F-973FB0DB",
-        "DOM-F-C1405A3A"
+        "DOM-F-C1405A3A",
+        "domain_intelligence-design-intelligence-kividbio-kividb-core-invariants",
+        "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants"
       ]
     },
     "G": {
@@ -1702,7 +1705,7 @@
       ]
     },
     "H": {
-      "total": 657,
+      "total": 660,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2360,7 +2363,10 @@
         "domain_intelligence-technical-construction-intelligence-sentence-transformers-all-minilm-l6-v2-core-",
         "domain_intelligence-technical-construction-intelligence-hf-sentence-transformers-all-minilm-l6-v2-le",
         "domain_intelligence-technical-construction-intelligence-planetable-planet-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-planetable-planet-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-planetable-planet-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-higress-group-higress-core-invariants",
+        "DOM-H-D48F999D",
+        "domain_intelligence-technical-construction-intelligence-higress-group-higress-learnings-core-invaria"
       ]
     },
     "I": {
@@ -29889,8 +29895,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-3.1-8B-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-3-1-8b-instruct-research-knowledge-intelligence-meta-llama-l.md",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "content_hash": "59dd8f28b3892ad7bff69c9c9d83956ead5c85eda8295ca4455f39b40425c894",
-      "created_at": "2026-11-22T18:12:22.504Z"
+      "content_hash": "a5d66e3fdbc2f78dee0f770f99b284c3538683e6f68c69ae720ddf40b7c7717a",
+      "created_at": "2026-11-26T11:15:35.754Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co",
@@ -29898,8 +29904,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-3.1-8b-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-3-1-8b-instruct-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-meta-llama-llama-3.1-8b-instruct-learnings",
-      "content_hash": "256deb294851cdc2e48e1267aaad93d49d17f134088f2d9f29e4fb302f128b77",
-      "created_at": "2026-11-22T18:12:34.256Z"
+      "content_hash": "aec16d442307fafba08a5a56af63e15633d874c65ce08bb78b0518a44895a825",
+      "created_at": "2026-11-26T11:15:55.742Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants",
@@ -46241,6 +46247,93 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T10:41:48.670Z"
+    },
+    "domain_intelligence-design-intelligence-kividbio-kividb-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-kividbio-kividb-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: kividbio/kividb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kividbio-kividb-design-intelligence-kividbio-kividb-core-invariants.md",
+      "repository": "kividbio/kividb",
+      "content_hash": "86a4a063a4873780561dd6ad89da194850fa2b9b1e1fb01e6b75bbfb8e8876fc",
+      "created_at": "2026-11-26T11:15:37.862Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-higress-group-higress-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-higress-group-higress-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: higress-group/higress Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-higress-group-higress-technical-construction-intelligence-higress-group-higress-.md",
+      "repository": "higress-group/higress",
+      "content_hash": "bda31016f964adb3740c0ce83a821e132c3e9afdf6a26bbffcb30d5fd6fe247b",
+      "created_at": "2026-11-26T11:15:44.773Z"
+    },
+    "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: yugabyte/yugabyte-db Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-yugabyte-yugabyte-db-human-need-intelligence-yugabyte-yugabyte-db-core-invariant.md",
+      "repository": "yugabyte/yugabyte-db",
+      "content_hash": "70f2b8fa15c216883be5e15cdd400216255792dfcc22c4b14a326a78a35d41a0",
+      "created_at": "2026-11-26T11:15:51.508Z"
+    },
+    "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: kividbio-kividb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-kividbio-kividb-learnings-design-intelligence-kividbio-kividb-learnings-core-inv.md",
+      "repository": "kividbio-kividb-learnings",
+      "content_hash": "46cf2f5f2ca721bbb3672ca710db3534e10585ffe963b92d087d38f23d4e51e0",
+      "created_at": "2026-11-26T11:15:55.112Z"
+    },
+    "DOM-H-D48F999D": {
+      "record_id": "DOM-H-D48F999D",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "wasm-rust): preserve SSE events with CRLF line endings",
+      "content": "When implementing operations in `plugins/wasm-rust/src/event_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "21f7f77e0c48e0e6a116bc5c9107200f352f6c997fe1ee83964fefe1bf33ec02",
+      "summary": "Prevents defects observed in production commit `879a6512`: wasm-rust): preserve SSE events with CRLF line endings. Unvalidated execution pat -> When implementing operations in `plugins/wasm-rust/src/event_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state tra",
+      "provenance": {
+        "source_uri": "project://higress-group-higress/higress-group-higress-learnings.md",
+        "source_version": "879a6512",
+        "observed_at": "2026-11-26T11:15:43.104Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (higress-group-higress)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of higress-group-higress"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T11:16:24.114Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-higress-group-higress-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-higress-group-higress-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: higress-group-higress-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-higress-group-higress-learnings-technical-construction-intelligence-higress-grou.md",
+      "repository": "higress-group-higress-learnings",
+      "content_hash": "2244da006ac4239b6b029dd767f04405ac674a3112e821624b08092aafcfc165",
+      "created_at": "2026-11-26T11:16:24.804Z"
     }
   }
 }

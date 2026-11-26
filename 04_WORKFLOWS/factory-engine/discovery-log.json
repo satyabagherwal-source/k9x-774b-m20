@@ -22372,5 +22372,20 @@
     "downloads": 0,
     "qualityScore": 2380,
     "discoveredAt": "2026-11-26T09:10:01.365Z"
+  },
+  {
+    "name": "kividb",
+    "fullName": "kividbio/kividb",
+    "url": "https://github.com/kividbio/kividb",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "A fast, multi-threaded Redis® and Valkey alternative written in Rust: drop-in compatible, with full-text and vector search built in",
+    "stars": 1501,
+    "forks": 143,
+    "openIssues": 5,
+    "language": "Rust",
+    "qualityScore": 1053,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-26T11:14:40.530Z"
   }
 ]

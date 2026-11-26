@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:03:51.302Z",
-  "total_cycles_completed": 12669,
-  "total_learnings_persisted": 12669,
-  "total_rules_promoted": 11555,
+  "last_updated": "2026-11-26T11:15:51.065Z",
+  "total_cycles_completed": 12673,
+  "total_learnings_persisted": 12673,
+  "total_rules_promoted": 11558,
   "history": [
-    {
-      "timestamp": "2026-11-25T16:06:07.717Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T16:06:11.374Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:01:43.683Z",
-      "repository": "nvidia/Nemotron-Labs-Image-30B-A3B",
-      "learningId": "learn-huggingface-nvidia-nemotron-labs-image-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T23:01:46.096Z",
-      "repository": "KRAFTON/Raon-1-mini",
-      "learningId": "learn-huggingface-krafton-raon-1-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T23:01:58.823Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T11:03:51.302Z",
       "repository": "wcandillon/react-native-skia",
       "learningId": "learn-github-wcandillon-react-native-skia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:15:35.525Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:15:37.420Z",
+      "repository": "kividbio/kividb",
+      "learningId": "learn-github-kividbio-kividb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:15:44.327Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T11:15:51.065Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

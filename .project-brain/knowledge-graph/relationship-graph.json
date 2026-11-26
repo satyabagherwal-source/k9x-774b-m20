@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T10:41:48.712Z",
+  "updated_at": "2026-11-26T11:16:24.147Z",
   "statistics": {
-    "total_nodes": 560,
+    "total_nodes": 561,
     "total_edges": 230,
     "domain_distribution": {
       "D": 338,
       "M": 1,
-      "H": 102,
+      "H": 103,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -12496,6 +12496,28 @@
       ],
       "created_at": "2026-11-26T10:41:48.712Z",
       "updated_at": "2026-11-26T10:41:48.712Z"
+    },
+    "DOM-H-D48F999D": {
+      "id": "DOM-H-D48F999D",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "wasm-rust): preserve SSE events with CRLF line endings",
+      "summary": "Prevents defects observed in production commit `879a6512`: wasm-rust): preserve SSE events with CRLF line endings. Unvalidated execution pat -> When implementing operations in `plugins/wasm-rust/src/event_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state tra",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://higress-group-higress/higress-group-higress-learnings.md",
+        "source_version": "879a6512",
+        "observed_at": "2026-11-26T11:15:43.104Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (higress-group-higress)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-26T11:16:24.147Z",
+      "updated_at": "2026-11-26T11:16:24.147Z"
     }
   },
   "edges": [

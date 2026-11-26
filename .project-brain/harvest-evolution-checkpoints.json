@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T11:03:58.522Z",
+  "last_updated": "2026-11-26T11:16:25.202Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -513,9 +513,9 @@
       "staged_for_review": 0
     },
     "higress-group-higress-learnings.md": {
-      "processed_at": "2026-11-24T17:03:20.860Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-26T11:16:24.150Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-pika-labs-pika-h3-flex-learnings.md": {
       "processed_at": "2026-11-25T12:48:08.534Z",
@@ -1803,7 +1803,7 @@
       "staged_for_review": 0
     },
     "hf-meta-llama-llama-3.1-8b-instruct-learnings.md": {
-      "processed_at": "2026-11-22T18:12:33.982Z",
+      "processed_at": "2026-11-26T11:15:55.501Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3961,9 +3961,14 @@
       "processed_at": "2026-11-26T09:13:05.394Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "kividbio-kividb-learnings.md": {
+      "processed_at": "2026-11-26T11:15:54.582Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4485,
-  "total_canonical_promoted": 560,
-  "total_staged_for_review": 3389
+  "total_dossiers_evaluated": 4488,
+  "total_canonical_promoted": 561,
+  "total_staged_for_review": 3390
 }
