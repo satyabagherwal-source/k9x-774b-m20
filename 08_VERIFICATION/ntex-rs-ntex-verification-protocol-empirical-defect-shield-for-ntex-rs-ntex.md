@@ -4,22 +4,22 @@
 {
   "source_repository": "ntex-rs/ntex",
   "source_url": "https://github.com/ntex-rs/ntex",
-  "source_version": "53f7a3d9",
+  "source_version": "a41117e7",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T18:00:22.837Z",
+  "timestamp": "2026-11-26T01:26:21.261Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ntex-rs-ntex",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ntex-rs/ntex](https://github.com/ntex-rs/ntex) (Revision: `53f7a3d9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T18:00:22.837Z`  
+> **Provenance**: Harvested from [ntex-rs/ntex](https://github.com/ntex-rs/ntex) (Revision: `a41117e7`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T01:26:21.261Z`  
 > **Learning ID**: `learn-github-ntex-rs-ntex`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ntex-rs/ntex` (Commit: `53f7a3d9`)
+- **Target Repository**: `ntex-rs/ntex` (Commit: `a41117e7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:00:21.004Z  
+> **Harvest Timestamp**: 2026-11-26T01:26:20.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2557 stars
+- **Stars / Engagement**: 2558 stars
 
 ---
 
@@ -1769,10 +1769,11 @@ use crate::{Ctx, Service, readiness::Generation};
 
 pub(crate) type BoxFuture<'a, R> = Pin<Box<dyn Future<Output = R> + 'a>>;
 
-/// A heap-allocated, type-erased pipeline call future.
+/// A heap-allocated, type-erased pipeline call or pipeline create future.
 ///
 /// Experimental: pipeline calls keep the blocks of finished call futures in a
-/// per-pipeline [`CallPool`] for reuse. This may change or be reverted.
+/// per-pipeline [`CallPool`] for reuse, and `PipelineFactory` does the same for
+/// create futures. This may change or be reverted.
 ///
 /// Unlike [`BoxFuture`], dropping the future returns its block to the
 /// [`CallPool`] of its owner.
@@ -2079,13 +2080,7 @@ pin_project_lite::pin_project! {
 }
 
 impl<F, M, O> Future for MapOutput<F, M>
-where
-    F: Future,
-    M: FnOnce(F::Output) -> O,
-{
-    type Output = O;
-
-    
+w
 ```
 
 ### Core Architecture Module: `ntex-tls/src/utils.rs`
@@ -2434,61 +2429,544 @@ pub(crate) mod testing {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a736a716` (2026-11-23)
-**Commit Message**: Add fixes files support
+### Incident Patch 1: `a41117e7` (2026-11-25)
+**Commit Message**: Fix http client connections accounting
 
-* io-uring: Register stream sockets in the ring's fixed file table, so reads
-  and writes skip the per-operation descriptor lookup. The default table size
-  is 16384, capped by the open file limit; set `NTEX_URING_FIXED_FILES` to
-  change it, or to `0` to disable it
+* client: Connections being opened count against the HTTP/1 connection limit,
+  so concurrent requests to different hosts no longer open more connections
+  than `ClientConfig::set_h1_connection_limit()` allows
+
+**File**: `ntex/CHANGES.md` (modified, +6/-0)
+```diff
+@@ -1,5 +1,11 @@
+ # Changes
+ 
++## [4.11.1] - unreleased
++
++* client: Connections being opened count against the HTTP/1 connection limit,
++  so concurrent requests to different hosts no longer open more connections
++  than `ClientConfig::set_h1_connection_limit()` allows
++
+ ## [4.11.0] - 2026-11-26
+ 
+ * http: An HTTP/1 service readiness error while no request is in progress is
+```
+
+**File**: `ntex/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "ntex"
+-version = "4.11.0"
++version = "4.11.1"
+ authors = ["ntex contributors <team@ntex.rs>"]
+ description = "Framework for composable network services"
+ readme = "README.md"
+```
+
+**File**: `ntex/src/client/pool.rs` (modified, +161/-2)
+```diff
+@@ -65,6 +65,7 @@ struct ConnectionPoolInner {
+ pub(super) struct Inner {
+     cfg: Cfg<ClientConfig>,
+     stopped: bool,
++    /// http/1 connections in use and connections being opened
+     acquired: usize,
+     available: HashMap<Key, VecDeque<AvailableConnection>>,
+     h2: HashMap<Key, Vec<H2Client>>,
+@@ -563,24 +564,31 @@ fn add_h2_client(
+     client
+ }
+ 
++/// Counts a connection being opened against the http/1 connection limit,
++/// the protocol is not known until the connection is established.
+ struct OpenGuard {
+     key: Key,
+     inner: Option<Rc<RefCell<Inner>>>,
+ }
+ 
+ impl OpenGuard {
+     fn new(key: Key, inner: Rc<RefCell<Inner>>) -> Self {
+-        inner.borrow_mut().connecting.insert(key.clone());
++        {
++            let mut pool = inner.borrow_mut();
++            pool.connecting.insert(key.clone());
++            pool.acquired += 1;
++        }
+         OpenGuard {
+             key,
+             inner: Some(inner),
+         }
+     }
+ 
++    /// Keeps counting the established http/1 connection.
+     fn consume(mut self) -> Acquired {
+         let inner = self.inner.take().unwrap();
+         inner.borrow_mut().connecting.remove(&self.key);
+-        Acquired::new(self.key.clone(), inner)
++        Acquired(self.key.clone(), inner)
+     }
+ }
+ 
+@@ -589,6 +597,7 @@ impl Drop for OpenGuard {
+         if let Some(inner) = self.inner.take() {
+             let mut pool = inner.borrow_mut();
+             pool.connecting.remove(&self.key);
++            pool.acquired -= 1;
+             pool.check_availability();
+         }
+     }
+@@ -645,6 +654,7 @@ mod tests {
+     use std::{future::Future, pin::Pin};
+ 
+     use super::*;
++    use crate::channel::condition::Condition;
+     use crate::service::{Pipeline, boxed, fn_service};
+     use crate::time::{Millis, Seconds, sleep};
+     use crate::{io as nio, testing::IoTest, util::lazy};
+@@ -710,6 +720,155 @@ mod tests {
+         assert_eq!(pool.0.inner.borrow().acquired, 2);
+     }
+ 
++    /// STATEMENT: Connections being opened count against the HTTP/1 connection limit, so concurrent requests to different hosts never open more connections than the limit.
++    ///
++    /// HOW:
++    /// - Use a limit of 2 and a connector that holds every connect until a gate is released.
++    /// - Poll requests to four hosts once and verify that only two connects start, `acquired` is 2, and the other two requests stay pending.
++    /// - Release the gate and verify that the first two requests complete without starting another connect.
++    /// - Drop one connection and verify that exactly one waiting host connects; drop the other and verify that the last host connects.
++    #[crate::rt_test]
++    async fn opening_connections_count_against_h1_limit() {
++        let gate = Condition::new();
++        let store = Rc::new(RefCell::new(Vec::new()));
++        let (gate2, store2) = (gate.clone(), store.clone());
++
++        let cfg = SharedCfg::new("C")
++            .add(ClientConfig::new().set_h1_connection_limit(2))
++            .build();
++        let pool = ConnectionPool::new(
++            ConnectorPipeline::new(boxed::service(fn_service(move |_| {
++                let (client, server) = IoTest::create();
++                store2.borrow_mut().push(server);
++                let gate = gate2.wait();
++                Box::pin(async move {
++                    let _ = gate.await;
++                    Ok(IoBoxed::from(nio::Io::new(client, SharedCfg::default())))
++                })
++            }))),
++            cfg.get(),
++        );
++        let pipe = Pipeline::new(cfg, pool.clone());
++        let req = |host: &str| Connect {
++            uri: Url::try_from(format!("http://{host}/test")).unwrap(),
++            addr: None,
++        };
++
++        let mut f1 = std::pin::pin!(pipe.call(req("host1")));
++        let mut f2 = std::pin::pin!(pipe.call(req("host2")));
++        let mut f3 = std::pin::pin!(pipe.call(req("host3")));
++        let mut f4 = std::pin::pin!(pipe.call(req("host4")));
++        assert!(lazy(|cx| f1.as_mut().poll(cx)).await.is_pending());
++        assert!(lazy(|cx| f2.as_mut().poll(cx)).await.is_pending());
++        assert!(lazy(|cx| f3.as_mut().poll(cx)).await.is_pending());
++        assert!(lazy(|cx| f4.as_mut().poll(cx)).await.is_pending());
++
++        // connect tasks run, both connects are held by the gate
++        sleep(Millis(10)).await;
++        assert_eq!(store.borrow().len(), 2);
++        assert_eq!(pool.0.inner.borrow().acquired, 2);
++        assert_eq!(pool.0.waiters.borrow().waiters.len(), 2);
++
++        gate.notify_and_lock(());
++        let timeout = |fut| crate::time::timeout(Millis(1000), fut);
++        let c1 = timeout(f1).await.unwrap().unwrap();
++        let c2 = timeout(f2).await.unwrap().unwrap();
++        sleep(Millis(10)).await;
++        assert_eq!(store.borrow().len(), 2);
++        assert_eq!(pool.0.inner.borrow().acquired, 2);
++        assert!(lazy(|cx| f3.as_mut().poll(cx)).await.is_pending());
++        assert!(lazy(|cx| f4.as_mut().poll(cx)).a
+```
+
+---
+
+### Incident Patch 2: `e63cb987` (2026-11-25)
+**Commit Message**: Fix read back-pressure handling
+
+* `IoRef::with_read_src()` and `IoRef::with_buf()` keep a read pause unless the
+  access consumed buffered read data or released read back-pressure; before,
+  any access, even one that only checks the buffer length, resumed reading
 
 **File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -62,7 +62,7 @@ ntex-h2 = "4.7.0"
+@@ -60,7 +60,7 @@ ntex-dispatcher = "4.5.0"
+ ntex-error = "3.1.0"
+ ntex-h2 = "4.7.0"
  ntex-http = "2.2.1"
- ntex-io = "4.8.0"
+-ntex-io = "4.9.0"
++ntex-io = "4.9.1"
  ntex-macros = "4.8.0"
--ntex-net = "4.12.4"
-+ntex-net = "4.13.0"
+ ntex-net = "4.13.1"
  ntex-router = "2.3.0"
- ntex-rt = "4.10.1"
- ntex-server = "4.6.2"
 ```
 
-**File**: `docs/4-runtime.md` (modified, +8/-0)
+**File**: `docs/7-io.md` (modified, +5/-2)
 ```diff
-@@ -42,6 +42,14 @@ Tokio and Compio are useful when your application uses libraries from those
- ecosystems. The native backend uses the platform reactor directly, without
- running a second general-purpose runtime.
+@@ -625,8 +625,11 @@ reports an [`IoStatusUpdate`] value:
  
-+With io_uring, each runtime thread registers its sockets in the ring's fixed
-+file table, so reads and writes skip the kernel's per-operation descriptor
-+lookup. The table has 16384 slots by default, capped by the open file limit
-+(`RLIMIT_NOFILE`). Each slot takes 8 to 16 bytes of kernel memory. Connections
-+beyond the table size, and all connections on kernels older than 5.19, use
-+plain descriptors. To change the size, set the `NTEX_URING_FIXED_FILES`
-+environment variable before the first runtime starts; `0` disables the table.
-+
- Let `#[ntex::main]` own the process entry point unless you need another setup.
- `SystemRunner::block_on` blocks the current thread. Do not call it inside an
- async Tokio task to nest one runtime inside another.
+ Use [`Io::poll_read_pause`] if you also want to stop accepting transport input
+ while waiting. The pause is cooperative. Decoding, accessing the application
+-read buffer, or explicitly requesting more input resumes reads. Use it while
+-a dispatcher waits on readiness, not to disable the read half permanently.
++read buffer through [`IoRef::with_read_dst`], consuming buffered input through
++[`IoRef::with_buf`] or [`IoRef::with_read_src`], or explicitly requesting more
++input resumes reads. Access that consumes nothing, such as reading buffer
++sizes, keeps the pause. Use it while a dispatcher waits on readiness, not to
++disable the read half permanently.
+ 
+ A codec-driven service receives the same conditions as [`RecvError`] from
+ [`Io::poll_recv`]. It also receives decoder failures. Unlike the status
 ```
 
-**File**: `ntex-net/CHANGES.md` (modified, +7/-0)
+**File**: `ntex-io/CHANGES.md` (modified, +6/-0)
 ```diff
-@@ -1,5 +1,12 @@
+@@ -1,5 +1,11 @@
  # Changes
  
-+## [4.13.0] - 2026-11-24
++## [4.9.1] - 2026-11-26
 +
-+* io-uring: Register stream sockets in the ring's fixed file table, so reads
-+  and writes skip the per-operation descriptor lookup. The default table size
-+  is 16384, capped by the open file limit; set `NTEX_URING_FIXED_FILES` to
-+  change it, or to `0` to disable it
++* `IoRef::with_read_src()` and `IoRef::with_buf()` keep a read pause unless the
++  access consumed buffered read data or released read back-pressure; before,
++  any access, even one that only checks the buffer length, resumed reading
 +
- ## [4.12.5] - 2026-11-23
+ ## [4.9.0] - 2026-11-25
  
- * io-uring: `Handle::write` submits the send directly, instead of waking the
+ * Add `Io::recv_item()`, which receives the next item with its end of stream
+```
+
+**File**: `ntex-io/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "ntex-io"
+-version = "4.9.0"
++version = "4.9.1"
+ authors = ["ntex contributors <team@ntex.rs>"]
+ description = "Utilities for abstracting io streams"
+ keywords = ["network", "framework", "async", "futures"]
+```
+
+**File**: `ntex-io/src/io/stream.rs` (modified, +6/-3)
+```diff
+@@ -545,9 +545,12 @@ impl<F> Io<F> {
+     /// touches the read buffer or asks for more input, namely
+     /// [`read_more`](Self::read_more), [`poll_read_more`](Self::poll_read_more),
+     /// [`IoRef::decode`], [`IoRef::decode_item`], and [`IoRef::with_read_dst`].
+-    /// Releasing read backpressure cancels it as well. Because those methods
+-    /// are available through every [`IoRef`] clone, the pause holds only while
+-    /// no other holder touches the read buffer.
++    /// [`IoRef::with_buf`] and [`IoRef::with_read_src`] cancel it only when
++    /// the application-facing read buffer is smaller after the access; access
++    /// that consumes nothing, such as filter callbacks reading buffer sizes,
++    /// keeps it. Releasing read backpressure cancels it as well. Because those
++    /// methods are available through every [`IoRef`] clone, the pause holds
++    /// only while no other holder touches the read buffer.
+     ///
+     /// See [`poll_status_update`](Self::poll_status_update) for the reported
+     /// updates.
+```
+
+**File**: `ntex-io/src/io/tests.rs` (modified, +110/-1)
+```diff
+@@ -3911,9 +3911,10 @@ async fn read_task_is_woken_after_state_is_published() {
+     io.with_read_dst(|_| ());
+     assert_eq!(seen.get(), Some(true), "read_dst resume");
+ 
++    io.with_read_src(|buf| buf.extend_from_slice(b"x"));
+     io.st().flags.set_read_paused();
+     let seen = wake_read_task_inline(&io, not_paused);
+-    io.with_read_src(|_| ());
++    io.with_read_src(BytesMut::clear);
+     assert_eq!(seen.get(), Some(true), "read_src resume");
+ 
+     let (_client, server) = IoTest::create();
+@@ -4999,6 +5000,114 @@ async fn read_dst_size_keeps_read_state() {
+     assert!(!io.flags().is_read_ready());
+ }
+ 
++/// STATEMENT: Read-source and filter-buffer access that consumes nothing keeps an installed read pause.
++///
++/// HOW:
++/// - Buffer input, pause reads, then read lengths and append through `with_read_src` and `with_buf`.
++/// - Send more bytes and verify they stay unread until consuming through `with_read_src` cancels the pause.
++#[ntex::test]
++async fn read_src_access_without_consuming_keeps_read_pause() {
++    let (client, server) = IoTest::create();
++    client.remote_buffer_cap(1024);
++    let io = Io::new(server, SharedCfg::new("SRV"));
++
++    client.write("data");
++    assert_eq!(io.read_notify().await.unwrap(), Some(()));
++    assert!(lazy(|cx| io.poll_read_pause(cx)).await.is_pending());
++
++    assert_eq!(io.with_read_src(|buf| buf.len()), 4);
++    let len = io.with_buf(|buf| buf.with_read_buffers(|_, dst| dst.len()));
++    assert_eq!(len.unwrap(), 4);
++    io.with_read_src(|buf| buf.extend_from_slice(b"!"));
++    assert!(io.flags().is_read_paused());
++
++    // the transport does not read while paused
++    client.write("more");
++    sleep(Millis(25)).await;
++    assert_eq!(io.read_dst_size(), 5);
++    assert!(io.flags().is_read_paused());
++
++    // consuming cancels the pause
++    assert_eq!(io.with_read_src(|buf| buf.split_to(1)), b"d");
++    assert!(!io.flags().is_read_paused());
++    sleep(Millis(25)).await;
++    assert_eq!(io.with_read_dst(BytesMut::take), b"ata!more");
++}
++
++/// STATEMENT: Consuming the read destination through filter-buffer access cancels an installed read pause.
++///
++/// HOW:
++/// - Receive input through a passthrough filter, pause reads, and clear the transport-facing source.
++/// - Verify later input stays unread, then consume through `with_buf` and verify it arrives.
++#[ntex::test]
++async fn read_pause_with_filter_is_cancelled_by_consuming() {
++    let (client, server) = IoTest::create();
++    client.remote_buffer_cap(1024);
++    let io = Io::new(server, SharedCfg::new("SRV")).add_filter(Passthrough);
++
++    client.write("data");
++    assert_eq!(io.read_notify().await.unwrap(), Some(()));
++    assert!(lazy(|cx| io.poll_read_pause(cx)).await.is_pending());
++
++    // the source is not the application-facing destination
++    io.with_read_src(BytesMut::clear);
++    io.with_buf(|_| ()).unwrap();
++    assert!(io.flags().is_read_paused());
++
++    client.write("more");
++    sleep(Millis(25)).await;
++    assert_eq!(io.read_dst_size(), 4);
++
++    let head = io.with_buf(|buf| buf.with_read_buffers(|_, dst| dst.split_to(1)));
++    assert_eq!(head.unwrap(), b"d");
++    assert!(!io.flags().is_read_paused());
++    sleep(Millis(25)).await;
++    assert_eq!(io.with_read_dst(BytesMut::take), b"atamore");
++}
++
++/// STATEMENT: Filter callbacks that read the read-source size during output processing keep an installed read pause.
++///
++/// HOW:
++/// - Register callbacks that read the read-source length, as throughput accounting does, and pause reads.
++/// - Send output so the callbacks run, then send peer input and verify it stays unread until reads resume.
++#[ntex::test]
++async fn output_callbacks_keep_read_pause() {
++    struct Cb(Rc<Cell<usize>>);
++    impl crate::IoCallbacks for Cb {
++        fn before_processing(&self, io: &IoRef) {
++            self.0.set(self.0.get() + 1);
++            io.with_read_src(|buf| buf.len());
++        }
++        fn after_processing(&self, io: &IoRef) {
++            io.with_read_src(|buf| buf.len());
++        }
++    }
++
++    let (client, server) = IoTest::create();
++    client.remote_buffer_cap(1024);
++    let io = Io::new(server, SharedCfg::new("SRV"));
++    let calls = Rc::new(Cell::new(0));
++    io.register_filter_callbacks(Cb(calls.clone()));
++    assert!(lazy(|cx| io.poll_read_pause(cx)).await.is_pending());
++
++    io.send(Bytes::from_static(b"reply"), &BytesCodec)
++        .await
++        .unwrap();
++    io.flush(true).await.unwrap();
++    assert!(calls.get() > 0);
++    assert_eq!(client.read_any(), b"reply".as_ref());
++    assert!(io.flags().is_read_paused());
++
++    // the transport does not read while paused
++    client.write("data");
++    sleep(Millis(25)).await;
++    assert_eq!(io.read_dst_size(), 0);
++    assert!(io.flags().is_read_paused());
++
++    assert_eq!(io.read_notify().await.unwrap(), Some(()));
++    assert_eq!(io.with_read_dst(BytesMut::take), b"data");
++}
++
+ struct Failing;
+ 
+ impl Decoder for Failing {
+```
+
+**File**: `ntex-io/src/ioref.rs` (modified, +54/-15)
+```diff
+@@ -164,7 +164,7 @@ impl IoRef {
+ 
+     #[inline]
+     /// Checks whether the filter chain is not ready, see
+-    /// [`Filter::poll_ready`](crate::Filter::poll_ready).
++    /// [`Filter::poll_ready`].
+     ///
+     /// Transport reads are paused and output the chain holds does not reach
+     /// the transport during the pause. It is not caused by the peer, so read
+@@ -414,7 +414,10 @@ impl IoRef {
+     /// The destination exposed by
+     /// [`FilterBuf::with_read_buffers`](crate::FilterBuf::with_read_buffers) is
+     /// the application-facing read destination, so consuming enough of it
+-    /// releases read backpressure and cancels an installed read pause.
++    /// releases read backpressure, and an installed read pause is cancelled if
++    /// the destination is smaller after the access. Access that leaves it at
++    /// least as large as before, for example a filter callback that only reads
++    /// buffer sizes, keeps the pause.
+     ///
+     /// Buffer access is not reentrant. The closure must not use this
+     /// connection to access an overlapping read or write buffer, or change the
+@@ -423,10 +426,11 @@ impl IoRef {
+     where
+         F: FnOnce(&mut FilterBuf<'_>) -> R,
+     {
++        let dst_size = self.paused_read_dst_size();
+         self.with_callbacks(|cb| cb.before_processing(self));
+         let result = self.0.buffer.with_filter(self, |ctx| ctx.with_buffer(f));
+         self.with_callbacks(|cb| cb.after_processing(self));
+-        self.release_read_destination();
++        self.release_read_destination(dst_size);
+         self.0.sync_read_buffered();
+ 
+         self.consolidate_write_state(false)?;
+@@ -517,8 +521,12 @@ impl IoRef {
+     ///
+     /// Without a filter installed this is the same buffer as the
+     /// application-facing destination, so consuming enough of it releases read
+-    /// backpressure and cancels an installed read pause. Unlike
+-    /// [`with_read_dst`](Self::with_read_dst) it never clears read readiness.
++    /// backpressure, and an installed read pause is cancelled if the buffer is
++    /// smaller after the access. Access that leaves it at least as large as
++    /// before, for example reading the buffer length, keeps the pause. With a
++    /// filter installed the source is a different buffer and the pause is
++    /// kept. Unlike [`with_read_dst`](Self::with_read_dst) it never clears
++    /// read readiness.
+     ///
+     /// The closure must not access this connection's transport-facing read
+     /// source again. Nested access is unsupported and may terminate the
+@@ -527,8 +535,9 @@ impl IoRef {
+     where
+         F: FnOnce(&mut BytesMut) -> R,
+     {
++        let dst_size = self.paused_read_dst_size();
+         let result = self.0.buffer.with_read_src(self, f);
+-        self.release_read_destination();
++        self.release_read_destination(dst_size);
+         self.0.sync_read_buffered();
+         result
+     }
+@@ -726,7 +735,7 @@ impl IoRef {
+     ///
+     /// See [`release_read_destination`](Self::release_read_destination) for the
+     /// variant used when the caller may have drained a different buffer of the
+-    /// filter chain.
++    /// filter chain; it cancels the pause only when the destination shrank.
+     #[inline]
+     fn update_read_destination(&self, buf: &mut BytesMut) {
+         let st = &self.0;
+@@ -767,22 +776,52 @@ impl IoRef {
+         }
+     }
+ 
+-    /// Releases read backpressure and any installed read pause.
++    /// Releases read backpressure and cancels an installed read pause after
++    /// the application-facing read destination was consumed.
+     ///
+     /// Used by the accessors that can drain the application-facing read
+     /// destination without going through
+-    /// [`with_read_dst`](Self::with_read_dst). Unlike
++    /// [`with_read_dst`](Self::with_read_dst). `dst_size` is the destination
++    /// size before the access, from
++    /// [`paused_read_dst_size`](Self::paused_read_dst_size). Unlike
+     /// `update_read_destination()` this never clears read readiness, because
+-    /// the caller may have touched a different buffer of the chain. It only
+-    /// removes a stale pause, so it can never suppress a wakeup.
+-    fn release_read_destination(&self) {
++    /// the caller may have touched a different buffer of the chain.
++    ///
++    /// A pause installed by [`Io::poll_read_pause`](crate::Io::poll_read_pause)
++    /// is cancelled only if read backpressure was released or the destination
++    /// shrank. Access that consumed nothing, for example a filter callback
++    /// reading buffer sizes during a write flush, keeps the pause, so the
++    /// transport does not read input the dispatcher is not ready for.
++    #[inline]
++    fn release_read_destination(&self, dst_size: usize) {
++        if self.0.flags.is_read_paused_or_backpressure() {
++            self.release_read_destination_slow(dst_size);
++        }
++    }
++
++    /// Returns the application-facing read destination size if reads are
++    /// paused, `0` o
+```
+
+---
+
+### Incident Patch 3: `e56eacad` (2026-11-25)
+**Commit Message**: Require linux 6.1+ for io-uring backend
+
+* io-uring: Skip the `shutdown(2)` call when closing a connection that the
+  peer reset or that timed out, the socket is closed already
+
+* io-uring: Close the descriptor of a stream registered in the fixed file
+  table without a completion; saves a completion per connection
+
+* io-uring: Register a stream socket in the fixed file table on its 16th
+  receive instead of at start, short connections skip the `io_uring_register`
+  call and the extra `Close` of the slot
+
+* io-uring: Require Linux 6.1+, detected by the ring setup flags, features and
+  opcodes; without `neon-uring`, older kernels use the polling driver. Remove
+  the fallbacks for older kernels, listeners always use a multishot accept.
+  Deprecate `ReactorApi::is_new()`, it is always `true`
+
+* Add `Listener::poll_accept_stream()`, which returns an accepted connection
+  without its peer address; the io-uring listener calls `getpeername` only
+  when the address is requested
+
+**File**: `ntex-net/CHANGES.md` (modified, +21/-0)
+```diff
+@@ -1,5 +1,26 @@
+ # Changes
+ 
++## [4.13.1] - 2026-11-25
++
++* io-uring: Skip the `shutdown(2)` call when closing a connection that the
++  peer reset or that timed out, the socket is closed already
++
++* io-uring: Close the descriptor of a stream registered in the fixed file
++  table without a completion; saves a completion per connection
++
++* io-uring: Register a stream socket in the fixed file table on its 16th
++  receive instead of at start, short connections skip the `io_uring_register`
++  call and the extra `Close` of the slot
++
++* io-uring: Require Linux 6.1+, detected by the ring setup flags, features and
++  opcodes; without `neon-uring`, older kernels use the polling driver. Remove
++  the fallbacks for older kernels, listeners always use a multishot accept.
++  Deprecate `ReactorApi::is_new()`, it is always `true`
++
++* Add `Listener::poll_accept_stream()`, which returns an accepted connection
++  without its peer address; the io-uring listener calls `getpeername` only
++  when the address is requested
++
+ ## [4.13.0] - 2026-11-24
+ 
+ * io-uring: Register stream sockets in the ring's fixed file table, so reads
 ```
 
 **File**: `ntex-net/Cargo.toml` (modified, +1/-1)
@@ -2496,202 +2974,466 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  [package]
  name = "ntex-net"
--version = "4.12.5"
-+version = "4.13.0"
+-version = "4.13.0"
++version = "4.13.1"
  authors = ["ntex contributors <team@ntex.rs>"]
  description = "ntexwork utils for ntex framework"
  keywords = ["network", "framework", "async", "futures"]
 ```
 
-**File**: `ntex-net/src/uring/reactor.rs` (modified, +18/-0)
+**File**: `ntex-net/src/lib.rs` (modified, +41/-15)
 ```diff
-@@ -148,6 +148,24 @@ impl ReactorApi {
-     pub fn unregister_buf_ring(&self, bgid: u16) -> io::Result<()> {
-         self.inner.ring.submitter().unregister_buf_ring(bgid)
-     }
-+
-+    /// Registers an empty file table with `nr` slots, kernel 5.19 or greater.
-+    ///
-+    /// The ring has one table, it is released with the ring.
-+    pub fn register_files_sparse(&self, nr: u32) -> io::Result<()> {
-+        self.inner.ring.submitter().register_files_sparse(nr)
-+    }
-+
-+    /// Replaces slots of the file table starting at `offset`, `-1` clears a slot.
-+    ///
-+    /// Issued operations keep the file they resolved, a replaced or cleared
-+    /// file is released once they complete.
-+    pub fn register_files_update(&self, offset: u32, fds: &[RawFd]) -> io::Result<usize> {
-+        self.inner
-+            .ring
-+            .submitter()
-+            .register_files_update(offset, fds)
-+    }
- }
+@@ -12,10 +12,11 @@
+ //! - `tokio` enables the Tokio reactor.
+ //! - `compio` enables the Compio reactor.
+ //! - `neon-polling` requires the native `polling` reactor on Unix.
+-//! - `neon-uring` requires the native `io-uring` reactor on Linux.
++//! - `neon-uring` requires the native `io-uring` reactor on Linux 6.1 or later.
+ //!
+ //! Without an explicit runtime feature, Linux tries `io-uring` and falls back to
+-//! `polling`; other Unix platforms use polling and Windows always uses `IOCP`.
++//! `polling` on older kernels; other Unix platforms use polling and Windows
++//! always uses `IOCP`.
+ #![deny(clippy::pedantic)]
+ #![allow(
+     clippy::clone_on_copy,
+@@ -26,7 +27,7 @@
+     clippy::missing_panics_doc,
+     clippy::unused_async_trait_impl
+ )]
+-use std::task::{Context, Poll};
++use std::task::{Context, Poll, ready};
+ use std::{any::Any, fmt, future::poll_fn, io, net, net::SocketAddr, panic};
  
- /// io-uring reactor.
+ use ntex_io::Io;
+@@ -98,10 +99,11 @@ pub trait Reactor: Driver {
+ 
+ /// Reactor specific part of a [`Listener`].
+ pub(crate) trait ListenerOps {
++    /// Returns the peer address only if accepting reported it.
+     fn poll_accept(
+         &mut self,
+         cx: &mut Context<'_>,
+-    ) -> Poll<io::Result<(net::TcpStream, SocketAddr)>>;
++    ) -> Poll<io::Result<(net::TcpStream, Option<SocketAddr>)>>;
+ 
+     fn local_addr(&self) -> io::Result<SocketAddr>;
+ }
+@@ -128,7 +130,7 @@ impl Listener {
+     /// Dropping the returned future before it completes does not lose a
+     /// connection, the next call returns it.
+     pub async fn accept(&mut self) -> io::Result<(net::TcpStream, SocketAddr)> {
+-        poll_fn(|cx| self.0.poll_accept(cx)).await
++        poll_fn(|cx| self.poll_accept(cx)).await
+     }
+ 
+     /// Polls for a new incoming connection.
+@@ -141,7 +143,29 @@ impl Listener {
+         &mut self,
+         cx: &mut Context<'_>,
+     ) -> Poll<io::Result<(net::TcpStream, SocketAddr)>> {
+-        self.0.poll_accept(cx)
++        let (stream, addr) = ready!(self.0.poll_accept(cx))?;
++        let addr = match addr {
++            Some(addr) => addr,
++            None => stream.peer_addr().map_err(|err| {
++                if err.kind() == io::ErrorKind::NotConnected {
++                    // the peer reset the connection before it was accepted
++                    io::ErrorKind::ConnectionAborted.into()
++                } else {
++                    err
++                }
++            })?,
++        };
++        Poll::Ready(Ok((stream, addr)))
++    }
++
++    /// Polls for a new incoming connection without its peer address.
++    ///
++    /// Same as [`poll_accept`](Self::poll_accept), but the io-uring reactor
++    /// skips the `getpeername` call it needs for the address. A connection
++    /// that the peer reset before it was accepted may be returned, reading
++    /// from it reports the error.
++    pub fn poll_accept_stream(&mut self, cx: &mut Context<'_>) -> Poll<io::Result<net::TcpStream>> {
++        self.0.poll_accept(cx).map_ok(|(stream, _)| stream)
+     }
+ 
+     /// Returns the local address the listener is bound to.
+@@ -362,15 +386,17 @@ impl Runner for DefaultRuntime {
+             #[cfg(all(not(feature = "neon-uring"), not(feature = "neon-polling")))]
+             {
+                 #[cfg(target_os = "linux")]
+-                let driver: Box<dyn Reactor> = if let Ok(reactor) =
+-                    crate::uring::Reactor::new(crate::uring::Reactor::DEFAULT_ENTRIES)
+-                {
+-                    Box::new(reactor)
+-                } else {
+-                    Box::new(
+-                        crate::polling::Reactor::new().expect("Cannot construct io-uring reactor"),
+-                    )
+-                };
++                let driver: Box<dyn Reactor> =
++                    match crate::uring::Reactor::new(crate::uring::Reactor::DEFAULT_ENTRIES) {
++                        Ok(reactor) => Box::new(reactor),
++                        Err(e) => {
++                            log::info!("io-uring driver is not available, using polling: {e}");
++                            Box::new(
++                                crate::polling::Reactor::new()
++                                    .expect("Cannot construct polling reactor"),
++                            )
++                        }
++                    };
+ 
+                 #[cfg(not(target_os = "linux"))]
+                 let driver: Box<dyn Reactor> = Box::new(
 ```
 
-**File**: `ntex-net/src/uring/stream.rs` (modified, +365/-33)
+**File**: `ntex-net/src/polling/accept.rs` (modified, +2/-2)
 ```diff
-@@ -1,8 +1,9 @@
--use std::{cell::Cell, fmt, io, mem, num::NonZeroU32, os::fd::AsRawFd, ptr, rc::Rc, task::Poll};
-+use std::os::fd::{AsRawFd, RawFd};
-+use std::{cell::Cell, fmt, io, mem, num::NonZeroU32, ptr, rc::Rc, sync::OnceLock, task::Poll};
- 
- use ntex_bytes::{BufMut, BytePage, BytePages, Bytes, BytesMut, info::PageKind};
- use ntex_io::{IoContext, IoTaskStatus};
--use ntex_io_uring::{cqueue, opcode, types::Fd};
-+use ntex_io_uring::{cqueue, opcode, types::Fd, types::Fixed};
+@@ -85,10 +85,10 @@ impl ListenerOps for TcpListener {
+     fn poll_accept(
+         &mut self,
+         cx: &mut Context<'_>,
+-    ) -> Poll<io::Result<(net::TcpStream, net::SocketAddr)>> {
++    ) -> Poll<io::Result<(net::TcpStream, Option<net::SocketAddr>)>> {
+         loop {
+             match self.sock.accept() {
+-                Ok(res) => return Poll::Ready(Ok(res)),
++                Ok((stream, addr)) => return Poll::Ready(Ok((stream, Some(addr)))),
+                 Err(err) if err.kind() == io::ErrorKind::Interrupted => {}
+                 Err(err) if err.kind() == io::ErrorKind::WouldBlock => break,
+                 Err(err) => return Poll::Ready(Err(err)),
+```
+
+**File**: `ntex-net/src/uring/accept.rs` (modified, +67/-165)
+```diff
+@@ -5,12 +5,11 @@ use std::{task::Context, task::Poll, task::Waker};
+ use ntex_io_uring::{cqueue::more, opcode, types::Fd};
  use ntex_rt::Arbiter;
  use slab::Slab;
- use socket2::Socket;
-@@ -141,10 +142,34 @@ const IORING_RECVSEND_POLL_FIRST: u16 = 1;
- /// Ask the kernel to report in the notification whether data was copied
- const IORING_SEND_ZC_REPORT_USAGE: u16 = 8;
- const IORING_NOTIF_USAGE_ZC_COPIED: usize = 1 << 31;
-+/// Default size of the registered file table of a ring
-+const FIXED_FILES: u32 = 16 * 1024;
-+/// Kernel limit of the registered file table, `IORING_MAX_FIXED_FILES`
-+const FIXED_FILES_MAX: u64 = 1 << 20;
-+const FIXED_FILES_VAR: &str = "NTEX_URING_FIXED_FILES";
-+
-+/// Expands `$op` with `$fd` set to the stream's slot in the registered file
-+/// table, or to its descriptor if it has no slot.
-+macro_rules! with_fd {
-+    ($item:expr, $fd:ident => $op:expr) => {
-+        match $item.slot {
-+            Some(slot) => {
-+                let $fd = Fixed(slot);
-+                $op
-+            }
-+            None => {
-+                let $fd = $item.fd();
-+                $op
-+            }
-+        }
-+    };
-+}
+-use socket2::{SockAddr, SockAddrStorage};
  
- #[derive(Debug)]
- struct StreamItem {
-     io: Socket,
-+    /// Slot in the registered file table, see `FixedFiles`
-+    slot: Option<u32>,
-     /// Generation of the slot, see `StreamId`
-     generation: u32,
-     flags: Flags,
-@@ -175,9 +200,13 @@ enum Operation {
-         page: BytePage,
-         state: SendState,
-     },
-+    /// Close of the stream's slot in the file table, or of its descriptor if
-+    /// it has no slot
-     Close {
-         id: StreamId,
-     },
-+    /// Close of the descriptor of a stream with a slot
-+    CloseFd,
-     Nop,
+ use super::{Handler, Reactor, ReactorApi};
+ use crate::{Listener, ListenerOps};
+ 
+-type AcceptResult = io::Result<(net::TcpStream, net::SocketAddr)>;
++type AcceptResult = io::Result<(net::TcpStream, Option<net::SocketAddr>)>;
+ 
+ /// Accepted connections a listener queues before its multishot accept is
+ /// canceled, it is armed again once the queue is drained
+@@ -26,8 +25,6 @@ struct AcceptOpsHandler {
+ #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+ enum State {
+     Idle,
+-    /// `Accept` is submitted
+-    Accept,
+     /// Multishot `Accept` is submitted, it posts a completion per connection
+     Multi,
+     /// `PollAdd` is submitted, the listener reported `EAGAIN`
+@@ -38,8 +35,6 @@ enum State {
+ struct Entry {
+     /// The socket stays open until the kernel is done with it
+     sock: net::TcpListener,
+-    /// Peer address, written by the kernel
+-    addr: Box<(libc::sockaddr_storage, libc::socklen_t)>,
+     state: State,
+     /// The multishot accept is canceled because the queue is full
+     paused: bool,
+@@ -51,9 +46,6 @@ struct Entry {
+ 
+ struct AcceptOpsInner {
+     api: ReactorApi,
+-    supported: bool,
+-    /// Kernel supports multishot accept, available since 5.19
+-    multishot: bool,
+     entries: RefCell<Slab<Entry>>,
  }
  
-@@ -451,10 +480,130 @@ struct StreamOpsStorage {
-     streams: Streams,
-     /// Provided buffers for receives that wait for input
-     bufs: Option<BufRing>,
-+    /// Registered file table of the ring
-+    files: FixedFiles,
-     /// `IORING_SEND_ZC_REPORT_USAGE` is supported, cleared on first `EINVAL`
-     zc_report: bool,
+@@ -67,12 +59,8 @@ impl AcceptOps {
+         Arbiter::get_value(move || {
+             let mut inner = None;
+             reactor.register(|api| {
+-                let supported = api.is_supported(opcode::Accept::CODE)
+-                    && api.is_supported(opcode::PollAdd::CODE);
+                 let ops = Rc::new(AcceptOpsInner {
+-                    multishot: api.is_new(),
+                     api,
+-                    supported,
+                     entries: RefCell::new(Slab::new()),
+                 });
+                 inner = Some(ops.clone());
+@@ -82,22 +70,9 @@ impl AcceptOps {
+         })
+     }
+ 
+-    pub(crate) fn is_supported(&self) -> bool {
+-        self.0.supported
+-    }
+-
+-    pub(crate) fn listener(&self, sock: net::TcpListener) -> io::Result<Listener> {
+-        if !self.0.supported {
+-            return Err(io::Error::new(
+-                io::ErrorKind::Unsupported,
+-                "io-uring accept is not supported by the kernel",
+-            ));
+-        }
+-
++    pub(crate) fn listener(&self, sock: net::TcpListener) -> Listener {
+         let id = self.0.entries.borrow_mut().insert(Entry {
+             sock,
+-            // SAFETY: all zeros is a valid `sockaddr_storage`
+-            addr: Box::new((unsafe { mem::zeroed() }, 0)),
+             state: State::Idle,
+             paused: false,
+             results: VecDeque::new(),
+@@ -106,37 +81,21 @@ impl AcceptOps {
+         });
+         let id = u32::try_from(id).expect("Too many listeners");
+ 
+-        Ok(Listener::new(TcpListener {
++        Listener::new(TcpListener {
+             id,
+             ops: self.0.clone(),
+-        }))
++        })
+     }
  }
  
-+/// Slots of the ring's registered file table, one per stream.
-+///
-+/// Operations on a registered socket skip the descriptor lookup and the file
-+/// reference count update the kernel does for every operation on a plain
-+/// descriptor. Streams beyond the table size use their descriptor.
-+///
-+/// A slot holds its own reference to the socket, the stream closes both the
-+/// slot and the descriptor. The slot is reused only after its `Close`
-+/// completed, a pending close would otherwise remove the next stream's socket.
-+#[derive(Debug)]
-+struct FixedFiles {
-+    /// Number of slots, zero if the table is not available
-+    cap: u32,
-+    /// Slots below `next` were handed out
-+    next: u32,
-+    free: Vec<u32>,
+ impl AcceptOpsInner {
+     fn submit_accept(&self, id: u32, entry: &mut Entry) {
+         let fd = entry.sock.as_raw_fd();
+-        if self.multishot {
+-            entry.state = State::Multi;
+-            // SAFETY: the slab owns the socket until the operation completes
+-            unsafe {
+-                self.api.submit(id, move |en| {
+-                    opcode::AcceptMulti::new(en, Fd(fd)).flags(libc::SOCK_CLOEXEC);
+-                });
+-            }
+-            return;
+-        }
+-
+-        entry.state = State::Accept;
+-        entry.addr.1 = mem::size_of::<libc::sockaddr_storage>() as libc::socklen_t;
+-        let addr = (&raw mut entry.addr.0).cast::<libc::sockaddr>();
+-        let len = &raw mut entry.addr.1;
+-
+-        // SAFETY: the slab owns the boxed address and the socket until the
+-        // operation completes
++        entry.state = State::Multi;
++        // SAFETY: the slab owns the socket until the operation completes
+         unsafe {
+             self.api.submit(id, move |en| {
+-                opcode::Accept::new(en, Fd(fd), addr, len).flags(libc::SOCK_CLOEXEC);
++                opcode::AcceptMulti::new(en, Fd(fd)).flags(libc::SOCK_CLOEXEC);
+             });
+         }
+     }
+@@ -222,36 +181,12 @@ impl Drop for TcpListener {
+     }
+ }
+ 
+-fn accepted(fd: RawFd, addr: &(libc::sockaddr_storage, libc::socklen_t)) -> AcceptResult {
++/// Takes ownership of an accepted socket. Multishot accept does not report the
++/// peer address, every completion would overwrite a shared buffer; [`Listener`]
++/// queries it only when requested.
++fn accepted(fd: RawFd) -> net::TcpStream {
+     // SAFETY: the kernel returned a new connected socket owned by us
+-    let stream = unsafe { net::TcpStream::from_raw_fd(fd) };
+-
+-    let mut storage = SockAddrStorage::zeroed();
+-    // SAFETY: `sockaddr_storage` is a platform socket address 
+```
+
+**File**: `ntex-net/src/uring/bufring.rs` (modified, +3/-3)
+```diff
+@@ -36,8 +36,8 @@ pub(super) struct BufRing {
+ }
+ 
+ impl BufRing {
+-    /// Registers a ring of read pages, returns `None` if provided buffer
+-    /// rings are not supported.
++    /// Registers a ring of read pages, returns `None` if the ring cannot be
++    /// registered.
+     pub(super) fn new(api: &ReactorApi) -> Option<Self> {
+         Self::with_size(api, ENTRIES, PAGE_SIZE)
+     }
+@@ -70,7 +70,7 @@ impl BufRing {
+ 
+         // SAFETY: the ring memory is freed only after it is unregistered
+         if let Err(e) = unsafe { api.register_buf_ring(ring.as_ptr() as u64, entries, this.bgid) } {
+-            log::debug!("Provided buffer rings are not supported: {e:?}");
++            log::debug!("Cannot register provided buffer ring: {e:?}");
+             return None;
+         }
+         this.registered = true;
+```
+
+**File**: `ntex-net/src/uring/connect.rs` (modified, +0/-5)
+```diff
+@@ -32,11 +32,6 @@ impl ConnectOps {
+         Arbiter::get_value(move || {
+             let mut inner = None;
+             reactor.register(|api| {
+-                assert!(
+-                    api.is_supported(opcode::Connect::CODE),
+-                    "opcode::Connect is required for io-uring support"
+-                );
+-
+                 let ops = Rc::new(ConnectOpsInner {
+                     api,
+                     streams,
+```
+
+**File**: `ntex-net/src/uring/reactor.rs` (modified, +168/-43)
+```diff
+@@ -10,8 +10,8 @@ use std::os::unix::net::UnixStream as OsUnixStream;
+ 
+ use ntex_io::Io;
+ use ntex_io_uring::cqueue::{self, Entry as CEntry, more};
+-use ntex_io_uring::opcode::{AsyncCancel, AsyncCancel2};
+-use ntex_io_uring::squeue::{Entry as SEntry, PushError, SubmissionQueue};
++use ntex_io_uring::opcode::{self, AsyncCancel};
++use ntex_io_uring::squeue::{self, Entry as SEntry, PushError, SubmissionQueue};
+ use ntex_io_uring::types::{CancelBuilder, SubmitArgs, Timespec};
+ use ntex_io_uring::{EnterFlags, IoUring, Probe, Submitter};
+ use ntex_rt::{DriverType, Notify, PollResult, Runtime};
+@@ -66,10 +66,13 @@ pub struct ReactorApi {
+ 
+ impl ReactorApi {
+     #[inline]
+-    /// Check if the ring was set up with `IORING_SETUP_SINGLE_ISSUER`, so the
+-    /// kernel is 6.0 or greater and supports `IORING_RECVSEND_POLL_FIRST` (5.19)
++    #[deprecated(
++        since = "4.13.1",
++        note = "the driver requires Linux 6.1, always `true`"
++    )]
++    /// Check if the kernel is 6.0 or greater, always `true`.
+     pub fn is_new(&self) -> bool {
+-        self.inner.flags.get().contains(Flags::NEW)
++        true
+     }
+ 
+     fn submit_inner<F>(&self, f: F)
+@@ -104,6 +107,30 @@ impl ReactorApi {
+         });
+     }
+ 
++    #[inline]
++    /// Submit request to the driver without delivering its completion.
++    ///
++    /// For requests whose result is not needed, the `Close` of a descriptor
++    /// that nothing else uses for example. A successful request posts no
++    /// completion, a failure is ignored.
++    ///
++    /// # Safety
++    ///
++    /// The entry must not refer to memory, nothing tells when the kernel is
++    /// done with the request. A file descriptor or slot it refers to must
++    /// stay valid until the request is issued, with the next submit of the
++    /// reactor. See [`submit`](Self::submit) for the restrictions of `f`.
++    pub unsafe fn submit_detached<F>(&self, f: F)
++    where
++        F: FnOnce(&mut SEntry),
++    {
++        self.submit_inner(|en| {
++            f(en);
++            en.set_flags(squeue::Flags::SKIP_SUCCESS);
++            en.set_user_data(Reactor::CANCEL);
++        });
++    }
++
+     #[inline]
+     /// Attempt to cancel an already issued request.
+     pub fn cancel(&self, id: u32) {
+@@ -149,7 +176,7 @@ impl ReactorApi {
+         self.inner.ring.submitter().unregister_buf_ring(bgid)
+     }
+ 
+-    /// Registers an empty file table with `nr` slots, kernel 5.19 or greater.
++    /// Registers an empty file table with `nr` slots.
+     ///
+     /// The ring has one table, it is released with the ring.
+     pub fn register_files_sparse(&self, nr: u32) -> io::Result<()> {
+@@ -231,17 +258,38 @@ impl Drop for TakenHandlers<'_> {
+     }
+ }
+ 
+-bitflags::bitflags! {
+-    #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+-    struct Flags: u8 {
+-        /// Ring set up with `IORING_SETUP_SINGLE_ISSUER`, kernel 6.0 or greater
+-        const NEW      = 0b0000_0001;
+-    }
++/// Opcodes the driver issues, all available since 6.1
++const REQUIRED_OPCODES: [(u8, &str); 11] = [
++    (opcode::Accept::CODE, "Accept"),
++    (opcode::AsyncCancel::CODE, "AsyncCancel"),
++    (opcode::Close::CODE, "Close"),
++    (opcode::Connect::CODE, "Connect"),
++    (opcode::PollAdd::CODE, "PollAdd"),
++    (opcode::Read::CODE, "Read"),
++    (opcode::Recv::CODE, "Recv"),
++    (opcode::Send::CODE, "Send"),
++    (opcode::SendMsg::CODE, "SendMsg"),
++    (opcode::SendMsgZc::CODE, "SendMsgZc"),
++    (opcode::SendZc::CODE, "SendZc"),
++];
++
++/// Name of the first required opcode the kernel does not support.
++fn missing_opcode(probe: &Probe) -> Option<&'static str> {
++    REQUIRED_OPCODES
++        .iter()
++        .find(|(code, _)| !probe.is_supported(*code))
++        .map(|(_, name)| *name)
 +}
 +
-+impl FixedFiles {
-+    fn new(api: &ReactorApi) -> Self {
-+        let mut cap = fixed_files_cap();
-+        if cap != 0
-+            && let Err(e) = api.register_files_sparse(cap)
-+        {
-+            // kernel older than 5.19, or the table does not fit
-+            log::debug!("Cannot register io-uring file table with {cap} slots: {e:?}");
-+            cap = 0;
-+        }
-+        FixedFiles {
-+            cap,
-+            next: 0,
-+            free: Vec::new(),
-+        }
-+    }
-+
-+    /// Registers `fd` in a free slot, `None` if the table is full or not available.
-+    fn register(&mut self, api: &ReactorApi, fd: RawFd) -> Option<u32> {
-+        if self.cap == 0 {
-+            return None;
-+        }
-+        let slot = if let Some(slot) = self.free.pop() {
-+            slot
-+        } else if self.next < self.cap {
-+            self.next += 1;
-+            self.next - 1
-+        } else {
-+            return None;
-+        };
-+
-+        match api.register_files_update(slot, &[fd]) {
-+            Ok(1) => Some(slot),
-+            res => {
-+                log::warn!("Cannot register socket in io-uring file table, disable: {res:?}");
-+                self.free.push(slot);
-+                self.cap = 0;
-+                None
-+            }
-+        }
-+    }
-+
-+    /// Frees `slot`, its `Close` completed.
-+    fn release(&mut self, slot: u32) {
-+        self.free.push(slot);
-+    }
-+
-+    /// Clears every slot, a socket still registered closes with its descriptor.
-+    fn clear(&mut self, api: &ReactorApi) {
-+        if self.next != 0 {
-+            if let Err(e) = api.register_files_update(0, &vec![-1; self.next as usize]) {
-+                log::error!("Cannot clear io-uring file table: {e:?}");
-+            }
-+            self.next = 0;
-+            self.free.clear();
-+        }
-+    }
-+}
-+
-+/// Size of the registered file table of a rin
++fn unsupported(what: &str) -> io::Error {
++    io::Error::new(
++        io::ErrorKind::Unsupported,
++        format!("io-uring driver requires Linux 6.1+ ({what})"),
++    )
+ }
+ 
+ struct ReactorInner {
+     probe: Probe,
+-    flags: Cell<Flags>,
+     ring: IoUring<SEntry, CEntry>,
+     changes: UnsafeCell<VecDeque<mem::MaybeUninit<SEntry>>>,
+     notify_read: NotifierRead,
+@@ -303,6 +351,7 @@ impl Drop for ReactorInner {
+ 
+ impl Reactor {
+     const NOTIFY: u64 = notifier::NOTIFY;
++    /// User data of cancel and detached requests, their completions are ignored
+     const CANCEL: u64 = u64::MAX - 1;
+     const BATCH: u64 = 48;
+     const BATCH_MASK: u64 = 0xFFFF_0000_0000_0000;
+@@ -322,6 +371,10 @@ impl Reactor {
+     pub(crate) const DEFAULT_ENTRIES: u32 = 256;
+ 
+     /// Create io-uring driver
++    ///
++    /// Fails with [`io::ErrorKind::Unsupported`] on kernels older than 6.1,
++    /// detected by the ring setup flags, features and opcodes the kernel
++    /// supports.
+     pub fn new(capacity: u32) -> io::Result<Self> {
+         let build = |no_sqarray: bool| {
+             let mut builder = IoUring::builder();
+@@ -337,36 +390,45 @@ impl Reactor {
+         };
+ 
+         // Create ring
+-        let (new, ring) = if 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1248** (2026-11-25): Fix read back-pressure handling (@fafhrd91)
+- **PR #1247** (2026-11-25): Various fixes (@fafhrd91)
+- **PR #1246** (2026-11-24): Various fixes (@fafhrd91)
 - **PR #1245** (2026-11-23): Add fixes files support (@fafhrd91)
 - **PR #1244** (2026-11-23): Document that the native runtime cancels a detached pending task once… (@fafhrd91)
 - **PR #1243** (2026-11-23): io-uring:  submits the send directly, instead of waking the connectio… (@fafhrd91)
-- **PR #1242** (2026-11-22): Various optimizations (@fafhrd91)
-- **PR #1241** (2026-11-21): Optimize copy slice (@fafhrd91)
-- **PR #1240** (2026-11-19): Fix code typos (@fafhrd91)
 
 ---
 
@@ -2711,31 +3453,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add fixes files support
+## X. http client connections accounting
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ntex/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a736a716`: Add fixes files support. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a41117e7`: http client connections accounting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ntex-net = "4.13.0"
+## [4.11.1] - unreleased
+
+* client: Connections being opened count against the HTTP/1 connection limit,
+  so concurrent requests to different hosts no longer open more connections
+  than `ClientConfig::set_h1_connection_limit()` allows
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-ntex-net = "4.12.4"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a736a716` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a41117e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T01:18:09.847Z",
+  "last_updated": "2026-11-26T01:27:01.668Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25599,
+  "total_items": 25604,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217763,8 +217763,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "53f7a3d9",
-      "content_hash": "9f1073fc711637eaeb32a6a7e10a971dfb347ca824bb470f3b6e007215fe0d5f",
+      "source_version": "a41117e7",
+      "content_hash": "26522c9e161ef6f632e929c4be8059a0b55abc8af852bc4b4d1d38dc1586d03a",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -217794,7 +217794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T18:00:22.230Z",
+      "verified_at": "2026-11-26T01:26:20.777Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217848,10 +217848,10 @@
       "relative_path": "08_VERIFICATION/ntex-rs-ntex-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex.md",
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs/ntex",
       "repository": "ntex-rs/ntex",
-      "source_version": "53f7a3d9",
-      "content_hash": "5e51d923e41abd532d45ff1906f27b9086a3ee1fbc5d73e14a750d9c10c63c13",
+      "source_version": "a41117e7",
+      "content_hash": "6324cc929b83575b17e84867dc21a1f02c5b3a77e514cc4cfead7abcb9e5c4aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:00:23.270Z"
+      "persisted_at": "2026-11-26T01:26:21.618Z"
     },
     "learn-github-callstack-react-native-paper": {
       "learning_id": "learn-github-callstack-react-native-paper",
@@ -218135,9 +218135,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs-ntex-learnings",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c38e6d05a64fdf4d50184621b71a1efa84f044be4c1b8f52361b9b079c6cf32",
+      "content_hash": "86684ea9a431eb9acca434dfa76a0f8ae47e67bd1e13f200b2c50187b77c0cc8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T18:00:42.607Z"
+      "persisted_at": "2026-11-26T01:26:33.802Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
@@ -238689,8 +238689,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "7a66ccad",
-      "content_hash": "5084389c966afca81705e836d642f98718336342ebf4e4d7152837674466fee2",
+      "source_version": "726f74dc",
+      "content_hash": "6649accbb6d778152f25054573077caa1adafc402c06c62c0060bb7b04f961a7",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -238733,6 +238733,11 @@
           "number": 10411,
           "title": "docs(agents): drop grant methods from the configuration-mutation exception",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10580,
+          "title": "docs(agents): write requirement keywords in capitals",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238740,7 +238745,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T01:01:01.034Z",
+      "verified_at": "2026-11-26T01:26:29.425Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238782,10 +238787,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "repository": "aws/aws-cdk",
-      "source_version": "7a66ccad",
-      "content_hash": "7697cf0bea830770e6e8b80d6fee72c80ff4c18b4f4cbf1d4ed93359b78c9ac4",
+      "source_version": "726f74dc",
+      "content_hash": "ad14f45e8a6fcb0197dac727951806f8fa8507da7ff9757143c5935d153cb691",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:01:01.687Z"
+      "persisted_at": "2026-11-26T01:26:30.040Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk",
@@ -238794,10 +238799,10 @@
       "relative_path": "08_VERIFICATION/aws-aws-cdk-verification-protocol-empirical-defect-shield-for-aws-aws-cdk.md",
       "title": "Verification Protocol: Empirical Defect Shield for aws/aws-cdk",
       "repository": "aws/aws-cdk",
-      "source_version": "7a66ccad",
-      "content_hash": "b0cc52afd2917e8fd544524cde1d2ae646d87474aaed9321f239ab8ec87318c7",
+      "source_version": "726f74dc",
+      "content_hash": "9c6f9b4d55f828fc54bacd256b2504c4861d206f01da87ec32372911da4c33d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:01:02.037Z"
+      "persisted_at": "2026-11-26T01:26:30.220Z"
     },
     "learn-huggingface-qwen-qwen3-4b": {
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
@@ -238870,9 +238875,9 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "907d54156d978d151af796845ef13c2abfd840edf32940b0f3f91506df87db8d",
+      "content_hash": "d8e4be52e7b45f47998c5791e081a10cf3b7ceadc7e8dc92be04961d36551246",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:01:06.301Z"
+      "persisted_at": "2026-11-26T01:27:01.467Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk-learnings",
@@ -238882,9 +238887,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aws-aws-cdk-learnings",
       "repository": "aws-aws-cdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "9205d9df08bc632fdca316f0ebc1701cb82cb82b7cbc606506a72c89782db0ba",
+      "content_hash": "bc67dd71941ac323a904a417145a13acce61759431e34ccf5fc1d18c78b5f0a7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:01:06.646Z"
+      "persisted_at": "2026-11-26T01:27:01.668Z"
     },
     "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0": {
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
@@ -267223,7 +267228,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/NousResearch/Arete-27B",
       "source_version": "hf-nousresearch-arete-27b",
-      "content_hash": "06ca667a3efecdd4234e88d4c67ae1fb281f50f75e2051844dad5e316581761f",
+      "content_hash": "70aa58187742d4f0cf72409fffd5231c2ce357031b98f824aa3ad6021ea17f99",
       "dossier_path": "07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md",
       "promoted_rules": [],
@@ -267232,7 +267237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T04:29:01.438Z",
+      "verified_at": "2026-11-26T01:26:18.769Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267249,9 +267254,9 @@
       "title": "Research & Knowledge Intelligence: NousResearch/Arete-27B Core Invariants",
       "repository": "NousResearch/Arete-27B",
       "source_version": "hf-nousresearch-arete-27b",
-      "content_hash": "b261586c12dca6fa7e88213570cb0da4f91b27a50efbb77935714b2215ce9a50",
+      "content_hash": "684ef963d1b072b75730295aff8c586a24be8b91ee248a387123aefd922afff0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T04:29:01.850Z"
+      "persisted_at": "2026-11-26T01:26:19.218Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria",
@@ -267261,9 +267266,9 @@
       "title": "Research & Knowledge Intelligence: hf-nousresearch-arete-27b-learnings Core Invariants",
       "repository": "hf-nousresearch-arete-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "d26d9ef19ae2dbf72cce64183e9d8f7d625f894efc57c73883ca4fefccf643ba",
+      "content_hash": "cf9dca2c129ed162b8494fd6bf109a281ae8cf2b7527779c206ddb9a6302e497",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T04:29:14.680Z"
+      "persisted_at": "2026-11-26T01:26:34.166Z"
     },
     "learn-huggingface-prunaai-p-h3-image": {
       "learning_id": "learn-huggingface-prunaai-p-h3-image",
@@ -350470,6 +350475,68 @@
       "content_hash": "ad82c50500fda0aaf535dcb7f388921253f7b8fcc4e382a02ca3ad838e995cf1",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T01:18:08.702Z"
+    },
+    "candidate_directive-http-client-connections-accounting": {
+      "item_id": "candidate_directive-http-client-connections-accounting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GCMR-http-client-connections-accounting.md",
+      "title": "http client connections accounting",
+      "repository": "ntex-rs-ntex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b4dbb1c183422260872a723cc0ad55f4c4719fe735ff3413a0af204263f2d46",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:26:33.463Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ntex-rs-ntex-technical-construction-intelligence-ntex-rs-ntex-core-invariants.md",
+      "title": "Technical Construction Intelligence: ntex-rs/ntex Core Invariants",
+      "repository": "ntex-rs/ntex",
+      "source_version": "a41117e7",
+      "content_hash": "2f7d137a8ae2fa34824142d2261ac87e3e405953a9a67a1bc05b7651b0e4f511",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:26:21.435Z"
+    },
+    "rule-10580": {
+      "learning_id": "rule-10580",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10580,
+      "title": "docs(agents): write requirement keywords in capitals",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "726f74dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T01:26:29.425Z"
+    },
+    "candidate_directive-docs-agents-write-requirement-keywords-in-capitals": {
+      "item_id": "candidate_directive-docs-agents-write-requirement-keywords-in-capitals",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GY2R-docs-agents-write-requirement-keywords-in-capitals.md",
+      "title": "docs(agents): write requirement keywords in capitals",
+      "repository": "aws-aws-cdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "256335c2cef3c775c1d880fde72ab8d197344dc0b06f17f9633b121bab9f599e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:27:01.251Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ntex-rs-ntex-learnings-technical-construction-intelligence-ntex-rs-ntex-learning.md",
+      "title": "Technical Construction Intelligence: ntex-rs-ntex-learnings Core Invariants",
+      "repository": "ntex-rs-ntex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28c4eb8f1a6e7762b586c30a46bce13cdd4fc8d858406ceb9ec502b749dbd70e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T01:26:33.631Z"
     }
   },
   "ai-builder-brain": {

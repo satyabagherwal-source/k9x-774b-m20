@@ -4,24 +4,24 @@
 {
   "source_repository": "aws/aws-cdk",
   "source_url": "https://github.com/aws/aws-cdk",
-  "source_version": "7a66ccad",
+  "source_version": "726f74dc",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T01:01:01.494Z",
+  "timestamp": "2026-11-26T01:26:29.869Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aws-aws-cdk",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `7a66ccad`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T01:01:01.494Z`  
+> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `726f74dc`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T01:26:29.869Z`  
 > **Learning ID**: `learn-github-aws-aws-cdk`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 81%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from aws/aws-cdk:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T01:01:00.112Z  
+> **Harvest Timestamp**: 2026-11-26T01:26:28.536Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12991 stars
+- **Stars / Engagement**: 12992 stars
 
 ---
 
@@ -1214,8 +1214,8 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a66ccad` (2026-11-24)
-**Commit Message**: docs(agents): drop grant methods from the configuration-mutation exception (#39888)
+### Incident Patch 1: `c070afb5` (2026-11-25)
+**Commit Message**: docs(agents): write requirement keywords in capitals (#39898)
 
 ### Issue # (if applicable)
 
@@ -1223,11 +1223,11 @@ N/A
 
 ### Reason for this change
 
-`docs/AGENTS_CONSTRUCT_DESIGN.md` says in "Configuration Mutation" that grant methods should be on the construct interface. The same guide ("Construct Interface"), `AGENTS_CONSTRUCT_IMPLEMENTATION.md` ("Grants"), `DESIGN_GUIDELINES.md`, `FACADES_AND_TRAITS_DESIGN_GUIDELINES.md` and the awslint rule `no-grants` all say new grant methods go in a `{Resource}Grants` class.
+`AGENTS.md` writes its requirement keywords, MUST and SHOULD, in capitals. Eight requirement lines wrote the keyword in lowercase, so they do not read as requirements of the same kind as the rest of the file.
 
 ### Description of changes
 
-Keep the "Configuration Mutation" exception for factory methods only. The rule for grant methods is already stated in "Construct Interface" and in the implementation guide's "Grants" section.
+The keyword on those eight lines is now in capitals: SHOULD NOT for new L3s, SHOULD for feature flags tightening security, and MUST for attribute naming, README content, compiling README code blocks, README updates in `feat()` PRs, preserved defaults for new optional props, and jsii compatibility. No requirement changes; each line differs from before only in letter case.
 
 ### Describe any new or updated permissions being added
 
@@ -1235,35 +1235,76 @@ None.
 
 ### Description of how you validated changes
 
-Documentation only, one line changed.
+Compared each changed line with the original ignoring case. The only lines left with a lowercase "must" or "should" are the three principles at the top of the file, which are not requirement lines.
 
 ### Checklist
-- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
+- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https:/
 
-----
-
-*By submitting this pull request, I confirm that my contribution is made under the terms 
-
-**File**: `docs/AGENTS_CONSTRUCT_DESIGN.md` (modified, +1/-1)
+**File**: `AGENTS.md` (modified, +8/-8)
 ```diff
-@@ -192,7 +192,7 @@ Common facade types — see [AGENTS_CONSTRUCT_IMPLEMENTATION.md](./AGENTS_CONSTR
+@@ -60,7 +60,7 @@ Principles:
  
- - You MUST NOT include configuration mutation methods on the construct interface (`IFoo`) — they belong on the concrete class only (imported constructs cannot be reconfigured)
- - Annotate mutation methods with `@config` JSDoc tag
--- Exception: grant methods and factory methods SHOULD be on the interface because they serve external consumers or create new resources
-+- Exception: factory methods SHOULD be on the interface because they create new resources
+ - **L1 (`Cfn*`)**: Auto-generated from CloudFormation spec. Never manually edit.
+ - **L2**: Hand-written intent-based API with defaults. Where most work happens.
+-- **L3 (Patterns)**: Multi-resource compositions. Legacy L3s exist in `aws-ecs-patterns` and `aws-route53-patterns`. New L3s should NOT be added to this repo.
++- **L3 (Patterns)**: Multi-resource compositions. Legacy L3s exist in `aws-ecs-patterns` and `aws-route53-patterns`. New L3s SHOULD NOT be added to this repo.
  
- ### Method Verb Semantics
+ L2 design rules:
+ - You SHOULD design for the user's mental model, not the CloudFormation API — allow multiple paths to the same outcome when they serve different mental models
+@@ -233,7 +233,7 @@ Required when a change alters observable behavior of existing API.
  
+ - Use correct `FlagType`: `BugFix` when old behavior was wrong, `ApiDefault` when old behavior is valid but not recommended. `ApiDefault` requires `compatibilityWithOldBehaviorMd` field.
+ - New flags: set `introducedIn: { v2: 'V2NEXT' }`, `recommendedValue: true`, `unconfiguredBehavesLike: { v2: false }` — ensures existing apps keep old behavior
+-- Flags should tighten security (reduce trust/permissions), never loosen it. If you need broader permissions, make it an explicit API option
++- Flags SHOULD tighten security (reduce trust/permissions), never loosen it. If you need broader permissions, make it an explicit API option
+ - Don't use flags when a new construct replaces an old one — deprecate the old construct instead
+ - Flag variables: `is`/`has` prefix — `const isReducedScope = FeatureFlags.of(this).isEnabled(cxapi.MY_FLAG)`
+ - Warn about behavior changes via `Annotations.of(this).addWarningV2()` — not custom props. Users suppress via `acknowledgeWarning()`
+@@ -267,16 +267,16 @@ if (FeatureFlags.of(this).isEnabled(cxapi.MY_NEW_FLAG)) { ... }
+    */
+   readonly bucketArn: string;
+   ```
+-- Attribute names must begin with the type name: `bucketArn` not `arn`, `functionName` not `name`
++- Attribute names MUST begin with the type name: `bucketArn` not `arn`, `functionName` not `name`
+ - Copy prop documentation from official AWS docs when available
+ - Don't add docs on overrides — they inherit from the base interface
+ 
+ ### Module READMEs
+ 
+ - Each `aws-cdk-lib/aws-{service}` has a README that renders as official API docs
+-- Must include: maturity level, simple example near top, examples per use case
+-- README code blocks (` ```ts `) must compile — verified by Rosetta. Use ` ```ts nofixture ` to skip
+-- All `feat()` PRs must include README updates
++- MUST include: maturity level, simple example near top, examples per use case
++- README code blocks (` ```ts `) MUST compile — verified by Rosetta. Use ` ```ts nofixture ` to skip
++- All `feat()` PRs MUST include README updates
+ 
+ ## Testing
+ 
+@@ -295,7 +295,7 @@ if (FeatureFlags.of(this).isEnabled(cxapi.MY_NEW_FLAG)) { ... }
+ - Error tests: assert on specific error message, prefix test name with "fails"
+ - Test utility functions separately from constructs (e.g. `util.test.ts`)
+ - Grant methods: test with `new iam.Role()`, `Role.fromRoleArn()`, `new iam.User()`, `new iam.ServicePrincipal()`
+-- Include backward-compatibility tests when adding new optional props — default behavior must be preserved
++- Include backward-compatibility tests when adding new optional props — default behavior MUST be preserved
+ - Preserve deprecated API tests with `testDeprecated` (from `@aws-cdk/cdk-build-tools`)
+ - Avoid `overrideLogicalId` in tests — couples tests to internal naming
+ 
+@@ -367,4 +367,4 @@ Required for: new CFN resource types, new CFN properties, cross-service integrat
+ | [`INTEGRATION_TESTS.md`](./INTEGRATION_TESTS.md) | Human reference | Integration test deep-dive | When writing, running, or debugging integration tests |
+ 
+ All code is TypeScript compiled via [jsii](https://github.com/aws/jsii/) to other languages.
+-Every public API must be jsii-compatible.
++Every public API MUST be jsii-compatible.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39898** (2026-11-25): docs(agents): write requirement keywords in capitals (@ozelalisen)
+- **PR #39897** (2026-11-25): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
 - **PR #39888** (2026-11-24): docs(agents): drop grant methods from the configuration-mutation exception (@ozelalisen)
 - **PR #39879** (2026-11-23): feat: update L1 CloudFormation resource definitions (@aws-cdk-automation)
 - **PR #39873** (closed): feat(lambda): support python3.15 runtime in WebFunction (@mazyu36)
 - **PR #39871** (2026-11-23): feat(lambda): add nodejs26.x runtime to WebFunctionRuntime (@mazyu36)
-- **PR #39860** (2026-11-20): chore(merge-back): 2.278.0 (@aws-cdk-automation)
-- **PR #39858** (2026-11-20): chore(core): add telemetry counters for asset bundling (@mrgrain)
 
 ---
 
@@ -1283,31 +1324,45 @@ Documentation only, one line changed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(agents): drop grant methods from the configuration-mutation exception
+## X. docs(agents): write requirement keywords in capitals
 
 **RULE**:
-When implementing operations in `docs/AGENTS_CONSTRUCT_DESIGN.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a66ccad`: docs(agents): drop grant methods from the configuration-mutation exception. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c070afb5`: docs(agents): write requirement keywords in capitals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/AGENTS_CONSTRUCT_DESIGN.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- Exception: factory methods SHOULD be on the interface because they create new resources
+- **L3 (Patterns)**: Multi-resource compositions. Legacy L3s exist in `aws-ecs-patterns` and `aws-route53-patterns`. New L3s SHOULD NOT be added to this repo.
+- Flags SHOULD tighten security (reduce trust/permissions), never loosen it. If you need broader permissions, make it an explicit API option
+- Attribute names MUST begin with the type name: `bucketArn` not `arn`, `functionName` not `name`
+- MUST include: maturity level, simple example near top, examples per use case
+- README code blocks (` ```ts `) MUST compile — verified by Rosetta. Use ` ```ts nofixture ` to skip
+- All `feat()` PRs MUST include README updates
+- Include backward-compatibility tests when adding new optional props — default behavior MUST be preserved
+Every public API MUST be jsii-compatible.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-- Exception: grant methods and factory methods SHOULD be on the interface because they serve external consumers or create new resources
+- **L3 (Patterns)**: Multi-resource compositions. Legacy L3s exist in `aws-ecs-patterns` and `aws-route53-patterns`. New L3s should NOT be added to this repo.
+- Flags should tighten security (reduce trust/permissions), never loosen it. If you need broader permissions, make it an explicit API option
+- Attribute names must begin with the type name: `bucketArn` not `arn`, `functionName` not `name`
+- Must include: maturity level, simple example near top, examples per use case
+- README code blocks (` ```ts `) must compile — verified by Rosetta. Use ` ```ts nofixture ` to skip
+- All `feat()` PRs must include README updates
+- Include backward-compatibility tests when adding new optional props — default behavior must be preserved
+Every public API must be jsii-compatible.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a66ccad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c070afb5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

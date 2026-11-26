@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:18:04.603Z",
-  "total_cycles_completed": 12519,
-  "total_learnings_persisted": 12519,
-  "total_rules_promoted": 11469,
+  "last_updated": "2026-11-26T01:26:29.649Z",
+  "total_cycles_completed": 12522,
+  "total_learnings_persisted": 12522,
+  "total_rules_promoted": 11470,
   "history": [
-    {
-      "timestamp": "2026-11-25T06:47:39.893Z",
-      "repository": "RecursiveSI/flint",
-      "learningId": "learn-huggingface-recursivesi-flint",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:47:43.934Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:47:53.581Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T06:56:10.585Z",
       "repository": "XHToken/Spark-X2.6-4B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T01:18:04.603Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:26:19.011Z",
+      "repository": "NousResearch/Arete-27B",
+      "learningId": "learn-huggingface-nousresearch-arete-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:26:21.025Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T01:26:29.649Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

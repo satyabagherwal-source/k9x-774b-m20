@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "7a66ccad",
+    "sourceVersion": "726f74dc",
     "license": "Apache-2.0",
-    "contentHash": "5084389c966afca81705e836d642f98718336342ebf4e4d7152837674466fee2",
-    "lastHarvestedAt": "2026-11-25T01:01:01.260Z",
+    "contentHash": "6649accbb6d778152f25054573077caa1adafc402c06c62c0060bb7b04f961a7",
+    "lastHarvestedAt": "2026-11-26T01:26:29.643Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "53f7a3d9",
+    "sourceVersion": "a41117e7",
     "license": "Apache-2.0",
-    "contentHash": "9f1073fc711637eaeb32a6a7e10a971dfb347ca824bb470f3b6e007215fe0d5f",
-    "lastHarvestedAt": "2026-11-24T18:00:22.541Z",
+    "contentHash": "26522c9e161ef6f632e929c4be8059a0b55abc8af852bc4b4d1d38dc1586d03a",
+    "lastHarvestedAt": "2026-11-26T01:26:20.976Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -12135,8 +12135,8 @@
     "sourceUrl": "https://huggingface.co/NousResearch/Arete-27B",
     "sourceVersion": "hf-nousresearch-arete-27b",
     "license": "Open-Source",
-    "contentHash": "06ca667a3efecdd4234e88d4c67ae1fb281f50f75e2051844dad5e316581761f",
-    "lastHarvestedAt": "2026-11-22T04:29:01.649Z",
+    "contentHash": "70aa58187742d4f0cf72409fffd5231c2ce357031b98f824aa3ad6021ea17f99",
+    "lastHarvestedAt": "2026-11-26T01:26:19.000Z",
     "learningId": "learn-huggingface-nousresearch-arete-27b"
   },
   "hf-viggle-viggle-remake": {

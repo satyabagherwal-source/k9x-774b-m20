@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T01:18:09.307Z",
+  "updated_at": "2026-11-26T01:27:00.994Z",
   "stats": {
-    "total_discovered": 9557,
-    "approved_pending_harvest": 9060,
+    "total_discovered": 9559,
+    "approved_pending_harvest": 9061,
     "harvested_count": 0,
-    "rejected_count": 497,
+    "rejected_count": 498,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9050,
+      "COMMUNITY_AND_EXPERT": 9052,
       "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 153,
       "ENGINEERING_BLOGS": 7,
@@ -206802,6 +206802,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/saltstack-salt-learnings.md",
         "fileName": "saltstack-salt-learnings.md"
+      }
+    },
+    "SRC-953AF75A2288": {
+      "id": "SRC-953AF75A2288",
+      "url": "http://{host/",
+      "title": "http://{host/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-26T01:26:33.211Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
+        "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-3199FE1377B5": {
+      "id": "SRC-3199FE1377B5",
+      "url": "https://github.com/aws/jsii",
+      "title": "https://github.com/aws/jsii",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T01:27:00.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
       }
     }
   }

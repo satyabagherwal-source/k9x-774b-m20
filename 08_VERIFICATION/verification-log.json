@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-TABA",
-    "timestamp": "2026-11-24T09:57:09.622Z",
-    "repository": "ClementTsang/bottom",
-    "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "3668c226b36384d22d5779a98ce5a31a45bfee78d123566bde1b1acbd82312a0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-TBC4",
-    "timestamp": "2026-11-24T09:57:10.948Z",
-    "repository": "callstack/react-native-paper",
-    "learningId": "learn-github-callstack-react-native-paper",
-    "contentHash": "792454fa15ee7aa8b502b170c2bc1fc7290cb7715822621220f6ea4c3e5015be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-TD68",
-    "timestamp": "2026-11-24T09:57:13.328Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "49fb6c8daa594de70b9c17e722656a78e53445d5178da462e3a2b3583e4786f0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-TGBJ",
     "timestamp": "2026-11-24T09:57:17.407Z",
     "repository": "MaterializeInc/materialize",
@@ -7490,6 +7445,51 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "fdd75c3ef54ce4a5db2b74701f91164822a3ebf58c77396218a05e46a0834ed0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-G1H0",
+    "timestamp": "2026-11-26T01:26:18.996Z",
+    "repository": "NousResearch/Arete-27B",
+    "learningId": "learn-huggingface-nousresearch-arete-27b",
+    "contentHash": "70aa58187742d4f0cf72409fffd5231c2ce357031b98f824aa3ad6021ea17f99",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-G2ZW",
+    "timestamp": "2026-11-26T01:26:20.972Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "26522c9e161ef6f632e929c4be8059a0b55abc8af852bc4b4d1d38dc1586d03a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-G9ON",
+    "timestamp": "2026-11-26T01:26:29.639Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "6649accbb6d778152f25054573077caa1adafc402c06c62c0060bb7b04f961a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

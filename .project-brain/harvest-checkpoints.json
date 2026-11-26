@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T01:18:04.614Z",
+  "last_updated": "2026-11-26T01:26:29.659Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "5084389c966afca81705e836d642f98718336342ebf4e4d7152837674466fee2",
-      "verified_at": "2026-11-25T01:01:01.276Z",
+      "content_hash": "6649accbb6d778152f25054573077caa1adafc402c06c62c0060bb7b04f961a7",
+      "verified_at": "2026-11-26T01:26:29.658Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:01:01.276Z"
+      "last_updated": "2026-11-26T01:26:29.658Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "9f1073fc711637eaeb32a6a7e10a971dfb347ca824bb470f3b6e007215fe0d5f",
-      "verified_at": "2026-11-24T18:00:22.559Z",
+      "content_hash": "26522c9e161ef6f632e929c4be8059a0b55abc8af852bc4b4d1d38dc1586d03a",
+      "verified_at": "2026-11-26T01:26:21.027Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:00:22.559Z"
+      "last_updated": "2026-11-26T01:26:21.027Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -18261,14 +18261,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nousresearch-arete-27b",
-      "content_hash": "06ca667a3efecdd4234e88d4c67ae1fb281f50f75e2051844dad5e316581761f",
-      "verified_at": "2026-11-22T04:29:01.657Z",
+      "content_hash": "70aa58187742d4f0cf72409fffd5231c2ce357031b98f824aa3ad6021ea17f99",
+      "verified_at": "2026-11-26T01:26:19.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T04:29:01.657Z"
+      "last_updated": "2026-11-26T01:26:19.013Z"
     },
     "Viggle/Viggle-Remake": {
       "repository": "Viggle/Viggle-Remake",

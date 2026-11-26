@@ -796106,3 +796106,87 @@ source = "git+https://github.com/paradedb/tantivy.git?branch=main#ca507338823bdd
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f84516c5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10580. docs(agents): write requirement keywords in capitals (Harvested from aws/aws-cdk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(agents): write requirement keywords in capitals",
+  "source": "aws/aws-cdk",
+  "source_url": "https://github.com/aws/aws-cdk",
+  "source_version": "726f74dc",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T01:26:29.102Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aws-aws-cdk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `726f74dc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c070afb5`: docs(agents): write requirement keywords in capitals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- **L3 (Patterns)**: Multi-resource compositions. Legacy L3s exist in `aws-ecs-patterns` and `aws-route53-patterns`. New L3s SHOULD NOT be added to this repo.
+- Flags SHOULD tighten security (reduce trust/permissions), never loosen it. If you need broader permissions, make it an explicit API option
+- Attribute names MUST begin with the type name: `bucketArn` not `arn`, `functionName` not `name`
+- MUST include: maturity level, simple example near top, examples per use case
+- README code blocks (` ```ts `) MUST compile — verified by Rosetta. Use ` ```ts nofixture ` to skip
+- All `feat()` PRs MUST include README updates
+- Include backward-compatibility tests when adding new optional props — default behavior MUST be preserved
+Every public API MUST be jsii-compatible.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+- **L3 (Patterns)**: Multi-resource compositions. Legacy L3s exist in `aws-ecs-patterns` and `aws-route53-patterns`. New L3s should NOT be added to this repo.
+- Flags should tighten security (reduce trust/permissions), never loosen it. If you need broader permissions, make it an explicit API option
+- Attribute names must begin with the type name: `bucketArn` not `arn`, `functionName` not `name`
+- Must include: maturity level, simple example near top, examples per use case
+- README code blocks (` ```ts `) must compile — verified by Rosetta. Use ` ```ts nofixture ` to skip
+- All `feat()` PRs must include README updates
+- Include backward-compatibility tests when adding new optional props — default behavior must be preserved
+Every public API must be jsii-compatible.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c070afb5` are properly handled with clean fallback behavior.

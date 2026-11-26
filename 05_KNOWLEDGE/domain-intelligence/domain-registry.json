@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T01:18:09.688Z",
-  "total_records": 2696,
+  "last_updated": "2026-11-26T01:27:01.467Z",
+  "total_records": 2699,
   "domains": {
     "A": {
       "total": 22,
@@ -1689,7 +1689,7 @@
       ]
     },
     "H": {
-      "total": 642,
+      "total": 644,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2332,11 +2332,13 @@
         "domain_intelligence-technical-construction-intelligence-withcoral-coral-core-invariants",
         "domain_intelligence-technical-construction-intelligence-withcoral-coral-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-cloudwego-volo-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-cloudwego-volo-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-learnings-core-invariants"
       ]
     },
     "I": {
-      "total": 158,
+      "total": 159,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2495,7 +2497,8 @@
         "domain_intelligence-content-information-intelligence-googleworkspace-cli-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-core-invariants",
         "domain_intelligence-content-information-intelligence-alejandrobujan-tendedero-learnings-core-invaria",
-        "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants"
+        "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants",
+        "DOM-I-F9C7458B"
       ]
     },
     "J": {
@@ -18208,8 +18211,8 @@
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "repository": "aws/aws-cdk",
-      "content_hash": "7697cf0bea830770e6e8b80d6fee72c80ff4c18b4f4cbf1d4ed93359b78c9ac4",
-      "created_at": "2026-11-25T01:01:01.687Z"
+      "content_hash": "ad14f45e8a6fcb0197dac727951806f8fa8507da7ff9757143c5935d153cb691",
+      "created_at": "2026-11-26T01:26:30.040Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
@@ -18277,8 +18280,8 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-learnings-technical-construction-intelligence-aws-aws-cdk-learnings-.md",
       "repository": "aws-aws-cdk-learnings",
-      "content_hash": "907d54156d978d151af796845ef13c2abfd840edf32940b0f3f91506df87db8d",
-      "created_at": "2026-11-25T01:01:06.301Z"
+      "content_hash": "d8e4be52e7b45f47998c5791e081a10cf3b7ceadc7e8dc92be04961d36551246",
+      "created_at": "2026-11-26T01:27:01.467Z"
     },
     "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva",
@@ -25653,8 +25656,8 @@
       "title": "Research & Knowledge Intelligence: NousResearch/Arete-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nousresearch-arete-27b-research-knowledge-intelligence-nousresearch-arete-27b.md",
       "repository": "NousResearch/Arete-27B",
-      "content_hash": "b261586c12dca6fa7e88213570cb0da4f91b27a50efbb77935714b2215ce9a50",
-      "created_at": "2026-11-22T04:29:01.850Z"
+      "content_hash": "684ef963d1b072b75730295aff8c586a24be8b91ee248a387123aefd922afff0",
+      "created_at": "2026-11-26T01:26:19.218Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria",
@@ -25662,8 +25665,8 @@
       "title": "Research & Knowledge Intelligence: hf-nousresearch-arete-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nousresearch-arete-27b-learnings-research-knowledge-intelligence-hf-nousresea.md",
       "repository": "hf-nousresearch-arete-27b-learnings",
-      "content_hash": "d26d9ef19ae2dbf72cce64183e9d8f7d625f894efc57c73883ca4fefccf643ba",
-      "created_at": "2026-11-22T04:29:14.680Z"
+      "content_hash": "cf9dca2c129ed162b8494fd6bf109a281ae8cf2b7527779c206ddb9a6302e497",
+      "created_at": "2026-11-26T01:26:34.166Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-core-invariants",
@@ -45445,6 +45448,66 @@
       "repository": "cloudwego-volo-learnings",
       "content_hash": "5ede124d058bce5b5f34fa4f8d23c678894f984a681458cfcdc1ac28317b7c74",
       "created_at": "2026-11-26T01:18:08.532Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ntex-rs/ntex Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ntex-rs-ntex-technical-construction-intelligence-ntex-rs-ntex-core-invariants.md",
+      "repository": "ntex-rs/ntex",
+      "content_hash": "2f7d137a8ae2fa34824142d2261ac87e3e405953a9a67a1bc05b7651b0e4f511",
+      "created_at": "2026-11-26T01:26:21.435Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ntex-rs-ntex-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ntex-rs-ntex-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ntex-rs-ntex-learnings-technical-construction-intelligence-ntex-rs-ntex-learning.md",
+      "repository": "ntex-rs-ntex-learnings",
+      "content_hash": "28c4eb8f1a6e7762b586c30a46bce13cdd4fc8d858406ceb9ec502b749dbd70e",
+      "created_at": "2026-11-26T01:26:33.631Z"
+    },
+    "DOM-I-F9C7458B": {
+      "record_id": "DOM-I-F9C7458B",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "Integration test deep-dive: When writing running or debugging integration tests",
+      "content": "When writing, running, or debugging integration tests",
+      "content_hash": "333919088168b303fe2622467cf694b51b191490178f80ac69301693092a43a4",
+      "summary": "When writing, running, or debugging integration tests -> When writing, running, or debugging integration tests",
+      "provenance": {
+        "source_uri": "project://aws-aws-cdk/aws-aws-cdk-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "[`INTEGRATION_TESTS.md`](./INTEGRATION_TESTS.md)",
+        "author_or_entity": "AI-Builder-Brain Project Learning (aws-aws-cdk)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of aws-aws-cdk"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T01:27:00.805Z"
     }
   }
 }

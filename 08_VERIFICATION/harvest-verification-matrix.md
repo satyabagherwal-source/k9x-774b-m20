@@ -13189,3 +13189,7 @@
 | `CYCLE-20261126-56BK` | `2026-11-26T01:17:52.064Z` | `cloudwego/volo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10577` | Yes (`c4d351d0...`) |
 | `CYCLE-20261126-5C34` | `2026-11-26T01:17:59.536Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10578` | Yes (`8867786e...`) |
 | `CYCLE-20261126-5FZN` | `2026-11-26T01:18:04.595Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10579` | Yes (`fdd75c3e...`) |
+| `CYCLE-20261126-G1H0` | `2026-11-26T01:26:18.996Z` | `NousResearch/Arete-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | Yes (`70aa5818...`) |
+| `CYCLE-20261126-G2ZW` | `2026-11-26T01:26:20.972Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`26522c9e...`) |
+| `CYCLE-20261126-G9ON` | `2026-11-26T01:26:29.639Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10580` | Yes (`6649accb...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T01:27:00.836Z` | `aws-aws-cdk` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-F9C7458B` [Domain I] | Yes (`33391908...`) |

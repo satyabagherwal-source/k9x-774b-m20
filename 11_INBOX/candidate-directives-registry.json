@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T01:18:09.536Z",
+  "last_updated": "2026-11-26T01:27:01.251Z",
   "directives": [
     {
       "id": "CD-001",
@@ -62540,6 +62540,46 @@
       "source_repo": "saltstack-salt",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EBA0D0-apply-dependabot-ignore-caps-to-security.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-GCMR",
+      "directive_title": "http client connections accounting",
+      "source_repo": "ntex-rs-ntex-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GCMR-http-client-connections-accounting.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-GY2R",
+      "directive_title": "docs(agents): write requirement keywords in capitals",
+      "source_repo": "aws-aws-cdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-GY2R-docs-agents-write-requirement-keywords-in-capitals.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-0DA056",
+      "directive_title": "http client connections accounting",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ntex-rs-ntex",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0DA056-http-client-connections-accounting.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-16B662",
+      "directive_title": "docs(agents): write requirement keywords in capitals",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aws-aws-cdk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-16B662-docs-agents-write-requirement-keywords-i.md",
       "staged_date": "2026-11-26"
     }
   ]
