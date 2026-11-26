@@ -13473,3 +13473,7 @@
 | `CYCLE-20261126-3ZON` | `2026-11-26T16:40:44.135Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10728` | Yes (`e5381e48...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T16:41:28.835Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7DD90772` [Domain H] | Yes (`39076f83...`) |
 | `CYCLE-20261126-EWWN` | `2026-11-26T16:49:13.751Z` | `HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md` | Yes (`3a7c856e...`) |
+| `CYCLE-20261126-QJJ5` | `2026-11-26T16:58:16.289Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`ce67b3b0...`) |
+| `CYCLE-20261126-QL7N` | `2026-11-26T16:58:18.467Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10729` | Yes (`1a47cd4e...`) |
+| `CYCLE-20261126-QP9J` | `2026-11-26T16:58:23.719Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10730` | Yes (`4f91b632...`) |
+| `CYCLE-20261126-QUPS` | `2026-11-26T16:58:30.784Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10731` | Yes (`3d468df3...`) |

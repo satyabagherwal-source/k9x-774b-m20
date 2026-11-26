@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source**: github ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
-> **Source Version**: `1961133d`  
+> **Source Version**: `c78a56ff`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:37:22.493Z  
+> **Timestamp**: 2026-11-26T16:58:29.537Z  
 > **Learning ID**: `learn-github-topoteretes-cognee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:37:22.488Z  
+> **Harvest Timestamp**: 2026-11-26T16:58:29.529Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33431 stars
+- **Stars / Engagement**: 33647 stars
 
 ---
 
@@ -1504,11 +1504,11 @@ class DescriptorConnector(Connector):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6791** (2026-11-23): **Deleting one document's graph reads the whole dataset into memory; table loads run out of memory on a large graph**
+  *Symptoms*: ## Summary  `delete_by_document` finds the nodes and edges of one data item by fetching the source references of every node and every edge in the dataset and filtering them in Python. Its cost depends on the size of the dataset, not on the size of the document.  Cognify runs it once per table item through `purge_stale_dlt_source_artifacts`, also on a first load when nothing can be stale. Loading tables into a large dataset is therefore slow, and with several items in parallel the server runs out of memory.  ## Versions  - cognee 1.6.8, and the code path is unchanged in 1.6.9 (line numbers below are from 1.6.9) - Postgres graph store with pgvector, backend access control on  ## What happens  1. Cognify's table branch runs `purge_stale_dlt_source_artifacts` for every `DltSourceDocument` (`cognee/api/v1/cognify/cognify.py:815`). 2. That calls `delete_data_nodes_and_edges` → `try_delete_data_by_graph_provenance` → `unified.delete_by_document(dataset_id, data_id)`. 3. `delete_by_document` (`cognee/infrastructure/databases/unified/unified_store_engine.py:163`) calls `graph.find_node_source_refs_by_dataset(dataset_id)` and `graph.find_edge_source_refs_by_dataset(dataset_id)` (lines 192 and 197) and keeps the refs whose parsed data id equals `data_id`. 4. The Postgres adapter answers both with an unfiltered read of the dataset (`cognee/infrastructure/databases/graph/postgres_demo/adapter.py:1550` and `:1572`):  ```sql SELECT id, source_ref_keys FROM graph_node WHERE :dataset_id = ANY
+
 - **Issue #6689** (2026-11-13): **[Bug] LanceDB fails to persist transaction files on Windows during cognee.remember() — CognifyFailedError and CollectionNotFoundError**
   *Symptoms*: ### Bug Description  I'm encountering an issue when using Cognee on Windows with LanceDB as the vector database and OpenRouter for both LLM and embedding inference.  After resetting Cognee's data and ingesting local text files using cognee.remember(), the indexing pipeline fails because LanceDB cannot persist a transaction file.  The initial error is: _RuntimeError: lance error: LanceError(IO): failed to shutdown local writer LanceError(IO): failed to persist temp file The system cannot find the path specified. (os error 3)_  The subsequent rollback also fails: _CollectionNotFoundError: Collection 'DocumentChunk_text' not found! (Status code: 422)_  ### Steps to Reproduce  I run the following code in a Jupyter notebook (the code was given in the first video in cognee Youtube channel : https://www.youtube.com/watch?v=lQpmXvsrBzg&list=PLbJ6aa1LYeSTxMhlfOTKw3RbHGiL3fbm0&index=1): import cognee import os  await cognee.forget(everything=True)  data_path = "../data/silver"  for root, dirs, files in os.walk(data_path):     for file in files:         file_path = os.path.join(root, file)         print(file_path)          content = open(file_path, "r").read()         await cognee.remember(content)  The directory contains local md documents that I want to ingest into Cognee.  ### Expected Behavior  1. Ingest and index documents without filesystem errors. 2. Handle failed collection creation gracefully during rollback, without raising an additional CollectionNotFoundError.  ### Actual Be
-
-- **Issue #6558** (2026-11-09): **Recreated dataset reuses its deterministic ID but loses all non-owner ACLs, silently locking out shared principals**
-  *Symptoms*: ## Summary  When a dataset is deleted (`forget` / `delete_dataset`) and then created again under the same name by the same owner, it gets **the same dataset ID** but **only the owner's ACLs**. Every grant that other principals (users, roles, tenants) held on the old dataset is gone. Nothing in the API tells a client that this ID now refers to a different dataset. So a client that remembers "I already shared dataset `<id>` with role X" keeps trusting a grant that no longer exists. From then on that principal gets 403 on every read and write, with no clear signal why.  ## Where it comes from  - `cognee/modules/data/methods/get_unique_dataset_id.py`: the dataset ID is deterministic, `uuid5(NAMESPACE_OID, f"{dataset_name}{user.id}")` (and the tenant-aware variant). Recreating the dataset gives back the same UUID. - `cognee/modules/data/methods/delete_dataset.py`: `session.delete(dataset)` cascades and removes the dataset's ACL rows. That part is correct by itself. - On re-creation, only the owner gets `read/write/delete/share`.  Together these mean a dataset ID does not identify one dataset over its whole life. It can come back after a delete, with different permissions.  ## Steps to reproduce  1. User A creates dataset `agent_sessions` and adds data. 2. A grants a role (or another user B) `read` and `write` on it via `POST /api/v1/permissions/datasets/{principal_id}?permission_name=...`. 3. B writes to and searches the dataset successfully. 4. A runs `forget` on the dataset (or 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1525,89 +1525,1630 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1961133d` (2026-11-20)
-**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552) (#6800)
+### Incident Patch 1: `f508a230` (2026-11-26)
+**Commit Message**: fix(code_graph): Read enola 0.5.4 cluster output (SDK-1759) (#6882)
 
-Brings the report in line with the GRO-248 review: the answer prompt's
-decline rules and the judge's half-of-the-items rule (and when it
-changed), how the exclusion list was built and what our audit could see,
-both runs of the main configuration by category and with nothing
-excluded, the cognee version behind the runs, and drops claims the
-records don't back, such as the default depth being more economical.
+## Description
 
-**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
+#6880 bumped `enola-cli` to 0.5.4 with only `pyproject.toml` and
+`uv.lock`. It merged with the Code Graph E2E check red, and the SDK
+still assumed the pre-0.5.3 cluster layout. This PR makes the two SDK
+changes the bump needs.
+
+**Cluster output location (enola 0.5.3+).** enola now writes a cluster's
+graph once, to a directory of its own, and refuses a directory inside a
+member repository. Before, every member's `.enola-<dataset_id>` got a
+copy and cognee read the first member's. With 0.5.4 that directory only
+receives `extractor_cache.json`, so any dataset with more than one
+repository failed with `EnolaSnapshotError: no facts.jsonl`.
+
+- The cluster snapshot is written to
+`COGNEE_REPOS_DIR/.enola-clusters/<dataset_id>` through enola's
+`output.cluster_dir`. The repos root is always a local directory (the
+system root can be `s3://`), and a clone's directory name never starts
+with a dot, so no clone can collide with it.
+- Member labels are read from the `members` list of the cluster's
+`receipt.json` (`repo` + `repo_path`). The old path read
+`snapshot.meta.json` and `receipt.json` from each member's di
+
+**File**: `cognee/tasks/code_graph/cluster.py` (modified, +40/-82)
 ```diff
-@@ -1,118 +1,164 @@
--# Cognee on LoCoMo - Technical Evaluation Report
-+# Benchmarking cognee on LoCoMo - Technical Evaluation Report
+@@ -3,9 +3,8 @@
+ A repository extracted on its own cannot see the others: a frontend's HTTP call
+ names a path, and only a snapshot that also covers the backend can say which
+ route serves it. enola links repositories when it is given a cluster config
+-listing them, and writes the whole linked graph into every member, under a
+-directory of the dataset's own (``.enola-<dataset_id>``, see
+-:func:`cluster_output_dir`) rather than the shared ``.enola``.
++listing them, and writes the whole linked graph once, to a directory of the
++dataset's own outside the repositories (see :func:`cluster_snapshot_dir`).
+ 
+ A dataset is the cluster. When it holds more than one ``code_repo`` Data row,
+ :func:`snapshot_dataset_code_repos` runs enola once over all of them and the
+@@ -25,6 +24,7 @@
+ 
+ import asyncio
+ import json
++import os
+ from dataclasses import dataclass, field, replace
+ from pathlib import Path
+ from typing import TYPE_CHECKING, Any, Optional
+@@ -36,7 +36,6 @@
+     ParsedSnapshot,
+     parse_enola_snapshot,
+     run_enola_cluster,
+-    snapshot_identity,
+ )
+ 
+ if TYPE_CHECKING:
+@@ -113,93 +112,53 @@ async def dataset_code_repo_rows(dataset_id: UUID) -> list:
+ 
+ 
+ def cluster_output_dir(dataset_id: UUID) -> str:
+-    """Where, inside each member repository, a dataset's cluster snapshot is written.
++    """The working directory enola keeps inside each member for a dataset's cluster runs.
+ 
+-    A remote clone is shared by every dataset that adds its URL, and a cluster
+-    snapshot holds the facts of all the dataset's repositories. One directory
+-    per dataset keeps a cluster run from overwriting the snapshot another
+-    dataset is reading. enola takes the name relative to each repository.
++    It holds the member's extractor cache, not a snapshot. A remote clone is
++    shared by every dataset that adds its URL, so the name is the dataset's
++    own rather than the ``.enola`` a single-repository run writes its snapshot
++    to. enola takes the name relative to each repository.
+     """
+     return f".enola-{dataset_id}"
+ 
+ 
+-def _written_label(repo_path: Path, output_dir: str, snapshot_id: str | None) -> str | None:
+-    """The label enola gave a member in the snapshot just taken, or None.
++def cluster_snapshot_dir(dataset_id: UUID) -> Path:
++    """Where a dataset's cluster snapshot is written: one directory per dataset.
+ 
+-    A cluster run writes ``snapshot.meta.json`` into every member's
+-    ``output_dir`` with the member's own ``repo_label`` — the exact name its
+-    facts carry. The file is enola's own bookkeeping rather than part of the
+-    documented snapshot contract, so it is only trusted when it describes
+-    this snapshot (same ``snapshot_id``) and the caller falls back to
+-    deriving the label when it is missing or stale.
++    enola writes a cluster's graph once and refuses a directory inside a
++    member repository, so it lives next to the clones, under
++    ``BaseConfig.repos_root_directory`` (``COGNEE_REPOS_DIR``), which is a
++    local directory whatever the storage backend. A clone's directory name
++    never starts with a dot, so no clone can take this one's place.
+     """
+-    try:
+-        meta = json.loads(
+-            (repo_path / output_dir / "snapshot.meta.json").read_text(encoding="utf-8")
+-        )
+-    except (OSError, json.JSONDecodeError):
+-        return None
+-    if not isinstance(meta, dict):
+-        return None
+-    if snapshot_id is not None and meta.get("snapshot_id") != snapshot_id:
+-        return None
+-    label = meta.get("repo_label")
+-    return label if isinstance(label, str) and label else None
++    from cognee.tasks.code_graph.resolve_repo import default_clones_dir
+ 
++    return default_clones_dir() / ".enola-clusters" / str(dataset_id)
+ 
+-def _label_candidates(repo_path: Path, output_dir: str) -> list[str]:
+-    """The labels enola may have given a repository, most likely first.
+ 
+-    enola labels a repository by its own name from the git remote, and by its
+-    directory name when there is no usable remote or the name is already taken
+-    in the cluster. The remote is read from the member's own receipt.
+-    """
+-    candidates = []
+-    try:
+-        receipt = json.loads((repo_path / output_dir / "receipt.json").read_text(encoding="utf-8"))
+-    except (OSError, json.JSONDecodeError):
+-        receipt = None
+-    git = receipt.get("git") if isinstance(receipt, dict) else None
+-    remote = git.get("remote") if isinstance(git, dict) else None
+-    if isinstance(remote, str) and "/" in remote.strip("/"):
+-        candidates.append(remote.strip("/").rsplit("/", 1)[-1])
+-    if repo_path.name not in candidates:
+-        candidates.append(repo_path.name)
+-    return candidates
+-
+-
+-def resolve_member_labels(
+-    repo_paths: list[Path],
+-    fact_labels: set[str],
+-    output_dir: str,
+-    snapshot_id: str | None = None,
+-) -> list[str] | None:
++def resolve_member_labels(repo_paths: list[Path], receipt: dict | None) -> list[str] | None:
+     """The enola 
+```
+
+**File**: `cognee/tasks/code_graph/enola.py` (modified, +21/-13)
+```diff
+@@ -215,19 +215,26 @@ def _config_via_stdin() -> bool:
+     return os.name != "nt"
+ 
+ 
+-def render_cluster_config(repo_paths: list[Path], output_dir: str) -> str:
++def render_cluster_config(repo_paths: list[Path], output_dir: str, cluster_dir: Path) -> str:
+     """The enola cluster config for these repositories, as YAML text.
+ 
+     enola accepts a cluster only as a ``repos:`` config, whose entries must be
+     plain path strings. Paths are written absolute, so the config means the
+     same thing wherever enola resolves it from, and as JSON strings, which are
+-    valid YAML scalars and quote any path safely. ``output_dir`` replaces
+-    ``.enola`` as the snapshot directory; enola joins it to each repository
+-    path and refuses an absolute one. enola's per-repository
++    valid YAML scalars and quote any path safely. ``cluster_dir`` is where
++    enola writes the cluster's graph; enola refuses a directory inside one of
++    the repositories. ``output_dir`` replaces ``.enola`` as each member's own
++    working directory (its extractor cache); enola joins it to each
++    repository path and refuses an absolute one. enola's per-repository
+     architecture history (revisions under ``~/.enola/graphs``) is switched
+     off: cognee keeps its own record of the snapshot it loaded.
+     """
+-    lines = ["output:", f"  dir: {json.dumps(output_dir)}", "repos:"]
++    lines = [
++        "output:",
++        f"  dir: {json.dumps(output_dir)}",
++        f"  cluster_dir: {json.dumps(str(cluster_dir))}",
++        "repos:",
++    ]
+     lines.extend(f"  - {json.dumps(str(path))}" for path in repo_paths)
+     lines.extend(["history:", "  enabled: false"])
+     return "\n".join(lines) + "\n"
+@@ -236,13 +243,15 @@ def render_cluster_config(repo_paths: list[Path], output_dir: str) -> str:
+ async def run_enola_cluster(
+     repo_paths: list[Path],
+     output_dir: str,
++    cluster_dir: Path,
+     timeout: float = 600.0,
+ ) -> Path:
+-    """Run `enola --generate` over a cluster of repositories; return one snapshot directory.
++    """Run `enola --generate` over a cluster of repositories; return its snapshot directory.
+ 
+     enola links the repositories of a cluster config into one graph and
+-    writes that whole graph to every member's ``output_dir``, so any member's
+-    directory is the cluster's snapshot. The first member's is returned.
++    writes that graph once, to ``cluster_dir``, which must lie outside every
++    member repository (enola 0.5.3 and later; before, each member's
++    ``output_dir`` received a copy).
+ 
+     The config is built from the repositories' paths and handed to enola on
+     its standard input (``--generate /dev/stdin``): enola reads the config
+@@ -258,7 +267,7 @@ async def run_enola_cluster(
+         if not repo_path.is_dir():
+             raise EnolaSnapshotError(message=f"Repository path '{repo_path}' is not a directory.")
+ 
+-    config_text = render_cluster_config(repo_paths, output_dir)
++    config_text = render_cluster_config(repo_paths, output_dir, cluster_dir)
+     subject = f"the {len(repo_paths)}-repository cluster {[path.name for path in repo_paths]}"
+     cwd = Path(tempfile.gettempdir())
+ 
+@@ -283,13 +292,12 @@ async def run_enola_cluster(
+             stdin_data=config_text.encode("utf-8"),
+         )
+ 
+-    snapshot_dir = repo_paths[0] / output_dir
+-    if not (snapshot_dir / "facts.jsonl").is_file():
++    if not (cluster_dir / "facts.jsonl").is_file():
+         raise EnolaSnapshotError(
+-            message=f"enola completed but no facts.jsonl was found in '{snapshot_dir}'."
++            message=f"enola completed but no facts.jsonl was found in '{cluster_dir}'."
+         )
+ 
+-    return snapshot_dir
++    return cluster_dir
+ 
+ 
+ @dataclass(frozen=True)
+```
+
+**File**: `cognee/tests/test_code_graph_e2e.py` (modified, +10/-10)
+```diff
+@@ -63,12 +63,12 @@
+ 
+ # --- Known answers, pinned to the fixture + ENOLA_PINNED_VERSION ------------
+ # If enola is bumped and these change, update them deliberately. Last
+-# re-verified against enola 0.5.1: it emits the README as document/section
+-# symbols, an `extraction` coverage fact, the pyproject's declared package as
+-# `pkg:pypi/requests`, and (since 0.4.14) a module-level `module-edge:` dependency
+-# fact per resolved package import. File-level import facts such as
+-# `main -> inventory.store` now carry the imported file path as their target and
+-# no resolved module id; the resolved `imports` edge lives on the module-edge fact.
++# re-verified against enola 0.5.4: it emits the README as document/section
++# symbols, an `extraction` coverage fact and the pyproject's declared package as
++# `pkg:pypi/requests`. File-level import facts such as `main -> inventory.store`
++# carry the imported file path as their target and no resolved module id. Since
++# 0.5.4 the fixture gets no module-level `module-edge:` dependency fact either,
++# so the module-to-module `imports` edge is the one cognee derives itself.
+ 
+ EXPECTED_MODULES = {".", "inventory"}
+ 
+@@ -234,10 +234,10 @@ def _assert_typed_code_graph(nodes: dict, edges: list, repo_name: str) -> None:
+     )
+ 
+     imports = {(name_of[s], name_of[t]) for s, t, rel, _ in edges if rel == "imports"}
+-    # enola resolves the package import from main.py to the top-level module
+-    # `inventory` on a module-level dependency fact (see the known-answers note).
+-    assert ("module-edge: . -> inventory", "inventory") in imports, (
+-        f"Missing 'imports' edge from 'module-edge: . -> inventory' to module 'inventory'; "
++    # main.py imports the package: the root module imports module `inventory`
++    # (see the known-answers note).
++    assert (".", "inventory") in imports, (
++        f"Missing 'imports' edge from module '.' to module 'inventory'; "
+         f"imports present: {sorted(imports)}"
+     )
+ 
+```
+
+**File**: `cognee/tests/unit/tasks/code_graph/test_cluster.py` (modified, +41/-98)
+```diff
+@@ -14,6 +14,7 @@
+     ClusterMember,
+     DatasetCodeSnapshot,
+     cluster_output_dir,
++    cluster_snapshot_dir,
+     code_repo_path,
+     load_dataset_cluster,
+     mark_dataset_code_repos_for_rebuild,
+@@ -32,6 +33,7 @@
+ from cognee.tests.utils.graph_lookups import lookups_through_get_graph_data
+ 
+ cluster_module = importlib.import_module("cognee.tasks.code_graph.cluster")
++resolve_repo_module = importlib.import_module("cognee.tasks.code_graph.resolve_repo")
+ extract_module = importlib.import_module("cognee.tasks.code_graph.extract_code_graph")
+ graph_engine_module = importlib.import_module(
+     "cognee.infrastructure.databases.graph.get_graph_engine"
+@@ -75,33 +77,24 @@
+ REACHES = (UI_ROUTE, GOLF_ROUTE, "reaches_route")
+ 
+ 
+-def _write_snapshot(
+-    directory,
+-    facts=CLUSTER_FACTS,
+-    snapshot_id=SNAPSHOT_ID,
+-    remote=None,
+-    label=None,
+-    label_snapshot_id=None,
+-):
+-    """A member's cluster output directory (``OUTPUT_DIR``) as a cluster run leaves it.
++def _write_snapshot(directory, facts=CLUSTER_FACTS, snapshot_id=SNAPSHOT_ID, members=()):
++    """A cluster snapshot directory as an enola run leaves it.
+ 
+-    ``label`` adds the ``snapshot.meta.json`` enola writes, carrying the
+-    member's own ``repo_label`` (for ``label_snapshot_id``, default this
+-    snapshot). Without it only the contract files are present.
++    ``members`` are the (label, repository path) pairs the receipt lists.
+     """
+-    snapshot_dir = directory / OUTPUT_DIR
++    snapshot_dir = directory / "cluster-snapshot"
+     snapshot_dir.mkdir(parents=True, exist_ok=True)
+     (snapshot_dir / "facts.jsonl").write_text("\n".join(json.dumps(fact) for fact in facts) + "\n")
+-    receipt = {"snapshot_id": snapshot_id}
+-    if remote:
+-        receipt["git"] = {"remote": remote}
+-    (snapshot_dir / "receipt.json").write_text(json.dumps(receipt))
+-    if label is not None:
+-        meta = {"repo_label": label, "snapshot_id": label_snapshot_id or snapshot_id}
+-        (snapshot_dir / "snapshot.meta.json").write_text(json.dumps(meta))
++    (snapshot_dir / "receipt.json").write_text(
++        json.dumps({"snapshot_id": snapshot_id, "members": _receipt_members(members)})
++    )
+     return snapshot_dir
+ 
+ 
++def _receipt_members(members):
++    return [{"repo": label, "repo_path": str(path)} for label, path in members]
 +
-+*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
++
+ def _mock_engine(monkeypatch, nodes=(), edges=()):
+     engine = AsyncMock()
+     engine.get_graph_data.return_value = (list(nodes), list(edges))
+@@ -138,90 +131,41 @@ def test_code_repo_path_reads_metadata_as_dict_or_json_string(tmp_path):
+     assert code_repo_path(SimpleNamespace(system_metadata=None)) is None
  
- ## 1. Introduction
  
--This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-+This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
+-def test_each_dataset_has_its_own_cluster_output_dir():
+-    """A clone is shared by datasets: their cluster snapshots must not overwrite each other."""
++def test_each_dataset_has_its_own_cluster_directories(monkeypatch, tmp_path):
++    """A clone is shared by datasets: their cluster runs must not overwrite each other."""
++    monkeypatch.setattr(resolve_repo_module, "default_clones_dir", lambda: tmp_path)
+     other = UUID("7d4e1c2a-0000-4000-8000-000000000001")
  
--Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-+cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
+     assert OUTPUT_DIR != cluster_output_dir(other)
+     assert ".enola" not in {OUTPUT_DIR, cluster_output_dir(other)}
++    assert cluster_snapshot_dir(DATASET_ID) != cluster_snapshot_dir(other)
++    # Next to the clones, under a name no clone can have.
++    assert cluster_snapshot_dir(DATASET_ID) == tmp_path / ".enola-clusters" / str(DATASET_ID)
  
--Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
-+Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
  
- ## 2. Preliminaries
+-def test_member_label_is_the_one_enola_wrote_for_this_snapshot(tmp_path):
+-    """enola records each member's label; it wins over anything derivable."""
+-    first, second = _repos(tmp_path, "one", "two")
+-    _write_snapshot(first, remote="github.com/acme/golf", label="golf-api")
+-    _write_snapshot(second, label="ui")
+-
+-    labels = resolve_member_labels(
+-        [first, second], {"golf-api", "ui"}, OUTPUT_DIR, snapshot_id=SNAPSHOT_ID
+-    )
+-
+-    assert labels == ["golf-api", "ui"]
+-
+-
+-def test_members_with_the_same_written_label_are_not_a_cluster(tmp_path):
++def test_member_label_is_the_one_the_receipt_lists_for_its_path(tmp_path):
+     first, second = _repos(tmp_path, "one", "two")
+-    _write_snapshot(first, label="web")
+-    _write_snapshot(second, label="web")
+-
+-    assert (
+-        resolve_member_labels([first, second], {"web"}, OUTPUT_DIR, snapshot_id=SNAPSHOT_ID) is None
+-    )
+-
+-
+-def test_stale_written_label_is_ignored_and_derived_instead(tmp_path):
+-    """A meta file from an earlier run describes another snapshot: not trusted."""
+-    golf, ui = _repos(tmp_path, "golf", "ui")
+-    _write_snapshot(golf, label="old-golf", label_snapshot_id="sha256:older")
+-    _write_snapshot(ui, label="ui")
++    receipt = {"members": _receipt_members([("ui", second), ("golf-api", first)])}
  
- ### 2.1 LoCoMo
+-    labels = resolve_member_labels([golf, ui], {"golf", "ui"}, OUTPUT_DIR, snapshot_id=SNAPSHOT_ID)
++    assert resolve_member_labels([first, second], receipt) == ["golf-api", "ui"]
  
--LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
-+LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
+-    
+```
+
+**File**: `cognee/tests/unit/tasks/code_graph/test_enola_runner.py` (modified, +28/-12)
+```diff
+@@ -157,18 +157,23 @@ async def fake_create_subprocess_exec(*args, **kwargs):
+ CLUSTER_OUTPUT_DIR = ".enola-7d4e1c2a-0000-4000-8000-000000000000"
+ 
+ 
+-def test_render_cluster_config_sets_output_dir_lists_absolute_paths_and_disables_history(
++def test_render_cluster_config_sets_output_dirs_lists_absolute_paths_and_disables_history(
+     tmp_path,
+ ):
+     odd = tmp_path / "re: po"
+ 
+-    config = enola_module.render_cluster_config([tmp_path / "golf", odd], CLUSTER_OUTPUT_DIR)
++    cluster_dir = tmp_path / "clusters" / "ds: 1"
++
++    config = enola_module.render_cluster_config(
++        [tmp_path / "golf", odd], CLUSTER_OUTPUT_DIR, cluster_dir
++    )
+ 
+     # Paths are JSON-quoted (so Windows backslashes are escaped, and a path
+     # with YAML punctuation stays one scalar), absolute, in cluster order.
+     golf = json.dumps(str(tmp_path / "golf"))
+     assert config == (
+         f'output:\n  dir: "{CLUSTER_OUTPUT_DIR}"\n'
++        f"  cluster_dir: {json.dumps(str(cluster_dir))}\n"
+         f"repos:\n  - {golf}\n  - {json.dumps(str(odd))}\nhistory:\n  enabled: false\n"
+     )
+ 
+@@ -200,21 +205,26 @@ async def test_run_enola_cluster_pipes_the_config_and_writes_no_file(monkeypatch
+     monkeypatch.setattr(enola_module, "_config_via_stdin", lambda: True)
+     golf, ui = _cluster_repos(tmp_path)
+ 
++    cluster_dir = tmp_path / "clusters" / "dataset"
++
+     def write_snapshot():
+-        (golf / CLUSTER_OUTPUT_DIR).mkdir(exist_ok=True)
+-        (golf / CLUSTER_OUTPUT_DIR / "facts.jsonl").write_text("")
++        cluster_dir.mkdir(parents=True, exist_ok=True)
++        (cluster_dir / "facts.jsonl").write_text("")
+ 
+     calls = _capture_subprocess(monkeypatch, write_snapshot)
+ 
+-    snapshot_dir = await enola_module.run_enola_cluster([golf, ui], CLUSTER_OUTPUT_DIR, timeout=5.0)
++    snapshot_dir = await enola_module.run_enola_cluster(
++        [golf, ui], CLUSTER_OUTPUT_DIR, cluster_dir, timeout=5.0
++    )
+ 
+-    assert snapshot_dir == golf / CLUSTER_OUTPUT_DIR
++    # The cluster's graph is read from its own directory, not from a member.
++    assert snapshot_dir == cluster_dir
+     (args, kwargs, process), *_ = calls
+     assert args == (str(fake_binary), "--generate", "/dev/stdin")
+     assert kwargs["stdin"] == asyncio.subprocess.PIPE
+     assert (
+         process.stdin_received
+-        == enola_module.render_cluster_config([golf, ui], CLUSTER_OUTPUT_DIR).encode()
++        == enola_module.render_cluster_config([golf, ui], CLUSTER_OUTPUT_DIR, cluster_dir).encode()
+     )
+     # Neutral working directory, nothing written next to the repositories.
+     assert kwargs["cwd"] not in {str(golf), str(ui)}
+@@ -232,20 +242,24 @@ async def test_run_enola_cluster_on_windows_uses_a_temporary_file_it_removes(mon
+     golf, ui = _cluster_repos(tmp_path)
+     seen_configs = []
+ 
++    cluster_dir = tmp_path / "clusters" / "dataset"
++
+     def write_snapshot():
+-        (golf / CLUSTER_OUTPUT_DIR).mkdir(exist_ok=True)
+-        (golf / CLUSTER_OUTPUT_DIR / "facts.jsonl").write_text("")
++        cluster_dir.mkdir(parents=True, exist_ok=True)
++        (cluster_dir / "facts.jsonl").write_text("")
+         # The config exists while enola runs ...
+         seen_configs.extend(path.read_text() for path in tmp_path.glob("cognee-enola-cluster-*"))
+ 
+     calls = _capture_subprocess(monkeypatch, write_snapshot)
+ 
+-    await enola_module.run_enola_cluster([golf, ui], CLUSTER_OUTPUT_DIR, timeout=5.0)
++    await enola_module.run_enola_cluster([golf, ui], CLUSTER_OUTPUT_DIR, cluster_dir, timeout=5.0)
+ 
+     (args, _kwargs, process), *_ = calls
+     assert args[:2] == (str(fake_binary), "--generate")
+     assert args[2].endswith(".yaml") and process.stdin_received is None
+-    assert seen_configs == [enola_module.render_cluster_config([golf, ui], CLUSTER_OUTPUT_DIR)]
++    assert seen_configs == [
++        enola_module.render_cluster_config([golf, ui], CLUSTER_OUTPUT_DIR, cluster_dir)
++    ]
+     # ... and is gone once it has exited.
+     assert not list(tmp_path.glob("cognee-enola-cluster-*"))
+ 
+@@ -258,6 +272,8 @@ async def test_run_enola_cluster_rejects_a_missing_repository_before_running(mon
+     calls = _capture_subprocess(monkeypatch, lambda: None)
+ 
+     with pytest.raises(enola_module.EnolaSnapshotError):
+-        await enola_module.run_enola_cluster([golf, tmp_path / "gone"], CLUSTER_OUTPUT_DIR)
++        await enola_module.run_enola_cluster(
++            [golf, tmp_path / "gone"], CLUSTER_OUTPUT_DIR, tmp_path / "clusters" / "dataset"
++        )
+ 
+     assert calls == []
+```
+
+**File**: `docs/memory-internals.md` (modified, +2/-2)
+```diff
+@@ -184,8 +184,8 @@ Supported code files (`.py`, `.go`, `.ts`, `.java`, `.rs`, … — the extension
+ - **enola version**: installed by default as the pinned `enola-cli` wheel, which puts the binary in the environment's scripts directory; `ENOLA_PATH` always wins. A missing binary raises `EnolaNotInstalledError` with a reinstall hint — nothing is downloaded at runtime. The version pin lives only in `pyproject.toml`. Cognee reads enola's documented snapshot contract (`facts.jsonl`, `insights.json`, `flows.json`, `receipt.json`; `format_version` 1) and rejects a receipt with a format version it does not understand. Fact ids and resolved relation `target_id`s from the writer are used when present; explainer findings become `CodeInsight` nodes with `evidences` edges; a symbol's `doc` prop (its doc comment) becomes the node's `doc` and description; each `flows.json` flow becomes a `CodeFlow` node with `flow_entry`/`flow_stage`/`flow_route` edges to its entry, stages and routes, but only when the receipt lists that `flows.json` among the run's outputs (a release without the flows renderer leaves an earlier run's file in place; a snapshot without docs or flows ingests exactly as before); flows sharing a name in one repo (two services serving `GET /health`) are named after their entry as well, e.g. `GET /health (svc_a/app.health)`, so they stay separate nodes; an unchanged snapshot is skipped only when the repository node also carries the current `CODE_GRAPH_MAPPING_VERSION` (`extract_code_graph.py`; bump it whenever the fact-to-graph mapping changes, so repositories whose code did not change are mapped again); the receipt's provenance/quality block is stamped on the `CodeRepository` node and reported by the `delta` operation. Bumping the pin means re-checking the known answers in `cognee/tests/test_code_graph_e2e.py`.
+ - **Opt-out per add**: `preferred_loaders={"text_loader": {}}` treats a code file as a plain document (chunking + LLM extraction).
+ - **Whole repositories**: a local code-project directory or a GitHub/GitLab repository URL passed to `add()`/`remember()` (API: the `raw_data` form field) resolves to ONE `code_repo` manifest that cognify runs through the CODE_REPO route — a single enola pass with cross-file edges, plus the repo's documents as ordinary items. Remote URLs are shallow-cloned under `COGNEE_REPOS_DIR` (default `~/.cognee/repos`). Git LFS is disabled for every git command (`_run_git` in `resolve_repo.py`): an LFS file stays a pointer, and LFS pointers of documents are not ingested. A token passed as `repo_credentials` is sent only to the repository's own origin. `remember(content_type="code")` builds the same graph without the add step. The CODE route is per-file.
+-- **Several repositories in one dataset**: the dataset is one enola cluster. Its `code_repo` rows are extracted in a single enola run, so the graph also holds the edges between repositories: `reaches_route` from a client call to the route that serves it, cross-repository `calls`/`imports`. The cluster config has no file of its own — its members are the rows themselves (`system_metadata.repo_path`), and the `repos:` config enola needs is rendered from them and piped to `enola --generate /dev/stdin` (a temporary file, removed when enola exits, on Windows). enola writes the cluster snapshot into each member's `.enola-<dataset_id>` (enola's `output.dir`), not the `.enola` a single-repository run uses: a remote clone is shared by every dataset that adds its URL, and a cluster snapshot holds the other repositories' facts. Each member's label is read back from the `repo_label` in that directory's `snapshot.meta.json`. Each row still owns its own repository's nodes. The snapshot is parsed once per load, off the event loop, and shared by every member's tasks (`ParsedSnapshot`). Adding a repository (`remember(content_type="code")`) rebuilds the others from a fresh snapshot — up to `CLUSTER_INLINE_REBUILD_LIMIT` (5) existing repositories; beyond that only the new rows are built inline and the rest are marked for the next `cognify()`, which rebuilds the whole cluster. Deleting one (`forget(data_id=...)`, `datasets.delete_data`) does not run enola — the remaining rows are marked for re-extraction, and the next `cognify()` of the dataset rebuilds them, as after `forget(memory_only=True)`. The enola run over a cluster gets the per-repository timeout times the member count, capped at `CLUSTER_ENOLA_TIMEOUT_CAP_SECONDS` (1 h). Put repositories that call each other in the same dataset; ones in different datasets are never linked. Implementation: `cognee/tasks/code_graph/cluster.py`.
+-- **Docstrings as memory (code docs pipeline)**: `cognify_code_docs_pipeline(user, dataset=..., extract_entities=False, repo=None, include_modules=True)` in `cognee/memify_pipelines/cognify_code_docs.py` is a memify pipeline over an indexed repository (tasks in `cognee/tasks/code_docs/`). `extract_code_docs` reads the dataset's code graph, reads each documented symbol's do
 ```
 
 ---
 
-### Incident Patch 2: `013199f4` (2026-11-19)
-**Commit Message**: docs: Revise the LoCoMo technical report (COG-7552)
+### Incident Patch 2: `aa38c696` (2026-11-26)
+**Commit Message**: fix: Keep Notion pages under unreadable blocks (CLO-1400) (#6440)
 
-Brings the report in line with the GRO-248 review: the answer prompt's
-decline rules and the judge's half-of-the-items rule (and when it
-changed), how the exclusion list was built and what our audit could see,
-both runs of the main configuration by category and with nothing
-excluded, the cognee version behind the runs, and drops claims the
-records don't back, such as the default depth being more economical.
+## Description
+A Notion sync failed for the whole data source when one page held a
+block whose children the API will not return. A production tenant had 3
+of 10 data sources failing with `DLTIngestionError`, and the pod logs
+show the same two errors each time: `Notion API error 400 on
+blocks/<id>/children: validation_error: Block type
+external_object_instance_page is not supported via the API.` and `...
+Block type ai_block is not supported via the API for your bot type.`
+`_collect_nested_children` lists the children of every block with
+`has_children`, and any 4xx raised in `_NotionClient.request` aborts the
+dlt resource, so the rest of the source was lost with it (CLO-1400).
 
-**File**: `cognee/eval_framework/locomo/REPORT.md` (modified, +130/-66)
+A first-request `400 validation_error` that names the listed block's own
+type is now read as "the API cannot expose this block". The connector
+skips those children, keeps the block's own text and the surrounding
+blocks, and logs one warning with the block id and type. This holds for
+discovery and rendering, including synced copies. Page and table
+listings never skip, and neither does an error on a later page of a
+listing, since that would drop 
+
+**File**: `cognee/modules/integrations/notion/sync.py` (modified, +38/-27)
 ```diff
-@@ -1,118 +1,164 @@
--# Cognee on LoCoMo - Technical Evaluation Report
-+# Benchmarking cognee on LoCoMo - Technical Evaluation Report
+@@ -65,15 +65,15 @@ async def sync_notion(credential: IntegrationCredential) -> None:
+     await ingestion.run_sync("notion", credential, _sync_source)
+ 
+ 
+-async def without_nested_roots(access_token: str, roots: list[str]) -> list[str]:
+-    """The roots whose parent chain does not reach another selected root.
+-
+-    The outer root's walk already reads everything under it, so syncing the inner root
+-    too would ingest and cognify its pages twice under two node sets. The chain is
+-    followed one request per level (a page's parent can be a block, and a data
+-    source's parent is its database). A chain that cannot be followed because Notion
+-    reports an object as not shared is left alone and the root is kept. Any other
+-    failure raises, so a flaky lookup never silently changes what is synced.
++async def nested_roots(access_token: str, roots: list[str]) -> dict[str, str]:
++    """Each root whose parent chain reaches another selected root, mapped to that root.
 +
-+*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
++    The outer root's walk reads what is under it, so syncing the inner root too would
++    ingest and cognify its pages twice under two node sets. The chain is followed one
++    request per level (a page's parent can be a block, and a data source's parent is its
++    database). A chain that cannot be followed because Notion reports an object as not
++    shared is left alone and the root is kept. Any other failure raises, so a flaky
++    lookup never silently changes what is synced.
+     """
+     # ``_split`` refuses an entry that is not page:<id> or data_source:<id>, before any request.
+     selected = {client.canonical_id(_split(root)[1]): root for root in roots}
+@@ -90,21 +90,18 @@ async def parent_of(kind: str, object_id: str) -> tuple[str, str] | None:
+                 parents[key] = None
+         return parents[key]
  
- ## 1. Introduction
+-    kept = []
++    nested = {}
+     for root in roots:
+         kind, object_id = _split(root)
+         seen = {client.canonical_id(object_id)}
+         parent = await parent_of(kind, object_id)
+-        nested = False
+         while parent is not None and client.canonical_id(parent[1]) not in seen:
+             if client.canonical_id(parent[1]) in selected:
+-                nested = True
++                nested[root] = selected[client.canonical_id(parent[1])]
+                 break
+             seen.add(client.canonical_id(parent[1]))
+             parent = await parent_of(*parent)
+-        if not nested:
+-            kept.append(root)
+-    return kept
++    return nested
  
--This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-+This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
  
--Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-+cognee answered **~91%** of the 1,762 evaluated questions correctly according to the LLM judge (90.7% and 91.3% in two runs), using the hybrid retriever we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and excluded the questions that our audit or an external one flagged. We also left out open-domain questions, which need knowledge from outside the conversation. As is now common for LoCoMo, an LLM judge grades the answers, with one prompt for all questions; Section 5 compares its rules with those of other published LoCoMo judges.
+ async def _require_accepted_token(credential: IntegrationCredential, access_token: str) -> None:
+@@ -146,28 +143,42 @@ async def _sync_source(
+     source_factory = ingestion.source_factory("notion")
+     access_token = await access_token_for(credential)
+     await _require_accepted_token(credential, access_token)
+-    roots = await without_nested_roots(access_token, roots)
++    nested = await nested_roots(access_token, roots)
++    sources = {}
  
--Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses a configuration at the retriever's default depth, how our grading compares with published LoCoMo judges, and the limits of the evaluation. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
-+Section 2 introduces LoCoMo and the parts of cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation protocol, including the scope and the grading rules. Section 4 reports the results, overall and by category. Section 5 discusses an additional experiment at the retriever's default depth, how our grading compares with published LoCoMo judges, and what the evaluation doesn't show. Section 6 concludes, and Appendix A gives the models, configurations, rerun commands, audits and artifacts behind the results.
+     def make_source(root: str, resource_name: str, check_active):
+         kind, object_id = _split(root)
+-        return source_factory(
++        sources[root] = source_factory(
+             token=access_token,
+             root_page_ids=[object_id] if kind == "page" else [],
+             root_data_source_ids=[object_id] if kind == "data_source" else [],
+             workspace_id=str(credential.provider_account_id),
+             resource_name=resource_name,
+             check_active=check_active,
+         )
+-
+-    retained = await ingestion.sync_scopes(
+-        "notion",
+-        credential,
+-        counts,
+-        scopes=roots,
+-        dataset_name=dataset_name_for_credential(credential),
+-        make_source=make_source,
+-        classify_error=_classify_error,
+-    )
++        return sources[root]
++
++    retained: set[str] = set()
++    scopes = [root for root in roots if root not in nested]
++    while scopes:
++        retained |= await ingestion.sync_scopes(
++            "notion",
++            credential,
++            counts,
++            scopes=scopes,
++            dataset_name=dataset_name_for_credential(credential),
++            make_source=make_source,
++            classify_error=_classify_error,
++        )
++        # An outer walk that left blocks it could not read may not have reached a root
++        # nested in it, so that root is synced as its own scope instead of being retired.
++        scopes = [
++            inner
++            for inner, outer in nested.items()
++            if inner not in sources
++            and outer in sources
++            and ingestion.source_counts(sources[outer]).get("pages_incomplete")
++        ]
+     if not ingestion.retirement_blocked(counts):
+         await ingestion.retire_resources(
+             "notion", credential, dataset_name_for_credential(credential), retained
+```
+
+**File**: `cognee/tasks/ingestion/connectors/notion.md` (modified, +42/-1)
+```diff
+@@ -81,7 +81,9 @@ mass deletion. A 403/404 when fetching a page or database reached *through* the
+ item is gone and is tombstoned; the same error on one of your explicit roots aborts the sync
+ instead, since that is a configuration problem, not a deletion. A failure while listing a
+ readable page's blocks or querying a data source also aborts the sync, because it does not prove
+-anything below it is gone.
++anything below it is gone. So does an answer that omits what it must carry (a listing's
++`results` or `has_more`, a block's `type` or `has_children`, a database's `data_sources`) or that
++is not a JSON object: a missing field is never read as empty.
  
- ## 2. Preliminaries
+ Moving a page between two of your selected roots, or changing the roots so that another one
+ reaches it, changes its `cognee_node_set` (part of the row's identity), so it is re-ingested once
+@@ -164,3 +166,42 @@ uv run pytest cognee/tests/integration/tasks/connectors/test_notion_ingestion.py
+ Both mock the Notion API over `httpx.MockTransport` (no live credentials, no network). The
+ integration test runs the real source through `cognee.add()`, dlt staging on sqlite and orphan
+ cleanup; it needs no LLM because it does not cognify.
++
++## API-unsupported blocks
++
++If Notion rejects a block's children with `400 validation_error` and `Block type <type> is
++not supported via the API.` (or the `for your bot type` variant), the connector skips those
++children, keeps the block's own text and the rest of the page, and logs a warning with the
++block ID and type, never document content. This applies to discovery and rendering,
++including synced copies. These two messages are the ones the production sync logged
++(CLO-1400): another wording, any other error, a failed page or table listing, and an error
++after the first page of a listing still abort the sync.
++
++A page stored without such children is marked in its sync state, not in the stored row or
++its content hash, counted in `pages_incomplete` of `cognee_sync_stats` and logged by ID.
++Every sync lists its blocks again, so a page is rendered again when it turns incomplete or
++complete, not on every sync. A synced copy is listed only while its page is rendered, so a
++block that is unsupported inside a copy is skipped and logged but does not mark the page: the
++page is rendered again when it is edited, not when that block becomes readable. Nested text that
++was ingested before a block turned unsupported is dropped in that run: the document holds what
++the API returns.
++
++A page that disappears from below an incompletely read page is not proof of a deletion,
++because the stored ancestry names pages and databases, not container blocks. Such a page,
++and everything below it, is kept as stored and counted in `deletions_withheld`, with a
++warning naming the IDs. The rest of the sync goes on and its state advances. When the tree
++reads completely, the pages that are really gone are forgotten. State stored before
++ancestors were recorded withholds by root instead. Child pages inside synced copies are
++never discovered, so an unreadable block inside a copy withholds nothing.
++
++What the sync itself proved gone is never withheld: a page or database it reached and found
++gone (403/404, archived or in the trash), everything below it, and a row missing from a data
++source it queried to the end. Rows live in the data source, not under blocks, so a complete
++query is proof.
++
++A block Notion lists as `"type": "unsupported"` is matched by the type in its
++`unsupported.block_type`, the type Notion's error names.
++
++In Cognee Cloud, a selected root nested inside another selected root is normally synced
++through the outer one. When the outer root's sync leaves blocks unread, the nested root may
++be behind one of them, so it is synced as its own source and its pages are kept.
+```
+
+**File**: `cognee/tasks/ingestion/connectors/notion.py` (modified, +278/-44)
+```diff
+@@ -91,7 +91,7 @@
+ from collections import deque
+ from collections.abc import Callable
+ from dataclasses import dataclass
+-from typing import Any
++from typing import Any, overload
+ from uuid import UUID
  
- ### 2.1 LoCoMo
+ from cognee.shared.logging_utils import get_logger
+@@ -121,9 +121,25 @@
+ class NotionAPIError(Exception):
+     """A Notion API response that isn't worth retrying (or ran out of retries)."""
  
--LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) contains 10 conversations between two people, each with 19–32 dated sessions and 369–689 turns, and 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temporal (321), open-domain (96) and adversarial (446). Open-domain questions combine what a speaker said with general knowledge. Adversarial questions cannot be answered from the conversation: the expected response is to say so, and the dataset pairs each with a plausible wrong answer.
-+LoCoMo ([paper](https://arxiv.org/abs/2402.17753), [repository](https://github.com/snap-research/locomo)) has a public release, `locomo10.json`, with 10 conversations between two people, a subset of the dataset described in the paper. Each conversation has 19–32 dated sessions and 369–689 turns, and the release has 1,986 questions about them. The questions fall into five categories: single-hop (841), multi-hop (282), temp
+-    def __init__(self, status_code: int, message: str):
++    def __init__(
++        self,
++        status_code: int,
++        message: str,
++        *,
++        code: str | None = None,
++        api_message: str | None = None,
++    ):
+         super().__init__(message)
+         self.status_code = status_code
++        self.code = code
++        self.api_message = api_message
++
++
++class NotionResponseError(NotionAPIError):
++    """A 200 answer that cannot be read as what it should carry, so it has no HTTP status."""
++
++    def __init__(self, message: str):
++        super().__init__(0, message)
+ 
+ 
+ class _RetryableStatusError(NotionAPIError):
+@@ -190,8 +206,25 @@ def _attempt(self, method: str, path: str, params: dict | None, json_body: dict
+         # a 3xx answer with a JSON body must not be read as an empty page, which would
+         # tombstone everything below it.
+         if status != 200:
+-            raise NotionAPIError(status, _error_message(status, path, response))
+-        return response.json()
++            try:
++                error = response.json()
++            except ValueError:
++                error = {}
++            if not isinstance(error, dict):
++                error = {}
++            raise NotionAPIError(
++                status,
++                _error_message(status, path, response),
++                code=error.get("code"),
++                api_message=error.get("message"),
++            )
++        try:
++            body = response.json()
++        except ValueError:
++            body = None
++        if not isinstance(body, dict):
++            raise NotionResponseError(f"Notion answered {path} without a JSON object.")
++        return body
+ 
+     def get_self(self) -> dict:
+         return self.request("GET", "users/me")
+@@ -242,20 +275,107 @@ def _is_gone(exc: Exception) -> bool:
+     return isinstance(exc, NotionAPIError) and exc.status_code in (403, 404)
+ 
+ 
+-def _list_block_children(client: _NotionClient, block_id: str):
+-    """Yield a block's direct children, across Notion's cursor pagination."""
++def _listing_page(response: dict, path: str) -> tuple[list[dict], str | None]:
++    """One page of a listing as ``(results, next_cursor)``; ``next_cursor`` is None on the last.
++
++    A field the answer lacks is never read as "nothing more here": a missing ``results`` list or
++    ``has_more`` flag would end the walk early and tombstone every page synced from below it.
++    """
++    results = response.get("results")
++    if not isinstance(results, list):
++        raise NotionResponseError(f"Notion answered {path} without a results list.")
++    if not all(isinstance(result, dict) for result in results):
++        raise NotionResponseError(f"Notion answered {path} with a result that is not an object.")
++    has_more = response.get("has_more")
++    if not isinstance(has_more, bool):
++        raise NotionResponseError(f"Notion answered {path} without a has_more flag.")
++    if not has_more:
++        return results, None
++    cursor = response.get("next_cursor")
++    if not cursor:
++        raise NotionResponseError("Notion reported more results without a next_cursor.")
++    return results, cursor
++
++
++def _check_blocks(blocks: list[dict], path: str) -> None:
++    """A block names its type and says whether it has children, or the walk cannot tell.
++
++    Without ``has_children`` its nested pages are never listed, and without ``type`` a child
++    page or database is not recognised; both would be tombstoned as gone.
++    """
++    for block in blocks:
++        if not isinstance(block.get("type"), str) or not isinstance(
++            block.get("has_children"), bool
++        ):
++            raise NotionResponseError(
++                f"Notion answered {path} with a block lacking type or has_children."
++            )
++
++
++def _database_data_sources(database: dict, database_id: str) -> list[dict]:
++    """The data sources of a database answer; a missing list is not a database without rows."""
++    data_sources = database.get("data_sources")
++    if not isinstance(data_sources, list):
++        raise NotionResponseError(f"Notion answered database {database_id} without data_sources.")
++    return data_sources
++
++
++@overload
++def _list_block_children(
++    client: _NotionClient, block_id: str, *, block_type: None = None
++) -> list[dict]: ...
++
++
++@overload
++def _list_block_children(
++    client: _NotionClient, block_id: str, *, block_type: str
++) -> list[dict] | None: ...
++
++
++def _list_block_children(
++    client: _NotionClient, block_id: str, *, block_type: str | None = None
++) -> list[dict] | None:
++    """Re
+```
+
+**File**: `cognee/tests/integration/tasks/connectors/test_notion_ingestion.py` (modified, +112/-0)
+```diff
+@@ -611,3 +611,115 @@ async def test_one_page_that_cannot_be_extracted_does_not_freeze_the_tree_of_the
+         await cognee.cognify(datasets=[DATASET_NAME])
+ 
+     assert {edge for edge in await _page_tree() if edge[0] == CHILD} == {(CHILD, MID)}
++
++
++def _unsupported_children(fake, monkeypatch, block_type):
++    original_handler = fake.handler
++    failures = {"blocked": True, "calls": 0}
++
++    def handler(request):
++        if request.url.path == "/v1/blocks/unsupported/children":
++            failures["calls"] += 1
++            if failures["blocked"]:
++                return httpx.Response(
++                    400,
++                    json={
++                        "code": "validation_error",
++                        "message": (
++                            f"Block type {block_type} is not supported via the API "
++                            "for your bot type."
++                        ),
++                    },
++                )
++        return original_handler(request)
++
++    monkeypatch.setattr(fake, "handler", handler)
++    return failures
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("block_type", ["external_object_instance_page", "ai_block"])
++# Notion documents an API-unsupported type as listed "unsupported" with its own type inside;
++# which shape the tenant's listing uses is not known, so both are synced.
++@pytest.mark.parametrize("listed_as", ["own_type", "unsupported"])
++async def test_unsupported_children_sync_and_recover_without_page_edit(
++    clean_environment, monkeypatch, block_type, listed_as
++):
++    fake = _tree()
++    if listed_as == "own_type":
++        block = {"id": "unsupported", "type": block_type, "has_children": True, block_type: {}}
++    else:
++        block = {
++            "id": "unsupported",
++            "type": "unsupported",
++            "has_children": True,
++            "unsupported": {"block_type": block_type},
++        }
++    fake.blocks[ROOT].extend([block, _paragraph("after", "Content after unsupported block.")])
++    fake.blocks["unsupported"] = [_paragraph("recovered", "Recovered content.")]
++    failures = _unsupported_children(fake, monkeypatch, block_type)
++    await _sync(fake)
++    first = await _notion_data()
++    assert set(first) == {ROOT, CHILD}
++    assert failures["calls"] == 1
++    with open(first[ROOT].raw_data_location.removeprefix("file://"), encoding="utf-8") as document:
++        content = document.read()
++    assert "Q4 moves orders to Postgres." in content
++    assert "Content after unsupported block." in content
++    assert "Recovered content." not in content
++
++    await _sync(fake)
++    assert {key: record.id for key, record in (await _notion_data()).items()} == {
++        key: record.id for key, record in first.items()
++    }
++    assert failures["calls"] == 2
++
++    failures["blocked"] = False
++    await _sync(fake)
++    recovered = await _notion_data()
++    assert recovered[ROOT].id != first[ROOT].id
++    assert recovered[CHILD].id == first[CHILD].id
++    with open(
++        recovered[ROOT].raw_data_location.removeprefix("file://"), encoding="utf-8"
++    ) as document:
++        assert "Recovered content." in document.read()
++    await _sync(fake)
++    assert {key: record.id for key, record in (await _notion_data()).items()} == {
++        key: record.id for key, record in recovered.items()
++    }
++
++
++@pytest.mark.asyncio
++async def test_unsupported_subtree_keeps_previous_pages_until_it_reads_completely(
++    clean_environment, monkeypatch
++):
++    fake = _tree()
++    await _sync(fake)
++    original = await _notion_data()
++    child_block = fake.blocks[ROOT].pop()
++    fake.blocks[ROOT].append(
++        {
++            "id": "unsupported",
++            "type": "ai_block",
++            "has_children": True,
++            "ai_block": {},
++        }
++    )
++    fake.blocks["unsupported"] = [child_block]
++    fake.pages[ROOT]["last_edited_time"] = "2026-02-01T00:00:00.000Z"
++    failures = _unsupported_children(fake, monkeypatch, "ai_block")
++
++    # The child page is no longer listed, but nothing proves it is gone: the sync succeeds,
++    # the page that was edited lands, and the child stays.
++    await _sync(fake)
++    kept = await _notion_data()
++    assert set(kept) == {ROOT, CHILD}
++    assert kept[CHILD].id == original[CHILD].id
++    assert kept[ROOT].id != original[ROOT].id
++
++    failures["blocked"] = False
++    await _sync(fake)
++    assert set(await _notion_data()) == {ROOT, CHILD}
++    fake.blocks["unsupported"] = []
++    await _sync(fake)
++    assert set(await _notion_data()) == {ROOT}
+```
+
+**File**: `cognee/tests/unit/modules/integrations/test_notion_sync.py` (modified, +157/-11)
+```diff
+@@ -12,7 +12,7 @@
+ 
+ from cognee.modules.integrations.notion import client
+ from cognee.modules.integrations.notion import sync as sync_module
+-from cognee.modules.integrations.notion.sync import sync_notion, without_nested_roots
++from cognee.modules.integrations.notion.sync import nested_roots, sync_notion
+ 
+ WORKSPACE = "ws-1"
+ 
+@@ -239,6 +239,152 @@ async def test_a_root_nested_in_another_selected_root_is_not_synced_twice(sync_m
+     assert [call.kwargs["root_page_ids"] for call in sync_mocks.source.call_args_list] == [[nid(2)]]
+ 
+ 
++@pytest.mark.asyncio
++@pytest.mark.parametrize("pages_incomplete", [0, 1])
++async def test_a_root_nested_in_a_root_whose_walk_left_blocks_unread_is_synced_itself(
++    sync_mocks, pages_incomplete
++):
++    """The outer walk may not have reached a root inside a block it could not read: that
++    root is then synced as its own scope, and kept, instead of being retired."""
++    chain = {
++        ("page", nid(1)): ("block", nid(3)),
++        ("block", nid(3)): ("page", nid(2)),
++        ("page", nid(2)): None,
++    }
++    sync_mocks.parent.side_effect = lambda _token, kind, object_id: chain[(kind, object_id)]
++
++    def source(**kwargs):
++        stats = (
++            {"pages_incomplete": pages_incomplete} if kwargs["root_page_ids"] == [nid(2)] else {}
++        )
++        return SimpleNamespace(**kwargs, cognee_sync_stats=stats)
++
++    sync_mocks.source.side_effect = source
++    credential = make_credential(page(1), page(2))
++    await sync_notion(credential)
++
++    synced = [call.kwargs["root_page_ids"] for call in sync_mocks.source.call_args_list]
++    retained = sync_mocks.retire.await_args.args[3]
++    inner = sync_module.ingestion.resource_name("notion", credential, page(1))
++    if pages_incomplete:
++        assert synced == [[nid(2)], [nid(1)]]
++        assert inner in retained
++    else:
++        assert synced == [[nid(2)]]
++        assert inner not in retained
++
++
++@pytest.mark.asyncio
++async def test_a_root_nested_twice_is_reached_through_each_incomplete_walk(sync_mocks):
++    """Roots 1 in 2 in 3: 3's walk and then 2's walk left blocks unread, so all three sync."""
++    chain = {
++        ("page", nid(1)): ("page", nid(2)),
++        ("page", nid(2)): ("page", nid(3)),
++        ("page", nid(3)): None,
++    }
++    sync_mocks.parent.side_effect = lambda _token, kind, object_id: chain[(kind, object_id)]
++    sync_mocks.source.side_effect = lambda **kwargs: SimpleNamespace(
++        **kwargs, cognee_sync_stats={"pages_incomplete": int(kwargs["root_page_ids"] != [nid(1)])}
++    )
++
++    await sync_notion(make_credential(page(1), page(2), page(3)))
++
++    synced = [call.kwargs["root_page_ids"] for call in sync_mocks.source.call_args_list]
++    assert synced == [[nid(3)], [nid(2)], [nid(1)]]
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("readable", [True, False])
++async def test_a_selected_root_inside_a_block_notion_cannot_list_is_not_lost(readable):
++    """The real ``notion_source``: root B sits in an ai_block of root A. When A's walk can
++    read the block, B is synced through A once; when it cannot, B is synced on its own and
++    its table is kept, instead of being retired on a run recorded as ok."""
++    from cognee.tasks.ingestion.connectors.notion import notion_source
++    from cognee.tests.unit.tasks.connectors.test_notion_source import (
++        FakeNotion,
++        _page_object,
++        _rich_text_block,
++        _unsupported_response,
++    )
++
++    outer, inner, hidden = (
++        "00000000-0000-0000-0000-000000000001",
++        "00000000-0000-0000-0000-000000000002",
++        "00000000-0000-0000-0000-000000000003",
++    )
++    fake = FakeNotion()
++    fake.pages[outer] = _page_object(outer, "A", parent={"type": "workspace", "workspace": True})
++    fake.blocks[outer] = [_rich_text_block(hidden, "ai_block", "", has_children=True)]
++    fake.pages[inner] = _page_object(inner, "B", parent={"type": "block_id", "block_id": hidden})
++    fake.blocks[inner] = [_rich_text_block("b2", "paragraph", "hello B")]
++    fake.blocks[hidden] = [
++        {"id": inner, "type": "child_page", "has_children": False, "child_page": {"title": "B"}}
++    ]
++
++    def handler(request):
++        if not readable and request.url.path == f"/v1/blocks/{hidden}/children":
++            return _unsupported_response("ai_block")
++        return fake.handler(request)
++
++    http_client = httpx.Client(transport=httpx.MockTransport(handler))
++    chain = {
++        ("page", nid(2)): ("block", nid(3)),
++        ("block", nid(3)): ("page", nid(1)),
++        ("page", nid(1)): None,
++    }
++    built, rows_by_root = [], {}
++
++    def real_source(**kwargs):
++        built.append(kwargs["root_page_ids"])
++        return notion_source(**kwargs, http_client=http_client)
++
++    async def remember(source, **_kwargs):
++        rows = await asyncio.to_thread(list, source)
++        rows_by_root[built[-1][0]] = {row["id"] for row in rows}
++        return SimpleNamespace(status="completed")
++
++    creden
+```
+
+**File**: `cognee/tests/unit/tasks/connectors/test_notion_source.py` (modified, +610/-1)
+```diff
+@@ -15,6 +15,8 @@
+ from cognee.tasks.ingestion.connectors import notion as notion_module
+ from cognee.tasks.ingestion.connectors.notion import (
+     NotionAPIError,
++    NotionResponseError,
++    _is_gone,
+     _iter_rows,
+     _NotionClient,
+     _resolve_workspace_id,
+@@ -465,14 +467,146 @@ def handler(request):
+     previous = {ROOT_PAGE_ID: {}, CHILD_PAGE_ID: {}, ROW_PAGE_ID: {}}
+     state: dict = {}
+     rows = []
+-    with pytest.raises(NotionAPIError, match="incomplete"):
++    with pytest.raises(NotionResponseError, match="incomplete"):
+         rows.extend(
+             _iter_rows(_client(fake), [ROOT_PAGE_ID], [], WORKSPACE_ID, previous, state, {})
+         )
+     assert not any(row.get("_deleted") for row in rows)
+     assert state == {}
+ 
+ 
++def _resync_aborts(fake, answer_for, message, *, roots=([ROOT_PAGE_ID], [])):
++    """Sync once, then walk again where ``answer_for(request)`` may replace an answer; the walk
++    must raise ``message`` before any tombstone is emitted and before state is written."""
++    state: dict = {}
++    list(_iter_rows(_client(fake), *roots, WORKSPACE_ID, {}, state, {}))
++    previous = dict(state["pages"])
++    original, requests = fake.handler, []
++
++    def handler(request):
++        requests.append(request)
++        # A walk that reads the bad page as "more" asks for the next one for ever.
++        assert len(requests) < 200, "the walk did not stop"
++        return answer_for(request) or original(request)
++
++    fake.handler = handler
++    rows, new_state = [], {}
++    with pytest.raises(NotionResponseError, match=message):
++        rows.extend(_iter_rows(_client(fake), *roots, WORKSPACE_ID, previous, new_state, {}))
++    assert not any(row.get("_deleted") for row in rows)
++    assert new_state == {}
++
++
++_BLOCKS = f"blocks/{ROOT_PAGE_ID}/children"
++_QUERY = f"data_sources/{DATA_SOURCE_ID}/query"
++_NO_RESULTS = "without a results list"
++_NO_HAS_MORE = "without a has_more flag"
++# A page whose answer cannot be read as a page of results, and the error that says why.
++_BAD_PAGES = [
++    ({"has_more": False}, _NO_RESULTS),
++    ({"results": None}, _NO_RESULTS),
++    ({"results": {}}, _NO_RESULTS),
++    ({"results": [None], "has_more": False}, "not an object"),
++    ({"results": []}, _NO_HAS_MORE),
++    ({"results": [], "next_cursor": "c"}, _NO_HAS_MORE),
++    # Truthy, so only the type check stops it from reading as "more pages".
++    ({"results": [], "has_more": "false", "next_cursor": "c"}, _NO_HAS_MORE),
++    ({"results": [], "has_more": True}, "more results without a next_cursor"),
++]
++
++
++@pytest.mark.parametrize(("body", "message"), _BAD_PAGES)
++@pytest.mark.parametrize("listing", [_BLOCKS, _QUERY])
++def test_a_listing_page_that_cannot_be_read_aborts_without_tombstones(listing, body, message):
++    """A missing field is not an empty or last page: reading it as one would end the walk and
++    tombstone every page synced from below it."""
++
++    def answer_for(request):
++        if request.url.path.endswith(listing):
++            return httpx.Response(200, json={"object": "list", **body})
++
++    _resync_aborts(_tree_with_database(), answer_for, message)
++
++
++@pytest.mark.parametrize(("body", "message"), _BAD_PAGES)
++@pytest.mark.parametrize("listing", [_BLOCKS, _QUERY])
++def test_a_later_page_that_cannot_be_read_aborts_without_tombstones(listing, body, message):
++    """The page that is cut short is the second one: the first is complete and well formed."""
++
++    def answer_for(request):
++        if not request.url.path.endswith(listing):
++            return None
++        sent = request.url.params.get("start_cursor") or json.loads(request.content or b"{}").get(
++            "start_cursor"
++        )
++        if sent:
++            return httpx.Response(200, json={"object": "list", **body})
++        return httpx.Response(
++            200, json={"object": "list", "results": [], "has_more": True, "next_cursor": "c2"}
++        )
++
++    _resync_aborts(_tree_with_database(), answer_for, message)
++
++
++@pytest.mark.parametrize(
++    "content",
++    [b"[]", b'"x"', b"1", b"null", b"not json"],
++    ids=["list", "str", "int", "null", "raw"],
++)
++@pytest.mark.parametrize("listing", [_BLOCKS, _QUERY])
++def test_an_answer_that_is_not_a_json_object_aborts_without_tombstones(listing, content):
++    def answer_for(request):
++        if request.url.path.endswith(listing):
++            return httpx.Response(200, content=content)
++
++    _resync_aborts(_tree_with_database(), answer_for, "without a JSON object")
++
++
++@pytest.mark.parametrize(
++    "block",
++    [
++        {"id": "b", "has_children": False},
++        {"id": "b", "type": "toggle"},
++        {"id": "b", "type": "toggle", "has_children": "false"},
++        {"id": "b", "type": None, "has_children": False},
++    ],
++    ids=["no-type", "no-has_children", "has_children-not-bool", "type-null"],
++)
++def test_a_block_missing_its_type_or_has_children_aborts_without_tombstones(block):
++    """Without ``has_children`` a toggle's 
+```
+
+---
+
+### Incident Patch 3: `83742468` (2026-11-26)
+**Commit Message**: fix(broad): Measure store_mb in text and return clear limit errors (#6875)
+
+<!-- .github/pull_request_template.md -->
+
+## Description
+<!--
+Please provide a clear, human-generated description of the changes in
+this PR.
+DO NOT use AI-generated descriptions. We want to understand your thought
+process and reasoning.
+-->
+Fixes three BROAD limit problems found in manual release testing of
+`dev` (SDK-1757).
+
+| Problem | Before | After |
+|---|---|---|
+| `store_mb` unit | Whole-vs-partial decision used stored file bytes;
+the partial budget counted characters of text | Both count characters of
+text, measured as the dataset is loaded |
+| Non-finite limits (`NaN`, `Infinity`, `1e999`) | HTTP 500 with a
+traceback; bare `TypeError`/`OverflowError` in the SDK | HTTP 400 naming
+the setting; `ValueError` naming the setting in the SDK |
+| `BroadLimitError` | 500 on `/search`, unrelated 422 on `/recall` | 422
+with the "Raise batch_mb" message on both |
+
+## What changed
+
+- **`store_mb`:** the file-bytes gate (`dataset_size`) is removed. The
+dataset is loaded whole while characters are counted; once the text
+passes `store_mb`, loading stops and the most similar parts are loaded
+into a new store.
+- **Co
+
+**File**: `cognee/api/client.py` (modified, +7/-1)
+```diff
+@@ -1,5 +1,6 @@
+ """FastAPI server for the Cognee API."""
+ 
++import math
+ import os
+ from contextlib import asynccontextmanager
+ from traceback import format_exc
+@@ -303,9 +304,14 @@ async def request_validation_exception_handler(request: Request, exc: RequestVal
+             content={"detail": "LOGIN_BAD_CREDENTIALS"},
+         )
+ 
++    # The rejected input is echoed back, and JSON cannot hold NaN or Infinity: those are
++    # written as text so the answer stays the 400 it is.
+     return JSONResponse(
+         status_code=400,
+-        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
++        content=jsonable_encoder(
++            {"detail": exc.errors(), "body": exc.body},
++            custom_encoder={float: lambda value: value if math.isfinite(value) else str(value)},
++        ),
+     )
+ 
+ 
+```
+
+**File**: `cognee/modules/retrieval/README.md` (modified, +10/-7)
+```diff
+@@ -49,13 +49,16 @@ connection. Graph/vector I/O and LLM calls remain on the caller's async event lo
+ Cancelling a retrieval interrupts active SQLite work; any running Python stage must
+ finish before the queued close can release its store. Waiting for cleanup is asynchronous.
+ 
+-`retriever_specific_config["store_mb"]` defaults to `512` (512 MB in decimal units).
+-Datasets whose stored document sizes sum to at most that threshold are loaded whole.
+-Above it, the existing similarity-selected subset is used and the answer reports partial
+-coverage. The selected text is budgeted in million characters. This setting does not cap
+-process RAM: SQLite storage, parsed rows and document batches also consume memory, and
+-concurrent retrievals each own a separate store. The 256 MB batching budget and token and
+-result-row limits are independent of this threshold.
++`retriever_specific_config["store_mb"]` defaults to `512` and counts megabytes of text
++(million characters), the same on both sides of the threshold. A dataset holding at most
++that much text is loaded whole. Above it, the parts most similar to the question are
++loaded up to the same size, and the answer reports partial coverage as the text held and
++an estimate of the dataset's text. The stored file sizes do not decide this: a CSV holds
++more text than bytes, a PDF far less. The text is measured as it is read, so a dataset
++over the threshold is read up to it once before its most similar parts are loaded. This
++setting does not cap process RAM: SQLite storage, parsed rows and document batches also
++consume memory, and concurrent retrievals each own a separate store. The 256 MB batching
++budget and token and result-row limits are independent of this threshold.
+ 
+ ## The contract
+ 
+```
+
+**File**: `cognee/modules/retrieval/broad_retriever.py` (modified, +105/-65)
+```diff
+@@ -16,17 +16,19 @@
+ """
+ 
+ import json
++import math
+ import re
+ from collections.abc import AsyncIterator
+ from dataclasses import dataclass, field
+ from itertools import groupby, pairwise
+ from typing import Any, Literal
+ from uuid import UUID
+ 
++from fastapi import status
+ from pydantic import BaseModel, Field
+-from sqlalchemy import func, select
++from sqlalchemy import select
+ 
+-from cognee.context_global_variables import current_dataset_id
++from cognee.exceptions import CogneeValidationError
+ from cognee.infrastructure.databases.relational import get_relational_engine
+ from cognee.infrastructure.databases.unified import get_unified_engine
+ from cognee.infrastructure.databases.vector.exceptions import CollectionNotFoundError
+@@ -51,8 +53,9 @@
+ BROAD_READING_TOKENS = 12_000
+ # Megabytes of text held in memory at once while the store is built.
+ BROAD_BATCH_MB = 256
+-# A dataset up to this many megabytes is loaded into the store whole; a larger one is
+-# represented by the parts most similar to the question, up to this size.
++# A dataset holding up to this many megabytes (million characters) of text is loaded into
++# the store whole; a larger one is represented by the parts most similar to the question,
++# up to this size.
+ BROAD_STORE_MB = 512
+ # The least text a chunk is assumed to hold, when deciding how many to ask the vector
+ # store for; a chunk is rarely shorter.
+@@ -70,8 +73,17 @@
+ _MIN_CHUNK_TOKENS = 256
+ 
+ 
+-class BroadLimitError(ValueError):
+-    """The dataset exceeds a BROAD limit; the message names the setting to raise."""
++class BroadLimitError(CogneeValidationError):
++    """The dataset exceeds a BROAD limit; the message names the setting to raise. Not
++    logged when raised: recall catches it on a routed guess and answers another way."""
++
++    def __init__(
++        self,
++        message: str,
++        name: str = "BroadLimitError",
++        status_code: int = status.HTTP_422_UNPROCESSABLE_CONTENT,
++    ):
++        super().__init__(message, name, status_code, log=False)
+ 
+ 
+ class BroadNoTextError(NoDataError):
+@@ -146,22 +158,41 @@ def _units_of(nodes: list, edges: list, names: dict[str, str]) -> list[Unit]:
+ class Corpus:
+     """A dataset's documents, fetched from the graph in batches of whole documents so the
+     text held at once stays near ``batch_chars``. Batches are planned from each document's
+-    stored size, scaled by how much text a stored byte turned out to hold; a document
+-    larger than a batch raises."""
++    stored size, scaled by how much text a stored byte turned out to hold. The batches
++    end early once the text read passes ``store_chars``: the dataset is then too large to
++    load whole (``over_store``). A document larger than a batch is left out and raises
++    once the rest is read, so only when the dataset would otherwise load whole."""
+ 
+     graph: Any
+     documents: list[str]
+     names: dict[str, str]
+     sizes: dict[str, int]
+     batch_chars: int
++    store_chars: int
+     worker: BroadWorker
++    # The text read so far, in characters, and the stored bytes of the documents it came from.
++    read_chars: int = 0
++    read_stored: int = 0
++
++    @property
++    def over_store(self) -> bool:
++        return self.read_chars > self.store_chars
++
++    def estimated_chars(self) -> int | None:
++        """The whole dataset's text in characters, estimated from the text the documents
++        read so far held per stored byte; None when their stored sizes are unknown."""
++        if not self.read_stored:
++            return None
++        return round(self.read_chars * sum(self.sizes.values()) / self.read_stored)
+ 
+     async def fetch(self, documents: list[str]) -> list[Unit]:
+         nodes, edges = await self.graph.get_neighborhood(documents, depth=1)
+         return await self.worker.run(_units_of, nodes, edges, self.names)
+ 
+     async def batches(self) -> AsyncIterator[list[Unit]]:
+         ratio, start = 1.0, 0
++        # The first document larger than a batch, and its text in characters.
++        oversized: tuple[str, int] | None = None
+         while start < len(self.documents):
+             batch = [self.documents[start]]
+             planned = self.sizes.get(batch[0], 0) * ratio
+@@ -173,17 +204,25 @@ async def batches(self) -> AsyncIterator[list[Unit]]:
+                 planned += size * ratio
+             units = await self.fetch(batch)
+             text = sum(len(unit.text) for unit in units)
+-            if len(batch) == 1 and text > self.batch_chars:
+-                raise BroadLimitError(
+-                    f"BROAD: document {self.names.get(batch[0], batch[0])} holds {text:,} "
+-                    f"characters of text, more than one batch of {self.batch_chars:,} "
+-                    "(batch_mb). Raise batch_mb in retriever_specific_config."
+-                )
+             stored = sum(self.sizes.get(document, 0) for document in batch)
++            self.read_chars += text
++            self.read_stored += stored
++            if self.over_sto
+```
+
+**File**: `cognee/tests/performance/benchmark_broad_quality.py` (modified, +0/-3)
+```diff
+@@ -357,9 +357,6 @@ class Retriever(BroadRetriever):
+             responses = decisions
+             fixed_sql = reference_sql
+ 
+-            async def dataset_size(self):
+-                return fixture.manifest["bytes"]
+-
+             async def document_sizes(self, documents):
+                 return {doc: fixture.documents[doc]["bytes"] for doc in documents}
+ 
+```
+
+**File**: `cognee/tests/performance/benchmark_broad_store.py` (modified, +0/-3)
+```diff
+@@ -224,9 +224,6 @@ def close(self):
+             timings["close"] += time.perf_counter() - started
+ 
+     class FixedSQLRetriever(BroadRetriever):
+-        async def dataset_size(self):
+-            return sum(graph.sizes.values())
+-
+         async def document_sizes(self, documents):
+             return {document: graph.sizes[document] for document in documents}
+ 
+```
+
+**File**: `cognee/tests/unit/api/test_retriever_specific_config_over_http.py` (modified, +48/-4)
+```diff
+@@ -1,7 +1,8 @@
+ """POST /api/v1/search and /recall forward retriever_specific_config to the SDK call,
+ the way the SDK's own search()/recall() already accept it. The known keys are checked
+ for type and upper bound, and the one key JSON cannot carry (response_model) is rejected.
+-A rejected request answers 400: the app maps every request validation error to 400."""
++A rejected request answers 400: the app maps every request validation error to 400.
++A BROAD limit the dataset exceeds answers 422 with the setting to raise."""
+ 
+ import importlib
+ from types import SimpleNamespace
+@@ -12,7 +13,9 @@
+ from fastapi.exceptions import RequestValidationError
+ from fastapi.testclient import TestClient
+ 
+-from cognee.api.client import request_validation_exception_handler
++from cognee.api.client import exception_handler, request_validation_exception_handler
++from cognee.exceptions import CogneeApiError
++from cognee.modules.retrieval.broad_retriever import BroadLimitError
+ 
+ search_router_module = importlib.import_module("cognee.api.v1.search.routers.get_search_router")
+ recall_router_module = importlib.import_module("cognee.api.v1.recall.routers.get_recall_router")
+@@ -29,11 +32,12 @@
+ def _app(router_module, name):
+     """An app serving ``get_<name>_router()`` under ``/api/v1/<name>`` for a stub user.
+ 
+-    It registers the production validation handler, so a rejected body answers with the
+-    status a real client gets.
++    It registers the production error handlers, so a rejected body or a cognee error
++    answers with the status a real client gets.
+     """
+     app = FastAPI()
+     app.add_exception_handler(RequestValidationError, request_validation_exception_handler)
++    app.add_exception_handler(CogneeApiError, exception_handler)
+     app.include_router(getattr(router_module, f"get_{name}_router")(), prefix=f"/api/v1/{name}")
+     app.dependency_overrides[router_module.get_authenticated_user] = lambda: SimpleNamespace(
+         id=uuid4(), tenant_id=None
+@@ -214,3 +218,43 @@ def test_values_at_the_bounds_and_unknown_keys_pass(search_client):
+ 
+     assert response.status_code == 200, response.text
+     assert captured["retriever_specific_config"] == config
++
++
++@pytest.mark.parametrize("route", ["search", "recall"])
++@pytest.mark.parametrize("key", ["store_mb", "batch_mb"])
++@pytest.mark.parametrize("number", ["NaN", "Infinity", "-Infinity", "1e999"])
++def test_non_finite_limits_are_rejected_with_a_readable_400(
++    search_client, recall_client, route, key, number
++):
++    """JSON cannot hold the rejected NaN or Infinity, so the 400 echoes it as text."""
++    client = search_client[0] if route == "search" else recall_client[0]
++    captured = search_client[1] if route == "search" else recall_client[1]
++    body = f'{{"query": "q", "retrieverSpecificConfig": {{"{key}": {number}}}}}'
++
++    response = client.post(
++        f"/api/v1/{route}", content=body, headers={"Content-Type": "application/json"}
++    )
++
++    assert response.status_code == 400, response.text
++    assert key in response.json()["detail"][0]["msg"]
++    assert "Traceback" not in response.text
++    assert captured == {}
++
++
++@pytest.mark.parametrize("route", ["search", "recall"])
++def test_a_broad_limit_answers_422_with_the_setting_to_raise(
++    monkeypatch, search_client, recall_client, route
++):
++    message = "BROAD: document a.csv holds too much text. Raise batch_mb."
++
++    async def over_the_limit(**kwargs):
++        raise BroadLimitError(message)
++
++    package = importlib.import_module(f"cognee.api.v1.{route}")
++    monkeypatch.setattr(package, route, over_the_limit)
++    client = search_client[0] if route == "search" else recall_client[0]
++
++    response = client.post(f"/api/v1/{route}", json={"query": "q", "searchType": "BROAD"})
++
++    assert response.status_code == 422, response.text
++    assert response.json()["detail"] == f"{message} [BroadLimitError]"
+```
+
+**File**: `cognee/tests/unit/modules/retrieval/test_broad_retriever.py` (modified, +137/-26)
+```diff
+@@ -11,6 +11,7 @@
+ from cognee.infrastructure.databases.vector.exceptions import CollectionNotFoundError
+ from cognee.modules.retrieval import broad_retriever
+ from cognee.modules.retrieval.broad_retriever import (
++    BroadLimitError,
+     BroadNoTextError,
+     BroadRetriever,
+     DecisionLarge,
+@@ -248,36 +249,151 @@ def test_the_settings_are_positive():
+         BroadRetriever(reading_tokens=0)
+ 
+ 
++@pytest.mark.parametrize("setting", ["context_tokens", "reading_tokens", "batch_mb", "store_mb"])
++@pytest.mark.parametrize("value", ["abc", None, True, float("inf"), float("nan"), -1])
++def test_a_setting_that_is_not_a_positive_finite_number_is_named(setting, value):
++    with pytest.raises(ValueError, match=f"BROAD {setting} must be"):
++        BroadRetriever(**{setting: value})
++
++
++class _OneChunkVector:
++    """Ranks the given chunks best first and serves their text; each is its own document."""
++
++    def __init__(self, texts: dict[str, str]):
++        self.texts = texts
++
++    async def search(self, collection, *args, **kwargs):
++        if collection != "DocumentChunk_text":
++            raise CollectionNotFoundError("none")
++        return [
++            SimpleNamespace(id=name, score=n / 10, payload=None)
++            for n, name in enumerate(self.texts)
++        ]
++
++    async def retrieve(self, collection, ids):
++        return [
++            SimpleNamespace(
++                id=name,
++                score=0,
++                payload={"text": self.texts[name], "document_id": name, "document_name": name},
++            )
++            for name in ids
++        ]
++
++
++def test_the_default_store_holds_512_mb_of_text():
++    assert BroadRetriever().store_chars == 512_000_000
++
++
+ @pytest.mark.asyncio
+ @pytest.mark.parametrize(
+-    ("dataset_bytes", "expected_rows", "partial"),
+-    [(32_000_001, 2, False), (512_000_000, 2, False), (512_000_001, 1, True)],
++    ("store_chars", "expected_rows", "partial"), [(22, 2, False), (21, 2, False), (20, 1, True)]
+ )
+-async def test_default_store_covers_all_records_through_512_mb(
+-    monkeypatch, dataset_bytes, expected_rows, partial
++@pytest.mark.parametrize("stored_bytes", [1, 10, 1_000_000_000])
++async def test_store_mb_is_compared_with_the_text_not_the_stored_bytes(
++    monkeypatch, store_chars, expected_rows, partial, stored_bytes
+ ):
+-    class Vector:
+-        async def search(self, collection, *args, **kwargs):
+-            if collection != "DocumentChunk_text":
+-                raise CollectionNotFoundError("none")
+-            return [SimpleNamespace(id="c1", score=0.1, payload=None)]
++    """21 characters of text: loaded whole into a store of 21, whatever the files weigh
++    (a CSV holds more text than bytes, a PDF far less)."""
++    texts = {"a": "Alpha only.", "b": "Beta only."}
++    _use(monkeypatch, texts, vector=_OneChunkVector(texts), size=stored_bytes)
++    _llm(monkeypatch, [DecisionLarge(sql="SELECT COUNT(*) FROM lines")])
++    retriever = BroadRetriever(context_tokens=1)
++    retriever.store_chars = store_chars
+ 
+-        async def retrieve(self, collection, ids):
+-            payload = {"text": "Beta only.", "document_id": "d1", "document_name": "b"}
+-            return [SimpleNamespace(id="c1", score=0, payload=payload)]
++    found = await retriever.get_retrieved_objects("How many lines?")
+ 
+-    _use(monkeypatch, {"a": "Alpha only.", "b": "Beta only."}, vector=Vector())
++    assert found.rows == [(expected_rows,)]
++    assert bool(found.coverage) is partial
+ 
+-    async def dataset_size(self):
+-        return dataset_bytes
+ 
+-    monkeypatch.setattr(BroadRetriever, "dataset_size", dataset_size)
++@pytest.mark.asyncio
++async def test_a_store_just_under_the_text_holds_nearly_all_of_it(monkeypatch):
++    """One character short of the dataset costs one part, not most of the store: the
++    threshold and the size of the most similar parts are the same characters."""
++    texts = {f"doc{n}": f"row {n:02d}\n" for n in range(40)}  # 7 characters each, 280 in all
++    _use(monkeypatch, texts, vector=_OneChunkVector(texts), size=1)  # 40 bytes stored
+     _llm(monkeypatch, [DecisionLarge(sql="SELECT COUNT(*) FROM lines")])
++    retriever = BroadRetriever(context_tokens=1)
++    retriever.store_chars = 279
+ 
+-    found = await BroadRetriever(context_tokens=1).get_retrieved_objects("How many lines?")
++    found = await retriever.get_retrieved_objects("How many rows?")
+ 
+-    assert found.rows == [(expected_rows,)]
+-    assert bool(found.coverage) is partial
++    assert found.rows == [(39,)]
++    assert "39 parts of the dataset most similar" in found.coverage
++
++
++@pytest.mark.asyncio
++async def test_partial_coverage_states_the_text_held_and_the_estimated_text_of_the_dataset(
++    monkeypatch,
++):
++    """Both sizes are characters of text. The total is estimated from what the documents
++    read before the store was full held per stored byte."""
++    document = "".join(f"row {n:05d}\n" for n in range(1_000))  # 10,000 characters
++    texts = {f"doc{
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6807** (closed): fix(chunks): run the date-hint pass off the event loop (@pazonex)
-- **PR #6806** (2026-11-20): docs(graph): Describe Node neighbours as a copy (SDK-1684) (@dexters1)
-- **PR #6805** (2026-11-20): chore: Change default LLM model to gpt-6-luna (@dexters1)
-- **PR #6801** (2026-11-20): fix(graph): Look up one document's source refs (@dexters1)
-- **PR #6800** (2026-11-20): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
-- **PR #6799** (closed): docs: Revise the LoCoMo technical report (COG-7552) (@goran-radonic)
+- **PR #6883** (2026-11-26): fix(ci): Provide the Ladybug v0.17.0 JSON extension to the migration test (SDK-1760) (@siillee)
+- **PR #6882** (2026-11-26): fix(code_graph): Read enola 0.5.4 cluster output (SDK-1759) (@Vasilije1990)
+- **PR #6880** (2026-11-26): chore: bump enola-cli to 0.5.4 (@siillee)
+- **PR #6879** (2026-11-26): chore: release v1.6.11 (@siillee)
+- **PR #6878** (2026-11-26): chore: release v1.6.11 (@siillee)
+- **PR #6875** (2026-11-26): fix(broad): Measure store_mb in text and return clear limit errors (@siillee)
 
 ---
 
@@ -1627,35 +3168,62 @@ records don't back, such as the default depth being more economical.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: Revise the LoCoMo technical report (COG-7552)
+## X. code_graph): Read enola 0.5.4 cluster output (SDK-1759)
 
 **RULE**:
-When implementing operations in `cognee/eval_framework/locomo/REPORT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cognee/tasks/code_graph/cluster.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1961133d`: docs: Revise the LoCoMo technical report (COG-7552). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f508a230`: code_graph): Read enola 0.5.4 cluster output (SDK-1759). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/eval_framework/locomo/REPORT.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/tasks/code_graph/cluster.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-# Benchmarking cognee on LoCoMo - Technical Evaluation Report
-
-*Revised November 19, 2026. This revision describes the answer prompt's decline rules and the judge's partial-credit rule in more detail, including when that rule changed; explains how the exclusion list was built and what our audit could see; reports both runs of the main configuration by category and with nothing excluded; states which cognee version produced the runs; and removes observations we can't back up with hard data, such as the default depth being more economical. Earlier versions are in the repository history.*
-This report documents our evaluation of cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used cognee's existing memory components and built a LoCoMo-specific setup around them: how the conversations are formatted for ingestion, one answer prompt for every question, the retrieval depth and the judge's grading prompt were all developed on the ten conversations we report on. The goal was to measure that pipeline with a setup that others can inspect and rerun.
-cognee answered **~91%** of the 1,762 evaluated questions correctly according to the 
+listing them, and writes the whole linked graph once, to a directory of the
+dataset's own outside the repositories (see :func:`cluster_snapshot_dir`).
+import os
+    """The working directory enola keeps inside each member for a dataset's cluster runs.
+    It holds the member's extractor cache, not a snapshot. A remote clone is
+    shared by every dataset that adds its URL, so the name is the dataset's
+    own rather than the ``.enola`` a single-repository run writes its snapshot
+    to. enola takes the name relative to each repository.
+def cluster_snapshot_dir(dataset_id: UUID) -> Path:
+    """Where a dataset's cluster snapshot is written: one directory per dataset.
+    enola writes a cluster's graph once and refuses a directory inside a
+    member repository, so it lives next to the clones, under
+    ``BaseConfig.repos_root_directory`` (``COGNEE_REPOS_DIR``), which is a
+    local directory whatever the storage backend. A clone's directory name
+    never starts with a dot, so no clone can take this one's place.
+    from cognee.tasks.code_graph.resolve_repo import default_clones_dir
+    return default_clones_dir() / ".enola-clusters" / str(dataset_id)
+def resolve_member_labels(repo_p
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-# Cognee on LoCoMo - Technical Evaluation Report
-This report documents our evaluation of Cognee, an open-source AI memory platform, on LoCoMo, a benchmark of very long-term conversational memory. We used standard Cognee memory components with LoCoMo-specific data formatting, one answer prompt for every question, a fixed retrieval configuration and an LLM judge. The goal was to measure the existing pipeline with a setup that others can inspect and rerun.
-Cognee answers **91%** of the 1,762 evaluated questions correctly according to the LLM judge, using the hybrid retrieval approach we previously evaluated on [BEAM](../beam/REPORT.md). We audited LoCoMo's reference answers and exclude the questions that our audit or an external one found faulty. We also leave out open-domain questions, since this evaluation focuses on memory rather than general knowledge. As is now common for LoCoMo, an LLM judge grades the answers, with a single prompt for all questions; we comment on current judging practices in Section 5.
-Section 2 introduces LoCoMo and the parts of Cognee used here. Section 3 describes the method: how the conversations are ingested, how questions are answered, and the evaluation 
+listing them, and writes the whole linked graph into every member, under a
+directory of the dataset's own (``.enola-<dataset_id>``, see
+:func:`cluster_output_dir`) rather than the shared ``.enola``.
+    snapshot_identity,
+    """Where, inside each member repository, a dataset's cluster snapshot is written.
+    A remote clone is shared by every dataset that adds its URL, and a cluster
+    snapshot holds the facts of all the dataset's repositories. One directory
+    per dataset keeps a cluster run from overwriting the snapshot another
+    dataset is reading. enola takes the name relative to each repository.
+def _written_label(repo_path: Path, output_dir: str, snapshot_id: str | None) -> str | None:
+    """The label enola gave a member in the snapshot just taken, or None.
+    A cluster run writes ``snapshot.meta.json`` into every member's
+    ``output_dir`` with the member's own ``repo_label`` — the exact name its
+    facts carry. The file is enola's own bookkeeping rather than part of the
+    documented snapshot contract, so it is only trusted when it describes
+    this snapshot (same ``snapshot_id``) and the caller falls back to
+    deriving the label when it is missing or stale.
+  
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1961133d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f508a230` are properly handled with clean fallback behavior.

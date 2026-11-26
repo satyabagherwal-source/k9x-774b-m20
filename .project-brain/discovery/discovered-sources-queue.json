@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T16:41:29.295Z",
+  "updated_at": "2026-11-26T16:58:34.516Z",
   "stats": {
-    "total_discovered": 9911,
-    "approved_pending_harvest": 9399,
+    "total_discovered": 9912,
+    "approved_pending_harvest": 9400,
     "harvested_count": 0,
     "rejected_count": 512,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9395,
+      "COMMUNITY_AND_EXPERT": 9396,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -214485,6 +214485,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
         "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-4C98F39DE3DC": {
+      "id": "SRC-4C98F39DE3DC",
+      "url": "https://claude.ai/code/session_01HuEtW7YHz1QbZVCPE5SRx5",
+      "title": "https://claude.ai/code/session_01HuEtW7YHz1QbZVCPE5SRx5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:58:34.516Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flox-flox-learnings.md",
+        "fileName": "flox-flox-learnings.md"
       }
     }
   }

@@ -4,24 +4,24 @@
 {
   "source_repository": "mattermost/mattermost",
   "source_url": "https://github.com/mattermost/mattermost",
-  "source_version": "53ba1b4f",
+  "source_version": "fa151da3",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T08:56:35.157Z",
+  "timestamp": "2026-11-26T16:58:23.982Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mattermost-mattermost",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `53ba1b4f`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T08:56:35.157Z`  
+> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `fa151da3`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T16:58:23.982Z`  
 > **Learning ID**: `learn-github-mattermost-mattermost`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), F (Design Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from mattermost/mattermost:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T08:56:33.939Z  
+> **Harvest Timestamp**: 2026-11-26T16:58:22.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39632 stars
+- **Stars / Engagement**: 39713 stars
 
 ---
 
@@ -79,6 +79,10 @@ func userCreatePostPermissionCheckWithContext(c *Context, channelId string) {
 
 	if !hasPermission {
 		c.SetPermissionError(model.PermissionCreatePost)
+		return
+	}
+
+	if !requireChannelWriteAccessByID(c, channelId) {
 		return
 	}
 }
@@ -184,6 +188,43 @@ func checkEditFileAttachmentPermission(c *Context, newFileIds []string, original
 	}
 }
 
+// postAttributeValuesForCreate turns the submitted metadata values into PropertyValues to
+// write with the post.
+//
+// When nothing was submitted this returns (nil, nil) before any lookup, channel or property,
+// which is what keeps createPost byte-identical to its pre-feature behaviour — the reason
+// this is safe to add to the most-used endpoint in the product.
+func postAttributeValuesForCreate(c *Context, post *model.Post) ([]*model.PropertyValue, *model.AppError) {
+	items := post.Metadata.GetPropertyValues()
+	if len(items) == 0 {
+		return nil, nil
+	}
+
+	if !c.App.Config().FeatureFlags.PostAttributes {
+		return nil, model.NewAppError("Api4.createPost", "api.post.create_post.attributes_feature_disabled.app_error", nil, "", http.StatusBadRequest)
+	}
+
+	// Fetched only once there are values to check: the team ID decides which team-scoped
+	// fields apply. CreatePostAsUserWithFlags reads the same channel again a moment later.
+	channel, appErr := c.App.GetChannel(c.AppContext, post.ChannelId)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	values, fields, err := c.App.PreparePostPropertyValuesForCreate(c.AppContext, items, channel)
+	if err != nil {
+		return nil, model.AsAppError(err)
+	}
+
+	for _, field := range fields {
+		if !c.App.CanSetPostPropertyValueOnCreate(c.AppContext, c.AppContext.Session().UserId, field, channel) {
+			return nil, model.NewAppError("Api4.createPost", "api.post.create_post.attribute_no_permission.app_error", nil, "", http.StatusForbidden)
+		}
+	}
+
+	return values, nil
+}
+
 ```
 
 ### Core Architecture Module: `server/channels/api4/webhook.go`
@@ -240,7 +281,8 @@ func createIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ok, _ := c.App.SessionHasPermissionToReadChannel(c.AppContext, *c.AppContext.Session(), channel); !ok {
+	// Channel access policies do not apply to incoming webhooks, so this is the RBAC check alone.
+	if ok, _ := c.App.SessionHasPermissionToReadChannelRBACOnly(c.AppContext, *c.AppContext.Session(), channel); !ok {
 		c.LogAudit("fail - bad channel permissions")
 		c.SetPermissionError(model.PermissionReadChannelContent)
 		return
@@ -357,7 +399,7 @@ func updateIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if channel.Type != model.ChannelTypeOpen {
-		if ok, _ := c.App.SessionHasPermissionToReadChannel(c.AppContext, *c.AppContext.Session(), channel); !ok {
+		if ok, _ := c.App.SessionHasPermissionToReadChannelRBACOnly(c.AppContext, *c.AppContext.Session(), channel); !ok {
 			c.LogAudit("fail - bad channel permissions")
 			c.SetPermissionError(model.PermissionReadChannelContent)
 			return
@@ -485,15 +527,7 @@ func getIncomingHook(c *Context, w http.ResponseWriter, r *http.Request) {
 	auditRec.AddMeta("hook_display", hook.DisplayName)
 	auditRec.AddMeta("channel_id", hook.ChannelId)
 	auditRec.AddMeta("team_id", hook.TeamId)
-	c.LogAudit("attempt")
-
-	channel, err = c.App.GetChannel(c.AppContext, hook.ChannelId)
-	if err != nil {
-		c.Err = err
-		return
-	}
-
-	i
+	c.LogAudit("attempt"
 ```
 
 ### Core Architecture Module: `server/channels/api4/webhook_local.go`
@@ -667,6 +701,247 @@ func (es *Service) GetTrackFlowStartedByRole(isFirstAdmin bool, isSystemAdmin bo
 
 ```
 
+### Core Architecture Module: `server/channels/app/entities/core.go`
+```
+// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+package entities
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+	"unicode"
+
+	"github.com/mattermost/mattermost/server/public/model"
+)
+
+const (
+	CoreTimeTypeID         = CoreOwner + refSeparator + "time"
+	coreTimeRFC3339Pattern = `[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,9})?(?:[Zz]|[+-][0-9]{2}:[0-9]{2})`
+	// Clock + required zone keeps bare times and issue ids from matching.
+	// Accepts 16:30 CET, 16.30 CET, 4:30pm CET, 4.30 p.m. CET, 4pm CET.
+	coreTimeClockZonePattern = `(?i)(?:(?:[01]?\d|2[0-3])[:.][0-5]\d(?::[0-5]\d)?(?:\s*[ap]\.?m\.?)?|(?:0?[1-9]|1[0-2])(?:[:.][0-5]\d)?\s*[ap]\.?m\.?)\s*(?:UTC|GMT|Z|CET|CEST|EET|EEST|WET|WEST|BST|EST|EDT|CST|CDT|MST|MDT|PST|PDT|AKST|AKDT|HST|IST|JST|KST|AEST|AEDT|ACST|ACDT|AWST|NZST|NZDT)`
+)
+
+// Fixed offsets for the abbreviations we recognize. The abbreviation itself
+// encodes daylight-saving (CET vs CEST), so we do not need a geo zone database.
+var coreTimeZoneOffsets = map[string]int{
+	"UTC": 0, "GMT": 0, "Z": 0,
+	"CET": 3600, "CEST": 7200,
+	"EET": 7200, "EEST": 10800,
+	"WET": 0, "WEST": 3600, "BST": 3600,
+	"EST": -5 * 3600, "EDT": -4 * 3600,
+	"CST": -6 * 3600, "CDT": -5 * 3600,
+	"MST": -7 * 3600, "MDT": -6 * 3600,
+	"PST": -8 * 3600, "PDT": -7 * 3600,
+	"AKST": -9 * 3600, "AKDT": -8 * 3600,
+	"HST": -10 * 3600,
+	"IST": 5*3600 + 30*60,
+	"JST": 9 * 3600, "KST": 9 * 3600,
+	"AEST": 10 * 3600, "AEDT": 11 * 3600,
+	"ACST": 9*3600 + 30*60, "ACDT": 10*3600 + 30*60,
+	"AWST": 8 * 3600,
+	"NZST": 12 * 3600, "NZDT": 13 * 3600,
+}
+
+var (
+	coreTimeClockZoneRE = regexp.MustCompile(`(?i)^(\d{1,2})(?:[:.](\d{2}))?(?::(\d{2}))?\s*([ap]\.?m\.?)?\s*([A-Za-z]{1,5})$`)
+	coreTimeHourPMRE    = regexp.MustCompile(`(?i)^(\d{1,2})\s*([ap]\.?m\.?)\s*([A-Za-z]{1,5})$`)
+)
+
+func init() {
+	ensureCore()
+}
+
+func ensureCore() {
+	must(AddType(CoreOwner, &model.EntityType{Name: "time", DisplayName: "Time"}))
+	must(AddMatcher(CoreOwner, &model.EntityMatcher{Name: "time.rfc3339", Type: "time", Pattern: coreTimeRFC3339Pattern, Boundary: "token"}))
+	must(AddMatcher(CoreOwner, &model.EntityMatcher{Name: "time.clock_zone", Type: "time", Pattern: coreTimeClockZonePattern, Boundary: "token"}))
+}
+
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+// CoreLookup describes a value using a built-in type. createAt is the post's
+// creation time in Unix milliseconds. It dates a clock that names no day.
+// Zero means the current time.
+func CoreLookup(_ context.Context, typeID, value string, createAt int64) (*model.EntityCard, error) {
+	switch typeID {
+	case CoreTimeTypeID:
+		return coreTimeCard(value, createAt)
+	default:
+		return nil, fmt.Errorf("unsupported entity")
+	}
+}
+
+func coreTimeCard(value string, createAt int64) (*model.EntityCard, error) {
+	parsed, err := parseCoreTime(value, createAt)
+	if err != nil {
+		return nil, err
+	}
+	utc := parsed.UTC()
+	blocks, err := json.Marshal([]map[string]any{
+		{
+			"type": "text",
+			"text": fmt.Sprintf("**UTC:** %s", utc.Format("15:04 MST")),
+		},
+		{
+			"type":      "text",
+			"text":      fmt.Sprintf("As written: %s", value),
+			"is_subtle": true,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &model.EntityCard{
+		TypeID:  CoreTimeTypeID,
+		Value:   value,
+		Title:   "Timestamp",
+		Instant: utc.UnixMilli(),
+		Blocks:  blocks,
+	}, nil
+}
+
+func parseCoreTime(value string, createAt int64) (time.Time, error) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	normalized := strings.ToUpper(value)
+	if parsed, err := time.Parse(time.RFC3339Nano, normalized); err == nil {
+		return parsed, nil
+	}
+	if parsed, err := time.Parse(time.RFC3339, normalized); err == nil {
+		return parsed, nil
+	}
+	if parsed, err := parseCoreTimeClockZone(value, createAt); err == nil {
+		return parsed, nil
+	}
+	return time.Time{}, fmt.Errorf("unsupported entity")
+}
+
+func parseCoreTimeClockZone(value string, createAt int64) (time.Time, error) {
+	compact := collapseSpaces(value)
+	if m := coreTimeClockZoneRE.FindStringSubmatch(compact); m != nil {
+		hour, err := strconv.Atoi(m[1])
+		if err != nil {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		minute := 0
+		if m[2] != "" {
+			minute, err = strconv.Atoi(m[2])
+			if err != nil {
+				return time.Time{}, fmt.Errorf("unsupported entity")
+			}
+		}
+		second := 0
+		if m[3] != "" {
+			second, err = strconv.Atoi(m[3])
+			if err != nil {
+				return time.Time{}, fmt.Errorf("unsupported entity")
+			}
+		}
+		meridiem := m[4]
+		zone := strings.ToUpper(m[5])
+		if meridiem == "" && m[2] == "" {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		hour, err = applyMeridiem(hour, meridiem)
+		if err != nil {
+			return time.Time{}, err
+		}
+		return clockInZone(hour, minute, second, zone, createAt)
+	}
+	if m := coreTimeHourPMRE.FindStringSubmatch(compact); m != nil {
+		hour, err := strconv.Atoi(m[1])
+		if err != nil {
+			return time.Time{}, fmt.Errorf("unsupported entity")
+		}
+		hour, err = applyMeridiem(hour, m[2])
+		if err != nil {
+			return time.Time{}, err
+		}
+		return clockInZone(hour, 0, 0, strings.ToUpper(m[3]), createAt)
+	}
+	return time.Time{}, fmt.Errorf("unsupported entity")
+}
+
+func collapseSpaces(value string) string {
+	var b strings.Builder
+	b.Grow(len(value))
+	prevSpace := false
+	for _, r := range value {
+		if unicode.IsSpace(r) {
+			if !prevSpace {
+				b.WriteByte(' ')
+				prevSpace = true
+			}
+			continue
+		}
+		prevSpace = false
+		b.WriteRune(r)
+	}
+	return strings.TrimSpace(b.String())
+}
+
+func applyMeridiem(hour int, meridiem string) (int, error) {
+	meridiem = strings.ToLower(strings.ReplaceAll(meridiem, ".", ""))
+	switch meridiem {
+	case "":
+		if hour < 0 || hour > 23 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		return hour, nil
+	case "am":
+		if hour < 1 || hour > 12 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		if hour == 12 {
+			return 0, nil
+		}
+		return hour, nil
+	case "pm":
+		if hour < 1 || hour > 12 {
+			return 0, fmt.Errorf("unsupported entity")
+		}
+		if hour == 12 {
+			return 12, nil
+		}
+		return hour + 12, nil
+	default:
+		return 0, fmt.Errorf("unsupported entity")
+	}
+}
+
+func clockInZone(hour, minute, second int, zone string, createAt int64) (time.Time, error) {
+	if minute < 0 || minute > 59 || second < 0 || second > 59 {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	offset, ok := coreTimeZoneOffsets[zone]
+	if !ok {
+		return time.Time{}, fmt.Errorf("unsupported entity")
+	}
+	loc := time.FixedZone(zone, offset)
+	ref := time.Now()
+	if createAt > 0 {
+		ref = time.UnixMilli(createAt)
+	}
+	ref = ref.In(loc)
+	return time.Date(ref.Year(), ref.Month(), ref.Day(), hour, minute, second, 0, loc), nil
+}
+
+```
+
 ### Core Architecture Module: `server/channels/app/guarded_hooks.go`
 ```
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
@@ -817,11 +1092,7 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 		}
 		if replacementPost != nil {
 			post = replacementPost
-			if post.Metadata != nil && metadata != nil {
-				post.Metadata.Priority = metadata.Priority
-			} else {
-				post.Metadata = metadata
-			}
+			restorePriorityAndValues(post, metadata)
 		}
 		return true
 	}, plugin.MessageWillBePostedID)
@@ -849,11 +1120,7 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 		}
 		if replacement != nil {
 			post = replacement
-			if post.Metadata != nil && metadata != nil {
-				post.Metadata.Priority = metadata.Priority
-			} else {
-				post.Metadata = metadata
-			}
+			restorePriorityAndValues(post, metadata)
 		}
 		if trackPluginDelivery {
 			deliveredPluginIDs = append(deliveredPluginIDs, g.PluginId)
@@ -861,6 +1128,18 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 	}
 
 	return post, deliveredPluginIDs, nil
+}
+
+// restorePriorityAndValues puts the original post's priority and property values back on a
+// plugin's replacement post. Values are validated before the hooks run, and a plugin sets
+// values through the plugin API, not by rewriting the post here.
+func restorePriorityAndValues(replacement *model.Post, original *model.PostMetadata) {
+	if replacement.Metadata != nil && original != nil {
+		replacement.Metadata.Priority = original.Priority
+		replacement.Metadata.PropertyValues = original.PropertyValues
+	} else {
+		replacement.Metadata = original
+	}
 }
 
 // runGuardedMessageWillBeUpdated dispatches MessageWillBeUpdated. In the non-guarded
@@ -892,12 +1171,7 @@ func (a *App) runGuardedMessageWillBeUpdated(rctx request.CTX, newPost, oldPost 
 	}()
 
 	// Phase A: fan out to non-guard plugins, fail-open. With empty guards the exclude list is
-	// empty and behavior is identical to plain RunMultiHook.
-	var rejectionReason string
-	pCtx := pluginContext(rctx)
-	a.ch.RunMultiHookExcluding(pluginIDsOf(guards), func(hooks plugin.Hooks, manifest *model.Manifest) bool {
-		newPost, rejectionReason = hooks.MessageWillBeUpdated(pCtx, newPost.ForPlugin(), oldPost.ForPlugin())
-		if newPost != nil && trackPluginDelivery &
+	// empty 
 ```
 
 ### Core Architecture Module: `server/channels/app/imaging/utils.go`
@@ -1584,36 +1858,6 @@ func (w *searchEngineWatcher) startIfInactive(ctx context.Context, timer *time.T
 			w.ps.backfill
 ```
 
-### Core Architecture Module: `server/channels/app/platform/utils.go`
-```
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-
-package platform
-
-import (
-	"crypto/sha256"
-	"encoding/base64"
-)
-
-func getKeyHash(key string) string {
-	hash := sha256.New()
-	hash.Write([]byte(key))
-	return base64.StdEncoding.EncodeToString(hash.Sum(nil))
-}
-
-// allocateCacheTargets is used to fill target value types
-// for getting items from cache.
-func allocateCacheTargets[T any](l int) []any {
-	toPass := make([]any, 0, l)
-	for range l {
-		toPass = append(toPass, new(T))
-	}
-	return toPass
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1644,849 +1888,434 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47848ece` (2026-11-16)
-**Commit Message**: [MM-69773] Fix layout shift when wide images in posts finish loading (#39961)
+### Incident Patch 1: `724208f8` (2026-11-25)
+**Commit Message**: [MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check for Security and Release Updates (#40241)
 
-* [MM-69773] Size image placeholders like the loaded image to avoid layout shift
+* [MM-72029] Gate EnableSecurityFixAlert on the site_notices permissions
 
-The SizeAwareImage placeholder had explicit width/height attributes, so a
-surface's max-width or max-height only clamped one axis and the placeholder
-ended up taller (or wider) than the loaded image. Size it from its src's
-intrinsic dimensions instead, exactly like the real image, and draw the mini
-preview as a background since its fixed size can't be used for sizing.
+Delegated admins with SMTP access no longer read or write the setting;
+those with Notices access do. It stays write_restrictable and
+cloud_restrictable.
 
 Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-* [MM-69773] Size image placeholders from the image's real dimensions
+* [MM-72029] Move the setting to Site Configuration > Notices as Check for Security and Release Updates
 
-Capping the placeholder to 350px in JS produced fractional intrinsic sizes
-that browsers round, so scaled-down placeholders could differ from the real
-image by a fraction of a pixel. CSS already applies the max height to both.
+The help text now covers the security bulletins, the data sent to
+securityupdatecheck.mattermost.com, and the latest release check. The
+setting is hidden on Cloud and read-only when RestrictSystemAdmin is on.
 
 Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-* [MM-69773] Reserve the placeholder's size before its src is decoded
+* [MM-72029] Hide Workspace Optimization's Server updates section when the release check is off
 
-Firefox decodes the placeholder's SVG data URI asynchronously, so for its first
-frame the placeholder had no size and the post grew once it decoded. Use size
-containment with the image's natura
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-**File**: `e2e-tests/playwright/asset/opengraph-tall.html` (added, +18/-0)
+* [MM-72029] Add E2E coverage for Check for Security and Release Updates on the Notices page
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+* [MM-72029] Document Check for Security and Release Updates under Site Configuration > Notices
+
+Co-authored-by: mattermost-code <[REDA
+
+**File**: `docs/main/administration-guide/configure/environment-configuration-settings.mdx` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,18 @@
-+<!doctype html>
-+<html>
-+    <head>
-+        <meta charset="utf-8" />
-+        <title>OpenGraph Test Page</title>
-+        <meta property="og:type" content="website" />
-+        <meta property="og:site_name" content="Mattermost Test" />
-+        <meta property="og:title" content="OpenGraph Preview Title" />
-+        <meta property="og:description" content="This is a test page with a tall image." />
-+        <meta property="og:url" content="/opengraph-tall.html" />
-+        <meta property="og:image" content="/image-600x1200.jpg" />
-+        <meta property="og:image:width" content="600" />
-+        <meta property="og:image:height" content="1200" />
-+    </head>
-+    <body>
-+        <h1>OpenGraph Test Page</h1>
-+    </body>
-+</html>
+@@ -2557,8 +2557,8 @@ With self-hosted deployments, you can configure SMTP email server settings by go
+ </colgroup>
+ <tbody>
+ <tr>
+-<td><p>Enable or disable security alerts and the check for the latest Mattermost release.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled. The server also fetches the latest Mattermost release from GitHub to report whether it's out of date.</li><li><strong>false</strong>: Security alerts are disabled, and the server doesn't fetch the latest Mattermost release from GitHub.</li></ul></td>
+-<td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong></li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
++<td><p>From Mattermost v12.3, this setting is located in <strong>Site Configuration &gt; Notices</strong> as <a href={useBaseUrl('/administration-guide/configure/site-configuration-settings#check-for-security-and-release-updates')}>Check for Security and Release Updates</a>.</p><p>In Mattermost v12.2 and earlier, enable or disable security alerts and the check for the latest Mattermost release here.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled. The server also fetches the latest Mattermost release from GitHub to report whether it's out of date.</li><li><strong>false</strong>: Security alerts are disabled, and the server doesn't fetch the latest Mattermost release from GitHub.</li></ul></td>
++<td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong> (v12.2 and earlier)</li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
+ </tr>
+ </tbody>
+ </table>
 ```
 
-**File**: `e2e-tests/playwright/specs/functional/channels/post_list/post_height.spec.ts` (modified, +344/-9)
+**File**: `docs/main/administration-guide/configure/site-configuration-settings.mdx` (modified, +15/-0)
 ```diff
-@@ -9,7 +9,7 @@ import type {Disposable, Locator, Page} from '@playwright/test';
- import type {Post} from '@mattermost/types/posts';
+@@ -2296,6 +2296,21 @@ Access the following configuration settings in the System Console by going to **
+ </tbody>
+ </table>
  
- import {expect, setupFileServer, test, testConfig, watchElementSize} from '@mattermost/playwright-lib';
--import type {ChannelsPage, ChannelsPost, PlaywrightClient4} from '@mattermost/playwright-lib';
-+import type {ChannelsPage, ChannelsPost, PlaywrightClient4, SizeWatcher} from '@mattermost/playwright-lib';
++### Check for security and release updates
++
++<table>
++<colgroup>
++<col style={{width: '60%'}} />
++<col style={{width: '39%'}} />
++</colgroup>
++<tbody>
++<tr>
++<td><p>From Mattermost v12.3, this setting is located under Notices, and delegated admins need the <strong>Site Configuration &gt; Notices</strong> permission to change it. In Mattermost v12.2 and earlier, it's located in <strong>Environment &gt; SMTP</strong> as <a href={useBaseUrl('/administration-guide/configure/environment-configuration-settings#enable-security-alerts')}>Enable Security Alerts</a>.</p><p>Enable or disable the security update check and the check for the latest Mattermost release. This setting isn't available for Cloud deployments.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> Once every 24 hours, the server checks <code>securityupdatecheck.mattermost.com</code> for security bulletins that apply to its version. See the <a href={useBaseUrl('/administration-guide/manage/telemetry#security-update-check-feature')}>Telemetry</a> documentation for the data sent with this request. When SMTP is configured, system admins are notified by email of relevant bulletins. The server also requests the latest Mattermost release from GitHub (<code>api.github.com</code>) to report whether it's out of date.</li><li><strong>false</strong>: The server doesn't contact <code>securityupdatecheck.mattermost.com</code> or request the latest Mattermost release from GitHub. Security alerts aren't emailed, and the server doesn't report whether it's out of date.</li></ul></td>
++<td><ul><li>System Config path: <strong>Site Configuration &gt; Notices</strong></li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
++</tr>
++</tbody>
++</table>
++
+ ## Connected workspaces
  
- test.describe('Post height', () => {
-     let userClient: PlaywrightClient4;
-@@ -58,6 +58,11 @@ test.describe('Post height', () => {
-         additionalCheck?: (args: {postComponent: ChannelsPost}) => Promise<void>;
-         /** Playwright project names for which this test case should be skipped. */
-         skipProjects?: string[];
-+        /**
-+         * Allows the post height to change by less than half a pixel. An image file's preview can have a slightly
-+         * different aspect ratio than the original that its placeholder is sized from.
-+         */
-+        allowSubpixelHeightChange?: boolean;
-     };
+ <PlanAvailability slug="entry-ent" />
+```
+
+**File**: `docs/main/administration-guide/manage/telemetry.mdx` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@ To report whether the server is running the latest Mattermost release, the serve
  
-     const testCases: PostHeightTestCase[] = [
-@@ -122,8 +127,7 @@ test.describe('Post height', () => {
-         },
-         {
-             name: 'post with a single large image',
--            // MM-69979 Skip this on iPad because images that are too wide but above the minimum height cause layout shift
--            skipProjects: ['ipad'],
-+            allowSubpixelHeightChange: true,
-             makePost: () =>
-                 seedPost({
-                     message: 'post with a single large image',
-@@ -260,8 +264,6 @@ test.describe('Post height', () => {
-         },
-         {
-             name: 'post with a large Markdown image',
--            // MM-69979 Images that are too wide but above the minimum height cause layout shift
--            skipProjects: ['chrome', 'firefox', 'ipad', 'subpath'],
-             makePost: ({fileServerUrl}) =>
-                 seedPost({
-                     message: `![large image](${fileServerUrl}/huge-image.jpg)`,
-@@ -336,8 +338,6 @@ test.describe('Post height', () => {
-         },
-         {
-             name: 'post with a large image preview',
--            // MM-69979 Images that are too wide but above the minimum height cause layout shift
--            skipProjects: ['chrome', 'firefox', 'ipad', 'subpath'],
-             makePost: ({fileServerUrl}) =>
-                 seedPost({
-                     message: `${fileServerUrl}/huge-image.jpg`,
-@@ -465,11 +465,322 @@ test.describe('Post height', () => {
-                 }
+ ### Opt out
  
-                 // * Verify no height changes were detected
-+                const observations = await sizeWatcher.getObservations();
-+                if (testCase.allowSubpixelHeightChange) {
-+                    expect(observations.length).toBeGreaterThan(0);
-+                    for (const {height} of observations) {
-+                        expect(height).toBeCloseTo(observations[0].height, 0);
-+                    }
-+                } else {
-+                    expect(observations).toHaveLength(1);
-+                }
+-To opt out, you can disable this security update check feature for self-hosted deployments in the System Console by going to **Environment \> SMTP \> Enable Security Alerts**. See the [enable security alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts) documentation for details. When this feature is disabled, you will not receive any security alerts, and the server doesn't check GitHub for the latest release.
++To opt out, you can disable this security update check feature for self-hosted deployments in the System Console. From Mattermost v12.3, go to **Site Configuration \> Notices \> Check for Security and Release Updates**. See the [check for security and release updates](/administration-guide/configure/site-configuration-settings#check-for-security-and-release-updates) documentation for details. In Mattermost v12.2 and earlier, go to **Environment \> SMTP \> Enable Security Alerts**. See the [enable security alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts) documentation for details. When this feature is disabled, you will not receive any security alerts, and the server doesn't check GitHub for the latest release.
+ 
+ ## Error and diagnostics reporting feature
+ 
+```
+
+**File**: `docs/main/deployment-guide/air-gapped-operations/disable-phone-home-features.mdx` (modified, +1/-1)
+```diff
+@@ -33,4 +33,4 @@ The GIF picker relies on a third-party service which has a dependency on externa
+ 
+ To avoid log errors, we recommend disabling [telemetry-related features](/administration-guide/manage/telemetry), including the security update check, and error and diagnostics reporting features.
+ 
+-Disabling the security update check in **System Console > Environment > SMTP > [Enable Security Alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts)** also stops the server from requesting the latest Mattermost release from GitHub, which health checks use to report whether the server is out of date.
++Disabling the security update check also stops the server from requesting the latest Mattermost release from GitHub, which health checks use to report whether the server is out of date. From Mattermost v12.3, disable it in **System Console > Site Configuration > Notices > [Check for Security and Release Updates](/administration-guide/configure/site-configuration-settings#check-for-security-and-release-updates)**. In Mattermost v12.2 and earlier, disable it in **System Console > Environment > SMTP > [Enable Security Alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts)**.
+```
+
+**File**: `e2e-tests/cypress/tests/fixtures/console-example-inputs.json` (modified, +5/-6)
+```diff
+@@ -136,6 +136,10 @@
+             {
+                 "path": "admin_console/site_config/notices",
+                 "selector": "AnnouncementSettings.AdminNoticesEnabledtrue"
 +            },
-+        );
-+    }
-+
-+    // Images that are scaled down to fit the width of the post rather than being capped by the max image height. The
-+    // server's previews of these images keep their exact aspect ratio, so their placeholders can match exactly.
-+    const wideImageSurfaces = [
-+        {
-+            name: 'attachment',
-+            makePost: (file: string) => seedPost({message: `post with a ${file} attachment`, files: [file]}),
-+        },
-+        {
-+            name: 'Markdown image',
-+            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file})`}),
-+        },
-+        {
-+            name: 'Markdown image with an explicit size',
-+            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file} =200x50)`}),
-+        },
-+        {
-+            name: 'Markdown image with an explicit width',
-+            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file} =300)`}),
-+        },
-+        {
-+            name: 'image preview',
-+            makePost: (file: string) => seedPost({message: `${fileServerUrl}/${file}`}),
-+        },
-+        {
-+            // An image shorter than its line, where its vertical alignment affects the height of the line
-+            name: 'Markdown image between words',
-+            files: ['image-100x20.jpg'],
-+            makePost: (file: string) =>
-+                seedPost({message: `text before ![inline image](${fileServerUrl}/${file}) text after`}),
-+        },
-+    ];
-+
-+    for (const surface of wideImageSurfaces) {
-+        for (const file of surface.files ?? ['image-2000x400.jpg', 'image-1200x300.jpg']) {
-+            for (const messageDisplay of ['full', 'compact']) {
-+                test(
-+                    `image placeholder should match the size of the loaded image (${file} ${surface.name}, ${messageDisplay} display)`
-```
-
-**File**: `webapp/channels/src/components/block_renderer/image_block.test.tsx` (modified, +28/-0)
-```diff
-@@ -7,6 +7,8 @@ import type {MmImageBlock} from '@mattermost/types/mm_blocks';
- 
- import {openModal} from 'actions/views/modals';
- 
-+import SizeAwareImage from 'components/size_aware_image';
-+
- import {renderWithContext, screen, userEvent} from 'tests/react_testing_utils';
- import {ModalIdentifiers} from 'utils/constants';
- 
-@@ -143,4 +145,30 @@ describe('ImageBlock', () => {
-             }),
-         }));
-     });
-+
-+    // The style is applied to the placeholder over its own aspect ratio, so it mustn't contain an undefined one
-+    it.each([
-+        ['default', undefined, {objectFit: 'contain'}],
-+        ['person', 'person' as const, {objectFit: 'cover', aspectRatio: '1'}],
-+    ])('passes the size caps to SizeAwareImage as a style (%s image)', (_, imageStyle, expectedStyle) => {
-+        renderWithContext(
-+            <ImageBlock
-+                block={{
-+                    type: 'image',
-+                    url: 'https://example.com/photo.png',
-+                    size: 'small',
-+                    image_style: imageStyle,
-+                }}
-+                postId='post-1'
-+            />,
-+        );
-+
-+        expect(jest.mocked(SizeAwareImage).mock.lastCall?.[0].style).toStrictEqual({
-+            width: 'auto',
-+            height: 'auto',
-+            maxWidth: 204,
-+            maxHeight: 120,
-+            ...expectedStyle,
-+        });
-+    });
- });
-```
-
-**File**: `webapp/channels/src/components/block_renderer/image_block.tsx` (modified, +7/-2)
-```diff
-@@ -73,15 +73,20 @@ export const ImageBlock = ({block, postId}: ImageBlockProps) => {
-         return null;
-     }
- 
-+    const isPerson = block.image_style === 'person';
-     const imgClass = classNames('mm-blocks-image__img', {
--        'mm-blocks-image__img--person': block.image_style === 'person',
-+        'mm-blocks-image__img--person': isPerson,
-     });
- 
-     const imageConstraintStyle: CSSProperties = {
-         width: 'auto',
-         height: 'auto',
--        objectFit: block.image_style === 'person' ? 'cover' : 'contain',
-+        objectFit: isPerson ? 'cover' : 'contain',
-     };
-+    if (isPerson) {
-+        // Also applied to SizeAwareImage's placeholder, which otherwise takes the image's aspect ratio
-+        imageConstraintStyle.aspectRatio = '1';
-+    }
-     if (caps.maxWidth !== undefined) {
-         imageConstraintStyle.maxWidth = caps.maxWidth;
-     }
-```
-
-**File**: `webapp/channels/src/components/markdown_image/markdown_image.test.tsx` (modified, +23/-0)
-```diff
-@@ -270,6 +270,29 @@ describe('components/MarkdownImage', () => {
-         expect(img).toHaveAttribute('title', 'test title');
-     });
- 
-+    test.each([
-+        {width: '200', height: '50', expectedHeight: '50'},
-+        {width: '300', height: 'auto', expectedHeight: null},
-+    ])('should reserve the explicit size $width x $height with the placeholder while the image loads', ({width, height, expectedHeight}) => {
-+        const props = {
-+            ...baseProps,
-+            imageMetadata: {format: 'jpg', frameCount: 0, width: 1200, height: 300},
-+            src: 'https://example.com/image.jpg',
-+            width,
-+            height,
-+        };
-+        const {container} = renderWithContext(
-+            <MarkdownImage {...props}/>,
-+        );
-+
-+        const placeholder = container.querySelector('img.image-loading__placeholder');
-+        const img = screen.getByRole('img', {hidden: true});
-+        for (const element of [placeholder, img]) {
-+            expect(element).toHaveAttribute('width', width);
-+            expect(element?.getAttribute('height')).toEqual(expectedHeight);
-+        }
-+    });
-+
-     test(`should render image with MarkdownImageExpand if it is taller than ${Constants.EXPANDABLE_INLINE_IMAGE_MIN_HEIGHT}px`, () => {
-         const props = {
-             ...baseProps,
-```
-
-**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.scss` (modified, +6/-0)
-```diff
-@@ -154,6 +154,12 @@
++            {
++                "path": "admin_console/site_config/notices",
++                "selector": "ServiceSettings.EnableSecurityFixAlerttrue"
              }
-         }
- 
-+        // Keep in sync with the thumbnail branch of getScaledImageDimensions, which sizes the placeholder
-+        &:not(.large) img {
-+            max-width: var(--open-graph-thumbnail-size);
-+            max-height: var(--open-graph-thumbnail-size);
-+        }
-+
-         .preview-toggle {
-             position: absolute;
-             top: -4px;
+         ]
+     },
+@@ -177,12 +181,7 @@
+     },
+     {
+         "section": "environment.smtp",
+-        "disabledInputs": [
+-            {
+-                "path": "/admin_console/environment/smtp",
+-                "selector": "ServiceSettings.EnableSecurityFixAlerttrue"
+-            }
+-        ]
++        "disabledInputs": []
+     },
+     {
+         "section": "environment.push_notification_server",
 ```
 
-**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.test.tsx` (modified, +45/-0)
+**File**: `e2e-tests/playwright/lib/src/ui/components/system_console/sections/site_configuration/notices.ts` (added, +38/-0)
 ```diff
-@@ -272,6 +272,27 @@ describe('PostAttachmentOpenGraphImage', () => {
-         expect(container.querySelector('.PostAttachmentOpenGraph__image.large')).not.toBeInTheDocument();
-         expect(container.querySelector('.PostAttachmentOpenGraph__image .preview-toggle')).not.toBeInTheDocument();
-     });
+@@ -0,0 +1,38 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
 +
-+    test('should size the placeholder of a tall thumbnail to fit within the thumbnail box', () => {
-+        const props = {
-+            ...baseProps,
-+            imageMetadata: {
-+                ...baseProps.imageMetadata!,
-+                height: 1200,
-+                width: 600,
-+            },
-+        };
++import type {Locator} from '@playwright/test';
++import {expect} from '@playwright/test';
 +
-+        const {container} = renderWithContext(
-+            <PostAttachmentOpenGraphImage {...props}/>,
-+            initialState,
++import {RadioSetting} from '../../base_components';
++
++/**
++ * System Console -> Site Configuration -> Notices
++ */
++export default class Notices {
++    readonly container: Locator;
++
++    readonly header: Locator;
++
++    readonly enableAdminNotices: RadioSetting;
++    readonly enableEndUserNotices: RadioSetting;
++    readonly checkForSecurityAndReleaseUpdates: RadioSetting;
++
++    constructor(container: Locator) {
++        this.container = container;
++
++        this.header = container.getByText('Notices', {exact: true});
++
++        this.enableAdminNotices = new RadioSetting(container.getByRole('group', {name: /Enable Admin Notices/}));
++        this.enableEndUserNotices = new RadioSetting(container.getByRole('group', {name: /Enable End User Notices/}));
++        this.checkForSecurityAndReleaseUpdates = new RadioSetting(
++            container.getByRole('group', {name: /Check for Security and Release Updates/}),
++            'ServiceSettings.EnableSecurityFixAlert',
 +        );
++    }
 +
-+        const placeholder = container.querySelector<HTMLImageElement>('.PostAttachmentOpenGraph__image:not(.large) .image-loading__placeholder');
-+        expect(placeholder).toBeInTheDocument();
-+        expect(placeholder!.style.containIntrinsicSize).toEqual('40px 80px');
-+        expect(placeholder!.style.aspectRatio).toEqual('auto 40 / 80');
-+    });
- });
- 
- describe('PostAttachmentOpenGraphBody', () => {
-@@ -472,6 +493,30 @@ describe('Helpers', () => {
-             });
-         });
- 
-+        test('should scale tall images to fit within the thumbnail box', () => {
-+            expect(getScaledImageDimensions({
-+                format: 'png',
-+                frameCount: 0,
-+                height: 1200,
-+                width: 600,
-+            }, false)).toEqual({
-+                height: OPEN_GRAPH_THUMBNAIL_SIZE,
-+                width: OPEN_GRAPH_THUMBNAIL_SIZE / 2,
-+            });
-+        });
-+
-+        test('should not upscale images smaller than the thumbnail box', () => {
-+            expect(getScaledImageDimensions({
-+                format: 'png',
-+                frameCount: 0,
-+                height: 30,
-+                width: 60,
-+            }, false)).toEqual({
-+                height: 30,
-+                width: 60,
-+            });
-+        });
-+
-         test('should return empty dimensions when metadata is invalid', () => {
-             expect(getScaledImageDimensions({
-                 format: 'png',
-```
-
-**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.tsx` (modified, +1/-0)
-```diff
-@@ -108,6 +108,7 @@ export function getScaledImageDimensions(imageMetadata: ImageMetadata, large: bo
-     const ratio = Math.min(
-         OPEN_GRAPH_THUMBNAIL_SIZE / width,
-         OPEN_GRAPH_THUMBNAIL_SIZE / height,
-+        1,
-     );
- 
-     return {
-```
-
----
-
-### Incident Patch 2: `27945cb7` (2026-11-17)
-**Commit Message**: [MM-71213] Fix SMTP client error handling (#39967)
-
-* MM-71213 Fix SMTP client error handling
-
-* MM-71213 Point to the SMTP Connection Security setting in the error
-
-* Revert "MM-71213 Point to the SMTP Connection Security setting in the error"
-
-This reverts commit 263f08fce24b0b52a8b95803516462ca719cfed6.
-
-* MM-71213 Update STARTTLS Connection Security help text
-
-* MM-71213 Report when the SMTP server does not support STARTTLS
-
-* MM-71213 Update STARTTLS Connection Security docs
-
----------
-
-Co-authored-by: Mattermost Build <[REDACTED_EMAIL]>
-
-**File**: `docs/main/administration-guide/configure/authentication-configuration-settings.mdx` (modified, +1/-1)
-```diff
-@@ -495,7 +495,7 @@ This field is required. Anonymous bind is not currently supported.
- </colgroup>
- <tbody>
- <tr>
--<td><p>This setting controls the type of security Mattermost uses to connect to the AD/LDAP server, with these options:</p><ul><li><strong>None</strong>: <strong>(Default for self-hosted deployments)</strong> No encryption. With this option, it is <strong>highly recommended</strong> that the connection be secured outside of Mattermost, such as by a stunnel proxy. <code>config.json</code> option: <code>""</code></li><li><strong>TLS</strong>: <strong>(Default for Cloud deployments)</strong> Encrypts communication with TLS. <code>config.json</code> option: <code>"TLS"</code></li><li><strong>STARTTLS</strong>: Attempts to upgrade an existing insecure connection to a secure connection with TLS. <code>config.json</code> option: <code>"STARTTLS"</code></li></ul></td>
-+<td><p>This setting controls the type of security Mattermost uses to connect to the AD/LDAP server, with these options:</p><ul><li><strong>None</strong>: <strong>(Default for self-hosted deployments)</strong> No encryption. With this option, it is <strong>highly recommended</strong> that the connection be secured outside of Mattermost, such as by a stunnel proxy. <code>config.json</code> option: <code>""</code></li><li><strong>TLS</strong>: <strong>(Default for Cloud deployments)</strong> Encrypts communication with TLS. <code>config.json</code> option: <code>"TLS"</code></li><li><strong>STARTTLS</strong>: Upgrades an existing insecure connection to TLS. The connection fails if the AD/LDAP server doesn't support STARTTLS. <code>config.json</code> option: <code>"STARTTLS"</code></li></ul></td>
- <td><ul><li>System Config path: <strong>Authentication &gt; AD/LDAP</strong></li><li><code>config.json</code> setting: <code>LdapSettings</code> &gt; <code>ConnectionSecurity</code> &gt; <code>""</code></li><li>Environment variable: <code>MM_LDAPSETTINGS_CONNECTIONSECURITY</code></li></ul></td>
- </tr>
- </tbody>
-```
-
-**File**: `docs/main/administration-guide/configure/environment-configuration-settings.mdx` (modified, +1/-1)
-```diff
-@@ -2527,7 +2527,7 @@ With self-hosted deployments, you can configure SMTP email server settings by go
- </colgroup>
- <tbody>
- <tr>
--<td><p>Specify connection security for emails sent using SMTP.</p><ul><li><strong>Not specified</strong>: <strong>(Default)</strong> Send email over an unsecure connection.</li><li><strong>TLS</strong>: Communication between Mattermost and your email server is encrypted.</li><li><strong>STARTTLS</strong>: Attempts to upgrade an existing insecure connection to a secure connection using TLS.</li></ul></td>
-+<td><p>Specify connection security for emails sent using SMTP.</p><ul><li><strong>Not specified</strong>: <strong>(Default)</strong> Send email over an unsecure connection.</li><li><strong>TLS</strong>: Communication between Mattermost and your email server is encrypted.</li><li><strong>STARTTLS</strong>: Upgrades an existing insecure connection to TLS. The connection fails if the SMTP server doesn't support STARTTLS.</li></ul></td>
- <td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong></li><li><code>config.json</code> setting: <code>EmailSettings</code> &gt; <code>ConnectionSecurity</code></li><li>Environment variable: <code>MM_EMAILSETTINGS_CONNECTIONSECURITY</code></li></ul></td>
- </tr>
- </tbody>
-```
-
-**File**: `server/platform/shared/mail/mail.go` (modified, +8/-7)
-```diff
-@@ -11,6 +11,7 @@ import (
- 	"net"
- 	"net/mail"
- 	"net/smtp"
-+	"net/textproto"
- 	"slices"
- 	"time"
- 
-@@ -179,7 +180,13 @@ func NewSMTPClientAdvanced(ctx context.Context, conn net.Conn, config *SMTPConfi
- 			InsecureSkipVerify: config.SkipServerCertificateVerification,
- 			ServerName:         config.ServerName,
- 		}
--		c.StartTLS(tlsconfig)
-+		if err := c.StartTLS(tlsconfig); err != nil {
-+			var replyErr *textproto.Error
-+			if errors.As(err, &replyErr) && (replyErr.Code == 500 || replyErr.Code == 502) {
-+				return nil, errors.Wrap(err, "SMTP server does not support STARTTLS")
-+			}
-+			return nil, errors.Wrap(err, "unable to start TLS")
-+		}
- 	}
- 
- 	if config.EnableSMTPAuth {
-@@ -222,12 +229,6 @@ func TestConnection(ctx context.Context, config *SMTPConfig) error {
- 		}
- 		return errors.Wrap(err, "unable to connect")
- 	}
--	// NewSMTPClient ignores a failed StartTLS, so a handshake that ctx cut short can still return a client.
--	// TODO: MM-71213 remove this check once NewSMTPClient returns the StartTLS error; the error branch above
--	// then reports the deadline.
--	if !stop() {
--		return errors.Wrap(ctx.Err(), "unable to connect")
--	}
- 	c.Close()
- 	c.Quit()
- 
-```
-
-**File**: `server/platform/shared/mail/mail_test.go` (modified, +47/-0)
-```diff
-@@ -1051,3 +1051,50 @@ func TestNewSMTPClientAdvancedDeadlineDuringGreeting(t *testing.T) {
- 	_, err = conn.Write([]byte("QUIT\r\n"))
- 	assert.ErrorIs(t, err, net.ErrClosed, "the connection should be closed when the deadline ends the greeting")
- }
-+
-+func TestStartTLSError(t *testing.T) {
-+	for name, tc := range map[string]struct {
-+		reply string
-+		want  string
-+	}{
-+		"STARTTLS refused":       {reply: "454 TLS not available", want: "unable to start TLS"},
-+		"STARTTLS not supported": {reply: "502 not implemented", want: "SMTP server does not support STARTTLS"},
-+		"STARTTLS unrecognized":  {reply: "500 unrecognized command", want: "SMTP server does not support STARTTLS"},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			cfg := fakeSMTPServer(t, func(conn net.Conn) {
-+				r := textproto.NewConn(conn)
-+				_ = r.PrintfLine("220 localhost ESMTP")
-+				for {
-+					line, err := r.ReadLine()
-+					if err != nil {
-+						return
-+					}
-+					switch {
-+					case strings.HasPrefix(line, "EHLO"):
-+						_ = r.PrintfLine("250-localhost")
-+						_ = r.PrintfLine("250 STARTTLS")
-+					case strings.HasPrefix(line, "STARTTLS"):
-+						_ = r.PrintfLine("%s", tc.reply)
-+					case strings.HasPrefix(line, "MAIL FROM"):
-+						t.Errorf("mail transaction started: %s", line)
-+						_ = r.PrintfLine("250 OK")
-+					case strings.HasPrefix(line, "QUIT"):
-+						_ = r.PrintfLine("221 bye")
-+						return
-+					default:
-+						_ = r.PrintfLine("250 OK")
-+					}
-+				}
-+			})
-+			cfg.ConnectionSecurity = StartTLS
-+			cfg.FeedbackEmail = "sender@example.com"
-+
-+			err := TestConnection(context.Background(), cfg)
-+			require.ErrorContains(t, err, tc.want)
-+
-+			err = SendMailUsingConfig("recipient@example.com", "subject", "body", cfg, false, "", "", "", "", "")
-+			require.ErrorContains(t, err, tc.want)
-+		})
-+	}
++    async toBeVisible() {
++        await expect(this.header).toBeVisible();
++        await this.enableAdminNotices.toBeVisible();
++    }
 +}
 ```
 
-**File**: `webapp/channels/src/components/admin_console/admin_definition_constants.tsx` (modified, +1/-1)
+**File**: `e2e-tests/playwright/lib/src/ui/pages/system_console.ts` (modified, +8/-0)
 ```diff
-@@ -49,7 +49,7 @@ const SECTION_STARTTLS = (
-         <td>
-             <FormattedMessage
-                 id='admin.connectionSecurityStartDescription'
--                defaultMessage='Takes an existing insecure connection and attempts to upgrade it to a secure connection using TLS.'
-+                defaultMessage="Upgrades an existing insecure connection to TLS. The connection fails if the server doesn't support STARTTLS."
-             />
-         </td>
-     </tr>
+@@ -18,6 +18,7 @@ import DelegatedGranularAdministration from '@/ui/components/system_console/sect
+ import PermissionsSystemScheme from '@/ui/components/system_console/sections/user_management/permissions_system_scheme';
+ import MobileSecurity from '@/ui/components/system_console/sections/environment/mobile_security';
+ import Localization from '@/ui/components/system_console/sections/site_configuration/localization';
++import Notices from '@/ui/components/system_console/sections/site_configuration/notices';
+ import Notifications from '@/ui/components/system_console/sections/site_configuration/notifications';
+ import UsersAndTeams from '@/ui/components/system_console/sections/site_configuration/users_and_teams';
+ import BoardAttributes from '@/ui/components/system_console/sections/system_attributes/board_attributes';
+@@ -60,6 +61,7 @@ export default class SystemConsolePage {
+ 
+     // Site Configuration
+     readonly localization: Localization;
++    readonly notices: Notices;
+     readonly notifications: Notifications;
+     readonly usersAndTeams: UsersAndTeams;
+ 
+@@ -115,6 +117,7 @@ export default class SystemConsolePage {
+ 
+         // Site Configuration
+         this.localization = new Localization(adminConsoleWrapper);
++        this.notices = new Notices(adminConsoleWrapper);
+         this.notifications = new Notifications(adminConsoleWrapper);
+         this.usersAndTeams = new UsersAndTeams(adminConsoleWrapper);
+ 
+@@ -209,6 +212,11 @@ export default class SystemConsolePage {
+         await this.mfaSettings.toBeVisible();
+     }
+ 
++    async gotoNotices() {
++        await this.page.goto('/admin_console/site_config/notices');
++        await this.notices.toBeVisible();
++    }
++
+     async gotoPublicLinks() {
+         await this.page.goto('/admin_console/site_config/public_links');
+         await this.publicLinks.toBeVisible();
 ```
 
-**File**: `webapp/channels/src/i18n/en.json` (modified, +1/-1)
+**File**: `e2e-tests/playwright/specs/functional/system_console/site_configuration/check_for_security_and_release_updates.spec.ts` (added, +71/-0)
 ```diff
-@@ -3864,7 +3864,7 @@
-     "description": "Row label in the Connection Security help table (SMTP/LDAP admin settings); STARTTLS is a protocol name and should not be translated."
-   },
-   "admin.connectionSecurityStartDescription": {
--    "defaultMessage": "Takes an existing insecure connection and attempts to upgrade it to a secure connection using TLS.",
-+    "defaultMessage": "Upgrades an existing insecure connection to TLS. The connection fails if the server doesn't support STARTTLS.",
-     "description": "Description of the 'STARTTLS' option in the Connection Security dropdown used by System Console settings such as SMTP and LDAP."
-   },
-   "admin.connectionSecurityTitle": {
+@@ -0,0 +1,71 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
++
++import {expect, test} from '@mattermost/playwright-lib';
++import type {SystemConsolePage} from '@mattermost/playwright-lib';
++
++const SETTING_NAME = /Check for Security and Release Updates|Enable Security Alerts/;
++
++async function expectNotOnSmtpPage(systemConsolePage: SystemConsolePage) {
++    await systemConsolePage.page.goto('/admin_console/environment/smtp');
++    const container = systemConsolePage.page.locator('#adminConsoleWrapper');
++    await expect(container.getByRole('group', {name: /Skip Server Certificate Verification/})).toBeVisible();
++    await expect(container.getByRole('group', {name: SETTING_NAME})).toHaveCount(0);
++}
++
++/**
++ * @objective Verify Check for Security and Release Updates is on Site Configuration > Notices, not Environment > SMTP
++ *
++ * The test server pins ServiceSettings.EnableSecurityFixAlert through an environment variable, so the console always
++ * renders it disabled. Changing the value and its permission gating are covered by the config API and admin definition tests.
++ */
++test(
++    'shows Check for Security and Release Updates on the Notices page instead of the SMTP page',
++    {tag: ['@system_console', '@notices']},
++    async ({pw}) => {
++        const {adminUser} = await pw.initSetup();
++
++        // # Log in as a system admin
++        const {systemConsolePage} = await pw.testBrowser.login(adminUser);
++
++        // * Verify the setting is no longer on the SMTP page
++        await expectNotOnSmtpPage(systemConsolePage);
++
++        // # Open Site Configuration > Notices
++        await systemConsolePage.gotoNotices();
++        const setting = systemConsolePage.notices.checkForSecurityAndReleaseUpdates;
++
++        // * Verify the setting is shown with the test baseline (off) and its help text covers both checks
++        await setting.toBeVisible();
++        await setting.toBeFalse();
++        await expect(setting.helpText!).toContainText('security bulletins');
++        await expect(setting.helpText!).toContainText('latest Mattermost release');
++    },
++);
++
++/**
++ * @objective Verify write access to SMTP alone no longer grants the setting
++ */
++test(
++    'is not available to a delegated admin with only SMTP access',
++    {tag: ['@system_console', '@notices']},
++    async ({pw}) => {
++        await pw.skipIfNoLicense();
++        const {adminClient, user} = await pw.initSetup();
++
++        // # Grant the user manager role read and write access to SMTP, but not to Notices
++        const role = await adminClient.getRoleByName('system_user_manager');
++        await adminClient.patchRole(role.id, {
++            permissions: [...role.permissions, 'sysconsole_read_environment_smtp', 'sysconsole_write_environment_smtp'],
++        });
++        await adminClient.updateUserRoles(user.id, 'system_user system_user_manager');
++
++        // # Log in as that user
++        const {systemConsolePage} = await pw.testBrowser.login(user);
++
++        // * Verify the setting isn't on the SMTP page and Notices isn't in the sidebar
++        await expectNotOnSmtpPage(systemConsolePage);
++        await expect(systemConsolePage.sidebar.environment.smtp.link).toBeVisible();
++        await expect(systemConsolePage.sidebar.siteConfiguration.notices.link).toHaveCount(0);
++    },
++);
 ```
 
 ---
 
-### Incident Patch 3: `3c6e3e09` (2026-11-16)
-**Commit Message**: Changelog generator: fixes from the v12.2.0 dry run (#39932)
+### Incident Patch 2: `fde4020c` (2026-11-25)
+**Commit Message**: Fix typos in plugin registry JSDoc comments (#40296)
 
-* Changelog generator: fixes from the v12.2.0 dry run
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-- Database Schema Changes: the summary bullet names the release instead of VERSION.
-- API Changes: config-change-checker endpoint lines get their full path from the router
-  (the previous release's for a removed route, this release's for an added one). A line
-  whose route can't be found is left out of the note and flagged in the report, never
-  printed with a partial path. The checker itself now chains prefixes back to APIRoot.
-- A note that is already a sentence with its own verb doesn't get "Added" in front of it.
-- A note that says no more than its listed migration's name is folded into Database
-  Schema Changes, the model is told which migrations a note's PR added, and migration
-  numbers are taken out of bullets in every other section.
-- A docs page found for a PR is linked from that PR's bullet in any section, including
-  config.json and Compatibility, when the model didn't link it.
-- A dependency swap that changes behaviour goes under Compatibility, merged with an
-  overlapping bullet there.
-- A dry run also prints its summary to the job log.
-
-Co-Authored-By:
-
-**File**: `.github/scripts/changelog_release.py` (modified, +15/-2)
+**File**: `webapp/channels/src/plugins/registry.ts` (modified, +2/-2)
 ```diff
-@@ -239,6 +239,14 @@ def git_show(ref: str, path: str) -> str | None:
-     raise RuntimeError(f"git show {ref}:{path} failed: {(result.stderr or listing.stderr).strip()}")
+@@ -270,7 +270,7 @@ export default class PluginRegistry {
  
- 
-+def git_ls(ref: str, path: str) -> list[str]:
-+    """The files directly under the directory ``path`` (ending in ``/``) at ``ref``. A failing git command raises."""
-+    result = _git("ls-tree", "--name-only", ref, "--", path)
-+    if result.returncode != 0:
-+        raise RuntimeError(f"git ls-tree {ref} -- {path} failed: {result.stderr.strip()}")
-+    return sorted(line for line in result.stdout.splitlines() if line.strip())
-+
-+
- def git_added_files(base: str, head: str, path: str) -> list[str]:
-     """Files under ``path`` added between ``base`` and ``head``. A failing git command raises."""
-     result = _git("diff", "--name-only", "--diff-filter=A", base, head, "--", path)
-@@ -591,7 +599,10 @@ def _pick(candidates: list[dict]) -> dict | None:
- def docs_link(source: str, prs: dict, files_of, read_file) -> dict:
-     """Where the docs for the PR ``source`` are, and why, following the PR to its docs.
- 
--    ``prs`` maps each milestone PR's ``owner/repo#N`` to its title, body and head_ref;
-+    ``prs`` maps each milestone PR's ``owner/repo#N`` to its title, body and head_ref. It may also
-+    hold docs PRs outside the milestone (merged since the previous release, ``"outside": True``):
-+    docs often land after the code, in a later milestone or none. Those count only when they
-+    link the PR, never by a shared Jira key;
-     ``files_of(source)`` lists a PR's changed files (filename, status, patch);
-     ``read_file(path)`` reads a file as it is now, or None if it no longer exists.
- 
-@@ -608,10 +619,12 @@ def docs_link(source: str, prs: dict, files_of, read_file) -> dict:
-         for other, info in prs.items():
-             if other == source or not other.startswith("mattermost/mattermost#"):
-                 continue
--            shared = keys & jira_keys(info.get("title"), info.get("head_ref"), info.get("body"))
-+            shared = set() if info.get("outside") else keys & jira_keys(info.get("title"), info.get("head_ref"), info.get("body"))
-             linked = source in pr_references(info.get("body"), other.split("#")[0])
-             if shared or linked:
-                 via = f"docs PR {other}, which " + (f"names {', '.join(sorted(shared))}" if shared else "links the PR")
-+                if info.get("outside"):
-+                    via += " (outside the milestone)"
-                 candidates += _docs_candidates(files_of(other), via, read_file)
-         chosen = _pick(candidates)
-     if chosen:
+     /**
+      * Register a component fixed to the bottom of the create new channel modal and also registers a callback function to be called after
+-     * the channel has been succesfully created
++     * the channel has been successfully created
+      * Accepts a React component. Returns a unique identifier.
+      */
+     registerActionAfterChannelCreation = reArg(['component', 'action'], ({
+@@ -1214,7 +1214,7 @@ export default class PluginRegistry {
+      * Note that this is a low-level interface primarily meant for internal use, and is not subject
+      * to semver guarantees. It may change in the future.
+      * Accepts the following:
+-     * - func - A function that recieve the admin console config definitions and return a new
++     * - func - A function that receive the admin console config definitions and return a new
+      *          version of it, which is used for build the admin console.
+      * Each plugin can register at most one admin console plugin function, with newer registrations
+      * replacing older ones.
 ```
 
-**File**: `.github/scripts/check_config_changes_ci.py` (modified, +33/-3)
+---
+
+### Incident Patch 3: `e605f8be` (2026-11-25)
+**Commit Message**: mmctl: reject path-prefixed names in import delete (#40301)
+
+import delete printed success for names like data/import/<file> without
+deleting anything. Reject names containing path separators and clarify
+the help text to require the file name only.
+
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+
+**File**: `server/cmd/mmctl/commands/import.go` (modified, +5/-0)
 ```diff
-@@ -402,20 +402,29 @@ def check_config(patches: dict[str, str]) -> CheckResult:
- )
- _API_ROUTES_PATH = "server/channels/api4/api.go"
+@@ -44,6 +44,7 @@ var ImportUploadCmd = &cobra.Command{
+ var ImportDeleteCmd = &cobra.Command{
+ 	Use:     "delete [importname]",
+ 	Short:   "Delete an import file",
++	Long:    "Delete an import file. Provide only the file name as shown by \"import list available\", not a path.",
+ 	Example: "  import delete import_file.zip",
+ 	Args:    cobra.ExactArgs(1),
+ 	RunE:    withClient(importDeleteCmdF),
+@@ -273,6 +274,10 @@ func importUploadCmdF(c client.Client, command *cobra.Command, args []string) er
+ func importDeleteCmdF(c client.Client, command *cobra.Command, args []string) error {
+ 	importName := args[0]
  
-+# api.BaseRoutes.APIRoot = srv.Router.PathPrefix(model.APIURLSuffix).Subrouter()
-+_ROOT_RE = re.compile(r'BaseRoutes\.(\w+)\s*=\s*[\w.]*Router\.PathPrefix\(model\.(APIURLSuffix\w*)\)')
-+# The model constants the roots are built from (server/public/model/client4.go).
-+_ROOT_SUFFIXES = {"APIURLSuffix": "/api/v4", "APIURLSuffixV4": "/api/v4", "APIURLSuffixV5": "/api/v5"}
++	if strings.ContainsAny(importName, `/\`) {
++		return fmt.Errorf("invalid import name %q: provide only the file name as shown by \"import list available\", not a path", importName)
++	}
 +
- _METHOD_RE    = re.compile(r'(?:http\.Method)?(\w+)')
- _HTTP_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
- 
- 
- def _route_prefixes(api_src: str) -> dict[str, str]:
-     """Each api4 subrouter's path prefix, from the PathPrefix(...).Subrouter() lines of api.go.
- 
--    A subrouter hangs off another one, so its prefix is the parent's plus its own. The
--    roots (APIRoot and the like) are not defined by such a line and count as empty.
-+    A subrouter hangs off another one, so its prefix is the parent's plus its own, back to
-+    a root (APIRoot is ``/api/v4``, APIRoot5 ``/api/v5``). A chain that doesn't reach a
-+    known root starts from an empty prefix.
-     """
-     parents = {name: (parent, path) for name, parent, path in _SUBROUTER_RE.findall(api_src)}
--    prefixes: dict[str, str] = {}
-+    roots = {name: _ROOT_SUFFIXES[suffix] for name, suffix in _ROOT_RE.findall(api_src) if suffix in _ROOT_SUFFIXES}
-+    prefixes: dict[str, str] = dict(roots)
- 
-     def prefix(name: str, seen: tuple = ()) -> str:
-+        if name in roots:
-+            return roots[name]
-         if name not in parents or name in seen:
-             return ""
-         if name not in prefixes:
-@@ -490,6 +499,27 @@ def _parse_endpoints(src: str, prefixes: Optional[dict] = None) -> set[tuple[str
-     return endpoints
- 
- 
-+def router_endpoints(sources: list[str], api_src: str) -> set[tuple[str, str, str]]:
-+    """Every endpoint registered in ``sources`` (api4 files), with its full path.
-+
-+    Only routes on a known subrouter or root are returned: a route on any other receiver
-+    has no prefix that can be worked out, so its path would be partial.
-+    """
-+    prefixes = _route_prefixes(api_src)
-+    known = {name for name in prefixes}
-+    endpoints: set[tuple[str, str, str]] = set()
-+    for src in sources:
-+        blob = " ".join(src.split())
-+        for m in _HANDLE_RE.finditer(blob):
-+            receiver = m.group(1).rsplit(".", 1)[-1]
-+            if receiver not in known:
-+                continue
-+            full = _shorten_path_vars(prefixes[receiver] + m.group(2))
-+            for method in _parse_methods(m.group(4)):
-+                endpoints.add((full or "/", m.group(3), method))
-+    return endpoints
-+
-+
- def check_api(patches: dict[str, str]) -> CheckResult:
-     """
-     Detect API endpoint additions/removals in the api4/ directory.
+ 	if _, err := c.DeleteImport(context.TODO(), importName); err != nil {
+ 		return fmt.Errorf("failed to delete import: %w", err)
+ 	}
 ```
 
-**File**: `.github/scripts/generate_changelog.py` (modified, +284/-14)
+**File**: `server/cmd/mmctl/commands/import_e2e_test.go` (modified, +24/-0)
 ```diff
-@@ -65,6 +65,7 @@
+@@ -444,6 +444,30 @@ func (s *MmctlE2ETestSuite) TestImportDeleteCmdF() {
+ 		s.Require().Empty(printer.GetErrorLines())
+ 	})
  
- sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
- import changelog_release  # noqa: E402
-+import check_config_changes_ci as config_checker  # noqa: E402  (its router parser)
- 
- GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
- REPOS = [r.strip() for r in os.environ["REPOS"].split(",") if r.strip()]
-@@ -189,9 +190,13 @@
- 
- 12.  **Source markers:** Each raw release note begins with an ID in square brackets, such as `[N12]`. Every note you are given must appear in your output: end every bullet you write with the ID of the note it came from in double square brackets, separated from the text by one space: ` - Fixed an issue where the channel header was hidden. [[N12]]`. A note with no marker on any bullet is treated as left out of the changelog, so check before you answer that every ID you were given appears at least once. If a bullet combines several related notes, it must carry the ID of every note it combines, either in one marker or in several: `[[N3,N7]]` or `[[N3]][[N7]]`. Never merge a note into another bullet without adding its ID to that bullet. Do not put a marker on headings, on the `See BLOG_POST_LINK` line, on the config.json description paragraph, on plan-label bullets such as ` - **Changes to All plans:**`, or on the Database Schema Changes summary bullet; put it on the bullets nested beneath them instead. Never write a marker anywhere else. Markers are removed automatically before publishing.
- 
--13.  **Notes read from the release diff:** Some notes were not written by a developer but read from the code or the performance team's report: pre-packaged plugin version changes, added or removed WebSocket events, database schema migrations (given as SQL), and the benchmarking result. Place each in its section: plugin versions at the top of `#### User Interface` (keep the plugin bullet text and link exactly as given), WebSocket events under `### WebSocket Event Changes`, migrations under `#### Database Schema Changes`, and the benchmarking result as the first bullet of `#### Performance` under `### Improvements`, kept exactly as given. When a developer's note already describes the same change, write one bullet that combines them and carries both IDs, rather than two bullets saying the same thing.
-+13.  **Notes read from the release diff:** Some notes were not written by a developer but read from the code or the performance team's report: pre-packaged plugin version changes, added or removed WebSocket events, database schema migrations (given as SQL), and the benchmarking result. Place each in its section: plugin versions at the top of `#### User Interface` (keep the plugin bullet text and link exactly as given), WebSocket events under `### WebSocket Event Changes`, migrations under `#### Database Schema Changes`, and the benchmarking result as the first bullet of `#### Performance` under `### Improvements`, kept exactly as given. When a developer's note already describes the same change, write one bullet that combines them and carries both IDs, rather than two bullets saying the same thing. A developer's note about a schema change listed under `#### Database Schema Changes` (its PR added that migration, or the note names it) goes into that migration's bullet, carrying both IDs: never write a second bullet for it in another section. Never write a migration number (such as ``000238``) or migration file name anywhere outside `#### Database Schema Changes`.
- 
--14.  **Documentation links:** A note may end with a `Docs page:` line, found by following its PR to the documentation that PR changed. When that note's bullet goes under `### Improvements`, link the feature's name in the bullet to that URL, exactly as given, the way existing entries do: ` - Added [channel attributes](https://docs.mattermost.com/administration-guide/manage/admin/channel-attributes) on Enterprise Advanced.` Link it once, and only in an `### Improvements` bullet. Never add a docs.mattermost.com link that was not given in a note."""
-+14.  **Documentation links:** A note may end with a `Docs page:` line, found by following its PR to the documentation that PR changed. Link that note's bullet to that URL, exactly as given, wherever the bullet goes (under `### Improvements`, `#### config.json`, `#### Compatibility` or any other section), by linking the feature's name the way existing entries do: ` - Added [channel attributes](https://docs.mattermost.com/administration-guide/manage/admin/channel-attributes) on Enterprise Advanced.` Link each page once. Never add a docs.mattermost.com link that was not given in a note.
++	s.RunForSystemAdminAndLocal("delete import with a path is rejected and keeps the file", func(c client.Client) {
++		importFilePath := filepath.Join(server.GetPackagePath(), "tests", "import_test.zip")
++		importPath, err := filepath.Abs(filepath.Join(*s.th.App.Config().FileSettings.Directory,
++			*s.th.App.Config().ImportSettings.Directory))
++		s.Require().Nil(err)
 +
-+15.  **Verbs:** Start a bullet with "Added" only when the note is about something new being added. A note that is already a sentence with its own verb (such as "``GET /api/v4/posts/{post_id}/thread`` with ``updatesOnly=true`` now includes deleted replies") is kept as that sentence, or rewritten with a fitting verb ("Updated ... so that ..."); never put "Added" in front of it.
++		importName := "path_import_test.zip"
++		err = utils.CopyFile(importFilePath, filepath.Join(importPath, importName))
++		s.Require().Nil(err)
++		defer func() {
++			s.Require().Nil(s.th.App.DeleteImport(importName))
++		}()
 +
-+16.  **Dependency cha
++		printer.Clean()
++		err = importDeleteCmdF(c, &cobra.Command{}, []string{filepath.Join(*s.th.App.Config().ImportSettings.Directory, importName)})
++		s.Require().Error(err)
++		s.Require().Contains(err.Error(), "provide only the file name")
++		s.Require().Empty(printer.GetLines())
++
++		imports, appErr := s.th.App.ListImports()
++		s.Require().Nil(appErr)
++		s.Require().Contains(imports, importName)
++	})
++
+ 	s.RunForSystemAdminAndLocal("delete import", func(c client.Client) {
+ 		importName := "import_test.zip"
+ 		importFilePath := filepath.Join(server.GetPackagePath(), "tests", importName)
 ```
 
-**File**: `.github/scripts/test_check_config_changes_ci.py` (modified, +22/-0)
+**File**: `server/cmd/mmctl/commands/import_test.go` (modified, +16/-0)
 ```diff
-@@ -355,6 +355,28 @@ def test_a_path_variable_whose_pattern_has_braces_is_shortened_whole(self):
-                          {("/health/findings/{fingerprint}/mute", "muteHealthFinding", "POST")})
-         self.assertEqual(checker._shorten_path_vars("/{a:[0-9]{2,3}}/{b}/{c:x}"), "/{a}/{b}/{c}")
- 
-+    def test_routes_chain_back_to_the_api_root(self):
-+        # #39527 and #39528 wrote "GET /posts" and "GET /signup_available": the root and the
-+        # subrouter prefix were lost.
-+        api = ('\tapi.BaseRoutes.APIRoot = srv.Router.PathPrefix(model.APIURLSuffix).Subrouter()\n'
-+               '\tapi.BaseRoutes.APIRoot5 = srv.Router.PathPrefix(model.APIURLSuffixV5).Subrouter()\n'
-+               '\tapi.BaseRoutes.Usage = api.BaseRoutes.APIRoot.PathPrefix("/usage").Subrouter()\n'
-+               '\tapi.BaseRoutes.HostedCustomer = api.BaseRoutes.APIRoot.PathPrefix("/hosted_customer").Subrouter()\n')
-+        usage = ('\tapi.BaseRoutes.Usage.Handle("/posts", api.APISessionRequired(getPostsUsage)).Methods(http.MethodGet)\n'
-+                 '\tapi.BaseRoutes.HostedCustomer.Handle("/signup_available", '
-+                 'api.APISessionRequired(handleSignupAvailable)).Methods(http.MethodGet)\n'
-+                 '\tsomeOtherRouter.Handle("/loose", api.APISessionRequired(loose)).Methods(http.MethodGet)\n')
-+        self.assertEqual(checker._route_prefixes(api)["APIRoot5"], "/api/v5")
-+        self.assertEqual(checker._parse_endpoints(usage, checker._route_prefixes(api)) - {("/loose", "loose", "GET")}, {
-+            ("/api/v4/usage/posts", "getPostsUsage", "GET"),
-+            ("/api/v4/hosted_customer/signup_available", "handleSignupAvailable", "GET"),
-+        })
-+        # The changelog reads the router as a whole and leaves out a route on an unknown receiver.
-+        self.assertEqual(checker.router_endpoints([usage], api), {
-+            ("/api/v4/usage/posts", "getPostsUsage", "GET"),
-+            ("/api/v4/hosted_customer/signup_available", "handleSignupAvailable", "GET"),
-+        })
+@@ -1059,4 +1059,20 @@ func (s *MmctlUnitTestSuite) TestDeleteImportCmdF() {
+ 		s.Len(printer.GetLines(), 2)
+ 		s.Equal("Import file \"import.zip\" has been deleted", printer.GetLines()[1])
+ 	})
 +
-     def test_a_route_on_an_unknown_router_keeps_its_own_path(self):
-         self.assertEqual(checker._parse_endpoints(_HANDLE), {("/api/v4/foo", "getFoo", "GET")})
- 
-```
-
-**File**: `.github/scripts/test_generate_changelog.py` (modified, +334/-7)
-```diff
-@@ -429,6 +429,11 @@ def setUp(self):
-         self.saved_show = gc.changelog_release.git_show
-         self.saved_benchmark = gc.changelog_release.benchmark_notes
-         gc.changelog_release.benchmark_notes = lambda version: []
-+        self.saved_cut = gc.release_branch_cut
-+        gc.release_branch_cut = lambda ref: "2026-10-16T09:18:58Z"
-+        self.merged_since = {}
-+        self.saved_merged = gc.merged_prs_since
-+        gc.merged_prs_since = lambda repo, since: self.merged_since
-         self.saved_env = dict(os.environ)
-         gc.VERSION = gc.MILESTONE_TITLE = "v12.1.0"
-         gc.REPOS = ["mattermost/mattermost"]
-@@ -466,6 +471,8 @@ def tearDown(self):
-         gc.changelog_release.derived_notes = self.saved_derived
-         gc.changelog_release.git_show = self.saved_show
-         gc.changelog_release.benchmark_notes = self.saved_benchmark
-+        gc.release_branch_cut = self.saved_cut
-+        gc.merged_prs_since = self.saved_merged
-         os.environ.clear()
-         os.environ.update(self.saved_env)
- 
-@@ -554,7 +561,7 @@ def polish(notes):
-         self.assertIn("changed in the same PR, which added the page", link["basis"])
-         self.assertIn(f"is documented in [Feature]({url}) (linked in Administration)", (self.out / "summary.md").read_text())
- 
--    def test_docs_link_on_another_prs_bullet_is_dropped(self):
-+    def test_docs_link_on_another_prs_bullet_moves_to_the_prs_own_bullet(self):
-         self.details[1] = {"head_ref": "MM-123-feature", "files": [{
-             "filename": "docs/main/administration-guide/manage/admin/feature.mdx", "status": "added",
-             "patch": "+# Feature\n+\n+Use the feature.\n",
-@@ -571,11 +578,34 @@ def polish(notes):
-         gc.main()
-         url = "https://docs.mattermost.com/administration-guide/manage/admin/feature"
-         content = self.changelog.read_text()
--        self.assertNotIn(url, content)
--        self.assertIn("Extended the feature.", content)
-+        self.assertIn(f" - Added the feature. See the [Feature]({url}) documentation for details.\n", content)
-+        self.assertIn(" - Extended the feature.\n", content)
-+        self.assertEqual(content.count(url), 1)
-         link = self._payload()["readiness"]["doc_links"][0]
--        self.assertEqual((link["used_in"], link["linked_elsewhere"]), ([], []))
--        self.assertIn("(no bullet links it)", (self.out / "summary.md").read_text())
-+        self.assertEqual((link["used_in"], link["linked_elsewhere"]), (["Administration"], []))
-+        self.assertNotIn("(no bullet links it)", (self.out / "summary.md").read_text())
++	s.Run("delete command rejects names containing a path without calling the server", func() {
++		for _, name := range []string{
++			"data/import/import.zip",
++			"./import.zip",
++			"../import.zip",
++			"/data/import/import.zip",
++			`data\import\import.zip`,
++		} {
++			printer.Clean()
 +
-+    def test_a_docs_pr_outside_the_milestone_that_links_the_pr_gives_its_page(self):
-+        # Docs that land after the code: #900 is in no milestone and links #1.
-+        self.merged_since = {
-+            "mattermost/mattermost#900": {"title": "Docs for the feature", "body": "Documents https://github.com/mattermost/mattermost/pull/1."},
-+            "mattermost/mattermost#901": {"title": "MM-123 other docs", "body": "Unrelated."},  # a Jira key alone is not enough
-+        }
-+        self.details[900] = {"head_ref": "docs-feature", "files": [{
-+            "filename": "docs/main/administration-guide/manage/admin/feature.mdx", "status": "added",
-+            "patch": "+# Feature\n+\n+Use the feature.\n"}]}
-+        self.details[901] = {"head_ref": "MM-123-docs", "files": [{
-+            "filename": "docs/main/administration-guide/manage/admin/other.mdx", "status": "added", "patch": "+# Other\n"}]}
-+        self.prs[0]["head_ref"] = "MM-123-feature"
-+        pages = {"docs/main/administration-guide/manage/admin/feature.mdx": "---\ntitle: Feature\n---\n# Feature\n",
-+                 "docs/main/administration-guide/manage/admin/other.mdx": "---\ntitle: Other\n---\n# Other\n"}
-+        gc.changelog_release.git_show = lambda ref, path: pages.get(path, "FROM golang:1.27.1-bookworm\n")
-+        self.site_pages.update(pages)
-+        gc.main()
-+        link, = self._payload()["readiness"]["doc_links"]
-+        self.assertEqual((link["source"], link["url"]),
-+                         ("mattermost/mattermost#1", "https://docs.mattermost.com/administration-guide/manage/admin/feature"))
-+        self.assertIn("docs PR mattermost/mattermost#900, which links the PR (outside the milestone)", link["basis"])
- 
-     def test_docs_line_outranks_the_followed_page_and_is_checked(self):
-         self.details[1] = {"head_ref": "MM-123-feature", "files": [{
-@@ -603,7 +633,7 @@ def polish(notes):
-         readiness = self._payload()["readiness"]
-         self.assertEqual(readiness["doc_links"], [{
-             "source": "mattermost/mattermost#1", "url": named, "title": "Named page",
--            "basis": "named on the Docs: line of the PR's release note", "used_in": [], "linked_elsewhere": [],
-+            "basis": "named on the Docs: line of the PR's release note", "used_in": ["Administration"], "linked_elsewhere": [],
-         }])
-         self.assertEqual(readiness["doc_lin
++			err := importDeleteCmdF(s.client, &cobra.Command{}, []string{name})
++			s.Require().EqualError(err, fmt.Sprintf("invalid import name %q: provide only the file name as shown by \"import list available\", not a path", name))
++			s.Empty(printer.GetLines())
++		}
++	})
+ }
 ```
 
-**File**: `.github/workflows/changelog-scripts-test.yml` (modified, +1/-0)
+**File**: `server/cmd/mmctl/docs/mmctl_import_delete.rst` (modified, +1/-1)
 ```diff
-@@ -4,6 +4,7 @@ on:
-   pull_request:
-     paths:
-       - '.github/scripts/generate_changelog.py'
-+      - '.github/scripts/check_config_changes_ci.py'
-       - '.github/scripts/changelog_release.py'
-       - '.github/scripts/test_generate_changelog.py'
-       - '.github/scripts/test_changelog_release.py'
-```
-
-**File**: `.github/workflows/generate-changelog.yml` (modified, +8/-1)
-```diff
-@@ -198,7 +198,7 @@ jobs:
-         run: |
-           # Run the generator from this checkout even after the PR branch is checked out
-           # below: that branch was cut when the PR was opened and may carry an older copy.
--          cp .github/scripts/generate_changelog.py .github/scripts/changelog_release.py "$RUNNER_TEMP/"
-+          cp .github/scripts/generate_changelog.py .github/scripts/changelog_release.py .github/scripts/check_config_changes_ci.py "$RUNNER_TEMP/"
+@@ -9,7 +9,7 @@ Synopsis
+ ~~~~~~~~
  
-           PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "changelog/$VERSION" --state open --json number --jq '.[0].number // empty')"
-           BODY_FILE=""
-@@ -282,6 +282,13 @@ jobs:
-             echo
-             cat "$SUMMARY"
-           } >> "$GITHUB_STEP_SUMMARY"
-+          # A dry run's output is only read here and in the artifact; the log keeps a copy
-+          # that can be read without downloading it.
-+          if [ "$MODE" = "dry_run" ]; then
-+            echo "::group::Run summary"
-+            cat "$SUMMARY"
-+            echo "::endgroup::"
-+          fi
  
-       - name: Upload changelog output
-         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+-Delete an import file
++Delete an import file. Provide only the file name as shown by "import list available", not a path.
+ 
+ ::
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40092** (2026-11-17): Automated cherry pick of #39549 (@mattermost-build)
-- **PR #40090** (2026-11-17): Automated cherry pick of #40066 (@mattermost-build)
-- **PR #40084** (2026-11-16): [MM-65981] Make AD/LDAP wizard settings searchable in System Console (@cursor[bot])
-- **PR #40083** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
-- **PR #40082** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
-- **PR #40081** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
+- **PR #40411** (2026-11-26): Automated cherry pick of #40403 (@mattermost-build)
+- **PR #40410** (2026-11-26): Automated cherry pick of #40380 (@mattermost-build)
+- **PR #40407** (closed): docs: AI draft for [MM-72250] Serve the health findings export endpoint over local mode (@mattermost-docs-ai[bot])
+- **PR #40403** (2026-11-26): MM-72051 Limit the unauthenticated client config to fields needed before login (@esarafianou)
+- **PR #40395** (2026-11-26): Automated cherry pick of #38704 (@mattermost-code)
+- **PR #40394** (2026-11-26): Automated cherry pick of #37360 (@mattermost-code)
 
 ---
 
@@ -2506,48 +2335,33 @@ Co-Authored-By:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MM-69773] Fix layout shift when wide images in posts finish loading
+## X. [MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check 
 
 **RULE**:
-When implementing operations in `e2e-tests/playwright/asset/opengraph-tall.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/main/administration-guide/configure/environment-configuration-settings.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47848ece`: [MM-69773] Fix layout shift when wide images in posts finish loading. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `724208f8`: [MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check for Security and Release Updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-tests/playwright/asset/opengraph-tall.html`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/main/administration-guide/configure/environment-configuration-settings.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>OpenGraph Test Page</title>
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Mattermost Test" />
-        <meta property="og:title" content="OpenGraph Preview Title" />
-        <meta property="og:description" content="This is a test page with a tall image." />
-        <meta property="og:url" content="/opengraph-tall.html" />
-        <meta property="og:image" content="/image-600x1200.jpg" />
-        <meta property="og:image:width" content="600" />
-        <meta property="og:image:height" content="1200" />
-    </head>
-    <body>
-        <h1>OpenGraph Test Page</h1>
-    </body>
-</html>
+<td><p>From Mattermost v12.3, this setting is located in <strong>Site Configuration &gt; Notices</strong> as <a href={useBaseUrl('/administration-guide/configure/site-configuration-settings#check-for-security-and-release-updates')}>Check for Security and Release Updates</a>.</p><p>In Mattermost v12.2 and earlier, enable or disable security alerts and the check for the latest Mattermost release here.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled. The server also fetches the latest Mattermost release from GitHub to report whether it's out of date.</li><li><strong>false</strong>: Security alerts are disabled, and the server doesn't fetch the latest Mattermost release from GitHub.</li></ul></td>
+<td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong> (v12.2 and earlier)</li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+<td><p>Enable or disable security alerts and the check for the latest Mattermost release.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled. The server also fetches the latest Mattermost release from GitHub to report whether it's out of date.</li><li><strong>false</strong>: Security alerts are disabled, and the server doesn't fetch the latest Mattermost release from GitHub.</li></ul></td>
+<td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong></li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47848ece` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `724208f8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

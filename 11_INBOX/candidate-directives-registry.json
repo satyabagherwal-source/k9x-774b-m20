@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:49:27.145Z",
+  "last_updated": "2026-11-26T16:58:36.379Z",
   "directives": [
     {
       "id": "CD-001",
@@ -65982,6 +65982,68 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E2E33A-server-events-dispatch-rerender-dm-statu.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-QLEU",
+      "directive_title": "run tcsh profiles after the last deactivation",
+      "source_repo": "flox/flox",
+      "source_commit": "5441ece2",
+      "staged_file": "11_INBOX/candidate-directives/CD-QLEU-run-tcsh-profiles-after-the-last-deactivation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-QZ14",
+      "directive_title": "[MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check",
+      "source_repo": "mattermost-mattermost-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QZ14-mm-72029-move-enable-security-alerts-to-site-configuration-notices-as-check.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-QUX0",
+      "directive_title": "Read enola 0.5.4 cluster output (SDK-1759)",
+      "source_repo": "topoteretes/cognee",
+      "source_commit": "c78a56ff",
+      "staged_file": "11_INBOX/candidate-directives/CD-QUX0-read-enola-0-5-4-cluster-output-sdk-1759.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-QXTB",
+      "directive_title": "activate): run tcsh profiles after the last deactivation",
+      "source_repo": "flox-flox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QXTB-activate-run-tcsh-profiles-after-the-last-deactivation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-417D09",
+      "directive_title": "Forensic Learning Record (Deep Inspection): DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-417D09-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-5623A0",
+      "directive_title": "[MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mattermost-mattermost",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5623A0--mm-72029-move-enable-security-alerts-to.md",
       "staged_date": "2026-11-26"
     }
   ]

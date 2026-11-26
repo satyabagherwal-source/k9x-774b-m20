@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T16:49:27.513Z",
+  "last_updated": "2026-11-26T16:58:36.808Z",
   "total_verified_learnings": 9130,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26039,
+  "total_items": 26046,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114705,10 +114705,10 @@
       "relative_path": "08_VERIFICATION/topoteretes-cognee-verification-protocol-empirical-defect-shield-for-topoteretes.md",
       "title": "Verification Protocol: Empirical Defect Shield for topoteretes/cognee",
       "repository": "topoteretes/cognee",
-      "source_version": "1961133d",
-      "content_hash": "680cf1443b2ec832a2612246d43fb472af0447af9ce35943cea1aea1e5310802",
+      "source_version": "c78a56ff",
+      "content_hash": "e0449d306927348675ddabac9da2a8c37dfa189aa64d29585097a27c32e3e7d3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:37:24.013Z"
+      "persisted_at": "2026-11-26T16:58:31.460Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prithivmlmods-gender-classifier-mini-learning",
@@ -212712,8 +212712,8 @@
       "slug": "mattermost-mattermost",
       "platform": "github",
       "source_url": "https://github.com/mattermost/mattermost",
-      "source_version": "2d6c2852",
-      "content_hash": "0af3b89c358e9d88d8bd8b1920894604ae2709a3521c275a980b0d27af4427d7",
+      "source_version": "fa151da3",
+      "content_hash": "4f91b632c15aa7ed48ad4e41b37a8bb036f436eee55f1d02129c1e6664537f72",
       "dossier_path": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
       "promoted_rules": [
@@ -212736,6 +212736,11 @@
           "number": 9782,
           "title": "Product rail: pin and reorder items, Threads back in Channels, and Boards, badge",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10730,
+          "title": "[MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212743,7 +212748,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T12:48:47.453Z",
+      "verified_at": "2026-11-26T16:58:23.465Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212809,10 +212814,10 @@
       "relative_path": "08_VERIFICATION/mattermost-mattermost-verification-protocol-empirical-defect-shield-for-mattermo.md",
       "title": "Verification Protocol: Empirical Defect Shield for mattermost/mattermost",
       "repository": "mattermost/mattermost",
-      "source_version": "d841da9f",
-      "content_hash": "ba4aeb1cdaa73e9584b8377f25cd8dfb024ef7548d17dd52ffc329bc3c8a52cd",
+      "source_version": "fa151da3",
+      "content_hash": "683dec0bba3dbb3967cd7ed6d7f091de57a7768a84ddfa96dbd5035df8e72e35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:07:38.504Z"
+      "persisted_at": "2026-11-26T16:58:24.384Z"
     },
     "learn-github-juicedata-juicefs": {
       "learning_id": "learn-github-juicedata-juicefs",
@@ -213138,9 +213143,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mattermost-mattermost-learnings",
       "repository": "mattermost-mattermost-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f944d85b7189347db1a8adaf4fcf9a91407210a817c805b6b5547056ab6616b",
+      "content_hash": "cecbeb3fcb5a660cd537fb5e3d5dac634b169d8501feab0cfe8d5b669af0a496",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:07:44.905Z"
+      "persisted_at": "2026-11-26T16:58:36.808Z"
     },
     "learn-github-embassy-rs-embassy": {
       "learning_id": "learn-github-embassy-rs-embassy",
@@ -214793,7 +214798,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "0480b1a59483970fe456929c5be1984450ea7c0cf17d54384712875b2fb784a6",
+      "content_hash": "ce67b3b00cd98f3435ec91e9f3a0d5d080a95c14c5a2f315eef7d8febc60dc24",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [],
@@ -214802,7 +214807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:49:14.224Z",
+      "verified_at": "2026-11-26T16:58:16.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214819,9 +214824,9 @@
       "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF Core Invariants",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "899b69d1bd6e941199e0d843fa5b10c0c37c53d07013dd160e585d4d71c44692",
+      "content_hash": "70571436a89a0128b2ef357a5b42dde85c10ccbc0fb5f9737592794366136c79",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:49:14.671Z"
+      "persisted_at": "2026-11-26T16:58:16.532Z"
     },
     "learn-github-karakeep-app-karakeep": {
       "learning_id": "learn-github-karakeep-app-karakeep",
@@ -214929,9 +214934,9 @@
       "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings Core Invariants",
       "repository": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "57dbd2fa4d1566bd99c50a5f6ecc065e773554053148e32e2cbc449f3e9be1f6",
+      "content_hash": "1e41329acffb5c4419a682a1b9e226de15eb7a88e8cc85e79079fbaf0b828c96",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:49:27.406Z"
+      "persisted_at": "2026-11-26T16:58:35.679Z"
     },
     "candidate_directive-docker-pin-node-js-to-24-22-3-for-the-november-2026-security-release": {
       "item_id": "candidate_directive-docker-pin-node-js-to-24-22-3-for-the-november-2026-security-release",
@@ -245263,8 +245268,8 @@
       "slug": "flox-flox",
       "platform": "github",
       "source_url": "https://github.com/flox/flox",
-      "source_version": "80b795ff",
-      "content_hash": "d4a54f15ce1efb51a31a1b6955a7c17a738f66c46340af616dd5c2495362b117",
+      "source_version": "5441ece2",
+      "content_hash": "1a47cd4e2ffcc6e460f6ba036f0ad82a9b29227319f59171e2f404430af75f39",
       "dossier_path": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/flox-flox-learnings.md",
       "promoted_rules": [
@@ -245302,6 +245307,11 @@
           "number": 10494,
           "title": "run crate2nix build on Blacksmith runner",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10729,
+          "title": "run tcsh profiles after the last deactivation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245309,7 +245319,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T09:07:53.065Z",
+      "verified_at": "2026-11-26T16:58:18.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245351,10 +245361,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "repository": "flox/flox",
-      "source_version": "80b795ff",
-      "content_hash": "7ace2c42011fdbcb966a613b3a433f6db68d1ca37bda9911aea3ad53644e8866",
+      "source_version": "5441ece2",
+      "content_hash": "712a2c67eb8e9397cdc2001310ec188b0626daba7d69e503dee5967985bd5ae1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:07:53.899Z"
+      "persisted_at": "2026-11-26T16:58:18.933Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox",
@@ -245363,10 +245373,10 @@
       "relative_path": "08_VERIFICATION/flox-flox-verification-protocol-empirical-defect-shield-for-flox-flox.md",
       "title": "Verification Protocol: Empirical Defect Shield for flox/flox",
       "repository": "flox/flox",
-      "source_version": "80b795ff",
-      "content_hash": "b70ed0c4561ee457234ccd8cebf26847c90b2a0ec08606f1dbd458b7fa803991",
+      "source_version": "5441ece2",
+      "content_hash": "49818998bf823ddd1a80bb23ab42e38fdce2a58803504ac5c81e0ecc37ef73e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:07:54.131Z"
+      "persisted_at": "2026-11-26T16:58:19.137Z"
     },
     "rule-8572": {
       "learning_id": "rule-8572",
@@ -245414,9 +245424,9 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "ea0fa8f9fb0bef7388914a21dd76e7eeb96cae765a35cbc190fcf04097b1ad5a",
+      "content_hash": "d3605f633b695e2399733ff1f24dfc2542d66035bf35f4215318c3a6309f16a3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:08:10.952Z"
+      "persisted_at": "2026-11-26T16:58:35.029Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-flox-flox-learnings",
@@ -245426,9 +245436,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for flox-flox-learnings",
       "repository": "flox-flox-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ab8c7d2b5aec89e03e4f51d266b95484701e6986aa95809e0fb58f8faf6cad5",
+      "content_hash": "b6a73b0c41f895f1b3c530b221d9885e4c6032d19adb29fed9e903da458c1963",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:08:11.183Z"
+      "persisted_at": "2026-11-26T16:58:35.239Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pyannote-speaker-diarization-community-1-lear",
@@ -261570,8 +261580,8 @@
       "slug": "topoteretes-cognee",
       "platform": "github",
       "source_url": "https://github.com/topoteretes/cognee",
-      "source_version": "1961133d",
-      "content_hash": "9f60f6f6433828ac7897efce364a147bfa848951c7c02435885a077e48c75d0d",
+      "source_version": "c78a56ff",
+      "content_hash": "3d468df36b4143d197fb880fe99ca80c3c8ec8e8a049d0549f858256f9746cb8",
       "dossier_path": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "promoted_rules": [
@@ -261589,6 +261599,11 @@
           "number": 9610,
           "title": "Revise the LoCoMo technical report (COG-7552)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10731,
+          "title": "Read enola 0.5.4 cluster output (SDK-1759)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -261596,7 +261611,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:37:23.304Z",
+      "verified_at": "2026-11-26T16:58:30.524Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276111,10 +276126,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mattermost-mattermost-technical-construction-intelligence-mattermost-mattermost-.md",
       "title": "Technical Construction Intelligence: mattermost/mattermost Core Invariants",
       "repository": "mattermost/mattermost",
-      "source_version": "53ba1b4f",
-      "content_hash": "b946a3c44b39bc7b050f9a045182012e71bb69aa4458b99c2ed757996430e3dd",
+      "source_version": "fa151da3",
+      "content_hash": "38353078866b85a16ed1e7219257eca684d1b00d7c69007d2aaab8c3b3833ab8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:56:35.286Z"
+      "persisted_at": "2026-11-26T16:58:24.185Z"
     },
     "learn-github-apache-zookeeper": {
       "learning_id": "learn-github-apache-zookeeper",
@@ -276239,9 +276254,9 @@
       "title": "Technical Construction Intelligence: mattermost-mattermost-learnings Core Invariants",
       "repository": "mattermost-mattermost-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a91f5ee47444762550eb532f20945a8e28082e404c91018e44336772ef4056d",
+      "content_hash": "9118e51d538e3ab36dd4e61bd902d077613db8cd512543375b5a0974d0d4cbb4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:57:19.469Z"
+      "persisted_at": "2026-11-26T16:58:36.587Z"
     },
     "rule-8942": {
       "learning_id": "rule-8942",
@@ -300502,10 +300517,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-topoteretes-cognee-technical-construction-intelligence-topoteretes-cognee-core-i.md",
       "title": "Technical Construction Intelligence: topoteretes/cognee Core Invariants",
       "repository": "topoteretes/cognee",
-      "source_version": "1961133d",
-      "content_hash": "b78b8d198ecde9166e6dfde9a03238b48af4329e868aa05d4f1856d9d2682a59",
+      "source_version": "c78a56ff",
+      "content_hash": "b6cc84dfc7e5dcb364ef14e23e4633d4944ebba6f61a4104279815eefe449ef3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T17:37:23.864Z"
+      "persisted_at": "2026-11-26T16:58:31.253Z"
     },
     "agent_contract-agent-contract-topoteretes-cognee-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-topoteretes-cognee-autonomous-specialist-persona",
@@ -356931,6 +356946,96 @@
       "content_hash": "fdd14b69dd262b70e61abce0b9cba7852b4fc944c243aeadf9a697d26fc5335c",
       "domain_letter": "B",
       "persisted_at": "2026-11-26T16:40:48.666Z"
+    },
+    "rule-10729": {
+      "learning_id": "rule-10729",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10729,
+      "title": "run tcsh profiles after the last deactivation",
+      "source_url": "https://github.com/flox/flox",
+      "source_version": "5441ece2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:58:18.202Z"
+    },
+    "candidate_directive-run-tcsh-profiles-after-the-last-deactivation": {
+      "item_id": "candidate_directive-run-tcsh-profiles-after-the-last-deactivation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QLEU-run-tcsh-profiles-after-the-last-deactivation.md",
+      "title": "run tcsh profiles after the last deactivation",
+      "repository": "flox/flox",
+      "source_version": "5441ece2",
+      "content_hash": "3c2300f60c53c109e694fab257c7c3b461cb10531987bb23995895133cadc41f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T16:58:18.730Z"
+    },
+    "rule-10730": {
+      "learning_id": "rule-10730",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10730,
+      "title": "[MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check",
+      "source_url": "https://github.com/mattermost/mattermost",
+      "source_version": "fa151da3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:58:23.465Z"
+    },
+    "candidate_directive-mm-72029-move-enable-security-alerts-to-site-configuration-notices-as-check": {
+      "item_id": "candidate_directive-mm-72029-move-enable-security-alerts-to-site-configuration-notices-as-check",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QZ14-mm-72029-move-enable-security-alerts-to-site-configuration-notices-as-check.md",
+      "title": "[MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check",
+      "repository": "mattermost-mattermost-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0eef80364d5daff4bc8a36fa9b07b3e6ff078546b361fe312e05a7e496e20ea",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T16:58:36.379Z"
+    },
+    "rule-10731": {
+      "learning_id": "rule-10731",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10731,
+      "title": "Read enola 0.5.4 cluster output (SDK-1759)",
+      "source_url": "https://github.com/topoteretes/cognee",
+      "source_version": "c78a56ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:58:30.524Z"
+    },
+    "candidate_directive-read-enola-0-5-4-cluster-output-sdk-1759": {
+      "item_id": "candidate_directive-read-enola-0-5-4-cluster-output-sdk-1759",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QUX0-read-enola-0-5-4-cluster-output-sdk-1759.md",
+      "title": "Read enola 0.5.4 cluster output (SDK-1759)",
+      "repository": "topoteretes/cognee",
+      "source_version": "c78a56ff",
+      "content_hash": "afd1bce2d9ff6a5e39dc7c1acf53330c2b3f9a4e2835e6aa7c55315373a127e4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T16:58:31.048Z"
+    },
+    "candidate_directive-activate-run-tcsh-profiles-after-the-last-deactivation": {
+      "item_id": "candidate_directive-activate-run-tcsh-profiles-after-the-last-deactivation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QXTB-activate-run-tcsh-profiles-after-the-last-deactivation.md",
+      "title": "activate): run tcsh profiles after the last deactivation",
+      "repository": "flox-flox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7f10863c90fad12d6ca413a8231d1d562e94e1d635918ca9c4f01c2a9be1df3f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T16:58:34.803Z"
     }
   },
   "ai-builder-brain": {

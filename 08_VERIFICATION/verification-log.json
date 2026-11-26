@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-WQWK",
-    "timestamp": "2026-11-25T04:39:35.732Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "98fee9f9e5ef9dacf992ce802511cd8c22d8f8e8d4f9cfbc69d33b1aaa4dd2d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-CM6N",
-    "timestamp": "2026-11-25T04:51:56.111Z",
-    "repository": "autogluon/chronos-2",
-    "learningId": "learn-huggingface-autogluon-chronos-2",
-    "contentHash": "586bcbee8f9dcbeebb6055273fb01151bb251d165ad5f678326bebda2f3b34c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-CMXF",
-    "timestamp": "2026-11-25T04:51:57.075Z",
-    "repository": "Folkbench/folkbench",
-    "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "a53790fa1506fc541ebc9de875804288d7968ea90dd321811a4cd316f3c55475",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-CXDI",
-    "timestamp": "2026-11-25T04:52:10.614Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "4288a4696eea12412caad65d715b7773c661ff484f3088d3e30962b4070a588c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-NNA4",
     "timestamp": "2026-11-25T05:00:30.748Z",
     "repository": "openai/clip-vit-large-patch14",
@@ -7492,6 +7432,66 @@
     "contentHash": "3a7c856e576c15556295caeae206d606e29a2c5648ebea527e92bb15e10a4e42",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QJJ5",
+    "timestamp": "2026-11-26T16:58:16.289Z",
+    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "ce67b3b00cd98f3435ec91e9f3a0d5d080a95c14c5a2f315eef7d8febc60dc24",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QL7N",
+    "timestamp": "2026-11-26T16:58:18.467Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "1a47cd4e2ffcc6e460f6ba036f0ad82a9b29227319f59171e2f404430af75f39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QP9J",
+    "timestamp": "2026-11-26T16:58:23.719Z",
+    "repository": "mattermost/mattermost",
+    "learningId": "learn-github-mattermost-mattermost",
+    "contentHash": "4f91b632c15aa7ed48ad4e41b37a8bb036f436eee55f1d02129c1e6664537f72",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QUPS",
+    "timestamp": "2026-11-26T16:58:30.784Z",
+    "repository": "topoteretes/cognee",
+    "learningId": "learn-github-topoteretes-cognee",
+    "contentHash": "3d468df36b4143d197fb880fe99ca80c3c8ec8e8a049d0549f858256f9746cb8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

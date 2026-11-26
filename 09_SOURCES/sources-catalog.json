@@ -645,8 +645,8 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "0480b1a59483970fe456929c5be1984450ea7c0cf17d54384712875b2fb784a6",
-    "lastHarvestedAt": "2026-11-22T23:49:14.456Z",
+    "contentHash": "ce67b3b00cd98f3435ec91e9f3a0d5d080a95c14c5a2f315eef7d8febc60dc24",
+    "lastHarvestedAt": "2026-11-26T16:58:16.294Z",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf"
   },
   "hf-canberkkkkkk-ema-lightning": {
@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "d841da9f",
+    "sourceVersion": "fa151da3",
     "license": "NOASSERTION",
-    "contentHash": "9cc3c6b723ad65df83110eeb08d65a761c820c127342c3f9901efedcdee7cc77",
-    "lastHarvestedAt": "2026-11-24T07:07:37.654Z",
+    "contentHash": "4f91b632c15aa7ed48ad4e41b37a8bb036f436eee55f1d02129c1e6664537f72",
+    "lastHarvestedAt": "2026-11-26T16:58:23.724Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "80b795ff",
+    "sourceVersion": "5441ece2",
     "license": "GPL-2.0",
-    "contentHash": "d4a54f15ce1efb51a31a1b6955a7c17a738f66c46340af616dd5c2495362b117",
-    "lastHarvestedAt": "2026-11-25T09:07:53.343Z",
+    "contentHash": "1a47cd4e2ffcc6e460f6ba036f0ad82a9b29227319f59171e2f404430af75f39",
+    "lastHarvestedAt": "2026-11-26T16:58:18.472Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "1961133d",
+    "sourceVersion": "c78a56ff",
     "license": "Apache-2.0",
-    "contentHash": "9f60f6f6433828ac7897efce364a147bfa848951c7c02435885a077e48c75d0d",
-    "lastHarvestedAt": "2026-11-20T17:37:23.512Z",
+    "contentHash": "3d468df36b4143d197fb880fe99ca80c3c8ec8e8a049d0549f858256f9746cb8",
+    "lastHarvestedAt": "2026-11-26T16:58:30.788Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {

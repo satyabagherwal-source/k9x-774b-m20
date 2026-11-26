@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T16:49:27.343Z",
+  "last_updated": "2026-11-26T16:58:36.587Z",
   "total_records": 2763,
   "domains": {
     "A": {
@@ -10873,8 +10873,8 @@
       "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "content_hash": "899b69d1bd6e941199e0d843fa5b10c0c37c53d07013dd160e585d4d71c44692",
-      "created_at": "2026-11-22T23:49:14.671Z"
+      "content_hash": "70571436a89a0128b2ef357a5b42dde85c10ccbc0fb5f9737592794366136c79",
+      "created_at": "2026-11-26T16:58:16.532Z"
     },
     "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
@@ -10891,8 +10891,8 @@
       "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
       "repository": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings",
-      "content_hash": "57dbd2fa4d1566bd99c50a5f6ecc065e773554053148e32e2cbc449f3e9be1f6",
-      "created_at": "2026-11-22T23:49:27.406Z"
+      "content_hash": "1e41329acffb5c4419a682a1b9e226de15eb7a88e8cc85e79079fbaf0b828c96",
+      "created_at": "2026-11-26T16:58:35.679Z"
     },
     "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria",
@@ -20031,8 +20031,8 @@
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "repository": "flox/flox",
-      "content_hash": "7ace2c42011fdbcb966a613b3a433f6db68d1ca37bda9911aea3ad53644e8866",
-      "created_at": "2026-11-25T09:07:53.899Z"
+      "content_hash": "712a2c67eb8e9397cdc2001310ec188b0626daba7d69e503dee5967985bd5ae1",
+      "created_at": "2026-11-26T16:58:18.933Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
@@ -20040,8 +20040,8 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-learnings-architecture-intelligence-flox-flox-learnings-core-invariant.md",
       "repository": "flox-flox-learnings",
-      "content_hash": "ea0fa8f9fb0bef7388914a21dd76e7eeb96cae765a35cbc190fcf04097b1ad5a",
-      "created_at": "2026-11-25T09:08:10.952Z"
+      "content_hash": "d3605f633b695e2399733ff1f24dfc2542d66035bf35f4215318c3a6309f16a3",
+      "created_at": "2026-11-26T16:58:35.029Z"
     },
     "DOM-D-8240E8AC": {
       "record_id": "DOM-D-8240E8AC",
@@ -27566,8 +27566,8 @@
       "title": "Technical Construction Intelligence: mattermost/mattermost Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mattermost-mattermost-technical-construction-intelligence-mattermost-mattermost-.md",
       "repository": "mattermost/mattermost",
-      "content_hash": "b946a3c44b39bc7b050f9a045182012e71bb69aa4458b99c2ed757996430e3dd",
-      "created_at": "2026-11-17T08:56:35.286Z"
+      "content_hash": "38353078866b85a16ed1e7219257eca684d1b00d7c69007d2aaab8c3b3833ab8",
+      "created_at": "2026-11-26T16:58:24.185Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apache-zookeeper-core-invariants",
@@ -27635,8 +27635,8 @@
       "title": "Technical Construction Intelligence: mattermost-mattermost-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mattermost-mattermost-learnings-technical-construction-intelligence-mattermost-m.md",
       "repository": "mattermost-mattermost-learnings",
-      "content_hash": "5a91f5ee47444762550eb532f20945a8e28082e404c91018e44336772ef4056d",
-      "created_at": "2026-11-17T08:57:19.469Z"
+      "content_hash": "9118e51d538e3ab36dd4e61bd902d077613db8cd512543375b5a0974d0d4cbb4",
+      "created_at": "2026-11-26T16:58:36.587Z"
     },
     "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-citusdata-citus-core-invariants",
@@ -33989,8 +33989,8 @@
       "title": "Technical Construction Intelligence: topoteretes/cognee Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-topoteretes-cognee-technical-construction-intelligence-topoteretes-cognee-core-i.md",
       "repository": "topoteretes/cognee",
-      "content_hash": "b78b8d198ecde9166e6dfde9a03238b48af4329e868aa05d4f1856d9d2682a59",
-      "created_at": "2026-11-20T17:37:23.864Z"
+      "content_hash": "b6cc84dfc7e5dcb364ef14e23e4633d4944ebba6f61a4104279815eefe449ef3",
+      "created_at": "2026-11-26T16:58:31.253Z"
     },
     "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-core-invariants",

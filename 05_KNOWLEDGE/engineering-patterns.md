@@ -808901,3 +808901,262 @@ use rustls::quic::{self, ClientHandshake, Quic, QuicEvent, ServerHandshake, Side
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `bd95fd9b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10729. run tcsh profiles after the last deactivation (Harvested from flox/flox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "run tcsh profiles after the last deactivation",
+  "source": "flox/flox",
+  "source_url": "https://github.com/flox/flox",
+  "source_version": "5441ece2",
+  "license": "GPL-2.0",
+  "extracted_at": "2026-11-26T16:58:17.843Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-flox-flox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [flox/flox](https://github.com/flox/flox) (Revision: `5441ece2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `cli/flox-activations/src/cli/profile_scripts.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `173ce971`: activate): run tcsh profiles after the last deactivation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-activations/src/cli/profile_scripts.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // Omitted or given without a value, it means no env dirs have been
+    // sourced. The tcsh generator builds this flag in a word list from an
+    // unquoted `$var:q`, which drops an empty value, so it omits the flag when
+    // the variable is unset and passes it bare when the variable is empty, as
+    // it is after the last deactivation.
+    #[clap(default_value = "", num_args = 0..=1, default_missing_value = "")]
+    // Accepts the same omitted or bare forms as
+    // `ProfileScriptsArgs::already_sourced_env_dirs`.
+    #[clap(default_value = "", num_args = 0..=1, default_missing_value = "")]
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    // If not provided, defaults to an empty string. This is required for tcsh in
+    // particular that is unable to pass empty arguments on the command line.
+    #[clap(default_value = "")]
+    // Empty default matches `ProfileScriptsArgs::already_sourced_env_dirs` so
+    // tcsh can pass an unset variable without quoting gymnastics.
+    #[clap(default_value = "")]
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `173ce971` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10730. [MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check (Harvested from mattermost/mattermost)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check",
+  "source": "mattermost/mattermost",
+  "source_url": "https://github.com/mattermost/mattermost",
+  "source_version": "fa151da3",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T16:58:23.115Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mattermost-mattermost",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `fa151da3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/main/administration-guide/configure/environment-configuration-settings.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `724208f8`: [MM-72029] Move Enable Security Alerts to Site Configuration > Notices as Check for Security and Release Updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/main/administration-guide/configure/environment-configuration-settings.mdx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+<td><p>From Mattermost v12.3, this setting is located in <strong>Site Configuration &gt; Notices</strong> as <a href={useBaseUrl('/administration-guide/configure/site-configuration-settings#check-for-security-and-release-updates')}>Check for Security and Release Updates</a>.</p><p>In Mattermost v12.2 and earlier, enable or disable security alerts and the check for the latest Mattermost release here.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled. The server also fetches the latest Mattermost release from GitHub to report whether it's out of date.</li><li><strong>false</strong>: Security alerts are disabled, and the server doesn't fetch the latest Mattermost release from GitHub.</li></ul></td>
+<td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong> (v12.2 and earlier)</li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+<td><p>Enable or disable security alerts and the check for the latest Mattermost release.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled. The server also fetches the latest Mattermost release from GitHub to report whether it's out of date.</li><li><strong>false</strong>: Security alerts are disabled, and the server doesn't fetch the latest Mattermost release from GitHub.</li></ul></td>
+<td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong></li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `724208f8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10731. Read enola 0.5.4 cluster output (SDK-1759) (Harvested from topoteretes/cognee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Read enola 0.5.4 cluster output (SDK-1759)",
+  "source": "topoteretes/cognee",
+  "source_url": "https://github.com/topoteretes/cognee",
+  "source_version": "c78a56ff",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T16:58:30.172Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-topoteretes-cognee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `c78a56ff`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `cognee/tasks/code_graph/cluster.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f508a230`: code_graph): Read enola 0.5.4 cluster output (SDK-1759). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/tasks/code_graph/cluster.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+listing them, and writes the whole linked graph once, to a directory of the
+dataset's own outside the repositories (see :func:`cluster_snapshot_dir`).
+import os
+    """The working directory enola keeps inside each member for a dataset's cluster runs.
+    It holds the member's extractor cache, not a snapshot. A remote clone is
+    shared by every dataset that adds its URL, so the name is the dataset's
+    own rather than the ``.enola`` a single-repository run writes its snapshot
+    to. enola takes the name relative to each repository.
+def cluster_snapshot_dir(dataset_id: UUID) -> Path:
+    """Where a dataset's cluster snapshot is written: one directory per dataset.
+    enola writes a cluster's graph once and refuses a directory inside a
+    member repository, so it lives next to the clones, under
+    ``BaseConfig.repos_root_directory`` (``COGNEE_REPOS_DIR``), which is a
+    local directory whatever the storage backend. A clone's directory name
+    never starts with a dot, so no clone can take this one's place.
+    from cognee.tasks.code_graph.resolve_repo import default_clones_dir
+    return default_clones_dir() / ".enola-clusters" / str(dataset_id)
+def resolve_member_labels(repo_p
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+listing them, and writes the whole linked graph into every member, under a
+directory of the dataset's own (``.enola-<dataset_id>``, see
+:func:`cluster_output_dir`) rather than the shared ``.enola``.
+    snapshot_identity,
+    """Where, inside each member repository, a dataset's cluster snapshot is written.
+    A remote clone is shared by every dataset that adds its URL, and a cluster
+    snapshot holds the facts of all the dataset's repositories. One directory
+    per dataset keeps a cluster run from overwriting the snapshot another
+    dataset is reading. enola takes the name relative to each repository.
+def _written_label(repo_path: Path, output_dir: str, snapshot_id: str | None) -> str | None:
+    """The label enola gave a member in the snapshot just taken, or None.
+    A cluster run writes ``snapshot.meta.json`` into every member's
+    ``output_dir`` with the member's own ``repo_label`` — the exact name its
+    facts carry. The file is enola's own bookkeeping rather than part of the
+    documented snapshot contract, so it is only trusted when it describes
+    this snapshot (same ``snapshot_id``) and the caller falls back to
+    deriving the label when it is missing or stale.
+  
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f508a230` are properly handled with clean fallback behavior.

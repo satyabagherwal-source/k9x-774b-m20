@@ -13506,3 +13506,7 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `bd95fd9b` | Multi-dimensional audit evidence | 2026-11-26T16:40:44.140Z |
 | `learn-dom-h-7dd90772` | `project://react-hook-form-react-hook-form` | `b91c1ab9` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-26T16:41:28.835Z |
 | `learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct` | `https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-26T16:49:13.754Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-26T16:58:16.294Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `5441ece2` | Multi-dimensional audit evidence | 2026-11-26T16:58:18.472Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `fa151da3` | Multi-dimensional audit evidence | 2026-11-26T16:58:23.724Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `c78a56ff` | Multi-dimensional audit evidence | 2026-11-26T16:58:30.788Z |

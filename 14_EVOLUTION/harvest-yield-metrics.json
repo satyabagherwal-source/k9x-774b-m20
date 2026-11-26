@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:49:13.766Z",
-  "total_cycles_completed": 12786,
-  "total_learnings_persisted": 12786,
-  "total_rules_promoted": 11633,
+  "last_updated": "2026-11-26T16:58:30.802Z",
+  "total_cycles_completed": 12790,
+  "total_learnings_persisted": 12790,
+  "total_rules_promoted": 11636,
   "history": [
-    {
-      "timestamp": "2026-11-26T05:57:15.254Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:10:23.713Z",
-      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:10:30.914Z",
-      "repository": "iPlug2/iPlug2",
-      "learningId": "learn-github-iplug2-iplug2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:10:32.953Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T06:10:38.624Z",
       "repository": "HelixDB/helix-db",
@@ -1403,6 +1375,34 @@
       "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
       "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:58:16.306Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:58:18.485Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:58:23.738Z",
+      "repository": "mattermost/mattermost",
+      "learningId": "learn-github-mattermost-mattermost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:58:30.802Z",
+      "repository": "topoteretes/cognee",
+      "learningId": "learn-github-topoteretes-cognee",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

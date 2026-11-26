@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T09:08:10.543Z",
+  "timestamp": "2026-11-26T16:58:34.658Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-flox-flox-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [flox-flox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T09:08:10.543Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:58:34.658Z`  
 > **Learning ID**: `LEARN-EVO-flox-flox-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from flox-flox-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `80b795ff`  
+> **Source Version**: `5441ece2`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T09:07:51.919Z  
+> **Timestamp**: 2026-11-26T16:58:17.220Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T09:07:51.794Z  
+> **Harvest Timestamp**: 2026-11-26T16:58:17.212Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4215 stars
+- **Stars / Engagement**: 4219 stars
 
 ---
 
@@ -1474,31 +1474,767 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `794ead02` (2026-10-26)
-**Commit Message**: ci: run crate2nix build on Blacksmith runner
+### Incident Patch 1: `173ce971` (2026-11-25)
+**Commit Message**: fix(activate): run tcsh profiles after the last deactivation (#4899)
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+**Type:** Bug fix
+**Scope:** tcsh only. Bash, zsh and fish are not affected (tested).
+**Already on `main`?** Yes, since v1.13.0 (introduced by commit
+`e51135bda`). This stack did not introduce the bug, but #4892's `flox
+activate --hook-only` makes it easy to hit: it happens the first time a
+tcsh user leaves an auto-activated project.
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+**Stack position: 4 of 7.** Review from the top of the table down. Each
+PR is based on the one above it.
+
+| # | PR | Type | Scope | |
+|---|---|---|---|---|
+| 1 | #4890 Preserve Bash `PROMPT_COMMAND` callbacks | Bug fix | Bash |
+|
+| 2 | #4891 Preserve tcsh `precmd`/`cwdcmd` callbacks | Bug fix | tcsh |
+|
+| 3 | #4892 Add `flox activate --hook-only` | Feature | All shells | ⬆
+before this PR |
+| **4** | **This PR: #4899 Run tcsh profile scripts after the last
+deactivation** | **Bug fix** | **tcsh** | **◀ you are here** |
+| 5 | #4900 Isolate auth unit tests from shared state | Tests | Rust
+unit tests | ⬇ after this PR |
+| 6 | #4901 Document startup lines for non-interactive shells | Docs |
+All shells | |
+| 7 | #4902 Find the Bash hook behind bash-preexec and VS Code | Bug fix
+| Bash | |
+
+
+**File**: `cli/flox-activations/src/cli/profile_scripts.rs` (modified, +9/-6)
 ```diff
-@@ -497,7 +497,7 @@ jobs:
-     # Same fork restriction as `nix-build`: this job needs the AWS OIDC and
-     # Tailscale secrets to reach the builders.
-     if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
--    runs-on: "ubuntu-latest"
-+    runs-on: "blacksmith-4vcpu-ubuntu-2404"
-     timeout-minutes: 120
+@@ -26,9 +26,12 @@ pub struct ProfileScriptsArgs {
+         long,
+         help = "A list of FLOX_ENV directories that have already been sourced"
+     )]
+-    // If not provided, defaults to an empty string. This is required for tcsh in
+-    // particular that is unable to pass empty arguments on the command line.
+-    #[clap(default_value = "")]
++    // Omitted or given without a value, it means no env dirs have been
++    // sourced. The tcsh generator builds this flag in a word list from an
++    // unquoted `$var:q`, which drops an empty value, so it omits the flag when
++    // the variable is unset and passes it bare when the variable is empty, as
++    // it is after the last deactivation.
++    #[clap(default_value = "", num_args = 0..=1, default_missing_value = "")]
+     pub already_sourced_env_dirs: String,
+ }
  
-     needs:
+@@ -64,9 +67,9 @@ pub struct ProfileScriptsDeactivateArgs {
+         long,
+         help = "Current value of _FLOX_SOURCED_PROFILE_SCRIPTS; --env will be removed from it"
+     )]
+-    // Empty default matches `ProfileScriptsArgs::already_sourced_env_dirs` so
+-    // tcsh can pass an unset variable without quoting gymnastics.
+-    #[clap(default_value = "")]
++    // Accepts the same omitted or bare forms as
++    // `ProfileScriptsArgs::already_sourced_env_dirs`.
++    #[clap(default_value = "", num_args = 0..=1, default_missing_value = "")]
+     pub already_sourced_env_dirs: String,
+ }
+ 
+```
+
+**File**: `cli/flox-activations/src/gen_rc/bash.rs` (modified, +26/-8)
+```diff
+@@ -426,12 +426,21 @@ mod tests {
+               trap - SIGINT;
+               return $_prev_exit;
+             };
+-            if [[ ";${PROMPT_COMMAND[*]:-};" != *";_flox_hook;"* ]]; then
+-              if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]]; then
++            if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]] && (( BASH_VERSINFO[0] * 100 + BASH_VERSINFO[1] >= 501 )); then
++              _flox_hook_registered=;
++              for _flox_prompt_command in "${PROMPT_COMMAND[@]:-}"; do
++                if [[ ";$_flox_prompt_command;" == *";_flox_hook;"* ]]; then
++                  _flox_hook_registered=1;
++                  break;
++                fi;
++              done;
++              if [[ -z $_flox_hook_registered ]]; then
++                unset _flox_hook_registered _flox_prompt_command;
+                 PROMPT_COMMAND=(_flox_hook "${PROMPT_COMMAND[@]}");
+-              else
+-                PROMPT_COMMAND="_flox_hook${PROMPT_COMMAND:+;$PROMPT_COMMAND}";
+               fi;
++              unset _flox_hook_registered _flox_prompt_command;
++            elif [[ ";${PROMPT_COMMAND:-};" != *";_flox_hook;"* ]]; then
++              PROMPT_COMMAND="_flox_hook${PROMPT_COMMAND:+;$PROMPT_COMMAND}";
+             fi;
+         "#]].assert_eq(&output);
+     }
+@@ -475,12 +484,21 @@ mod tests {
+               trap - SIGINT;
+               return $_prev_exit;
+             };
+-            if [[ ";${PROMPT_COMMAND[*]:-};" != *";_flox_hook;"* ]]; then
+-              if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]]; then
++            if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]] && (( BASH_VERSINFO[0] * 100 + BASH_VERSINFO[1] >= 501 )); then
++              _flox_hook_registered=;
++              for _flox_prompt_command in "${PROMPT_COMMAND[@]:-}"; do
++                if [[ ";$_flox_prompt_command;" == *";_flox_hook;"* ]]; then
++                  _flox_hook_registered=1;
++                  break;
++                fi;
++              done;
++              if [[ -z $_flox_hook_registered ]]; then
++                unset _flox_hook_registered _flox_prompt_command;
+                 PROMPT_COMMAND=(_flox_hook "${PROMPT_COMMAND[@]}");
+-              else
+-                PROMPT_COMMAND="_flox_hook${PROMPT_COMMAND:+;$PROMPT_COMMAND}";
+               fi;
++              unset _flox_hook_registered _flox_prompt_command;
++            elif [[ ";${PROMPT_COMMAND:-};" != *";_flox_hook;"* ]]; then
++              PROMPT_COMMAND="_flox_hook${PROMPT_COMMAND:+;$PROMPT_COMMAND}";
+             fi;
+         "#]].assert_eq(&output);
+     }
+```
+
+**File**: `cli/flox-activations/src/gen_rc/fish.rs` (modified, +5/-4)
+```diff
+@@ -296,10 +296,11 @@ pub fn generate_fish_profile_commands(
+                     InvocationType::Interactive | InvocationType::InPlace
+                 )
+             {
+-                if let Some(mode) = &args.auto_activate_fish_mode {
+-                    writeln!(writer, "set -gx FLOX_AUTO_ACTIVATE_FISH_MODE {mode};")?;
+-                }
+-                write!(writer, "{}", crate::hook::fish_hook(&args.flox_bin))?;
++                write!(
++                    writer,
++                    "{}",
++                    crate::hook::fish_hook(&args.flox_bin, args.auto_activate_fish_mode)
++                )?;
+             }
+         },
+         Action::Deactivate(_) => {
+```
+
+**File**: `cli/flox-activations/src/gen_rc/tcsh.rs` (modified, +66/-4)
+```diff
+@@ -434,8 +434,39 @@ mod tests {
+             unset verbose;
+             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
+             setenv _FLOX_PROMPT_HOOK_VERSION 1:true;
+-            alias precmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`exec /flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env --skip-in-forked-subshell`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
+-            alias cwdcmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`exec /flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env --skip-in-forked-subshell`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
++            alias _flox_hook 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`exec /flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env --skip-in-forked-subshell`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
++            alias _flox_saved_precmd_0 '';
++            alias _flox_precmd_repair 'if ( "`alias precmd`" == "" ) alias precmd "_flox_saved_precmd_0; _flox_hook"; unset _flox_precmd_pending';
++            alias _flox_precmd_check 'if ( $?_flox_precmd_pending ) eval _flox_precmd_repair';
++            if ( ! $?_flox_hook_alias_generation ) set _flox_hook_alias_generation=0;
++            @ _flox_hook_alias_generation++;
++            set _flox_saved_precmd_name="_flox_saved_precmd_$_flox_hook_alias_generation";
++            set _flox_saved_cwdcmd_name="_flox_saved_cwdcmd_$_flox_hook_alias_generation";
++            set _flox_saved_periodic_name="_flox_saved_periodic_$_flox_hook_alias_generation";
++            set _flox_previous_precmd="`alias precmd`";
++            set _flox_previous_cwdcmd="`alias cwdcmd`";
++            set _flox_previous_periodic="`alias periodic`";
++            setenv _FLOX_MIGRATION_CODE 'printf "%s" "${_FLOX_LEGACY_ALIAS#*; if ( \$\?_flox_exit ) exit}"';
++            alias _flox_migrate_precmd 'setenv _FLOX_LEGACY_ALIAS $_flox_previous_precmd:q; set _flox_previous_precmd="`/nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/printenv _FLOX_MIGRATION_CODE | /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-bash-interactive-5.3p9/bin/bash -p`"; unsetenv _FLOX_LEGACY_ALIAS';
++            if ( "$_flox_previous_precmd" =~ 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=*; if ( $?_flox_exit ) exit*' ) eval _flox_migrate_precmd;
++            unalias _flox_migrate_precmd;
++            alias _flox_migrate_cwdcmd 'setenv _FLOX_LEGACY_ALIAS $_flox_previous_cwdcmd:q; set _flox_previous_cwdcmd="`/nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/printenv _FLOX_MIGRATION_CODE | /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-bash-interactive-5.3p9/bin/bash -p`"; unsetenv _FLOX_LEGACY_ALIAS';
++            if ( "$_flox_previous_cwdcmd" =~ 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=*; if ( $?_flox_exit ) exit*' ) eval _flox_migrate_cwdcmd;
++            unalias _flox_migrate_cwdcmd;
++            if ( "$_flox_previous_precmd" !~ '*_flox_saved_precmd*; _flox_hook*' && ( "$_flox_previous_precmd" =~ *^[@ABCDEFGHIJKLMNOPQRSTUVWXYZ^_?]* || "$_flox_previous_precmd" =~ *^[[]* || "$_flox_previous_precmd" =~ *^[\\]* || "$_flox_previous_precmd" =~ *^]* || "$_flox_previous_precmd" =~ *\\[23][01234567][01234567]* ) ) set _flox_previous_precmd="";
++            if ( "$_flox_previous_cwdcmd" !~ '*_flox_saved_cwdcmd*; _flox_hook*' && ( "$_flox_previous_cwdcmd" =~ *^[@ABCDEFGHIJKLMNOPQRSTUVWXYZ^_?]* || "$_flox_previous_cwdcmd" =~ *^[[]* || "$_flox_previous_cwdcmd" =~ *^[\\]* || "$_flox_previous_cwdcmd" =~ *^]* || "$_flox_previous_cwdcmd" =~ *\\[23][01234567][01234567]* ) ) set _flox_previous_cwdcmd="";
++            if ( "$_flox_previous_periodic" !~ '*_flox_saved_periodic*; _flox_precmd_check*' && ( "$_flox_previous_periodic" =~ *^[@ABCDEFGHIJKLMNOPQRSTUVWXYZ^_?]* || "$_flox_previous_periodic" =~ *^[[]* || "$_flox_previous_periodic" =~ *^[\\]* || "$_flox_previous_periodic" =~ *^]* || "$_flox_previous_periodic" =~ *\\[23][01234567][01234567]* ) ) set _flox_periodic_lossy;
++            if ( "$_flox_previous_precmd" != "" && "$_flox_previous_precmd" !~ '*_flox_saved_precmd*; _flox_hook*' ) set _flox_precmd_guard;
++            set _flox_wrap_periodic=0;
++            if ( $?_flox_precmd_guard && ! $?_flox_periodic_lossy && "$_flox_previous_periodic" !~ '*_flox_saved_periodic*; _flox_precmd_check*' ) set _flox_wrap_periodic=1;
++            if ( "$_flox_previous_precmd" !~ '*_flox_saved_precmd*; _flox_hook*' ) alias $_flox_saved_precmd_name "$_flox_previous_precmd";
++            if ( "$_flox_previous_cwdcmd" !~ '*_flox_saved_cwdcmd*; _flox_hook*' ) alias $_flox_saved_cwdcmd_name "$_flox_previous_cwdcmd"
+```
+
+**File**: `cli/flox-activations/src/hook.rs` (modified, +129/-8)
+```diff
+@@ -48,13 +48,22 @@
+ 
+ use std::borrow::Cow;
+ 
++use flox_core::activate::context::AutoActivateFishMode;
+ use flox_core::activate::vars::{FLOX_INVOCATION_TYPES_VAR, FLOX_INVOCATION_TYPES_WIRE_VAR};
+ use flox_core::hook_actions::{PROMPT_HOOK_VERSION_ENV, prompt_hook_marker_value};
+ use indoc::formatdoc;
+ 
+ pub fn bash_hook(flox_bin: &str) -> String {
+     let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
+     let marker = prompt_hook_marker_value(true);
++    // Bash 5.1+ runs every element of a PROMPT_COMMAND array, so there the
++    // hook counts as registered in any element and is added as its own element,
++    // which keeps `$_` and PIPESTATUS intact for the user's callbacks. Older
++    // Bash runs only element zero, so there the hook counts only in element
++    // zero and is added by prefixing that element's text; a scalar assignment
++    // to an array replaces element zero and keeps the later elements. The
++    // helpers are unset before assigning so a readonly PROMPT_COMMAND, whose
++    // assignment error aborts the block, does not leave them behind.
+     formatdoc!(
+         r#"
+         export {PROMPT_HOOK_VERSION_ENV}={marker};
+@@ -67,12 +76,21 @@ pub fn bash_hook(flox_bin: &str) -> String {
+           trap - SIGINT;
+           return $_prev_exit;
+         }};
+-        if [[ ";${{PROMPT_COMMAND[*]:-}};" != *";_flox_hook;"* ]]; then
+-          if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]]; then
++        if [[ "$(declare -p PROMPT_COMMAND 2>&1)" == "declare -a"* ]] && (( BASH_VERSINFO[0] * 100 + BASH_VERSINFO[1] >= 501 )); then
++          _flox_hook_registered=;
++          for _flox_prompt_command in "${{PROMPT_COMMAND[@]:-}}"; do
++            if [[ ";$_flox_prompt_command;" == *";_flox_hook;"* ]]; then
++              _flox_hook_registered=1;
++              break;
++            fi;
++          done;
++          if [[ -z $_flox_hook_registered ]]; then
++            unset _flox_hook_registered _flox_prompt_command;
+             PROMPT_COMMAND=(_flox_hook "${{PROMPT_COMMAND[@]}}");
+-          else
+-            PROMPT_COMMAND="_flox_hook${{PROMPT_COMMAND:+;$PROMPT_COMMAND}}";
+           fi;
++          unset _flox_hook_registered _flox_prompt_command;
++        elif [[ ";${{PROMPT_COMMAND:-}};" != *";_flox_hook;"* ]]; then
++          PROMPT_COMMAND="_flox_hook${{PROMPT_COMMAND:+;$PROMPT_COMMAND}}";
+         fi;
+         "#
+     )
+@@ -109,7 +127,7 @@ pub fn zsh_hook(flox_bin: &str) -> String {
+     )
+ }
+ 
+-pub fn fish_hook(flox_bin: &str) -> String {
++pub fn fish_hook(flox_bin: &str, auto_activate_fish_mode: Option<AutoActivateFishMode>) -> String {
+     // Fish's command substitution (flox activate) collapses newlines to spaces,
+     // so semicolons are required as statement delimiters to survive. The
+     // newlines are kept for readability — fish treats them as whitespace.
+@@ -139,9 +157,12 @@ pub fn fish_hook(flox_bin: &str) -> String {
+     //   - disable_arrow: no PWD reaction; only prompt-based evaluation.
+     let flox_bin = shell_escape::escape(Cow::Borrowed(flox_bin));
+     let marker = prompt_hook_marker_value(true);
++    let mode = auto_activate_fish_mode.map_or_else(String::new, |mode| {
++        format!("set -gx FLOX_AUTO_ACTIVATE_FISH_MODE {mode};\n")
++    });
+     formatdoc!(
+         r#"
+-        set -gx {PROMPT_HOOK_VERSION_ENV} {marker};
++        {mode}set -gx {PROMPT_HOOK_VERSION_ENV} {marker};
+         function _flox_hook --on-event fish_prompt;
+             eval (command {flox_bin} hook-env --shell fish --shell-pid $fish_pid --invocation-types "${FLOX_INVOCATION_TYPES_VAR}" | string collect);
+             if test "$FLOX_AUTO_ACTIVATE_FISH_MODE" != "disable_arrow";
+@@ -215,6 +236,8 @@ pub fn fish_hook(flox_bin: &str) -> String {
+ // passes the running binary's store path instead, which is always safe.
+ pub fn tcsh_hook(flox_bin: &str) -> String {
+     let flox_bin = tcsh_escape_in_alias(flox_bin);
++    let bash_bin = env!("X_BASH_BIN");
++    let printenv_bin = concat!(env!("COREUTILS"), "/bin/printenv");
+     // A tcsh alias body must be a single line, so assemble the statements here
+     // and join them with "; " rather than writing one long string literal.
+     let hook = [
+@@ -228,15 +251,113 @@ pub fn tcsh_hook(flox_bin: &str) -> String {
+     ]
+     .join("; ");
+     let marker = prompt_hook_marker_value(true);
++    let lossy_precmd = tcsh_lossy_alias_test("_flox_previous_precmd");
++    let lossy_cwdcmd = tcsh_lossy_alias_test("_flox_previous_cwdcmd");
++    let lossy_periodic = tcsh_lossy_alias_test("_flox_previous_periodic");
++    // Keep user alias bodies in separate, immutable aliases so profiles can save
++    // and restore old wrappers. Retain appended wrappers instead of adding
++    // another native callback, but capture replacement aliases.
++    //
++    // `alias` prints control characters in caret notation (ESC as `^[`) and,
++    // outside a UTF-8 locale, other non-ASCII bytes as `\ooo`, so a captured
++    // body containing either may not
+```
+
+**File**: `cli/flox/doc/flox-activate.md` (modified, +52/-4)
+```diff
+@@ -11,6 +11,7 @@ flox-activate - activate environments
+ # SYNOPSIS
+ 
+ ```text
++flox [<general-options>] activate --hook-only
+ flox [<general-options>] activate
+      [-d=<path> | -r=<owner>/<name>]
+      [-t]
+@@ -105,12 +106,51 @@ so you do not have to run `flox activate` or `flox deactivate` by hand.
+ 
+ Auto-activation is on by default and only requires the Flox prompt hook to be
+ installed in your shell.
+-The hook is installed by any in-place activation,
+-so add a line such as `eval "$(flox activate -D)"` to your shell's startup
+-file (for example `~/.bashrc`, `~/.zshrc`, `~/.config/fish/config.fish`, or
+-`~/.tcshrc`).
++To install the hook without activating a startup environment,
++add the appropriate command to your shell's startup file.
++
++Bash (`~/.bashrc`) and Zsh (`~/.zshrc`):
++
++```bash
++eval "$(flox activate --hook-only)"
++```
++
++Fish (`~/.config/fish/config.fish`):
++
++```fish
++status is-interactive; and flox activate --hook-only | source
++```
++
++Tcsh (`~/.tcshrc`):
++
++```tcsh
++if ( $?prompt ) then
++  eval "`flox activate --hook-only`"
++endif
++```
++
++The shell is detected in the same way as for in-place activation.
++No default environment or FloxHub account is required.
++Generating the code reads your configuration
++(creating the configuration directory if it is missing) and nothing else:
++it does not open an environment, contact FloxHub or any other network service,
++send telemetry, or use Nix.
++It prints nothing when `disable_hook = true`.
++Existing directory permissions and auto-activation settings still apply.
++With the default `auto_activate = prompt`,
++a project does not need to be allowed beforehand;
++Flox asks at the first prompt in its directory.
++
++Initialization itself activates nothing.
++At the first prompt, the hook evaluates the current directory and its ancestors,
++so an allowed environment can activate immediately when the shell starts
++inside its directory tree.
++
++The hook is also installed by any in-place activation.
+ If you already activate a default or other environment in-place at startup,
+ the hook is already installed.
++For example, `eval "$(flox activate -D)"` installs the hook and activates the
++logged-in account's default environment in every new shell.
+ 
+ Run `flox config --set disable_hook true` to opt out of the hook entirely,
+ which both disables auto-activation and other features like `flox deactivate`.
+@@ -197,6 +237,14 @@ options.
+    `flox` automatically knows when to print the activation script to `stdout`,
+    so this command is just a debugging aid for users.
+ 
++`--hook-only`
++:  Print shell integration without activating an environment.
++   Source the output in an interactive shell to enable auto-activation.
++   Allowed environments may activate at the first prompt.
++   Cannot be combined with environment selectors or activation options.
++   Prints nothing and exits successfully when `disable_hook = true`.
++   Fails if the shell was initialized by an incompatible version of Flox.
++
+ `-s`, `--start-services`
+ :  Start the services listed in the manifest when activating the environment.
+    If no services are running, the services from the manifest will be started,
+```
+
+**File**: `cli/flox/doc/flox-config.md` (modified, +2/-1)
+```diff
+@@ -139,7 +139,8 @@ flox config --set 'trusted_environments."owner/name"' trust
+     (default: `$XDG_DATA_HOME/flox`).
+ 
+ `disable_hook`
+-:   Don't set up the Flox prompt hook as part of activation.
++:   Don't set up the Flox prompt hook as part of activation,
++    and make `flox activate --hook-only` print nothing.
+     The prompt hook is required for auto-activation and for `flox deactivate` to
+     take effect (default: false).
+ 
+```
+
+**File**: `cli/flox/src/commands/activate.rs` (modified, +85/-20)
+```diff
+@@ -1,4 +1,4 @@
+-use std::io::{BufWriter, stdout};
++use std::io::{BufWriter, Write, stdout};
+ use std::os::unix::process::CommandExt;
+ use std::path::{Path, PathBuf};
+ use std::process::Stdio;
+@@ -7,6 +7,7 @@ use std::{env, fs};
+ use anyhow::{Context, Result, anyhow, bail};
+ use bpaf::Bpaf;
+ use crossterm::tty::IsTty;
++use flox_activations::hook::{bash_hook, fish_hook, tcsh_hook, zsh_hook};
+ use flox_config::{AutoActivationPreference, Config, EnvironmentPromptConfig};
+ use flox_core::activate::context::{
+     ActivateCtx,
+@@ -42,6 +43,7 @@ use flox_rust_sdk::providers::services::process_compose::{PROCESS_COMPOSE_BIN, P
+ use flox_rust_sdk::providers::upgrade_checks::UpgradeInformationGuard;
+ use flox_rust_sdk::utils::FLOX_INTERPRETER;
+ use indoc::{formatdoc, indoc};
++use shell_gen::ShellWithPath;
+ use toml_edit::Key;
+ use tracing::{debug, trace, warn};
+ 
+@@ -94,28 +96,77 @@ pub enum CommandSelect {
+ }
+ 
+ #[derive(Bpaf, Clone)]
+-pub struct Activate {
+-    #[bpaf(external(environment_select), fallback(Default::default()))]
+-    pub environment: EnvironmentSelect,
++pub enum Activate {
++    /// Print shell integration without activating an environment
++    #[bpaf(long("hook-only"))]
++    HookOnly,
+ 
+-    #[bpaf(external(activate_subcommand_or_options))]
+-    pub subcommand_or_options: ActivateSubcommandOrOptions,
++    Environment {
++        #[bpaf(external(environment_select), fallback(Default::default()))]
++        environment: EnvironmentSelect,
++
++        #[bpaf(external(activate_subcommand_or_options))]
++        subcommand_or_options: ActivateSubcommandOrOptions,
++    },
+ }
+ 
+ impl Activate {
+     /// Centrally-derived subcommand string for this invocation. Returns
+     /// the `activate::allow` / `activate::deny` form for the auto-activate
+     /// permission-management sub-commands, preserving the join-key
+     /// continuity the legacy `environment_subcommand_metric!` stream
+-    /// already used.
++    /// already used, and `activate::hook-only` for `--hook-only`.
+     pub fn subcommand_name(&self) -> &'static str {
+-        match &self.subcommand_or_options {
+-            ActivateSubcommandOrOptions::AutoActivate { auto_activate } => match auto_activate {
++        match self {
++            Self::HookOnly => "activate::hook-only",
++            Self::Environment {
++                subcommand_or_options: ActivateSubcommandOrOptions::AutoActivate { auto_activate },
++                ..
++            } => match auto_activate {
+                 AutoActivate::Allow => "activate::allow",
+                 AutoActivate::Deny => "activate::deny",
+             },
+-            ActivateSubcommandOrOptions::ActivateOptions { .. } => "activate",
++            _ => "activate",
++        }
++    }
++
++    /// Whether the prompt hook launched this activation for a directory it
++    /// entered, rather than the user running it.
++    pub fn launched_by_hook(&self) -> bool {
++        matches!(
++            self,
++            Self::Environment {
++                subcommand_or_options: ActivateSubcommandOrOptions::ActivateOptions { options },
++                ..
++            } if options.from_hook
++        )
++    }
++
++    /// Print the shell hook, or nothing when `disable_hook` is set, as
++    /// in-place activation skips the hook silently.
++    pub fn print_hook(config: &Config) -> Result<()> {
++        if config.flox.disable_hook.unwrap_or(false) {
++            debug!("not printing the shell hook because disable_hook is set");
++            return Ok(());
++        }
++        let prompt_hook_version = env::var(PROMPT_HOOK_VERSION_ENV).ok();
++        if prompt_hook_version_mismatched(prompt_hook_version.as_deref()) {
++            bail!(indoc! {"
++                This shell's integration was initialized by an incompatible version of Flox.
++                Restart your shell, then initialize again."});
+         }
++        let shell = detect_shell_for_in_place()?;
++        let flox_bin = flox_bin_for_hook(&shell);
++        let script = match shell {
++            ShellWithPath::Bash(_) => bash_hook(&flox_bin),
++            ShellWithPath::Zsh(_) => zsh_hook(&flox_bin),
++            ShellWithPath::Fish(_) => fish_hook(&flox_bin, config.flox.auto_activate_fish_mode),
++            ShellWithPath::Tcsh(_) => tcsh_hook(&flox_bin),
++        };
++        let mut writer = BufWriter::new(stdout());
++        writer.write_all(script.as_bytes())?;
++        writer.flush()?;
++        Ok(())
+     }
+ }
+ 
+@@ -175,6 +226,10 @@ pub struct ActivateOptions {
+     #[bpaf(long, short)]
+     pub generation: Option<GenerationId>,
+ 
++    /// Set by the prompt hook on the activations it launches.
++    #[bpaf(long("from-hook"), hide)]
++    pub from_hook: bool,
++
+     #[bpaf(external(command_select), optional)]
+     pub command: Option<CommandSelect>,
+ }
+@@ -192,20 +247,30 @@ impl ActivateOptions {
+ 
+ impl Activate {
+     pub async fn handle(self, mut config: Config, mut flox: Flox) -> Result<()> {
+-        let options = match self.subcommand_or_options {
++        let 
+```
+
+---
+
+### Incident Patch 2: `e1bdc4a8` (2026-11-14)
+**Commit Message**: fix(activate): tighten hook-only checks and documentation
+
+Run the hook-only generation test with metrics enabled, so moving the
+early return below telemetry startup would create the data and cache
+directories that the test checks for. Log at debug level why nothing is
+printed when disable_hook is set. Note in flox-config(1) that
+disable_hook also silences --hook-only, and drop an inaccurate reason
+for the tcsh block form from flox-activate(1).
+
+Claude-Session: https://claude.ai/code/session_01HuEtW7YHz1QbZVCPE5SRx5
+
+**File**: `cli/flox/doc/flox-activate.md` (modified, +1/-4)
+```diff
+@@ -121,10 +121,7 @@ Fish (`~/.config/fish/config.fish`):
+ status is-interactive; and flox activate --hook-only | source
+ ```
+ 
+-Tcsh (`~/.tcshrc`).
+-Use the block form,
+-because tcsh substitutes the body of a one-line `if` even when the condition
+-is false:
++Tcsh (`~/.tcshrc`):
+ 
+ ```tcsh
+ if ( $?prompt ) then
+```
+
+**File**: `cli/flox/doc/flox-config.md` (modified, +2/-1)
+```diff
+@@ -139,7 +139,8 @@ flox config --set 'trusted_environments."owner/name"' trust
+     (default: `$XDG_DATA_HOME/flox`).
+ 
+ `disable_hook`
+-:   Don't set up the Flox prompt hook as part of activation.
++:   Don't set up the Flox prompt hook as part of activation,
++    and make `flox activate --hook-only` print nothing.
+     The prompt hook is required for auto-activation and for `flox deactivate` to
+     take effect (default: false).
+ 
+```
+
+**File**: `cli/flox/src/commands/activate.rs` (modified, +1/-0)
+```diff
+@@ -134,6 +134,7 @@ impl Activate {
+     /// in-place activation skips the hook silently.
+     pub fn print_hook(config: &Config) -> Result<()> {
+         if config.flox.disable_hook.unwrap_or(false) {
++            debug!("not printing the shell hook because disable_hook is set");
+             return Ok(());
+         }
+         let prompt_hook_version = env::var(PROMPT_HOOK_VERSION_ENV).ok();
+```
+
+**File**: `cli/tests/hook-only.bats` (modified, +3/-1)
+```diff
+@@ -42,8 +42,10 @@ hook_only_project_setup() {
+   echo 'invalid environment metadata' > .flox/env.json
+   for shell in bash zsh fish tcsh; do
+     # Logged out: the dummy token from the suite setup must not be inherited.
++    # Metrics are enabled, unlike the rest of the suite, so that telemetry
++    # startup would create the data and cache directories checked below.
+     run --separate-stderr env FLOX_SHELL="$(command -v "$shell")" \
+-      FLOX_FLOXHUB_TOKEN= NIX_REMOTE=disabled \
++      FLOX_FLOXHUB_TOKEN= NIX_REMOTE=disabled FLOX_DISABLE_METRICS=false \
+       "$FLOX_BIN" activate --hook-only
+     assert_success
+     [ -n "$output" ]
+```
+
+---
+
+### Incident Patch 3: `29226a1e` (2026-11-15)
+**Commit Message**: fix(activate): keep hook-launched activations quiet when logged out
+
+When the prompt hook enters an allowed project it runs
+'flox activate --dir <dir>', an ordinary command that printed "You are
+not logged in to FloxHub" for a logged-out user. A hook installed by
+in-place activation usually ran inside that active environment, where
+the reminder is already skipped, but a shell set up with --hook-only has
+no active environment, so the reminder printed on every project entry.
+
+The hook now passes the hidden flag --from-hook, and the reminder is
+skipped for an activation that carries it. Credentials and telemetry for
+these activations are unchanged. A command the user runs still prints
+the reminder.
+
+Claude-Session: https://claude.ai/code/session_01HuEtW7YHz1QbZVCPE5SRx5
+
+**File**: `cli/flox/src/commands/activate.rs` (modified, +17/-0)
+```diff
+@@ -130,6 +130,18 @@ impl Activate {
+         }
+     }
+ 
++    /// Whether the prompt hook launched this activation for a directory it
++    /// entered, rather than the user running it.
++    pub fn launched_by_hook(&self) -> bool {
++        matches!(
++            self,
++            Self::Environment {
++                subcommand_or_options: ActivateSubcommandOrOptions::ActivateOptions { options },
++                ..
++            } if options.from_hook
++        )
++    }
++
+     /// Print the shell hook, or nothing when `disable_hook` is set, as
+     /// in-place activation skips the hook silently.
+     pub fn print_hook(config: &Config) -> Result<()> {
+@@ -214,6 +226,10 @@ pub struct ActivateOptions {
+     #[bpaf(long, short)]
+     pub generation: Option<GenerationId>,
+ 
++    /// Set by the prompt hook on the activations it launches.
++    #[bpaf(long("from-hook"), hide)]
++    pub from_hook: bool,
++
+     #[bpaf(external(command_select), optional)]
+     pub command: Option<CommandSelect>,
+ }
+@@ -1325,6 +1341,7 @@ mod tests {
+             add_sbin: false,
+             mode: None,
+             generation: None,
++            from_hook: false,
+             command: None,
+         }
+     }
+```
+
+**File**: `cli/flox/src/commands/hook_env.rs` (modified, +6/-4)
+```diff
+@@ -999,7 +999,9 @@ async fn prompt_for_auto_activation(project_dirs: &[PathBuf]) -> Result<AutoActi
+ /// The emitted command is itself evaluated by the shell's prompt hook, and
+ /// runs `flox activate` with stdout captured — which selects in-place mode —
+ /// so this reuses the full activation path (hooks, services, attach
+-/// semantics) of `eval "$(flox activate)"`.
++/// semantics) of `eval "$(flox activate)"`. `--from-hook` marks the
++/// activation as launched by the hook, which keeps the logged-out reminder
++/// quiet.
+ ///
+ /// It runs flox through [`FLOX_BIN_FOR_SHELL`], the same command the hook
+ /// used to start this process. `command` (`exec` in tcsh) keeps a user
+@@ -1012,19 +1014,19 @@ fn write_activate_command(shell: Shell, project_dir: &Path, writer: &mut impl Wr
+         Shell::Bash | Shell::Zsh => {
+             writeln!(
+                 writer,
+-                r#"eval "$(command {escaped_bin} activate --dir {escaped_dir})";"#
++                r#"eval "$(command {escaped_bin} activate --dir {escaped_dir} --from-hook)";"#
+             )?;
+         },
+         Shell::Fish => {
+             writeln!(
+                 writer,
+-                "command {escaped_bin} activate --dir {escaped_dir} | source;"
++                "command {escaped_bin} activate --dir {escaped_dir} --from-hook | source;"
+             )?;
+         },
+         Shell::Tcsh => {
+             writeln!(
+                 writer,
+-                r#"eval "`exec {escaped_bin} activate --dir {escaped_dir}`";"#
++                r#"eval "`exec {escaped_bin} activate --dir {escaped_dir} --from-hook`";"#
+             )?;
+         },
+     }
+```
+
+**File**: `cli/flox/src/commands/mod.rs` (modified, +15/-2)
+```diff
+@@ -620,7 +620,8 @@ impl FloxArgs {
+     /// Remind a user who is not logged in — no credential, or one whose `exp`
+     /// claim has passed — to run 'flox auth login'. The reminder is suppressed
+     /// for `flox auth`, `push`, and `publish` subcommands, the prompt-hook
+-    /// flow, invocations nested inside an activation, and when the
++    /// flow, activations the prompt hook launches, invocations nested inside
++    /// an activation, and when the
+     /// `auth_notifications` config key is set to `false`.
+     ///
+     /// The credential is not consumed when the configured authn mode does not
+@@ -661,8 +662,20 @@ impl FloxArgs {
+             // shell, including in-place `eval "$(flox activate)"` ones, so
+             // it is a reliable signal even across the parent shell.
+             let nested = activated_environments().last_active().is_some();
++            // An activation the prompt hook launches on entering a directory
++            // stays quiet as well, whether or not an environment is already
++            // active, as in a shell set up with `flox activate --hook-only`.
++            let launched_by_hook = matches!(
++                &self.command,
++                Some(Commands::Use(UseCommands::Activate(activate))) if activate.launched_by_hook()
++            );
+             let quieted = !config.flox.auth_notifications.unwrap_or(true);
+-            if !reports_auth && !self.is_prompt_hook_flow() && !nested && !quieted {
++            if !reports_auth
++                && !self.is_prompt_hook_flow()
++                && !nested
++                && !launched_by_hook
++                && !quieted
++            {
+                 message::warning(
+                     "You are not logged in to FloxHub. Run 'flox auth login' to log in.",
+                 );
+```
+
+**File**: `cli/flox/src/commands/services/mod.rs` (modified, +1/-0)
+```diff
+@@ -416,6 +416,7 @@ pub async fn start_services_with_new_process_compose(
+         add_sbin: false,
+         mode: Some(activate_mode),
+         generation,
++        from_hook: false,
+         // this isn't actually used because we pass invocation type below
+         command: Some(CommandSelect::ExecCommand {
+             command: "true".to_string(),
+```
+
+**File**: `cli/tests/hook-only.bats` (modified, +21/-0)
+```diff
+@@ -99,6 +99,27 @@ hook_only_project_setup() {
+   [ -z "$stderr" ]
+ }
+ 
++# Like an auto-activation in a shell whose hook came from an in-place
++# activation, one launched by the hook stays quiet about being logged out.
++# A command the user runs still prints the reminder.
++@test "hook-only: auto-activation does not print the logged-out reminder" {
++  hook_only_project_setup
++  FLOX_FLOXHUB_TOKEN= run --separate-stderr bash --noprofile --norc -c '
++    set -e
++    export FLOX_SHELL=$(command -v bash)
++    eval "$($FLOX_BIN activate --hook-only)"
++    "$FLOX_BIN" config > /dev/null
++    cd "$PROJECT_DIR"
++    _flox_hook
++    [[ $FLOX_ENV_PROJECT == "$PROJECT_DIR" ]]
++    echo active
++  '
++  assert_success
++  assert_output --partial active
++  run grep -c "You are not logged in to FloxHub" <<< "$stderr"
++  assert_output 1
++}
++
+ @test "hook-only: zsh detects the caller and preserves hooks and fork ownership" {
+   hook_only_project_setup
+   run --separate-stderr zsh -fic '
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4935** (2026-11-25): chore: revert accidentally merged commits (@mkenigs)
+- **PR #4933** (2026-11-25): test(environment): Backdate lockfile mtime in lock write tests (@dcarley)
 - **PR #4922** (2026-11-24): feat(show,search): Warn about deprecated packages (@mkenigs)
 - **PR #4919** (closed): build: Update FloxHub API schemas to d70550f8 (@floxbot)
+- **PR #4917** (2026-11-25): feat(flox): Add hidden archive and unarchive commands (@dcarley)
 - **PR #4916** (closed): build: Update FloxHub API schemas to 2740c8a8 (@floxbot)
-- **PR #4915** (2026-11-24): refactor(factory)!: Call the Factory job a run (@brendaneamon)
-- **PR #4914** (2026-11-23): feat(buildenv): List keys for untrusted packages (@dcarley)
-- **PR #4909** (2026-11-20): build: Update FloxHub API schemas to c140ac3b (@floxbot)
 
 ---
 
@@ -1518,31 +2254,44 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: run crate2nix build on Blacksmith runner
+## X. activate): run tcsh profiles after the last deactivation
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/flox-activations/src/cli/profile_scripts.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `794ead02`: ci: run crate2nix build on Blacksmith runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `173ce971`: activate): run tcsh profiles after the last deactivation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-activations/src/cli/profile_scripts.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    runs-on: "blacksmith-4vcpu-ubuntu-2404"
+    // Omitted or given without a value, it means no env dirs have been
+    // sourced. The tcsh generator builds this flag in a word list from an
+    // unquoted `$var:q`, which drops an empty value, so it omits the flag when
+    // the variable is unset and passes it bare when the variable is empty, as
+    // it is after the last deactivation.
+    #[clap(default_value = "", num_args = 0..=1, default_missing_value = "")]
+    // Accepts the same omitted or bare forms as
+    // `ProfileScriptsArgs::already_sourced_env_dirs`.
+    #[clap(default_value = "", num_args = 0..=1, default_missing_value = "")]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    runs-on: "ubuntu-latest"
+    // If not provided, defaults to an empty string. This is required for tcsh in
+    // particular that is unable to pass empty arguments on the command line.
+    #[clap(default_value = "")]
+    // Empty default matches `ProfileScriptsArgs::already_sourced_env_dirs` so
+    // tcsh can pass an unset variable without quoting gymnastics.
+    #[clap(default_value = "")]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `794ead02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `173ce971` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

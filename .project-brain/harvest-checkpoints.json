@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T16:49:13.769Z",
+  "last_updated": "2026-11-26T16:58:30.810Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -800,14 +800,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "0480b1a59483970fe456929c5be1984450ea7c0cf17d54384712875b2fb784a6",
-      "verified_at": "2026-11-22T23:49:14.464Z",
+      "content_hash": "ce67b3b00cd98f3435ec91e9f3a0d5d080a95c14c5a2f315eef7d8febc60dc24",
+      "verified_at": "2026-11-26T16:58:16.309Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:49:14.464Z"
+      "last_updated": "2026-11-26T16:58:16.309Z"
     },
     "canberkkkkkk/ema-lightning": {
       "repository": "canberkkkkkk/ema-lightning",
@@ -3636,14 +3636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mattermost-mattermost",
-      "content_hash": "9cc3c6b723ad65df83110eeb08d65a761c820c127342c3f9901efedcdee7cc77",
-      "verified_at": "2026-11-24T07:07:37.677Z",
+      "content_hash": "4f91b632c15aa7ed48ad4e41b37a8bb036f436eee55f1d02129c1e6664537f72",
+      "verified_at": "2026-11-26T16:58:23.745Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T07:07:37.677Z"
+      "last_updated": "2026-11-26T16:58:23.745Z"
     },
     "chaos-mesh/chaos-mesh": {
       "repository": "chaos-mesh/chaos-mesh",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "d4a54f15ce1efb51a31a1b6955a7c17a738f66c46340af616dd5c2495362b117",
-      "verified_at": "2026-11-25T09:07:53.363Z",
+      "content_hash": "1a47cd4e2ffcc6e460f6ba036f0ad82a9b29227319f59171e2f404430af75f39",
+      "verified_at": "2026-11-26T16:58:18.492Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T09:07:53.363Z"
+      "last_updated": "2026-11-26T16:58:18.492Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -10266,14 +10266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topoteretes-cognee",
-      "content_hash": "9f60f6f6433828ac7897efce364a147bfa848951c7c02435885a077e48c75d0d",
-      "verified_at": "2026-11-20T17:37:23.520Z",
+      "content_hash": "3d468df36b4143d197fb880fe99ca80c3c8ec8e8a049d0549f858256f9746cb8",
+      "verified_at": "2026-11-26T16:58:30.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:37:23.520Z"
+      "last_updated": "2026-11-26T16:58:30.809Z"
     },
     "radix-ui/primitives": {
       "repository": "radix-ui/primitives",
