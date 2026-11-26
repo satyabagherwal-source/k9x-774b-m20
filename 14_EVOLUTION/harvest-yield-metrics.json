@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:00:14.747Z",
-  "total_cycles_completed": 12768,
-  "total_learnings_persisted": 12768,
-  "total_rules_promoted": 11620,
+  "last_updated": "2026-11-26T16:10:58.217Z",
+  "total_cycles_completed": 12772,
+  "total_learnings_persisted": 12772,
+  "total_rules_promoted": 11623,
   "history": [
-    {
-      "timestamp": "2026-11-26T04:47:43.773Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T04:56:03.011Z",
-      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T04:56:04.281Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T05:05:09.375Z",
-      "repository": "laion/clap-htsat-fused",
-      "learningId": "learn-huggingface-laion-clap-htsat-fused",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T05:05:19.826Z",
       "repository": "open-policy-agent/opa",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T16:00:14.747Z",
       "repository": "appwrite/appwrite",
       "learningId": "learn-github-appwrite-appwrite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:10:42.383Z",
+      "repository": "briaai/RMBG-3.0",
+      "learningId": "learn-huggingface-briaai-rmbg-3-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:10:52.688Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:10:55.289Z",
+      "repository": "DefGuard/defguard",
+      "learningId": "learn-github-defguard-defguard",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:10:58.217Z",
+      "repository": "run-llama/llama_index",
+      "learningId": "learn-github-run-llama-llama_index",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

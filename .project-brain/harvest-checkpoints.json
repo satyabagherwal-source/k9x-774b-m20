@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T16:00:14.759Z",
+  "last_updated": "2026-11-26T16:10:58.228Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3801,14 +3801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-defguard-defguard",
-      "content_hash": "e32925dfa5b054e0a9ea3cfe7d7cfdc4b17383951f11bd714e7ea7e9a647237e",
-      "verified_at": "2026-11-26T11:39:52.761Z",
+      "content_hash": "f068316be4f52a910f94a83de0c6b76dd6376ac5cb1833df4a8533df68295516",
+      "verified_at": "2026-11-26T16:10:55.299Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T11:39:52.761Z"
+      "last_updated": "2026-11-26T16:10:55.299Z"
     },
     "tamagui/tamagui": {
       "repository": "tamagui/tamagui",
@@ -9906,14 +9906,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-run-llama-llama_index",
-      "content_hash": "b846cd6b1e95f24799483fd2aae5358d4ea6e082f2a1d348ada344c7abf25452",
-      "verified_at": "2026-11-15T02:15:10.454Z",
+      "content_hash": "47ca01ea511b9e196133e03640f8776e166fdb9379551e635e3f6ae7a7db8de4",
+      "verified_at": "2026-11-26T16:10:58.227Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T02:15:10.454Z"
+      "last_updated": "2026-11-26T16:10:58.227Z"
     },
     "vercel-labs/opensrc": {
       "repository": "vercel-labs/opensrc",
@@ -15486,14 +15486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-laurent22-joplin",
-      "content_hash": "dbc01eebac58e8a267f2fd07c1ac6378eff56bc81dce31e3b8a2d6179d4fc0f1",
-      "verified_at": "2026-11-24T06:20:45.412Z",
+      "content_hash": "6e114cfcc23a4c497d781bd1ddfbd7a8b8ea0266ed080fdc7d8bfdada86a1793",
+      "verified_at": "2026-11-26T16:10:52.698Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:20:45.412Z"
+      "last_updated": "2026-11-26T16:10:52.698Z"
     },
     "appwrite/appwrite": {
       "repository": "appwrite/appwrite",
@@ -19431,14 +19431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-briaai-rmbg-3-0",
-      "content_hash": "13d01c85b6442bae76c8f667727a965944f3210273a74d1658c999b0229a386f",
-      "verified_at": "2026-11-22T23:06:10.761Z",
+      "content_hash": "3b1323226ed7e18930cb4e1d0ddff2135f71767681400c110b741a4c55e0d646",
+      "verified_at": "2026-11-26T16:10:42.386Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:06:10.761Z"
+      "last_updated": "2026-11-26T16:10:42.386Z"
     },
     "HuggingFaceTB/SmolVLM2-256M-Video-Instruct": {
       "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",

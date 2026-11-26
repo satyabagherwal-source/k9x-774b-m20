@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-7TO4",
-    "timestamp": "2026-11-25T02:56:14.068Z",
-    "repository": "SeekStorm/SeekStorm",
-    "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "b68533ef62bd0c72753ecff297bfd2fa4eee969b101c735ce04516dec1f3ccf7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-JAM5",
-    "timestamp": "2026-11-25T03:05:09.245Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "7f7e42eb1028cd403cbba7d2342620d45f108849f3349a66539672159df5c8ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-U2SX",
-    "timestamp": "2026-11-25T03:13:32.337Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "29b6eed87e86e6de62c3122719bcb21bda3a8ee426d49aa01b755d2aa0568fe3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-U4LB",
-    "timestamp": "2026-11-25T03:13:34.655Z",
-    "repository": "mrkai77/Loop",
-    "learningId": "learn-github-mrkai77-loop",
-    "contentHash": "22e7845db77118bd3ada678bb2ddd7d72e6c8a7e28b948391e143327d8f7e688",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-D64I",
     "timestamp": "2026-11-25T03:28:23.106Z",
     "repository": "google/tcmalloc",
@@ -7490,6 +7430,66 @@
     "repository": "appwrite/appwrite",
     "learningId": "learn-github-appwrite-appwrite",
     "contentHash": "4632466ee123c5dd45f8969167c3705f169165b32ea6fae2e27d968e4e8c110a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1DFB",
+    "timestamp": "2026-11-26T16:10:42.359Z",
+    "repository": "briaai/RMBG-3.0",
+    "learningId": "learn-huggingface-briaai-rmbg-3-0",
+    "contentHash": "3b1323226ed7e18930cb4e1d0ddff2135f71767681400c110b741a4c55e0d646",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1LDL",
+    "timestamp": "2026-11-26T16:10:52.665Z",
+    "repository": "laurent22/joplin",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "6e114cfcc23a4c497d781bd1ddfbd7a8b8ea0266ed080fdc7d8bfdada86a1793",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1NDV",
+    "timestamp": "2026-11-26T16:10:55.267Z",
+    "repository": "DefGuard/defguard",
+    "learningId": "learn-github-defguard-defguard",
+    "contentHash": "f068316be4f52a910f94a83de0c6b76dd6376ac5cb1833df4a8533df68295516",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1PN7",
+    "timestamp": "2026-11-26T16:10:58.195Z",
+    "repository": "run-llama/llama_index",
+    "learningId": "learn-github-run-llama-llama_index",
+    "contentHash": "47ca01ea511b9e196133e03640f8776e166fdb9379551e635e3f6ae7a7db8de4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

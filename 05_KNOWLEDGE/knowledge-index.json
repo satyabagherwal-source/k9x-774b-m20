@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T16:00:22.020Z",
+  "last_updated": "2026-11-26T16:11:05.510Z",
   "total_verified_learnings": 9130,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26017,
+  "total_items": 26023,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114621,10 +114621,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
       "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
       "repository": "laurent22/joplin",
-      "source_version": "58fbd837",
-      "content_hash": "dfbc83cc984bfaa5a1bdddbfaaf55e5249f49aa1bdfdc1013a64756352f3e6b5",
+      "source_version": "c8e3c011",
+      "content_hash": "bae79e54cb6d2ef0cdbc019c63b8e3da889060a6749d67d44655eed42d9f6bda",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:20:45.796Z"
+      "persisted_at": "2026-11-26T16:10:53.305Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin",
@@ -114633,10 +114633,10 @@
       "relative_path": "08_VERIFICATION/laurent22-joplin-verification-protocol-empirical-defect-shield-for-laurent22-jop.md",
       "title": "Verification Protocol: Empirical Defect Shield for laurent22/joplin",
       "repository": "laurent22/joplin",
-      "source_version": "58fbd837",
-      "content_hash": "595c45b16c69b77694829b71995754fd85609c7c7cdb489c45883caab172b3de",
+      "source_version": "c8e3c011",
+      "content_hash": "7ef476b2b721b7abde28e0b2ce638713dc63ebae9b3ed9d9d7ff84dc300cdf7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:20:45.968Z"
+      "persisted_at": "2026-11-26T16:10:53.596Z"
     },
     "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker": {
       "item_id": "candidate_directive-test-a-lost-virtualtime-wakeup-and-drive_on_threads-advancing-over-busy-worker",
@@ -114730,9 +114730,9 @@
       "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
       "repository": "laurent22-joplin-learnings",
       "source_version": "HEAD",
-      "content_hash": "b053f2d442f37c259953c78461f7618b078478c1eb686538e27d21c43aa30693",
+      "content_hash": "26eff5048da73947dcb1e42dcdb4db1e25a375cbd125ba807125958f6e1cacd9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:20:51.920Z"
+      "persisted_at": "2026-11-26T16:11:03.804Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-laurent22-joplin-learnings",
@@ -114742,9 +114742,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for laurent22-joplin-learnings",
       "repository": "laurent22-joplin-learnings",
       "source_version": "HEAD",
-      "content_hash": "0efa18dd3294a3da5ce8edc189752f66f5ac91c68f45ef9b496f45ea425a2bac",
+      "content_hash": "a2914beedf713cd3098d98cc9800b4ec31b98183f3b1e89c8cc42ece1b56aff2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:20:52.079Z"
+      "persisted_at": "2026-11-26T16:11:04.071Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
       "item_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
@@ -244219,14 +244219,19 @@
       "slug": "run-llama-llama_index",
       "platform": "github",
       "source_url": "https://github.com/run-llama/llama_index",
-      "source_version": "99d7433f",
-      "content_hash": "b846cd6b1e95f24799483fd2aae5358d4ea6e082f2a1d348ada344c7abf25452",
+      "source_version": "40d4f79e",
+      "content_hash": "47ca01ea511b9e196133e03640f8776e166fdb9379551e635e3f6ae7a7db8de4",
       "dossier_path": "07_PROJECT_LEARNING/run-llama-llama_index-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/run-llama-llama_index-learnings.md",
       "promoted_rules": [
         {
           "number": 8562,
           "title": "raise requires-python for security fixes across integrations (stacked",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10721,
+          "title": "add zizmor workflow scanning and fix high-severity findings",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -244235,7 +244240,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T02:15:10.267Z",
+      "verified_at": "2026-11-26T16:10:57.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244277,10 +244282,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-run-llama-llama_index-technical-construction-intelligence-run-llama-llama_index-.md",
       "title": "Technical Construction Intelligence: run-llama/llama_index Core Invariants",
       "repository": "run-llama/llama_index",
-      "source_version": "99d7433f",
-      "content_hash": "6d9bce6e85e4c87a41593fb69dca82bca0848fd62fede43ff8720c37ffdfa363",
+      "source_version": "40d4f79e",
+      "content_hash": "dabb4b7bf775712e0955d2447637368a98dbb93492ce6f234bb068ebb17255a8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T02:15:10.784Z"
+      "persisted_at": "2026-11-26T16:10:58.826Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-run-llama-llama_index": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-run-llama-llama_index",
@@ -244289,10 +244294,10 @@
       "relative_path": "08_VERIFICATION/run-llama-llama_index-verification-protocol-empirical-defect-shield-for-run-llam.md",
       "title": "Verification Protocol: Empirical Defect Shield for run-llama/llama_index",
       "repository": "run-llama/llama_index",
-      "source_version": "99d7433f",
-      "content_hash": "a7c1c060bdaa3895049548f0cd88b810f7b901c15c3ed7d2c3580bd09154d809",
+      "source_version": "40d4f79e",
+      "content_hash": "dd964c011b709176d754427a4293ce3081db370d7144ad12a53c9b885dcd15ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T02:15:10.916Z"
+      "persisted_at": "2026-11-26T16:10:59.094Z"
     },
     "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8": {
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
@@ -265059,8 +265064,8 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "79d1cfe3",
-      "content_hash": "e32925dfa5b054e0a9ea3cfe7d7cfdc4b17383951f11bd714e7ea7e9a647237e",
+      "source_version": "ba842b46",
+      "content_hash": "f068316be4f52a910f94a83de0c6b76dd6376ac5cb1833df4a8533df68295516",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
@@ -265098,6 +265103,11 @@
           "number": 10667,
           "title": "Warn about required dg version for network device preshared key",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10720,
+          "title": "release/2.2.1 -> stable",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -265105,7 +265115,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:39:52.464Z",
+      "verified_at": "2026-11-26T16:10:54.933Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -265147,10 +265157,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "repository": "DefGuard/defguard",
-      "source_version": "79d1cfe3",
-      "content_hash": "0e57a5045d800fa3335073cee01da0955665b029b6943f3254bd66b67a849b70",
+      "source_version": "ba842b46",
+      "content_hash": "1ea3ce30062d5ba2fedcbeaf0fcbe5bc41100f02e2d716a4453d05df067250b3",
       "domain_letter": "A",
-      "persisted_at": "2026-11-26T11:39:53.169Z"
+      "persisted_at": "2026-11-26T16:10:55.890Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard",
@@ -265159,10 +265169,10 @@
       "relative_path": "08_VERIFICATION/defguard-defguard-verification-protocol-empirical-defect-shield-for-defguard-def.md",
       "title": "Verification Protocol: Empirical Defect Shield for DefGuard/defguard",
       "repository": "DefGuard/defguard",
-      "source_version": "79d1cfe3",
-      "content_hash": "0f2f6452d7fcfc401d1556e98e5598912776c5445fe7b600955e46d74f60dce1",
+      "source_version": "ba842b46",
+      "content_hash": "70fd0a6d238b618b75bc3955c1b7b74fea3a6997a9ca97d0687f17de2496590b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:39:53.387Z"
+      "persisted_at": "2026-11-26T16:10:56.158Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -265196,9 +265206,9 @@
       "title": "Human & Need Intelligence: defguard-defguard-learnings Core Invariants",
       "repository": "defguard-defguard-learnings",
       "source_version": "HEAD",
-      "content_hash": "34c2dd69f20b2b36984c66d33105cae3add7dafcf6b4f552a956c8cd3dcfd0d1",
+      "content_hash": "b59546e88a20a9d54c4b879f22e09786975d9b036aa97ba31d41d4a6ff6cc4d8",
       "domain_letter": "A",
-      "persisted_at": "2026-11-24T16:46:19.179Z"
+      "persisted_at": "2026-11-26T16:11:05.219Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard-learnings",
@@ -265208,9 +265218,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for defguard-defguard-learnings",
       "repository": "defguard-defguard-learnings",
       "source_version": "HEAD",
-      "content_hash": "1df18b0c290a8b4d08d22ebf873eee4a5b1848b975bbe70f68f7d21d094c6266",
+      "content_hash": "74d9125a98b4c34da51cb599c34a1c5aaa27deac5d1f6c9705ec07a64bdfbd74",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T16:46:19.398Z"
+      "persisted_at": "2026-11-26T16:11:05.510Z"
     },
     "rule-8789": {
       "learning_id": "rule-8789",
@@ -274412,8 +274422,8 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "58fbd837",
-      "content_hash": "dbc01eebac58e8a267f2fd07c1ac6378eff56bc81dce31e3b8a2d6179d4fc0f1",
+      "source_version": "c8e3c011",
+      "content_hash": "6e114cfcc23a4c497d781bd1ddfbd7a8b8ea0266ed080fdc7d8bfdada86a1793",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
@@ -274431,6 +274441,11 @@
           "number": 10216,
           "title": "Fixes #17124: Fix revision viewer crash caused by renovate tooltip libr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10719,
+          "title": "Fix failing fs-driver-rn tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -274438,7 +274453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:20:45.193Z",
+      "verified_at": "2026-11-26T16:10:52.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -294908,7 +294923,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/briaai/RMBG-3.0",
       "source_version": "hf-briaai-rmbg-3.0",
-      "content_hash": "13d01c85b6442bae76c8f667727a965944f3210273a74d1658c999b0229a386f",
+      "content_hash": "3b1323226ed7e18930cb4e1d0ddff2135f71767681400c110b741a4c55e0d646",
       "dossier_path": "07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md",
       "promoted_rules": [],
@@ -294917,7 +294932,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:06:10.522Z",
+      "verified_at": "2026-11-26T16:10:42.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -294934,9 +294949,9 @@
       "title": "Research & Knowledge Intelligence: briaai/RMBG-3.0 Core Invariants",
       "repository": "briaai/RMBG-3.0",
       "source_version": "hf-briaai-rmbg-3.0",
-      "content_hash": "6e57a15940208ba5c70394dd330c31d3327a74e6918ebed83a3bb6755795dc15",
+      "content_hash": "a28c9cf645ee1709072d300a368c025b3e1de033210482560931771172b61788",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:06:10.964Z"
+      "persisted_at": "2026-11-26T16:10:42.693Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-briaai-rmbg-3-0-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-briaai-rmbg-3-0-learnings-core-invariants",
@@ -294946,9 +294961,9 @@
       "title": "Research & Knowledge Intelligence: hf-briaai-rmbg-3.0-learnings Core Invariants",
       "repository": "hf-briaai-rmbg-3.0-learnings",
       "source_version": "HEAD",
-      "content_hash": "f893226af104ff9666da85fc9dd15f21b5db20dfcdb2af663bea957aef8a905f",
+      "content_hash": "091167003598aa81972a9d31632fe64e84d5d3452bc6980e1227b82974041f43",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:06:28.672Z"
+      "persisted_at": "2026-11-26T16:11:02.433Z"
     },
     "candidate_directive-hosting-bound-per-neighbor-hosting-adverts-and-close-disconnect-race": {
       "item_id": "candidate_directive-hosting-bound-per-neighbor-hosting-adverts-and-close-disconnect-race",
@@ -356597,6 +356612,84 @@
       "content_hash": "f7d1bd34cd01d1b6a2a6796cb40651f7f62801f3db36d93ebfc92b9cd710ca4d",
       "domain_letter": "J",
       "persisted_at": "2026-11-26T16:00:21.504Z"
+    },
+    "rule-10719": {
+      "learning_id": "rule-10719",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10719,
+      "title": "Fix failing fs-driver-rn tests",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "c8e3c011",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:10:52.328Z"
+    },
+    "candidate_directive-fix-failing-fs-driver-rn-tests": {
+      "item_id": "candidate_directive-fix-failing-fs-driver-rn-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1TRH-fix-failing-fs-driver-rn-tests.md",
+      "title": "Fix failing fs-driver-rn tests",
+      "repository": "laurent22-joplin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2f9642debafb2f0e748a05918dd718b9054dff07cc3d7234147f3feef74d92d9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T16:11:03.533Z"
+    },
+    "rule-10720": {
+      "learning_id": "rule-10720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10720,
+      "title": "release/2.2.1 -> stable",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "ba842b46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:10:54.933Z"
+    },
+    "candidate_directive-release-2-2-1-stable": {
+      "item_id": "candidate_directive-release-2-2-1-stable",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1UUT-release-2-2-1-stable.md",
+      "title": "release/2.2.1 -> stable",
+      "repository": "defguard-defguard-learnings",
+      "source_version": "HEAD",
+      "content_hash": "44724fa620f369af3b7e3399b0269b7b47bbdf1a0af42aee4bfa167eeb68067c",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-26T16:11:04.952Z"
+    },
+    "rule-10721": {
+      "learning_id": "rule-10721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10721,
+      "title": "add zizmor workflow scanning and fix high-severity findings",
+      "source_url": "https://github.com/run-llama/llama_index",
+      "source_version": "40d4f79e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:10:57.864Z"
+    },
+    "candidate_directive-add-zizmor-workflow-scanning-and-fix-high-severity-findings": {
+      "item_id": "candidate_directive-add-zizmor-workflow-scanning-and-fix-high-severity-findings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1PX0-add-zizmor-workflow-scanning-and-fix-high-severity-findings.md",
+      "title": "add zizmor workflow scanning and fix high-severity findings",
+      "repository": "run-llama/llama_index",
+      "source_version": "40d4f79e",
+      "content_hash": "bd7f5064f451cc55e03afa6360f71bdbf47156dd1eb99d91666787e05a0e6902",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-26T16:10:58.553Z"
     }
   },
   "ai-builder-brain": {

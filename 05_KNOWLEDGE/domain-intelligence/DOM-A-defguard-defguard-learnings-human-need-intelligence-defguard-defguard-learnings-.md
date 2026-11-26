@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T16:46:18.798Z",
+  "timestamp": "2026-11-26T16:11:04.764Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-defguard-defguard-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [defguard-defguard-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T16:46:18.798Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:11:04.764Z`  
 > **Learning ID**: `LEARN-EVO-defguard-defguard-learnings`
 
 
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `279cc5c3`  
+> **Source Version**: `ba842b46`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T16:46:06.607Z  
+> **Timestamp**: 2026-11-26T16:10:53.609Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T16:46:06.600Z  
+> **Harvest Timestamp**: 2026-11-26T16:10:53.602Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2922 stars
+- **Stars / Engagement**: 2926 stars
 
 ---
 
@@ -2040,11 +2040,11 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4105** (2026-11-26): **Source code release archive do not contain built web components**
+  *Symptoms*: Because `tar` is launched with `--exclude-vcs-ignores` the `dist` folder is skipped, but required for the complete source code archive.
+
 - **Issue #4053** (2026-11-20): **Pasted comma-separated addresses aren’t split into chips**
   *Symptoms*: Pasting a comma-separated list into "IPv4/IPv6 CIDR ranges or addresses" in Add new alias creates one long chip that overflows the form. After saving, the values are split correctly (Edit alias shows separate chips).  Steps 1. Firewall → Aliases → Add new alias 2. Paste `1.0.0.0-9.255.255.255,11.0.0.0-100.63.255.255,100.128.0.0-126.255.255.255,128.0.0.0-169.253.255.255,169.255.0.0-172.15.255.255,172.32.0.0-192.167.255.255,192.169.0.0-223.255.255.255,2000::/3` into the addresses field 3. Click outside the field  https://github.com/user-attachments/assets/9cb2dd70-3f2b-4b9d-a88b-270fb293514a   Fix this in:  - [x] Rules - [x] Destination - [x] Alias - [x] Location -> AllowedIPs
-
-- **Issue #4051** (2026-11-17): **Edge/proxy stops accepting new connections: idle client connections are never closed and exhaust the file descriptor limit**
-  *Symptoms*: **Describe the bug** The edge (process `defguard-proxy`) accumulates established client connections on port 443 that are never closed. With roughly 50 active users it reached 1012 established connections within about three days, hit the container's default soft limit of 1024 open files and stopped accepting new connections.  Existing connections kept working, so the service looked healthy, but every new connection attempt timed out. For users this shows up as: - After entering the MFA code, the desktop client spins indefinitely and the tunnel is never established. - Occasionally the client reports that it cannot connect to the edge.  Nothing matching `too many open files` or `accept` appears in the edge container log at the configured log level.  **To Reproduce** Steps to reproduce the behavior: 1. Run the edge as a Docker container with the default `nofile` soft limit of 1024, published directly on 443/tcp (no reverse proxy in front). 2. Let about 50 users work normally with the desktop client for a few days. 3. Watch the number of established connections on port 443 inside the container: `ss -Htn state established 'sport = :443' | wc -l`. It grows continuously and far exceeds the number of clients. 4. Once the process holds 1024 file descriptors, new connections are no longer accepted: SYNs reach the container but get no SYN-ACK, and MFA / tunnel setup hangs in the client.  **Expected behavior** - Idle or dead client connections are closed by the edge (idle timeout and/or T
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2061,54 +2061,120 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `279cc5c3` (2026-11-24)
-**Commit Message**: 2.2.1 (#4100)
+### Incident Patch 1: `ba842b46` (2026-11-26)
+**Commit Message**: release/2.2.1 -> stable
 
-**File**: `Cargo.lock` (modified, +1/-1)
+* change the mailpit image
+
+* e2e image fallback
+
+**File**: `.github/scripts/e2e-image-tags.sh` (added, +26/-0)
 ```diff
-@@ -1538,7 +1538,7 @@ dependencies = [
+@@ -0,0 +1,26 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++branch=${GITHUB_REF#refs/heads/}
++image_tag=${branch//\//-}
++if [[ $branch =~ ^(release|stable)/([0-9]+) ]]; then
++  fallback_tag="stable-${BASH_REMATCH[2]}.x"
++else
++  fallback_tag=dev
++fi
++env_file=${GITHUB_ENV:-/dev/stdout}
++
++echo "IMAGE_TAG=$image_tag" >> "$env_file"
++echo "E2E tests will run on IMAGE_TAG=$image_tag"
++
++# Other repositories build proxy and gateway, so a missing tag falls back to stable or dev.
++use_tag_or_fallback() {
++  local env_var=$1 image=ghcr.io/defguard/$2
++  if ! docker buildx imagetools inspect "$image:$image_tag" > /dev/null 2>&1; then
++    echo "::warning::$image:$image_tag not found, E2E tests use $image:$fallback_tag"
++    echo "$env_var=$fallback_tag" >> "$env_file"
++  fi
++}
++
++use_tag_or_fallback EDGE_IMAGE_TAG defguard-proxy
++use_tag_or_fallback GATEWAY_IMAGE_TAG gateway
+```
+
+**File**: `.github/workflows/e2e.yml` (modified, +6/-28)
+```diff
+@@ -30,16 +30,8 @@ jobs:
+           username: ${{ github.actor }}
+           password: ${{ secrets.GITHUB_TOKEN }}
  
- [[package]]
- name = "defguard_common"
--version = "2.2.0"
-+version = "2.2.1"
- dependencies = [
-  "anyhow",
-  "argon2 0.6.0",
+-      - name: Export image tag
+-        run: |
+-          BRANCH=${GITHUB_REF#refs/heads/}
+-          if [[ "$BRANCH" == release/* ]] || [[ "$BRANCH" == stable/* ]]; then
+-            IMAGE_TAG=${BRANCH//\//-}
+-          else
+-            IMAGE_TAG=$BRANCH
+-          fi
+-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+-          echo "E2E tests will run on IMAGE_TAG=$IMAGE_TAG"
++      - name: Export image tags
++        run: bash .github/scripts/e2e-image-tags.sh
+ 
+       - name: Set up Node
+         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+@@ -130,15 +122,8 @@ jobs:
+           username: ${{ github.actor }}
+           password: ${{ secrets.GITHUB_TOKEN }}
+ 
+-      - name: Export image tag
+-        run: |
+-          BRANCH=${GITHUB_REF#refs/heads/}
+-          if [[ "$BRANCH" == release/* ]] || [[ "$BRANCH" == stable/* ]]; then
+-            IMAGE_TAG=${BRANCH//\//-}
+-          else
+-            IMAGE_TAG=$BRANCH
+-          fi
+-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
++      - name: Export image tags
++        run: bash .github/scripts/e2e-image-tags.sh
+ 
+       - name: Set up Node
+         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+@@ -225,15 +210,8 @@ jobs:
+           username: ${{ github.actor }}
+           password: ${{ secrets.GITHUB_TOKEN }}
+ 
+-      - name: Export image tag
+-        run: |
+-          BRANCH=${GITHUB_REF#refs/heads/}
+-          if [[ "$BRANCH" == release/* ]] || [[ "$BRANCH" == stable/* ]]; then
+-            IMAGE_TAG=${BRANCH//\//-}
+-          else
+-            IMAGE_TAG=$BRANCH
+-          fi
+-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
++      - name: Export image tags
++        run: bash .github/scripts/e2e-image-tags.sh
+ 
+       - name: Set up Node
+         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `docker-compose.e2e.yaml` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,7 @@ redundant_closure = "warn"
- [workspace.dependencies]
- # internal crates
- defguard_setup = { path = "./crates/defguard_setup", version = "0.0.0" }
--defguard_common = { path = "./crates/defguard_common", version = "2.2.0", default-features = false }
-+defguard_common = { path = "./crates/defguard_common", version = "2.2.1", default-features = false }
- defguard_static_ip = { path = "./crates/defguard_static_ip", version = "0.0.0" }
- defguard_core = { path = "./crates/defguard_core", version = "0.0.0", default-features = false }
- defguard_event_logger = { path = "./crates/defguard_event_logger", version = "0.0.0" }
-```
-
-**File**: `crates/defguard_common/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "defguard_common"
--version = "2.2.0"
-+version = "2.2.1"
- edition.workspace = true
- license-file.workspace = true
- homepage.workspace = true
+@@ -57,4 +57,4 @@ services:
+       - NET_ADMIN
+ 
+   mailpit:
+-    image: axllent/mailpit:latest
++    image: ghcr.io/axllent/mailpit:latest
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4114** (2026-11-26): release/2.2.1 -> stable (@t-aleksander)
+- **PR #4111** (2026-11-26): Warn about required dg version for network device preshared key (@jakub-tldr)
+- **PR #4106** (2026-11-26): Fix source code archive (@moubctez)
 - **PR #4102** (2026-11-24): Pipeline fixes (@t-aleksander)
 - **PR #4100** (2026-11-24): Bump version to 2.2.1 (@t-aleksander)
 - **PR #4099** (2026-11-24): Make Client download page consistent with landing page (@t-aleksander)
-- **PR #4093** (2026-11-23): apply new design for network devices modals (@filipslezaklab)
-- **PR #4090** (2026-11-23): consistent UX around copy/download actions (@filipslezaklab)
-- **PR #4089** (2026-11-23): fix lint (@filipslezaklab)
 
 ---
 
@@ -2128,31 +2194,56 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. release/2.2.1 -> stable
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/e2e-image-tags.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `279cc5c3`: 2.2.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba842b46`: release/2.2.1 -> stable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/e2e-image-tags.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "2.2.1"
+#!/usr/bin/env bash
+set -euo pipefail
+
+branch=${GITHUB_REF#refs/heads/}
+image_tag=${branch//\//-}
+if [[ $branch =~ ^(release|stable)/([0-9]+) ]]; then
+  fallback_tag="stable-${BASH_REMATCH[2]}.x"
+else
+  fallback_tag=dev
+fi
+env_file=${GITHUB_ENV:-/dev/stdout}
+
+echo "IMAGE_TAG=$image_tag" >> "$env_file"
+echo "E2E tests will run on IMAGE_TAG=$image_tag"
+
+# Other repositories build proxy and gateway, so a missing tag falls back to stable or dev.
+use_tag_or_fallback() {
+  local env_var=$1 image=ghcr.io/defguard/$2
+  if ! docker buildx imagetools inspect "$image:$image_tag" > /dev/null 2>&1; then
+    echo "::warning::$image:$image_tag not found, E2E tests use $image:$fallback_tag"
+    echo "$env_var=$fallback_tag" >> "$env_file"
+  fi
+}
+
+use_tag_or_fallback EDGE_IMAGE_TAG defguard-proxy
+use_tag_or_fallback GATEWAY_IMAGE_TAG gateway
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "2.2.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `279cc5c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba842b46` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

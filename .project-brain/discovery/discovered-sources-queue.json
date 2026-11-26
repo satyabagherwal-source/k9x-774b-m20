@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T16:00:18.989Z",
+  "updated_at": "2026-11-26T16:11:03.188Z",
   "stats": {
-    "total_discovered": 9843,
-    "approved_pending_harvest": 9333,
+    "total_discovered": 9847,
+    "approved_pending_harvest": 9337,
     "harvested_count": 0,
     "rejected_count": 510,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9328,
+      "COMMUNITY_AND_EXPERT": 9332,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -213003,6 +213003,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
         "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-6A2C6D4840AB": {
+      "id": "SRC-6A2C6D4840AB",
+      "url": "https://github.com/laurent22/joplin/pull/16636",
+      "title": "https://github.com/laurent22/joplin/pull/16636",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:11:02.895Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-DB7E259893F9": {
+      "id": "SRC-DB7E259893F9",
+      "url": "https://github.com/laurent22/joplin/issues/17202",
+      "title": "https://github.com/laurent22/joplin/issues/17202",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:11:02.987Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-3162A9F77D95": {
+      "id": "SRC-3162A9F77D95",
+      "url": "https://github.com/laurent22/joplin/pull/16746",
+      "title": "https://github.com/laurent22/joplin/pull/16746",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:11:03.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-4F0CB77CE4DD": {
+      "id": "SRC-4F0CB77CE4DD",
+      "url": "https://github.com/laurent22/joplin/pull/17093",
+      "title": "https://github.com/laurent22/joplin/pull/17093",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:11:03.188Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
       }
     }
   }

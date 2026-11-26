@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T16:00:21.504Z",
+  "last_updated": "2026-11-26T16:11:05.219Z",
   "total_records": 2762,
   "domains": {
     "A": {
@@ -10119,8 +10119,8 @@
       "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
       "repository": "laurent22/joplin",
-      "content_hash": "dfbc83cc984bfaa5a1bdddbfaaf55e5249f49aa1bdfdc1013a64756352f3e6b5",
-      "created_at": "2026-11-24T06:20:45.796Z"
+      "content_hash": "bae79e54cb6d2ef0cdbc019c63b8e3da889060a6749d67d44655eed42d9f6bda",
+      "created_at": "2026-11-26T16:10:53.305Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants",
@@ -10197,8 +10197,8 @@
       "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-learnings-technical-construction-intelligence-laurent22-joplin-.md",
       "repository": "laurent22-joplin-learnings",
-      "content_hash": "b053f2d442f37c259953c78461f7618b078478c1eb686538e27d21c43aa30693",
-      "created_at": "2026-11-24T06:20:51.920Z"
+      "content_hash": "26eff5048da73947dcb1e42dcdb4db1e25a375cbd125ba807125958f6e1cacd9",
+      "created_at": "2026-11-26T16:11:03.804Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
@@ -19760,8 +19760,8 @@
       "title": "Technical Construction Intelligence: run-llama/llama_index Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-run-llama-llama_index-technical-construction-intelligence-run-llama-llama_index-.md",
       "repository": "run-llama/llama_index",
-      "content_hash": "6d9bce6e85e4c87a41593fb69dca82bca0848fd62fede43ff8720c37ffdfa363",
-      "created_at": "2026-11-15T02:15:10.784Z"
+      "content_hash": "dabb4b7bf775712e0955d2447637368a98dbb93492ce6f234bb068ebb17255a8",
+      "created_at": "2026-11-26T16:10:58.826Z"
     },
     "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-core-invariants",
@@ -25305,8 +25305,8 @@
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "repository": "DefGuard/defguard",
-      "content_hash": "0e57a5045d800fa3335073cee01da0955665b029b6943f3254bd66b67a849b70",
-      "created_at": "2026-11-26T11:39:53.169Z"
+      "content_hash": "1ea3ce30062d5ba2fedcbeaf0fcbe5bc41100f02e2d716a4453d05df067250b3",
+      "created_at": "2026-11-26T16:10:55.890Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -25323,8 +25323,8 @@
       "title": "Human & Need Intelligence: defguard-defguard-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-learnings-human-need-intelligence-defguard-defguard-learnings-.md",
       "repository": "defguard-defguard-learnings",
-      "content_hash": "34c2dd69f20b2b36984c66d33105cae3add7dafcf6b4f552a956c8cd3dcfd0d1",
-      "created_at": "2026-11-24T16:46:19.179Z"
+      "content_hash": "b59546e88a20a9d54c4b879f22e09786975d9b036aa97ba31d41d4a6ff6cc4d8",
+      "created_at": "2026-11-26T16:11:05.219Z"
     },
     "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-databendlabs-databend-core-invariants",
@@ -32224,8 +32224,8 @@
       "title": "Research & Knowledge Intelligence: briaai/RMBG-3.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-rmbg-3-0-research-knowledge-intelligence-briaai-rmbg-3-0-core-invarian.md",
       "repository": "briaai/RMBG-3.0",
-      "content_hash": "6e57a15940208ba5c70394dd330c31d3327a74e6918ebed83a3bb6755795dc15",
-      "created_at": "2026-11-22T23:06:10.964Z"
+      "content_hash": "a28c9cf645ee1709072d300a368c025b3e1de033210482560931771172b61788",
+      "created_at": "2026-11-26T16:10:42.693Z"
     },
     "DOM-D-EE4276B2": {
       "record_id": "DOM-D-EE4276B2",
@@ -32275,8 +32275,8 @@
       "title": "Research & Knowledge Intelligence: hf-briaai-rmbg-3.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-rmbg-3-0-learnings-research-knowledge-intelligence-hf-briaai-rmbg-3-0-.md",
       "repository": "hf-briaai-rmbg-3.0-learnings",
-      "content_hash": "f893226af104ff9666da85fc9dd15f21b5db20dfcdb2af663bea957aef8a905f",
-      "created_at": "2026-11-22T23:06:28.672Z"
+      "content_hash": "091167003598aa81972a9d31632fe64e84d5d3452bc6980e1227b82974041f43",
+      "created_at": "2026-11-26T16:11:02.433Z"
     },
     "DOM-L-902F756C": {
       "record_id": "DOM-L-902F756C",

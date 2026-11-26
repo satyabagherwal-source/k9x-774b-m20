@@ -4,22 +4,22 @@
 {
   "source_repository": "laurent22/joplin",
   "source_url": "https://github.com/laurent22/joplin",
-  "source_version": "58fbd837",
+  "source_version": "c8e3c011",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-24T06:20:45.631Z",
+  "timestamp": "2026-11-26T16:10:53.018Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-laurent22-joplin",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [laurent22/joplin](https://github.com/laurent22/joplin) (Revision: `58fbd837`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-24T06:20:45.631Z`  
+> **Provenance**: Harvested from [laurent22/joplin](https://github.com/laurent22/joplin) (Revision: `c8e3c011`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T16:10:53.018Z`  
 > **Learning ID**: `learn-github-laurent22-joplin`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `laurent22/joplin` (Commit: `58fbd837`)
+- **Target Repository**: `laurent22/joplin` (Commit: `c8e3c011`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:20:44.181Z  
+> **Harvest Timestamp**: 2026-11-26T16:10:51.004Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 57332 stars
+- **Stars / Engagement**: 57370 stars
 
 ---
 
@@ -941,11 +941,13 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17181** (2026-11-23): **Mobile, Desktop: Fixes #17180: Place the cursor after the marker when toggling a blockquote on an empty line**
-  *Symptoms*: ### Problem  Fixes #17180.  When the cursor is on an empty line, the blockquote toolbar button (added in #16385) inserts `> ` but leaves the cursor in front of the marker. You can't just start typing the quote. This is most annoying on mobile, where typing `> ` by hand is harder.  ### Cause  `toggleBlockQuote` gets a `TransactionSpec` from `toggleSelectedLinesStartWith`, but it dispatched only `{ changes }` and threw away the selection that the helper had already calculated. CodeMirror then maps the old cursor through the insertion. Text inserted exactly at the cursor ends up after it, so on an empty line (or with the cursor at the start of a line) the cursor stays before `> `.  ### Fix  Dispatch the full spec from `toggleSelectedLinesStartWith`, as the header command (`toggleHeaderLevel`) already does. With a cursor, it now lands after `> `. Toggling the blockquote off still removes the marker as before. With a ranged selection, the selection now covers the changed lines, which matches how the header and list commands behave.  ### Testing  - Added a regression test in `markdownCommands.test.ts`. It toggles a blockquote on an empty line, checks the cursor is after `> `, then types text and checks it ends up inside the quote. The test fails without this change (cursor at 11 instead of 13) and passes with it. - `yarn jest CodeMirror` in `packages/editor`: 33 suites, 302 tests pass.  This change was prepared with AI assistance (GitHub Copilot). I reviewed and 
+- **Issue #17203** (2026-11-26): **Mobile: Fixes #17202: Fix S3 sync on Android**
+  *Symptoms*: Android 3.8 S3 sync fails with ReferenceError: Property 'ReadableStream' doesn't exist, due a regression introduced by the Expo upgrade in PR https://github.com/laurent22/joplin/pull/16636. Expo 57’s fetch response uses ReadableStream when the AWS S3 client reads its body, but the Android runtime does not provide that global.  This PR installs a ReadableStream polyfill during mobile startup when the global is missing. TypeScript, lint, and an Android production bundle pass; S3 sync still needs device testing.  This fixes https://github.com/laurent22/joplin/issues/17202  ### Testing  To test the change, I built a release version of the app and synced my live production data with it. I confirm that sync is working as normal with this change
 
-- **Issue #17162** (2026-11-21): **Chore: Fixes #17056: Fix ordered list spacing for 100+ items and RangeError for 1000+ items in Turndown**
-  *Symptoms*: # Summary Fixes #17056  In `commonmark-rules.js`, indentation after ordered list numbers was calculated using `' '.repeat(3 - indexStr.length)`. When converting lists with 1,000 or more items, `3 - indexStr.length` becomes negative (`-1`), causing `String.prototype.repeat()` to throw an uncaught `RangeError: Invalid count value`. For 100-999 items, it produced zero spaces after the period.  This PR uses `Math.max(1, 3 - indexStr.length)` to ensure at least one space is always emitted and prevent the `RangeError`.  # Testing Plan - Added unit test in `packages/turndown/test/turndown-test.js` verifying conversion of lists with 100+ and 1,000+ items. - Ran Turndown test suite: all tests pass.
+- **Issue #17202** (2026-11-26): **(3.8 regression) S3 Sync on Android is broken**
+  *Symptoms*: ### Operating system  Android  ### Joplin version  3.8.1  ### Desktop version info  _No response_  ### Current behaviour  On Android, s3 sync stalls for a while and then fails with an error. See the log  ### Expected behaviour  Sync should work  ### Logs  11-26T02:07:27: Synchronizer: There was some errors: 11-26T02:07:27: Synchronizer: ReferenceError: Property 'ReadableStream' doesn't exist ReferenceError: Property 'ReadableStream' doesn't exist     at get (address at index.android.bundle:1:7670683)     at anonymous (address at index.android.bundle:1:12135545)     at tryCallOne (address at InternalBytecode.js:1:1296)     at anonymous (address at InternalBytecode.js:1:4984) 11-26T02:07:27: Synchronizer: ReferenceError: Property 'ReadableStream' doesn't exist ReferenceError: Property 'ReadableStream' doesn't exist     at get (address at index.android.bundle:1:7670683)     at anonymous (address at index.android.bundle:1:12135545)     at tryCallOne (address at InternalBytecode.js:1:1296)     at anonymous (address at InternalBytecode.js:1:4984) 11-26T02:07:27: FileApi: Could not retrieve remote date - defaulting to device date: ReferenceError: Property 'ReadableStream' doesn't exist ReferenceError: Property 'ReadableStream' doesn't exist     at get (address at index.android.bundle:1:7670683)     at anonymous (address at index.android.bundle:1:12135545)     at tryCallOne (address at InternalBytecode.js:1:1296)     at anonymous (address at InternalBytecode.js:1:4984)
+  **Post-Mortem & Fix Analysis**:
+  > I ran an AI analysis and it suggested PR https://github.com/laurent22/joplin/pull/16746 or renovate updates are unlikely to be the cause. It suggests the most likely cause of the regression is the react native and expo upgrade in PR https://github.com/laurent22/joplin/pull/16636 or https://github.com/laurent22/joplin/pull/17093
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -962,267 +964,149 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32724e5e` (2026-11-22)
-**Commit Message**: Desktop: Fixes #17124: Fix revision viewer crash caused by renovate tooltip library upgrade (#17125)
+### Incident Patch 1: `34f55b0f` (2026-11-25)
+**Commit Message**: Chore: Fix failing fs-driver-rn tests (#17197)
 
-**File**: `packages/app-desktop/gui/NoteRevisionViewer.tsx` (modified, +3/-3)
+**File**: `packages/app-mobile/utils/fs-driver/fs-driver-rn.test.ts` (modified, +3/-6)
 ```diff
-@@ -13,7 +13,7 @@ import bridge from '../services/bridge';
- import { NoteEntity, RevisionEntity } from '@joplin/lib/services/database/types';
- import { AppState } from '../app.reducer';
- import * as urlUtils from '@joplin/lib/urlUtils';
--const ReactTooltip = require('react-tooltip');
-+import { Tooltip } from 'react-tooltip';
- import { connect } from 'react-redux';
- import shared from '@joplin/lib/components/shared/note-screen-shared';
- import getHelpMessage from '@joplin/lib/components/shared/NoteRevisionViewer/getHelpMessage';
-@@ -246,7 +246,7 @@ const NoteRevisionViewerComponent: React.FC<Props> = ({ themeId, noteId, onBack,
- 			<button disabled={!revisions.length || deleting} onClick={deleteHistoryButton_onClick} className='deleteHistory'style={{ ...theme.buttonStyle, marginLeft: 10, height: theme.inputStyle.height }}>
- 				{deleteHistoryButtonTitle}
- 			</button>
--			<HelpButton tip={helpMessage} id="noteRevisionHelpButton" onClick={helpButton_onClick} />
-+			<HelpButton tip={helpMessage} onClick={helpButton_onClick} />
- 		</div>
- 	);
+@@ -13,21 +13,18 @@ const mockQuickCryptoBinaryLikeToArrayBuffer = jest.fn();
+ const mockQuickCryptoAb2str = jest.fn();
  
-@@ -269,7 +269,7 @@ const NoteRevisionViewerComponent: React.FC<Props> = ({ themeId, noteId, onBack,
- 				undecryptable={decryptFailed && noteLockSessionUnlocked}
- 			/> : null}
- 			{viewer}
--			<ReactTooltip place="bottom" delayShow={300} className="help-tooltip" />
-+			<Tooltip anchorSelect=".revision-viewer-title [data-tip]" content={helpMessage} place="bottom" delayShow={300} className="help-tooltip" />
- 		</div>
- 	);
+ const mockRnfs = {
++	appendFile: mockRnfsAppendFile,
+ 	exists: jest.fn(),
+-	unlink: jest.fn(),
+ 	moveFile: jest.fn(),
++	read: mockRnfsRead,
++	unlink: jest.fn(),
  };
+ 
+ jest.mock('rn-fetch-blob', () => ({
+ 	__esModule: true,
+ 	default: { fs: { appendFile: mockRnFetchBlobAppendFile } },
+ }));
+ 
+-jest.mock('@dr.pogodin/react-native-fs', () => ({
+-	appendFile: mockRnfsAppendFile,
+-	read: mockRnfsRead,
+-}));
+-
+ jest.mock('react-native-quick-crypto', () => ({
+ 	__esModule: true,
+ 	default: {
 ```
 
 ---
 
-### Incident Patch 2: `08a1dd61` (2026-11-22)
-**Commit Message**: fix(deps): update dependency prosemirror-inputrules to v1.5.1 (#17166)
+### Incident Patch 2: `739bea39` (2026-11-26)
+**Commit Message**: Mobile: Fixes #17202: Fix S3 sync on Android (#17203)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `packages/editor/package.json` (modified, +1/-1)
+**File**: `packages/app-mobile/package.json` (modified, +2/-1)
 ```diff
-@@ -51,7 +51,7 @@
-     "prosemirror-example-setup": "1.2.3",
-     "prosemirror-gapcursor": "1.4.0",
-     "prosemirror-history": "1.5.0",
--    "prosemirror-inputrules": "1.5.0",
-+    "prosemirror-inputrules": "1.5.1",
-     "prosemirror-keymap": "1.2.3",
-     "prosemirror-model": "1.25.3",
-     "prosemirror-schema-list": "1.5.1",
+@@ -97,7 +97,8 @@
+     "string-natural-compare": "3.0.1",
+     "tar-stream": "3.2.0",
+     "timers": "0.1.1",
+-    "url": "0.11.4"
++    "url": "0.11.4",
++    "web-streams-polyfill": "3.3.3"
+   },
+   "devDependencies": {
+     "@babel/core": "7.29.0",
 ```
 
-**File**: `yarn.lock` (modified, +12/-2)
+**File**: `packages/app-mobile/utils/polyfills/index.ts` (modified, +6/-0)
 ```diff
-@@ -12793,7 +12793,7 @@ __metadata:
-     prosemirror-example-setup: "npm:1.2.3"
-     prosemirror-gapcursor: "npm:1.4.0"
-     prosemirror-history: "npm:1.5.0"
--    prosemirror-inputrules: "npm:1.5.0"
-+    prosemirror-inputrules: "npm:1.5.1"
-     prosemirror-keymap: "npm:1.2.3"
-     prosemirror-model: "npm:1.25.3"
-     prosemirror-schema-list: "npm:1.5.1"
-@@ -46568,7 +46568,17 @@ __metadata:
+@@ -1,4 +1,10 @@
+ import './bufferPolyfill';
++import { ReadableStream as PolyfillReadableStream } from 'web-streams-polyfill/ponyfill';
++
++// Expo's fetch response body uses ReadableStream, which Hermes does not provide.
++if (typeof globalThis.ReadableStream === 'undefined') {
++	globalThis.ReadableStream = PolyfillReadableStream as unknown as typeof ReadableStream;
++}
+ 
+ // For aws-sdk-js-v3
+ import 'react-native-get-random-values';
+```
+
+**File**: `packages/tools/cspell/dictionary4.txt` (modified, +1/-0)
+```diff
+@@ -385,4 +385,5 @@ Thaana
+ assoc
+ Hookmark
+ unsynced
++ponyfill
+ привет
+```
+
+**File**: `yarn.lock` (modified, +8/-0)
+```diff
+@@ -12714,6 +12714,7 @@ __metadata:
+     typescript: "npm:5.9.3"
+     url: "npm:0.11.4"
+     url-loader: "npm:4.1.1"
++    web-streams-polyfill: "npm:3.3.3"
+     webpack: "npm:5.97.1"
+     webpack-cli: "npm:5.1.4"
+     webpack-dev-server: "npm:5.2.6"
+@@ -56334,6 +56335,13 @@ __metadata:
    languageName: node
    linkType: hard
  
--"prosemirror-inputrules@npm:1.5.0, prosemirror-inputrules@npm:^1.0.0":
-+"prosemirror-inputrules@npm:1.5.1":
-+  version: 1.5.1
-+  resolution: "prosemirror-inputrules@npm:1.5.1"
-+  dependencies:
-+    prosemirror-state: "npm:^1.0.0"
-+    prosemirror-transform: "npm:^1.0.0"
-+  checksum: 10/81f08415a39ad795a2a097c8667eb86e4473eca1389c793139d6bacbb69be740732e8ff8f21b2808130bacd7f53a1b0b7621b48a22ff44d902995b41654e4b80
++"web-streams-polyfill@npm:3.3.3":
++  version: 3.3.3
++  resolution: "web-streams-polyfill@npm:3.3.3"
++  checksum: 10/8e7e13501b3834094a50abe7c0b6456155a55d7571312b89570012ef47ec2a46d766934768c50aabad10a9c30dd764a407623e8bfcc74fcb58495c29130edea9
 +  languageName: node
 +  linkType: hard
 +
-+"prosemirror-inputrules@npm:^1.0.0":
-   version: 1.5.0
-   resolution: "prosemirror-inputrules@npm:1.5.0"
-   dependencies:
+ "web-worker@npm:^1.2.0":
+   version: 1.2.0
+   resolution: "web-worker@npm:1.2.0"
 ```
 
 ---
 
-### Incident Patch 3: `e70e7c30` (2026-11-22)
-**Commit Message**: Mobile: Fixes #17086: Throttle frame waits to ~5 Hz to improve encryption/decryption performance (#17087)
+### Incident Patch 3: `dcd35477` (2026-11-25)
+**Commit Message**: Chore: Fix Windows builds packaging every architecture regardless of the requested one
 
-**File**: `packages/app-mobile/utils/shim-init-react/index.ts` (modified, +13/-1)
+**File**: `packages/app-desktop/package.json` (modified, +2/-16)
 ```diff
-@@ -5,7 +5,7 @@ const { GeolocationReact } = require('../geolocation-react.js');
- import RNFetchBlob from 'rn-fetch-blob';
- import { randomBytes } from 'react-native-quick-crypto';
- import FsDriverRN from '../fs-driver/fs-driver-rn';
--import { Linking, Platform } from 'react-native';
-+import { AppState, Linking, Platform } from 'react-native';
- import crypto from '../../services/e2ee/crypto';
- import { reloadAppAsync } from 'expo';
- 
-@@ -188,6 +188,18 @@ export default function shimInit() {
- 		void reloadAppAsync();
- 	};
- 
-+	shim.waitForFrame = () => {
-+		// Animation frames do not fire while the app is in the background.
-+		if (AppState.currentState !== 'active') {
-+			return Promise.resolve(Date.now());
-+		}
-+		return new Promise<number>((resolve) => {
-+			requestAnimationFrame(() => {
-+				resolve(Date.now());
-+			});
-+		});
-+	};
-+
- 	shimInitShared();
- }
- 
-```
-
-**File**: `packages/app-mobile/utils/shim-init-react/index.web.ts` (modified, +10/-2)
-```diff
-@@ -92,9 +92,17 @@ const shimInit = () => {
- 	};
- 
- 	shim.waitForFrame = () => {
--		return new Promise<void>((resolve) => {
-+		// Animation frames do not fire while the tab is hidden.
-+		if (document.visibilityState !== 'visible') {
-+			return Promise.resolve(Date.now());
-+		}
-+		return new Promise<number>((resolve) => {
-+			// A backup timer ensures the wait completes if the tab becomes hidden
-+			// after the visibility check but before the animation frame fires.
-+			const timeout = setTimeout(() => resolve(Date.now()), 100);
- 			requestAnimationFrame(() => {
--				resolve();
-+				clearTimeout(timeout);
-+				resolve(Date.now());
- 			});
- 		});
- 	};
-```
-
-**File**: `packages/app-mobile/utils/shim-init-react/shimInitShared.ts` (modified, +0/-8)
-```diff
-@@ -61,14 +61,6 @@ const shimInitShared = () => {
- 
- 	shim.showMessageBox = makeShowMessageBox(null);
- 
--	shim.waitForFrame = () => {
--		return new Promise<void>((resolve) => {
--			requestAnimationFrame(() => {
--				resolve();
--			});
--		});
--	};
--
- 	shim.mobilePlatform = () => {
- 		return Platform.OS as MobilePlatform;
- 	};
-```
-
-**File**: `packages/lib/services/e2ee/EncryptionService.ts` (modified, +16/-5)
-```diff
-@@ -13,6 +13,7 @@ const logger = Logger.create('EncryptionService');
- const perfLogger = PerformanceLogger.create();
- 
- const emptyUint8Array = new Uint8Array(0);
-+const frameWaitIntervalMs = 200;
- 
- function hexPad(s: string, length: number) {
- 	return padLeft(s, length, '0');
-@@ -636,6 +637,7 @@ export default class EncryptionService {
- 		await destination.append(this.encodeHeader_(header, options.isNoteLock));
- 
- 		let doneSize = 0;
-+		let lastFrameTimestamp = Date.now();
- 
- 		while (true) {
- 			const block = await source.read(chunkSize);
-@@ -645,10 +647,15 @@ export default class EncryptionService {
- 			if (options.onProgress) options.onProgress({ doneSize: doneSize });
- 
- 			// Wait for a frame so that the app remains responsive in mobile.
-+			// This wait is throttled to a maximum of one call per frameWaitIntervalMs.
- 			// https://corbt.com/posts/2015/12/22/breaking-up-heavy-processing-in-react-native.html
--			await shim.waitForFrame();
-+			const shouldWaitForFrame = Date.now() - lastFrameTimestamp >= frameWaitIntervalMs;
-+			const [frameTimestamp, encrypted] = await Promise.all([
-+				shouldWaitForFrame ? shim.waitForFrame() : lastFrameTimestamp,
-+				this.encrypt(method, masterKeyPlainText, block),
-+			]);
-+			lastFrameTimestamp = frameTimestamp;
- 
--			const encrypted = await this.encrypt(method, masterKeyPlainText, block);
- 			await crypto.increaseNonce(this.encryptionNonce_);
- 
- 			await destination.append(padLeft(encrypted.length.toString(16), 6, '0'));
-@@ -664,6 +671,7 @@ export default class EncryptionService {
- 		const masterKeyPlainText = await this.masterKeyPlainText_(header.masterKeyId, options);
- 
- 		let doneSize = 0;
-+		let lastFrameTimestamp = Date.now();
- 
- 		while (true) {
- 			const lengthHex = await source.read(6);
-@@ -675,9 +683,12 @@ export default class EncryptionService {
- 			doneSize += length;
- 			if (options.onProgress) options.onProgress({ doneSize: doneSize });
- 
--			await shim.waitForFrame();
--
--			const block = await source.read(length);
-+			const shouldWaitForFrame = Date.now() - lastFrameTimestamp >= frameWaitIntervalMs;
-+			const [frameTimestamp, block] = await Promise.all([
-+				shouldWaitForFrame ? shim.waitForFrame() : lastFrameTimestamp,
-+				source.read(length),
-+			]);
-+			lastFrameTimestamp = frameTimestamp;
- 
- 			const plainText = await this.decrypt(header.encryptionMethod, masterKeyPlainText, block);
- 			await destination.append(plainText);
-```
-
-**File**: `packages/lib/shim-init-node.ts` (modified, +1/-1)
-```diff
-@@ -734,7 +734,7 @@ function shimInit(options: ShimInitOptions = null) {
- 		return shim.electronBridge().openItem(filepath);
- 	};
- 
--	shim.waitForFrame = () => {};
-+	shim.waitForFrame = async () => Date.now();
- 
- 	shim.appVersion = () => {
- 		if (appVersion) return appVersion();
-```
-
-**File**: `packages/lib/shim.ts` (modified, +1/-1)
-```diff
-@@ -454,7 +454,7 @@ const shim = {
- 		throw new Error('Not implemented: openOrCreateFile');
- 	},
- 
--	waitForFrame: (): void => {
-+	waitForFrame: (): Promise<number> => {
- 		throw new Error('Not implemented: waitForFrame');
- 	},
- 
+@@ -63,22 +63,8 @@
+       },
+       "icon": "../../Assets/ImageSources/Joplin.ico",
+       "target": [
+-        {
+-          "target": "nsis",
+-          "arch": [
+-            "x64",
+-            "ia32",
+-            "arm64"
+-          ]
+-        },
+-        {
+-          "target": "portable",
+-          "arch": [
+-            "x64",
+-            "ia32",
+-            "arm64"
+-          ]
+-        }
++        "nsis",
++        "portable"
+       ],
+       "extraFiles": [
+         {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17181** (closed): Mobile, Desktop: Fixes #17180: Place the cursor after the marker when toggling a blockquote on an empty line (@m86hussein)
-- **PR #17175** (closed): Api: Fixes #16793: Support Authorization: Bearer for MCP/REST API (@Aditya060806)
-- **PR #17168** (closed): chore(deps): update dependency @playwright/test to v1.62.0 (@renovate[bot])
-- **PR #17167** (closed): Update dependency react-native-quick-crypto to v1.1.7 (@renovate[bot])
-- **PR #17166** (2026-11-22): fix(deps): update dependency prosemirror-inputrules to v1.5.1 (@renovate[bot])
-- **PR #17164** (2026-11-21): Desktop: Reduce CPU usage of the embedding indexer (@laurent22)
+- **PR #17206** (closed): Android: Fixes #17207: Show logo instead of a blank screen while the app is starting (@realkotob)
+- **PR #17205** (closed): fix(deps): update dependency web-streams-polyfill to v4 (@renovate[bot])
+- **PR #17203** (2026-11-26): Mobile: Fixes #17202: Fix S3 sync on Android (@mrjo118)
+- **PR #17198** (2026-11-26): chore(deps): update dependency @testing-library/react to v16.3.3 (@renovate[bot])
+- **PR #17197** (2026-11-25): Chore: Fix failing fs-driver-rn tests (@mrjo118)
+- **PR #17196** (2026-11-25): Server: Do not warn about shared items refused because of a name conflict (@laurent22)
 
 ---
 
@@ -1242,35 +1126,38 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Desktop: Fixes #17124: Fix revision viewer crash caused by renovate tooltip libr
+## X. Fix failing fs-driver-rn tests
 
 **RULE**:
-When implementing operations in `packages/app-desktop/gui/NoteRevisionViewer.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/app-mobile/utils/fs-driver/fs-driver-rn.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `32724e5e`: Desktop: Fixes #17124: Fix revision viewer crash caused by renovate tooltip library upgrade. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34f55b0f`: Fix failing fs-driver-rn tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-desktop/gui/NoteRevisionViewer.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-mobile/utils/fs-driver/fs-driver-rn.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { Tooltip } from 'react-tooltip';
-			<HelpButton tip={helpMessage} onClick={helpButton_onClick} />
-			<Tooltip anchorSelect=".revision-viewer-title [data-tip]" content={helpMessage} place="bottom" delayShow={300} className="help-tooltip" />
+	appendFile: mockRnfsAppendFile,
+	read: mockRnfsRead,
+	unlink: jest.fn(),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-const ReactTooltip = require('react-tooltip');
-			<HelpButton tip={helpMessage} id="noteRevisionHelpButton" onClick={helpButton_onClick} />
-			<ReactTooltip place="bottom" delayShow={300} className="help-tooltip" />
+	unlink: jest.fn(),
+jest.mock('@dr.pogodin/react-native-fs', () => ({
+	appendFile: mockRnfsAppendFile,
+	read: mockRnfsRead,
+}));
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `32724e5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34f55b0f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

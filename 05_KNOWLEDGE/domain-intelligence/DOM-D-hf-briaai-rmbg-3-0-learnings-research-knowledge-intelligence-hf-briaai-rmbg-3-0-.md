@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T23:06:28.572Z",
+  "timestamp": "2026-11-26T16:11:02.256Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-briaai-rmbg-3.0-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-briaai-rmbg-3.0-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T23:06:28.572Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:11:02.256Z`  
 > **Learning ID**: `LEARN-EVO-hf-briaai-rmbg-3.0-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-briaai-rm`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T23:06:10.254Z  
+> **Timestamp**: 2026-11-26T16:10:41.566Z  
 > **Learning ID**: `learn-huggingface-briaai-rmbg-3-0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/briaai/RMBG-3.0](https://huggingface.co/briaai/RMBG-3.0))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:06:10.096Z  
+> **Harvest Timestamp**: 2026-11-26T16:10:41.355Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-segmentation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 225 downloads | 331 likes
+- **Stars / Engagement**: 484 downloads | 636 likes
 
 ---
 

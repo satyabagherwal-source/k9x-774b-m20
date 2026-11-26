@@ -13454,3 +13454,7 @@
 | `CYCLE-20261126-NPAZ` | `2026-11-26T16:00:04.571Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`f0f302d5...`) |
 | `CYCLE-20261126-NSPG` | `2026-11-26T16:00:08.980Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10717` | Yes (`1e5ae53c...`) |
 | `CYCLE-20261126-NX52` | `2026-11-26T16:00:14.726Z` | `appwrite/appwrite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10718` | Yes (`4632466e...`) |
+| `CYCLE-20261126-1DFB` | `2026-11-26T16:10:42.359Z` | `briaai/RMBG-3.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md` | Yes (`3b132322...`) |
+| `CYCLE-20261126-1LDL` | `2026-11-26T16:10:52.665Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10719` | Yes (`6e114cfc...`) |
+| `CYCLE-20261126-1NDV` | `2026-11-26T16:10:55.267Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10720` | Yes (`f068316b...`) |
+| `CYCLE-20261126-1PN7` | `2026-11-26T16:10:58.195Z` | `run-llama/llama_index` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10721` | Yes (`47ca01ea...`) |

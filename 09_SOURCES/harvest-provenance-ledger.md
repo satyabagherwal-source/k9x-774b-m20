@@ -13487,3 +13487,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-26T16:00:04.576Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `2720220a` | Multi-dimensional audit evidence | 2026-11-26T16:00:08.985Z |
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `4ba94d47` | Multi-dimensional audit evidence | 2026-11-26T16:00:14.732Z |
+| `learn-huggingface-briaai-rmbg-3-0` | `https://huggingface.co/briaai/RMBG-3.0` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-26T16:10:42.365Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `c8e3c011` | Multi-dimensional audit evidence | 2026-11-26T16:10:52.670Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `ba842b46` | Multi-dimensional audit evidence | 2026-11-26T16:10:55.272Z |
+| `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `40d4f79e` | Multi-dimensional audit evidence | 2026-11-26T16:10:58.200Z |

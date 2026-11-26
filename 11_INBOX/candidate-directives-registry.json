@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:00:21.236Z",
+  "last_updated": "2026-11-26T16:11:04.952Z",
   "directives": [
     {
       "id": "CD-001",
@@ -65779,6 +65779,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "J"
+    },
+    {
+      "id": "CD-1TRH",
+      "directive_title": "Fix failing fs-driver-rn tests",
+      "source_repo": "laurent22-joplin-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1TRH-fix-failing-fs-driver-rn-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-1UUT",
+      "directive_title": "release/2.2.1 -> stable",
+      "source_repo": "defguard-defguard-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1UUT-release-2-2-1-stable.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-1PX0",
+      "directive_title": "add zizmor workflow scanning and fix high-severity findings",
+      "source_repo": "run-llama/llama_index",
+      "source_commit": "40d4f79e",
+      "staged_file": "11_INBOX/candidate-directives/CD-1PX0-add-zizmor-workflow-scanning-and-fix-high-severity-findings.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-DAE2E6",
+      "directive_title": "Fix failing fs-driver-rn tests",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "laurent22-joplin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DAE2E6-fix-failing-fs-driver-rn-tests.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-164ADA",
+      "directive_title": "release/2.2.1 -> stable",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "defguard-defguard",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-164ADA-release-2-2-1-stable.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }

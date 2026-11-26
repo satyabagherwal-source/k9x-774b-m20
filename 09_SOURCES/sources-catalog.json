@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "79d1cfe3",
+    "sourceVersion": "ba842b46",
     "license": "NOASSERTION",
-    "contentHash": "e32925dfa5b054e0a9ea3cfe7d7cfdc4b17383951f11bd714e7ea7e9a647237e",
-    "lastHarvestedAt": "2026-11-26T11:39:52.741Z",
+    "contentHash": "f068316be4f52a910f94a83de0c6b76dd6376ac5cb1833df4a8533df68295516",
+    "lastHarvestedAt": "2026-11-26T16:10:55.272Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -6553,10 +6553,10 @@
     "repository": "run-llama/llama_index",
     "platform": "github",
     "sourceUrl": "https://github.com/run-llama/llama_index",
-    "sourceVersion": "99d7433f",
+    "sourceVersion": "40d4f79e",
     "license": "MIT",
-    "contentHash": "b846cd6b1e95f24799483fd2aae5358d4ea6e082f2a1d348ada344c7abf25452",
-    "lastHarvestedAt": "2026-11-15T02:15:10.444Z",
+    "contentHash": "47ca01ea511b9e196133e03640f8776e166fdb9379551e635e3f6ae7a7db8de4",
+    "lastHarvestedAt": "2026-11-26T16:10:58.200Z",
     "learningId": "learn-github-run-llama-llama_index"
   },
   "vercel-labs-opensrc": {
@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "58fbd837",
+    "sourceVersion": "c8e3c011",
     "license": "NOASSERTION",
-    "contentHash": "dbc01eebac58e8a267f2fd07c1ac6378eff56bc81dce31e3b8a2d6179d4fc0f1",
-    "lastHarvestedAt": "2026-11-24T06:20:45.398Z",
+    "contentHash": "6e114cfcc23a4c497d781bd1ddfbd7a8b8ea0266ed080fdc7d8bfdada86a1793",
+    "lastHarvestedAt": "2026-11-26T16:10:52.670Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {
@@ -12895,8 +12895,8 @@
     "sourceUrl": "https://huggingface.co/briaai/RMBG-3.0",
     "sourceVersion": "hf-briaai-rmbg-3.0",
     "license": "Open-Source",
-    "contentHash": "13d01c85b6442bae76c8f667727a965944f3210273a74d1658c999b0229a386f",
-    "lastHarvestedAt": "2026-11-22T23:06:10.752Z",
+    "contentHash": "3b1323226ed7e18930cb4e1d0ddff2135f71767681400c110b741a4c55e0d646",
+    "lastHarvestedAt": "2026-11-26T16:10:42.365Z",
     "learningId": "learn-huggingface-briaai-rmbg-3-0"
   },
   "hf-huggingfacetb-smolvlm2-256m-video-instruct": {
