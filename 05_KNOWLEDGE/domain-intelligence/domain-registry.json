@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T22:10:53.420Z",
+  "last_updated": "2026-11-26T22:21:55.897Z",
   "total_records": 2786,
   "domains": {
     "A": {
@@ -9519,8 +9519,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "7c53e34285068c90535bc577ff39a57b6e066147ce3748be1e2b07f53678a5a8",
-      "created_at": "2026-11-26T22:02:20.035Z"
+      "content_hash": "f6c443721ca8880ee0c8feed1ff582402fa61f7171fa26371c0efb0c9c364e0f",
+      "created_at": "2026-11-26T22:21:55.897Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10458,8 +10458,8 @@
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "repository": "argoproj/argo-workflows",
-      "content_hash": "268e58b4dd10929d90ab8742ca2ba76e67e5906b3c599cb0a6f351441ef900e8",
-      "created_at": "2026-11-26T04:30:58.777Z"
+      "content_hash": "2b5079fada5419848ab799ee2e57bcd92c85c98e0fd41eb39ba7deb542e36230",
+      "created_at": "2026-11-26T22:21:49.824Z"
     },
     "DOM-D-3A0F1688": {
       "record_id": "DOM-D-3A0F1688",
@@ -10518,8 +10518,8 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-learnings-human-need-intelligence-argoproj-argo-workflow.md",
       "repository": "argoproj-argo-workflows-learnings",
-      "content_hash": "5c563193338f012ec47d439ec14eeab50dbd4d9c31afcbd0275f9838d9034e0d",
-      "created_at": "2026-11-26T04:31:04.084Z"
+      "content_hash": "3a8da38feed1937fe92d5961d95f7d59f4e1bb5269f2a8911255a38882574c6b",
+      "created_at": "2026-11-26T22:21:55.014Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-ggu",
@@ -14824,8 +14824,8 @@
       "title": "Research & Knowledge Intelligence: pablodawson/MiniMax-H3-360-Orbit-LoRA Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pablodawson-minimax-h3-360-orbit-lora-research-knowledge-intelligence-pabloda.md",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "content_hash": "0689609908386b797b29d878b837d7e800c70ec513e39ec456923a46d5df1ff6",
-      "created_at": "2026-11-23T13:06:45.306Z"
+      "content_hash": "91f211baf49f8ceddcc04cbe13344d856b0931cc10cd062172d57bd9945ee67a",
+      "created_at": "2026-11-26T22:21:39.114Z"
     },
     "domain_intelligence-architecture-intelligence-matthart1983-netwatch-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-matthart1983-netwatch-core-invariants",
@@ -14953,8 +14953,8 @@
       "title": "Research & Knowledge Intelligence: hf-pablodawson-minimax-h3-360-orbit-lora-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pablodawson-minimax-h3-360-orbit-lora-learnings-research-knowledge-intelligen.md",
       "repository": "hf-pablodawson-minimax-h3-360-orbit-lora-learnings",
-      "content_hash": "c9333d193ac0e0161f6bf159007be23cfe6ea8a047fd43b756d285797c593c27",
-      "created_at": "2026-11-23T13:07:03.652Z"
+      "content_hash": "5d04058e552a7d3b7e5fbd7a78dda1110776749add283b2662dacc215759af56",
+      "created_at": "2026-11-26T22:21:53.128Z"
     },
     "DOM-K-2852CE47": {
       "record_id": "DOM-K-2852CE47",

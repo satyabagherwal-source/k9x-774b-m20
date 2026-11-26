@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T22:10:53.204Z",
+  "last_updated": "2026-11-26T22:21:55.714Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56036,11 +56036,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-LKAC",
+      "id": "CD-ARNG",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-LKAC-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ARNG-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -67353,6 +67353,37 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7C66F4-daemon-drain-buffered-watcher-changes-be.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-AMYR",
+      "directive_title": "update dependency buildx to v0.39.1 (main)",
+      "source_repo": "argoproj/argo-workflows",
+      "source_commit": "b5eaaaa9",
+      "staged_file": "11_INBOX/candidate-directives/CD-AMYR-update-dependency-buildx-to-v0-39-1-main.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-AQYX",
+      "directive_title": "deps): update dependency buildx to v0.39.1 (main)",
+      "source_repo": "argoproj-argo-workflows-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AQYX-deps-update-dependency-buildx-to-v0-39-1-main.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-CC1A0A",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CC1A0A-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-26"
     }
   ]

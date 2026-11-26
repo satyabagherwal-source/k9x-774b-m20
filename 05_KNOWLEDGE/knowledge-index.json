@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T22:10:53.813Z",
+  "last_updated": "2026-11-26T22:21:56.082Z",
   "total_verified_learnings": 9137,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26220,
+  "total_items": 26223,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c53e34285068c90535bc577ff39a57b6e066147ce3748be1e2b07f53678a5a8",
+      "content_hash": "f6c443721ca8880ee0c8feed1ff582402fa61f7171fa26371c0efb0c9c364e0f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:02:20.035Z"
+      "persisted_at": "2026-11-26T22:21:55.897Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e75f35e4265a9cb1b60e99aad7a07292180a777045758b649fee52beabc2a3f5",
+      "content_hash": "9b1f0bbd522daa2332dc8ff6c5d32d26ecc23b5b4f0a5c13da2618414ff7fe9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:02:20.308Z"
+      "persisted_at": "2026-11-26T22:21:56.082Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -212389,8 +212389,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "27111e49",
-      "content_hash": "70cc56f89d96e43e9af60962300a75d012c1b3f664e04426b34d144c82adf83c",
+      "source_version": "b5eaaaa9",
+      "content_hash": "66274e1b65287ec45e82db02861c10a31853f347a98fcf569154e6ca2d80d37d",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212443,6 +212443,11 @@
           "number": 10597,
           "title": "PR readiness bot reports wrong output due to missing permissions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10783,
+          "title": "update dependency buildx to v0.39.1 (main)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212450,7 +212455,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T04:30:58.180Z",
+      "verified_at": "2026-11-26T22:21:48.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212492,10 +212497,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "repository": "argoproj/argo-workflows",
-      "source_version": "27111e49",
-      "content_hash": "268e58b4dd10929d90ab8742ca2ba76e67e5906b3c599cb0a6f351441ef900e8",
+      "source_version": "b5eaaaa9",
+      "content_hash": "2b5079fada5419848ab799ee2e57bcd92c85c98e0fd41eb39ba7deb542e36230",
       "domain_letter": "A",
-      "persisted_at": "2026-11-26T04:30:58.777Z"
+      "persisted_at": "2026-11-26T22:21:49.824Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows",
@@ -212504,10 +212509,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "27111e49",
-      "content_hash": "6c5505ec9b370301d6ee224bfc27b95f7d85c3c7f98d1d040afea5e39947a90f",
+      "source_version": "b5eaaaa9",
+      "content_hash": "4e32e68eab6641fdaa93d7e81a6dcc97aca89e8d71975bedc326abcc30b218ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:30:58.967Z"
+      "persisted_at": "2026-11-26T22:21:50.014Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212541,9 +212546,9 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c563193338f012ec47d439ec14eeab50dbd4d9c31afcbd0275f9838d9034e0d",
+      "content_hash": "3a8da38feed1937fe92d5961d95f7d59f4e1bb5269f2a8911255a38882574c6b",
       "domain_letter": "A",
-      "persisted_at": "2026-11-26T04:31:04.084Z"
+      "persisted_at": "2026-11-26T22:21:55.014Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni",
@@ -212553,9 +212558,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "074d1acb40ee5cd3b36060c48c8551413ea096b63b406518a48ff44bcbeeef5a",
+      "content_hash": "c1e2ba8f5a48e9855e6e07f109a81367af962727526aca2f14bb2fedc028c7a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:31:04.238Z"
+      "persisted_at": "2026-11-26T22:21:55.205Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -228078,7 +228083,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "fd821a8c8f02ec43f57a62df10fb3604fbd4d33bab88cc82cd9f0ad40546f6ea",
+      "content_hash": "716a360c92f1a78bd6987f47550870b5202c35c2da83fe743c38c86aa9c12f7e",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [],
@@ -228087,7 +228092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T13:06:44.732Z",
+      "verified_at": "2026-11-26T22:21:38.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228104,9 +228109,9 @@
       "title": "Research & Knowledge Intelligence: pablodawson/MiniMax-H3-360-Orbit-LoRA Core Invariants",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "0689609908386b797b29d878b837d7e800c70ec513e39ec456923a46d5df1ff6",
+      "content_hash": "91f211baf49f8ceddcc04cbe13344d856b0931cc10cd062172d57bd9945ee67a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T13:06:45.306Z"
+      "persisted_at": "2026-11-26T22:21:39.114Z"
     },
     "learn-github-matthart1983-netwatch": {
       "learning_id": "learn-github-matthart1983-netwatch",
@@ -228527,9 +228532,9 @@
       "title": "Research & Knowledge Intelligence: hf-pablodawson-minimax-h3-360-orbit-lora-learnings Core Invariants",
       "repository": "hf-pablodawson-minimax-h3-360-orbit-lora-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9333d193ac0e0161f6bf159007be23cfe6ea8a047fd43b756d285797c593c27",
+      "content_hash": "5d04058e552a7d3b7e5fbd7a78dda1110776749add283b2662dacc215759af56",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T13:07:03.652Z"
+      "persisted_at": "2026-11-26T22:21:53.128Z"
     },
     "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-learnings-core-invariant": {
       "item_id": "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-learnings-core-invariant",
@@ -340746,13 +340751,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-LKAC-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ARNG-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2299d38366f188f9ab5e4392df842a9452b53745402ee9f46e53108888a2b76",
+      "content_hash": "52b16b0e103ca6fe4e74c0cf734c32d2b391fd034463b96933def3401a791e3c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:02:19.770Z"
+      "persisted_at": "2026-11-26T22:21:55.714Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -359595,6 +359600,44 @@
       "content_hash": "0ea8db4bee73ef61c330de326840ed64d266810aa00a9f67c355821f225c32aa",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T22:10:52.264Z"
+    },
+    "rule-10783": {
+      "learning_id": "rule-10783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10783,
+      "title": "update dependency buildx to v0.39.1 (main)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "b5eaaaa9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T22:21:48.918Z"
+    },
+    "candidate_directive-update-dependency-buildx-to-v0-39-1-main": {
+      "item_id": "candidate_directive-update-dependency-buildx-to-v0-39-1-main",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AMYR-update-dependency-buildx-to-v0-39-1-main.md",
+      "title": "update dependency buildx to v0.39.1 (main)",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "b5eaaaa9",
+      "content_hash": "cfa74d338a03f86e9d8c55415e9bacfe14361410f53a1e03a6abd8f68681d918",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-26T22:21:49.636Z"
+    },
+    "candidate_directive-deps-update-dependency-buildx-to-v0-39-1-main": {
+      "item_id": "candidate_directive-deps-update-dependency-buildx-to-v0-39-1-main",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AQYX-deps-update-dependency-buildx-to-v0-39-1-main.md",
+      "title": "deps): update dependency buildx to v0.39.1 (main)",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2c41fd6f993cb255c617515b1d7f25e861edb6664731a821cb05d1c729a01ed",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-26T22:21:54.826Z"
     }
   },
   "ai-builder-brain": {

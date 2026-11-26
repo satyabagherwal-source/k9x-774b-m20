@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T22:10:46.801Z",
-  "total_cycles_completed": 12883,
-  "total_learnings_persisted": 12883,
-  "total_rules_promoted": 11689,
+  "last_updated": "2026-11-26T22:21:49.416Z",
+  "total_cycles_completed": 12885,
+  "total_learnings_persisted": 12885,
+  "total_rules_promoted": 11690,
   "history": [
-    {
-      "timestamp": "2026-11-26T11:49:33.413Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T12:01:54.345Z",
-      "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T12:11:29.430Z",
       "repository": "yyjeqhc/webcodex",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T22:10:46.801Z",
       "repository": "aws-amplify/amplify-js",
       "learningId": "learn-github-aws-amplify-amplify-js",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:21:38.898Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:21:49.416Z",
+      "repository": "argoproj/argo-workflows",
+      "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

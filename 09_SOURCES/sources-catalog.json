@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "fd821a8c8f02ec43f57a62df10fb3604fbd4d33bab88cc82cd9f0ad40546f6ea",
-    "lastHarvestedAt": "2026-11-23T13:06:45.019Z",
+    "contentHash": "716a360c92f1a78bd6987f47550870b5202c35c2da83fe743c38c86aa9c12f7e",
+    "lastHarvestedAt": "2026-11-26T22:21:38.886Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "27111e49",
+    "sourceVersion": "b5eaaaa9",
     "license": "Apache-2.0",
-    "contentHash": "70cc56f89d96e43e9af60962300a75d012c1b3f664e04426b34d144c82adf83c",
-    "lastHarvestedAt": "2026-11-26T04:30:58.395Z",
+    "contentHash": "66274e1b65287ec45e82db02861c10a31853f347a98fcf569154e6ca2d80d37d",
+    "lastHarvestedAt": "2026-11-26T22:21:49.399Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

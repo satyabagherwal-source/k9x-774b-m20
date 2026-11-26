@@ -13573,3 +13573,5 @@
 | `CYCLE-20261126-LFCZ` | `2026-11-26T22:02:13.379Z` | `margelo/react-native-vision-camera` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10781` | Yes (`5baba2d1...`) |
 | `CYCLE-20261126-W9YP` | `2026-11-26T22:10:39.601Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`cdb06c70...`) |
 | `CYCLE-20261126-WFI2` | `2026-11-26T22:10:46.778Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10782` | Yes (`05c50587...`) |
+| `CYCLE-20261126-AENV` | `2026-11-26T22:21:38.875Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`716a360c...`) |
+| `CYCLE-20261126-AMS3` | `2026-11-26T22:21:49.395Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10783` | Yes (`66274e1b...`) |

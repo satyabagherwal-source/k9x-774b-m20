@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-FDG6",
-    "timestamp": "2026-11-25T10:57:59.766Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "a5fa5910d7f23aef714003fa89242961b94dcf57b14cc333de9345ffb02e28fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-WEQZ",
-    "timestamp": "2026-11-25T11:11:14.603Z",
-    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-    "contentHash": "017c161de8876f1b12d7274dad53183f7a354715ed1a650622599b5ab2f02c56",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-WPEF",
     "timestamp": "2026-11-25T11:11:28.407Z",
     "repository": "apache/incubator-pegasus",
@@ -7490,6 +7460,36 @@
     "repository": "aws-amplify/amplify-js",
     "learningId": "learn-github-aws-amplify-amplify-js",
     "contentHash": "05c50587afb2b3faae3b8e640ba330c40550e4e7bb1fa863608ff81b0f05fc8e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-AENV",
+    "timestamp": "2026-11-26T22:21:38.875Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "716a360c92f1a78bd6987f47550870b5202c35c2da83fe743c38c86aa9c12f7e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-AMS3",
+    "timestamp": "2026-11-26T22:21:49.395Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "66274e1b65287ec45e82db02861c10a31853f347a98fcf569154e6ca2d80d37d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

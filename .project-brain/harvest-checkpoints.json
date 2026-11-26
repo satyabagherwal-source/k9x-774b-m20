@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T22:10:46.805Z",
+  "last_updated": "2026-11-26T22:21:49.419Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "fd821a8c8f02ec43f57a62df10fb3604fbd4d33bab88cc82cd9f0ad40546f6ea",
-      "verified_at": "2026-11-23T13:06:45.031Z",
+      "content_hash": "716a360c92f1a78bd6987f47550870b5202c35c2da83fe743c38c86aa9c12f7e",
+      "verified_at": "2026-11-26T22:21:38.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T13:06:45.031Z"
+      "last_updated": "2026-11-26T22:21:38.900Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -8991,14 +8991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-workflows",
-      "content_hash": "70cc56f89d96e43e9af60962300a75d012c1b3f664e04426b34d144c82adf83c",
-      "verified_at": "2026-11-26T04:30:58.410Z",
+      "content_hash": "66274e1b65287ec45e82db02861c10a31853f347a98fcf569154e6ca2d80d37d",
+      "verified_at": "2026-11-26T22:21:49.418Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T04:30:58.410Z"
+      "last_updated": "2026-11-26T22:21:49.418Z"
     },
     "postgresml/postgresml": {
       "repository": "postgresml/postgresml",

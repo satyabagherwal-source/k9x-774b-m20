@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T22:10:51.075Z",
-    "lastVerified": "2026-11-26T22:10:51.075Z",
+    "lastChecked": "2026-11-26T22:21:52.735Z",
+    "lastVerified": "2026-11-26T22:21:52.735Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T21:44:26.948Z",
+    "lastChecked": "2026-11-26T22:21:50.815Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T21:44:26.948Z"
+    "lastVerified": "2026-11-26T22:21:50.815Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1868,8 +1868,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T18:05:45.045Z",
-    "lastVerified": "2026-11-26T18:05:45.045Z",
+    "lastChecked": "2026-11-26T22:21:45.693Z",
+    "lastVerified": "2026-11-26T22:21:45.693Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -3473,9 +3473,9 @@
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
     "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
-    "lastChecked": "2026-11-26T03:38:24.564Z",
+    "lastChecked": "2026-11-26T22:21:48.096Z",
     "revisionIdentifier": "2b290b34",
-    "lastVerified": "2026-11-26T03:38:24.564Z"
+    "lastVerified": "2026-11-26T22:21:48.096Z"
   },
   "hf-huggingfacetb-smolvlm2-256m-video-instruct": {
     "name": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
@@ -3733,8 +3733,8 @@
     "officialUrl": "https://github.com/berty/berty",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T14:24:04.761Z",
-    "lastVerified": "2026-11-24T14:24:04.761Z",
+    "lastChecked": "2026-11-26T22:21:40.797Z",
+    "lastVerified": "2026-11-26T22:21:40.797Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-berty-berty",
@@ -4739,9 +4739,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-25T15:07:05.584Z",
+    "lastChecked": "2026-11-26T22:21:35.604Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-25T15:07:05.584Z"
+    "lastVerified": "2026-11-26T22:21:35.604Z"
   },
   "hf-tongyi-mai-z-image-turbo": {
     "name": "Tongyi-MAI/Z-Image-Turbo",
@@ -5716,12 +5716,12 @@
     "officialUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T13:06:44.242Z",
-    "lastVerified": "2026-11-23T13:06:44.242Z",
+    "lastChecked": "2026-11-26T22:21:38.207Z",
+    "lastVerified": "2026-11-26T22:21:38.207Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "fd821a8c8f02ec43f57a62df10fb3604fbd4d33bab88cc82cd9f0ad40546f6ea",
+    "contentHash": "716a360c92f1a78bd6987f47550870b5202c35c2da83fe743c38c86aa9c12f7e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6661,14 +6661,14 @@
     "officialUrl": "https://github.com/argoproj/argo-workflows",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T04:30:57.438Z",
-    "lastVerified": "2026-11-26T04:30:57.438Z",
+    "lastChecked": "2026-11-26T22:21:48.081Z",
+    "lastVerified": "2026-11-26T22:21:48.081Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "70cc56f89d96e43e9af60962300a75d012c1b3f664e04426b34d144c82adf83c",
+    "contentHash": "66274e1b65287ec45e82db02861c10a31853f347a98fcf569154e6ca2d80d37d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

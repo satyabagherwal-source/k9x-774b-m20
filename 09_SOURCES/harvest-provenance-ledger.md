@@ -13606,3 +13606,5 @@ Every entry in this ledger must capture:
 | `learn-github-margelo-react-native-vision-camera` | `https://github.com/margelo/react-native-vision-camera` | `d54fc486` | Multi-dimensional audit evidence | 2026-11-26T22:02:13.384Z |
 | `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-11-26T22:10:39.606Z |
 | `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `c08112f4` | Multi-dimensional audit evidence | 2026-11-26T22:10:46.783Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-11-26T22:21:38.886Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `b5eaaaa9` | Multi-dimensional audit evidence | 2026-11-26T22:21:49.399Z |

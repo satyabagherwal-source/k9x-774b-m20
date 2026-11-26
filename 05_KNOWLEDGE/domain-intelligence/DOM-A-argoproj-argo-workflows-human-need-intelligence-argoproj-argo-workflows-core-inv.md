@@ -4,24 +4,24 @@
 {
   "source_repository": "argoproj/argo-workflows",
   "source_url": "https://github.com/argoproj/argo-workflows",
-  "source_version": "27111e49",
+  "source_version": "b5eaaaa9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T04:30:58.621Z",
+  "timestamp": "2026-11-26T22:21:49.635Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-argoproj-argo-workflows",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `27111e49`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T04:30:58.621Z`  
+> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `b5eaaaa9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T22:21:49.635Z`  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain A (Human & Need Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from argoproj/argo-workflows:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T04:30:57.438Z  
+> **Harvest Timestamp**: 2026-11-26T22:21:48.081Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17118 stars
+- **Stars / Engagement**: 17123 stars
 
 ---
 
@@ -781,11 +781,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17602** (2026-11-25): **fix(ci): PR readiness bot reports wrong output due to missing permissions**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [x] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  No issue tracking this problem  ### Motivation  <!-- TODO: Say why you made your changes. --> <img width="743" height="251" alt="image" src="https://github.com/user-attachments/assets/e2a4ab57-8da0-4abb-9a24-3a4c7ae20186" />  Contributor table was showing wrong number for issues row for my account (should be 0 opened and 5 commented on in the picture)  ### Modifications  <!-- TODO: Say what changes you made. --> <!-- TODO: Attach screenshots if you changed the UI. --> Increase permissions of workflow  ### Verification  <!-- TODO: Say how you tested your changes. --> A bit of hacking on my fork to trigger the workflow as I cannot test it here without merging the PR https://github.com/ricCap/argo-workflows/pull/4#issuecomment-7173182600  <img width="680" height="121" alt="image" src="https:/
+- **Issue #17636** (2026-11-26): **chore(deps): update dependency webpack to v5.113.0 (main)**
+  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [webpack](https://redirect.github.com/webpack/webpack) | [`5.111.1` → `5.113.0`](https://renovatebot.com/diffs/npm/webpack/5.111.1/5.113.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/webpack/5.113.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/webpack/5.113.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/webpack/5.111.1/5.113.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/webpack/5.111.1/5.113.0?slim=true) |  ---  ### Release Notes  <details> <summary>webpack/webpack (webpack)</summary>  ### [`v5.113.0`](https://redirect.github.com/webpack/webpack/blob/HEAD/CHANGELOG.md#51130)  [Compare Source](https://redirect.github.com/webpack/webpack/compare/v5.112.2...v5.113.0)  ##### Minor Changes  - Treat pure CommonJS exports and `require()` of pure modules as side-effect free. (by [@&#8203;hai-x](https://redirect.github.com/hai-x) in [#&#8203;21937](https://redirect.github.com/webpack/webpack/pull/21937))  - Add `compilation.hooks.chunkHashDependencies` for chunks naming other ch
 
-- **Issue #17601** (2026-11-25): **feat(controller): retry skipped completion reconciles when the informer catches up**
-  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [x] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [x] Unit or e2e tests cover the change - [x] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  <!-- Does this PR fix an issue -->  Part of #17244 (step 4), should be merged after https://github.com/argoproj/argo-workflows/pull/17589 (step 3), which in turn should come after (step 2) https://github.com/argoproj/argo-workflows/pull/17245. Will rebase once those are merged (see only [this PR diff here](https://github.com/ricCap/argo-workflows/compare/811b51f923e5c4a3897a56f5ae15d83cc87fd4b7...0722df19f))  ### Motivation  <!-- TODO: Say why you made your changes. --> 😄 continuing with step 4 of #17244  🤖 `processNextItem` skips a reconcile when the workflow informer has not yet seen the controller's last write (`isOutdated`), and retries it with `AddRateLimited`. When the informer later delivers that write, its `UpdateFunc` also uses `AddRateLimited`. Both wait the full `DEFAULT_REQUEUE_TIME` (10s by default).  A comple
+- **Issue #17635** (2026-11-26): **chore(deps): update dependency sass to v1.108.2 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [sass](https://redirect.github.com/sass/dart-sass) | [`1.107.0` → `1.108.2`](https://renovatebot.com/diffs/npm/sass/1.107.0/1.108.2) | ![age](https://developer.mend.io/api/mc/badges/age/npm/sass/1.108.2?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/sass/1.108.2?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/sass/1.107.0/1.108.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/sass/1.107.0/1.108.2?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### Release Notes  <details> <summary>sass/dart-sass (sass)</summary>  ### [`v1.108.2`](https://redirect.github.com/sass/dart-sass/blob/HEAD/CHANGELOG.md#11082)  [Compare Source](https://redirect.github.com/sass/dart-sass/compare/1.108.1...1.108.2)  - No user-visible changes.  ### [`v1.108.1`](https://redirect.github.com/sass/dart-sass/blob/HEAD/CHANGELOG.md#11081)  [Compare Source](https://redirect.github.com/sass/dart-sass/compare/1.108.0...1.108.1)  ##### Node.js Embedded Host  - Fix an issue in the release 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -802,64 +802,581 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27111e49` (2026-11-25)
-**Commit Message**: fix(ci): PR readiness bot reports wrong output due to missing permissions (#17602)
+### Incident Patch 1: `db785a62` (2026-11-26)
+**Commit Message**: chore(deps): update dependency buildx to v0.39.1 (main) (#17631)
 
-Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `.github/pr-readiness/README.md` (modified, +1/-1)
+**File**: `.github/workflows/release.yaml` (modified, +1/-1)
 ```diff
-@@ -61,7 +61,7 @@ A deterministic check ([`template.ts`](template.ts)) compares the description ag
- - `workflow_run` workflows execute the **default branch's** definition with the base-repo token — a fork PR cannot alter what runs here. `pull_request_target` likewise runs the base branch's definition, never the fork's.
- - The job **never checks out or executes PR-head code**; the checkout step pins `ref` to the default branch (without it, `pull_request_target` would check out the PR's base branch). Keep it that way.
- - The author's login is checked against GitHub's login format before it is put into a search string.
--- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`. No secrets beyond `GITHUB_TOKEN`.
-+- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`, `issues: read`. The last is needed by the contributor table: without it, GitHub search cannot see issues, so the `is:issue` searches silently return the author's PRs instead. No secrets beyond `GITHUB_TOKEN`.
- - `workflow_run.pull_requests` is empty for fork PRs, so the PR is found by matching `head_sha` against open PRs; no match → exit (a newer push superseded the run).
- - PR title/body/branch are attacker-controlled: they are only ever handled as data, never interpolated into shell or scripts. The comment never echoes contributor-supplied text — only the bot's own guidance, check titles/URLs, and template section names.
- - All actions are pinned to full commit SHAs (enforced by repo lint).
-```
-
-**File**: `.github/workflows/pr-readiness.yaml` (modified, +1/-0)
-```diff
-@@ -49,6 +49,7 @@ jobs:
-       pull-requests: write # sticky comment + not-ready label
-       contents: read # checkout of the default branch (scripts, OWNERS, template)
-       actions: read # job/step conclusions for the feature check
-+      issues: read # contributor table: without it, search hides issues and `is:issue` queries count PRs instead
-     steps:
-       - name: Harden the runner (Audit all outbound calls)
-         if: ${{ vars.disable_harden_runner != 'true' }}
+@@ -62,7 +62,7 @@ jobs:
+       - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+         with:
+-          version: v0.38.2
++          version: v0.39.1
+ 
+       - name: Cache Docker layers
+         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
 ```
 
 ---
 
-### Incident Patch 2: `1c8564d6` (2026-11-25)
-**Commit Message**: fix(build): detect lint build tags on macOS (#17296)
+### Incident Patch 2: `ffcf8313` (2026-11-26)
+**Commit Message**: fix(controller): preserve template identity in artifact GC (#17502)
 
-Signed-off-by: Luca Marsella <[REDACTED_EMAIL]>
+Signed-off-by: hairuiyang <[REDACTED_EMAIL]>
 
-**File**: `Makefile` (modified, +2/-1)
+**File**: `pkg/apis/workflow/v1alpha1/workflow_types.go` (modified, +62/-26)
 ```diff
-@@ -190,7 +190,8 @@ TOOL_GOTESTSUM              := $(GOPATH)/bin/gotestsum
- TOOL_BUF                    := $(GOPATH)/bin/buf
- endif
- # Extract custom build tags for linting (excluding platform-specific ones)
--GO_BUILD_TAGS               := $(shell grep -rh '//go:build' --include='*.go' --exclude-dir=vendor --exclude-dir=".??*" . 2>/dev/null | grep -v vendor | sed 's|.*//go:build ||' | tr '&|!() ' '\n' | grep -v '^$$' | grep -vE '^(windows|darwin|linux|ignore_autogenerated)$$' | sort -u | tr '\n' ',' | sed 's/,$$//')
-+# git grep, not grep -r: it skips ignored dirs (vendor/, .go/) the same way with GNU and BSD tools
-+GO_BUILD_TAGS               := $(shell git grep --no-color -h --untracked '//go:build' -- '*.go' 2>/dev/null | grep -v vendor | sed 's|.*//go:build ||' | tr '&|!() ' '\n' | grep -v '^$$' | grep -vE '^(windows|darwin|linux|ignore_autogenerated)$$' | sort -u | tr '\n' ',' | sed 's/,$$//')
- TOOL_EMBEDDOC               := hack/embeddoc/embeddoc
+@@ -1923,6 +1923,14 @@ type TemplateRef struct {
+ 	ClusterScope bool `json:"clusterScope,omitempty" protobuf:"varint,4,opt,name=clusterScope"`
+ }
  
- # npm bin -g will do this on later npms than we have
++// GetResourceScope returns the scope of the referenced WorkflowTemplate.
++func (ref *TemplateRef) GetResourceScope() ResourceScope {
++	if ref.ClusterScope {
++		return ResourceScopeCluster
++	}
++	return ResourceScopeNamespaced
++}
++
+ // Synchronization holds synchronization lock configuration
+ type Synchronization struct {
+ 	// Semaphores holds the list of Semaphores configuration
+@@ -3939,14 +3947,53 @@ func (w *Workflow) NodeID64(name string) string {
+ 	return fmt.Sprintf("%s-%v", w.Name, h.Sum64())
+ }
+ 
++// GetNodeTemplateKey returns the scoped key for a node's template, or an empty
++// string if the template is unnamed.
++func (w *Workflow) GetNodeTemplateKey(node *NodeStatus) string {
++	scope, resourceName := node.GetTemplateScope()
++	key, stored := resolveTemplateReference(scope, resourceName, node)
++	if !stored {
++		key = w.localTemplateKeyPrefix() + node.TemplateName
++	}
++	if strings.HasSuffix(key, "/") {
++		return ""
++	}
++	return key
++}
++
++func (w *Workflow) localTemplateKeyPrefix() string {
++	return string(ResourceScopeLocal) + "/" + w.Name + "/"
++}
++
++// GetTemplateFromSnapshot looks up a key from GetNodeTemplateKey in the execution
++// spec or stored templates, without fetching any live references.
++func (w *Workflow) GetTemplateFromSnapshot(key string) *Template {
++	if key == "" {
++		return nil
++	}
++	name, local := strings.CutPrefix(key, w.localTemplateKeyPrefix())
++	if !local {
++		return w.getStoredTemplate(key)
++	}
++	for _, tmpl := range w.GetExecSpec().Templates {
++		if tmpl.Name == name {
++			return &tmpl
++		}
++	}
++	return nil
++}
++
+ // GetStoredTemplate retrieves a template from stored templates of the workflow.
+ func (w *Workflow) GetStoredTemplate(scope ResourceScope, resourceName string, caller TemplateReferenceHolder) *Template {
+-	tmplID, storageNeeded := resolveTemplateReference(scope, resourceName, caller)
+-	if !storageNeeded {
+-		// Local templates aren't stored
++	key, stored := resolveTemplateReference(scope, resourceName, caller)
++	if !stored {
+ 		return nil
+ 	}
+-	if tmpl, ok := w.Status.StoredTemplates[tmplID]; ok {
++	return w.getStoredTemplate(key)
++}
++
++func (w *Workflow) getStoredTemplate(key string) *Template {
++	if tmpl, ok := w.Status.StoredTemplates[key]; ok {
+ 		return tmpl.DeepCopy()
+ 	}
+ 	return nil
+@@ -3997,30 +4044,19 @@ func (w *Workflow) SetStoredInlineTemplate(scope ResourceScope, resourceName str
+ 	return nil
+ }
+ 
+-// resolveTemplateReference resolves the stored template name of a given template holder on the template scope and determines
+-// if it should be stored
+-func resolveTemplateReference(callerScope ResourceScope, resourceName string, caller TemplateReferenceHolder) (string, bool) {
+-	tmplRef := caller.GetTemplateRef()
+-	switch {
+-	case tmplRef != nil:
+-		// We are calling an external WorkflowTemplate or ClusterWorkflowTemplate. Template storage is needed
+-		// We need to determine if we're calling a WorkflowTemplate or a ClusterWorkflowTemplate
+-		referenceScope := ResourceScopeNamespaced
+-		if tmplRef.ClusterScope {
+-			referenceScope = ResourceScopeCluster
+-		}
+-		return fmt.Sprintf("%s/%s/%s", referenceScope, tmplRef.Name, tmplRef.Template), true
+-	case callerScope != ResourceScopeLocal:
+-		// Either a WorkflowTemplate or a ClusterWorkflowTemplate is calling a template inside itself. Template storage is needed
+-		if caller.GetTemplate() != nil {
+-			// If we have an inlined template here, use the inlined name
+-			return fmt.Sprintf("%s/%s/inline/%s", callerScope, resourceName, caller.GetName()), true
+-		}
+-		return fmt.Sprintf("%s/%s/%s", callerScope, resourceName, caller.GetTemplateName()), true
+-	default:
+-		// A Workflow is calling a template inside itself. Template storage is not needed
++// resolveTemplateReference returns the key used in Status.StoredTemplates.
++// A local template does not need a stored copy.
++func resolveTemplateReference(scope ResourceScope, resourceName string, caller TemplateReferenceHolder) (string, bool) {
++	if ref := caller.GetTemplateRef(); ref != nil {
++		return fmt.Sprintf("%s/%s/%s", ref.GetResourceScope(), ref.Name, ref.Template), true
++	}
++	if scope == ResourceScopeLocal {
+ 		return "", false
+ 	}
++	if caller.GetTemplate() != nil {
++		return fmt.Sprintf("%s/%s/inline/%s", scope, resourceName, caller.GetName()), true
++	}
++	return fmt.Sprintf("%s/%s/%s", scope, resourceName, caller.GetTemplateName()), true
+ }
+ 
+ // ContinueOn defines if a workflow should continue even if a task or step fails/errors.
+```
+
+**File**: `workflow/controller/artifact_gc.go` (modified, +17/-22)
+```diff
+@@ -143,8 +143,8 @@ func (woc *wfOperationCtx) processArtifactGCStrategy(ctx context.Context, strate
+ 		return nil
+ 	}
+ 
+-	// cache the templates by name so we can find them easily
+-	templatesByName := make(map[string]*wfv1.Template)
++	// Cache templates by their complete identity so same-named templates stay separate.
++	templatesByKey := make(map[string]*wfv1.Template)
+ 
+ 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 	// We need to create a separate Pod for each set of Artifacts that require special permissions
+@@ -179,32 +179,27 @@ func (woc *wfOperationCtx) processArtifactGCStrategy(ctx context.Context, strate
+ 			woc.log.WithField("nodeID", artifactSearchResult.NodeID).Error(ctx, "Was unable to obtain node")
+ 			return fmt.Errorf("can't process Artifact GC Strategy %s: node ID %q not found in Status", strategy, artifactSearchResult.NodeID)
+ 		}
+-		templateName := util.GetTemplateFromNode(*node)
+-		if templateName == "" {
+-			return fmt.Errorf("can't process Artifact GC Strategy %s: node %+v has an unnamed template", strategy, node)
++		templateKey := woc.wf.GetNodeTemplateKey(node)
++		if templateKey == "" {
++			return fmt.Errorf("can't process Artifact GC Strategy %s: node %q has an unnamed template", strategy, node.ID)
+ 		}
+-		template, found := templatesByName[templateName]
+-		if !found {
+-			template = woc.wf.GetTemplateByName(templateName)
++		if _, found := templatesByKey[templateKey]; !found {
++			template := woc.wf.GetTemplateFromSnapshot(templateKey)
+ 			if template == nil {
+-				return fmt.Errorf("can't process Artifact GC Strategy %s: template name %q belonging to node %+v not found", strategy, templateName, node)
++				return fmt.Errorf("can't process Artifact GC Strategy %s: template %q for node %q not found", strategy, templateKey, node.ID)
+ 			}
+-			templatesByName[templateName] = template
+-		}
+-
+-		if _, found := groupedByPod[podName][template.Name]; !found {
+-			groupedByPod[podName][template.Name] = make(wfv1.ArtifactSearchResults, 0)
++			templatesByKey[templateKey] = template
+ 		}
+ 
+-		groupedByPod[podName][template.Name] = append(groupedByPod[podName][template.Name], artifactSearchResult)
++		groupedByPod[podName][templateKey] = append(groupedByPod[podName][templateKey], artifactSearchResult)
+ 	}
+ 
+ 	// start up a separate Pod with a separate set of ArtifactGCTasks for it to use for each unique Service Account/metadata
+ 	for podName, templatesToArtList := range groupedByPod {
+ 		tasks := make([]*wfv1.WorkflowArtifactGCTask, 0)
+ 
+-		for templateName, artifacts := range templatesToArtList {
+-			template := templatesByName[templateName]
++		for templateKey, artifacts := range templatesToArtList {
++			template := templatesByKey[templateKey]
+ 			woc.addTemplateArtifactsToTasks(ctx, podName, &tasks, template, artifacts)
+ 		}
+ 
+@@ -222,7 +217,7 @@ func (woc *wfOperationCtx) processArtifactGCStrategy(ctx context.Context, strate
+ 				return fmt.Errorf("can't find podInfo for podName %q", podName)
+ 			}
+ 
+-			_, err := woc.createArtifactGCPod(ctx, strategy, tasks, podAccessInfo, podName, templatesToArtList, templatesByName)
++			_, err := woc.createArtifactGCPod(ctx, strategy, tasks, podAccessInfo, podName, templatesToArtList, templatesByKey)
+ 			if err != nil {
+ 				return err
+ 			}
+@@ -462,7 +457,7 @@ func (woc *wfOperationCtx) createWorkflowArtifactGCTask(ctx context.Context, tas
+ 
+ // create the Pod which will do the deletions
+ func (woc *wfOperationCtx) createArtifactGCPod(ctx context.Context, strategy wfv1.ArtifactGCStrategy, tasks []*wfv1.WorkflowArtifactGCTask,
+-	info podInfo, podName string, templatesToArtList templatesToArtifacts, templatesByName map[string]*wfv1.Template) (*corev1.Pod, error) {
++	info podInfo, podName string, templatesToArtList templatesToArtifacts, templatesByKey map[string]*wfv1.Template) (*corev1.Pod, error) {
+ 	woc.log.WithFields(logging.Fields{"strategy": strategy, "podName": podName}).Info(ctx, "creating pod to delete artifacts")
+ 
+ 	// Pod is owned by WorkflowArtifactGCTasks, so it will die automatically when all of them have died
+@@ -474,10 +469,10 @@ func (woc *wfOperationCtx) createArtifactGCPod(ctx context.Context, strategy wfv
+ 
+ 	artifactLocations := make([]*wfv1.ArtifactLocation, 0)
+ 
+-	for templateName, artifacts := range templatesToArtList {
+-		template, found := templatesByName[templateName]
++	for templateKey, artifacts := range templatesToArtList {
++		template, found := templatesByKey[templateKey]
+ 		if !found {
+-			return nil, fmt.Errorf("can't find template with name %q", templateName)
++			return nil, fmt.Errorf("can't find template %q", templateKey)
+ 		}
+ 
+ 		if template.ArchiveLocation.HasLocation() {
+```
+
+**File**: `workflow/controller/artifact_gc_identity_test.go` (added, +190/-0)
+```diff
+@@ -0,0 +1,190 @@
++package controller
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++
++	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
++	"github.com/argoproj/argo-workflows/v4/util/logging"
++)
++
++func TestArtifactGCSeparatesSameNamedTemplates(t *testing.T) {
++	archiveLocation := func(bucket, secret string) *wfv1.ArtifactLocation {
++		return &wfv1.ArtifactLocation{S3: &wfv1.S3Artifact{
++			S3Bucket: wfv1.S3Bucket{
++				Endpoint: "minio:9000",
++				Bucket:   bucket,
++				AccessKeySecret: &corev1.SecretKeySelector{
++					LocalObjectReference: corev1.LocalObjectReference{Name: secret},
++					Key:                  "accesskey",
++				},
++				SecretKeySecret: &corev1.SecretKeySelector{
++					LocalObjectReference: corev1.LocalObjectReference{Name: secret},
++					Key:                  "secretkey",
++				},
++			},
++			Key: "archive",
++		}}
++	}
++	first := wfv1.Template{Name: "main", ArchiveLocation: archiveLocation("first-bucket", "first-secret")}
++	second := wfv1.Template{Name: "main", ArchiveLocation: archiveLocation("second-bucket", "second-secret")}
++	node := func(id, resource string) wfv1.NodeStatus {
++		return wfv1.NodeStatus{
++			ID:          id,
++			Name:        "template-identity." + id,
++			Type:        wfv1.NodeTypePod,
++			Phase:       wfv1.NodeSucceeded,
++			TemplateRef: &wfv1.TemplateRef{Name: resource, Template: "main"},
++			Outputs: &wfv1.Outputs{Artifacts: wfv1.Artifacts{{
++				Name:             "result",
++				ArtifactLocation: wfv1.ArtifactLocation{S3: &wfv1.S3Artifact{Key: id + "/result"}},
++			}}},
++		}
++	}
++	useLocalTemplate := func(wf *wfv1.Workflow) {
++		localNode := wf.Status.Nodes["first"]
++		localNode.TemplateName = "main"
++		localNode.TemplateRef = nil
++		localNode.TemplateScope = "local/" + wf.Name
++		wf.Status.Nodes["first"] = localNode
++		delete(wf.Status.StoredTemplates, "namespaced/first/main")
++	}
++
++	for _, tt := range []struct {
++		name            string
++		setup           func(*wfv1.Workflow) *wfv1.WorkflowTemplate
++		missingTemplate string
++	}{
++		{name: "two WorkflowTemplates"},
++		{
++			name: "local and referenced",
++			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
++				useLocalTemplate(wf)
++				wf.Spec.Templates = []wfv1.Template{first}
++				return nil
++			},
++		},
++		{
++			name: "namespaced and cluster",
++			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
++				clusterNode := wf.Status.Nodes["second"]
++				clusterNode.TemplateRef = &wfv1.TemplateRef{Name: "first", Template: "main", ClusterScope: true}
++				wf.Status.Nodes["second"] = clusterNode
++				delete(wf.Status.StoredTemplates, "namespaced/second/main")
++				wf.Status.StoredTemplates["cluster/first/main"] = second
++				return nil
++			},
++		},
++		{
++			name: "inherited template scopes",
++			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
++				for id, n := range wf.Status.Nodes {
++					n.TemplateName = "main"
++					n.TemplateRef = nil
++					n.TemplateScope = "namespaced/" + id
++					wf.Status.Nodes[id] = n
++				}
++				return nil
++			},
++		},
++		{
++			name: "workflowTemplateRef and referenced",
++			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
++				useLocalTemplate(wf)
++				wf.Spec.WorkflowTemplateRef = &wfv1.WorkflowTemplateRef{Name: "source"}
++				wf.Status.Phase = wfv1.WorkflowSucceeded
++				return &wfv1.WorkflowTemplate{
++					ObjectMeta: metav1.ObjectMeta{Name: "source", Namespace: wf.Namespace},
++					Spec: wfv1.WorkflowSpec{
++						Entrypoint: "main",
++						Templates:  []wfv1.Template{first},
++					},
++				}
++			},
++		},
++		{
++			name: "missing referenced template",
++			setup: func(wf *wfv1.Workflow) *wfv1.WorkflowTemplate {
++				wf.Spec.Templates = []wfv1.Template{second}
++				delete(wf.Status.StoredTemplates, "namespaced/second/main")
++				return nil
++			},
++			missingTemplate: "namespaced/second/main",
++		},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			ctx := logging.TestContext(t.Context())
++			wf := &wfv1.Workflow{
++				ObjectMeta: metav1.ObjectMeta{Name: "template-identity", Namespace: "default", UID: "workflow-uid"},
++				Spec: wfv1.WorkflowSpec{
++					ArtifactGC: &wfv1.WorkflowLevelArtifactGC{ArtifactGC: wfv1.ArtifactGC{Strategy: wfv1.ArtifactGCOnWorkflowCompletion}},
++				},
++				Status: wfv1.WorkflowStatus{
++					StoredTemplates: map[string]wfv1.Template{
++						"namespaced/first/main":  first,
++						"namespaced/second/main": second,
++					},
++					Nodes: wfv1.Nodes{
++						"first":  node("first", "first"),
++						"second": node("second", "second"),
++					},
++				},
++			}
++			options := []any{wf}
++			var source *wfv1.WorkflowTemplate
++			if tt.setup != nil {
++				source = tt.setup(wf)
++				if source != nil {
++					options = append(options, source)
++				}
++			}
++			cancel, controller := newController(ctx, options...)
++			defer cancel()
++			assignTaskUIDs(controller)
++			woc := newWorkflowOperationCtx(ctx, wf, co
+```
+
+**File**: `workflow/controller/operator.go` (modified, +18/-20)
+```diff
+@@ -1544,8 +1544,8 @@ func (woc *wfOperationCtx) assessNodeStatus(ctx context.Context, pod *apiv1.Pod,
+ 		return nil
+ 	}
+ 	if tmpl == nil {
+-		woc.log.WithFields(logging.Fields{"nodeName": old.Name, "templateName": old.TemplateName}).
+-			Debug(ctx, "no template resolved for node (expected for inline templates); daemon teardown detection is disabled for it")
++		woc.log.WithFields(logging.Fields{"nodeName": old.Name, "templateName": old.TemplateName, "templateScope": old.TemplateScope}).
++			Debug(ctx, "could not resolve node template; skipping daemon teardown detection")
+ 	}
+ 	// The only way a daemon node becomes Succeeded while its pod is still alive is
+ 	// killDaemonedChildren, which marks the node and then requests pod termination.
+@@ -2820,26 +2820,24 @@ func (woc *wfOperationCtx) childrenFulfilled(node *wfv1.NodeStatus) bool {
+ }
+ 
+ func (woc *wfOperationCtx) GetNodeTemplate(ctx context.Context, node *wfv1.NodeStatus) (*wfv1.Template, error) {
+-	if node.TemplateRef != nil {
+-		// Check storedTemplates first so that modifications to the CWT after the workflow
+-		// started do not cause assessNodeStatus to spuriously mark the node as Error.
+-		scope, name := node.GetTemplateScope()
+-		if tmpl := woc.wf.GetStoredTemplate(scope, name, node); tmpl != nil {
+-			return tmpl, nil
+-		}
+-		tmplCtx, err := woc.createTemplateContext(ctx, scope, name)
+-		if err != nil {
+-			woc.markNodeError(ctx, node.Name, err)
+-			return nil, err
+-		}
+-		tmpl, err := tmplCtx.GetTemplateFromRef(ctx, node.TemplateRef)
+-		if err != nil {
+-			woc.markNodeError(ctx, node.Name, err)
+-			return tmpl, err
+-		}
++	if tmpl := woc.wf.GetTemplateFromSnapshot(woc.wf.GetNodeTemplateKey(node)); tmpl != nil {
+ 		return tmpl, nil
+ 	}
+-	return woc.wf.GetTemplateByName(node.TemplateName), nil
++	if node.TemplateRef == nil {
++		return nil, nil
++	}
++	// Keep the live lookup for explicit references that have no stored snapshot.
++	scope, name := node.GetTemplateScope()
++	tmplCtx, err := woc.createTemplateContext(ctx, scope, name)
++	if err != nil {
++		woc.markNodeError(ctx, node.Name, err)
++		return nil, err
++	}
++	tmpl, err := tmplCtx.GetTemplateFromRef(ctx, node.TemplateRef)
++	if err != nil {
++		woc.markNodeError(ctx, node.Name, err)
++	}
++	return tmpl, err
+ }
+ 
+ func (woc *wfOperationCtx) markWorkflowRunning(ctx context.Context) context.Context {
+```
+
+**File**: `workflow/controller/operator_test.go` (modified, +24/-0)
+```diff
+@@ -2051,6 +2051,30 @@ spec:
+ 	assert.Equal(t, "say-hello", tmpl.Name)
+ }
+ 
++func TestGetNodeTemplateUsesInheritedScope(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
++	local := wfv1.Template{Name: "main", Daemon: new(true)}
++	stored := wfv1.Template{Name: "main", Daemon: new(false)}
++	wf := &wfv1.Workflow{
++		ObjectMeta: metav1.ObjectMeta{Name: "inherited-scope", Namespace: "default"},
++		Spec:       wfv1.WorkflowSpec{Templates: []wfv1.Template{local}},
++		Status:     wfv1.WorkflowStatus{StoredTemplates: map[string]wfv1.Template{"namespaced/source/main": stored}},
++	}
++	cancel, controller := newController(ctx, wf)
++	defer cancel()
++	woc := newWorkflowOperationCtx(ctx, wf, controller)
++	node := &wfv1.NodeStatus{TemplateName: "main", TemplateScope: "namespaced/source"}
++
++	tmpl, err := woc.GetNodeTemplate(ctx, node)
++	require.NoError(t, err)
++	require.Equal(t, &stored, tmpl)
++
++	delete(woc.wf.Status.StoredTemplates, "namespaced/source/main")
++	tmpl, err = woc.GetNodeTemplate(ctx, node)
++	require.NoError(t, err)
++	require.Nil(t, tmpl)
++}
++
+ // TestAssessNodeStatusWithTemplateRefUsesStoredTemplates verifies that assessNodeStatus
+ // correctly resolves the phase from the pod when a cross-CWT templateRef node's template
+ // has been removed from the CWT after pod creation. The node must not be marked Error.
+```
+
+**File**: `workflow/templateresolution/context.go` (modified, +1/-4)
+```diff
+@@ -228,10 +228,7 @@ func (tplCtx *TemplateContext) resolveTemplateImpl(ctx context.Context, tmplHold
+ 			inlineScope := scope
+ 			inlineResourceName := resourceName
+ 			if tmplRef := tmplHolder.GetTemplateRef(); tmplRef != nil {
+-				inlineScope = wfv1.ResourceScopeNamespaced
+-				if tmplRef.ClusterScope {
+-					inlineScope = wfv1.ResourceScopeCluster
+-				}
++				inlineScope = tmplRef.GetResourceScope()
+ 				inlineResourceName = tmplRef.Name
+ 			}
+ 			err = tplCtx.workflow.SetStoredInlineTemplate(inlineScope, inlineResourceName, newTmpl)
+```
+
+---
+
+### Incident Patch 3: `3e7a4273` (2026-11-26)
+**Commit Message**: docs: fix leftovers from the docs style pass (#17600)
+
+Signed-off-by: Riccardo Capraro <[REDACTED_EMAIL]>
+
+**File**: `docs/events.md` (modified, +9/-1)
+```diff
+@@ -33,11 +33,19 @@ curl https://localhost:2746/api/v1/events/argo/my-discriminator \
+   -d '{"message": "hello"}'
+ ```
+ 
+-By default, the Event endpoint processes the Event before it returns, and can report failures to you.
++By default, the Event endpoint processes the Event before it returns.
++If dispatching the Event fails, the endpoint returns HTTP 500.
+ If you enable `--event-async-dispatch`, the endpoint queues the Event and returns without waiting for Argo to process it.
+ This means that Argo does not notify you of failures synchronously.
+ With async dispatch, the endpoint returns a failure (503) if the Event processing queue is full.
+ 
++In both modes, when dispatching fails for a WorkflowEventBinding, Argo records a `WorkflowEventBindingError` Warning event on that WorkflowEventBinding and logs an error in the Argo Server log.
++To see these events, run:
++
++```bash
++kubectl get events --field-selector reason=WorkflowEventBindingError -n argo
++```
++
+ !!! Warning "Processing Order"
+     Argo does not always process Events in the order it receives them.
+ 
+```
+
+**File**: `docs/offloading-large-workflows.md` (modified, +2/-2)
+```diff
+@@ -137,5 +137,5 @@ Options:
+ 
+ - ConfigMap offloading triggers at 128KB total args (131,072 bytes, JSON marshaled)
+ - Individual arg file offloading triggers at 128KB per argument (131,072 bytes)
+-- Check controller logs for "Offloaded container args to ConfigMap" message
+-- Check emissary logs for "Offloaded large argument to file" message
++- Check controller logs for the `Offloaded container args to configmap` message
++- Check emissary logs for the `Offloaded large argument to file` message
+```
+
+**File**: `docs/service-accounts.md` (modified, +6/-4)
+```diff
+@@ -4,17 +4,19 @@
+ 
+ ### Roles, Role-Bindings, and Service Accounts
+ 
+-To support features such as artifacts, outputs, and access to secrets, Argo needs to communicate with Kubernetes resources using the Kubernetes API.
+-To communicate with the Kubernetes API, Argo uses a `ServiceAccount` to authenticate itself to the Kubernetes API.
++Workflow pods use a `ServiceAccount` to authenticate to the Kubernetes API.
++The executor in each pod uses it to report outputs, so at minimum the `ServiceAccount` needs `create` and `patch` on `workflowtaskresults`.
++The executor reads artifact repository credentials from secrets mounted into the pod, so it does not need API access to those secrets.
++Your own containers may need further permissions, for example to create Kubernetes resources.
+ You give a `ServiceAccount` its permissions by binding a `Role` to it with a `RoleBinding`.
+ 
+-Then, when submitting Workflows, you can specify which `ServiceAccount` Workflow pods use:
++You set the `ServiceAccount` that Workflow pods use with the `spec.serviceAccountName` field, or with the `--serviceaccount` flag when submitting:
+ 
+ ```bash
+ argo submit --serviceaccount <name>
+ ```
+ 
+-If you don't specify a `ServiceAccount`, Workflow pods use the `default` `ServiceAccount` from the namespace the workflow runs in, which almost always has insufficient privileges by default.
++If none of the template, the Workflow or the [workflow defaults](default-workflow-specs.md) set `serviceAccountName`, Workflow pods use the `default` `ServiceAccount` from the namespace the Workflow runs in, which almost always has insufficient privileges by default.
+ 
+ For more information about granting Argo the necessary permissions for your use case, see [Workflow RBAC](workflow-rbac.md).
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17602** (2026-11-25): fix(ci): PR readiness bot reports wrong output due to missing permissions (@ricCap)
-- **PR #17601** (closed): feat(controller): retry skipped completion reconciles when the informer catches up (@ricCap)
-- **PR #17599** (2026-11-25): docs: update CHANGELOG.md for v4.1.7 (@github-actions[bot])
-- **PR #17596** (2026-11-25): chore(deps): update dependency minimatch to v11.0.9 (main) (@renovate[bot])
-- **PR #17595** (2026-11-25): chore(deps): update dependency @types/node to v24.19.4 (main) (@renovate[bot])
-- **PR #17593** (2026-11-25): fix(artifacts): reject S3 caSecret without a valid PEM certificate (cherry-pick #17373 for 4.0) (@Joibel)
+- **PR #17636** (2026-11-26): chore(deps): update dependency webpack to v5.113.0 (main) (@renovate[bot])
+- **PR #17635** (2026-11-26): chore(deps): update dependency sass to v1.108.2 (main) (@renovate[bot])
+- **PR #17634** (2026-11-26): fix(controller): preserve template identity in artifact GC (cherry-pick #17502 for 4.0) (@Joibel)
+- **PR #17632** (2026-11-26): chore(deps): update dependency prettier to v3.10.1 (main) (@renovate[bot])
+- **PR #17631** (2026-11-26): chore(deps): update dependency buildx to v0.39.1 (main) (@renovate[bot])
+- **PR #17628** (2026-11-26): chore(deps): update sigstore/cosign-installer action to v4.1.4 (main) (@renovate[bot])
 
 ---
 
@@ -879,31 +1396,31 @@ Signed-off-by: Luca Marsella <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): PR readiness bot reports wrong output due to missing permissions
+## X. deps): update dependency buildx to v0.39.1 (main)
 
 **RULE**:
-When implementing operations in `.github/pr-readiness/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27111e49`: ci): PR readiness bot reports wrong output due to missing permissions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db785a62`: deps): update dependency buildx to v0.39.1 (main). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/pr-readiness/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`, `issues: read`. The last is needed by the contributor table: without it, GitHub search cannot see issues, so the `is:issue` searches silently return the author's PRs instead. No secrets beyond `GITHUB_TOKEN`.
+          version: v0.39.1
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- `permissions: {}` at the top; the job grants only `pull-requests: write`, `contents: read`, `actions: read`. No secrets beyond `GITHUB_TOKEN`.
+          version: v0.38.2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27111e49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db785a62` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
