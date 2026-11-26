@@ -3,7 +3,7 @@
 > **Source Version**: `hf-conceptco`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T09:47:26.969Z  
+> **Timestamp**: 2026-11-26T05:48:34.082Z  
 > **Learning ID**: `learn-huggingface-conceptcountry-qwen-concept-27b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ConceptCountry/qwen-concept-27b](https://huggingface.co/ConceptCountry/qwen-concept-27b))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T09:47:26.803Z  
+> **Harvest Timestamp**: 2026-11-26T05:48:33.955Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 120155 downloads | 255 likes
+- **Stars / Engagement**: 120418 downloads | 258 likes
 
 ---
 

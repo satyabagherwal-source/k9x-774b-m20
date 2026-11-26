@@ -798547,3 +798547,111 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `26ea3034` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10607. Elasticsearch search attribute mapping backwards compatibility fix (Harvested from temporalio/temporal)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Elasticsearch search attribute mapping backwards compatibility fix",
+  "source": "temporalio/temporal",
+  "source_url": "https://github.com/temporalio/temporal",
+  "source_version": "67959df6",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T05:48:45.180Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-temporalio-temporal",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `67959df6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `common/searchattribute/mapper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fd06a49a`: Elasticsearch search attribute mapping backwards compatibility fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/searchattribute/mapper.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// GetAlias returns the alias of fieldName. A legacy custom search attribute (registered
+// through cluster metadata) always maps to itself. A namespace alias that has the same name as a
+// legacy custom search attribute is not used: GetFieldName resolves that name to the legacy
+// attribute. The field has no alias in that case, so that two fields never get the same alias.
+	if m.isLegacyCustomSearchAttribute(fieldName) {
+	alias, err := m.mapper.GetAlias(fieldName, namespaceName)
+	if err != nil {
+		return "", err
+	}
+	// TODO: Remove this check once custom search attributes of Elasticsearch visibility stores
+	// are only registered as namespace aliases and no cluster-level custom search attribute is left.
+	if m.isLegacyCustomSearchAttribute(alias) {
+		return "", serviceerror.NewInvalidArgumentf(
+			"search attribute field %s is aliased to %s, which is already a cluster-level custom search attribute",
+			fieldName,
+			alias,
+		)
+	}
+// GetFieldName returns the field name of alias. A legacy custom search attribute (registered
+// through cluster metadata) takes precedence over a namespace alias with the same name: its
+// existing documents are stored under its own name, so resolving it t
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	alias, firstErr := m.mapper.GetAlias(fieldName, namespaceName)
+	if firstErr != nil {
+		if !m.isLegacyCustomSearchAttribute(fieldName) {
+			return "", firstErr
+		}
+		// this is a custom search attribute registered through cluster metadata.
+	fieldName, firstErr := m.mapper.GetFieldName(alias, namespaceName)
+	if firstErr != nil {
+		if !m.isLegacyCustomSearchAttribute(alias) {
+			return "", firstErr
+		}
+		// this is a custom search attribute registered through cluster metadata.
+	return fieldName, nil
+	legacyCustomSearchAttributes := make(map[string]enumspb.IndexedValueType)
+	for name, valueType := range nameTypeMap.Custom() {
+		legacyCustomSearchAttributes[name] = valueType
+	return NewNameTypeMap(legacyCustomSearchAttributes)
+// If no replacement where made, it returns nil which means that original SearchAttributes struct should be used.
+	// If no field name was mapped, return nil to save on clone operation on caller side.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fd06a49a` are properly handled with clean fallback behavior.

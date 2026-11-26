@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T05:05:21.015Z",
-    "lastVerified": "2026-11-26T05:05:21.015Z",
+    "lastChecked": "2026-11-26T05:48:46.471Z",
+    "lastVerified": "2026-11-26T05:48:46.471Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T05:38:42.675Z",
-    "lastVerified": "2026-11-26T05:38:42.675Z",
+    "lastChecked": "2026-11-26T05:48:49.474Z",
+    "lastVerified": "2026-11-26T05:48:49.474Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,8 +367,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T01:45:12.813Z",
-    "lastVerified": "2026-11-26T01:45:12.813Z",
+    "lastChecked": "2026-11-26T05:48:41.332Z",
+    "lastVerified": "2026-11-26T05:48:41.332Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -4356,9 +4356,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-25T04:39:35.934Z",
+    "lastChecked": "2026-11-26T05:48:43.736Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-25T04:39:35.934Z"
+    "lastVerified": "2026-11-26T05:48:43.736Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -7148,12 +7148,12 @@
     "officialUrl": "https://github.com/temporalio/temporal",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T05:37:17.139Z",
-    "lastVerified": "2026-11-25T05:37:17.139Z",
+    "lastChecked": "2026-11-26T05:48:44.446Z",
+    "lastVerified": "2026-11-26T05:48:44.446Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "7206d60fabff28f244f1954d8c01f07b602b06c168eca49a5ea6aff7d6a40a2d",
+    "contentHash": "6b2a06bbc80a011b875ac3b17917a316a42843d4c39146421508cbf11e21b5ae",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -8006,9 +8006,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-24T23:41:35.613Z",
+    "lastChecked": "2026-11-26T05:48:31.390Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-24T23:41:35.613Z"
+    "lastVerified": "2026-11-26T05:48:31.390Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -11437,9 +11437,9 @@
   "williewangwei-swiftui-tutorials": {
     "name": "SwiftUI-Tutorials",
     "officialUrl": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
-    "lastChecked": "2026-11-23T19:59:30.251Z",
+    "lastChecked": "2026-11-26T05:48:36.398Z",
     "revisionIdentifier": "0ced68b2",
-    "lastVerified": "2026-11-23T19:59:30.251Z"
+    "lastVerified": "2026-11-26T05:48:36.398Z"
   },
   "rdfjs-n3.js": {
     "name": "rdfjs/N3.js",
@@ -14638,12 +14638,12 @@
     "officialUrl": "https://huggingface.co/ConceptCountry/qwen-concept-27b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T09:47:26.803Z",
-    "lastVerified": "2026-11-22T09:47:26.803Z",
+    "lastChecked": "2026-11-26T05:48:33.955Z",
+    "lastVerified": "2026-11-26T05:48:33.955Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
-    "contentHash": "ed6d992f03f5357c408e622bbd573043bd9c8a33a17ae3fb1ad5b0c4edce0fb4",
+    "contentHash": "69b044a0894cb21bb4ce25d53319b044c350f50a22434c308111078e80707206",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

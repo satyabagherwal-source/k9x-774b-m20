@@ -4,24 +4,24 @@
 {
   "source_repository": "temporalio/temporal",
   "source_url": "https://github.com/temporalio/temporal",
-  "source_version": "c70df160",
+  "source_version": "67959df6",
   "license": "MIT",
-  "timestamp": "2026-11-25T05:37:18.463Z",
+  "timestamp": "2026-11-26T05:48:46.225Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-temporalio-temporal",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `c70df160`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T05:37:18.463Z`  
+> **Provenance**: Harvested from [temporalio/temporal](https://github.com/temporalio/temporal) (Revision: `67959df6`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T05:48:46.225Z`  
 > **Learning ID**: `learn-github-temporalio-temporal`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from temporalio/temporal:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:37:17.139Z  
+> **Harvest Timestamp**: 2026-11-26T05:48:44.446Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24588 stars
+- **Stars / Engagement**: 24606 stars
 
 ---
 
@@ -2135,210 +2135,653 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8495e550` (2026-11-24)
-**Commit Message**: Fix panic on empty MySQL isolation level attribute (#13095)
+### Incident Patch 1: `fd06a49a` (2026-11-25)
+**Commit Message**: Elasticsearch search attribute mapping backwards compatibility fix (#13188)
 
 ## What changed?
+Fixes for OSS clusters on Elasticsearch visibility that have the
+pre-allocated custom search attribute fields (`Bool01`–`03`,
+`Int01`–`03`, `Double01`–`03`, `Datetime01`–`03`, `KeywordList01`–`03`,
+`Text01`–`03`, `Keyword01`–`10`) in cluster metadata (added in v1.31 by
+#9346):
 
-Guard `sanitizeAttr` against an empty isolation-level value, and drop
-blank `transaction_isolation` / `tx_isolation` connect attributes when
-building the DSN so the default `READ-COMMITTED` isolation level applies
-without leaving an empty alias behind.
+- **`OperatorService.ListSearchAttributes` hides pre-allocated fields on
+Elasticsearch.**
+- When a namespace is given, it returns that namespace's aliases of
+pre-allocated fields, the same way `listSearchAttributesSQL` does. A
+cluster-level custom search attribute wins over an alias with the same
+name.
+  - A namespace lookup error is now returned instead of being ignored.
+- **History adds the pre-allocated fields to the Elasticsearch index
+mapping at startup.**
+- It reads the pre-allocated fields from cluster metadata and registers
+them through `VisibilityManager.AddSearchAttributes`. This follows
+saas-temporal#5983.
+- It runs in the background. Each attempt has a 30s timeout, with
+exponential backoff for up to 10 minutes. It stops when the service
+stops.
+- **Cluster-level custom search attributes win over namespace
 
-- `common/persistence/sql/sqlplugin/mysql/session/session.go`
-  - `sanitizeAttr`: check `len(value) > 0` before indexing `value[0]`.
-- `buildDSNAttrs`: skip blank `transaction_isolation` / `tx_isolation`
-entries before inserting them, so no empty `SET <key> =` is emitted.
-Other blank attributes (e.g. `readTimeout`) are still passed through.
-- `common/persistence/sql/sqlplugin/mysql/session/session_test.go`
-- Extend `TestBuildDSN` with cases for both aliases (empty /
-whitespace), both aliases blank, a valid override alongside a blank
-alias, and an unrelated blank attribute; runs for both the `main` and
-`visibility` stores.
-
-## Why?
-
-`sanitizeAttr` indexed `value[0]` without checking its length. An empty
-`transaction_isolation` (or legacy `tx_isolation`) connect attribute —
-e.g. from an env-var/template substitution that resolves to an empty
-string — panick
-
-**File**: `common/persistence/sql/sqlplugin/mysql/session/session.go` (modified, +5/-1)
+**File**: `common/searchattribute/mapper.go` (modified, +42/-19)
 ```diff
-@@ -161,6 +161,10 @@ func buildDSNAttrs(dbKind sqlplugin.DbKind, cfg *config.SQL) (map[string]string,
+@@ -58,28 +58,39 @@ func (*NoopMapper) GetFieldName(alias string, _ string) (string, error) {
+ 	return alias, nil
+ }
+ 
++// GetAlias returns the alias of fieldName. A legacy custom search attribute (registered
++// through cluster metadata) always maps to itself. A namespace alias that has the same name as a
++// legacy custom search attribute is not used: GetFieldName resolves that name to the legacy
++// attribute. The field has no alias in that case, so that two fields never get the same alias.
+ func (m *backCompMapper) GetAlias(fieldName string, namespaceName string) (string, error) {
+-	alias, firstErr := m.mapper.GetAlias(fieldName, namespaceName)
+-	if firstErr != nil {
+-		if !m.isLegacyCustomSearchAttribute(fieldName) {
+-			return "", firstErr
+-		}
+-		// this is a custom search attribute registered through cluster metadata.
++	if m.isLegacyCustomSearchAttribute(fieldName) {
+ 		return fieldName, nil
  	}
- 	for k, v := range cfg.ConnectAttributes {
- 		k1, v1 := sanitizeAttr(k, v)
-+		// Drop blank isolation entries; keeping them would emit an invalid "SET <key> =".
-+		if (k1 == isolationLevelAttrName || k1 == isolationLevelAttrNameLegacy) && v1 == "" {
-+			continue
-+		}
- 		attrs[k1] = v1
++	alias, err := m.mapper.GetAlias(fieldName, namespaceName)
++	if err != nil {
++		return "", err
++	}
++	// TODO: Remove this check once custom search attributes of Elasticsearch visibility stores
++	// are only registered as namespace aliases and no cluster-level custom search attribute is left.
++	if m.isLegacyCustomSearchAttribute(alias) {
++		return "", serviceerror.NewInvalidArgumentf(
++			"search attribute field %s is aliased to %s, which is already a cluster-level custom search attribute",
++			fieldName,
++			alias,
++		)
++	}
+ 	return alias, nil
+ }
+ 
++// GetFieldName returns the field name of alias. A legacy custom search attribute (registered
++// through cluster metadata) takes precedence over a namespace alias with the same name: its
++// existing documents are stored under its own name, so resolving it through a namespace alias
++// (eg: one left over from a SQL visibility store) would hide them.
+ func (m *backCompMapper) GetFieldName(alias string, namespaceName string) (string, error) {
+-	fieldName, firstErr := m.mapper.GetFieldName(alias, namespaceName)
+-	if firstErr != nil {
+-		if !m.isLegacyCustomSearchAttribute(alias) {
+-			return "", firstErr
+-		}
+-		// this is a custom search attribute registered through cluster metadata.
++	if m.isLegacyCustomSearchAttribute(alias) {
+ 		return alias, nil
+ 	}
+-	return fieldName, nil
++	return m.mapper.GetFieldName(alias, namespaceName)
+ }
+ 
+ func (m *backCompMapper) isLegacyCustomSearchAttribute(name string) bool {
+@@ -124,18 +135,28 @@ func (m *mapperProviderImpl) GetMapper(nsName namespace.Name) (Mapper, error) {
+ }
+ 
+ func legacyCustomSearchAttributes(nameTypeMap NameTypeMap) NameTypeMap {
+-	legacyCustomSearchAttributes := make(map[string]enumspb.IndexedValueType)
+-	for name, valueType := range nameTypeMap.Custom() {
++	return NewNameTypeMap(WithoutPreallocatedFields(nameTypeMap.Custom()))
++}
++
++// WithoutPreallocatedFields returns a copy of the custom search attributes without the
++// pre-allocated custom search attribute fields (eg: Keyword01), which are only usable through
++// a namespace alias.
++func WithoutPreallocatedFields(
++	customSearchAttributes map[string]enumspb.IndexedValueType,
++) map[string]enumspb.IndexedValueType {
++	result := make(map[string]enumspb.IndexedValueType, len(customSearchAttributes))
++	for name, valueType := range customSearchAttributes {
+ 		if sadefs.IsPreallocatedCSAFieldName(name, valueType) {
+ 			continue
+ 		}
+-		legacyCustomSearchAttributes[name] = valueType
++		result[name] = valueType
+ 	}
+-	return NewNameTypeMap(legacyCustomSearchAttributes)
++	return result
+ }
+ 
+ // AliasFields returns SearchAttributes struct where each custom search attribute name is replaced with alias.
+-// If no replacement where made, it returns nil which means that original SearchAttributes struct should be used.
++// Fields that have no alias are dropped. If no field was renamed or dropped, it returns the original
++// SearchAttributes struct.
+ func AliasFields(
+ 	mapperProvider MapperProvider,
+ 	searchAttributes *commonpb.SearchAttributes,
+@@ -164,6 +185,8 @@ func AliasFields(
+ 			// IMPORTANT: AliasFields should never return serviceerror.InvalidArgument because it is used by Poll API and the error
+ 			// goes through up to SDK, which shutdowns worker when it receives serviceerror.InvalidArgument as poll response.
+ 			if _, ok := errors.AsType[*serviceerror.InvalidArgument](err); ok {
++				// The field is dropped, so the original SearchAttributes can't be returned.
++				mapped = true
+ 				continue
+ 			}
+ 			return nil, err
+@@ -174,7 +197,7 @@ func AliasFields(
+ 		newIndexedFields[aliasName] = saPayload
  	}
  
-@@ -192,7 +196,7 @@ func sanitizeAttr(inkey string, invalue string) (string, string) {
- 	value := strings.ToLower(strings.TrimSpace(invalue))
- 	switch key {
- 	case isolationLevelAttrName, isolationLevelAttrNameLegacy:
--		if value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
-+		if len(value) > 0 && value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
- 			value = "'" + value + "'"
- 		}
- 		return key, value
+-	// If no field name was mapped, return nil to save on clone operation on caller side.
++	// If no field was renamed or dropped, return the original to save on clone operation on caller side.
+ 	if !mapped {
+ 		return searchAttributes, nil
+ 	}
 ```
 
-**File**: `common/persistence/sql/sqlplugin/mysql/session/session_test.go` (modified, +144/-0)
+**File**: `common/searchattribute/mapper_test.go` (modified, +120/-2)
 ```diff
-@@ -119,6 +119,146 @@ func (s *sessionTestSuite) TestBuildDSN() {
- 			outIsolationVal: "'repeatable-read'",
- 			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
+@@ -21,9 +21,10 @@ func Test_AliasFields(t *testing.T) {
+ 			"wrong_field": {Data: []byte("data23")}, // Wrong unknown name must be ignored.
  		},
+ 	}
++	// Fields without an alias are dropped, even when no other field is renamed.
+ 	sb, err := AliasFields(mapperProvider, sa, "error-namespace")
+ 	require.NoError(t, err)
+-	require.Equal(t, sa, sb)
++	require.Empty(t, sb.GetIndexedFields())
+ 
+ 	sa = &commonpb.SearchAttributes{
+ 		IndexedFields: map[string]*commonpb.Payload{
+@@ -33,7 +34,7 @@ func Test_AliasFields(t *testing.T) {
+ 	}
+ 	sb, err = AliasFields(mapperProvider, sa, "unknown-namespace")
+ 	require.NoError(t, err)
+-	require.Equal(t, sa, sb)
++	require.Empty(t, sb.GetIndexedFields())
+ 
+ 	sa = &commonpb.SearchAttributes{
+ 		IndexedFields: map[string]*commonpb.Payload{
+@@ -253,3 +254,120 @@ func TestMapperProviderReturnsFallbackLookupError(t *testing.T) {
+ 	require.ErrorContains(t, err, `failed to load search attributes for fallback index "test-visibility-index"`)
+ 	require.ErrorContains(t, err, expectedErr.Error())
+ }
++
++type staticAliasMapper struct {
++	aliasToField map[string]string
++}
++
++func (m staticAliasMapper) GetAlias(fieldName string, namespaceName string) (string, error) {
++	for alias, field := range m.aliasToField {
++		if field == fieldName {
++			return alias, nil
++		}
++	}
++	return "", serviceerror.NewInvalidArgumentf("namespace %s has no mapping for field %s", namespaceName, fieldName)
++}
++
++func (m staticAliasMapper) GetFieldName(alias string, namespaceName string) (string, error) {
++	if field, ok := m.aliasToField[alias]; ok {
++		return field, nil
++	}
++	return "", serviceerror.NewInvalidArgumentf("namespace %s has no mapping for alias %s", namespaceName, alias)
++}
++
++func Test_BackCompMapperPrefersLegacyCustomSearchAttributeOverNamespaceAlias(t *testing.T) {
++	mapper := &backCompMapper{
++		mapper: staticAliasMapper{aliasToField: map[string]string{
++			// Left over from a SQL visibility store: same name as the legacy attribute below.
++			"CustomerId": "Keyword01",
++			"NewAttr":    "Keyword02",
++		}},
++		fallbackNameTypeMap: NewNameTypeMap(map[string]enumspb.IndexedValueType{
++			"CustomerId": enumspb.INDEXED_VALUE_TYPE_KEYWORD,
++		}),
++	}
++
++	fieldName, err := mapper.GetFieldName("CustomerId", "ns")
++	require.NoError(t, err)
++	require.Equal(t, "CustomerId", fieldName)
++
++	fieldName, err = mapper.GetFieldName("NewAttr", "ns")
++	require.NoError(t, err)
++	require.Equal(t, "Keyword02", fieldName)
++
++	_, err = mapper.GetFieldName("Unknown", "ns")
++	var invalidArgumentErr *serviceerror.InvalidArgument
++	require.ErrorAs(t, err, &invalidArgumentErr)
++
++	alias, err := mapper.GetAlias("CustomerId", "ns")
++	require.NoError(t, err)
++	require.Equal(t, "CustomerId", alias)
++
++	alias, err = mapper.GetAlias("Keyword02", "ns")
++	require.NoError(t, err)
++	require.Equal(t, "NewAttr", alias)
++
++	// The field behind the shadowed alias has no alias, so it doesn't collide with the legacy
++	// attribute.
++	_, err = mapper.GetAlias("Keyword01", "ns")
++	require.ErrorAs(t, err, &invalidArgumentErr)
++
++	for _, tc := range []struct {
++		name     string
++		input    map[string]string
++		expected map[string]string
++	}{
 +		{
-+			name: "empty isolation level falls back to default",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"transaction_isolation": ""},
-+			},
-+			outIsolationKey: "transaction_isolation",
-+			outIsolationVal: "'READ-COMMITTED'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++			name:     "with another renamed field",
++			input:    map[string]string{"CustomerId": "legacy", "Keyword01": "via-alias", "Keyword02": "new"},
++			expected: map[string]string{"CustomerId": "legacy", "NewAttr": "new"},
 +		},
 +		{
-+			name: "whitespace isolation level falls back to default",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"transaction_isolation": " "},
++			// The result doesn't depend on whether another field is renamed.
++			name:     "without another renamed field",
++			input:    map[string]string{"CustomerId": "legacy", "Keyword01": "via-alias"},
++			expected: map[string]string{"CustomerId": "legacy"},
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			indexedFields := make(map[string]*commonpb.Payload, len(tc.input))
++			for name, value := range tc.input {
++				indexedFields[name] = &commonpb.Payload{Data: []byte(value)}
++			}
++			sa, err := AliasFields(
++				staticMapperProvider{mapper: mapper},
++				&commonpb.SearchAttributes{IndexedFields: indexedFields},
++				"ns",
++			)
++			require.NoError(t, err)
++			result := make(map[string]string, len(sa.GetIndexedFields()))
++			for name, payload := range sa.GetIndexedFields() {
++				result[name] = string(payload.GetData())
++			}
++			require.Equal(t, tc.expected, result)
++		})
++	}
++}
++
++type staticMapperProvider struct {
++	mapper Mapper
++}
++
++func (p staticMapperProvider) GetMapper(namespace.Name) (Mapper, error) {
++	return p.mapper, nil
++}
++
++func TestWithoutPreallocatedFields(t *testing.T) {
++	result := WithoutPreallocatedFields(map[string]enumspb.IndexedValueType{
++		"Keyword01":     enumspb.INDEXED_VALUE_TYPE_KEYWORD,
++		"KeywordList03": enumspb.INDEXED_VALUE_TYPE_KEYWORD_LIST,
++		"Text02":        enumspb.INDEXED_VALUE_TYPE_TEXT,
++		// Same pattern but a different type than the pre-allocated field: registered by a user.
++		"Int01":      enumspb.INDEXED_VALUE_TYPE_KEYWORD,
++		"CustomerId": enumspb.INDEXED_VALUE_TYPE_KEYWORD,
++	})
++	require.Equal(t, map[string]enumspb.Index
+```
+
+**File**: `service/frontend/operator_handler.go` (modified, +33/-4)
+```diff
+@@ -491,18 +491,47 @@ func (h *OperatorHandlerImpl) ListSearchAttributes(
+ 	}
+ 
+ 	if h.visibilityMgr.HasStoreName(esconfig.PersistenceName) {
+-		return h.listSearchAttributesElasticsearch(ctx, indexName, searchAttributes)
++		return h.listSearchAttributesElasticsearch(request, searchAttributes)
+ 	}
+ 	return h.listSearchAttributesSQL(ctx, request, searchAttributes)
+ }
+ 
++// listSearchAttributesElasticsearch returns the custom search attributes registered at the
++// cluster level, plus the namespace aliases of pre-allocated fields. Pre-allocated fields
++// themselves (eg: Keyword01) are not returned: they can only be used through an alias.
+ func (h *OperatorHandlerImpl) listSearchAttributesElasticsearch(
+-	ctx context.Context,
+-	indexName string,
++	request *operatorservice.ListSearchAttributesRequest,
+ 	searchAttributes searchattribute.NameTypeMap,
+ ) (*operatorservice.ListSearchAttributesResponse, error) {
++	cmCSA := searchAttributes.Custom()
++	customSearchAttributes := searchattribute.WithoutPreallocatedFields(cmCSA)
++	if nsName := request.GetNamespace(); nsName != "" {
++		ns, err := h.namespaceRegistry.GetNamespace(namespace.Name(nsName))
++		if err != nil {
++			return nil, err
++		}
++		// Like listSearchAttributesSQL, iterate over the fields in cluster metadata and return the
++		// alias of the pre-allocated ones.
++		saMapper := ns.CustomSearchAttributesMapper()
++		fieldToAliasMap := saMapper.FieldToAliasMap()
++		for field, tp := range cmCSA {
++			if !sadefs.IsPreallocatedCSAFieldName(field, tp) {
++				continue
++			}
++			alias, ok := fieldToAliasMap[field]
++			if !ok {
++				continue
++			}
++			// A cluster-level custom search attribute takes precedence over a namespace alias
++			// with the same name.
++			if _, exists := customSearchAttributes[alias]; exists {
++				continue
++			}
++			customSearchAttributes[alias] = tp
++		}
++	}
+ 	return &operatorservice.ListSearchAttributesResponse{
+-		CustomAttributes: searchAttributes.Custom(),
++		CustomAttributes: customSearchAttributes,
+ 		SystemAttributes: searchAttributes.System(),
+ 	}, nil
+ }
+```
+
+**File**: `service/frontend/operator_handler_test.go` (modified, +43/-0)
+```diff
+@@ -836,6 +836,49 @@ func (s *operatorHandlerSuite) Test_ListSearchAttributes_Elasticsearch() {
+ 	s.Nil(resp)
+ }
+ 
++func (s *operatorHandlerSuite) Test_ListSearchAttributes_ElasticsearchHidesPreallocatedFields() {
++	ctx := context.Background()
++	customSearchAttributes := maps.Clone(searchattribute.TestEsNameTypeMap().Custom())
++	maps.Copy(customSearchAttributes, searchattribute.TestNameTypeMap().Custom())
++	saTypeMap := searchattribute.NewNameTypeMap(customSearchAttributes)
++	legacyOnly := searchattribute.TestEsNameTypeMap().Custom()
++
++	s.mockResource.VisibilityManager.EXPECT().HasStoreName(esconfig.PersistenceName).Return(true).AnyTimes()
++	s.mockResource.VisibilityManager.EXPECT().GetIndexName().Return(testIndexName).AnyTimes()
++	s.mockResource.SearchAttributesManager.EXPECT().GetSearchAttributes(testIndexName, true).Return(saTypeMap, nil).AnyTimes()
++
++	// Without a namespace, only the cluster-level custom search attributes are returned.
++	resp, err := s.handler.ListSearchAttributes(ctx, &operatorservice.ListSearchAttributesRequest{})
++	s.Require().NoError(err)
++	s.Equal(legacyOnly, resp.GetCustomAttributes())
++
++	// With a namespace, its aliases of pre-allocated fields are returned too.
++	ns := namespace.NewLocalNamespaceForTest(
++		&persistencespb.NamespaceInfo{Name: testNamespace},
++		&persistencespb.NamespaceConfig{CustomSearchAttributeAliases: map[string]string{
++			"Keyword05": "NewAttr",
++			// Same name as a cluster-level custom search attribute: not exposed.
++			"Keyword06": "CustomKeywordField",
++			// A field that is not in cluster metadata (eg: a larger pool on another cluster): not exposed.
++			"Keyword50": "OtherAttr",
++		}},
++		s.currentClusterName,
++	)
++	s.mockResource.NamespaceCache.EXPECT().GetNamespace(namespace.Name(testNamespace)).Return(ns, nil)
++	resp, err = s.handler.ListSearchAttributes(ctx, &operatorservice.ListSearchAttributesRequest{Namespace: testNamespace})
++	s.Require().NoError(err)
++	expected := maps.Clone(legacyOnly)
++	expected["NewAttr"] = enumspb.INDEXED_VALUE_TYPE_KEYWORD
++	s.Equal(expected, resp.GetCustomAttributes())
++
++	// A namespace that can't be read is an error.
++	s.mockResource.NamespaceCache.EXPECT().GetNamespace(namespace.Name("missing")).
++		Return(nil, serviceerror.NewNamespaceNotFound("missing"))
++	_, err = s.handler.ListSearchAttributes(ctx, &operatorservice.ListSearchAttributesRequest{Namespace: "missing"})
++	var namespaceNotFoundErr *serviceerror.NamespaceNotFound
++	s.Require().ErrorAs(err, &namespaceNotFoundErr)
++}
++
+ func (s *operatorHandlerSuite) Test_ListSearchAttributes_SQL() {
+ 	handler := s.handler
+ 	ctx := context.Background()
+```
+
+**File**: `service/history/fx.go` (modified, +1/-0)
+```diff
+@@ -118,6 +118,7 @@ var Module = fx.Options(
+ 	workerdeployment.ClientModule,
+ 	fx.Provide(RoutingInfoCacheProvider),
+ 	fx.Invoke(ServiceLifetimeHooks),
++	fx.Invoke(RegisterPreallocatedSearchAttributeMappings),
+ 	fx.Invoke(func(
+ 		chasmEngine chasm.Engine,
+ 		chasmVisibilityManager chasm.VisibilityManager,
+```
+
+**File**: `service/history/preallocated_search_attributes.go` (added, +122/-0)
+```diff
+@@ -0,0 +1,122 @@
++package history
++
++import (
++	"context"
++	"sync"
++	"time"
++
++	enumspb "go.temporal.io/api/enums/v1"
++	"go.temporal.io/server/common/backoff"
++	"go.temporal.io/server/common/log"
++	"go.temporal.io/server/common/log/tag"
++	"go.temporal.io/server/common/persistence/visibility"
++	"go.temporal.io/server/common/persistence/visibility/manager"
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
++	"go.temporal.io/server/common/searchattribute"
++	"go.temporal.io/server/common/searchattribute/sadefs"
++	"go.uber.org/fx"
++)
++
++const registerPreallocatedSearchAttributesAttemptTimeout = 30 * time.Second
++
++var registerPreallocatedSearchAttributesRetryPolicy = backoff.NewExponentialRetryPolicy(time.Second).
++	WithMaximumInterval(time.Minute).
++	WithExpirationInterval(10 * time.Minute)
++
++// RegisterPreallocatedSearchAttributeMappings adds the pre-allocated custom search attribute
++// fields (eg: Keyword01) listed in cluster metadata to the mappings of the Elasticsearch
++// visibility indexes. The index mapping is not dynamic, so values of unmapped fields are not
++// indexed, and queries on their namespace aliases return nothing.
++// It runs in the background when the service starts, and retries failures for a limited time.
++func RegisterPreallocatedSearchAttributeMappings(
++	lc fx.Lifecycle,
++	visibilityManager manager.VisibilityManager,
++	searchAttributesProvider searchattribute.Provider,
++	logger log.Logger,
++) {
++	ctx, cancel := context.WithCancel(context.Background())
++	var wg sync.WaitGroup
++	lc.Append(fx.Hook{
++		OnStart: func(context.Context) error {
++			wg.Go(func() {
++				registerPreallocatedSearchAttributeMappings(
++					ctx,
++					visibilityManager,
++					searchAttributesProvider,
++					registerPreallocatedSearchAttributesRetryPolicy,
++					logger,
++				)
++			})
++			return nil
++		},
++		OnStop: func(context.Context) error {
++			cancel()
++			wg.Wait()
++			return nil
++		},
++	})
++}
++
++func registerPreallocatedSearchAttributeMappings(
++	ctx context.Context,
++	visibilityManager manager.VisibilityManager,
++	searchAttributesProvider searchattribute.Provider,
++	retryPolicy backoff.RetryPolicy,
++	logger log.Logger,
++) {
++	visibilityManagers := []manager.VisibilityManager{visibilityManager}
++	if visibilityManagerDual, ok := visibilityManager.(*visibility.VisibilityManagerDual); ok {
++		visibilityManagers = []manager.VisibilityManager{
++			visibilityManagerDual.GetPrimaryVisibility(),
++			visibilityManagerDual.GetSecondaryVisibility(),
++		}
++	}
++
++	for _, visManager := range visibilityManagers {
++		// TODO: Other visibility stores don't support adding search attributes.
++		if visManager.GetStoreNames()[0] != esconfig.PersistenceName {
++			continue
++		}
++		indexName := visManager.GetIndexName()
++		err := backoff.ThrottleRetryContext(
++			ctx,
++			func(ctx context.Context) error {
++				return registerPreallocatedFieldMappings(ctx, visManager, searchAttributesProvider)
 +			},
-+			outIsolationKey: "transaction_isolation",
-+			outIsolationVal: "'READ-COMMITTED'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
++			retryPolicy,
++			nil,
++		)
++		if err != nil {
++			logger.Error("Failed to register pre-allocated custom search attribute mappings.",
++				tag.ESIndex(indexName), tag.Error(err))
++			continue
++		}
++		logger.Info("Registered pre-allocated custom search attribute mappings.", tag.ESIndex(indexName))
++	}
++}
++
++// registerPreallocatedFieldMappings adds the mappings of all the pre-allocated fields in one
++// request. Adding a field that is already mapped with the same type doesn't change it.
++func registerPreallocatedFieldMappings(
++	ctx context.Context,
++	visManager manager.VisibilityManager,
++	searchAttributesProvider searchattribute.Provider,
++) error {
++	searchAttributes, err := searchAttributesProvider.GetSearchAttributes(visManager.GetIndexName(), false)
++	if err != nil {
++		return err
++	}
++	preallocatedFields := make(map[string]enumspb.IndexedValueType)
++	for name, valueType := range searchAttributes.Custom() {
++		if sadefs.IsPreallocatedCSAFieldName(name, valueType) {
++			preallocatedFields[name] = valueType
++		}
++	}
++	if len(preallocatedFields) == 0 {
++		return nil
++	}
++
++	ctx, cancel := context.WithTimeout(ctx, registerPreallocatedSearchAttributesAttemptTimeout)
++	defer cancel()
++	return visManager.AddSearchAttributes(ctx, &manager.AddSearchAttributesRequest{SearchAttributes: preallocatedFields})
++}
+```
+
+**File**: `service/history/preallocated_search_attributes_test.go` (added, +152/-0)
+```diff
+@@ -0,0 +1,152 @@
++package history
++
++import (
++	"context"
++	"errors"
++	"maps"
++	"testing"
++	"time"
++
++	"go.temporal.io/server/common/backoff"
++	"go.temporal.io/server/common/log"
++	"go.temporal.io/server/common/persistence/sql/sqlplugin/mysql"
++	"go.temporal.io/server/common/persistence/visibility"
++	"go.temporal.io/server/common/persistence/visibility/manager"
++	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch/esconfig"
++	"go.temporal.io/server/common/searchattribute"
++	"go.uber.org/fx/fxtest"
++	"go.uber.org/mock/gomock"
++)
++
++const preallocatedFieldsTestIndex = "test-index"
++
++// esClusterMetadataTypeMap returns the custom search attributes of an Elasticsearch cluster with
++// legacy cluster-level search attributes and the pre-allocated fields in cluster metadata.
++func esClusterMetadataTypeMap() searchattribute.NameTypeMap {
++	customSearchAttributes := maps.Clone(searchattribute.TestEsNameTypeMap().Custom())
++	maps.Copy(customSearchAttributes, searchattribute.TestNameTypeMap().Custom())
++	return searchattribute.NewNameTypeMap(customSearchAttributes)
++}
++
++func newMockVisibilityManager(ctrl *gomock.Controller, storeName string) *manager.MockVisibilityManager {
++	visManager := manager.NewMockVisibilityManager(ctrl)
++	visManager.EXPECT().GetStoreNames().Return([]string{storeName}).AnyTimes()
++	visManager.EXPECT().GetIndexName().Return(preallocatedFieldsTestIndex).AnyTimes()
++	return visManager
++}
++
++func TestRegisterPreallocatedSearchAttributeMappings(t *testing.T) {
++	expectedRequest := &manager.AddSearchAttributesRequest{
++		SearchAttributes: searchattribute.TestNameTypeMap().Custom(),
++	}
++
++	testCases := []struct {
++		name  string
++		setup func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager
++	}{
++		{
++			name: "elasticsearch registers only the pre-allocated fields",
++			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
++				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
++				saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).Return(esClusterMetadataTypeMap(), nil)
++				visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(nil)
++				return visManager
++			},
 +		},
 +		{
-+			name: "tab and newline isolation level falls back to default",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"transaction_isolation": "\t\n"},
++			name: "elasticsearch failure is retried",
++			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
++				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
++				saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).Return(esClusterMetadataTypeMap(), nil).Times(2)
++				gomock.InOrder(
++					visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(errors.New("unavailable")),
++					visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(nil),
++				)
++				return visManager
 +			},
-+			outIsolationKey: "transaction_isolation",
-+			outIsolationVal: "'READ-COMMITTED'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
 +		},
 +		{
-+			name: "empty legacy isolation level falls back to default",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"tx_isolation": ""},
++			name: "elasticsearch failure gives up after the retries",
++			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
++				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
++				saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).Return(esClusterMetadataTypeMap(), nil).Times(3)
++				visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(errors.New("forbidden")).Times(3)
++				return visManager
 +			},
-+			outIsolationKey: "transaction_isolation",
-+			outIsolationVal: "'READ-COMMITTED'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
 +		},
 +		{
-+			name: "whitespace legacy isolation level falls back to default",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"tx_isolation": " "},
++			name: "cluster metadata lookup failure is retried",
++			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
++				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
++				gomock.InOrder(
++					saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).
++						Return(searchattribute.NameTypeMap{}, errors.New("unavailable")),
++					saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).
++						Return(esClusterMetadataTypeMap(), nil),
++				)
++				visManager.EXPECT().AddSearchAttributes(gomock.Any(), expectedRequest).Return(nil)
++				return visManager
 +			},
-+			outIsolationKey: "transaction_isolation",
-+			outIsolationVal: "'READ-COMMITTED'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
 +		},
 +		{
-+			name: "tab and newline legacy isolation level falls back to default",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"tx_isolation": "\t\n"},
++			name: "no pre-allocated fields in cluster metadata",
++			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
++				visManager := newMockVisibilityManager(ctrl, esconfig.PersistenceName)
++				saProvider.EXPECT().GetSearchAttributes(preallocatedFieldsTestIndex, false).Return(searchattribute.TestEsNameTypeMap(), nil)
++				return visManager
 +			},
-+			outIsolationKey: "transaction_isolation",
-+			outIsolationVal: "'READ-COMMITTED'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
 +		},
 +		{
-+			name: "both isolation aliases blank fall back to default",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"transaction_isolation": "", "tx_isolation": ""},
++			name: "sql is skipped",
++			setup: func(ctrl *gomock.Controller, _ *searchattribute.MockProvider) manager.VisibilityManager {
++				return newMockVisibilityManager(ctrl, mysql.PluginName)
 +			},
-+			outIsolationKey: "transaction_isolation",
-+			outIsolationVal: "'READ-COMMITTED'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
 +		},
 +		{
-+			name: "valid isolation level with blank legacy alias",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"transaction_isolation": "REPEATABLE-READ", "tx_isolation": ""},
-+			},
-+			outIsolationKey: "transaction_isolation",
-+			outIsolationVal: "'repeatable-read'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
-+		},
-+		{
-+			name: "valid legacy isolation level with blank full-name alias",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"tx_isolation": "REPEATABLE-READ", "transaction_isolation": ""},
-+			},
-+			outIsolationKey: "tx_isolation",
-+			outIsolationVal: "'repeatable-read'",
-+			outURLPath:      "test:pass@tcp(192.168.0.1:3306)/db1?",
-+		},
-+		{
-+			name: "unrelated blank attribute is preserved",
-+			in: config.SQL{
-+				User:              "test",
-+				Password:          "pass",
-+				ConnectProtocol:   "tcp",
-+				ConnectAddr:       "192.168.0.1:3306",
-+				DatabaseName:      "db1",
-+				ConnectAttributes: map[string]string{"readTimeout": ""},
-+			},
-+			out
++			name: "dual visibility registers only the elasticsearch store",
++			setup: func(ctrl *gomock.Controller, saProvider *searchattribute.MockProvider) manager.VisibilityManager {
++				sqlManager := newMockVisi
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13314** (2026-11-25): Improve shard ownership checks (@prathyushpv)
+- **PR #13311** (2026-11-25): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13309** (2026-11-25): add oss foundations as owner to batcher owner (@feiyang3cat)
 - **PR #13304** (closed): Fix: Recover Activity delivery after a sync-match start timeout (@ali-khokhar-nvidia)
 - **PR #13296** (closed): Add persistence failpoints with namespace scoping (@stephanos)
 - **PR #13295** (closed): Run gRPC and HTTP test faults on failpoints (@stephanos)
-- **PR #13294** (closed): Add server failpoint source and startup switch (@stephanos)
-- **PR #13289** (2026-11-25): Add BUGGIFY to the server (@stephanos)
-- **PR #13288** (2026-11-25): Configure failpoints with the testing.failpointRules setting (@stephanos)
 
 ---
 
@@ -2358,35 +2801,69 @@ string — panick
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. panic on empty MySQL isolation level attribute
+## X. Elasticsearch search attribute mapping backwards compatibility fix
 
 **RULE**:
-When implementing operations in `common/persistence/sql/sqlplugin/mysql/session/session.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/searchattribute/mapper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8495e550`: panic on empty MySQL isolation level attribute. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fd06a49a`: Elasticsearch search attribute mapping backwards compatibility fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/persistence/sql/sqlplugin/mysql/session/session.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/searchattribute/mapper.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Drop blank isolation entries; keeping them would emit an invalid "SET <key> =".
-		if (k1 == isolationLevelAttrName || k1 == isolationLevelAttrNameLegacy) && v1 == "" {
-			continue
-		}
-		if len(value) > 0 && value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
+// GetAlias returns the alias of fieldName. A legacy custom search attribute (registered
+// through cluster metadata) always maps to itself. A namespace alias that has the same name as a
+// legacy custom search attribute is not used: GetFieldName resolves that name to the legacy
+// attribute. The field has no alias in that case, so that two fields never get the same alias.
+	if m.isLegacyCustomSearchAttribute(fieldName) {
+	alias, err := m.mapper.GetAlias(fieldName, namespaceName)
+	if err != nil {
+		return "", err
+	}
+	// TODO: Remove this check once custom search attributes of Elasticsearch visibility stores
+	// are only registered as namespace aliases and no cluster-level custom search attribute is left.
+	if m.isLegacyCustomSearchAttribute(alias) {
+		return "", serviceerror.NewInvalidArgumentf(
+			"search attribute field %s is aliased to %s, which is already a cluster-level custom search attribute",
+			fieldName,
+			alias,
+		)
+	}
+// GetFieldName returns the field name of alias. A legacy custom search attribute (registered
+// through cluster metadata) takes precedence over a namespace alias with the same name: its
+// existing documents are stored under its own name, so resolving it t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		if value[0] != '\'' { // mysql sys variable values must be enclosed in single quotes
+	alias, firstErr := m.mapper.GetAlias(fieldName, namespaceName)
+	if firstErr != nil {
+		if !m.isLegacyCustomSearchAttribute(fieldName) {
+			return "", firstErr
+		}
+		// this is a custom search attribute registered through cluster metadata.
+	fieldName, firstErr := m.mapper.GetFieldName(alias, namespaceName)
+	if firstErr != nil {
+		if !m.isLegacyCustomSearchAttribute(alias) {
+			return "", firstErr
+		}
+		// this is a custom search attribute registered through cluster metadata.
+	return fieldName, nil
+	legacyCustomSearchAttributes := make(map[string]enumspb.IndexedValueType)
+	for name, valueType := range nameTypeMap.Custom() {
+		legacyCustomSearchAttributes[name] = valueType
+	return NewNameTypeMap(legacyCustomSearchAttributes)
+// If no replacement where made, it returns nil which means that original SearchAttributes struct should be used.
+	// If no field name was mapped, return nil to save on clone operation on caller side.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8495e550` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fd06a49a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

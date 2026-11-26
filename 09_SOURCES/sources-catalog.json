@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "c70df160",
+    "sourceVersion": "67959df6",
     "license": "MIT",
-    "contentHash": "7206d60fabff28f244f1954d8c01f07b602b06c168eca49a5ea6aff7d6a40a2d",
-    "lastHarvestedAt": "2026-11-25T05:37:18.245Z",
+    "contentHash": "6b2a06bbc80a011b875ac3b17917a316a42843d4c39146421508cbf11e21b5ae",
+    "lastHarvestedAt": "2026-11-26T05:48:45.867Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -12595,8 +12595,8 @@
     "sourceUrl": "https://huggingface.co/ConceptCountry/qwen-concept-27b",
     "sourceVersion": "hf-conceptcountry-qwen-concept-27b",
     "license": "Open-Source",
-    "contentHash": "ed6d992f03f5357c408e622bbd573043bd9c8a33a17ae3fb1ad5b0c4edce0fb4",
-    "lastHarvestedAt": "2026-11-22T09:47:27.482Z",
+    "contentHash": "69b044a0894cb21bb4ce25d53319b044c350f50a22434c308111078e80707206",
+    "lastHarvestedAt": "2026-11-26T05:48:34.745Z",
     "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b"
   },
   "hf-abiray-minimax-h3-image-gguf": {

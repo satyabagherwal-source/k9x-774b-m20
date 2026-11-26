@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T05:38:33.062Z",
-  "total_cycles_completed": 12582,
-  "total_learnings_persisted": 12582,
-  "total_rules_promoted": 11500,
+  "last_updated": "2026-11-26T05:48:45.890Z",
+  "total_cycles_completed": 12584,
+  "total_learnings_persisted": 12584,
+  "total_rules_promoted": 11501,
   "history": [
-    {
-      "timestamp": "2026-11-25T10:57:45.244Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T10:57:59.776Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T11:11:14.614Z",
       "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T05:38:33.062Z",
       "repository": "zvec-ai/zvec-grep",
       "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:48:34.761Z",
+      "repository": "ConceptCountry/qwen-concept-27b",
+      "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:48:45.890Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/ConceptCountry/qwen-concept-27b",
   "source_version": "hf-conceptcountry-qwen-concept-27b",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T09:47:27.718Z",
+  "timestamp": "2026-11-26T05:48:35.055Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-conceptcountry-qwen-concept-27b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ConceptCountry/qwen-concept-27b](https://huggingface.co/ConceptCountry/qwen-concept-27b) (Revision: `hf-concept`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T09:47:27.718Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T05:48:35.055Z`  
 > **Learning ID**: `learn-huggingface-conceptcountry-qwen-concept-27b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ConceptCountry/qwen-concept-27b](https://huggingface.co/ConceptCountry/qwen-concept-27b))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T09:47:26.803Z  
+> **Harvest Timestamp**: 2026-11-26T05:48:33.955Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 120155 downloads | 255 likes
+- **Stars / Engagement**: 120418 downloads | 258 likes
 
 ---
 

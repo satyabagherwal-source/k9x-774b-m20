@@ -13260,3 +13260,5 @@
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T05:30:03.088Z` | `linkerd-linkerd2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D64D33E0` [Domain D] | Yes (`96d4e8e5...`) |
 | `CYCLE-20261126-GDK9` | `2026-11-26T05:38:31.209Z` | `higurashi-ai/Haru-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md` | Yes (`10fda5aa...`) |
 | `CYCLE-20261126-GEZ7` | `2026-11-26T05:38:33.043Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10606` | Yes (`7aa1f095...`) |
+| `CYCLE-20261126-TB8Z` | `2026-11-26T05:48:34.739Z` | `ConceptCountry/qwen-concept-27b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md` | Yes (`69b044a0...`) |
+| `CYCLE-20261126-TJTY` | `2026-11-26T05:48:45.862Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10607` | Yes (`6b2a06bb...`) |

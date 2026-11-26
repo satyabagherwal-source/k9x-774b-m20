@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T05:38:44.988Z",
+  "last_updated": "2026-11-26T05:48:52.252Z",
   "total_records": 2711,
   "domains": {
     "A": {
@@ -8526,8 +8526,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c99e2a9f3296e4cee202ea839a4a4b1f3159fb0d2b91aa1aec43115ee87c5a74",
-      "created_at": "2026-11-26T03:46:54.902Z"
+      "content_hash": "73c3658e329a2a4afb1e1938e6866e270333bfcb3c55d3c0630e7cc3ada567a7",
+      "created_at": "2026-11-26T05:48:52.252Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -11100,8 +11100,8 @@
       "title": "Content & Information Intelligence: temporalio/temporal Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-content-information-intelligence-temporalio-temporal-core-in.md",
       "repository": "temporalio/temporal",
-      "content_hash": "bb8550a22365864fc588cecc705ee329ea635596ddeffeab236cc9cfd994fa32",
-      "created_at": "2026-11-25T05:37:18.641Z"
+      "content_hash": "91553e4cf94ed82a20db403de6d362a86f2c8d9044acec8494783f7efe2cb599",
+      "created_at": "2026-11-26T05:48:46.466Z"
     },
     "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-alibaba-zvec-core-invariants",
@@ -11127,8 +11127,8 @@
       "title": "Content & Information Intelligence: temporalio-temporal-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-temporalio-temporal-learnings-content-information-intelligence-temporalio-tempor.md",
       "repository": "temporalio-temporal-learnings",
-      "content_hash": "b53afcc7860f5c13066183f91a5123aea2e2bcdcfcaecbab32c68ab62fb987cd",
-      "created_at": "2026-11-25T05:37:22.600Z"
+      "content_hash": "84ed339b7ca450dbb55985b85e5631001f14f65e1a479031b026e0507df5d93c",
+      "created_at": "2026-11-26T05:48:50.965Z"
     },
     "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-alibaba-zvec-learnings-core-invariants",
@@ -19157,8 +19157,8 @@
       "title": "Research & Knowledge Intelligence: ConceptCountry/qwen-concept-27b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conceptcountry-qwen-concept-27b-research-knowledge-intelligence-conceptcountr.md",
       "repository": "ConceptCountry/qwen-concept-27b",
-      "content_hash": "ca5df22f8debe209053fc73b6a11aefa514b5c855b4ad2090f5cdd555c5c087e",
-      "created_at": "2026-11-22T09:47:27.719Z"
+      "content_hash": "fbd7488d8184b4547087c3497655a6f5646203ac4a0df164266daca37ec08b47",
+      "created_at": "2026-11-26T05:48:35.056Z"
     },
     "DOM-E-5B37AC18": {
       "record_id": "DOM-E-5B37AC18",
@@ -19214,8 +19214,8 @@
       "title": "Research & Knowledge Intelligence: hf-conceptcountry-qwen-concept-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conceptcountry-qwen-concept-27b-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-conceptcountry-qwen-concept-27b-learnings",
-      "content_hash": "ecf8af2c9de8fadebe8931c49502a995b8069712ad4f2660079bf8c5f5df3274",
-      "created_at": "2026-11-22T09:47:39.312Z"
+      "content_hash": "5475baae1cdf0fb82bd93f304a131a2d3d3e4f0b5fe6ad41be30161bd77e6653",
+      "created_at": "2026-11-26T05:48:49.991Z"
     },
     "DOM-D-CE38AA18": {
       "record_id": "DOM-D-CE38AA18",

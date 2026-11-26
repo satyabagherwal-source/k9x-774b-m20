@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-YBNR",
-    "timestamp": "2026-11-24T15:09:00.423Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "d269ba33a559f045604ea73396a85c88ba88c1a902cf38a1ca56002bed4b8ff9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-8WY1",
-    "timestamp": "2026-11-24T15:17:14.569Z",
-    "repository": "EL4CTEO/fast-anything",
-    "learningId": "learn-github-el4cteo-fast-anything",
-    "contentHash": "d26d749e17c63d43325332b90d5b2108d6ef765f75a0f57c1b7b033bb0b987c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-95GW",
     "timestamp": "2026-11-24T15:17:25.617Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7460,36 @@
     "repository": "zvec-ai/zvec-grep",
     "learningId": "learn-github-zvec-ai-zvec-grep",
     "contentHash": "7aa1f0958e871840f545861e7d7bba460da8fbef464a4ab462102063bc838bce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-TB8Z",
+    "timestamp": "2026-11-26T05:48:34.739Z",
+    "repository": "ConceptCountry/qwen-concept-27b",
+    "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
+    "contentHash": "69b044a0894cb21bb4ce25d53319b044c350f50a22434c308111078e80707206",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-TJTY",
+    "timestamp": "2026-11-26T05:48:45.862Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "6b2a06bbc80a011b875ac3b17917a316a42843d4c39146421508cbf11e21b5ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
