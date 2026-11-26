@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T06:30:19.092Z",
+  "timestamp": "2026-11-26T16:21:33.930Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-expo-expo-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [expo-expo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T06:30:19.092Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:21:33.930Z`  
 > **Learning ID**: `LEARN-EVO-expo-expo-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `b03773cb`  
+> **Source Version**: `e9871f12`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T06:30:12.391Z  
+> **Timestamp**: 2026-11-26T16:21:17.940Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:30:12.388Z  
+> **Harvest Timestamp**: 2026-11-26T16:21:17.937Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 53744 stars
+- **Stars / Engagement**: 53796 stars
 
 ---
 
@@ -699,769 +699,613 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `546b3581` (2026-11-23)
-**Commit Message**: [ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or released while its request completes (#50106)
+### Incident Patch 1: `5b818c75` (2026-11-26)
+**Commit Message**: [router] Port upstream React Navigation accessibility fixes (#54296)
 
-# Why
+## Why
 
-Production crash on the JS thread (SDK 57; the code is identical on 58
-and `main`):
+The React Navigation copy in `expo-router` does not have three upstream
+accessibility fixes:
 
-```
-Crashed: com.facebook.react.runtime.JavaScript
-0  libobjc.A.dylib   objc_msgSend + 32
-1  CFNetwork         -[NSURLSessionTask cancel] + 96
-2  ExpoFileSystem    FileSystemDownloadTask.sharedObjectWillRelease()
-3  ExpoModulesCore   SharedObjectRegistry.add(...) releaser closure
-5  ExpoModulesCore   expo::SharedObject::NativeState::~NativeState()
-7  hermesvm          hermes::vm::HadesGC::finalizeYoungGenObjects()
-8  hermesvm          hermes::vm::HadesGC::youngGenCollection(...)
-```
+- A disabled `PlatformPressable` blocks presses, but it does not report
+a disabled state. Screen readers announce an active button. Upstream
+fix:
+[`b1cb5599`](https://github.com/react-navigation/react-navigation/commit/b1cb5599bf042511423d7b7f93624bd0c9180261).
+- On web, the focused drawer item uses `aria-selected`. That attribute
+is not valid for a link or a button, so the current page is not
+reported. Upstream fix:
+[`aa1fd10f`](https://github.com/react-navigation/react-navigation/commit/aa1fd10f20f6146981edd5ee390672c4e4a10494).
+- In the JS stack, a screen ignores touches after a route below a
+transparent modal is removed and the modal closes. A stale "inert" state
+keeps `pointer-events: none` on the screen. Upstream fix:
+[`94b0d3f7`](https://github.com/react-navigation/react-navigation/commit/94b0d3f726e397daa4685342f4efffd35b66ec92).
 
-`FileSystemDownloadTask.downloadTask` / `delegateKey` (and
-`FileSystemUploadTask.uploadTask`) are cleared on the URLSession
-delegate queue (`didCompleteWithError` → `finishTask` → `cleanup`) and
-read on the JS thread by `sharedObjectWillRelease`, which the Hermes GC
-finalizer calls as soon as the JS `DownloadTask` becomes unreachable.
-Apps drop the task the moment its promise settles, so the two overlap.
-The unsynchronized read retains a task the delegate queue has just
-released, and `cancel
+Fixes ENG-29397.
 
-**File**: `.changeset/file-system-ios-task-release-race.md` (added, +5/-0)
+## How
+
+Each upstream commit is ported as one commit, in upstream date order.
+Each commit body names the upstream commit.
+
+1. `aa1fd10f` — use `aria-current` f
+
+**File**: `.changeset/router-port-upstream-a11y-fixes.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+'expo-file-system': patch
++'expo-router': patch
 +---
 +
-+[iOS] Fix a crash when a `DownloadTask` or `UploadTask` is cancelled or garbage-collected at the moment its request completes.
++Port React Navigation accessibility fixes: use `aria-current` for the focused drawer item on web, expose the disabled state of `PlatformPressable`, and fix a JS stack screen that ignored touches after a route below a transparent modal was removed.
 ```
 
-**File**: `packages/expo-file-system/ios/FileSystemDownloadTask.swift` (modified, +24/-20)
+**File**: `packages/expo-router/src/react-navigation/drawer/views/DrawerItem.tsx` (modified, +2/-1)
 ```diff
-@@ -244,8 +244,10 @@ struct DownloadTaskOptions: Record {
-  * A SharedObject that handles file downloads with pause/resume support and progress tracking.
-  */
- class FileSystemDownloadTask: SharedObject {
--  private var downloadTask: URLSessionDownloadTask?
--  private var delegateKey: String?
-+  // The main queue sets and clears the task (`start`, `resume`, `finishTask`, the release hook), while
-+  // `cancel()` runs on the JS thread and `pause()` on a background executor. An unguarded optional lets
-+  // one of them retain a task that the main queue is releasing, so `cancel()` reaches freed memory.
-+  private let downloadTask = Mutex<URLSessionDownloadTask?>(nil)
-   private var sessionType: NetworkTaskSessionType = .background
-   private(set) var isPausing = false
-   private var backgroundSessionHandler: FileSystemBackgroundSessionHandler?
-@@ -283,7 +285,7 @@ class FileSystemDownloadTask: SharedObject {
-   }
- 
-   func acknowledgeBackgroundCompletion() throws {
--    guard downloadTask == nil else { throw BackgroundDownloadNotFinishedException() }
-+    guard downloadTask.withLock({ $0 == nil }) else { throw BackgroundDownloadNotFinishedException() }
-     backgroundSessionHandler?.acknowledgeDownload(self)
-     backgroundSessionHandler = nil
-   }
-@@ -304,19 +306,19 @@ class FileSystemDownloadTask: SharedObject {
-     }
- 
-     let task = session.downloadTask(with: request)
--    downloadTask = task
-+    downloadTask.withLock { $0 = task }
-     registerBackgroundCompletion(in: session, options: options)
--    delegateKey = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
-+    _ = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
-     task.resume()
-   }
- 
-   func pause() async -> [String: String?] {
-     isPausing = true
--    guard let downloadTask else {
-+    guard let task = downloadTask.withLock({ $0 }) else {
-       return ["resumeData": nil]
-     }
- 
--    let resumeData = await downloadTask.cancelByProducingResumeData()
-+    let resumeData = await task.cancelByProducingResumeData()
-     return ["resumeData": resumeData?.base64EncodedString()]
-   }
- 
-@@ -340,41 +342,43 @@ class FileSystemDownloadTask: SharedObject {
-     let delegate = DownloadTaskDelegate(sharedObject: self, destination: to, promise: promise)
-     let task = session.downloadTask(withResumeData: data)
- 
--    downloadTask = task
-+    downloadTask.withLock { $0 = task }
-     registerBackgroundCompletion(in: session, options: options)
--    delegateKey = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
-+    _ = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
-     task.resume()
-   }
- 
-   func cancel() {
-     isPausing = false
--    recordResponse(downloadTask?.response)
--    downloadTask?.cancel()
--    cleanup(unregisterDelegate: false)
-+    let task = takeDownloadTask()
-+    recordResponse(task?.response)
-+    task?.cancel()
-   }
- 
-   func finishTask(succeeded: Bool) {
-     backgroundSessionHandler?.finishDownload(self, succeeded: succeeded)
-     // Delegate is unregistered by NetworkTaskSessionDispatcher after didCompleteWithError returns.
--    cleanup(unregisterDelegate: false)
-+    downloadTask.withLock { $0 = nil }
-   }
- 
-   override func sharedObjectWillRelease() {
-     // SharedObject release may arrive on the JS thread; subscriber state is main-queue confined.
-     DispatchQueue.main.async {
-       self.backgroundSessionHandler?.discardDownload(self)
-       self.backgroundSessionHandler = nil
--      self.downloadTask?.cancel()
--      self.cleanup(unregisterDelegate: false)
-+      self.takeDownloadTask()?.cancel()
-     }
-   }
- 
--  private func cleanup(unregisterDelegate: Bool) {
--    if unregisterDelegate {
--      NetworkTaskSessionManager.shared.unregister(key: delegateKey)
-+  /**
-+   Takes the task out of its slot, so that only one caller can cancel it.
-+   */
-+  private func takeDownloadTask() -> URLSessionDownloadTask? {
-+    return downloadTask.withLock { task in
-+      let result = task
-+      task = nil
-+      return result
-     }
--    delegateKey = nil
--    downloadTask = nil
-   }
- }
- 
+@@ -131,7 +131,8 @@ export function DrawerItem(props: Props) {
+         onPress={onPress}
+         role="button"
+         aria-label={accessibilityLabel}
+-        aria-selected={focused}
++        aria-current={process.env.EXPO_OS === 'web' ? (focused ? 'page' : undefined) : undefined}
++        aria-selected={process.env.EXPO_OS === 'web' ? undefined : focused}
+         pressColor={pressColor}
+         pressOpacity={pressOpacity}
+         hoverEffect={{ color }}
 ```
 
-**File**: `packages/expo-file-system/ios/FileSystemUploadTask.swift` (modified, +23/-14)
+**File**: `packages/expo-router/src/react-navigation/drawer/views/__tests__/DrawerItem.test.web.tsx` (added, +25/-0)
 ```diff
-@@ -34,7 +34,9 @@ struct UploadTaskResult: Record {
-  * A SharedObject that handles file uploads with progress tracking.
-  */
- class FileSystemUploadTask: SharedObject {
--  private var uploadTask: URLSessionUploadTask?
-+  // The main queue clears the task when the upload completes, while `cancel()` and the release hook
-+  // run on the JS thread. See `FileSystemDownloadTask.downloadTask`.
-+  private let uploadTask = Mutex<URLSessionUploadTask?>(nil)
-   private var delegateKey: String?
-   private var sessionType: NetworkTaskSessionType = .background
-   private var sourceAccess: FileSystemScopedAccess?
-@@ -62,28 +64,24 @@ class FileSystemUploadTask: SharedObject {
-         }
-       }
- 
-+      let task: URLSessionUploadTask
-       if options.uploadType == .multipart {
-         let boundaryString = UUID().uuidString
-         let bodyFileURL = try createMultipartBody(boundary: boundaryString, sourceUrl: sourceUrl, options: options)
- 
-         request.setValue("multipart/form-data; boundary=\(boundaryString)", forHTTPHeaderField: "Content-Type")
-         tempFileURL = bodyFileURL
- 
--        uploadTask = session.uploadTask(with: request, fromFile: bodyFileURL)
-+        task = session.uploadTask(with: request, fromFile: bodyFileURL)
-       } else {
--        uploadTask = session.uploadTask(with: request, fromFile: sourceUrl)
--      }
--
--      guard let uploadTask else {
--        promise.reject(UnableToUploadException("Failed to create upload task"))
--        cleanup()
--        return
-+        task = session.uploadTask(with: request, fromFile: sourceUrl)
-       }
-+      uploadTask.withLock { $0 = task }
- 
-       let delegate = UploadTaskDelegate(sharedObject: self, promise: promise) {
-         self.finishTask()
-       }
--      delegateKey = NetworkTaskSessionManager.shared.register(delegate: delegate, for: uploadTask, in: session)
-+      delegateKey = NetworkTaskSessionManager.shared.register(delegate: delegate, for: task, in: session)
- 
-       guard !cancelled else {
-         NetworkTaskSessionManager.shared.unregister(key: delegateKey)
-@@ -92,7 +90,7 @@ class FileSystemUploadTask: SharedObject {
-         return
-       }
- 
--      uploadTask.resume()
-+      task.resume()
-     } catch {
-       promise.reject(UnableToUploadException(error.localizedDescription))
-       cleanup(unregisterDelegate: true)
-@@ -101,11 +99,22 @@ class FileSystemUploadTask: SharedObject {
- 
-   func cancel() {
-     cancelled = true
--    uploadTask?.cancel()
-+    takeUploadTask()?.cancel()
-   }
- 
-   override func sharedObjectWillRelease() {
--    uploadTask?.cancel()
-+    takeUploadTask()?.cancel()
-+  }
+@@ -0,0 +1,25 @@
++/** @jest-environment jsdom */
++import { render } from '@testing-library/react';
 +
-+  /**
-+   Takes the task out of its slot, so that only one caller can cancel it.
-+   */
-+  private func takeUploadTask() -> URLSessionUploadTask? {
-+    return uploadTask.withLock { task in
-+      let result = task
-+      task = nil
-+      return result
-+    }
-   }
- 
-   fileprivate func emitProgress(bytesSent: Int64, totalBytes: Int64) {
-@@ -130,7 +139,7 @@ class FileSystemUploadTask: SharedObject {
-       NetworkTaskSessionManager.shared.unregister(key: delegateKey)
-     }
-     delegateKey = nil
--    uploadTask = nil
-+    uploadTask.withLock { $0 = nil }
-     sourceAccess = nil
-     if let tempFileURL = tempFileURL {
-       try? FileManager.default.removeItem(at: tempFileURL)
-```
-
----
-
-### Incident Patch 2: `6dfa92e0` (2026-11-23)
-**Commit Message**: fix(cli): Use `@expo/require-utils` and `@expo/json-file` in `expo serve` adapter for error handling and CJS recovery path (#52851)
-
-## Summary
-
-Currently, `expo serve` may fail when the loading behaviour of `.js`
-files changes. This can happen for example if `package.json:type` is set
-to `"module"`, making `.js` loading as raw imports/require take on a
-different meaning.
-
-We should send `loadModule` on `expo-server` through
-`@expo/require-utils`' `loadModuleSync` for consistency and a CommonJS
-recovery path.
-
-We can additionally switch to `@expo/json-file` for JSON loading. This
-means that both `loadModule` and `readJson` on the adapter issue better
-error messages when running `expo serve` on malformed project exports.
-
-## Set of changes
-
-- Add custom `expo-server` adapter to `expo serve`
-- Add `loadModule` method sent through `@expo/require-utils`
-- Add `readJson` method sent through `@expo/json-file`
-- Apply JSON loading change to routes manifest too
-
----------
-
-Co-authored-by: kitten-agent <[REDACTED_EMAIL]>
-
-**File**: `.changeset/serve-commonjs-adapter.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@expo/cli": patch
-+---
++import { DefaultTheme, ThemeProvider } from '../../../native';
++import { DrawerItem } from '../DrawerItem';
 +
-+In `expo serve`, load exported CommonJS server modules independently of the project module type and improve error handling
-```
-
-**File**: `packages/@expo/cli/src/serve/adapter.ts` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+import JsonFile from '@expo/json-file';
-+import { loadModuleSync } from '@expo/require-utils';
-+import { createEnvironment } from 'expo-server/adapter/environment/common';
-+import { createRequestHandler as createHttpHandler } from 'expo-server/adapter/http';
-+import fs from 'node:fs';
-+import path from 'node:path';
-+import { pathToFileURL } from 'node:url';
++it('marks the focused drawer link with aria-current', () => {
++  const { getByTestId, rerender } = render(
++    <ThemeProvider value={DefaultTheme}>
++      <DrawerItem label="Home" href="/home" focused onPress={() => {}} testID="item" />
++    </ThemeProvider>
++  );
 +
-+export function createRequestHandler(params: { build: string }) {
-+  const environment = createEnvironment({
-+    async readText(request) {
-+      try {
-+        return await fs.promises.readFile(path.join(params.build, request), 'utf8');
-+      } catch {
-+        return null;
-+      }
-+    },
-+    async readJson(request) {
-+      return JsonFile.readAsync(path.join(params.build, request));
-+    },
-+    async loadModule(request) {
-+      const filePath = path.join(params.build, request);
-+      if (/\.c?js$/.test(filePath)) {
-+        return loadModuleSync(filePath);
-+      }
-+      const importFilename = path.isAbsolute(filePath) ? pathToFileURL(filePath).href : filePath;
-+      return await import(importFilename);
-+    },
-+    isDevelopment: false,
-+  });
-+  return createHttpHandler(params, environment);
-+}
-```
-
-**File**: `packages/@expo/cli/src/serve/serveAsync.ts` (modified, +3/-5)
-```diff
-@@ -1,7 +1,6 @@
-+import JsonFile from '@expo/json-file';
- import chalk from 'chalk';
- import connect from 'connect';
--import { createRequestHandler } from 'expo-server/adapter/http';
--import fs from 'node:fs/promises';
- import http from 'node:http';
- import path from 'node:path';
- import send from 'send';
-@@ -12,6 +11,7 @@ import { CommandError } from '../utils/errors';
- import { findUpProjectRootOrAssert } from '../utils/findUp';
- import { loadEnvFiles } from '../utils/nodeEnv';
- import { resolveMetroPortAsync } from '../utils/port';
-+import { createRequestHandler } from './adapter';
- import { applyStaticHeaders, loadStaticManifestAsync, resolveStaticHeaders } from './static';
- 
- type Options = {
-@@ -184,9 +184,7 @@ function canParseURL(url: string): boolean {
- }
- 
- async function isDevelopmentExportAsync(dist: string): Promise<boolean> {
--  const manifest = JSON.parse(
--    await fs.readFile(path.join(dist, 'server/_expo/routes.json'), 'utf8')
--  );
-+  const manifest = await JsonFile.readAsync(path.join(dist, 'server/_expo/routes.json'));
-   return manifest.mode === 'development';
- }
- 
-```
-
----
-
-### Incident Patch 3: `faab137d` (2026-11-23)
-**Commit Message**: fix(cli,router-server): Use `.cjs` for server exports when `package.json:type` is `"module"` (#54051)
-
-## Summary
-
-Builds on changes in #52949
-Related to #52851
-Resolves #52690
-
-While #52851 allows `.js` server exports that are in CommonJS format to
-load by using our usual loading logic for `expo serve`, this doesn't
-resolve the underlying problem. When `"type": "module"` is specified in
-`package.json`, we should alter the exports themselves to use `.cjs`
-extensions, since the workspace has been opted into ESM by default.
-
-This change determines the `package.json:type` and passes on the altered
-output extension for server outputs into the serializer, based on
-preparation changes #52949 and that full stack. Before this PR, control
-over filenames, chunking, and output was split across the CLI (and in
-there between export and the dev-server), and the serializer, causing
-misalignments, which would've introduced a lot of granular small changes
-and potentially subtle regressions.
-
-When applied, `outputExtension: configOptions.serverOutputExtension` is
-passed on to the serializer to change the output extension to `.cjs`
-just for the server output. `expo-server` and EAS Hosting should alre
-
-**File**: `.changeset/cli-server-cjs-output.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+---
-+"@expo/cli": patch
-+"@expo/router-server": patch
-+---
++  expect(getByTestId('item').getAttribute('aria-current')).toBe('page');
++  expect(getByTestId('item').hasAttribute('aria-selected')).toBe(false);
 +
-+Use `.cjs` filenames for CommonJS server output in projects with `"type": "module"`.
-```
-
-**File**: `packages/@expo/cli/e2e/__tests__/export/server-artifacts.test.ts` (modified, +187/-61)
-```diff
-@@ -3,7 +3,7 @@ import fs from 'node:fs';
- import { createRequire } from 'node:module';
- import path from 'node:path';
- 
--import { executeExpoAsync } from '../../utils/expo';
-+import { createExpoServe, executeExpoAsync } from '../../utils/expo';
- import { processFindPrefixedValue } from '../../utils/process';
- import { setupServer } from '../../utils/runtime';
- import { createBackgroundServer } from '../../utils/server';
-@@ -14,9 +14,17 @@ runExportSideEffects();
- 
- jest.unmock('@expo/spawn-async');
- 
--it.each(['pair', 'string', 'captured'])(
--  'exports a custom serializer %s result as server artifacts',
--  async (format) => {
-+it.each([
-+  ['pair', 'commonjs'],
-+  ['string', 'commonjs'],
-+  ['captured', 'commonjs'],
-+  ['pair', 'module'],
-+  ['string', 'module'],
-+  ['captured', 'module'],
-+])(
-+  'exports a custom serializer %s result as server artifacts (%s)',
-+  async (format, packageType) => {
-+    const extension = packageType === 'module' ? '.cjs' : '.js';
-     let projectRoot = getTemporaryPath();
-     try {
-       await fs.promises.cp(
-@@ -30,6 +38,9 @@ it.each(['pair', 'string', 'captured'])(
-         path.join(projectRoot, 'node_modules'),
-         'junction'
-       );
-+      const packagePath = path.join(projectRoot, 'package.json');
-+      const pkg = JSON.parse(await fs.promises.readFile(packagePath, 'utf8'));
-+      await fs.promises.writeFile(packagePath, JSON.stringify({ ...pkg, type: packageType }));
-       await fs.promises.appendFile(
-         path.join(projectRoot, 'metro.config.cjs'),
-         `
-@@ -52,7 +63,9 @@ if (${JSON.stringify(format)} === 'captured') {
-         env: { NODE_ENV: 'production' },
-       });
-       const serverRoot = path.join(projectRoot, 'dist/server');
--      const filename = findProjectFiles(serverRoot).find((file) => file.endsWith('hello+api.js'))!;
-+      const filename = findProjectFiles(serverRoot).find((file) =>
-+        file.endsWith('hello+api' + extension)
-+      )!;
-       expect(filename).toBeDefined();
-       const output = path.join(serverRoot, filename);
-       const { GET } = createRequire(__filename)(output);
-@@ -85,23 +98,29 @@ if (${JSON.stringify(format)} === 'captured') {
-   }
- );
- 
--it('exports and runs a server route with a standalone worker', async () => {
--  let projectRoot = getTemporaryPath();
--  try {
--    await fs.promises.cp(
--      path.join(__dirname, '../../fixtures/with-server-artifacts'),
--      projectRoot,
--      { recursive: true }
--    );
--    projectRoot = await fs.promises.realpath(projectRoot);
--    await fs.promises.symlink(
--      path.join(getRouterE2ERoot(), 'node_modules'),
--      path.join(projectRoot, 'node_modules'),
--      'junction'
--    );
--    await fs.promises.writeFile(
--      path.join(projectRoot, 'app/hello+api.ts'),
--      `
-+it.each(['commonjs', 'module'])(
-+  'exports and runs a server route with a standalone worker (%s)',
-+  async (packageType) => {
-+    const extension = packageType === 'module' ? '.cjs' : '.js';
-+    let projectRoot = getTemporaryPath();
-+    try {
-+      await fs.promises.cp(
-+        path.join(__dirname, '../../fixtures/with-server-artifacts'),
-+        projectRoot,
-+        { recursive: true }
-+      );
-+      projectRoot = await fs.promises.realpath(projectRoot);
-+      await fs.promises.symlink(
-+        path.join(getRouterE2ERoot(), 'node_modules'),
-+        path.join(projectRoot, 'node_modules'),
-+        'junction'
-+      );
-+      const packagePath = path.join(projectRoot, 'package.json');
-+      const pkg = JSON.parse(await fs.promises.readFile(packagePath, 'utf8'));
-+      await fs.promises.writeFile(packagePath, JSON.stringify({ ...pkg, type: packageType }));
-+      await fs.promises.writeFile(
-+        path.join(projectRoot, 'app/hello+api.ts'),
-+        `
- import { Worker as NodeWorker } from 'node:worker_threads';
- import path from 'node:path';
- export async function GET() {
-@@ -115,41 +134,54 @@ export async function GET() {
-   return Response.json({ value, workerPath });
- }
- `
--    );
--    await fs.promises.writeFile(
--      path.join(projectRoot, 'worker.ts'),
--      `
-+      );
-+      await fs.promises.writeFile(
-+        path.join(projectRoot, 'worker.ts'),
-+        `
- import { parentPort } from 'node:worker_threads';
- parentPort.postMessage('worker result');
- `
--    );
--    await executeExpoAsync(projectRoot, ['export', '-p', 'web', '--api-only', '--source-maps'], {
--      env: { NODE_ENV: 'production' },
--    });
--    const serverRoot = path.join(projectRoot, 'dist/server');
--    const { stdout } = await spawnAsync(
--      process.execPath,
--      [
--        '-e',
--        'require(process.argv[1]).GET().then(async (response) => console.log(JSON.stringify(await response.json()))).catch((error) => { console.error(error); process.exitCode = 1; });',
--        path.join(serverRoot, '_expo/functions/hello+api.js'),
--      ],
--      { cwd: projectRoot }
--    ).catch((error) => {
--      throw new Error(error.stderr || error.message);
--    });
--    const result = JSON
-```
-
-**File**: `packages/@expo/cli/src/start/server/metro/MetroBundlerDevServer.ts` (modified, +28/-6)
-```diff
-@@ -74,6 +74,7 @@ import {
-   getBaseUrlFromExpoConfig,
-   getChunkingStrategyFromExpoConfig,
-   getMetroDirectBundleOptions,
-+  isServerEnvironment,
- } from '../middleware/metroOptions';
- import { prependMiddleware } from '../middleware/mutations';
- import { createInfoHandler, createOpen } from '../middleware/openHandlers';
-@@ -244,8 +245,12 @@ export class MetroBundlerDevServer extends BundlerDevServer {
-     const middlewareFilePath = path.isAbsolute(manifest.middleware.file)
-       ? manifest.middleware.file
-       : path.join(appDir, manifest.middleware.file);
-+    const serverOutputExtension = this.serverOutputExtension;
-     const artifactFilename = convertPathToModuleSpecifier(
--      path.join(outputDir, path.relative(appDir, middlewareFilePath.replace(/\.[tj]sx?$/, '.js')))
-+      path.join(
-+        outputDir,
-+        path.relative(appDir, middlewareFilePath.replace(/\.[tj]sx?$/, serverOutputExtension))
-+      )
-     );
-     const contents = await this.bundleApiRoute(middlewareFilePath, {
-       platform,
-@@ -280,6 +285,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
-     platform: string;
-   }): Promise<{ files: ExportAssetMap; manifest: RoutesManifest<string> }> {
-     const { routerRoot } = this.instanceMetroOptions;
-+    const serverOutputExtension = this.serverOutputExtension;
-     assert(
-       routerRoot != null,
-       'The server must be started before calling exportExpoRouterApiRoutesAsync.'
-@@ -325,9 +331,14 @@ export class MetroBundlerDevServer extends BundlerDevServer {
-       const artifactFilename =
-         route.page === rscPath
-           ? // HACK: Add RSC renderer to the output...
--            convertPathToModuleSpecifier(path.join(outputDir, '.' + rscPath + '.js'))
-+            convertPathToModuleSpecifier(
-+              path.join(outputDir, '.' + rscPath + serverOutputExtension)
-+            )
-           : convertPathToModuleSpecifier(
--              path.join(outputDir, path.relative(appDir, filepath.replace(/\.[tj]sx?$/, '.js')))
-+              path.join(
-+                outputDir,
-+                path.relative(appDir, filepath.replace(/\.[tj]sx?$/, serverOutputExtension))
-+              )
-             );
-       const contents = await this.bundleApiRoute(filepath, {
-         platform,
-@@ -370,7 +381,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
-     includeSourceMaps?: boolean;
-     platform?: string;
-   }) {
--    const artifactFilename = '_expo/server/render.js';
-+    const artifactFilename = `_expo/server/render${this.serverOutputExtension}`;
-     const renderModule = await this.ssrLoadModuleContents(
-       require.resolve('@expo/router-server/node/render.js'),
-       {
-@@ -417,7 +428,9 @@ export class MetroBundlerDevServer extends BundlerDevServer {
-     // NOTE(@hassankhan): Should we parallelize loader bundling?
-     for (const entry of entryPoints) {
-       const pagePath = entry.page.startsWith('/') ? entry.page.slice(1) : entry.page;
--      const artifactFilename = convertPathToModuleSpecifier(path.join(outputDir, pagePath + '.js'));
-+      const artifactFilename = convertPathToModuleSpecifier(
-+        path.join(outputDir, pagePath + this.serverOutputExtension)
-+      );
-       const contents = await this.bundleLoader(entry.file, {
-         platform,
-         entryFilename: artifactFilename,
-@@ -818,6 +831,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
- 
-   // Set when the server is started.
-   private instanceMetroOptions: Partial<ExpoMetroOptions> = {};
-+  private serverOutputExtension: '.js' | '.cjs' = '.js';
- 
-   private ssrLoadModule: SSRLoadModuleFunc = async (
-     filePath,
-@@ -1006,6 +1020,10 @@ export class MetroBundlerDevServer extends BundlerDevServer {
-       ...specificOptions,
-     };
- 
-+    if (isServerEnvironment(opts.environment)) {
-+      opts.outputExtension ??= this.serverOutputExtension;
-+    }
++  rerender(
++    <ThemeProvider value={DefaultTheme}>
++      <DrawerItem label="Home" href="/home" focused={false} onPress={() => {}} testID="item" />
++    </ThemeProvider>
++  );
 +
-     // https://github.com/facebook/metro/blob/2405f2f6c37a1b641cc379b9c733b1eff0c1c2a1/packages/metro/src/lib/parseOptionsFromUrl.js#L55-L87
-     const { filename, bundle, map, ...rest } = await this.metroLoadModuleContents(filePath, opts);
-     return {
-@@ -1202,7 +1220,8 @@ export class MetroBundlerDevServer extends BundlerDevServer {
-     );
- 
-     // Save the SSR manifest so we can perform more replacements in the server renderer and with server actions.
--    files.set(`_expo/rsc/${options.platform}/ssr-manifest.js`, {
-+    const manifestFilename = `_expo/rsc/${options.platform}/ssr-manifest${this.serverOutputExtension}`;
-+    files.set(manifestFilename, {
-       targetDomain: 'server',
-       contents:
-         'module.exports = ' +
-@@ -1332,6 +1351,7 @@ export class MetroBundlerDevServer extends BundlerDevServer {
-       );
-     }
- 
-+    this.serverOutputExtension = config.pkg.type === 'module' ? '.cjs' : '.js';
-     const instanceMetroOptions = {
-       chunkingStrategy: getChunkingStrategyFromExpoConfig(exp),
-       isExporting: !!options.isExporting,
-@@ -1539,6 +1559,7 @@ exp
-```
-
-**File**: `packages/@expo/cli/src/start/server/metro/__tests__/MetroBundlerDevServer-test.ts` (modified, +32/-0)
-```diff
-@@ -1133,3 +1133,35 @@ function serverContents(filename: string) {
-     artifacts: [{ type: 'js', filename, source: src, originFilename: 'entry.ts', metadata: {} }],
-   };
- }
-+
-+it('defaults server output extensions while preserving client requests and explicit overrides', async () => {
-+  for (const [environment, serverExtension, outputExtension, expected] of [
-+    ['node', '.cjs', undefined, '.cjs'],
-+    ['react-server', '.cjs', undefined, '.cjs'],
-+    ['client', '.cjs', undefined, undefined],
-+    ['node', '.js', undefined, '.js'],
-+    ['node', '.cjs', '.js', '.js'],
-+    ['client', '.cjs', '.custom', '.custom'],
-+  ] as const) {
-+    const devServer = createDevServerForStaticPageTests();
-+    devServer['serverOutputExtension'] = serverExtension;
-+    const load = jest.spyOn(devServer as any, 'metroLoadModuleContents').mockResolvedValue({
-+      filename: 'entry',
-+      bundle: 'code',
-+      map: '',
-+    });
-+    await devServer['ssrLoadModuleContents']('/app/index.ts', {
-+      environment,
-+      outputExtension,
-+      entryFilename: 'exact.bundle',
-+    });
-+    expect(load).toHaveBeenCalledWith(
-+      '/app/index.ts',
-+      expect.objectContaining({
-+        environment,
-+        outputExtension: expected,
-+        entryFilename: 'exact.bundle',
-+      })
-+    );
-+  }
++  expect(getByTestId('item').hasAttribute('aria-current')).toBe(false);
++  expect(getByTestId('item').hasAttribute('aria-selected')).toBe(false);
 +});
 ```
 
-**File**: `packages/@expo/cli/src/start/server/metro/createServerComponentsMiddleware.ts` (modified, +4/-3)
+**File**: `packages/expo-router/src/react-navigation/elements/PlatformPressable.tsx` (modified, +1/-0)
 ```diff
-@@ -47,6 +47,7 @@ export function createServerComponentsMiddleware(
-   projectRoot: string,
-   {
-     rscPath,
-+    outputExtension = '.js',
-     instanceMetroOptions,
-     ssrLoadModule,
-     ssrLoadModuleArtifacts,
-@@ -55,6 +56,7 @@ export function createServerComponentsMiddleware(
-     routerOptions,
-   }: {
-     rscPath: string;
-+    outputExtension?: '.js' | '.cjs';
-     instanceMetroOptions: Partial<ExpoMetroOptions>;
-     ssrLoadModule: SSRLoadModuleFunc;
-     ssrLoadModuleArtifacts: SSRLoadModuleArtifactsFunc;
-@@ -203,7 +205,6 @@ export function createServerComponentsMiddleware(
-       // Match babel plugin.
-       const publicModuleId = './' + toPosixPath(path.relative(projectRoot, entryPoint));
- 
--      // Import relative to `dist/server/_expo/rsc/web/router.js`
-       manifest[publicModuleId] = [String(relativeName), outputName];
-     }
- 
-@@ -232,7 +233,7 @@ export function createServerComponentsMiddleware(
-     await processEntryPoints(uniqueEntryPoints);
- 
-     // Save the SSR manifest so we can perform more replacements in the server renderer and with server actions.
--    files.set(`_expo/rsc/${platform}/action-manifest.js`, {
-+    files.set(`_expo/rsc/${platform}/action-manifest${outputExtension}`, {
-       targetDomain: 'server',
-       contents: 'module.exports = ' + JSON.stringify(manifest),
-     });
-@@ -260,7 +261,7 @@ export function createServerComponentsMiddleware(
-       includeSourceMaps,
-       excludeSource: true,
-       splitChunks: false,
--      entryFilename: `_expo/rsc/${platform}/router.js`,
-+      entryFilename: `_expo/rsc/${platform}/router${outputExtension}`,
-     });
- 
-     // Extract the global CSS modules that are imported from the router.
+@@ -117,6 +117,7 @@ function PlatformPressableInternal({
+     <AnimatedPressable
+       ref={ref}
+       accessible
++      disabled={disabled}
+       role={Platform.OS === 'web' && rest.href != null ? 'link' : 'button'}
+       onPress={disabled ? undefined : handlePress}
+       onPressIn={disabled ? undefined : handlePressIn}
 ```
 
-**File**: `packages/@expo/router-server/src/rsc/middleware.ts` (modified, +5/-3)
+**File**: `packages/expo-router/src/react-navigation/elements/__tests__/PlatformPressable.test.native.tsx` (added, +17/-0)
 ```diff
-@@ -16,6 +16,8 @@ import { renderRsc } from './rsc-renderer';
- declare const $$require_external: typeof require;
+@@ -0,0 +1,17 @@
++import { render } from '@testing-library/react-native';
++import { Text } from 'react-native';
++
++import { DefaultTheme, ThemeProvider } from '../../native';
++import { PlatformPressable } from '../PlatformPressable';
++
++it('exposes the disabled state', async () => {
++  const { getByTestId } = await render(
++    <ThemeProvider value={DefaultTheme}>
++      <PlatformPressable disabled testID="pressable">
++        <Text>Action</Text>
++      </PlatformPressable>
++    </ThemeProvider>
++  );
++
++  expect(getByTestId('pressable').props.accessibilityState.disabled).toBe(true);
++});
+```
+
+**File**: `packages/expo-router/src/react-navigation/elements/__tests__/PlatformPressable.test.web.tsx` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++/** @jest-environment jsdom */
++import { render } from '@testing-library/react';
++import { Text } from 'react-native';
++
++import { DefaultTheme, ThemeProvider } from '../../native';
++import { PlatformPressable } from '../PlatformPressable';
++
++it('exposes the disabled state', () => {
++  const { getByTestId } = render(
++    <ThemeProvider value={DefaultTheme}>
++      <PlatformPressable disabled testID="pressable">
++        <Text>Action</Text>
++      </PlatformPressable>
++    </ThemeProvider>
++  );
++
++  expect(getByTestId('pressable').getAttribute('aria-disabled')).toBe('true');
++});
+```
+
+**File**: `packages/expo-router/src/react-navigation/stack/__tests__/integration/navigation.test.ios.tsx` (modified, +57/-0)
+```diff
+@@ -10,6 +10,7 @@ import { Tabs } from '../../../../layouts/Tabs';
+ import { NativeTabs } from '../../../../native-tabs';
+ import { renderRouter } from '../../../../testing-library';
+ import { type ParamListBase, useFocusEffect, useIsFocused, useNavigation } from '../../../native';
++import { CommonActions } from '../../../routers';
+ import type { StackNavigationProp } from '../../types';
  
- const debug = createDebug('expo:router:server:rsc-renderer');
-+// TODO(@kitten): Bundle RSC like the SSR renderer so the serializer handles chunking internally.
-+const serverOutputExtension = path.extname(__filename);
+ jest.mock('react-native-screens', () => {
+@@ -38,6 +39,7 @@ jest.mock('react-native-screens', () => {
  
- function serverRequire<T = any>(...targetOutputModulePath: string[]): T {
-   // NOTE(@kitten): This `__dirname` will be located in the output file system, e.g. `dist/server/*`
-@@ -36,7 +38,7 @@ function getServerActionManifest(
-     string,
-   ]
- > {
--  const filePath = `../../rsc/${platform}/action-manifest.js`;
-+  const filePath = `../../rsc/${platform}/action-manifest${serverOutputExtension}`;
-   return serverRequire(filePath);
+ afterEach(() => {
+   jest.useRealTimers();
++  jest.restoreAllMocks();
+ });
+ 
+ it('supports push, back, and replace through useRouter', async () => {
+@@ -156,6 +158,61 @@ it('emits transition events when opening and closing a route', async () => {
+   expect(events.at(-1)).toEqual({ type: 'end', closing: true });
+ });
+ 
++it('accepts touches on a screen revealed after a route below a transparent modal is removed', async () => {
++  const onPress = jest.fn();
++  // In Jest, native driver animations never call JS listeners, so no card would become inert.
++  jest
++    .spyOn(
++      jest.requireMock<{ default: { shouldUseNativeDriver: () => boolean } }>(
++        'react-native/src/private/animated/NativeAnimatedHelper'
++      ).default,
++      'shouldUseNativeDriver'
++    )
++    .mockReturnValue(false);
++
++  function Modal() {
++    const navigation = useNavigation();
++    return (
++      <Button
++        title="Remove second"
++        onPress={() => {
++          const state = navigation.getState()!;
++          navigation.dispatch(
++            CommonActions.reset({
++              ...state,
++              routes: state.routes.filter((route) => route.name !== 'second'),
++              index: 1,
++            })
++          );
++        }}
++      />
++    );
++  }
++
++  await renderRouter({
++    _layout: () => (
++      <JSStack>
++        <JSStack.Screen name="modal" options={{ presentation: 'transparentModal' }} />
++      </JSStack>
++    ),
++    index: () => <Button title="Index action" onPress={onPress} />,
++    second: () => <View testID="second" />,
++    modal: Modal,
++  });
++
++  await act(() => router.push('/second'));
++  await act(() => jest.runAllTimers());
++  await act(() => router.push('/modal'));
++  await act(() => jest.runAllTimers());
++  await fireEvent.press(screen.getByText('Remove second'));
++  await act(() => router.back());
++  await act(() => jest.runAllTimers());
++
++  expect(screen).toHavePathname('/');
++  await fireEvent.press(screen.getByText('Index action'));
++  expect(onPress).toHaveBeenCalledTimes(1);
++});
++
+ it('renders preloaded routes without focusing them', async () => {
+   const focusEffect = jest.fn();
+   const focusCleanup = jest.fn();
+```
+
+**File**: `packages/expo-router/src/react-navigation/stack/views/Stack/CardContainer.tsx` (modified, +4/-0)
+```diff
+@@ -155,6 +155,10 @@ function CardContainerInner({
+   const { colors } = useTheme();
+ 
+   React.useEffect(() => {
++    if (scene.progress.next == null) {
++      wrapperRef.current?.setInert(false);
++    }
++
+     const listener = scene.progress.next?.addListener?.(({ value }: { value: number }) => {
+       wrapperRef.current?.setInert(value > EPSILON);
+     });
+```
+
+---
+
+### Incident Patch 2: `4b972f14` (2026-11-26)
+**Commit Message**: [ui][ios] Register view modifiers by their type (#53975)
+
+## Why
+
+`ViewModifierRegistry.register(_:factory:)` takes a closure that creates
+the modifier from a `[String: Any]` dictionary, and every built-in
+factory only calls `Modifier(from: params, appContext:)`. A view of Expo
+Modules v2 doesn't get its props as dictionaries. With the type of the
+modifier, it can decode the modifier straight from its JavaScript
+object, because every `Record` is `JavaScriptDecodable`.
+
+## How
+
+- `register(_:_:)` registers a `ViewModifier & Record` type. For a v1
+view, the registry creates the modifier with
+`from(dictionary:appContext:)`, as the factories did.
+- A modifier that sends events conforms to
+`EventDispatchingViewModifier`, and the registry sets its
+`eventDispatcher`. An overload of `register(_:_:)` keeps these types in
+their own case, so the registry needs no dynamic cast. The first cast to
+`EventDispatchingViewModifier` costs about 1,000,000 ns on the main
+thread for each modifier type.
+- The registry keeps each type in a closure, through `@autoclosure`
+overloads of the internal `register(_:_:)`. So the Swift runtime creates
+the `ViewModifier` and `Record` witness tables of a type when a
+
+**File**: `.changeset/ios-expo-ui-register-modifiers-by-type.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@expo/ui': minor
++---
++
++[iOS] Add `ViewModifierRegistry.register(_:_:)`, which registers a custom modifier by its type. A modifier that sends events conforms to `EventDispatchingViewModifier`. Deprecate `ViewModifierRegistry.register(_:factory:)`.
+```
+
+**File**: `apps/bare-expo/modules/test-expo-ui/ios/TestExpoUiModule.swift` (modified, +1/-3)
+```diff
+@@ -6,9 +6,7 @@ public class TestExpoUiModule: Module {
+     Name("TestExpoUi")
+ 
+     OnCreate {
+-      ViewModifierRegistry.register("customBorder") { params, appContext, _ in
+-        return try CustomBorderModifier(from: params, appContext: appContext)
+-      }
++      ViewModifierRegistry.register("customBorder", CustomBorderModifier.self)
+     }
+ 
+     OnDestroy {
+```
+
+**File**: `docs/pages/versions/unversioned/sdk/ui/swift-ui/extending.mdx` (modified, +1/-3)
+```diff
+@@ -246,9 +246,7 @@ public class MyUiModule: Module {
+     Name("MyUi")
+ 
+     OnCreate {
+-      ViewModifierRegistry.register("customBorder") { params, appContext, _ in
+-        return try CustomBorderModifier(from: params, appContext: appContext)
+-      }
++      ViewModifierRegistry.register("customBorder", CustomBorderModifier.self)
+     }
+ 
+     OnDestroy {
+```
+
+**File**: `packages/expo-ui/ios/Modifiers/ContainerBackgroundModifier.swift` (modified, +3/-0)
+```diff
+@@ -26,6 +26,9 @@ internal struct ContainerBackgroundModifier: ViewModifier, Record {
+   @Field var container: ContainerBackgroundPlacementOptions?
+ 
+   func body(content: Content) -> some View {
++#if DEBUG
++    let _ = warnIfWidgetPlacementIsUnavailable()
++#endif
+ #if os(tvOS) || os(macOS)
+     content
+ #else
+```
+
+**File**: `packages/expo-ui/ios/Modifiers/HingeObservationModifiers.swift` (modified, +1/-6)
+```diff
+@@ -3,7 +3,7 @@
+ import ExpoModulesCore
+ import SwiftUI
+ 
+-internal struct OnHingeChangeModifier: ViewModifier, Record {
++internal struct OnHingeChangeModifier: EventDispatchingViewModifier, Record {
+   // Worklet path: synchronous invocation on the UI runtime (no JS-thread dispatch).
+   @Field var workletCallback: WorkletCallback?
+   // JS-thread path: async event via the global modifier event dispatcher.
+@@ -12,11 +12,6 @@ internal struct OnHingeChangeModifier: ViewModifier, Record {
+ 
+   init() {}
+ 
+-  init(from params: Dict, appContext: AppContext, eventDispatcher: EventDispatcher) throws {
+-    try self = .init(from: params, appContext: appContext)
+-    self.eventDispatcher = eventDispatcher
+-  }
+-
+   func body(content: Content) -> some View {
+ #if canImport(SwiftUI, _version: 8.0.85) // iOS 27.1 SDK
+     if #available(iOS 27.1, macOS 27.1, tvOS 27.1, visionOS 27.1, *) {
+```
+
+**File**: `packages/expo-ui/ios/Modifiers/OnGeometryChangeModifier.swift` (modified, +1/-6)
+```diff
+@@ -3,16 +3,11 @@
+ import ExpoModulesCore
+ import SwiftUI
+ 
+-internal struct OnGeometryChangeModifier: ViewModifier, Record {
++internal struct OnGeometryChangeModifier: EventDispatchingViewModifier, Record {
+   var eventDispatcher: EventDispatcher?
+ 
+   init() {}
+ 
+-  init(from params: Dict, appContext: AppContext, eventDispatcher: EventDispatcher) throws {
+-    try self = .init(from: params, appContext: appContext)
+-    self.eventDispatcher = eventDispatcher
+-  }
+-
+   private func dispatch(_ frame: CGRect) {
+     eventDispatcher?(["onGeometryChange": [
+       "x": frame.origin.x,
+```
+
+**File**: `packages/expo-ui/ios/Modifiers/OnSubmitModifier.swift` (modified, +1/-6)
+```diff
+@@ -3,16 +3,11 @@
+ import ExpoModulesCore
+ import SwiftUI
+ 
+-internal struct OnSubmitModifier: ViewModifier, Record {
++internal struct OnSubmitModifier: EventDispatchingViewModifier, Record {
+   var eventDispatcher: EventDispatcher?
+ 
+   init() {}
+ 
+-  init(from params: Dict, appContext: AppContext, eventDispatcher: EventDispatcher) throws {
+-    try self = .init(from: params, appContext: appContext)
+-    self.eventDispatcher = eventDispatcher
+-  }
+-
+   func body(content: Content) -> some View {
+     content.onSubmit {
+       eventDispatcher?(["onSubmit": [:]])
+```
+
+**File**: `packages/expo-ui/ios/Modifiers/PresentationModifiers.swift` (modified, +1/-6)
+```diff
+@@ -38,18 +38,13 @@ private func parsePresentationDetent(_ detent: Either<PresentationDetentPreset,
+   return nil
  }
  
-@@ -53,7 +55,7 @@ function getSSRManifest(
-     string,
-   ]
- > {
--  const filePath = `../../rsc/${platform}/ssr-manifest.js`;
-+  const filePath = `../../rsc/${platform}/ssr-manifest${serverOutputExtension}`;
-   return serverRequire(filePath);
+-internal struct PresentationDetentsModifier: ViewModifier, Record {
++internal struct PresentationDetentsModifier: EventDispatchingViewModifier, Record {
+   @Field var detents: [Either<PresentationDetentPreset, PresentationDetentItem>]?
+   @Field var selection: Either<PresentationDetentPreset, PresentationDetentItem>?
+   var eventDispatcher: EventDispatcher?
+ 
+   init() {}
+ 
+-  init(from params: Dict, appContext: AppContext, eventDispatcher: EventDispatcher) throws {
+-    try self = .init(from: params, appContext: appContext)
+-    self.eventDispatcher = eventDispatcher
+-  }
+-
+   @available(iOS 16.0, tvOS 16.0, *)
+   private func parseDetents() -> Set<PresentationDetent> {
+     guard let detents, !detents.isEmpty else {
+```
+
+---
+
+### Incident Patch 3: `a1289277` (2026-11-26)
+**Commit Message**: [ui][ios] Fix `Namespace` and migrate `Namespace` and `Grid.Row` to Expo Modules v2 (#53866)
+
+## Why
+
+The iOS views of `@expo/ui` move from Expo Modules v1 to v2 in small
+groups. `NamespaceView` and `GridRowView` go first, because they take no
+modifiers and no other view reads their props.
+
+`Namespace` doesn't work: `matchedGeometryEffect` and `glassEffectId`
+never find its namespace. The JS wrapper of native views
+(`mapAriaProps`) turns an `id` prop into `nativeID`, so `NamespaceView`
+never gets the id.
+
+## How
+
+- `Namespace` gives its `id` to the native view as `namespaceId`, which
+the wrapper doesn't rename.
+- `NamespaceView` and `GridRowView` are public `@ExpoView` structs, so
+core registers them as views of the `@expo/ui` package. `ExpoUIModule`
+doesn't list them in `@ExpoModule(views:)`, because then core registers
+them twice.
+- JS reads the views with `requireOptionalNative('@expo/ui')`. Android
+has no `expo.packages` but also loads these files. There,
+`requireOptionalNative` gives `null`, and `requireNative` would throw.
+- `jest-expo` mocks `expo.packages['@expo/ui']`, and the `expo` stub of
+the `expo-widgets` bundle gets `requireOptionalNative`. Without them,
+the component
+
+**File**: `.changeset/expo-widgets-ui-package-views.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'expo-widgets': patch
++---
++
++[iOS] Add `requireOptionalNative` to the `expo` stub of the widgets bundle, so the bundle can load the `@expo/ui` views that come from the package object.
+```
+
+**File**: `.changeset/ios-expo-ui-namespace-grid-row-v2.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@expo/ui': patch
++---
++
++[iOS] Move the native views of `Namespace` and `Grid.Row` to the Expo Modules API 2.0.
+```
+
+**File**: `.changeset/ios-expo-ui-namespace-id.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@expo/ui': patch
++---
++
++[iOS] Fix `Namespace`, whose `id` didn't reach the native view, so `matchedGeometryEffect` and `glassEffectId` found no namespace.
+```
+
+**File**: `.changeset/jest-expo-expo-ui-package-views.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'jest-expo': patch
++---
++
++Mock the views that `@expo/ui` reads from its package object (`expo.packages['@expo/ui']`).
+```
+
+**File**: `packages/expo-ui/ios/ExpoUIModule.swift` (modified, +0/-2)
+```diff
+@@ -128,8 +128,6 @@ public final class ExpoUIModule: Module {
+     // MARK: - Views that don't support common view modifiers
+ 
+     View(SlotView.self)
+-    View(NamespaceView.self)
+-    View(GridRowView.self)
+ 
+     // MARK: - Expo UI Views
+ 
+```
+
+**File**: `packages/expo-ui/ios/GridView.swift` (modified, +5/-9)
+```diff
+@@ -29,19 +29,15 @@ public struct GridView: ExpoSwiftUI.View {
+   }
  }
  
-@@ -147,7 +149,7 @@ export async function renderRscAsync(
-     {
-       router: () => {
-         // NOTE(@kitten): [WORKAROUND] Assumes __dirname is at `dist/server/_expo/functions/_flight`
--        return serverRequire(`../../rsc/${platform}/router.js`);
-+        return serverRequire(`../../rsc/${platform}/router${serverOutputExtension}`);
-       },
-     },
-     args
+-public final class GridRowProps: ExpoSwiftUI.ViewProps {}
+-public struct GridRowView: ExpoSwiftUI.View {
+-  @ObservedObject public var props: GridRowProps
+-
+-  public init(props: GridRowProps) {
+-    self.props = props
+-  }
++@ViewProps
++public struct GridRowProps {}
+ 
++@ExpoView<GridRowProps>
++public struct GridRowView: View {
+   public var body: some View {
+     if #available(iOS 16.0, macOS 13.0, tvOS 16.0, *) {
+       GridRow {
+-        Children()
+-          .publishZeroContentOrigin(props.shadowNodeProxy)
++        children
+       }
+     } else {
+       EmptyView()
+```
+
+**File**: `packages/expo-ui/ios/NamespaceView.swift` (modified, +9/-13)
+```diff
+@@ -3,27 +3,23 @@
+ import SwiftUI
+ import ExpoModulesCore
+ 
+-internal final class NamespaceViewProps: ExpoSwiftUI.ViewProps {
+-  @Field var id: String
++@ViewProps
++public struct NamespaceViewProps {
++  var namespaceId: String = ""
+ }
+ 
+-internal struct NamespaceView: ExpoSwiftUI.View {
+-  @ObservedObject var props: NamespaceViewProps
++@ExpoView<NamespaceViewProps>
++public struct NamespaceView: View {
+   @Namespace var namespace
+ 
+-  init(props: NamespaceViewProps) {
+-    self.props = props
+-  }
+-
+-  var body: some View {
++  public var body: some View {
+     // We should register the namespace right after view updating.
+     // That allows children views to reference the namespace immediately.
+-    NamespaceRegistry.shared.registerNamespace(namespace, forKey: props.id)
++    NamespaceRegistry.shared.registerNamespace(namespace, forKey: props.namespaceId)
+ 
+-    return Children()
+-      .publishZeroContentOrigin(props.shadowNodeProxy)
++    return children
+       .onDisappear {
+-        NamespaceRegistry.shared.unregisterNamespace(forKey: props.id)
++        NamespaceRegistry.shared.unregisterNamespace(forKey: props.namespaceId)
+       }
+   }
+ }
+```
+
+**File**: `packages/expo-ui/src/__mocks__/expo.ts` (modified, +16/-1)
+```diff
+@@ -15,11 +15,26 @@ export const requireNativeModule = jest.fn(() => ({
+   getMaterialColors: jest.fn(() => ({})),
+ }));
+ 
+-export const requireNativeView = jest.fn((moduleName: string, viewName: string) => {
++function createMockNativeView(viewName: string) {
+   return function MockNativeView(props: Record<string, any>) {
+     renderedNativeViews(viewName, props);
+     // Swallow string children — the RN mock View can't render raw text.
+     const children = typeof props.children === 'string' ? undefined : props.children;
+     return createElement(View, { ...props, children });
+   };
++}
++
++export const requireNativeView = jest.fn((moduleName: string, viewName: string) => {
++  return createMockNativeView(viewName);
+ });
++
++// The package object of `@expo/ui` (`expo.packages['@expo/ui']`) has a mock view for each view name.
++export const requireOptionalNative = jest.fn(
++  () =>
++    new Proxy(
++      {},
++      {
++        get: (_target, name) => (typeof name === 'string' ? createMockNativeView(name) : undefined),
++      }
++    )
++);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #54079** (2026-11-23): [ci][macOS] Skip lifecycle scripts when adding react-native-macos (@gabrieldonadel)
-- **PR #54078** (2026-11-23): [docs] Update the Device Manager steps in the Android emulator guide (@baasilali)
-- **PR #54070** (2026-11-23): [core][iOS] Install the `NativeModule` and `SharedRef` classes from Swift (@tsapeta)
-- **PR #54068** (2026-11-24): [ui][android] Mark the selected option in the Picker menu (@miniware9)
-- **PR #54059** (closed): [docs] Add an FAQ entry on Snack visibility and deletion (@sarahlane8)
-- **PR #54057** (closed): [expo-router] Preserve dynamic parent parameters when pressing a JavaScript tab (@cleissonproductera)
+- **PR #54339** (closed): [config] Roll back modifyConfigAsync when the dynamic config drops a nested object (@vonovak)
+- **PR #54337** (closed): [expo-app-intents] Read the plugin entry with inspect mode (@vonovak)
+- **PR #54336** (closed): [expo-widgets] Link only the widget's frameworks into the extension under SwiftPM (@chrfalch)
+- **PR #54332** (2026-11-26): [core] Define WORKLETS_STABLE_API_TARGET for the worklets adapter (@tshmieldev)
+- **PR #54324** (2026-11-26): [expo-modules-autolinking] Add expo-task-manager to the precompiled derivations fixture (@intergalacticspacehighway)
+- **PR #54322** (2026-11-26): [expo] Fail clearly when ExpoWidgets links precompiled under SwiftPM (@chrfalch)
 
 ---
 
@@ -1481,25 +1325,25 @@ just for the server output. `expo-server` and EAS Hosting should alre
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or rele
+## X. [router] Port upstream React Navigation accessibility fixes
 
 **RULE**:
-When implementing operations in `.changeset/file-system-ios-task-release-race.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/router-port-upstream-a11y-fixes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `546b3581`: [ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or released while its request completes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b818c75`: [router] Port upstream React Navigation accessibility fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/file-system-ios-task-release-race.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/router-port-upstream-a11y-fixes.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-'expo-file-system': patch
+'expo-router': patch
 ---
 
-[iOS] Fix a crash when a `DownloadTask` or `UploadTask` is cancelled or garbage-collected at the moment its request completes.
+Port React Navigation accessibility fixes: use `aria-current` for the focused drawer item on web, expose the disabled state of `PlatformPressable`, and fix a JS stack screen that ignored touches after a route below a transparent modal was removed.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1509,7 +1353,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `546b3581` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b818c75` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T16:11:05.219Z",
+  "last_updated": "2026-11-26T16:21:34.364Z",
   "total_records": 2762,
   "domains": {
     "A": {
@@ -9789,8 +9789,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "d80d58ed20d19e9ba626fcd5c0541390f7740e434147bd4e65b868e4ef1b6708",
-      "created_at": "2026-11-25T15:00:44.402Z"
+      "content_hash": "8ac176248468359d76eee1571ec9b4fd5aa2c990a686e51a60b93b7f87be09f4",
+      "created_at": "2026-11-26T16:21:27.830Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -10233,8 +10233,8 @@
       "title": "Technical Construction Intelligence: expo/expo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
       "repository": "expo/expo",
-      "content_hash": "a83be03b5999d7b1d2d9a4ae21f0d34e768718a1b4cf4eba040f73d2d61075e9",
-      "created_at": "2026-11-24T06:30:14.279Z"
+      "content_hash": "76686f9e115b8adb372a4205ee137a423b8e3776a50bfadd437f362516738eaf",
+      "created_at": "2026-11-26T16:21:20.089Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
@@ -10260,8 +10260,8 @@
       "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-learnings-technical-construction-intelligence-expo-expo-learnings-core.md",
       "repository": "expo-expo-learnings",
-      "content_hash": "d0636f285a57cb16e6d33b72c37c01f10b2d74f24ec2cc4c37a9190dd2f72099",
-      "created_at": "2026-11-24T06:30:19.457Z"
+      "content_hash": "51edb0687098b3378975467563d71d89a93ad3e331e1c85ad348fff8438fadea",
+      "created_at": "2026-11-26T16:21:34.364Z"
     },
     "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
@@ -10503,8 +10503,8 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-research-knowledge-intellig.md",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "content_hash": "bc35920e805cfc145529572c087238907811351109ade80541e8632a73d041be",
-      "created_at": "2026-11-22T23:15:33.738Z"
+      "content_hash": "32173ab2170337f6ecf775015acc1811ec673404fde423c097dad8f9241ba90e",
+      "created_at": "2026-11-26T16:21:10.197Z"
     },
     "domain_intelligence-architecture-intelligence-grpc-grpc-rust-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-grpc-grpc-rust-core-invariants",
@@ -10557,8 +10557,8 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-learnings-research-knowledg.md",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings",
-      "content_hash": "03994d04c0914986a274ed07d14d1f8643d938ba541f0157770f1c3b037b48e0",
-      "created_at": "2026-11-22T23:15:51.036Z"
+      "content_hash": "a546c5e6a4a3479020bf0c00e44e334170b43feebf96c78d7a47e7b2aebc059c",
+      "created_at": "2026-11-26T16:21:33.041Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants",
@@ -19751,8 +19751,8 @@
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "repository": "metalbear-co/mirrord",
-      "content_hash": "a498a721d433d4973dfc0e6b0818aa1e1295a212bf2f6c36485af9d4f0c6971e",
-      "created_at": "2026-11-25T07:57:00.586Z"
+      "content_hash": "ab0fe2097805233ca6a9e5a1cbc7c5e86b8ae203aebca861341bdb79803442cb",
+      "created_at": "2026-11-26T16:21:14.311Z"
     },
     "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
@@ -19778,8 +19778,8 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-learnings-technical-construction-intelligence-metalbear-co-.md",
       "repository": "metalbear-co-mirrord-learnings",
-      "content_hash": "a9df87a2e74efa7e8f2872e23d15b5c18b229f0b0ef404104432e0a3b79679e6",
-      "created_at": "2026-11-25T07:57:14.095Z"
+      "content_hash": "0dfa960eb23cae57e119da26f1a82cf8cc44679df8da64944a007845fde8b931",
+      "created_at": "2026-11-26T16:21:32.196Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",

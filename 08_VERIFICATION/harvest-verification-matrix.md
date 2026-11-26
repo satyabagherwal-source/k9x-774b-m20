@@ -13458,3 +13458,7 @@
 | `CYCLE-20261126-1LDL` | `2026-11-26T16:10:52.665Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10719` | Yes (`6e114cfc...`) |
 | `CYCLE-20261126-1NDV` | `2026-11-26T16:10:55.267Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10720` | Yes (`f068316b...`) |
 | `CYCLE-20261126-1PN7` | `2026-11-26T16:10:58.195Z` | `run-llama/llama_index` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10721` | Yes (`47ca01ea...`) |
+| `CYCLE-20261126-ETM3` | `2026-11-26T16:21:09.867Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`7719cc76...`) |
+| `CYCLE-20261126-EWJT` | `2026-11-26T16:21:13.673Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10722` | Yes (`7a13154c...`) |
+| `CYCLE-20261126-F10H` | `2026-11-26T16:21:19.457Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10723` | Yes (`4c8f1a44...`) |
+| `CYCLE-20261126-F6Z3` | `2026-11-26T16:21:27.183Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10724` | Yes (`ca044f09...`) |

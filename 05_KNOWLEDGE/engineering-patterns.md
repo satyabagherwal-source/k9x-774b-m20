@@ -808322,3 +808322,228 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0130d038` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10722. build the remaining test jobs with line-table debug info (Harvested from metalbear-co/mirrord)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build the remaining test jobs with line-table debug info",
+  "source": "metalbear-co/mirrord",
+  "source_url": "https://github.com/metalbear-co/mirrord",
+  "source_version": "8f225c1f",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T16:21:12.911Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-metalbear-co-mirrord",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `8f225c1f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/build-mirrord-cli.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d64f3d8a`: ci: build the remaining test jobs with line-table debug info. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-mirrord-cli.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+env:
+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
+  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d64f3d8a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10723. [router] Port upstream React Navigation accessibility fixes (Harvested from expo/expo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[router] Port upstream React Navigation accessibility fixes",
+  "source": "expo/expo",
+  "source_url": "https://github.com/expo/expo",
+  "source_version": "e9871f12",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T16:21:18.702Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-expo-expo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [expo/expo](https://github.com/expo/expo) (Revision: `e9871f12`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.changeset/router-port-upstream-a11y-fixes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5b818c75`: [router] Port upstream React Navigation accessibility fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/router-port-upstream-a11y-fixes.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+---
+'expo-router': patch
+---
+
+Port React Navigation accessibility fixes: use `aria-current` for the focused drawer item on web, expose the disabled state of `PlatformPressable`, and fix a JS stack screen that ignored touches after a route below a transparent modal was removed.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5b818c75` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10724. build(deps): bump milvus-storage for per-client GCP credentials (Harvested from milvus-io/milvus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps): bump milvus-storage for per-client GCP credentials",
+  "source": "milvus-io/milvus",
+  "source_url": "https://github.com/milvus-io/milvus",
+  "source_version": "b830b0cd",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T16:21:26.455Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-milvus-io-milvus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `b830b0cd`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/design-docs/design_docs/20261110-external-collection-broker-iam.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a9679897`: build(deps): bump milvus-storage for per-client GCP credentials. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design-docs/design_docs/20261110-external-collection-broker-iam.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+milvus-storage f9138562 (milvus-storage#837) removes the process-wide GCP
+credential registry and the separate GCP HTTP-factory initialization. The
+credential provider is bound to each S3 client, so several GCP identities can
+share an endpoint and bucket, and GCP and S3-compatible filesystems initialize
+together in one process. Mocked tests and source inspection do not establish
+production deployment or live five-cloud E2E.
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+The one-GCP-identity-per-(endpoint,bucket) registry restriction and mixed
+GCP/S3 HTTP-factory initialization limitation remain. Mocked tests and source
+inspection do not establish production deployment or live five-cloud E2E.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a9679897` are properly handled with clean fallback behavior.

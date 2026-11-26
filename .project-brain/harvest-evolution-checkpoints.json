@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:11:05.740Z",
+  "last_updated": "2026-11-26T16:21:34.860Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -428,7 +428,7 @@
       "staged_for_review": 1
     },
     "metalbear-co-mirrord-learnings.md": {
-      "processed_at": "2026-11-25T07:57:13.446Z",
+      "processed_at": "2026-11-26T16:21:31.144Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2078,7 +2078,7 @@
       "staged_for_review": 1
     },
     "expo-expo-learnings.md": {
-      "processed_at": "2026-11-24T06:30:18.755Z",
+      "processed_at": "2026-11-26T16:21:33.361Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2088,7 +2088,7 @@
       "staged_for_review": 0
     },
     "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md": {
-      "processed_at": "2026-11-22T23:15:50.781Z",
+      "processed_at": "2026-11-26T16:21:32.727Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3983,7 +3983,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4575,
+  "total_dossiers_evaluated": 4578,
   "total_canonical_promoted": 564,
-  "total_staged_for_review": 3446
+  "total_staged_for_review": 3449
 }

@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "4cc42b892be79f5b5ea60f7444ac0b98cbbc4f1d0aaa5ec19edb38cad6d6969d",
-    "lastHarvestedAt": "2026-11-22T23:15:33.508Z",
+    "contentHash": "7719cc76c416ca9b475a8fc882b0585c3c46f7620b8471bd8808a3dd8c4841bb",
+    "lastHarvestedAt": "2026-11-26T16:21:09.872Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "1a999f8a",
+    "sourceVersion": "8f225c1f",
     "license": "MIT",
-    "contentHash": "d1b6c96ac4f0d500f188e43a4279534e28ff196142e8889fe2f3a7a9049c0b27",
-    "lastHarvestedAt": "2026-11-25T07:57:00.143Z",
+    "contentHash": "7a13154c9229aa27dd80be98b8d9f1bf8c77f6c6ebc7a2137ba31d3bbe56f991",
+    "lastHarvestedAt": "2026-11-26T16:21:13.678Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "45164988",
+    "sourceVersion": "b830b0cd",
     "license": "Apache-2.0",
-    "contentHash": "b9967214fb35757e69f24e2dd4bfa22660c8e9ee7ff4badfbc995b158cae8855",
-    "lastHarvestedAt": "2026-11-25T15:00:43.825Z",
+    "contentHash": "ca044f0915dafca54b0b658bc754d5efed3c74e7bd53a5969f7e989d1560e47d",
+    "lastHarvestedAt": "2026-11-26T16:21:27.188Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "b03773cb",
+    "sourceVersion": "e9871f12",
     "license": "MIT",
-    "contentHash": "9b5fea2d363eff5ea37cfa556947151796c8af3394dbaeb69541942953f86dea",
-    "lastHarvestedAt": "2026-11-24T06:30:13.707Z",
+    "contentHash": "4c8f1a4410f82abceb42d6be0145cb95ed2572c4bfdfbae9ab66c40b25d5ef6b",
+    "lastHarvestedAt": "2026-11-26T16:21:19.462Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

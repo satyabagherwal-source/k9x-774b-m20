@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T16:11:03.188Z",
+  "updated_at": "2026-11-26T16:21:33.745Z",
   "stats": {
-    "total_discovered": 9847,
-    "approved_pending_harvest": 9337,
+    "total_discovered": 9852,
+    "approved_pending_harvest": 9341,
     "harvested_count": 0,
-    "rejected_count": 510,
+    "rejected_count": 511,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9332,
+      "COMMUNITY_AND_EXPERT": 9336,
       "OFFICIAL_DOCUMENTATION": 285,
-      "STANDARDS_AND_SPECIFICATIONS": 157,
+      "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 55,
       "LEGAL_AND_REGULATORY": 2,
@@ -213091,6 +213091,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
         "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-B3079073C69D": {
+      "id": "SRC-B3079073C69D",
+      "url": "https://claude.ai/code/session_016Xj2Au87tqTQPFbLUHbBMW",
+      "title": "https://claude.ai/code/session_016Xj2Au87tqTQPFbLUHbBMW",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:21:31.398Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-4E88E27A8D1A": {
+      "id": "SRC-4E88E27A8D1A",
+      "url": "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd",
+      "title": "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "discovered_at": "2026-11-26T16:21:31.537Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-0903FCE49B12": {
+      "id": "SRC-0903FCE49B12",
+      "url": "https://github.com/react-navigation/react-navigation/commit/b1cb5599bf042511423d7b7f93624bd0c9180261",
+      "title": "https://github.com/react-navigation/react-navigation/commit/b1cb5599bf042511423d7b7f93624bd0c9180261",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:21:33.568Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-C84C85E5792E": {
+      "id": "SRC-C84C85E5792E",
+      "url": "https://github.com/react-navigation/react-navigation/commit/aa1fd10f20f6146981edd5ee390672c4e4a10494",
+      "title": "https://github.com/react-navigation/react-navigation/commit/aa1fd10f20f6146981edd5ee390672c4e4a10494",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:21:33.654Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-0DE09D720B0F": {
+      "id": "SRC-0DE09D720B0F",
+      "url": "https://github.com/react-navigation/react-navigation/commit/94b0d3f726e397daa4685342f4efffd35b66ec92",
+      "title": "https://github.com/react-navigation/react-navigation/commit/94b0d3f726e397daa4685342f4efffd35b66ec92",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T16:21:33.745Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
       }
     }
   }

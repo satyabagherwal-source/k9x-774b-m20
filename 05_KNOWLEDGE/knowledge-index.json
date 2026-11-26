@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T16:11:05.510Z",
+  "last_updated": "2026-11-26T16:21:34.631Z",
   "total_verified_learnings": 9130,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26023,
+  "total_items": 26030,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114177,10 +114177,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "repository": "milvus-io/milvus",
-      "source_version": "45164988",
-      "content_hash": "d80d58ed20d19e9ba626fcd5c0541390f7740e434147bd4e65b868e4ef1b6708",
+      "source_version": "b830b0cd",
+      "content_hash": "8ac176248468359d76eee1571ec9b4fd5aa2c990a686e51a60b93b7f87be09f4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T15:00:44.402Z"
+      "persisted_at": "2026-11-26T16:21:27.830Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-milvus-io-milvus",
@@ -114189,10 +114189,10 @@
       "relative_path": "08_VERIFICATION/milvus-io-milvus-verification-protocol-empirical-defect-shield-for-milvus-io-mil.md",
       "title": "Verification Protocol: Empirical Defect Shield for milvus-io/milvus",
       "repository": "milvus-io/milvus",
-      "source_version": "45164988",
-      "content_hash": "7454fed4925955bf72e24dd133234dd67efc730b6fc4b6f126d9c95d4a3157c4",
+      "source_version": "b830b0cd",
+      "content_hash": "04ce2b7ec6e8b2a242e29785346eea00d44578e5dcfd804afe39a3cf4ddf2cef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:00:44.643Z"
+      "persisted_at": "2026-11-26T16:21:28.100Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-efficient-large-model-open-h3-regenerate-2k-l",
@@ -114837,10 +114837,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
       "title": "Technical Construction Intelligence: expo/expo Core Invariants",
       "repository": "expo/expo",
-      "source_version": "b03773cb",
-      "content_hash": "a83be03b5999d7b1d2d9a4ae21f0d34e768718a1b4cf4eba040f73d2d61075e9",
+      "source_version": "e9871f12",
+      "content_hash": "76686f9e115b8adb372a4205ee137a423b8e3776a50bfadd437f362516738eaf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:30:14.279Z"
+      "persisted_at": "2026-11-26T16:21:20.089Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo",
@@ -114849,10 +114849,10 @@
       "relative_path": "08_VERIFICATION/expo-expo-verification-protocol-empirical-defect-shield-for-expo-expo.md",
       "title": "Verification Protocol: Empirical Defect Shield for expo/expo",
       "repository": "expo/expo",
-      "source_version": "b03773cb",
-      "content_hash": "2f9494222fa57b16f6f4ddb58644c03464646842eef4e3a4c1c426133fa08d95",
+      "source_version": "e9871f12",
+      "content_hash": "70ff1f9ee145d8cef8135515266c31d059966b02022ebcfa7891fbe147409e2a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:30:14.499Z"
+      "persisted_at": "2026-11-26T16:21:20.356Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
@@ -114898,9 +114898,9 @@
       "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
       "repository": "expo-expo-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0636f285a57cb16e6d33b72c37c01f10b2d74f24ec2cc4c37a9190dd2f72099",
+      "content_hash": "51edb0687098b3378975467563d71d89a93ad3e331e1c85ad348fff8438fadea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T06:30:19.457Z"
+      "persisted_at": "2026-11-26T16:21:34.364Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings",
@@ -114910,9 +114910,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for expo-expo-learnings",
       "repository": "expo-expo-learnings",
       "source_version": "HEAD",
-      "content_hash": "0bf2399dd887bdf42911ef30105b54e879e8652c720a04e6d4bafde537bd3c0b",
+      "content_hash": "8a85486c344892ff0d7351336ea3a0be207d2925680a1fdc2fd9b612e2c3b3d4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:30:19.691Z"
+      "persisted_at": "2026-11-26T16:21:34.631Z"
     },
     "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
@@ -212566,7 +212566,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "4cc42b892be79f5b5ea60f7444ac0b98cbbc4f1d0aaa5ec19edb38cad6d6969d",
+      "content_hash": "7719cc76c416ca9b475a8fc882b0585c3c46f7620b8471bd8808a3dd8c4841bb",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "promoted_rules": [],
@@ -212575,7 +212575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:15:33.269Z",
+      "verified_at": "2026-11-26T16:21:09.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212592,9 +212592,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "bc35920e805cfc145529572c087238907811351109ade80541e8632a73d041be",
+      "content_hash": "32173ab2170337f6ecf775015acc1811ec673404fde423c097dad8f9241ba90e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:15:33.738Z"
+      "persisted_at": "2026-11-26T16:21:10.197Z"
     },
     "learn-github-grpc-grpc-rust": {
       "learning_id": "learn-github-grpc-grpc-rust",
@@ -213102,9 +213102,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "03994d04c0914986a274ed07d14d1f8643d938ba541f0157770f1c3b037b48e0",
+      "content_hash": "a546c5e6a4a3479020bf0c00e44e334170b43feebf96c78d7a47e7b2aebc059c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:15:51.036Z"
+      "persisted_at": "2026-11-26T16:21:33.041Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants",
@@ -244096,8 +244096,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "1a999f8a",
-      "content_hash": "d1b6c96ac4f0d500f188e43a4279534e28ff196142e8889fe2f3a7a9049c0b27",
+      "source_version": "8f225c1f",
+      "content_hash": "7a13154c9229aa27dd80be98b8d9f1bf8c77f6c6ebc7a2137ba31d3bbe56f991",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -244145,6 +244145,11 @@
           "number": 10488,
           "title": "Drop unsafe jaq builtins",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10722,
+          "title": "build the remaining test jobs with line-table debug info",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244152,7 +244157,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T07:56:59.908Z",
+      "verified_at": "2026-11-26T16:21:13.342Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244194,10 +244199,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "repository": "metalbear-co/mirrord",
-      "source_version": "1a999f8a",
-      "content_hash": "a498a721d433d4973dfc0e6b0818aa1e1295a212bf2f6c36485af9d4f0c6971e",
+      "source_version": "8f225c1f",
+      "content_hash": "ab0fe2097805233ca6a9e5a1cbc7c5e86b8ae203aebca861341bdb79803442cb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T07:57:00.586Z"
+      "persisted_at": "2026-11-26T16:21:14.311Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord",
@@ -244206,10 +244211,10 @@
       "relative_path": "08_VERIFICATION/metalbear-co-mirrord-verification-protocol-empirical-defect-shield-for-metalbear.md",
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord",
       "repository": "metalbear-co/mirrord",
-      "source_version": "1a999f8a",
-      "content_hash": "35dc30a03b3ff66b72f1a70a9fc3db903c7675514d89e1b32def6a0029979e16",
+      "source_version": "8f225c1f",
+      "content_hash": "4841a9d429803976a815d4653d19389fc0cfdb03f699519bf2392007f17d4b75",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:57:00.795Z"
+      "persisted_at": "2026-11-26T16:21:14.626Z"
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -244370,9 +244375,9 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9df87a2e74efa7e8f2872e23d15b5c18b229f0b0ef404104432e0a3b79679e6",
+      "content_hash": "0dfa960eb23cae57e119da26f1a82cf8cc44679df8da64944a007845fde8b931",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T07:57:14.095Z"
+      "persisted_at": "2026-11-26T16:21:32.196Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings",
@@ -244382,9 +244387,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co-mirrord-learnings",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "fed404d2a927090dbc75771c54a3ca10a8cfb08da48f9a7ca547ae055294402e",
+      "content_hash": "77382476852f23a275d0746b8ff3ddc66dccd2f01b16d8fbb22330cf99018d44",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T07:57:14.282Z"
+      "persisted_at": "2026-11-26T16:21:32.464Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -244445,8 +244450,8 @@
       "slug": "milvus-io-milvus",
       "platform": "github",
       "source_url": "https://github.com/milvus-io/milvus",
-      "source_version": "45164988",
-      "content_hash": "b9967214fb35757e69f24e2dd4bfa22660c8e9ee7ff4badfbc995b158cae8855",
+      "source_version": "b830b0cd",
+      "content_hash": "ca044f0915dafca54b0b658bc754d5efed3c74e7bd53a5969f7e989d1560e47d",
       "dossier_path": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
       "promoted_rules": [
@@ -244504,6 +244509,11 @@
           "number": 10546,
           "title": "Wake QueryView recovery waiters before WAL shutdown",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10724,
+          "title": "build(deps): bump milvus-storage for per-client GCP credentials",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244511,7 +244521,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T15:00:43.520Z",
+      "verified_at": "2026-11-26T16:21:26.862Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274670,8 +274680,8 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "b03773cb",
-      "content_hash": "9b5fea2d363eff5ea37cfa556947151796c8af3394dbaeb69541942953f86dea",
+      "source_version": "e9871f12",
+      "content_hash": "4c8f1a4410f82abceb42d6be0145cb95ed2572c4bfdfbae9ab66c40b25d5ef6b",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
@@ -274694,6 +274704,11 @@
           "number": 10219,
           "title": "[ios][file-system] Fix crash when a DownloadTask/UploadTask is cancelled or rele",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10723,
+          "title": "[router] Port upstream React Navigation accessibility fixes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -274701,7 +274716,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:30:13.435Z",
+      "verified_at": "2026-11-26T16:21:19.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -356690,6 +356705,96 @@
       "content_hash": "bd7f5064f451cc55e03afa6360f71bdbf47156dd1eb99d91666787e05a0e6902",
       "domain_letter": "A",
       "persisted_at": "2026-11-26T16:10:58.553Z"
+    },
+    "rule-10722": {
+      "learning_id": "rule-10722",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10722,
+      "title": "build the remaining test jobs with line-table debug info",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "8f225c1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:21:13.342Z"
+    },
+    "candidate_directive-build-the-remaining-test-jobs-with-line-table-debug-info": {
+      "item_id": "candidate_directive-build-the-remaining-test-jobs-with-line-table-debug-info",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EWTU-build-the-remaining-test-jobs-with-line-table-debug-info.md",
+      "title": "build the remaining test jobs with line-table debug info",
+      "repository": "metalbear-co/mirrord",
+      "source_version": "8f225c1f",
+      "content_hash": "f5c6e9c91894ecb538aa191d4c8eba2b413a2b341d1871fbfd1d3bd76cb51324",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T16:21:14.041Z"
+    },
+    "rule-10723": {
+      "learning_id": "rule-10723",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10723,
+      "title": "[router] Port upstream React Navigation accessibility fixes",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "e9871f12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:21:19.136Z"
+    },
+    "candidate_directive-router-port-upstream-react-navigation-accessibility-fixes": {
+      "item_id": "candidate_directive-router-port-upstream-react-navigation-accessibility-fixes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FCAY-router-port-upstream-react-navigation-accessibility-fixes.md",
+      "title": "[router] Port upstream React Navigation accessibility fixes",
+      "repository": "expo-expo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a6db0a067c913764a95c2a46ee9de4431fe87e526691a672613ec31ada7b7816",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-26T16:21:34.091Z"
+    },
+    "rule-10724": {
+      "learning_id": "rule-10724",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10724,
+      "title": "build(deps): bump milvus-storage for per-client GCP credentials",
+      "source_url": "https://github.com/milvus-io/milvus",
+      "source_version": "b830b0cd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:21:26.863Z"
+    },
+    "candidate_directive-build-deps-bump-milvus-storage-for-per-client-gcp-credentials": {
+      "item_id": "candidate_directive-build-deps-bump-milvus-storage-for-per-client-gcp-credentials",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F79E-build-deps-bump-milvus-storage-for-per-client-gcp-credentials.md",
+      "title": "build(deps): bump milvus-storage for per-client GCP credentials",
+      "repository": "milvus-io/milvus",
+      "source_version": "b830b0cd",
+      "content_hash": "15c9fa8def34dde0c7dd9bf8c322e82853ff9a7e4e279ce9cd8674c6e0c247c4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T16:21:27.561Z"
+    },
+    "candidate_directive-ci-build-the-remaining-test-jobs-with-line-table-debug-info": {
+      "item_id": "candidate_directive-ci-build-the-remaining-test-jobs-with-line-table-debug-info",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FAM5-ci-build-the-remaining-test-jobs-with-line-table-debug-info.md",
+      "title": "ci: build the remaining test jobs with line-table debug info",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ebf25080754571b03bfb42c3730389d186104cf6156b3d69dc6c63d6880484a2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T16:21:31.908Z"
     }
   },
   "ai-builder-brain": {

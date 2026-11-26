@@ -13491,3 +13491,7 @@ Every entry in this ledger must capture:
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `c8e3c011` | Multi-dimensional audit evidence | 2026-11-26T16:10:52.670Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `ba842b46` | Multi-dimensional audit evidence | 2026-11-26T16:10:55.272Z |
 | `learn-github-run-llama-llama_index` | `https://github.com/run-llama/llama_index` | `40d4f79e` | Multi-dimensional audit evidence | 2026-11-26T16:10:58.200Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-26T16:21:09.872Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `8f225c1f` | Multi-dimensional audit evidence | 2026-11-26T16:21:13.678Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `e9871f12` | Multi-dimensional audit evidence | 2026-11-26T16:21:19.462Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `b830b0cd` | Multi-dimensional audit evidence | 2026-11-26T16:21:27.188Z |

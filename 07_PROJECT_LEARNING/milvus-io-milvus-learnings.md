@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `45164988`  
+> **Source Version**: `b830b0cd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:00:42.270Z  
+> **Timestamp**: 2026-11-26T16:21:25.694Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:00:42.262Z  
+> **Harvest Timestamp**: 2026-11-26T16:21:25.686Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46739 stars
+- **Stars / Engagement**: 46747 stars
 
 ---
 
@@ -1547,17 +1547,14 @@ RunDataset(const Dataset& d) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #56021** (2026-11-25): **CI trust-path probe (transient, will be closed)**
-  *Symptoms*: Authorized CI trust-boundary check: this PR adds a single marker file and is closed immediately after observing which base-context workflow jobs (if any) execute it. No secret values are printed.
-  **Post-Mortem & Fix Analysis**:
-  > Welcome @le-schlo! It looks like this is your first PR to milvus-io/milvus 🎉
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please assign **zhuwenxing** after the PR has been reviewed. You can assign the PR to them by writing `/assign @zhuwenxing` in a comment when ready.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/milvus-io/milvus/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["zhuwenxing"]} -->
+- **Issue #56108** (2026-11-26): **enhance: keep the GC checkpoint test fixture out of production builds**
+  *Symptoms*: ### Problem `internal/datacoord/gc/checkpoint_fixtures_testonly.go` (added in #52977) is guarded by `//go:build test || dynamic`. Production builds pass the `dynamic` tag (`MILVUS_GO_BUILD_TAGS` in the Makefile), so this test-only fixture is compiled into the `milvus` binary. It imports `testing` and `github.com/bytedance/mockey`, and it is the only package in the production dependency graph that imports mockey.  In mockey v1.4.6, the `internal/monkey/linkname` package has an `init()` that walks the main module's whole function table and stores every function in a name-to-PC map and a `[]*runtime.Func` slice. It runs at startup in every Milvus process. In a mixcoord heap profile taken on master `20746425a1` (`inuse_space`, after a forced GC), `github.com/bytedance/mockey/internal/monkey/linkname.init.0` retained 9.97 MB (flat = cum).  ### Change Change the build constraint to `//go:build test`, as used by the other `*_testonly.go` fixtures in `internal/datacoord`.  ### Verification - `go list -deps -tags dynamic,sonic,with_jemalloc,bytedance_tango ./cmd`, before and after: on arm64, 22 packages leave the production dependency set (mockey, its 12 internal packages, the goconvey/smartystreets/gls packages it pulls in, and `golang.org/x/arch/arm64/arm64asm`); on amd64, 21. No package is added. - No non-test code references the fixture's symbols (`MockCheckpointCatalog`, `CheckDroppedSegmentGCForTest`, `DataViewCompactionProtectionForTest`, `(*GarbageCollector).ContextForTest`). 
 
-- **Issue #55991** (2026-11-25): **enhance: reclaim empty PK version index storage**
-  *Symptoms*: When a vchannel goes idle after a burst of writes, TTL eviction removes the PK version entries but leaves the hash tables and expiration queue allocated. With many previously written collections, that storage remains reachable after the live-entry byte budget drops to zero.  Release the backing storage under the index mutex when the last entry expires. Preserve the forgotten-write boundary for CAS validation and allocate a map on the next admitted PK write.  Related: #52374  design doc: docs/design-docs/design_docs/20260601-partial-update-optimistic-lock-design.md  ## Validation  - The regression fails on the old implementation and passes on the new one. It covers both Int64 and VarChar PKs, stale snapshot rejection, and conflict detection after a later write recreates the index. - Isolated index unit tests pass with the race detector and 95.1% statement coverage on Go 1.26.11 (darwin/arm64). The full interceptor package was blocked by a local C++ dependency mismatch. - In a local workload of 4,096 vchannels with 1,000 distinct PKs each, expiring all entries reduced post-GC retained heap from 177.5 MiB to 0.73 MiB. Active update median was 27.1 µs before and 27.5 µs after. Evicting and refilling a 1,000-PK index took 183 µs before and 227 µs after. 
+- **Issue #56071** (2026-11-26): **fix: [3.0] bump milvus-storage to read Tencent role_arn volumes**
+  *Symptoms*: issue: #56070 pr: #54316  ## What  Upgrade milvus-storage from `03e23960` to `49b22ab8`. The only change in that range is milvus-io/milvus-storage#846, the 3.0 backport of milvus-io/milvus-storage#714 ("support Tencent OIDC assume-role chains").  ## Why  An external collection on Tencent COS that reads through a customer role sends `cloud_provider=tencent`, `use_iam=true`, `role_arn` and an optional `external_id`. Go admission accepts that spec, but milvus-storage `03e23960` handles `role_arn` only for aws and aliyun. Creating the filesystem therefore fails with `role_arn not supported for cloud provider: tencent`, and the collection can be created but not read.  With #846, milvus-storage takes the pod's TKE OIDC identity and assumes the target role with a TC3-signed `sts:AssumeRole` call, sending `ExternalId` when it is set.  Master has had #714 since #54316 moved its storage pin to `3bc763b`, so this change has no master PR of its own.  ## Effect on other Tencent deployments  #846 also rewrites the Tencent STS client that plain `use_iam` deployments (no `role_arn`) use. In the #846 review, the old and new clients were compared on about 30 STS response shapes: responses of the real shape and HTTP errors behave as before.  ## Validation  - milvus-io/milvus-storage#846 passed its CI (build, unit tests, Talon integration) before it merged. - This PR changes only the pin. Milvus CI builds and tests it. - Not tested against live Tencent COS on 3.0.  🤖 Generated with [Claude Code
   **Post-Mortem & Fix Analysis**:
-  > [ci-v2-notice] Notice: New ci-v2 system is enabled for this PR.  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check  // for ci-v2/code-check - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build  // for ci-v2/build - /ci-rerun-build-all  // for ci-v2/build-all (multi-arch builds) - /ci-rerun-buildenv  // for ci-v2/build-env (build milvus-env builder images; update .env after the new tag is ready) - /ci-rerun-ut-integration  // for ci-v2/ut-integration, will rerun ci-v2/build - /ci-rerun-ut-go  // for ci-v2/ut-go, will rerun ci-v2/build - /ci-rerun-ut-cpp  // for ci-v2/ut-cpp - /ci-rerun-ut  // for all ci-v2/ut-integration, ci-v2/ut-go, ci-v2/ut-cpp, will rerun ci-v2/build - /ci-rerun-e2e-default  // for ci-v2/e2e-default - /ci-rerun-e2e-pulsar-wp  // for ci-v2/e2e-pulsar-wp (GCP branch-equivalent Pulsar + Woodpecker Python E2E) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e pool dispatcher) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp 
-  > /lgtm /approve
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"52734c83943729a91ce915bf077060f2e21a70f5","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-26T08:13:19.814808Z">2026-11-26T08:13:19.814808Z</relative-time> | `52734c8` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please ask for approval from **xiaofan-luan** after the PR has been reviewed.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[internal/core/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/internal/core/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["xiaofan-luan"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1574,1241 +1571,605 @@ RunDataset(const Dataset& d) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae3d2586` (2026-11-25)
-**Commit Message**: fix: Wake QueryView recovery waiters before WAL shutdown (#55391)
+### Incident Patch 1: `a9679897` (2026-11-26)
+**Commit Message**: build(deps): bump milvus-storage for per-client GCP credentials (#56050)
 
-WAL close waits for active operations before closing the QueryView
-handler, but a query waiting for view recovery can hold the operation
-reference that close is waiting for. Stop new acquisitions and wake
-recovery waiters with the existing on-shutdown ViewError before the
-lifetime wait. Keep resources for already acquired leases until the
-later handoff cleanup.
+## What
 
-Propagate the stopped state to shards created during shutdown, preserve
-cancellation and requested-version semantics, and cover recovery waiting
-through the real SN query/search service entrypoints with injected
-resource backends.
+Upgrade milvus-storage from `ce42fa1d` to `f9138562`. The only change in
+that range is milvus-io/milvus-storage#837 ("allow multiple GCP
+identities on the same endpoint and bucket").
 
-Related issue: #40451
+## Why
 
-Validation: focused SN handler, WAL adaptor, ViewError and streaming
-interceptor tests passed with `-tags dynamic,test -gcflags="all=-N -l"`
-on macOS arm64 using an existing native SDK. Tests cover
-ready/unrecoverable/down/dropped/canceled/deadline/shutdown paths, MVCC
-waiting, and the existing retryable wire projection. The recovery-wait
-and query/search RPC regressions also passed under `-race`. The
-production close ordering was traced from lifetime stop through
-acquisition shutdown, operation drain and ha
+The old pin kept one process-wide `GcpCredentialRegistry` keyed by
+endpoint and bucket, so two GCP identities on one bucket could not
+coexist. For example, an existing external spec that impersonates a
+service account directly and a new spec that goes through the credential
+Broker on the same bucket blocked each other. #837 removes the registry
+and binds the credential provider to each S3 client.
 
-**File**: `docs/design-docs/design_docs/qviews/query/query_plan.md` (modified, +5/-0)
+## Changes
+
+- `internal/core/thirdparty/milvus-storage/CMakeLists.txt`: the new pin.
+- `internal/core/unittest/test_external_take.cpp`: #837 removes
+`GcpCredentialProvider::IssuesBearerToken()` and `Identity()`, which the
+external spec injection tests used. The tests now check the credential
+mode through what the provider still exposes:
+- both Broker modes build a `GcpBrokerCredentialProvider`; node IAM and
+impersonation do not;
+- Bearer providers return empty AWS credentials, while HMAC returns its
+key pair;
+- the res
+
+**File**: `docs/design-docs/design_docs/20261110-external-collection-broker-iam.md` (modified, +6/-3)
 ```diff
-@@ -9,6 +9,11 @@ locates the local shard by vchannel and returns its real identity in the plan.
- Matching UpRecovering state waits for local recovery; missing or unusable views
- return the existing View errors.
+@@ -189,6 +189,9 @@ fallback. Server tests
+ verify vendor AssumeRole requests with temporary source credentials and
+ sanitized failures.
  
-+Waiting is local to SN; the Coord-facing `UpRecovering` to `Up` projection is
-+unchanged. WAL shutdown stops query acquisition before draining its in-flight
-+operations: waiters wake and new acquisitions fail with an on-shutdown error.
-+QueryView resources are released only after those operations finish.
-+
- Planning first acquires a serving View with the request's exact schema, then
- fixes one MVCC and waits for the runtime's Growing and Transform data visibility.
- It resolves the View's loaded partitions and optimizes against its exact read
+-The one-GCP-identity-per-(endpoint,bucket) registry restriction and mixed
+-GCP/S3 HTTP-factory initialization limitation remain. Mocked tests and source
+-inspection do not establish production deployment or live five-cloud E2E.
++milvus-storage f9138562 (milvus-storage#837) removes the process-wide GCP
++credential registry and the separate GCP HTTP-factory initialization. The
++credential provider is bound to each S3 client, so several GCP identities can
++share an endpoint and bucket, and GCP and S3-compatible filesystems initialize
++together in one process. Mocked tests and source inspection do not establish
++production deployment or live five-cloud E2E.
 ```
 
-**File**: `internal/streamingnode/server/wal/adaptor/query_shutdown_test.go` (added, +257/-0)
+**File**: `internal/core/src/storage/loon_ffi/util.cpp` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,257 @@
-+package adaptor
+@@ -1267,7 +1267,8 @@ InjectExternalSpecProperties(
+ 
+     // Target impersonation and Broker tokens have the same endpoint contract
+     // in Go admission and native readers, including persisted specs. Plain IAM
+-    // retains GcpCredentialRegistry's operator-trusted endpoint delivery policy.
++    // keeps milvus-storage's Bearer delivery policy: HTTPS *.googleapis.com,
++    // or an endpoint the operator's primary GCP filesystem trusts.
+     if (spec_cloud_provider == "gcp" &&
+         (has_target || !broker_endpoint.empty())) {
+         arrow::util::Uri endpoint;
+```
+
+**File**: `internal/core/thirdparty/milvus-storage/CMakeLists.txt` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+ # Update milvus-storage_VERSION for the first occurrence
+ milvus_add_pkg_config("milvus-storage")
+ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES "")
+-set( milvus-storage_VERSION ce42fa1d4bec64015ff7dab9232634e1b6e602bf)
++set( milvus-storage_VERSION f9138562ffa1c8567b7197518164374c9eb5e7fa)
+ set( GIT_REPOSITORY  "https://github.com/milvus-io/milvus-storage.git")
+ message(STATUS "milvus-storage repo: ${GIT_REPOSITORY}")
+ message(STATUS "milvus-storage version: ${milvus-storage_VERSION}")
+```
+
+**File**: `internal/core/unittest/test_external_take.cpp` (modified, +34/-9)
+```diff
+@@ -52,6 +52,7 @@
+ #include "knowhere/comp/index_param.h"
+ #include "milvus-storage/filesystem/fs.h"
+ #include "milvus-storage/lob_column/lob_reference.h"
++#include "milvus-storage/filesystem/gcp/gcp_broker_credential_provider.h"
+ #include "milvus-storage/filesystem/gcp/gcp_credential_provider.h"
+ #include "milvus-storage/properties.h"
+ #include "milvus-storage/reader.h"
+@@ -4978,13 +4979,19 @@ TEST(InjectExtfsAllowlist, GcpBrokerTargetAndEndpoint) {
+     ASSERT_TRUE(config.ok()) << config.status();
+     EXPECT_EQ(config->gcp_target_service_account, target);
+     EXPECT_EQ(config->credential_endpoint, endpoint);
++    // use_iam would make the Broker mint tokens for its own identity instead
++    // of the target.
++    EXPECT_FALSE(config->use_iam);
+     EXPECT_EQ(config->access_key_id, "");
+     EXPECT_EQ(config->access_key_value, "");
+     EXPECT_EQ(config->talon_mode, milvus_storage::TalonMode::Disabled);
+     auto provider = milvus_storage::BuildGcpProviderFromConfig(*config);
+     ASSERT_TRUE(provider.ok()) << provider.status();
+-    EXPECT_TRUE((*provider)->IssuesBearerToken());
+-    EXPECT_EQ((*provider)->Identity().find("broker:"), 0u);
++    // The Broker provider, sending Bearer tokens (HMAC returns its key pair).
++    EXPECT_NE(dynamic_cast<milvus_storage::GcpBrokerCredentialProvider*>(
++                  provider->get()),
++              nullptr);
++    EXPECT_TRUE((*provider)->GetAWSCredentials().IsEmpty());
+ 
+     auto reject = [&](const nlohmann::json& spec) {
+         milvus_storage::api::Properties denied;
+@@ -5067,13 +5074,25 @@ TEST(InjectExtfsAllowlist, GcpTargetServiceAccountWithOptionalIam) {
+             std::make_shared<const milvus_storage::api::Properties>(props),
+             "gs://storage.googleapis.com/bucket/path");
+         ASSERT_TRUE(config.ok()) << config.status();
++        EXPECT_EQ(config->gcp_target_service_account, target);
++        EXPECT_TRUE(config->credential_endpoint.empty());
+         EXPECT_EQ(config->access_key_id, "");
+         EXPECT_EQ(config->access_key_value, "");
+         EXPECT_EQ(config->talon_mode, milvus_storage::TalonMode::Disabled);
+         auto provider = milvus_storage::BuildGcpProviderFromConfig(*config);
+         ASSERT_TRUE(provider.ok()) << provider.status();
+-        EXPECT_TRUE((*provider)->IssuesBearerToken());
+-        EXPECT_EQ((*provider)->Identity(), "impersonate:" + target);
++        // A Bearer provider outside the Broker: node IAM or impersonation.
++        EXPECT_EQ(dynamic_cast<milvus_storage::GcpBrokerCredentialProvider*>(
++                      provider->get()),
++                  nullptr);
++        EXPECT_TRUE((*provider)->GetAWSCredentials().IsEmpty());
++        // Node IAM takes no token lifetime; impersonation rejects one above
++        // GCP's 3600 s cap.
++        auto unbounded = *config;
++        unbounded.load_frequency = 7200;
++        EXPECT_TRUE(milvus_storage::BuildGcpProviderFromConfig(unbounded)
++                        .status()
++                        .IsInvalid());
+     }
+ }
+ 
+@@ -5182,8 +5201,9 @@ TEST(InjectExtfsAllowlist, S3CloudEndpointsResolveWithExplicitPort) {
+ }
+ 
+ TEST(InjectExtfsAllowlist, GcpPlainIamKeepsTrustedEndpointPolicy) {
+-    // Injection must preserve plain IAM's existing endpoint policy. Actual
+-    // Bearer delivery still depends on the operator-trusted registry entry.
++    // Injection must preserve plain IAM's existing endpoint policy.
++    // milvus-storage still sends the Bearer token to these custom endpoints
++    // only after the operator's primary GCP filesystem trusts them.
+     ASSERT_TRUE(
+         InitCredentialBrokerPolicy(
+             std::string(
+@@ -5251,16 +5271,21 @@ TEST(InjectExtfsAllowlist, GcpBrokerIamProviderAndValidation) {
+     EXPECT_EQ(config->talon_mode, milvus_storage::TalonMode::Disabled);
+     auto provider = milvus_storage::BuildGcpProviderFromConfig(*config);
+     ASSERT_TRUE(provider.ok()) << provider.status();
+-    EXPECT_TRUE((*provider)->IssuesBearerToken());
+-    EXPECT_EQ((*provider)->Identity(), "broker-iam:" + endpoint);
++    EXPECT_NE(dynamic_cast<milvus_storage::GcpBrokerCredentialProvider*>(
++                  provider->get()),
++              nullptr);
++    EXPECT_TRUE((*provider)->GetAWSCredentials().IsEmpty());
+ 
+     // Without a Broker endpoint the same IAM flag still selects node IAM.
+     auto node_config = *config;
+     node_config.credential_endpoint.clear();
+     auto node_provider =
+         milvus_storage::BuildGcpProviderFromConfig(node_config);
+     ASSERT_TRUE(node_provider.ok()) << node_provider.status();
+-    EXPECT_EQ((*node_provider)->Identity(), "iam");
++    EXPECT_EQ(dynamic_cast<milvus_storage::GcpBrokerCredentialProvider*>(
++                  node_provider->get()),
++              nullptr);
++    EXPECT_TRUE((*node_provider)->GetAWSCredentials().IsEmpty());
+ 
+     auto reject = [&](const nlohmann::json& spec) {
+         milvus_storage::api::Properties denied;
+```
+
+---
+
+### Incident Patch 2: `b830b0cd` (2026-11-26)
+**Commit Message**: enhance: keep the GC checkpoint test fixture out of production builds (#56108)
+
+### Problem
+`internal/datacoord/gc/checkpoint_fixtures_testonly.go` (added in
+#52977) is guarded by `//go:build test || dynamic`. Production builds
+pass the `dynamic` tag (`MILVUS_GO_BUILD_TAGS` in the Makefile), so this
+test-only fixture is compiled into the `milvus` binary. It imports
+`testing` and `github.com/bytedance/mockey`, and it is the only package
+in the production dependency graph that imports mockey.
+
+In mockey v1.4.6, the `internal/monkey/linkname` package has an `init()`
+that walks the main module's whole function table and stores every
+function in a name-to-PC map and a `[]*runtime.Func` slice. It runs at
+startup in every Milvus process. In a mixcoord heap profile taken on
+master `20746425a1` (`inuse_space`, after a forced GC),
+`github.com/bytedance/mockey/internal/monkey/linkname.init.0` retained
+9.97 MB (flat = cum).
+
+### Change
+Change the build constraint to `//go:build test`, as used by the other
+`*_testonly.go` fixtures in `internal/datacoord`.
+
+### Verification
+- `go list -deps -tags dynamic,sonic,with_jemalloc,bytedance_tango
+./cmd`, before and after: on arm64, 22 packages leave th
+
+**File**: `internal/datacoord/gc/checkpoint_fixtures_testonly.go` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-//go:build test || dynamic
++//go:build test
+ 
+ // Licensed to the LF AI & Data foundation under one
+ // or more contributor license agreements. See the NOTICE file
+```
+
+---
+
+### Incident Patch 3: `efd7ef8d` (2026-11-26)
+**Commit Message**: fix: Align refused RESTful request logs and authorization reports with gRPC (#55957)
+
+issue: #55955
+
+A request refused before it reaches the Proxy method left different
+records depending on the entry it came through. The first commit aligns
+the RESTful entry with gRPC in four places without touching any log
+format: values are only made available, and the configured access log
+formatter decides which of them are written.
+
+The second commit is the one change to the default configuration: the
+default `upsert` formatter now also applies to the RESTful v2 upsert
+path.
+
+The third commit is the one change to a response: a RESTful request
+naming a partition that does not exist is no longer answered as a rate
+limit rejection.
+
+The fourth commit lets the error type of a failed RESTful call reach the
+access log.
+
+### What changes
+
+| | Before | After |
+|---|---|---|
+| Access log of a RESTful request refused by authentication | user
+`Unknown`, code `Unknown`, empty message and error type | claimed user
+name, code `1800`, message, `input_error` |
+| Authorization report (`ReportAction` / `ActionAuthorize`) from the
+RESTful entry | context without the gin context, so an extension cannot
+read clien
+
+**File**: `configs/milvus.yaml` (modified, +1/-1)
+```diff
+@@ -520,7 +520,7 @@ proxy:
+         methods: "HybridSearch, Search, /search, /v1/vector/search, /v2/vectordb/entities/search, /v2/vectordb/entities/advanced_search, /v2/vectordb/entities/hybrid_search"
+       upsert:
+         format: "[$time_now] [ACCESS] <$user_name: $user_addr> $method_name [status: $method_status] [code: $error_code] [sdk: $sdk_version] [msg: $error_msg] [traceID: $trace_id] [timeCost: $time_cost] [database: $database_name] [collection: $collection_name] [partitions: $partition_name] [partial_update: $partial_update] [error_type: $error_type]"
+-        methods: Upsert
++        methods: "Upsert, /v2/vectordb/entities/upsert"
+     cacheSize: 0 # Size of log of write cache, in byte. (Close write cache if size was 0)
+     cacheFlushInterval: 3 # time interval of auto flush write cache, in seconds. (Close auto flush if interval was 0)
+   connectionCheckIntervalSeconds: 120 # the interval time(in seconds) for connection manager to scan inactive client info
+```
+
+**File**: `internal/distributed/proxy/httpserver/auth_report_test.go` (added, +135/-0)
+```diff
+@@ -0,0 +1,135 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package httpserver
 +
 +import (
 +	"context"
-+	"sync"
-+	"sync/atomic"
++	"net/http"
++	"net/http/httptest"
 +	"testing"
-+	"time"
 +
 +	"github.com/bytedance/mockey"
++	"github.com/gin-gonic/gin"
++	"github.com/stretchr/testify/assert"
 +	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc/codes"
++	"google.golang.org/grpc/status"
 +
-+	"github.com/milvus-io/milvus/internal/metastore"
-+	"github.com/milvus-io/milvus/internal/metastore/kv/streamingnode"
-+	"github.com/milvus-io/milvus/internal/mocks/streamingnode/server/wal/interceptors/shard/mock_shards"
-+	"github.com/milvus-io/milvus/internal/streamingnode/server/resource"
-+	"github.com/milvus-io/milvus/internal/streamingnode/server/wal/snview"
-+	"github.com/milvus-io/milvus/internal/views/qviews"
-+	"github.com/milvus-io/milvus/internal/views/viewerror"
-+	worknodehandler "github.com/milvus-io/milvus/internal/views/worknode/handler"
-+	"github.com/milvus-io/milvus/pkg/v3/kv"
-+	"github.com/milvus-io/milvus/pkg/v3/kv/predicates"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/viewpb"
-+	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
-+	"github.com/milvus-io/milvus/pkg/v3/streaming/walimpls/impls/walimplstest"
++	"github.com/milvus-io/milvus-proto/go-api/v3/hook"
++	"github.com/milvus-io/milvus-proto/go-api/v3/milvuspb"
++	"github.com/milvus-io/milvus/internal/proxy"
++	"github.com/milvus-io/milvus/internal/util/hookutil"
 +	"github.com/milvus-io/milvus/pkg/v3/util/merr"
 +	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
 +)
 +
-+type queryShutdownTestResMgr struct {
-+	mu        sync.Mutex
-+	acquired  map[qviews.QueryViewKey]snview.AcquireResource
-+	onRelease func(snview.ReleaseResource)
++type reportedAction struct {
++	ctx        context.Context
++	req        interface{}
++	fullMethod string
++	action     string
 +}
 +
-+func newQueryShutdownTestResMgr(onRelease func(snview.ReleaseResource)) *queryShutdownTestResMgr {
-+	return &queryShutdownTestResMgr{
-+		acquired:  make(map[qviews.QueryViewKey]snview.AcquireResource),
-+		onRelease: onRelease,
-+	}
++type actionRecorder struct {
++	hookutil.DefaultExtension
++	actions []reportedAction
 +}
 +
-+func (m *queryShutdownTestResMgr) Acquire(req snview.AcquireResource) {
-+	m.mu.Lock()
-+	m.acquired[req.Key] = req
-+	m.mu.Unlock()
++func (r *actionRecorder) ReportAction(ctx context.Context, req interface{}, _ interface{}, _ error, fullMethod string, action string) error {
++	r.actions = append(r.actions, reportedAction{ctx: ctx, req: req, fullMethod: fullMethod, action: action})
++	return nil
 +}
 +
-+func (m *queryShutdownTestResMgr) Release(req snview.ReleaseResource) {
-+	if m.onRelease != nil {
-+		m.onRelease(req)
-+	}
-+	go req.OnDropped()
-+}
-+
-+func (m *queryShutdownTestResMgr) getAcquired(key qviews.QueryViewKey) (snview.AcquireResource, bool) {
-+	m.mu.Lock()
-+	defer m.mu.Unlock()
-+	req, ok := m.acquired[key]
-+	return req, ok
-+}
-+
-+type failingQueryViewMetaKV struct {
-+	kv.MetaKv
-+	entered chan struct{}
-+	once    sync.Once
-+}
-+
-+func (f *failingQueryViewMetaKV) MultiSaveAndRemove(
-+	ctx context.Context,
-+	_ map[string]string,
-+	_ []string,
-+	_ ...predicates.Predicate,
-+) error {
-+	f.once.Do(func() {
-+		close(f.entered)
-+	})
-+	if err := ctx.Err(); err != nil {
-+		return err
-+	}
-+	return merr.WrapErrIoFailedReason("etcd unavailable")
-+}
-+
-+func newQueryShutdownTestView(vchannel string, replicaID int64, state viewpb.QueryViewState) *viewpb.QueryViewOfShard {
-+	return &viewpb.QueryViewOfShard{
-+		Meta: &viewpb.QueryViewMeta{
-+			CollectionId: 1,
-+			ReplicaId:    replicaID,
-+			Vchannel:     vchannel,
-+			State:        state,
-+			Version: &viewpb.QueryViewVersion{
-+				DataVersion:  &viewpb.DataVersion{StreamingVersion: 1},
-+				QueryVersion: 1,
-+			},
-+		},
-+		StreamingNode: &viewpb.QueryViewOfStreamingNode{},
-+	}
-+}
-+
-+func newQueryShutdownTestWAL(
-+	t *testing.T,
-+	catalog metastore.StreamingNodeCataLog,
-+	resMgr snview.StreamingNodeResourceManager,
-+	views []*viewpb.QueryViewOfShard,
-+) *walAdaptorImpl {
-+	t.Helper()
-+	paramtable.Init()
-+	resource.InitForTest(t)
-+
-+	walImpls := newFirstTimeTickWALImpls(func(context.Context, message.MutableMessage) (message.MessageID, error) {
-+		return walimplstest.NewTestMessageID(1), nil
-+	})
-+	roWAL := adaptImplsToROWAL(walImpls, func() {})
-+	param, err := buildInterceptorParams(context.Background(), walImpls, nil)
-+	require.NoError(t, err)
-+	shardManager := mock_shards.NewMockShardManager(t)
-+	shardManager.EXPECT().Close().Return()
-+	param.ShardManager = shardManager
-+
-+	w := adaptImplsToRWWAL(roWAL, nil, param)
-+	w.queryViewHandler = snview.RecoverPChannelSNQueryViewHandler(
-+		roWAL.availableCtx,
-+		walImpls.Channel().Name,
-+		catalog,
-+		resMgr,
-+		views,
-+	)
-+	return w
-+}
-+
-+func TestWALCloseWakesRecoveryWaitersBeforeResourceRelease(t *testing.T) {
-+	mockey.PatchConvey("close wakes recovery waiters before lifetime drain and resource release", t, func() {
-+		var acquireExited atomic.Bool
-+		var released atomic.Int32
-+		resMgr := newQueryShutdownTestResMgr(func(snview.ReleaseResource) {
-+			require.True(t, acquireExited.Load(), "query plan waiter must exit before handoff releases view resources")
-+			released.Add(1)
-+		})
-+		recovered := newQueryShutdownTestView("first-time-tick-test_1v0", 1, viewpb.QueryViewState_QueryViewStateUp)
-+		w := newQueryShutdownTestWAL(t, nil, resMgr, []*viewpb.QueryViewOfShard{recovered})
-+
-+		entered := make(chan struct{})
-+		var enterOnce sync.Once
-+		var orig func(*snview.SNQueryViewHandler, context.Context, qviews.ShardID, int32) (*snview.QueryViewLease, error)
-+		mockey.Mock((*snview.SNQueryViewHandler).AcquireUpViewAtSchema).Origin(&orig).To(
-+			func(h *snview.SNQueryViewHandler, ctx context.Context, shardID qviews.ShardID, schema int32) (*snview.QueryViewLease, error) {
-+				enterOnce.Do(func() { close(entered) })
-+				lease, er
-```
-
-**File**: `internal/streamingnode/server/wal/adaptor/wal_adaptor.go` (modified, +5/-0)
-```diff
-@@ -403,6 +403,11 @@ func (w *walAdaptorImpl) Close() {
- 	// begin to close the wal.
- 	w.lifetime.SetState(typeutil.LifetimeStateStopped)
- 	w.forceCancelAfterGracefulTimeout()
-+	if w.queryViewHandler != nil {
-+		// Recovery waiters hold a lifetime reference. Wake them before waiting
-+		// for in-flight operations, without releasing their query resources yet.
-+		w.queryViewHandler.StopQueryAcquisition()
-+	}
- 	w.lifetime.Wait()
- 	if w.queryViewHandler != nil {
- 		w.queryViewHandler.CloseForHandoff()
-```
-
-**File**: `internal/streamingnode/server/wal/snview/handler.go` (modified, +7/-0)
-```diff
-@@ -78,6 +78,8 @@ type SNQueryViewHandler struct {
- 	resMgr         StreamingNodeResourceManager
- 	localOptimizer optimizer.LocalOptimizer
- 	leaseDuration  time.Duration
-+	// queriesStopped fails new acquisitions once WAL shutdown starts.
-+	queriesStopped bool
- }
- 
- // recoverSNQueryViewHandler reconstructs the handler from persisted views
-@@ -233,6 +235,7 @@ func (h *SNQueryViewHandler) getOrCreateShard(shardID qviews.ShardID) *snShardVi
- 			onEmpty:       h.makeOnEmpty(shardID),
- 			leaseDuration: h.leaseDuration,
- 		}
-+		shard.queriesStopped = h.queriesStopped
- 		h.shards[shardID] = shard
- 	}
- 	return shard
-@@ -273,6 +276,10 @@ func (h *SNQueryViewHandler) acquireUpViewForSchema(ctx context.Context, shardID
- 			return nil, err
- 		}
- 		h.mu.Lock()
-+		if h.queriesStopped {
-+			h.mu.Unlock()
-+			return nil, viewerror.NewOnShutdownError("query view handler is shutting down")
-+		}
- 		var candidates []*snShardView
- 		if shard := h.shards[shardID]; shard != nil {
- 			candidates = append(candidates, shard)
-```
-
-**File**: `internal/streamingnode/server/wal/snview/handler_test.go` (modified, +15/-0)
-```diff
-@@ -1003,3 +1003,18 @@ func TestSNHandler_Recover_AcquireCallbackFlow(t *testing.T) {
- func (m *mockResourceManager) QueryRuntime(qviews.QueryViewKey) (QueryRuntime, bool) {
- 	return m.runtime, m.runtime != nil
- }
-+
-+func newFullSNViewWithState(version int64, state viewpb.QueryViewState, qnNodeIDs ...int64) qviews.QueryViewAtWorkNode {
-+	meta := buildHandlerTestMeta(version)
-+	meta.State = state
-+	queryNodes := make([]*viewpb.QueryViewOfQueryNode, 0, len(qnNodeIDs))
-+	for _, nodeID := range qnNodeIDs {
-+		queryNodes = append(queryNodes, &viewpb.QueryViewOfQueryNode{
-+			NodeId: nodeID,
-+			Partitions: []*viewpb.QueryViewOfPartition{
-+				{PartitionId: 10, SegmentIds: []int64{nodeID * 100}},
-+			},
-+		})
-+	}
-+	return qviews.NewFullQueryViewAtStreamingNode(meta, &viewpb.QueryViewOfStreamingNode{}, queryNodes)
-+}
-```
-
-**File**: `internal/streamingnode/server/wal/snview/query_lease.go` (modified, +29/-0)
-```diff
-@@ -26,6 +26,10 @@ func (h *SNQueryViewHandler) acquireUpView(ctx context.Context, shardID qviews.S
- 	default:
- 	}
- 	h.mu.Lock()
-+	if h.queriesStopped {
-+		h.mu.Unlock()
-+		return nil, viewerror.NewOnShutdownError("query view handler is shutting down")
-+	}
- 	shard := h.shards[shardID]
- 	h.mu.Unlock()
- 	if shard == nil {
-@@ -34,12 +38,37 @@ func (h *SNQueryViewHandler) acquireUpView(ctx context.Context, shardID qviews.S
- 	return shard.acquireUpView(ctx, version, withTopology)
- }
- 
-+// StopQueryAcquisition wakes recovery waiters without releasing resources used
-+// by in-flight queries. WAL shutdown must call this before waiting for queries
-+// to finish; CloseForHandoff performs resource cleanup after that wait.
-+func (h *SNQueryViewHandler) StopQueryAcquisition() {
-+	h.mu.Lock()
-+	if h.queriesStopped {
-+		h.mu.Unlock()
-+		return
-+	}
-+	h.queriesStopped = true
-+	shards := make([]*snShardView, 0, len(h.shards))
-+	for _, shard := range h.shards {
-+		shards = append(shards, shard)
-+	}
-+	h.mu.Unlock()
-+	// Never nest shard locks under h.mu: onEmpty takes h.mu under a shard lock.
-+	for _, shard := range shards {
-+		shard.stopQueryAcquisition()
-+	}
-+}
-+
- func (s *snShardView) acquireUpView(ctx context.Context, version qviews.QueryViewVersion, withTopology bool) (*QueryViewLease, error) {
- 	for {
- 		if err := ctx.Err(); err != nil {
- 			return nil, err
- 		}
- 		s.mu.Lock()
-+		if s.queriesStopped {
-+			s.mu.Unlock()
-+			return nil, viewerror.NewOnShutdownError("query view %s is shutting down", s.shardID.String())
-+		}
- 		entry, exists := s.views[version]
- 		if !exists {
- 			s.mu.Unlock()
-```
-
-**File**: `internal/streamingnode/server/wal/snview/query_recovery_rpc_test.go` (added, +124/-0)
-```diff
-@@ -0,0 +1,124 @@
-+//go:build test && dynamic
-+
-+package snview
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/milvus-io/milvus/internal/views/viewerror"
-+	"github.com/milvus-io/milvus/internal/views/viewquery"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/viewpb"
-+)
-+
-+type recoveryWaitRuntime struct {
-+	mockQueryRuntime
-+	entered chan struct{}
-+	visible chan struct{}
-+}
-+
-+func (r *recoveryWaitRuntime) WaitMVCCVisible(ctx context.Context, growing, transforming uint64) error {
-+	_ = r.mockQueryRuntime.WaitMVCCVisible(ctx, growing, transforming)
-+	close(r.entered)
-+	select {
-+	case <-ctx.Done():
-+		return ctx.Err()
-+	case <-r.visible:
-+		return nil
-+	}
-+}
-+
-+func TestSNHandler_Phase2RecoveryRPC(t *testing.T) {
-+	for _, operation := range []string{"search", "query"} {
-+		for _, event := range []string{"ready", "unrecoverable", "canceled", "shutdown"} {
-+			t.Run(operation+"/"+event, func(t *testing.T) {
-+				mockResolvePartitions(t)
-+				view := newFullSNViewWithState(1, viewpb.QueryViewState_QueryViewStateUp, 101)
-+				mgr := newMockResourceManager()
-+				runtime := &recoveryWaitRuntime{entered: make(chan struct{}), visible: make(chan struct{})}
-+				mgr.runtime = runtime
-+				h := recoverSNQueryViewHandler(context.Background(), testPChannel, newMockCatalog(), mgr, []*viewpb.QueryViewOfShard{view.IntoProto()})
-+				recovery, ok := mgr.getAcquired(view.QueryViewKey())
-+				require.True(t, ok)
-+				// Empty growing results exercise the real RPC server and task
-+				// provider without needing native segment execution.
-+				server := viewquery.NewServer(h, nil)
-+				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-+				defer cancel()
-+				result := make(chan error, 1)
-+				go func() {
-+					id := view.ShardID().IntoProto()
-+					version := view.Version().IntoProto()
-+					mvcc := &viewpb.QueryPlanMVCC{GrowingTimetick: 11, TransformingTimetick: 10}
-+					var err error
-+					if operation == "search" {
-+						_, err = server.SearchOnView(ctx, &viewpb.SearchOnViewRequest{
-+							ShardId: id, Version: version, Mvcc: mvcc,
-+							LegacyReq: &internalpb.SearchRequest{CollectionID: testCollectionID},
-+						})
-+					} else {
-+						_, err = server.QueryOnView(ctx, &viewpb.QueryOnViewRequest{
-+							ShardId: id, Version: version, Mvcc: mvcc,
-+							LegacyReq: &internalpb.RetrieveRequest{CollectionID: testCollectionID},
-+						})
-+					}
-+					result <- err
-+				}()
-+				waitForRecoveryWaiter(t, h)
-+				select {
-+				case <-runtime.entered:
-+					t.Fatal("runtime used before recovery completed")
-+				default:
-+				}
-+				switch event {
-+				case "ready":
-+					recovery.OnReady()
-+					select {
-+					case <-runtime.entered:
-+					case <-ctx.Done():
-+						t.Fatal("RPC did not resume after recovery")
-+					}
-+					require.EqualValues(t, 11, runtime.growingTimetick)
-+					require.EqualValues(t, 10, runtime.transformingTimetick)
-+					select {
-+					case err := <-result:
-+						t.Fatalf("RPC skipped MVCC visibility wait: %v", err)
-+					default:
-+					}
-+					close(runtime.visible)
-+				case "unrecoverable":
-+					recovery.OnUnrecoverable()
-+				case "canceled":
-+					cancel()
-+				case "shutdown":
-+					h.StopQueryAcquisition()
-+				}
-+				select {
-+				case err := <-result:
-+					switch event {
-+					case "ready":
-+						require.NoError(t, err)
-+					case "canceled":
-+						require.ErrorIs(t, err, context.Canceled)
-+					default:
-+						// Check that the real RPC projection preserves retryability.
-+						wire := viewerror.ConvertViewError(operation, viewerror.NewGRPCStatusFromError(err).Err())
-+						viewErr := viewerror.AsViewError(wire)
-+						require.True(t, viewErr.IsRetryable(), "%v", wire)
-+						if event == "shutdown" {
-+							require.True(t, viewErr.IsOnShutdown())
-+						} else {
-+							require.True(t, viewErr.IsViewInvalidated())
-+						}
-+					}
-+				case <-time.After(5 * time.Second):
-+					t.Fatal("RPC did not finish")
-+				}
-+			})
++func (r *actionRecorder) authorizeActions() []reportedAction {
++	var result []reportedAction
++	for _, action := range r.actions {
++		if action.action == hookutil.ActionAuthorize {
++			result = append(result, action)
 +		}
 +	}
-+}
-```
-
-**File**: `internal/streamingnode/server/wal/snview/query_recovery_wait_test.go` (added, +282/-0)
-```diff
-@@ -0,0 +1,282 @@
-+//go:build test && dynamic
-+
-+package snview
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/bytedance/mockey"
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/protobuf/proto"
-+
-+	"github.com/milvus-io/milvus/internal/views/qviews"
-+	"github.com/milvus-io/milvus/internal/views/viewerror"
-+	"github.com/milvus-io/milvus/internal/views/worknode/handler"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/viewpb"
-+)
-+
-+type queryLeaseResult struct {
-+	lease *QueryViewLease
-+	err   error
-+}
-+
-+// waitForRecoveryWaiter returns once a query has parked on a recovering shard
-+// of testVChannel: waiters take the shard's recovery notification under the
-+// same lock that inspects the state, so a registered channel means "waiting".
-+func waitForRecoveryWaiter(t *testing.T, h *SNQueryViewHandler) {
-+	t.Helper()
-+	require.Eventually(t, func() bool {
-+		h.mu.Lock()
-+		shards := make([]*snShardView, 0, len(h.shards))
-+		for id, shard := range h.shards {
-+			if id.VChannel == testVChannel {
-+				shards = append(shards, shard)
-+			}
-+		}
-+		h.mu.Unlock()
-+		for _, shard := range shards {
-+			shard.mu.Lock()
-+			waiting := shard.recoveryChanged != nil
-+			shard.mu.Unlock()
-+			if waiting {
-+				return true
-+			}
-+		}
-+		return false
-+	}, 5*time.Second, time.Millisecond)
-+}
-+
-+func startRecoveryQuery(ctx context.Context, h *SNQueryViewHandler, id qviews.ShardID, version *qviews.QueryViewVersion) <-chan queryLeaseResult {
-+	result := make(chan queryLeaseResult, 1)
-+	go func() {
-+		var lease *QueryViewLease
-+		var err error
-+		if version == nil {
-+			lease, err = h.AcquireLatestUpView(ctx, id)
-+		} else {
-+			lease, err = h.AcquireUpView(ctx, id, *version)
-+		}
-+		result <- queryLeaseResult{lease, err}
-+	}()
 +	return result
 +}
 +
-+func receiveRecoveryQuery(t *testing.T, result <-chan queryLeaseResult) queryLeaseResult {
-+	t.Helper()
-+	select {
-+	case got := <-result:
-+		if got.lease != nil {
-+			t.Cleanup(got.lease.Release)
-+		}
-+		return got
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("query did not leave recovery wait")
-+		return queryLeaseResult{}
++func recordActions(t *testing.T) *actionRecorder {
++	original := hookutil.GetExtension()
++	t.Cleanup(func() { hookutil.SetTestExtension(original) })
++	recorder := &actionRecorder{}
++	hookutil.SetTestExtension(recorder)
++	return recorder
++}
++
++// A refusal reported as an authorization event carries the gin context, the
++// only place the hook extension can read the HTTP caller from.
++func TestCheckAuthorizationV2ReportsWithGinContext(t *testing.T) {
++	denied := status.Error(codes.PermissionDenied, "PrivilegeSearch: permission deny to alice in the `default` database")
++	privilege := mockey.Mock(proxy.PrivilegeInterceptorWithMetaCache).Return(
++		proxy.PrivilegeFunc(func(ctx context.Context, _ interface{}) (context.Context, error) {
++			return ctx, denied
++		})).Build()
++	defer privilege.UnPatch()
++
++	for _, tc := range []struct {
++		name     string
++		username string
++		status   int
++	}{
++		{name: "no authenticated user", username: "", status: http.StatusUnauthorized},
++		{name: "privilege denied", username: "alice", status: http.StatusForbidden},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			recorder := recordActions(t)
++			w := httptest.NewRecorder()
++			c, _ := gin.CreateTestContext(w)
++			c.Request = httptest.NewRequest(http.MethodPost, "/v2/vectordb/entities/search", nil)
++			c.Set(ContextUsername, tc.username)
++			req := &milvuspb.SearchRequest{DbName: "default", CollectionName: "collection"}
++
++			err := (&HandlersV2{}).checkAuthorizationV2(context.Background(), c, false, req)
++
++			assert.Error(t, err)
++			assert.Equal(t, tc.status, w.Code)
++			reports := recorder.authorizeActions()
++			require.Len(t, reports, 1)
++			assert.Same(t, c, reports[0].ctx.Value(hook.GinParamsKey))
++			assert.Same(t, req, reports[0].req)
++		})
 +	}
 +}
 +
-+func TestSNHandler_RecoveryWaitExits(t *testing.T) {
-+	for _, exact := range []bool{false, true} {
-+		mode := "latest"
-+		if exact {
-+			mode = "exact"
-+		}
-+		for _, event := range []string{"unrecoverable", "down", "dropped", "canceled", "deadline", "shutdown"} {
-+			t.Run(mode+"/"+event, func(t *testing.T) {
-+				view := newFullSNViewWithState(1, viewpb.QueryViewState_QueryViewStateUp, 101)
-+				mgr := newMockResourceManager()
-+				h := recoverSNQueryViewHandler(context.Background(), testPChannel, newMockCatalog(), mgr, []*viewpb.QueryViewOfShard{view.IntoProto()})
-+				recovery, ok := mgr.getAcquired(view.QueryViewKey())
-+				require.True(t, ok)
-+				timeout := 5 * time.Second
-+				if event == "deadline" {
-+					timeout = 100 * time.Millisecond
-+				}
-+				ctx, cancel := context.WithTimeout(context.Background(), timeout)
-+				defer cancel()
-+				var version *qviews.QueryViewVersion
-+				if exact {
-+					v := view.Version()
-+					version = &v
-+				}
-+				result := startRecoveryQuery(ctx, h, view.ShardID(), version)
-+				waitForRecoveryWaiter(t, h)
-+				switch event {
-+				case "unrecoverable":
-+					recovery.OnUnrecoverable()
-+				case "down":
-+					h.ApplyViews([]handler.ApplyView{{View: newSNViewWithState(1, viewpb.QueryViewState_QueryViewStateDown)}})
-+				case "dropped":
-+					h.ApplyViews([]handler.ApplyView{{View: newSNViewWithState(1, viewpb.QueryViewState_QueryViewStateDropped)}})
-+				case "canceled":
-+					cancel()
-+				case "shutdown":
-+					h.StopQueryAcquisition()
-+					h.StopQueryAcquisition()
-+				}
-+				got := receiveRecoveryQuery(t, result)
-+				require.Nil(t, got.lease)
-+				switch event {
-+				case "canceled":
-+					require.ErrorIs(t, got.err, context.Canceled)
-+				case "deadline":
-+					require.ErrorIs(t, got.err, context.DeadlineExceeded)
-+				case "shutdown":
-+					require.True(t, viewerror.AsViewError(got.err).IsOnShutdown(), "%v", got.err)
-+				default:
-+					viewErr := viewerror.AsViewError(got.err)
-+					require.True(t, viewErr.IsRetryable(), "%v", got.err)
-+					if exact {
-+						require.True(t, viewErr.IsViewInvalidated())
-+					} else {
-+						require.True(t, viewErr.IsViewNotFound())
-+					}
-+					// A delayed completion cannot resurrect a failed or retired view.
-+					recovery.OnReady()
-+					lease, err := h.AcquireUpView(ctx, view.ShardID(), view.Version())
-+					require.Nil(t, lease)
-+					require.True(t, viewerror.AsViewError(err).IsViewInvalidated())
-+				}
-+			})
-+		}
++// A rate limit rejection is not an authorization decision. The gRPC limiter
++// does not report it as one, so the RESTful entry must not either.
++func TestRateLimitRejectionIsNotReportedAsAuthorization(t *testing.T) {
++	paramtable.Init()
++	checkLimiter := mockey.Mock(CheckLimiter).Return(nil, merr.ErrServiceRateLimit).Build()
++	defer checkLimiter.UnPatch()
++	recorder := recordActions(t)
++
++	w := httptest.NewRecorder()
++	c, _ := gin.CreateTestContext(w)
++	c.Request = httptest.NewRequest(http.MethodPost, "/v2/vectordb/entities/search", nil)
++	handled := false
++
++	_, err := (&HandlersV2{}).wrapperProxyWithLimit(context.Background(), c, &milvuspb.SearchRequest{}, false, false,
++		"/milvus.proto.milvus.MilvusService/Search", true, nil,
++		func(context.Context, any) (any, error) { handled = true; return nil, nil })
++
++	assert.ErrorIs(t, err, RestRequestInterceptorErr)
++	assert.False(t, handled)
++	code, _ := c.Get(HTTPReturnCode)
++	assert.EqualValues(t, merr.Code(merr.ErrHTTPRateLimit), code)
++	assert.Empty(t, recorder.authorizeActions())
++
+```
+
+**File**: `internal/distributed/proxy/httpserver/constant.go` (modified, +1/-0)
+```diff
+@@ -112,6 +112,7 @@ const (
+ 	ContextResponse               = "response"
+ 	ContextUsername               = "username"
+ 	ContextToken                  = "token"
++	ContextErrorType              = "error_type" // merr classification of a failed call, read by the access log; must match accesslog/info.ContextErrorType
+ 	VectorCollectionsPath         = "/vector/collections"
+ 	VectorCollectionsCreatePath   = "/vector/collections/create"
+ 	VectorCollectionsDescribePath = "/vector/collections/describe"
+```
+
+**File**: `internal/distributed/proxy/httpserver/handler_v2.go` (modified, +18/-6)
+```diff
+@@ -753,21 +753,30 @@ func wrapperTraceLog(v2 handlerFuncV2) handlerFuncV2 {
+ 	}
+ }
+ 
++// ContextWithGin attaches the gin context to ctx under the key the hook
++// extension looks it up by. With it the extension reads the caller of a RESTful
++// request (user, client address, user agent) from the HTTP request; without it
++// the extension looks for gRPC metadata and a gRPC peer, which a RESTful request
++// does not have.
++func ContextWithGin(ctx context.Context, c *gin.Context) context.Context {
++	return context.WithValue(ctx, hook.GinParamsKey, c)
++}
++
+ func (h *HandlersV2) checkAuthorizationV2(ctx context.Context, c *gin.Context, ignoreErr bool, req interface{}) error {
+ 	username, ok := c.Get(ContextUsername)
+ 	if !ok || username.(string) == "" {
+ 		if !ignoreErr {
+ 			HTTPReturn(c, http.StatusUnauthorized, gin.H{HTTPReturnCode: merr.Code(merr.ErrNeedAuthenticate), HTTPReturnMessage: merr.ErrNeedAuthenticate.Error()})
+ 		}
+-		hookutil.GetExtension().ReportAction(ctx, req, WrapErrorToResponse(merr.ErrNeedAuthenticate), nil, c.FullPath(), hookutil.ActionAuthorize)
++		hookutil.GetExtension().ReportAction(ContextWithGin(ctx, c), req, WrapErrorToResponse(merr.ErrNeedAuthenticate), nil, c.FullPath(), hookutil.ActionAuthorize)
+ 		return merr.ErrNeedAuthenticate
+ 	}
+ 	ctx, authErr := proxy.PrivilegeInterceptorWithMetaCache(h.metaCache)(ctx, req)
+ 	if authErr != nil {
+ 		if !ignoreErr {
+ 			HTTPReturn(c, http.StatusForbidden, gin.H{HTTPReturnCode: merr.Code(authErr), HTTPReturnMessage: authErr.Error()})
+ 		}
+-		hookutil.GetExtension().ReportAction(ctx, req, WrapErrorToResponse(authErr), nil, c.FullPath(), hookutil.ActionAuthorize)
++		hookutil.GetExtension().ReportAction(ContextWithGin(ctx, c), req, WrapErrorToResponse(authErr), nil, c.FullPath(), hookutil.ActionAuthorize)
+ 		return authErr
+ 	}
+ 
+@@ -795,7 +804,10 @@ func (h *HandlersV2) wrapperProxyWithLimit(ctx context.Context, ginCtx *gin.Cont
+ 		_, err := CheckLimiter(ctx, req, pxy)
+ 		if err != nil {
+ 			mlog.Warn(context.TODO(), "high level restful api, fail to check limiter", mlog.Err(err), mlog.String("method", fullMethod))
+-			hookutil.GetExtension().ReportAction(ctx, req, WrapErrorToResponse(merr.ErrHTTPRateLimit), nil, ginCtx.FullPath(), hookutil.ActionAuthorize)
++			// A rate limit rejection is not an authorization decision and is
++			// not reported as one; the gRPC limiter does not report it either.
++			// The request still reaches the audit log through the report made
++			// when the RESTful request returns.
+ 			HTTPAbortReturn(ginCtx, http.StatusOK, gin.H{
+ 				HTTPReturnCode:    merr.Code(merr.ErrHTTPRateLimit),
+ 				HTTPReturnMessage: merr.ErrHTTPRateLimit.Error() + ", error: " + err.Error(),
+@@ -818,7 +830,7 @@ func (h *HandlersV2) wrapperProxyWithLimit(ctx context.Context, ginCtx *gin.Cont
+ 			return handler(ctx, req)
+ 		})
+ 	}
+-	response, err := proxy.HookInterceptor(context.WithValue(ctx, hook.GinParamsKey, ginCtx), req, username.(string), fullMethod, forwardHandler)
++	response, err := proxy.HookInterceptor(ContextWithGin(ctx, ginCtx), req, username.(string), fullMethod, forwardHandler)
+ 	if response != nil {
+ 		ginCtx.Set(ContextResponse, response)
+ 	}
+@@ -831,8 +843,8 @@ func (h *HandlersV2) wrapperProxyWithLimit(ctx context.Context, ginCtx *gin.Cont
+ 
+ 	if err != nil {
+ 		// Expose the exact classification (incl. boundary InputError marks) to
+-		// the REST access log; key must match accesslog/info.ContextErrorType.
+-		ginCtx.Set("error_type", merr.GetErrorType(err).String())
++		// the REST access log.
++		ginCtx.Set(ContextErrorType, merr.GetErrorType(err).String())
+ 		mlog.Warn(ctx, "high level restful api, grpc call failed", mlog.Err(err))
+ 		if !ignoreErr {
+ 			HTTPAbortReturn(ginCtx, http.StatusOK, gin.H{HTTPReturnCode: merr.Code(err), HTTPReturnMessage: err.Error()})
+```
+
+**File**: `internal/distributed/proxy/httpserver/handler_v2_test.go` (modified, +4/-0)
+```diff
+@@ -1014,6 +1014,7 @@ func TestTimeoutMiddlewareCommitsBufferedResponsesAndMetadata(t *testing.T) {
+ 				c.Header("X-Test", testcase.name)
+ 				c.Set(ContextRequest, "request-"+testcase.name)
+ 				c.Set(ContextResponse, "response-"+testcase.name)
++				c.Set(ContextErrorType, merr.InputError.String())
+ 				c.Set("traceID", "trace-"+testcase.name)
+ 				testcase.write(c, testcase.code, testcase.name)
+ 			}))
+@@ -1043,6 +1044,9 @@ func TestTimeoutMiddlewareCommitsBufferedResponsesAndMetadata(t *testing.T) {
+ 			value, ok = ctx.Get(ContextResponse)
+ 			assert.True(t, ok)
+ 			assert.Equal(t, "response-"+testcase.name, value)
++			value, ok = ctx.Get(ContextErrorType)
++			assert.True(t, ok)
++			assert.Equal(t, merr.InputError.String(), value)
+ 			value, ok = ctx.Get("traceID")
+ 			assert.True(t, ok)
+ 			assert.Equal(t, "trace-"+testcase.name, value)
+```
+
+**File**: `internal/distributed/proxy/httpserver/timeout_middleware.go` (modified, +5/-0)
+```diff
+@@ -222,6 +222,11 @@ var timeoutContextKeysToPropagate = []string{
+ 	HTTPReturnMessage,
+ 	ContextRequest,
+ 	ContextResponse,
++	// Without it the access log, which reads the original context, falls
++	// back to the default classification of the code and loses the marks
++	// made at the proxy boundary (for example a not-found name is an input
++	// error there, a system error by default).
++	ContextErrorType,
+ 	"traceID",
+ }
+ 
+```
+
+**File**: `internal/distributed/proxy/httpserver/utils.go` (modified, +7/-1)
+```diff
+@@ -5020,7 +5020,13 @@ func CheckLimiter(ctx context.Context, req interface{}, pxy types.ProxyComponent
+ 	metaCache := getProxyMetaCache(pxy)
+ 	dbID, collectionIDToPartIDs, rt, n, err := proxy.GetRequestInfo(ctx, metaCache(), request)
+ 	if err != nil {
+-		return nil, err
++		// Failing to resolve the names in the request is not a rate limit
++		// decision. Let the request through, as the gRPC rate limit
++		// interceptor does, so that the Proxy method reports the real error
++		// (for example partition not found) instead of the caller reporting
++		// a rate limit rejection.
++		mlog.Warn(ctx, "failed to get request info when check limiter", mlog.Err(err))
++		return nil, nil
+ 	}
+ 	if n == 0 {
+ 		return nil, nil
+```
+
+**File**: `internal/distributed/proxy/httpserver/utils_test.go` (modified, +42/-0)
+```diff
+@@ -115,6 +115,48 @@ func TestCheckLimiter_ZeroTokenRequestsBypassLimiter(t *testing.T) {
+ 	}
+ }
+ 
++// A request naming a partition that does not exist is not a rate limit
++// rejection: the limiter is not consulted and the request goes on to the Proxy
++// method, which reports the real error, as it does behind the gRPC rate limit
++// interceptor.
++func TestCheckLimiter_MetaLookupFailureIsNotARateLimitRejection(t *testing.T) {
++	quotaConfig := &paramtable.Get().QuotaConfig.QuotaAndLimitsEnabled
++	originalValue := quotaConfig.GetValue()
++	require.NoError(t, paramtable.Get().Save(quotaConfig.Key, "true"))
++	t.Cleanup(func() { _ = paramtable.Get().Save(quotaConfig.Key, originalValue) })
++
++	pxy := proxyComponentWithMetaCache{ProxyComponent: &proxy.Proxy{}, metaCache: &proxy.MetaCache{}}
++	getLimiter := mockey.Mock((*proxy.Proxy).GetRateLimiter).Return(&proxy.SimpleLimiter{}, nil).Build()
++	defer getLimiter.UnPatch()
++	check := mockey.Mock((*proxy.SimpleLimiter).Check).Return(nil).Build()
++	defer check.UnPatch()
++	getDatabase := mockey.Mock((*proxy.MetaCache).GetDatabaseInfo).Return(&metacache.DatabaseInfo{DBID: 100}, nil).Build()
++	defer getDatabase.UnPatch()
++	getCollection := mockey.Mock((*proxy.MetaCache).GetCollectionID).Return(int64(10), nil).Build()
++	defer getCollection.UnPatch()
++	getPartition := mockey.Mock((*proxy.MetaCache).GetPartitionInfo).Return(nil, merr.WrapErrPartitionNotFound("nopart")).Build()
++	defer getPartition.UnPatch()
++
++	testCases := []struct {
++		name    string
++		request proto.Message
++	}{
++		{"insert", &milvuspb.InsertRequest{DbName: "target", CollectionName: "collection", PartitionName: "nopart"}},
++		{"delete", &milvuspb.DeleteRequest{DbName: "target", CollectionName: "collection", PartitionName: "nopart", Expr: "id == 1"}},
++		{"search", &milvuspb.SearchRequest{DbName: "target", CollectionName: "collection", PartitionNames: []string{"nopart"}, Nq: 1}},
++		{"query", &milvuspb.QueryRequest{DbName: "target", CollectionName: "collection", PartitionNames: []string{"nopart"}}},
 +	}
++	for _, tc := range testCases {
++		t.Run(tc.name, func(t *testing.T) {
++			resp, err := CheckLimiter(context.Background(), tc.request, pxy)
++			assert.NoError(t, err)
++			assert.Nil(t, resp)
++		})
++	}
++	assert.Zero(t, check.Times(), "the limiter must not be consulted when the request info cannot be resolved")
++	assert.EqualValues(t, len(testCases), getPartition.Times(), "the lookup failure must be the reason the limiter was skipped")
 +}
 +
-+func TestSNHandler_RecoveryWaitPinsRequestedVersion(t *testing.T) {
-+	old := newFullSNViewWithState(1, viewpb.QueryViewState_QueryViewStateUp, 101)
-+	newer := newFullSNViewWithState(2, viewpb.QueryViewState_QueryViewStateUp, 102)
-+	mgr := newMockResourceManager()
-+	h := recoverSNQueryViewHandler(context.Background(), testPChannel, newMockCatalog(), mgr, []*viewpb.QueryViewOfShard{old.IntoProto(), newer.IntoProto()})
-+	ol
-```
-
----
-
-### Incident Patch 2: `16ffc35f` (2026-11-25)
-**Commit Message**: fix: align JSON stats existence with raw empty-container semantics (#55594)
-
-Fixes #55290
-
-JSON stats previously treated shredded arrays such as `[]`, `[null]`,
-and recursively empty containers as existing because their column
-entries were valid. Evaluate their BSON contents with the existing
-recursive emptiness check so `EXISTS`, `IS NULL`, and `IS NOT NULL`
-agree with raw JSON evaluation. Scalar columns retain their
-validity-based check.
-
-For parent paths, combine shared and shredded matches with OR. For
-example, in `{"parent":{"a":[1],"empty":null}}`, the empty shared
-remainder must not overwrite the existence established by the shredded
-array.
-
-Resolve scalar descendants first. If all rows are resolved, skip
-remaining arrays and shared data. Otherwise, use the accumulated result
-bitmap to skip fully resolved physical array cells before pinning either
-payload or validity. Mixed cells retain the per-row guard against
-redundant BSON parsing. Ordinary shredding scans retain their existing
-validity handling.
-
-### Validation
-
-- Latest update: `be07357945`. Its source snapshot passed **148 tests
-across 6 suites** through Dev CLI cloud C++ validation, covering JSON
-stats routing, empty
-
-**File**: `internal/core/src/exec/expression/ExistsExpr.cpp` (modified, +68/-2)
-```diff
-@@ -41,6 +41,36 @@
- namespace milvus {
- namespace exec {
- 
-+namespace {
-+
-+// Determine whether each unresolved BSON array contains a nonempty value for
-+// EXISTS. Resolved rows in mixed scan batches need no BSON parsing.
-+void
-+EvaluateShreddedArrayExists(const std::string_view* values,
-+                            ValidityView valid,
-+                            size_t size,
-+                            TargetBitmapView result,
-+                            TargetBitmapView /*valid_result*/,
-+                            TargetBitmapView resolved) {
-+    // The executor slices result for each scan batch; resolved spans the segment.
-+    const auto resolved_batch = resolved.view(result.offset(), size);
-+    for (size_t i = 0; i < size; ++i) {
-+        // Rows already matched by another descendant need no BSON parsing.
-+        if (resolved_batch[i] || (valid && !valid[i])) {
-+            result[i] = false;
-+            continue;
-+        }
-+        // A valid BSON array can still be recursively empty ([], [null],
-+        // [[]], ...). Match Json::exist and the shared BSON evaluator.
-+        BsonView bson(reinterpret_cast<const uint8_t*>(values[i].data()),
-+                      values[i].size());
-+        auto array = bson.ParseAsArrayAtOffset(0);
-+        result[i] = array.has_value() && !BsonView::IsBsonValueEmpty(*array);
-+    }
-+}
-+
-+}  // namespace
-+
- void
- PhyExistsFilterExpr::DetermineExecPath() {
-     // JsonStats is the fallback applied by EnsureExecPathDetermined() when no
-@@ -241,17 +271,49 @@ PhyExistsFilterExpr::EvalJsonExistsForDataSegmentByStats() {
-                         });
-                     auto shredding_fields =
-                         index->GetShreddingFieldsWithPrefix(pointer);
-+                    // Resolve cheap scalar validity first, regardless of field
-+                    // name order, before reading any array payloads.
-                     for (const auto& field : shredding_fields) {
-+                        if (index->GetShreddingJsonType(field) ==
-+                            index::JSONType::ARRAY) {
-+                            continue;
-+                        }
-+                        if (res_view.all()) {
-+                            break;
-+                        }
-                         TargetBitmap temp_valid(active_count_, true);
-                         TargetBitmapView temp_valid_view(temp_valid);
-                         index->ExecutorForGettingValid(
-                             op_ctx_, field, temp_valid_view);
-                         res_view |= temp_valid_view;
-                     }
-+
-+                    // Only read arrays if scalar validity left unresolved rows.
-+                    for (const auto& field : shredding_fields) {
-+                        if (index->GetShreddingJsonType(field) !=
-+                            index::JSONType::ARRAY) {
-+                            continue;
-+                        }
-+                        if (res_view.all()) {
-+                            break;
-+                        }
-+                        TargetBitmap array_exists(active_count_, false);
-+                        // Fully resolved cells need neither payload nor
-+                        // validity. Mixed cells still skip resolved rows in
-+                        // the evaluator; its validity output is unused.
-+                        index->ExecutorForUnresolvedShreddingData<
-+                            std::string_view>(op_ctx_,
-+                                              field,
-+                                              EvaluateShreddedArrayExists,
-+                                              TargetBitmapView(array_exists),
-+                                              TargetBitmapView(array_exists),
-+                                              res_view);
-+                        res_view |= TargetBitmapView(array_exists);
-+                    }
-                 }
- 
-                 // process shared data
--                {
-+                if (!res_view.all()) {
-                     milvus::ScopedTimer timer(
-                         "exists_json_stats_shared_data", [this](double us) {
-                             json_stats_shared_latency_us_ += us;
-@@ -261,7 +323,11 @@ PhyExistsFilterExpr::EvalJsonExistsForDataSegmentByStats() {
-                         bson_index_,
-                         pointer,
-                         [&](BsonView bson, uint32_t row_id, uint32_t offset) {
--                            res_view[row_id] = !bson.IsBsonValueEmpty(offset);
-+                            // A parent can have children in both layouts. An
-+                            // empty shared child must not erase a shredded hit.
-+                            if (!bson.IsBsonValueEmpty(offset)) {
-+                                res_view[row_id] = true;
-+                            }
-                         });
-                 }
- 
-```
-
-**File**: `internal/core/src/exec/expression/JsonContainsByStatsTest.cpp` (modified, +424/-2)
-```diff
-@@ -38,7 +38,9 @@
- #include "common/protobuf_utils.h"
- #include "exec/expression/BinaryRangeExpr.h"
- #include "exec/expression/ExprBatchTestUtils.h"
-+#include "exec/expression/ExprCache.h"
- #include "exec/expression/ExprIndexIntegrationTestUtils.h"
-+#include "exec/expression/ExistsExpr.h"
- #include "exec/expression/JsonContainsExpr.h"
- #include "index/Meta.h"
- #include "exec/expression/TermExpr.h"
-@@ -80,6 +82,16 @@ using namespace milvus::index;
- 
- class JsonStatsProjectionTestAccessor {
-  public:
-+    static std::shared_ptr<ChunkedColumnInterface>&
-+    ShreddingColumn(JsonKeyStats& stats, const std::string& field_name) {
-+        return stats.shredding_columns_.at(field_name);
-+    }
-+
-+    static std::shared_ptr<ChunkedColumnInterface>&
-+    SharedColumn(JsonKeyStats& stats) {
-+        return stats.shared_column_;
-+    }
-+
-     static bool
-     IsInMultiFieldColumnGroup(const JsonKeyStats& stats,
-                               const std::string& field_name) {
-@@ -90,6 +102,70 @@ class JsonStatsProjectionTestAccessor {
- 
- namespace {
- 
-+struct DisableExprCache {
-+    bool was_enabled = exec::ExprResCacheManager::IsEnabled();
-+    DisableExprCache() {
-+        exec::ExprResCacheManager::SetEnabled(false);
-+    }
-+    ~DisableExprCache() {
-+        exec::ExprResCacheManager::SetEnabled(was_enabled);
-+    }
-+};
-+
-+// Keep the real stats reads, but count entry into the expensive scan paths.
-+class CountingExistsColumn : public ChunkedVariableColumn<std::string> {
-+ public:
-+    CountingExistsColumn(std::shared_ptr<cachinglayer::CacheSlot<Chunk>> slot,
-+                         const FieldMeta& meta,
-+                         std::shared_ptr<ChunkedColumnInterface> source)
-+        : ChunkedVariableColumn<std::string>(std::move(slot), meta),
-+          source_(std::move(source)) {
-+    }
-+
-+    ScanResult
-+    Scan(OpContext* ctx, const ScanOptions& options) const override {
-+        ++array_scans;
-+        return source_->Scan(ctx, options);
-+    }
-+
-+    void
-+    BulkRawBsonAt(OpContext* ctx,
-+                  std::function<void(BsonView, uint32_t, uint32_t)> fn,
-+                  const uint32_t* rows,
-+                  const uint32_t* offsets,
-+                  int64_t count) const override {
-+        ++shared_reads;
-+        source_->BulkRawBsonAt(ctx, std::move(fn), rows, offsets, count);
-+    }
-+
-+    mutable int64_t array_scans = 0;
-+    mutable int64_t shared_reads = 0;
-+
-+ private:
-+    std::shared_ptr<ChunkedColumnInterface> source_;
-+};
-+
-+// Use the production scan cursor and record every payload/validity pin.
-+class CountingExistsArrayColumn : public ChunkedVariableColumn<std::string> {
-+ public:
-+    using ChunkedVariableColumn<std::string>::ChunkedVariableColumn;
-+
-+    PinWrapper<Chunk*>
-+    GetChunk(OpContext* ctx, int64_t chunk_id) const override {
-+        pinned_chunks.push_back(chunk_id);
-+        return ChunkedVariableColumn<std::string>::GetChunk(ctx, chunk_id);
-+    }
-+
-+    ScanResult
-+    Scan(OpContext* ctx, const ScanOptions& options) const override {
-+        ++array_scans;
-+        return ChunkedVariableColumn<std::string>::Scan(ctx, options);
-+    }
-+
-+    mutable std::vector<int64_t> pinned_chunks;
-+    mutable int64_t array_scans = 0;
-+};
-+
- bool
- IsValidAt(const std::vector<uint8_t>& valid_data, size_t i) {
-     return ((valid_data[i >> 3] >> (i & 0x07)) & 1) != 0;
-@@ -228,7 +304,8 @@ BuildJsonStatsIndex(const std::vector<std::string>& json_strings,
-                     int64_t field_id,
-                     int64_t build_id,
-                     int64_t version_id,
--                    const std::vector<uint8_t>* valid_data = nullptr) {
-+                    const std::vector<uint8_t>* valid_data = nullptr,
-+                    int64_t max_shredding_columns = 1024) {
-     std::vector<milvus::Json> data;
-     data.reserve(json_strings.size());
-     for (const auto& s : json_strings) {
-@@ -284,7 +361,8 @@ BuildJsonStatsIndex(const std::vector<std::string>& json_strings,
-     Config build_config;
-     build_config[INSERT_FILES_KEY] = std::vector<std::string>{log_path};
- 
--    auto builder = std::make_shared<JsonKeyStats>(ctx, false);
-+    auto builder =
-+        std::make_shared<JsonKeyStats>(ctx, false, max_shredding_columns);
-     builder->Build(build_config);
- 
-     const auto create_index_result = builder->Upload(build_config);
-@@ -2054,3 +2132,347 @@ TEST(JsonStatsExecPathTest, TypedArrayIndexWinsOverJsonStatsForContains) {
-                   exec::ExprExecPath::JsonStats);
-     }
- }
-+
-+class JsonStatsExistsOrderTest : public ::testing::TestWithParam<bool> {};
-+
-+TEST_P(JsonStatsExistsOrderTest, ResolvedParentSkipsRemainingColumns) {
-+    DisableExprCache disable_cache;
-+    milvus::test::ExprBatchSizeGuard batch_size(7);
-+    constexpr int64_t n =
-+        17;  // Exercise a partial bitmap word and final batch.
-+    const bool array_first = GetParam();
-+    const std::string scalar_key = array_first ? "z" : "a";
-+    enum LastRow { Scalar, ComplementaryScalars, Array
-```
-
-**File**: `internal/core/src/segcore/json_stats/JsonKeyStats.h` (modified, +59/-8)
-```diff
-@@ -267,6 +267,63 @@ class JsonKeyStats {
-         TargetBitmapView res,
-         TargetBitmapView valid_res,
-         ValTypes... values) {
-+        milvus::detail::ColumnFilterPtr filter;
-+        if (skip_func) {
-+            filter = std::make_shared<milvus::detail::ColumnFilter>(
-+                milvus::detail::ColumnFilter::MetricsSource::
-+                    PreloadedStatistics,
-+                [&](int64_t cell_id) {
-+                    return skip_func(skip_index_, path, cell_id);
-+                });
-+        }
-+        return ScanShreddingData<T>(
-+            op_ctx, path, func, filter, res, valid_res, values...);
-+    }
-+
-+    // EXISTS has already resolved the rows set in resolved. Skip their entire
-+    // physical cells before pinning payload or validity; the callback still
-+    // receives resolved to avoid parsing those rows in mixed cells.
-+    template <typename T, typename FUNC>
-+    int64_t
-+    ExecutorForUnresolvedShreddingData(milvus::OpContext* op_ctx,
-+                                       const std::string& path,
-+                                       FUNC func,
-+                                       TargetBitmapView res,
-+                                       TargetBitmapView valid_res,
-+                                       TargetBitmapView resolved) {
-+        const auto it = shredding_columns_.find(path);
-+        if (it == shredding_columns_.end()) {
-+            return 0;
-+        }
-+        const auto& column = it->second;
-+        column->Prepare(op_ctx);
-+        AssertInfo(resolved.size() >= column->NumRows(),
-+                   "Resolved bitmap is shorter than shredding column {}",
-+                   path);
-+        auto filter = std::make_shared<milvus::detail::ColumnFilter>(
-+            milvus::detail::ColumnFilter::MetricsSource::PreloadedStatistics,
-+            [column, resolved](int64_t cell_id) {
-+                const auto start = column->GetNumRowsUntilChunk(cell_id);
-+                const auto size = column->chunk_row_nums(cell_id);
-+                return resolved.view(start, size).all();
-+            },
-+            // These rows already have their final result. Their array-column
-+            // validity must not trigger a payload pin or clear that result.
-+            /*skipped_validity_required=*/false);
-+        return ScanShreddingData<T>(
-+            op_ctx, path, func, filter, res, valid_res, resolved);
-+    }
-+
-+ private:
-+    template <typename T, typename FUNC, typename... ValTypes>
-+    int64_t
-+    ScanShreddingData(milvus::OpContext* op_ctx,
-+                      const std::string& path,
-+                      FUNC& func,
-+                      milvus::detail::ColumnFilterPtr filter,
-+                      TargetBitmapView res,
-+                      TargetBitmapView valid_res,
-+                      ValTypes... values) {
-         int64_t processed_size = 0;
-         // if path is not in shredding_columns_, return 0
-         if (shredding_columns_.find(path) == shredding_columns_.end()) {
-@@ -284,14 +341,7 @@ class JsonKeyStats {
-                 : ChunkedColumnInterface::ScanPinPolicy::ResultOwned;
-         auto options = ChunkedColumnInterface::ScanOptions::ForData(
-             0, TargetTypeOf<T>(), pin_policy);
--        if (skip_func) {
--            options.filter = std::make_shared<milvus::detail::ColumnFilter>(
--                milvus::detail::ColumnFilter::MetricsSource::
--                    PreloadedStatistics,
--                [&](int64_t cell_id) {
--                    return skip_func(skip_index_, path, cell_id);
--                });
--        }
-+        options.filter = std::move(filter);
-         auto cursor = column->Scan(op_ctx, options);
-         AssertInfo(cursor != nullptr,
-                    "Shredding column {} does not support data scan",
-@@ -344,6 +394,7 @@ class JsonKeyStats {
-         return processed_size;
-     }
- 
-+ public:
-     std::set<std::string>
-     GetShreddingFields(const std::string& pointer) {
-         std::set<std::string> fields;
-```
-
-**File**: `internal/core/src/segcore/json_stats/JsonKeyStatsScanTest.cpp` (modified, +77/-0)
-```diff
-@@ -16,6 +16,7 @@
- 
- #include <gtest/gtest.h>
- 
-+#include <algorithm>
- #include <cstring>
- #include <numeric>
- #include <optional>
-@@ -374,6 +375,82 @@ TEST_P(JsonKeyStatsScanTest, SkipUsesPhysicalCellOnceAndPreservesIncomingBits) {
-     }
- }
- 
-+TEST_P(JsonKeyStatsScanTest, ResolvedCellsNeverPinPayloadOrValidity) {
-+    const int64_t first_rows = DEFAULT_EXEC_EVAL_EXPR_BATCH_SIZE + 3;
-+    const int64_t rows = first_rows + 5 + 7;
-+    for (bool nullable : {false, true}) {
-+        for (int mode : {0, 1, 2, 3}) {
-+            SCOPED_TRACE(testing::Message()
-+                         << "nullable=" << nullable << " mode=" << mode);
-+            auto fixture = MakeColumn({first_rows, 5, 7},
-+                                      std::vector<std::string>(rows, "payload"),
-+                                      DataType::STRING,
-+                                      nullable);
-+            auto stats = MakeStats(fixture.column);
-+            // 0: none resolved, 1: all resolved, 2/3: a single unresolved
-+            // valid/invalid row in the middle cell. Both end cells can skip.
-+            TargetBitmap resolved(rows, mode != 0);
-+            if (mode >= 2) {
-+                int64_t unresolved = first_rows;
-+                while (ValidRow(unresolved) != (mode == 2)) {
-+                    ++unresolved;
-+                }
-+                ASSERT_LT(unresolved, first_rows + 5);
-+                resolved[unresolved] = false;
-+            }
-+            auto original = resolved.clone();
-+            TargetBitmap result(rows, false), valid(rows, true);
-+            int64_t parsed_rows = 0;
-+            auto predicate = [&](const std::string_view* data,
-+                                 ValidityView validity,
-+                                 int64_t size,
-+                                 TargetBitmapView res,
-+                                 TargetBitmapView valid_res,
-+                                 TargetBitmapView resolved_rows) {
-+                auto resolved_batch = resolved_rows.view(res.offset(), size);
-+                for (int64_t i = 0; i < size; ++i) {
-+                    if (resolved_batch[i]) {
-+                        continue;
-+                    }
-+                    valid_res[i] = !validity || validity[i];
-+                    if (!valid_res[i]) {
-+                        continue;
-+                    }
-+                    ++parsed_rows;
-+                    res[i] = data[i] == "payload";
-+                }
-+            };
-+            fixture.trace->fail_pin = mode == 1;
-+            EXPECT_EQ(
-+                stats->ExecutorForUnresolvedShreddingData<std::string_view>(
-+                    nullptr,
-+                    "test_path",
-+                    predicate,
-+                    TargetBitmapView(result),
-+                    TargetBitmapView(valid),
-+                    TargetBitmapView(resolved)),
-+                rows);
-+            const auto& pins = fixture.trace->pinned_chunks;
-+            if (mode == 1) {
-+                EXPECT_TRUE(pins.empty());
-+            } else if (mode >= 2) {
-+                EXPECT_EQ(pins, (std::vector<int64_t>{1}));
-+                EXPECT_EQ(parsed_rows, mode == 2 || !nullable ? 1 : 0);
-+            } else {
-+                EXPECT_NE(std::find(pins.begin(), pins.end(), 0), pins.end());
-+                EXPECT_NE(std::find(pins.begin(), pins.end(), 1), pins.end());
-+                EXPECT_NE(std::find(pins.begin(), pins.end(), 2), pins.end());
-+            }
-+            for (int64_t i = 0; i < rows; ++i) {
-+                EXPECT_EQ(resolved[i], original[i]);
-+                EXPECT_EQ(result[i],
-+                          !resolved[i] && (!nullable || ValidRow(i)));
-+                EXPECT_EQ(valid[i], resolved[i] || !nullable || ValidRow(i));
-+            }
-+        }
-+    }
-+}
-+
- template <typename T>
- void
- CheckFixedWidth(DataType type,
-```
-
----
-
-### Incident Patch 3: `cd5310ef` (2026-11-25)
-**Commit Message**: fix: honor Talon routing for broker-backed external tables (#55904)
-
-Allow external tables that use a credential broker to follow the
-operator's Talon read settings. The external-table opt-in defaults to
-false. When enabled, AWS broker target roles, supported broker IAM
-modes, and Azure broker targets can use the configured Talon coordinator
-and read mode.
-
-The previous policy in #54986 forced every broker-backed external
-filesystem to origin. The storage revision already pinned on master
-supports per-request broker descriptors. Aliyun and Tencent target-role
-reads continue to use native storage because the pinned Talon S3
-provider accepts AWS target roles only. Local filesystems also use
-native storage. Endpoint allowlisting and Azure alias normalization run
-before routing.
-
-Related to #53875 and #54985. Corresponding 3.0 change in #55901.
-
-**Verification**
-
-- Exercised the existing broker policy, Azure legacy alias/query,
-endpoint normalization and non-broker routing tests in a focused native
-executable. The two updated broker cases failed against the original
-master implementation. All four cases passed with this change.
-- Covered AWS, Aliyun and Tencent with both IAM and target
-
-**File**: `internal/core/src/storage/loon_ffi/util.cpp` (modified, +9/-10)
-```diff
-@@ -1283,9 +1283,14 @@ InjectExternalSpecProperties(
-         ARROW_RETURN_NOT_OK(validate_token_lifetime("GCP Bearer credentials"));
-     }
- 
--    // External Tables share the filesystem tuning, with an independently
--    // configured mode. Local external filesystems never use Talon.
--    const bool external_is_local = value("storage_type") == "local";
-+    // Talon's S3 broker accepts target roles only for AWS. Preserve native
-+    // routing for Aliyun and Tencent target roles.
-+    const bool native_target_role =
-+        !broker_endpoint.empty() &&
-+        (spec_cloud_provider == "aliyun" || spec_cloud_provider == "tencent") &&
-+        !use_iam;
-+    const bool origin_only =
-+        native_target_role || value("storage_type") == "local";
-     for (const auto* key : {PROPERTY_FS_TALON_MODE,
-                             PROPERTY_FS_TALON_OPEN_ONLY,
-                             PROPERTY_FS_TALON_SMALL_READ_THRESHOLD,
-@@ -1298,13 +1303,7 @@ InjectExternalSpecProperties(
-                                      : key;
-         const auto value = PropertyValueAsString(properties, source_key);
-         const auto extfs_key = ExternalFsPropertyKey(extfs_prefix, key);
--        // Keep Broker credential acquisition and refresh on the origin filesystem.
--        if (!broker_endpoint.empty()) {
--            properties.erase(extfs_key);
--            if (std::string_view(key) == PROPERTY_FS_TALON_MODE) {
--                properties[extfs_key] = std::string("0");
--            }
--        } else if (external_is_local) {
-+        if (origin_only) {
-             properties.erase(extfs_key);
-         } else if (value.has_value()) {
-             properties[extfs_key] = *value;
-```
-
-**File**: `internal/core/unittest/test_external_take.cpp` (modified, +28/-11)
-```diff
-@@ -33,6 +33,8 @@
- #include <memory>
- #include <optional>
- #include <string>
-+#include <string_view>
-+#include <utility>
- #include <vector>
- 
- #include "common/ChunkWriter.h"
-@@ -4030,7 +4032,7 @@ TEST(InjectExtfsAllowlist, AzureLegacyBrokerQuery) {
-     EXPECT_EQ(std::get<std::string>(props.at("extfs.42.credential_endpoint")),
-               endpoint);
-     EXPECT_EQ(props.count("extfs.42.azure_credential_endpoint"), 0u);
--    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.talon.mode")), "0");
-+    EXPECT_EQ(props.count("extfs.42.talon.mode"), 0u);
-     EXPECT_ANY_THROW(inject(endpoint + "&extra=1"));
-     EXPECT_ANY_THROW(
-         inject("https://broker.example.com/v1/credentials/"
-@@ -4748,7 +4750,12 @@ TEST(InjectExtfsAllowlist, BrokerIamPolicyAndLegacyAliases) {
-     EXPECT_FALSE(
-         InitCredentialBrokerPolicy(std::string(R"(["file:///tmp/broker"])"))
-             .ok());
--    for (const auto& cloud : {"aws", "aliyun", "tencent"}) {
-+    for (const auto& [cloud, iam] : {std::pair{"aws", true},
-+                                     {"aliyun", true},
-+                                     {"tencent", true},
-+                                     {"aws", false},
-+                                     {"aliyun", false},
-+                                     {"tencent", false}}) {
-         for (const auto* format : {"parquet", "milvus-table"}) {
-             for (uint32_t mode : {0u, 1u, 2u}) {
-                 milvus_storage::api::Properties props;
-@@ -4761,14 +4768,17 @@ TEST(InjectExtfsAllowlist, BrokerIamPolicyAndLegacyAliases) {
-                                    {"extfs",
-                                     {{"cloud_provider", cloud},
-                                      {"region", "us-west-2"},
--                                     {"use_iam", "true"},
-+                                     {"use_iam", iam ? "true" : "false"},
-                                      {"credential_endpoint", endpoint}}}};
-+                if (!iam) {
-+                    spec["extfs"]["role_arn"] = "target-role";
-+                }
-                 InjectExternalSpecProperties(
-                     props, 42, "s3://bucket/path", spec.dump());
-                 EXPECT_EQ(std::get<std::string>(
-                               props.at("extfs.42.credential_endpoint")),
-                           endpoint);
--                EXPECT_EQ(props.count("extfs.42.role_arn"), 0u);
-+                EXPECT_EQ(props.count("extfs.42.role_arn"), iam ? 0u : 1u);
-                 auto address =
-                     std::get<std::string>(props.at("extfs.42.address"));
-                 auto scheme_end = address.find("://");
-@@ -4779,13 +4789,16 @@ TEST(InjectExtfsAllowlist, BrokerIamPolicyAndLegacyAliases) {
-                         props),
-                     "s3://" + address + "/bucket/path");
-                 ASSERT_TRUE(config.ok()) << config.status();
--                EXPECT_TRUE(config->use_iam);
-+                EXPECT_EQ(config->use_iam, iam);
-                 EXPECT_TRUE(config->IsAwsCredentialBrokerEnabled());
-                 EXPECT_EQ(config->credential_endpoint, endpoint);
-                 EXPECT_FALSE(config->s3_use_crt);
--                EXPECT_EQ(config->talon_mode,
--                          milvus_storage::TalonMode::Disabled);
--                EXPECT_EQ(props.count("extfs.42.talon.coordinator"), 0u);
-+                const bool supports_talon =
-+                    iam || std::string_view(cloud) == "aws";
-+                EXPECT_EQ(static_cast<uint32_t>(config->talon_mode),
-+                          supports_talon ? mode : 0u);
-+                EXPECT_EQ(config->talon_coordinator,
-+                          supports_talon ? "talon:1234" : "");
-                 spec["extfs"]["credential_endpoint"] = endpoint + "/other";
-                 EXPECT_ANY_THROW(InjectExternalSpecProperties(
-                     props, 42, "s3://bucket/path", spec.dump()));
-@@ -4809,8 +4822,9 @@ TEST(InjectExtfsAllowlist, BrokerIamPolicyAndLegacyAliases) {
-     InjectExternalSpecProperties(
-         props, 42, "azure://core.windows.net/container/path", spec.dump());
-     EXPECT_EQ(props.count("extfs.42.azure_credential_endpoint"), 0u);
--    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.talon.mode")), "0");
--    EXPECT_EQ(props.count("extfs.42.talon.coordinator"), 0u);
-+    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.talon.mode")), "2");
-+    EXPECT_EQ(std::get<std::string>(props.at("extfs.42.talon.coordinator")),
-+              "talon:1234");
-     EXPECT_EQ(std::get<std::string>(props.at("extfs.42.credential_endpoint")),
-               endpoint);
-     spec["extfs"]["azure_credential_endpoint"] = endpoint + "/other";
-@@ -5425,6 +5439,7 @@ TEST(InjectExtfsAllowlist, S3BrokerTargetRoleAcrossClouds) {
-             }
-             milvus_storage::api::Properties props;
-             props["milvus.talon.external_mode"] = uint32_t{2};
-+            props[PROPERTY_FS_TALON_COORDINATOR] = std::string("talon:1234");
-             InjectExter
+ func TestCheckLimiter_ChargedRequestsRemainRateLimited(t *testing.T) {
+ 	quotaConfig := &paramtable.Get().QuotaConfig.QuotaAndLimitsEnabled
+ 	originalValue := quotaConfig.GetValue()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #56021** (closed): CI trust-path probe (transient, will be closed) (@le-schlo)
-- **PR #55991** (2026-11-25): enhance: reclaim empty PK version index storage (@sunby)
-- **PR #55990** (closed): enhance: [3.0] enable configurable S3 CRT for index builds (@marcelo-cjl)
-- **PR #55987** (closed): enhance: enable S3 CRT by default for index builds (@marcelo-cjl)
-- **PR #55982** (closed): fix: Publish grouped imports with their commit-time Transform cursors (@sijie-ni-0214)
-- **PR #55969** (2026-11-25): enhance: [cp3.0] Gate Import V3 default enablement on cluster version (@xaxys)
+- **PR #56108** (2026-11-26): enhance: keep the GC checkpoint test fixture out of production builds (@liliu-z)
+- **PR #56071** (2026-11-26): fix: [3.0] bump milvus-storage to read Tencent role_arn volumes (@xiaofan-luan)
+- **PR #56063** (closed): enhance: schedule async segment loads by sequence and priority (@sparknack)
+- **PR #56061** (closed): feat: Support business-version conditional upserts in the Go SDK (@weiliu1031)
+- **PR #56057** (2026-11-26): enhance: reduce logging allocations in compaction scans (@sijie-ni-0214)
+- **PR #56050** (2026-11-26): build(deps): bump milvus-storage for per-client GCP credentials (@xiaofan-luan)
 
 ---
 
@@ -2828,32 +2189,35 @@ master implementation. All four cases passed with this change.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Wake QueryView recovery waiters before WAL shutdown
+## X. build(deps): bump milvus-storage for per-client GCP credentials
 
 **RULE**:
-When implementing operations in `docs/design-docs/design_docs/qviews/query/query_plan.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design-docs/design_docs/20261110-external-collection-broker-iam.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae3d2586`: Wake QueryView recovery waiters before WAL shutdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a9679897`: build(deps): bump milvus-storage for per-client GCP credentials. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design-docs/design_docs/qviews/query/query_plan.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design-docs/design_docs/20261110-external-collection-broker-iam.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-Waiting is local to SN; the Coord-facing `UpRecovering` to `Up` projection is
-unchanged. WAL shutdown stops query acquisition before draining its in-flight
-operations: waiters wake and new acquisitions fail with an on-shutdown error.
-QueryView resources are released only after those operations finish.
-
+milvus-storage f9138562 (milvus-storage#837) removes the process-wide GCP
+credential registry and the separate GCP HTTP-factory initialization. The
+credential provider is bound to each S3 client, so several GCP identities can
+share an endpoint and bucket, and GCP and S3-compatible filesystems initialize
+together in one process. Mocked tests and source inspection do not establish
+production deployment or live five-cloud E2E.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+The one-GCP-identity-per-(endpoint,bucket) registry restriction and mixed
+GCP/S3 HTTP-factory initialization limitation remain. Mocked tests and source
+inspection do not establish production deployment or live five-cloud E2E.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae3d2586` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a9679897` are properly handled with clean fallback behavior.

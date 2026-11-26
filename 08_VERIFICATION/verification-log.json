@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-D64I",
-    "timestamp": "2026-11-25T03:28:23.106Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "0f985a2e8af37fd26217f8125cfcc286b9c30f65784047b8a57361dfaa87359e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-DA55",
-    "timestamp": "2026-11-25T03:28:28.313Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "642c4e87b85420fab5cc699bed2df695d14d61597300d94ca48121118461e237",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-O0VY",
-    "timestamp": "2026-11-25T03:36:49.534Z",
-    "repository": "fastify/fastify",
-    "learningId": "learn-github-fastify-fastify",
-    "contentHash": "a89065c5a8dbeaaae690fc92f25af5254c977f5b277e0b62e9f1518e6e8dfa57",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-60BT",
-    "timestamp": "2026-11-25T03:50:48.617Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "27cf034847681fb4862b9ae8f4a234c4fd50e7882917d7c70e80f1bd5c2dbcbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-63WU",
     "timestamp": "2026-11-25T03:50:53.262Z",
     "repository": "meshtastic/Meshtastic-Android",
@@ -7490,6 +7430,66 @@
     "repository": "run-llama/llama_index",
     "learningId": "learn-github-run-llama-llama_index",
     "contentHash": "47ca01ea511b9e196133e03640f8776e166fdb9379551e635e3f6ae7a7db8de4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-ETM3",
+    "timestamp": "2026-11-26T16:21:09.867Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+    "contentHash": "7719cc76c416ca9b475a8fc882b0585c3c46f7620b8471bd8808a3dd8c4841bb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-EWJT",
+    "timestamp": "2026-11-26T16:21:13.673Z",
+    "repository": "metalbear-co/mirrord",
+    "learningId": "learn-github-metalbear-co-mirrord",
+    "contentHash": "7a13154c9229aa27dd80be98b8d9f1bf8c77f6c6ebc7a2137ba31d3bbe56f991",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-F10H",
+    "timestamp": "2026-11-26T16:21:19.457Z",
+    "repository": "expo/expo",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "4c8f1a4410f82abceb42d6be0145cb95ed2572c4bfdfbae9ab66c40b25d5ef6b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-F6Z3",
+    "timestamp": "2026-11-26T16:21:27.183Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "ca044f0915dafca54b0b658bc754d5efed3c74e7bd53a5969f7e989d1560e47d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

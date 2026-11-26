@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T23:15:50.930Z",
+  "timestamp": "2026-11-26T16:21:32.898Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T23:15:50.930Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:21:32.898Z`  
 > **Learning ID**: `LEARN-EVO-hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-ista-dasl`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T23:15:32.977Z  
+> **Timestamp**: 2026-11-26T16:21:09.122Z  
 > **Learning ID**: `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:15:32.824Z  
+> **Harvest Timestamp**: 2026-11-26T16:21:08.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 910329 downloads | 678 likes
+- **Stars / Engagement**: 970097 downloads | 692 likes
 
 ---
 

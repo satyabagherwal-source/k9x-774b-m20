@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:10:58.217Z",
-  "total_cycles_completed": 12772,
-  "total_learnings_persisted": 12772,
-  "total_rules_promoted": 11623,
+  "last_updated": "2026-11-26T16:21:27.204Z",
+  "total_cycles_completed": 12776,
+  "total_learnings_persisted": 12776,
+  "total_rules_promoted": 11626,
   "history": [
-    {
-      "timestamp": "2026-11-26T05:05:19.826Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T05:05:21.735Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T05:17:06.164Z",
-      "repository": "crate-ci/typos",
-      "learningId": "learn-github-crate-ci-typos",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T05:17:19.516Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T05:18:14.253Z",
       "repository": "adventists-ai/Sophon-Realtime-v1",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T16:10:58.217Z",
       "repository": "run-llama/llama_index",
       "learningId": "learn-github-run-llama-llama_index",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:21:09.888Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:21:13.695Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:21:19.479Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T16:21:27.204Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

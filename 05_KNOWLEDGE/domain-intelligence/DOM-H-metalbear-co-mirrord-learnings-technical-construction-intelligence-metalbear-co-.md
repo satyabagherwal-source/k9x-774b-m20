@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T07:57:13.754Z",
+  "timestamp": "2026-11-26T16:21:31.738Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-metalbear-co-mirrord-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [metalbear-co-mirrord-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T07:57:13.754Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:21:31.738Z`  
 > **Learning ID**: `LEARN-EVO-metalbear-co-mirrord-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 87%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from metalbear-co-mirrord-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `1a999f8a`  
+> **Source Version**: `8f225c1f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T07:56:58.935Z  
+> **Timestamp**: 2026-11-26T16:21:12.144Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T07:56:58.930Z  
+> **Harvest Timestamp**: 2026-11-26T16:21:12.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5430 stars
+- **Stars / Engagement**: 5433 stars
 
 ---
 
@@ -1540,461 +1540,349 @@ impl TargetRoot {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aee4b8a5` (2026-11-24)
-**Commit Message**: Drop unsafe jaq builtins (#5301)
+### Incident Patch 1: `d64f3d8a` (2026-11-25)
+**Commit Message**: ci: build the remaining test jobs with line-table debug info (#5318)
 
-* Dropped unsage jaq builtins
+The integration tests already build with `CARGO_PROFILE_DEV_DEBUG=line-tables-only`. This change sets
+it in every other workflow that compiles code in the dev profile: the e2e tests, the unit tests in
+`ci.yaml`, the macOS and Windows tests, the doctests, and the Linux CLI build. Line tables keep the
+file and line numbers in panics and backtraces, but they make the builds smaller and faster to link,
+and they make the rust-cache entries smaller under the 10 GB limit.
 
-* Added UT
+rust-cache hashes every `CARGO*` variable into its key, so each workflow sets the variable at the
+top level, where every job that shares a cache key sees the same value.
 
-* Copy mirrord-jaq and mirrord-test-macros into the agent image build
+Claude-Session: https://claude.ai/code/session_016Xj2Au87tqTQPFbLUHbBMW
 
-**File**: `Cargo.lock` (modified, +3/-5)
+**File**: `.github/workflows/build-mirrord-cli.yaml` (modified, +5/-0)
 ```diff
-@@ -5195,12 +5195,12 @@ dependencies = [
-  "hyper-util",
-  "jaq-core",
-  "jaq-json",
-- "jaq-std",
-  "k8s-cri",
-  "libc",
-  "mirrord-agent-env",
-  "mirrord-agent-iptables",
-  "mirrord-cluster-auth",
-+ "mirrord-jaq",
-  "mirrord-nightly-polyfill",
-  "mirrord-protocol",
-  "mirrord-protocol-io",
-@@ -5827,7 +5827,7 @@ dependencies = [
+@@ -6,6 +6,11 @@ on:
+ permissions:
+   contents: read
  
- [[package]]
- name = "mirrord-protocol"
--version = "1.30.2"
-+version = "1.30.3"
- dependencies = [
-  "actix-codec",
-  "bincode",
-@@ -5838,10 +5838,8 @@ dependencies = [
-  "http-body-util",
-  "http-serde",
-  "hyper",
-- "jaq-core",
-- "jaq-json",
-- "jaq-std",
-  "libc",
-+ "mirrord-jaq",
-  "mirrord-macros",
-  "nix 0.31.3",
-  "semver 1.0.28",
++env:
++  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
++  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
++  CARGO_PROFILE_DEV_DEBUG: line-tables-only
++
+ jobs:
+   build-mirrord-cli:
+     runs-on: blacksmith-8vcpu-ubuntu-2404
 ```
 
-**File**: `changelog.d/+jq-env-halt-builtins.security.md` (added, +1/-0)
+**File**: `.github/workflows/check-rust-docs.yaml` (modified, +3/-0)
+```diff
+@@ -9,6 +9,9 @@ permissions:
+ env:
+   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+   RUSTDOCFLAGS: "-Dwarnings"
++  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
++  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
++  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+ 
+ jobs:
+   rust-docs:
+```
+
+**File**: `.github/workflows/ci.yaml` (modified, +3/-0)
+```diff
+@@ -53,6 +53,9 @@ env:
+   NEXTEST_NO_TESTS: warn
+   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+   MIRRORD_TELEMETRY: false
++  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
++  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
++  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+ 
+ jobs:
+   # ── plan ────────────────────────────────────────────────────────────
+```
+
+**File**: `.github/workflows/test-e2e.yaml` (modified, +3/-0)
+```diff
+@@ -24,6 +24,9 @@ permissions:
+ env:
+   MIRRORD_TELEMETRY: false
+   KIND_CLUSTER_NAME: mirrord-e2e
++  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
++  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
++  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+ 
+ jobs:
+   e2e:
+```
+
+**File**: `.github/workflows/test-macos.yaml` (modified, +3/-0)
+```diff
+@@ -11,6 +11,9 @@ env:
+   NEXTEST_NO_TESTS: warn
+   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+   MIRRORD_TELEMETRY: false
++  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
++  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
++  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+ 
+ jobs:
+   macos-tests:
+```
+
+**File**: `.github/workflows/test-windows.yaml` (modified, +3/-0)
+```diff
+@@ -11,6 +11,9 @@ env:
+   NEXTEST_NO_TESTS: warn
+   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+   MIRRORD_TELEMETRY: false
++  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
++  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
++  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+ 
+ jobs:
+   windows-tests:
+```
+
+**File**: `.github/workflows/windows-tests.yaml` (modified, +3/-0)
+```diff
+@@ -17,6 +17,9 @@ env:
+   CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+   MIRRORD_TELEMETRY: "false"
+   LIBCLANG_PATH: "C:\\Program Files\\LLVM\\bin"
++  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
++  # debug info.
++  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+ 
+ jobs:
+   windows_e2e:
+```
+
+**File**: `changelog.d/+ci-line-tables-debuginfo.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+User-supplied jq filters can no longer call `env`, `halt`, or `halt_error`. A filter that calls one of these now fails with an `Undefined filter` error.
-```
-
-**File**: `mirrord/agent/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -25,6 +25,7 @@ mirrord-sessions-manager-client.workspace = true
- mirrord-cluster-auth = { workspace = true, features = ["eks"] }
- mirrord-remote-layer-protocol.workspace = true
- mirrord-agent-env = { path = "./env", default-features = false }
-+mirrord-jaq = { path = "../jaq", default-features = false }
- mirrord-agent-iptables = { path = "./iptables" }
- mirrord-tls-util = { path = "../tls-util" }
- mirrord-nightly-polyfill = { path = "../nightly-polyfill" }
-@@ -84,7 +85,6 @@ rcgen.workspace = true
- serde_json_path.workspace = true
- dns-lookup.workspace = true
- tokio-retry.workspace = true
--jaq-std.workspace = true
- jaq-core.workspace = true
- jaq-json = { workspace = true, features = ["serde_json"] }
- 
-```
-
-**File**: `mirrord/agent/Dockerfile` (modified, +3/-1)
-```diff
-@@ -22,6 +22,8 @@ COPY .cargo /app/.cargo
- COPY mirrord/macros /app/mirrord/macros
- COPY mirrord/nightly-polyfill /app/mirrord/nightly-polyfill
- COPY mirrord/tls-util /app/mirrord/tls-util
-+COPY mirrord/test-macros /app/mirrord/test-macros
-+COPY mirrord/jaq /app/mirrord/jaq
- COPY mirrord/protocol /app/mirrord/protocol
- COPY mirrord/protocol-io /app/mirrord/protocol-io
- COPY mirrord/remote-layer-protocol /app/mirrord/remote-layer-protocol
-@@ -36,7 +38,7 @@ COPY Cargo.toml Cargo.lock CHANGELOG.md README.md LICENSE rust-toolchain.toml /a
- # so we remove from the workspace. `default-members` goes first: it names crates not copied here,
- # and its `members` substring would otherwise make the members rewrite match it too.
- RUN sed -i '/^default-members = \[/,/^\]/d' /app/Cargo.toml && \
--    sed -i '/members = \[/,/\]/c\members = [\n    "mirrord/agent",\n    "mirrord/agent/env",\n    "mirrord/agent/iptables",\n    "mirrord/cluster-auth",\n    "mirrord/macros",\n    "mirrord/nightly-polyfill",\n    "mirrord/operator-websocket",\n    "mirrord/protocol",\n    "mirrord/protocol-io",\n    "mirrord/remote-layer-protocol",\n    "mirrord/sessions-manager/client",\n    "mirrord/sessions-manager/protocol",\n    "mirrord/tls-util",\n]' /app/Cargo.toml
-+    sed -i '/members = \[/,/\]/c\members = [\n    "mirrord/agent",\n    "mirrord/agent/env",\n    "mirrord/agent/iptables",\n    "mirrord/cluster-auth",\n    "mirrord/jaq",\n    "mirrord/macros",\n    "mirrord/nightly-polyfill",\n    "mirrord/operator-websocket",\n    "mirrord/protocol",\n    "mirrord/protocol-io",\n    "mirrord/remote-layer-protocol",\n    "mirrord/sessions-manager/client",\n    "mirrord/sessions-manager/protocol",\n    "mirrord/test-macros",\n    "mirrord/tls-util",\n]' /app/Cargo.toml
- 
- 
- # Build final binary against BuildKit cache mounts. The target directory is one of them, so cargo's
-```
-
-**File**: `mirrord/agent/src/http/filter.rs` (modified, +2/-20)
-```diff
-@@ -3,10 +3,7 @@ use std::{fmt::Debug, io::Read, ops::Not, sync::LazyLock, time::Duration};
- use fancy_regex::Regex;
- use http::HeaderMap;
- use hyper::http::request::Parts;
--use jaq_core::{
--    Ctx, RcIter,
--    load::{Arena, File, Loader},
--};
-+use jaq_core::{Ctx, RcIter};
- use jaq_json::Val;
- use mirrord_agent_env::envs::JAQ_TIME_LIMIT;
- use mirrord_protocol::tcp::{HttpMethodFilter, JqQuery};
-@@ -228,22 +225,7 @@ async fn eval_jaq(query: JqQuery, payload: String) -> Result<bool, String> {
-     let span = tracing::warn_span!("jaq eval", ?query);
- 
-     let mut handle = tokio::task::spawn_blocking(move || {
--        let program = File {
--            code: query.as_str(),
--            path: (),
--        };
--        let loader = Loader::new(jaq_std::defs().chain(jaq_json::defs()));
--        let arena = Arena::default();
--        let modules = loader
--            .load(&arena, program)
--            .map_err(|errors| format!("failed to parse the filter: {errors:?}"))?;
--
--        let filter =
--            jaq_core::Compiler::default().with_funs(jaq_std::funs().chain(jaq_json::funs()));
--
--        let filter = filter
--            .compile(modules)
--            .map_err(|errors| format!("failed to compile the filter: {errors:?}"))?;
-+        let filter = mirrord_jaq::compile_jq(query.as_str()).map_err(|error| error.to_string())?;
- 
-         let inputs = RcIter::new(core::iter::empty());
-         let mut out = filter.run((Ctx::new([], &inputs), Val::from(payload)));
-```
-
-**File**: `mirrord/jaq/src/lib.rs` (modified, +40/-2)
-```diff
-@@ -87,9 +87,25 @@ fn compiler_error_to_string(error: CompileError) -> String {
-     compile_error
- }
- 
-+/// Builtins of `jaq_std` that reach outside the program.
-+///
-+/// * `env` reads the environment of the process that runs it,
-+/// * `halt` and `halt_error` exit that process.
-+///
-+/// Filters are written by user, and a user-defined program should not be able to call these
-+/// in a shared environment. Such program should fail to compile.
-+const DENIED_BUILTINS: &[&str] = &["env", "halt", "halt_error"];
-+
-+/// Compiles a user-supplied jq program with the standard library, minus [`DENIED_BUILTINS`].
-+///
-+/// Every place that runs a user's jq program should be compiled here, so that no caller can grant the
-+/// program access to its environment or the power to exit.
- pub fn compile_jq(code: &str) -> Result<jaq_core::Filter<jaq_core::Native<jaq_json::Val>>> {
-     let file = jaq_core::load::File { code, path: () };
--    let loader = jaq_core::load::Loader::new(jaq_std::defs().chain(jaq_json::defs()));
-+    let defs = jaq_std::defs()
-+        .chain(jaq_json::defs())
-+        .filter(|def| !DENIED_BUILTINS.contains(&def.name));
-+    let loader = jaq_core::load::Loader::new(defs);
-     let arena = jaq_core::load::Arena::default();
-     let modules = loader.load(&arena, file).map_err(|errors| {
-         // Since we only load 1 file, there should only be 1 error, take first.
-@@ -99,7 +115,10 @@ pub fn compile_jq(code: &str) -> Result<jaq_core::Filter<jaq_core::Native<jaq_js
-         }
-     })?;
- 
--    let filter = jaq_core::Compiler::default().with_funs(jaq_std::funs().chain(jaq_json::funs()));
-+    let funs = jaq_std::funs()
-+        .chain(jaq_json::funs())
-+        .filter(|(name, ..)| !DENIED_BUILTINS.contains(name));
-+    let filter = jaq_core::Compiler::default().with_funs(funs);
- 
-     // Convert the compile errors into a human-readable string using our helper.
-     filter.compile(modules).map_err(|errors| JqError::Compile {
-@@ -248,6 +267,25 @@ mod tests {
-         VerifiedJqString::try_from("idk | whatever").unwrap_err();
-     }
- 
-+    #[test]
-+    fn jq_verification_rejects_denied_builtins() {
-+        for (program, builtin) in [
-+            ("env | has(\"PATH\")", "env"),
-+            (".a or (env.HOME == \"/root\")", "env"),
-+            ("halt", "halt"),
-+            ("halt_error", "halt_error"),
-+            ("halt_error(1)", "halt_error"),
-+        ] {
-+            match VerifiedJqString::try_from(program) {
-+                Err(JqError::Compile { error, .. }) => assert!(
-+                    error.contains(&format!("Undefined filter: {builtin}")),
-+                    "{program:?} failed with an unexpected error: {error}"
-+                ),
-+                other => panic!("{program:?} should fail to compile, got {other:?}"),
-+            }
-+        }
-+    }
-+
-     #[test]
-     fn test_estimate_string_len() {
-         // This error doesn't make sens (complains about undefined symbols that don't appear in the
-```
-
-**File**: `mirrord/protocol/Cargo.toml` (modified, +2/-4)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "mirrord-protocol"
--version = "1.30.2"
-+version = "1.30.3"
- authors.workspace = true
- description.workspace = true
- documentation.workspace = true
-@@ -44,9 +44,7 @@ uuid = { workspace = true, features = ["v4"] }
- mirrord-macros = { path = "../macros" }
- strum.workspace = true
- strum_macros.workspace = true
--jaq-core.workspace = true
--jaq-std.workspace = true
--jaq-json.workspace = true
-+mirrord-jaq = { path = "../jaq", default-features = false }
- 
- [target.'cfg(unix)'.dependencies]
- libc.workspace = true
-```
-
-**File**: `mirrord/protocol/src/tcp.rs` (modified, +8/-39)
-```diff
-@@ -17,10 +17,6 @@ use hyper::{
-     HeaderMap, Method, Request, Response, StatusCode, Uri, Version,
-     body::{Body, Frame},
- };
--use jaq_core::{
--    Compiler,
--    load::{Arena, File, Loader},
--};
- use mirrord_macros::protocol_break;
- use semver::VersionReq;
- use serde::{Deserialize, Serialize};
-@@ -345,39 +341,12 @@ pub struct JqQuery(String);
- 
- impl JqQuery {
-     pub fn new(expr: &str) -> Result<Self, String> {
--        let inner = || {
--            let program = File {
--                code: expr,
--                path: (),
--            };
--            let loader = Loader::new(jaq_std::defs().chain(jaq_json::defs()));
--            let arena = Arena::default();
--
--            let modules = loader.load(&arena, program).map_err(|errors| {
--                errors
--                    .into_iter()
--                    .map(|e| format!("{e:?}"))
--                    .collect::<Vec<_>>()
--                    .join("; ")
--            })?;
--
--            Compiler::default()
--                .with_funs(jaq_std::funs().chain(jaq_json::funs()))
--                .compile(modules)
--                .map_err(|errors| {
--                    errors
--                        .into_iter()
--                        .map(|e| format!("{e:?}"))
--                        .collect::<Vec<_>>()
--                        .join("; ")
--                })?;
--
--            Ok(JqQuery(expr.to_owned()))
--        };
--
--        inner().inspect_err(|fail| {
--            tracing::error!(
--                r"
-+        mirrord_jaq::compile_jq(expr)
-+            .map(|_| JqQuery(expr.to_owned()))
-+            .map_err(|error| error.to_string())
-+            .inspect_err(|fail| {
-+                tracing::error!(
-+                    r"
-                 Something went wrong while compiling jaq query {expr:?}
- 
-                 >> Please check that the string supplied is a valid jaq expression according to
-@@ -386,8 +355,8 @@ impl JqQuery {
-                 > Error:
-                 {fail:#?}
-                 "
--            )
--        })
-+                )
-+            })
-     }
- }
- 
++CI builds the tests and test binaries with line-table debug info instead of full debug info, which makes the builds and their caches smaller and faster.
 ```
 
 ---
 
-### Incident Patch 2: `99480b10` (2026-11-24)
-**Commit Message**: Describe what the mirrord MCP Server does, and link it from Quick Start (#5289)
+### Incident Patch 2: `ebb055e8` (2026-11-26)
+**Commit Message**: Add the docs diagram style guide and redraw the general diagrams (#5319)
 
-* Link the mirrord MCP Server from Quick Start and Install mirrord
+* Add the docs diagram style guide and redraw the general diagrams
 
-* Say what the mirrord MCP Server does for the user in its getting-started links
+Refs GTM-1891.
 
-* Lead the mirrord MCP Server page with what it does for the user
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-The page opened with a list of tools, and the getting-started links
-described the server in the same terms. The intro and both links now
-say what the agent can do with it: generate and validate configs,
-explain options, follow the skills and the safe defaults, offline.
+* Fix the diagram guide references and examples
 
-The page also gains facts from the server at 3.291.0: Windows needs
-3.291.0 for the skills, `validate_config` takes the directory mirrord
-runs from, and the instructions list now has every instruction the
-server sends.
+Point the mirrord symbol and cloud sources at files in this PR, give the
+smaller logo sizes, write the laptop example with real numbers, add the
+server symbol for CI runners, and say where to run the render command.
 
-* Use the new MCP Server description on the AI agents overview
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* Add one-click install links for Cursor and VS Code to the MCP Server page
+* Keep the original dev loop PNG
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+Restore devloop.png and its link on the local development page.
+Point the cloud icon in the guide to ecs-sample-app.svg.
 
-* Drop the schema_file note from the validate_config row
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+* Color the shared cluster messages and developers
 
-* Ask for the absolute path only when the client doesn't find mirrord
+Give each developer a laptop color and match the queue messages to it.
+Remove the Kubernetes logo and name, because the diagram applies to ECS too.
 
-🤖 Generate
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/docs/getting-started/install-mirrord.md` (modified, +1/-0)
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/DIAGRAMS.md` (added, +197/-0)
 ```diff
-@@ -86,6 +86,7 @@ mirrord supports Kubernetes `1.22` or later. This applies to the open-source ver
- 
- ## Next steps
- 
-+- [mirrord MCP Server](../using-mirrord-with-ai/mcp-server.md): your AI agent generates mirrord configs, validates them deterministically, explains each option, and follows mirrord's skills and safe defaults, all offline.
- - [Onboarding Wizard](onboarding-wizard.md): generate a `mirrord-up.yaml` for your services.
- - [Starting your first session](first-session.md): run your local code in the context of the cluster.
- - [Install the Operator](install-the-operator.md): for teams sharing a cluster, the platform team installs it once per cluster.
+@@ -0,0 +1,197 @@
++# Diagram style
++
++Paths in this file are relative to the `docs` directory of the mirrord repository.
++
++All diagrams in the docs use one style. Write each diagram as a hand-written SVG file in `docs/.gitbook/assets/`. Do not export diagrams from Excalidraw, D2, draw.io, or Figma, and do not add PNG diagrams. Screenshots of the product are not diagrams, and this guide does not apply to them.
++
++Two diagrams show the style well. Copy from them when you start a new one:
++
++- `docs/.gitbook/assets/api-gateway-traffic.svg`
++- `docs/.gitbook/assets/header-propagation.svg`
++
++## File
++
++- Root element: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 W H" width="W" height="H" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">`.
++- Width: 960 to 1200. GitBook scales the image down to the page width, so a wider image makes the text too small. Use the same width in the `viewBox` and the `width` attribute. When the content needs more than 1200, keep the wider `viewBox` and set `width="1200"`, as in `redis-pubsub-splitting.svg`.
++- Put a `<title id="t">` and a `<desc id="d">` first. The `desc` tells the full flow in words, for screen readers.
++- Put a white background as the first shape: `<rect x="0" y="0" width="W" height="H" fill="#ffffff"/>`. GitBook dark mode needs it.
++- Keep the file small and readable. Use plain `rect`, `line`, `path`, `polyline`, `circle`, `ellipse`, and `text`. Do not embed fonts, raster images, or base64 data. Add a short comment before each group of shapes.
++
++## Colors
++
++| Use | Fill | Text |
++|-----|------|------|
++| Neutral component (client, service, queue, database) | `#ffffff` | `#232141` |
++| mirrord component (agent, operator, layer, CLI, forwarder) | `#756DF3` | `#ffffff` |
++| Your local process or your machine | `#756DF3` | `#ffffff` |
++| The deployed workload or the original target | `#E4E3FD` | `#232141` |
++| Gateway, broker, or other infrastructure to highlight | `#FFCB7D` | `#232141` |
++| Temporary resource that mirrord creates | `#ffffff`, dashed `#756DF3` stroke, `stroke-dasharray="8 6"` | `#232141` |
++| Boundary (cluster, machine, namespace) | `#F5F4FE` (`#ffffff` for a boundary inside a boundary), solid `#756DF3` stroke | label `#4a44b8` |
++| Inactive or dropped path | none | `#8a8a99` |
++
++- Outline every box with `stroke="#232141" stroke-width="2"`, except boundaries and temporary resources, which use the purple stroke above.
++- Only temporary resources use a dashed outline. A boundary has a solid outline, so the two never look the same.
++- Secondary text inside boxes uses `#333344` (or `#ffffff` on a purple box).
++- Do not use other colors. Do not use red, green, or blue to show "match" and "no match". Use the purple path for the mirrord route and the dark path for the normal route.
++
++## Shapes
++
++- Box: `rx="12"`. A box inside a box: `rx="8"` to `rx="10"`.
++- Database: a cylinder (an `ellipse` top on a `path` body), same stroke and colors as a box.
++- Queue or topic: a box with three thin vertical lines at the right end, or a plain box with the type in the secondary text.
++- Do not draw hand-drawn or sketchy shapes. Use the symbols in [Symbols](#symbols) to show what a thing is.
++
++## Logos
++
++### Kubernetes logo
++
++The Kubernetes logo shows what runs in the cluster. Use it in two places:
++
++- **On a Kubernetes cluster.** On a cluster drawn as a cloud, center the logo on the top-right corner bump, 24px in from the top of the bump, as in `api-gateway-traffic.svg`. The boundary rule that follows does not apply to a cloud. On a cluster drawn as a boundary, center a 36px logo on the top-right corner, at `x + width - 18`, `y - 18`. Do not put it on a broker boundary, such as "Kafka cluster". A broker boundary gets the broker logo (see below).
++- **On a box that runs in the cluster, when the diagram has no Kubernetes cluster boundary.** Center a 36px logo on the bottom-right corner of the box, at `x + width - 18`, `y + height - 18`. On a box less than 60 high, use a 26px logo, at `x + width - 13`, `y + height - 13`. Examples: the mirrord operator, a forwarder, the deployed app, a preview pod. Do not put it on brokers or managed services.
++
++Define the symbol once in `<defs>`, and place it with `<use href="#k8s" x="..." y="..." width="36" height="36"/>`. The logo half covers the corner, so make sure it does not cover an arrow or text, and grow the canvas when it goes past the edge:
++
++```xml
++<symbol id="k8s" viewBox="0 0 32 32">
++  <polygon points="16.00,1.60 27.73,7.25 30.62,19.94 22.51,30.11 9.49,30.11 1.38,19.94 4.27,7.25" fill="#326CE5" stroke="#326CE5" stroke-width="2" stroke-linejoin="round"/>
++  <g fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round">
++  <circle cx="16" cy="16" r="7"/>
++  <line x1="16.00" y1="13.40" x2="16.00" y2="5.80"/><line x1="18.03" y1="14.38" x2="23.97" y2="9.64"/><line x1="18.53" y1="16.58" x2="25.94" y2="18.27"/><line x1="17.13" y1="18.34" x2="20.43" y2="25.19"/><line x
 ```
 
-**File**: `docs/docs/getting-started/quick-start.md` (modified, +3/-2)
+**File**: `docs/README.md` (modified, +4/-0)
 ```diff
-@@ -24,8 +24,9 @@ Get mirrord running against your cluster in a few minutes.
- ## Developers
+@@ -20,6 +20,10 @@ When **changing the structure** of the docs, like creating a new page, you must
  
- 1. [Install mirrord](install-mirrord.md): the CLI, or the extension for VS Code or a JetBrains IDE.
--2. [Onboarding Wizard](onboarding-wizard.md) (optional): generate a `mirrord-up.yaml` for your services.
--3. [Starting your first session](first-session.md): run your local code in the context of the cluster.
-+2. [mirrord MCP Server](../using-mirrord-with-ai/mcp-server.md) (optional, needs the CLI): your AI agent generates mirrord configs, validates them deterministically, explains each option, and follows mirrord's skills and safe defaults, all offline.
-+3. [Onboarding Wizard](onboarding-wizard.md) (optional): generate a `mirrord-up.yaml` for your services.
-+4. [Starting your first session](first-session.md): run your local code in the context of the cluster.
+ **Every feature page needs a plan tag.** Pages under `docs/using-mirrord`, `docs/sharing-the-cluster` and `docs/use-cases` must list at least one of `oss`, `team` or `enterprise` in their `tags` frontmatter, alongside `alpha` or `beta` where relevant. `mirrord mcp` reads these tags to tell users which plan a feature needs. The `content_check` job of the mirrord repository's CI runs `.github/scripts/check_plan_tags.py` on every PR that changes the docs and fails on any page in those directories without one, so a new page cannot ship untagged.
  
- ## Platform teams
++### Diagrams
++
++All diagrams use one style. Read [DIAGRAMS.md](DIAGRAMS.md) before you add or change a diagram.
++
+ ### GitBook
  
+ Each tab on the docs site corresponds to a GitBook "space". Adding a space is done through GitBook, and GitHub sync must be set up to sync changes between the space's repo and the website. Note that changes made in GitBook may be live. The next publish replaces the content of the `docs-published` branch, so a page edited and merged in GitBook is lost unless the same change is also made here.
 ```
 
-**File**: `docs/docs/using-mirrord-with-ai/README.md` (modified, +1/-1)
+**File**: `docs/docs/.gitbook/assets/api-gateway-traffic.svg` (modified, +42/-10)
 ```diff
-@@ -12,7 +12,7 @@ If you're using tools like Claude Code, Cursor, or Codex, mirrord lets you safel
- 
- Here are some ways you can connect mirrord to your AI coding workflow:
- 
--- **[mirrord MCP Server](./mcp-server.md)** - Register the MCP server built into the mirrord CLI, so your agent validates configs and reads the docs of your installed mirrord version.
-+- **[mirrord MCP Server](./mcp-server.md)** - Register the MCP server built into the mirrord CLI, so your agent generates mirrord configs, validates them deterministically, explains each option, and follows mirrord's skills and safe defaults, all offline.
- - **[Agent skills for mirrord](./ai-skills-plugin.md)** - Install skills that give your AI assistant built-in mirrord expertise.
- - **[Test Claude Code Changes Against Staging](./claude-code.md)** - Set up Claude Code to run the code it writes against the real services in your staging cluster, step by step.
- - **[Configure AI Agents to Use mirrord](./the-meta-prompt.md)** - A prompt generator that creates project-specific `AGENTS.md` files and configurations automatically, saving hours of manual setup across multiple services.
+@@ -1,15 +1,42 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -25 960 445" width="960" height="445" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+   <title id="t">How a request reaches your local process through an API gateway</title>
+   <desc id="d">A caller outside the cluster sends a request to the API gateway. The gateway authenticates and routes it to the service pod. At the pod, the mirrord agent sends requests that match your filter to your local process, and all other requests to the deployed container.</desc>
+   <defs>
+     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+       <path d="M0 0 L10 5 L0 10 z" fill="#232141"/>
+     </marker>
++    <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
++      <path d="M0 0 L10 5 L0 10 z" fill="#756DF3"/>
++    </marker>
++    <symbol id="k8s" viewBox="0 0 32 32">
++      <polygon points="16.00,1.60 27.73,7.25 30.62,19.94 22.51,30.11 9.49,30.11 1.38,19.94 4.27,7.25" fill="#326CE5" stroke="#326CE5" stroke-width="2" stroke-linejoin="round"/>
++      <g fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round">
++        <circle cx="16" cy="16" r="7"/>
++        <line x1="16.00" y1="13.40" x2="16.00" y2="5.80"/><line x1="18.03" y1="14.38" x2="23.97" y2="9.64"/><line x1="18.53" y1="16.58" x2="25.94" y2="18.27"/><line x1="17.13" y1="18.34" x2="20.43" y2="25.19"/><line x1="14.87" y1="18.34" x2="11.57" y2="25.19"/><line x1="13.47" y1="16.58" x2="6.06" y2="18.27"/><line x1="13.97" y1="14.38" x2="8.03" y2="9.64"/>
++      </g>
++      <circle cx="16" cy="16" r="2.4" fill="#ffffff"/>
++    </symbol>
++    <symbol id="mirrord" viewBox="97 61 391 696">
++<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
++<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
++<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6
 ```
 
-**File**: `docs/docs/using-mirrord-with-ai/mcp-server.md` (modified, +21/-6)
+**File**: `docs/docs/.gitbook/assets/ecs-sample-app-requests.svg` (modified, +27/-7)
 ```diff
-@@ -1,6 +1,6 @@
- ---
- title: mirrord MCP Server
--description: Register the MCP server built into the mirrord CLI, so that your AI agent checks mirrord configs and reads the mirrord docs of the version you have installed.
-+description: Register the MCP server built into the mirrord CLI, so that your AI agent generates and validates mirrord configs offline, for the mirrord version you run.
- tags:
-   - oss
-   - team
-@@ -9,16 +9,24 @@ tags:
- 
- # mirrord MCP Server
- 
--The mirrord CLI includes an [MCP](https://modelcontextprotocol.io) server, `mirrord mcp`. It gives an AI agent tools to validate `mirrord.json` and `mirrord-up.yaml` against the schema of your installed mirrord version, to explain config options, and to search and read the mirrord docs and [skills](./ai-skills-plugin.md) that this version ships with. It works offline and never starts a session.
-+`mirrord mcp` is the [MCP](https://modelcontextprotocol.io) server built into the mirrord CLI. With it, your AI agent:
-+
-+- Generates `mirrord.json` and `mirrord-up.yaml` files, and validates them against the schema of the mirrord version you run.
-+- Explains any config option: what it does, the values it takes, and the mirrord plan it needs.
-+- Follows the mirrord [skills](./ai-skills-plugin.md) for tasks such as database branching, Kafka splitting, preview environments, and CI.
-+- Uses safe defaults on shared clusters: it mirrors incoming traffic, steals only with an HTTP filter, and targets staging or development clusters, never production.
-+- Answers mirrord questions from the docs of your installed version.
-+
-+The server works offline, from the docs and schema built into your mirrord binary, and never starts a session.
- 
- ## What you need
- 
--- mirrord CLI `3.273.0` or later. Check with `mirrord --version`, and see [Install mirrord](../getting-started/install-mirrord.md).
-+- mirrord CLI `3.273.0` or later, and `3.291.0` or later on Windows for the skills. Check with `mirrord --version`, and see [Install mirrord](../getting-started/install-mirrord.md).
- - An agent that supports MCP servers over stdio, such as Claude Code, Codex, Cursor, VS Code, Windsurf, Claude Desktop, or OpenCode.
- 
- ## Register the server
- 
--Use the absolute path to the `mirrord` binary. Clients that start from a desktop launcher don't inherit your shell's `PATH`. To find the path, run:
-+If the client doesn't find `mirrord` on its `PATH`, use the absolute path to the binary. Clients started from a desktop launcher often don't see your shell's `PATH`. To find the path, run:
- 
- ```sh
- which mirrord
-@@ -43,7 +51,9 @@ codex mcp add mirrord -- /absolute/path/to/mirrord mcp
- {% endtab %}
- {% tab title="Cursor, Windsurf, Claude Desktop" %}
- 
--Add the entry under `"mcpServers"` in the client's config file:
-+In Cursor, you can [add the server with one click](cursor://anysphere.cursor-deeplink/mcp/install?name=mirrord&config=eyJjb21tYW5kIjoibWlycm9yZCIsImFyZ3MiOlsibWNwIl19). The link registers the command `mirrord` without a path, so Cursor has to find `mirrord` on its `PATH`. If Cursor lists no `mirrord` tools, replace `mirrord` in the entry's `command` with the absolute path.
-+
-+To register the server by hand, add the entry under `"mcpServers"` in the client's config file:
- 
- - Cursor: `~/.cursor/mcp.json`, or `.cursor/mcp.json` in the project.
- - Windsurf: `~/.codeium/windsurf/mcp_config.json`.
-@@ -56,7 +66,9 @@ Add the entry under `"mcpServers"` in the client's config file:
- {% endtab %}
- {% tab title="VS Code" %}
- 
--Add the entry under `"servers"` in `.vscode/mcp.json`:
-+You can [install the server with one click](vscode:mcp/install?%7B%22name%22%3A%22mirrord%22%2C%22command%22%3A%22mirrord%22%2C%22args%22%3A%5B%22mcp%22%5D%7D). The link registers the command `mirrord` without a path, so VS Code has to find `mirrord` on its `PATH`. If VS Code lists no `mirrord` tools, replace `mirrord` in `command` with the absolute path.
-+
-+To register the server by hand, add the entry under `"servers"` in `.vscode/mcp.json`:
- 
- ```json
- "mirrord": { "type": "stdio", "command": "/absolute/path/to/mirrord", "args": ["mcp"] }
-@@ -100,9 +112,12 @@ The server sends the agent instructions when it connects. They tell the agent to
- 
- - Get the matching skill with `get_skill` before it starts a mirrord task.
- - Validate every config with `validate_config` before it writes the file, and fix issues until none remain.
-+- Look up options with `explain_config_option` instead of guessing.
-+- When mirrord fails, validate every config involved before it proposes a fix, and propose one fix at a time.
- - Answer questions about mirrord with `search_docs` and `read_doc`, not from memory.
- - Default to `mirror` for incoming traffic, and on a shared cluster use `steal` only with an HTTP filter.
- - Target staging or development clusters, never production.
-+- Know that `mirrord exec` and `mirrord up` deploy nothing to the cluster, that database branches stay until their TTL runs out, and that preview environments stay until sto
+@@ -8,6 +8,22 @@
+     <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+       <path d="M0 0 L10 5 L0 10 z" fill="#756DF3"/>
+     </marker>
++    <symbol id="mirrord" viewBox="97 61 391 696">
++<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
++<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
++<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6.2-8.8-12.9-12.3-19.1l-1.5-2.3 c-1.2-1.8-2-3.8-3.2-5.6c-1.5-2.3-2.9-5.3-5-8.2c0,0,0,0,0-0.3c-1.5-2.3-3.5-5-5.5-7.3c-5-5.9-13.1-13.2-24.2-15.6 c-10.8-2.1-21.9,2.1-27.4,10c-1.2,1.5-0.6,3.8,0.9,4.7c1.5,1.2,3.8,0.6,4.7-0.9c4.1-5.9,12.5-8.8,20.4-7.3 c7.3,1.5,13.1,5.9,17.5,10c-4.7-0.9-9.3-0.3-13.7,1.2c-8.8,3.5-14.6,12-16.9,24.1c-2,11.5-0.3,24.7,4.7,37.3 c1.2,2.6,2.3,5.3,3.5,7.6c-4.1-3.5-7.9-7.3-11.1-11.5c-1.2-1.5-3.5-1.8-5-0.6c-1.5,1.2-1.8,3.5-0.6,5c8.2,10,18.4,18.5,29.5,24.7 c7.9,7.6,16.9,11.7,25.7,11.7c2.9,0,6.1-0.6,8.8-1.8c12.5-5.3,19-20.6,17.5-39.3c2.6,2.1,5,3.8,7.9,5.3c1.5,0.9,2.9,1.2,4.4,1.2 C277.8,401.4,279.2,400.8,280.1,399.6z"/>
++<path d="M439.4,215.2c29.5,54,45.5,122.4,45.5,193.8c0,123.6-49,234.9-122.8,279.2c0.6,2.1,1.2,4.4,1.2,6.8 c0,12.3-10.2,22.6-22.5,22.6c-4.4,0-8.8-1.2-12.3-3.5c0.3,1.2,0.3,2.6,0.3,3.8c0,20.3-16.3,36.7-36.5,36.7s-36.5-16.4-36.5-36.7 c0-1.2,0-2.6,0.3-3.8c-3.5,2.3-7.9,3.5-12.3,3.5c-12.3,0-22.5-10-22.5-22.6c0-2.3,0.3-4.7,1.2-6.8C148.6,643.6,99.3,532.3,99.3,409 c0-71.9,16.3-140.9,46.4-195.3c-1.5-0.9-2.3-2.1-3.5-3.2c-9.9-11.2-15.5-26.4-16.9-42.6c-0.6-11.5,0.9-23.2,5-33.8 c0.6-1.8,2.6-6.8,7.6-7.3c5.3-0.6,8.5,3.8,11.4,7.9c1.2,1.5,2.3,2.9,2.9,3.8c5.5,5.3,12.5,9.7,21.6,13.8c4.4,2.1,9,3.8,13.4,5.3 c11.1-11.2,22.8-20.6,35-27.9c-0.6-2.3-1.2-4.4-1.2-6.8c0-12.3,10.2-22.6,22.5-22.6c4.4,0,8.8,1.2,12.3,3.5c0-1.2-0.3-2.6-0.3-3.8 c0-20.3,16.3-36.7,36.5-36.7c20.1,0,36.5,16.4,36.5,36.7c0,1.2,0,2.6-0.3,3.8c3.5-2.3,7.9-3.5,12.3-3.5c12.5,0,22.5,10.3,22.5,22.6 c0,2.3-0.3,4.7-1.2,6.8c12.5,7.6,24.8,17.3,36.2,29.1c4.7-1.5,9-3.2,13.7-5.3c9-4.1,16-8.5,21.6-13.8c0.9-0.9,2-2.3,2.9-3.8 c2.9-4.1,6.1-8.5,11.4-7.9c5,0.6,7,5.6,7.6,7.3c4.1,10.6,5.5,22.3,4.7,33.8c-1.2,15.9-7,31.4-16.9,42.6 C442.3,21
+```
+
+**File**: `docs/docs/.gitbook/assets/ecs-sample-app.svg` (modified, +32/-8)
+```diff
+@@ -8,6 +8,25 @@
+     <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+       <path d="M0 0 L10 5 L0 10 z" fill="#756DF3"/>
+     </marker>
++    <symbol id="mirrord" viewBox="97 61 391 696">
++<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
++<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
++<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6.2-8.8-12.9-12.3-19.1l-1.5-2.3 c-1.2-1.8-2-3.8-3.2-5.6c-1.5-2.3-2.9-5.3-5-8.2c0,0,0,0,0-0.3c-1.5-2.3-3.5-5-5.5-7.3c-5-5.9-13.1-13.2-24.2-15.6 c-10.8-2.1-21.9,2.1-27.4,10c-1.2,1.5-0.6,3.8,0.9,4.7c1.5,1.2,3.8,0.6,4.7-0.9c4.1-5.9,12.5-8.8,20.4-7.3 c7.3,1.5,13.1,5.9,17.5,10c-4.7-0.9-9.3-0.3-13.7,1.2c-8.8,3.5-14.6,12-16.9,24.1c-2,11.5-0.3,24.7,4.7,37.3 c1.2,2.6,2.3,5.3,3.5,7.6c-4.1-3.5-7.9-7.3-11.1-11.5c-1.2-1.5-3.5-1.8-5-0.6c-1.5,1.2-1.8,3.5-0.6,5c8.2,10,18.4,18.5,29.5,24.7 c7.9,7.6,16.9,11.7,25.7,11.7c2.9,0,6.1-0.6,8.8-1.8c12.5-5.3,19-20.6,17.5-39.3c2.6,2.1,5,3.8,7.9,5.3c1.5,0.9,2.9,1.2,4.4,1.2 C277.8,401.4,279.2,400.8,280.1,399.6z"/>
++<path d="M439.4,215.2c29.5,54,45.5,122.4,45.5,193.8c0,123.6-49,234.9-122.8,279.2c0.6,2.1,1.2,4.4,1.2,6.8 c0,12.3-10.2,22.6-22.5,22.6c-4.4,0-8.8-1.2-12.3-3.5c0.3,1.2,0.3,2.6,0.3,3.8c0,20.3-16.3,36.7-36.5,36.7s-36.5-16.4-36.5-36.7 c0-1.2,0-2.6,0.3-3.8c-3.5,2.3-7.9,3.5-12.3,3.5c-12.3,0-22.5-10-22.5-22.6c0-2.3,0.3-4.7,1.2-6.8C148.6,643.6,99.3,532.3,99.3,409 c0-71.9,16.3-140.9,46.4-195.3c-1.5-0.9-2.3-2.1-3.5-3.2c-9.9-11.2-15.5-26.4-16.9-42.6c-0.6-11.5,0.9-23.2,5-33.8 c0.6-1.8,2.6-6.8,7.6-7.3c5.3-0.6,8.5,3.8,11.4,7.9c1.2,1.5,2.3,2.9,2.9,3.8c5.5,5.3,12.5,9.7,21.6,13.8c4.4,2.1,9,3.8,13.4,5.3 c11.1-11.2,22.8-20.6,35-27.9c-0.6-2.3-1.2-4.4-1.2-6.8c0-12.3,10.2-22.6,22.5-22.6c4.4,0,8.8,1.2,12.3,3.5c0-1.2-0.3-2.6-0.3-3.8 c0-20.3,16.3-36.7,36.5-36.7c20.1,0,36.5,16.4,36.5,36.7c0,1.2,0,2.6-0.3,3.8c3.5-2.3,7.9-3.5,12.3-3.5c12.5,0,22.5,10.3,22.5,22.6 c0,2.3-0.3,4.7-1.2,6.8c12.5,7.6,24.8,17.3,36.2,29.1c4.7-1.5,9-3.2,13.7-5.3c9-4.1,16-8.5,21.6-13.8c0.9-0.9,2-2.3,2.9-3.8 c2.9-4.1,6.1-8.5,11.4-7.9c5,0.6,7,5.6,7.6,7.3c4.1,10.6,5.5,22.3,4.7,33.8c-1.2,15.9-7,31.4-16.9,42.6 C442.3,21
+```
+
+**File**: `docs/docs/.gitbook/assets/header-propagation.svg` (modified, +27/-5)
+```diff
+@@ -8,6 +8,22 @@
+     <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+       <path d="M0 0 L10 5 L0 10 z" fill="#ACACAC"/>
+     </marker>
++    <symbol id="mirrord" viewBox="97 61 391 696">
++<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
++<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
++<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6.2-8.8-12.9-12.3-19.1l-1.5-2.3 c-1.2-1.8-2-3.8-3.2-5.6c-1.5-2.3-2.9-5.3-5-8.2c0,0,0,0,0-0.3c-1.5-2.3-3.5-5-5.5-7.3c-5-5.9-13.1-13.2-24.2-15.6 c-10.8-2.1-21.9,2.1-27.4,10c-1.2,1.5-0.6,3.8,0.9,4.7c1.5,1.2,3.8,0.6,4.7-0.9c4.1-5.9,12.5-8.8,20.4-7.3 c7.3,1.5,13.1,5.9,17.5,10c-4.7-0.9-9.3-0.3-13.7,1.2c-8.8,3.5-14.6,12-16.9,24.1c-2,11.5-0.3,24.7,4.7,37.3 c1.2,2.6,2.3,5.3,3.5,7.6c-4.1-3.5-7.9-7.3-11.1-11.5c-1.2-1.5-3.5-1.8-5-0.6c-1.5,1.2-1.8,3.5-0.6,5c8.2,10,18.4,18.5,29.5,24.7 c7.9,7.6,16.9,11.7,25.7,11.7c2.9,0,6.1-0.6,8.8-1.8c12.5-5.3,19-20.6,17.5-39.3c2.6,2.1,5,3.8,7.9,5.3c1.5,0.9,2.9,1.2,4.4,1.2 C277.8,401.4,279.2,400.8,280.1,399.6z"/>
++<path d="M439.4,215.2c29.5,54,45.5,122.4,45.5,193.8c0,123.6-49,234.9-122.8,279.2c0.6,2.1,1.2,4.4,1.2,6.8 c0,12.3-10.2,22.6-22.5,22.6c-4.4,0-8.8-1.2-12.3-3.5c0.3,1.2,0.3,2.6,0.3,3.8c0,20.3-16.3,36.7-36.5,36.7s-36.5-16.4-36.5-36.7 c0-1.2,0-2.6,0.3-3.8c-3.5,2.3-7.9,3.5-12.3,3.5c-12.3,0-22.5-10-22.5-22.6c0-2.3,0.3-4.7,1.2-6.8C148.6,643.6,99.3,532.3,99.3,409 c0-71.9,16.3-140.9,46.4-195.3c-1.5-0.9-2.3-2.1-3.5-3.2c-9.9-11.2-15.5-26.4-16.9-42.6c-0.6-11.5,0.9-23.2,5-33.8 c0.6-1.8,2.6-6.8,7.6-7.3c5.3-0.6,8.5,3.8,11.4,7.9c1.2,1.5,2.3,2.9,2.9,3.8c5.5,5.3,12.5,9.7,21.6,13.8c4.4,2.1,9,3.8,13.4,5.3 c11.1-11.2,22.8-20.6,35-27.9c-0.6-2.3-1.2-4.4-1.2-6.8c0-12.3,10.2-22.6,22.5-22.6c4.4,0,8.8,1.2,12.3,3.5c0-1.2-0.3-2.6-0.3-3.8 c0-20.3,16.3-36.7,36.5-36.7c20.1,0,36.5,16.4,36.5,36.7c0,1.2,0,2.6-0.3,3.8c3.5-2.3,7.9-3.5,12.3-3.5c12.5,0,22.5,10.3,22.5,22.6 c0,2.3-0.3,4.7-1.2,6.8c12.5,7.6,24.8,17.3,36.2,29.1c4.7-1.5,9-3.2,13.7-5.3c9-4.1,16-8.5,21.6-13.8c0.9-0.9,2-2.3,2.9-3.8 c2.9-4.1,6.1-8.5,11.4-7.9c5,0.6,7,5.6,7.6,7.3c4.1,10.6,5.5,22.3,4.7,33.8c-1.2,15.9-7,31.4-16.9,42.6 C442.3,212.
+```
+
+**File**: `docs/docs/.gitbook/assets/preview-sync-flow.svg` (modified, +59/-4)
+```diff
+@@ -1,4 +1,59 @@
+-<?xml version="1.0" standalone="no"?>
+-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 640" width="2040" height="1280"><!-- svg-source:excalidraw --><metadata></metadata><defs><style class="style-fonts">
+-      @font-face { font-family: "Comic Shanns"; src: url(data:font/woff2;base64,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
+```
+
+**File**: `docs/docs/.gitbook/assets/shared-cluster.svg` (added, +156/-0)
+```diff
+@@ -0,0 +1,156 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -47 1200 767" width="1200" height="767" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
++  <title id="t">How several developers use one cluster at the same time</title>
++  <desc id="d">Four developers run local processes with mirrord on their laptops, against one shared cluster. One: an upstream service sends requests to a shared service, and HTTP filters on the x-header header send yellow requests to developer A, whose laptop is yellow, and green requests to developer B, whose laptop is green. Two: SQS or Kafka splitting sends the green queue messages to developer B and the blue queue messages to developer C, whose laptop is blue. The white messages stay with the deployed service. Three: developer D targets the upstream service, and a mirrord policy blocks writes to the main database. Four: DB branching gives developer D a personal database branch, which receives the writes.</desc>
++  <defs>
++    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
++      <path d="M0 0 L10 5 L0 10 z" fill="#232141"/>
++    </marker>
++    <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
++      <path d="M0 0 L10 5 L0 10 z" fill="#756DF3"/>
++    </marker>
++    <marker id="arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
++      <path d="M0 0 L10 5 L0 10 z" fill="#ACACAC"/>
++    </marker>
++    <symbol id="mirrord" viewBox="97 61 391 696">
++<path fill="#ffffff" d="M255.6,387c4.1,19.1-0.9,36.1-12,40.5c-8.2,3.2-17.8,0-26.5-8.2c-0.3-0.6-0.9-0.9-1.5-1.2c0,0,0,0-0.3-0.3 c-5.5-5.6-10.5-13.2-14-22c-4.7-11.5-6.1-23.2-4.4-33.5c1.8-9.4,6.1-16.1,12.8-18.8c5.5-2.3,12.5-1.5,19.3,2.6 c1.5,2.3,2.6,4.4,3.8,6.2c-4.1,2.6-6.4,10.3-6.4,20.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.5 c3.2,17.9,12,31.1,19,29.7c6.4-1.2,9.6-14.4,7.6-30.2C255.3,386.4,255.6,386.7,255.6,387z"/>
++<path fill="#ffffff" d="M384,398.4c-3.2,6.8-7.3,12.3-12,17c0,0,0,0-0.3,0c-0.6,0.3-0.9,0.9-1.2,1.2c-8.7,7.9-18.4,11.5-26.5,8.2 c-11.1-4.7-16-21.4-12-40.5c1.5-1.8,3.2-3.8,4.7-5.6c5-6.5,9-13.2,12.8-20l1.2-2.1c1.2-1.8,2-3.8,3.2-5.6c1.2-2.1,2.6-4.4,4.4-7 c3.5-2.1,6.7-3.2,9.9-3.8c-2,4.7-2.3,10.3-2.3,15.3l3.2,1.8l11.1,6.5l-12.5,1.5h-0.9c0.3,1.2,0.3,2.3,0.6,3.8 C370.5,384.6,377.5,397,384,398.4z"/>
++<path fill="#E4E3FD" d="M405,391.7c-1.5-1.2-3.8-0.9-5,0.6c-3.2,4.1-7,7.9-11.1,11.5c1.2-2.3,2.6-5,3.5-7.6 c5.3-12.6,6.7-25.8,4.7-37.3c-2.3-12-8.2-20.6-16.9-24.1c-4.1-1.8-8.8-2.1-13.7-1.2c4.4-4.4,10.2-8.5,17.5-10 c8.2-1.5,16.6,1.5,20.4,7.3c1.2,1.5,3.2,2.1,5,0.9c1.5-1.2,2-3.2,0.9-4.7c-5.5-8.2-16.6-12.3-27.4-10c-11.1,2.1-19.3,9.7-24.2,15.6 c-2,2.3-3.8,5-5.5,7.3c-2,2.9-3.5,5.6-5,8.2c-1.2,2.1-2.3,3.8-3.2,5.6l-1.2,2.1c-3.8,6.5-7.6,13.2-12.3,19.1 c-5.8,7.6-11.7,12.9-18.4,16.7c0.6-5,2-9.7,4.4-14.1c0.9-1.8,0.3-3.8-1.5-4.7c-1.7-0.9-3.8-0.3-4.7,1.5c-2.9,5.6-4.7,11.5-5.3,17.6 c0,0.9-0.3,3.5,1.5,5.6c1.2,1.2,2.3,1.8,4.1,1.8c1.5,0,2.9-0.3,4.4-1.5c2.6-1.5,5.3-3.2,7.9-5.3c-1.7,18.5,5,34.1,17.5,39.3 c2.9,1.2,5.8,1.8,8.8,1.8c8.5,0,17.5-4.4,25.4-12c11.4-6.2,21.6-14.4,29.5-24.7C406.7,395.2,406.4,392.8,405,391.7z M292.1,149.1 c90.1,0,163.6,116.6,163.6,259.6s-73.5,259.6-163.6,259.6c-90.4,0-163.6-116.6-163.6-259.6S201.9,149.1,292.1,149.1z M389.5,517.3 c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.7c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L389.5,517.3z M346.9,589c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-31.2,23.2 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.6-0.3,0.9-0.3L346.9,589z M338.2,189.1c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3l-122.5,93.4c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.9,0,0.9-0.3L338.2,189.1z M324.4,284.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3l-31.2,22.9c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.6,1.5,0.6 c0.3,0,0.6,0,0.9-0.3L324.4,284.5z M322.7,495.9c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.8-0.9-2.3-0.3l-66.2,50.8 c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6c0.3,0,0.6,0,0.9-0.3L322.7,495.9z M314.8,472.4c0.9-0.6,0.9-1.8,0.3-2.3 c-0.6-0.9-1.8-0.9-2.3-0.3L281.6,493c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.6,0.9,0.9,1.5,0.9c0.3,0,0.9-0.3,0.9-0.3L314.8,472.4z M302.3,190.5c0.9-0.6,0.9-1.8,0.3-2.3c-0.6-0.9-1.7-0.9-2.3-0.3L234,239c-0.9,0.6-0.9,1.8-0.3,2.3c0.3,0.3,0.9,0.6,1.5,0.6 c0.3,0,0.9,0,1.2-0.3L302.3,190.5z M280.1,399.6c1.8-2.1,1.5-4.7,1.5-5.6c-0.6-6.2-2.3-12.3-5-17.9c-0.9-1.8-2.9-2.3-4.7-1.5 c-1.8,0.9-2.3,2.9-1.5,4.7c2.3,4.4,3.8,9.4,4.4,14.1c-6.4-3.8-12.5-9.4-18.4-16.7c-4.7-6.2-8.8-12.9-12.3-19.1l-1.5-2.3 c-1.2-1.8-2-3.8-3.2-5.6c-1.5-2.3-2.9-5.3-5-8.2c0,0,0,0,0-0.3c-1.5-2.3-3.5-5-5.5-7.3c-5-5.9-13.1-13.2-24.2-15.6 c-10.8-2.1-21.9,2.1-27.4,10c-1.2,1.5-0.6,3.8,0.9,4.7c1.5,1.2,3.8,0.6,4.7-0.9c4.1-5.9,12.5-8.8,20.4-7.3 c7.3,1.5,13.1,5.9,17.5,10c-4.7-0.9-9.3-0.3-13.7,1.2c-8.8,3.5-14.6,12-16.9,24.1c-2,11.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5306** (2026-11-24): Trim dependencies of the CLI and the agent (@Razz4780)
-- **PR #5304** (2026-11-24): Release 3.291.1 (@cubby-mb[bot])
-- **PR #5303** (2026-11-24): Harden filesystem path handling in the agent (@Razz4780)
-- **PR #5301** (2026-11-24): Drop unsafe jaq builtins (@Razz4780)
-- **PR #5294** (2026-11-24): ci: submit WinGet manifests from a workflow dispatched on main (@meowjesty)
-- **PR #5291** (2026-11-23): Publish docs and guides when a labeled pull request merges (@meowjesty)
+- **PR #5325** (2026-11-26): Redraw the env vars and mirrord for CI diagrams (@eyalb181)
+- **PR #5324** (2026-11-26): Redraw the preview environment create and modify diagrams (@eyalb181)
+- **PR #5323** (2026-11-26): Redraw the preview H2, multi-cluster, and GCP Pub/Sub diagrams (@eyalb181)
+- **PR #5322** (2026-11-26): Redraw the Kafka, RabbitMQ, and SQS splitting diagrams (@eyalb181)
+- **PR #5321** (2026-11-26): Redraw the operator architecture, BullMQ, and Redis diagrams (@eyalb181)
+- **PR #5320** (2026-11-26): Redraw the Azure Service Bus, Temporal, NATS, and ConfigMap diagrams (@eyalb181)
 
 ---
 
@@ -2014,37 +1902,35 @@ server sends.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Drop unsafe jaq builtins
+## X. ci: build the remaining test jobs with line-table debug info
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-mirrord-cli.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aee4b8a5`: Drop unsafe jaq builtins. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d64f3d8a`: ci: build the remaining test jobs with line-table debug info. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-mirrord-cli.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "mirrord-jaq",
-version = "1.30.3"
- "mirrord-jaq",
+env:
+  # Line tables keep the file and line numbers in panics and backtraces, but they build and link faster than full
+  # debug info. rust-cache hashes this variable into its key, so the jobs that share a cache must all set it.
+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "jaq-std",
-version = "1.30.2"
- "jaq-core",
- "jaq-json",
- "jaq-std",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aee4b8a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d64f3d8a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

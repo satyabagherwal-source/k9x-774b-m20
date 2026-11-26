@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T16:10:58.228Z",
+  "last_updated": "2026-11-26T16:21:27.216Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -755,14 +755,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "4cc42b892be79f5b5ea60f7444ac0b98cbbc4f1d0aaa5ec19edb38cad6d6969d",
-      "verified_at": "2026-11-22T23:15:33.517Z",
+      "content_hash": "7719cc76c416ca9b475a8fc882b0585c3c46f7620b8471bd8808a3dd8c4841bb",
+      "verified_at": "2026-11-26T16:21:09.892Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:15:33.517Z"
+      "last_updated": "2026-11-26T16:21:09.892Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "d1b6c96ac4f0d500f188e43a4279534e28ff196142e8889fe2f3a7a9049c0b27",
-      "verified_at": "2026-11-25T07:57:00.160Z",
+      "content_hash": "7a13154c9229aa27dd80be98b8d9f1bf8c77f6c6ebc7a2137ba31d3bbe56f991",
+      "verified_at": "2026-11-26T16:21:13.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T07:57:00.160Z"
+      "last_updated": "2026-11-26T16:21:13.706Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "b9967214fb35757e69f24e2dd4bfa22660c8e9ee7ff4badfbc995b158cae8855",
-      "verified_at": "2026-11-25T15:00:43.846Z",
+      "content_hash": "ca044f0915dafca54b0b658bc754d5efed3c74e7bd53a5969f7e989d1560e47d",
+      "verified_at": "2026-11-26T16:21:27.215Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:00:43.846Z"
+      "last_updated": "2026-11-26T16:21:27.215Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",
@@ -15516,14 +15516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-expo-expo",
-      "content_hash": "9b5fea2d363eff5ea37cfa556947151796c8af3394dbaeb69541942953f86dea",
-      "verified_at": "2026-11-24T06:30:13.728Z",
+      "content_hash": "4c8f1a4410f82abceb42d6be0145cb95ed2572c4bfdfbae9ab66c40b25d5ef6b",
+      "verified_at": "2026-11-26T16:21:19.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:30:13.728Z"
+      "last_updated": "2026-11-26T16:21:19.489Z"
     },
     "vercel/swr": {
       "repository": "vercel/swr",
