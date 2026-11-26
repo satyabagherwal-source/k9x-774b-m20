@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T19:45:57.348Z",
+  "last_updated": "2026-11-26T19:55:13.537Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61418,11 +61418,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-Q6OZ",
+      "id": "CD-23UP",
       "directive_title": "Bump version number",
-      "source_repo": "zoontek-react-native-bootsplash-learnings",
+      "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-Q6OZ-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-23UP-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -63405,11 +63405,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-Q5UU",
+      "id": "CD-22P1",
       "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-Q5UU-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-22P1-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -66835,6 +66835,24 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-33DC41-bump-version-number.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-3B7673",
+      "directive_title": "daemon): drain buffered watcher changes before returning from indexing",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3B7673-daemon-drain-buffered-watcher-changes-be.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-F5D054",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F5D054-bump-version-number.md",
       "staged_date": "2026-11-26"
     }
   ]

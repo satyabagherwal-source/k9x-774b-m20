@@ -13535,3 +13535,4 @@
 | `CYCLE-20261126-F2D1` | `2026-11-26T19:37:18.517Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10764` | Yes (`9a84341c...`) |
 | `CYCLE-20261126-F5WZ` | `2026-11-26T19:37:23.123Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10765` | Yes (`d6129c26...`) |
 | `CYCLE-20261126-PVVL` | `2026-11-26T19:45:43.329Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`f8e6e397...`) |
+| `CYCLE-20261126-1SOV` | `2026-11-26T19:54:59.071Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`19b3b7c1...`) |

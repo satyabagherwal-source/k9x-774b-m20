@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-JMFF",
-    "timestamp": "2026-11-25T08:13:20.331Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "bfe49f5538b93d23392942911fbc4332a90ba49f68da92348a0c2c3accc10aaa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-JQHN",
     "timestamp": "2026-11-25T08:13:25.595Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7475,21 @@
     "repository": "Tongyi-MAI/Z-Image-Turbo",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
     "contentHash": "f8e6e397b50d53ff1c47ceebde042d831b5f6dddd8611ab850402e416bdfc84e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-1SOV",
+    "timestamp": "2026-11-26T19:54:59.071Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "19b3b7c10c0cb5331b490731adfe2bec445e0f883a3ee3680c53c895edef2026",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

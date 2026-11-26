@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T19:45:57.758Z",
+  "last_updated": "2026-11-26T19:55:14.084Z",
   "total_verified_learnings": 9133,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "50c133d4d78bbd03ac7107a889286b34d8dea4983a854a0852e12e67616e1a4a",
+      "content_hash": "9366f8beb7f89190a80523c156e97892539c7746de9fb67ce441e8746cbe8970",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:45:56.450Z"
+      "persisted_at": "2026-11-26T19:55:12.309Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e8184f477ca26b50510e09fa601b96d3374403fc965007096d4ab20c030404ff",
+      "content_hash": "6743fdc6a508834f54499805e47da24957c1990d2a70323bef6735939e5e4dc0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:45:56.632Z"
+      "persisted_at": "2026-11-26T19:55:12.588Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "040a71cdc53a250529617c480c303c4c4f45169cdec73be32b2346ca492fd9ab",
+      "content_hash": "98974ad71220bc7448044a3bedfaf32023d6dfb6ac6092c1d16d80ba7a8e34f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T19:45:56.785Z"
+      "persisted_at": "2026-11-26T19:55:12.818Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -219597,9 +219597,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "3b51d4cdf8078772c5508075edfe4690710468b3253be6445742af0a5394a96f",
+      "content_hash": "70505851cfc08919a18781786daccf8f651cd6ba7158f5cc95ef77089ba26e00",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T17:30:58.661Z"
+      "persisted_at": "2026-11-26T19:55:13.815Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219609,9 +219609,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "72bb791b6fa191fb33767ec3f925b53699d13988260b5ccd6a08d1b4a66d6509",
+      "content_hash": "8028c9ab3aa0c52c3d97289c21a7f7e687bc38451ab0749ac06c40cfaa2e92e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:30:58.824Z"
+      "persisted_at": "2026-11-26T19:55:14.084Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -222928,7 +222928,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "07d157ac3b1aa5a26d56ad21aed1107cb7257b596f740b794cc909b17aa01b7b",
+      "content_hash": "19b3b7c10c0cb5331b490731adfe2bec445e0f883a3ee3680c53c895edef2026",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
       "promoted_rules": [],
@@ -222937,7 +222937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T06:22:15.904Z",
+      "verified_at": "2026-11-26T19:54:58.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222954,9 +222954,9 @@
       "title": "Research & Knowledge Intelligence: openai/gpt-oss-120b Core Invariants",
       "repository": "openai/gpt-oss-120b",
       "source_version": "hf-openai-gpt-oss-120b",
-      "content_hash": "0b67a40b6fc3b32c94c3aca6af8cccde1f9b4a4ab78bc3c41f8a7b1cbe53b6b3",
+      "content_hash": "5dd3b4bb51898e0c532a069b295681cad05e076f8195f6cb7b193ae10f89728f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T06:22:16.305Z"
+      "persisted_at": "2026-11-26T19:54:59.416Z"
     },
     "learn-github-nats-io-nats-server": {
       "learning_id": "learn-github-nats-io-nats-server",
@@ -223101,9 +223101,9 @@
       "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-120b-learnings Core Invariants",
       "repository": "hf-openai-gpt-oss-120b-learnings",
       "source_version": "HEAD",
-      "content_hash": "08bf2d30101470390369dc197aefff03056255be5eb627da5c52aa669354cd48",
+      "content_hash": "31f44f06dc0bc18e11086c2e65143bbf52644b4a5c383657670a609511876bc6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T06:22:34.120Z"
+      "persisted_at": "2026-11-26T19:55:11.069Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant",
@@ -349599,13 +349599,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Q6OZ-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-23UP-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e538212f8eaebd1094114630fe31184e75abd01b82160359289ddec7ac635eb7",
+      "content_hash": "2fc90253cf1689e11f47f24cf58faa837a03e9ec37f75e0dd372708ca1fdf8e5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:45:57.348Z"
+      "persisted_at": "2026-11-26T19:55:13.537Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -352415,13 +352415,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Q5UU-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-22P1-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d08007a11fa05a9670712863eda85f0916fef2d05381766119fc494efe2eef2b",
+      "content_hash": "61ddaa602ede2876930991d4ad10f8b5300f0b3d40fd17b00f3fcf2ccdcb13d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:45:56.262Z"
+      "persisted_at": "2026-11-26T19:55:12.037Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",

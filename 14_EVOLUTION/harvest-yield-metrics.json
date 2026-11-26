@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T19:45:43.345Z",
-  "total_cycles_completed": 12847,
-  "total_learnings_persisted": 12847,
+  "last_updated": "2026-11-26T19:54:59.092Z",
+  "total_cycles_completed": 12848,
+  "total_learnings_persisted": 12848,
   "total_rules_promoted": 11671,
   "history": [
-    {
-      "timestamp": "2026-11-26T10:08:16.866Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T10:08:29.359Z",
       "repository": "arangodb/arangodb",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-26T19:45:43.345Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T19:54:59.092Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

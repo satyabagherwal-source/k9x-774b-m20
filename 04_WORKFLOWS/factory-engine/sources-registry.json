@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T19:45:55.157Z",
-    "lastVerified": "2026-11-26T19:45:55.157Z",
+    "lastChecked": "2026-11-26T19:55:10.534Z",
+    "lastVerified": "2026-11-26T19:55:10.534Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -401,8 +401,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T19:16:21.679Z",
-    "lastVerified": "2026-11-26T19:16:21.679Z",
+    "lastChecked": "2026-11-26T19:55:10.521Z",
+    "lastVerified": "2026-11-26T19:55:10.521Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -572,8 +572,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T15:50:13.112Z",
-    "lastVerified": "2026-11-26T15:50:13.112Z",
+    "lastChecked": "2026-11-26T19:55:05.532Z",
+    "lastVerified": "2026-11-26T19:55:05.532Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -2497,9 +2497,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-26T01:26:28.106Z",
+    "lastChecked": "2026-11-26T19:55:08.025Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-26T01:26:28.106Z"
+    "lastVerified": "2026-11-26T19:55:08.025Z"
   },
   "flox-flox": {
     "name": "flox/flox",
@@ -2754,9 +2754,9 @@
   "boardgameio-boardgame.io": {
     "name": "boardgame.io",
     "officialUrl": "https://github.com/boardgameio/boardgame.io",
-    "lastChecked": "2026-11-24T12:05:06.373Z",
+    "lastChecked": "2026-11-26T19:55:00.719Z",
     "revisionIdentifier": "47adef2b",
-    "lastVerified": "2026-11-24T12:05:06.373Z"
+    "lastVerified": "2026-11-26T19:55:00.719Z"
   },
   "permify-permify": {
     "name": "permify",
@@ -3828,8 +3828,8 @@
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T12:47:44.958Z",
-    "lastVerified": "2026-11-25T12:47:44.958Z",
+    "lastChecked": "2026-11-26T19:54:55.503Z",
+    "lastVerified": "2026-11-26T19:54:55.503Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuberwastaken-claurst",
@@ -4750,12 +4750,12 @@
     "officialUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T06:22:15.486Z",
-    "lastVerified": "2026-11-23T06:22:15.486Z",
+    "lastChecked": "2026-11-26T19:54:58.175Z",
+    "lastVerified": "2026-11-26T19:54:58.175Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "07d157ac3b1aa5a26d56ad21aed1107cb7257b596f740b794cc909b17aa01b7b",
+    "contentHash": "19b3b7c10c0cb5331b490731adfe2bec445e0f883a3ee3680c53c895edef2026",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5628,9 +5628,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-26T02:18:37.870Z",
+    "lastChecked": "2026-11-26T19:55:02.989Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-26T02:18:37.870Z"
+    "lastVerified": "2026-11-26T19:55:02.989Z"
   },
   "apache-shardingsphere": {
     "name": "shardingsphere",
