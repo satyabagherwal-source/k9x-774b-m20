@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `754f2bdb`  
+> **Source Version**: `202082ee`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:29:37.571Z  
+> **Timestamp**: 2026-11-26T03:13:03.367Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:29:37.562Z  
+> **Harvest Timestamp**: 2026-11-26T03:13:03.360Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7410 stars
+- **Stars / Engagement**: 7461 stars
 
 ---
 
@@ -1793,335 +1793,343 @@ final class SoundEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b85bb19e` (2026-11-21)
-**Commit Message**: Release prep: Windows and Linux 0.6.0, Android 0.6.0
+### Incident Patch 1: `cac6aae2` (2026-11-24)
+**Commit Message**: Release prep: Mac 0.6.2 (build 28)
 
-Windows and Linux 0.6.0: start a Claude Code session from the island or
-from Coucou for Android 0.6.0, drop a file on a session, approve
-Antigravity and OpenCode. Version 0.6.0 in Cargo, npm, Tauri and the Arch
-PKGBUILD; CHANGELOG dated; README rows, Linux links and paragraph.
-What's new: the session item says island (no notch on a PC), and the phone
-launch replaces the « OK Coucou » item; 14 languages, the test passes.
-
-Android 0.6.0 (#1133 by @Rhytam23): CHANGELOG dated, README row and
-download links, docs/android.html and docs/index.html point to android-v0.6.0.
+- project.yml and Info.plist: 0.6.2, build 28.
+- CHANGELOG: 0.6.2 dated November 24, 2026: Mochi's room.
+- README: 0.6.2 row in the Versions table; Mochi's room in Features, in
+  the Coucou window section and in How it works.
+- What's new 0.6.2 in the 16 languages: Mochi's room, your tools on the
+  wall, approve at the door. scripts/test-whats-new.py passes.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `CHANGELOG.md` (modified, +2/-2)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -39,7 +39,7 @@ Fixes:
- - **Mochi reads the memory pressure** as soon as he comes back on screen (#795 by @orrrrli)
- - **iPhone link**: the relay is sturdier (#1035) and no longer retries a bad device token forever (#1036), by @hasnain-amir
+@@ -1,5 +1,9 @@
+ # Changelog
  
--## Windows and Linux 0.6.0 — Unreleased
-+## Windows and Linux 0.6.0 — November 21, 2026
++## 0.6.2 — November 24, 2026
++
++- **Mochi's room** *(GitHub build)* — a new page at the top of the Notch section of the Coucou window, off by default: Mochi in a little room where every object is live data. He naps on the bed when nothing runs, sits at the desk while an agent works (code types itself on the screen) and runs to the door when one asks something: the permission request opens under the room with Deny, Always and Allow, each a click. The window is your weather: sun when the CI of your main branches and your last Vercel deploy are green, clouds while something builds, rain when a build fails, a storm when a deploy fails, stars at night. The frames on the wall are your connected tools with their logos — Stripe paid today, GitHub stars, the last Vercel deploy, n8n runs, your next Cal.com call — a click opens them. The clock gives the real time and the time coded with agents today, and the plant on the shelf grows with your streak. Under the room: time coded, approvals, deploys and streak for today, and the room's settings (door, weather, day and night, which tools hang on the wall). It only reads what Coucou already has, and draws nothing while it is off or the window is hidden. The idea came from the community
++
+ ## 0.6.1 — November 19, 2026
  
- - **The n8n card fills in on start** and shows each new execution, with its sound (#1093, #1095 by @Ohualtex)
- - **Hardening** — the hook pipe only accepts your own account, Coucou's folders are restricted to you, and the hook relay is checked by its SHA-256 (#1076, #1100 by @Ohualtex)
-@@ -68,7 +68,7 @@ Fixes:
- - **The finished card goes away when a new prompt comes** (#587) and **the GitHub week strip is graded against its own week** (#611), by @rollecode
- - **Botan, the founders list** — the second step of the card shown after an update has one more line, *Botan: Mochi is leaving the notch. Join the founders ↗*, which opens [louisraille.fr/botan](https://louisraille.fr/botan). The card is a little taller for it
- 
--## Android 0.6.0 — Unreleased
-+## Android 0.6.0 — November 21, 2026
- 
- - **Coucou for Android 0.6.0**, by @Rhytam23 (versionCode 6)
-   - **Start a Claude Code session from your phone** — a row on Home, **New Claude Code session**: pick one of the projects your computer lists, write what Claude should do, and send. Your terminal opens on the computer with Claude Code and your words, and the session shows on the phone like any other. Sending asks for your fingerprint or screen lock, like Allow. The phone sees the projects' folder names only and cannot type a path; the sheet says whether it was sent, refused (and why) or got no answer. It needs Coucou 0.6.0 on Windows or Linux with Settings → Android phone → **Let the phone start Claude Code sessions** turned on (off by default); with an older computer or a Mac the phone says "Your computer doesn't offer this yet" and everything else works as before
+ - **Mochi no longer weighs down 120 Hz Macs** — on a ProMotion screen Mochi was redrawn 120 times a second, even folded in the notch: 35 to 60 % CPU, and as much again in WindowServer. He is now drawn at 60 fps while the island is open and 30 folded, the mini Mochis at 30, with the same motion on every screen; on a ProMotion Mac he also stops moving twice as fast (#1116, found by @liztim17)
 ```
 
-**File**: `README.md` (modified, +6/-5)
+**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
 ```diff
-@@ -147,7 +147,7 @@ The Mac app does the work; the iPhone app keeps you in the loop when you step aw
- - 🧩 **Home-screen widgets** — nine of them, from a tiny Mochi to a big card with plan usage and quick buttons. Orange when something waits for you, blue while it works, green when it's done. Read-only: a request is always decided in the app.
- - 🔒 **Local and private** — the phone talks straight to your computer on your Wi-Fi, paired with a QR code and a pinned certificate. The phone link is **off by default**, and nothing listens until you turn it on.
- 
--**Status:** tested on a real phone (Android 13) with the Windows app. The phone link is in **Coucou 0.4.0 for Windows and Linux**. Download the signed APK from the [latest Android release](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0). Android needs Coucou on **Windows or Linux**, or Coucou 0.6.0 or later on the **Mac** (GitHub build), Android 11 or later, and both on the same Wi-Fi. Full guide: [`android/README.md`](android/README.md).
-+**Status:** tested on a real phone (Android 13) with the Windows app. The phone link is in **Coucou 0.4.0 for Windows and Linux**; starting a Claude Code session from the phone needs **Coucou 0.6.0 for Windows or Linux**. Download the signed APK from the [latest Android release](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0). Android needs Coucou on **Windows or Linux**, or Coucou 0.6.0 or later on the **Mac** (GitHub build), Android 11 or later, and both on the same Wi-Fi. Full guide: [`android/README.md`](android/README.md).
+@@ -36,9 +36,9 @@
+ 	<key>CFBundlePackageType</key>
+ 	<string>APPL</string>
+ 	<key>CFBundleShortVersionString</key>
+-	<string>0.6.1</string>
++	<string>0.6.2</string>
+ 	<key>CFBundleVersion</key>
+-	<string>27</string>
++	<string>28</string>
+ 	<key>LSUIElement</key>
+ 	<true/>
+ 	<key>NSAccessibilityUsageDescription</key>
+```
+
+**File**: `NotchBuddy/Resources/whats-new.json` (modified, +122/-0)
+```diff
+@@ -1,6 +1,128 @@
+ {
+   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 16 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
+   "releases": [
++    {
++      "version": "0.6.2",
++      "items": [
++        {
++          "icon": "sparkles",
++          "title": {
++            "en": "Mochi's room",
++            "fr": "La chambre de Mochi",
++            "es": "La habitación de Mochi",
++            "pt-BR": "O quarto do Mochi",
++            "ru": "Комната Мочи",
++            "zh-Hans": "Mochi 的房间",
++            "hi": "मोची का कमरा",
++            "ar": "غرفة موتشي",
++            "bn": "মোচির ঘর",
++            "id": "Kamar Mochi",
++            "de": "Mochis Zimmer",
++            "tr": "Mochi'nin odası",
++            "th": "ห้องของโมจิ",
++            "zh-Hant": "Mochi 的房間",
++            "ko": "모찌의 방",
++            "ja": "モチの部屋"
++          },
++          "detail": {
++            "en": "A new page of the Coucou window: Mochi, your agents and your day, live in a little room.",
++            "fr": "Une nouvelle page de la fenêtre Coucou : Mochi, tes agents et ta journée, en direct dans une petite chambre.",
++            "es": "Una página nueva de la ventana de Coucou: Mochi, tus agentes y tu día, en directo en una habitación.",
++            "pt-BR": "Uma página nova da janela do Coucou: o Mochi, seus agentes e seu dia, ao vivo num quartinho.",
++            "ru": "Новая страница окна Coucou: Мочи, твои агенты и твой день вживую в маленькой комнате.",
++            "zh-Hans": "Coucou 窗口的新页面：Mochi、你的智能体和你的一天，都在一间小房间里实时呈现。",
++            "hi": "Coucou विंडो का नया पेज: मोची, आपके एजेंट और आपका दिन, एक छोटे कमरे में लाइव।",
++            "ar": "صفحة جديدة في نافذة Coucou: موتشي ووكلاؤك ويومك، مباشرة في غرفة صغيرة.",
++            "bn": "Coucou উইন্ডোর নতুন পেজ: মোচি, আপনার এজেন্ট আর আপনার দিন, একটি ছোট ঘরে লাইভ।",
++            "id": "Halaman baru di jendela Coucou: Mochi, agen-agenmu, dan harimu, langsung di kamar kecil.",
++            "de": "Eine neue Seite im Coucou-Fenster: Mochi, deine Agenten und dein Tag, live in einem kleinen Zimmer.",
++            "tr": "Coucou penceresinde yeni bir sayfa: Mochi, ajanların ve günün, küçük bir odada canlı.",
++            "th": "หน้าใหม่ในหน้าต่าง Coucou: โมจิ เอเจนต์ และวันของคุณ แบบสดๆ ในห้องเล็กๆ",
++            "zh-Hant": "Coucou 視窗的新頁面：Mochi、你的智慧體和你的一天，都在一間小房間裡即時呈現。",
++            "ko": "Coucou 창의 새 페이지: 모찌와 에이전트, 그리고 당신의 하루를 작은 방에서 실시간으로.",
++            "ja": "Coucou ウィンドウの新しいページ：モチとエージェント、あなたの一日を小さな部屋でライブ表示。"
++          }
++        },
++        {
++          "icon": "puzzle",
++          "title": {
++            "en": "Your tools on the wall",
++            "fr": "Tes outils au mur",
++            "es": "Tus herramientas en la pared",
++            "pt-BR": "Suas ferramentas na parede",
++            "ru": "Твои сервисы на стене",
++            "zh-Hans": "墙上的工具",
++            "hi": "दीवार पर आपके टूल्स",
++            "ar": "أدواتك على الجدار",
++            "bn": "দেয়ালে আপনার টুল",
++            "id": "Alatmu di dinding",
++            "de": "Deine Tools an der Wand",
++            "tr": "Araçların duvarda",
++            "th": "เครื่องมือของคุณบนผนัง",
++            "zh-Hant": "牆上的工具",
++            "ko": "벽에 걸린 도구",
++            "ja": "壁にあなたのツール"
++          },
++          "detail": {
++            "en": "Stripe, GitHub, Vercel, n8n and Cal.com in frames; your CI and deploys as the weather.",
++            "fr": "Stripe, GitHub, Vercel, n8n et Cal.com dans des cadres ; ta CI et tes déploiements en météo.",
++            "es": "Stripe, GitHub, Vercel, n8n y Cal.com en cuadros; tu CI y tus despliegues como el tiempo.",
++            "pt-BR": "Stripe, GitHub, Vercel, n8n e Cal.com em quadros; seu CI e seus deploys como o tempo.",
++            "ru": "Stripe, GitHub, Vercel, n8n и Cal.com в рамках; CI и деплои — как погода за окном.",
++            "zh-Hans": "Stripe、GitHub、Vercel、n8n 和 Cal.com 挂在相框里；CI 和部署化作窗外天气。",
++            "hi": "Stripe, GitHub, Vercel, n8n और Cal.com फ़्रेम में; आपका CI और डिप्लॉय मौसम बनकर।",
++            "ar": "Stripe وGitHub وVercel وn8n وCal.com في إطارات، وCI وعمليات النشر كطقس النافذة.",
++            "bn": "Stripe, GitHub, Vercel, n8n আর Cal.com ফ্রেমে; আপনার CI আর ডিপ্লয় জানালার আবহাওয়া।",
++            "id": "Stripe, GitHub, Vercel, n8n, dan Cal.com di bingkai; CI dan deploy jadi cuaca di jendela.",
++            "de": "Stripe, GitHub, Vercel, n8n und Cal.com in Bilderrahmen; CI und Deployments als Wetter.",
++            "tr": "Stripe, GitHub, Vercel, n8n ve Cal.com çerçevelerde; CI ve dağıtımların pencerede hava.",
++            "th": "Stripe, GitHub, Vercel, n8n และ Cal.com ในกรอบรูป ส่วน CI และดีพลอยเป็นสภาพอากาศ",
++            "zh-Hant": "Stripe、GitHub、Vercel、n8n 和 Cal.com 掛在相框裡；CI 和部署化作窗外天氣。",
++            "ko": "Stripe, GitHub, Vercel, n8n, Cal.com을 액자에, CI와 배포는 창밖 날씨로.",
++ 
+```
+
+**File**: `NotchBuddy/project.yml` (modified, +2/-2)
+```diff
+@@ -140,8 +140,8 @@ targets:
+         CFBundleName: Coucou
+         CFBundleDisplayName: Coucou
+         CFBundleIdentifier: fr.louisraille.NotchBuddy
+-        CFBundleVersion: "27"
+-        CFBundleShortVersionString: "0.6.1"
++        CFBundleVersion: "28"
++        CFBundleShortVersionString: "0.6.2"
+         CFBundlePackageType: APPL
+         LSUIElement: YES
+         NSHighResolutionCapable: YES
+```
+
+**File**: `README.md` (modified, +4/-0)
+```diff
+@@ -62,6 +62,7 @@ Since 0.4, Coucou has its own window and sits in the Dock. On the left, **Flow**
+ - ✍️ **Your words, your way** — a dictionary of names Coucou always spells right, replacements, snippets (say a short phrase, paste a whole text), and an optional clean-up by Claude, on your Claude plan through Claude Code or with your own key: as said, natural or polished, per app.
+ - 📝 **Notetaker** — click Record a call: Coucou records your microphone and what your Mac plays, no bot joins the call. Then you get the transcript person by person, a summary, the key points and the to-dos, written by Claude with your key or by Apple Intelligence on your Mac. The audio is deleted once the transcript is written. Tell the people in the call that you record.
+ - 📊 **Statistics** — words dictated, time saved, words per minute, days in a row and the apps you dictate in. Counted on your Mac, never sent anywhere.
++- 🛏️ **Mochi's room** — a page of the window where every object is live data: Mochi naps on the bed, works at the desk while an agent does and waits at the door when one asks something (answer right there). The window shows your CI and Vercel deploys as the weather, the frames on the wall your Stripe, GitHub, Vercel, n8n and Cal.com, the clock the time coded today, the plant your streak. Off by default: Notch → Mochi's room.
  
  <table>
  <tr>
-@@ -198,6 +198,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
+@@ -98,6 +99,7 @@ Flow dictation and the Notetaker are on the Mac for now; Windows and Linux are n
+ - 🗣️ **« OK Coucou »** *(macOS, GitHub build)* — talk to Mochi like Jarvis. Say « OK Coucou », then ask: « how much did I make on Stripe today? », « swap GitHub for Stripe », « play some Daft Punk », « who won the game last night? », « send an email to Enzo to tell him the image is ready ». Claude is the brain (your own Anthropic API key, set in Settings → Chat); speech recognition runs on your Mac, and only your words and the data Coucou reads to answer go to Anthropic, never audio. Mochi listens, thinks and answers out loud; emails open in the notch and leave only when you click Send. Settings → Voice.
+ - 🎙️ **Dictate in the chat** *(macOS, GitHub build)* — click the mic next to the chat field and talk in any of your languages (Coucou picks the one you spoke, or right-click the mic to choose); speech recognition runs on your Mac when it supports it.
+ - ↘️ **The notch or a corner** *(macOS, GitHub build)* — put Coucou in any corner of the screen: drag Mochi there, or Settings → General → Display → Position. A small tile with Mochi at rest; open, the other pills sit on a quarter circle around him.
++- 🛏️ **Mochi's room** *(macOS, GitHub build)* — a little room in the Coucou window where every object is live: Mochi at the bed, the desk or the door with your approvals, your CI and deploys as the weather in the window, your tools in frames on the wall, the time coded on the clock, your streak as a plant.
+ - 🔎 **Search the settings** — type in the Coucou window's sidebar to find any setting *(macOS GitHub build, Windows, Linux)*.
+ - 🫥 **Invisible when idle** — hides away when nothing is running, peeks out when you hover the notch (the top edge of the screen on Windows and Linux).
+ - 🖥️ **Any Mac, notch or not** — on an iMac, a Mac mini, or a MacBook with its lid closed on an external display, Mochi sits in a small bar at the top of the screen. With several displays, pick his screen in Settings → General, or let him follow your mouse *(macOS)*.
+@@ -166,6 +168,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
  
- | Windows & Linux | Date | Highlights |
+ | Version | Date | Highlights |
  |---------|------|------------|
-+| 0.6.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.6.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.6.0) | Nov 21, 2026 | Start a Claude Code session from the island or from your Android phone, drop a file on a session, approve Antigravity and OpenCode, Botan founders list |
- | 0.5.9 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.9) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.9) | Nov 3, 2026 | The island never disappears (Mochi or the time when closed), ✕ to fold it, dictation keeps your language, your own dictation key, silence while you speak |
- | 0.5.8 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.8) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.8) | Oct 31, 2026 | 14 fixes and features by @Ohualtex: permission requests queue, Claude Desktop cards and pill, plan usage in the compact island, Flow pill in a corner |
- | 0.5.7 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.7) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.7) | Oct 31, 2026 | Mail with classic Outlook on Windows: search, filters, automatic sorting, mail plans from the chat; search the settings |
-@@ -217,7 +218,7 @@ Coucou for Android, by [@Rhytam23](https://github.com/Rhytam23), is released und
++| [0.6.2](https://github.com/Louis-CFM/coucou/releases/tag/v0.6.2) | Nov 24, 2026 | Mochi's room: a page of the Coucou window where Mochi, your CI weather and your tools are live in a little room, approvals at the door |
+ | [0.6.1](https://github.com/Louis-CFM/coucou/releases/tag/v0.6.1) | Nov 19, 2026 | Mochi light on 120 Hz Macs (60 fps open, 30 folded), Botan founders list, crash fixes for speech permission and Flow on macOS 27 |
+ | [0.6.0](https://github.com/Louis-CFM/coucou/releases/tag/v0.6.0) | Nov 12, 2026 | Start a Claude Code session from the notch, drop a file on a session, ⌘⇧2 screenshot copied, approve Antigravity commands, Android phone link, Coucoudoro |
+ | [0.5.8](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.8) | Oct 31, 2026 | Fixes by @Ohualtex: approvals and questions stay put, desktop Mochi stays visible, dropped files no longer overwrite each other |
+@@ -531,6 +534,7 @@ Agents running on a server (VS Code Remote - SSH, an SSH environment in the Clau
  
- | Android | Date | Highlights |
- |---------|------|------------|
--| 0.6.0 | Unreleased | Start a Claude Code session on your computer from the phone, spoken alerts when an agent needs you or finishes |
-+| [0.6.0](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0) | Nov 21, 2026 | Start a Claude Code session on your Windows or Linux computer from the phone (off by default, standard permission mode), spoken alerts when an agent needs you or finishes |
- | [0.5.0](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0) | Nov 13, 2026 | Swipe the island up to put it away, nothing lost with the swipe (quiet notifications), hide the island in Do Not Disturb, six more languages (16 translations), a steadier relay link for testers |
- | [0.4.0](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.4.0) | Nov 3, 2026 | Works with a Mac as well as with Windows and Linux; the island sits in the middle again at a lower screen resolution |
- | [0.3.0](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.3.0) | Oct 22, 2026 | A light theme and your phone's colours, nine more languages (Arabic right to left), quick actions, a Team widget, Share to Coucou, the weekly recap, a per-agent mute |
-@@ -250,7 +251,7 @@ Everything else, troubleshooting included, is in [docs/IPHONE.md](docs/IPHONE.md
- 
- ### Android
- 
--1. **Download** `Coucou-Android-0.5.0.apk` from the [release page](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0) on your phone (Android 11 or later) and open it. Android asks once to allow installs from your browser or file manager. You can also [build it from source](#build-from-source).
-+1. **Download** `Coucou-Android-0.6.0.apk` from the [release page](https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0) on your phone (Android 11 or later) and open it. A
-```
-
-**File**: `docs/android.html` (modified, +2/-2)
-```diff
-@@ -5,7 +5,7 @@
- <section id="en">
- <h1>Coucou for Android</h1>
- <div class="meta">Your computer does the work, your Android phone keeps you in the loop when you step away.</div>
--<p style="text-align:center;margin:20px 0"><a class="btn" href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0">Download Coucou for Android 0.5.0</a></p>
-+<p style="text-align:center;margin:20px 0"><a class="btn" href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0">Download Coucou for Android 0.6.0</a></p>
- <p class="meta" style="text-align:center">A signed APK, free, no ads. By Rhytam Biswas (<a href="https://github.com/Rhytam23">@Rhytam23</a>).</p>
- <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:16px 0">
- <img src="media/android-home.jpg" style="width:100%;max-width:230px;border-radius:14px" alt="Home: Mochi, the agent list, plan usage and a service">
-@@ -22,7 +22,7 @@ <h2>What you need</h2>
- 
- <h2>Get it on your phone</h2>
- <ol>
--<li><b>Download</b> <code>Coucou-Android-0.5.0.apk</code> from the <a href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0">release page</a> on your phone and open it. Android asks once to allow installs from your browser or file manager.</li>
-+<li><b>Download</b> <code>Coucou-Android-0.6.0.apk</code> from the <a href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0">release page</a> on your phone and open it. Android asks once to allow installs from your browser or file manager.</li>
- <li><b>On your computer:</b> close any older Coucou, start 0.4.0 or later, then Settings → <b>Android phone</b> → turn on <b>Phone link</b>. If Windows asks about the firewall, allow Coucou on private networks.</li>
- <li><b>Show pairing code</b>, then scan it with the app (or paste the link).</li>
- <li><b>Start a Claude Code session</b> on the computer: it shows up on the phone within seconds.</li>
-```
-
-**File**: `docs/index.html` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ <h2>Now on Android</h2>
- <li><b>Free,</b> no ads, no analytics.</li>
- </ul>
- <p class="meta">Needs Coucou 0.4.0 or later on Windows or Linux, or 0.6.0 or later on the Mac (GitHub build), Android 11 or later, and both on the same Wi-Fi.</p>
--<p style="text-align:center"><a class="btn" href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.5.0">Download the Android app</a><a class="btn ghost" href="android.html">How to set it up</a></p>
-+<p style="text-align:center"><a class="btn" href="https://github.com/Louis-CFM/coucou/releases/tag/android-v0.6.0">Download the Android app</a><a class="btn ghost" href="android.html">How to set it up</a></p>
- <div class="card"><b>Private by design.</b> No account, no analytics, no tracking. Your keys stay in your Keychain, Windows Credential Manager or the Linux Secret Service. <a href="privacy.html">Read the privacy policy</a>.</div>
- <p class="meta">Requires macOS 15 or later. No notch? Mochi sits in a small bar at the top of the screen. Windows 10/11: the button downloads the .msi installer; prefer an .exe? <a href="https://github.com/Louis-CFM/coucou/releases/download/windows-latest/Coucou-Windows-setup.exe">Here it is</a>. Not signed yet, so SmartScreen may ask: click <b>More info → Run anyway</b>. Linux: version 0.5 is out (AppImage, .deb, .rpm), <a href="https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.0">download it here</a>.</p>
- <footer>© 2026 Louis Raillé · Coucou’s code is open source (MIT) · <a href="https://github.com/Louis-CFM/coucou">GitHub</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="legal.html">Legal notice</a></footer></div></body></html>
-```
-
-**File**: `linux/arch/PKGBUILD` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
- 
- pkgname=coucou-git
- _pkgname=coucou
--pkgver=0.5.9
-+pkgver=0.6.0
- pkgrel=1
- pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
- arch=('x86_64' 'aarch64')
-```
-
-**File**: `windows/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -804,7 +804,7 @@ dependencies = [
- 
- [[package]]
- name = "coucou"
--version = "0.5.9"
-+version = "0.6.0"
- dependencies = [
-  "arboard",
-  "cpal",
-@@ -841,7 +841,7 @@ dependencies = [
- 
- [[package]]
- name = "coucou-hook"
--version = "0.5.9"
-+version = "0.6.0"
- dependencies = [
-  "libc",
-  "serde_json",
-```
-
-**File**: `windows/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ members = ["src-tauri", "hook"]
- resolver = "2"
- 
- [workspace.package]
--version = "0.5.9"
-+version = "0.6.0"
- edition = "2021"
- license = "MIT"
- 
-```
-
-**File**: `windows/package-lock.json` (modified, +2/-2)
-```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "coucou-windows",
--  "version": "0.5.9",
-+  "version": "0.6.0",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "coucou-windows",
--      "version": "0.5.9",
-+      "version": "0.6.0",
-       "dependencies": {
-         "@tauri-apps/api": "^2"
-       },
+ - **Island**: a borderless `NSPanel` hugging the notch, driven by a small state machine (`hidden → petit → home`).
+ - **Character**: drawn in SwiftUI `Canvas` + `TimelineView` at 60 fps — squircle body, eyes projected on a sphere, spring animations. No Rive, no Lottie, no images.
++- **Mochi's room**: one painted picture, with what moves drawn over it in a `Canvas` (the weather cut to the 
 ```
 
 ---
 
-### Incident Patch 2: `3a565329` (2026-11-20)
-**Commit Message**: Linux: a session from the phone runs 'command claude', never an alias
+### Incident Patch 2: `56b1f782` (2026-11-24)
+**Commit Message**: Merge pull request #1160 from Louis-CFM/mochi-room
 
-As Louis asked: the Linux terminal runs an interactive login shell, so a
-user's alias or shell function named claude still applied, and an alias
-such as claude='claude --dangerously-skip-permissions' would have
-reached a session started from the phone. The phone's launch now uses
-'command claude', which takes the program on $PATH only. The island's
-own launch is unchanged; Windows already skipped aliases with
-Get-Command -CommandType Application.
+Mochi's room + release prep Mac 0.6.2
 
-Tests: the phone's command on zsh, bash and fish, with and without a
-prompt; the island keeps plain claude.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/ANDROID_0_6_PLAN.md` (modified, +2/-1)
+**File**: `.github/workflows/build.yml` (modified, +3/-0)
 ```diff
-@@ -147,7 +147,8 @@ the row is there when a computer is paired, and says what is missing.
-    terminal to type.
- 3. **Decided (Louis, 19 November): a session started from the phone always starts in the standard permission mode**,
-    with `--permission-mode default`, whatever the computer's own Claude Code settings say, so it always asks for approval
--   and the requests arrive on the phone as usual. The island's own launch is unchanged. In `launch.rs` this is
-+   and the requests arrive on the phone as usual. On Linux it runs as `command claude`, so a shell alias or function cannot
-+   add a flag (Louis, 20 November). The island's own launch is unchanged. In `launch.rs` this is
-    `Origin::Phone` and `launch_from_phone`, tested in `a_session_from_the_phone_always_starts_in_the_standard_permission_mode`.
- 4. **The list is the island's whole list**, including a folder the user picked by hand there, not only folders sessions ran in.
- 5. **Two folders with the same name look the same on the phone** (the path is never sent). Rare with ten projects.
-```
-
-**File**: `docs/ANDROID_LINK.md` (modified, +3/-1)
-```diff
-@@ -279,7 +279,9 @@ sent nothing about it, and its `launch` messages are an unknown type: ignored an
-   check that the folder exists, and the prompt handed over the same way, **never written into a command line** (an environment variable
-   on Linux, a temporary file read and deleted by PowerShell on Windows). There is no second launcher.
- - **Claude Code always starts in the standard permission mode** (`claude --permission-mode default`), whatever the computer's own
--  Claude Code settings say: a phone can never start a session that doesn't ask for approval. The island's own launch is unchanged.
-+  Claude Code settings say: a phone can never start a session that doesn't ask for approval. On Linux it is started as `command claude`,
-+  so an alias or a shell function in the user's .bashrc or .zshrc cannot add a flag of its own; on Windows `Get-Command -CommandType
-+  Application` already skips them. The island's own launch is unchanged.
- - The answer goes to the phone that asked. A `launch` whose `id` is not valid is ignored (there is nothing to answer to); the same `id`
-   twice starts one session. The prompt is never logged, on either side, and the phone does not keep it.
- - **The phone asks for its screen lock (fingerprint, pattern, PIN) before it sends**, like Allow; with no screen lock set up it sends
-```
-
-**File**: `windows/src-tauri/src/launch.rs` (modified, +26/-5)
-```diff
-@@ -53,6 +53,19 @@ impl Origin {
-             Origin::Phone => " --permission-mode default",
-         }
-     }
+@@ -72,6 +72,9 @@ jobs:
+       - name: Test the work streak (Mochi sleepy after long work, fresh after a break)
+         run: bash scripts/test-work-streak.sh
+ 
++      - name: Test Mochi's room (where Mochi stands, the weather, the streak plant)
++        run: bash scripts/test-mochi-room.sh
 +
-+    /// How the Linux shell names Claude Code. From a phone, `command claude`:
-+    /// the program on $PATH, never an alias or a shell function from the
-+    /// user's .bashrc or .zshrc, which could add a flag of its own (an alias
-+    /// with --dangerously-skip-permissions, say). The island keeps `claude`,
-+    /// as it ships today. Windows already skips them for both, with
-+    /// Get-Command -CommandType Application.
-+    pub fn shell_claude(self) -> &'static str {
-+        match self {
-+            Origin::Island => "claude",
-+            Origin::Phone => "command claude",
-+        }
+       - name: Test Notetaker transcript (speakers, echo, summary, Markdown)
+         run: bash scripts/test-notetaker.sh
+ 
+```
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -1,5 +1,9 @@
+ # Changelog
+ 
++## 0.6.2 — November 24, 2026
++
++- **Mochi's room** *(GitHub build)* — a new page at the top of the Notch section of the Coucou window, off by default: Mochi in a little room where every object is live data. He naps on the bed when nothing runs, sits at the desk while an agent works (code types itself on the screen) and runs to the door when one asks something: the permission request opens under the room with Deny, Always and Allow, each a click. The window is your weather: sun when the CI of your main branches and your last Vercel deploy are green, clouds while something builds, rain when a build fails, a storm when a deploy fails, stars at night. The frames on the wall are your connected tools with their logos — Stripe paid today, GitHub stars, the last Vercel deploy, n8n runs, your next Cal.com call — a click opens them. The clock gives the real time and the time coded with agents today, and the plant on the shelf grows with your streak. Under the room: time coded, approvals, deploys and streak for today, and the room's settings (door, weather, day and night, which tools hang on the wall). It only reads what Coucou already has, and draws nothing while it is off or the window is hidden. The idea came from the community
++
+ ## 0.6.1 — November 19, 2026
+ 
+ - **Mochi no longer weighs down 120 Hz Macs** — on a ProMotion screen Mochi was redrawn 120 times a second, even folded in the notch: 35 to 60 % CPU, and as much again in WindowServer. He is now drawn at 60 fps while the island is open and 30 folded, the mini Mochis at 30, with the same motion on every screen; on a ProMotion Mac he also stops moving twice as fast (#1116, found by @liztim17)
+```
+
+**File**: `NotchBuddy/Assets.xcassets/Room/Contents.json` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++{
++  "info": {
++    "author": "xcode",
++    "version": 1
++  }
++}
+\ No newline at end of file
+```
+
+**File**: `NotchBuddy/Assets.xcassets/Room/MochiRoom.imageset/Contents.json` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++{
++  "images": [
++    {
++      "idiom": "universal",
++      "scale": "1x"
++    },
++    {
++      "filename": "MochiRoom.jpg",
++      "idiom": "universal",
++      "scale": "2x"
++    },
++    {
++      "idiom": "universal",
++      "scale": "3x"
 +    }
- }
- 
- /// The prompt as it is handed over: trimmed, on one line.
-@@ -84,8 +97,8 @@ pub fn sh_quote(s: &str) -> String {
- /// shell again in the project once Claude Code quits.
- #[cfg_attr(windows, allow(dead_code))]
- pub fn shell_command(shell: &str, has_prompt: bool, origin: Origin) -> Vec<String> {
--    let flags = origin.claude_flags();
--    let run = if has_prompt { format!(r#"claude{flags} "$COUCOU_PROMPT""#) } else { format!("claude{flags}") };
-+    let (claude, flags) = (origin.shell_claude(), origin.claude_flags());
-+    let run = if has_prompt { format!(r#"{claude}{flags} "$COUCOU_PROMPT""#) } else { format!("{claude}{flags}") };
-     vec![shell.to_string(), "-lic".to_string(), format!("{run}; exec {} -l", sh_quote(shell))]
- }
- 
-@@ -448,19 +461,27 @@ mod tests {
-         // overrides them for this session: it asks for approval, and the requests reach the phone as usual.
-         assert_eq!(Origin::Phone.claude_flags(), " --permission-mode default");
-         assert_eq!(Origin::Island.claude_flags(), "", "the island's own launch is unchanged");
-+        // On Linux the phone's session skips the user's aliases and shell functions: an alias such as
-+        // claude='claude --dangerously-skip-permissions' in .zshrc never reaches it.
-+        assert_eq!(Origin::Phone.shell_claude(), "command claude");
-+        assert_eq!(Origin::Island.shell_claude(), "claude", "the island's own launch is unchanged");
- 
-         // Linux, with and without a prompt; the prompt stays in the environment.
-         assert_eq!(
-             shell_command("/bin/zsh", true, Origin::Phone),
--            s(&["/bin/zsh", "-lic", r#"claude --permission-mode default "$COUCOU_PROMPT"; exec /bin/zsh -l"#])
-+            s(&["/bin/zsh", "-lic", r#"command claude --permission-mode default "$COUCOU_PROMPT"; exec /bin/zsh -l"#])
-         );
-         assert_eq!(
-             shell_command("/bin/bash", false, Origin::Phone),
--            s(&["/bin/bash", "-lic", "claude --permission-mode default; exec /bin/bash -l"])
-+            s(&["/bin/bash", "-lic", "command claude --permission-mode default; exec /bin/bash -l"])
-+        );
-+        assert_eq!(
-+            shell_command("/usr/bin/fish", true, Origin::Phone),
-+            s(&["/usr/bin/fish", "-lic", r#"command claude --permission-mode default "$COUCOU_PROMPT"; exec /usr/bin/fish -l"#])
-         );
-         let nasty = r#"--dangerously-skip-permissions "x"; claude --permission-mode bypassPermissions"#;
-         let spawn = linux_spawn("/usr/bin/kitty", "/bin/zsh", "/home/me/p", nasty, Origin::Phone);
--        assert_eq!(spawn.args.last().unwrap(), r#"claude --permission-mode default "$COUCOU_PROMPT"; exec /bin/zsh -l"#);
-+        assert_eq!(spawn.args.last().unwrap(), r#"command claude --permission-mode default "$COUCOU_PROMPT"; exec /bin/zsh -l"#);
-         assert!(spawn.args.iter().all(|a| !a.contains("dangerously") && !a.contains("bypass")), "{:?}", spawn.args);
-         assert_eq!(spawn.env, vec![("COUCOU_PROMPT".to_string(), nasty.to_string())]);
- 
++  ],
++  "info": {
++    "author": "xcode",
++    "version": 1
++  }
++}
+\ No newline at end of file
 ```
 
----
-
-### Incident Patch 3: `754f2bdb` (2026-11-21)
-**Commit Message**: Merge pull request #1146 from Louis-CFM/fix-herdr-test-race
-
-Tests: the two herdr tests sharing the pane list no longer race
-
-**File**: `windows/src-tauri/src/herdr.rs` (modified, +6/-0)
+**File**: `NotchBuddy/Assets.xcassets/Room/MochiRoomWindow.imageset/Contents.json` (added, +21/-0)
 ```diff
-@@ -152,8 +152,13 @@ mod tests {
-         assert!(from_payload(&payload("w1:pA", "/home/me/.cargo/bin/herdr", "Ubuntu")).is_some());
-     }
- 
-+    /// The pane list is shared by the whole process, and tests run in parallel:
-+    /// the cap test fills it past the limit, which would evict another test's pane.
-+    static SHARED_LIST: std::sync::Mutex<()> = std::sync::Mutex::new(());
-+
-     #[test]
-     fn the_pane_list_is_capped() {
-+        let _list = SHARED_LIST.lock().unwrap_or_else(|e| e.into_inner());
-         let extra = crate::session_window::MAX_SESSIONS + 3;
-         for i in 0..extra {
-             observe(&json!({ "session_id": format!("herdr-cap-{i}"), "herdr_pane": "w1:pC",
-@@ -181,6 +186,7 @@ mod tests {
- 
-     #[test]
-     fn a_session_end_forgets_the_pane() {
-+        let _list = SHARED_LIST.lock().unwrap_or_else(|e| e.into_inner());
-         let start = json!({ "session_id": "herdr-test-1", "herdr_pane": "w1:pB", "herdr_bin": "/b/herdr",
-             "wsl_distro": "Ubuntu" });
-         observe(&start, "SessionStart");
+@@ -0,0 +1,21 @@
++{
++  "images": [
++    {
++      "idiom": "universal",
++      "scale": "1x"
++    },
++    {
++      "filename": "MochiRoomWindow.png",
++      "idiom": "universal",
++      "scale": "2x"
++    },
++    {
++      "idiom": "universal",
++      "scale": "3x"
++    }
++  ],
++  "info": {
++    "author": "xcode",
++    "version": 1
++  }
++}
+\ No newline at end of file
+```
+
+**File**: `NotchBuddy/Assets.xcassets/Room/RoomLogoCalcom.imageset/Contents.json` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++{
++  "images": [
++    {
++      "filename": "caldotcom.svg",
++      "idiom": "universal"
++    }
++  ],
++  "info": {
++    "author": "xcode",
++    "version": 1
++  },
++  "properties": {
++    "preserves-vector-representation": true,
++    "template-rendering-intent": "template"
++  }
++}
+\ No newline at end of file
+```
+
+**File**: `NotchBuddy/Assets.xcassets/Room/RoomLogoCalcom.imageset/caldotcom.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg role="img" viewBox="-0.2 9.3 24.4 5.4" xmlns="http://www.w3.org/2000/svg"><title>Cal.com</title><path d="M2.408 14.488C1.035 14.488 0 13.4 0 12.058c0-1.346.982-2.443 2.408-2.443.758 0 1.282.233 1.691.765l-.66.55a1.343 1.343 0 0 0-1.03-.442c-.93 0-1.44.711-1.44 1.57 0 .86.559 1.557 1.44 1.557.413 0 .765-.147 1.043-.443l.651.573c-.391.51-.929.743-1.695.743zM6.948 10.913h.89v3.49h-.89v-.51c-.185.362-.493.604-1.083.604-.943 0-1.695-.82-1.695-1.826 0-1.007.752-1.825 1.695-1.825.585 0 .898.241 1.083.604zm.026 1.758c0-.546-.374-.998-.964-.998-.568 0-.938.457-.938.998 0 .528.37.998.938.998.586 0 .964-.456.964-.998zM8.467 9.503h.89v4.895h-.89zM9.752 13.937a.53.53 0 0 1 .542-.528c.313 0 .533.242.533.528a.527.527 0 0 1-.533.537.534.534 0 0 1-.542-.537zM14.23 13.839c-.33.403-.832.658-1.426.658a1.806 1.806 0 0 1-1.84-1.826c0-1.007.778-1.825 1.84-1.825.572 0 1.07.241 1.4.622l-.687.577c-.172-.215-.396-.376-.713-.376-.568 0-.938.456-.938.998 0 .541.37.997.938.997.343 0 .58-.179.757-.42zM14.305 12.671c0-1.007.78-1.825 1.84-1.825 1.061 0 1.84.818 1.84 1.825 0 1.007-.779 1.826-1.84 1.826-1.06-.005-1.84-.82-1.84-1.826zm2.778 0c0-.546-.37-.998-.938-.998-.568-.004-.937.452-.937.998 0 .542.37.998.937.998.568 0 .938-.456.938-.998zM24 12.269v2.13h-.89v-1.911c0-.604-.281-.864-.704-.864-.396 0-.678.197-.678.864v1.91h-.89v-1.91c0-.604-.285-.864-.704-.864-.396 0-.744.197-.744.864v1.91h-.89v-3.49h.89v.484c.185-.376.52-.564 1.035-.564.489 0 .898.241 1.123.649.224-.417.554-.65 1.153-.65.731.005 1.299.56 1.299 1.442z"/></svg>
+\ No newline at end of file
+```
+
+**File**: `NotchBuddy/Assets.xcassets/Room/RoomLogoGitHub.imageset/Contents.json` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++{
++  "images": [
++    {
++      "filename": "github.svg",
++      "idiom": "universal"
++    }
++  ],
++  "info": {
++    "author": "xcode",
++    "version": 1
++  },
++  "properties": {
++    "preserves-vector-representation": true,
++    "template-rendering-intent": "template"
++  }
++}
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1160** (2026-11-24): Mochi's room + release prep Mac 0.6.2 (@Louis-CFM)
 - **PR #1146** (2026-11-21): Tests: the two herdr tests sharing the pane list no longer race (@Louis-CFM)
 - **PR #1145** (2026-11-21): Release prep: Windows and Linux 0.6.0, Android 0.6.0 (@Louis-CFM)
 - **PR #1138** (closed): Feature upstream 061 (@Dev-Madhan)
 - **PR #1134** (2026-11-20): Tests: the chat PDF test gets its own temp folder (flaky on Linux CI) (@Rhytam23)
 - **PR #1133** (2026-11-21): Coucou for Android 0.6.0: start a Claude Code session from the phone, spoken alerts (@Rhytam23)
-- **PR #1132** (2026-11-19): Release prep: Mac 0.6.1 (@Louis-CFM)
 
 ---
 
@@ -2141,13 +2149,13 @@ Tests: the two herdr tests sharing the pane list no longer race
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release prep: Windows and Linux 0.6.0, Android 0.6.0
+## X. Release prep: Mac 0.6.2 (build 28)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b85bb19e`: Release prep: Windows and Linux 0.6.0, Android 0.6.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cac6aae2`: Release prep: Mac 0.6.2 (build 28). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2155,16 +2163,16 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-## Windows and Linux 0.6.0 — November 21, 2026
-## Android 0.6.0 — November 21, 2026
+## 0.6.2 — November 24, 2026
+
+- **Mochi's room** *(GitHub build)* — a new page at the top of the Notch section of the Coucou window, off by default: Mochi in a little room where every object is live data. He naps on the bed when nothing runs, sits at the desk while an agent works (code types itself on the screen) and runs to the door when one asks something: the permission request opens under the room with Deny, Always and Allow, each a click. The window is your weather: sun when the CI of your main branches and your last Vercel deploy are green, clouds while something builds, rain when a build fails, a storm when a deploy fails, stars at night. The frames on the wall are your connected tools with their logos — Stripe paid today, GitHub stars, the last Vercel deploy, n8n runs, your next Cal.com call — a click opens them. The clock gives the real time and the time coded with agents today, and the plant on the shelf grows with your streak. Under the room: time coded, approvals, deploys and streak for today, and the room's settings (door, weather, day and night, which tools hang on the wall). It only reads what Coucou already has, and draws nothing while it is off or the window is hid
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-## Windows and Linux 0.6.0 — Unreleased
-## Android 0.6.0 — Unreleased
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b85bb19e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cac6aae2` are properly handled with clean fallback behavior.

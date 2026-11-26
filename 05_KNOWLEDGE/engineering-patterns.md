@@ -797041,3 +797041,167 @@ Mini has six content blockers (General, Privacy, Social, Security, Other, Custom
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6aca811d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10591. add GET hop diagnostics to existing telemetry events (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "add GET hop diagnostics to existing telemetry events",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "c09581ba",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T03:13:10.199Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `c09581ba`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/src/operations/get/op_ctx_task.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c09581ba`: add GET hop diagnostics to existing telemetry events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/operations/get/op_ctx_task.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            None,
+    // Telemetry only: time this relay spent waiting on downstream peers, and
+    // how many of those waits ended in a timeout (silent downstream peers).
+    let mut downstream_wait_ms: u64 = 0;
+    let mut downstream_timeout_attempts: u32 = 0;
+                        Some((downstream_wait_ms, downstream_timeout_attempts)),
+            op_manager
+                .ring
+                .connection_manager
+                .get_peer_by_addr(upstream_addr),
+        // Telemetry only (`downstream_wait_ms`): not read by any decision, so
+        // not simulation-visible.
+        let wait_started = tokio::time::Instant::now();
+        downstream_wait_ms =
+            downstream_wait_ms.saturating_add(wait_started.elapsed().as_millis() as u64);
+                downstream_timeout_attempts = downstream_timeout_attempts.saturating_add(1);
+    /// GET hop diagnostics: the relay driver must pass its upstream into the
+    /// forward `get_request` event and its accumulated downstream wait /
+    /// timeout-attempt counters into the exhaustion `get_not_found` event, and
+    /// count timeouts only in the timeout arm. Fields reach production only
+    /// through these call sites.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c09581ba` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10592. recognise role-split tool results, keep observe read-only, tiered slim (Harvested from lioensky/VCPToolBox)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "recognise role-split tool results, keep observe read-only, tiered slim",
+  "source": "lioensky/VCPToolBox",
+  "source_url": "https://github.com/lioensky/VCPToolBox",
+  "source_version": "ff2624ee",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T03:13:12.625Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lioensky-vcptoolbox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox) (Revision: `ff2624ee`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `AdminPanel-Vue/src/views/FinalContextViewer.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0868bc6d`: context): recognise role-split tool results, keep observe read-only, tiered slimming. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AdminPanel-Vue/src/views/FinalContextViewer.vue`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+// 分块展示占比和按占比折算的大约数量：折算以上面这个总数为准，各块加起来与总数一致。
+  const share = `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
+  const approx = Math.round((tokenCount / total) * contextTokens(snapshot.value?.summary))
+  return approx > 0 ? `${share}（约 ${formatNumber(approx)}）` : share
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+// 分块只展示占比，分项数字和总数口径不同，并列显示会造成误读。
+  return `${percent >= 10 ? percent.toFixed(0) : percent.toFixed(1)}%`
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0868bc6d` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T03:04:41.120Z",
+  "last_updated": "2026-11-26T03:13:14.417Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "2f3def1226a529990dec69be1d6d554089d2dc7a81622536631885b027185976",
-      "verified_at": "2026-11-26T00:46:42.050Z",
+      "content_hash": "3aa7761bb2efac9458d2e158b028251e0d2f4d0e5fe99576223c49b7c1c88015",
+      "verified_at": "2026-11-26T03:13:14.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T00:46:42.050Z"
+      "last_updated": "2026-11-26T03:13:14.417Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "307d868b14fe68ce0e32db197ce010542c6e539978d053eaa62204ea98478cc9",
-      "verified_at": "2026-11-25T23:01:58.833Z",
+      "content_hash": "40745a28a365069b9265f7ec575ddf7600ffe9fcf7db984c099f1b1545355cbf",
+      "verified_at": "2026-11-26T03:13:10.778Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T23:01:58.833Z"
+      "last_updated": "2026-11-26T03:13:10.778Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "4ed45b8f336b3b38475e2073dfce6bdef713be89ce3c68524b317c7ffdf391cb",
-      "verified_at": "2026-11-25T01:44:32.059Z",
+      "content_hash": "8ff98ff241c8033d4b3a9fc55f13e414efd5b699fcb864bcb7f037edba413d0d",
+      "verified_at": "2026-11-26T03:13:13.207Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:44:32.059Z"
+      "last_updated": "2026-11-26T03:13:13.207Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -14001,14 +14001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-louis-cfm-coucou",
-      "content_hash": "38e13dbb967e5e11e13e67e21f15def3b57709477680284dac1c3b82b5e707b5",
-      "verified_at": "2026-11-23T17:29:38.340Z",
+      "content_hash": "cd5934e1f8ee043bd57519f6519480c53a57ee4b2789f0faec6909d60fa0ecb2",
+      "verified_at": "2026-11-26T03:13:03.972Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:29:38.340Z"
+      "last_updated": "2026-11-26T03:13:03.972Z"
     },
     "lxml/lxml": {
       "repository": "lxml/lxml",
@@ -18576,14 +18576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-conwayresearch-underdog-woof",
-      "content_hash": "e09e6f57912a0b62d4a34c3c07551691269c085b41c7f413318e5937f59f18d5",
-      "verified_at": "2026-11-22T06:27:27.642Z",
+      "content_hash": "8a353cdb9a5dd52b2743d8977275a1e1d23e06faca50d6b7ac3a42771be69801",
+      "verified_at": "2026-11-26T03:12:57.984Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T06:27:27.642Z"
+      "last_updated": "2026-11-26T03:12:57.984Z"
     },
     "CaviraOSS/LongMemory": {
       "repository": "CaviraOSS/LongMemory",

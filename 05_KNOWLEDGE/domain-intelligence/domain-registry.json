@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T03:04:47.786Z",
+  "last_updated": "2026-11-26T03:13:20.157Z",
   "total_records": 2703,
   "domains": {
     "A": {
@@ -10069,8 +10069,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "9b0e26187da9c3fbf50f431b0a92ea40d2ebac60469161f2a761ecd72dd2d36d",
-      "created_at": "2026-11-25T23:01:59.193Z"
+      "content_hash": "c60610ea3f824a3e4e71cb18e12b88f84c8cbabf8f8bab88375c3f9803fe8081",
+      "created_at": "2026-11-26T03:13:11.194Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10147,8 +10147,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "178b188a86e766980159c60addb9a89b5a25e19ea053d6fb0d3259625fec928c",
-      "created_at": "2026-11-25T23:03:04.856Z"
+      "content_hash": "ce3963241d14d8496061760544ad98b02df2e4d41dedc3a0c8abbf029420c503",
+      "created_at": "2026-11-26T03:13:20.157Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -12961,8 +12961,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "adadeeef1f979da17b6455550a025cf3ccaa7dfa068754bd103f76ef9c9883d6",
-      "created_at": "2026-11-25T01:44:32.465Z"
+      "content_hash": "bfbad30caa57bc0278910bbf47ec123e0b6acc921a7d1f0e7d7ce2787abcc3a0",
+      "created_at": "2026-11-26T03:13:13.634Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -15782,8 +15782,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "f0c51fe4f81ab849661e14b16da41e0d4cca416fcb6eab079d6ee0af74a4df7e",
-      "created_at": "2026-11-26T00:46:42.516Z"
+      "content_hash": "9e2df54d5b2983aec963bcb262e06b98cfa7886e7f7058fdca9406976d370c1d",
+      "created_at": "2026-11-26T03:13:14.847Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -23038,8 +23038,8 @@
       "title": "Research & Knowledge Intelligence: ConwayResearch/Underdog-Woof Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-woof-research-knowledge-intelligence-conwayresearch-u.md",
       "repository": "ConwayResearch/Underdog-Woof",
-      "content_hash": "b389103b21a757485a68e3c81fb60c68859cfe4bdef2cebba2288339aa660b8e",
-      "created_at": "2026-11-22T06:27:27.832Z"
+      "content_hash": "cea6439dbda5ca09579927258d512a5d1190129dc1ecf82c80c323b18d485f37",
+      "created_at": "2026-11-26T03:12:58.193Z"
     },
     "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-core-invariants",
@@ -23098,8 +23098,8 @@
       "title": "Research & Knowledge Intelligence: hf-conwayresearch-underdog-woof-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-conwayresearch-underdog-woof-learnings-research-knowledge-intelligence-hf-con.md",
       "repository": "hf-conwayresearch-underdog-woof-learnings",
-      "content_hash": "bbd399d3f000890d36f8e77d0223382ff0e3ddc1e4f3182fa9e745a2bac26d1d",
-      "created_at": "2026-11-22T06:27:38.044Z"
+      "content_hash": "6b85adc3d1454ab483f46203dff68943ec1c057bddaf7108471637f754efb5f8",
+      "created_at": "2026-11-26T03:13:18.255Z"
     },
     "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants",
@@ -24730,8 +24730,8 @@
       "title": "Architecture Intelligence: Louis-CFM/coucou Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-architecture-intelligence-louis-cfm-coucou-core-invariants.md",
       "repository": "Louis-CFM/coucou",
-      "content_hash": "79c7b82eea710076c5c0e141c100a159bafb01281ec7ac4c3f0fb3d2abec5b62",
-      "created_at": "2026-11-23T17:29:38.889Z"
+      "content_hash": "fe6969252826381d2d2da65a9b0fd43921171fec7de91d5523db62ec43923bb5",
+      "created_at": "2026-11-26T03:13:04.407Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zyphra-zonos3-mini-core-invariants",
@@ -24757,8 +24757,8 @@
       "title": "Architecture Intelligence: louis-cfm-coucou-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-learnings-architecture-intelligence-louis-cfm-coucou-learnings-.md",
       "repository": "louis-cfm-coucou-learnings",
-      "content_hash": "9114cb7572d4941cd993f66d8d2062ea502f4c5e75f1a7f034a5b68f34128f34",
-      "created_at": "2026-11-23T17:29:48.108Z"
+      "content_hash": "1e45e6c480840c917f067185028dc74d7405bbee72ea3c8fa6f43a0193323a8a",
+      "created_at": "2026-11-26T03:13:19.205Z"
     },
     "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-prometheus-prometheus-learnings-core-invariants",

@@ -13217,3 +13217,8 @@
 | `CYCLE-20261126-Y8BB` | `2026-11-26T03:04:26.519Z` | `mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md` | Yes (`0260b283...`) |
 | `CYCLE-20261126-YEV9` | `2026-11-26T03:04:35.013Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10590` | Yes (`10ed5690...`) |
 | `CYCLE-20261126-YJK7` | `2026-11-26T03:04:41.095Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9414` | Yes (`58a9d203...`) |
+| `CYCLE-20261126-96Y3` | `2026-11-26T03:12:57.963Z` | `ConwayResearch/Underdog-Woof` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md` | Yes (`8a353cdb...`) |
+| `CYCLE-20261126-9BJK` | `2026-11-26T03:13:03.920Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md` | Yes (`cd5934e1...`) |
+| `CYCLE-20261126-9GTI` | `2026-11-26T03:13:10.758Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10591` | Yes (`40745a28...`) |
+| `CYCLE-20261126-9IOZ` | `2026-11-26T03:13:13.187Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10592` | Yes (`8ff98ff2...`) |
+| `CYCLE-20261126-9JMM` | `2026-11-26T03:13:14.398Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`3aa7761b...`) |

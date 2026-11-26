@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T03:04:47.537Z",
+  "last_updated": "2026-11-26T03:13:19.970Z",
   "directives": [
     {
       "id": "CD-001",
@@ -62900,6 +62900,68 @@
       "source_repo": "provablehq-snarkos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8B84CA-empirical-invariant-guard-in-cargo-toml.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-9N6K",
+      "directive_title": "Release prep: Mac 0.6.2 (build 28)",
+      "source_repo": "louis-cfm-coucou-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9N6K-release-prep-mac-0-6-2-build-28.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-9NXB",
+      "directive_title": "add GET hop diagnostics to existing telemetry events",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9NXB-add-get-hop-diagnostics-to-existing-telemetry-events.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "M"
+    },
+    {
+      "id": "CD-9IVY",
+      "directive_title": "recognise role-split tool results, keep observe read-only, tiered slim",
+      "source_repo": "lioensky/VCPToolBox",
+      "source_commit": "ff2624ee",
+      "staged_file": "11_INBOX/candidate-directives/CD-9IVY-recognise-role-split-tool-results-keep-observe-read-only-tiered-slim.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-9JTV",
+      "directive_title": "NUC 152 Falsy Value Assignment",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "d536eec8",
+      "staged_file": "11_INBOX/candidate-directives/CD-9JTV-nuc-152-falsy-value-assignment.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-C96CC5",
+      "directive_title": "Release prep: Mac 0.6.2 (build 28)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "louis-cfm-coucou",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C96CC5-release-prep-mac-0-6-2-build-28-.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-E2E4E4",
+      "directive_title": "add GET hop diagnostics to existing telemetry events",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "freenet-freenet-core",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E2E4E4-add-get-hop-diagnostics-to-existing-tele.md",
       "staged_date": "2026-11-26"
     }
   ]

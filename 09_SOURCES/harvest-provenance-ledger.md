@@ -13250,3 +13250,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | `https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-26T03:04:26.524Z |
 | `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `d439e269` | Multi-dimensional audit evidence | 2026-11-26T03:04:35.018Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `9c02ea4e` | Multi-dimensional audit evidence | 2026-11-26T03:04:41.100Z |
+| `learn-huggingface-conwayresearch-underdog-woof` | `https://huggingface.co/ConwayResearch/Underdog-Woof` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-26T03:12:57.968Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `202082ee` | Multi-dimensional audit evidence | 2026-11-26T03:13:03.925Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `c09581ba` | Multi-dimensional audit evidence | 2026-11-26T03:13:10.762Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `ff2624ee` | Multi-dimensional audit evidence | 2026-11-26T03:13:13.191Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d536eec8` | Multi-dimensional audit evidence | 2026-11-26T03:13:14.402Z |

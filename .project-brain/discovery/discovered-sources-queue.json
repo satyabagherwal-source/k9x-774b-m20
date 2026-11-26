@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T03:04:45.751Z",
+  "updated_at": "2026-11-26T03:13:18.657Z",
   "stats": {
-    "total_discovered": 9572,
-    "approved_pending_harvest": 9073,
+    "total_discovered": 9574,
+    "approved_pending_harvest": 9075,
     "harvested_count": 0,
     "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9063,
+      "COMMUNITY_AND_EXPERT": 9065,
       "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 155,
       "ENGINEERING_BLOGS": 7,
@@ -207118,6 +207118,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
         "fileName": "0xcub3-wblock-learnings.md"
+      }
+    },
+    "SRC-A50A117B15E1": {
+      "id": "SRC-A50A117B15E1",
+      "url": "https://github.com/Louis-CFM/coucou/releases/tag/v0.6.2",
+      "title": "https://github.com/Louis-CFM/coucou/releases/tag/v0.6.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T03:13:18.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
+        "fileName": "louis-cfm-coucou-learnings.md"
+      }
+    },
+    "SRC-087F00BC5BAC": {
+      "id": "SRC-087F00BC5BAC",
+      "url": "https://github.com/Louis-CFM/coucou/releases/tag/v0.6.1",
+      "title": "https://github.com/Louis-CFM/coucou/releases/tag/v0.6.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T03:13:18.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
+        "fileName": "louis-cfm-coucou-learnings.md"
       }
     }
   }

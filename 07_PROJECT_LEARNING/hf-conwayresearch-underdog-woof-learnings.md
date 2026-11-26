@@ -3,7 +3,7 @@
 > **Source Version**: `hf-conwayres`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T06:27:27.176Z  
+> **Timestamp**: 2026-11-26T03:12:57.442Z  
 > **Learning ID**: `learn-huggingface-conwayresearch-underdog-woof`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ConwayResearch/Underdog-Woof](https://huggingface.co/ConwayResearch/Underdog-Woof))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:27:25.083Z  
+> **Harvest Timestamp**: 2026-11-26T03:12:57.339Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 10 downloads | 267 likes
+- **Stars / Engagement**: 4 downloads | 270 likes
 
 ---
 

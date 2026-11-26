@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T03:04:48.020Z",
+  "last_updated": "2026-11-26T03:13:20.348Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25633,
+  "total_items": 25640,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "20963739",
-      "content_hash": "9b0e26187da9c3fbf50f431b0a92ea40d2ebac60469161f2a761ecd72dd2d36d",
+      "source_version": "c09581ba",
+      "content_hash": "c60610ea3f824a3e4e71cb18e12b88f84c8cbabf8f8bab88375c3f9803fe8081",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T23:01:59.193Z"
+      "persisted_at": "2026-11-26T03:13:11.194Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "20963739",
-      "content_hash": "7ef17c288f8f0f786194c9183e204643c977337ba0344e0de015ad4c019ed267",
+      "source_version": "c09581ba",
+      "content_hash": "609ea2444aab5e6fffab92a2b589b76ec4e72e6052baab96d7b2b4f8786a7c97",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:01:59.346Z"
+      "persisted_at": "2026-11-26T03:13:11.388Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "178b188a86e766980159c60addb9a89b5a25e19ea053d6fb0d3259625fec928c",
+      "content_hash": "ce3963241d14d8496061760544ad98b02df2e4d41dedc3a0c8abbf029420c503",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T23:03:04.856Z"
+      "persisted_at": "2026-11-26T03:13:20.157Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "884def40770da5c0d1b8e4dcc36c34b8cb150d8db5b133d321cf3d38fb10025f",
+      "content_hash": "8e83a9e24bd9cc57ab34b1aef239beb7bbc54ec249bed7c3cc85023d8133cea8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:03:05.044Z"
+      "persisted_at": "2026-11-26T03:13:20.348Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -221031,8 +221031,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "20963739",
-      "content_hash": "307d868b14fe68ce0e32db197ce010542c6e539978d053eaa62204ea98478cc9",
+      "source_version": "c09581ba",
+      "content_hash": "40745a28a365069b9265f7ec575ddf7600ffe9fcf7db984c099f1b1545355cbf",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221200,6 +221200,11 @@
           "number": 10553,
           "title": "keep the node running when a helper process is OOM-killed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10591,
+          "title": "add GET hop diagnostics to existing telemetry events",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221207,7 +221212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:01:58.631Z",
+      "verified_at": "2026-11-26T03:13:10.535Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222419,8 +222424,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "c4762817",
-      "content_hash": "4ed45b8f336b3b38475e2073dfce6bdef713be89ce3c68524b317c7ffdf391cb",
+      "source_version": "ff2624ee",
+      "content_hash": "8ff98ff241c8033d4b3a9fc55f13e414efd5b699fcb864bcb7f037edba413d0d",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -222473,6 +222478,11 @@
           "number": 10420,
           "title": "Empirical Invariant Guard in TDBKnowledge.js",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10592,
+          "title": "recognise role-split tool results, keep observe read-only, tiered slim",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222480,7 +222490,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T01:44:31.825Z",
+      "verified_at": "2026-11-26T03:13:12.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222522,10 +222532,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "c4762817",
-      "content_hash": "adadeeef1f979da17b6455550a025cf3ccaa7dfa068754bd103f76ef9c9883d6",
+      "source_version": "ff2624ee",
+      "content_hash": "bfbad30caa57bc0278910bbf47ec123e0b6acc921a7d1f0e7d7ce2787abcc3a0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:44:32.465Z"
+      "persisted_at": "2026-11-26T03:13:13.634Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox",
@@ -222534,10 +222544,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "c4762817",
-      "content_hash": "308ddf34b4d33869750e985ddf3b9eda51aa14422b7b1aa3d8af0de7c3251845",
+      "source_version": "ff2624ee",
+      "content_hash": "33997d09eed74f5c0729964432a5fd873500c3afbbb12959578f45b5c560fab2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:44:32.646Z"
+      "persisted_at": "2026-11-26T03:13:13.869Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -230775,8 +230785,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "ac6641e3",
-      "content_hash": "2f3def1226a529990dec69be1d6d554089d2dc7a81622536631885b027185976",
+      "source_version": "d536eec8",
+      "content_hash": "3aa7761bb2efac9458d2e158b028251e0d2f4d0e5fe99576223c49b7c1c88015",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231017,7 +231027,7 @@
         },
         {
           "number": "EXISTING",
-          "title": "NUC 147 Deferred Suites",
+          "title": "NUC 152 Falsy Value Assignment",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -231086,7 +231096,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T00:46:41.751Z",
+      "verified_at": "2026-11-26T03:13:14.169Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231128,10 +231138,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "ac6641e3",
-      "content_hash": "f0c51fe4f81ab849661e14b16da41e0d4cca416fcb6eab079d6ee0af74a4df7e",
+      "source_version": "d536eec8",
+      "content_hash": "9e2df54d5b2983aec963bcb262e06b98cfa7886e7f7058fdca9406976d370c1d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T00:46:42.516Z"
+      "persisted_at": "2026-11-26T03:13:14.847Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231140,10 +231150,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "ac6641e3",
-      "content_hash": "a4aa6c07b9630af30f5e762e85e854d32a6520ba252a554032a56f4b3cd976cd",
+      "source_version": "d536eec8",
+      "content_hash": "a2ab58058dcff2d8187bb53385fc90b7d8373041aec7918add6b379f874ed139",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:46:42.736Z"
+      "persisted_at": "2026-11-26T03:13:15.192Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -253783,7 +253793,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Woof",
       "source_version": "hf-conwayresearch-underdog-woof",
-      "content_hash": "e09e6f57912a0b62d4a34c3c07551691269c085b41c7f413318e5937f59f18d5",
+      "content_hash": "8a353cdb9a5dd52b2743d8977275a1e1d23e06faca50d6b7ac3a42771be69801",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md",
       "promoted_rules": [],
@@ -253792,7 +253802,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T06:27:27.459Z",
+      "verified_at": "2026-11-26T03:12:57.726Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253809,9 +253819,9 @@
       "title": "Research & Knowledge Intelligence: ConwayResearch/Underdog-Woof Core Invariants",
       "repository": "ConwayResearch/Underdog-Woof",
       "source_version": "hf-conwayresearch-underdog-woof",
-      "content_hash": "b389103b21a757485a68e3c81fb60c68859cfe4bdef2cebba2288339aa660b8e",
+      "content_hash": "cea6439dbda5ca09579927258d512a5d1190129dc1ecf82c80c323b18d485f37",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T06:27:27.832Z"
+      "persisted_at": "2026-11-26T03:12:58.193Z"
     },
     "learn-github-fabio-rovai-open-ontologies": {
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
@@ -253929,9 +253939,9 @@
       "title": "Research & Knowledge Intelligence: hf-conwayresearch-underdog-woof-learnings Core Invariants",
       "repository": "hf-conwayresearch-underdog-woof-learnings",
       "source_version": "HEAD",
-      "content_hash": "bbd399d3f000890d36f8e77d0223382ff0e3ddc1e4f3182fa9e745a2bac26d1d",
+      "content_hash": "6b85adc3d1454ab483f46203dff68943ec1c057bddaf7108471637f754efb5f8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T06:27:38.044Z"
+      "persisted_at": "2026-11-26T03:13:18.255Z"
     },
     "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-fabio-rovai-open-ontologies-learnings-core-invariants",
@@ -261731,8 +261741,8 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "754f2bdb",
-      "content_hash": "38e13dbb967e5e11e13e67e21f15def3b57709477680284dac1c3b82b5e707b5",
+      "source_version": "202082ee",
+      "content_hash": "cd5934e1f8ee043bd57519f6519480c53a57ee4b2789f0faec6909d60fa0ecb2",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
@@ -261747,7 +261757,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:29:38.003Z",
+      "verified_at": "2026-11-26T03:13:03.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261763,10 +261773,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-louis-cfm-coucou-architecture-intelligence-louis-cfm-coucou-core-invariants.md",
       "title": "Architecture Intelligence: Louis-CFM/coucou Core Invariants",
       "repository": "Louis-CFM/coucou",
-      "source_version": "754f2bdb",
-      "content_hash": "79c7b82eea710076c5c0e141c100a159bafb01281ec7ac4c3f0fb3d2abec5b62",
+      "source_version": "202082ee",
+      "content_hash": "fe6969252826381d2d2da65a9b0fd43921171fec7de91d5523db62ec43923bb5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:29:38.889Z"
+      "persisted_at": "2026-11-26T03:13:04.407Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou",
@@ -261775,10 +261785,10 @@
       "relative_path": "12_DECISIONS/ADR-louis-cfm-coucou-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in Louis-CFM/coucou",
       "repository": "Louis-CFM/coucou",
-      "source_version": "754f2bdb",
-      "content_hash": "9cea98a0095de979b8bf4a7030d43c80e698bcea35249de7e4b4fe48e8515a3f",
+      "source_version": "202082ee",
+      "content_hash": "6a9898523190e41431759742162b029740030332ee7770975f879efbd9871c0a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:29:39.151Z"
+      "persisted_at": "2026-11-26T03:13:04.597Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-louis-cfm-coucou": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-louis-cfm-coucou",
@@ -261787,10 +261797,10 @@
       "relative_path": "08_VERIFICATION/louis-cfm-coucou-verification-protocol-empirical-defect-shield-for-louis-cfm-cou.md",
       "title": "Verification Protocol: Empirical Defect Shield for Louis-CFM/coucou",
       "repository": "Louis-CFM/coucou",
-      "source_version": "754f2bdb",
-      "content_hash": "ab0386bd0598207bf142b8dcf2c8c09b313d557f1062aa0ed421d7fe1f78615c",
+      "source_version": "202082ee",
+      "content_hash": "b56cf5907cf663f0fd81fdadfb9d477b085a5b635ca772fb66be1efd39442b28",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:29:39.352Z"
+      "persisted_at": "2026-11-26T03:13:04.787Z"
     },
     "rule-8757": {
       "learning_id": "rule-8757",
@@ -261903,9 +261913,9 @@
       "title": "Architecture Intelligence: louis-cfm-coucou-learnings Core Invariants",
       "repository": "louis-cfm-coucou-learnings",
       "source_version": "HEAD",
-      "content_hash": "9114cb7572d4941cd993f66d8d2062ea502f4c5e75f1a7f034a5b68f34128f34",
+      "content_hash": "1e45e6c480840c917f067185028dc74d7405bbee72ea3c8fa6f43a0193323a8a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:29:48.108Z"
+      "persisted_at": "2026-11-26T03:13:19.205Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-louis-cfm-coucou-learnings",
@@ -261915,9 +261925,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in louis-cfm-coucou-learnings",
       "repository": "louis-cfm-coucou-learnings",
       "source_version": "HEAD",
-      "content_hash": "afe65a9a76ac9e7ee6e145baa980e29708e59c70517a77eb747c4463867e8b72",
+      "content_hash": "7e80035024eb577b99f62848a7ff358e0c9eb8afaea51c0d54e4b295231b4e1a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:29:48.341Z"
+      "persisted_at": "2026-11-26T03:13:19.393Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-louis-cfm-coucou-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-louis-cfm-coucou-learnings",
@@ -261927,9 +261937,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for louis-cfm-coucou-learnings",
       "repository": "louis-cfm-coucou-learnings",
       "source_version": "HEAD",
-      "content_hash": "aea86103ca0b5a78fec0f6fdc83473fccfa148f9d5112093fce6937dd68dcf5a",
+      "content_hash": "63527d2087e1f54059f67a37609554461cfd271b89644f91579d141cc857eba0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:29:48.557Z"
+      "persisted_at": "2026-11-26T03:13:19.548Z"
     },
     "candidate_directive-web-ui-align-literal-and-duration-keyword-parsing-with-promql": {
       "item_id": "candidate_directive-web-ui-align-literal-and-duration-keyword-parsing-with-promql",
@@ -350960,6 +350970,94 @@
       "content_hash": "ece431e12bdc00c3b2668a5f2783ac474ba6b0e5285f264162849779c1a7b35c",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T03:04:46.331Z"
+    },
+    "candidate_directive-release-prep-mac-0-6-2-build-28": {
+      "item_id": "candidate_directive-release-prep-mac-0-6-2-build-28",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9N6K-release-prep-mac-0-6-2-build-28.md",
+      "title": "Release prep: Mac 0.6.2 (build 28)",
+      "repository": "louis-cfm-coucou-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef2a3e8eff8448ef51082ae1781f70aba90de08e951f069e4819f1a1b2da7215",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T03:13:19.008Z"
+    },
+    "rule-10591": {
+      "learning_id": "rule-10591",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10591,
+      "title": "add GET hop diagnostics to existing telemetry events",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "c09581ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T03:13:10.535Z"
+    },
+    "candidate_directive-add-get-hop-diagnostics-to-existing-telemetry-events": {
+      "item_id": "candidate_directive-add-get-hop-diagnostics-to-existing-telemetry-events",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9NXB-add-get-hop-diagnostics-to-existing-telemetry-events.md",
+      "title": "add GET hop diagnostics to existing telemetry events",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b8ccc4b1a9d5d74e3c87c7e4226f624066a459acecfef2af52a7ecb84148aab",
+      "domain_letter": "M",
+      "persisted_at": "2026-11-26T03:13:19.970Z"
+    },
+    "rule-10592": {
+      "learning_id": "rule-10592",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10592,
+      "title": "recognise role-split tool results, keep observe read-only, tiered slim",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "ff2624ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T03:13:12.957Z"
+    },
+    "candidate_directive-recognise-role-split-tool-results-keep-observe-read-only-tiered-slim": {
+      "item_id": "candidate_directive-recognise-role-split-tool-results-keep-observe-read-only-tiered-slim",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9IVY-recognise-role-split-tool-results-keep-observe-read-only-tiered-slim.md",
+      "title": "recognise role-split tool results, keep observe read-only, tiered slim",
+      "repository": "lioensky/VCPToolBox",
+      "source_version": "ff2624ee",
+      "content_hash": "38f6b7791375188285ec93546e72cf6de96f0e8fb7e0e66a2f2b33309e4c4fbe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T03:13:13.442Z"
+    },
+    "candidate_directive-nuc-152-falsy-value-assignment": {
+      "item_id": "candidate_directive-nuc-152-falsy-value-assignment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9JTV-nuc-152-falsy-value-assignment.md",
+      "title": "NUC 152 Falsy Value Assignment",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "d536eec8",
+      "content_hash": "1ca87f86d63abd034d937bd3bf659c99de3fb1d65ed2c9cafbb91d7be5fb1a23",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T03:13:14.660Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nucleoidai-nucleoid": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nucleoidai-nucleoid",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-nucleoidai-nucleoid-adr-subsystem-boundary-modular-decoupling-in-nucleoidai-nucl.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in NucleoidAI/Nucleoid",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "d536eec8",
+      "content_hash": "25672f4654f1821027dea716db4239f6b5bcbc9e5c471d22592f135b033534f7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T03:13:15.035Z"
     }
   },
   "ai-builder-brain": {
