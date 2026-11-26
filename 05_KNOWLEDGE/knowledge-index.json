@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T05:30:05.584Z",
+  "last_updated": "2026-11-26T05:38:45.175Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25679,
+  "total_items": 25682,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1cdab2243fdb733fd1be9aed8ce4c4085cf5d0639efeecf7da11c5567bba932",
+      "content_hash": "ac088cd2b207b619bdf80172332b2e05ac615ea19080a02e3154d768e0afe0b8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:56:47.085Z"
+      "persisted_at": "2026-11-26T05:38:43.509Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ea06ded98b3d233c95af016bfff75f68d0086ed8d728e6904301bdecc3192bd",
+      "content_hash": "abdc2db2ce1242591c59132140da35cf5e9e01ebde72920ec5e74d4a40737cf2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:56:47.301Z"
+      "persisted_at": "2026-11-26T05:38:43.707Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "05e67cabbfd6fef7ec4dd9b18dcbcbdc7ae5951243a038606dbe0898ba88b6df",
+      "content_hash": "67125bc5647cea327b2b187ceab870a0bda0f0b9babd5931070fbb23c92df612",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:56:47.477Z"
+      "persisted_at": "2026-11-26T05:38:43.867Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -219482,9 +219482,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0864ec562957bbda1b74dae916e99021a62fed41b9bf11dcdc625789eaf849f",
+      "content_hash": "ad12d53318fc82e846c8d21d94deeecb353f3e0b3a8646e71ff190e3b90a1ebc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:05:13.186Z"
+      "persisted_at": "2026-11-26T05:38:44.988Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219494,9 +219494,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e073345aa4784f00e6090536b70268ccf8c344db7892d9e1682a7fc96ebeff8",
+      "content_hash": "cc5b0606625e57a244a9f1829e5b3e43527494a4a5eef243fed00a768f9970b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:05:13.429Z"
+      "persisted_at": "2026-11-26T05:38:45.175Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -227282,8 +227282,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "3d57ea50",
-      "content_hash": "1a7be02dffa7f8d5c2e812cf72af8bc9c8234f2d0f8caf6c8d1e43158f677f6d",
+      "source_version": "bdcb14a4",
+      "content_hash": "7aa1f0958e871840f545861e7d7bba460da8fbef464a4ab462102063bc838bce",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -227321,6 +227321,11 @@
           "number": 10384,
           "title": "bind bare calls to the enclosing module's items",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10606,
+          "title": "drain buffered watcher changes before returning from indexing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227328,7 +227333,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T23:33:20.092Z",
+      "verified_at": "2026-11-26T05:38:32.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227370,10 +227375,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-technical-construction-intelligence-zvec-ai-zvec-grep-core-inv.md",
       "title": "Technical Construction Intelligence: zvec-ai/zvec-grep Core Invariants",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "3d57ea50",
-      "content_hash": "2c7e5d52e156edbe961742323cebb78c87d9b1c86b1a9b1bc4a4cf8c1023174e",
+      "source_version": "bdcb14a4",
+      "content_hash": "2109dad3e6b28a19bb826b6460cfafad02d4ef83c4e6ab0ff8a8bb1239ec5f46",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:33:20.679Z"
+      "persisted_at": "2026-11-26T05:38:33.476Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona",
@@ -227382,10 +227387,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/zvec-ai-zvec-grep-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona.md",
       "title": "Agent Contract: zvec-ai/zvec-grep Autonomous Specialist Persona",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "3d57ea50",
-      "content_hash": "f8e24311f9b77465972a613a7fb0e788c48d58fa3a744b52537830ec282ea9aa",
+      "source_version": "bdcb14a4",
+      "content_hash": "f45facbc8b92129a2004312ac5426d54df5d34b55897ce81b73ef48298822cb3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T23:33:20.824Z"
+      "persisted_at": "2026-11-26T05:38:33.662Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep",
@@ -227394,10 +227399,10 @@
       "relative_path": "08_VERIFICATION/zvec-ai-zvec-grep-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai/zvec-grep",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "3d57ea50",
-      "content_hash": "8c131fbb8df3ae2874a28b362d7a6c0549075ac934962aa6215b3ebfd98d386a",
+      "source_version": "bdcb14a4",
+      "content_hash": "6c51ed4d73e421cb33c33d06cfb8ec4fb93f08fee6e3aff18a41c69d8e93e428",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T23:33:20.961Z"
+      "persisted_at": "2026-11-26T05:38:33.816Z"
     },
     "learn-huggingface-openbmb-minicpm-ocr-1-0": {
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
@@ -233451,7 +233456,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/higurashi-ai/Haru-4B",
       "source_version": "hf-higurashi-ai-haru-4b",
-      "content_hash": "2d7f6f7dd5467cf447c92165503f2369b4195295574e8d37784daedbe6e4ef0d",
+      "content_hash": "10fda5aadc2cc741ef84ccaf34d94fee0285f068ca977c3996ccd4975d80d55d",
       "dossier_path": "07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md",
       "promoted_rules": [],
@@ -233460,7 +233465,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T09:35:09.817Z",
+      "verified_at": "2026-11-26T05:38:30.956Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233477,9 +233482,9 @@
       "title": "Research & Knowledge Intelligence: higurashi-ai/Haru-4B Core Invariants",
       "repository": "higurashi-ai/Haru-4B",
       "source_version": "hf-higurashi-ai-haru-4b",
-      "content_hash": "ca9d1a60652f8e6bb7f4a82d90ed08f03a38e476a91f85f681ddccebe1c6ecb7",
+      "content_hash": "46cbb6d735613f8f318ed8dd55e5eb8af1f0f7e215bb4fb020e704c34435d15a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T09:35:10.243Z"
+      "persisted_at": "2026-11-26T05:38:31.448Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant",
@@ -233489,9 +233494,9 @@
       "title": "Research & Knowledge Intelligence: hf-higurashi-ai-haru-4b-learnings Core Invariants",
       "repository": "hf-higurashi-ai-haru-4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "abd5c7f12435dbc1a4864fed59fc2dc5f0e4be6a939833a05629edf1e1842776",
+      "content_hash": "918ae844827d4392eebbaf809a13d7c61b29b6221d2b0a2fbe7332e91c354ad0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T09:35:22.029Z"
+      "persisted_at": "2026-11-26T05:38:44.266Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants",
@@ -348833,13 +348838,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QXHX-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GO1H-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "7bd77bf3da5480adfc9b398de7751f83a1d685e1fed8ceb1c78748a67c66c0d3",
+      "content_hash": "4f1a45279420bd23d8050a5dff42b10abeef72aef9a89a383eec303933958504",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:22:44.757Z"
+      "persisted_at": "2026-11-26T05:38:44.789Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -351618,6 +351623,44 @@
       "content_hash": "111a6c035e40b527cabf8ac79beed7c57c81c0289454c7d6a61918b7c16f37fa",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T05:30:05.041Z"
+    },
+    "rule-10606": {
+      "learning_id": "rule-10606",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10606,
+      "title": "drain buffered watcher changes before returning from indexing",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "bdcb14a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T05:38:32.818Z"
+    },
+    "candidate_directive-drain-buffered-watcher-changes-before-returning-from-indexing": {
+      "item_id": "candidate_directive-drain-buffered-watcher-changes-before-returning-from-indexing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GF62-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "title": "drain buffered watcher changes before returning from indexing",
+      "repository": "zvec-ai/zvec-grep",
+      "source_version": "bdcb14a4",
+      "content_hash": "54f03545b29b1a83f6376cc579b8f9f199e879f53b9199c6c77babda5153c10b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T05:38:33.291Z"
+    },
+    "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing": {
+      "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GMWP-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "title": "daemon): drain buffered watcher changes before returning from indexing",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3edc9f4311a2dce50e13c9bbb5594433cbdb1fb6638597f2010ffc594068fb61",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T05:38:43.322Z"
     }
   },
   "ai-builder-brain": {

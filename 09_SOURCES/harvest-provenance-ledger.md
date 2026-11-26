@@ -13291,3 +13291,5 @@ Every entry in this ledger must capture:
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `63911ea6` | Multi-dimensional audit evidence | 2026-11-26T05:29:13.190Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `151572e0` | Multi-dimensional audit evidence | 2026-11-26T05:29:20.070Z |
 | `learn-dom-d-d64d33e0` | `project://linkerd-linkerd2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md` | 2026-11-26T05:30:03.088Z |
+| `learn-huggingface-higurashi-ai-haru-4b` | `https://huggingface.co/higurashi-ai/Haru-4B` | `hf-higuras` | Multi-dimensional audit evidence | 2026-11-26T05:38:31.214Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `bdcb14a4` | Multi-dimensional audit evidence | 2026-11-26T05:38:33.048Z |

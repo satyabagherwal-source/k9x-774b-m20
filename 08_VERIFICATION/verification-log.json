@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-MAT1",
-    "timestamp": "2026-11-24T14:59:39.445Z",
-    "repository": "BuilderIO/builder",
-    "learningId": "learn-github-builderio-builder",
-    "contentHash": "d7c7da30a2e9776e8e528997b8a1b32fc66447f34fa6e81846a06e9e779040b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-MD57",
-    "timestamp": "2026-11-24T14:59:42.475Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "ee89560c474315d843a57fd9d57325f2fd626609cc50c7a1c12d408cd2e44501",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-YBNR",
     "timestamp": "2026-11-24T15:09:00.423Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7490,6 +7460,36 @@
     "repository": "risingwavelabs/risingwave",
     "learningId": "learn-github-risingwavelabs-risingwave",
     "contentHash": "186c077641e1a5b48e32f26c4f518576bfd36dcf8f55dfdb4391c77fa7b42577",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GDK9",
+    "timestamp": "2026-11-26T05:38:31.209Z",
+    "repository": "higurashi-ai/Haru-4B",
+    "learningId": "learn-huggingface-higurashi-ai-haru-4b",
+    "contentHash": "10fda5aadc2cc741ef84ccaf34d94fee0285f068ca977c3996ccd4975d80d55d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GEZ7",
+    "timestamp": "2026-11-26T05:38:33.043Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "7aa1f0958e871840f545861e7d7bba460da8fbef464a4ab462102063bc838bce",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

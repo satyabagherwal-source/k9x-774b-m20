@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "3d57ea50",
+    "sourceVersion": "bdcb14a4",
     "license": "Apache-2.0",
-    "contentHash": "1a7be02dffa7f8d5c2e812cf72af8bc9c8234f2d0f8caf6c8d1e43158f677f6d",
-    "lastHarvestedAt": "2026-11-24T23:33:20.262Z",
+    "contentHash": "7aa1f0958e871840f545861e7d7bba460da8fbef464a4ab462102063bc838bce",
+    "lastHarvestedAt": "2026-11-26T05:38:33.048Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {
@@ -12575,8 +12575,8 @@
     "sourceUrl": "https://huggingface.co/higurashi-ai/Haru-4B",
     "sourceVersion": "hf-higurashi-ai-haru-4b",
     "license": "Open-Source",
-    "contentHash": "2d7f6f7dd5467cf447c92165503f2369b4195295574e8d37784daedbe6e4ef0d",
-    "lastHarvestedAt": "2026-11-22T09:35:10.045Z",
+    "contentHash": "10fda5aadc2cc741ef84ccaf34d94fee0285f068ca977c3996ccd4975d80d55d",
+    "lastHarvestedAt": "2026-11-26T05:38:31.214Z",
     "learningId": "learn-huggingface-higurashi-ai-haru-4b"
   },
   "jithin-sabu-purge-app": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T05:29:20.087Z",
-  "total_cycles_completed": 12580,
-  "total_learnings_persisted": 12580,
-  "total_rules_promoted": 11499,
+  "last_updated": "2026-11-26T05:38:33.062Z",
+  "total_cycles_completed": 12582,
+  "total_learnings_persisted": 12582,
+  "total_rules_promoted": 11500,
   "history": [
-    {
-      "timestamp": "2026-11-25T10:45:37.804Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T10:57:39.064Z",
-      "repository": "LiquidAI/LFM3-1.7B",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T10:57:45.244Z",
       "repository": "Orange-OpenSource/hurl",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T05:29:20.087Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:38:31.228Z",
+      "repository": "higurashi-ai/Haru-4B",
+      "learningId": "learn-huggingface-higurashi-ai-haru-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:38:33.062Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

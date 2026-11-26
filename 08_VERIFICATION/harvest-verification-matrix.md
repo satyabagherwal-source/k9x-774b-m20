@@ -13258,3 +13258,5 @@
 | `CYCLE-20261126-4EZL` | `2026-11-26T05:29:13.185Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md` | Yes (`44436e63...`) |
 | `CYCLE-20261126-4KAP` | `2026-11-26T05:29:20.065Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10605` | Yes (`186c0776...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T05:30:03.088Z` | `linkerd-linkerd2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D64D33E0` [Domain D] | Yes (`96d4e8e5...`) |
+| `CYCLE-20261126-GDK9` | `2026-11-26T05:38:31.209Z` | `higurashi-ai/Haru-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md` | Yes (`10fda5aa...`) |
+| `CYCLE-20261126-GEZ7` | `2026-11-26T05:38:33.043Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10606` | Yes (`7aa1f095...`) |
