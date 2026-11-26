@@ -845,8 +845,8 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "977fae8ac56e93863fbcd7f775526f66f0ef327dda21d8b1f1451e45422763fc",
-    "lastHarvestedAt": "2026-11-23T05:06:32.444Z",
+    "contentHash": "01d3b680b535fb0420fee712f7afc016bb9cf726d5621a6b282143917f181a1c",
+    "lastHarvestedAt": "2026-11-26T18:58:46.424Z",
     "learningId": "learn-huggingface-openai-whisper-large-v3"
   },
   "hf-black-forest-labs-flux.1-schnell": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "50d1f268",
+    "sourceVersion": "f399f9fc",
     "license": "NOASSERTION",
-    "contentHash": "3214005029a11539dfdc9e6eb3ce2b0186a9c4cf274e26c740e814959d2718b0",
-    "lastHarvestedAt": "2026-11-26T17:48:23.999Z",
+    "contentHash": "fdc815221989b9cdf2283017cbb2796ad2637d286a83189b1ef91ecb2b8608e8",
+    "lastHarvestedAt": "2026-11-26T18:59:02.904Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3993,10 +3993,10 @@
     "repository": "o2sh/onefetch",
     "platform": "github",
     "sourceUrl": "https://github.com/o2sh/onefetch",
-    "sourceVersion": "8b63584a",
+    "sourceVersion": "98660b72",
     "license": "MIT",
-    "contentHash": "5810b7d9a592ebb07399455742f812f718d862b672f9419bf8494713fcd177d2",
-    "lastHarvestedAt": "2026-11-21T20:10:42.892Z",
+    "contentHash": "5273ec8707dcb6842af72a7a707f7b5581c6359a2619b0979f00598d9306ccb7",
+    "lastHarvestedAt": "2026-11-26T18:58:47.780Z",
     "learningId": "learn-github-o2sh-onefetch"
   },
   "runanywhereai-runanywhere-sdks": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "726f74dc",
+    "sourceVersion": "ff323598",
     "license": "Apache-2.0",
-    "contentHash": "6649accbb6d778152f25054573077caa1adafc402c06c62c0060bb7b04f961a7",
-    "lastHarvestedAt": "2026-11-26T01:26:29.643Z",
+    "contentHash": "0426bd1bff7b6a10e96a69748a2bd7764c117dd2b3de48ca926599c2973e4253",
+    "lastHarvestedAt": "2026-11-26T18:58:56.978Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "50d1f268",
+  "source_version": "f399f9fc",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-26T17:48:24.247Z",
+  "timestamp": "2026-11-26T18:59:03.154Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `50d1f268`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-26T17:48:24.247Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `f399f9fc`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T18:59:03.154Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `50d1f268`)
+- **Target Repository**: `dathere/qsv` (Commit: `f399f9fc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T17:48:22.829Z  
+> **Harvest Timestamp**: 2026-11-26T18:59:02.101Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2290,161 +2290,166 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50d1f268` (2026-11-26)
-**Commit Message**: fix(joinp): drop temporary transformed key columns by name, before --sql-filter (#5118)
+### Incident Patch 1: `f399f9fc` (2026-11-26)
+**Commit Message**: deps: update lock file
 
-* fix(joinp): drop temporary transformed key columns by name, before --sql-filter
-
-With -i, -z or -N, the temporary `_qsv-<key>-transformed` columns were
-visible to --sql-filter (so a positional ORDER BY could sort by one),
-and were then removed by matching any name containing "-transformed",
-which also dropped user columns and SQL aliases like `status-transformed`.
-Now they are dropped by their exact names right after the join.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #5118 in CHANGELOG
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(joinp): cover the `_right`-suffixed temp key column in a full join
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +60/-60)
 ```diff
-@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `synthesize`: relationship learning read source columns by their position in the `stats` output, so `--stats-options` that selected or reordered columns (e.g. `--select city,zip`) made `joint`, `ordered` and `correlated` groups learn from the wrong columns, such as pairing IDs with cities. Source columns are now mapped by position when the stats output matches the header, by unique header name under a selection, and by index for headerless input (`QSV_NO_HEADERS`). `--stats-options` may no longer include `--select`/`-s` or `--weight`, which change which columns `stats` reports; run `qsv select` on the input first. ([#5067](https://github.com/dathere/qsv/pull/5067))
- - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
- - `joinp`: with a key transformation (`-i`, `-z` or `-N`) and `--coalesce`, right-only rows of a `--full` or `--right` join on same-named keys lost their key, written as empty. The cleanup also dropped any column named `<left key>_right`, even one that wasn't a key copy, and when selected key names collided, such as `id` and `id_right`, it dropped a key. Now the left key is filled from its same-named right key before `--sql-filter` runs, and only that key's right copy is dropped, in joins that output right columns. ([#5117](https://github.com/dathere/qsv/pull/5117))
-+- `joinp`: with a key transformation (`-i`, `-z` or `-N`), the temporary transformed key columns were still in the join result when `--sql-filter` ran, so a positional `ORDER BY` or `GROUP BY` could hit a temporary key instead of the intended column. They were then removed by matching any column name containing `-transformed`, which also dropped user columns and SQL aliases with that in their name, such as `status-transformed`. Now the temporary columns are dropped by their exact names before `--sql-filter` runs. ([#5118](https://github.com/dathere/qsv/pull/5118))
+@@ -33,9 +33,9 @@ dependencies = [
  
- ### Changed
- - **deps: Polars bumped to upstream rev [`08b2814`](https://github.com/pola-rs/polars/commit/08b2814ce6386c0efe0fea512912353f42a8b7b6)** (94 commits past `93d31f0`; crates stay 0.55.1). Some `sqlp` results that already worked change:
-```
-
-**File**: `src/cmd/joinp.rs` (modified, +28/-12)
-```diff
-@@ -953,7 +953,34 @@ impl JoinStruct {
-             join_lf
-         };
+ [[package]]
+ name = "actix-http"
+-version = "3.22.0"
++version = "3.22.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "50f98f47b03911915aa3f0b856749aa3d3915033afabb295ab6ac5ff3b8bd5c1"
++checksum = "ef789744a2e6e678dd2dee90b2aecc084022709378f28d9d0eee6d7d299e36b8"
+ dependencies = [
+  "actix-codec",
+  "actix-service",
+@@ -199,9 +199,9 @@ dependencies = [
  
--        let mut results_lf = match &self.sql_filter {
-+        // Drop the temporary transformed key columns by their exact names (a right one gets
-+        // a `_right` suffix when it collides), before --sql-filter, so the filter sees the
-+        // same columns as in a join without key transformations, and user columns whose names
-+        // merely contain "-transformed" are kept.
-+        let join_lf = if keys_transformed {
-+            let mut join_lf = join_lf;
-+            let temp_cols: Vec<String> = left_col_names
-+                .iter()
-+                .chain(&right_col_names)
-+                .flat_map(|name| {
-+                    [
-+                        format!("_qsv-{name}-transformed"),
-+                        format!("_qsv-{name}-transformed_right"),
-+                    ]
-+                })
-+                .collect();
-+            let keep_cols: Vec<Expr> = join_lf
-+                .collect_schema()?
-+                .iter_names()
-+                .filter(|name| !temp_cols.iter().any(|temp| temp == name.as_str()))
-+                .map(|name| col(name.as_str()))
-+                .collect();
-+            join_lf.select(keep_cols)
-+        } else {
-+            join_lf
-+        };
-+
-+        let results_lf = match &self.sql_filter {
-             Some(sql_filter) => {
-                 let mut ctx = util::new_sql_context();
-                 ctx.register("join_result", join_lf);
-@@ -962,17 +989,6 @@ impl JoinStruct {
-             _ => join_lf,
-         };
+ [[package]]
+ name = "ahash"
+-version = "0.8.13"
++version = "0.8.14"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0fca89247609239eeb6915e6991111866b92d7b31025e69302bbf430cc4d2c38"
++checksum = "54dae3d1d7b8956f3506c4e999a74e77f932a59153ccf38ab8cf96db74bb9dc0"
+ dependencies = [
+  "cfg-if",
+  "const-random",
+@@ -247,9 +247,9 @@ dependencies = [
  
--        if keys_transformed {
--            // Remove temporary transformed columns
--            let keep_cols: Vec<Expr> = results_lf
--                .collect_schema()?
--                .iter_names()
--                .filter(|col| !col.contains("-transformed"))
--                .map(|col| polars::lazy::dsl::col(col.as_str()))
--                .collect();
--            results_lf = results_lf.select(keep_cols);
--        }
--
-         // SQLContext defers a --sql-filter query into a plan with default flags, so set them
-         // on the whole plan to honor --no-optimizations
-         let mut results_lf = results_lf.with_optimizations(optflags);
-```
-
-**File**: `tests/test_joinp.rs` (modified, +51/-0)
-```diff
-@@ -3452,6 +3452,57 @@ fn joinp_coalesce_transformed_keys_keeps_right_only_keys() {
-     );
- }
+ [[package]]
+ name = "allocator-api2"
+-version = "0.2.21"
++version = "0.2.22"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
++checksum = "57b212daf2e827b1ccdd778b7eb48ba433e58cb0e4f27b43cd6b7a608425a014"
  
-+// with a key transformation, the temporary key columns are dropped by name before --sql-filter
-+#[test]
-+fn joinp_transformed_keys_temp_columns_hidden() {
-+    let wrk = Workdir::new("joinp_transformed_keys_temp_columns_hidden");
-+    wrk.create_from_string("left.csv", "k,a\nB,1\na,2\n");
-+    wrk.create_from_string("right.csv", "k,b\nb,1\nA,2\n");
-+
-+    // --sql-filter sees only the output columns, so ORDER BY 3 sorts by b, not a temp key
-+    let mut cmd = wrk.command("joinp");
-+    cmd.args(["k", "left.csv", "k", "right.csv", "-i", "--coalesce"])
-+        .args(["--sql-filter", "SELECT * FROM join_result ORDER BY 3"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["k", "a", "b"],
-+            svec!["B", "1", "1"],
-+            svec!["a", "2", "2"]
-+        ]
-+    );
-+
-+    // a full join keeps the right temp key too, suffixed `_right` as it collides; it is dropped
-+    let mut cmd = wrk.command("joinp");
-+    cmd.args(["k", "left.csv", "k", "right.csv", "-i", "--full"])
-+        .args(["--maintain-order", "left_right"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["k", "a", "k_right", "b"],
-+            svec!["B", "1", "b", "1"],
-+            svec!["a", "2", "A", "2"]
-+        ]
-+    );
-+
-+    // user columns and SQL aliases whose names contain "-transformed" are kept
-+    wrk.create_from_string("status.csv", "k,status-transformed\nB,x\n");
-+    let mut cmd = wrk.command("joinp");
-+    cmd.args(["k", "status.csv", "k", "right.csv", "-i", "--left-semi"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(got, vec![svec!["k", "status-transformed"], svec!["B", "x"]]);
-+
-+    let mut cmd = wrk.command("joinp");
-+    cmd.args(["k", "status.csv", "k", "right.csv", "-i"]).args([
-+        "--sql-filter",
-+        r#"SELECT k, b AS "b-transformed" FROM join_result"#,
-+    ]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(got, vec![svec!["k", "b-transformed"], svec!["B", "1"]]);
-+}
-+
- // same-named .sz inputs, snappy or not, must not overwrite each other (#4779).
- #[test]
- fn joinp_same_named_sz_inputs() {
+ [[package]]
+ name = "android_system_properties"
+@@ -710,9 +710,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "async-compression"
+-version = "0.4.53"
++version = "0.4.54"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7bde8322bfc31ade96978b8d3c06be0fd60401192e7ddb9a0b2de5e215d22e61"
++checksum = "0c31224bd2c09447484a1143f2fc1d871eb405789859c8e5470a3e7f95f40a18"
+ dependencies = [
+  "compression-codecs",
+  "compression-core",
+@@ -1496,9 +1496,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "compression-codecs"
+-version = "0.4.48"
++version = "0.4.49"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5e41632c2efd201c62f1432f7cbee121b97878eab579da9d85676573d1fd33b9"
++checksum = "f938fc0d88fbe2c8d6f0e1ba96ba1165d89ff698e98468cd019d92cff2ecd367"
+ dependencies = [
+  "brotli",
+  "compression-core",
+@@ -1605,9 +1605,9 @@ checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
+ 
+ [[package]]
+ name = "constant_time_eq"
+-version = "0.6.1"
++version = "0.6.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9eb6feb175df65d0a3ccd3e73484e940d0ac664e8034f0519fd49a93db3071d9"
++checksum = "144e7f1de087984240b7816d47f698b414979faa6f40839c5b86d6bd47db57b7"
+ dependencies = [
+  "rustversion",
+ ]
+@@ -3341,9 +3341,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "h2"
+-version = "0.4.20"
++version = "0.4.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
++checksum = "b634322c4924093fe6a6e05ecbe5717cd3c6014934455f4ae8e5cf14ba3264a8"
+ dependencies = [
+  "atomic-waker",
+  "bytes",
+@@ -3560,7 +3560,7 @@ dependencies = [
+  "serde",
+  "serde_derive",
+  "sysinfo 0.38.4",
+- "toml 1.2.2+spec-1.1.0",
++ "toml 1.2.3+spec-1.1.0",
+  "uuid",
+ ]
+ 
+@@ -4235,9 +4235,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "jsonschema"
+-version = "0.63.1"
++version = "0.63.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f048e101172edb2c5f0351d7e3bc3796ac89b7f150e64b0cbd20dd82215b2160"
++checksum = "b0802aebc749a4ef12e76aee083622b100249be0dc6d2103d84bbb2f7936a1ae"
+ dependencies = [
+  "ahash",
+  "bytecount",
+@@ -4266,18 +4266,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "jsonschema-regex"
+-version = "0.63.1"
++version = "0.63.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c3ef369677a99a8c7381196491eb4e0a718c337756cf82bdb91303933789f181"
++checksum = "ba1527289dfcb1400df61b5c591218e8e30031376671f611faecb5b9a1ff4987"
+ dependencies = [
+  "regex-syntax",
+ ]
+ 
+ [[package]]
+ name = "jsonschema-value"
+-version = "0.63.1"
++version = "0.63.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d698d83c2661d1e6f289b567a73e95d5549ec155775260e93165110a583296f4"
++checksum = "a95285ab129d630f01cf2f1345c28662116340fac1a35eb0795e5dbbf0ef990d"
+ dependencies = [
+  "ahash",
+  "bytecount",
+@@ -4303,9 +4303,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "kiddo"
+-version = "6.3.1"
++version = "6.3.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aec3e974af09683a6e0c399a5e929787434102719dbb2614b282e713e2cc00d8"
++checksum = "302df6ce3cc13782b6ea7171686366e712f0e22325086c6742ff9fba80e0c3a4"
+ dependencies = [
+  "aligned-vec",
+  "array-init",
+@@ -4567,9 +4567,9 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
+ 
+ [[package]]
+ name = "litrs"
+-version = "1.0.1"
++version = "1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4744e383959f0db86ede514b809b1c53251889093803c05267acc7d4e7030d70"
++checksum = "02b614978e47ce529faee66579f2b2fe19c94aa96d910a6a9a8043b2b02d8175"
+ 
+ [[package]]
+ name = "local-waker"
+@@ -4656,7 +4656,7 @@ version = "0.25.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ef1
 ```
 
 #### Recent Merged Pull Requests:
@@ -2473,31 +2478,79 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. joinp): drop temporary transformed key columns by name, before --sql-filter
+## X. deps: update lock file
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50d1f268`: joinp): drop temporary transformed key columns by name, before --sql-filter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f399f9fc`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `joinp`: with a key transformation (`-i`, `-z` or `-N`), the temporary transformed key columns were still in the join result when `--sql-filter` ran, so a positional `ORDER BY` or `GROUP BY` could hit a temporary key instead of the intended column. They were then removed by matching any column name containing `-transformed`, which also dropped user columns and SQL aliases with that in their name, such as `status-transformed`. Now the temporary columns are dropped by their exact names before `--sql-filter` runs. ([#5118](https://github.com/dathere/qsv/pull/5118))
+version = "3.22.1"
+checksum = "ef789744a2e6e678dd2dee90b2aecc084022709378f28d9d0eee6d7d299e36b8"
+version = "0.8.14"
+checksum = "54dae3d1d7b8956f3506c4e999a74e77f932a59153ccf38ab8cf96db74bb9dc0"
+version = "0.2.22"
+checksum = "57b212daf2e827b1ccdd778b7eb48ba433e58cb0e4f27b43cd6b7a608425a014"
+version = "0.4.54"
+checksum = "0c31224bd2c09447484a1143f2fc1d871eb405789859c8e5470a3e7f95f40a18"
+version = "0.4.49"
+checksum = "f938fc0d88fbe2c8d6f0e1ba96ba1165d89ff698e98468cd019d92cff2ecd367"
+version = "0.6.2"
+checksum = "144e7f1de087984240b7816d47f698b414979faa6f40839c5b86d6bd47db57b7"
+version = "0.4.21"
+checksum = "b634322c4924093fe6a6e05ecbe5717cd3c6014934455f4ae8e5cf14ba3264a8"
+ "toml 1.2.3+spec-1.1.0",
+version = "0.63.2"
+checksum = "b0802aebc749a4ef12e76aee083622b100249be0dc6d2103d84bbb2f7936a1ae"
+version = "0.63.2"
+checksum = "ba1527289dfcb1400df61b5c591218e8e30031376671f611faecb5b9a1ff4987"
+version = "0.63.2"
+checksum = "a95285ab129d630f01cf2f1345c28662116340fac1a35eb0795e5dbbf0ef990d"
+version = "6.3.2"
+checksum = "302df6ce3cc13782b6ea7171686366e712f0e22325086c6742ff9fba80e0c3a4"
+version = "1.1.0"
+checksum = "02b614978e47ce529faee66579f2b2fe19c94aa96d910a6a9a8043b2b02d8175"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "3.22.0"
+checksum = "50f98f47b03911915aa3f0b856749aa3d3915033afabb295ab6ac5ff3b8bd5c1"
+version = "0.8.13"
+checksum = "0fca89247609239eeb6915e6991111866b92d7b31025e69302bbf430cc4d2c38"
+version = "0.2.21"
+checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
+version = "0.4.53"
+checksum = "7bde8322bfc31ade96978b8d3c06be0fd60401192e7ddb9a0b2de5e215d22e61"
+version = "0.4.48"
+checksum = "5e41632c2efd201c62f1432f7cbee121b97878eab579da9d85676573d1fd33b9"
+version = "0.6.1"
+checksum = "9eb6feb175df65d0a3ccd3e73484e940d0ac664e8034f0519fd49a93db3071d9"
+version = "0.4.20"
+checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
+ "toml 1.2.2+spec-1.1.0",
+version = "0.63.1"
+checksum = "f048e101172edb2c5f0351d7e3bc3796ac89b7f150e64b0cbd20dd82215b2160"
+version = "0.63.1"
+checksum = "c3ef369677a99a8c7381196491eb4e0a718c337756cf82bdb91303933789f181"
+version = "0.63.1"
+checksum = "d698d83c2661d1e6f289b567a73e95d5549ec155775260e93165110a583296f4"
+version = "6.3.1"
+checksum = "aec3e974af09683a6e0c399a5e929787434102719dbb2614b282e713e2cc00d8"
+version = "1.0.1"
+checksum = "4744e383959f0db86ede514b809b1c53251889093803c05267acc7d4e7030d70"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50d1f268` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f399f9fc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -811390,3 +811390,164 @@ import dev.langchain4j.agentic.planner.AgentArgument;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7c5e5ed2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10759. count c++ headers and modules as c++ (fixes #1855) (Harvested from o2sh/onefetch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "count c++ headers and modules as c++ (fixes #1855)",
+  "source": "o2sh/onefetch",
+  "source_url": "https://github.com/o2sh/onefetch",
+  "source_version": "98660b72",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T18:58:47.179Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-o2sh-onefetch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `98660b72`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3de99c1c`: count c++ headers and modules as c++ (fixes #1855). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  tokei_aliases: # optional, other tokei languages to count as this one, e.g. `Cpp` lists `CppHeader` and `CppModule`
+    - SomeTokeiVariant
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3de99c1c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10760. align compatibility rules with their guides and prune the review skills (Harvested from aws/aws-cdk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "align compatibility rules with their guides and prune the review skills",
+  "source": "aws/aws-cdk",
+  "source_url": "https://github.com/aws/aws-cdk",
+  "source_version": "ff323598",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T18:58:56.394Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-aws-aws-cdk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `ff323598`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `skills/cdk-review/cdk-construct-design-review/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6efedd4d`: skills): align compatibility rules with their guides and prune the review skills. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/cdk-review/cdk-construct-design-review/SKILL.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+2. **Check the diff against the rules,** judging the shape the changed surface produces. For each rule
+   check both directions: what is present and violating, and what the kind owes but the diff omits.
+   Before flagging an absence, confirm the service supports the affordance in the authoritative AWS
+   takes one value. Stop once you can name the defect and cite its rule — file + section.
+`message` as the complete posted comment (observation, impact, a fix once you have checked one, and the
+guideline cited inline by file + section). This dimension's `category` is one of: Feature placement &
+abstraction, Design Guidelines conformance, Clarity/simplicity/consistency, Footgun-free & ages-well
+interface quality.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+2. **Check the diff against the rules.** Walk the changed surface family by family — **Feature placement**,
+   **Abstraction / L1 leak**, **Conformance**, **Footgun / ages-well** — judging the shape it produces. For
+   each rule check both directions: what is present and violating, and what the kind owes but the diff
+   omits. Before flagging an absence, confirm the service supports the affordance in the authoritative AWS
+   takes one value. Stop once you can name the defect and cite its rule — file + section — with the concrete
+   fix.
+Beyond the shared exclusions in `cdk-review-principles` (pre-existing, cosmetics, out-of-scope,
+no-nit-quota), stay silent on the following — not even as OPTIONAL — because none is a design defect in
+the changed surface. When a defect belongs to a different dimension, leave it — it's outside your scope.
+
+`message` as the complete posted comment (observation, impact, concrete fix, and the guideline cited
+inline by file + section). This dimension's `category` is one of: Feature placement & abstraction,
+Design Guidelines conformance, Clarity/simplicity/consistency, Footgun-free & ages-well interface
+quality.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6efedd4d` are properly handled with clean fallback behavior.

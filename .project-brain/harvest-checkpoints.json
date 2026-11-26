@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T18:50:27.051Z",
+  "last_updated": "2026-11-26T18:59:02.924Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1085,14 +1085,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-whisper-large-v3",
-      "content_hash": "977fae8ac56e93863fbcd7f775526f66f0ef327dda21d8b1f1451e45422763fc",
-      "verified_at": "2026-11-23T05:06:32.452Z",
+      "content_hash": "01d3b680b535fb0420fee712f7afc016bb9cf726d5621a6b282143917f181a1c",
+      "verified_at": "2026-11-26T18:58:46.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T05:06:32.452Z"
+      "last_updated": "2026-11-26T18:58:46.438Z"
     },
     "black-forest-labs/FLUX.1-schnell": {
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "3214005029a11539dfdc9e6eb3ce2b0186a9c4cf274e26c740e814959d2718b0",
-      "verified_at": "2026-11-26T17:48:24.018Z",
+      "content_hash": "fdc815221989b9cdf2283017cbb2796ad2637d286a83189b1ef91ecb2b8608e8",
+      "verified_at": "2026-11-26T18:59:02.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T17:48:24.018Z"
+      "last_updated": "2026-11-26T18:59:02.923Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -6111,14 +6111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-o2sh-onefetch",
-      "content_hash": "5810b7d9a592ebb07399455742f812f718d862b672f9419bf8494713fcd177d2",
-      "verified_at": "2026-11-21T20:10:42.902Z",
+      "content_hash": "5273ec8707dcb6842af72a7a707f7b5581c6359a2619b0979f00598d9306ccb7",
+      "verified_at": "2026-11-26T18:58:47.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T20:10:42.902Z"
+      "last_updated": "2026-11-26T18:58:47.799Z"
     },
     "RunanywhereAI/runanywhere-sdks": {
       "repository": "RunanywhereAI/runanywhere-sdks",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "6649accbb6d778152f25054573077caa1adafc402c06c62c0060bb7b04f961a7",
-      "verified_at": "2026-11-26T01:26:29.658Z",
+      "content_hash": "0426bd1bff7b6a10e96a69748a2bd7764c117dd2b3de48ca926599c2973e4253",
+      "verified_at": "2026-11-26T18:58:56.999Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T01:26:29.658Z"
+      "last_updated": "2026-11-26T18:58:56.999Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",

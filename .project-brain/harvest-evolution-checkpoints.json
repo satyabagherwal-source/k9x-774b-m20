@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:50:33.029Z",
+  "last_updated": "2026-11-26T18:59:08.800Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T18:50:31.982Z",
@@ -1018,8 +1018,8 @@
       "staged_for_review": 1
     },
     "aws-aws-cdk-learnings.md": {
-      "processed_at": "2026-11-26T01:27:00.836Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-26T18:59:07.790Z",
+      "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "infracost-infracost-learnings.md": {
@@ -2263,7 +2263,7 @@
       "staged_for_review": 0
     },
     "hf-openai-whisper-large-v3-learnings.md": {
-      "processed_at": "2026-11-23T05:06:51.241Z",
+      "processed_at": "2026-11-26T18:59:07.340Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3413,7 +3413,7 @@
       "staged_for_review": 0
     },
     "o2sh-onefetch-learnings.md": {
-      "processed_at": "2026-11-21T20:10:59.822Z",
+      "processed_at": "2026-11-26T18:59:06.382Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3993,7 +3993,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4629,
+  "total_dossiers_evaluated": 4632,
   "total_canonical_promoted": 565,
-  "total_staged_for_review": 3485
+  "total_staged_for_review": 3487
 }

@@ -13552,3 +13552,7 @@ Every entry in this ledger must capture:
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `ee15ab0a` | Multi-dimensional audit evidence | 2026-11-26T18:41:52.383Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-26T18:50:13.586Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `50c1a5c5` | Multi-dimensional audit evidence | 2026-11-26T18:50:27.029Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-26T18:58:46.424Z |
+| `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `98660b72` | Multi-dimensional audit evidence | 2026-11-26T18:58:47.780Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `ff323598` | Multi-dimensional audit evidence | 2026-11-26T18:58:56.978Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `f399f9fc` | Multi-dimensional audit evidence | 2026-11-26T18:59:02.904Z |

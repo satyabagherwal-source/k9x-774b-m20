@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:50:27.047Z",
-  "total_cycles_completed": 12832,
-  "total_learnings_persisted": 12832,
-  "total_rules_promoted": 11663,
+  "last_updated": "2026-11-26T18:59:02.921Z",
+  "total_cycles_completed": 12836,
+  "total_learnings_persisted": 12836,
+  "total_rules_promoted": 11666,
   "history": [
-    {
-      "timestamp": "2026-11-26T08:57:31.514Z",
-      "repository": "flux-iac/tofu-controller",
-      "learningId": "learn-github-flux-iac-tofu-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T08:57:35.675Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T09:12:18.306Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T09:12:19.805Z",
-      "repository": "sand-ai/MAGI-2-preview",
-      "learningId": "learn-huggingface-sand-ai-magi-2-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T09:12:29.140Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T18:50:27.047Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:58:46.435Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-openai-whisper-large-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:58:47.792Z",
+      "repository": "o2sh/onefetch",
+      "learningId": "learn-github-o2sh-onefetch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:58:56.996Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T18:59:02.921Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

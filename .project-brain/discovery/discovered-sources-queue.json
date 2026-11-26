@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T18:41:58.085Z",
+  "updated_at": "2026-11-26T18:59:08.032Z",
   "stats": {
-    "total_discovered": 9963,
-    "approved_pending_harvest": 9443,
+    "total_discovered": 9967,
+    "approved_pending_harvest": 9447,
     "harvested_count": 0,
     "rejected_count": 520,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9447,
-      "OFFICIAL_DOCUMENTATION": 285,
+      "COMMUNITY_AND_EXPERT": 9450,
+      "OFFICIAL_DOCUMENTATION": 286,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 55,
@@ -215573,6 +215573,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
         "fileName": "callstack-react-native-paper-learnings.md"
+      }
+    },
+    "SRC-BF7EDF3C7046": {
+      "id": "SRC-BF7EDF3C7046",
+      "url": "https://github.com/XAMPPRocky/tokei",
+      "title": "https://github.com/XAMPPRocky/tokei",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:59:06.518Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
+        "fileName": "o2sh-onefetch-learnings.md"
+      }
+    },
+    "SRC-FFECE9A6F002": {
+      "id": "SRC-FFECE9A6F002",
+      "url": "https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md",
+      "title": "https://github.com/aws/aws-cdk/blob/main/docs/AGENTS_CONSTRUCT_DESIGN.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:59:07.906Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-6843280F6C66": {
+      "id": "SRC-6843280F6C66",
+      "url": "https://github.com/aws/aws-cdk/blob/main/AGENTS.md",
+      "title": "https://github.com/aws/aws-cdk/blob/main/AGENTS.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:59:07.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-D37E894D4B9A": {
+      "id": "SRC-D37E894D4B9A",
+      "url": "https://docs.aws.amazon.com/cdk/v2/guide/tokens.html",
+      "title": "https://docs.aws.amazon.com/cdk/v2/guide/tokens.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T18:59:08.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
       }
     }
   }

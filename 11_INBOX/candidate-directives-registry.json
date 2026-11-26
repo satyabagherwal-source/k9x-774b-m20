@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T18:50:32.447Z",
+  "last_updated": "2026-11-26T18:59:08.275Z",
   "directives": [
     {
       "id": "CD-001",
@@ -13469,14 +13469,14 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-MJG1",
+      "id": "CD-1V8V",
       "directive_title": "update lock file",
       "source_repo": "dathere/qsv",
-      "source_commit": "5915d306",
-      "staged_file": "11_INBOX/candidate-directives/CD-MJG1-update-lock-file.md",
+      "source_commit": "f399f9fc",
+      "staged_file": "11_INBOX/candidate-directives/CD-1V8V-update-lock-file.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-23",
+      "date_staged": "2026-11-26",
       "domain_letter": "G"
     },
     {
@@ -66650,6 +66650,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F6FD54-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-1Y1M",
+      "directive_title": "count c++ headers and modules as c++ (fixes #1855)",
+      "source_repo": "o2sh-onefetch-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1Y1M-count-c-headers-and-modules-as-c-fixes-1855.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-1QO5",
+      "directive_title": "align compatibility rules with their guides and prune the review skills",
+      "source_repo": "aws/aws-cdk",
+      "source_commit": "ff323598",
+      "staged_file": "11_INBOX/candidate-directives/CD-1QO5-align-compatibility-rules-with-their-guides-and-prune-the-review-skills.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-9C97A2",
+      "directive_title": "count c++ headers and modules as c++ (fixes #1855)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "o2sh-onefetch",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9C97A2-count-c-headers-and-modules-as-c-fixes-1.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-1Z75",
+      "directive_title": "skills): align compatibility rules with their guides and prune the review skills",
+      "source_repo": "aws-aws-cdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1Z75-skills-align-compatibility-rules-with-their-guides-and-prune-the-review-skills.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
     }
   ]
 }

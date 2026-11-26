@@ -13519,3 +13519,7 @@
 | `CYCLE-20261126-FRWB` | `2026-11-26T18:41:52.379Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10757` | Yes (`203fd4c9...`) |
 | `CYCLE-20261126-QIML` | `2026-11-26T18:50:13.581Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`cb743ba6...`) |
 | `CYCLE-20261126-QT00` | `2026-11-26T18:50:27.024Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10758` | Yes (`0d9fa632...`) |
+| `CYCLE-20261126-1IC3` | `2026-11-26T18:58:46.419Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`01d3b680...`) |
+| `CYCLE-20261126-1JDR` | `2026-11-26T18:58:47.775Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10759` | Yes (`5273ec87...`) |
+| `CYCLE-20261126-1QH9` | `2026-11-26T18:58:56.973Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10760` | Yes (`0426bd1b...`) |
+| `CYCLE-20261126-1V1W` | `2026-11-26T18:59:02.900Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`fdc81522...`) |

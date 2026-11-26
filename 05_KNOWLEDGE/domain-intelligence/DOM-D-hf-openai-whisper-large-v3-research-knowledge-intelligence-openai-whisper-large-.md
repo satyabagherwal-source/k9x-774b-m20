@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/openai/whisper-large-v3",
   "source_version": "hf-openai-whisper-large-v3",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T05:06:32.643Z",
+  "timestamp": "2026-11-26T18:58:46.660Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-openai-whisper-large-v3",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [openai/whisper-large-v3](https://huggingface.co/openai/whisper-large-v3) (Revision: `hf-openai-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T05:06:32.643Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T18:58:46.660Z`  
 > **Learning ID**: `learn-huggingface-openai-whisper-large-v3`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai/whisper-large-v3](https://huggingface.co/openai/whisper-large-v3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T05:06:31.833Z  
+> **Harvest Timestamp**: 2026-11-26T18:58:45.744Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3194927 downloads | 6839 likes
+- **Stars / Engagement**: 3141206 downloads | 6854 likes
 
 ---
 

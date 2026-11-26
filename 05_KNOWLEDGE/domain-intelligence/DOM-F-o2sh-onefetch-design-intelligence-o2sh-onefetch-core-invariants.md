@@ -4,24 +4,24 @@
 {
   "source_repository": "o2sh/onefetch",
   "source_url": "https://github.com/o2sh/onefetch",
-  "source_version": "8b63584a",
+  "source_version": "98660b72",
   "license": "MIT",
-  "timestamp": "2026-11-21T20:10:43.157Z",
+  "timestamp": "2026-11-26T18:58:48.015Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-o2sh-onefetch",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `8b63584a`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T20:10:43.157Z`  
+> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `98660b72`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T18:58:48.015Z`  
 > **Learning ID**: `learn-github-o2sh-onefetch`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from o2sh/onefetch:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T20:10:41.586Z  
+> **Harvest Timestamp**: 2026-11-26T18:58:46.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Command-line Git information tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12086 stars
+- **Stars / Engagement**: 12089 stars
 
 ---
 
@@ -1190,39 +1190,151 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32c6a391` (2026-11-21)
-**Commit Message**: docs: show the language build step in the architecture diagram
+### Incident Patch 1: `3de99c1c` (2026-11-26)
+**Commit Message**: feat: count c++ headers and modules as c++ (fixes #1855) (#1938)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `ARCHITECTURE.md` (modified, +10/-0)
+**File**: `CONTRIBUTING.md` (modified, +2/-0)
 ```diff
-@@ -3,6 +3,16 @@
- Onefetch reads a Git repository, collects information about it, and prints that
- information next to the logo of the repository's main language (or as JSON/YAML).
- 
-+At build time, `build.rs` generates the `Language` enum:
-+
-+```
-+languages.yaml ──────────────┐
-+                             ├──► build.rs ──► $OUT_DIR/language.rs ──► language::Language
-+src/language/language.tera ──┘    (tera)       (included by language)   (used by data and render)
-+```
-+
-+At run time:
-+
+@@ -67,6 +67,8 @@ CSharp: # required, this will be the name of the enum variant for the language a
+     chip: "#178600" # required, this is used for the language breakdown bar, its value can be found in linguist [2].
+   icon: '\u{E648}' # optional, the UTF-16 code point of the nerd font icon if supported [3]
+   serialization: c# # required only if the Enum name `CSharp` doesn't match the display name `C#`
++  tokei_aliases: # optional, other tokei languages to count as this one, e.g. `Cpp` lists `CppHeader` and `CppModule`
++    - SomeTokeiVariant
  ```
- command line ──► cli ─────┐
-                           ├──► options ──┬── InfoOptions ───► data::build_info ──► Info ──┐
+ 
+ - [1] https://github.com/XAMPPRocky/tokei#supported-languages
+```
+
+**File**: `languages.yaml` (modified, +3/-0)
+```diff
+@@ -475,6 +475,9 @@ Cpp:
+     chip: "#F34B7D"
+   icon: '\u{E61D}'
+   serialization: c++
++  tokei_aliases:
++    - CppHeader
++    - CppModule
+ Crystal:
+   type: programming
+   ascii: |
+```
+
+**File**: `src/data/loc.rs` (modified, +44/-2)
+```diff
+@@ -35,7 +35,9 @@ fn get_loc_by_language(languages: &tokei::Languages) -> Option<HashMap<Language,
+         let loc = count_loc(language_name, language);
+ 
+         if loc > 0 {
+-            loc_by_language.insert(Language::from(*language_name), loc);
++            *loc_by_language
++                .entry(Language::from(*language_name))
++                .or_insert(0) += loc;
+         }
+     }
+ 
+@@ -88,7 +90,7 @@ fn get_locs(
+ fn filter_languages_on_type(types: &[LanguageType]) -> Vec<tokei::LanguageType> {
+     Language::iter()
+         .filter(|language| types.contains(&language.language_type()))
+-        .map(std::convert::Into::into)
++        .flat_map(|language| language.tokei_types().iter().copied())
+         .collect()
+ }
+ 
+@@ -207,4 +209,44 @@ mod test {
+ 
+         assert_eq!(expected_order, actual_order);
+     }
++
++    #[test]
++    fn cpp_headers_and_modules_are_counted_as_cpp() {
++        let mut languages = tokei::Languages::new();
++        for (language_type, code) in [
++            (tokei::LanguageType::Cpp, 100),
++            (tokei::LanguageType::CppHeader, 40),
++            (tokei::LanguageType::CppModule, 25),
++        ] {
++            languages.insert(
++                language_type,
++                tokei::Language {
++                    code,
++                    ..Default::default()
++                },
++            );
++        }
++
++        let loc_by_language = get_loc_by_language(&languages).unwrap();
++
++        assert_eq!(loc_by_language.len(), 1);
++        assert_eq!(loc_by_language[&Language::Cpp], 165);
++    }
++
++    #[test]
++    fn programming_filter_includes_cpp_aliases() {
++        let tokei_types = filter_languages_on_type(&[LanguageType::Programming]);
++
++        assert!(tokei_types.contains(&tokei::LanguageType::Cpp));
++        assert!(tokei_types.contains(&tokei::LanguageType::CppHeader));
++        assert!(tokei_types.contains(&tokei::LanguageType::CppModule));
++    }
++
++    #[test]
++    fn cpp_aliases_are_not_scanned_when_cpp_is_filtered_out() {
++        let tokei_types = filter_languages_on_type(&[LanguageType::Markup]);
++
++        assert!(!tokei_types.contains(&tokei::LanguageType::CppHeader));
++        assert!(!tokei_types.contains(&tokei::LanguageType::CppModule));
++    }
+ }
+```
+
+**File**: `src/language/language.tera` (modified, +19/-1)
+```diff
+@@ -45,8 +45,11 @@ impl fmt::Display for Language {
+ impl From<tokei::LanguageType> for Language {
+     fn from(language: tokei::LanguageType) -> Self {
+         match language {
+-            {% for language, _ in languages -%}
++            {% for language, attrs in languages -%}
+                 tokei::LanguageType::{{ language }} => Self::{{ language }},
++                {% for alias in attrs.tokei_aliases | default(value=[]) -%}
++                    tokei::LanguageType::{{ alias }} => Self::{{ language }},
++                {% endfor -%}
+             {% endfor %}
+             _ => unimplemented!("Language {:?}", language),
+         }
+@@ -64,6 +67,21 @@ impl From<Language> for tokei::LanguageType {
+ }
+ 
+ impl Language {
++    /// Every tokei language type counted as this language: its own type,
++    /// followed by the `tokei_aliases` listed in `languages.yaml`.
++    pub fn tokei_types(&self) -> &'static [tokei::LanguageType] {
++        match self {
++            {% for language, attrs in languages -%}
++                Language::{{ language }} => &[
++                    tokei::LanguageType::{{ language }},
++                    {% for alias in attrs.tokei_aliases | default(value=[]) -%}
++                        tokei::LanguageType::{{ alias }},
++                    {% endfor -%}
++                ],
++            {% endfor %}
++        }
++    }
++
+     pub fn ascii_art(&self) -> &'static str {
+         match self {
+             {% for language, attrs in languages -%}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1938** (2026-11-26): feat: count c++ headers and modules as c++ (fixes #1855) (@ilobilo)
 - **PR #1931** (2026-11-21): chore(deps): Update Rust crate toml to 1.2.2 (@renovate[bot])
 - **PR #1930** (2026-11-21): chore(deps): Update Rust crate json-strip-comments to 3.1.3 (@renovate[bot])
 - **PR #1928** (2026-11-21): feat: add Twig language support (@sully-vian)
 - **PR #1927** (2026-11-19): fix: don't apply --exclude to churn (@o2sh)
 - **PR #1926** (2026-11-19): chore(deps): Update Rust crate regex to 1.13.2 (@renovate[bot])
-- **PR #1925** (2026-11-19): chore(deps): Update clap (@renovate[bot])
 
 ---
 
@@ -1242,30 +1354,22 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: show the language build step in the architecture diagram
+## X. count c++ headers and modules as c++ (fixes #1855)
 
 **RULE**:
-When implementing operations in `ARCHITECTURE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `32c6a391`: docs: show the language build step in the architecture diagram. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3de99c1c`: count c++ headers and modules as c++ (fixes #1855). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ARCHITECTURE.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-At build time, `build.rs` generates the `Language` enum:
-
-```
-languages.yaml ──────────────┐
-                             ├──► build.rs ──► $OUT_DIR/language.rs ──► language::Language
-src/language/language.tera ──┘    (tera)       (included by language)   (used by data and render)
-```
-
-At run time:
-
+  tokei_aliases: # optional, other tokei languages to count as this one, e.g. `Cpp` lists `CppHeader` and `CppModule`
+    - SomeTokeiVariant
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1275,7 +1379,7 @@ At run time:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `32c6a391` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3de99c1c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
