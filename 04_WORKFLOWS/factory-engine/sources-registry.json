@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T00:18:08.157Z",
-    "lastVerified": "2026-11-26T00:18:08.157Z",
+    "lastChecked": "2026-11-26T00:26:34.064Z",
+    "lastVerified": "2026-11-26T00:26:34.064Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -197,8 +197,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T23:50:11.757Z",
-    "lastVerified": "2026-11-25T23:50:11.757Z",
+    "lastChecked": "2026-11-26T00:26:34.054Z",
+    "lastVerified": "2026-11-26T00:26:34.054Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1963,12 +1963,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
-    "name": "zilliztech/claude-context",
+    "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T23:04:35.867Z",
-    "lastVerified": "2026-11-24T23:04:35.867Z",
+    "lastChecked": "2026-11-26T00:26:31.451Z",
+    "lastVerified": "2026-11-26T00:26:31.451Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zilliztech-claude-context",
@@ -1977,7 +1977,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c5326ccb"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -2052,8 +2053,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T13:31:45.383Z",
-    "lastVerified": "2026-11-25T13:31:45.383Z",
+    "lastChecked": "2026-11-26T00:26:28.983Z",
+    "lastVerified": "2026-11-26T00:26:28.983Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -4823,9 +4824,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-11-25T00:08:19.872Z",
+    "lastChecked": "2026-11-26T00:26:26.453Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-11-25T00:08:19.872Z"
+    "lastVerified": "2026-11-26T00:26:26.453Z"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -5575,9 +5576,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-24T16:45:51.038Z",
+    "lastChecked": "2026-11-26T00:26:18.980Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-24T16:45:51.038Z"
+    "lastVerified": "2026-11-26T00:26:18.980Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -10627,9 +10628,9 @@
   "kevinnzou-compose-webview-multiplatform": {
     "name": "compose-webview-multiplatform",
     "officialUrl": "https://github.com/KevinnZou/compose-webview-multiplatform",
-    "lastChecked": "2026-11-23T14:55:20.912Z",
+    "lastChecked": "2026-11-26T00:26:24.087Z",
     "revisionIdentifier": "68e76907",
-    "lastVerified": "2026-11-23T14:55:20.912Z"
+    "lastVerified": "2026-11-26T00:26:24.087Z"
   },
   "agamm-pseo-next": {
     "name": "pseo-next",
@@ -13995,12 +13996,12 @@
     "officialUrl": "https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T03:11:24.077Z",
-    "lastVerified": "2026-11-22T03:11:24.077Z",
+    "lastChecked": "2026-11-26T00:26:21.827Z",
+    "lastVerified": "2026-11-26T00:26:21.827Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-    "contentHash": "1b047ef18cca3cd94e25a2b7523d3ff06b42686134bfab49118768de9c1e541f",
+    "contentHash": "ac9e97bda3f636e3dd4abd52fb3f43122095093ec2e3720f007f3ff463259d39",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

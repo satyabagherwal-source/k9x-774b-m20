@@ -13204,3 +13204,4 @@ Every entry in this ledger must capture:
 | `learn-github-touchlab-kermit` | `https://github.com/touchlab/Kermit` | `21eb2603` | Multi-dimensional audit evidence | 2026-11-26T00:17:57.773Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `f21a2468` | Multi-dimensional audit evidence | 2026-11-26T00:18:04.520Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f2e66637` | Multi-dimensional audit evidence | 2026-11-26T00:18:04.876Z |
+| `learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-GLB-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-26T00:26:22.483Z |

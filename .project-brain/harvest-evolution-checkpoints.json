@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:18:11.125Z",
+  "last_updated": "2026-11-26T00:26:36.475Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-25T23:50:13.238Z",
+      "processed_at": "2026-11-26T00:26:35.558Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-25T23:50:12.369Z",
+      "processed_at": "2026-11-26T00:26:34.664Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2988,7 +2988,7 @@
       "staged_for_review": 0
     },
     "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md": {
-      "processed_at": "2026-11-22T03:11:44.173Z",
+      "processed_at": "2026-11-26T00:26:34.205Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3943,7 +3943,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4293,
+  "total_dossiers_evaluated": 4296,
   "total_canonical_promoted": 548,
-  "total_staged_for_review": 3262
+  "total_staged_for_review": 3264
 }

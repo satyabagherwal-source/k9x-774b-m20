@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T00:18:10.785Z",
+  "last_updated": "2026-11-26T00:26:36.149Z",
   "total_records": 2693,
   "domains": {
     "A": {
@@ -8508,8 +8508,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "84f88994deef4badbd69d183eb24ab7fbae67b6e64987b7e711bf4e47ed01899",
-      "created_at": "2026-11-25T23:50:13.816Z"
+      "content_hash": "c8d0cb8c44d216572fa9e5812950a228c5023178029734bd10146acd7ce5cfa6",
+      "created_at": "2026-11-26T00:26:36.149Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9426,8 +9426,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "bf8715f032faa709a41e82c5ee1f5aa1579cd5bfa8e01b8faab263a8f74fd93b",
-      "created_at": "2026-11-25T23:50:12.876Z"
+      "content_hash": "a9734ee93997f015cd449d47e5df41ef824fdc7ec38470b9c87481468c2e387a",
+      "created_at": "2026-11-26T00:26:35.192Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -21863,8 +21863,8 @@
       "title": "Research & Knowledge Intelligence: ccore/Qwen3.5-4B-GLB-3D-Coder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-glb-3d-coder-research-knowledge-intelligence-ccore-qwen3-5-4.md",
       "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-      "content_hash": "752d99319ad3f3d23534a2baa54254ab7f7bfc535987bc6952bb13fa8e9d793f",
-      "created_at": "2026-11-22T03:11:24.930Z"
+      "content_hash": "1a7782530e92438650d08ba71d5288f84cdd948779e7ac2c003bed117795203e",
+      "created_at": "2026-11-26T00:26:22.714Z"
     },
     "DOM-D-55AF5812": {
       "record_id": "DOM-D-55AF5812",
@@ -21914,8 +21914,8 @@
       "title": "Research & Knowledge Intelligence: hf-ccore-qwen3.5-4b-glb-3d-coder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ccore-qwen3-5-4b-glb-3d-coder-learnings-research-knowledge-intelligence-hf-cc.md",
       "repository": "hf-ccore-qwen3.5-4b-glb-3d-coder-learnings",
-      "content_hash": "cad16a46620e5f2a5af17dcb5c883f79aee62be246219724bde424d7bcfdd778",
-      "created_at": "2026-11-22T03:11:44.381Z"
+      "content_hash": "bcc99aed62c1ca0e001bc7e6b01ff72c2682bed9cf03c092a6bc16216e97bb92",
+      "created_at": "2026-11-26T00:26:34.455Z"
     },
     "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tencent-loopforge-core-invariants",

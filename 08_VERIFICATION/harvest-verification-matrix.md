@@ -13171,3 +13171,4 @@
 | `CYCLE-20261126-04Y1` | `2026-11-26T00:17:57.769Z` | `touchlab/Kermit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10567` | Yes (`498de7ae...`) |
 | `CYCLE-20261126-0A5F` | `2026-11-26T00:18:04.515Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md` | Yes (`cad71c92...`) |
 | `CYCLE-20261126-0AFC` | `2026-11-26T00:18:04.872Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10568` | Yes (`ae71faba...`) |
+| `CYCLE-20261126-AYDR` | `2026-11-26T00:26:22.479Z` | `ccore/Qwen3.5-4B-GLB-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-glb-3d-coder-learnings.md` | Yes (`ac9e97bd...`) |

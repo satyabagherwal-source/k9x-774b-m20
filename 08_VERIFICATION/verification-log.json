@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-RADC",
-    "timestamp": "2026-11-24T07:07:38.688Z",
-    "repository": "bridgecrewio/checkov",
-    "learningId": "learn-github-bridgecrewio-checkov",
-    "contentHash": "7e85c9e34e49bd111c31b3cea7d30c3a5f3730a2fce4d4c5d4a8ba8b74afeb6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-O6LC",
     "timestamp": "2026-11-24T07:33:13.440Z",
     "repository": "NervJS/taro",
@@ -7492,6 +7477,21 @@
     "contentHash": "ae71faba075db48f2cd5690ed5a965fa193c585fc152425ace7787ef741e0909",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-AYDR",
+    "timestamp": "2026-11-26T00:26:22.479Z",
+    "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
+    "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
+    "contentHash": "ac9e97bda3f636e3dd4abd52fb3f43122095093ec2e3720f007f3ff463259d39",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

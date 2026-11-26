@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T00:18:04.893Z",
+  "last_updated": "2026-11-26T00:26:22.499Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18081,14 +18081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-      "content_hash": "1b047ef18cca3cd94e25a2b7523d3ff06b42686134bfab49118768de9c1e541f",
-      "verified_at": "2026-11-22T03:11:24.697Z",
+      "content_hash": "ac9e97bda3f636e3dd4abd52fb3f43122095093ec2e3720f007f3ff463259d39",
+      "verified_at": "2026-11-26T00:26:22.498Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:11:24.697Z"
+      "last_updated": "2026-11-26T00:26:22.498Z"
     },
     "davila7/claude-code-templates": {
       "repository": "davila7/claude-code-templates",
