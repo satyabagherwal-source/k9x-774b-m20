@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T10:31:05.800Z",
+  "last_updated": "2026-11-26T10:41:49.344Z",
   "total_verified_learnings": 9126,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25819,
+  "total_items": 25828,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223122,8 +223122,8 @@
       "slug": "loft-sh-vcluster",
       "platform": "github",
       "source_url": "https://github.com/loft-sh/vcluster",
-      "source_version": "9555d7d8",
-      "content_hash": "590448c9d68cd0df28e86f824452b13200227317848481335d2a596b93924831",
+      "source_version": "1145cb57",
+      "content_hash": "9d288c09772faa365abc7cf4a8b57e85ebd4839874a1f1ab4ac589b61aaf7ab6",
       "dossier_path": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
       "promoted_rules": [
@@ -223146,6 +223146,11 @@
           "number": 10121,
           "title": "skip host objects that belong to another virtual object",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10651,
+          "title": "ship helm v4.3.2 in the cli image and keep helm 3 behaviour",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223153,7 +223158,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T10:25:30.945Z",
+      "verified_at": "2026-11-26T10:41:00.789Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223195,10 +223200,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "repository": "loft-sh/vcluster",
-      "source_version": "1671d54b",
-      "content_hash": "767da92314ce2a54e8e7508ad83b74664d36fe67ebd44bbeb0bff072a45ccb62",
+      "source_version": "1145cb57",
+      "content_hash": "1213fddaf25beb43825c28f59d0b96141f6044ade9ba13dae7a9eccdf64e21f2",
       "domain_letter": "L",
-      "persisted_at": "2026-11-23T21:04:50.109Z"
+      "persisted_at": "2026-11-26T10:41:01.773Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-loft-sh-vcluster",
@@ -223207,10 +223212,10 @@
       "relative_path": "08_VERIFICATION/loft-sh-vcluster-verification-protocol-empirical-defect-shield-for-loft-sh-vclus.md",
       "title": "Verification Protocol: Empirical Defect Shield for loft-sh/vcluster",
       "repository": "loft-sh/vcluster",
-      "source_version": "1671d54b",
-      "content_hash": "9b39a79271081555e031f58f52de89acc10ff627f2b97f185a70686c2c27165a",
+      "source_version": "1145cb57",
+      "content_hash": "584ee0df4ce27ac76c34e08bdb7b0aad3469cbb5d0474aae1eb3e871908dc64e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T21:04:50.330Z"
+      "persisted_at": "2026-11-26T10:41:02.117Z"
     },
     "learn-github-neuron-core-neuron-ai": {
       "learning_id": "learn-github-neuron-core-neuron-ai",
@@ -237193,8 +237198,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "f0ccd5a6",
-      "content_hash": "29b6eed87e86e6de62c3122719bcb21bda3a8ee426d49aa01b755d2aa0568fe3",
+      "source_version": "ba27193e",
+      "content_hash": "06d2785eec682d4b99a6f376554bc3f653abbff073f8a67b4b697857cd5ad36f",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -237232,6 +237237,11 @@
           "number": 10441,
           "title": "Use requires and if constexpr in chrono, hash, simd, compression, result and syn",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10650,
+          "title": "copies can miss keys that overflowed from empty chunks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237239,7 +237249,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T03:13:32.120Z",
+      "verified_at": "2026-11-26T10:40:55.011Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237293,10 +237303,10 @@
       "relative_path": "08_VERIFICATION/facebook-folly-verification-protocol-empirical-defect-shield-for-meta-folly.md",
       "title": "Verification Protocol: Empirical Defect Shield for meta/folly",
       "repository": "meta/folly",
-      "source_version": "f0ccd5a6",
-      "content_hash": "142e43160b5b30fa6d5577360d017ccba08206e2249ce9dc6250821636e2726e",
+      "source_version": "ba27193e",
+      "content_hash": "6dd78a81c7701e926246e2f8cd479f0fd7753b27c28bf0c420912ff761e2a69a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:13:32.949Z"
+      "persisted_at": "2026-11-26T10:40:56.422Z"
     },
     "learn-github-gkd-kit-gkd": {
       "learning_id": "learn-github-gkd-kit-gkd",
@@ -237524,9 +237534,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for facebook-folly-learnings",
       "repository": "facebook-folly-learnings",
       "source_version": "HEAD",
-      "content_hash": "59da743c7ef3b7c9399700470b4591306bc96f17fe9edd5f438b049af01ef7d6",
+      "content_hash": "8b77ab7721eb851fb6724c00f7bf4e506c522ef23eec2518afeee2fd4ad023c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T03:13:39.892Z"
+      "persisted_at": "2026-11-26T10:41:10.735Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnin",
@@ -269369,8 +269379,8 @@
       "slug": "signerlabs-klee",
       "platform": "github",
       "source_url": "https://github.com/signerlabs/Klee",
-      "source_version": "f39e0f96",
-      "content_hash": "0bd559fb1b7b6602720778c75798d52b2bd433b30563f53a24cf655a000ca005",
+      "source_version": "8a8ecf52",
+      "content_hash": "fb8edec5250a8497d8c666ebf1cc125539d27511785c24c4047506cb9e2c4e56",
       "dossier_path": "07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/signerlabs-klee-learnings.md",
       "promoted_rules": [
@@ -269385,7 +269395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:26:14.061Z",
+      "verified_at": "2026-11-26T10:40:57.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269427,10 +269437,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-signerlabs-klee-architecture-intelligence-signerlabs-klee-core-invariants.md",
       "title": "Architecture Intelligence: signerlabs/Klee Core Invariants",
       "repository": "signerlabs/Klee",
-      "source_version": "f39e0f96",
-      "content_hash": "b5870a7512d074c13a3ca2e9b7ec39b4a50a7ceca714abb6a4c2762c4c68d54d",
+      "source_version": "8a8ecf52",
+      "content_hash": "0cd418bc15d8e2d1ad6a1b9c467325ccec282b0d8c06f5d5221bd7dc0cf3f861",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T03:26:14.652Z"
+      "persisted_at": "2026-11-26T10:40:58.390Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-signerlabs-klee": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-signerlabs-klee",
@@ -269566,9 +269576,9 @@
       "title": "Architecture Intelligence: signerlabs-klee-learnings Core Invariants",
       "repository": "signerlabs-klee-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c105e49fece305cd592b3d03575b9f9a1d4e291fd2cb9f7ef129e899a71baf0",
+      "content_hash": "8a271d74beb53249de83127d0b3b448851df1aab0a41243b4d12ae7d4a58e079",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T03:26:27.291Z"
+      "persisted_at": "2026-11-26T10:41:49.344Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-signerlabs-klee-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-signerlabs-klee-learnings",
@@ -275917,8 +275927,8 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "3a78aa0d",
-      "content_hash": "a627c424c102d8786ebc37d9805a19eb6846d63d044875d0cb187f65688e7cf4",
+      "source_version": "5290ba9e",
+      "content_hash": "8525134da6b568210328966dbe7188ca085cb7c7da3a334f6b8a27bf5b3d1007",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
@@ -275936,6 +275946,11 @@
           "number": 10283,
           "title": "Add manual AddressSanitizer builds for PostgreSQL and Citus",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10652,
+          "title": "crash when UPDATE sets a column to an array or jsonb subscript",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -275943,7 +275958,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:41:58.580Z",
+      "verified_at": "2026-11-26T10:41:05.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275985,10 +276000,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-citusdata-citus-architecture-intelligence-citusdata-citus-core-invariants.md",
       "title": "Architecture Intelligence: citusdata/citus Core Invariants",
       "repository": "citusdata/citus",
-      "source_version": "a5635dec",
-      "content_hash": "e1cf8d8854808bf862801deba719166c174e9d7d81dd91876f597300ce51e197",
+      "source_version": "5290ba9e",
+      "content_hash": "376a53dc1d5de2217008b359ed75190c37efcfddad19f904b3b5eb2b152bdf43",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:49:55.274Z"
+      "persisted_at": "2026-11-26T10:41:06.295Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-citusdata-citus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-citusdata-citus",
@@ -275997,10 +276012,10 @@
       "relative_path": "08_VERIFICATION/citusdata-citus-verification-protocol-empirical-defect-shield-for-citusdata-citu.md",
       "title": "Verification Protocol: Empirical Defect Shield for citusdata/citus",
       "repository": "citusdata/citus",
-      "source_version": "3a78aa0d",
-      "content_hash": "63bdf87c2809e8d088eb7ca2b90ec9c96f958a77c12d0bd61313457ba28eb6ad",
+      "source_version": "5290ba9e",
+      "content_hash": "345b9c983740e7cada7608c25ab36c548c4248e45e02b446da75fd8153ffc893",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:41:59.373Z"
+      "persisted_at": "2026-11-26T10:41:06.583Z"
     },
     "rule-8944": {
       "learning_id": "rule-8944",
@@ -284935,7 +284950,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "8521ff169a3365f3254bdd002ae0dd7186df839977c62ae0b9396c230e58daf2",
+      "content_hash": "8796b0db3a0a82e71a41ba26968cfcffcb5cd5d247408a1fb0f3e1b890bd4d0d",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "promoted_rules": [],
@@ -284944,7 +284959,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T17:44:29.386Z",
+      "verified_at": "2026-11-26T10:40:50.808Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284961,9 +284976,9 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-R1 Core Invariants",
       "repository": "deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "73d1c0da11c3b8f8ed7df1c6810487b999bd83be8823ffdcbd5e938b9e8a5914",
+      "content_hash": "4c271503532701eeeecd59463db73940f473d048418def9218dd2273b5b54df5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T17:44:29.856Z"
+      "persisted_at": "2026-11-26T10:40:51.544Z"
     },
     "rule-9077": {
       "learning_id": "rule-9077",
@@ -285098,9 +285113,9 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-r1-learnings Core Invariants",
       "repository": "hf-deepseek-ai-deepseek-r1-learnings",
       "source_version": "HEAD",
-      "content_hash": "aad097b7b9b372461c028f6eb667d0ad8d1bc5fc7c0dc1d33b4f0fba3b9c21fd",
+      "content_hash": "d9931ad035af4bfbb2525fe6cc14e00819227fe946dddc13dd982d2203370891",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T17:44:42.243Z"
+      "persisted_at": "2026-11-26T10:41:11.316Z"
     },
     "rule-9078": {
       "learning_id": "rule-9078",
@@ -353675,6 +353690,120 @@
       "content_hash": "28465cfe908de5df8b03f830c748019e11ac82c1e3c6dd05a7ac281cefe930c3",
       "domain_letter": "I",
       "persisted_at": "2026-11-26T10:31:03.338Z"
+    },
+    "rule-10650": {
+      "learning_id": "rule-10650",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10650,
+      "title": "copies can miss keys that overflowed from empty chunks",
+      "source_url": "https://github.com/facebook/folly",
+      "source_version": "ba27193e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T10:40:55.011Z"
+    },
+    "candidate_directive-copies-can-miss-keys-that-overflowed-from-empty-chunks": {
+      "item_id": "candidate_directive-copies-can-miss-keys-that-overflowed-from-empty-chunks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-99ZA-copies-can-miss-keys-that-overflowed-from-empty-chunks.md",
+      "title": "copies can miss keys that overflowed from empty chunks",
+      "repository": "meta/folly",
+      "source_version": "ba27193e",
+      "content_hash": "1baa1127beac85e95e59659117e25aa9e206b7dc63942cf9c7d977605cfa1f57",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T10:40:55.754Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-meta-folly-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-meta-folly-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-facebook-folly-quality-verification-intelligence-meta-folly-core-invariants.md",
+      "title": "Quality & Verification Intelligence: meta/folly Core Invariants",
+      "repository": "meta/folly",
+      "source_version": "ba27193e",
+      "content_hash": "d655910b142aa27e1f961d759fce036a0792d89577ca05473111c9cd263e9e9e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T10:40:56.076Z"
+    },
+    "rule-10651": {
+      "learning_id": "rule-10651",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10651,
+      "title": "ship helm v4.3.2 in the cli image and keep helm 3 behaviour",
+      "source_url": "https://github.com/loft-sh/vcluster",
+      "source_version": "1145cb57",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T10:41:00.789Z"
+    },
+    "candidate_directive-ship-helm-v4-3-2-in-the-cli-image-and-keep-helm-3-behaviour": {
+      "item_id": "candidate_directive-ship-helm-v4-3-2-in-the-cli-image-and-keep-helm-3-behaviour",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9EDQ-ship-helm-v4-3-2-in-the-cli-image-and-keep-helm-3-behaviour.md",
+      "title": "ship helm v4.3.2 in the cli image and keep helm 3 behaviour",
+      "repository": "loft-sh/vcluster",
+      "source_version": "1145cb57",
+      "content_hash": "7287fa8138188615a64a91909ac602684d5858478890d3270ef30ecbd65b7ed3",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-26T10:41:01.458Z"
+    },
+    "rule-10652": {
+      "learning_id": "rule-10652",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10652,
+      "title": "crash when UPDATE sets a column to an array or jsonb subscript",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "5290ba9e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T10:41:05.295Z"
+    },
+    "candidate_directive-crash-when-update-sets-a-column-to-an-array-or-jsonb-subscript": {
+      "item_id": "candidate_directive-crash-when-update-sets-a-column-to-an-array-or-jsonb-subscript",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9HVM-crash-when-update-sets-a-column-to-an-array-or-jsonb-subscript.md",
+      "title": "crash when UPDATE sets a column to an array or jsonb subscript",
+      "repository": "citusdata/citus",
+      "source_version": "5290ba9e",
+      "content_hash": "6fe5b2835675d7a379ba9adffe1a8a97e3f98ecd1663daef3b20d682bf819c6a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T10:41:05.992Z"
+    },
+    "candidate_directive-f14-copies-can-miss-keys-that-overflowed-from-empty-chunks": {
+      "item_id": "candidate_directive-f14-copies-can-miss-keys-that-overflowed-from-empty-chunks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9L2F-f14-copies-can-miss-keys-that-overflowed-from-empty-chunks.md",
+      "title": "F14: copies can miss keys that overflowed from empty chunks",
+      "repository": "facebook-folly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e5f3556e0f87f151347ef77aaad324767f64adb0a1ed6f10cbe98f2f021e9c36",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T10:41:10.124Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-facebook-folly-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-facebook-folly-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-facebook-folly-learnings-quality-verification-intelligence-facebook-folly-learni.md",
+      "title": "Quality & Verification Intelligence: facebook-folly-learnings Core Invariants",
+      "repository": "facebook-folly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b31ae2fac32929c8d35812446dd1827808e6588eb197cda960ba5f7411860e40",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T10:41:10.425Z"
     }
   },
   "ai-builder-brain": {

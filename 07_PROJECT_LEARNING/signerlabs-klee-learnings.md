@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/signerlabs-klee-learnings.md`  
 > **Source**: github ([https://github.com/signerlabs/Klee](https://github.com/signerlabs/Klee))  
-> **Source Version**: `f39e0f96`  
+> **Source Version**: `8a8ecf52`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T03:26:13.118Z  
+> **Timestamp**: 2026-11-26T10:40:57.230Z  
 > **Learning ID**: `learn-github-signerlabs-klee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/signerlabs-klee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/signerlabs/Klee](https://github.com/signerlabs/Klee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:26:13.112Z  
+> **Harvest Timestamp**: 2026-11-26T10:40:57.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native macOS AI chat app powered by MLX. 100% local inference on Apple Silicon, no cloud required. Built with ShipSwift.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1779 stars
+- **Stars / Engagement**: 1797 stars
 
 ---
 
@@ -889,6 +889,7 @@ class ChatStore {
   *Symptoms*: ### I dont see any updates for past 3 months  is it dead?  will be updated and improved? 
   **Post-Mortem & Fix Analysis**:
   > Not dead! Sorry for the long silence.  Klee v1.1.0 is out: https://github.com/signerlabs/Klee/releases/tag/v1.1.0. It upgrades MLX (mlx-swift-lm 3.32.3) and adds Gemma 4 and Qwen 3.6. This local version will keep being maintained.  If you want frontier cloud models with a full agent harness, there is also the new Klee for Mac at https://kleedesktop.com.  Closing this one. Feel free to open a new issue for anything specific.
+  > thanks. How can i use it localy without signing in? i dont want any account ties, can this be used local offline? i really dont want and dont plan on creating accounts to use programs.  Please advise if local no sign in option is in works and available.
 
 - **Issue #35** (2026-11-14): **Your project is featured in Awesome MLX**
   *Symptoms*: Hey! Just wanted to let you know that **Klee** is now listed in **[Awesome MLX](https://github.com/raullenchai/awesome-mlx)** — a curated directory of 120+ projects built on Apple's MLX framework.  If you'd like to update the description or category, feel free to [open a PR](https://github.com/raullenchai/awesome-mlx) or let me know here.  Thanks for building on MLX!
@@ -910,175 +911,12 @@ class ChatStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f39e0f96` (2026-11-16)
-**Commit Message**: docs: banner shows Klee's new face instead of the whale
+### Incident Patch 1: `8a8ecf52` (2026-11-25)
+**Commit Message**: docs: the banner's face looks up and to the right, as Klee's icon does now
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 
-
----
-
-### Incident Patch 2: `4fb51d22` (2026-11-14)
-**Commit Message**: docs: banner linking to Klee for Mac, Chinese README
-
-A full-width banner under the title links to kleedesktop.com, with the note about the new
-Klee for Mac right below it. README.zh-CN.md is the Chinese version; each README links to
-the other at the top.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +8/-2)
-```diff
-@@ -1,11 +1,17 @@
- # Klee
- 
-+**English** · [简体中文](README.zh-CN.md)
-+
-+<a href="https://kleedesktop.com"><img src="Docs/images/klee-for-mac-en.png" alt="The new Klee for Mac: say it, and Klee builds websites and apps and edits video on your Mac. Get it at kleedesktop.com" width="100%"></a>
-+
-+> **Want frontier cloud models and a full agent harness?** The new [Klee for Mac](https://kleedesktop.com) runs Claude Opus 5.5, Fable 5.2 and Sonnet 5.5 with planning, subtasks, skills and MCP, and can build websites and apps for you. It needs a Klee account and is paid. **[Download it at kleedesktop.com →](https://kleedesktop.com)**
-+>
-+> This repository is the local version. It stays free, open source and actively maintained.
-+
- A native macOS AI agent that runs entirely on your Mac. No cloud, no account, no subscription.
- 
- Klee uses [MLX](https://github.com/ml-explore/mlx-swift) to run large language models directly on Apple Silicon, so your conversations never leave your device.
- 
--> **Want frontier cloud models and a full agent harness?** The new [Klee for Mac](https://kleedesktop.com) runs Claude Opus 5.5, Fable 5.2 and Sonnet 5.5 with planning, subtasks, skills and MCP, and can build websites and apps for you. It needs a Klee account and is paid. This local version stays free, open source and actively maintained.
--
- ## Features
- 
- - **100% local inference** -- your data stays on your Mac
-```
-
-**File**: `README.zh-CN.md` (added, +123/-0)
-```diff
-@@ -0,0 +1,123 @@
-+# Klee
-+
-+[English](README.md) · **简体中文**
-+
-+<a href="https://kleedesktop.com"><img src="Docs/images/klee-for-mac-zh.png" alt="全新 Klee Mac 版：说一句话，在你的 Mac 上做网站、做 App、剪视频。前往 kleedesktop.com 下载" width="100%"></a>
-+
-+> **想用云端更强的模型和完整的 Agent 能力？** 全新的 [Klee Mac 版](https://kleedesktop.com)可以用 Claude Opus 5.5、Fable 5.2 和 Sonnet 5.5，会做计划、派子任务、用技能和 MCP，能帮你做网站和 App。需要注册 Klee 账号，付费使用。**[前往 kleedesktop.com 下载 →](https://kleedesktop.com)**
-+>
-+> 本仓库是本地版，继续免费、开源，并持续维护。
-+
-+一个完全在你的 Mac 上运行的原生 macOS AI 助手。不上云，不用注册，不用订阅。
-+
-+Klee 用 [MLX](https://github.com/ml-explore/mlx-swift) 直接在 Apple 芯片上运行大语言模型，你的对话不会离开你的设备。
-+
-+## 功能
-+
-+- **100% 本地推理**：数据只留在你的 Mac 上
-+- **不用账号，不用 API Key**：下载就能开始聊
-+- **一键下载模型**：选好模型，剩下的交给 Klee
-+- **原生工具调用**：AI 可以读写文件、搜索网页、运行终端命令
-+- **看图**：支持视觉的模型可以在消息里附图片
-+- **网页搜索**：通过 Jina AI 搜索（免费 API Key，在侧栏里配置）
-+- **流式输出**：边生成边显示
-+- **显示思考过程**：模型的推理过程放在可折叠的卡片里
-+- **平台模块**：用原生 Swift 集成扩展 AI 的能力（即将推出）
-+- **轻量**：约 60 MB 的原生 SwiftUI 应用，没有 Electron、没有 Docker、没有后台服务
-+
-+## 系统要求
-+
-+| 项目 | 最低要求 |
-+|---|---|
-+| macOS | 15.0（Sequoia）或更高 |
-+| 芯片 | Apple 芯片（M1 或更新） |
-+| 内存 | 16 GB（见下方模型表） |
-+
-+内存越大，能跑的模型越大、越强：
-+
-+| 内存 | 推荐模型 |
-+|---|---|
-+| 16 GB | Qwen 3.5 9B、Gemma 4 12B、Qwen 3 8B、Gemma 3 12B、DeepSeek R1 8B |
-+| 32 GB | Qwen 3.6 27B、Qwen 3.6 35B（MoE）、Gemma 4 26B（MoE）、Qwen 3.5 27B、Qwen 3.5 35B（MoE） |
-+| 64 GB | Gemma 4 31B、Gemma 3 27B、DeepSeek R1 32B |
-+| 96 GB 以上 | Qwen 3.5 122B（MoE） |
-+
-+## 安装
-+
-+Klee 以签名过的 macOS 应用（Developer ID）直接分发，不走 App Store。
-+
-+1. 从 [Releases](https://github.com/signerlabs/Klee/releases) 下载最新的 `.zip`（例如 `Klee-v1.1.0.zip`）
-+2. 解压，把 **Klee.app** 拖进「应用程序」文件夹
-+3. 打开 Klee。如果 macOS 弹出安全提示，到 **系统设置 > 隐私与安全性** 里点「仍要打开」
-+
-+## 使用
-+
-+1. **打开 Klee**：应用会检测你的内存，列出适合的模型
-+2. **下载模型**：点推荐模型旁边的下载按钮，下载中断后会自动续传
-+3. **开始聊天**：选中已下载的模型，输入你的消息
-+
-+AI 能帮你处理文件、查网页、跑终端命令，用平常说话的方式提就行。
-+
-+### 开启网页搜索（可选）
-+
-+1. 在 [jina.ai](https://jina.ai/?sui=apikey) 免费申请一个 API Key（不用绑卡）
-+2. 点右上角的侧栏按钮
-+3. 打开 **Web Search**，粘贴 API Key
-+4. 让 Klee 帮你搜任何东西
-+
-+模型缓存在 `~/.klee/models/`，重启应用后仍在。
-+
-+## 支持的模型
-+
-+所有模型都是 HuggingFace 上 [mlx-community](https://huggingface.co/mlx-community) 的 4-bit 量化版本。
-+
-+| 模型 | 大小 | 最低内存 | 看图 | HuggingFace ID |
-+|---|---|---|---|---|
-+| Qwen 3.5 9B | 约 6 GB | 16 GB | 支持 | `mlx-community/Qwen3.5-9B-4bit` |
-+| Gemma 4 12B | 约 6.7 GB | 16 GB | 支持 | `mlx-community/gemma-4-12B-it-4bit` |
-+| Qwen 3 8B | 约 4.3 GB | 16 GB | | `mlx-community/Qwen3-8B-4bit` |
-+| Gemma 3 12B | 约 8 GB | 16 GB | | `mlx-community/gemma-3-12b-it-qat-4bit` |
-+| DeepSeek R1 8B | 约 4.6 GB | 16 GB | | `mlx-community/DeepSeek-R1-0528-Qwen3-8B-4bit` |
-+| Qwen 3.6 27B | 约 16 GB | 32 GB | 支持 | `mlx-community/Qwen3.6-27B-4bit` |
-+| Qwen 3.6 35B（MoE） | 约 20 GB | 32 GB | 支持 | `mlx-community/Qwen3.6-35B-A3B-4bit` |
-+| Gemma 4 26B（MoE） | 约 15 GB | 32 GB | 支持 | `mlx-community/gemma-4-26b-a4b-it-4bit` |
-+| Qwen 3.5 27B | 约 16 GB | 32 GB | 支持 | `mlx-community/Qwen3.5-27B-4bit` |
-+| Qwen 3.5 35B（MoE） | 约 20 GB | 32 GB | 支持 | `mlx-community/Qwen3.5-35B-A3B-4bit` |
-+| Gemma 4 31B | 约 18 GB | 64 GB | 支持 | `mlx-community/gemma-4-31b-it-4bit` |
-+| Gemma 3 27B | 约 17 GB | 64 GB | | `mlx-community/gemma-3-27b-it-qat-4bit` |
-+| DeepSeek R1 32B | 约 18 GB | 64 GB | | `mlx-community/DeepSeek-R1-Distill-Qwen-32B-4bit` |
-+| Qwen 3.5 122B（MoE） | 约 70 GB | 96 GB | 支持 | `mlx-community/Qwen3.5-122B-A10B-4bit` |
-+
-+## 内置工具
-+
-+Klee 用原生工具调用（mlx-swift-lm 的 ToolCall API），不用 MCP，不用 Node.js，没有外部进程。
-+
-+| 工具 | 说明 |
-+|---|---|
-+| `file_write` | 新建或覆盖文件 |
-+| `file_read` | 读取文件内容 |
-+| `file_list` | 列出目录内容 |
-+| `file_delete` | 删除文件 |
-+| `web_search` | 搜索网页（需要 Jina API Key） |
-+| `web_fetch` | 抓取网页并提取正文 |
-+| `shell_exec` | 运行终端命令（30 秒超时） |
-+
-+## 从源码构建
-+
-+需要 Xcode 16+ 和 macOS 15.0+。
-+
-+```bash
-+git clone https://github.com/signerlabs/Klee.git
-+cd Klee
-+open Klee.xcodeproj
-+```
-+
-+选择 **Klee** scheme，然后构建运行（Cmd+R）。首次构建时会自动拉取 SPM 依赖（mlx-swift-lm 3.32、swift-transformers 1.3）。
-+
-+## 致谢
-+
-+Klee 使用了 [ShipSwift](https://shipswift.app) 的组件和架构。
-+
-+## 许可证
-+
-+MIT
-```
 
 #### Recent Merged Pull Requests:
 - **PR #34** (2025-10-31): v2.0 (@w-zhong)
@@ -1099,42 +937,3 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. docs: banner linking to Klee for Mac, Chinese README
-
-**RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in signerlabs/Klee. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `4fb51d22`: docs: banner linking to Klee for Mac, Chinese README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```swift
-// Verified production-grade fix pattern:
-**English** · [简体中文](README.zh-CN.md)
-
-<a href="https://kleedesktop.com"><img src="Docs/images/klee-for-mac-en.png" alt="The new Klee for Mac: say it, and Klee builds websites and apps and edits video on your Mac. Get it at kleedesktop.com" width="100%"></a>
-
-> **Want frontier cloud models and a full agent harness?** The new [Klee for Mac](https://kleedesktop.com) runs Claude Opus 5.5, Fable 5.2 and Sonnet 5.5 with planning, subtasks, skills and MCP, and can build websites and apps for you. It needs a Klee account and is paid. **[Download it at kleedesktop.com →](https://kleedesktop.com)**
->
-> This repository is the local version. It stays free, open source and actively maintained.
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```swift
-// Induced defect failure mode:
-> **Want frontier cloud models and a full agent harness?** The new [Klee for Mac](https://kleedesktop.com) runs Claude Opus 5.5, Fable 5.2 and Sonnet 5.5 with planning, subtasks, skills and MCP, and can build websites and apps for you. It needs a Klee account and is paid. This local version stays free, open source and actively maintained.
-
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4fb51d22` are properly handled with clean fallback behavior.

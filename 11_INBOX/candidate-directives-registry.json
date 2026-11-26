@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T10:31:05.242Z",
+  "last_updated": "2026-11-26T10:41:10.124Z",
   "directives": [
     {
       "id": "CD-001",
@@ -64414,6 +64414,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F6435E-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-99ZA",
+      "directive_title": "copies can miss keys that overflowed from empty chunks",
+      "source_repo": "meta/folly",
+      "source_commit": "ba27193e",
+      "staged_file": "11_INBOX/candidate-directives/CD-99ZA-copies-can-miss-keys-that-overflowed-from-empty-chunks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-9EDQ",
+      "directive_title": "ship helm v4.3.2 in the cli image and keep helm 3 behaviour",
+      "source_repo": "loft-sh/vcluster",
+      "source_commit": "1145cb57",
+      "staged_file": "11_INBOX/candidate-directives/CD-9EDQ-ship-helm-v4-3-2-in-the-cli-image-and-keep-helm-3-behaviour.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-9HVM",
+      "directive_title": "crash when UPDATE sets a column to an array or jsonb subscript",
+      "source_repo": "citusdata/citus",
+      "source_commit": "5290ba9e",
+      "staged_file": "11_INBOX/candidate-directives/CD-9HVM-crash-when-update-sets-a-column-to-an-array-or-jsonb-subscript.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-9L2F",
+      "directive_title": "F14: copies can miss keys that overflowed from empty chunks",
+      "source_repo": "facebook-folly-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-9L2F-f14-copies-can-miss-keys-that-overflowed-from-empty-chunks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "K"
     }
   ]
 }

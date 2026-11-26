@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T10:30:54.091Z",
+  "last_updated": "2026-11-26T10:41:05.688Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -290,14 +290,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "8521ff169a3365f3254bdd002ae0dd7186df839977c62ae0b9396c230e58daf2",
-      "verified_at": "2026-11-22T17:44:29.647Z",
+      "content_hash": "8796b0db3a0a82e71a41ba26968cfcffcb5cd5d247408a1fb0f3e1b890bd4d0d",
+      "verified_at": "2026-11-26T10:40:51.261Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T17:44:29.647Z"
+      "last_updated": "2026-11-26T10:40:51.261Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -7881,14 +7881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-citusdata-citus",
-      "content_hash": "a627c424c102d8786ebc37d9805a19eb6846d63d044875d0cb187f65688e7cf4",
-      "verified_at": "2026-11-24T14:41:58.801Z",
+      "content_hash": "8525134da6b568210328966dbe7188ca085cb7c7da3a334f6b8a27bf5b3d1007",
+      "verified_at": "2026-11-26T10:41:05.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:41:58.801Z"
+      "last_updated": "2026-11-26T10:41:05.687Z"
     },
     "reshaped-ui/reshaped": {
       "repository": "reshaped-ui/reshaped",
@@ -11046,14 +11046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-loft-sh-vcluster",
-      "content_hash": "590448c9d68cd0df28e86f824452b13200227317848481335d2a596b93924831",
-      "verified_at": "2026-11-25T10:25:31.285Z",
+      "content_hash": "9d288c09772faa365abc7cf4a8b57e85ebd4839874a1f1ab4ac589b61aaf7ab6",
+      "verified_at": "2026-11-26T10:41:01.166Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T10:25:31.285Z"
+      "last_updated": "2026-11-26T10:41:01.166Z"
     },
     "arkivanov/Decompose": {
       "repository": "arkivanov/Decompose",
@@ -15291,14 +15291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-signerlabs-klee",
-      "content_hash": "0bd559fb1b7b6602720778c75798d52b2bd433b30563f53a24cf655a000ca005",
-      "verified_at": "2026-11-17T03:26:14.274Z",
+      "content_hash": "fb8edec5250a8497d8c666ebf1cc125539d27511785c24c4047506cb9e2c4e56",
+      "verified_at": "2026-11-26T10:40:58.069Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:26:14.274Z"
+      "last_updated": "2026-11-26T10:40:58.069Z"
     },
     "testing-library/react-testing-library": {
       "repository": "testing-library/react-testing-library",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "29b6eed87e86e6de62c3122719bcb21bda3a8ee426d49aa01b755d2aa0568fe3",
-      "verified_at": "2026-11-25T03:13:32.359Z",
+      "content_hash": "06d2785eec682d4b99a6f376554bc3f653abbff073f8a67b4b697857cd5ad36f",
+      "verified_at": "2026-11-26T10:40:55.446Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T03:13:32.359Z"
+      "last_updated": "2026-11-26T10:40:55.446Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",

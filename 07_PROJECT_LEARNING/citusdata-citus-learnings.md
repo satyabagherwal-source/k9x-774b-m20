@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source**: github ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
-> **Source Version**: `3a78aa0d`  
+> **Source Version**: `5290ba9e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T14:41:57.683Z  
+> **Timestamp**: 2026-11-26T10:41:04.113Z  
 > **Learning ID**: `learn-github-citusdata-citus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:41:57.677Z  
+> **Harvest Timestamp**: 2026-11-26T10:41:04.106Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed PostgreSQL as an extension
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 12868 stars
+- **Stars / Engagement**: 12873 stars
 
 ---
 
@@ -2542,11 +2542,11 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8987** (2026-11-25): **Coordinator segfault: UPDATE ... SET col = array subscript on distributed/reference table (PG18, 14.3.0)**
+  *Symptoms*: Citus 14.3.0 on PostgreSQL 18.1 (x86_64, Debian packages).  An UPDATE whose SET value is a bare subscript fetch crashes the coordinator backend with SIGSEGV during planning (EXPLAIN alone crashes too); the postmaster then restarts all sessions.  Steps to reproduce (empty table is enough):  ```sql CREATE TABLE t (k int, v int); SELECT create_distributed_table('t', 'k'); UPDATE t SET v = (ARRAY[1])[1]; -- server closed the connection unexpectedly ```  Server log:  ``` LOG:  client backend (PID ...) was terminated by signal 11: Segmentation fault DETAIL:  Failed process was running: UPDATE t SET v = (ARRAY[1])[1]; LOG:  terminating any other active server processes ```  Also crashes: - `UPDATE t SET v = a[1] WHERE k = 1` (int[] column), `SET a = a[1:1]`, jsonb `SET j = j['x']` - router (fast path or not) and multi-shard; reference tables too - prepared statements with a parameter array, in every plan_cache_mode  Does not crash: - the subscript inside an expression: `SET v = a[1] + 0`, `coalesce(a[1], 0)` - inside a scalar subquery: `SET v = (SELECT (ARRAY[1])[1])` - subscript assignment `SET a[1] = 5`; subscripts in WHERE / SELECT / INSERT - citus local tables, plain tables, or a database without the citus extension  Backtrace:  ``` #0  get_rule_expr (...) at deparser/ruleutils_18.c:6114 #1  get_update_query_targetlist_def (...) at deparser/ruleutils_18.c:3948 #2  get_update_query_def (...) at deparser/ruleutils_18.c:3777 #3  get_query_def_extended (...) at deparser/ruleutils_18
+
 - **Issue #8959** (2026-11-16): **Segfault in AddPartitionKeyNotNullFilterToSelect: INSERT ... SELECT ... GROUP BY into a schema-sharded table with a now() default (PG18)**
   *Symptoms*: On PostgreSQL 18, an `INSERT ... SELECT ... GROUP BY` into a single-shard (schema-based sharding) table crashes the coordinator backend with signal 11 when the statement contains a stable function such as `now()`. A column default counts. The postmaster then terminates all other backends and goes through crash recovery.  **Versions** - PostgreSQL 18.4 - Citus 14.1.0, 14.2.0 and nightly (15.0-1, built 2026-10-26). All three crash. Tables created with `create_distributed_table(..., NULL)` crash the same way (checked on 14.2.0 and nightly). - Tested with the official `citusdata/citus` Docker images, both on a single node (coordinator holding shards) and on a coordinator plus one worker. - We first hit this in production on PostgreSQL 18.4 + Citus 14.1.0 (PGDG RHEL 8 packages, `citus_18-14.1.0-1PGDG.rhel8.10`). The kernel log showed:   ```   postgres[...]: segfault at 4 ip ... error 4 in citus.so   ```  **Reproduce (SQL)**  ```sql SET citus.enable_schema_based_sharding TO on; CREATE SCHEMA tenant; CREATE TABLE tenant.src (k text); CREATE TABLE tenant.dst (k text, created_at timestamptz DEFAULT now()); INSERT INTO tenant.src VALUES ('a'), ('a'), ('b');  INSERT INTO tenant.dst (k) SELECT k FROM tenant.src GROUP BY k; ```  ``` server closed the connection unexpectedly LOG:  client backend (PID 133) was terminated by signal 11: Segmentation fault DETAIL:  Failed process was running: INSERT INTO tenant.dst (k) SELECT k FROM tenant.src GROUP BY k; LOG:  terminating any other active ser
-
-- **Issue #8897** (2026-10-14): **getProcNo_compat() returns -1 for auxiliary procs on PG17+, causing out-of-bounds BackendData access**
-  *Symptoms*: ## Summary  On PG17+, `getProcNo_compat()` is defined as `a->vxid.procNumber` (`src/include/pg_version_compat.h:696`). That is **not** the PGPROC slot index for every proc:  - **Auxiliary processes** (checkpointer, bgwriter, walwriter, startup, ... and on PG18 the **io workers**) have `vxid.procNumber = INVALID_PROC_NUMBER` (-1). See `InitAuxiliaryProcess()` in PG17/PG18 `proc.c`. - **Prepared-transaction dummy procs** carry the *preparing backend's* number, or -1 after recovery (`MarkAsPreparingGuts()` in `twophase.c`).  On PG16, the equivalent `proc->pgprocno` was always the slot index, so this changed meaning when the compat macro was introduced.  ## Impact  `BuildLocalWaitGraph()` (`lock_graph.c:563`) iterates over every PGPROC with `pid != 0` and calls `GetBackendDataForProc()`, which indexes `backendManagementShmemData->backends[getProcNo_compat(proc)]`. For an aux proc that is `backends[-1]`. So on every distributed deadlock detection cycle, Citus:  - acquires/releases a "spinlock" on a byte that lies **before** the `backends[]` array (in the `BackendManagementShmemData` header / preceding shmem), and - copies garbage into a `BackendData`.  Today this is silent only because, with `sizeof(BackendData) == 56`, the stray byte happens to be zero, so it becomes a transient out-of-bounds write. Any change to `BackendData`'s size moves it. With an 88-byte struct (while working on #8888) it lands on a non-zero byte and the maintenance daemon PANICs:  ``` PANIC:  stuck spinlock
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2563,520 +2563,255 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a78aa0d` (2026-11-24)
-**Commit Message**: Add manual AddressSanitizer builds for PostgreSQL and Citus (#8972)
+### Incident Patch 1: `5290ba9e` (2026-11-25)
+**Commit Message**: Fix crash when UPDATE sets a column to an array or jsonb subscript (#9004)
 
-<!-- copilot-assessment:v1 -->
-### Agent assessment
+DESCRIPTION: Fixes a crash when UPDATE sets a column to an array or
+jsonb subscript
 
-Self-reported assessment, not an independent review.
+Fixes #8987.
 
-Assessed revision: `f17c14006e97bb1cfec8f93153e296e601993f5b`
+When it deparses the SET clause of a shard query,
+ExpandMergedSubscriptingRefEntries() splits the merged subscript
+assignments of a column, like "SET a[1] = x, a[2] = y", into one target
+entry per assignment, and detaches the refexpr of each SubscriptingRef.
+It treated any SubscriptingRef at the top of a target entry as an
+assignment, so a fetch like "SET v = (ARRAY[1])[1]", "SET a = a[1:2]" or
+"SET j = j['x']" lost its container, and get_rule_expr() dereferenced
+the NULL refexpr. The coordinator crashed while planning such UPDATEs on
+distributed and reference tables, and the same happened for the SET
+clauses of INSERT .. ON CONFLICT DO UPDATE and MERGE.
 
-| Dimension | Assessment | Rationale |
-|---|---|---|
-| Change confidence | 6/10 | ↑ Final-head Build & Test (136 passed, 2
-skipped), packaging, and CodeQL passed.<br>↑ The larger-runner matrix
-passed 38 of 41 suite jobs, including shard 1 on PG17/18/19.<br>↓ Three
-intermittent output differences are unexplained and tracked in #8997,
-#8998 and #8999. A PG18 locking issue is not ruled out.<br>↓ No ASAN run
-on the final head yet; cold/warm and failure-injection acceptance are
-deferred until the workflow is on `main`. |
-<!-- /copilot-assessment -->
+As in PostgreSQL's get_assignment_input() and processIndirection(), a
+SubscriptingRef assigns to the container only if it has a refassgnexpr.
+Without one, it fetches from the container and is the value that is
+assigned to the column, so it is now left as is.
 
-DESCRIPTION: Adds manual AddressSanitizer builds for PostgreSQL and
-Citus
-
-Adds an opt-in GCC ASAN and UBSan bool mode to `setup_cassert_pg`,
-preserving default cassert and assert-off callers. The manual-only ASAN
-workflow retains all 41 cassert coverage jobs on PG17/18/19: regular
-suite groups, six arbitrary-config shards per major, three PostgreSQL
-upgrade pairs with/without columnar, and normal/mixed ol
-
-**File**: `.github/actions/setup_cassert_pg/action.yml` (modified, +101/-4)
+**File**: `src/backend/distributed/deparser/citus_ruleutils.c` (modified, +30/-8)
 ```diff
-@@ -13,17 +13,45 @@ inputs:
-       The arm64 nightly passes false so a green run unambiguously means "arm works".
-     required: false
-     default: "true"
-+  sanitizer:
-+    description: "Optional sanitizer: none (default) or address-bool (GCC ASAN and UBSan bool check)."
-+    required: false
-+    default: "none"
-+  cold_cache:
-+    description: "Build without downloading a cached prefix, for cold-cache measurements."
-+    required: false
-+    default: "false"
- outputs:
-   pgenv_bindir:
-     description: "bindir of the freshly built cassert PG (version-specific pgenv prefix)"
-     value: ${{ steps.build_citus.outputs.bindir }}
- runs:
-   using: composite
-   steps:
-+    - name: Validate sanitizer selection
-+      shell: bash
-+      env:
-+        SANITIZER: ${{ inputs.sanitizer }}
-+      run: |
-+        set -euo pipefail
-+        case "$SANITIZER" in
-+          none) ;;
-+          address-bool)
-+            ASAN_DIR="${ASAN_DIR:-$RUNNER_TEMP/asan}"
-+            [[ "$ASAN_DIR" = /* ]]
-+            mkdir -p "$ASAN_DIR/reports"
-+            echo "ASAN_DIR=$ASAN_DIR" >> "$GITHUB_ENV"
-+            echo "ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:symbolize=1:log_path=$ASAN_DIR/reports/asan" >> "$GITHUB_ENV"
-+            echo "UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1" >> "$GITHUB_ENV" ;;
-+          *) echo "::error::Unsupported sanitizer: $SANITIZER"; exit 1 ;;
-+        esac
+@@ -1857,7 +1857,7 @@ ensure_update_targetlist_in_param_order(List *targetList)
+ 
+ 
+ /*
+- * isSubsRef checks if a given node is a SubscriptingRef or can be
++ * isSubsRef checks if a given node is a SubscriptingRef assignment or can be
+  * reached through an implicit coercion.
+  */
+ static
+@@ -1881,14 +1881,23 @@ isSubsRef(Node *node)
+ 		node = (Node *) coerceToDomain->arg;
+ 	}
+ 
+-	return (IsA(node, SubscriptingRef));
++	if (!IsA(node, SubscriptingRef))
++	{
++		return false;
++	}
 +
-     - name: Install build dependencies
-+      id: dependencies
-       shell: bash
-       run: |
-         set -euo pipefail
-+        echo "os=$(. /etc/os-release; echo "$ID-$VERSION_ID")" >> "$GITHUB_OUTPUT"
-         sudo apt-get update
-         sudo apt-get install -y --no-install-recommends \
-           bison flex gcc make perl pkg-config \
-@@ -34,6 +62,7 @@ runs:
-           locales
-         # da_DK locale required by columnar collation tests
-         sudo locale-gen da_DK.UTF-8
-+        locale -a | grep -Fx 'da_DK.utf8'
++	/*
++	 * A SubscriptingRef without refassgnexpr fetches from a container, as in
++	 * "SET col = arr[1]", so it is the value that is assigned to the column.
++	 */
++	return ((SubscriptingRef *) node)->refassgnexpr != NULL;
+ }
  
-     - name: Restore pgenv (cassert PG) cache
-       id: cache
-@@ -44,10 +73,11 @@ runs:
-         # runner.arch keeps amd64 and arm64 prefixes from sharing binaries (runner.os is
-         # "Linux" for both); inputs.cassert keeps assert-on/off builds in separate entries
-         # (the assert-off edit is applied to the copied config, so it doesn't move hashFiles).
--        key: pgenv-cassert-${{ runner.os }}-${{ runner.arch }}-cassert${{ inputs.cassert }}-${{ inputs.pg_full }}-${{ hashFiles('.devcontainer/pgenv/config/default.conf') }}
-+        key: pgenv-cassert-${{ steps.dependencies.outputs.os }}-${{ runner.arch }}-cassert${{ inputs.cassert }}-${{ inputs.sanitizer }}-${{ inputs.pg_full }}-${{ hashFiles('.devcontainer/pgenv/config/default.conf', '.github/actions/setup_cassert_pg/action.yml') }}
-+        lookup-only: ${{ inputs.cold_cache == 'true' }}
  
-     - name: Build cassert PostgreSQL (USE_VALGRIND dropped)
--      if: steps.cache.outputs.cache-hit != 'true'
-+      if: inputs.cold_cache == 'true' || steps.cache.outputs.cache-hit != 'true'
-       shell: bash
-       run: |
-         set -euo pipefail
-@@ -61,6 +91,11 @@ runs:
-         cp .devcontainer/pgenv/config/default.conf "$HOME/.pgenv/config/default.conf"
-         sed -i "s|'CFLAGS=[^']*'|'CFLAGS=-Og -g3 -fno-omit-frame-pointer'|" \
-           "$HOME/.pgenv/config/default.conf"
-+        if [ "${{ inputs.sanitizer }}" = "address-bool" ]; then
-+          export CC=gcc
-+          sed -i "s|'CFLAGS=[^']*'|'CFLAGS=-O1 -g3 -fno-omit-frame-pointer -fsanitize=address,bool -fno-sanitize-recover=bool -fsanitize-address-use-after-scope' 'LDFLAGS=-fsanitize=address,bool' 'CC=gcc'|" \
-+            "$HOME/.pgenv/config/default.conf"
-+        fi
-         # Assert-off build (arm64 nightly): drop --enable-cassert so a green run is a clean
-         # pass/fail signal rather than the "expected red" cassert nightly.
-         if [ "${{ inputs.cassert }}" != "true" ]; then
-@@ -69,7 +104,23 @@ runs:
-         echo "----- effective pgenv default.conf -----"
-         cat "$HOME/.pgenv/config/default.conf"
-         export PATH="$HOME/.pgenv/bin:$PATH"
--        MAKEFLAGS="-j $(nproc)" pgenv build "${{ inputs.pg_full }}"
-+        if [ "${{ inputs.sanitizer }}" = "address-bool" ]; then
-+          # PG19 needs C11, but its typeof_unqual spelling must also work in Citus's GNU99.
-+          export pgac_cv_c_typeof_unqual=no
-+          for keyword in typeof_unqual __typeof_unqual__; do
-+            if printf 'int main(void) { void *p = 0; %s(p) q = p; return q != p; }\n' "$keyword" |
-+                gcc -std=gnu99 -Werror -x c -c -o /dev/null - \
-+                  2>> "$ASAN_DIR/typeof-unqual-probe.txt"; then
-+              export pgac_cv_c_typeof_unqual="$keyword"
-+              break
-+            fi
-+          done
-+          echo "pgac_cv_c_typeof_unqual=$pgac_cv_c_typeof_unqual" >> "$ASAN_DIR/typeof-unqual-probe.txt"
-+          /usr/bin/time -v -o "$ASAN_DIR/pg-${{ inputs.pg_full }}-build.time" \
-+            env MAKEFLAGS="-j $(nproc)" pgenv build "${{ inputs.pg_full }}"
-+        e
+ /*
+  * checkTlistForSubsRef - checks if any target entry in the list contains a
+- * SubscriptingRef or can be reached through an implicit coercion. Used by
+- * ExpandMergedSubscriptingRefEntries() to identify if any target entries
++ * SubscriptingRef assignment or can be reached through an implicit coercion.
++ * Used by ExpandMergedSubscriptingRefEntries() to identify if any target entries
+  * need to be expanded - if not the original target list is preserved.
+  */
+ static
+@@ -1925,7 +1934,7 @@ ExpandMergedSubscriptingRefEntries(List *targetEntryList)
+ 
+ 	if (!checkTlistForSubsRef(targetEntryList))
+ 	{
+-		/* No subscripting refs found, return original list */
++		/* no SubscriptingRef assignments found, return original list */
+ 		return targetEntryList;
+ 	}
+ 
+@@ -1964,7 +1973,7 @@ ExpandMergedSubscriptingRefEntries(List *targetEntryList)
+ 
+ 		if (expandedTargetEntries == NIL)
+ 		{
+-			/* return original entry since it doesn't hold a SubscriptingRef node */
++			/* return original entry since it holds no SubscriptingRef assignment */
+ 			newTargetEntryList = lappend(newTargetEntryList, targetEntry);
+ 		}
+ 		else
+@@ -1991,7 +2000,8 @@ ExpandMergedSubscriptingRefEntries(List *targetEntryList)
+ /*
+  * TargetEntryExprFindSubsRef searches given Expr --assuming that it is part
+  * of a target list entry-- to see if it directly (i.e.: itself) or indirectly
+- * (e.g.: behind some level of coercions) holds a SubscriptingRef node.
++ * (e.g.: behind some level of coercions) holds a SubscriptingRef node that
++ * assigns to elements of a container.
+  *
+  * Returns the original SubscriptingRef node on success or NULL otherwise.
+  *
+@@ -2038,7 +2048,19 @@ TargetEntryExprFindSubsRef(Expr *expr)
+ 		}
+ 		else if (IsA(node, SubscriptingRef))
+ 		{
+-			return (SubscriptingRef *) node;
++			SubscriptingRef *subsRef = (SubscriptingRef *) node;
++
++			/*
++			 * A SubscriptingRef without refassgnexpr fetches from a container,
++			 * as in "SET col = arr[1]", so it is the value that is assigned to
++			 * the column, and its refexpr must be kept.
++			 */
++			if (subsRef->refassgnexpr == NULL)
++			{
++				break;
++			}
++
++			return subsRef;
+ 		}
+ 		else
+ 		{
 ```
 
-**File**: `.github/workflows/asan.yml` (added, +435/-0)
+**File**: `src/test/regress/expected/update_subscript_fetch_8987.out` (added, +58/-0)
 ```diff
-@@ -0,0 +1,435 @@
-+name: ASAN
-+run-name: ASAN (${{ github.ref_name }})
-+
-+on:
-+  workflow_dispatch:
-+    inputs:
-+      cold_cache:
-+        description: "Build every PostgreSQL prefix cold (do not download caches)"
-+        type: boolean
-+        default: false
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.ref }}
-+  cancel-in-progress: false
-+
-+env:
-+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-+
-+jobs:
-+  params:
-+    name: Initialize parameters
-+    runs-on: ubuntu-24.04
-+    outputs:
-+      matrix: ${{ steps.matrix.outputs.matrix }}
-+      citus_old_version: v14.0.1
-+    steps:
-+      - name: Set up parameters
-+        id: matrix
-+        shell: bash
-+        run: |
-+          python3 - <<'PY'
-+          import json
-+          import os
-+
-+          # Keep pins and coverage aligned with nightly_cassert.yml.
-+          versions = {"17": "17.11", "18": "18.6", "19": "19rc1"}
-+          jobs = []
-+          for major, full in versions.items():
-+              for group in ("regress", "isolation", "columnar", "failure", "tap", "generator"):
-+                  jobs.append(dict(name=f"PG{major} - {group}", full=full,
-+                                   group=group, timeout=180))
-+              for shard in range(6):
-+                  jobs.append(dict(name=f"PG{major} - arbitrary-configs-{shard}",
-+                                   full=full, group="arbitrary-configs",
-+                                   shard=shard, timeout=240))
-+          for old, new in (("17", "18"), ("18", "19"), ("17", "19")):
-+              jobs.append(dict(name=f"PG{old}-PG{new} - pg-upgrade",
-+                               old_full=versions[old], full=versions[new],
-+                               group="pg-upgrade", timeout=180))
-+          for major in ("17", "18"):
-+              jobs.append(dict(name=f"PG{major} - citus-upgrade", full=versions[major],
-+                               group="citus-upgrade", timeout=180))
-+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
-+              print("matrix=" + json.dumps(jobs), file=output)
-+          PY
-+
-+  test:
-+    needs: params
-+    name: ASAN ${{ matrix.name }}
-+    runs-on: ${{ fromJSON(matrix.group == 'arbitrary-configs' && matrix.shard == 1 && toJSON(vars.ASAN_SHARD1_RUNNER) || '"ubuntu-24.04"') }}
-+    timeout-minutes: ${{ matrix.timeout }}
-+    strategy:
-+      fail-fast: false
-+      max-parallel: 2
-+      matrix:
-+        include: ${{ fromJson(needs.params.outputs.matrix) }}
-+    env:
-+      citus_old_version: ${{ needs.params.outputs.citus_old_version }}
-+    steps:
-+      - uses: actions/checkout@v5
-+      - name: Initialize ASAN evidence
-+        shell: bash
-+        run: |
-+          set -euo pipefail
-+          ASAN_DIR="$RUNNER_TEMP/asan"
-+          mkdir -p "$ASAN_DIR/reports" "$ASAN_DIR/canary"
-+          echo "ASAN_DIR=$ASAN_DIR" >> "$GITHUB_ENV"
-+          echo "ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:symbolize=1:log_path=$ASAN_DIR/reports/asan" >> "$GITHUB_ENV"
-+          git rev-parse HEAD > "$ASAN_DIR/citus-revision.txt"
-+          date -u +%FT%TZ > "$ASAN_DIR/start.txt"
-+      - uses: ./.github/actions/setup_cassert_pg
-+        if: matrix.group == 'pg-upgrade'
-+        with:
-+          pg_full: ${{ matrix.old_full }}
-+          sanitizer: address-bool
-+          cold_cache: ${{ inputs.cold_cache }}
-+      - uses: ./.github/actions/setup_cassert_pg
-+        with:
-+          pg_full: ${{ matrix.full }}
-+          sanitizer: address-bool
-+          cold_cache: ${{ inputs.cold_cache }}
-+      - name: Verify runtime and symbolized error reporting
-+        shell: bash
-+        run: |
-+          set -euo pipefail
-+          runtime="$("$CC" -print-file-name=libasan.so)"
-+          test -f "$runtime"
-+          echo "ASAN_RUNTIME=$runtime" >> "$GITHUB_ENV"
-+          readlink -f "$runtime" > "$ASAN_DIR/runtime.txt"
-+          # Do not preload JavaScript Actions, pipenv installation, or compiler processes.
-+          cat > "$ASAN_DIR/canary/canary.c" <<'C'
-+          #include <stdlib.h>
-+          int main(int argc, char **argv)
-+          {
-+              volatile char *p = malloc(1);
-+              p[argc] = 1;
-+              free((void *) p);
-+              return 0;
-+          }
-+          C
-+          "$CC" $CFLAGS "$ASAN_DIR/canary/canary.c" $LDFLAGS -o "$ASAN_DIR/canary/canary"
-+          ulimit -c 0
-+          status=0
-+          ASAN_OPTIONS="detect_leaks=0:abort_on_error=1:symbolize=1:log_path=$ASAN_DIR/canary/asan" \
-+            "$ASAN_DIR/canary/canary" > "$ASAN_DIR/canary/output.txt" 2>&1 || status=$?
-+          test "$status" -ne 0
-+          grep -E 'ERROR: AddressSanitizer: heap-buffer-overflow' "$ASAN_DIR"/canary/asan.*
-+          grep -E 'canary.c:[0-9]+' "$ASAN_DIR"/canary/asan.*
-+          cat > "$ASAN_DIR/canary/bool-canary.c" <<'C'
-+          int main(void)
-+          {
-+              unsigned char raw = 2;
-+              volatile _Bool *value = (volatile _Bool *) &raw;
-+       
-```
-
-**File**: `ci/README.md` (modified, +83/-0)
-```diff
-@@ -11,6 +11,89 @@ make reindent
- 
- See the sections below for details on what a specific failing script means.
- 
-+## Manual AddressSanitizer builds
-+
-+The `ASAN` workflow (`.github/workflows/asan.yml`) is manual-only. After the
-+workflow is available on GitHub, select **Actions > ASAN > Run workflow** and
-+choose the ref to test, or use `gh workflow run asan.yml --ref <ref>`.
-+Dispatch requires separate authorization; it is not triggered by pushes or PRs.
-+It publishes no packages or images and is not a required PR or release gate.
-+Select `cold_cache=true` for a fully cold run: every job builds PostgreSQL even
-+if another job has already populated the shared cache. Successful cold jobs
-+still save caches. Use the default `false` for the subsequent warm run of the
-+same revision, and confirm every prefix reports a cache hit in its artifacts.
-+
-+Coverage matches `nightly_cassert.yml`: PG17/18/19 each run regress, isolation,
-+columnar, failure, TAP, generator, and all six arbitrary-config shards. Shard 1
-+runs one config at a time on the runner configured by the `ASAN_SHARD1_RUNNER`
-+repository or organization variable; other shards run two configs at a time on
-+Ubuntu 24.04. Set the variable to a larger runner with enough memory, such as
-+`ubuntu-24.04-8core`, before dispatch. PostgreSQL upgrades cover 17->18,
-+18->19, and 17->19, each with and without columnar. PG17/18 also run normal
-+and mixed old-Citus upgrades from v14.0.1. The single matrix contains 41 suite
-+jobs, limits concurrency to two, and does not cancel other shards on failure.
-+`ASAN result` requires every selected job to succeed, including instrumentation
-+and diagnostic checks.
-+
-+Jobs use Ubuntu 24.04. Python suites explicitly provision Python 3.12 to match
-+the regression Pipfile. Setup verifies the Danish UTF-8 OS locale; a fresh-cluster
-+preflight also requires `initdb` to import the native `da_DK` catalog alias used
-+by the collation tests.
-+
-+`setup_cassert_pg` opts into GCC ASAN and the UBSan bool check with
-+`sanitizer: address-bool`; its default `none` preserves ordinary cassert and
-+arm64 assert-off builds. PostgreSQL and both current/old Citus libraries use
-+`-O1 -g3 -fno-omit-frame-pointer -fsanitize=address,bool
-+-fno-sanitize-recover=bool -fsanitize-address-use-after-scope` and link with
-+`-fsanitize=address,bool`. Other UBSan checks are not enabled. Sanitizer caches
-+are separate and include the action/config hash and Ubuntu version. The PG19
-+`typeof_unqual` probe uses Citus's GNU C99 mode and supplies that result to
-+PostgreSQL's configure, so its installed headers do not advertise a C23-only
-+spelling to a C99 consumer. PostgreSQL itself retains its required C11-or-newer
-+build mode. Cold builds and cache hits verify the selected prefix, PostgreSQL
-+flags, and ASAN runtime linkage of PostgreSQL, libpq, and both Citus libraries.
-+They require libubsan linkage only when a binary references its invalid-value
-+handler. Old upgrade tarballs are built locally with the same compiler/flags
-+and verified before the upgrade harness reuses them. UBSan output is captured
-+from each suite's combined test output and fails the job if a diagnostic was
-+printed, even when a test harness otherwise hides a backend failure.
-+
-+For local reproduction, build in an isolated Linux checkout with the same flags
-+and assertions. Set `ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:symbolize=1:log_path=<absolute-report-directory>/asan`
-+before running instrumented programs; keep that directory outside harness cleanup
-+paths. Set `UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1` to halt on
-+invalid-boolean reports and print a symbolized stack trace. UBSan diagnostics
-+are captured from test output rather than a runtime log file. This is
-+address-error and invalid-boolean coverage, not LeakSanitizer or full UBSan
-+coverage.
-+Python/libpq launchers need the matching GCC runtime first: apply
-+`LD_PRELOAD="$(gcc -print-file-name=libasan.so)"` only to the native test command
-+process tree, never globally to JavaScript Actions or tool installation.
-+Do not disable runtime-order checks. A deliberate heap-overflow canary must exit
-+nonzero with a symbolized report; its expected reports are separate from suite
-+reports. No suppressions, suite skips, or expected-red exceptions are used.
-+
-+Each `asan-PG...` artifact contains compiler/runtime and revision identities,
-+configure flags, cache-hit evidence, verification markers, build timings, test
-+timings, and ASAN reports. `logs-PG...` artifacts retain native logs and diffs.
-+Any nonempty suite ASAN report fails the job even if the harness returns zero;
-+native command failures and missing mandatory verification also fail it.
-+Cleanup and uploads run on failure/cancellation when the runner can execute them.
-+Hard termination or job timeout can prevent final evidence upload.
-+
-+Compare complete cold-cache and warm-cache runs of the same revision before
-+choosing nightly cadence or mandatory release policy. `/usr/bi
-```
-
-**File**: `src/test/regress/bin/diff` (modified, +24/-1)
-```diff
-@@ -36,7 +36,10 @@ fi
- 
- if test -z "${VANILLATEST:-}"
- then
--	touch "$file1"  # when adding a new test the expected file does not exist
-+	if [[ ! -e "$file1" ]]
-+	then
-+		touch "$file1"  # when adding a new test the expected file does not exist
-+	fi
- 	normalize_file="$BASEDIR/normalize.sed"
- 	# when running tests on an existing cluster some changes need to be done on
- 	# normalize.sed file. So a new file is used.
-@@ -46,6 +49,26 @@ then
- 	fi
- 	sed -Ef "$normalize_file" < "$file1" > "$file1.modified"
- 	sed -Ef "$normalize_file" < "$file2" > "$file2.modified"
-+	if [[ "$test" == "seclabel" ]]
-+	then
-+		# Node activation emits these independent metadata commands in heap-scan order.
-+		python3 - "$file1.modified" "$file2.modified" <<'PY' || exit $?
-+import pathlib
-+import re
-+import sys
-+
-+header = "SELECT 1 FROM citus_add_node('localhost', :worker_2_port);\n"
-+pair = r"NOTICE:  issuing [^\n]*\nDETAIL:  [^\n]*\n"
-+block = re.compile(f"({re.escape(header)})((?:{pair})+)")
-+for name in sys.argv[1:]:
-+    path = pathlib.Path(name)
-+    text = path.read_text()
-+    text = block.sub(lambda m: m[1] + "".join(sorted(re.findall(pair, m[2]))), text)
-+    path.write_text(text)
-+PY
-+		"$DIFF" -w $args "$file1.modified" "$file2.modified"
-+		exit $?
-+	fi
- 	"$DIFF" -w $args "$file1.modified" "$file2.modified" | LC_CTYPE=C.UTF-8 diff-filter "$BASEDIR/normalize.sed"
- 	exit ${PIPESTATUS[0]}
- else
-```
-
-**File**: `src/test/regress/bin/test_diff` (modified, +51/-0)
-```diff
-@@ -36,3 +36,54 @@ function test_case()
- 
- test_case "same"
- test_case "different"
-+
-+tmpdir=$(mktemp -d)
-+mkdir "$tmpdir/expected" "$tmpdir/results"
-+cleanup()
-+{
-+	rm -f \
-+		"$tmpdir/expected/seclabel.out" \
-+		"$tmpdir/expected/seclabel.out.modified" \
-+		"$tmpdir/results/seclabel.out" \
-+		"$tmpdir/results/seclabel.out.modified" \
-+		"$tmpdir/expected/source.c" \
-+		"$tmpdir/expected/source.c.modified" \
-+		"$tmpdir/results/source.c" \
-+		"$tmpdir/results/source.c.modified"
-+	rmdir "$tmpdir/expected" "$tmpdir/results" "$tmpdir"
-+}
-+trap cleanup EXIT
-+
-+printf '%s\n' \
-+	"SELECT 1 FROM citus_add_node('localhost', :worker_2_port);" \
-+	"NOTICE:  issuing command a" "DETAIL:  on server localhost:57637 connectionId: 1" \
-+	"NOTICE:  issuing command b" "DETAIL:  on server localhost:57638 connectionId: 2" \
-+	"result" > "$tmpdir/expected/seclabel.out"
-+printf '%s\n' \
-+	"SELECT 1 FROM citus_add_node('localhost', :worker_2_port);" \
-+	"NOTICE:  issuing command b" "DETAIL:  on server localhost:57638 connectionId: 2" \
-+	"NOTICE:  issuing command a" "DETAIL:  on server localhost:57637 connectionId: 1" \
-+	"result" > "$tmpdir/results/seclabel.out"
-+if ! diff -u "$tmpdir/expected/seclabel.out" "$tmpdir/results/seclabel.out"; then
-+	exit 1
-+fi
-+
-+sed -i 's/command b/command changed/' "$tmpdir/results/seclabel.out"
-+if diff -u "$tmpdir/expected/seclabel.out" "$tmpdir/results/seclabel.out" > /dev/null; then
-+	echo "seclabel comparison accepted a changed command" >&2
-+	exit 1
-+fi
-+
-+cp "$tmpdir/expected/seclabel.out" "$tmpdir/results/seclabel.out"
-+sed -i '/NOTICE:  issuing command b/{N;d;}' "$tmpdir/results/seclabel.out"
-+if diff -u "$tmpdir/expected/seclabel.out" "$tmpdir/results/seclabel.out" > /dev/null; then
-+	echo "seclabel comparison accepted a missing command" >&2
-+	exit 1
-+fi
-+
-+printf '%s\n' 'int source;' > "$tmpdir/expected/source.c"
-+cp "$tmpdir/expected/source.c" "$tmpdir/results/source.c"
-+touch -t 200001010000 "$tmpdir/expected/source.c"
-+source_mtime=$(stat -c %Y "$tmpdir/expected/source.c")
-+diff "$tmpdir/expected/source.c" "$tmpdir/results/source.c" > /dev/null
-+test "$source_mtime" = "$(stat -c %Y "$tmpdir/expected/source.c")"
-```
-
-**File**: `src/test/regress/expected/background_rebalance_parallel.out` (modified, +11/-10)
-```diff
-@@ -178,16 +178,17 @@ WHERE S.logicalrelid = P.logicalrelid ORDER BY S.shardid ASC;
-  85674023 |        50052
- (24 rows)
- 
--SELECT D.task_id,
--       (SELECT T.command FROM pg_dist_background_task T WHERE T.task_id = D.task_id),
--       D.depends_on,
--       (SELECT T.command FROM pg_dist_background_task T WHERE T.task_id = D.depends_on)
--FROM pg_dist_background_task_depend D  WHERE job_id = 17777 ORDER BY D.task_id, D.depends_on ASC;
-- task_id |                               command                               | depends_on |                               command
-----------------------------------------------------------------------
--    1001 | SELECT pg_catalog.citus_move_shard_placement(85674000,50,53,'auto') |       1000 | SELECT pg_catalog.citus_move_shard_placement(85674001,51,52,'auto')
--    1003 | SELECT pg_catalog.citus_move_shard_placement(85674008,50,53,'auto') |       1002 | SELECT pg_catalog.citus_move_shard_placement(85674009,51,52,'auto')
--    1005 | SELECT pg_catalog.citus_move_shard_placement(85674016,50,53,'auto') |       1004 | SELECT pg_catalog.citus_move_shard_placement(85674017,51,52,'auto')
-+SELECT T.command AS task_command, DT.command AS depends_on_command
-+FROM pg_dist_background_task_depend D
-+LEFT JOIN pg_dist_background_task T ON T.task_id = D.task_id
-+LEFT JOIN pg_dist_background_task DT ON DT.task_id = D.depends_on
-+WHERE D.job_id = 17777
-+ORDER BY T.command, DT.command;
-+                            task_command                             |                         depends_on_command
+@@ -0,0 +1,58 @@
++-- Regression for #8987: setting a column to an array or jsonb subscript, like
++-- "UPDATE t SET v = (ARRAY[1])[1]", crashed the coordinator, since the shard
++-- query deparser took the subscript for an assignment and lost its container.
++-- Kept out of multi_schedule because N-1 runs against older coordinator
++-- libraries would still crash on these statements.
++CREATE SCHEMA update_subscript_fetch_8987;
++SET search_path TO update_subscript_fetch_8987;
++SET citus.shard_count TO 4;
++SET citus.shard_replication_factor TO 1;
++SET citus.next_shard_id TO 60594200;
++CREATE DOMAIN int_arr_domain AS INT[];
++CREATE TABLE subs_fetch_update(id INT PRIMARY KEY, val INT, arr INT[], arr_dom int_arr_domain, js JSONB);
++SELECT create_distributed_table('subs_fetch_update', 'id');
++ create_distributed_table
 +---------------------------------------------------------------------
-+ SELECT pg_catalog.citus_move_shard_placement(85674000,50,53,'auto') | SELECT pg_catalog.citus_move_shard_placement(85674001,51,52,'auto')
-+ SELECT pg_catalog.citus_move_shard_placement(85674008,50,53,'auto') | SELECT pg_catalog.citus_move_shard_placement(85674009,51,52,'auto')
-+ SELECT pg_catalog.citus_move_shard_placement(85674016,50,53,'auto') | SELECT pg_catalog.citus_move_shard_placement(85674017,51,52,'auto')
- (3 rows)
- 
- -- Check that if there is a reference table that needs to be synched to a node,
++
++(1 row)
++
++INSERT INTO subs_fetch_update
++  VALUES (1, 0, '{10,20,30}', '{1,2,3}', '{"a": 1}'),
++         (2, 0, '{40,50,60}', '{4,5,6}', '{"a": 2}');
++-- fast path router queries
++UPDATE subs_fetch_update SET val = (ARRAY[7,8])[2] WHERE id = 1;
++UPDATE subs_fetch_update SET val = arr[2] WHERE id = 2;
++-- multi-shard query, with an array slice, a domain over an array and jsonb
++UPDATE subs_fetch_update SET arr = arr[2:3], arr_dom = arr_dom[1:2], js = js['a'];
++SELECT * FROM subs_fetch_update ORDER BY id;
++ id | val |   arr   | arr_dom | js
++---------------------------------------------------------------------
++  1 |   8 | {20,30} | {1,2}   | 1
++  2 |  50 | {50,60} | {4,5}   | 2
++(2 rows)
++
++-- a subscript next to subscript assignments to another column
++UPDATE subs_fetch_update SET arr[1] = 100, val = arr[2], arr[2] = 200;
++SELECT * FROM subs_fetch_update ORDER BY id;
++ id | val |    arr    | arr_dom | js
++---------------------------------------------------------------------
++  1 |  30 | {100,200} | {1,2}   | 1
++  2 |  60 | {100,200} | {4,5}   | 2
++(2 rows)
++
++-- the SET clauses of INSERT .. ON CONFLICT and MERGE
++INSERT INTO subs_fetch_update VALUES (1)
++ON CONFLICT (id)
++DO UPDATE SET val = (ARRAY[5,6])[1];
++MERGE INTO subs_fetch_update t
++USING (SELECT id, arr FROM subs_fetch_update) s ON t.id = s.id AND t.id = 2
++WHEN MATCHED THEN UPDATE SET val = s.arr[1];
++SELECT * FROM subs_fetch_update ORDER BY id;
++ id | val |    arr    | arr_dom | js
++---------------------------------------------------------------------
++  1 |   5 | {100,200} | {1,2}   | 1
++  2 | 100 | {100,200} | {4,5}   | 2
++(2 rows)
++
++SET client_min_messages TO WARNING;
++DROP SCHEMA update_subscript_fetch_8987 CASCADE;
 ```
 
-**File**: `src/test/regress/expected/metadata_sync_batching_edge_cases.out` (modified, +1/-1)
+**File**: `src/test/regress/multi_1_create_citus_schedule` (modified, +8/-0)
 ```diff
-@@ -499,7 +499,7 @@ SELECT logicalrelid::regclass,
-         WHERE s.logicalrelid = p.logicalrelid) AS placements
- FROM pg_dist_partition p
- WHERE logicalrelid::regclass::text LIKE 'msbe\_no\_active\_placements.%'
--ORDER BY 1;
-+ORDER BY logicalrelid::regclass::text;
-               logicalrelid               | shards | placements
- ---------------------------------------------------------------------
-  msbe_no_active_placements.dist_table    |      0 |          0
+@@ -139,3 +139,11 @@ test: node_removal_transaction_recovery
+ # the N-1 test matrix. Move back to multi_1_schedule at Citus 15.
+ # ----------
+ test: insert_select_single_shard_table_8959
++
++# ----------
++# update_subscript_fetch_8987 covers an UPDATE .. SET crash (#8987); the N-1
++# (14.2-1) coordinator library still segfaults on these statements, so this
++# cannot run under the N-1 test matrix. Move to multi_schedule, next to
++# subscripting_op, once the N-1 coordinator library has the fix.
++# ----------
++test: update_subscript_fetch_8987
 ```
 
-**File**: `src/test/regress/expected/stat_counters.out` (modified, +2/-1)
+**File**: `src/test/regress/sql/update_subscript_fetch_8987.sql` (added, +45/-0)
 ```diff
-@@ -353,7 +353,8 @@ SELECT * FROM stat_counters.dist_table WHERE a = 1;
- (0 rows)
- 
- -- first one establishes a connection, the second one reuses it
--SELECT connection_reused = 1 FROM citus_stat_counters WHERE name = current_database();
-+-- other backends can also reuse connections while this test runs
-+SELECT connection_reused >= 1 FROM citus_stat_counters WHERE name = current_database();
-  ?column?
- ---------------------------------------------------------------------
-  t
+@@ -0,0 +1,45 @@
++-- Regression for #8987: setting a column to an array or jsonb subscript, like
++-- "UPDATE t SET v = (ARRAY[1])[1]", crashed the coordinator, since the shard
++-- query deparser took the subscript for an assignment and lost its container.
++-- Kept out of multi_schedule because N-1 runs against older coordinator
++-- libraries would still crash on these statements.
++CREATE SCHEMA update_subscript_fetch_8987;
++SET search_path TO update_subscript_fetch_8987;
++SET citus.shard_count TO 4;
++SET citus.shard_replication_factor TO 1;
++SET citus.next_shard_id TO 60594200;
++
++CREATE DOMAIN int_arr_domain AS INT[];
++CREATE TABLE subs_fetch_update(id INT PRIMARY KEY, val INT, arr INT[], arr_dom int_arr_domain, js JSONB);
++SELECT create_distributed_table('subs_fetch_update', 'id');
++INSERT INTO subs_fetch_update
++  VALUES (1, 0, '{10,20,30}', '{1,2,3}', '{"a": 1}'),
++         (2, 0, '{40,50,60}', '{4,5,6}', '{"a": 2}');
++
++-- fast path router queries
++UPDATE subs_fetch_update SET val = (ARRAY[7,8])[2] WHERE id = 1;
++UPDATE subs_fetch_update SET val = arr[2] WHERE id = 2;
++
++-- multi-shard query, with an array slice, a domain over an array and jsonb
++UPDATE subs_fetch_update SET arr = arr[2:3], arr_dom = arr_dom[1:2], js = js['a'];
++
++SELECT * FROM subs_fetch_update ORDER BY id;
++
++-- a subscript next to subscript assignments to another column
++UPDATE subs_fetch_update SET arr[1] = 100, val = arr[2], arr[2] = 200;
++
++SELECT * FROM subs_fetch_update ORDER BY id;
++
++-- the SET clauses of INSERT .. ON CONFLICT and MERGE
++INSERT INTO subs_fetch_update VALUES (1)
++ON CONFLICT (id)
++DO UPDATE SET val = (ARRAY[5,6])[1];
++
++MERGE INTO subs_fetch_update t
++USING (SELECT id, arr FROM subs_fetch_update) s ON t.id = s.id AND t.id = 2
++WHEN MATCHED THEN UPDATE SET val = s.arr[1];
++
++SELECT * FROM subs_fetch_update ORDER BY id;
++
++SET client_min_messages TO WARNING;
++DROP SCHEMA update_subscript_fetch_8987 CASCADE;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9009** (2026-11-26): [12.1] Backport nullable subquery and FULL join normalization (@ihalatci)
+- **PR #9004** (2026-11-25): Fix crash when UPDATE sets a column to an array or jsonb subscript (@codeforall)
 - **PR #8989** (closed): Enforce object ownership for more citus-internal UDFs (Backport #8587 to release-13.2.2) (@ihalatci)
 - **PR #8988** (closed): Enforce object ownership for more citus-internal UDFs (Backport #8587 to release-13.3) (@ihalatci)
+- **PR #8984** (2026-11-25): Close consistency gaps in clone promotion (Add worker node using snapshot) (@codeforall)
 - **PR #8983** (2026-11-23): Restrict citus_use_authinfo subscription option to superusers (@eaydingol)
-- **PR #8979** (2026-11-18): Pin GitHub Actions Ubuntu runners to 24.04 (@ihalatci)
-- **PR #8978** (closed): [14.0] Support PostgreSQL 16.16 / 17.12 / 18.7 by restoring removed outer-join relations (@eaydingol)
-- **PR #8972** (2026-11-24): Add manual AddressSanitizer build workflow (@ihalatci)
 
 ---
 
@@ -3096,59 +2831,64 @@ upgrade pairs with/without columnar, and normal/mixed ol
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add manual AddressSanitizer builds for PostgreSQL and Citus
+## X. crash when UPDATE sets a column to an array or jsonb subscript
 
 **RULE**:
-When implementing operations in `.github/actions/setup_cassert_pg/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/backend/distributed/deparser/citus_ruleutils.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a78aa0d`: Add manual AddressSanitizer builds for PostgreSQL and Citus. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5290ba9e`: crash when UPDATE sets a column to an array or jsonb subscript. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/setup_cassert_pg/action.yml`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/deparser/citus_ruleutils.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  sanitizer:
-    description: "Optional sanitizer: none (default) or address-bool (GCC ASAN and UBSan bool check)."
-    required: false
-    default: "none"
-  cold_cache:
-    description: "Build without downloading a cached prefix, for cold-cache measurements."
-    required: false
-    default: "false"
-    - name: Validate sanitizer selection
-      shell: bash
-      env:
-        SANITIZER: ${{ inputs.sanitizer }}
-      run: |
-        set -euo pipefail
-        case "$SANITIZER" in
-          none) ;;
-          address-bool)
-            ASAN_DIR="${ASAN_DIR:-$RUNNER_TEMP/asan}"
-            [[ "$ASAN_DIR" = /* ]]
-            mkdir -p "$ASAN_DIR/reports"
-            echo "ASAN_DIR=$ASAN_DIR" >> "$GITHUB_ENV"
-            echo "ASAN_OPTIONS=detect_leaks=0:abort_on_error=1:symbolize=1:log_path=$ASAN_DIR/reports/asan" >> "$GITHUB_ENV"
-            echo "UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1" >> "$GITHUB_ENV" ;;
-          *) echo "::error::Unsupported sanitizer: $SANITIZER"; exit 1 ;;
-        esac
+ * isSubsRef checks if a given node is a SubscriptingRef assignment or can be
+	if (!IsA(node, SubscriptingRef))
+	{
+		return false;
+	}
 
-      id: dependencies
-        echo "os=$(. /etc/os-release; echo "$ID-$VERSION_ID")" >> "$GITHUB_OUTPUT"
-        locale -a | grep -Fx 'da_DK.utf8'
-        key: pgenv-cassert-${{ steps.dep
+	/*
+	 * A SubscriptingRef without refassgnexpr fetches from a container, as in
+	 * "SET col = arr[1]", so it is the value that is assigned to the column.
+	 */
+	return ((SubscriptingRef *) node)->refassgnexpr != NULL;
+ * SubscriptingRef assignment or can be reached through an implicit coercion.
+ * Used by ExpandMergedSubscriptingRefEntries() to identify if any target entries
+		/* no SubscriptingRef assignments found, return original list */
+			/* return original entry since it holds no SubscriptingRef assignment */
+ * (e.g.: behind some level of coercions) holds a SubscriptingRef node that
+ * assigns to elements of a container.
+			SubscriptingRef *subsRef = (SubscriptingRef *) node;
+
+			/*
+			 * A SubscriptingRef without refassgnexpr fetches from a container,
+			 * as in "SET col = arr[1]", so it is the value that is assigned to
+			 * the column, and its refexpr must be kept.
+			 */
+			if (subsRef->refassgnexpr == NULL)
+			{
+				break;
+			}
+
+			return subsRef;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-        key: pgenv-cassert-${{ runner.os }}-${{ runner.arch }}-cassert${{ inputs.cassert }}-${{ inputs.pg_full }}-${{ hashFiles('.devcontainer/pgenv/config/default.conf') }}
-      if: steps.cache.outputs.cache-hit != 'true'
-        MAKEFLAGS="-j $(nproc)" pgenv build "${{ inputs.pg_full }}"
+ * isSubsRef checks if a given node is a SubscriptingRef or can be
+	return (IsA(node, SubscriptingRef));
+ * SubscriptingRef or can be reached through an implicit coercion. Used by
+ * ExpandMergedSubscriptingRefEntries() to identify if any target entries
+		/* No subscripting refs found, return original list */
+			/* return original entry since it doesn't hold a SubscriptingRef node */
+ * (e.g.: behind some level of coercions) holds a SubscriptingRef node.
+			return (SubscriptingRef *) node;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a78aa0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5290ba9e` are properly handled with clean fallback behavior.

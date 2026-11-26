@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T10:30:54.080Z",
-  "total_cycles_completed": 12656,
-  "total_learnings_persisted": 12656,
-  "total_rules_promoted": 11546,
+  "last_updated": "2026-11-26T10:41:05.675Z",
+  "total_cycles_completed": 12661,
+  "total_learnings_persisted": 12661,
+  "total_rules_promoted": 11549,
   "history": [
-    {
-      "timestamp": "2026-11-25T15:21:27.847Z",
-      "repository": "sensenova/SenseNova-Loop-9B-Preview",
-      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:21:35.229Z",
-      "repository": "prof18/feed-flow",
-      "learningId": "learn-github-prof18-feed-flow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:29:54.722Z",
-      "repository": "pyannote/speaker-diarization-3.1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:29:58.235Z",
-      "repository": "actix/actix-web",
-      "learningId": "learn-github-actix-actix-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T15:30:12.881Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T15:38:59.897Z",
       "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-26T10:30:54.080Z",
       "repository": "apache/arrow",
       "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:40:51.257Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:40:55.434Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:40:58.065Z",
+      "repository": "signerlabs/Klee",
+      "learningId": "learn-github-signerlabs-klee",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:41:01.157Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T10:41:05.675Z",
+      "repository": "citusdata/citus",
+      "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

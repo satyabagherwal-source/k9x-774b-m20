@@ -13370,3 +13370,9 @@ Every entry in this ledger must capture:
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `c4f407dc` | Multi-dimensional audit evidence | 2026-11-26T10:19:29.834Z |
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-26T10:30:51.212Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `dd456e00` | Multi-dimensional audit evidence | 2026-11-26T10:30:54.064Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-26T10:40:51.241Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `ba27193e` | Multi-dimensional audit evidence | 2026-11-26T10:40:55.414Z |
+| `learn-github-signerlabs-klee` | `https://github.com/signerlabs/Klee` | `8a8ecf52` | Multi-dimensional audit evidence | 2026-11-26T10:40:58.049Z |
+| `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `1145cb57` | Multi-dimensional audit evidence | 2026-11-26T10:41:01.140Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `5290ba9e` | Multi-dimensional audit evidence | 2026-11-26T10:41:05.658Z |
+| `learn-dom-d-68a82b80` | `project://signerlabs-klee` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/signerlabs-klee-learnings.md` | 2026-11-26T10:41:48.717Z |

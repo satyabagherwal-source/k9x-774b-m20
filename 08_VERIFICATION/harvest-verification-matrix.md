@@ -13337,3 +13337,9 @@
 | `CYCLE-20261126-HPRA` | `2026-11-26T10:19:29.830Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10648` | Yes (`8c5e26a4...`) |
 | `CYCLE-20261126-WBIF` | `2026-11-26T10:30:51.207Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`8141eae3...`) |
 | `CYCLE-20261126-WDPN` | `2026-11-26T10:30:54.059Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10649` | Yes (`37cf85b8...`) |
+| `CYCLE-20261126-96HV` | `2026-11-26T10:40:51.235Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`8796b0db...`) |
+| `CYCLE-20261126-99PT` | `2026-11-26T10:40:55.409Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10650` | Yes (`06d2785e...`) |
+| `CYCLE-20261126-9BQZ` | `2026-11-26T10:40:58.043Z` | `signerlabs/Klee` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/signerlabs-klee-learnings.md` | Yes (`fb8edec5...`) |
+| `CYCLE-20261126-9E4U` | `2026-11-26T10:41:01.134Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10651` | Yes (`9d288c09...`) |
+| `CYCLE-20261126-9HMC` | `2026-11-26T10:41:05.652Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10652` | Yes (`8525134d...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T10:41:48.717Z` | `signerlabs-klee` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-68A82B80` [Domain D] | Yes (`f0fa21db...`) |

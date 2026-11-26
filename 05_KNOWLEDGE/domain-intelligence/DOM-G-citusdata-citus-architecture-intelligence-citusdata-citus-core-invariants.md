@@ -4,23 +4,23 @@
 {
   "source_repository": "citusdata/citus",
   "source_url": "https://github.com/citusdata/citus",
-  "source_version": "a5635dec",
+  "source_version": "5290ba9e",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-19T00:49:55.128Z",
+  "timestamp": "2026-11-26T10:41:05.987Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-citusdata-citus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [citusdata/citus](https://github.com/citusdata/citus) (Revision: `a5635dec`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-19T00:49:55.128Z`  
+> **Provenance**: Harvested from [citusdata/citus](https://github.com/citusdata/citus) (Revision: `5290ba9e`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-26T10:41:05.987Z`  
 > **Learning ID**: `learn-github-citusdata-citus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence)
 - **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:49:53.943Z  
+> **Harvest Timestamp**: 2026-11-26T10:41:04.106Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Distributed PostgreSQL as an extension
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 12865 stars
+- **Stars / Engagement**: 12873 stars
 
 ---
 
@@ -2556,11 +2556,11 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8987** (2026-11-25): **Coordinator segfault: UPDATE ... SET col = array subscript on distributed/reference table (PG18, 14.3.0)**
+  *Symptoms*: Citus 14.3.0 on PostgreSQL 18.1 (x86_64, Debian packages).  An UPDATE whose SET value is a bare subscript fetch crashes the coordinator backend with SIGSEGV during planning (EXPLAIN alone crashes too); the postmaster then restarts all sessions.  Steps to reproduce (empty table is enough):  ```sql CREATE TABLE t (k int, v int); SELECT create_distributed_table('t', 'k'); UPDATE t SET v = (ARRAY[1])[1]; -- server closed the connection unexpectedly ```  Server log:  ``` LOG:  client backend (PID ...) was terminated by signal 11: Segmentation fault DETAIL:  Failed process was running: UPDATE t SET v = (ARRAY[1])[1]; LOG:  terminating any other active server processes ```  Also crashes: - `UPDATE t SET v = a[1] WHERE k = 1` (int[] column), `SET a = a[1:1]`, jsonb `SET j = j['x']` - router (fast path or not) and multi-shard; reference tables too - prepared statements with a parameter array, in every plan_cache_mode  Does not crash: - the subscript inside an expression: `SET v = a[1] + 0`, `coalesce(a[1], 0)` - inside a scalar subquery: `SET v = (SELECT (ARRAY[1])[1])` - subscript assignment `SET a[1] = 5`; subscripts in WHERE / SELECT / INSERT - citus local tables, plain tables, or a database without the citus extension  Backtrace:  ``` #0  get_rule_expr (...) at deparser/ruleutils_18.c:6114 #1  get_update_query_targetlist_def (...) at deparser/ruleutils_18.c:3948 #2  get_update_query_def (...) at deparser/ruleutils_18.c:3777 #3  get_query_def_extended (...) at deparser/ruleutils_18
+
 - **Issue #8959** (2026-11-16): **Segfault in AddPartitionKeyNotNullFilterToSelect: INSERT ... SELECT ... GROUP BY into a schema-sharded table with a now() default (PG18)**
   *Symptoms*: On PostgreSQL 18, an `INSERT ... SELECT ... GROUP BY` into a single-shard (schema-based sharding) table crashes the coordinator backend with signal 11 when the statement contains a stable function such as `now()`. A column default counts. The postmaster then terminates all other backends and goes through crash recovery.  **Versions** - PostgreSQL 18.4 - Citus 14.1.0, 14.2.0 and nightly (15.0-1, built 2026-10-26). All three crash. Tables created with `create_distributed_table(..., NULL)` crash the same way (checked on 14.2.0 and nightly). - Tested with the official `citusdata/citus` Docker images, both on a single node (coordinator holding shards) and on a coordinator plus one worker. - We first hit this in production on PostgreSQL 18.4 + Citus 14.1.0 (PGDG RHEL 8 packages, `citus_18-14.1.0-1PGDG.rhel8.10`). The kernel log showed:   ```   postgres[...]: segfault at 4 ip ... error 4 in citus.so   ```  **Reproduce (SQL)**  ```sql SET citus.enable_schema_based_sharding TO on; CREATE SCHEMA tenant; CREATE TABLE tenant.src (k text); CREATE TABLE tenant.dst (k text, created_at timestamptz DEFAULT now()); INSERT INTO tenant.src VALUES ('a'), ('a'), ('b');  INSERT INTO tenant.dst (k) SELECT k FROM tenant.src GROUP BY k; ```  ``` server closed the connection unexpectedly LOG:  client backend (PID 133) was terminated by signal 11: Segmentation fault DETAIL:  Failed process was running: INSERT INTO tenant.dst (k) SELECT k FROM tenant.src GROUP BY k; LOG:  terminating any other active ser
-
-- **Issue #8897** (2026-10-14): **getProcNo_compat() returns -1 for auxiliary procs on PG17+, causing out-of-bounds BackendData access**
-  *Symptoms*: ## Summary  On PG17+, `getProcNo_compat()` is defined as `a->vxid.procNumber` (`src/include/pg_version_compat.h:696`). That is **not** the PGPROC slot index for every proc:  - **Auxiliary processes** (checkpointer, bgwriter, walwriter, startup, ... and on PG18 the **io workers**) have `vxid.procNumber = INVALID_PROC_NUMBER` (-1). See `InitAuxiliaryProcess()` in PG17/PG18 `proc.c`. - **Prepared-transaction dummy procs** carry the *preparing backend's* number, or -1 after recovery (`MarkAsPreparingGuts()` in `twophase.c`).  On PG16, the equivalent `proc->pgprocno` was always the slot index, so this changed meaning when the compat macro was introduced.  ## Impact  `BuildLocalWaitGraph()` (`lock_graph.c:563`) iterates over every PGPROC with `pid != 0` and calls `GetBackendDataForProc()`, which indexes `backendManagementShmemData->backends[getProcNo_compat(proc)]`. For an aux proc that is `backends[-1]`. So on every distributed deadlock detection cycle, Citus:  - acquires/releases a "spinlock" on a byte that lies **before** the `backends[]` array (in the `BackendManagementShmemData` header / preceding shmem), and - copies garbage into a `BackendData`.  Today this is silent only because, with `sizeof(BackendData) == 56`, the stray byte happens to be zero, so it becomes a transient out-of-bounds write. Any change to `BackendData`'s size moves it. With an 88-byte struct (while working on #8888) it lands on a non-zero byte and the maintenance daemon PANICs:  ``` PANIC:  stuck spinlock
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2577,341 +2577,255 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a5635dec` (2026-11-18)
-**Commit Message**: Pin GitHub Actions Ubuntu runners to 24.04 (#8979)
+### Incident Patch 1: `5290ba9e` (2026-11-25)
+**Commit Message**: Fix crash when UPDATE sets a column to an array or jsonb subscript (#9004)
 
-DESCRIPTION: Pins GitHub Actions Ubuntu runners to Ubuntu 24.04
+DESCRIPTION: Fixes a crash when UPDATE sets a column to an array or
+jsonb subscript
 
-## Why
+Fixes #8987.
 
-The Nightly cassert [last good run on November
-12](https://github.com/citusdata/citus/actions/runs/43146032467) and
-[first failing run on November
-13](https://github.com/citusdata/citus/actions/runs/43356785925) used
-the same commit, `08479aca8b0d0d83640559f1a641b1d9ae5c2028`.
-Investigation identified the `ubuntu-latest` transition from Ubuntu
-24.04 to 26.04: restored PostgreSQL binaries could not load
-`libicuuc.so.74`, and Pipenv could not find the required Python 3.12.
-PostgreSQL pins were unchanged. Restore the intended runner environment
-rather than adapting dependencies to Ubuntu 26.04.
+When it deparses the SET clause of a shard query,
+ExpandMergedSubscriptingRefEntries() splits the merged subscript
+assignments of a column, like "SET a[1] = x, a[2] = y", into one target
+entry per assignment, and detaches the refexpr of each SubscriptingRef.
+It treated any SubscriptingRef at the top of a target entry as an
+assignment, so a fetch like "SET v = (ARRAY[1])[1]", "SET a = a[1:2]" or
+"SET j = j['x']" lost its container, and get_rule_expr() dereferenced
+the NULL refexpr. The coordinator crashed while planning such UPDATEs on
+distributed and reference tables, and the same happened for the SET
+clauses of INSERT .. ON CONFLICT DO UPDATE and MERGE.
 
-## Scope
+As in PostgreSQL's get_assignment_input() and processIndirection(), a
+SubscriptingRef assigns to the container only if it has a refassgnexpr.
+Without one, it fetches from the container and is the value that is
+assigned to the column, so it is now left as is.
 
-Replace all 30 `runs-on: ubuntu-latest` selections with `ubuntu-24.04`
-across seven workflows: `build_and_test.yml`, `run_tests.yml` (shared
-workflow), `nightly_cassert.yml`, `nightly_arm64.yml` (helper jobs
-only), `flaky_test_debugging.yml`, `packaging-test-pipelines.yml`, and
-`devcontainer.yml`.
-
-Preserve CodeQL's explicit `ubuntu-22.04`, native `ubuntu-24.04-arm`,
-and all Python/dependency/PostgreSQL pins, caches, action versions,
-schedules, matrices, and ot
-
-**File**: `.github/workflows/build_and_test.yml` (modified, +13/-13)
+**File**: `src/backend/distributed/deparser/citus_ruleutils.c` (modified, +30/-8)
 ```diff
-@@ -25,7 +25,7 @@ jobs:
-   # Since GHA does not interpolate env varibles in matrix context, we need to
-   # define them in a separate job and use them in other jobs.
-   params:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     name: Initialize parameters
-     outputs:
-       build_image_name: "ghcr.io/citusdata/extbuilder"
-@@ -47,7 +47,7 @@ jobs:
-         run: echo 'noop'
-   check-sql-snapshots:
-     needs: params
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: ${{ needs.params.outputs.build_image_name }}:${{ needs.params.outputs.sql_snapshot_pg_version }}${{ needs.params.outputs.image_suffix }}
-       options: --user root
-@@ -59,7 +59,7 @@ jobs:
-         ci/check_sql_snapshots.sh
-   check-style:
-     needs: params
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: ${{ needs.params.outputs.style_checker_image_name }}:${{ needs.params.outputs.style_checker_tools_version }}${{ needs.params.outputs.image_suffix }}
-     steps:
-@@ -117,7 +117,7 @@ jobs:
-           - ${{ needs.params.outputs.pg17_version }}
-           - ${{ needs.params.outputs.pg18_version }}
-           - ${{ needs.params.outputs.pg19_version }}
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: "${{ matrix.image_name }}:${{ fromJson(matrix.pg_version).full }}${{ matrix.image_suffix }}"
-       options: --user root
-@@ -192,7 +192,7 @@ jobs:
-       codecov_token: ${{ secrets.CODECOV_TOKEN }}
-   test-arbitrary-configs:
-     name: PG${{ fromJson(matrix.pg_version).major }} - check-arbitrary-configs-${{ matrix.parallel }}
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: "${{ matrix.image_name }}:${{ fromJson(matrix.pg_version).full }}${{ needs.params.outputs.image_suffix }}"
-       options: --user root
-@@ -241,7 +241,7 @@ jobs:
-         codecov_token: ${{ secrets.CODECOV_TOKEN }}
-   test-pg-upgrade:
-     name: PG${{ matrix.old_pg_major }}-PG${{ matrix.new_pg_major }} - check-pg-upgrade
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: "${{ needs.params.outputs.pgupgrade_image_name }}:${{ needs.params.outputs.upgrade_pg_versions }}${{ needs.params.outputs.image_suffix }}"
-       options: --user root
-@@ -302,7 +302,7 @@ jobs:
-         codecov_token: ${{ secrets.CODECOV_TOKEN }}
-   test-citus-upgrade:
-     name: PG${{ fromJson(matrix.pg_version).major }} - check-citus-upgrade
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: "${{ needs.params.outputs.citusupgrade_image_name }}:${{ fromJson(matrix.pg_version).full }}${{ needs.params.outputs.image_suffix }}"
-       options: --user root
-@@ -356,7 +356,7 @@ jobs:
-   ch_benchmark:
-     name: CH Benchmark
-     if: startsWith(github.ref, 'refs/heads/ch_benchmark/')
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     needs:
-     - build
-     steps:
-@@ -374,7 +374,7 @@ jobs:
-   tpcc_benchmark:
-     name: TPCC Benchmark
-     if: startsWith(github.ref, 'refs/heads/tpcc_benchmark/')
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     needs:
-     - build
-     steps:
-@@ -393,7 +393,7 @@ jobs:
-     name: Prepare parallelization matrix
-     if: ${{ needs.test-flakyness-pre.outputs.tests != ''}}
-     needs: test-flakyness-pre
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     outputs:
-       json: ${{ steps.parallelization.outputs.json }}
-     steps:
-@@ -405,7 +405,7 @@ jobs:
-   test-flakyness-pre:
-     name: Detect regression tests need to be ran
-     if: ${{ !inputs.skip_test_flakyness }}
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     needs: build
-     outputs:
-       tests: ${{ steps.detect-regression-tests.outputs.tests }}
-@@ -457,7 +457,7 @@ jobs:
-   test-flakyness:
-     if: ${{ needs.test-flakyness-pre.outputs.tests != ''}}
-     name: Test flakyness
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: ${{ needs.params.outputs.fail_test_image_name }}:${{ fromJson(needs.params.outputs.pg18_version).full }}${{ needs.params.outputs.image_suffix }}
-       options: --user root
-@@ -513,7 +513,7 @@ jobs:
-     - test-arbitrary-configs
-     - test-pg-upgrade
-     - test-citus-upgrade
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-     - name: Show results of required jobs
-       run: echo '${{ toJSON(needs) }}'
-```
-
-**File**: `.github/workflows/devcontainer.yml` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ on:
+@@ -1857,7 +1857,7 @@ ensure_update_targetlist_in_param_order(List *targetList)
  
- jobs:
-   docker:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     permissions:
-       contents: read
-       packages: write
-```
-
-**File**: `.github/workflows/flaky_test_debugging.yml` (modified, +3/-3)
-```diff
-@@ -25,7 +25,7 @@ on:
- jobs:
-   build:
-     name: Build Citus
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: ${{ vars.build_image_name }}:${{ vars.pg17_version  }}${{ vars.image_suffix }}
-       options: --user root
-@@ -44,7 +44,7 @@ jobs:
-           ./install-${{ env.PG_MAJOR }}.tar
-   prepare_parallelization_matrix:
-     name: Prepare parallelization matrix
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     outputs:
-       json: ${{ steps.parallelization.outputs.json }}
-     steps:
-@@ -55,7 +55,7 @@ jobs:
-           count: ${{ inputs.flaky_test_parallel_jobs }}
-   test_flakyness:
-     name: Test flakyness
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: ${{ vars.fail_test_image_name }}:${{ vars.pg17_version  }}${{ vars.image_suffix }}
-       options: --user root
-```
-
-**File**: `.github/workflows/nightly_arm64.yml` (modified, +2/-2)
-```diff
-@@ -41,7 +41,7 @@ jobs:
-   # Bounded to the two newest majors for phase 1; bump here to widen the arm coverage.
-   params:
-     name: Initialize parameters
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     outputs:
-       pg_versions: '[{ "major": "17", "full": "17.11" }, { "major": "18", "full": "18.6" }]'
-     steps:
-@@ -95,7 +95,7 @@ jobs:
-     name: Open issue on failure
-     needs: [ test ]
-     if: failure()
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/github-script@v7
-         with:
-```
-
-**File**: `.github/workflows/nightly_cassert.yml` (modified, +6/-6)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-   # restating them. Until then this job is the one place to bump the cassert matrix.
-   params:
-     name: Initialize parameters
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     outputs:
-       pg_versions: '[{ "major": "17", "full": "17.11" }, { "major": "18", "full": "18.6" }, { "major": "19", "full": "19rc1" }]'
-       pg_upgrade_pairs: '[{ "old": "17", "old_full": "17.11", "new": "18", "new_full": "18.6" }, { "old": "18", "old_full": "18.6", "new": "19", "new_full": "19rc1" }, { "old": "17", "old_full": "17.11", "new": "19", "new_full": "19rc1" }]'
-@@ -46,7 +46,7 @@ jobs:
-   test:
-     needs: params
-     name: cassert PG${{ matrix.pg.major }} - ${{ matrix.group }}
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -96,7 +96,7 @@ jobs:
-   pg-upgrade:
-     needs: params
-     name: cassert PG${{ matrix.old }}-PG${{ matrix.new }} - pg-upgrade
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -142,7 +142,7 @@ jobs:
-   citus-upgrade:
-     needs: params
-     name: cassert PG${{ matrix.pg.major }} - citus-upgrade
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -180,7 +180,7 @@ jobs:
-   arbitrary-configs:
-     needs: params
-     name: cassert PG${{ matrix.pg.major }} - arbitrary-configs-${{ matrix.parallel }}
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -223,7 +223,7 @@ jobs:
-     name: Open issue on failure
-     needs: [ test, pg-upgrade, citus-upgrade, arbitrary-configs ]
-     if: failure()
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/github-script@v7
-         with:
-```
-
-**File**: `.github/workflows/packaging-test-pipelines.yml` (modified, +4/-4)
-```diff
-@@ -17,7 +17,7 @@ concurrency:
- jobs:
  
-   get_postgres_versions_from_file:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     outputs:
-       pg_versions: ${{ steps.get-postgres-versions.outputs.pg_versions }}
-     steps:
-@@ -41,7 +41,7 @@ jobs:
-   rpm_build_tests:
-     name: rpm_build_tests
-     needs: get_postgres_versions_from_file
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -113,7 +113,7 @@ jobs:
-   deb_build_tests:
-     name: deb_build_tests
-     needs: get_postgres_versions_from_file
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     strategy:
-       fail-fast: false
-       matrix:
-@@ -195,7 +195,7 @@ jobs:
-       - get_postgres_versions_from_file
-       - rpm_build_tests
-       - deb_build_tests
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - name: Show results of required jobs
-         run: echo '${{ toJSON(needs) }}'
+ /*
+- * isSubsRef checks if a given node is a SubscriptingRef or can be
++ * isSubsRef checks if a given node is a SubscriptingRef assignment or can be
+  * reached through an implicit coercion.
+  */
+ static
+@@ -1881,14 +1881,23 @@ isSubsRef(Node *node)
+ 		node = (Node *) coerceToDomain->arg;
+ 	}
+ 
+-	return (IsA(node, SubscriptingRef));
++	if (!IsA(node, SubscriptingRef))
++	{
++		return false;
++	}
++
++	/*
++	 * A SubscriptingRef without refassgnexpr fetches from a container, as in
++	 * "SET col = arr[1]", so it is the value that is assigned to the column.
++	 */
++	return ((SubscriptingRef *) node)->refassgnexpr != NULL;
+ }
+ 
+ 
+ /*
+  * checkTlistForSubsRef - checks if any target entry in the list contains a
+- * SubscriptingRef or can be reached through an implicit coercion. Used by
+- * ExpandMergedSubscriptingRefEntries() to identify if any target entries
++ * SubscriptingRef assignment or can be reached through an implicit coercion.
++ * Used by ExpandMergedSubscriptingRefEntries() to identify if any target entries
+  * need to be expanded - if not the original target list is preserved.
+  */
+ static
+@@ -1925,7 +1934,7 @@ ExpandMergedSubscriptingRefEntries(List *targetEntryList)
+ 
+ 	if (!checkTlistForSubsRef(targetEntryList))
+ 	{
+-		/* No subscripting refs found, return original list */
++		/* no SubscriptingRef assignments found, return original list */
+ 		return targetEntryList;
+ 	}
+ 
+@@ -1964,7 +1973,7 @@ ExpandMergedSubscriptingRefEntries(List *targetEntryList)
+ 
+ 		if (expandedTargetEntries == NIL)
+ 		{
+-			/* return original entry since it doesn't hold a SubscriptingRef node */
++			/* return original entry since it holds no SubscriptingRef assignment */
+ 			newTargetEntryList = lappend(newTargetEntryList, targetEntry);
+ 		}
+ 		else
+@@ -1991,7 +2000,8 @@ ExpandMergedSubscriptingRefEntries(List *targetEntryList)
+ /*
+  * TargetEntryExprFindSubsRef searches given Expr --assuming that it is part
+  * of a target list entry-- to see if it directly (i.e.: itself) or indirectly
+- * (e.g.: behind some level of coercions) holds a SubscriptingRef node.
++ * (e.g.: behind some level of coercions) holds a SubscriptingRef node that
++ * assigns to elements of a container.
+  *
+  * Returns the original SubscriptingRef node on success or NULL otherwise.
+  *
+@@ -2038,7 +2048,19 @@ TargetEntryExprFindSubsRef(Expr *expr)
+ 		}
+ 		else if (IsA(node, SubscriptingRef))
+ 		{
+-			return (SubscriptingRef *) node;
++			SubscriptingRef *subsRef = (SubscriptingRef *) node;
++
++			/*
++			 * A SubscriptingRef without refassgnexpr fetches from a container,
++			 * as in "SET col = arr[1]", so it is the value that is assigned to
++			 * the column, and its refexpr must be kept.
++			 */
++			if (subsRef->refassgnexpr == NULL)
++			{
++				break;
++			}
++
++			return subsRef;
+ 		}
+ 		else
+ 		{
 ```
 
-**File**: `.github/workflows/run_tests.yml` (modified, +1/-1)
+**File**: `src/test/regress/expected/update_subscript_fetch_8987.out` (added, +58/-0)
 ```diff
-@@ -48,7 +48,7 @@ jobs:
-       matrix:
-         pg_version: ${{ fromJson(inputs.pg_versions) }}
-         make: ${{ fromJson(inputs.make_targets) }}
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     container:
-       image: "${{ inputs.image_name }}:${{ matrix.pg_version.full }}${{ inputs.image_suffix }}"
-       options: >-
+@@ -0,0 +1,58 @@
++-- Regression for #8987: setting a column to an array or jsonb subscript, like
++-- "UPDATE t SET v = (ARRAY[1])[1]", crashed the coordinator, since the shard
++-- query deparser took the subscript for an assignment and lost its container.
++-- Kept out of multi_schedule because N-1 runs against older coordinator
++-- libraries would still crash on these statements.
++CREATE SCHEMA update_subscript_fetch_8987;
++SET search_path TO update_subscript_fetch_8987;
++SET citus.shard_count TO 4;
++SET citus.shard_replication_factor TO 1;
++SET citus.next_shard_id TO 60594200;
++CREATE DOMAIN int_arr_domain AS INT[];
++CREATE TABLE subs_fetch_update(id INT PRIMARY KEY, val INT, arr INT[], arr_dom int_arr_domain, js JSONB);
++SELECT create_distributed_table('subs_fetch_update', 'id');
++ create_distributed_table
++---------------------------------------------------------------------
++
++(1 row)
++
++INSERT INTO subs_fetch_update
++  VALUES (1, 0, '{10,20,30}', '{1,2,3}', '{"a": 1}'),
++         (2, 0, '{40,50,60}', '{4,5,6}', '{"a": 2}');
++-- fast path router queries
++UPDATE subs_fetch_update SET val = (ARRAY[7,8])[2] WHERE id = 1;
++UPDATE subs_fetch_update SET val = arr[2] WHERE id = 2;
++-- multi-shard query, with an array slice, a domain over an array and jsonb
++UPDATE subs_fetch_update SET arr = arr[2:3], arr_dom = arr_dom[1:2], js = js['a'];
++SELECT * FROM subs_fetch_update ORDER BY id;
++ id | val |   arr   | arr_dom | js
++---------------------------------------------------------------------
++  1 |   8 | {20,30} | {1,2}   | 1
++  2 |  50 | {50,60} | {4,5}   | 2
++(2 rows)
++
++-- a subscript next to subscript assignments to another column
++UPDATE subs_fetch_update SET arr[1] = 100, val = arr[2], arr[2] = 200;
++SELECT * FROM subs_fetch_update ORDER BY id;
++ id | val |    arr    | arr_dom | js
++---------------------------------------------------------------------
++  1 |  30 | {100,200} | {1,2}   | 1
++  2 |  60 | {100,200} | {4,5}   | 2
++(2 rows)
++
++-- the SET clauses of INSERT .. ON CONFLICT and MERGE
++INSERT INTO subs_fetch_update VALUES (1)
++ON CONFLICT (id)
++DO UPDATE SET val = (ARRAY[5,6])[1];
++MERGE INTO subs_fetch_update t
++USING (SELECT id, arr FROM subs_fetch_update) s ON t.id = s.id AND t.id = 2
++WHEN MATCHED THEN UPDATE SET val = s.arr[1];
++SELECT * FROM subs_fetch_update ORDER BY id;
++ id | val |    arr    | arr_dom | js
++---------------------------------------------------------------------
++  1 |   5 | {100,200} | {1,2}   | 1
++  2 | 100 | {100,200} | {4,5}   | 2
++(2 rows)
++
++SET client_min_messages TO WARNING;
++DROP SCHEMA update_subscript_fetch_8987 CASCADE;
+```
+
+**File**: `src/test/regress/multi_1_create_citus_schedule` (modified, +8/-0)
+```diff
+@@ -139,3 +139,11 @@ test: node_removal_transaction_recovery
+ # the N-1 test matrix. Move back to multi_1_schedule at Citus 15.
+ # ----------
+ test: insert_select_single_shard_table_8959
++
++# ----------
++# update_subscript_fetch_8987 covers an UPDATE .. SET crash (#8987); the N-1
++# (14.2-1) coordinator library still segfaults on these statements, so this
++# cannot run under the N-1 test matrix. Move to multi_schedule, next to
++# subscripting_op, once the N-1 coordinator library has the fix.
++# ----------
++test: update_subscript_fetch_8987
+```
+
+**File**: `src/test/regress/sql/update_subscript_fetch_8987.sql` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++-- Regression for #8987: setting a column to an array or jsonb subscript, like
++-- "UPDATE t SET v = (ARRAY[1])[1]", crashed the coordinator, since the shard
++-- query deparser took the subscript for an assignment and lost its container.
++-- Kept out of multi_schedule because N-1 runs against older coordinator
++-- libraries would still crash on these statements.
++CREATE SCHEMA update_subscript_fetch_8987;
++SET search_path TO update_subscript_fetch_8987;
++SET citus.shard_count TO 4;
++SET citus.shard_replication_factor TO 1;
++SET citus.next_shard_id TO 60594200;
++
++CREATE DOMAIN int_arr_domain AS INT[];
++CREATE TABLE subs_fetch_update(id INT PRIMARY KEY, val INT, arr INT[], arr_dom int_arr_domain, js JSONB);
++SELECT create_distributed_table('subs_fetch_update', 'id');
++INSERT INTO subs_fetch_update
++  VALUES (1, 0, '{10,20,30}', '{1,2,3}', '{"a": 1}'),
++         (2, 0, '{40,50,60}', '{4,5,6}', '{"a": 2}');
++
++-- fast path router queries
++UPDATE subs_fetch_update SET val = (ARRAY[7,8])[2] WHERE id = 1;
++UPDATE subs_fetch_update SET val = arr[2] WHERE id = 2;
++
++-- multi-shard query, with an array slice, a domain over an array and jsonb
++UPDATE subs_fetch_update SET arr = arr[2:3], arr_dom = arr_dom[1:2], js = js['a'];
++
++SELECT * FROM subs_fetch_update ORDER BY id;
++
++-- a subscript next to subscript assignments to another column
++UPDATE subs_fetch_update SET arr[1] = 100, val = arr[2], arr[2] = 200;
++
++SELECT * FROM subs_fetch_update ORDER BY id;
++
++-- the SET clauses of INSERT .. ON CONFLICT and MERGE
++INSERT INTO subs_fetch_update VALUES (1)
++ON CONFLICT (id)
++DO UPDATE SET val = (ARRAY[5,6])[1];
++
++MERGE INTO subs_fetch_update t
++USING (SELECT id, arr FROM subs_fetch_update) s ON t.id = s.id AND t.id = 2
++WHEN MATCHED THEN UPDATE SET val = s.arr[1];
++
++SELECT * FROM subs_fetch_update ORDER BY id;
++
++SET client_min_messages TO WARNING;
++DROP SCHEMA update_subscript_fetch_8987 CASCADE;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8979** (2026-11-18): Pin GitHub Actions Ubuntu runners to 24.04 (@ihalatci)
-- **PR #8969** (2026-11-10): [release-14.0] Propagate encrypted password on CREATE ROLE (#8966) (@onurctirtir)
-- **PR #8968** (2026-11-10): [release-13.2] Propagate encrypted password on CREATE ROLE (#8966) (@onurctirtir)
-- **PR #8966** (2026-11-09): Propagate encrypted password on CREATE ROLE (@onurctirtir)
-- **PR #8963** (2026-11-16): Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT (@Bimal-ray99)
-- **PR #8956** (2026-11-06): Evaluate replayed object definitions in the owner context (@ihalatci)
+- **PR #9009** (2026-11-26): [12.1] Backport nullable subquery and FULL join normalization (@ihalatci)
+- **PR #9004** (2026-11-25): Fix crash when UPDATE sets a column to an array or jsonb subscript (@codeforall)
+- **PR #8989** (closed): Enforce object ownership for more citus-internal UDFs (Backport #8587 to release-13.2.2) (@ihalatci)
+- **PR #8988** (closed): Enforce object ownership for more citus-internal UDFs (Backport #8587 to release-13.3) (@ihalatci)
+- **PR #8984** (2026-11-25): Close consistency gaps in clone promotion (Add worker node using snapshot) (@codeforall)
+- **PR #8983** (2026-11-23): Restrict citus_use_authinfo subscription option to superusers (@eaydingol)
 
 ---
 
@@ -2931,55 +2845,67 @@ schedules, matrices, and ot
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Pin GitHub Actions Ubuntu runners to 24.04
+## X. crash when UPDATE sets a column to an array or jsonb subscript
 
 **RULE**:
-When implementing operations in `.github/workflows/build_and_test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/backend/distributed/deparser/citus_ruleutils.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a5635dec`: Pin GitHub Actions Ubuntu runners to 24.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5290ba9e`: crash when UPDATE sets a column to an array or jsonb subscript. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build_and_test.yml`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/deparser/citus_ruleutils.c`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
+ * isSubsRef checks if a given node is a SubscriptingRef assignment or can be
+	if (!IsA(node, SubscriptingRef))
+	{
+		return false;
+	}
+
+	/*
+	 * A SubscriptingRef without refassgnexpr fetches from a container, as in
+	 * "SET col = arr[1]", so it is the value that is assigned to the column.
+	 */
+	return ((SubscriptingRef *) node)->refassgnexpr != NULL;
+ * SubscriptingRef assignment or can be reached through an implicit coercion.
+ * Used by ExpandMergedSubscriptingRefEntries() to identify if any target entries
+		/* no SubscriptingRef assignments found, return original list */
+			/* return original entry since it holds no SubscriptingRef assignment */
+ * (e.g.: behind some level of coercions) holds a SubscriptingRef node that
+ * assigns to elements of a container.
+			SubscriptingRef *subsRef = (SubscriptingRef *) node;
+
+			/*
+			 * A SubscriptingRef without refassgnexpr fetches from a container,
+			 * as in "SET col = arr[1]", so it is the value that is assigned to
+			 * the column, and its refexpr must be kept.
+			 */
+			if (subsRef->refassgnexpr == NULL)
+			{
+				break;
+			}
+
+			return subsRef;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
+ * isSubsRef checks if a given node is a SubscriptingRef or can be
+	return (IsA(node, SubscriptingRef));
+ * SubscriptingRef or can be reached through an implicit coercion. Used by
+ * ExpandMergedSubscriptingRefEntries() to identify if any target entries
+		/* No subscripting refs found, return original list */
+			/* return original entry since it doesn't hold a SubscriptingRef node */
+ * (e.g.: behind some level of coercions) holds a SubscriptingRef node.
+			return (SubscriptingRef *) node;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a5635dec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5290ba9e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

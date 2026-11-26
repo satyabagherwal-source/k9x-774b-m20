@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T10:31:05.518Z",
-  "total_records": 2733,
+  "last_updated": "2026-11-26T10:41:49.344Z",
+  "total_records": 2736,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1021,
+      "total": 1022,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1093,7 +1093,8 @@
         "domain_intelligence-research-knowledge-intelligence-sand-ai-magi-2-preview-core-invariants",
         "DOM-D-B8D29B23",
         "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria",
-        "DOM-D-439581EA"
+        "DOM-D-439581EA",
+        "DOM-D-68A82B80"
       ]
     },
     "E": {
@@ -2588,7 +2589,7 @@
       ]
     },
     "K": {
-      "total": 171,
+      "total": 173,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2760,7 +2761,9 @@
         "domain_intelligence-quality-verification-intelligence-oshai-kotlin-logging-core-invariants",
         "domain_intelligence-quality-verification-intelligence-oshai-kotlin-logging-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-oven-sh-bun-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-oven-sh-bun-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-oven-sh-bun-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-meta-folly-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-facebook-folly-learnings-core-invariants"
       ]
     },
     "L": {
@@ -13342,8 +13345,8 @@
       "title": "Deployment & Operations Intelligence: loft-sh/vcluster Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-loft-sh-vcluster-deployment-operations-intelligence-loft-sh-vcluster-core-invari.md",
       "repository": "loft-sh/vcluster",
-      "content_hash": "767da92314ce2a54e8e7508ad83b74664d36fe67ebd44bbeb0bff072a45ccb62",
-      "created_at": "2026-11-23T21:04:50.109Z"
+      "content_hash": "1213fddaf25beb43825c28f59d0b96141f6044ade9ba13dae7a9eccdf64e21f2",
+      "created_at": "2026-11-26T10:41:01.773Z"
     },
     "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-neuron-core-neuron-ai-core-invariants",
@@ -26163,8 +26166,8 @@
       "title": "Architecture Intelligence: signerlabs/Klee Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-signerlabs-klee-architecture-intelligence-signerlabs-klee-core-invariants.md",
       "repository": "signerlabs/Klee",
-      "content_hash": "b5870a7512d074c13a3ca2e9b7ec39b4a50a7ceca714abb6a4c2762c4c68d54d",
-      "created_at": "2026-11-17T03:26:14.652Z"
+      "content_hash": "0cd418bc15d8e2d1ad6a1b9c467325ccec282b0d8c06f5d5221bd7dc0cf3f861",
+      "created_at": "2026-11-26T10:40:58.390Z"
     },
     "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-scrapinghub-dateparser-learnings-core-invariants",
@@ -26181,8 +26184,8 @@
       "title": "Architecture Intelligence: signerlabs-klee-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-signerlabs-klee-learnings-architecture-intelligence-signerlabs-klee-learnings-co.md",
       "repository": "signerlabs-klee-learnings",
-      "content_hash": "4c105e49fece305cd592b3d03575b9f9a1d4e291fd2cb9f7ef129e899a71baf0",
-      "created_at": "2026-11-17T03:26:27.291Z"
+      "content_hash": "8a271d74beb53249de83127d0b3b448851df1aab0a41243b4d12ae7d4a58e079",
+      "created_at": "2026-11-26T10:41:49.344Z"
     },
     "domain_intelligence-research-knowledge-intelligence-microsoft-mage-vl-cowork-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-mage-vl-cowork-core-invariants",
@@ -27614,8 +27617,8 @@
       "title": "Architecture Intelligence: citusdata/citus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-citusdata-citus-architecture-intelligence-citusdata-citus-core-invariants.md",
       "repository": "citusdata/citus",
-      "content_hash": "e1cf8d8854808bf862801deba719166c174e9d7d81dd91876f597300ce51e197",
-      "created_at": "2026-11-19T00:49:55.274Z"
+      "content_hash": "376a53dc1d5de2217008b359ed75190c37efcfddad19f904b3b5eb2b152bdf43",
+      "created_at": "2026-11-26T10:41:06.295Z"
     },
     "DOM-H-13452896": {
       "record_id": "DOM-H-13452896",
@@ -29737,8 +29740,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-R1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-r1-research-knowledge-intelligence-deepseek-ai-deepseek-.md",
       "repository": "deepseek-ai/DeepSeek-R1",
-      "content_hash": "73d1c0da11c3b8f8ed7df1c6810487b999bd83be8823ffdcbd5e938b9e8a5914",
-      "created_at": "2026-11-22T17:44:29.856Z"
+      "content_hash": "4c271503532701eeeecd59463db73940f473d048418def9218dd2273b5b54df5",
+      "created_at": "2026-11-26T10:40:51.544Z"
     },
     "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants",
@@ -29755,8 +29758,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-r1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-r1-learnings-research-knowledge-intelligence-hf-deepseek.md",
       "repository": "hf-deepseek-ai-deepseek-r1-learnings",
-      "content_hash": "aad097b7b9b372461c028f6eb667d0ad8d1bc5fc7c0dc1d33b4f0fba3b9c21fd",
-      "created_at": "2026-11-22T17:44:42.243Z"
+      "content_hash": "d9931ad035af4bfbb2525fe6cc14e00819227fe946dddc13dd982d2203370891",
+      "created_at": "2026-11-26T10:41:11.316Z"
     },
     "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants",
@@ -46178,6 +46181,66 @@
       "repository": "planetable-planet-learnings",
       "content_hash": "7cc087c7af057acf99e727fea437940d5328d23b17950f390998fc05ccbd5183",
       "created_at": "2026-11-26T10:19:35.793Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-meta-folly-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-meta-folly-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: meta/folly Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-facebook-folly-quality-verification-intelligence-meta-folly-core-invariants.md",
+      "repository": "meta/folly",
+      "content_hash": "d655910b142aa27e1f961d759fce036a0792d89577ca05473111c9cd263e9e9e",
+      "created_at": "2026-11-26T10:40:56.076Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-facebook-folly-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-facebook-folly-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: facebook-folly-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-facebook-folly-learnings-quality-verification-intelligence-facebook-folly-learni.md",
+      "repository": "facebook-folly-learnings",
+      "content_hash": "b31ae2fac32929c8d35812446dd1827808e6588eb197cda960ba5f7411860e40",
+      "created_at": "2026-11-26T10:41:10.425Z"
+    },
+    "DOM-D-68A82B80": {
+      "record_id": "DOM-D-68A82B80",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): signerlabs/Klee",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/signerlabs-klee-learnings.md`  \n> **Source**: github ([https://github.com/signerlabs/Klee](https://github.com/signerlabs/Klee))  \n> **Source Version**: `8a8ecf52`  \n> **License**: PERMISSIVE_OPEN_SOURCE  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "f0fa21db0f06fb2f7434770b9c51f2cb312cced424349ba3d17bc5c11571e5b9",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/signerlabs-klee-learnings.md`  \n> **Source**: github ([https://github.com/signerlabs -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/signerlabs-klee-learnings.md`  \n> **Source**: github ([https://github.com/signerlabs",
+      "provenance": {
+        "source_uri": "project://signerlabs-klee/signerlabs-klee-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T10:41:11.611Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (signerlabs-klee)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of signerlabs-klee"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T10:41:48.670Z"
     }
   }
 }

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-T2HN",
-    "timestamp": "2026-11-24T19:44:51.419Z",
-    "repository": "aio-libs/aiohttp",
-    "learningId": "learn-github-aio-libs-aiohttp",
-    "contentHash": "eddcf05e2e6474c294d4c3f7ef257ca673e5c4cd20f9a12792d51a3d0c7a964d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-T6RR",
-    "timestamp": "2026-11-24T19:44:56.967Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "01c0a9fe45209fa914c55232b855ad7c4b1e97c8478137e07104b54fdd356ee9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-6H1R",
-    "timestamp": "2026-11-24T19:55:16.815Z",
-    "repository": "orcarouter/Inkling-2-Mini-abliterated-GGUF",
-    "learningId": "learn-huggingface-orcarouter-inkling-2-mini-abliterated-gguf",
-    "contentHash": "7f33b8cc073571a2f5362a805fee9f68e14f1c66f0850dc6e355c21c4120dc4d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-6IZQ",
-    "timestamp": "2026-11-24T19:55:19.334Z",
-    "repository": "thinkingmachines/Inkling-2-Mini",
-    "learningId": "learn-huggingface-thinkingmachines-inkling-2-mini",
-    "contentHash": "094e003860576a2d2c2f89409341826f2be33a54224a7de0cc7adbc4fbba61d5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-HZ9C",
-    "timestamp": "2026-11-24T20:04:13.632Z",
-    "repository": "dembrandt/dembrandt",
-    "learningId": "learn-github-dembrandt-dembrandt",
-    "contentHash": "e73305320ef97be2e164825d5b69a92e68aabab43f07dce07be76258644c7614",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-I6L1",
     "timestamp": "2026-11-24T20:04:23.125Z",
     "repository": "skyhook-io/radar",
@@ -7490,6 +7415,81 @@
     "repository": "apache/arrow",
     "learningId": "learn-github-apache-arrow",
     "contentHash": "37cf85b82bd0c44a2ade9cfb87f32da1f028bd181d6eb0023cc3f98cf7f09174",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-96HV",
+    "timestamp": "2026-11-26T10:40:51.235Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+    "contentHash": "8796b0db3a0a82e71a41ba26968cfcffcb5cd5d247408a1fb0f3e1b890bd4d0d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-99PT",
+    "timestamp": "2026-11-26T10:40:55.409Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "06d2785eec682d4b99a6f376554bc3f653abbff073f8a67b4b697857cd5ad36f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-9BQZ",
+    "timestamp": "2026-11-26T10:40:58.043Z",
+    "repository": "signerlabs/Klee",
+    "learningId": "learn-github-signerlabs-klee",
+    "contentHash": "fb8edec5250a8497d8c666ebf1cc125539d27511785c24c4047506cb9e2c4e56",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-9E4U",
+    "timestamp": "2026-11-26T10:41:01.134Z",
+    "repository": "loft-sh/vcluster",
+    "learningId": "learn-github-loft-sh-vcluster",
+    "contentHash": "9d288c09772faa365abc7cf4a8b57e85ebd4839874a1f1ab4ac589b61aaf7ab6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-9HMC",
+    "timestamp": "2026-11-26T10:41:05.652Z",
+    "repository": "citusdata/citus",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "8525134da6b568210328966dbe7188ca085cb7c7da3a334f6b8a27bf5b3d1007",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
