@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T17:48:29.493Z",
+  "last_updated": "2026-11-26T17:57:13.224Z",
   "total_records": 2767,
   "domains": {
     "A": {
@@ -10616,8 +10616,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "7265a35715ca9b51e232fe59d690397408fa1c59d5e893a6ef1b774662c8e2a4",
-      "created_at": "2026-11-26T13:36:02.756Z"
+      "content_hash": "736ae5c7764831973e28430b519b349ea3ed7e58931027551b84f8ecac58b888",
+      "created_at": "2026-11-26T17:57:07.519Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -11600,8 +11600,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-0.6B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-0-6b-research-knowledge-intelligence-qwen-qwen3-0-6b-core-invarian.md",
       "repository": "Qwen/Qwen3-0.6B",
-      "content_hash": "5205155f9fb6ee01f74b304216b1964c245041ad75817dc8058c7626e4a4397a",
-      "created_at": "2026-11-23T03:27:40.925Z"
+      "content_hash": "58ac747d4226c3ef26b6a87a214f61a0edd8c430ccefa0095f0f79376c163686",
+      "created_at": "2026-11-26T17:56:54.762Z"
     },
     "DOM-D-7BD861BF": {
       "record_id": "DOM-D-7BD861BF",
@@ -11651,8 +11651,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-0-6b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-.md",
       "repository": "hf-qwen-qwen3-0.6b-learnings",
-      "content_hash": "232513a37874d9fce391fef398de8180263b81a20441e26e9ef04f85efc99682",
-      "created_at": "2026-11-23T03:27:58.014Z"
+      "content_hash": "1239700cc9d315045431cef18d450cdda585a7416c180d5d02481078895182bd",
+      "created_at": "2026-11-26T17:57:12.346Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant",
@@ -27763,8 +27763,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "028d9427d2d140de1f3f500fb7124815c59429391de743a85f20fb511966afb7",
-      "created_at": "2026-11-26T00:00:06.740Z"
+      "content_hash": "74400668a54c1cb83026171dce095445b85e69dcf6e179f315bb1006fa90cb4b",
+      "created_at": "2026-11-26T17:57:13.224Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -30672,8 +30672,8 @@
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "repository": "1jehuang/jcode",
-      "content_hash": "675f924e39d1ea27e1c78601283a32b4d3a87bf0f5f8217e11bcd9ecebb9415a",
-      "created_at": "2026-11-25T10:35:14.920Z"
+      "content_hash": "beec88b3a09eeafbc02ed6cdfde3be28fce5331f92bc2682e3c828b306f22283",
+      "created_at": "2026-11-26T17:56:56.268Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -30681,8 +30681,8 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-learnings-architecture-intelligence-1jehuang-jcode-learnings-core.md",
       "repository": "1jehuang-jcode-learnings",
-      "content_hash": "9c7cf9c77459b05726319c385a0884cd11dd3fe95f3bf5a0b0cf159097dfaf8a",
-      "created_at": "2026-11-25T10:35:28.570Z"
+      "content_hash": "9ae9245acbfcdce4ac91f1b0eb323c8b706ab79073321cfe48f7450ad177ebe1",
+      "created_at": "2026-11-26T17:57:11.350Z"
     },
     "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T17:48:24.018Z",
+  "last_updated": "2026-11-26T17:57:07.026Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "c5e2da68263269a4a34c0a4844decac20ffbd6636f9c2b820472e829835b968c",
-      "verified_at": "2026-11-23T03:27:40.719Z",
+      "content_hash": "5cfe03d385f201a1bda33c7ac26bdb679fc1105160f82c80eda63296d23ca29e",
+      "verified_at": "2026-11-26T17:56:54.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T03:27:40.719Z"
+      "last_updated": "2026-11-26T17:56:54.489Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "f4fbdf3c2b302a6aeca151ccb3dc909471431b461c78e8e9ccaa0e3d77623b23",
-      "verified_at": "2026-11-26T13:36:02.532Z",
+      "content_hash": "7232e67d2efeff29398925fd29af80f2c09249a43421eff07bd31f36bb7550c9",
+      "verified_at": "2026-11-26T17:57:07.025Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:36:02.532Z"
+      "last_updated": "2026-11-26T17:57:07.025Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "5d6c3ac9f1e55f377f046ddc00852f77ad01a1e44aedb8d6512357bf215271ec",
-      "verified_at": "2026-11-25T10:35:14.499Z",
+      "content_hash": "013dd4a484de9e7da32ad1ae7a63bb9ad88ff3403968a54a46535daa7e9c18ff",
+      "verified_at": "2026-11-26T17:56:55.748Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T10:35:14.499Z"
+      "last_updated": "2026-11-26T17:56:55.748Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",

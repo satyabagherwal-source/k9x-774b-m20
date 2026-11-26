@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T17:48:29.681Z",
+  "last_updated": "2026-11-26T17:57:13.444Z",
   "total_verified_learnings": 9131,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26086,
+  "total_items": 26091,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213581,8 +213581,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "2910d1e2",
-      "content_hash": "f4fbdf3c2b302a6aeca151ccb3dc909471431b461c78e8e9ccaa0e3d77623b23",
+      "source_version": "b2358d26",
+      "content_hash": "7232e67d2efeff29398925fd29af80f2c09249a43421eff07bd31f36bb7550c9",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213670,6 +213670,11 @@
           "number": 10563,
           "title": "remove in python ci parser the slab.toml parsing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10745,
+          "title": "ensure correct host indexes updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213677,7 +213682,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T13:36:02.293Z",
+      "verified_at": "2026-11-26T17:57:06.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213719,10 +213724,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "2910d1e2",
-      "content_hash": "7265a35715ca9b51e232fe59d690397408fa1c59d5e893a6ef1b774662c8e2a4",
+      "source_version": "b2358d26",
+      "content_hash": "736ae5c7764831973e28430b519b349ea3ed7e58931027551b84f8ecac58b888",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T13:36:02.756Z"
+      "persisted_at": "2026-11-26T17:57:07.519Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213731,10 +213736,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "2910d1e2",
-      "content_hash": "7212cb7b15e037183cb24c775d5a10201a1de334a8b344b43c1fed2e0ec790ad",
+      "source_version": "b2358d26",
+      "content_hash": "40d86ca1652ff19c0ac0cfdbb33bdeb7bc2e145af818f295180f45b3c9bb904d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:36:02.950Z"
+      "persisted_at": "2026-11-26T17:57:07.743Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -217520,7 +217525,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "c5e2da68263269a4a34c0a4844decac20ffbd6636f9c2b820472e829835b968c",
+      "content_hash": "5cfe03d385f201a1bda33c7ac26bdb679fc1105160f82c80eda63296d23ca29e",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "promoted_rules": [
@@ -217545,7 +217550,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T03:27:40.476Z",
+      "verified_at": "2026-11-26T17:56:54.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217562,9 +217567,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-0.6B Core Invariants",
       "repository": "Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "5205155f9fb6ee01f74b304216b1964c245041ad75817dc8058c7626e4a4397a",
+      "content_hash": "58ac747d4226c3ef26b6a87a214f61a0edd8c430ccefa0095f0f79376c163686",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T03:27:40.925Z"
+      "persisted_at": "2026-11-26T17:56:54.762Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
@@ -217574,9 +217579,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-0.6b-learnings",
       "source_version": "HEAD",
-      "content_hash": "232513a37874d9fce391fef398de8180263b81a20441e26e9ef04f85efc99682",
+      "content_hash": "1239700cc9d315045431cef18d450cdda585a7416c180d5d02481078895182bd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T03:27:58.014Z"
+      "persisted_at": "2026-11-26T17:57:12.346Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
@@ -246614,8 +246619,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "103a1fa2",
-      "content_hash": "5d6c3ac9f1e55f377f046ddc00852f77ad01a1e44aedb8d6512357bf215271ec",
+      "source_version": "cfd6745d",
+      "content_hash": "013dd4a484de9e7da32ad1ae7a63bb9ad88ff3403968a54a46535daa7e9c18ff",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -246653,6 +246658,11 @@
           "number": 10506,
           "title": "publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10744,
+          "title": "document isolated background task registries for benchmarks (fixes #2272)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246660,7 +246670,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T10:35:14.259Z",
+      "verified_at": "2026-11-26T17:56:55.386Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246714,10 +246724,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
       "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
       "repository": "1jehuang/jcode",
-      "source_version": "103a1fa2",
-      "content_hash": "ea8cd6af850c08f22435734fb690d06ce666405cb2aa41e0123b001908b42778",
+      "source_version": "cfd6745d",
+      "content_hash": "480aaf83584464fd02afee94f65160d398186c5ebad842ca361131d56b9f046f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:35:15.135Z"
+      "persisted_at": "2026-11-26T17:56:56.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
@@ -246726,10 +246736,10 @@
       "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "103a1fa2",
-      "content_hash": "1d075033b38c5ea159112d69729aff6fa8270468856ebbeb5c26ffc8d8b1ded8",
+      "source_version": "cfd6745d",
+      "content_hash": "d9963f414089aeea83971f019739ccaf914f82526020b64fa2144d3770e021c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:35:15.285Z"
+      "persisted_at": "2026-11-26T17:56:56.756Z"
     },
     "candidate_directive-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-update-all-go-dependencies-main",
@@ -246814,9 +246824,9 @@
       "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "f84a56751509f3a0acbb578bdffa1c9501f719adb1e28345655e07f4196afd36",
+      "content_hash": "7c526515a779f2dabdf5916089853bb34d928139fdf653f183333ac61129766e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:35:28.754Z"
+      "persisted_at": "2026-11-26T17:57:11.673Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
@@ -246826,9 +246836,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "bbe9b433dcd4f5f27fcf565c33c892b28907f9a6e3c13ed616b15d82d8341016",
+      "content_hash": "2aa034934cd1ac484ab6c34ed5a6c88df44410efd9b1250783bf5929b86c9e1f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:35:28.909Z"
+      "persisted_at": "2026-11-26T17:57:11.866Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
@@ -277066,9 +277076,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "028d9427d2d140de1f3f500fb7124815c59429391de743a85f20fb511966afb7",
+      "content_hash": "74400668a54c1cb83026171dce095445b85e69dcf6e179f315bb1006fa90cb4b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T00:00:06.740Z"
+      "persisted_at": "2026-11-26T17:57:13.224Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -277078,9 +277088,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f3e1199cdd6a9799ca0ae11e386a988f47fac022dd9daca029f3d910ac5efb7",
+      "content_hash": "6219e6aba2074e8a0fb6e8ea32121039c1db161044c82eb0b279dbe42ec2274e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T00:00:07.001Z"
+      "persisted_at": "2026-11-26T17:57:13.444Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -289687,10 +289697,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "repository": "1jehuang/jcode",
-      "source_version": "103a1fa2",
-      "content_hash": "675f924e39d1ea27e1c78601283a32b4d3a87bf0f5f8217e11bcd9ecebb9415a",
+      "source_version": "cfd6745d",
+      "content_hash": "beec88b3a09eeafbc02ed6cdfde3be28fce5331f92bc2682e3c828b306f22283",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:35:14.920Z"
+      "persisted_at": "2026-11-26T17:56:56.268Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode",
@@ -289712,9 +289722,9 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c7cf9c77459b05726319c385a0884cd11dd3fe95f3bf5a0b0cf159097dfaf8a",
+      "content_hash": "9ae9245acbfcdce4ac91f1b0eb323c8b706ab79073321cfe48f7450ad177ebe1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:35:28.570Z"
+      "persisted_at": "2026-11-26T17:57:11.350Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings",
@@ -357616,6 +357626,70 @@
       "content_hash": "1a9c853a798ad9072e88a7a8523c339f4f34fc46c71b00a0a3c0979121bb4011",
       "domain_letter": "B",
       "persisted_at": "2026-11-26T17:48:27.767Z"
+    },
+    "rule-10744": {
+      "learning_id": "rule-10744",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10744,
+      "title": "document isolated background task registries for benchmarks (fixes #2272)",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "cfd6745d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T17:56:55.386Z"
+    },
+    "candidate_directive-document-isolated-background-task-registries-for-benchmarks-fixes-2272": {
+      "item_id": "candidate_directive-document-isolated-background-task-registries-for-benchmarks-fixes-2272",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UAYZ-document-isolated-background-task-registries-for-benchmarks-fixes-2272.md",
+      "title": "document isolated background task registries for benchmarks (fixes #2272)",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "517d722452352bf0f2d8198c37e1ea2d298b3ccbaeea5704f62ba948044d6445",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T17:57:11.057Z"
+    },
+    "rule-10745": {
+      "learning_id": "rule-10745",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10745,
+      "title": "ensure correct host indexes updates",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "b2358d26",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T17:57:06.658Z"
+    },
+    "candidate_directive-ensure-correct-host-indexes-updates": {
+      "item_id": "candidate_directive-ensure-correct-host-indexes-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U82I-ensure-correct-host-indexes-updates.md",
+      "title": "ensure correct host indexes updates",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "b2358d26",
+      "content_hash": "db6324e9681aa396dd45baa528bfabdd52c0c33e1e1c6cb9af560821094d0288",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T17:57:07.296Z"
+    },
+    "candidate_directive-gpu-ensure-correct-host-indexes-updates": {
+      "item_id": "candidate_directive-gpu-ensure-correct-host-indexes-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UCG5-gpu-ensure-correct-host-indexes-updates.md",
+      "title": "gpu): ensure correct host indexes updates",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9700db0152ed389366b948a7071d5b67961ef7b836ebef889ef06807738c834",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T17:57:12.971Z"
     }
   },
   "ai-builder-brain": {

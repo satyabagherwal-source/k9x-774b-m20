@@ -13497,3 +13497,6 @@
 | `CYCLE-20261126-IOQI` | `2026-11-26T17:48:09.018Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10741` | Yes (`65a5d7ae...`) |
 | `CYCLE-20261126-IYNO` | `2026-11-26T17:48:21.876Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10742` | Yes (`4d8a526d...`) |
 | `CYCLE-20261126-J0AJ` | `2026-11-26T17:48:23.995Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10743` | Yes (`32140050...`) |
+| `CYCLE-20261126-TY6B` | `2026-11-26T17:56:54.467Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`5cfe03d3...`) |
+| `CYCLE-20261126-TZ55` | `2026-11-26T17:56:55.721Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10744` | Yes (`013dd4a4...`) |
+| `CYCLE-20261126-U7UE` | `2026-11-26T17:57:06.998Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10745` | Yes (`7232e67d...`) |

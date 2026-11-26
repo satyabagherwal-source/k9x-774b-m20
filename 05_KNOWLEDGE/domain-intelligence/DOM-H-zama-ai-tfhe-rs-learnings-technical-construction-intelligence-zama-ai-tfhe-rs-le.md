@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T00:00:06.328Z",
+  "timestamp": "2026-11-26T17:57:12.830Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zama-ai-tfhe-rs-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zama-ai-tfhe-rs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T00:00:06.328Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T17:57:12.830Z`  
 > **Learning ID**: `LEARN-EVO-zama-ai-tfhe-rs-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 89%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 90%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zama-ai-tfhe-rs-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `aba54549`  
+> **Source Version**: `b2358d26`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T23:59:21.406Z  
+> **Timestamp**: 2026-11-26T17:57:05.636Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:59:21.399Z  
+> **Harvest Timestamp**: 2026-11-26T17:57:05.630Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -488,7 +488,6 @@ template <typename Torus> struct int_decompression {
 #include <cmath>
 #include <functional>
 #include <optional>
-#include <queue>
 #include <type_traits>
 
 #include <stdio.h>
@@ -677,7 +676,8 @@ void generate_device_accumulator_with_encoding(
     cudaStream_t stream, uint32_t gpu_index, Torus *acc, uint64_t *degree,
     uint64_t *max_degree, uint32_t glwe_dimension, uint32_t polynomial_size,
     uint32_t input_message_modulus, uint32_t input_carry_modulus,
-    uint32_t output_message_modulus, uint32_t output_carry_m
+    uint32_t output_message_modulus, uint32_t output_carry_modulus,
+    std::
 ```
 
 ### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/integer/kv_store/kv_store_utilities.h`
@@ -1966,83 +1966,938 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83659c4c` (2026-11-25)
-**Commit Message**: fix: remove in python ci parser the slab.toml parsing
+### Incident Patch 1: `b2358d26` (2026-11-26)
+**Commit Message**: fix(gpu): ensure correct host indexes updates (#4210)
 
-**File**: `ci/parse_benchmark_profile.py` (modified, +2/-35)
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/comparison.h` (modified, +46/-43)
 ```diff
-@@ -1,7 +1,6 @@
- #!/usr/bin/env python3
- import argparse
- import sys
--import tomllib
+@@ -625,55 +625,58 @@ template <typename Torus> struct int_comparison_buffer {
+         bool seq = mem_simu_group_carries
+                        ->use_sequential_algorithm_to_resolve_group_carries;
  
+-        // Mirror second_step_lut_index_generator / h_scalar_array_cum_sum for a
+-        // single cumulative-sum position (see
+-        // int_prop_simu_group_carries_memory).
+-        auto lut_index_for = [group_size, seq](uint32_t pos) -> Torus {
+-          uint32_t group_index = pos / group_size;
+-          uint32_t pos_in_group = pos % group_size;
+-          if (group_index == 0)
+-            return (Torus)pos_in_group;
+-          else if (pos_in_group == group_size - 1)
+-            return seq ? (Torus)((group_index - 1) % (group_size - 1) +
+-                                 2 * group_size)
+-                       : (Torus)(2 * group_size);
+-          else
+-            return (Torus)(pos_in_group + group_size);
+-        };
+-        auto corrector_for = [group_size, seq](uint32_t pos) -> Torus {
+-          uint32_t group_index = pos / group_size;
+-          uint32_t pos_in_group = pos % group_size;
+-          if (group_index == 0 || pos_in_group != group_size - 1)
+-            return (Torus)0;
+-          return seq ? ((Torus)1 << ((group_index - 1) % (group_size - 1)))
+-                     : (Torus)1;
++        // Group g uses the LUT index and the corrector that
++        // int_prop_simu_group_carries_memory uses at the last position of the
++        // group (at the simulator position for the last group). The comparison
++        // only applies this LUT to the first n_groups blocks, the other
++        // indexes are set to 0: the LUT can no longer be used for the generic
++        // borrow propagation.
++        auto group_pos = [=](uint32_t g) -> uint32_t {
++          return (g + 1 < n_groups) ? (g + 1) * group_size - 1
++                                    : num_radix_blocks - 2;
+         };
++        auto *lut = mem_simu_group_carries->luts_array_second_step;
++        lut->set_lut_indexes(
++            active_streams,
++            [&](Torus *h_indexes, uint32_t num_indexes) {
++              for (uint32_t i = 0; i < num_indexes; i++)
++                h_indexes[i] = 0;
++              for (uint32_t g = 0; g < n_groups; g++) {
++                uint32_t pos = group_pos(g);
++                uint32_t group_index = pos / group_size;
++                uint32_t pos_in_group = pos % group_size;
++                if (group_index == 0) {
++                  h_indexes[g] = pos_in_group;
++                } else if (pos_in_group == group_size - 1) {
++                  uint32_t inner_index =
++                      seq ? (group_index - 1) % (group_size - 1) : 0;
++                  h_indexes[g] = 2 * group_size + inner_index;
++                } else {
++                  h_indexes[g] = pos_in_group + group_size;
++                }
++              }
++            },
++            lut->num_blocks);
++        lut->broadcast_lut(active_streams, false);
  
- BACKEND_MAP = {
-@@ -14,7 +13,7 @@
+-        std::vector<Torus> h_indexes(n_groups);
+-        std::vector<Torus> h_scalar_corrector(n_groups);
+-        for (uint32_t g = 0; g + 1 < n_groups; g++) {
+-          uint32_t pos = (g + 1) * group_size - 1;
+-          h_indexes[g] = lut_index_for(pos);
+-          h_scalar_corrector[g] = corrector_for(pos);
++        // h_scalar_corrector is the source of the asynchronous copy, it lives
++        // until the borrow memory is released
++        Torus *h_scalar_corrector =
++            mem_simu_group_carries->h_scalar_array_cum_sum;
++        for (uint32_t g = 0; g < n_groups; g++) {
++          uint32_t pos = group_pos(g);
++          uint32_t group_index = pos / group_size;
++          h_scalar_corrector[g] = 0;
++          if (group_index != 0 && pos % group_size == group_size - 1) {
++            uint32_t inner_index =
++                seq ? (group_index - 1) % (group_size - 1) : 0;
++            h_scalar_corrector[g] = (Torus)1 << inner_index;
++          }
+         }
+-        uint32_t simulator_pos = num_radix_blocks - 2;
+-        h_indexes[n_groups - 1] = lut_index_for(simulator_pos);
+-        h_scalar_corrector[n_groups - 1] = corrector_for(simulator_pos);
+-
+-        auto *lut = mem_simu_group_carries->luts_array_second_step;
+         cuda_memcpy_with_size_tracking_async_to_gpu(
+-            lut->get_lut_indexes(0, 0), h_indexes.data(),
++            mem_simu_group_carries->scalar_array_cum_sum, h_scalar_corrector,
+             safe_mul_sizeof<Torus>(n_groups), streams.stream(0),
+             streams.gpu_index(0), allocate_gpu_memory);
+-        lut->broadcast_lut(active_streams, false);
+-
+-        cuda_memcpy_with_size_tracking_async_to_gpu(
+-            mem_simu_group_carries->scalar_array_cum_sum,
+-            h_scalar_corrector.data(), safe_mul_sizeof<Torus>(n_groups),
+-            streams.stream(0), streams.gpu_index(0), allocate_gpu_memory);
+-        for (uint32_t i = 0; i < n_groups; i++)
+-          mem_simu_group_carries->h_scalar_array_cum_sum[i] =
+-              h_scalar_c
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/div_rem.h` (modified, +48/-11)
+```diff
+@@ -79,6 +79,10 @@ template <typename Torus> struct unsigned_int_div_rem_2_2_memory {
+   Torus **first_indexes_for_overflow_sub_gpu_0;
+   Torus **second_indexes_for_overflow_sub_gpu_0;
+   Torus **scalars_for_overflow_sub_gpu_0;
++  /// @brief CPU copy of the first indexes, used for the output degrees
++  Torus **h_first_indexes_for_overflow_sub;
++  /// @brief CPU copy of the second indexes, used for the output degrees
++  Torus **h_second_indexes_for_overflow_sub;
+ 
+   Torus **first_indexes_for_overflow_sub_gpu_1;
+   Torus **second_indexes_for_overflow_sub_gpu_1;
+@@ -480,7 +484,11 @@ template <typename Torus> struct unsigned_int_div_rem_2_2_memory {
+     scalars_for_overflow_sub_gpu_0 =
+         (Torus **)malloc(safe_mul_sizeof<Torus *>(num_blocks));
+ 
+-    Torus *h_lut_indexes = (Torus *)malloc(safe_mul_sizeof<Torus>(num_blocks));
++    // CPU copies of the LUT indexes, kept for update_lut_indexes
++    h_first_indexes_for_overflow_sub =
++        (Torus **)malloc(safe_mul_sizeof<Torus *>(num_blocks));
++    h_second_indexes_for_overflow_sub =
++        (Torus **)malloc(safe_mul_sizeof<Torus *>(num_blocks));
+     Torus *h_scalar = (Torus *)malloc(safe_mul_sizeof<Torus>(num_blocks));
+ 
+     // Extra indexes for the luts in first step
+@@ -510,10 +518,12 @@ template <typename Torus> struct unsigned_int_div_rem_2_2_memory {
+         }
+       };
+ 
+-      generate_lut_indexes<Torus>(streams, index_generator,
+-                                  first_indexes_for_overflow_sub_gpu_0[nb - 1],
+-                                  nb, 2 * group_size + 1, h_lut_indexes,
+-                                  allocate_gpu_memory);
++      h_first_indexes_for_overflow_sub[nb - 1] =
++          (Torus *)malloc(safe_mul_sizeof<Torus>(nb));
++      generate_lut_indexes<Torus>(
++          streams, index_generator,
++          first_indexes_for_overflow_sub_gpu_0[nb - 1], nb, 2 * group_size + 1,
++          h_first_indexes_for_overflow_sub[nb - 1], allocate_gpu_memory);
+     }
+     // Extra indexes for the luts in second step
+     uint32_t num_extra_luts = use_seq ? (group_size - 1) : 1;
+@@ -550,9 +560,12 @@ template <typename Torus> struct unsigned_int_div_rem_2_2_memory {
+         }
+       };
+ 
++      h_second_indexes_for_overflow_sub[nb - 1] =
++          (Torus *)malloc(safe_mul_sizeof<Torus>(nb));
+       generate_lut_indexes<Torus>(streams, index_generator,
+                                   second_indexes_for_overflow_sub_gpu_0[nb - 1],
+-                                  nb, num_luts_second_step, h_lut_indexes,
++                                  nb, num_luts_second_step,
++                                  h_second_indexes_for_overflow_sub[nb - 1],
+                                   allocate_gpu_memory);
+ 
+       for (int index = 0; index < nb; index++) {
+@@ -578,7 +591,6 @@ template <typename Torus> struct unsigned_int_div_rem_2_2_memory {
+           allocate_gpu_memory);
+     }
+     cuda_synchronize_stream(streams.stream(0), streams.gpu_index(0));
+-    free(h_lut_indexes);
+     free(h_scalar);
+   };
+ 
+@@ -844,6 +856,12 @@ template <typename Torus> struct unsigned_int_div_rem_2_2_memory {
+     free(first_indexes_for_overflow_sub_gpu_2);
+     free(second_indexes_for_overflow_sub_gpu_2);
+     free(scalars_for_overflow_sub_gpu_2);
++    for (int i = 0; i < max_indexes_to_erase; i++) {
++      free(h_first_indexes_for_overflow_sub[i]);
++      free(h_second_indexes_for_overflow_sub[i]);
++    }
++    free(h_first_indexes_for_overflow_sub);
++    free(h_second_indexes_for_overflow_sub);
+ 
+     check_cuda_error(cudaEventDestroy(create_indexes_done));
+ 
+@@ -899,6 +917,10 @@ template <typename Torus> struct unsigned_int_div_rem_memory {
+   Torus **first_indexes_for_overflow_sub;
+   Torus **second_indexes_for_overflow_sub;
+   Torus **scalars_for_overflow_sub;
++  /// @brief CPU copy of the first indexes, used for the output degrees
++  Torus **h_first_indexes_for_overflow_sub;
++  /// @brief CPU copy of the second indexes, used for the output degrees
++  Torus **h_second_indexes_for_overflow_sub;
+   uint32_t max_indexes_to_erase;
+   bool gpu_memory_allocated;
+ 
+@@ -1173,7 +1195,11 @@ template <typename Torus> struct unsigned_int_div_rem_memory {
+     scalars_for_overflow_sub =
+         (Torus **)malloc(safe_mul_sizeof<Torus *>(num_blocks));
+ 
+-    Torus *h_lut_indexes = (Torus *)malloc(safe_mul_sizeof<Torus>(num_blocks));
++    // CPU copies of the LUT indexes, kept for update_lut_indexes
++    h_first_indexes_for_overflow_sub =
++        (Torus **)malloc(safe_mul_sizeof<Torus *>(num_blocks));
++    h_second_indexes_for_overflow_sub =
++        (Torus **)malloc(safe_mul_sizeof<Torus *>(num_blocks));
+     Torus *h_scalar = (Torus *)malloc(safe_mul_sizeof<Torus>(num_blocks));
+ 
+     // Extra indexes for the luts in first step
+@@ -1203,9 +1229,12 @@ template <typename Torus> struct unsigned_int_div_rem_memory {
+         }
+       };
+ 
++      h_first_indexes_for_overflow_sub[nb - 1] =
++          (Torus *)malloc(safe_mul_sizeof<Torus>(nb));
+       generate_lut_indexes<T
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer_utilities.h` (modified, +50/-62)
+```diff
+@@ -13,7 +13,6 @@
+ #include <cmath>
+ #include <functional>
+ #include <optional>
+-#include <queue>
+ #include <type_traits>
+ 
+ #include <stdio.h>
+@@ -463,46 +462,6 @@ template <typename T> struct radix_index_tables {
+   }
+ };
+ 
+-inline void calculate_final_degrees(uint64_t *const out_degrees,
+-                                    const uint64_t *const input_degrees,
+-                                    uint32_t num_blocks,
+-                                    uint32_t num_radix_in_vec,
+-                                    uint32_t chunk_size,
+-                                    uint64_t message_modulus) {
+-
+-  auto get_degree = [message_modulus](uint64_t degree) -> uint64_t {
+-    return std::min(message_modulus - 1, degree);
+-  };
+-  std::vector<std::queue<uint64_t>> columns(num_blocks);
+-  for (uint32_t i = 0; i < num_radix_in_vec; ++i) {
+-    for (uint32_t j = 0; j < num_blocks; ++j) {
+-      if (input_degrees[i * num_blocks + j])
+-        columns[j].push(input_degrees[i * num_blocks + j]);
+-    }
+-  }
+-
+-  for (uint32_t i = 0; i < num_blocks; ++i) {
+-    auto &col = columns[i];
+-    while (col.size() > 1) {
+-      uint32_t cur_degree = 0;
+-      uint32_t mn = std::min(chunk_size, (uint32_t)col.size());
+-      for (int j = 0; j < mn; ++j) {
+-        cur_degree += col.front();
+-        col.pop();
+-      }
+-      const uint64_t new_degree = get_degree(cur_degree);
+-      col.push(new_degree);
+-      if ((i + 1) < num_blocks) {
+-        columns[i + 1].push(new_degree);
+-      }
+-    }
+-  }
+-
+-  for (int i = 0; i < num_blocks; i++) {
+-    out_degrees[i] = (columns[i].empty()) ? 0 : columns[i].front();
+-  }
+-}
+-
+ /// @brief Computes the output degrees and noise levels of a partial sum that
+ /// does not reduce its result to message blocks: each output block is the
+ /// plain sum of the blocks left in its column once every column holds at most
+@@ -1300,18 +1259,17 @@ struct int_radix_lut_custom_input_output {
+     using_trivial_lwe_indexes = false;
+   }
+ 
+-private:
+   /// Generates LUT indexes, validates them, and copies to this LUT's GPU index
+-  /// buffer. This is an internal helper - use generate_and_broadcast_lut with
+-  /// an index generator instead.
++  /// buffer. Does not broadcast - caller must call broadcast_lut if needed.
+   ///
+   /// @tparam IndexGenerator Callable with signature: void(InputTorus* indexes,
+   /// uint32_t count)
+   /// @param streams         CUDA streams for async operations
+   /// @param generator       Function/lambda that fills the index buffer
+   /// @param num_indexes     Number of indexes to generate (must equal
+   /// num_blocks)
+-  /// @param h_buffer        Optional CPU buffer; if nullptr, uses h_lut_indexes
++  /// @param h_buffer        Optional CPU staging buffer; if nullptr, uses
++  /// h_lut_indexes. h_lut_indexes is updated in both cases.
+   template <typename IndexGenerator>
+   void set_lut_indexes(CudaStreams streams, IndexGenerator generator,
+                        uint32_t num_indexes, InputTorus *h_buffer = nullptr) {
+@@ -1327,8 +1285,13 @@ struct int_radix_lut_custom_input_output {
+     generate_lut_indexes<InputTorus>(streams, generator, get_lut_indexes(0, 0),
+                                      num_indexes, num_luts, index_buffer,
+                                      gpu_memory_allocated);
++    // Keep the CPU copy equal to the GPU one (used to set the output degrees)
++    if (index_buffer != h_lut_indexes)
++      memcpy(h_lut_indexes, index_buffer,
++             safe_mul_sizeof<InputTorus>(num_indexes));
+   }
+ 
++private:
+   /// Sets all LUT indexes to a constant value on both CPU and GPU.
+   /// Does not broadcast - caller must call broadcast_lut if needed.
+   void set_lut_indexes_to_constant_async(const CudaStreams &streams,
+@@ -1351,17 +1314,36 @@ struct int_radix_lut_custom_input_output {
+   }
+ 
+ public:
+-  /// Copies precomputed LUT indexes from a GPU buffer to this LUT's GPU index
+-  /// buffer.
++  /// @brief Sets the LUT indexes from indexes already on the GPU, without
++  /// reading them back.
+   ///
+-  /// @param streams              CUDA streams for async operations
+-  /// @param d_src_lut_indexes    Source GPU buffer containing precomputed
+-  /// indexes
+-  /// @param num_indexes          Number of indexes to copy
+-  void
+-  set_lut_indexes_and_broadcast_from_gpu(CudaStreams streams,
+-                                         InputTorus const *d_src_lut_indexes,
+-                                         uint32_t num_indexes) {
++  /// @param streams           CUDA streams for async operations
++  /// @param d_src_lut_indexes GPU buffer holding the new indexes
++  /// @param h_src_lut_indexes CPU copy of the same indexes, kept in
++  /// h_lut_indexes for the output degrees. Can be nullptr only if all the
++  /// LUTs have the same degree.
++  /// @param num_indexes       Number of indexes to copy
++  void set_lut_indexes_and_broadcast_from_gpu(
++      CudaStreams streams, InputTorus const *d_src_lut_indexes,
++      InputTorus const *h_src_lut_indexes, u
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/div_rem.cuh` (modified, +13/-2)
+```diff
+@@ -151,11 +151,15 @@ __host__ void host_unsigned_integer_div_rem_block_by_block_2_2(
+                             CudaRadixCiphertextFFI *low,
+                             CudaRadixCiphertextFFI *rem, Torus *first_indexes,
+                             Torus *second_indexes, Torus *scalar_indexes) {
++      size_t h_indexes_id = rem->num_radix_blocks - 1;
+       uint32_t compute_overflow = 1;
+       uint32_t uses_input_borrow = 0;
+       sub_result->num_radix_blocks = low->num_radix_blocks;
+       overflow_sub_mem->update_lut_indexes(
+-          streams.get_ith(gpu_index), first_indexes, second_indexes,
++          streams.get_ith(gpu_index), first_indexes,
++          mem_ptr->h_first_indexes_for_overflow_sub[h_indexes_id],
++          second_indexes,
++          mem_ptr->h_second_indexes_for_overflow_sub[h_indexes_id],
+           scalar_indexes, rem->num_radix_blocks);
+       host_integer_overflowing_sub<uint64_t>(
+           streams.get_ith(gpu_index), sub_result, rem, low, sub_overflowed,
+@@ -749,8 +753,15 @@ __host__ void host_unsigned_integer_div_rem(
+       auto scalar_indexes =
+           mem_ptr->scalars_for_overflow_sub
+               [merged_interesting_remainder->num_radix_blocks - 1];
++      auto h_first_indexes =
++          mem_ptr->h_first_indexes_for_overflow_sub
++              [merged_interesting_remainder->num_radix_blocks - 1];
++      auto h_second_indexes =
++          mem_ptr->h_second_indexes_for_overflow_sub
++              [merged_interesting_remainder->num_radix_blocks - 1];
+       mem_ptr->overflow_sub_mem->update_lut_indexes(
+-          streams, first_indexes, second_indexes, scalar_indexes,
++          streams, first_indexes, h_first_indexes, second_indexes,
++          h_second_indexes, scalar_indexes,
+           merged_interesting_remainder->num_radix_blocks);
+       host_integer_overflowing_sub<uint64_t>(
+           streams, new_remainder, merged_interesting_remainder,
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/kv_store/kv_store.cuh` (modified, +2/-1)
+```diff
+@@ -228,8 +228,9 @@ __host__ void host_kv_store_compute_eq_selectors_small_map(
+     // the LUT per level.
+     auto active =
+         streams.active_gpu_subset(total_chunks, mem_ptr->params.pbs_type());
++    // No CPU copy needed: all the is_max_value LUTs have degree 1
+     is_max_value_lut->set_lut_indexes_and_broadcast_from_gpu(
+-        active, mem_ptr->d_level_lut_indexes[level], total_chunks);
++        active, mem_ptr->d_level_lut_indexes[level], nullptr, total_chunks);
+ 
+     integer_radix_apply_univariate_lookup_table<Torus>(
+         streams, tree_pbs_output, tree_accumulator, bsks, ksks,
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/multiplication.cuh` (modified, +11/-3)
+```diff
+@@ -510,9 +510,17 @@ __host__ void host_integer_partial_sum_ciphertexts_vec(
+           active_streams, current_blocks, radix_lwe_out, bsks, ksks,
+           luts_message_carry, num_blocks_in_apply_lut, true);
+     }
+-    calculate_final_degrees(radix_lwe_out->degrees, terms->degrees,
+-                            num_radix_blocks, num_radix_in_vec, chunk_size,
+-                            mem_ptr->params.message_modulus);
++    // The PBS above wrote the messages to [0, n) and the carries to
++    // [n + 1, 2n], block n stays zero: set the CPU metadata to match, as the
++    // addition below computes the output degrees and noise levels from it
++    for (uint32_t i = 0; i < num_radix_blocks; i++) {
++      current_blocks->degrees[i] = luts_message_carry->degrees[0];
++      current_blocks->noise_levels[i] = NoiseLevel::NOMINAL;
++      current_blocks->degrees[num_radix_blocks + i] =
++          (i == 0) ? 0 : luts_message_carry->degrees[1];
++      current_blocks->noise_levels[num_radix_blocks + i] =
++          (i == 0) ? NoiseLevel::ZERO : NoiseLevel::NOMINAL;
++    }
+     cuda_set_device(streams.gpu_index(0));
+     CudaRadixCiphertextFFI current_blocks_slice;
+     as_radix_ciphertext_slice<Torus>(&current_blocks_slice, current_blocks,
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/scalar_bitops.cuh` (modified, +2/-2)
+```diff
+@@ -44,8 +44,8 @@ host_scalar_bitop(CudaStreams streams, CudaRadixCiphertextFFI *output,
+     }
+     auto active_streams = streams.active_gpu_subset(
+         num_clear_blocks, mem_ptr->lut->params.pbs_type());
+-    lut->set_lut_indexes_and_broadcast_from_gpu(active_streams, clear_blocks,
+-                                                num_clear_blocks);
++    lut->set_lut_indexes_and_broadcast_from_gpu(
++        active_streams, clear_blocks, h_clear_blocks, num_clear_blocks);
+ 
+     integer_radix_apply_univariate_lookup_table<Torus>(
+         streams, output, input, bsks, ksks, lut, num_clear_blocks);
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/scalar_comparison.cuh` (modified, +3/-2)
+```diff
+@@ -766,15 +766,16 @@ __host__ void host_scalar_equality_check(
+       scalar_pack_blocks(lsb_streams.stream(0), streams.gpu_index(0),
+                          &packed_scalar, scalar_blocks, num_scalar_blocks,
+                          message_modulus);
++      // No CPU copy of the packed scalar: all the EQ/NE LUTs have degree 1
+       scalar_comparison_luts->set_lut_indexes_and_broadcast_from_gpu(
+-          active_lsb_streams, (Torus const *)packed_scalar.ptr,
++          active_lsb_streams, (Torus const *)packed_scalar.ptr, nullptr,
+           num_halved_scalar_blocks);
+     } else if (num_lsb_radix_blocks == 1) {
+       copy_radix_ciphertext_slice_async<Torus>(
+           lsb_streams.stream(0), lsb_streams.gpu_index(0), packed_blocks, 0, 1,
+           lwe_array_in, 0, 1);
+       scalar_comparison_luts->set_lut_indexes_and_broadcast_from_gpu(
+-          active_lsb_streams, scalar_blocks, num_halved_scalar_blocks);
++          active_lsb_streams, scalar_blocks, nullptr, num_halved_scalar_blocks);
+     }
+ 
+     integer_radix_apply_univariate_lookup_table<Torus>(
+```
+
+---
+
+### Incident Patch 2: `62caf195` (2026-11-26)
+**Commit Message**: fix(gpu): support shift and rotate amounts of another width (#4187)
+
+* fix(gpu): support shift and rotate amounts of another width
+
+* test(gpu): check shift and rotate by an amount of another width
+
+* test(gpu): run the shift and rotate amount width tests on cpu and gpu
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/goldschmidt_division.h` (modified, +4/-8)
+```diff
+@@ -103,8 +103,6 @@ template <typename Torus> struct int_goldschmidt_division_buffer {
+   CudaRadixCiphertextFFI wide_n;
+   /// @brief Leading-zero count of the denominator, counter_blocks.
+   CudaRadixCiphertextFFI leading_zeros;
+-  /// @brief leading_zeros zero-extended to the width of the value it shifts.
+-  CudaRadixCiphertextFFI shift_amount;
+   /// @brief Boolean block set when the denominator is zero.
+   CudaRadixCiphertextFFI d_is_zero;
+ 
+@@ -244,7 +242,6 @@ template <typename Torus> struct int_goldschmidt_division_buffer {
+     new_ct(shifted_d, num_blocks);
+     new_ct(wide_n, 2 * num_blocks);
+     new_ct(leading_zeros, counter_blocks);
+-    new_ct(shift_amount, 2 * num_blocks);
+     new_ct(d_is_zero, 1);
+     new_ct(seed_factor, x0_blocks);
+     new_ct(seed_found, 1);
+@@ -305,11 +302,11 @@ template <typename Torus> struct int_goldschmidt_division_buffer {
+     // Two shifters: the denominator stays at operand width, the numerator is
+     // widened first so that shifting it left cannot lose its top bits.
+     shift_d_mem = new int_shift_and_rotate_buffer<Torus>(
+-        streams, LEFT_SHIFT, false, params, num_blocks, allocate_gpu_memory,
+-        size_tracker);
++        streams, LEFT_SHIFT, false, params, num_blocks, counter_blocks,
++        allocate_gpu_memory, size_tracker);
+     shift_n_mem = new int_shift_and_rotate_buffer<Torus>(
+-        streams, LEFT_SHIFT, false, params, 2 * num_blocks, allocate_gpu_memory,
+-        size_tracker);
++        streams, LEFT_SHIFT, false, params, 2 * num_blocks, counter_blocks,
++        allocate_gpu_memory, size_tracker);
+ 
+     // Seed table: for d's top (lut_precision + 1) bits, x0 such that
+     // (1 + x0) * d < 1 and 1 + x0 approximates 1/d to lut_precision bits.
+@@ -407,7 +404,6 @@ template <typename Torus> struct int_goldschmidt_division_buffer {
+     drop_ct(shifted_d);
+     drop_ct(wide_n);
+     drop_ct(leading_zeros);
+-    drop_ct(shift_amount);
+     drop_ct(d_is_zero);
+     drop_ct(seed_factor);
+     drop_ct(seed_found);
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer.h` (modified, +1/-1)
+```diff
+@@ -213,7 +213,7 @@ uint64_t scratch_cuda_shift_and_rotate_64_inplace_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+     CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_blocks,
+-    uint32_t message_modulus, uint32_t carry_modulus,
++    uint32_t num_shift_blocks, uint32_t message_modulus, uint32_t carry_modulus,
+     SHIFT_OR_ROTATE_TYPE shift_type, bool is_signed, bool allocate_gpu_memory);
+ 
+ void cuda_shift_and_rotate_64_inplace_async(
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/include/integer/shift_and_rotate.h` (modified, +35/-23)
+```diff
+@@ -166,11 +166,15 @@ template <typename Torus> struct int_shift_and_rotate_buffer {
+   /// @brief One-block ct reused by the fixup: first the boolean predicate,
+   /// then the per-block condition packed into the carry.
+   CudaRadixCiphertextFFI *tmp_overshift;
+-  /// @brief Zero-padded copy of the shift amount, used when the block count is
+-  /// odd (the comparison needs an even count, or one). Null when not padding.
++  /// @brief Zero-padded copy of the shift amount, used when the amount has
++  /// fewer blocks than the value (both paths read as many amount blocks as the
++  /// value has) or than the comparison needs (an even count, or one). Null
++  /// when not padding.
+   CudaRadixCiphertextFFI *tmp_padded_shift;
+-  /// @brief Number of blocks the comparison runs on: the input block count
+-  /// rounded up to even (or 1).
++  /// @brief Number of blocks of the encrypted shift amount.
++  uint32_t num_shift_blocks;
++  /// @brief Number of blocks the comparison runs on: the larger of the value
++  /// and amount block counts, rounded up to even (or 1).
+   uint32_t overshift_compare_num_blocks;
+   /// @brief Constant the shift amount is compared against: total_nb_bits split
+   /// into blocks, on the host.
+@@ -197,11 +201,13 @@ template <typename Torus> struct int_shift_and_rotate_buffer {
+                               SHIFT_OR_ROTATE_TYPE shift_type, bool is_signed,
+                               int_radix_params params,
+                               uint32_t num_radix_blocks,
++                              uint32_t num_shift_blocks,
+                               bool allocate_gpu_memory,
+                               uint64_t &size_tracker) {
+     this->shift_type = shift_type;
+     this->is_signed = is_signed;
+     this->params = params;
++    this->num_shift_blocks = num_shift_blocks;
+     gpu_memory_allocated = allocate_gpu_memory;
+ 
+     uint32_t bits_per_block = std::log2(params.message_modulus);
+@@ -255,6 +261,17 @@ template <typename Torus> struct int_shift_and_rotate_buffer {
+     // ---- Overshift handling (shifts only, not rotations) ----
+     setup_handle_overshift(streams, num_radix_blocks, total_nb_bits,
+                            allocate_gpu_memory, size_tracker);
++
++    uint32_t padded_shift_num_blocks =
++        handle_overshift ? overshift_compare_num_blocks : num_radix_blocks;
++    tmp_padded_shift = nullptr;
++    if (padded_shift_num_blocks > num_shift_blocks) {
++      tmp_padded_shift = new CudaRadixCiphertextFFI;
++      create_zero_radix_ciphertext_async<Torus>(
++          streams.stream(0), streams.gpu_index(0), tmp_padded_shift,
++          padded_shift_num_blocks, params.big_lwe_dimension, size_tracker,
++          allocate_gpu_memory);
++    }
+   }
+ 
+   /// @brief Allocates and initializes the buffers and LUTs used to fix up the
+@@ -269,7 +286,6 @@ template <typename Torus> struct int_shift_and_rotate_buffer {
+     handle_overshift = (shift_type == LEFT_SHIFT || shift_type == RIGHT_SHIFT);
+     overshift_compare_mem = nullptr;
+     tmp_overshift = nullptr;
+-    tmp_padded_shift = nullptr;
+     overshift_compare_num_blocks = 0;
+     d_overshift_scalar_blocks = nullptr;
+     h_overshift_scalar_blocks = nullptr;
+@@ -280,11 +296,14 @@ template <typename Torus> struct int_shift_and_rotate_buffer {
+     if (handle_overshift) {
+       auto message_modulus = params.message_modulus;
+ 
+-      // The unsigned scalar comparison requires an even number of blocks (or
+-      // exactly 1), so pad the comparison block count when needed.
+-      overshift_compare_num_blocks = num_radix_blocks;
+-      if (num_radix_blocks > 1 && (num_radix_blocks % 2 != 0))
+-        overshift_compare_num_blocks = num_radix_blocks + 1;
++      // The comparison reads the whole amount. The unsigned scalar comparison
++      // requires an even number of blocks (or exactly 1), so pad the
++      // comparison block count when needed.
++      overshift_compare_num_blocks =
++          std::max(num_radix_blocks, num_shift_blocks);
++      if (overshift_compare_num_blocks > 1 &&
++          (overshift_compare_num_blocks % 2 != 0))
++        overshift_compare_num_blocks += 1;
+ 
+       overshift_compare_mem = new int_comparison_buffer<Torus>(
+           streams, COMPARISON_TYPE::GE, params, overshift_compare_num_blocks,
+@@ -295,14 +314,6 @@ template <typename Torus> struct int_shift_and_rotate_buffer {
+           streams.stream(0), streams.gpu_index(0), tmp_overshift, 1,
+           params.big_lwe_dimension, size_tracker, allocate_gpu_memory);
+ 
+-      if (overshift_compare_num_blocks != num_radix_blocks) {
+-        tmp_padded_shift = new CudaRadixCiphertextFFI;
+-        create_zero_radix_ciphertext_async<Torus>(
+-            streams.stream(0), streams.gpu_index(0), tmp_padded_shift,
+-            overshift_compare_num_blocks, params.big_lwe_dimension,
+-            size_tracker, allocate_gpu_memory);
+-      }
+-
+       // Decompose total_nb_bits into base-message_modulus digits
+       // (little-endian)
+       std::vector<Torus> dig
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/goldschmidt_division.cuh` (modified, +4/-12)
+```diff
+@@ -296,25 +296,17 @@ __host__ void goldschmidt_normalize(CudaStreams streams,
+       streams, &mem->d_is_zero, denominator, mem->d_zero_scalar,
+       mem->is_zero_mem, bsks, ksks, num_blocks, num_blocks);
+ 
+-  // The barrel shifter wants the amount at the same width as the value, so the
+-  // counter is zero extended for each of the two shifts.
+-  CudaRadixCiphertextFFI narrow_amount;
+-  as_radix_ciphertext_slice<Torus>(&narrow_amount, &mem->shift_amount, 0,
+-                                   num_blocks);
+-  goldschmidt_blockshift<Torus>(streams, &narrow_amount, &mem->leading_zeros,
+-                                0);
+   copy_radix_ciphertext_async<Torus>(stream, gpu_index, &mem->shifted_d,
+                                      denominator);
+-  host_shift_and_rotate_inplace<Torus, KSTorus>(
+-      streams, &mem->shifted_d, &narrow_amount, mem->shift_d_mem, bsks, ksks);
++  host_shift_and_rotate_inplace<Torus, KSTorus>(streams, &mem->shifted_d,
++                                                &mem->leading_zeros,
++                                                mem->shift_d_mem, bsks, ksks);
+   goldschmidt_blockshift<Torus>(streams, &mem->current_d, &mem->shifted_d,
+                                 (int32_t)(fp_blocks - num_blocks));
+ 
+   goldschmidt_blockshift<Torus>(streams, &mem->wide_n, numerator, 0);
+-  goldschmidt_blockshift<Torus>(streams, &mem->shift_amount,
+-                                &mem->leading_zeros, 0);
+   host_shift_and_rotate_inplace<Torus, KSTorus>(
+-      streams, &mem->wide_n, &mem->shift_amount, mem->shift_n_mem, bsks, ksks);
++      streams, &mem->wide_n, &mem->leading_zeros, mem->shift_n_mem, bsks, ksks);
+   goldschmidt_blockshift<Torus>(streams, &mem->current_n, &mem->wide_n,
+                                 (int32_t)fp_blocks - 2 * (int32_t)num_blocks);
+   POP_RANGE()
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/shift_and_rotate.cu` (modified, +3/-2)
+```diff
+@@ -4,14 +4,15 @@ uint64_t scratch_cuda_shift_and_rotate_64_inplace_async(
+     CudaStreamsFFI streams, int8_t **mem_ptr,
+     CudaLweBootstrapKeyParamsFFI bsk_params,
+     CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_blocks,
+-    uint32_t message_modulus, uint32_t carry_modulus,
++    uint32_t num_shift_blocks, uint32_t message_modulus, uint32_t carry_modulus,
+     SHIFT_OR_ROTATE_TYPE shift_type, bool is_signed, bool allocate_gpu_memory) {
+   int_radix_params params(bsk_params, ksk_params, message_modulus,
+                           carry_modulus);
+ 
+   return scratch_cuda_shift_and_rotate<uint64_t>(
+       CudaStreams(streams), (int_shift_and_rotate_buffer<uint64_t> **)mem_ptr,
+-      num_blocks, params, shift_type, is_signed, allocate_gpu_memory);
++      num_blocks, num_shift_blocks, params, shift_type, is_signed,
++      allocate_gpu_memory);
  }
  
+ void cuda_shift_and_rotate_64_inplace_async(
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/integer/shift_and_rotate.cuh` (modified, +35/-32)
+```diff
+@@ -15,12 +15,13 @@
+ template <typename Torus>
+ __host__ uint64_t scratch_cuda_shift_and_rotate(
+     CudaStreams streams, int_shift_and_rotate_buffer<Torus> **mem_ptr,
+-    uint32_t num_radix_blocks, int_radix_params params,
+-    SHIFT_OR_ROTATE_TYPE shift_type, bool is_signed, bool allocate_gpu_memory) {
++    uint32_t num_radix_blocks, uint32_t num_shift_blocks,
++    int_radix_params params, SHIFT_OR_ROTATE_TYPE shift_type, bool is_signed,
++    bool allocate_gpu_memory) {
+   uint64_t size_tracker = 0;
+   *mem_ptr = new int_shift_and_rotate_buffer<Torus>(
+       streams, shift_type, is_signed, params, num_radix_blocks,
+-      allocate_gpu_memory, size_tracker);
++      num_shift_blocks, allocate_gpu_memory, size_tracker);
+   return size_tracker;
+ }
  
--def parse_profile(profile_string, output_file, slab_toml):
-+def parse_profile(profile_string, output_file):
-     parts = profile_string.split("::", 1)
-     if len(parts) != 2:
-         print(
-@@ -50,33 +49,6 @@ def parse_profile(profile_string, output_file, slab_toml):
-     else:
-         profile = profile_name
+@@ -29,7 +30,8 @@ __host__ uint64_t scratch_cuda_shift_and_rotate(
+  * packs it into the carry of mem->tmp_overshift, so it can later be fused into
+  * the final cleaning PBS of the reassembly at no extra per-block PBS cost. For
+  * an arithmetic right shift the condition also encodes the input's sign.
+- * @param lwe_shift Encrypted shift amount to compare against the bit width.
++ * @param lwe_shift Encrypted shift amount to compare against the bit width,
++ * with mem->overshift_compare_num_blocks blocks.
+  * @param last_bit Input's original sign bit, used for the arithmetic case.
+  * @param mem Scratch buffer holding the comparison memory, scalar and LUTs.
+  */
+@@ -43,22 +45,8 @@ host_compute_overshift_condition(CudaStreams streams,
+   auto message_modulus = mem->params.message_modulus;
+   auto carry_modulus = mem->params.carry_modulus;
  
--    with open(slab_toml, "rb") as f:
--        slab = tomllib.load(f)
--
--    available = slab.get("backend", {}).get(slab_backend, {})
--    if profile not in available:
--        print(
--            f"Error: profile '{profile}' not found under [backend.{slab_backend}] in {slab_toml}.\n"
--            f"Known profiles: {', '.join(sorted(available.keys()))}",
--            file=sys.stderr,
--        )
--        sys.exit(1)
--
--    entry = available[profile]
--    expected_hardware = (
--        entry.get("hardware_name") or entry.get("flavor_name") or entry.get("instance_type")
--    )
--    assert expected_hardware is not None, (
--        f"profile '{profile}' in {slab_toml} has none of 'hardware_name', 'flavor_name' or 'instance_type'"
--    )
--    if hardware_name != expected_hardware:
--        print(
--            f"Error: hardware '{hardware_name}' does not match expected '{expected_hardware}' "
--            f"for profile '{profile}' in {slab_toml}.",
--            file=sys.stderr,
--        )
--        sys.exit(1)
--
-     with open(output_file, "a") as f:
-         for var_name, value in [
-             ("backend", slab_backend),
-@@ -99,10 +71,5 @@ def parse_profile(profile_string, output_file, slab_toml):
-         "output_file",
-         help="File to append the parsed key=value pairs to (e.g. $GITHUB_OUTPUT)",
-     )
--    parser.add_argument(
--        "--slab-toml",
--        default="ci/slab.toml",
--        help="Path to slab.toml (default: ci/slab.toml)",
--    )
-     args = parser.parse_args()
--    parse_profile(args.profile_string, args.output_file, args.slab_toml)
-+    parse_profile(args.profile_string, args.output_file)
+-  auto num_radix_blocks = lwe_shift->num_radix_blocks;
+-  CudaRadixCiphertextFFI const *compare_in;
+-  if (mem->tmp_padded_shift != nullptr) {
+-    // Pad the shift amount to an even number of blocks (high block is 0).
+-    set_zero_radix_ciphertext_slice_async<Torus>(
+-        streams.stream(0), streams.gpu_index(0), mem->tmp_padded_shift, 0,
+-        mem->tmp_padded_shift->num_radix_blocks);
+-    copy_radix_ciphertext_slice_async<Torus>(
+-        streams.stream(0), streams.gpu_index(0), mem->tmp_padded_shift, 0,
+-        num_radix_blocks, lwe_shift, 0, num_radix_blocks);
+-    compare_in = mem->tmp_padded_shift;
+-  } else {
+-    compare_in = lwe_shift;
+-  }
+   integer_radix_unsigned_scalar_difference_check<Torus>(
+-      streams, mem->tmp_overshift, compare_in, mem->d_overshift_scalar_blocks,
++      streams, mem->tmp_overshift, lwe_shift, mem->d_overshift_scalar_blocks,
+       mem->h_overshift_scalar_blocks, mem->overshift_compare_mem,
+       mem->overshift_compare_mem->diff_buffer->operator_f, bsks, ksks,
+       mem->overshift_compare_num_blocks, mem->num_overshift_scalar_blocks);
+@@ -110,16 +98,39 @@ host_shift_and_rotate_inplace(CudaStreams streams,
+                               CudaRadixCiphertextFFI const *lwe_shift,
+                               int_shift_and_rotate_buffer<Torus> *mem,
+                               void *const *bsks, KSTorus *const *ksks) {
++  if (lwe_shift->num_radix_blocks != mem->num_shift_blocks)
++    PANIC("Cuda error: lwe_shift num radix blocks must be the one given to "
++          "the scratch")
++  auto num_radix_blocks = lwe_array->num_radix_blocks;
++  if (num_radix_blocks == 0)
++    return;
++
++  // Both paths read as many amount blocks as the value has, the overshift
++  // comparison reads all of them: a shorter amount is padded with zero blocks.
++  CudaRadixCiphertextFFI const *full_shift = lwe_shift;
++  if (mem->tmp_padded_shift != nullptr) {
++    set_zero_radix_ciphertext_slice_async<Torus>(
++        streams.stream(0), streams.gpu_index(0), mem->tmp_padded_shift, 0,
++        mem->tmp_padded_shift->num_radix_blocks);
++    copy_radix_ciphertext_slice_async<Torus>(
++        streams.stream(0), streams.gpu_index(0), mem->tmp_padded_shift, 0,
++        lwe_shift->num_radix_blocks, lwe_shift, 0, lwe_shift->num_radix_blocks);
++    full_shift = mem->tmp_padded_shift;
++  }
++  CudaRadixCiphertextFFI value_width_shift;
++  as_radix_ciphertext_slice<Torus>(&value_width_shift, full_shift, 0,
++                                   num_radix_blocks);
++
+   if (mem->use_block_path) {
+     auto block_mem = mem->block_mem;
+-    host_block_shift_and_rotate<Torus, KSTorus>(streams, lwe_array, lwe_shift,
+-                                                block_mem, bsks, ksks);
++    host_block_shift_and_rotate<Torus, KSTorus>(
++        streams, lwe_array, &value_width_shift, block_mem, bsks, ksks);
+     // The result still carries the noise accumulated by the rounds, so a
+     // cleaning PBS is due anyway; for a shift it also applies the overshift
+     // selection for free.
+     if (mem->handle_overshift) {
+       host_compute_overshift_condition<Torus, KSTorus>(
+-          streams, lwe_shift, &block_mem->sign_block, mem, bsks, ksks);
++          streams, full_shift, &block_mem->sign_block, mem, bsks, ksks);
+       host_apply_overshift_cleanup<Torus, KSTorus>(
+           streams, lwe_array, &block_mem->messages, me
+```
+
+**File**: `backends/tfhe-cuda-backend/src/bindings.rs` (modified, +1/-0)
+```diff
+@@ -789,6 +789,7 @@ unsafe extern "C" {
+         bsk_params: CudaLweBootstrapKeyParamsFFI,
+         ksk_params: CudaLweKeyswitchKeyParamsFFI,
+         num_blocks: u32,
++        num_shift_blocks: u32,
+         message_modulus: u32,
+         carry_modulus: u32,
+         shift_type: SHIFT_OR_ROTATE_TYPE,
+```
+
+**File**: `tfhe/src/integer/gpu/ffi.rs` (modified, +12/-0)
+```diff
+@@ -3832,6 +3832,7 @@ pub(crate) unsafe fn cuda_backend_unchecked_right_shift_assign<T: UnsignedIntege
+         bsk_params,
+         ksk_params,
+         num_blocks,
++        u32::try_from(radix_shift.d_blocks.lwe_ciphertext_count().0).unwrap(),
+         u32::try_from(message_modulus.0).unwrap(),
+         u32::try_from(carry_modulus.0).unwrap(),
+         ShiftRotateType::RightShift as u32,
+@@ -3931,6 +3932,7 @@ pub(crate) unsafe fn cuda_backend_unchecked_left_shift_assign<T: UnsignedInteger
+         bsk_params,
+         ksk_params,
+         num_blocks,
++        u32::try_from(radix_shift.d_blocks.lwe_ciphertext_count().0).unwrap(),
+         u32::try_from(message_modulus.0).unwrap(),
+         u32::try_from(carry_modulus.0).unwrap(),
+         ShiftRotateType::LeftShift as u32,
+@@ -4035,6 +4037,7 @@ pub(crate) unsafe fn cuda_backend_unchecked_rotate_right_assign<T: UnsignedInteg
+         bsk_params,
+         ksk_params,
+         num_blocks,
++        u32::try_from(radix_rotation.d_blocks.lwe_ciphertext_count().0).unwrap(),
+         u32::try_from(message_modulus.0).unwrap(),
+         u32::try_from(carry_modulus.0).unwrap(),
+         ShiftRotateType::RightRotate as u32,
+@@ -4139,6 +4142,7 @@ pub(crate) unsafe fn cuda_backend_unchecked_rotate_left_assign<T: UnsignedIntege
+         bsk_params,
+         ksk_params,
+         num_blocks,
++        u32::try_from(radix_rotation.d_blocks.lwe_ciphertext_count().0).unwrap(),
+         u32::try_from(message_modulus.0).unwrap(),
+         u32::try_from(carry_modulus.0).unwrap(),
+         ShiftRotateType::LeftRotate as u32,
+@@ -4267,6 +4271,7 @@ pub(crate) fn cuda_backend_get_right_shift_size_on_gpu(
+     bsk: &impl CudaBootstrapKey,
+     ksk_params: CudaLweKeyswitchKeyParamsFFI,
+     num_blocks: u32,
++    num_shift_blocks: u32,
+     is_signed: bool,
+ ) -> u64 {
+     let bsk_params = bsk.params_ffi();
+@@ -4279,6 +4284,7 @@ pub(crate) fn cuda_backend_get_right_shift_size_on_gpu(
+             bsk_params,
+             ksk_params,
+             num_blocks,
++            num_shift_blocks,
+             u32::try_from(message_modulus.0).unwrap(),
+             u32::try_from(carry_modulus.0).unwrap(),
+             ShiftRotateType::RightShift as u32,
+@@ -4300,6 +4306,7 @@ pub(crate) fn cuda_backend_get_left_shift_size_on_gpu(
+     bsk: &impl CudaBootstrapKey,
+     ksk_params: CudaLweKeyswitchKeyParamsFFI,
+     num_blocks: u32,
++    num_shift_blocks: u32,
+     is_signed: bool,
+ ) -> u64 {
+     let bsk_params = bsk.params_ffi();
+@@ -4312,6 +4319,7 @@ pub(crate) fn cuda_backend_get_left_shift_size_on_gpu(
+             bsk_params,
+             ksk_params,
+             num_blocks,
++            num_shift_blocks,
+             u32::try_from(message_modulus.0).unwrap(),
+             u32::try_from(carry_modulus.0).unwrap(),
+             ShiftRotateType::LeftShift as u32,
+@@ -4333,6 +4341,7 @@ pub(crate) fn cuda_backend_get_rotate_right_size_on_gpu(
+     bsk: &impl CudaBootstrapKey,
+     ksk_params: CudaLweKeyswitchKeyParamsFFI,
+     num_blocks: u32,
++    num_shift_blocks: u32,
+     is_signed: bool,
+ ) -> u64 {
+     let bsk_params = bsk.params_ffi();
+@@ -4345,6 +4354,7 @@ pub(crate) fn cuda_backend_get_rotate_right_size_on_gpu(
+             bsk_params,
+             ksk_params,
+             num_blocks,
++            num_shift_blocks,
+             u32::try_from(message_modulus.0).unwrap(),
+             u32::try_from(carry_modulus.0).unwrap(),
+             ShiftRotateType::RightRotate as u32,
+@@ -4366,6 +4376,7 @@ pub(crate) fn cuda_backend_get_rotate_left_size_on_gpu(
+     bsk: &impl CudaBootstrapKey,
+     ksk_params: CudaLweKeyswitchKeyParamsFFI,
+     num_blocks: u32,
++    num_shift_blocks: u32,
+     is_signed: bool,
+ ) -> u64 {
+     let bsk_params = bsk.params_ffi();
+@@ -4378,6 +4389,7 @@ pub(crate) fn cuda_backend_get_rotate_left_size_on_gpu(
+             bsk_params,
+             ksk_params,
+             num_blocks,
++            num_shift_blocks,
+             u32::try_from(message_modulus.0).unwrap(),
+             u32::try_from(carry_modulus.0).unwrap(),
+             ShiftRotateType::LeftRotate as u32,
+```
+
+---
+
+### Incident Patch 3: `40005b56` (2026-11-26)
+**Commit Message**: fix(hpu): on slow machines there is a time between DMA queue kernel add and udev add, so adding a retry loop (#4228)
+
+**File**: `backends/tfhe-hpu-backend/src/ffi/v80/mod.rs` (modified, +16/-6)
+```diff
+@@ -316,12 +316,22 @@ impl HpuHw {
+             .expect("dma-ctl q start idx 0 h2c failed");
+ 
+         // Write stage2 PDI through QDMA
+-        let qdma_h2c = OpenOptions::new()
+-            .read(false)
+-            .write(true)
+-            .create(false)
+-            .open(format!("/dev/qdma{dev}001-MM-0"))
+-            .map_err(|e| format!("Unable to open Qdma queue 0: {e}"))?;
++        let mut tries = 0;
++        let qdma_h2c = loop {
++            match OpenOptions::new()
++                .read(false)
++                .write(true)
++                .create(false)
++                .open(format!("/dev/qdma{dev}001-MM-0"))
++            {
++                Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied && tries < 10 => {
++                    tries += 1;
++                    std::thread::sleep(std::time::Duration::from_millis(20));
++                }
++                res => break res.unwrap_or_else(|e| panic!("Unable to open Qdma queue 0: {e}")),
++            }
++        };
++
+         let ret = nix::sys::uio::pwrite(&qdma_h2c, stg2_data, 0x000102100000_i64)
+             .map_err(|e| format!("pwrite failed: {e}"))?;
+         if ret != stg2_data.len() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4228** (2026-11-26): fix(hpu): retry on DMA queue open to load FPGAs (@pgardratzama)
+- **PR #4224** (2026-11-26): chore(deps): ignore chrono unmaintained warning (@nsarlin-zama)
 - **PR #4220** (2026-11-25): fix: remove in python ci parser the slab.toml parsing (@SouchonTheo)
 - **PR #4218** (2026-11-25): chore(deps): bump requests from 2.32.4 to 2.33.0 in /ci (@dependabot[bot])
 - **PR #4217** (2026-11-24): chore(ci): remove ci file not used anymore (@SouchonTheo)
 - **PR #4215** (2026-11-24): HPU bench numbers for v1.9 doc (@pgardratzama)
-- **PR #4214** (2026-11-23): chore: move gpu scripts to dedicated dir with gpu team as codewoners (@IceTDrinker)
-- **PR #4212** (2026-11-23): chore(data-extractor): bump url to 2.5.9 (@nsarlin-zama)
 
 ---
 
@@ -2062,64 +2917,75 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove in python ci parser the slab.toml parsing
+## X. gpu): ensure correct host indexes updates
 
 **RULE**:
-When implementing operations in `ci/parse_benchmark_profile.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `backends/tfhe-cuda-backend/cuda/include/integer/comparison.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83659c4c`: remove in python ci parser the slab.toml parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2358d26`: gpu): ensure correct host indexes updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/parse_benchmark_profile.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/include/integer/comparison.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-def parse_profile(profile_string, output_file):
-    parse_profile(args.profile_string, args.output_file)
+        // Group g uses the LUT index and the corrector that
+        // int_prop_simu_group_carries_memory uses at the last position of the
+        // group (at the simulator position for the last group). The comparison
+        // only applies this LUT to the first n_groups blocks, the other
+        // indexes are set to 0: the LUT can no longer be used for the generic
+        // borrow propagation.
+        auto group_pos = [=](uint32_t g) -> uint32_t {
+          return (g + 1 < n_groups) ? (g + 1) * group_size - 1
+                                    : num_radix_blocks - 2;
+        auto *lut = mem_simu_group_carries->luts_array_second_step;
+        lut->set_lut_indexes(
+            active_streams,
+            [&](Torus *h_indexes, uint32_t num_indexes) {
+              for (uint32_t i = 0; i < num_indexes; i++)
+                h_indexes[i] = 0;
+              for (uint32_t g = 0; g < n_groups; g++) {
+                uint32_t pos = group_pos(g);
+                uint32_t group_index = pos / group_size;
+                uint32_t pos_in_group = pos % group_size;
+                if (group_index == 0) {
+                  h_indexes[g] = pos_in_group;
+                } else if (pos_in_group =
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-import tomllib
-def parse_profile(profile_string, output_file, slab_toml):
-    with open(slab_toml, "rb") as f:
-        slab = tomllib.load(f)
-
-    available = slab.get("backend", {}).get(slab_backend, {})
-    if profile not in available:
-        print(
-            f"Error: profile '{profile}' not found under [backend.{slab_backend}] in {slab_toml}.\n"
-            f"Known profiles: {', '.join(sorted(available.keys()))}",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    entry = available[profile]
-    expected_hardware = (
-        entry.get("hardware_name") or entry.get("flavor_name") or entry.get("instance_type")
-    )
-    assert expected_hardware is not None, (
-        f"profile '{profile}' in {slab_toml} has none of 'hardware_name', 'flavor_name' or 'instance_type'"
-    )
-    if hardware_name != expected_hardware:
-        print(
-            f"Error: hardware '{hardware_name}' does not match expected '{expected_hardware}' "
-            f"for profile '{profile}' in {slab_toml}.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    parser.add_argument(
-        "--slab-toml",
-        default="ci/slab.toml",
-        help="Path to slab.toml (default: ci/slab.to
+        // Mirror second_step_lut_index_generator / h_scalar_array_cum_sum for a
+        // single cumulative-sum position (see
+        // int_prop_simu_group_carries_memory).
+        auto lut_index_for = [group_size, seq](uint32_t pos) -> Torus {
+          uint32_t group_index = pos / group_size;
+          uint32_t pos_in_group = pos % group_size;
+          if (group_index == 0)
+            return (Torus)pos_in_group;
+          else if (pos_in_group == group_size - 1)
+            return seq ? (Torus)((group_index - 1) % (group_size - 1) +
+                                 2 * group_size)
+                       : (Torus)(2 * group_size);
+          else
+            return (Torus)(pos_in_group + group_size);
+        };
+        auto corrector_for = [group_size, seq](uint32_t pos) -> Torus {
+          uint32_t group_index = pos / group_size;
+          uint32_t pos_in_group = pos % group_size;
+          if (group_index == 0 || pos_in_group != group_size - 1)
+            return (Torus)0;
+          return seq ? ((Torus)1 << ((group_index - 1) % (group_size - 1)))
+                     : (Torus)1;
+        std::vector<Torus> h_indexes(n_groups);
+        std::vector<Torus> h_scalar_corrector(n
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83659c4c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2358d26` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

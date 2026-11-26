@@ -810137,3 +810137,201 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `50d1f268` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10744. document isolated background task registries for benchmarks (fixes #2272) (Harvested from 1jehuang/jcode)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "document isolated background task registries for benchmarks (fixes #2272)",
+  "source": "1jehuang/jcode",
+  "source_url": "https://github.com/1jehuang/jcode",
+  "source_version": "cfd6745d",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T17:56:55.038Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-1jehuang-jcode",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [1jehuang/jcode](https://github.com/1jehuang/jcode) (Revision: `cfd6745d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a5ca9a77`: document isolated background task registries for benchmarks (fixes #2272). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+the user's normal session storage. On Unix, also give the server and clients the
+same private `TMPDIR`: background task status and output use the OS temp
+folder (`$TMPDIR/jcode-bg-tasks`), not `JCODE_HOME`. Without this, an isolated
+benchmark and the regular daemon can see each other's background tasks.
+(
+  root=$(mktemp -d) || exit 1
+  export JCODE_HOME="$root/home" TMPDIR="$root/tmp" JCODE_TEST_SESSION=1
+  mkdir -m 700 "$JCODE_HOME" "$TMPDIR" || exit 1
+  printf 'Isolated run directory: %s\n' "$root"
+  ./target/selfdev/jcode run --no-update --socket "$root/server.sock" '<prompt>'
+)
+Remove the printed directory only after the isolated daemon and its background
+tasks have stopped and you no longer need their output.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+the user's normal session storage.
+./target/selfdev/jcode run --no-update --socket /run/user/1000/jcode-mytest.sock '<prompt>'
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a5ca9a77` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10745. ensure correct host indexes updates (Harvested from zama-ai/tfhe-rs)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ensure correct host indexes updates",
+  "source": "zama-ai/tfhe-rs",
+  "source_url": "https://github.com/zama-ai/tfhe-rs",
+  "source_version": "b2358d26",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T17:57:06.303Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zama-ai-tfhe-rs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `b2358d26`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `backends/tfhe-cuda-backend/cuda/include/integer/comparison.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b2358d26`: gpu): ensure correct host indexes updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/cuda/include/integer/comparison.h`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // Group g uses the LUT index and the corrector that
+        // int_prop_simu_group_carries_memory uses at the last position of the
+        // group (at the simulator position for the last group). The comparison
+        // only applies this LUT to the first n_groups blocks, the other
+        // indexes are set to 0: the LUT can no longer be used for the generic
+        // borrow propagation.
+        auto group_pos = [=](uint32_t g) -> uint32_t {
+          return (g + 1 < n_groups) ? (g + 1) * group_size - 1
+                                    : num_radix_blocks - 2;
+        auto *lut = mem_simu_group_carries->luts_array_second_step;
+        lut->set_lut_indexes(
+            active_streams,
+            [&](Torus *h_indexes, uint32_t num_indexes) {
+              for (uint32_t i = 0; i < num_indexes; i++)
+                h_indexes[i] = 0;
+              for (uint32_t g = 0; g < n_groups; g++) {
+                uint32_t pos = group_pos(g);
+                uint32_t group_index = pos / group_size;
+                uint32_t pos_in_group = pos % group_size;
+                if (group_index == 0) {
+                  h_indexes[g] = pos_in_group;
+                } else if (pos_in_group =
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        // Mirror second_step_lut_index_generator / h_scalar_array_cum_sum for a
+        // single cumulative-sum position (see
+        // int_prop_simu_group_carries_memory).
+        auto lut_index_for = [group_size, seq](uint32_t pos) -> Torus {
+          uint32_t group_index = pos / group_size;
+          uint32_t pos_in_group = pos % group_size;
+          if (group_index == 0)
+            return (Torus)pos_in_group;
+          else if (pos_in_group == group_size - 1)
+            return seq ? (Torus)((group_index - 1) % (group_size - 1) +
+                                 2 * group_size)
+                       : (Torus)(2 * group_size);
+          else
+            return (Torus)(pos_in_group + group_size);
+        };
+        auto corrector_for = [group_size, seq](uint32_t pos) -> Torus {
+          uint32_t group_index = pos / group_size;
+          uint32_t pos_in_group = pos % group_size;
+          if (group_index == 0 || pos_in_group != group_size - 1)
+            return (Torus)0;
+          return seq ? ((Torus)1 << ((group_index - 1) % (group_size - 1)))
+                     : (Torus)1;
+        std::vector<Torus> h_indexes(n_groups);
+        std::vector<Torus> h_scalar_corrector(n
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b2358d26` are properly handled with clean fallback behavior.

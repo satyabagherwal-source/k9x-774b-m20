@@ -4,17 +4,17 @@
 {
   "source_repository": "1jehuang/jcode",
   "source_url": "https://github.com/1jehuang/jcode",
-  "source_version": "103a1fa2",
+  "source_version": "cfd6745d",
   "license": "MIT",
-  "timestamp": "2026-11-25T10:35:14.727Z",
+  "timestamp": "2026-11-26T17:56:56.023Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-1jehuang-jcode",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [1jehuang/jcode](https://github.com/1jehuang/jcode) (Revision: `103a1fa2`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T10:35:14.727Z`  
+> **Provenance**: Harvested from [1jehuang/jcode](https://github.com/1jehuang/jcode) (Revision: `cfd6745d`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T17:56:56.023Z`  
 > **Learning ID**: `learn-github-1jehuang-jcode`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T10:35:13.353Z  
+> **Harvest Timestamp**: 2026-11-26T17:56:54.363Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 22037 stars
+- **Stars / Engagement**: 22071 stars
 
 ---
 
@@ -1055,17 +1055,16 @@ impl Agent {
             return false;
         }
 
-        let context_limit = self.provider.context_window() as u64;
         let compaction = self.registry.compaction();
 
         let (dropped, usage_pct) = match compaction.try_write() {
             Ok(mut manager) => {
                 let (dropped, usage_pct) = {
                     let all_messages = self.session.provider_messages();
-                    manager.update_observed_input_tokens(context_limit);
                     let usage_pct = manager.context_usage_with(all_messages) * 100.0;
-                    // The provider rejected the request, so the context was at
-                    // least the limit even if the local estimate is lower.
+                    // Preserve the actual observed/estimated token count rather than
+                    // overwriting it with `provider.context_window()`: an upstream route
+                    // may reject at a smaller limit (e.g. 64k) than the catalog window (1M).
                     let pre_tokens = manager.effective_token_count_with(all_messages) as u64;
                     let dropped = match manager.hard_compact_with(all_messages) {
                         Ok(dropped) => dropped,
@@ -1136,7 +1135,7 @@ impl Agent {
     ///
     /// This failure is caused by the serialized request body (dominated by inline
     /// base64 images) exceeding the provider's size cap, which is independent of
-
+    /// the token context 
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/conversation_reset.rs`
@@ -2053,300 +2052,43 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7d77576` (2026-11-25)
-**Commit Message**: fix: publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)
+### Incident Patch 1: `a5ca9a77` (2026-11-25)
+**Commit Message**: fix: document isolated background task registries for benchmarks (fixes #2272)
 
-**File**: `crates/jcode-base/src/background.rs` (modified, +32/-0)
+**File**: `AGENTS.md` (modified, +14/-2)
 ```diff
-@@ -1306,6 +1306,22 @@ impl BackgroundTaskManager {
-             if let Ok(json) = serde_json::to_string_pretty(&final_status) {
-                 let _ = fs::write(&task.status_path, json).await;
-             }
-+            let output_path = self.output_path_for(&final_status.task_id);
-+            Bus::global().publish(BusEvent::BackgroundTaskCompleted(
-+                BackgroundTaskCompleted {
-+                    task_id: final_status.task_id,
-+                    tool_name: final_status.tool_name,
-+                    display_name: final_status.display_name,
-+                    session_id: final_status.session_id,
-+                    status: final_status.status,
-+                    exit_code: final_status.exit_code,
-+                    output_preview: "Cancelled by user".to_string(),
-+                    output_file: output_path,
-+                    duration_secs: final_status.duration_secs.unwrap_or_default(),
-+                    notify: notify_flag,
-+                    wake: wake_flag,
-+                },
-+            ));
+@@ -72,7 +72,10 @@ For synthetic prompts and streaming/CPU/power benchmarks, set a dedicated
+ `JCODE_HOME` and `JCODE_TEST_SESSION=1` for both the server and its clients,
+ in addition to using a unique `--socket`. A private socket alone isolates the
+ daemon, not persisted sessions. Never run synthetic benchmark prompts against
+-the user's normal session storage.
++the user's normal session storage. On Unix, also give the server and clients the
++same private `TMPDIR`: background task status and output use the OS temp
++folder (`$TMPDIR/jcode-bg-tasks`), not `JCODE_HOME`. Without this, an isolated
++benchmark and the regular daemon can see each other's background tasks.
  
-             Ok(true)
-         } else {
-@@ -1353,6 +1369,22 @@ impl BackgroundTaskManager {
-                 terminal_event_record(event_status, event_exit_code, event_error.as_deref()),
-             );
-             self.write_status_file(&status_path, &status).await;
-+            let output_path = self.output_path_for(&status.task_id);
-+            Bus::global().publish(BusEvent::BackgroundTaskCompleted(
-+                BackgroundTaskCompleted {
-+                    task_id: status.task_id,
-+                    tool_name: status.tool_name,
-+                    display_name: status.display_name,
-+                    session_id: status.session_id,
-+                    status: status.status,
-+                    exit_code: status.exit_code,
-+                    output_preview: "Cancelled by user".to_string(),
-+                    output_file: output_path,
-+                    duration_secs: status.duration_secs.unwrap_or_default(),
-+                    notify: status.notify,
-+                    wake: status.wake,
-+                },
-+            ));
-             Ok(true)
-         }
-     }
-```
-
-**File**: `crates/jcode-base/src/background/tests.rs` (modified, +29/-0)
-```diff
-@@ -67,6 +67,35 @@ async fn adopted_task_cancellation_drops_actual_owner() -> Result<()> {
-     assert_adopted_owner_cancelled(false).await
- }
+ `cargo build` alone proves nothing about behavior. `jcode run` and interactive
+ sessions are served by the long-lived daemon at
+@@ -86,9 +89,18 @@ run your build against its own socket:
  
-+#[tokio::test]
-+async fn cancel_publishes_background_task_completed_event() -> Result<()> {
-+    let tmp = tempdir()?;
-+    let manager = BackgroundTaskManager::with_output_dir(tmp.path().to_path_buf());
-+    let mut rx = Bus::global().subscribe();
-+    let handle = tokio::spawn(async move {
-+        std::future::pending::<()>().await;
-+        Ok(jcode_tool_types::ToolOutput::new("unreachable"))
-+    });
-+    let info = manager.adopt("bash", "cancel-bus-event", handle).await;
-+    assert!(manager.cancel(&info.task_id).await?);
+ ```bash
+ cargo build --profile selfdev
+-./target/selfdev/jcode run --no-update --socket /run/user/1000/jcode-mytest.sock '<prompt>'
++(
++  root=$(mktemp -d) || exit 1
++  export JCODE_HOME="$root/home" TMPDIR="$root/tmp" JCODE_TEST_SESSION=1
++  mkdir -m 700 "$JCODE_HOME" "$TMPDIR" || exit 1
++  printf 'Isolated run directory: %s\n' "$root"
++  ./target/selfdev/jcode run --no-update --socket "$root/server.sock" '<prompt>'
++)
+ ```
+ 
++Remove the printed directory only after the isolated daemon and its background
++tasks have stopped and you no longer need their output.
 +
-+    let deadline = tokio::time::Instant::now() + Duration::from_secs(5);
-+    loop {
-+        let remaining = deadline.saturating_duration_since(tokio::time::Instant::now());
-+        assert!(!remaining.is_zero(), "timed out waiting for BackgroundTaskCompleted");
-+        match tokio::time::timeout(remaining, rx.recv()).await {
-+            Ok(Ok(BusEvent::BackgroundTaskCompleted(ev))) if ev.task_id == info.task_id => {
-+                assert_eq!(ev.status, BackgroundTaskStatus::Failed);
-+                assert_eq!(ev.output_preview, "Cancelled by user");
-+                break;
-+            }
-+            Ok(Ok(_)) | Ok(Err(tokio::sync::broadcast::error::RecvError::Lagged(_))) => continue,
-+            other => panic!("unexpected bus recv result: {other:?}"),
-+        }
-+    }
-+    Ok(())
-+}
-+
- #[tokio::test]
- async fn adopted_task_reload_drops_owner() -> Result<()> {
-     assert_adopted_owner_cancelled(true).await
-```
-
----
-
-### Incident Patch 2: `85175729` (2026-11-25)
-**Commit Message**: fix: write non-empty payload to throttle and activity stamp files (fixes #2286)
-
-**File**: `crates/jcode-base/src/mobile_runner.rs` (modified, +1/-1)
-```diff
-@@ -314,7 +314,7 @@ pub fn touch_cloud_activity_marker() {
-         return;
-     }
-     if let Some(path) = busy_marker()
--        && let Err(error) = std::fs::write(&path, b"")
-+        && let Err(error) = jcode_storage::touch_stamp(&path)
-     {
-         crate::logging::warn(&format!("cloud activity marker update failed: {error}"));
-     }
-```
-
-**File**: `crates/jcode-base/src/mobile_runner_process.rs` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ struct BusyMarker(Option<PathBuf>);
- impl BusyMarker {
-     fn touch(&self) {
-         if let Some(path) = &self.0
--            && let Err(error) = std::fs::write(path, b"")
-+            && let Err(error) = jcode_storage::touch_stamp(path)
-         {
-             crate::logging::warn(&format!("mobile runner busy marker update failed: {error}"));
-         }
-```
-
-**File**: `crates/jcode-base/src/scratch_maintenance.rs` (modified, +1/-1)
-```diff
-@@ -92,7 +92,7 @@ fn prune_due(dir: &Path) -> bool {
- }
+ Two things that waste time otherwise:
  
- fn mark_pruned(dir: &Path) {
--    let _ = std::fs::write(dir.join(PRUNE_MARKER), b"");
-+    let _ = jcode_storage::touch_stamp(&dir.join(PRUNE_MARKER));
- }
- 
- /// Core of [`prune_stale_scratch`], parameterized for unit testing.
-```
-
-**File**: `crates/jcode-base/src/session/maintenance.rs` (modified, +1/-1)
-```diff
-@@ -63,7 +63,7 @@ fn claim_prune_slot(base: &Path) -> bool {
-         return false;
-     }
-     // Touch (create or refresh) the marker to claim the slot.
--    std::fs::write(&marker, b"").is_ok()
-+    jcode_storage::touch_stamp(&marker).is_ok()
- }
- 
- /// Core of [`prune_old_session_backups`], parameterized on the directory and
-```
-
-**File**: `crates/jcode-build-support/src/version_gc.rs` (modified, +1/-1)
-```diff
-@@ -158,7 +158,7 @@ fn prune_due(dir: &Path) -> bool {
- }
- 
- fn mark_pruned(dir: &Path) {
--    let _ = std::fs::write(dir.join(PRUNE_MARKER), b"");
-+    let _ = std::fs::write(dir.join(PRUNE_MARKER), b"1");
- }
- 
- /// Core of [`prune_old_versions`], parameterized for unit tests.
-```
-
-**File**: `crates/jcode-storage/src/lib.rs` (modified, +36/-0)
-```diff
-@@ -797,6 +797,13 @@ mod windows_hardening_tests {
-     }
- }
- 
-+/// Touch a throttle/activity stamp file with a non-empty payload so its mtime
-+/// advances reliably on all filesystems (including Windows, where writing `b""`
-+/// truncates without issuing a `WriteFile` call).
-+pub fn touch_stamp(path: &Path) -> std::io::Result<()> {
-+    std::fs::write(path, b"1")
-+}
-+
- #[cfg(test)]
- mod env_file_tests {
-     use super::*;
-@@ -819,4 +826,33 @@ mod env_file_tests {
-             "SAFE_KEY=safe-value\n"
-         );
-     }
-+
-+    #[test]
-+    fn touch_stamp_writes_non_empty_payload_and_updates_mtime() {
-+        let temp = tempfile::tempdir().expect("temp dir");
-+        let marker = temp.path().join("throttle.stamp");
-+
-+        touch_stamp(&marker).expect("touch stamp");
-+        let data = std::fs::read(&marker).expect("read stamp");
-+        assert!(!data.is_empty(), "stamp payload must be non-empty");
-+
-+        let past = std::time::SystemTime::now() - std::time::Duration::from_secs(60);
-+        std::fs::File::options()
-+            .write(true)
-+            .open(&marker)
-+            .and_then(|file| file.set_modified(past))
-+            .expect("backdate stamp");
-+        let old_mtime = std::fs::metadata(&marker)
-+            .and_then(|meta| meta.modified())
-+            .expect("old mtime");
-+
-+        touch_stamp(&marker).expect("re-touch stamp");
-+        let new_mtime = std::fs::metadata(&marker)
-+            .and_then(|meta| meta.modified())
-+            .expect("new mtime");
-+        assert!(
-+            new_mtime > old_mtime,
-+            "expected mtime to advance after touch_stamp (old={old_mtime:?}, new={new_mtime:?})"
-+        );
-+    }
- }
-```
-
-**File**: `src/cli/hot_exec.rs` (modified, +1/-1)
-```diff
-@@ -264,7 +264,7 @@ fn claim_update_fetch_slot() -> bool {
-         return false;
-     }
-     // Touch before fetching so a spawn burst collapses to ~one fetch.
--    std::fs::write(&marker, b"").is_ok()
-+    std::fs::write(&marker, b"1").is_ok()
- }
- 
- /// `None` means this local checkout has no tracking branch, not a failed check.
-```
-
----
-
-### Incident Patch 3: `f4c3d0eb` (2026-11-25)
-**Commit Message**: fix: replay signed thinking for Claude provider route (fixes #2265)
-
-**File**: `crates/jcode-base/src/message.rs` (modified, +3/-1)
-```diff
-@@ -340,7 +340,9 @@ pub fn push_reasoning_blocks(
-     // Whether the replay block we stored already contains the readable text.
-     let mut readable_replay_stored = false;
-     if store_replay_context {
--        if provider_name.eq_ignore_ascii_case("anthropic") {
-+        if provider_name.eq_ignore_ascii_case("anthropic")
-+            || provider_name.eq_ignore_ascii_case("claude")
-+        {
-             if let Some(signature) = reasoning_signature.filter(|s| !s.is_empty()) {
-                 blocks.push(ContentBlock::AnthropicThinking {
-                     thinking: reasoning_content.to_string(),
-```
-
-**File**: `crates/jcode-base/src/message/tests.rs` (modified, +24/-0)
-```diff
-@@ -922,6 +922,30 @@ fn push_reasoning_blocks_anthropic_signed_replay() {
-     }
- }
- 
-+#[test]
-+fn push_reasoning_blocks_claude_route_signed_replay() {
-+    let mut blocks = Vec::new();
-+    push_reasoning_blocks(
-+        &mut blocks,
-+        "Claude",
-+        "signed thought",
-+        Some("sig"),
-+        true,
-+    );
-+    assert_eq!(blocks.len(), 1);
-+    match &blocks[0] {
-+        ContentBlock::AnthropicThinking {
-+            thinking,
-+            signature,
-+        } => {
-+            assert_eq!(thinking, "signed thought");
-+            assert_eq!(signature, "sig");
-+        }
-+        other => panic!("expected AnthropicThinking, got {other:?}"),
-+    }
-+    assert!(crate::provider::stores_reasoning_content_for_context("Claude"));
-+}
-+
- #[test]
- fn push_reasoning_blocks_anthropic_unsigned_falls_back_to_trace() {
-     let mut blocks = Vec::new();
-```
-
-**File**: `crates/jcode-base/src/provider/mod.rs` (modified, +1/-1)
-```diff
-@@ -182,7 +182,7 @@ pub fn stores_reasoning_content_for_context(provider_name: &str) -> bool {
-     }
-     matches!(
-         provider_name.to_ascii_lowercase().as_str(),
--        "openrouter" | "anthropic" | "openai"
-+        "openrouter" | "anthropic" | "claude" | "openai"
-     )
- }
- 
+ - `crate::logging::info` writes to a log file, not stderr, so instrumenting a
 ```
 
 #### Recent Merged Pull Requests:
@@ -2375,53 +2117,45 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270)
+## X. document isolated background task registries for benchmarks (fixes #2272)
 
 **RULE**:
-When implementing operations in `crates/jcode-base/src/background.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7d77576`: publish BackgroundTaskCompleted when cancelling background tasks (fixes #2270). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a5ca9a77`: document isolated background task registries for benchmarks (fixes #2272). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-base/src/background.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let output_path = self.output_path_for(&final_status.task_id);
-            Bus::global().publish(BusEvent::BackgroundTaskCompleted(
-                BackgroundTaskCompleted {
-                    task_id: final_status.task_id,
-                    tool_name: final_status.tool_name,
-                    display_name: final_status.display_name,
-                    session_id: final_status.session_id,
-                    status: final_status.status,
-                    exit_code: final_status.exit_code,
-                    output_preview: "Cancelled by user".to_string(),
-                    output_file: output_path,
-                    duration_secs: final_status.duration_secs.unwrap_or_default(),
-                    notify: notify_flag,
-                    wake: wake_flag,
-                },
-            ));
-            let output_path = self.output_path_for(&status.task_id);
-            Bus::global().publish(BusEvent::BackgroundTaskCompleted(
-                BackgroundTaskCompleted {
-                    task_id: status.task_id,
-                    tool_name: status.tool_name,
-                    display_name: status.display_name,
-                    session_id: status.session
+the user's normal session storage. On Unix, also give the server and clients the
+same private `TMPDIR`: background task status and output use the OS temp
+folder (`$TMPDIR/jcode-bg-tasks`), not `JCODE_HOME`. Without this, an isolated
+benchmark and the regular daemon can see each other's background tasks.
+(
+  root=$(mktemp -d) || exit 1
+  export JCODE_HOME="$root/home" TMPDIR="$root/tmp" JCODE_TEST_SESSION=1
+  mkdir -m 700 "$JCODE_HOME" "$TMPDIR" || exit 1
+  printf 'Isolated run directory: %s\n' "$root"
+  ./target/selfdev/jcode run --no-update --socket "$root/server.sock" '<prompt>'
+)
+Remove the printed directory only after the isolated daemon and its background
+tasks have stopped and you no longer need their output.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+the user's normal session storage.
+./target/selfdev/jcode run --no-update --socket /run/user/1000/jcode-mytest.sock '<prompt>'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7d77576` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a5ca9a77` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

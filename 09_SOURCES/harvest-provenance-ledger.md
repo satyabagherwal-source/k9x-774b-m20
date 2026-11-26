@@ -13530,3 +13530,6 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `87417f36` | Multi-dimensional audit evidence | 2026-11-26T17:48:09.023Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `d414fa94` | Multi-dimensional audit evidence | 2026-11-26T17:48:21.880Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `50d1f268` | Multi-dimensional audit evidence | 2026-11-26T17:48:23.999Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-26T17:56:54.471Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `cfd6745d` | Multi-dimensional audit evidence | 2026-11-26T17:56:55.725Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `b2358d26` | Multi-dimensional audit evidence | 2026-11-26T17:57:07.002Z |

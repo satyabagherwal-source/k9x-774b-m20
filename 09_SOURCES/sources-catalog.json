@@ -745,8 +745,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "c5e2da68263269a4a34c0a4844decac20ffbd6636f9c2b820472e829835b968c",
-    "lastHarvestedAt": "2026-11-23T03:27:40.711Z",
+    "contentHash": "5cfe03d385f201a1bda33c7ac26bdb679fc1105160f82c80eda63296d23ca29e",
+    "lastHarvestedAt": "2026-11-26T17:56:54.471Z",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b"
   },
   "hf-google-t5-t5-small": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "2910d1e2",
+    "sourceVersion": "b2358d26",
     "license": "NOASSERTION",
-    "contentHash": "f4fbdf3c2b302a6aeca151ccb3dc909471431b461c78e8e9ccaa0e3d77623b23",
-    "lastHarvestedAt": "2026-11-26T13:36:02.517Z",
+    "contentHash": "7232e67d2efeff29398925fd29af80f2c09249a43421eff07bd31f36bb7550c9",
+    "lastHarvestedAt": "2026-11-26T17:57:07.002Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "103a1fa2",
+    "sourceVersion": "cfd6745d",
     "license": "MIT",
-    "contentHash": "5d6c3ac9f1e55f377f046ddc00852f77ad01a1e44aedb8d6512357bf215271ec",
-    "lastHarvestedAt": "2026-11-25T10:35:14.483Z",
+    "contentHash": "013dd4a484de9e7da32ad1ae7a63bb9ad88ff3403968a54a46535daa7e9c18ff",
+    "lastHarvestedAt": "2026-11-26T17:56:55.725Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
