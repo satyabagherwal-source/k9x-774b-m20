@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "5c92e8cba428d6e871dbe88d72c09d1021d03929e251adb1ba4f56c858becf38",
-    "lastHarvestedAt": "2026-11-22T15:41:31.306Z",
+    "contentHash": "359fdfa8ee5667525a12dabf1b21885590a344dfcd632f9d49bcf2d2bbf2cb75",
+    "lastHarvestedAt": "2026-11-26T08:36:29.906Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "d69f54cf",
+    "sourceVersion": "75fe8688",
     "license": "MIT",
-    "contentHash": "4d4517e2c5653b1792a0488e92d03e4f5f5ec771aeceaf94ca42de8998bef09d",
-    "lastHarvestedAt": "2026-11-24T13:21:13.424Z",
+    "contentHash": "aa3080d116bd5427ce36df32d4fce3b3ad0e7adb6d4c56f41515a834ed254d23",
+    "lastHarvestedAt": "2026-11-26T08:36:40.535Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "e87c19c1",
+    "sourceVersion": "ab594768",
     "license": "MIT",
-    "contentHash": "89b48509c4e84459b6269f1062180d9be0f301689fe7b322e8d64a158f954e29",
-    "lastHarvestedAt": "2026-11-25T01:52:49.181Z",
+    "contentHash": "fb59056d95b1c1fbd5b5fb0ce771da1d992e9ec78ce2de129f30ef7ebeb8f857",
+    "lastHarvestedAt": "2026-11-26T08:36:44.267Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

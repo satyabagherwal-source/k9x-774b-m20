@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T08:26:42.111Z",
+  "last_updated": "2026-11-26T08:36:50.254Z",
   "total_records": 2723,
   "domains": {
     "A": {
@@ -11904,8 +11904,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/MiniMax-H3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-research-knowledge-intelligence-comfy-org-minimax-h3-cor.md",
       "repository": "Comfy-Org/MiniMax-H3",
-      "content_hash": "268a71238d840ee402c2e8aca1c2ade8863db3bce92922f76a27e37b09adf084",
-      "created_at": "2026-11-18T09:19:39.774Z"
+      "content_hash": "81b27dca5420e87e6f93f1c107655376443c21055771541ec05bd0d1df5a411f",
+      "created_at": "2026-11-26T08:36:30.137Z"
     },
     "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-core-invariants",
@@ -11982,8 +11982,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-minimax-h3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-learnings-research-knowledge-intelligence-hf-comfy-org-m.md",
       "repository": "hf-comfy-org-minimax-h3-learnings",
-      "content_hash": "c0d9bcbd21616938302ccba19c4b56669cd615c956d80e0ea2c4939d2238d0fa",
-      "created_at": "2026-11-18T09:19:43.479Z"
+      "content_hash": "6e5ad1ee12b878c38376ed75d3cddcc1614edb54450b67ce8d842b85d9963b5e",
+      "created_at": "2026-11-26T08:36:49.317Z"
     },
     "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari": {
       "record_id": "domain_intelligence-quality-verification-intelligence-nginx-kubernetes-ingress-learnings-core-invari",
@@ -24404,8 +24404,8 @@
       "title": "Technical Construction Intelligence: oxc-project/oxc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-technical-construction-intelligence-oxc-project-oxc-core-invaria.md",
       "repository": "oxc-project/oxc",
-      "content_hash": "146c1d64af4785386e65114334c8fc641b6e498f87f63a3011afd7975af65ec3",
-      "created_at": "2026-11-25T01:52:49.638Z"
+      "content_hash": "c262b0bf44bed4c28f2060ce201076d5f266f2b9805ed74c0e8d202540d582a0",
+      "created_at": "2026-11-26T08:36:44.698Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -24413,8 +24413,8 @@
       "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-learnings-technical-construction-intelligence-oxc-project-oxc-le.md",
       "repository": "oxc-project-oxc-learnings",
-      "content_hash": "2a7304178d8a91a8486484a5d4a6d659b8ec50443dab94d32bce2c6e4f8e83a2",
-      "created_at": "2026-11-25T01:52:57.468Z"
+      "content_hash": "c77fafd2d68c5f605ffd665abd04a618dffbab1520823414430dc1c9fda8f2ae",
+      "created_at": "2026-11-26T08:36:48.707Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-core-invariants",
@@ -30646,8 +30646,8 @@
       "title": "Architecture Intelligence: sqlpage/SQLPage Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-architecture-intelligence-sqlpage-sqlpage-core-invariants.md",
       "repository": "sqlpage/SQLPage",
-      "content_hash": "a6218ea21a9d91ee1d7f52b71de4d3c3097613decbf41e81b2db3f21f77625bf",
-      "created_at": "2026-11-24T13:21:13.848Z"
+      "content_hash": "4b3769d73b774bebcf53cad6b8f38e3b4d327ec2e10882937b00eef9885519d9",
+      "created_at": "2026-11-26T08:36:40.960Z"
     },
     "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-",
@@ -30673,8 +30673,8 @@
       "title": "Architecture Intelligence: sqlpage-sqlpage-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-learnings-architecture-intelligence-sqlpage-sqlpage-learnings-co.md",
       "repository": "sqlpage-sqlpage-learnings",
-      "content_hash": "174d676d67133b7e44bfd4063fe7ba12d6c8e137903bac69527becd923e8905e",
-      "created_at": "2026-11-24T13:21:19.316Z"
+      "content_hash": "439454cb77636bc2ff2b7e8a420a1c02f23b41de0003b088b02a88dafdb0c708",
+      "created_at": "2026-11-26T08:36:50.254Z"
     },
     "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants",

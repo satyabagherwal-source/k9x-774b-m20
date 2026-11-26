@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `d69f54cf`  
+> **Source Version**: `75fe8688`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T13:21:12.293Z  
+> **Timestamp**: 2026-11-26T08:36:39.335Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:21:12.287Z  
+> **Harvest Timestamp**: 2026-11-26T08:36:39.330Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2586 stars
+- **Stars / Engagement**: 2588 stars
 
 ---
 
@@ -619,7 +619,7 @@ if (document.querySelector("pre code")) {
 
 async function highlightCode() {
   const base =
-    "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/es";
+    "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/es";
   const { default: engine } = await import(`${base}/highlight.min.js`);
   await Promise.all(
     ["sql", "json", "handlebars", "nginx"].map(async (language) => {
@@ -1082,211 +1082,60 @@ export function initExperience(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d69f54cf` (2026-11-23)
-**Commit Message**: Fix SQLPage component accessibility and audit the reference (#1635)
+### Incident Patch 1: `986c75df` (2026-11-25)
+**Commit Message**: Fix SQLite 64-bit integer decoding (#1637)
 
-* Check component documentation accessibility in CI (#1634)
+* fix integer overflow
 
-* Audit official-site component docs with axe in CI
+* test large integer decoding
 
-* Audit component examples in SQLPage stock themes
+* Explain why the large integer fixture uses arithmetic
 
-* Improve accessibility of navigation and tracking components
-
-* Enlarge big number title link targets
-
-* Resolve the remaining component accessibility audit findings
-
-* Preserve accent hues when improving contrast
-
-* Keep outlined orange buttons vivid
-
-* Keep accessibility fixes scoped to SQLPage
-
-* Drop stylesheet wiring checks from the accessibility audit
-
-* Enhance accessibility and improve component functionality
-
-Update accessibility features and component enhancements.
-
-**File**: `CHANGELOG.md` (modified, +6/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -2,14 +2,16 @@
+@@ -2,6 +2,7 @@
  
  ## unreleased
  
--- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
--- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
-+- Big number title links have a larger target for touch and pointer users.
-+- Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
-+- Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
-+- Inline links are underlined so they stand out without relying on color. The documentation search button has a clear accessible name separate from its shortcut hint.
-+- Disabled buttons expose their state to assistive technology and cannot be activated.
-+- Tracking blocks without links now expose their titles to screen readers.
- - The `shell` sidebar now uses `navbar_title` and preserves the colors of the supplied logo in dark mode.
- - Chart export menus, tooltips, and series colors now follow the theme surrounding each chart, including in custom shells. Chart labels on colored marks have a contrasting outline that carries over to SVG downloads.
- - Map marker popups follow the surrounding theme so their titles and links stay readable.
- - Each `login` component’s labels target its own fields. Set `false AS autofocus` to keep the username field from taking focus when the page opens.
--- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
--- Improved contrast for text and controls across the official SQLPage site.
- - JSON `shell` menu items with a link are now links in the accessibility tree instead of being announced as buttons; only submenu toggles keep `role="button"`.
- - The new [`status_bar` component](https://sql-page.com/component.sql?component=status_bar) displays short status messages and links along the bottom of the screen or inline with page content.
- - A file input with `multiple` now keeps every selected file, instead of only the last one. The new [`sqlpage.persist_uploaded_files`](https://sql-page.com/functions.sql?function=persist_uploaded_files) function saves them all and returns a JSON array with the `path`, original `name`, `mime_type` and `size` of each file.
++- SQLite query results preserve the full 64-bit range of `INTEGER` values. ([#1636](https://github.com/sqlpage/SQLPage/issues/1636))
+ - Big number title links have a larger target for touch and pointer users.
+ - Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
+ - Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +4/-0)
+**File**: `src/webserver/database/sql_to_json.rs` (modified, +4/-3)
 ```diff
-@@ -67,6 +67,10 @@ built executable. Component suites use `fixtures/<suite>/{index.sql,test.ts}` an
- import the shared `fixture.ts` harness; root-level `*.spec.ts` files cover the
- official site.
- 
-+Run `npx playwright test --grep @accessibility` from `tests/end-to-end` to audit
-+the official site's component documentation and its live examples in SQLPage's
-+stock light and dark themes with axe-core. The normal Playwright suite also runs it.
-+
- To show that an issue exists before you fix it, put the reproduction in a fixture and run it against releases with one command, such as `nix run .#reproduce -- repro_721 postgres v0.35.0 v0.36.1 tree`. The second argument is `sqlite` or `postgres`, and `tree` is your working tree. It prints Playwright's output for each version, then a table you can paste into the issue or pull request. Releases run from their Docker images, from v0.29.0 onwards, and Postgres from `docker compose`. Without Nix, run `npm run reproduce --` in `tests/end-to-end` instead.
- 
- To run a whole suite against a release instead, set `SQLPAGE_RELEASE` to its tag, such as `SQLPAGE_RELEASE=v0.47.0 npx playwright test fixtures/tracking`. Both servers then run that release's Docker image against the same fixtures, on ports 18080 and 18081, so the test fails on the release and passes on your working tree. Add `--ui` to watch the page in each step.
+@@ -159,9 +159,10 @@ pub(super) fn sql_nonnull_to_json<'r>(
+     match type_name {
+         "REAL" | "FLOAT" | "FLOAT4" | "FLOAT8" | "DOUBLE" => decode_raw::<f64>(raw_value).into(),
+         "NUMERIC" | "DECIMAL" => decimal_to_json(&decode_raw(raw_value)),
+-        "INT8" | "BIGINT" | "SERIAL8" | "BIGSERIAL" | "IDENTITY" | "INT64" | "INTEGER8"
+-        | "BIGINT SIGNED" => decode_raw::<i64>(raw_value).into(),
+-        "INT" | "INT4" | "INTEGER" | "MEDIUMINT" | "YEAR" => decode_raw::<i32>(raw_value).into(),
++        // SQLite INTEGER and unsigned ODBC SQL_INTEGER can exceed the i32 range.
++        "INTEGER" | "INT8" | "BIGINT" | "SERIAL8" | "BIGSERIAL" | "IDENTITY" | "INT64"
++        | "INTEGER8" | "BIGINT SIGNED" => decode_raw::<i64>(raw_value).into(),
++        "INT" | "INT4" | "MEDIUMINT" | "YEAR" => decode_raw::<i32>(raw_value).into(),
+         "INT2" | "SMALLINT" | "TINYINT" => decode_raw::<i16>(raw_value).into(),
+         "BIGINT UNSIGNED" => decode_raw::<u64>(raw_value).into(),
+         "INT UNSIGNED" | "MEDIUMINT UNSIGNED" | "SMALLINT UNSIGNED" | "TINYINT UNSIGNED" => {
 ```
 
-**File**: `examples/official-site/README.md` (modified, +4/-0)
+**File**: `tests/sql_test_files/data/large_integer.sql` (added, +3/-0)
 ```diff
-@@ -22,6 +22,10 @@ Run SQLPage from that directory, or run
- `docker compose -f examples/official-site/docker-compose.yml up --build` from
- the repository root.
- 
-+Add `theme=light` or `theme=dark` to a component reference URL to preview its
-+live examples using SQLPage's stock theme. For example, visit
-+`/component.sql?component=form&theme=light`.
-+
- ## Landing page
- 
- The home page is rendered by `index.sql` and the `landing-page` custom template.
-```
-
-**File**: `examples/official-site/assets/docs/shell.css` (modified, +15/-0)
-```diff
-@@ -40,6 +40,11 @@
- }
- 
- .docs-search kbd {
-+  position: absolute;
-+  z-index: 5;
-+  inset-inline-end: 2.25rem;
-+  align-self: center;
-+  pointer-events: none;
-   font: var(--tblr-font-size-h5) var(--tblr-font-monospace);
- }
- 
-@@ -49,6 +54,12 @@
-   }
- }
- 
-+@media (width >= 62rem) and (not (pointer: coarse)) {
-+  .docs-search:has(kbd:not([hidden])) input {
-+    padding-inline-end: 3rem;
-+  }
-+}
-+
- .docs-columns {
-   display: flex;
-   flex-direction: column;
-@@ -111,6 +122,10 @@
- }
- 
- @media (min-width: 62rem) {
-+  .docs-search:has(kbd:not([hidden])) input {
-+    padding-inline-end: 3rem;
-+  }
-+
-   .docs-columns {
-     flex-direction: row;
-     align-items: flex-start;
-```
-
-**File**: `examples/official-site/sqlpage/docs-shell.sql` (modified, +4/-0)
-```diff
-@@ -7,6 +7,10 @@ select 'shell-docs' as component,
-     $options->>'title' as title,
-     $options->>'description' as description,
-     $options->>'css' as css,
-+    case sqlpage.variables('get')->>'theme'
-+        when 'light' then 'light'
-+        when 'dark' then 'dark'
-+    end as stock_theme,
-     $section as section,
-     cast($catalog as integer) as catalog,
-     coalesce($kind || 's', 'guides') as topic_label,
-```
-
-**File**: `examples/official-site/sqlpage/migrations/18_button.sql` (modified, +3/-0)
-```diff
-@@ -117,3 +117,6 @@ INSERT INTO example(component, description, properties) VALUES
-             "image":"https://upload.wikimedia.org/wikipedia/commons/f/fa/Globe.svg"
-         }]')
-     );
-+
-+INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
-+    ('button', 'image_alt', 'Alternative text for an informative button image. Leave empty if decorative or repeated by the button title.', 'TEXT', FALSE, TRUE);
-```
-
-**File**: `examples/official-site/sqlpage/migrations/31_card_docs_update.sql` (modified, +7/-3)
-```diff
-@@ -70,9 +70,9 @@ INSERT INTO example(component, description, properties) VALUES
-     ('card', 'A gallery of images.',
-         json('[
-             {"component":"card", "title":"My favorite animals in pictures", "columns": 3},
--            {"title": "Lynx", "description_md": "The **lynx** is a medium-sized **wild cat** native to Northern, Central and Eastern Europe to Central Asia and Siberia, the Tibetan Plateau and the Himalayas.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Lynx_lynx_-_05.jpg/330px-Lynx_lynx_-_05.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true, "icon":"star" },
--            {"title": "Squirrel", "description_md": "The **chipmunk** is a small, striped rodent of the family Sciuridae. Chipmunks are found in North America, with the exception of the Siberian chipmunk which is found primarily in Asia.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/American_squirrel_eating_nut%2C_13_Jun_2013.JPG/330px-American_squirrel_eating_nut%2C_13_Jun_2013.JPG", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true },
--            {"title": "Spider", "description_md": "The **jumping spider family** (_Salticidae_) contains more than 600 described genera and about *6000 described species*, making it the largest family of spiders with about 13% of all species.", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Australian_orb_weaver_spinning_web.jpg/330px-Australian_orb_weaver_spinning_web.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true }
-+            {"title": "Lynx", "description_md": "The **lynx** is a medium-sized **wild cat** native to Northern, Central and Eastern Europe to Central Asia and Siberia, the Tibetan Plateau and the Himalayas.", "top_image_alt": "A Eurasian lynx", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Lynx_lynx_-_05.jpg/330px-Lynx_lynx_-_05.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true, "icon":"star" },
-+            {"title": "Squirrel", "description_md": "The **chipmunk** is a small, striped rodent of the family Sciuridae. Chipmunks are found in North America, with the exception of the Siberian chipmunk which is found primarily in Asia.", "top_image_alt": "A squirrel eating a nut", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/American_squirrel_eating_nut%2C_13_Jun_2013.JPG/330px-American_squirrel_eating_nut%2C_13_Jun_2013.JPG", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true },
-+            {"title": "Spider", "description_md": "The **jumping spider family** (_Salticidae_) contains more than 600 described genera and about *6000 described species*, making it the largest family of spiders with about 13% of all species.", "top_image_alt": "An orb weaver spinning a web", "top_image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Australian_orb_weaver_spinning_web.jpg/330px-Australian_orb_weaver_spinning_web.jpg", "top_image_width": 330, "top_image_height": 495, "top_image_lazy": true }
-         ]')),
-     ('card', 'Beautifully colored cards with variable width. The blue card (width 6) takes half the screen, whereas of the red and green cards have the default width of 3',
-         json('[
-@@ -87,3 +87,7 @@ INSERT INTO example(component, description, properties) VALUES
-             {"title": "Embedded Chart", "embed": "/examples/chart.sql?_sqlpage_embed" },
-             {"title": "Embedded Video", "embed": "https://www.youtube.com/embed/mXdgmSdaXkg", "allow": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share", "embed_mode": "iframe", "height": "350" }
-         ]'));
-+
-+INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
-+    ('card', 'top_image_alt', 'Alternative text for an informative card image. Leave empty if decorative.', 'TEXT', FALSE, TRUE),
-+    ('card', 'embed_title', 'Accessible name of the iframe. Defaults to the card title, or Embedded content if no title is set.', 'TEXT', FALSE, TRUE);
-```
-
-**File**: `examples/official-site/sqlpage/migrations/34_carousel.sql` (modified, +5/-2)
-```diff
-@@ -134,6 +134,9 @@ VALUES
-         FALSE,
-         TRUE
-     );
-+INSERT INTO parameter(component, name, description, type, top_level, optional) VALUES
-+    ('carousel', 'image_alt', 'Alternative text describing the slide image. Leave empty if the image is decorative or its caption already describes it.', 'TEXT', FALSE, TRUE);
-+
- -- Insert example(s) for the component
- INSERT INTO example(component, description, properties)
- VALUES (
-@@ -142,8 +145,8 @@ VALUES (
-         JSON(
-             '[
-                 {"component":"carousel","name":"cats1","title":"Famous Database Animals"},
--                {"image":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg/1280px-Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg"},
--                {"image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg/1280px-Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg"}
-+                {"image_alt":"African elephants at a watering hole","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg/1280px-Elefantes_africanos_de_sabana_%28Loxodonta_africana%29%2C_Elephant_Sands%2C_Botsuana%2C_2018-07-28%2C_DD_114-117_PAN.jpg"},
-+                {"image_alt":"A panoramic view of Penguin Island","image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg/1280px-Penguin_Island_panorama_with_ferry_and_dolphins_in_foreground%2C_March_2023_06.jpg"}
-                 ]'
-         )
-     ),
+@@ -0,0 +1,3 @@
++-- SQLPage evaluates literal-only SELECTs itself, so + 0 forces database execution.
++-- Keep the expected value as text so it cannot overflow in the integer decoder.
++select '3000000000' as expected_contains, 3000000000 + 0 as actual;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1639** (2026-11-25): Refresh Rust and browser dependencies (@lovasoa)
+- **PR #1638** (closed): Verify SQLite 64-bit integers with upstream SQLx (@lovasoa)
+- **PR #1637** (2026-11-25): Fix SQLite 64-bit integer decoding (@lovasoa)
 - **PR #1635** (2026-11-23): Fix SQLPage component accessibility and audit the reference (@lovasoa)
 - **PR #1634** (2026-11-23): Check component documentation accessibility in CI (@lovasoa)
 - **PR #1631** (2026-11-23): Use search_placeholder as the accessible name of the shell search field (@mkerz-masfg)
-- **PR #1630** (2026-11-23): Document create_new for single selects (@mkerz-masfg)
-- **PR #1625** (closed): Publish a searchable reference for SQLPage settings (@lovasoa)
-- **PR #1624** (2026-11-23): Use the same prepared site for preview, tests, and deployment (@lovasoa)
 
 ---
 
@@ -1306,13 +1155,13 @@ Update accessibility features and component enhancements.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. SQLPage component accessibility and audit the reference
+## X. SQLite 64-bit integer decoding
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d69f54cf`: SQLPage component accessibility and audit the reference. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `986c75df`: SQLite 64-bit integer decoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1320,22 +1169,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Big number title links have a larger target for touch and pointer users.
-- Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
-- Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
-- Inline links are underlined so they stand out without relying on color. The documentation search button has a clear accessible name separate from its shortcut hint.
-- Disabled buttons expose their state to assistive technology and cannot be activated.
-- Tracking blocks without links now expose their titles to screen readers.
+- SQLite query results preserve the full 64-bit range of `INTEGER` values. ([#1636](https://github.com/sqlpage/SQLPage/issues/1636))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- The first-website tutorial now lets you choose an installation target, copy a command, or download an archive for macOS, Windows, Linux, or AWS Lambda.
-- Missing component pages on the official site return HTTP 404 and link to the catalog. Action buttons in colored alerts stay readable.
-- The official documentation now connects tutorials, component examples, and the function reference through shared navigation. Browse by task, open search with Ctrl+K or ⌘K, and share a link to a specific parameter. Code blocks have copy controls. Wide examples show SQL beside the live result.
-- Improved contrast for text and controls across the official SQLPage site.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d69f54cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `986c75df` are properly handled with clean fallback behavior.

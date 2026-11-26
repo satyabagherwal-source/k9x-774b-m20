@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T08:26:42.509Z",
+  "last_updated": "2026-11-26T08:36:50.605Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T07:40:25.774Z",
@@ -58,7 +58,7 @@
       "staged_for_review": 1
     },
     "oxc-project-oxc-learnings.md": {
-      "processed_at": "2026-11-25T01:52:56.487Z",
+      "processed_at": "2026-11-26T08:36:47.767Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -668,7 +668,7 @@
       "staged_for_review": 1
     },
     "sqlpage-sqlpage-learnings.md": {
-      "processed_at": "2026-11-24T13:21:18.259Z",
+      "processed_at": "2026-11-26T08:36:49.527Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2223,8 +2223,8 @@
       "staged_for_review": 1
     },
     "hf-comfy-org-minimax-h3-learnings.md": {
-      "processed_at": "2026-11-22T15:42:41.240Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-26T08:36:49.086Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "infiniflow-infinity-learnings.md": {
@@ -3958,7 +3958,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4449,
+  "total_dossiers_evaluated": 4452,
   "total_canonical_promoted": 557,
-  "total_staged_for_review": 3368
+  "total_staged_for_review": 3370
 }

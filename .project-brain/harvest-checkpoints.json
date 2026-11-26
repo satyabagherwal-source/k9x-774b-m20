@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T08:26:35.226Z",
+  "last_updated": "2026-11-26T08:36:44.285Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -995,14 +995,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
-      "content_hash": "5c92e8cba428d6e871dbe88d72c09d1021d03929e251adb1ba4f56c858becf38",
-      "verified_at": "2026-11-22T15:41:31.315Z",
+      "content_hash": "359fdfa8ee5667525a12dabf1b21885590a344dfcd632f9d49bcf2d2bbf2cb75",
+      "verified_at": "2026-11-26T08:36:29.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T15:41:31.315Z"
+      "last_updated": "2026-11-26T08:36:29.921Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7206,14 +7206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqlpage-sqlpage",
-      "content_hash": "4d4517e2c5653b1792a0488e92d03e4f5f5ec771aeceaf94ca42de8998bef09d",
-      "verified_at": "2026-11-24T13:21:13.441Z",
+      "content_hash": "aa3080d116bd5427ce36df32d4fce3b3ad0e7adb6d4c56f41515a834ed254d23",
+      "verified_at": "2026-11-26T08:36:40.556Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T13:21:13.441Z"
+      "last_updated": "2026-11-26T08:36:40.556Z"
     },
     "DouyinFE/semi-design": {
       "repository": "DouyinFE/semi-design",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "89b48509c4e84459b6269f1062180d9be0f301689fe7b322e8d64a158f954e29",
-      "verified_at": "2026-11-25T01:52:49.199Z",
+      "content_hash": "fb59056d95b1c1fbd5b5fb0ce771da1d992e9ec78ce2de129f30ef7ebeb8f857",
+      "verified_at": "2026-11-26T08:36:44.285Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:52:49.199Z"
+      "last_updated": "2026-11-26T08:36:44.285Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

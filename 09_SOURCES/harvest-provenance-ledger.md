@@ -13338,3 +13338,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy4-flash` | `https://huggingface.co/tencent/Hy4-flash` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-26T08:22:14.916Z |
 | `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `68c2c3ad` | Multi-dimensional audit evidence | 2026-11-26T08:22:44.729Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `1413bf88` | Multi-dimensional audit evidence | 2026-11-26T08:26:35.209Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T08:36:29.906Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `75fe8688` | Multi-dimensional audit evidence | 2026-11-26T08:36:40.535Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `ab594768` | Multi-dimensional audit evidence | 2026-11-26T08:36:44.267Z |

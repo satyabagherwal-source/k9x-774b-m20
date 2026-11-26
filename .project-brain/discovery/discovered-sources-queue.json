@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T08:26:40.223Z",
+  "updated_at": "2026-11-26T08:36:49.794Z",
   "stats": {
-    "total_discovered": 9699,
-    "approved_pending_harvest": 9199,
+    "total_discovered": 9707,
+    "approved_pending_harvest": 9207,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9186,
+      "COMMUNITY_AND_EXPERT": 9194,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -209905,6 +209905,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
         "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-350A275A1B8C": {
+      "id": "SRC-350A275A1B8C",
+      "url": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22target%22%3A%22es2021%22%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=class+C+%7B%0A++%40dec+accessor+x+%3D+1%3B%0A%7D%0Aclass+D+%7B%0A++y+%3D+1%3B%0A++static+z+%3D+2%3B%0A%7D%0A",
+      "title": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22target%22%3A%22es2021%22%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=class+C+%7B%0A++%40dec+accessor+x+%3D+1%3B%0A%7D%0Aclass+D+%7B%0A++y+%3D+1%3B%0A++static+z+%3D+2%3B%0A%7D%0A",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:36:47.879Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-8839D48F3DBD": {
+      "id": "SRC-8839D48F3DBD",
+      "url": "https://app.codspeed.io/oxc-project/oxc/branches/accessor-lowering-source-positions",
+      "title": "https://app.codspeed.io/oxc-project/oxc/branches/accessor-lowering-source-positions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:36:47.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-D22576ADDB0C": {
+      "id": "SRC-D22576ADDB0C",
+      "url": "https://source-map-viewer.void.app/compare?a=eJylkm9P4kAQxr_KZO8NmpUG7x0NCUvhPPUwRmLMxTHNZhmhXtnt7W4RNHx3s2DlT5Dcxb5o0t1nfs8z03llI9JkpadhYobEmmwqLaQql85d22wqPf3IKB-e68wPClLQAkt_y8xSDVnbzNRJYc0TKR_ZUvtsQtGY8oKsiz5FIDuKUe-3OSP_BYcz8qcb9CEpEzr7d2JVcSji4EsRB7sRHzNN19YUZP38f4Ju1m0AZ6lUipwzNnXeWDkK3UfH0E7T69ubXprCcQSanuGO5J--LGqhcpkSEnhFjV4Z7bwtlTe2drQ6Qv_5QtT8OHN8nzGHRoCjX4TXiDzM1kBLvrR6_wbU9sKCzwbPLXlTmZd0IOXgEI3DqryCLlB_7EztfkjqgUNSL6zxxs8L4oBshoyDLvN8PbbuobFt_6f3WSGbB0xjx3hL2Q2ylyA7DbIo-gbOlFZRXxZFpke3N79aVVcnE5np-pOrT2SBmnH2obxwRrMme0U2Jesyo5E1v3Nkj1lOyJrIdhHIODItJ-SQNe8fOL6zlp9red07ZBu3idGetF-J1tuEGqA9JAVVHcygBY0YQ8ub8wvCeXUF4Lz0mYIXaMFpJV75TVbdu2X4ePkIIQTvC9HnPSF6cfzcFcnvOL4U4qISJONOfCe6Z7EQvZ9b2o5IrvilEOdB1ruKJx3RHSwPkC3Y4g1Okc8I&b=eJylklFP2zAQx7_KyXspyDSie2tUiWuaMca6VVSIB4yiyLmWQGpnttO1oH73yS2hoSvVJvJgKb7__f5353tmU1JkUkdZpDNiXTZPDSSySK0dmXyeOvqSU5FdqNyNS5LQA0O_qtxQS7AzvZAnpdEPJF1gKuXyGQX3VJRkbPAuQr",
+      "title": "https://source-map-viewer.void.app/compare?a=eJylkm9P4kAQxr_KZO8NmpUG7x0NCUvhPPUwRmLMxTHNZhmhXtnt7W4RNHx3s2DlT5Dcxb5o0t1nfs8z03llI9JkpadhYobEmmwqLaQql85d22wqPf3IKB-e68wPClLQAkt_y8xSDVnbzNRJYc0TKR_ZUvtsQtGY8oKsiz5FIDuKUe-3OSP_BYcz8qcb9CEpEzr7d2JVcSji4EsRB7sRHzNN19YUZP38f4Ju1m0AZ6lUipwzNnXeWDkK3UfH0E7T69ubXprCcQSanuGO5J--LGqhcpkSEnhFjV4Z7bwtlTe2drQ6Qv_5QtT8OHN8nzGHRoCjX4TXiDzM1kBLvrR6_wbU9sKCzwbPLXlTmZd0IOXgEI3DqryCLlB_7EztfkjqgUNSL6zxxs8L4oBshoyDLvN8PbbuobFt_6f3WSGbB0xjx3hL2Q2ylyA7DbIo-gbOlFZRXxZFpke3N79aVVcnE5np-pOrT2SBmnH2obxwRrMme0U2Jesyo5E1v3Nkj1lOyJrIdhHIODItJ-SQNe8fOL6zlp9red07ZBu3idGetF-J1tuEGqA9JAVVHcygBY0YQ8ub8wvCeXUF4Lz0mYIXaMFpJV75TVbdu2X4ePkIIQTvC9HnPSF6cfzcFcnvOL4U4qISJONOfCe6Z7EQvZ9b2o5IrvilEOdB1ruKJx3RHSwPkC3Y4g1Okc8I&b=eJylklFP2zAQx7_KyXspyDSie2tUiWuaMca6VVSIB4yiyLmWQGpnttO1oH73yS2hoSvVJvJgKb7__f5353tmU1JkUkdZpDNiXTZPDSSySK0dmXyeOvqSU5FdqNyNS5LQA0O_qtxQS7AzvZAnpdEPJF1gKuXyGQX3VJRkbPAuQr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:36:48.059Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-5FD3CE3F5A94": {
+      "id": "SRC-5FD3CE3F5A94",
+      "url": "https://github.com/tc39/ecma262/pull/2417",
+      "title": "https://github.com/tc39/ecma262/pull/2417",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:36:48.123Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-B4A58A815D9D": {
+      "id": "SRC-B4A58A815D9D",
+      "url": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=const+log%3A+string%5B%5D+%3D+%5B%5D%3B%0Aconst+key+%3D+%28%29+%3D%3E+%28log.push%28%22key%22%29%2C+%22k%22%29%3B%0Aconst+dec+%3D+%28_%3A+object%2C+name%3A+string%29+%3D%3E+log.push%28%60dec%3A%24%7Bname%7D%60%29%3B%0A%0Ac",
+      "title": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=const+log%3A+string%5B%5D+%3D+%5B%5D%3B%0Aconst+key+%3D+%28%29+%3D%3E+%28log.push%28%22key%22%29%2C+%22k%22%29%3B%0Aconst+dec+%3D+%28_%3A+object%2C+name%3A+string%29+%3D%3E+log.push%28%60dec%3A%24%7Bname%7D%60%29%3B%0A%0Ac",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:36:48.188Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-AEBDFDB5604A": {
+      "id": "SRC-AEBDFDB5604A",
+      "url": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%7D%7D&code=const+log%3A+string%5B%5D+%3D+%5B%5D%3B%0Aconst+key+%3D+%28name%3A+string%29+%3D%3E+%28log.push%28name%29%2C+name%29%3B%0A%0Aclass+Foo+%7B%0A++declare+%5Bkey%28%22declared%22%29%5D%3A+any%3B%0A++%5Bkey%28%22field%22%29%5D+%3D+1%3B%0A%7D%0Aconsole.log%28log%29%3B%0A",
+      "title": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%7D%7D&code=const+log%3A+string%5B%5D+%3D+%5B%5D%3B%0Aconst+key+%3D+%28name%3A+string%29+%3D%3E+%28log.push%28name%29%2C+name%29%3B%0A%0Aclass+Foo+%7B%0A++declare+%5Bkey%28%22declared%22%29%5D%3A+any%3B%0A++%5Bkey%28%22field%22%29%5D+%3D+1%3B%0A%7D%0Aconsole.log%28log%29%3B%0A",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:36:48.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-146550D9355C": {
+      "id": "SRC-146550D9355C",
+      "url": "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/es",
+      "title": "https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/es",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:36:49.733Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-37A0C55A2DE9": {
+      "id": "SRC-37A0C55A2DE9",
+      "url": "https://github.com/sqlpage/SQLPage/issues/1636",
+      "title": "https://github.com/sqlpage/SQLPage/issues/1636",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T08:36:49.794Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+        "fileName": "sqlpage-sqlpage-learnings.md"
       }
     }
   }

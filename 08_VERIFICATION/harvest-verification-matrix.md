@@ -13305,3 +13305,6 @@
 | `CYCLE-20261126-AXKW` | `2026-11-26T08:22:14.912Z` | `tencent/Hy4-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md` | Yes (`4eef8ac1...`) |
 | `CYCLE-20261126-BKL1` | `2026-11-26T08:22:44.725Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10630` | Yes (`1cb0e6aa...`) |
 | `CYCLE-20261126-GIF6` | `2026-11-26T08:26:35.202Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10631` | Yes (`3f8da785...`) |
+| `CYCLE-20261126-T9AL` | `2026-11-26T08:36:29.901Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`359fdfa8...`) |
+| `CYCLE-20261126-THHV` | `2026-11-26T08:36:40.531Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10632` | Yes (`aa3080d1...`) |
+| `CYCLE-20261126-TKDI` | `2026-11-26T08:36:44.262Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10633` | Yes (`fb59056d...`) |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T08:26:35.223Z",
-  "total_cycles_completed": 12626,
-  "total_learnings_persisted": 12626,
-  "total_rules_promoted": 11526,
+  "last_updated": "2026-11-26T08:36:44.278Z",
+  "total_cycles_completed": 12629,
+  "total_learnings_persisted": 12629,
+  "total_rules_promoted": 11528,
   "history": [
-    {
-      "timestamp": "2026-11-25T13:31:38.682Z",
-      "repository": "speridlabs/idol",
-      "learningId": "learn-huggingface-speridlabs-idol",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T13:39:56.423Z",
-      "repository": "Comfy-Org/Wan-2.2",
-      "learningId": "learn-huggingface-comfy-org-wan-2-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T13:49:19.073Z",
-      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T13:49:21.819Z",
       "repository": "erkamyaman/rust-anything",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T08:26:35.223Z",
       "repository": "biomejs/biome",
       "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:36:29.919Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:36:40.549Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T08:36:44.278Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

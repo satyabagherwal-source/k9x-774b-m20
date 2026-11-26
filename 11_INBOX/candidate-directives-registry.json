@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T08:26:41.912Z",
+  "last_updated": "2026-11-26T08:36:50.067Z",
   "directives": [
     {
       "id": "CD-001",
@@ -64065,6 +64065,46 @@
       "source_repo": "sfu-db-connector-x",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AEAB62-empirical-invariant-guard-in-test-oracle.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-TOUQ",
+      "directive_title": "SQLite 64-bit integer decoding",
+      "source_repo": "sqlpage-sqlpage-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TOUQ-sqlite-64-bit-integer-decoding.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TNNO",
+      "directive_title": "napi/parser, linter/plugins): deserialize statements directly onto directives in",
+      "source_repo": "oxc-project-oxc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TNNO-napi-parser-linter-plugins-deserialize-statements-directly-onto-directives-in.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-D2964F",
+      "directive_title": "napi/parser, linter/plugins): deserialize statements directly onto directives in",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "oxc-project-oxc",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D2964F-napi-parser-linter-plugins-deserialize-s.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-DE561F",
+      "directive_title": "SQLite 64-bit integer decoding",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sqlpage-sqlpage",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DE561F-sqlite-64-bit-integer-decoding.md",
       "staged_date": "2026-11-26"
     }
   ]

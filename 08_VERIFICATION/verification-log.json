@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-G6QX",
-    "timestamp": "2026-11-24T17:42:51.945Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "159d25bdad67d9b861e9730a1552fcdf5e66b115212e368014eca81751c5f725",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-RV5Y",
-    "timestamp": "2026-11-24T17:51:56.806Z",
-    "repository": "cheeriojs/dom-serializer",
-    "learningId": "learn-github-cheeriojs-dom-serializer",
-    "contentHash": "0920831538f07956f1b943e5d2db3455f51a232a3ce7ced852ce443cc7782a6c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-RYNS",
-    "timestamp": "2026-11-24T17:52:01.336Z",
-    "repository": "authzed/spicedb",
-    "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "c8550492a4b852ffc0290296b18b683dc16f3d8933fd8809baaddccf586e1885",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-2PE1",
     "timestamp": "2026-11-24T18:00:22.537Z",
     "repository": "ntex-rs/ntex",
@@ -7490,6 +7445,51 @@
     "repository": "biomejs/biome",
     "learningId": "learn-github-biomejs-biome",
     "contentHash": "3f8da7855f37b0bdfa7449474e8b16344f9b3d8782e9cc224884dc28041ff74f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-T9AL",
+    "timestamp": "2026-11-26T08:36:29.901Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "359fdfa8ee5667525a12dabf1b21885590a344dfcd632f9d49bcf2d2bbf2cb75",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-THHV",
+    "timestamp": "2026-11-26T08:36:40.531Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "aa3080d116bd5427ce36df32d4fce3b3ad0e7adb6d4c56f41515a834ed254d23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-TKDI",
+    "timestamp": "2026-11-26T08:36:44.262Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "fb59056d95b1c1fbd5b5fb0ce771da1d992e9ec78ce2de129f30ef7ebeb8f857",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
