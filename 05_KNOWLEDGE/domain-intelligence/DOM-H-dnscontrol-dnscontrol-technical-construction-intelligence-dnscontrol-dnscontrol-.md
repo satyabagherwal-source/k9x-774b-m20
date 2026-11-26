@@ -4,24 +4,24 @@
 {
   "source_repository": "DNSControl/dnscontrol",
   "source_url": "https://github.com/DNSControl/dnscontrol",
-  "source_version": "cc95a67a",
+  "source_version": "54f54578",
   "license": "MIT",
-  "timestamp": "2026-11-19T07:14:23.004Z",
+  "timestamp": "2026-11-26T06:44:07.916Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dnscontrol-dnscontrol",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol) (Revision: `cc95a67a`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T07:14:23.004Z`  
+> **Provenance**: Harvested from [DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol) (Revision: `54f54578`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T06:44:07.916Z`  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from DNSControl/dnscontrol:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T07:14:21.763Z  
+> **Harvest Timestamp**: 2026-11-26T06:44:06.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4011 stars
+- **Stars / Engagement**: 4016 stars
 
 ---
 
@@ -671,11 +671,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5122** (2026-11-18): **docs: update REFACTORING_PROJECTS and release notes template**
-  *Symptoms*: 
+- **Issue #5133** (2026-11-25): **build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0**
+  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.4 to 2.23.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.23.0</h2> <h2>What's Changed</h2> <ul> <li>Added integration with the StepSecurity Secure Registry community tier, a hosted SaaS registry that is free for public repositories using GitHub-hosted runners with Harden-Runner. Enable it with <code>secure-registry: true</code> to route JavaScript package downloads through Secure Registry, which applies a default two-day cooldown and blocks known compromised packages. See the <a href="https://docs.stepsecurity.io/packages/secure-registry/community-tier">Community tier documentation</a> for setup and configuration.</li> <li>Bug fix: Redacted credentials and signatures from signed S3 URLs that could appear in agent error logs when event uploads failed.</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0">https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/aebdcf6156ab6691adf63218240e476564a1ed4c"><code>aebdcf6</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harde
 
-- **Issue #5120** (2026-11-18): **build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4**
-  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.3 to 2.22.4. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.22.4</h2> <h2>What's Changed</h2> <ul> <li>Fixed a Linux agent memory leak that could cause runners to run out of memory during jobs with heavy process or network activity.</li> <li>The workaround for GitHub’s DNS resolver and outbound proxy experiment on GitHub-hosted Linux runners now defaults to enabled when feature flags can’t be fetched.</li> <li>Improved HTTP/2 TLS interception on Linux (enterprise tier).</li> <li>Added retries for failed monitoring API requests, improving reliability of monitoring initialization and raw-event uploads.</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4">https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/1d88384fd173af6ecb012dfd0264a306b711241a"><code>1d88384</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/716">#716</a> from step-security/rc-48</li> <li><a href="https://github.com/step-security/harden-runner/commit/26249c00f9d7bd75872eeed44f5bc
+- **Issue #5127** (2026-11-19): **commands: add NameFQDN when importing --ir**
+  *Symptoms*: The NameFQDN attr does not get generated when going through the --ir path (SetLabel is never called). This results in errors about NameFQDN not being set on 5.9, and in all entries having an empty NameFQDN on 5.10 which then means multiple entries with different names but the same target/value conflict.  So add the NameFQDN when importing via --ir.  Properly fixes https://github.com/DNSControl/dnscontrol/issues/4854 (--ir unusable in v5)  <!-- ## Before submiting a pull request  Please make sure you've run the following commands from the root directory.      bin/generate-all.sh  (this runs commands like "go generate", fixes formatting, and so on)  ## Pull request title  The pull request title becomes the commit message on main and must follow Conventional Commits (the "PR: Commitlint" check enforces this). Provider-specific changes use the scope "p/PROVIDERNAME". The subject starts with a lowercase letter.  Some examples: * ci: add required GHA permissions for goreleaser * docs: fix providers with "contributor support" table * feat(p/ROUTE53): allow R53_ALIAS records to enable target health evaluation  More details can be found in CONTRIBUTING.md under "Pull request titles". !--> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -692,36 +692,34 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0e98ff40` (2026-11-18)
-**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4 (#5120)
+### Incident Patch 1: `54f54578` (2026-11-25)
+**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0 (#5133)
 
 Bumps
 [step-security/harden-runner](https://github.com/step-security/harden-runner)
-from 2.22.3 to 2.22.4.
+from 2.22.4 to 2.23.0.
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
 href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's
 releases</a>.</em></p>
 <blockquote>
-<h2>v2.22.4</h2>
+<h2>v2.23.0</h2>
 <h2>What's Changed</h2>
 <ul>
-<li>Fixed a Linux agent memory leak that could cause runners to run out
-of memory during jobs with heavy process or network activity.</li>
-<li>The workaround for GitHub’s DNS resolver and outbound proxy
-experiment on GitHub-hosted Linux runners now defaults to enabled when
-feature flags can’t be fetched.</li>
-<li>Improved HTTP/2 TLS interception on Linux (enterprise tier).</li>
-<li>Added retries for failed monitoring API requests, improving
-reliability of monitoring initialization and raw-event uploads.</li>
+<li>Added integration with the StepSecurity Secure Registry community
+tier, a hosted SaaS registry that is free for public repositories using
+GitHub-hosted runners with Harden-Runner. Enable it with
+<code>secure-registry: true</code> to route JavaScript package downloads
+through Secure Registry, which applies a default two-day cooldown and
+blocks known compromised packages. See the <a
+href="https://docs.stepsecurity.io/packages/secure-registry/community-tier">Community
+tier documentation</a> for setup and configuration.</li>
+<li>Bug fix: Redacted credentials and signatures from signed S3 URLs
+that could appear in agent error logs when event uploads failed.</li>
 </ul>
 <p><strong>Full Changelog</strong>: <a
-href="https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4">https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Commits</su
+href="https://github.com/step-security/harden-runner/compare
 
 **File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
 ```diff
@@ -729,8 +727,8 @@ href="https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4">
          target: [FuzzConfigJSON, FuzzTXTQuoted]
      steps:
        - name: Harden the runner (Audit all outbound calls)
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
++        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
          with:
            egress-policy: audit
  
@@ -742,98 +740,20 @@ href="https://github.com/step-security/harden-runner/compare/v2.22.3...v2.22.4">
  
      steps:
        - name: Harden the runner (Audit all outbound calls)
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
++        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
          with:
            egress-policy: audit
  
 ```
 
----
-
-### Incident Patch 2: `df0698d5` (2026-11-18)
-**Commit Message**: fix(p/AZURE_PRIVATE_DNS): mark AZURE_ALIAS as not supported (#5119)
-
-# Issue
-
-AZURE_ALIAS is not supported on Azure Private DNS
-
-# Resolution
-
-Mark it as unsupported.
-
-**File**: `build/generate/providers_test.go` (modified, +3/-3)
-```diff
-@@ -172,7 +172,7 @@ func TestFeatureMatrixStructure(t *testing.T) {
- 	// them, and under BIND, whose "*" claims the entire catalog (bind.md
- 	// documents that it writes every type verbatim).
- 	azureAlias := recordTypeFeature("AZURE_ALIAS")
--	for _, provider := range []string{"AZURE_DNS", "AZURE_PRIVATE_DNS", "BIND"} {
-+	for _, provider := range []string{"AZURE_DNS", "BIND"} {
- 		if note := matrix.Providers[provider][azureAlias]; note == nil || !note.HasFeature {
- 			t.Fatalf("%s must claim AZURE_ALIAS support", provider)
- 		}
-@@ -408,8 +408,8 @@ func TestGenerateFeatureMatrixRendersRecordTypesList(t *testing.T) {
- 				t.Error("BIND's \"*\" claims every type; its bullet must list AZURE_ALIAS")
- 			}
- 		case strings.HasPrefix(line, "- [AZURE_PRIVATE_DNS](azureprivatedns.md):"):
--			if !strings.Contains(line, azureAlias) {
--				t.Error("AZURE_PRIVATE_DNS bullet must list AZURE_ALIAS")
-+			if strings.Contains(line, azureAlias) {
-+				t.Error("AZURE_PRIVATE_DNS bullet must not list AZURE_ALIAS")
- 			}
- 		}
- 	}
-```
-
-**File**: `documentation/provider/azureprivatedns.md` (modified, +2/-1)
-```diff
-@@ -227,7 +227,8 @@ The ResourceGroup is case-insensitive (it is lowercased internally).
-   - [get-zones](../commands/get-zones.md): ✅
-   - [AUTODNSSEC](../language-reference/domain-modifiers/AUTODNSSEC_ON.md): ❌
- - Supported Record Types
--  - [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
-+  - [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
-     - Not supported: [ALIAS](../language-reference/domain-modifiers/ALIAS.md) (Azure DNS does not provide a generic ALIAS functionality. Use AZURE_ALIAS instead.)
-+    - Not supported: [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) (Azure Private DNS does not support alias records)
-     - Not supported: [CAA](../language-reference/domain-modifiers/CAA.md) (Azure Private DNS does not support CAA records)
- <!-- provider-features-end -->
-```
-
-**File**: `documentation/provider/index.md` (modified, +2/-1)
-```diff
-@@ -194,8 +194,9 @@ NOTE: "Unimplemented" means that the provider's API supports this record type bu
- - [AXFRDDNS](axfrddns.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [CAA](../language-reference/domain-modifiers/CAA.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [DHCID](../language-reference/domain-modifiers/DHCID.md) [DNAME](../language-reference/domain-modifiers/DNAME.md) [DS](../language-reference/domain-modifiers/DS.md) [HTTPS](../language-reference/domain-modifiers/HTTPS.md) [LOC](../language-reference/domain-modifiers/LOC.md) [MX](../language-reference/domain-modifiers/MX.md) [NAPTR](../language-reference/domain-modifiers/NAPTR.md) [NS](../language-reference/domain-modifiers/NS.md) [OPENPGPKEY](../language-reference/domain-modifiers/OPENPGPKEY.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SMIMEA](../language-reference/domain-modifiers/SMIMEA.md) [SRV](../language-reference/domain-modifiers/SRV.md) [SSHFP](../language-reference/domain-modifiers/SSHFP.md) [SVCB](../language-reference/domain-modifiers/SVCB.md) [TLSA](../language-reference/domain-modifiers/TLSA.md) [TXT](../language-reference/domain-modifiers/TXT.md)
- - [AZURE_DNS](azuredns.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) [CAA](../language-reference/domain-modifiers/CAA.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [NS](../language-reference/domain-modifiers/NS.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
-   - Not supported: [ALIAS](../language-reference/domain-modifiers/ALIAS.md) (Azure DNS does not provide a generic ALIAS functionality. Use AZURE_ALIAS instead.)
--- [AZURE_PRIVATE_DNS](azureprivatedns.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
-+- [AZURE_PRIVATE_DNS](azureprivatedns.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [MX](../language-reference/domain-modifiers/MX.md) [PTR](../language-reference/domain-modifiers/PTR.md) [SRV](../language-reference/domain-modifiers/SRV.md) [TXT](../language-reference/domain-modifiers/TXT.md)
-   - Not supported: [ALIAS](../language-reference/domain-modifiers/ALIAS.md) (Azure DNS does not provide a generic ALIAS functionality. Use AZURE_ALIAS instead.)
-+  - Not supported: [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) (Azure Private DNS does not support alias records)
-   - Not supported: [CAA](../language-reference/domain-modifiers/CAA.md) (Azure Private DNS does not support CAA records)
- - [BIND](bind.md): [A](../language-reference/domain-modifiers/A.md) [AAAA](../language-reference/domain-modifiers/AAAA.md) [ADGUARDHOME_AAAA_PASSTHROUGH](../language-reference/domain-modifiers/ADGUARDHOME_AAAA_PASSTHROUGH.md) [ADGUARDHOME_A_PASSTHROUGH](../language-reference/domain-modifiers/ADGUARDHOME_A_PASSTHROUGH.md) [AKAMAICDN](../language-reference/domain-modifiers/AKAMAICDN.md) [AKAMAITLC](../language-reference/domain-modifiers/AKAMAITLC.md) [ALIAS](../language-reference/domain-modifiers/ALIAS.md) [AZURE_ALIAS](../language-reference/domain-modifiers/AZURE_ALIAS.md) [BUNNY_DNS_PZ](../language-reference/domain-modifiers/BUNNY_DNS_PZ.md) [BUNNY_DNS_RDR](../language-reference/domain-modifiers/BUNNY_DNS_RDR.md) [CAA](../language-reference/domain-modifiers/CAA.md) [CF_WORKER_ROUTE](../language-reference/domain-modifiers/CF_WORKER_ROUTE.md) [CLOUDFLAREAPI_SINGLE_REDIRECT](../language-reference/domain-modifiers/CF_SINGLE_REDIRECT.md) [CLOUDNS_WR](../language-reference/domain-modifiers/CLOUDNS_WR.md) [CNAME](../language-reference/domain-modifiers/CNAME.md) [CSYNC](../language-reference/domain-modifiers/CSYNC.md) [DHCID](../language-reference/domain-modifiers/DHCID.md) [DNAME](../language-reference/domain-modifiers/DNAME.md) [DNSKEY](../language-reference/domain-modifiers/DNSKEY.md) [DS](../language-reference/domain-modifiers/DS.md) [FRAME](../language-reference/domain-modifiers/FRAME.md) [HTTPS](../language-reference/domain-modifiers/HTTPS.md) [LOC](../language-reference/domain-modifiers/LOC.md) [LUA](../language-reference/domain-modifiers/LUA.md) [MIKROTIK_FORWARDER](../language-reference/domain-modifiers/MIKROTIK_FORWARDER.md) [MIKROTIK_FWD](../language-reference/domain-modifiers/MIK
-```
-
-**File**: `providers/azureprivatedns/azurePrivateDnsProvider.go` (modified, +1/-1)
-```diff
-@@ -96,7 +96,7 @@ func init() {
- 		Maintainer:   "@matthewmgamble",
- 		SupportedTypes: []string{
- 			"Basic8",
--			"AZURE_ALIAS",
-+			"AZURE_ALIAS:Cannot:Azure Private DNS does not support alias records",
- 			"PTR",
- 			"CAA:Cannot:Azure Private DNS does not support CAA records",
- 			"NS:Cannot",
-```
-
 #### Recent Merged Pull Requests:
+- **PR #5133** (2026-11-25): build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0 (@dependabot[bot])
+- **PR #5127** (2026-11-19): commands: add NameFQDN when importing --ir (@yuyuyureka)
+- **PR #5126** (2026-11-19): ci: correct stale download-artifact pin comment (@chicks-net)
 - **PR #5122** (2026-11-18): docs: update REFACTORING_PROJECTS and release notes template (@TomOnTime)
 - **PR #5120** (2026-11-18): build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4 (@dependabot[bot])
 - **PR #5119** (2026-11-18): fix(p/AZURE_PRIVATE_DNS): mark AZURE_ALIAS as not supported (@TomOnTime)
-- **PR #5118** (2026-11-18): chore: prep release (@TomOnTime)
-- **PR #5117** (2026-11-17): refactor(p/OPENWRT): fix golint warnings (@TomOnTime)
-- **PR #5116** (2026-11-17): refactor(p/CLOUDNS): fix golint warnings (@TomOnTime)
 
 ---
 
@@ -853,13 +773,13 @@ Mark it as unsupported.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4
+## X. build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0
 
 **RULE**:
 When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0e98ff40`: build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54f54578`: build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
@@ -867,17 +787,17 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0e98ff40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54f54578` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

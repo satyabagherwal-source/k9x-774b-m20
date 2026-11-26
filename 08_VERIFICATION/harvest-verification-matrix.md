@@ -13277,3 +13277,7 @@
 | `CYCLE-20261126-6KYK` | `2026-11-26T06:26:53.468Z` | `oshai/kotlin-logging` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10615` | Yes (`9b77a41a...`) |
 | `CYCLE-20261126-HGGE` | `2026-11-26T06:35:20.846Z` | `n4ze3m/tiny-voca` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-n4ze3m-tiny-voca-learnings.md` | Yes (`905c4867...`) |
 | `CYCLE-20261126-HIWF` | `2026-11-26T06:35:24.015Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10616` | Yes (`566d4b3d...`) |
+| `CYCLE-20261126-SIM1` | `2026-11-26T06:43:56.857Z` | `meituan-longcat/LongCat-Video-Avatar-1.6` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md` | Yes (`b20f183f...`) |
+| `CYCLE-20261126-SKEP` | `2026-11-26T06:43:59.185Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10617` | Yes (`062c639b...`) |
+| `CYCLE-20261126-SOWZ` | `2026-11-26T06:44:05.027Z` | `sozercan/kaset` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10618` | Yes (`1b8b6625...`) |
+| `CYCLE-20261126-SQX9` | `2026-11-26T06:44:07.629Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10619` | Yes (`a6af0992...`) |

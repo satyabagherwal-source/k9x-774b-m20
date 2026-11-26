@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "62103794",
+    "sourceVersion": "54f54578",
     "license": "MIT",
-    "contentHash": "cc5f574cfad974afe02e36e62c011cafe9aa5c68f9f07bb7cf3076483535f1b4",
-    "lastHarvestedAt": "2026-11-20T12:07:20.455Z",
+    "contentHash": "a6af09927fc2f3eb29a9d5e82722714661fc30500d81a3b031b84da573eb350d",
+    "lastHarvestedAt": "2026-11-26T06:44:07.633Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "99022d83",
+    "sourceVersion": "690f59f2",
     "license": "MIT",
-    "contentHash": "1960374ccacd00981aa38092f2326b35d9e2e638369df989a860e0fc7924f226",
-    "lastHarvestedAt": "2026-11-25T00:26:40.090Z",
+    "contentHash": "062c639bcf4f29f1b3a6bb9ffa7e0652da2992dfd3963415fb892e5c6d5ce125",
+    "lastHarvestedAt": "2026-11-26T06:43:59.190Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -9783,10 +9783,10 @@
     "repository": "sozercan/kaset",
     "platform": "github",
     "sourceUrl": "https://github.com/sozercan/kaset",
-    "sourceVersion": "957c1db4",
+    "sourceVersion": "49c8bb52",
     "license": "MIT",
-    "contentHash": "0fed78b16876654cafdac506d238f5b9b3870ace7f03ca5e2e593097729404e1",
-    "lastHarvestedAt": "2026-11-23T20:56:13.722Z",
+    "contentHash": "1b8b66250a14e83bebfc1d95da42c7ef9008fcdc190322fcfc46004dae2ff00f",
+    "lastHarvestedAt": "2026-11-26T06:44:05.032Z",
     "learningId": "learn-github-sozercan-kaset"
   },
   "digitalbazaar-pyld": {
@@ -12745,8 +12745,8 @@
     "sourceUrl": "https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6",
     "sourceVersion": "hf-meituan-longcat-longcat-video-avatar-1.6",
     "license": "Open-Source",
-    "contentHash": "9eec5864889ac8b05bb78b6b50e018d9c1de114a17e12585b5052629820d9dd0",
-    "lastHarvestedAt": "2026-11-22T11:34:34.201Z",
+    "contentHash": "b20f183f9eba46718b77d59942ba0c4af8f1d1fe91a8a36b174bd59e5ad3ab50",
+    "lastHarvestedAt": "2026-11-26T06:43:56.862Z",
     "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6"
   },
   "hf-nex-agi-nex-n2.6": {

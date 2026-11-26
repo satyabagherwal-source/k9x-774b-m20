@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-HFCK",
-    "timestamp": "2026-11-24T16:19:50.900Z",
-    "repository": "ArchiveBox/ArchiveBox",
-    "learningId": "learn-github-archivebox-archivebox",
-    "contentHash": "44d6a4cb69c151c2509815b94b7964b9885513238d4dfa0c41a4ecff76b0d54d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-HIDQ",
-    "timestamp": "2026-11-24T16:19:54.830Z",
-    "repository": "nats-io/nats-server",
-    "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "d3b07a59d3f9d079698b037e882ccdad6afd1379a6d36eeffc791e4d3c6b6c2b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-S7C0",
-    "timestamp": "2026-11-24T16:28:13.728Z",
-    "repository": "AngelSlim/Hy4-flash-GGUF",
-    "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
-    "contentHash": "e98d7b4d5aca2b6ea80a6360315824c0213c26e5929b304603dfc895f8d2029e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-3904",
-    "timestamp": "2026-11-24T16:36:49.108Z",
-    "repository": "MariaDB/server",
-    "learningId": "learn-github-mariadb-server",
-    "contentHash": "ec7144540a2da3df250fef54bfab9be396d535095bb00af11283e0d98d4b86cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-F1L8",
     "timestamp": "2026-11-24T16:45:59.372Z",
     "repository": "lxml/lxml",
@@ -7490,6 +7430,66 @@
     "repository": "xevrion/hatchzip",
     "learningId": "learn-github-xevrion-hatchzip",
     "contentHash": "566d4b3ddea164674332ac25b6b9b3bac002bd598633b4f78053e6aad0a5a4d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SIM1",
+    "timestamp": "2026-11-26T06:43:56.857Z",
+    "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
+    "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
+    "contentHash": "b20f183f9eba46718b77d59942ba0c4af8f1d1fe91a8a36b174bd59e5ad3ab50",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SKEP",
+    "timestamp": "2026-11-26T06:43:59.185Z",
+    "repository": "zenbu-labs/terminal-browser",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "062c639bcf4f29f1b3a6bb9ffa7e0652da2992dfd3963415fb892e5c6d5ce125",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SOWZ",
+    "timestamp": "2026-11-26T06:44:05.027Z",
+    "repository": "sozercan/kaset",
+    "learningId": "learn-github-sozercan-kaset",
+    "contentHash": "1b8b66250a14e83bebfc1d95da42c7ef9008fcdc190322fcfc46004dae2ff00f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SQX9",
+    "timestamp": "2026-11-26T06:44:07.629Z",
+    "repository": "DNSControl/dnscontrol",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "a6af09927fc2f3eb29a9d5e82722714661fc30500d81a3b031b84da573eb350d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

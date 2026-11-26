@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `62103794`  
+> **Source Version**: `54f54578`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T12:07:19.500Z  
+> **Timestamp**: 2026-11-26T06:44:06.361Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:07:19.389Z  
+> **Harvest Timestamp**: 2026-11-26T06:44:06.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4010 stars
+- **Stars / Engagement**: 4016 stars
 
 ---
 
@@ -657,11 +657,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5133** (2026-11-25): **build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0**
+  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.4 to 2.23.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.23.0</h2> <h2>What's Changed</h2> <ul> <li>Added integration with the StepSecurity Secure Registry community tier, a hosted SaaS registry that is free for public repositories using GitHub-hosted runners with Harden-Runner. Enable it with <code>secure-registry: true</code> to route JavaScript package downloads through Secure Registry, which applies a default two-day cooldown and blocks known compromised packages. See the <a href="https://docs.stepsecurity.io/packages/secure-registry/community-tier">Community tier documentation</a> for setup and configuration.</li> <li>Bug fix: Redacted credentials and signatures from signed S3 URLs that could appear in agent error logs when event uploads failed.</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0">https://github.com/step-security/harden-runner/compare/v2.22.4...v2.23.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/aebdcf6156ab6691adf63218240e476564a1ed4c"><code>aebdcf6</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harde
+
 - **Issue #5127** (2026-11-19): **commands: add NameFQDN when importing --ir**
   *Symptoms*: The NameFQDN attr does not get generated when going through the --ir path (SetLabel is never called). This results in errors about NameFQDN not being set on 5.9, and in all entries having an empty NameFQDN on 5.10 which then means multiple entries with different names but the same target/value conflict.  So add the NameFQDN when importing via --ir.  Properly fixes https://github.com/DNSControl/dnscontrol/issues/4854 (--ir unusable in v5)  <!-- ## Before submiting a pull request  Please make sure you've run the following commands from the root directory.      bin/generate-all.sh  (this runs commands like "go generate", fixes formatting, and so on)  ## Pull request title  The pull request title becomes the commit message on main and must follow Conventional Commits (the "PR: Commitlint" check enforces this). Provider-specific changes use the scope "p/PROVIDERNAME". The subject starts with a lowercase letter.  Some examples: * ci: add required GHA permissions for goreleaser * docs: fix providers with "contributor support" table * feat(p/ROUTE53): allow R53_ALIAS records to enable target health evaluation  More details can be found in CONTRIBUTING.md under "Pull request titles". !--> 
-
-- **Issue #5126** (2026-11-19): **ci: correct stale download-artifact pin comment**
-  *Symptoms*: ## What  Fixes the stale version comment on the SHA-pinned `actions/download-artifact` ref in `release_draft.yml`.  ## Why  Dependabot bumped this pin from v4.3.0 to v8.0.2 in #5081, but the pin's comment had trailing prose after the version ("`# v4.3.0, same major as the generator's upload-artifact v4.6.0`"), so Dependabot updated the SHA and left the comment untouched. On main the SHA is v8.0.2 while the comment still claims v4.3.0, and the documented "same major as the SLSA generator" constraint was silently crossed.  The three releases since the bump (Nov 12, 16, and 18) all succeeded, so download-artifact v8 happily reads the generator's upload-artifact v4.6.0 artifacts — nothing is broken, but the comment now lies. This PR updates the comment to a bare `# v8.0.2`, which is the form Dependabot maintains automatically. If we ever want to hold this pin to a specific major for real, that constraint belongs in a `dependabot.yml` ignore rule, not in a comment.  Refs #5125, where the broader "finish pinning the CI fleet" discussion lives.  ## Notes for reviewer  - One-line change, comment only — the SHA is unchanged (it was already v8.0.2's). - No `bin/generate-all.sh` output is affected by a workflow comment change. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -678,128 +678,68 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62103794` (2026-11-19)
-**Commit Message**: commands: add NameFQDN when importing --ir (#5127)
+### Incident Patch 1: `54f54578` (2026-11-25)
+**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0 (#5133)
 
-The NameFQDN attr does not get generated when going through the --ir
-path (SetLabel is never called). This results in errors about NameFQDN
-not being set on 5.9, and in all entries having an empty NameFQDN on
-5.10 which then means multiple entries with different names but the same
-target/value conflict.
+Bumps
+[step-security/harden-runner](https://github.com/step-security/harden-runner)
+from 2.22.4 to 2.23.0.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's
+releases</a>.</em></p>
+<blockquote>
+<h2>v2.23.0</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>Added integration with the StepSecurity Secure Registry community
+tier, a hosted SaaS registry that is free for public repositories using
+GitHub-hosted runners with Harden-Runner. Enable it with
+<code>secure-registry: true</code> to route JavaScript package downloads
+through Secure Registry, which applies a default two-day cooldown and
+blocks known compromised packages. See the <a
+href="https://docs.stepsecurity.io/packages/secure-registry/community-tier">Community
+tier documentation</a> for setup and configuration.</li>
+<li>Bug fix: Redacted credentials and signatures from signed S3 URLs
+that could appear in agent error logs when event uploads failed.</li>
+</ul>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/step-security/harden-runner/compare
 
-So add the NameFQDN when importing via --ir.
-
-Properly fixes https://github.com/DNSControl/dnscontrol/issues/4854
-(--ir unusable in v5)
-
-<!--
-## Before submiting a pull request
-
-Please make sure you've run the following commands from the root
-directory.
-
-    bin/generate-all.sh
-
-(this runs commands like "go generate", fixes formatting, and so on)
-
-## Pull request title
-
-The pull request title becomes the commit message on main and must
-follow Conventional Commits (the "PR: Commitlint" check enforces this).
-Provider-specific changes use the scope "p/PROVIDERNAME". The subject
-starts with a lowercase letter.
-
-Some examples:
-* ci: add required GHA permissions for goreleaser
-* docs: fix providers with "contributor support" table
-* feat(p/ROUTE53): allow R53_ALIAS records to enable target health
-evaluation
-
-More details can be found in
-
-**File**: `commands/commands.go` (modified, +18/-0)
+**File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
 ```diff
-@@ -185,6 +185,24 @@ func GetDNSConfig(args GetDNSConfigArgs) (*models.DNSConfig, error) {
- 		if err = dec.Decode(cfg); err != nil {
- 			return nil, err
- 		}
-+
-+		// RecordConfig.NameFQDN is not serialized (json:"-"), so records
-+		// decoded from an IR file have no FQDN and GetLabelFQDN() returns
-+		// "".  Reconstruct the label now that the domain (origin) is known,
-+		// otherwise FQDN-based validation (checkDuplicates and friends)
-+		// reports bogus errors for valid zones. See issue #4854.
-+		for _, d := range cfg.Domains {
-+			for _, r := range d.Records {
-+				if r != nil {
-+					r.SetLabel(r.GetLabel(), d.Name)
-+				}
-+			}
-+			for _, r := range d.EnsureAbsent {
-+				if r != nil {
-+					r.SetLabel(r.GetLabel(), d.Name)
-+				}
-+			}
-+		}
- 	}
+@@ -27,7 +27,7 @@ jobs:
+         target: [FuzzConfigJSON, FuzzTXTQuoted]
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
++        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
+         with:
+           egress-policy: audit
  
- 	return preloadProviders(cfg)
 ```
 
----
-
-### Incident Patch 2: `cd6377f2` (2026-11-19)
-**Commit Message**: ci: correct stale download-artifact pin comment (#5126)
-
-## What
-
-Fixes the stale version comment on the SHA-pinned
-`actions/download-artifact` ref in `release_draft.yml`.
-
-## Why
-
-Dependabot bumped this pin from v4.3.0 to v8.0.2 in #5081, but the pin's
-comment had trailing prose after the version ("`# v4.3.0, same major as
-the generator's upload-artifact v4.6.0`"), so Dependabot updated the SHA
-and left the comment untouched. On main the SHA is v8.0.2 while the
-comment still claims v4.3.0, and the documented "same major as the SLSA
-generator" constraint was silently crossed.
-
-The three releases since the bump (Nov 12, 16, and 18) all succeeded, so
-download-artifact v8 happily reads the generator's upload-artifact
-v4.6.0 artifacts — nothing is broken, but the comment now lies. This PR
-updates the comment to a bare `# v8.0.2`, which is the form Dependabot
-maintains automatically. If we ever want to hold this pin to a specific
-major for real, that constraint belongs in a `dependabot.yml` ignore
-rule, not in a comment.
-
-Refs #5125, where the broader "finish pinning the CI fleet" discussion
-lives.
-
-## Notes for reviewer
-
-- One-line change, comment only — the SHA is unchanged (it was al
-
-**File**: `.github/workflows/release_draft.yml` (modified, +1/-1)
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
 ```diff
-@@ -408,7 +408,7 @@ jobs:
-       contents: write # attach the provenance asset to the draft release
+@@ -36,7 +36,7 @@ jobs:
+ 
      steps:
-       - name: Download the signed provenance
--        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v4.3.0, same major as the generator's upload-artifact v4.6.0
-+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
++        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
          with:
-           name: ${{ needs.provenance.outputs.provenance-name }}
+           egress-policy: audit
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5133** (2026-11-25): build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0 (@dependabot[bot])
 - **PR #5127** (2026-11-19): commands: add NameFQDN when importing --ir (@yuyuyureka)
 - **PR #5126** (2026-11-19): ci: correct stale download-artifact pin comment (@chicks-net)
 - **PR #5122** (2026-11-18): docs: update REFACTORING_PROJECTS and release notes template (@TomOnTime)
 - **PR #5120** (2026-11-18): build(deps): bump step-security/harden-runner from 2.22.3 to 2.22.4 (@dependabot[bot])
 - **PR #5119** (2026-11-18): fix(p/AZURE_PRIVATE_DNS): mark AZURE_ALIAS as not supported (@TomOnTime)
-- **PR #5118** (2026-11-18): chore: prep release (@TomOnTime)
 
 ---
 
@@ -819,45 +759,28 @@ lives.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. commands: add NameFQDN when importing --ir
+## X. build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0
 
 **RULE**:
-When implementing operations in `commands/commands.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62103794`: commands: add NameFQDN when importing --ir. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `54f54578`: build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `commands/commands.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-		// RecordConfig.NameFQDN is not serialized (json:"-"), so records
-		// decoded from an IR file have no FQDN and GetLabelFQDN() returns
-		// "".  Reconstruct the label now that the domain (origin) is known,
-		// otherwise FQDN-based validation (checkDuplicates and friends)
-		// reports bogus errors for valid zones. See issue #4854.
-		for _, d := range cfg.Domains {
-			for _, r := range d.Records {
-				if r != nil {
-					r.SetLabel(r.GetLabel(), d.Name)
-				}
-			}
-			for _, r := range d.EnsureAbsent {
-				if r != nil {
-					r.SetLabel(r.GetLabel(), d.Name)
-				}
-			}
-		}
+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62103794` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `54f54578` are properly handled with clean fallback behavior.

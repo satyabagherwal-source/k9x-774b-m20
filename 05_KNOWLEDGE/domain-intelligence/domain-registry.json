@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T06:35:35.275Z",
-  "total_records": 2715,
+  "last_updated": "2026-11-26T06:44:13.753Z",
+  "total_records": 2717,
   "domains": {
     "A": {
       "total": 22,
@@ -1696,7 +1696,7 @@
       ]
     },
     "H": {
-      "total": 649,
+      "total": 651,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2346,7 +2346,9 @@
         "domain_intelligence-technical-construction-intelligence-adventists-ai-sophon-realtime-v1-core-invari",
         "DOM-H-4E1550AF",
         "domain_intelligence-technical-construction-intelligence-hf-adventists-ai-sophon-realtime-v1-learning",
-        "DOM-H-F039AD05"
+        "DOM-H-F039AD05",
+        "domain_intelligence-technical-construction-intelligence-sozercan-kaset-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-sozercan-kaset-learnings-core-invariants"
       ]
     },
     "I": {
@@ -15767,8 +15769,8 @@
       "title": "Architecture Intelligence: zenbu-labs/terminal-browser Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-architecture-intelligence-zenbu-labs-terminal-browse.md",
       "repository": "zenbu-labs/terminal-browser",
-      "content_hash": "7fab58bbd37f39b35f9f97f6badf776b95efb0758b64cd729dc0f780ed49b3c8",
-      "created_at": "2026-11-25T00:26:40.719Z"
+      "content_hash": "79475466c5a7d029e581f4262301f9dce300509648d357ede21d0fe1133d0fa9",
+      "created_at": "2026-11-26T06:43:59.775Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-core-invariants",
@@ -15803,8 +15805,8 @@
       "title": "Architecture Intelligence: zenbu-labs-terminal-browser-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zenbu-labs-terminal-browser-learnings-architecture-intelligence-zenbu-labs-termi.md",
       "repository": "zenbu-labs-terminal-browser-learnings",
-      "content_hash": "f60e0347b1dbaa97e86d8705545f198191eee20568d39f76adc3e632975f0428",
-      "created_at": "2026-11-25T00:26:57.146Z"
+      "content_hash": "6a7b2b4b14d359141f34c6f011af6f01eb81bf4ac269783ae23337f3c3d3190a",
+      "created_at": "2026-11-26T06:44:12.119Z"
     },
     "DOM-D-2F30EB65": {
       "record_id": "DOM-D-2F30EB65",
@@ -27720,8 +27722,8 @@
       "title": "Research & Knowledge Intelligence: meituan-longcat/LongCat-Video-Avatar-1.6 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-video-avatar-1-6-research-knowledge-intelligence-meit.md",
       "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
-      "content_hash": "ba99c8dc8cfb73c5cd3d449f84f250590cdc953a87e23d9d972df29d1e9eca2e",
-      "created_at": "2026-11-22T11:34:34.504Z"
+      "content_hash": "7c6bb783ee9ab964d70faba2a8269a8c3c7d75842445dd15da954683878b8fb3",
+      "created_at": "2026-11-26T06:43:57.130Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nex-agi-nex-n2-6-core-invariants",
@@ -27789,8 +27791,8 @@
       "title": "Research & Knowledge Intelligence: hf-meituan-longcat-longcat-video-avatar-1.6-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meituan-longcat-longcat-video-avatar-1-6-learnings-research-knowledge-intelli.md",
       "repository": "hf-meituan-longcat-longcat-video-avatar-1.6-learnings",
-      "content_hash": "881091b0de52c4c56e153a5b32c3b8a0a6d60a37021a49b55aeda0d1306700bf",
-      "created_at": "2026-11-22T11:35:15.573Z"
+      "content_hash": "a6e7afb3bb3a264cd2680519b6dc36b0e7d72373902684ddf53704b009d8036c",
+      "created_at": "2026-11-26T06:44:12.861Z"
     },
     "DOM-D-1453C5CA": {
       "record_id": "DOM-D-1453C5CA",
@@ -31380,8 +31382,8 @@
       "title": "Technical Construction Intelligence: DNSControl/dnscontrol Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dnscontrol-dnscontrol-technical-construction-intelligence-dnscontrol-dnscontrol-.md",
       "repository": "DNSControl/dnscontrol",
-      "content_hash": "5218ec588bdc3214c4428b808368be52dabcf79a0182dae052e5f9fa8f86ad14",
-      "created_at": "2026-11-19T07:14:23.161Z"
+      "content_hash": "33a8894f8765ea91c5bc93a30f378feaf630ce5f8cb1f64857d287b3146cc5ce",
+      "created_at": "2026-11-26T06:44:08.223Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria",
@@ -45932,6 +45934,24 @@
       "repository": "oshai-kotlin-logging-learnings",
       "content_hash": "3fe66352bab39e27d7905007d3b40f66a9a59072875df296402021f59b9b66fb",
       "created_at": "2026-11-26T06:27:05.400Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sozercan-kaset-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sozercan-kaset-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sozercan/kaset Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sozercan-kaset-technical-construction-intelligence-sozercan-kaset-core-invariant.md",
+      "repository": "sozercan/kaset",
+      "content_hash": "0723e324ce0d04548308f9c4ac88ba7c7e28c82495be1dc002b6436824c8a469",
+      "created_at": "2026-11-26T06:44:05.561Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-sozercan-kaset-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-sozercan-kaset-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: sozercan-kaset-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-sozercan-kaset-learnings-technical-construction-intelligence-sozercan-kaset-lear.md",
+      "repository": "sozercan-kaset-learnings",
+      "content_hash": "44a57532d08b9cffe4b92201f19561751a8117b5e7f9605063e30e5ed87e2301",
+      "created_at": "2026-11-26T06:44:13.753Z"
     }
   }
 }

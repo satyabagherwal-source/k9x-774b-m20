@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T11:35:15.444Z",
+  "timestamp": "2026-11-26T06:44:12.743Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-meituan-longcat-longcat-video-avatar-1.6-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-meituan-longcat-longcat-video-avatar-1.6-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T11:35:15.444Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T06:44:12.743Z`  
 > **Learning ID**: `LEARN-EVO-hf-meituan-longcat-longcat-video-avatar-1.6-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-meituan-l`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T11:34:33.558Z  
+> **Timestamp**: 2026-11-26T06:43:56.192Z  
 > **Learning ID**: `learn-huggingface-meituan-longcat-longcat-video-avatar-1-6`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6](https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T11:34:18.652Z  
+> **Harvest Timestamp**: 2026-11-26T06:43:56.010Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3483 downloads | 405 likes
+- **Stars / Engagement**: 5135 downloads | 532 likes
 
 ---
 

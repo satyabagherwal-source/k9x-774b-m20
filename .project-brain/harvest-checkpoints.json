@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T06:35:24.036Z",
+  "last_updated": "2026-11-26T06:44:07.650Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "cc5f574cfad974afe02e36e62c011cafe9aa5c68f9f07bb7cf3076483535f1b4",
-      "verified_at": "2026-11-20T12:07:20.462Z",
+      "content_hash": "a6af09927fc2f3eb29a9d5e82722714661fc30500d81a3b031b84da573eb350d",
+      "verified_at": "2026-11-26T06:44:07.650Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T12:07:20.462Z"
+      "last_updated": "2026-11-26T06:44:07.650Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -11001,14 +11001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
-      "content_hash": "1960374ccacd00981aa38092f2326b35d9e2e638369df989a860e0fc7924f226",
-      "verified_at": "2026-11-25T00:26:40.110Z",
+      "content_hash": "062c639bcf4f29f1b3a6bb9ffa7e0652da2992dfd3963415fb892e5c6d5ce125",
+      "verified_at": "2026-11-26T06:43:59.207Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:26:40.110Z"
+      "last_updated": "2026-11-26T06:43:59.207Z"
     },
     "kosi-libs/Kodein": {
       "repository": "kosi-libs/Kodein",
@@ -14721,14 +14721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sozercan-kaset",
-      "content_hash": "0fed78b16876654cafdac506d238f5b9b3870ace7f03ca5e2e593097729404e1",
-      "verified_at": "2026-11-23T20:56:13.730Z",
+      "content_hash": "1b8b66250a14e83bebfc1d95da42c7ef9008fcdc190322fcfc46004dae2ff00f",
+      "verified_at": "2026-11-26T06:44:05.054Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T20:56:13.730Z"
+      "last_updated": "2026-11-26T06:44:05.054Z"
     },
     "digitalbazaar/pyld": {
       "repository": "digitalbazaar/pyld",
@@ -19206,14 +19206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
-      "content_hash": "9eec5864889ac8b05bb78b6b50e018d9c1de114a17e12585b5052629820d9dd0",
-      "verified_at": "2026-11-22T11:34:34.212Z",
+      "content_hash": "b20f183f9eba46718b77d59942ba0c4af8f1d1fe91a8a36b174bd59e5ad3ab50",
+      "verified_at": "2026-11-26T06:43:56.879Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T11:34:34.212Z"
+      "last_updated": "2026-11-26T06:43:56.879Z"
     },
     "nex-agi/Nex-N2.6": {
       "repository": "nex-agi/Nex-N2.6",

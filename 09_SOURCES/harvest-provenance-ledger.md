@@ -13310,3 +13310,7 @@ Every entry in this ledger must capture:
 | `learn-github-oshai-kotlin-logging` | `https://github.com/oshai/kotlin-logging` | `0eeeba0c` | Multi-dimensional audit evidence | 2026-11-26T06:26:53.472Z |
 | `learn-huggingface-n4ze3m-tiny-voca` | `https://huggingface.co/n4ze3m/tiny-voca` | `hf-n4ze3m-` | Multi-dimensional audit evidence | 2026-11-26T06:35:20.851Z |
 | `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `07c0e5ca` | Multi-dimensional audit evidence | 2026-11-26T06:35:24.019Z |
+| `learn-huggingface-meituan-longcat-longcat-video-avatar-1-6` | `https://huggingface.co/meituan-longcat/LongCat-Video-Avatar-1.6` | `hf-meituan` | Multi-dimensional audit evidence | 2026-11-26T06:43:56.862Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `690f59f2` | Multi-dimensional audit evidence | 2026-11-26T06:43:59.190Z |
+| `learn-github-sozercan-kaset` | `https://github.com/sozercan/kaset` | `49c8bb52` | Multi-dimensional audit evidence | 2026-11-26T06:44:05.032Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `54f54578` | Multi-dimensional audit evidence | 2026-11-26T06:44:07.633Z |

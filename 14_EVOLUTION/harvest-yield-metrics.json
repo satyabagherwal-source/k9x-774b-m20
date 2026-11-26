@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:35:24.033Z",
-  "total_cycles_completed": 12598,
-  "total_learnings_persisted": 12598,
-  "total_rules_promoted": 11510,
+  "last_updated": "2026-11-26T06:44:07.646Z",
+  "total_cycles_completed": 12602,
+  "total_learnings_persisted": 12602,
+  "total_rules_promoted": 11513,
   "history": [
-    {
-      "timestamp": "2026-11-25T11:59:44.033Z",
-      "repository": "LiquidAI/LFM3-VL-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:59:51.459Z",
-      "repository": "jellyfin/Swiftfin",
-      "learningId": "learn-github-jellyfin-swiftfin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:59:54.054Z",
-      "repository": "nats-io/nats.go",
-      "learningId": "learn-github-nats-io-nats-go",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T11:59:56.657Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T12:09:00.722Z",
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T06:35:24.033Z",
       "repository": "xevrion/hatchzip",
       "learningId": "learn-github-xevrion-hatchzip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:43:56.875Z",
+      "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
+      "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:43:59.203Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:44:05.046Z",
+      "repository": "sozercan/kaset",
+      "learningId": "learn-github-sozercan-kaset",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T06:44:07.646Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

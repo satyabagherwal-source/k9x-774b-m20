@@ -4,24 +4,24 @@
 {
   "source_repository": "zenbu-labs/terminal-browser",
   "source_url": "https://github.com/zenbu-labs/terminal-browser",
-  "source_version": "99022d83",
+  "source_version": "690f59f2",
   "license": "MIT",
-  "timestamp": "2026-11-25T00:26:40.411Z",
+  "timestamp": "2026-11-26T06:43:59.476Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zenbu-labs-terminal-browser",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `99022d83`).  
-> **License**: MIT | **Timestamp**: `2026-11-25T00:26:40.411Z`  
+> **Provenance**: Harvested from [zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser) (Revision: `690f59f2`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T06:43:59.476Z`  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zenbu-labs/terminal-browser:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:26:38.504Z  
+> **Harvest Timestamp**: 2026-11-26T06:43:57.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4857 stars
+- **Stars / Engagement**: 4962 stars
 
 ---
 
@@ -1575,570 +1575,418 @@ impl Bridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99022d83` (2026-11-24)
-**Commit Message**: Fix electron patch conflicts, update to latest electron (#334)
+### Incident Patch 1: `690f59f2` (2026-11-25)
+**Commit Message**: Image transmission throttle limit inside rex (#339)
 
-* rebase electron patches onto 45.4.1, keeping 44.11.5
+* limit the rate of image data written to rex per second + associated config option
 
-* publish branch builds of patched electron as previews, promote them without rebuilding
+* bump little bit
 
-Runs of pixel electron build off the default branch publish a prerelease
-electron-v<version>-preview.<branch> and keep a status comment on the branch's PR
-instead of opening issues. The promote input copies a complete preview's assets to
-electron-v<version>.
+* fix comments, add TERMINAL_BROWSER_IMAGE_RATE var for controlling image rate
 
-* pin patched electron 45.4.1
-
-* route offscreen input through the router only once it knows the view
-
-Chromium 156 drops routed mouse and wheel events whose root view is not in the
-router's map yet; forward those straight to the widget instead.
-
-* keep the electron release notes inline, without a preview preamble
-
-* download promoted assets outside the checkout
-
-**File**: `.github/workflows/pixel-electron-build.yml` (modified, +176/-19)
+**File**: `browser/src/session/session.tsx` (modified, +2/-0)
 ```diff
-@@ -1,5 +1,5 @@
- name: pixel electron build
--run-name: "build patched electron v${{ inputs.version }}"
-+run-name: "${{ inputs.promote && format('promote electron v{0} preview from {1}', inputs.version, github.ref_name) || github.ref_name == github.event.repository.default_branch && format('build patched electron v{0}', inputs.version) || format('preview patched electron v{0} on {1}', inputs.version, github.ref_name) }}"
+@@ -19,6 +19,7 @@ import {
+   commandLabel,
+   ENGINE_LOG_FILE,
+   fetchLatestRelease,
++  imageRate,
+   installedChannel,
+   installedVersion,
+   lastUrl,
+@@ -1117,6 +1118,7 @@ class Session {
+       highlightTransmits: this.settings.get("render.transmitOutlines") === "on",
+       frameEvents: this.settings.get("render.frameEvents") === "on",
+       tiles: this.settings.get("render.tiles"),
++      imageRate: imageRate(this.settings.get("render.imageRate")),
+     };
+     root.setRender(render);
+     root.setLogFile(this.settings.get("debug.logFile") === "on" ? ENGINE_LOG_FILE : null);
+```
+
+**File**: `browser/src/session/settings.ts` (modified, +8/-1)
+```diff
+@@ -62,7 +62,14 @@ function settingRow(key: SettingKey, value: string): SettingRow {
+   if (values.length === 2 && values.includes("on") && values.includes("off")) {
+     return { ...base, kind: "toggle", value, inverted: def.inverted ?? false };
+   }
+-  return { ...base, kind: "choice", value, choices, custom: !(def.schema instanceof z.ZodEnum) };
++  return {
++    ...base,
++    kind: "choice",
++    value,
++    choices,
++    custom: !(def.schema instanceof z.ZodEnum),
++    unit: def.unit ?? null,
++  };
+ }
  
- on:
-   workflow_dispatch:
-@@ -11,24 +11,60 @@ on:
-         description: "Comma separated platforms to build; the others keep their published assets"
-         required: false
-         default: "darwin-arm64,darwin-x64,linux-x64,linux-arm64"
-+      promote:
-+        description: "Copy this branch's preview release to the production release instead of building"
-+        type: boolean
-+        default: false
+ function agentBrief(files: ConfigFiles): string {
+```
+
+**File**: `browser/src/ui/settings/general.tsx` (modified, +27/-6)
+```diff
+@@ -154,13 +154,21 @@ export function SettingLine({
+           />
+         )}
+         {row.kind === "string" && (
+-          <TemplateField row={row} actions={actions} width={dropdownWidth} rem={rem} theme={theme} />
++          <TemplateField row={row} value={row.value} actions={actions} width={dropdownWidth} rem={rem} theme={theme} />
+         )}
+       </Box>
+       <Text style={{ fontSize: rem * 0.85, color: theme.muted, selectable: false }}>{row.hint}</Text>
+       {customShown && (
+         <Box style={{ justifyContent: "end" }}>
+-          <TemplateField row={row} actions={actions} width={dropdownWidth} rem={rem} theme={theme} />
++          <TemplateField
++            row={row}
++            value={preset ? "" : row.value}
++            unit={row.unit}
++            actions={actions}
++            width={dropdownWidth}
++            rem={rem}
++            theme={theme}
++          />
+         </Box>
+       )}
+     </Box>
+@@ -169,12 +177,16 @@ export function SettingLine({
  
- permissions:
-   contents: write
-   issues: write
-+  pull-requests: write
+ function TemplateField({
+   row,
++  value,
++  unit,
+   actions,
+   width,
+   rem,
+   theme,
+ }: {
+-  row: SettingRow & { value: string };
++  row: SettingRow;
++  value: string;
++  unit?: string | null;
+   actions: SettingsActions;
+   width: number;
+   rem: number;
+@@ -186,21 +198,30 @@ function TemplateField({
+         width,
+         height: rem * 2.1,
+         alignItems: "center",
++        gap: rem * 0.5,
+         padding: { left: rem * 0.7, right: rem * 0.7 },
+         cornerRadius: rem * 0.35,
+         background: theme.field,
+         border: { width: 1, color: row.modified ? withAlpha(theme.accent, 150) : theme.fieldBorder },
+       }}
+     >
+       <Input
+-        key={row.value}
+-        defaultValue={row.value}
++        key={value}
++        defaultValue={value}
+         style={{ flexGrow: 1, flexBasis: 0, wrap: false, fontSize: rem * 0.9 }}
+         caretColor={theme.accent}
+         selectionColor={theme.selection}
+         onChange={(text) => actions.draft(row.key, text)}
+-        onSubmit={(text) => actions.set(row.key, text)}
++        onSubmit={(text) => {
++          if (row.kind === "choice" && text.trim() === "") return;
++          actions.set(row.key, text);
++        }}
+       />
++      {unit && (
++        <Text style={{ flexShrink: 0, fontSize: rem * 0.9, color: theme.muted, wrap: false, selectable: false }}>
++          {unit}
++        </Text>
++      )}
+     </Box>
+   );
+ }
+```
+
+**File**: `browser/src/ui/types.ts` (modified, +1/-1)
+```diff
+@@ -111,7 +111,7 @@ export type SettingRow = {
+ } & (
+   | { kind: "string"; value: string }
+   | { kind: "toggle"; value: string; inverted: boolean }
+-  | { kind: "choice"; value: string; choices: SettingChoiceView[]; custom: boolean }
++  | { kind: "choice"; value: string; choices: SettingChoiceView[]; custom: boolean; unit: string | null }
+ );
  
- concurrency:
--  group: electron-build-${{ inputs.version }}
-+  group: electron-build-${{ inputs.version }}-${{ github.ref_name }}
-   cancel-in-progress: false
+ export interface SettingsView {
+```
+
+**File**: `browser/test/config.test.js` (modified, +23/-1)
+```diff
+@@ -10,7 +10,7 @@ const { defaultKeys } = require("shared");
+ const { searchUrlFor, searchOrUrl } = require("../dist/url.js");
+ const { SEARCH_ENGINES, engineBySearch, parseSuggestions } = require("shared");
+ const { SettingsManager } = require("../dist/session/settings.js");
+-const { renderEnv, maxFps } = require("shared");
++const { renderEnv, maxFps, imageRate } = require("shared");
  
--# Releases are tagged electron-v<version> so they never collide with the pixel-v<version>
--# tags of the pixel packages or terminal-browser's own v<version> tags.
-+# Runs on the default branch publish the production release, tagged electron-v<version> so it
-+# never collides with the pixel-v<version> tags of the pixel packages or terminal-browser's own
-+# v<version> tags. Runs on any other branch publish a prerelease tagged
-+# electron-v<version>-preview.<branch>, which installs ignore unless PIXEL_ELECTRON_MIRROR points
-+# at it, and report on the branch's PR. Promoting copies a preview's assets to production as is.
- jobs:
-   plan:
-     runs-on: ubuntu-latest
-     timeout-minutes: 5
-     outputs:
-       matrix: ${{ steps.matrix.outputs.matrix }}
-+      channel: ${{ steps.channel.outputs.channel }}
-+      tag: ${{ steps.channel.outputs.tag }}
-+      preview_tag: ${{ steps.channel.outputs.preview_tag }}
-     steps:
-+      - id: channel
-+        env:
-+          VERSION: ${{ inputs.version }}
-+          PROMOTE: ${{ inputs.promote }}
-+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-+        run: |
-+          set -euo pipefail
-+          slug=$(printf %s "$GITHUB_REF_NAME" | tr -c 'A-Za-z0-9.-' '-')
-+          preview_tag="electron-v$VERSION-preview.$slug"
-+          if [ "$GITHUB_REF_NAME" = "$DEFAULT_BRANCH" ]; then
-+            if [ "$PROMOTE" = "true" ]; then
-+              echo "::error::promote runs on the branch whose preview should become production, not on $DEFAULT_BRANCH"
-+              exit 1
-+            fi
-+            channel=production
-+            tag="electron-v$VERSION"
-+          else
-+            channel=preview
-+            tag="$preview_tag"
-+          fi
-+          echo "channel=$channel" >> "$GITHUB_OUTPUT"
-+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-+          echo "preview_tag=$preview_tag" >> "$GITHUB_OUTPUT"
-+          echo "channel: $channel, release: $tag"
+ const press = (key, mods = {}) => ({
+   key,
+@@ -274,6 +274,28 @@ test("render settings accept numbers or their named values and refuse the rest",
+   assert.equal(broken.settings["render.transport"], "auto");
+ });
+ 
++test("max image transfer speed is auto or a number of megabytes per second", () => {
++  const store = tempStore();
++  assert.equal(store.load().settings["render.imageRate"], "auto");
++  assert.equal(imageRate("auto"), "auto");
++  assert.equal(imageRate("600"), 600);
 +
-       - id: matrix
-         env:
-           PLATFORMS: ${{ inputs.platforms || 'darwin-arm64,darwin-x64,linux-x64,linux-arm64' }}
-@@ -51,6 +87,7 @@ jobs:
- 
-   build:
-     needs: plan
-+    if: ${{ !inputs.promote }}
-     strategy:
-       fail-fast: false
-       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
-@@ -84,8 +121,9 @@ jobs:
-             ${{ runner.temp }}/out/sha-${{ matrix.platform }}.txt
-           if-no-files-found: error
- 
-+      # a preview reports on its PR instead, and must not block the sync workflow
-       - name: Report failure loudly
--        if: failure()
-+        if: ${{ failure() && needs.plan.outputs.channel == 'production' }}
-         env:
-           GH_TOKEN: ${{ github.token }}
-         run: |
-@@ -104,11 +142,13 @@ jobs:
-   publish:
-     # single writer for the release and SHASUMS256.txt: the build legs run in
-     # parallel and never touch the release themselves
--    needs: build
--    if: ${{ !cancelled() }}
-+    needs: [plan, build]
-+    if: ${{ !cancelled() && !inputs.promote }}
-     runs-on: ubuntu-latest
-     timeout-minutes: 30
-     steps:
-+      - uses: actions/checkout@v4
++  fs.writeFileSync(store.files.settings, JSON.stringify({ "render.imageRate": 450.5 }));
++  const loaded = store.load();
++  assert.deepEqual(loaded.errors, []);
++  assert.equal(loaded.settings["render.imageRate"], "450.5");
 +
-       - uses: actions/download-artifact@v4
-         with:
-           pattern: electron-asset-*
-@@ -118,10 +158,12 @@ jobs:
-       - name: Publish whatever built
-         env:
-           GH_TOKEN: ${{ github.token }}
-+          CHANNEL: ${{ needs.plan.outputs.channel }}
-+          TAG: ${{ needs.plan.outputs.tag }}
-+          PLATFORMS: ${{ inputs.platforms }}
-         run: |
-           set -euo pipefail
-           version="${{ inputs.version }}"
--          tag="electron-v$version"
-           cd out
-           ls *.zip electron.d.ts >/dev/null
-           # every platform leg generates the same electron.d.ts and lists it
-@@ -142,23 +184,31 @@ jobs:
-           Build: cookies on disk are encrypted with an OS keychain key (the \`EnableCookieEncryption\` fuse), the macOS app is marked \`LSUIElement\` so it never shows in the Dock, and it is si
-```
-
-**File**: `.github/workflows/pixel-electron-sync.yml` (modified, +1/-1)
-```diff
-@@ -66,7 +66,7 @@ jobs:
-               echo "v$version: open issue exists (close it to re-enable), skipping"
-               continue
-             fi
--            if grep -q "v$version" active-builds.txt; then
-+            if grep -qx "build patched electron v$version" active-builds.txt; then
-               echo "v$version: build already queued or running, skipping"
-               continue
-             fi
-```
-
-**File**: `pixel/electron/patches/0001-osr-shm-frame.patch` (modified, +36/-36)
-```diff
-@@ -40,15 +40,15 @@ diff --git a/docs/api/structures/web-preferences.md b/docs/api/structures/web-pr
- diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
- --- a/docs/api/web-contents.md
- +++ b/docs/api/web-contents.md
--@@ -930,6 +930,7 @@ Returns:
-+@@ -927,6 +927,7 @@ Returns:
-  
-  * `details` Event\<\>
-    * `texture` [OffscreenSharedTexture](structures/offscreen-shared-texture.md) (optional) _Experimental_ - The GPU shared texture of the frame, when `webPreferences.offscreen.useSharedTexture` is `true`.
- +  * `softwareFrame` [OffscreenSoftwareFrame](structures/offscreen-software-frame.md) (optional) _Experimental_ - The shared memory frame, when `webPreferences.offscreen.useSharedMemory` is `true`.
-  * `dirtyRect` [Rectangle](structures/rectangle.md)
-  * `image` [NativeImage](native-image.md) - The image data of the whole frame.
-  
--@@ -953,6 +954,8 @@ By managing the texture lifecycle by yourself, you can safely pass the `texture.
-+@@ -950,6 +951,8 @@ By managing the texture lifecycle by yourself, you can safely pass the `texture.
-  
-  More details can be found in the [offscreen rendering tutorial](../tutorial/offscreen-rendering.md). To learn about how to handle the texture in native code, refer to [offscreen rendering's code documentation.](../../shell/browser/osr/README.md).
-  
-@@ -60,7 +60,7 @@ diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
- diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/electron_api_web_contents.cc
- --- a/shell/browser/api/electron_api_web_contents.cc
- +++ b/shell/browser/api/electron_api_web_contents.cc
--@@ -927,6 +927,8 @@ WebContents::WebContents(v8::Isolate* isolate,
-+@@ -1053,6 +1053,8 @@ WebContents::WebContents(v8::Isolate* isolate,
-        options.Get(options::kOffscreen, &use_offscreen_dict);
-        use_offscreen_dict.Get(options::kUseSharedTexture,
-                               &offscreen_use_shared_texture_);
-@@ -69,7 +69,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
-        use_offscreen_dict.Get(options::kSharedTexturePixelFormat,
-                               &offscreen_shared_texture_pixel_format_);
-        use_offscreen_dict.Get(options::kDeviceScaleFactor,
--@@ -976,7 +978,7 @@ WebContents::WebContents(v8::Isolate* isolate,
-+@@ -1099,7 +1101,7 @@ WebContents::WebContents(v8::Isolate* isolate,
-  
-      if (embedder_ && embedder_->IsOffScreen()) {
-        auto* view = new OffScreenWebContentsView(
-@@ -78,8 +78,8 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
-            offscreen_shared_texture_pixel_format_,
-            offscreen_device_scale_factor_,
-            base::BindRepeating(&WebContents::OnPaint, base::Unretained(this)));
--@@ -1001,7 +1003,8 @@ WebContents::WebContents(v8::Isolate* isolate,
--     params.starting_sandbox_flags = starting_sandbox_flags;
-+@@ -1123,7 +1125,8 @@ WebContents::WebContents(v8::Isolate* isolate,
-+     content::WebContents::CreateParams params{browser_context};
-      auto* view = new OffScreenWebContentsView(
-          transparent, offscreen_use_shared_texture_,
- -        offscreen_shared_texture_pixel_format_, offscreen_device_scale_factor_,
-@@ -88,7 +88,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
-          base::BindRepeating(&WebContents::OnPaint, base::Unretained(this)));
-      params.view = view;
-      params.delegate_view = view;
--@@ -1446,7 +1449,7 @@ void WebContents::MaybeOverrideCreateParamsForNewWindow(
-+@@ -1600,7 +1603,7 @@ void WebContents::MaybeOverrideCreateParamsForNewWindow(
-        // Use a no-op callback here. The real OnPaint callback will be bound
-        // to the child WebContents in AddNewContents via SetCallback().
-        auto* view = new OffScreenWebContentsView(
-@@ -97,7 +97,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
-            offscreen_shared_texture_pixel_format_,
-            offscreen_device_scale_factor_, base::DoNothing());
-        create_params->view = view;
--@@ -4295,7 +4298,8 @@ bool WebContents::IsOffScreen() const {
-+@@ -4714,7 +4717,8 @@ bool WebContents::IsOffScreen() const {
-  
-  void WebContents::OnPaint(const gfx::Rect& dirty_rect,
-                            const SkBitmap& bitmap,
-@@ -107,7 +107,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
-    v8::Isolate* isolate = JavascriptEnvironment::GetIsolate();
-    v8::HandleScope handle_scope(isolate);
-  
--@@ -4305,10 +4309,18 @@ void WebContents::OnPaint(const gfx::Rect& dirty_rect,
-+@@ -4724,10 +4728,18 @@ void WebContents::OnPaint(const gfx::Rect& dirty_rect,
-        event->GetWrapper(isolate).ToLocalChecked();
-    gin_helper::Dictionary dict(isolate, event_object);
-  
-@@ -130,7 +130,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
- diff --git a/shell/browser/api/electron_api_web_contents.h b/shell/browser/api/electron_api_web_contents.h
- ---
-```
-
-**File**: `pixel/electron/patches/0002-osr-vsync-display.patch` (modified, +6/-6)
-```diff
-@@ -1,7 +1,7 @@
- diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/osr/osr_render_widget_host_view.cc
- --- a/shell/browser/osr/osr_render_widget_host_view.cc
- +++ b/shell/browser/osr/osr_render_widget_host_view.cc
--@@ -208,6 +208,9 @@ OffScreenRenderWidgetHostView::OffScreenRenderWidgetHostView(
-+@@ -215,6 +215,9 @@ OffScreenRenderWidgetHostView::OffScreenRenderWidgetHostView(
-    compositor_->SetAcceleratedWidget(gfx::kNullAcceleratedWidget);
-    compositor_->SetDelegate(this);
-    compositor_->SetRootLayer(root_layer_.get());
-@@ -11,7 +11,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
-  
-    ResizeRootLayer(false);
-  
--@@ -908,6 +911,10 @@ void OffScreenRenderWidgetHostView::SetupFrameRate(bool force) {
-+@@ -927,6 +930,10 @@ void OffScreenRenderWidgetHostView::SetupFrameRate(bool force) {
-    if (!force && frame_rate_threshold_us_ != 0)
-      return;
-  
-@@ -22,7 +22,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
-    frame_rate_threshold_us_ = 1000000 / frame_rate_;
-  
-    if (compositor_) {
--@@ -916,6 +923,21 @@ void OffScreenRenderWidgetHostView::SetupFrameRate(bool force) {
-+@@ -935,6 +942,21 @@ void OffScreenRenderWidgetHostView::SetupFrameRate(bool force) {
-    }
-  }
-  
-@@ -47,13 +47,13 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
- diff --git a/shell/browser/osr/osr_render_widget_host_view.h b/shell/browser/osr/osr_render_widget_host_view.h
- --- a/shell/browser/osr/osr_render_widget_host_view.h
- +++ b/shell/browser/osr/osr_render_widget_host_view.h
--@@ -271,6 +271,9 @@ class OffScreenRenderWidgetHostView
--  private:
-+@@ -268,6 +268,9 @@ class OffScreenRenderWidgetHostView
-    void ReleaseCompositor();
-    void SetupFrameRate(bool force);
-+   void ResizeRootLayer(bool force);
- +#if BUILDFLAG(IS_MAC)
- +  void UpdateVSyncDisplay();
- +#endif
--   void ResizeRootLayer(bool force);
-  
-    viz::FrameSinkId AllocateFrameSinkId();
-+ 
-```
-
-**File**: `pixel/electron/patches/0003-osr-wayland-scale.patch` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/osr/osr_render_widget_host_view.cc
- --- a/shell/browser/osr/osr_render_widget_host_view.cc
- +++ b/shell/browser/osr/osr_render_widget_host_view.cc
--@@ -972,6 +972,43 @@ OffScreenRenderWidgetHostView::GetNewScreenInfosForUpdate() {
-+@@ -991,6 +991,43 @@ OffScreenRenderWidgetHostView::GetNewScreenInfosForUpdate() {
-    return screen_infos;
-  }
-  
-@@ -48,7 +48,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
- diff --git a/shell/browser/osr/osr_render_widget_host_view.h b/shell/browser/osr/osr_render_widget_host_view.h
- --- a/shell/browser/osr/osr_render_widget_host_view.h
- +++ b/shell/browser/osr/osr_render_widget_host_view.h
--@@ -169,6 +169,9 @@ class OffScreenRenderWidgetHostView
-+@@ -162,6 +162,9 @@ class OffScreenRenderWidgetHostView
-    gfx::Size GetCompositorViewportPixelSize() override;
-    ui::Compositor* GetCompositor() override;
-    display::ScreenInfos GetNewScreenInfosForUpdate() override;
-```
-
-**File**: `pixel/electron/patches/0004-osr-wheel-phase.patch` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/osr/osr_render_widget_host_view.cc
- --- a/shell/browser/osr/osr_render_widget_host_view.cc
- +++ b/shell/browser/osr/osr_render_widget_host_view.cc
--@@ -857,7 +857,7 @@ void OffScreenRenderWidgetHostView::SendMouseWheelEvent(
-+@@ -876,7 +876,7 @@ void OffScreenRenderWidgetHostView::SendMouseWheelEvent(
-    }
-    if (!render_widget_host_)
-      return;
-```
-
-**File**: `pixel/electron/patches/0005-osr-resize-surface-id.patch` (modified, +8/-8)
-```diff
-@@ -1,7 +1,7 @@
- diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/osr/osr_render_widget_host_view.cc
- --- a/shell/browser/osr/osr_render_widget_host_view.cc
- +++ b/shell/browser/osr/osr_render_widget_host_view.cc
--@@ -281,6 +281,15 @@ void OffScreenRenderWidgetHostView::InitAsChild(gfx::NativeView) {
-+@@ -288,6 +288,15 @@ void OffScreenRenderWidgetHostView::InitAsChild(gfx::NativeView) {
-  }
-  
-  void OffScreenRenderWidgetHostView::SetSize(const gfx::Size& size) {
-@@ -17,7 +17,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
-    size_ = size;
-    SynchronizeVisualProperties();
-  }
--@@ -736,6 +745,10 @@ void OffScreenRenderWidgetHostView::SynchronizeVisualProperties() {
-+@@ -755,6 +764,10 @@ void OffScreenRenderWidgetHostView::SynchronizeVisualProperties() {
-      return;
-    }
-  
-@@ -28,7 +28,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
-    ResizeRootLayer(true);
-  }
-  
--@@ -1012,16 +1025,26 @@ void OffScreenRenderWidgetHostView::UpdateScreenInfo() {
-+@@ -1031,16 +1044,26 @@ void OffScreenRenderWidgetHostView::UpdateScreenInfo() {
-  void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
-    SetupFrameRate(false);
-  
-@@ -59,7 +59,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
-    root_layer()->SetBounds(gfx::Rect(size));
-  
-    auto sf = GetDeviceScaleFactor();
--@@ -1034,10 +1057,6 @@ void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
-+@@ -1053,10 +1076,6 @@ void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
-      compositor_->SetDisplayColorSpaces(new_screen_info.display_color_spaces);
-    }
-  
-@@ -70,7 +70,7 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.cc b/shell/browser/os
-    delegated_frame_host()->EmbedSurface(
-        delegated_frame_host_surface_id_, size,
-        cc::DeadlinePolicy::UseDefaultDeadline());
--@@ -1050,6 +1069,12 @@ void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
-+@@ -1069,6 +1088,12 @@ void OffScreenRenderWidgetHostView::ResizeRootLayer(bool force) {
-    }
-  }
-  
-@@ -94,15 +94,15 @@ diff --git a/shell/browser/osr/osr_render_widget_host_view.h b/shell/browser/osr
-  #include <string>
-  #include <vector>
-  
--@@ -278,6 +279,7 @@ class OffScreenRenderWidgetHostView
-+@@ -274,6 +275,7 @@ class OffScreenRenderWidgetHostView
-+ #if BUILDFLAG(IS_MAC)
-    void UpdateVSyncDisplay();
-  #endif
--   void ResizeRootLayer(bool force);
- +  void AllocateDelegatedFrameHostSurfaceId();
-  
-    viz::FrameSinkId AllocateFrameSinkId();
-  
--@@ -315,6 +317,7 @@ class OffScreenRenderWidgetHostView
-+@@ -311,6 +313,7 @@ class OffScreenRenderWidgetHostView
-  
-    bool hold_resize_ = false;
-    bool pending_resize_ = false;
-```
-
-**File**: `pixel/electron/patches/0006-media-capture-state.patch` (modified, +31/-29)
-```diff
-@@ -11,7 +11,7 @@ new file mode 100644
- diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
- --- a/docs/api/web-contents.md
- +++ b/docs/api/web-contents.md
--@@ -743,6 +743,15 @@ Returns:
-+@@ -740,6 +740,15 @@ Returns:
-  
-  Emitted when media becomes audible or inaudible.
-  
-@@ -27,7 +27,7 @@ diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
-  #### Event: 'did-change-theme-color'
-  
-  Returns:
--@@ -1541,6 +1550,10 @@ Returns `boolean` - Whether this page has been muted.
-+@@ -1533,6 +1542,10 @@ Returns `boolean` - Whether this page has been muted.
-  
-  Returns `boolean` - Whether audio is currently playing.
-  
-@@ -41,7 +41,7 @@ diff --git a/docs/api/web-contents.md b/docs/api/web-contents.md
- diff --git a/filenames.gni b/filenames.gni
- --- a/filenames.gni
- +++ b/filenames.gni
--@@ -442,6 +442,8 @@ filenames = {
-+@@ -479,6 +479,8 @@ filenames = {
-      "shell/browser/login_handler.h",
-      "shell/browser/media/media_capture_devices_dispatcher.cc",
-      "shell/browser/media/media_capture_devices_dispatcher.h",
-@@ -53,15 +53,15 @@ diff --git a/filenames.gni b/filenames.gni
- diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/electron_api_web_contents.cc
- --- a/shell/browser/api/electron_api_web_contents.cc
- +++ b/shell/browser/api/electron_api_web_contents.cc
--@@ -207,6 +207,7 @@
-+@@ -216,6 +216,7 @@
-  #include "extensions/browser/view_type_utils.h"
-  #include "extensions/common/mojom/view_type.mojom.h"
-  #include "shell/browser/extensions/electron_extension_web_contents_observer.h"
- +#include "shell/browser/media/media_capture_ui.h"
-  #endif
-  
-  #if BUILDFLAG(ENABLE_PRINTING)
--@@ -3683,6 +3684,32 @@ bool WebContents::IsCurrentlyAudible() {
-+@@ -4019,6 +4020,32 @@ bool WebContents::IsCurrentlyAudible() {
-    return web_contents()->IsCurrentlyAudible();
-  }
-  
-@@ -94,18 +94,20 @@ diff --git a/shell/browser/api/electron_api_web_contents.cc b/shell/browser/api/
-  #if BUILDFLAG(ENABLE_PRINTING)
-  namespace {
-  
--@@ -5262,6 +5289,7 @@ void WebContents::FillObjectTemplate(v8::Isolate* isolate,
--       .SetMethod("setAudioMuted", &WebContents::SetAudioMuted)
--       .SetMethod("isAudioMuted", &WebContents::IsAudioMuted)
--       .SetMethod("isCurrentlyAudible", &WebContents::IsCurrentlyAudible)
-+@@ -5787,6 +5814,9 @@ void WebContents::FillObjectTemplate(v8::Isolate* isolate,
-+       gin::CreateFunctionTemplate(
-+           isolate, base::BindRepeating(&gin_helper::Destroyable::IsDestroyed),
-+           options));
-++  gin_helper::ObjectTemplateBuilder(isolate, templ)
- +      .SetMethod("getMediaCapture", &WebContents::GetMediaCapture)
--       .SetMethod("setCaretBrowsingEnabled",
--                  &WebContents::SetCaretBrowsingEnabled)
--       .SetMethod("isCaretBrowsingEnabled", &WebContents::IsCaretBrowsingEnabled)
-++      .Build();
-+   // We use gin_helper::ObjectTemplateBuilder instead of
-+   // gin::ObjectTemplateBuilder here to handle the fact that WebContents is
-+   // destroyable.
- diff --git a/shell/browser/api/electron_api_web_contents.h b/shell/browser/api/electron_api_web_contents.h
- --- a/shell/browser/api/electron_api_web_contents.h
- +++ b/shell/browser/api/electron_api_web_contents.h
--@@ -101,6 +101,8 @@ class DevToolsEyeDropper;
-+@@ -108,6 +108,8 @@ class DevToolsEyeDropper;
-  
-  namespace electron {
-  
-@@ -114,7 +116,7 @@ diff --git a/shell/browser/api/electron_api_web_contents.h b/shell/browser/api/e
-  class DevToolsContextMenu;
-  class DraggableRegionDebugger;
-  class ElectronBrowserContext;
--@@ -263,6 +265,8 @@ class WebContents final : public ExclusiveAccessContext,
-+@@ -273,6 +275,8 @@ class WebContents final : public ExclusiveAccessContext,
-    void SetAudioMuted(bool muted);
-    bool IsAudioMuted();
-    bool IsCurrentlyAudible();
-@@ -127,7 +129,7 @@ diff --git a/shell/browser/media/media_capture_ui.cc b/shell/browser/media/media
- new file mode 100644
- --- /dev/null
- +++ b/shell/browser/media/media_capture_ui.cc
--@@ -0,0 +1,152 @@
-+@@ -0,0 +1,153 @@
- +// Copyright (c) 2026 Zenbu Labs. All rights reserved.
- +// Use of this source code is governed by the MIT license that can be
- +// found in the LICENSE file.
-@@ -273,7 +275,8 @@ new file mode 100644
- +content::MediaResponseCallback TrackMediaCapture(
- +    content::WebContents* web_contents,
- +    content::MediaResponseCallback callback) {
--+  return base::BindOnce(&RespondWithTracking, web_contents->GetWeakPtr(),
-++  return base::BindOnce(&RespondWithTracking,
-++                        web_contents ? web_contents->GetWeakPtr() : nullptr,
- +                        std::move(callback));
- +}
- +
-@@ -346,23 +349,22 @@ new file mode 100644
- diff --git a/shell/browser/web_contents_permission_helper.cc b/shell/browser/web_contents_permission_helper.cc
- --- a/shell/browser/web_contents_permission_helper.cc
- +++ b/shell/browser/web_contents_permission_helper.cc
--@@ -18,6 +18,7 @@
-+@@ -19,6 +19,7 @@
-  #include "shell/browser/electron_browser_context.h"
-  #include "shell/browser/electron_permission_mana
-```
-
----
-
-### Incident Patch 2: `a47886a0` (2026-11-24)
-**Commit Message**: fix ratio not respected inside rex
-
-**File**: `pixel/packages/pixel/src/terminal/terminals/rex.ts` (modified, +19/-3)
-```diff
-@@ -1,3 +1,5 @@
-+import path from "node:path";
++  fs.writeFileSync(store.files.settings, JSON.stringify({ "render.imageRate": "0.5" }));
++  assert.equal(store.load().settings["render.imageRate"], "0.5");
 +
- import { adjacentPane, bracketedPaste, paneById, PASTE_KEY } from "../shared";
- import type { PaneRect } from "../shared";
- import type { Detect, Pane, PaneDetails } from "../terminal";
-@@ -35,7 +37,8 @@ function layoutRects(layout: RexLayout | undefined, into: PaneRect[] = []): Pane
- export const rex: Detect = (env, run) => {
-   if (!env.REX_BLOCK && env.TERM_PROGRAM !== "rex") return null;
++  for (const bad of ["fast", "0", "-5", "", "Infinity"]) {
++    fs.writeFileSync(store.files.settings, JSON.stringify({ "render.imageRate": bad }));
++    const broken = store.load();
++    assert.equal(broken.errors.length, 1, `accepted ${JSON.stringify(bad)}`);
++    assert.equal(broken.settings["render.imageRate"], "auto");
++  }
++});
++
+ test("window.transparent defaults off, persists on, and refuses other values", () => {
+   const store = tempStore();
+   assert.equal(store.load().settings["window.transparent"], "off");
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/backend.rs` (modified, +8/-0)
+```diff
+@@ -132,6 +132,14 @@ pub trait Backend: Any + Send {
+         None
+     }
  
--  const rex = (args: string[], input?: string) => run("rex", args, input);
-+  const bin = env.REX_BIN_DIR ? path.join(env.REX_BIN_DIR, "rex") : "rex";
-+  const rex = (args: string[], input?: string) => run(bin, args, input);
++    fn image_rate_limit(&self) -> Option<f32> {
++        None
++    }
++
++    fn last_image_bytes(&self) -> usize {
++        0
++    }
++
+     fn set_title(&mut self, _text: &str) -> io::Result<()> {
+         Ok(())
+     }
+```
+
+**File**: `pixel/engine/crates/pixel-core/src/engine/frame.rs` (modified, +52/-10)
+```diff
+@@ -49,12 +49,13 @@ impl Engine {
+             .unwrap_or(interval)
+     }
  
-   async function panes(): Promise<Pane[]> {
-     const { blocks } = JSON.parse(await rex(["block", "ls", "--json"])) as {
-@@ -90,8 +93,21 @@ export const rex: Detect = (env, run) => {
-       await rex(["focus", pane]);
-     },
-     async split({ from, direction, command, size }) {
--      const ratio = size ? ["--ratio", String(Math.round(size * 100))] : [];
--      await rex(["split", "--block", from.id, "--split", SPLIT_DIRECTION[direction], ...ratio, "--", ...command]);
-+      const created = (await rex(["split", "--block", from.id, "--split", SPLIT_DIRECTION[direction], "--", ...command])).trim();
-+      if (!size || !created || !env.REX_SESSION) return;
-+      const newBlockFirst = direction === "left" || direction === "up";
-+      await rex([
-+        "api",
-+        "call",
-+        "session.resize_pane",
-+        JSON.stringify({
-+          session_id: env.REX_SESSION,
-+          direction: direction === "left" || direction === "right" ? "horizontal" : "vertical",
-+          before_block_id: newBlockFirst ? created : from.id,
-+          after_block_id: newBlockFirst ? from.id : created,
-+          ratio: newBlockFirst ? size : 1 - size,
-+        }),
-+      ]);
-     },
-   };
- };
+-    pub(super) fn frame_debt(&self) -> Duration {
+-        let interval = self.frame_interval();
+-        let Some(budget) = self.backend.byte_rate_limit() else {
+-            return interval;
++    fn next_frame_at(&self) -> Option<Instant> {
++        let transfer = |bytes: usize, budget: Option<f32>| {
++            budget.map_or(Duration::ZERO, |budget| Duration::from_secs_f32((bytes as f32 / budget).min(0.2)))
+         };
+-        interval.max(Duration::from_secs_f32((self.last_frame_bytes as f32 / budget).min(0.2)))
++        let wait = transfer(self.last_frame_bytes, self.backend.byte_rate_limit())
++            .max(transfer(self.backend.last_image_bytes(), self.backend.image_rate_limit()));
++        next_frame_at(self.frame_slot, self.frame_interval(), self.last_frame, wait)
+     }
+ 
+     pub fn since_input(&self) -> Duration {
+@@ -76,12 +77,13 @@ impl Engine {
+ 
+     pub(super) fn frame(&mut self) -> io::Result<()> {
+         self.apply_scroll_requests();
+-        let debt = self.frame_debt();
+         let now = Instant::now();
+-        if !debt.is_zero() && now.duration_since(self.frame_slot) < debt {
++        if let Some(due) = self.next_frame_at()
++            && now < due
++        {
+             self.frame_deferred = self.draws_something();
+             if self.frame_deferred {
+-                self.frame_due = Some(self.frame_slot + debt);
++                self.frame_due = Some(due);
+                 self.note_frame_wanted();
+                 return Ok(());
+             }
+@@ -118,8 +120,7 @@ impl Engine {
+         crate::profiler::span("frame", || -> io::Result<()> {
+             let start = Instant::now();
+             let interval = self.frame_interval();
+-            let next_slot = self.frame_slot + interval;
+-            let slot = if !interval.is_zero() && start >= next_slot && start < next_slot + interval { next_slot } else { start };
++            let slot = slot_for(self.frame_slot, interval, start);
+             self.backend.schedule_present((!interval.is_zero()).then(|| slot + self.present_after));
+             let mut damage: Vec<(usize, bool, Vec<Rect>)> = Vec::new();
+             for (i, whole) in work {
+@@ -254,3 +255,44 @@ impl Engine {
+         ops
+     }
+ }
++
++fn next_frame_at(slot: Instant, interval: Duration, last_start: Instant, transfer: Duration) -> Option<Instant> {
++    let paced = (!interval.is_zero()).then(|| slot + interval);
++    let transferred = (!transfer.is_zero()).then(|| last_start + transfer);
++    paced.max(transferred)
++}
++
++fn slot_for(previous: Instant, interval: Duration, start: Instant) -> Instant {
++    let next = previous + interval;
++    if !interval.is_zero() && start >= next && start < next + interval { next } else { start }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn a_transfer_wait_between_one_and_two_intervals_is_kept_even_when_frames_snap_to_earlier_slots() {
++        let interval = Duration::from_secs_f64(1.0 / 60.0);
++        let transfer = Duration::from_millis(24);
++        let origin = Instant::now();
++        let (mut slot, mut start) = (origin, origin);
++        let mut starts = vec![start];
++        for _ in 0..10 {
++            start = next_frame_at(slot, interval, start, transfer).unwrap();
++            slot = slot_for(slot, interval, start);
++            starts.push(start);
++        }
++        for pair in starts.windows(2) {
++            assert!(pair[1] - pair[0] >= transfer, "frames {:?} apart", pair[1] - pair[0]);
++        }
++    }
++
++    #[test]
++    fn without_a_transfer_wait_frames_follow_the_slot_grid() {
++        let interval = Duration::from_millis(10);
++        let origin = Instant::now();
++        assert_eq!(next_frame_at(origin, interval, origin + Duration::from_millis(3), Duration::ZERO), Some(origin + interval));
++        assert_eq!(next_frame_at(origin, Duration::ZERO, origin, Duration::ZERO), None);
++    }
++}
+```
+
+**File**: `pixel/engine/crates/pixel-kitty/src/lib.rs` (modified, +54/-0)
+```diff
+@@ -106,6 +106,9 @@ pub struct Kitty {
+     flashes: present::Flashes,
+     terminal_id: u64,
+     native: native::NativeInput,
++    payload_bytes: usize,
++    image_rate_override: Option<f32>,
++    forced_image_rate: Option<ForcedImageRate>,
+ }
+ 
+ fn ask<T>(
+@@ -131,6 +134,7 @@ impl Kitty {
+             None => HerdrTarget::from_env(env),
+         };
+         let mut kitty = Self::blank(tty.output()?, tty.wrapper(), target);
++        kitty.forced_image_rate = forced_image_rate(env);
+         kitty.cell = tty.cell();
+         kitty.connect_herdr();
+         match host {
+@@ -201,6 +205,9 @@ impl Kitty {
+             flashes: present::Flashes::default(),
+             terminal_id: NEXT_TERMINAL_ID.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
+             native: native::NativeInput::default(),
++            payload_bytes: 0,
++            image_rate_override: None,
++            forced_image_rate: None,
+         }
+     }
+ 
+@@ -396,6 +403,7 @@ impl Kitty {
+                     .push(FrameFile::create(self.frame_path(slot, generation), data.len())?);
+             }
+         }
++        self.payload_bytes += data.len();
+         let index = (self.frame_seq % FRAME_SLOTS) as usize;
+         self.frame_seq += 1;
+         let file = &mut self.frame_files[index];
+@@ -430,6 +438,23 @@ impl Kitty {
+         self.force_tiles = on;
+     }
+ 
++    pub fn set_image_rate_limit(&mut self, bytes_per_sec: Option<f32>) {
++        self.image_rate_override = bytes_per_sec;
++    }
++
++    pub fn image_rate_limit(&self) -> Option<f32> {
++        match self.forced_image_rate {
++            Some(ForcedImageRate::Auto) => self.identity.image_bytes_per_sec(),
++            Some(ForcedImageRate::Uncapped) => None,
++            Some(ForcedImageRate::BytesPerSec(rate)) => Some(rate),
++            None => self.image_rate_override.or_else(|| self.identity.image_bytes_per_sec()),
++        }
++    }
++
++    pub fn last_image_bytes(&self) -> usize {
++        self.payload_bytes
++    }
++
+     pub fn holds_a_frame(&self) -> bool {
+         self.patches.holds_a_frame()
+     }
+@@ -443,6 +468,7 @@ impl Kitty {
+     }
+ 
+     pub fn draw(&mut self, tty: &mut dyn Tty, frame: pixel_raster::PixelFrame<'_>) -> io::Result<usize> {
++        self.payload_bytes = 0;
+         let canvas = frame.canvas;
+         if self.hosted {
+             if tty.host().is_some_and(|host| host.closed) {
+@@ -700,6 +726,34 @@ const HERDR_RETRY_MIN: Duration = Duration::from_secs(1);
+ const HERDR_RETRY_MAX: Duration = Duration::from_secs(10);
+ 
+ 
++#[derive(Debug, Clone, Copy, PartialEq)]
++enum ForcedImageRate {
++    Auto,
++    Uncapped,
++    BytesPerSec(f32),
++}
++
++fn forced_image_rate(env: &dyn Vars) -> Option<ForcedImageRate> {
++    let value = env.var("TERMINAL_BROWSER_IMAGE_RATE")?;
++    let forced = match value.trim() {
++        "auto" => Some(ForcedImageRate::Auto),
++        "uncapped" => Some(ForcedImageRate::Uncapped),
++        number => number
++            .parse::<f32>()
++            .ok()
++            .filter(|mb| mb.is_finite() && *mb > 0.0)
++            .map(|mb| ForcedImageRate::BytesPerSec(mb * 1_000_000.0)),
++    };
++    match forced {
++        Some(rate) => pixel_core::logging::info("terminal", format!("image transfer rate forced to {rate:?}")),
++        None => pixel_core::logging::warn(
++            "terminal",
++            format!("ignoring TERMINAL_BROWSER_IMAGE_RATE={value:?}, expected auto, uncapped, or megabytes per second"),
++        ),
++    }
++    forced
++}
++
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ enum FrameTransport {
+     File,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #339** (2026-11-25): Image transmission throttle limit inside rex (@RobPruzan)
 - **PR #334** (2026-11-24): Fix electron patch conflicts, update to latest electron (@RobPruzan)
 - **PR #328** (2026-11-23): move webview content with chromium's scroll tree (@RobPruzan)
 - **PR #327** (2026-11-22): add conditional ui location for zoomed rex pane (@RobPruzan)
 - **PR #325** (2026-11-21): instant wheel scroll (@RobPruzan)
 - **PR #319** (2026-11-20): apply webview page scrolls as image offset instructions (@RobPruzan)
-- **PR #318** (2026-11-19): fix incorrect cell size report (@RobPruzan)
 
 ---
 
@@ -2158,53 +2006,32 @@ router's map yet; forward those straight to the widget instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. electron patch conflicts, update to latest electron
+## X. Image transmission throttle limit inside rex
 
 **RULE**:
-When implementing operations in `.github/workflows/pixel-electron-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `browser/src/session/session.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99022d83`: electron patch conflicts, update to latest electron. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `690f59f2`: Image transmission throttle limit inside rex. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pixel-electron-build.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/session.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-run-name: "${{ inputs.promote && format('promote electron v{0} preview from {1}', inputs.version, github.ref_name) || github.ref_name == github.event.repository.default_branch && format('build patched electron v{0}', inputs.version) || format('preview patched electron v{0} on {1}', inputs.version, github.ref_name) }}"
-      promote:
-        description: "Copy this branch's preview release to the production release instead of building"
-        type: boolean
-        default: false
-  pull-requests: write
-  group: electron-build-${{ inputs.version }}-${{ github.ref_name }}
-# Runs on the default branch publish the production release, tagged electron-v<version> so it
-# never collides with the pixel-v<version> tags of the pixel packages or terminal-browser's own
-# v<version> tags. Runs on any other branch publish a prerelease tagged
-# electron-v<version>-preview.<branch>, which installs ignore unless PIXEL_ELECTRON_MIRROR points
-# at it, and report on the branch's PR. Promoting copies a preview's assets to production as is.
-      channel: ${{ steps.channel.outputs.channel }}
-      tag: ${{ steps.channel.outputs.tag }}
-      preview_tag: ${{ steps.channel.outputs.preview_tag }}
-      - id:
+  imageRate,
+      imageRate: imageRate(this.settings.get("render.imageRate")),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-run-name: "build patched electron v${{ inputs.version }}"
-  group: electron-build-${{ inputs.version }}
-# Releases are tagged electron-v<version> so they never collide with the pixel-v<version>
-# tags of the pixel packages or terminal-browser's own v<version> tags.
-        if: failure()
-    needs: build
-    if: ${{ !cancelled() }}
-          tag="electron-v$version"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99022d83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `690f59f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

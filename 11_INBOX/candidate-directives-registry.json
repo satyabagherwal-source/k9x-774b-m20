@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T06:35:35.086Z",
+  "last_updated": "2026-11-26T06:44:13.435Z",
   "directives": [
     {
       "id": "CD-001",
@@ -63655,6 +63655,57 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-16E26D-daemon-drain-buffered-watcher-changes-be.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-SU6D",
+      "directive_title": "Image transmission throttle limit inside rex",
+      "source_repo": "zenbu-labs-terminal-browser-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SU6D-image-transmission-throttle-limit-inside-rex.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-SVED",
+      "directive_title": "finish removing source comments",
+      "source_repo": "sozercan-kaset-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SVED-finish-removing-source-comments.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-SR58",
+      "directive_title": "build(deps): bump step-security/harden-runner from 2.22.4 to 2.23.0",
+      "source_repo": "DNSControl/dnscontrol",
+      "source_commit": "54f54578",
+      "staged_file": "11_INBOX/candidate-directives/CD-SR58-build-deps-bump-step-security-harden-runner-from-2-22-4-to-2-23-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-A71375",
+      "directive_title": "Image transmission throttle limit inside rex",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zenbu-labs-terminal-browser",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A71375-image-transmission-throttle-limit-inside.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-CD7BF8",
+      "directive_title": "finish removing source comments",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sozercan-kaset",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CD7BF8-finish-removing-source-comments.md",
       "staged_date": "2026-11-26"
     }
   ]
