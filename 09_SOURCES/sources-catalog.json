@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "1ef6de6d88054b570aac4a85fbe9c6f47f68275e931985558b717cc1067945db",
-    "lastHarvestedAt": "2026-11-22T19:43:09.706Z",
+    "contentHash": "2c610fd18a234babdfc3228ca3b4e321941088c88070b0ec7168345ca64460f4",
+    "lastHarvestedAt": "2026-11-26T12:50:45.585Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -10683,10 +10683,10 @@
     "repository": "makecindy/cindy",
     "platform": "github",
     "sourceUrl": "https://github.com/makecindy/cindy",
-    "sourceVersion": "cb3ac9aa",
+    "sourceVersion": "bba889a9",
     "license": "Apache-2.0",
-    "contentHash": "d463bbf1e7e3f936a5cfe57a72aca2e880430a7b0177b3dcf2c022cce30bcd27",
-    "lastHarvestedAt": "2026-11-24T02:12:44.379Z",
+    "contentHash": "c75d2c88532892dd2ea0d993d7d32df4ad051d9d1de31d48b10935bdd01e5772",
+    "lastHarvestedAt": "2026-11-26T12:50:53.924Z",
     "learningId": "learn-github-makecindy-cindy"
   },
   "fei2411-ds-bot": {

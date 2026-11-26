@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
   "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T19:43:09.999Z",
+  "timestamp": "2026-11-26T12:50:45.906Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [XingChen-AGI/Xing4.0-29B-A4B](https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B) (Revision: `hf-xingche`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T19:43:09.999Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T12:50:45.906Z`  
 > **Learning ID**: `learn-huggingface-xingchen-agi-xing4-0-29b-a4b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B](https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T19:43:09.068Z  
+> **Harvest Timestamp**: 2026-11-26T12:50:44.729Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5591 downloads | 1871 likes
+- **Stars / Engagement**: 5647 downloads | 1871 likes
 
 ---
 

@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T12:38:47.061Z",
-    "lastVerified": "2026-11-26T12:38:47.061Z",
+    "lastChecked": "2026-11-26T12:50:57.604Z",
+    "lastVerified": "2026-11-26T12:50:57.604Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -217,8 +217,8 @@
     "officialUrl": "https://github.com/sxyazi/yazi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T05:10:24.208Z",
-    "lastVerified": "2026-11-25T05:10:24.208Z",
+    "lastChecked": "2026-11-26T12:50:42.104Z",
+    "lastVerified": "2026-11-26T12:50:42.104Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sxyazi-yazi",
@@ -289,9 +289,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T12:11:37.923Z",
+    "lastChecked": "2026-11-26T12:50:57.198Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T12:11:37.923Z"
+    "lastVerified": "2026-11-26T12:50:57.198Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1358,9 +1358,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-26T07:28:42.279Z",
+    "lastChecked": "2026-11-26T12:50:52.074Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-26T07:28:42.279Z"
+    "lastVerified": "2026-11-26T12:50:52.074Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -1817,12 +1817,12 @@
     "officialUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T19:43:09.068Z",
-    "lastVerified": "2026-11-22T19:43:09.068Z",
+    "lastChecked": "2026-11-26T12:50:44.729Z",
+    "lastVerified": "2026-11-26T12:50:44.729Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "1ef6de6d88054b570aac4a85fbe9c6f47f68275e931985558b717cc1067945db",
+    "contentHash": "2c610fd18a234babdfc3228ca3b4e321941088c88070b0ec7168345ca64460f4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2812,9 +2812,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-11-25T12:29:00.181Z",
+    "lastChecked": "2026-11-26T12:50:49.601Z",
     "revisionIdentifier": "b8d95290",
-    "lastVerified": "2026-11-25T12:29:00.181Z"
+    "lastVerified": "2026-11-26T12:50:49.601Z"
   },
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
@@ -6825,9 +6825,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-11-25T11:30:09.696Z",
+    "lastChecked": "2026-11-26T12:50:54.766Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-11-25T11:30:09.696Z"
+    "lastVerified": "2026-11-26T12:50:54.766Z"
   },
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
@@ -12440,14 +12440,14 @@
     "officialUrl": "https://github.com/makecindy/cindy",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T02:12:43.170Z",
-    "lastVerified": "2026-11-24T02:12:43.170Z",
+    "lastChecked": "2026-11-26T12:50:52.463Z",
+    "lastVerified": "2026-11-26T12:50:52.463Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-makecindy-cindy",
-    "contentHash": "d463bbf1e7e3f936a5cfe57a72aca2e880430a7b0177b3dcf2c022cce30bcd27",
+    "contentHash": "c75d2c88532892dd2ea0d993d7d32df4ad051d9d1de31d48b10935bdd01e5772",
     "promotedRulesCount": 1,
-    "recentFixesCount": 23,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

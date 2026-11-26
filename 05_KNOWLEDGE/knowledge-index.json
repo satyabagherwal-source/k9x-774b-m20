@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T12:38:50.699Z",
+  "last_updated": "2026-11-26T12:51:01.243Z",
   "total_verified_learnings": 9127,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25902,
+  "total_items": 25905,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a3bc92e0ad79e0d574d6ac3de67d1ce9819909147f310c5170a7503b2f63b9ea",
+      "content_hash": "0d62257fa05bb552569252a714a43262e5730199741f3bfa0751e008d9605d9e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:38:50.155Z"
+      "persisted_at": "2026-11-26T12:51:00.729Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a66d98901fde2c02b00d7f2872cbf3614a817686715ad313b8b2455327ef197",
+      "content_hash": "89404e4103ef304ce8a02d39ba9d306d2aa72bd76f0b37d63685984988f975e2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:38:50.437Z"
+      "persisted_at": "2026-11-26T12:51:00.995Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f8f17f2135adbdd87f9c35fc3366649e51eca76a4932d5d14779a670f82b934",
+      "content_hash": "498db2d76e69ec4a90435ad403a7b7a88ee207544fb7dd17b9caef37ac0d2fea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:38:50.699Z"
+      "persisted_at": "2026-11-26T12:51:01.243Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112102,9 +112102,9 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/Xing4.0-29B-A4B Core Invariants",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "95ad82a97d3f272a770c8c50955dd0e8fe0a0d776bbba6b63d3ea97edb86edf5",
+      "content_hash": "9a81e9731f1546dda978bf111783ea80f22da52b2a4874cfa4a1b7c436f8279f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:43:10.001Z"
+      "persisted_at": "2026-11-26T12:50:45.907Z"
     },
     "candidate_directive-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046": {
       "item_id": "candidate_directive-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046",
@@ -112150,9 +112150,9 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-xing4.0-29b-a4b-learnings Core Invariants",
       "repository": "hf-xingchen-agi-xing4.0-29b-a4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "8211489a751a68436cf3cbdc68e63c9bf1388fc6a5f41fba4697e0c5ad2659a2",
+      "content_hash": "c419dae8176a6d0c9260c9fb90ba9e47b02997b7b8d4e3ef6acc6e37232fe17e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:43:33.806Z"
+      "persisted_at": "2026-11-26T12:50:58.120Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
@@ -113505,10 +113505,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
       "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
       "repository": "makecindy/cindy",
-      "source_version": "cb3ac9aa",
-      "content_hash": "dd60bf2bf2c3cb55491e930bd045ede03c7150b3d39507042522a1a98f21b604",
+      "source_version": "bba889a9",
+      "content_hash": "f780677f8d8b4d9adb472a9034629a93fcc71448ee0a5a93a71330c5a9240285",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:12:44.803Z"
+      "persisted_at": "2026-11-26T12:50:54.545Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy",
@@ -113517,10 +113517,10 @@
       "relative_path": "08_VERIFICATION/makecindy-cindy-verification-protocol-empirical-defect-shield-for-makecindy-cind.md",
       "title": "Verification Protocol: Empirical Defect Shield for makecindy/cindy",
       "repository": "makecindy/cindy",
-      "source_version": "cb3ac9aa",
-      "content_hash": "40570913b281e9607b46af7a55c0d1d6579d50cf38c6db7d95db0a80ed847935",
+      "source_version": "bba889a9",
+      "content_hash": "35eb0c8d72c388f416cc707586055ec235d8938552baa9dcc4d562b62a1fce38",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:12:44.982Z"
+      "persisted_at": "2026-11-26T12:50:54.808Z"
     },
     "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570": {
       "item_id": "candidate_directive-react-align-the-file-browser-search-dialog-with-the-console-design-7570",
@@ -113578,9 +113578,9 @@
       "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
       "repository": "makecindy-cindy-learnings",
       "source_version": "HEAD",
-      "content_hash": "a6cf1a3ac138eb68a0022ddea3f1256decfee14462905fdb06755a4e8859c4e7",
+      "content_hash": "825064990669ae4be7f0daba9b6b61d98dd1a7646aec0be64edb0425fb93884d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:12:57.218Z"
+      "persisted_at": "2026-11-26T12:50:59.261Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-makecindy-cindy-learnings",
@@ -113590,9 +113590,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for makecindy-cindy-learnings",
       "repository": "makecindy-cindy-learnings",
       "source_version": "HEAD",
-      "content_hash": "389c983141142387126649583975bff3808fea3d5ad7079ca5de4bb8a3e560f5",
+      "content_hash": "b4861f85ebd0b4a2e8c27e5702108402a6a5397bd5deffb12321c7f43fba4606",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T02:12:57.393Z"
+      "persisted_at": "2026-11-26T12:50:59.529Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",
@@ -272125,8 +272125,8 @@
       "slug": "makecindy-cindy",
       "platform": "github",
       "source_url": "https://github.com/makecindy/cindy",
-      "source_version": "cb3ac9aa",
-      "content_hash": "d463bbf1e7e3f936a5cfe57a72aca2e880430a7b0177b3dcf2c022cce30bcd27",
+      "source_version": "bba889a9",
+      "content_hash": "c75d2c88532892dd2ea0d993d7d32df4ad051d9d1de31d48b10935bdd01e5772",
       "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "promoted_rules": [
@@ -272144,6 +272144,11 @@
           "number": 10178,
           "title": "Empirical Invariant Guard in gitSnapshotCoordinator.test.ts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10680,
+          "title": "reconcile the two empty-550 error notices",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -272151,7 +272156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T02:12:44.165Z",
+      "verified_at": "2026-11-26T12:50:53.608Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287023,7 +287028,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "1ef6de6d88054b570aac4a85fbe9c6f47f68275e931985558b717cc1067945db",
+      "content_hash": "2c610fd18a234babdfc3228ca3b4e321941088c88070b0ec7168345ca64460f4",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [],
@@ -287032,7 +287037,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:43:09.419Z",
+      "verified_at": "2026-11-26T12:50:45.252Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -352005,13 +352010,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GWEM-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WK4P-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0267ed4b9306ee78a0be1edb81572ce0e62808bfbd6a0997cb1e769267a575cf",
+      "content_hash": "e647b79c7ed14d42abf5c1e5243f6018d6467274c8ec8d05453aed36a18e0602",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:38:49.876Z"
+      "persisted_at": "2026-11-26T12:51:00.463Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
@@ -354897,6 +354902,44 @@
       "content_hash": "fb2064b0f40178d6df7447500b7ac89e9f9106b2425a0417834624457920b11a",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T12:38:48.339Z"
+    },
+    "rule-10680": {
+      "learning_id": "rule-10680",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10680,
+      "title": "reconcile the two empty-550 error notices",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "bba889a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:50:53.608Z"
+    },
+    "candidate_directive-reconcile-the-two-empty-550-error-notices": {
+      "item_id": "candidate_directive-reconcile-the-two-empty-550-error-notices",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WFCR-reconcile-the-two-empty-550-error-notices.md",
+      "title": "reconcile the two empty-550 error notices",
+      "repository": "makecindy/cindy",
+      "source_version": "bba889a9",
+      "content_hash": "abb6b1e81a8493e25c8cc24df8356aa355d221483af688cf43153dfde8d089aa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:50:54.274Z"
+    },
+    "candidate_directive-desktop-reconcile-the-two-empty-550-error-notices": {
+      "item_id": "candidate_directive-desktop-reconcile-the-two-empty-550-error-notices",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WIZ9-desktop-reconcile-the-two-empty-550-error-notices.md",
+      "title": "desktop): reconcile the two empty-550 error notices",
+      "repository": "makecindy-cindy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9a37fda005b741a143d8b65a93dafcf77df06dd7ffc01f3de4de538ea4a748b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T12:50:58.972Z"
     }
   },
   "ai-builder-brain": {

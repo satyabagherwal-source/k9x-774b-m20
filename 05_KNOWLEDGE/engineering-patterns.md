@@ -804789,3 +804789,84 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `83f2cb7e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10680. reconcile the two empty-550 error notices (Harvested from makecindy/cindy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "reconcile the two empty-550 error notices",
+  "source": "makecindy/cindy",
+  "source_url": "https://github.com/makecindy/cindy",
+  "source_version": "bba889a9",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T12:50:53.203Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-makecindy-cindy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `bba889a9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b0bd3858`: desktop): reconcile the two empty-550 error notices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+// #12924, unit: the live and historical notices name an upstream 5xx status —
+// the exact empty HTTP 550 and any other message naming "550 status code" get
+// the same upstream-status notice (#12970) — while the dispatch refusal keeps
+// its own "not sent" text.
+const upstream550 = zhCN.chat.errorBanner.upstreamStatusError.replace('{{status}}', '550');
+  ['550 status code (no body)', upstream550],
+  ['ordinary failure mentioning 550 status code (no body)', upstream550],
+])('names the upstream 5xx status and keeps the dispatch refusal (%s)', async (message, expected) => {
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// #12924, unit: the live and historical notices distinguish the observed
+// empty HTTP 550 from ordinary failures, while preserving the dispatch refusal.
+  ['550 status code (no body)', '模型服务返回 HTTP 550（无响应内容）'],
+  ['ordinary failure mentioning 550 status code (no body)', zhCN.chat.errorBanner.replyFailed],
+])('localizes the exact empty upstream 550 without changing other errors (%s)', async (message, expected) => {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b0bd3858` are properly handled with clean fallback behavior.

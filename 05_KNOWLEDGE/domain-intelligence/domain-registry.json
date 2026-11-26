@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T12:38:50.155Z",
+  "last_updated": "2026-11-26T12:51:00.729Z",
   "total_records": 2747,
   "domains": {
     "A": {
@@ -8517,8 +8517,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "a3bc92e0ad79e0d574d6ac3de67d1ce9819909147f310c5170a7503b2f63b9ea",
-      "created_at": "2026-11-26T12:38:50.155Z"
+      "content_hash": "0d62257fa05bb552569252a714a43262e5730199741f3bfa0751e008d9605d9e",
+      "created_at": "2026-11-26T12:51:00.729Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8526,8 +8526,8 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/Xing4.0-29B-A4B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-xing4-0-29b-a4b-research-knowledge-intelligence-xingchen-agi-xin.md",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "content_hash": "95ad82a97d3f272a770c8c50955dd0e8fe0a0d776bbba6b63d3ea97edb86edf5",
-      "created_at": "2026-11-22T19:43:10.001Z"
+      "content_hash": "9a81e9731f1546dda978bf111783ea80f22da52b2a4874cfa4a1b7c436f8279f",
+      "created_at": "2026-11-26T12:50:45.907Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-dathere-qsv-core-invariants",
@@ -8544,8 +8544,8 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-xing4.0-29b-a4b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-xing4-0-29b-a4b-learnings-research-knowledge-intelligence-hf-xin.md",
       "repository": "hf-xingchen-agi-xing4.0-29b-a4b-learnings",
-      "content_hash": "8211489a751a68436cf3cbdc68e63c9bf1388fc6a5f41fba4697e0c5ad2659a2",
-      "created_at": "2026-11-22T19:43:33.806Z"
+      "content_hash": "c419dae8176a6d0c9260c9fb90ba9e47b02997b7b8d4e3ef6acc6e37232fe17e",
+      "created_at": "2026-11-26T12:50:58.120Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
@@ -9315,8 +9315,8 @@
       "title": "Technical Construction Intelligence: makecindy/cindy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-technical-construction-intelligence-makecindy-cindy-core-invaria.md",
       "repository": "makecindy/cindy",
-      "content_hash": "dd60bf2bf2c3cb55491e930bd045ede03c7150b3d39507042522a1a98f21b604",
-      "created_at": "2026-11-24T02:12:44.803Z"
+      "content_hash": "f780677f8d8b4d9adb472a9034629a93fcc71448ee0a5a93a71330c5a9240285",
+      "created_at": "2026-11-26T12:50:54.545Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-core-invariants",
@@ -9384,8 +9384,8 @@
       "title": "Technical Construction Intelligence: makecindy-cindy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-makecindy-cindy-learnings-technical-construction-intelligence-makecindy-cindy-le.md",
       "repository": "makecindy-cindy-learnings",
-      "content_hash": "a6cf1a3ac138eb68a0022ddea3f1256decfee14462905fdb06755a4e8859c4e7",
-      "created_at": "2026-11-24T02:12:57.218Z"
+      "content_hash": "825064990669ae4be7f0daba9b6b61d98dd1a7646aec0be64edb0425fb93884d",
+      "created_at": "2026-11-26T12:50:59.261Z"
     },
     "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-volcengine-openviking-learnings-core-invaria",

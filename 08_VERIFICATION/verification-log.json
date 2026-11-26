@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-O2Q6",
-    "timestamp": "2026-11-24T23:24:55.374Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "e3ce2c1b786c8edb29147fae84d6aefce7f26aca1fe756cc48ee51bba0e8c7a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-YWAR",
-    "timestamp": "2026-11-24T23:33:20.259Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "1a7be02dffa7f8d5c2e812cf72af8bc9c8234f2d0f8caf6c8d1e43158f677f6d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-YXXV",
     "timestamp": "2026-11-24T23:33:22.387Z",
     "repository": "rollup/rollup",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "0f52ac720e83a8b47a7143f70cb3e9afec93ac3df0cfa5a380fd8272279dbab5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-W8NG",
+    "timestamp": "2026-11-26T12:50:45.580Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "2c610fd18a234babdfc3228ca3b4e321941088c88070b0ec7168345ca64460f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WF33",
+    "timestamp": "2026-11-26T12:50:53.919Z",
+    "repository": "makecindy/cindy",
+    "learningId": "learn-github-makecindy-cindy",
+    "contentHash": "c75d2c88532892dd2ea0d993d7d32df4ad051d9d1de31d48b10935bdd01e5772",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

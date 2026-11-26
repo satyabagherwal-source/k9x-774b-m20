@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:38:43.349Z",
-  "total_cycles_completed": 12700,
-  "total_learnings_persisted": 12700,
-  "total_rules_promoted": 11577,
+  "last_updated": "2026-11-26T12:50:53.940Z",
+  "total_cycles_completed": 12702,
+  "total_learnings_persisted": 12702,
+  "total_rules_promoted": 11578,
   "history": [
-    {
-      "timestamp": "2026-11-26T00:18:04.881Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T00:26:22.489Z",
-      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-      "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T00:34:44.983Z",
       "repository": "microsoft/Florence-2-base",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T12:38:43.349Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:50:45.601Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T12:50:53.940Z",
+      "repository": "makecindy/cindy",
+      "learningId": "learn-github-makecindy-cindy",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

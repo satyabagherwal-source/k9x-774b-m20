@@ -4,22 +4,22 @@
 {
   "source_repository": "makecindy/cindy",
   "source_url": "https://github.com/makecindy/cindy",
-  "source_version": "cb3ac9aa",
+  "source_version": "bba889a9",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T02:12:44.628Z",
+  "timestamp": "2026-11-26T12:50:54.273Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-makecindy-cindy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `cb3ac9aa`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T02:12:44.628Z`  
+> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `bba889a9`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T12:50:54.273Z`  
 > **Learning ID**: `learn-github-makecindy-cindy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `makecindy/cindy` (Commit: `cb3ac9aa`)
+- **Target Repository**: `makecindy/cindy` (Commit: `bba889a9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T02:12:43.170Z  
+> **Harvest Timestamp**: 2026-11-26T12:50:52.463Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10495 stars
+- **Stars / Engagement**: 10678 stars
 
 ---
 
@@ -1027,13 +1027,14 @@ export default {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12340** (2026-11-23): **ACP 插件引擎冷会话被写入插件库 extraDirs 后发送消息报 Capability 'extraDirs' not supported**
-  *Symptoms*: **提交人**: 匿名 **客户端版本**: 0.1.144  ---  ### 问题描述  使用 ACP 插件引擎（本次复现使用的是 Antigravity 插件引擎）的既有项目任务，在客户端重启或会话未激活（冷会话）状态下被切回聚焦后，再次发送消息会在发送前失败，界面提示「回复未完成」，错误详情为：  ```text Capability 'extraDirs' not supported (reason: not-implemented) ```  失败后消息被退回输入队列头部，后续在该任务中重试发送仍会持续复现，且用户无法通过界面清除相关目录状态。  ### 复现条件与步骤  1. 安装并启用带 `"library": true` 的插件（本次环境中为官方插件 Cindy Chrome / `my-browser`）。 2. 在一个绑定了本地项目的任务中使用 ACP 插件引擎完成至少一轮对话，且该项目在 `project-directories.json` 中存在对应条目（即使值为空数组 `[]`）。 3. 让该任务回到冷会话状态（例如重启 Cindy，使内存中不再持有该会话实例）。 4. 切换到该 ACP 任务使其获得焦点，然后发送任意一条消息。  ### 定位到的原因（两个叠加问题）  1. **冷会话写入插件库 `extra_dirs` 时漏检引擎能力，且激活后清理变成 no-op**    - 聚焦冷会话时，`syncLibraryReadonlyExtraDir` → `applyLibraryReadonlyExtraDir` → `applyDirectoryGrants("extraDirs", ...)` 仅在内存中存在活跃会话实例时检查 `capabilities.extraDirs.supported`。    - 对未激活的冷会话未按数据库中的 `agent_kind` 检查能力，因此将插件的 `cindy-library:<library-path>` 持久化写入了 `sessions.extra_dirs`。    - 当会话随后被懒加载激活后，切走焦点触发清理时反而命中 `capabilities.extraDirs.supported === false` 的 no-op 守卫，导致这条 `cindy-library:` 记录长期滞留在数据库中（且常规目录设置接口会保留 library slot，用户无法在界面清除）。  2. **`beforeTurn` 钩子判断条件使用 `||` 绕过了能力检查**    - 发送消息前，`applyProjectDirectoriesForTurn` 合并了数据库中滞留的 `extra_dirs`（非空）。    - 该函数中调用 `setExtraDirs` 前的守卫写成了 `(extraDirs.length || session.capabilities.extraDirs.supported) && await session.setExtraDirs(...)`（`writableDirs` 存在相同写法）。    - 因为 `extraDirs.length > 0`，`||` 短路绕过了 `capabilities.extraDirs.supported === false` 的检查，强行调用 `setExtraDirs` 并抛出 `Capability 'extraDirs' not supported (reason: not-implemented
-  **Post-Mortem & Fix Analysis**:
-  > **判断：** 已有 Antigravity 项目任务应能在重启后继续对话，不依赖 ACP 支持插件库目录。0.1.144 报告的发送错误与 `main@fa4d01ae` 的代码路径吻合：需要修的是宿主在聚焦和发送时对目录能力的判断，不是插件引擎本身。目前未见覆盖此故障的修复 PR；以下是源码核对，尚未独立实机复现。  **行动：** 建议由桌面会话运行时维护者提交带回归用例的最小修复。使用已完成一轮对话的本地 Antigravity 项目任务，保留 `project-directories.json` 中显式的 `[]`。让 `my-browser` 在当前进程中实际打开作品库，再切回尚未激活的目标任务并发送。这里要区分“启用了插件”和“插件已打开库”：已合并的 #3906 明确焦点刷新只复用实际打开库的插件，仅安装启用不能证明是这次聚焦写入了新目录。  - **聚焦时：** `applyDirectoryGrants` 只在有活跃会话实例时检查能力。建议在写入插件库系统项前，对冷任务按持久化的 `agent_kind` 确认能力；对不支持的 ACP 不新增 `cindy-library:`，也不报告 `authorizedReadonly=true`。撤销时允许只移除历史系统项，不应因引擎不支持而提前返回，也不要清空用户自选目录。 - **发送时：** 显式 `[]` 是撤销项目目录，不是缺少配置，轮次开始时仍会合并任务里保存的目录（#11126）。`applyProjectDirectoriesForTurn` 目前按“列表非空 **或** 能力受支持”调用 setter，而 ACP 将 `extraDirs`、`writableDirs` 均声明为 `not-implemented`。应分别按对应能力调用；支持时即使列表为空也要下发，以撤销上一轮的授权。保留原有路径校验，不要通过吞掉 setter 异常解决。  **完成条件：** 在修复构建记录同一任务聚焦前后的系统项状态和发送结果：原本无系统项时不新增；预置旧系统项时，无需用户编辑数据库，原消息能进入下一轮、不再退回队首，切走后只清理系统项。用一个支持目录的会话作对照，确认正常挂载和空列表撤销仍然生效。  <!-- slack-sync type=issue-analysis source-delive
+- **Issue #13004** (2026-11-26): **插件引擎（ACP）后台启动常驻开发服务后，回合结束仍持续显示运行中且每轮重置计时**
+  *Symptoms*: **提交人**: wjxforu **客户端版本**: 0.1.146  ---  ### 现象  在**本机插件引擎（Antigravity / ACP）**会话中后台启动一个本地开发服务（例如 `pnpm dev`，且工具调用入参已明确带有 `IsDaemon: true`）后，即使助手已经回复完毕、回合正常结束，左侧任务列表中该会话的图标仍持续显示为「运行中」状态，容易误以为任务还在处理中。  更明显的是，每次继续在该会话里发消息，新一轮回复结束后图标又会立刻重新点亮并持续约 30 分钟。  ### 复现步骤  1. 使用插件引擎（如本机 Antigravity）新建一个任务； 2. 在任务中让 Agent 后台启动一个不会自动退出的开发服务（如 `unset HTTPS_PROXY ... && pnpm dev`，工具参数带 `IsDaemon: true`）； 3. 等 Agent 完成当前回复并结束回合； 4. 观察左侧任务列表：该任务仍持续显示运行中图标；之后再发一轮普通消息等回复结束，图标会再次点亮并重新计时约 30 分钟。  ### 原因线索与对比  - 此前在 #10751（PR #10786）中，Claude Code 已经按命令区分了「常驻服务（`service`）」和「会自己结束的后台工作（`work`）」，本地 dev server 不会点亮侧边栏运行中状态。 - 但在 ACP 插件引擎下，`IsDaemon: true` 的命令只要服务活着就不会发送 `completed`，而宿主侧在回合正常结束（`end_turn`）时把所有未完成工具调用一并视为「后台仍在工作」，既未识别 `IsDaemon: true` 这类常驻标记，也未复用 `classifyBackgroundCommand` 排除长驻服务，导致常驻服务持续触发后台活动态，且每次新回合结束都会刷新 30 分钟上限。  ### 期望行为  插件引擎（ACP）的后台活动检测能够区分常驻服务与真正的后台工作： - 优先识别工具入参中的常驻标记（如 `IsDaemon === true`）； - 并复用现有的长驻命令分类逻辑（如 `pnpm dev` 等开发服务），避免长驻服务误点亮侧边栏运行中图标，同时保留后台子代理、构建、测试等真实后台工作的运行中提示。 --- ## 相关日志  提交客户端本机最近 2 小时的运行日志摘录，不代表已定位故障，也不包含 SSH 远端或手机日志。已按来源和字段白名单过滤并脱敏；不读取对话正文或原始请求响应。 ```text - 2026-11-26T01:00:01.729Z [WARN] [proxy/cc-proxy] ◀ upstream response (non-2xx) - 2026-11-26T01:18:19.521Z [WARN] [proxy/cc-proxy] ◀ upstream response (non-2xx) - 2026-11-26T01:25:51.774Z [WARN] [main/workdir-diagnostics] workdir probe filesystem result { ↵    requestId: 3094, ↵    operation: 'realpath', ↵    directoryRef: '01323dc5e8f1c148', ↵    phase: 'waiting-result', ↵    timeoutMs: 5000, ↵    elapsed
 
-- **Issue #12325** (2026-11-23): **本机 Agent API 的 claude-code 会话未注册 provider 路由，同名模型时 503 provider_route_ambiguous**
-  *Symptoms*: **提交人**: Zhou Zero **客户端版本**: 0.1.144  ---  ## 现象  通过**本机 Agent API**（`local-agent`，`POST /rpc`）用 `claude-code` 引擎发起会话时，如果两个已连接 provider 提供同名模型，Cindy 推理网关返回 503：  ``` HTTP 503  retry-after: 1 {"type":"error","error":{"type":"provider_route_ambiguous",  "code":"provider_route_ambiguous",  "message":"model 'deepseek-v4.1-flash-1017' matches multiple connected Providers;             retry after the session Provider is bound"}} ```  同一个 provider、同一个模型，改用 **pi** 引擎则正常完成（本次实测 4 秒返回）。  ## 复现  1. 配置两个自定义 provider（例如 A 和 B），都提供同名模型 `deepseek-v4.1-flash-1017` 2. 通过本机 Agent API `session/open`，`model` 传 **provider A 对应的 sha256 模型 id**，`toolPolicy: "client-only"` 3. `send` 一条消息 → `events` 轮询最终返回 `turn_end: failed`，错误即为上面的 503  SDK 内部重试 10 次后放弃，总耗时约 170 秒。  ## 关键证据  `startSession` 日志确认 provider 已经传对：  ``` startSession   model      : deepseek-v4.1-flash-1017   providerId : <provider A>        ← provider 正确传入   endpoint   : http://127.0.0.1:57028   scope      : maker/s:local-agent-<uuid>/claude-code ```  `models` 接口也能正确区分两个 provider 的同名模型（`id` = `sha256([providerId, engine, modelId])`，两者不同）。  ## 定位  网关处理 claude-code 请求时，用 `x-claude-code-session-id` 反查会话绑定的 provider：  - **查不到** → 走 `resolveImplicitLocalBridgeRouteResolution(model, "claude-code")` - → `connectedDefaultProviderForModel` 里 `chatEligibleSourcesForModel` 返回 2 个来源 - → `if (engine === "claude-code" && length > 1) return { kind: "ambiguous" }` → 503  问题在于**会话→provider 的内存映射没有被注册**。GUI 路径在 9 处调用了 `hydrateSessionProvider()`，但在 `apps/de
+- **Issue #12883** (2026-11-25): **db-worker 超时后 turnId 复用导致 "could not replace the previous turn lease" 永久自锁**
+  *Symptoms*: **提交人**: qingwei **客户端版本**: 0.1.146  ---  ### 问题现象  会话在上一轮正常结束、准备消费队列下一条消息时，反复报错「回复未完成：`could not replace the previous turn lease`」，队列头部消息不断被放回队首重试并持续失败。  在同一 Cindy 进程生命周期内，该会话无法自愈；只有完全退出并重启 Cindy（产生新的 `owner.instanceId` 且旧进程退出）后，残留租约才会被回收解除。  ### 触发场景  发生在长驻 Claude Code 会话的队列自动续发路径中。当时本地 SQLite 数据库体积较大（约 1 GB）且多会话并发读写繁忙，导致 `db-worker` 的 `op="tx"` RPC 出现超过 30 秒超时（`DB_TRANSPORT_OUTCOME_UNKNOWN`）。  ### 根因分析  1. **客户端超时但 SQLite 实际提交成功**：    - `dispatchSend` 将 `turnGeneration` 从 `N` 递增为 `N+1`，拼出确定性 `turnId = "${sessionInstanceId}:${N+1}"`。    - `beforeProviderStart` 调用 `SessionTurnLeaseTracker.markTurnStarted(sessionId, turnId)`，向 `db-worker` 发起 `message.leaseMutate (op="insert")`。    - 该 RPC 超过 30s 触发客户端超时（`DB_TRANSPORT_OUTCOME_UNKNOWN`），但 `db-worker` 实际仍完成了事务提交，对应 `session:turn-lease:v1:<instanceId>` 租约行已落盘。 2. **失败回滚导致下次重试复用同一 `turnId`**：    - 超时后，`markTurnStarted` 的 `catch` 删除内存中的 `activeTurnIds.delete(sessionId)`；    - `dispatchSend` 的 `finally` 将 `this.turnGeneration` 回滚回 `N`；    - `maker-input-coordinator` 将该消息恢复回队首（`pre-accept send failed; restored queue head`）。 3. **重试时投机写入 `activeTurnIds` 导致 `clearRecoverableLease` 误判自锁**：    - 队列重试时，`dispatchSend` 再次把 `turnGeneration` 从 `N` 递增为 `N+1`，生成与已落盘租约**完全相同**的 `turnId`。    - `markTurnStarted` **在写库之前**先执行 `this.activeTurnIds.set(sessionId, turnId)`。    - 随后 `tryAcquireSessionTurnLease` 执行 `INSERT ... ON CONFLICT(session_id, client_id) DO NOTHING`，因上次已落盘的租约行存在，返回 `changes === 0`。    - 进入恢复分支读取持久化租约并调用 `clearRecoverableLease`：由于 
+  **Post-Mortem & Fix Analysis**:
+  > **判断：** 队首消息没有丢失，但一次数据库超时后，即使再次发送，它仍可能无法开始。[#12828 的连续日志](https://github.com/makecindy/cindy/issues/12828#issuecomment-7164426261)记录了 0.1.146 的同一次故障：`tx` 请求 `254547` 等待 30.145 秒后报错，消息退回队首；约两分钟后，同一会话、同一条消息重试，报错变为 `could not replace the previous turn lease`。这证实了先后顺序；`DB_TRANSPORT_OUTCOME_UNKNOWN` 本身既不证明提交，也不证明回滚。  **行动：** 建议 FicoHub 接续 #12800 的租约诊断，在 `sessionTurnLease.test.ts` 的临时 SQLite 夹具上补一个可重复的队列续发用例：沿本地 Claude Code 会话上一轮结束后的发送入口，让第一次 `message.leaseMutate(insert)` 真正提交，再只向调用方返回结果未知。用 `readPersistedSessionTurnLeases` 只读核对该行，然后让同一 Session 在同一进程重试原队首，不手工换号。记录两次 `turnId` 是否相同、重试的 `reason` 和 provider 派发次数；不需要用户数据库或消息正文。  main `dadf5bc5` 的代码支持这个假设：未派发时 `dispatchSend` 会回滚代次；重试时，[租约跟踪器](https://github.com/makecindy/cindy/blob/dadf5bc5e443ef9c775a232a239e1fbe85259f7b/apps/desktop/src/main/maker-ipc/sessionTurnLease.ts#L320-L390)先把待获取的 ID 记为活跃，再检查库中同号的行，因此可能把上次留下的行误认作正在运行的轮次。没有活跃标记时，已有 `isTurnActive` 路径可以回收本进程的旧行，所以不能据此断言重启是唯一恢复方式。已合并的 #12806 只增加本地原因日志；其同号冲突测试用**不同 ID** 重试成功，未覆盖这里的同号重试。  若用例得到
+  > 我来接手租约重试这一项。先用临时 SQLite 验证写入已提交、调用方收到结果未知时，同进程重试原队首是否会自锁。修复会验证原消息只派发一次，以及迟到的结束事件不会清掉后继租约。
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1050,646 +1051,1043 @@ export default {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2c92e39` (2026-11-24)
-**Commit Message**: Merge pull request #12379 from amanayayatu-tech/fix/10161-snapshot-send-diagnosis
+### Incident Patch 1: `b0bd3858` (2026-11-26)
+**Commit Message**: fix(desktop): reconcile the two empty-550 error notices
 
-fix(desktop): explain when snapshot preparation blocks sending
+#12967 and #12970 both addressed #12924 and landed on main within minutes.
+#12970's generic upstream 5xx notice ("上游返回 550，本次回复未完成。") is
+checked before #12967's exact-550 reason key, so the 550 cases in
+ErrorLocalization.test.tsx fail on main (unit shard 1/8, Linux and Windows).
 
-**File**: `apps/desktop/src/main/__tests__/gitSnapshotCoordinator.test.ts` (modified, +7/-2)
-```diff
-@@ -1,5 +1,5 @@
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
--import { currentOperationBudget, operationCheckpoint } from '../utils/operationBudget';
-+import { currentOperationBudget, operationCheckpoint, SnapshotOperationDeadlineError } from '../utils/operationBudget';
- 
- import {
-   GitSnapshotCoordinator,
-@@ -65,7 +65,12 @@ describe('durable snapshot dispatch intent', () => {
-     const deps = makeDeps({ snapshotTimeoutMs: 50, recordTurnAttempt: () => pending.promise });
-     const coordinator = new GitSnapshotCoordinator(deps);
-     const result = coordinator.onTurnStart('s1');
--    const rejected = expect(result).rejects.toThrow('deadline');
-+    // #10161 / unit: the stalled intent previously surfaced a generic snapshot
-+    // deadline. The display error must name the send failure and keep its retry type.
-+    const rejected = Promise.all([
-+      expect(result).rejects.toBeInstanceOf(SnapshotOperationDeadlineError),
-+      expect(result).rejects.toThrow(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/),
-+    ]);
-     await vi.advanceTimersByTimeAsync(50);
-     await rejected;
-     expect(coordinator.hasPendingTurnStart('s1')).toBe(false);
-```
-
-**File**: `apps/desktop/src/main/git-snapshot/gitSnapshotCoordinator.ts` (modified, +12/-1)
-```diff
-@@ -6,7 +6,13 @@
-  */
- 
- import type { AgentKind } from '@cindy/maker-core';
--import { OperationBudget, operationCheckpoint, operationWait } from '../utils/operationBudget';
-+import {
-+  OperationBudget,
-+  operationCheckpoint,
-+  operationWait,
-+  SnapshotDispatchIntentDeadlineError,
-+  SnapshotOperationDeadlineError,
-+} from '../utils/operationBudget';
- 
- import { createAfterEditLabel } from './gitSnapshotLabeler';
- import { enqueueGitRepoWrite } from './gitRepoWriteQueue';
-@@ -166,6 +172,11 @@ export class GitSnapshotCoordinator {
-       const index = queue?.indexOf(record) ?? -1;
-       if (index >= 0) queue!.splice(index, 1);
-       if (queue?.length === 0) this.turnStartQueues.delete(sessionId);
-+      if (error instanceof SnapshotOperationDeadlineError) {
-+        // This rejection is before intent confirmation. Keep the local deadline
-+        // type for the scheduler's existing guarded retry, and identify it in history.
-+        throw new SnapshotDispatchIntentDeadlineError(error);
-+      }
-       throw error;
-     }
-   }
-```
-
-**File**: `apps/desktop/src/main/scheduler-host/__tests__/runnerQueuedDispatch.test.ts` (modified, +8/-2)
-```diff
-@@ -546,7 +546,9 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
-   // scheduler must settle from the queued failure callback, not its later poll.
-   // Only the real typed snapshot deadline is handed to #10834's backoff recovery;
-   // its resend and exhaustion are covered by the persisted-recovery tests below.
--  it.each(['deadline', 'permission', 'stop', 'clear', 'pause', 'delete', 'unknown-send'] as const)(
-+  // #10161 / unit: with recovery disabled, the same stalled journal receipt
-+  // must reach the run's failure details as an unsent message.
-+  it.each(['deadline', 'deadline-without-recovery', 'permission', 'stop', 'clear', 'pause', 'delete', 'unknown-send'] as const)(
-     'settles pre-accept snapshot preparation through the real queue: %s', async (outcome) => {
-     vi.useFakeTimers();
-     const h = createSessionHarness(async () => ({ accepted: true }));
-@@ -582,7 +584,8 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
-       beforeDispatchUserTurn: (sid, item, signal) => prepareQueuedPromptSnapshot(snapshots, watchers, sid, item, signal),
-       onAcceptedQueuedMessage: async () => { watchers.delete('snapshot-run-input'); await accepted?.(); },
-       onPersistedSendRejected: (sid, message, item, recovering) => queue.onPersistedSendRejected(sid, message, item, recovering),
--      isResumableTurnErrorCandidate: signals => signals.reason === 'scheduler-snapshot-preparation',
-+      isResumableTurnErrorCandidate: signals => outcome !== 'deadline-without-recovery'
-+        && signals.reason === 'scheduler-snapshot-preparation',
-       onResumableTurnError: takeOver,
-       onDiscardedQueuedMessage: (_sid, item) => { watchers.get(item.clientId)?.onDiscarded(); watchers.delete(item.clientId); },
-       steerToAgent: async () => {}, abortSession: async () => {}, isTurnRunning: () => false,
-@@ -634,6 +637,9 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
-       expect(vendorSend).toHaveBeenCalledTimes(outcome === 'unknown-send' ? 1 : 0);
-       expect(result.error).toBeInstanceOf(Error);
-       if (outcome === 'permission') expect(result.error.message).toBe('permission denied');
-+      if (outcome === 'deadline-without-recovery') {
-+        expect(result.error.message).toMatch(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/);
-+      }
-       expect(persisted).toHaveBeenCalledOnce();
-       releaseIntent({ attemptId: 'late' });
-       await vi.advanceTimersByTimeAsync(0);
-```
-
-**File**: `apps/desktop/src/main/scheduler-host/__tests__/runnerSendOutcome.test.ts` (modified, +39/-0)
-```diff
-@@ -59,6 +59,7 @@ import { RemoteAgentRemoteError } from '../../remote-agent/controller/runClient'
- import { MakerScheduleRunner } from '../runner.desktop';
- import { ScheduledModelSelectionBusyError } from '../../maker-ipc/scheduledModelSelection';
- import { isHeadlessGhostSetupTurn } from '../../mcp-integrations/ghostSetupInteractionSurface';
-+import { GitSnapshotCoordinator } from '../../git-snapshot/gitSnapshotCoordinator.js';
- 
- type SessionSendOptions = Parameters<Session['send']>[1];
- type SendImpl = (
-@@ -692,6 +693,44 @@ describe('MakerScheduleRunner send outcome policy', () => {
-     expect(ctx.removeAbortListener).toHaveBeenCalledTimes(1);
-   });
- 
-+  // #10161 / unit: the idle scheduler goes straight through this runner.
-+  // Its generic error sanitization used to erase the safe, typed send diagnosis.
-+  it('keeps the dispatch intent diagnosis in an idle scheduled run', async () => {
-+    vi.useFakeTimers();
-+    const receipt = Promise.withResolvers<{ attemptId: string }>();
-+    const entered = Promise.withResolvers<void>();
-+    const snapshots = new GitSnapshotCoordinator({
-+      snapshotTimeoutMs: 50,
-+      recordTurnAttempt: () => { entered.resolve(); return receipt.promise; },
-+      readAutoSnapshotEnabled: () => true,
-+      getSessionContext: vi.fn(), detectRepoRoot: vi.fn(),
-+      createShadowSavepoint: vi.fn(), createShadowMarker: vi.fn(),
-+      oneShot: vi.fn(), logger: createLogger(),
-+    });
-+    const dispatch = vi.fn();
-+    const h = createSessionHarness(async (_message, opts) => {
-+      await opts?.onAccepted?.();
-+      dispatch();
-+      return { accepted: true };
-+    });
-+    const { runner, notifier } = createRunnerHarness(h.session, {
-+      beforeDispatchUserTurn: (id, signal) => snapshots.onTurnStart(id, signal),
-+    });
-+    try {
-+      const result = runner.fire(baseSchedule(), createFireContext()).catch(error => error);
-+      await entered.promise;
-+      await vi.advanceTimersByTimeAsync(50);
-+      const errorMsg = expect.stringMatching(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/);
-+      expect(await result).toMatchObject({ message: errorMsg });
-+      expect(latestNotifiedRun(notifier)).toMatchObject({ status: 'failed', errorMsg });
-+      expect(mocks.createMessage).toHaveBeenCalledOnce();
-+      expect(dispatch).not.toHaveBeenCalled();
-+    } finally {
-+      receipt.resolve({ attemptId: 'late' });
-+      vi.useRealTimers();
-+    }
-+  });
-+
-   // Unit regression for the idle shared reconnect: after acceptance, a confirmed
-   // startup failure still closes out this occurrence through the normal runner.
-   // The allocator/runtime suite drives the real reconnect and token delivery.
-```
-
-**File**: `apps/desktop/src/main/scheduler-host/runner.ts` (modified, +5/-1)
-```diff
-@@ -103,6 +103,7 @@ import { isPluginEngineKind } from '../../shared/agentKindConversion.js';
- import { ensureDialogueWorkspaceDir } from '../localDb/dialogueWorkspace';
- import { AcceptedCallbackDispatchCancelled } from '../maker-ipc/acceptedCallbackRunner.js';
- import { schedulerFailureDetail } from '../maker-ipc/schedulerQueueBridge.js';
-+import { SnapshotDispatchIntentDeadlineError } from '../utils/operationBudget.js';
- 
- 
- import { prependHandoffToUserMessage } from '../maker-ipc/agentHandoff.js';
-@@ -2644,7 +2645,10 @@ export class MakerScheduleRunner implements ScheduleRunner {
-         ctx.signal.removeEventListener('abort', onAbort);
-         return this.deferFire(schedule, session.id, 'session-running');
-       }
--      sendError = formatSchedulerSendError(sendContext, normalized.reason);
-+      // The host supplies a fixed diagnostic for this proven pre-dispatch failure.
-+      sendError = err instanceof SnapshotDispatchIntentDeadlineError
-+        ? err.message
-+        : formatSchedulerSendError(sendContext, normalized.reason);
-       this.deps.logger.warn?.('[runner] session send failed before dispatch', {
-         ...sendLogBase,
-         source: normalized.source,
-```
-
-**File**: `apps/desktop/src/main/utils/operationBudget.ts` (modified, +12/-2)
-```diff
-@@ -21,12 +21,22 @@ export function assertGitDirectoryReady(dir: string): void {
- 
- /** Typed locally: error text from a provider must never authorize a retry. */
- export class SnapshotOperationDeadlineError extends Error {
--  constructor() {
--    super('Snapshot operation deadline exceeded');
-+  constructor(message = 'Snapshot operation deadline exceeded', options?: ErrorOptions) {
-+    super(message, options);
-     this.name = 'SnapshotOperationDeadlineError';
-   }
- }
- 
-+/** The deadline expired before the host could confirm durable dispatch intent. */
-+export class SnapshotDispatchIntentDeadlineError extends SnapshotOperationDeadlineError {
-+  constructor(cause: SnapshotOperationDeadlineError) {
-+    super(
-+      '[SNAPSHOT_DISPATCH_INTENT_TIMEOUT] Snapshot operation deadline exceeded before confirming the send record. The message was not sent.',
-+      { cause },
-+    );
-+  }
-+}
-+
- export class OperationBudget {
-   readonly controller = new AbortController();
-   readonly signal = this.controller.signal;
-```
-
-**File**: `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx` (modified, +23/-0)
-```diff
-@@ -91,6 +91,29 @@ it.each(['live', 'history'] as const)('reports a clean Codex transport exit as a
-   }
- });
- 
-+// #10161 / unit: a stalled local dispatch record used to look like a model
-+// reply failure. Both error surfaces use real localized copy after the host
-+// identifies that boundary. An unclassified timeout still has generic copy.
-+it.each(['live', 'history', 'unclassified'] as const)('attributes a send preparation deadline in %s', async surface => {
-+  const i18n = createInstance();
-+  await i18n.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } } });
-+  const raw = 'Snapshot operation deadline exceeded';
-+  const message = surface === 'unclassified'
-+    ? raw
-+    : `[SNAPSHOT_DISPATCH_INTENT_TIMEOUT] ${raw} before confirming the send record. The message was not sent.`;
-+  const retry = vi.fn();
-+  render(<I18nextProvider i18n={i18n}>{surface === 'history'
-+    ? <ErrorMessageCard message={message} />
-+    : <ErrorBanner error={message} agentKind="codex" retryText="原消息" onRetry={retry} />}</I18nextProvider>);
-+  expect(screen.getByText(surface === 'unclassified'
-+    ? zhCN.chat.errorBanner.replyFailed
-+    : '未发送消息，Cindy 未能及时确认安全记录')).toBeTruthy();
-+  if (surface === 'live') {
-+    fireEvent.click(screen.getByRole('button', { name: zhCN.chat.errorBanner.retry }));
-+    expect(retry).toHaveBeenCalledWith('原消息');
-+  }
-+});
-+
- // #10854, unit: production live reducer + banner/tail/history must retain the
- // actual cause for diagnosis while legacy reason-only errors use neutral copy.
- it.each(['live', 'tail', 'history'] as const)('keeps silent-stop %s copy neutral and preserves cause details', async surface => {
-```
-
-**File**: `apps/desktop/src/renderer/i18n/locales/de/common.json` (modified, +1/-0)
-```diff
-@@ -16160,6 +16160,7 @@
-       "CONTEXT_COMPACTION_MODEL_UNAVAILABLE": "Der Kontext konnte beim Modellwechsel nicht komprimiert werden, da das vorherige Modell über diese Verbindung nicht verfügbar ist.",
-       "MODEL_SELECTION_UNAVAILABLE": "Das ausgewählte Modell ist bei seinem Anbieter nicht mehr verfügbar. Prüfe die Verbindung in den Einstellungen oder wähle ein anderes verfügbares Modell.",
-       "MODEL_CATALOG_UNCONFIRMED": "Die Modellliste konnte nicht bestätigt werden. Das ausgewählte Modell wurde beibehalten. Aktualisiere die Modellliste und versuche es erneut.",
-+      "SNAPSHOT_DISPATCH_INTENT_TIMEOUT": "Nachricht nicht gesendet. Cindy konnte den Sicherheitseintrag nicht rechtzeitig bestätigen.",
-       "HARNESS_SWITCH_NOT_READY": "Der Harness-Wechsel ist noch nicht bereit. Prüfe die Fehlerdetails und versuche es erneut, sobald der Harness bereit ist.",
-       "DEVICE_LINK_BUSY": "Der Remotecomputer ist ausgelastet. Versuche es in Kürze erneut.",
-       "REMOTE_DAEMON_CLOSED": "Die Remote-Verbindung wurde unterbrochen, möglicherweise während eines Updates. Diese Runde wurde beendet. Sende die Nachricht erneut.",
-```
-
----
-
-### Incident Patch 2: `c76b9df5` (2026-11-23)
-**Commit Message**: fix(desktop): explain when snapshot preparation blocks sending
-
-Refs #10161
-
-Assisted-by: Cindy
-Signed-off-by: Nepha Peachy <[REDACTED_EMAIL]>
-
-**File**: `apps/desktop/src/main/__tests__/gitSnapshotCoordinator.test.ts` (modified, +7/-2)
-```diff
-@@ -1,5 +1,5 @@
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
--import { currentOperationBudget, operationCheckpoint } from '../utils/operationBudget';
-+import { currentOperationBudget, operationCheckpoint, SnapshotOperationDeadlineError } from '../utils/operationBudget';
- 
- import {
-   GitSnapshotCoordinator,
-@@ -65,7 +65,12 @@ describe('durable snapshot dispatch intent', () => {
-     const deps = makeDeps({ snapshotTimeoutMs: 50, recordTurnAttempt: () => pending.promise });
-     const coordinator = new GitSnapshotCoordinator(deps);
-     const result = coordinator.onTurnStart('s1');
--    const rejected = expect(result).rejects.toThrow('deadline');
-+    // #10161 / unit: the stalled intent previously surfaced a generic snapshot
-+    // deadline. The display error must name the send failure and keep its retry type.
-+    const rejected = Promise.all([
-+      expect(result).rejects.toBeInstanceOf(SnapshotOperationDeadlineError),
-+      expect(result).rejects.toThrow(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/),
-+    ]);
-     await vi.advanceTimersByTimeAsync(50);
-     await rejected;
-     expect(coordinator.hasPendingTurnStart('s1')).toBe(false);
-```
-
-**File**: `apps/desktop/src/main/git-snapshot/gitSnapshotCoordinator.ts` (modified, +12/-1)
-```diff
-@@ -6,7 +6,13 @@
-  */
- 
- import type { AgentKind } from '@cindy/maker-core';
--import { OperationBudget, operationCheckpoint, operationWait } from '../utils/operationBudget';
-+import {
-+  OperationBudget,
-+  operationCheckpoint,
-+  operationWait,
-+  SnapshotDispatchIntentDeadlineError,
-+  SnapshotOperationDeadlineError,
-+} from '../utils/operationBudget';
- 
- import { createAfterEditLabel } from './gitSnapshotLabeler';
- import { enqueueGitRepoWrite } from './gitRepoWriteQueue';
-@@ -166,6 +172,11 @@ export class GitSnapshotCoordinator {
-       const index = queue?.indexOf(record) ?? -1;
-       if (index >= 0) queue!.splice(index, 1);
-       if (queue?.length === 0) this.turnStartQueues.delete(sessionId);
-+      if (error instanceof SnapshotOperationDeadlineError) {
-+        // This rejection is before intent confirmation. Keep the local deadline
-+        // type for the scheduler's existing guarded retry, and identify it in history.
-+        throw new SnapshotDispatchIntentDeadlineError(error);
-+      }
-       throw error;
-     }
-   }
-```
-
-**File**: `apps/desktop/src/main/scheduler-host/__tests__/runnerQueuedDispatch.test.ts` (modified, +8/-2)
-```diff
-@@ -546,7 +546,9 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
-   // scheduler must settle from the queued failure callback, not its later poll.
-   // Only the real typed snapshot deadline is handed to #10834's backoff recovery;
-   // its resend and exhaustion are covered by the persisted-recovery tests below.
--  it.each(['deadline', 'permission', 'stop', 'clear', 'pause', 'delete', 'unknown-send'] as const)(
-+  // #10161 / unit: with recovery disabled, the same stalled journal receipt
-+  // must reach the run's failure details as an unsent message.
-+  it.each(['deadline', 'deadline-without-recovery', 'permission', 'stop', 'clear', 'pause', 'delete', 'unknown-send'] as const)(
-     'settles pre-accept snapshot preparation through the real queue: %s', async (outcome) => {
-     vi.useFakeTimers();
-     const h = createSessionHarness(async () => ({ accepted: true }));
-@@ -582,7 +584,8 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
-       beforeDispatchUserTurn: (sid, item, signal) => prepareQueuedPromptSnapshot(snapshots, watchers, sid, item, signal),
-       onAcceptedQueuedMessage: async () => { watchers.delete('snapshot-run-input'); await accepted?.(); },
-       onPersistedSendRejected: (sid, message, item, recovering) => queue.onPersistedSendRejected(sid, message, item, recovering),
--      isResumableTurnErrorCandidate: signals => signals.reason === 'scheduler-snapshot-preparation',
-+      isResumableTurnErrorCandidate: signals => outcome !== 'deadline-without-recovery'
-+        && signals.reason === 'scheduler-snapshot-preparation',
-       onResumableTurnError: takeOver,
-       onDiscardedQueuedMessage: (_sid, item) => { watchers.get(item.clientId)?.onDiscarded(); watchers.delete(item.clientId); },
-       steerToAgent: async () => {}, abortSession: async () => {}, isTurnRunning: () => false,
-@@ -634,6 +637,9 @@ describe('MakerScheduleRunner queued dispatch (busy bound session)', () => {
-       expect(vendorSend).toHaveBeenCalledTimes(outcome === 'unknown-send' ? 1 : 0);
-       expect(result.error).toBeInstanceOf(Error);
-       if (outcome === 'permission') expect(result.error.message).toBe('permission denied');
-+      if (outcome === 'deadline-without-recovery') {
-+        expect(result.error.message).toMatch(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/);
-+      }
-       expect(persisted).toHaveBeenCalledOnce();
-       releaseIntent({ attemptId: 'late' });
-       await vi.advanceTimersByTimeAsync(0);
-```
-
-**File**: `apps/desktop/src/main/scheduler-host/__tests__/runnerSendOutcome.test.ts` (modified, +39/-0)
-```diff
-@@ -59,6 +59,7 @@ import { RemoteAgentRemoteError } from '../../remote-agent/controller/runClient'
- import { MakerScheduleRunner } from '../runner.desktop';
- import { ScheduledModelSelectionBusyError } from '../../maker-ipc/scheduledModelSelection';
- import { isHeadlessGhostSetupTurn } from '../../mcp-integrations/ghostSetupInteractionSurface';
-+import { GitSnapshotCoordinator } from '../../git-snapshot/gitSnapshotCoordinator.js';
- 
- type SessionSendOptions = Parameters<Session['send']>[1];
- type SendImpl = (
-@@ -692,6 +693,44 @@ describe('MakerScheduleRunner send outcome policy', () => {
-     expect(ctx.removeAbortListener).toHaveBeenCalledTimes(1);
-   });
- 
-+  // #10161 / unit: the idle scheduler goes straight through this runner.
-+  // Its generic error sanitization used to erase the safe, typed send diagnosis.
-+  it('keeps the dispatch intent diagnosis in an idle scheduled run', async () => {
-+    vi.useFakeTimers();
-+    const receipt = Promise.withResolvers<{ attemptId: string }>();
-+    const entered = Promise.withResolvers<void>();
-+    const snapshots = new GitSnapshotCoordinator({
-+      snapshotTimeoutMs: 50,
-+      recordTurnAttempt: () => { entered.resolve(); return receipt.promise; },
-+      readAutoSnapshotEnabled: () => true,
-+      getSessionContext: vi.fn(), detectRepoRoot: vi.fn(),
-+      createShadowSavepoint: vi.fn(), createShadowMarker: vi.fn(),
-+      oneShot: vi.fn(), logger: createLogger(),
-+    });
-+    const dispatch = vi.fn();
-+    const h = createSessionHarness(async (_message, opts) => {
-+      await opts?.onAccepted?.();
-+      dispatch();
-+      return { accepted: true };
-+    });
-+    const { runner, notifier } = createRunnerHarness(h.session, {
-+      beforeDispatchUserTurn: (id, signal) => snapshots.onTurnStart(id, signal),
-+    });
-+    try {
-+      const result = runner.fire(baseSchedule(), createFireContext()).catch(error => error);
-+      await entered.promise;
-+      await vi.advanceTimersByTimeAsync(50);
-+      const errorMsg = expect.stringMatching(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/);
-+      expect(await result).toMatchObject({ message: errorMsg });
-+      expect(latestNotifiedRun(notifier)).toMatchObject({ status: 'failed', errorMsg });
-+      expect(mocks.createMessage).toHaveBeenCalledOnce();
-+      expect(dispatch).not.toHaveBeenCalled();
-+    } finally {
-+      receipt.resolve({ attemptId: 'late' });
-+      vi.useRealTimers();
-+    }
-+  });
-+
-   // Unit regression for the idle shared reconnect: after acceptance, a confirmed
-   // startup failure still closes out this occurrence through the normal runner.
-   // The allocator/runtime suite drives the real reconnect and token delivery.
-```
-
-**File**: `apps/desktop/src/main/scheduler-host/runner.ts` (modified, +5/-1)
-```diff
-@@ -103,6 +103,7 @@ import { isPluginEngineKind } from '../../shared/agentKindConversion.js';
- import { ensureDialogueWorkspaceDir } from '../localDb/dialogueWorkspace';
- import { AcceptedCallbackDispatchCancelled } from '../maker-ipc/acceptedCallbackRunner.js';
- import { schedulerFailureDetail } from '../maker-ipc/schedulerQueueBridge.js';
-+import { SnapshotDispatchIntentDeadlineError } from '../utils/operationBudget.js';
- 
- 
- import { prependHandoffToUserMessage } from '../maker-ipc/agentHandoff.js';
-@@ -2644,7 +2645,10 @@ export class MakerScheduleRunner implements ScheduleRunner {
-         ctx.signal.removeEventListener('abort', onAbort);
-         return this.deferFire(schedule, session.id, 'session-running');
-       }
--      sendError = formatSchedulerSendError(sendContext, normalized.reason);
-+      // The host supplies a fixed diagnostic for this proven pre-dispatch failure.
-+      sendError = err instanceof SnapshotDispatchIntentDeadlineError
-+        ? err.message
-+        : formatSchedulerSendError(sendContext, normalized.reason);
-       this.deps.logger.warn?.('[runner] session send failed before dispatch', {
-         ...sendLogBase,
-         source: normalized.source,
-```
-
-**File**: `apps/desktop/src/main/utils/operationBudget.ts` (modified, +12/-2)
-```diff
-@@ -21,12 +21,22 @@ export function assertGitDirectoryReady(dir: string): void {
- 
- /** Typed locally: error text from a provider must never authorize a retry. */
- export class SnapshotOperationDeadlineError extends Error {
--  constructor() {
--    super('Snapshot operation deadline exceeded');
-+  constructor(message = 'Snapshot operation deadline exceeded', options?: ErrorOptions) {
-+    super(message, options);
-     this.name = 'SnapshotOperationDeadlineError';
-   }
- }
- 
-+/** The deadline expired before the host could confirm durable dispatch intent. */
-+export class SnapshotDispatchIntentDeadlineError extends SnapshotOperationDeadlineError {
-+  constructor(cause: SnapshotOperationDeadlineError) {
-+    super(
-+      '[SNAPSHOT_DISPATCH_INTENT_TIMEOUT] Snapshot operation deadline exceeded before confirming the send record. The message was not sent.',
-+      { cause },
-+    );
-+  }
-+}
-+
- export class OperationBudget {
-   readonly controller = new AbortController();
-   readonly signal = this.controller.signal;
-```
-
-**File**: `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx` (modified, +23/-0)
-```diff
-@@ -73,6 +73,29 @@ it.each(['live', 'history'] as const)('reports a clean Codex transport exit as a
-   }
- });
- 
-+// #10161 / unit: a stalled local dispatch record used to look like a model
-+// reply failure. Both error surfaces use real localized copy after the host
-+// identifies that boundary. An unclassified timeout still has generic copy.
-+it.each(['live', 'history', 'unclassified'] as const)('attributes a send preparation deadline in %s', async surface => {
-+  const i18n = createInstance();
-+  await i18n.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } } });
-+  const raw = 'Snapshot operation deadline exceeded';
-+  const message = surface === 'unclassified'
-+    ? raw
-+    : `[SNAPSHOT_DISPATCH_INTENT_TIMEOUT] ${raw} before confirming the send record. The message was not sent.`;
-+  const retry = vi.fn();
-+  render(<I18nextProvider i18n={i18n}>{surface === 'history'
-+    ? <ErrorMessageCard message={message} />
-+    : <ErrorBanner error={message} agentKind="codex" retryText="原消息" onRetry={retry} />}</I18nextProvider>);
-+  expect(screen.getByText(surface === 'unclassified'
-+    ? zhCN.chat.errorBanner.replyFailed
-+    : '未发送消息，Cindy 未能及时确认安全记录')).toBeTruthy();
-+  if (surface === 'live') {
-+    fireEvent.click(screen.getByRole('button', { name: zhCN.chat.errorBanner.retry }));
-+    expect(retry).toHaveBeenCalledWith('原消息');
-+  }
-+});
-+
- // #10854, unit: production live reducer + banner/tail/history must retain the
- // actual cause for diagnosis while legacy reason-only errors use neutral copy.
- it.each(['live', 'tail', 'history'] as const)('keeps silent-stop %s copy neutral and preserves cause details', async surface => {
-```
-
-**File**: `apps/desktop/src/renderer/i18n/locales/de/common.json` (modified, +1/-0)
-```diff
-@@ -16157,6 +16157,7 @@
-       "CONTEXT_COMPACTION_MODEL_UNAVAILABLE": "Der Kontext konnte beim Modellwechsel nicht komprimiert werden, da das vorherige Modell über diese Verbindung nicht verfügbar ist.",
-       "MODEL_SELECTION_UNAVAILABLE": "Das ausgewählte Modell ist bei seinem Anbieter nicht mehr verfügbar. Prüfe die Verbindung in den Einstellungen oder wähle ein anderes verfügbares Modell.",
-       "MODEL_CATALOG_UNCONFIRMED": "Die Modellliste konnte nicht bestätigt werden. Das ausgewählte Modell wurde beibehalten. Aktualisiere die Modellliste und versuche es erneut.",
-+      "SNAPSHOT_DISPATCH_INTENT_TIMEOUT": "Nachricht nicht gesendet. Cindy konnte den Sicherheitseintrag nicht rechtzeitig bestätigen.",
-       "HARNESS_SWITCH_NOT_READY": "Der Harness-Wechsel ist noch nicht bereit. Prüfe die Fehlerdetails und versuche es erneut, sobald der Harness bereit ist.",
-       "DEVICE_LINK_BUSY": "Der Remotecomputer ist ausgelastet. Versuche es in Kürze erneut.",
-       "REMOTE_DAEMON_CLOSED": "Die Remote-Verbindung wurde unterbrochen, möglicherweise während eines Updates. Diese Runde wurde beendet. Sende die Nachricht erneut.",
-```
-
----
-
-### Incident Patch 3: `9a60a19e` (2026-11-23)
-**Commit Message**: ci(host): build the tag the release workflow runs on
-
-Code scanning flagged the ref input: a manual run executes in the default branch's context, so checking out and running a ref named by the caller could poison the caches other workflows restore.
-
-Drop the ref and version inputs. A release is built by running the workflow from its tag, which builds that commit and takes the version from the tag name; a run from a branch builds an unversioned package. The job no longer uses a dependency cache.
-
-Also drop the disk cleanup step: the first run showed 103 GB free on the hosted runner, and the step took two and a half minutes.
+Keep #12970's behaviour: any message naming a 5xx status code gets the
+upstream-status notice on both the live banner and the history card. Remove
+#12967's now-unreachable upstreamEmpty550 reason and its locale strings, and
+update its test to expect the upstream-status notice; the dispatch-refusal
+case is unchanged.
 
 Assisted-by: Cindy (https://cindy.app)
-Signed-off-by: Dash <[REDACTED_EMAIL]>
+Signed-off-by: DavidShen <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/host-release.yml` (modified, +13/-33)
+**File**: `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx` (modified, +8/-5)
 ```diff
-@@ -1,21 +1,16 @@
- name: Host release (Linux)
--run-name: ${{ github.event_name == 'workflow_dispatch' && format('Host release {0}', inputs.ref) || github.event.pull_request.title }}
-+run-name: ${{ github.event_name == 'workflow_dispatch' && format('Host release {0}', github.ref_name) || github.event.pull_request.title }}
+@@ -42,14 +42,17 @@ const raw = JSON.stringify({ error: {
+ } });
+ afterEach(cleanup);
  
- # Builds the standalone Cindy Host for Linux from one commit, as both editions, and keeps the
- # result as a workflow artifact. Nothing is published: no GitHub Release, CDN or registry write.
- # Whoever needs the package (for example the cloud image recipes) downloads the artifact of the
- # run and pins the digests from its summary. See docs/host/README.md, "Linux 发布包".
- on:
-+  # Run it from the release tag to build ("Use workflow from" in the Actions page, or
-+  # `gh workflow run host-release.yml --ref v<version>`). The job builds the commit it runs on and
-+  # takes the version from the tag; there is no input naming another ref, so it never checks out
-+  # code other than its own. Run from a branch, it builds an unversioned package.
-   workflow_dispatch:
--    inputs:
--      ref:
--        description: Tag or commit to build, for example v0.1.144
--        required: true
--        type: string
--      version:
--        description: Release version. Leave empty when ref is a v<version> tag
--        required: false
--        type: string
-   # Changes to the builder or to this workflow build an unversioned package, so a broken release
-   # build is found in review instead of at the next release.
-   pull_request:
-@@ -29,7 +24,7 @@ permissions:
-   contents: read
- 
- concurrency:
--  group: host-release-${{ github.event.pull_request.number || inputs.ref }}
-+  group: host-release-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
- 
- jobs:
-@@ -51,36 +46,22 @@ jobs:
-       XDT_SKIP_AGENT_BIN_INSTALL: '1'
-       HOST_ARCH: ${{ matrix.target.arch }}
-     steps:
--      # Dependencies, two unpacked releases (about 2 GB each) and their archives do not fit
--      # beside the toolchains a hosted runner preinstalls; this job uses neither of these two.
--      - name: Free runner disk space
--        run: |
--          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
--          df -h /
--
-       - name: Checkout client
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
--          ref: ${{ inputs.ref }}
-           lfs: true
- 
-       - name: Resolve the release version
-         env:
-           EVENT_NAME: ${{ github.event_name }}
--          INPUT_REF: ${{ inputs.ref }}
--          INPUT_VERSION: ${{ inputs.version }}
-+          REF_TYPE: ${{ github.ref_type }}
-+          REF_NAME: ${{ github.ref_name }}
-         run: |
-           set -euo pipefail
--          if [ "$EVENT_NAME" = workflow_dispatch ]; then
--            version="$INPUT_VERSION"
--            if [ -z "$version" ]; then
--              case "$INPUT_REF" in
--                v[0-9]*) version="${INPUT_REF#v}" ;;
--                *) echo "::error::Give a version when ref is not a v<version> tag"; exit 1 ;;
--              esac
--            fi
--            if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
--              echo "::error::Not a release version: $version"; exit 1
-+          if [ "$EVENT_NAME" = workflow_dispatch ] && [ "$REF_TYPE" = tag ]; then
-+            version="${REF_NAME#v}"
-+            if [ "$version" = "$REF_NAME" ] || ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
-+              echo "::error::Not a release tag: $REF_NAME (expected v<version>)"; exit 1
-             fi
-             # The Host and the web client read the version from the desktop manifest, as the
-             # desktop packaging does (writePackageVersion). This checkout is discarded afterwards.
-@@ -107,12 +88,11 @@ jobs:
-           run_install: false
- 
-       # The release bundles the Node that builds it, so use the version the repository pins.
-+      # No dependency cache: a release is installed from the lockfile alone.
-       - name: Setup Node.js
-         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-         with:
-           node-version-file: .nvmrc
--          cache: pnpm
--          cache-dependency-path: pnpm-lock.yaml
- 
-       - name: Install dependencies
-         run: pnpm install --frozen-lockfile
+-// #12924, unit: the live and historical notices distinguish the observed
+-// empty HTTP 550 from ordinary failures, while preserving the dispatch refusal.
++// #12924, unit: the live and historical notices name an upstream 5xx status —
++// the exact empty HTTP 550 and any other message naming "550 status code" get
++// the same upstream-status notice (#12970) — while the dispatch refusal keeps
++// its own "not sent" text.
++const upstream550 = zhCN.chat.errorBanner.upstreamStatusError.replace('{{status}}', '550');
+ it.each([
+-  ['550 status code (no body)', '模型服务返回 HTTP 550（无响应内容）'],
+-  ['ordinary failure mentioning 550 status code (no body)', zhCN.chat.errorBanner.replyFailed],
++  ['550 status code (no body)', upstream550],
++  ['ordinary failure mentioning 550 status code (no body)', upstream550],
+   ['provider-rejected-before-dispatch: Provider rejected the Session send before dispatch: SEND/task/send',
+     zhCN.chat.errorBanner.messageNotSent],
+-])('localizes the exact empty upstream 550 without changing other errors (%s)', async (message, expected) => {
++])('names the upstream 5xx status and keeps the dispatch refusal (%s)', async (message, expected) => {
+   const i18n = createInstance();
+   await i18n.init({ lng: 'zh-CN', resources: { 'zh-CN': { translation: zhCN } } });
+   const { rerender } = render(<I18nextProvider i18n={i18n}>
 ```
 
-**File**: `docs/host/README.md` (modified, +1/-1)
+**File**: `apps/desktop/src/renderer/components/chat/errorReasonI18n.ts` (modified, +0/-3)
 ```diff
-@@ -75,7 +75,7 @@ CINDY_HOST_API=http://127.0.0.1:3456 pnpm --filter desktop dev
+@@ -77,8 +77,5 @@ export function errorReasonI18nKey(reason: string | null | undefined, message: s
+   if (isProviderSafetyRefusalError(message, reason)) {
+     return 'chat.errorBanner.providerSafetyRefusal';
+   }
+-  if (!reason && /^550 status code \(no body\)$/i.test(message.trim())) {
+-    return 'chat.errorBanner.upstreamEmpty550';
+-  }
+   return reason ? ERROR_REASON_I18N_KEYS[reason] : undefined;
+ }
+```
+
+**File**: `apps/desktop/src/renderer/i18n/locales/de/common.json` (modified, +0/-1)
+```diff
+@@ -15650,7 +15650,6 @@
+       "piRetryHistoryUnavailable": "Deine Nachricht wurde nicht gesendet. Pi konnte den Verlauf, der zum Senden nötig ist, nicht lesen. Du kannst es erneut versuchen oder in einer neuen Aufgabe fortfahren.",
+       "upstreamStatusError": "Der vorgeschaltete Dienst hat {{status}} zurückgegeben – die Antwort konnte nicht abgeschlossen werden.",
+       "messageNotSent": "Deine Nachricht wurde nicht gesendet.",
+-      "upstreamEmpty550": "Der Modelldienst hat HTTP 550 ohne Antwortinhalt zurückgegeben",
+       "replyFailed": "Antwort konnte nicht abgeschlossen werden",
+       "queuedSendRecovery": "Deine Nachricht wurde nicht gesendet. Wähle „Erneut versuchen“, um sie unverändert zu senden. Eine neue Nachricht ersetzt sie.",
+       "retryTitle": "Letzte Nachricht erneut senden",
+```
+
+**File**: `apps/desktop/src/renderer/i18n/locales/en/common.json` (modified, +0/-1)
+```diff
+@@ -15687,7 +15687,6 @@
+       "piRetryHistoryUnavailable": "Your message was not sent. Pi could not read the history needed to send it. You can retry, or continue in a new task.",
+       "upstreamStatusError": "The upstream returned {{status}}, so this reply is incomplete.",
+       "messageNotSent": "Your message was not sent.",
+-      "upstreamEmpty550": "The model service returned HTTP 550 with an empty response",
+       "replyFailed": "Could not complete the reply",
+       "queuedSendRecovery": "Your message wasn’t sent. Select Retry to send it as is. Sending a new message will replace it.",
+       "retryTitle": "Resend the last message",
+```
+
+**File**: `apps/desktop/src/renderer/i18n/locales/es/common.json` (modified, +0/-1)
+```diff
+@@ -15786,7 +15786,6 @@
+       "piRetryHistoryUnavailable": "Tu mensaje no se envió. Pi no pudo leer el historial necesario para enviarlo. Puedes volver a intentarlo o continuar en una tarea nueva.",
+       "upstreamStatusError": "El proveedor devolvió {{status}}, por lo que la respuesta no pudo completarse.",
+       "messageNotSent": "Tu mensaje no se envió.",
+-      "upstreamEmpty550": "El servicio del modelo devolvió HTTP 550 con una respuesta vacía",
+       "replyFailed": "No se pudo completar la respuesta",
+       "queuedSendRecovery": "Tu mensaje no se envió. Selecciona «Reintentar» para enviarlo tal cual. Si envías un mensaje nuevo, reemplazará al anterior.",
+       "retryTitle": "Reenviar el último mensaje",
+```
+
+**File**: `apps/desktop/src/renderer/i18n/locales/fr/common.json` (modified, +0/-1)
+```diff
+@@ -15786,7 +15786,6 @@
+       "piRetryHistoryUnavailable": "Message non envoyé. Pi n’a pas pu lire l’historique nécessaire à l’envoi. Vous pouvez réessayer ou continuer dans une nouvelle tâche.",
+       "upstreamStatusError": "Le service en amont a renvoyé {{status}} ; la réponse n’a pas pu aboutir.",
+       "messageNotSent": "Message non envoyé.",
+-      "upstreamEmpty550": "Le service du modèle a renvoyé HTTP 550 avec une réponse vide",
+       "replyFailed": "Impossible de terminer la réponse",
+       "queuedSendRecovery": "Ton message n’a pas été envoyé. Sélectionne « Réessayer » pour le renvoyer tel quel. Si tu envoies un nouveau message, il remplacera le précédent.",
+       "retryTitle": "Renvoyer le dernier message",
+```
+
+**File**: `apps/desktop/src/renderer/i18n/locales/ja/common.json` (modified, +0/-1)
+```diff
+@@ -15621,7 +15621,6 @@
+       "piRetryHistoryUnavailable": "メッセージは送信されませんでした。Pi が送信に必要な履歴を読み込めませんでした。再試行するか、新しいタスクで続けてください。",
+       "upstreamStatusError": "上流が {{status}} を返したため、この返信は完了しませんでした。",
+       "messageNotSent": "メッセージは送信されませんでした。",
+-      "upstreamEmpty550": "モデルサービスが空の応答で HTTP 550 を返しました",
+       "replyFailed": "返信を完了できませんでした",
+       "queuedSendRecovery": "直前のメッセージは送信されていません。「再試行」でそのまま送信できます。新しいメッセージを送ると、直前のメッセージは置き換わります。",
+       "retryTitle": "最後のメッセージを再送信",
+```
+
+**File**: `apps/desktop/src/renderer/i18n/locales/ko/common.json` (modified, +0/-1)
+```diff
+@@ -15621,7 +15621,6 @@
+       "piRetryHistoryUnavailable": "메시지를 보내지 못했습니다. Pi가 전송에 필요한 기록을 읽지 못했습니다. 다시 시도하거나 새 작업에서 계속할 수 있습니다.",
+       "upstreamStatusError": "상위 서비스가 {{status}}를 반환하여 이 답변이 완료되지 않았습니다.",
+       "messageNotSent": "메시지를 보내지 못했습니다.",
+-      "upstreamEmpty550": "모델 서비스에서 빈 응답과 함께 HTTP 550을 반환했어요",
+       "replyFailed": "답변을 완료하지 못했습니다",
+       "queuedSendRecovery": "이전 메시지가 전송되지 않았습니다. ‘다시 시도’를 누르면 그대로 보낼 수 있습니다. 새 메시지를 보내면 이전 메시지를 대체합니다.",
+       "retryTitle": "마지막 메시지 다시 보내기",
+```
+
+---
+
+### Incident Patch 2: `eb65da3d` (2026-11-26)
+**Commit Message**: Merge pull request #13038 from nothingyuancando/codex/fix-12427-nginx-diagnostics
+
+fix(relay): locate nginx configuration parse failures
+
+**File**: `packages/device-link-relay/src/__tests__/nginx.test.ts` (modified, +17/-0)
+```diff
+@@ -150,6 +150,23 @@ beforeEach(() => {
+ });
+ afterEach(() => vi.unstubAllGlobals());
  
- ## Linux 发布包
++// #12427 diagnostic follow-up: real prepare entry; existing quote tests only cover successful parsing.
++// Unit: included-file syntax failures must identify their source without returning argument values.
++it.each([
++  ['# header\r\nserver {\r\n  proxy_set_header Authorization private-test-token\r\n}', 'Invalid Nginx directive', 3, 3, 'proxy_set_header'],
++  ['# header\nserver {\n  set $secret "private-test-token', 'Invalid Nginx token', 3, 15, null],
++  ['# header\nserver {\n  set $secret ${private-test-token', 'Unclosed Nginx variable', 3, 15, null],
++  ['# header\nserver {\n  set $secret private-test-token;', 'Unclosed Nginx block', 2, 1, 'server'],
++] as const)('reports safe source coordinates for %s', (source, reason, line, column, directive) => {
++  h.files.set(site, source);
++  let message = '';
++  try { prepare(); } catch (error) { message = (error as Error).message; }
++  expect(message).toContain(`${reason} at ${JSON.stringify(site)}:${line}:${column}`);
++  if (directive) expect(message).toContain(`(directive: ${directive})`);
++  expect(message).not.toContain('private-test-token');
++  expect(h.signals).toEqual([]);
++});
++
+ it('preserves quoted log format delimiters before a server in an included file (#12427)', () => {
+   const format = `log_format site_total escape=json '{' # comment with }
+     '"uri":"$request_uri"' "}" ";";\n`;
+```
+
+**File**: `packages/device-link-relay/src/nginx.ts` (modified, +16/-6)
+```diff
+@@ -47,6 +47,16 @@ export interface NginxPlan {
+ /** 解析语法与位置，不用正则改写任意 Nginx 配置；引号、注释、变量与嵌套块分别处理。 */
+ function parse(file: string, source: string): Directive[] {
+   const tokens: Array<{ kind: 'word' | '{' | '}' | ';'; value: string; start: number; end: number }> = [];
++  // Diagnostics contain coordinates and a plain directive name, never arguments
++  // (which may contain authorization headers or other private configuration).
++  const fail = (reason: string, offset: number, directive?: string): never => {
++    const prefix = source.slice(0, offset);
++    const line = prefix.split('\n').length;
++    const column = offset - prefix.lastIndexOf('\n');
++    const name = directive && /^[a-z_][a-z0-9_]{0,63}$/i.test(directive)
++      ? ` (directive: ${directive})` : '';
++    throw new Error(`${reason} at ${JSON.stringify(file)}:${line}:${column}${name}`);
++  };
+   let i = 0;
+   while (i < source.length) {
+     if (/\s/.test(source[i])) {
+@@ -85,7 +95,7 @@ function parse(file: string, source: string): Directive[] {
+       }
+       if (c === '$' && source[i + 1] === '{') {
+         const end = source.indexOf('}', i + 2);
+-        if (end < 0) throw new Error('Unclosed Nginx variable');
++        if (end < 0) fail('Unclosed Nginx variable', i);
+         value += source.slice(i, end + 1);
+         i = end + 1;
+         continue;
+@@ -94,18 +104,18 @@ function parse(file: string, source: string): Directive[] {
+       value += c;
+       i++;
+     }
+-    if (quote || i === start) throw new Error('Invalid Nginx token');
++    if (quote || i === start) fail('Invalid Nginx token', start);
+     tokens.push({ kind: 'word', value, start, end: i });
+   }
+   let cursor = 0;
+-  function block(nested: boolean): Directive[] {
++  function block(nested: boolean, opening?: { start: number; value: string }): Directive[] {
+     const nodes: Directive[] = [];
+     while (cursor < tokens.length && tokens[cursor].kind !== '}') {
+       const first = tokens[cursor++];
+       const args: string[] = [];
+       while (cursor < tokens.length && tokens[cursor].kind === 'word') args.push(tokens[cursor++].value);
+       const delimiter = tokens[cursor++];
+-      if (!delimiter || delimiter.kind === '}') throw new Error('Invalid Nginx directive');
++      if (!delimiter || delimiter.kind === '}') fail('Invalid Nginx directive', first.start, first.value);
+       const node: Directive = {
+         file,
+         name: first.value,
+@@ -115,12 +125,12 @@ function parse(file: string, source: string): Directive[] {
+       };
+       if (delimiter.kind === '{') {
+         node.open = delimiter.end;
+-        node.children = block(true);
++        node.children = block(true, first);
+         node.end = tokens[cursor - 1].end;
+       }
+       nodes.push(node);
+     }
+-    if (nested && tokens[cursor++]?.kind !== '}') throw new Error('Unclosed Nginx block');
++    if (nested && tokens[cursor++]?.kind !== '}') fail('Unclosed Nginx block', opening?.start ?? source.length, opening?.value);
+     return nodes;
+   }
+   return block(false);
+```
+
+---
+
+### Incident Patch 3: `450374a2` (2026-11-26)
+**Commit Message**: Merge pull request #13023 from makecindy/feat/linux-remote-cursor
+
+feat(remote-desktop): Linux 被控端用本机鼠标显示远端光标，GNOME Wayland 支持控制，被控提示只用桌面浮窗
+
+**File**: `apps/desktop/forge.config.ts` (modified, +6/-0)
+```diff
+@@ -1126,6 +1126,12 @@ function buildRemoteDesktopInput(platform: ForgePlatform, arch: ForgeArch): void
+         path.join(temporary, 'cindy-linux-desktop-capture'),
+         path.join(destDir, 'cindy-linux-desktop-capture'),
+       );
++      // Optional GNOME (Mutter/PipeWire) capture: builders without its headers
++      // skip it, and must not ship an earlier checkout's binary instead.
++      const gnomeCapture = path.join(destDir, 'cindy-linux-gnome-capture');
++      fs.rmSync(gnomeCapture, { force: true });
++      if (fs.existsSync(path.join(temporary, 'cindy-linux-gnome-capture')))
++        fs.copyFileSync(path.join(temporary, 'cindy-linux-gnome-capture'), gnomeCapture);
+       const clipboard = spawnSync(
+         process.execPath,
+         [
+```
+
+**File**: `apps/desktop/native/remote-desktop/linux-capture/build.mjs` (modified, +54/-7)
+```diff
+@@ -12,6 +12,14 @@ function run(command, args) {
+     throw new Error(`Linux capture build failed: ${command}: ${result.stderr || result.error}`);
+   return result.stdout.trim();
+ }
++/** pkg-config flags, or null when a development package is absent. */
++function optional(...packages) {
++  const result = spawnSync('pkg-config', ['--cflags', '--libs', ...packages], {
++    encoding: 'utf8',
++    timeout: 60000,
++  });
++  return result.status === 0 ? result.stdout.trim().split(/\s+/).filter(Boolean) : null;
++}
+ const protocols = [
+   'wlr-screencopy-unstable-v1',
+   'ext-image-copy-capture-v1',
+@@ -30,27 +38,66 @@ for (const name of protocols) {
+     path.join(output, name + '.c'),
+   ]);
+ }
+-const flags = run('pkg-config', [
+-  '--cflags',
+-  '--libs',
+-  'wayland-client',
+-  'libturbojpeg',
+-  'libpng',
+-]).split(/\s+/);
++const flags = run('pkg-config', ['--cflags', '--libs', 'wayland-client', 'libpng']).split(/\s+/);
++// X11 capture needs XFIXES for the separate cursor; MIT-SHM (libXext) only
++// speeds it up. Builders without these headers keep the Wayland helper and
++// report X11 capture unavailable at runtime.
++const x11 = optional('x11', 'xfixes');
++const shm = x11 && optional('xext');
++// Composite lets X11 capture keep Cindy's local-only notice out of the picture
++// (x11.h). Without it the helper refuses such captures, and the notice stays off.
++const composite = x11 && optional('xcomposite');
+ const binary = path.join(output, 'cindy-linux-desktop-capture');
+ run('cc', [
+   '-std=c11',
+   '-Wall',
+   '-Wextra',
+   '-Werror',
+   '-O2',
++  ...(x11 ? ['-DCINDY_X11'] : []),
++  ...(shm ? ['-DCINDY_XSHM'] : []),
++  ...(composite ? ['-DCINDY_XCOMPOSITE'] : []),
+   path.join(source, 'main.c'),
+   ...protocols.map((name) => path.join(output, name + '.c')),
+   '-I',
+   output,
+   ...flags,
++  ...(x11 ?? []),
++  ...(shm ?? []),
++  ...(composite ?? []),
+   '-lm',
++  // JPEG backends are loaded at runtime (jpeg.h); none is a link dependency.
++  '-ldl',
+   '-o',
+   binary + '.tmp',
+ ]);
+ fs.renameSync(binary + '.tmp', binary);
++
++// GNOME (Mutter) capture is a separate binary so a missing PipeWire library
++// can never stop the Wayland/X11 helper above from loading.
++const gnome = path.join(output, 'cindy-linux-gnome-capture');
++fs.rmSync(gnome, { force: true });
++const gnomeFlags = optional('gio-2.0', 'libpipewire-0.3', 'xcursor', 'libpng');
++if (gnomeFlags) {
++  run('cc', [
++    '-std=gnu11',
++    '-Wall',
++    '-Wextra',
++    '-Werror',
++    // PipeWire's inline SPA helpers trip these in their own headers.
++    '-Wno-missing-field-initializers',
++    '-Wno-unused-parameter',
++    '-O2',
++    path.join(source, 'gnome.c'),
++    ...gnomeFlags,
++    '-lm',
++    '-ldl',
++    '-o',
++    gnome + '.tmp',
++  ]);
++  fs.renameSync(gnome + '.tmp', gnome);
++} else {
++  console.warn(
++    'Linux capture: GNOME capture skipped (gio-2.0, libpipewire-0.3 or xcursor missing)',
++  );
++}
+```
+
+**File**: `apps/desktop/native/remote-desktop/linux-capture/cursor_shape.h` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++/* Map an X cursor-theme name onto the viewer's standard shape keywords.
++ * Toolkits name cursors either with CSS names (GTK, Chromium) or legacy X
++ * cursor-font names (Qt, Xt, window managers). Unknown and unnamed cursors
++ * return NULL so the viewer keeps its local arrow. */
++#ifndef CINDY_CURSOR_SHAPE_H
++#define CINDY_CURSOR_SHAPE_H
++#include <stddef.h>
++#include <string.h>
++
++#define CURSOR_SHAPE_NAMES 12
++static const struct {
++  const char *shape;
++  const char *names[CURSOR_SHAPE_NAMES];
++} cursor_shapes[] = {
++    {"default", {"default", "left_ptr", "arrow", "top_left_arrow",
++                 "left_arrow", "right_ptr", "draft_large", "draft_small"}},
++    {"text", {"text", "xterm", "ibeam"}},
++    {"vertical-text", {"vertical-text"}},
++    {"pointer", {"pointer", "hand", "hand1", "hand2", "pointing_hand"}},
++    {"crosshair",
++     {"crosshair", "cross", "tcross", "cross_reverse", "diamond_cross",
++      "cell", "plus", "target", "dotbox"}},
++    {"grab", {"grab", "openhand", "hand_open"}},
++    {"grabbing", {"grabbing", "closedhand", "hand_closed", "dnd-none"}},
++    {"move", {"move", "fleur", "all-scroll", "size_all", "dnd-move"}},
++    {"ew-resize",
++     {"ew-resize", "col-resize", "e-resize", "w-resize", "sb_h_double_arrow",
++      "h_double_arrow", "size_hor", "split_h", "right_side", "left_side"}},
++    {"ns-resize",
++     {"ns-resize", "row-resize", "n-resize", "s-resize", "sb_v_double_arrow",
++      "v_double_arrow", "size_ver", "split_v", "top_side", "bottom_side"}},
++    {"nwse-resize",
++     {"nwse-resize", "nw-resize", "se-resize", "size_fdiag",
++      "bd_double_arrow", "top_left_corner", "bottom_right_corner"}},
++    {"nesw-resize",
++     {"nesw-resize", "ne-resize", "sw-resize", "size_bdiag",
++      "fd_double_arrow", "top_right_corner", "bottom_left_corner"}},
++    {"not-allowed",
++     {"not-allowed", "no-drop", "dnd-no-drop", "forbidden", "crossed_circle",
++      "circle", "pirate", "X_cursor"}},
++    {"copy", {"copy", "dnd-copy"}},
++    {"alias", {"alias", "dnd-link", "link"}},
++    {"wait", {"wait", "watch"}},
++    {"progress", {"progress", "left_ptr_watch", "half-busy"}},
++    {"help", {"help", "question_arrow", "whats_this", "left_ptr_help",
++              "dnd-ask"}},
++};
++#define CURSOR_SHAPE_COUNT (sizeof(cursor_shapes) / sizeof(cursor_shapes[0]))
++__attribute__((unused)) static const char *cursor_shape_for_name(const char *name) {
++  if (!name || !*name)
++    return NULL;
++  for (size_t i = 0; i < CURSOR_SHAPE_COUNT; i++)
++    for (size_t j = 0; j < CURSOR_SHAPE_NAMES && cursor_shapes[i].names[j]; j++)
++      if (!strcmp(name, cursor_shapes[i].names[j]))
++        return cursor_shapes[i].shape;
++  return NULL;
++}
++#endif
+```
+
+**File**: `apps/desktop/native/remote-desktop/linux-capture/encode.h` (added, +120/-0)
+```diff
+@@ -0,0 +1,120 @@
++/* Bounded encoders shared by the X11 and GNOME backends: base64 text for the
++ * line protocol, a PNG cursor raster, and the 1920-pixel video downscale. */
++#ifndef CINDY_CAPTURE_ENCODE_H
++#define CINDY_CAPTURE_ENCODE_H
++#include <png.h>
++#include <stddef.h>
++#include <stdint.h>
++#include <stdlib.h>
++
++static char *cindy_base64(const unsigned char *bytes, size_t length) {
++  static const char abc[] =
++      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
++  char *out = malloc(4 * ((length + 2) / 3) + 1);
++  if (!out)
++    return NULL;
++  size_t j = 0;
++  for (size_t i = 0; i < length; i += 3) {
++    uint32_t n = (uint32_t)bytes[i] << 16;
++    if (i + 1 < length)
++      n |= (uint32_t)bytes[i + 1] << 8;
++    if (i + 2 < length)
++      n |= bytes[i + 2];
++    out[j++] = abc[n >> 18];
++    out[j++] = abc[(n >> 12) & 63];
++    out[j++] = i + 1 < length ? abc[(n >> 6) & 63] : '=';
++    out[j++] = i + 2 < length ? abc[n & 63] : '=';
++  }
++  out[j] = 0;
++  return out;
++}
++/* Straight (non-premultiplied) RGBA to base64 PNG. The 48 KiB bound keeps
++ * the text within the cursor protocol's 64 KiB limit. */
++static char *cindy_png_base64(const unsigned char *rgba, int width,
++                              int height) {
++  png_image image = {.version = PNG_IMAGE_VERSION,
++                     .width = (png_uint_32)width,
++                     .height = (png_uint_32)height,
++                     .format = PNG_FORMAT_RGBA};
++  char *result = NULL;
++  png_alloc_size_t size = 0;
++  if (width > 0 && height > 0 && width <= 256 && height <= 256 &&
++      png_image_write_to_memory(&image, NULL, &size, 0, rgba, 0, NULL) &&
++      size <= 49152) {
++    unsigned char *png = malloc(size);
++    if (png && png_image_write_to_memory(&image, png, &size, 0, rgba, 0, NULL))
++      result = cindy_base64(png, size);
++    free(png);
++  }
++  png_image_free(&image);
++  return result;
++}
++/* Premultiplied 8-bit channel to straight alpha. */
++static unsigned char cindy_unpremultiply(unsigned value, unsigned alpha) {
++  if (!alpha)
++    return 0;
++  unsigned v = (value * 255 + alpha / 2) / alpha;
++  return (unsigned char)(v > 255 ? 255 : v);
++}
++/* Match the normal desktop video's 1920-pixel long-edge cap before IPC and
++ * decoding. Bilinear sampling preserves aspect ratio and supports padded
++ * rows. *scratch is allocated once (1920x1920x4) and reused by the caller. */
++static const unsigned char *cindy_scale_pixels(const unsigned char *pixels,
++                                               uint32_t source_width,
++                                               uint32_t source_height,
++                                               uint32_t source_stride,
++                                               unsigned char **scratch,
++                                               int *width, int *height,
++                                               int *stride) {
++  *width = (int)source_width;
++  *height = (int)source_height;
++  *stride = (int)source_stride;
++  uint32_t edge = source_width > source_height ? source_width : source_height;
++  if (edge <= 1920)
++    return pixels;
++  *width = (int)(source_width * 1920 / edge);
++  *height = (int)(source_height * 1920 / edge);
++  if (*width < 1)
++    *width = 1;
++  if (*height < 1)
++    *height = 1;
++  *stride = *width * 4;
++  if (!*scratch)
++    *scratch = malloc(1920 * 1920 * 4);
++  if (!*scratch)
++    return NULL;
++  uint32_t xs[1920], weights[1920];
++  for (int x = 0; x < *width; x++) {
++    uint32_t pos =
++        *width > 1
++            ? (uint32_t)((uint64_t)x * (source_width - 1) * 256 / (*width - 1))
++            : 0;
++    xs[x] = pos >> 8;
++    weights[x] = pos & 255;
++  }
++  for (int y = 0; y < *height; y++) {
++    uint32_t pos = *height > 1 ? (uint32_t)((uint64_t)y * (source_height - 1) *
++                                            256 / (*height - 1))
++                               : 0;
++    uint32_t sy = pos >> 8, wy = pos & 255;
++    uint32_t next = sy + 1 < source_height ? sy + 1 : sy;
++    const unsigned char *a = pixels + (size_t)sy * source_stride;
++    const unsigned char *b = pixels + (size_t)next * source_stride;
++    unsigned char *dest = *scratch + (size_t)y * (size_t)*stride;
++    for (int x = 0; x < *width; x++) {
++      uint32_t sx = xs[x], wx = weights[x],
++               nx = sx + 1 < source_width ? sx + 1 : sx;
++      for (int channel = 0; channel < 3; channel++) {
++        uint32_t top =
++            a[sx * 4 + channel] * (256 - wx) + a[nx * 4 + channel] * wx;
++        uint32_t bottom =
++            b[sx * 4 + channel] * (256 - wx) + b[nx * 4 + channel] * wx;
++        dest[x * 4 + channel] =
++            (unsigned char)((top * (256 - wy) + bottom * wy + 32768) >> 16);
++      }
++      dest[x * 4 + 3] = 255;
++    }
++  }
++  return *scratch;
++}
++#endif
+```
+
+**File**: `apps/desktop/native/remote-desktop/linux-capture/gnome-test.py` (added, +224/-0)
+```diff
+@@ -0,0 +1,224 @@
++"""Explicit GNOME (Mutter) Wayland integration test:
++    python3 gnome-test.py <gnome-capture-helper> <input-helper>
++Requires gnome-shell (46+), dbus-daemon, a running user PipeWire, python3-gi
++and gdk-pixbuf. Starts its own headless GNOME Shell on a private session bus,
++so it never records or drives the user's real desktop.
++
++Covers: probes without creating a session, monitor enumeration, cursor-free
++monitor video (with an embedded-cursor control that must differ), cursor
++position/hotspot/shape from stream metadata, absolute pointer input, keyboard
++text, Chinese text pasted through the clipboard with the user's clipboard
++restored (also after the helper exits), wheel, clean EOF teardown of both
++helpers, and helper exit when the compositor goes away.
++"""
++import base64
++import ctypes as C
++import json
++import os
++from pathlib import Path
++import subprocess
++import sys
++import tempfile
++import threading
++import time
++
++from gi.repository import Gio, GLib
++
++GP = C.CDLL('libgdk_pixbuf-2.0.so.0')
++def api(name, result, args):
++    f = getattr(GP, name); f.restype = result; f.argtypes = args; return f
++api('gdk_pixbuf_new_from_file', C.c_void_p, [C.c_char_p, C.c_void_p])
++for name in ('width', 'height', 'rowstride', 'n_channels'):
++    api('gdk_pixbuf_get_' + name, C.c_int, [C.c_void_p])
++api('gdk_pixbuf_get_pixels', C.POINTER(C.c_ubyte), [C.c_void_p])
++api('g_object_unref', None, [C.c_void_p])
++
++capture_binary, input_binary = (str(Path(p).resolve()) for p in sys.argv[1:3])
++with tempfile.TemporaryDirectory(prefix='cindy-gnome-test-') as temp:
++    bus = subprocess.Popen(['dbus-daemon', '--session', '--nofork', '--print-address=1'],
++                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
++    address = bus.stdout.readline().strip()
++    display = 'cindy-test-%d' % os.getpid()
++    env = {**os.environ, 'DBUS_SESSION_BUS_ADDRESS': address, 'XDG_SESSION_TYPE': 'wayland',
++           'XDG_CURRENT_DESKTOP': 'GNOME', 'WAYLAND_DISPLAY': display}
++    env.pop('DISPLAY', None)
++    shell = subprocess.Popen(['gnome-shell', '--headless', '--wayland', '--no-x11',
++                              '--virtual-monitor', '1280x800', '--wayland-display', display],
++                             env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
++    helpers = []
++    try:
++        connection = Gio.DBusConnection.new_for_address_sync(
++            address, Gio.DBusConnectionFlags.AUTHENTICATION_CLIENT |
++            Gio.DBusConnectionFlags.MESSAGE_BUS_CONNECTION, None, None)
++        deadline = time.monotonic() + 20
++        while time.monotonic() < deadline:
++            owned = connection.call_sync('org.freedesktop.DBus', '/org/freedesktop/DBus',
++                                         'org.freedesktop.DBus', 'NameHasOwner',
++                                         GLib.Variant('(s)', ('org.gnome.Mutter.RemoteDesktop',)),
++                                         None, 0, -1, None).unpack()[0]
++            if owned: break
++            time.sleep(0.2)
++        assert owned, 'headless GNOME Shell did not start'
++        time.sleep(2)  # let the shell finish its startup animation
++
++        for args in ([capture_binary, '--check'], [input_binary, '--gnome', '--check']):
++            result = subprocess.run(args, env=env, capture_output=True, timeout=5)
++            assert result.returncode == 0 and result.stdout == b'ready\n', (args, result)
++        x11 = subprocess.run([capture_binary, '--check'], capture_output=True, timeout=5,
++                             env={**env, 'XDG_SESSION_TYPE': 'x11', 'WAYLAND_DISPLAY': ''})
++        assert x11.returncode != 0 and not x11.stdout, 'X11 session probe accepted'
++        monitors = json.loads(subprocess.run([capture_binary, '--monitors'], env=env,
++                                             capture_output=True, timeout=5).stdout)
++        assert len(monitors) == 1 and monitors[0]['width'] == 1280 and monitors[0]['height'] == 800, monitors
++        connector = monitors[0]['id']
++        for bad in ('gnome:', 'gnome:a b', 'gnome:../x', 'hyprland:Meta-0'):
++            result = subprocess.run([capture_binary, 'cursor-overlay', '1', '65', bad], env=env,
++                                    input=b'f', capture_output=True, timeout=5)
++            assert result.returncode == 2 and not result.stdout, (bad, result)
++
++        # Another application's clipboard, which pasting must leave in place.
++        RD = 'org.gnome.Mutter.RemoteDesktop'; RDS = RD + '.Session'
++        def rd(path, iface, method, args=None, fds=None):
++            if fds is not None:
++                return connection.call_with_unix_fd_list_sync(RD, path, iface, method, args,
++                                                              None, 0, -1, fds, None)
++            return connection.call_sync(RD, path, iface, method, args, None, 0, -1, None)
++        owner = rd('/org/gnome/Mutter/RemoteDesktop', RD, 'CreateSession').unpack()[0]
++        rd(
+```
+
+**File**: `apps/desktop/native/remote-desktop/linux-capture/gnome.c` (added, +819/-0)
+```diff
+@@ -0,0 +1,819 @@
++/* GNOME Shell (Mutter) Wayland capture without the portal picker.
++ *
++ * Mutter's own org.gnome.Mutter.ScreenCast API records one monitor into a
++ * PipeWire stream in the logged-in user's session; GNOME shows its usual
++ * screen-sharing indicator while it runs. The cursor travels as PipeWire
++ * metadata instead of pixels, so the video is cursor-free. Wayland never
++ * exposes cursor names: the shape hint comes from matching the cursor raster
++ * against the user's configured cursor theme.
++ *
++ * Same private, serial protocol as cindy-linux-desktop-capture: one 'f'
++ * request, one bounded line (base64 JPEG, or a JSON frame with the cursor).
++ * The latest frame is kept in memory only; no files, sockets or history.
++ *
++ *   --check            interfaces present, PipeWire and JPEG usable; no session
++ *   --monitors         JSON list of logical monitors (connector, geometry)
++ *   video|cursor-overlay <scale> <quality> gnome:<connector>
++ */
++#define _GNU_SOURCE
++#include "cursor_shape.h"
++#include "encode.h"
++#include "jpeg.h"
++#include <gio/gio.h>
++#include <math.h>
++#include <pipewire/pipewire.h>
++#include <poll.h>
++#include <signal.h>
++#include <spa/buffer/meta.h>
++#include <spa/param/video/format-utils.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++/* Last: Xlib's macros (Status, Bool, None) must not reach GLib or SPA. */
++#include <X11/Xcursor/Xcursor.h>
++
++#define SCREEN_CAST "org.gnome.Mutter.ScreenCast"
++#define SCREEN_CAST_PATH "/org/gnome/Mutter/ScreenCast"
++#define SCREEN_CAST_SESSION "org.gnome.Mutter.ScreenCast.Session"
++#define CURSOR_META_SIZE(w, h)                                                 \
++  (sizeof(struct spa_meta_cursor) + sizeof(struct spa_meta_bitmap) +           \
++   (size_t)(w) * (h) * 4)
++
++static GDBusConnection *bus;
++static struct {
++  char *session;
++  guint node;
++  int closed, failed, overlay, quality, bgrx;
++  double scale;
++  struct pw_loop *loop;
++  struct pw_context *context;
++  struct pw_core *core;
++  struct pw_stream *stream;
++  struct spa_hook stream_listener, core_listener;
++  uint32_t width, height;
++  /* The latest complete frame, tightly packed. */
++  unsigned char *frame, *scaled;
++  size_t frame_size;
++  unsigned long frame_serial, encoded_serial;
++  char *line;
++  /* Latest cursor state from stream metadata. */
++  int cursor_known, cursor_visible, cursor_opaque, cursor_x, cursor_y,
++      cursor_width, cursor_height, hot_x, hot_y;
++  char *cursor_png;
++  const char *cursor_shape;
++} g;
++
++static GVariant *call(const char *name, const char *path, const char *iface,
++                      const char *method, GVariant *args, const char *type) {
++  GError *error = NULL;
++  GVariant *result = g_dbus_connection_call_sync(
++      bus, name, path, iface, method, args, type ? G_VARIANT_TYPE(type) : NULL,
++      G_DBUS_CALL_FLAGS_NONE, 3000, NULL, &error);
++  if (error)
++    g_error_free(error);
++  return result;
++}
++static int valid_connector(const char *name) {
++  size_t n = strlen(name);
++  if (!n || n > 80)
++    return 0;
++  for (size_t i = 0; i < n; i++)
++    if (!(g_ascii_isalnum(name[i]) || name[i] == '_' || name[i] == '.' ||
++          name[i] == '-'))
++      return 0;
++  return 1;
++}
++static void json_string(const char *text) {
++  putchar('"');
++  for (const unsigned char *p = (const unsigned char *)text; *p; p++) {
++    if (*p == '"' || *p == '\\')
++      printf("\\%c", *p);
++    else if (*p < 0x20)
++      printf("\\u%04x", *p);
++    else
++      putchar(*p);
++  }
++  putchar('"');
++}
++
++/* Logical monitors in Mutter's layout. Sizes are logical (desktop points)
++ * in the default logical layout mode; `scale` converts stream pixels. */
++static int print_monitors(void) {
++  GVariant *state = call(
++      "org.gnome.Mutter.DisplayConfig", "/org/gnome/Mutter/DisplayConfig",
++      "org.gnome.Mutter.DisplayConfig", "GetCurrentState", NULL,
++      "(ua((ssss)a(siiddada{sv})a{sv})a(iiduba(ssss)a{sv})a{sv})");
++  if (!state)
++    return 1;
++  GVariant *monitors = g_variant_get_child_value(state, 1);
++  GVariant *logical = g_variant_get_child_value(state, 2);
++  GVariant *properties = g_variant_get_child_value(state, 3);
++  guint32 layout = 1;
++  g_variant_lookup(properties, "layout-mode", "u", &layout);
++  int first = 1, count = 0;
++  putchar('[');
++  for (gsize i = 0; i < g_variant_n_children(logical) && count < 32; i++) {
++    gint32 x, y;
++    gdouble scale;
++    guint32 transform;
++    gboolean primary;
++    GVariant *members, *unused;
++    g_variant_get_child(logical, i, "(iidub@a(ssss)@a{sv})", &x, &y, &scale,
++                        &transform, &primary, &members, &unused);
++    g_variant_unref(unused);
++    const char *connector = NULL;
++    if (g_variant_n_children(members))
++      g_variant_get_child(members, 0, "(&s&s&s&s)", &connector, NULL, NULL,
++                          NULL);
++    /* The first member's current mode sizes a mirrored logical monitor. */
++    gint32 width = 0, height =
+```
+
+**File**: `apps/desktop/native/remote-desktop/linux-capture/jpeg.h` (added, +152/-0)
+```diff
+@@ -0,0 +1,152 @@
++/* JPEG encoding resolved at runtime. Stock Ubuntu has no libturbojpeg, but
++ * every GTK desktop that runs Electron ships gdk-pixbuf with its system-matched
++ * libjpeg. TurboJPEG stays the fast path wherever it is installed (Arch, the
++ * managed cloud image); gdk-pixbuf keeps the helper usable everywhere else.
++ * Neither backend writes files or keeps frames beyond the call. */
++#ifndef CINDY_CAPTURE_JPEG_H
++#define CINDY_CAPTURE_JPEG_H
++#include <dlfcn.h>
++#include <stddef.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++/* TurboJPEG's stable ABI values (turbojpeg.h, unchanged since 1.2). */
++enum {
++  CINDY_TJPF_RGBX = 2,
++  CINDY_TJPF_BGRX = 3,
++  CINDY_TJSAMP_420 = 2,
++  CINDY_TJFLAG_BOTTOMUP = 2,
++  CINDY_TJFLAG_FASTDCT = 2048
++};
++struct jpeg_backend {
++  void *library;
++  void *handle;
++  void *(*tj_init)(void);
++  int (*tj_compress)(void *, const unsigned char *, int, int, int, int,
++                     unsigned char **, unsigned long *, int, int, int);
++  void (*tj_free)(unsigned char *);
++  int (*tj_destroy)(void *);
++  void *(*pixbuf_new)(const unsigned char *, int, int, int, int, int, int,
++                      void *, void *);
++  int (*pixbuf_save)(void *, char **, size_t *, const char *, char **,
++                     char **, void **);
++  void (*object_unref)(void *);
++  void (*error_free)(void *);
++  void (*g_free)(void *);
++  unsigned char *rgb;
++  size_t rgb_size;
++};
++static struct jpeg_backend jb;
++static void *jpeg_symbol(const char *name) {
++  return jb.library ? dlsym(jb.library, name) : NULL;
++}
++/* Libraries stay loaded: gdk-pixbuf registers GObject types and caches its
++ * loaders, neither of which survives dlclose. The helper's exit releases them. */
++static void jpeg_close(void) {
++  if (jb.handle && jb.tj_destroy)
++    jb.tj_destroy(jb.handle);
++  free(jb.rgb);
++  memset(&jb, 0, sizeof(jb));
++}
++static int jpeg_open(void) {
++  if (jb.library)
++    return 0;
++  jb.library = dlopen("libturbojpeg.so.0", RTLD_NOW | RTLD_LOCAL);
++  if (jb.library) {
++    *(void **)&jb.tj_init = jpeg_symbol("tjInitCompress");
++    *(void **)&jb.tj_compress = jpeg_symbol("tjCompress2");
++    *(void **)&jb.tj_free = jpeg_symbol("tjFree");
++    *(void **)&jb.tj_destroy = jpeg_symbol("tjDestroy");
++    if (jb.tj_init && jb.tj_compress && jb.tj_free && jb.tj_destroy &&
++        (jb.handle = jb.tj_init()))
++      return 0;
++    jpeg_close();
++  }
++  /* dlsym on the handle also searches its glib/gobject dependencies. */
++  jb.library = dlopen("libgdk_pixbuf-2.0.so.0", RTLD_NOW | RTLD_LOCAL);
++  if (!jb.library)
++    return -1;
++  *(void **)&jb.pixbuf_new = jpeg_symbol("gdk_pixbuf_new_from_data");
++  *(void **)&jb.pixbuf_save = jpeg_symbol("gdk_pixbuf_save_to_bufferv");
++  *(void **)&jb.object_unref = jpeg_symbol("g_object_unref");
++  *(void **)&jb.error_free = jpeg_symbol("g_error_free");
++  *(void **)&jb.g_free = jpeg_symbol("g_free");
++  if (jb.pixbuf_new && jb.pixbuf_save && jb.object_unref && jb.error_free &&
++      jb.g_free)
++    return 0;
++  jpeg_close();
++  return -1;
++}
++/* Encode 32-bit pixels. `bgrx` selects byte order; `bottom_up` reads rows
++ * upward. On success *out must be released with jpeg_release(). */
++static int jpeg_encode(const unsigned char *pixels, int width, int stride,
++                       int height, int bgrx, int bottom_up, int quality,
++                       unsigned char **out, unsigned long *length) {
++  *out = NULL;
++  *length = 0;
++  if (width <= 0 || height <= 0 || stride < width * 4 || quality < 1 ||
++      quality > 100 || jpeg_open())
++    return -1;
++  if (jb.handle)
++    return jb.tj_compress(jb.handle, pixels, width, stride, height,
++                          bgrx ? CINDY_TJPF_BGRX : CINDY_TJPF_RGBX, out,
++                          length, CINDY_TJSAMP_420, quality,
++                          CINDY_TJFLAG_FASTDCT |
++                              (bottom_up ? CINDY_TJFLAG_BOTTOMUP : 0))
++               ? -1
++               : 0;
++  size_t row = (size_t)width * 3, size = row * (size_t)height;
++  if (size > jb.rgb_size) {
++    unsigned char *next = realloc(jb.rgb, size);
++    if (!next)
++      return -1;
++    jb.rgb = next;
++    jb.rgb_size = size;
++  }
++  int r = bgrx ? 2 : 0, b = bgrx ? 0 : 2;
++  for (int y = 0; y < height; y++) {
++    const unsigned char *source =
++        pixels + (size_t)(bottom_up ? height - 1 - y : y) * (size_t)stride;
++    unsigned char *dest = jb.rgb + (size_t)y * row;
++    for (int x = 0; x < width; x++) {
++      dest[x * 3] = source[x * 4 + r];
++      dest[x * 3 + 1] = source[x * 4 + 1];
++      dest[x * 3 + 2] = source[x * 4 + b];
++    }
++  }
++  /* GDK_COLORSPACE_RGB, no alpha, 8 bits per sample; the pixbuf borrows rgb. */
++  void *pixbuf = jb.pixbuf_new(jb.rgb, 0, 0, 8, width, height, (int)row, NULL,
++                               NULL);
++  if (!pixbuf)
++    return -1;
++  char value[4];
++  snprintf(value, sizeof(value), "%d", quality);
++  char *keys[] = {"quality", NULL}, *va
+```
+
+**File**: `apps/desktop/native/remote-desktop/linux-capture/main.c` (modified, +129/-79)
+```diff
+@@ -1,20 +1,26 @@
+ #define _GNU_SOURCE
+ #include "cursor.h"
++#include "encode.h"
++#include "jpeg.h"
+ #include "wlr-screencopy-unstable-v1.h"
++#ifdef CINDY_X11
++#include "x11.h"
++#endif
+ #include <errno.h>
+ #include <signal.h>
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/mman.h>
+-#include <turbojpeg.h>
+ #include <unistd.h>
+ #include <wayland-client.h>
  
--无图形 Linux 用的 Host 发布包由工作流 [Host release (Linux)](../../.github/workflows/host-release.yml) 构建。在 Actions 页手动运行，`ref` 填要构建的发布标签（例如 `v0.1.144`），版本号取自标签；`ref` 不是 `v<版本>` 标签时另填 `version`。
-+无图形 Linux 用的 Host 发布包由工作流 [Host release (Linux)](../../.github/workflows/host-release.yml) 构建。在 Actions 页手动运行，「Use workflow from」选要构建的发布标签，或用 `gh workflow run host-release.yml --ref v<版本>`。工作流构建它所在的那个提交，版本号取自标签，所以只能构建已经包含这条工作流的标签。从分支运行得到不带版本号的包。
- 
- - 每次运行在 Ubuntu 24.04 x64 上从同一个提交构建国内版和国际版，各自装入对应区域的网页客户端，内含 Node、Agent 运行时和 Chromium。两份都要先通过打包验收（`apps/host/scripts/release-region.e2e.mjs`）才会归档。
- - 产物是 `cindy-host-<版本>-linux-x64-<cn|global>.tar.gz`，作为该次运行的 artifact 保留 90 天，用 `gh run download <运行编号>` 取回。工作流只读仓库，不写 GitHub Release 和 CDN；对外发布是另一步。
+ /* Private, serial protocol: one 'f' request, one bounded base64 JPEG line.
+  * The connection and shm buffer survive requests, but no frame history does.
+  * Unsupported output layouts exit so the parent can use grim's composition.
++ * An `x11:<x>,<y>,<width>,<height>` output selects root-window capture of that
++ * pixel rectangle on an X11 session instead (see x11.h).
+  */
+ struct output_info {
+   struct wl_output *output;
+@@ -34,7 +40,7 @@ struct capture {
+   void *pixels;
+   unsigned char *scaled, *oriented;
+   size_t size;
+-  int overlay, quality, cursor_free;
++  int overlay, quality, cursor_free, x11;
+   struct output_info output_info[32];
+   const char *requested_output;
+ };
+@@ -192,63 +198,11 @@ static const struct zwlr_screencopy_frame_v1_listener frame_listener = {
+     .flags = frame_flags,
+     .ready = frame_ready,
+     .failed = frame_failed};
+-/* Match the normal desktop video's 1920-pixel long-edge cap before IPC and
+- * decoding. Bilinear sampling preserves aspect ratio and supports padded rows.
+- * The one scratch buffer is reused for the lifetime of this capture child. */
++/* Scaling lives in encode.h, shared with the GNOME capture helper. */
+ static const unsigned char *video_pixels(struct capture *c, int *width,
+                                          int *height, int *stride) {
+-  *width = (int)c->width;
+-  *height = (int)c->height;
+-  *stride = (int)c->stride;
+-  uint32_t edge = c->width > c->height ? c->width : c->height;
+-  if (edge <= 1920)
+-    return c->pixels;
+-  *width = (int)(c->width * 1920 / edge);
+-  *height = (int)(c->height * 1920 / edge);
+-  if (*width < 1)
+-    *width = 1;
+-  if (*height < 1)
+-    *height = 1;
+-  *stride = *width * 4;
+-  if (!c->scaled)
+-    c->scaled = malloc(1920 * 1920 * 4);
+-  if (!c->scaled)
+-    return NULL;
+-  uint32_t xs[1920], weights[1920];
+-  for (int x = 0; x < *width; x++) {
+-    uint32_t pos =
+-        *width > 1
+-            ? (uint32_t)((uint64_t)x * (c->width - 1) * 256 / (*width - 1))
+-            : 0;
+-    xs[x] = pos >> 8;
+-    weights[x] = pos & 255;
+-  }
+-  for (int y = 0; y < *height; y++) {
+-    uint32_t pos =
+-        *height > 1
+-            ? (uint32_t)((uint64_t)y * (c->height - 1) * 256 / (*height - 1))
+-            : 0;
+-    uint32_t sy = pos >> 8, wy = pos & 255;
+-    uint32_t next = sy + 1 < c->height ? sy + 1 : sy;
+-    const unsigned char *a = (const unsigned char *)c->pixels + sy * c->stride;
+-    const unsigned char *b =
+-        (const unsigned char *)c->pixels + next * c->stride;
+-    unsigned char *dest = c->scaled + y * *stride;
+-    for (int x = 0; x < *width; x++) {
+-      uint32_t sx = xs[x], wx = weights[x],
+-               nx = sx + 1 < c->width ? sx + 1 : sx;
+-      for (int channel = 0; channel < 3; channel++) {
+-        uint32_t top =
+-            a[sx * 4 + channel] * (256 - wx) + a[nx * 4 + channel] * wx;
+-        uint32_t bottom =
+-            b[sx * 4 + channel] * (256 - wx) + b[nx * 4 + channel] * wx;
+-        dest[x * 4 + channel] =
+-            (unsigned char)((top * (256 - wy) + bottom * wy + 32768) >> 16);
+-      }
+-      dest[x * 4 + 3] = 255;
+-    }
+-  }
+-  return c->scaled;
++  return cindy_scale_pixels(c->pixels, c->width, c->height, c->stride,
++                            &c->scaled, width, height, stride);
+ }
+ /* Screencopy buffers use output-buffer coordinates. Rotate into the displayed
+  * orientation after bounded scaling, applying Y_INVERT in buffer coordinates.
+@@ -287,26 +241,23 @@ static const unsigned char *oriented_pixels(struct capture *c, int *width,
+   }
+   return c->oriented;
+ }
+-static int send_jpeg(struct capture *c, tjhandle encoder) {
++static int send_jpeg(struct capture *c) {
+   unsigned char *jpeg = NULL;
+   unsigned long length = 0;
+-  int format = (c->format == WL_SHM_FORMAT_XRGB8888 ||
+-                c->format == WL_SHM_FORMAT_ARGB8888)
+-                   ? TJPF_BGRX
+-                   : TJPF_RGBX;
+-  int flags = TJFLAG_FASTDCT;
+-  if (c->transform == WL_OUTPUT_TRANSFORM_NORMAL &&
+-      (c->flags & ZWLR_SCREENCOPY_FRAME_V1_FLAGS_Y_INVERT))
+-    flags |= TJFLAG_BOTTOMUP;
++  int bgrx = c->format == WL_SHM_FORMAT_XRGB8888 ||
++             c->format == WL_SHM_FORMAT_ARGB8888;
++  int bottom_up = c->transform == WL_OUTPUT_TRANSFORM_NORMAL &&
++                  (c->flags & ZWLR_SCREENCOPY_FRAME_V1_FLAGS_Y_INVERT);
+   int width, height, stride;
+   const unsigned char *pixels = oriented_pixels(c, &width, &height, &stride);
+   if (!pixels)
+     return -1;
+   int status = -1;
+   for (int quality = c->quality ? c->quality : 65; quality >= 25;
+        quality -= 20) {
+-    if
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12383** (2026-11-24): fix(mobile): show relay join errors before an invite arrives (@amanayayatu-tech)
-- **PR #12381** (2026-11-24): test(remote-agent): await guest host disposal (@amanayayatu-tech)
-- **PR #12380** (2026-11-24): fix(codex): clarify hosted built-in model refusal (@amanayayatu-tech)
-- **PR #12379** (2026-11-24): fix(desktop): explain when snapshot preparation blocks sending (@amanayayatu-tech)
-- **PR #12377** (2026-11-24): ci(host): 新增 Linux Host 发布包的构建工作流 (@dashhuang)
-- **PR #12374** (2026-11-24): test(codex): make MCP readiness retry deterministic (@amanayayatu-tech)
+- **PR #13240** (2026-11-26): fix(desktop): 统一两套空 HTTP 550 报错文案，修复 main 单测失败 (@DavidShenXD)
+- **PR #13194** (2026-11-26): feat(remote-connection): Agent-Net 卡片版本号旁支持检查并二次确认更新 (@MagicLizi)
+- **PR #13182** (2026-11-26): chore(repo): 普通 PR 改为 squash 合入，worktree 巡检识别 squash 合入的分支 (@MagicLizi)
+- **PR #13128** (2026-11-26): fix(desktop): 启动时账号切换不再让环境初始化失败 (@MagicLizi)
+- **PR #13110** (2026-11-26): fix(desktop): 无法预览的附件面板只显示原文件名和一个打开按钮 (@MagicLizi)
+- **PR #13090** (closed): feat(model-providers): add Command Code GOAT connection preset (@xuzini-xzn)
 
 ---
 
@@ -1709,38 +2107,42 @@ Signed-off-by: Dash <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in gitSnapshotCoordinator.test.ts
+## X. desktop): reconcile the two empty-550 error notices
 
 **RULE**:
-When implementing operations in `apps/desktop/src/main/__tests__/gitSnapshotCoordinator.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2c92e39`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b0bd3858`: desktop): reconcile the two empty-550 error notices. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/__tests__/gitSnapshotCoordinator.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/renderer/components/chat/__tests__/ErrorLocalization.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { currentOperationBudget, operationCheckpoint, SnapshotOperationDeadlineError } from '../utils/operationBudget';
-    // #10161 / unit: the stalled intent previously surfaced a generic snapshot
-    // deadline. The display error must name the send failure and keep its retry type.
-    const rejected = Promise.all([
-      expect(result).rejects.toBeInstanceOf(SnapshotOperationDeadlineError),
-      expect(result).rejects.toThrow(/^\[SNAPSHOT_DISPATCH_INTENT_TIMEOUT\]/),
-    ]);
+// #12924, unit: the live and historical notices name an upstream 5xx status —
+// the exact empty HTTP 550 and any other message naming "550 status code" get
+// the same upstream-status notice (#12970) — while the dispatch refusal keeps
+// its own "not sent" text.
+const upstream550 = zhCN.chat.errorBanner.upstreamStatusError.replace('{{status}}', '550');
+  ['550 status code (no body)', upstream550],
+  ['ordinary failure mentioning 550 status code (no body)', upstream550],
+])('names the upstream 5xx status and keeps the dispatch refusal (%s)', async (message, expected) => {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { currentOperationBudget, operationCheckpoint } from '../utils/operationBudget';
-    const rejected = expect(result).rejects.toThrow('deadline');
+// #12924, unit: the live and historical notices distinguish the observed
+// empty HTTP 550 from ordinary failures, while preserving the dispatch refusal.
+  ['550 status code (no body)', '模型服务返回 HTTP 550（无响应内容）'],
+  ['ordinary failure mentioning 550 status code (no body)', zhCN.chat.errorBanner.replyFailed],
+])('localizes the exact empty upstream 550 without changing other errors (%s)', async (message, expected) => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2c92e39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b0bd3858` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

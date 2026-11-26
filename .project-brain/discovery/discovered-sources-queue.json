@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T12:20:19.792Z",
+  "updated_at": "2026-11-26T12:50:58.586Z",
   "stats": {
-    "total_discovered": 9758,
-    "approved_pending_harvest": 9257,
+    "total_discovered": 9760,
+    "approved_pending_harvest": 9259,
     "harvested_count": 0,
     "rejected_count": 501,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9244,
+      "COMMUNITY_AND_EXPERT": 9246,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -211196,6 +211196,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
         "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-56C876488484": {
+      "id": "SRC-56C876488484",
+      "url": "https://github.com/makecindy/cindy/issues/12828",
+      "title": "https://github.com/makecindy/cindy/issues/12828",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T12:50:58.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+        "fileName": "makecindy-cindy-learnings.md"
+      }
+    },
+    "SRC-3B6A64F335C5": {
+      "id": "SRC-3B6A64F335C5",
+      "url": "https://github.com/makecindy/cindy/blob/dadf5bc5e443ef9c775a232a239e1fbe85259f7b/apps/desktop/src/main/maker-ipc/sessionTurnLease.ts",
+      "title": "https://github.com/makecindy/cindy/blob/dadf5bc5e443ef9c775a232a239e1fbe85259f7b/apps/desktop/src/main/maker-ipc/sessionTurnLease.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T12:50:58.586Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
+        "fileName": "makecindy-cindy-learnings.md"
       }
     }
   }

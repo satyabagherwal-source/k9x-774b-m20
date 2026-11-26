@@ -13383,3 +13383,5 @@
 | `CYCLE-20261126-4GEH` | `2026-11-26T12:29:09.257Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`a07c33fe...`) |
 | `CYCLE-20261126-GIAI` | `2026-11-26T12:38:31.578Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`cc0212c7...`) |
 | `CYCLE-20261126-GRCU` | `2026-11-26T12:38:43.326Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10679` | Yes (`0f52ac72...`) |
+| `CYCLE-20261126-W8NG` | `2026-11-26T12:50:45.580Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`2c610fd1...`) |
+| `CYCLE-20261126-WF33` | `2026-11-26T12:50:53.919Z` | `makecindy/cindy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10680` | Yes (`c75d2c88...`) |
