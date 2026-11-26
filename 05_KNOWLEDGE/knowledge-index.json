@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T23:50:10.253Z",
+  "last_updated": "2026-11-26T23:58:47.626Z",
   "total_verified_learnings": 9138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8cd6c5e752e1511969e92e61a2aafbe3d4ac5f632fcffbcf450ebb52157a42a6",
+      "content_hash": "7fcbba18a32f047abdf5e560bb88c719d09594f9e3a9e163e71578ccf1c136e6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:10:53.420Z"
+      "persisted_at": "2026-11-26T23:58:46.222Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "56e74e25817952c17a8034f305390f4e8473db0da2f5c9a96d9cc4764a468602",
+      "content_hash": "ce88608a53e28126318d1e966b3214ffc3168fab832de21b366a1fa0b4dc135a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:10:53.639Z"
+      "persisted_at": "2026-11-26T23:58:46.413Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c561c1d18c720435dc028b6fcaf851a49f815271b62e67961537213f48b2093",
+      "content_hash": "e370abf1377bb26e64c95020f48ec2bfb18b3562c747e5ebd113e88b31dcbd7a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:10:53.813Z"
+      "persisted_at": "2026-11-26T23:58:46.555Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -239511,9 +239511,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7321a4c3739fb9fe700a4249f60ee7f9cecd00920c6b68585aec6edc613dbb1",
+      "content_hash": "a2b182a874ef4926644d5cbd4b4d3802744af8da555c3f556cd8b01224488aa6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T18:33:08.642Z"
+      "persisted_at": "2026-11-26T23:58:47.626Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -330594,7 +330594,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TenStrip/10Eros-Max",
       "source_version": "hf-tenstrip-10eros-max",
-      "content_hash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
+      "content_hash": "1b5c4f8a4bcaa6648b94693849870a40f56b917171d6320f0a1b371882c55062",
       "dossier_path": "07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md",
       "promoted_rules": [],
@@ -330603,7 +330603,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:12:31.211Z",
+      "verified_at": "2026-11-26T23:58:32.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -330620,9 +330620,9 @@
       "title": "Research & Knowledge Intelligence: TenStrip/10Eros-Max Core Invariants",
       "repository": "TenStrip/10Eros-Max",
       "source_version": "hf-tenstrip-10eros-max",
-      "content_hash": "493041fa76f89e3b77e088d2c645b1e7ce663ee9e0b7e194029e4350bb2ed909",
+      "content_hash": "8fc4a41edb775f0edfc564fffe33b92dc3bf8274bb5247706fa75d1bacb8635a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:12:31.635Z"
+      "persisted_at": "2026-11-26T23:58:33.399Z"
     },
     "rule-10058": {
       "learning_id": "rule-10058",
@@ -330658,9 +330658,9 @@
       "title": "Research & Knowledge Intelligence: hf-tenstrip-10eros-max-learnings Core Invariants",
       "repository": "hf-tenstrip-10eros-max-learnings",
       "source_version": "HEAD",
-      "content_hash": "50da9cf658c2028e2e76df409478a1ef48a86ef28f9d0e93cdecf6fa02ff37cc",
+      "content_hash": "b6c2102c7fb606ca08beffa824fe8d0d0f51456c82b4471040c3a121af9d8eef",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:13:16.399Z"
+      "persisted_at": "2026-11-26T23:58:45.375Z"
     },
     "candidate_directive-deps-bump-the-modules-group-with-9-updates": {
       "item_id": "candidate_directive-deps-bump-the-modules-group-with-9-updates",
@@ -352570,13 +352570,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WKGJ-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RAXI-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2bd70201bfe73c9ee01b14d550deb78d6f1c1c2209ba02c6746801128b9ebec",
+      "content_hash": "7b2bcd32d92aa3f9aa4ba9b48c28605c5f14d6e13d171cb13bc8c67bbfbd4629",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:10:53.204Z"
+      "persisted_at": "2026-11-26T23:58:46.038Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",

@@ -13604,3 +13604,4 @@
 | `CYCLE-20261126-FGZS` | `2026-11-26T23:49:34.024Z` | `margelo/react-native-mmkv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10796` | Yes (`456a9e50...`) |
 | `CYCLE-20261126-FJ12` | `2026-11-26T23:49:36.662Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10797` | Yes (`ead616ec...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T23:50:09.433Z` | `envoyproxy-envoy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E3FDDFF0` [Domain H] | Yes (`8a85ebd3...`) |
+| `CYCLE-20261126-R106` | `2026-11-26T23:58:33.174Z` | `TenStrip/10Eros-Max` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md` | Yes (`1b5c4f8a...`) |

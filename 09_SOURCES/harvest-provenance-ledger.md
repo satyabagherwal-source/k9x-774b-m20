@@ -13637,3 +13637,4 @@ Every entry in this ledger must capture:
 | `learn-github-margelo-react-native-mmkv` | `https://github.com/margelo/react-native-mmkv` | `7780ab11` | Multi-dimensional audit evidence | 2026-11-26T23:49:34.029Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `603220f0` | Multi-dimensional audit evidence | 2026-11-26T23:49:36.666Z |
 | `learn-dom-h-e3fddff0` | `project://envoyproxy-envoy` | `603220f0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | 2026-11-26T23:50:09.433Z |
+| `learn-huggingface-tenstrip-10eros-max` | `https://huggingface.co/TenStrip/10Eros-Max` | `hf-tenstri` | Multi-dimensional audit evidence | 2026-11-26T23:58:33.177Z |

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-tenstrip-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T15:12:30.955Z  
+> **Timestamp**: 2026-11-26T23:58:32.638Z  
 > **Learning ID**: `learn-huggingface-tenstrip-10eros-max`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/TenStrip/10Eros-Max](https://huggingface.co/TenStrip/10Eros-Max))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T15:12:30.772Z  
+> **Harvest Timestamp**: 2026-11-26T23:58:32.516Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 1110 likes
+- **Stars / Engagement**: 0 downloads | 1208 likes
 
 ---
 

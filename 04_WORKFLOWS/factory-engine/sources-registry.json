@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T23:24:12.728Z",
-    "lastVerified": "2026-11-26T23:24:12.728Z",
+    "lastChecked": "2026-11-26T23:58:44.998Z",
+    "lastVerified": "2026-11-26T23:58:44.998Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T23:49:40.015Z",
-    "lastVerified": "2026-11-26T23:49:40.015Z",
+    "lastChecked": "2026-11-26T23:58:45.006Z",
+    "lastVerified": "2026-11-26T23:58:45.006Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -366,8 +366,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T19:37:13.817Z",
-    "lastVerified": "2026-11-26T19:37:13.817Z",
+    "lastChecked": "2026-11-26T23:58:40.036Z",
+    "lastVerified": "2026-11-26T23:58:40.036Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -4152,9 +4152,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-26T05:05:18.342Z",
+    "lastChecked": "2026-11-26T23:58:42.511Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-26T05:05:18.342Z"
+    "lastVerified": "2026-11-26T23:58:42.511Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -4354,9 +4354,9 @@
   "dylanvann-react-native-fast-image": {
     "name": "react-native-fast-image",
     "officialUrl": "https://github.com/DylanVann/react-native-fast-image",
-    "lastChecked": "2026-11-24T15:44:25.504Z",
+    "lastChecked": "2026-11-26T23:58:35.116Z",
     "revisionIdentifier": "d86d925a",
-    "lastVerified": "2026-11-24T15:44:25.504Z"
+    "lastVerified": "2026-11-26T23:58:35.116Z"
   },
   "apptainer-singularity": {
     "name": "singularity",
@@ -5343,9 +5343,9 @@
   "webrtc-rs-webrtc": {
     "name": "webrtc",
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
-    "lastChecked": "2026-11-25T23:41:34.655Z",
+    "lastChecked": "2026-11-26T23:58:30.004Z",
     "revisionIdentifier": "3c4584ae",
-    "lastVerified": "2026-11-25T23:41:34.655Z"
+    "lastVerified": "2026-11-26T23:58:30.004Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -7367,12 +7367,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "k3s-io-k3s": {
-    "name": "k3s-io/k3s",
+    "name": "k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T06:10:31.910Z",
-    "lastVerified": "2026-11-26T06:10:31.910Z",
+    "lastChecked": "2026-11-26T23:58:37.500Z",
+    "lastVerified": "2026-11-26T23:58:37.500Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
@@ -7381,7 +7381,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9b575d91"
   },
   "duckdb-duckdb": {
     "name": "duckdb/duckdb",
@@ -15194,12 +15195,12 @@
     "officialUrl": "https://huggingface.co/TenStrip/10Eros-Max",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T15:12:30.772Z",
-    "lastVerified": "2026-11-23T15:12:30.772Z",
+    "lastChecked": "2026-11-26T23:58:32.516Z",
+    "lastVerified": "2026-11-26T23:58:32.516Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tenstrip-10eros-max",
-    "contentHash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
+    "contentHash": "1b5c4f8a4bcaa6648b94693849870a40f56b917171d6320f0a1b371882c55062",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T23:50:10.030Z",
+  "last_updated": "2026-11-26T23:58:47.626Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -8562,8 +8562,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "8cd6c5e752e1511969e92e61a2aafbe3d4ac5f632fcffbcf450ebb52157a42a6",
-      "created_at": "2026-11-26T22:10:53.420Z"
+      "content_hash": "7fcbba18a32f047abdf5e560bb88c719d09594f9e3a9e163e71578ccf1c136e6",
+      "created_at": "2026-11-26T23:58:46.222Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -18442,8 +18442,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "f7321a4c3739fb9fe700a4249f60ee7f9cecd00920c6b68585aec6edc613dbb1",
-      "created_at": "2026-11-26T18:33:08.642Z"
+      "content_hash": "a2b182a874ef4926644d5cbd4b4d3802744af8da555c3f556cd8b01224488aa6",
+      "created_at": "2026-11-26T23:58:47.626Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -41015,8 +41015,8 @@
       "title": "Research & Knowledge Intelligence: TenStrip/10Eros-Max Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tenstrip-10eros-max-research-knowledge-intelligence-tenstrip-10eros-max-core-.md",
       "repository": "TenStrip/10Eros-Max",
-      "content_hash": "493041fa76f89e3b77e088d2c645b1e7ce663ee9e0b7e194029e4350bb2ed909",
-      "created_at": "2026-11-23T15:12:31.635Z"
+      "content_hash": "8fc4a41edb775f0edfc564fffe33b92dc3bf8274bb5247706fa75d1bacb8635a",
+      "created_at": "2026-11-26T23:58:33.399Z"
     },
     "DOM-D-864519D2": {
       "record_id": "DOM-D-864519D2",
@@ -41066,8 +41066,8 @@
       "title": "Research & Knowledge Intelligence: hf-tenstrip-10eros-max-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tenstrip-10eros-max-learnings-research-knowledge-intelligence-hf-tenstrip-10e.md",
       "repository": "hf-tenstrip-10eros-max-learnings",
-      "content_hash": "50da9cf658c2028e2e76df409478a1ef48a86ef28f9d0e93cdecf6fa02ff37cc",
-      "created_at": "2026-11-23T15:13:16.399Z"
+      "content_hash": "b6c2102c7fb606ca08beffa824fe8d0d0f51456c82b4471040c3a121af9d8eef",
+      "created_at": "2026-11-26T23:58:45.375Z"
     },
     "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-skyzh-mini-lsm-core-invariants",

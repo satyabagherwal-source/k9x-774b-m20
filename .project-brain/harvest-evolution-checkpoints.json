@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:50:10.433Z",
+  "last_updated": "2026-11-26T23:58:47.830Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T23:32:29.720Z",
@@ -8,12 +8,12 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T22:10:52.686Z",
+      "processed_at": "2026-11-26T23:58:45.584Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-26T18:33:07.632Z",
+      "processed_at": "2026-11-26T23:58:46.722Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3768,8 +3768,8 @@
       "staged_for_review": 1
     },
     "hf-tenstrip-10eros-max-learnings.md": {
-      "processed_at": "2026-11-23T15:13:16.123Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-26T23:58:45.151Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "skyzh-mini-lsm-learnings.md": {
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4722,
+  "total_dossiers_evaluated": 4725,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3543
+  "total_staged_for_review": 3545
 }

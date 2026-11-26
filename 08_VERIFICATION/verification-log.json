@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-1ETE",
-    "timestamp": "2026-11-25T12:39:06.818Z",
-    "repository": "LiconStudio/Minimax-H3-VBVR",
-    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
-    "contentHash": "6778b9204e06f8236a2ab446c677daced1536336df664194538090d2df9e54b2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-1O5H",
     "timestamp": "2026-11-25T12:39:18.917Z",
     "repository": "karmada-io/karmada",
@@ -7492,6 +7477,21 @@
     "contentHash": "ead616ec5e6315a3f90aa14f0c99afead4174204e5b7309f725735e4c311b35c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-R106",
+    "timestamp": "2026-11-26T23:58:33.174Z",
+    "repository": "TenStrip/10Eros-Max",
+    "learningId": "learn-huggingface-tenstrip-10eros-max",
+    "contentHash": "1b5c4f8a4bcaa6648b94693849870a40f56b917171d6320f0a1b371882c55062",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

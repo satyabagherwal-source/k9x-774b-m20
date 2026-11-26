@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T23:49:36.687Z",
+  "last_updated": "2026-11-26T23:58:33.192Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -20031,14 +20031,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tenstrip-10eros-max",
-      "content_hash": "310126bf2ef84562f0eea1964efc3b5575ed4ce957784969b26da82952dcf1ea",
-      "verified_at": "2026-11-23T15:12:31.446Z",
+      "content_hash": "1b5c4f8a4bcaa6648b94693849870a40f56b917171d6320f0a1b371882c55062",
+      "verified_at": "2026-11-26T23:58:33.191Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:12:31.446Z"
+      "last_updated": "2026-11-26T23:58:33.191Z"
     },
     "inclusionAI/Ling-3.2-air": {
       "repository": "inclusionAI/Ling-3.2-air",
