@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T03:46:54.902Z",
-  "total_records": 2703,
+  "last_updated": "2026-11-26T03:55:55.050Z",
+  "total_records": 2704,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1014,
+      "total": 1015,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1086,7 +1086,8 @@
         "DOM-D-0A1336C6",
         "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-comfy-core-invariants",
-        "DOM-D-760DF4AB"
+        "DOM-D-760DF4AB",
+        "DOM-D-5C5BC093"
       ]
     },
     "E": {
@@ -8473,8 +8474,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ca0ba680b636c7e03270bf5e114d07c344c3c19429b17cbbc96bf07003bec12a",
-      "created_at": "2026-11-26T03:38:28.369Z"
+      "content_hash": "483c6cabc16635f34ee998e9513909042e59502459e436e3839b9c7422397328",
+      "created_at": "2026-11-26T03:55:55.050Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -22273,8 +22274,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "07cb8d1b7d9d5349bad96cc0994db4b2e660dd82e523c29ad66497b95d1b14a1",
-      "created_at": "2026-11-25T02:29:01.078Z"
+      "content_hash": "7fcfffbdff645ee2c3de01ff6a79b07765561af5a1ca761648628b499e79b7d9",
+      "created_at": "2026-11-26T03:55:19.283Z"
     },
     "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian": {
       "record_id": "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian",
@@ -22282,8 +22283,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin-matrixone-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-learnings-quality-verification-intelligence-matrixorigin-.md",
       "repository": "matrixorigin-matrixone-learnings",
-      "content_hash": "67480aab6b7f8862047ec67341e945071d05b710ab65db3da8bd7b7027e1dfc3",
-      "created_at": "2026-11-22T05:28:22.434Z"
+      "content_hash": "05ab7d86096fc2207fea051660fb1cc915b888d464ab932ba7ea26ccc295cc6f",
+      "created_at": "2026-11-26T03:55:53.963Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant",
@@ -26833,8 +26834,8 @@
       "title": "Research & Knowledge Intelligence: facebook/sam-3d-body-dinov3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam-3d-body-dinov3-research-knowledge-intelligence-facebook-sam-3d-b.md",
       "repository": "facebook/sam-3d-body-dinov3",
-      "content_hash": "45c56aeddc18cd0f291d3fc0a2fcf66011af3d51f066d32f94a76967dcefc46a",
-      "created_at": "2026-11-22T07:13:50.144Z"
+      "content_hash": "8ce2dae52d721b005c9100d87fb790111ae364dedb5b2a1bc87919040b417aa3",
+      "created_at": "2026-11-26T03:55:05.024Z"
     },
     "domain_intelligence-architecture-intelligence-storybookjs-storybook-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-storybookjs-storybook-core-invariants",
@@ -26851,8 +26852,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebook-sam-3d-body-dinov3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebook-sam-3d-body-dinov3-learnings-research-knowledge-intelligence-hf-face.md",
       "repository": "hf-facebook-sam-3d-body-dinov3-learnings",
-      "content_hash": "79b109d2078f3e89dabd0ecc00398f87e7906cd60a36436c52a673ea82c28532",
-      "created_at": "2026-11-22T07:14:01.873Z"
+      "content_hash": "56457a31d65e5a3f19a1f14969af28de3cc1da4757dfc73533018b32503775bb",
+      "created_at": "2026-11-26T03:55:22.405Z"
     },
     "DOM-H-F8265FBB": {
       "record_id": "DOM-H-F8265FBB",
@@ -45581,6 +45582,48 @@
       "repository": "0xcub3-wblock-learnings",
       "content_hash": "ece431e12bdc00c3b2668a5f2783ac474ba6b0e5285f264162849779c1a7b35c",
       "created_at": "2026-11-26T03:04:46.331Z"
+    },
+    "DOM-D-5C5BC093": {
+      "record_id": "DOM-D-5C5BC093",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): matrixorigin/matrixone",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  \n> **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  \n> **Source Version**: `e5d6f92f`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clo",
+      "content_hash": "1cecbc9c00e068915eb753b23ad65054d62d80e70ef18fe160c9938a5a8505a1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  \n> **Source**: github ([https://github.com/mat -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  \n> **Source**: github ([https://github.com/mat",
+      "provenance": {
+        "source_uri": "project://matrixorigin-matrixone/matrixorigin-matrixone-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T03:55:22.592Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (matrixorigin-matrixone)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of matrixorigin-matrixone"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T03:55:53.482Z"
     }
   }
 }

@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "ca5325ce",
+    "sourceVersion": "e5d6f92f",
     "license": "Apache-2.0",
-    "contentHash": "dae30617af92e1d6776f377ca55c714ece1a6c69807d203a37154d20af577870",
-    "lastHarvestedAt": "2026-11-25T02:29:00.642Z",
+    "contentHash": "b1e8ec76ae85f9b3a634d85e4a698f30f55f1010dd1fe2b4de9cb4c0ec4e04c1",
+    "lastHarvestedAt": "2026-11-26T03:55:19.028Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -12415,8 +12415,8 @@
     "sourceUrl": "https://huggingface.co/facebook/sam-3d-body-dinov3",
     "sourceVersion": "hf-facebook-sam-3d-body-dinov3",
     "license": "Open-Source",
-    "contentHash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
-    "lastHarvestedAt": "2026-11-22T07:13:49.937Z",
+    "contentHash": "f1f58e8ec23aff876cbd693d4def997a3eabbc8c93720402ac71a86359866206",
+    "lastHarvestedAt": "2026-11-26T03:55:04.793Z",
     "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3"
   },
   "agentes-chat-agentes-chat": {

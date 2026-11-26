@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T03:46:55.082Z",
+  "last_updated": "2026-11-26T03:55:55.448Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca0ba680b636c7e03270bf5e114d07c344c3c19429b17cbbc96bf07003bec12a",
+      "content_hash": "483c6cabc16635f34ee998e9513909042e59502459e436e3839b9c7422397328",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:38:28.369Z"
+      "persisted_at": "2026-11-26T03:55:55.050Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e88ec6a8f1188a9883f7e955a33c9ee5e5f73a4488b0b57384079a351899cea5",
+      "content_hash": "d64ba415ec70e1d23e7429c83810dce58abed7f95b38d36d17e29591c8805a94",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:38:28.556Z"
+      "persisted_at": "2026-11-26T03:55:55.269Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd6c87ed8677aa9909c05b2653b7d6a6aca419271247f92a17995088d4b14be7",
+      "content_hash": "f6c79cd03ac2429dbe09be5cff21dd79e0f36fac779029eb27dbe84957584f2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:38:28.730Z"
+      "persisted_at": "2026-11-26T03:55:55.448Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -223669,8 +223669,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "ca5325ce",
-      "content_hash": "dae30617af92e1d6776f377ca55c714ece1a6c69807d203a37154d20af577870",
+      "source_version": "e5d6f92f",
+      "content_hash": "b1e8ec76ae85f9b3a634d85e4a698f30f55f1010dd1fe2b4de9cb4c0ec4e04c1",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -223730,7 +223730,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T02:29:00.431Z",
+      "verified_at": "2026-11-26T03:55:18.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251536,10 +251536,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "repository": "matrixorigin/matrixone",
-      "source_version": "ca5325ce",
-      "content_hash": "07cb8d1b7d9d5349bad96cc0994db4b2e660dd82e523c29ad66497b95d1b14a1",
+      "source_version": "e5d6f92f",
+      "content_hash": "7fcfffbdff645ee2c3de01ff6a79b07765561af5a1ca761648628b499e79b7d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:29:01.078Z"
+      "persisted_at": "2026-11-26T03:55:19.283Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone",
@@ -251585,9 +251585,9 @@
       "title": "Quality & Verification Intelligence: matrixorigin-matrixone-learnings Core Invariants",
       "repository": "matrixorigin-matrixone-learnings",
       "source_version": "HEAD",
-      "content_hash": "67480aab6b7f8862047ec67341e945071d05b710ab65db3da8bd7b7027e1dfc3",
+      "content_hash": "05ab7d86096fc2207fea051660fb1cc915b888d464ab932ba7ea26ccc295cc6f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T05:28:22.434Z"
+      "persisted_at": "2026-11-26T03:55:53.963Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone-learnings",
@@ -273367,7 +273367,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam-3d-body-dinov3",
       "source_version": "hf-facebook-sam-3d-body-dinov3",
-      "content_hash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
+      "content_hash": "f1f58e8ec23aff876cbd693d4def997a3eabbc8c93720402ac71a86359866206",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md",
       "promoted_rules": [],
@@ -273376,7 +273376,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T07:13:49.706Z",
+      "verified_at": "2026-11-26T03:55:04.518Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273393,9 +273393,9 @@
       "title": "Research & Knowledge Intelligence: facebook/sam-3d-body-dinov3 Core Invariants",
       "repository": "facebook/sam-3d-body-dinov3",
       "source_version": "hf-facebook-sam-3d-body-dinov3",
-      "content_hash": "45c56aeddc18cd0f291d3fc0a2fcf66011af3d51f066d32f94a76967dcefc46a",
+      "content_hash": "8ce2dae52d721b005c9100d87fb790111ae364dedb5b2a1bc87919040b417aa3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T07:13:50.144Z"
+      "persisted_at": "2026-11-26T03:55:05.024Z"
     },
     "learn-github-storybookjs-storybook": {
       "learning_id": "learn-github-storybookjs-storybook",
@@ -273517,9 +273517,9 @@
       "title": "Research & Knowledge Intelligence: hf-facebook-sam-3d-body-dinov3-learnings Core Invariants",
       "repository": "hf-facebook-sam-3d-body-dinov3-learnings",
       "source_version": "HEAD",
-      "content_hash": "79b109d2078f3e89dabd0ecc00398f87e7906cd60a36436c52a673ea82c28532",
+      "content_hash": "56457a31d65e5a3f19a1f14969af28de3cc1da4757dfc73533018b32503775bb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T07:14:01.873Z"
+      "persisted_at": "2026-11-26T03:55:22.405Z"
     },
     "candidate_directive-react-document-the-declaring-file-and-fail-on-a-missing-export": {
       "item_id": "candidate_directive-react-document-the-declaring-file-and-fail-on-a-missing-export",
@@ -342789,13 +342789,13 @@
       "item_id": "candidate_directive-rust-bind-bare-calls-to-the-enclosing-module-s-items",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5ZO3-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-SF9B-rust-bind-bare-calls-to-the-enclosing-module-s-items.md",
       "title": "rust): bind bare calls to the enclosing module's items",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5f335faeeaa892cbc8aabb832d5a6dc9add423e254938c7f388a2d4b20465656",
+      "content_hash": "5698786c3e87a3331aaa5c326fda0f041713107a86a445dc653f8c291bb6c468",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:38:28.183Z"
+      "persisted_at": "2026-11-26T03:55:54.827Z"
     },
     "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-rollup-rollup-learnings-core-invariants",

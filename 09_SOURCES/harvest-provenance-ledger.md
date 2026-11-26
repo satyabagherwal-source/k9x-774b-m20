@@ -13260,3 +13260,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T03:29:54.863Z |
 | `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-26T03:38:15.249Z |
 | `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m` | `https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-26T03:46:41.002Z |
+| `learn-huggingface-facebook-sam-3d-body-dinov3` | `https://huggingface.co/facebook/sam-3d-body-dinov3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-26T03:55:04.793Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e5d6f92f` | Multi-dimensional audit evidence | 2026-11-26T03:55:19.028Z |
+| `learn-dom-d-5c5bc093` | `project://matrixorigin-matrixone` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | 2026-11-26T03:55:53.523Z |

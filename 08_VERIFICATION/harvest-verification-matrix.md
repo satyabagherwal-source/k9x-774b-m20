@@ -13227,3 +13227,6 @@
 | `CYCLE-20261126-UZL6` | `2026-11-26T03:29:54.858Z` | `Comfy-Org/RelayVSR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-relayvsr-learnings.md` | Yes (`f4a21181...`) |
 | `CYCLE-20261126-5POS` | `2026-11-26T03:38:15.244Z` | `Zyphra/ZONOS3-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md` | Yes (`47b69712...`) |
 | `CYCLE-20261126-GJXI` | `2026-11-26T03:46:40.998Z` | `facebook/dinov3-vitl16-pretrain-lvd1689m` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md` | Yes (`c5e9fbd7...`) |
+| `CYCLE-20261126-RCNO` | `2026-11-26T03:55:04.788Z` | `facebook/sam-3d-body-dinov3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md` | Yes (`f1f58e8e...`) |
+| `CYCLE-20261126-RNN3` | `2026-11-26T03:55:19.023Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`b1e8ec76...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T03:55:53.523Z` | `matrixorigin-matrixone` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5C5BC093` [Domain D] | Yes (`1cecbc9c...`) |

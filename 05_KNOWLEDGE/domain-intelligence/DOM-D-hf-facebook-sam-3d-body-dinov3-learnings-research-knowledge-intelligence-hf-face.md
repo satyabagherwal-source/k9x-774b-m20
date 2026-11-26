@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T07:14:01.764Z",
+  "timestamp": "2026-11-26T03:55:22.272Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-facebook-sam-3d-body-dinov3-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-facebook-sam-3d-body-dinov3-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T07:14:01.764Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T03:55:22.272Z`  
 > **Learning ID**: `LEARN-EVO-hf-facebook-sam-3d-body-dinov3-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-facebook-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T07:13:49.444Z  
+> **Timestamp**: 2026-11-26T03:55:04.225Z  
 > **Learning ID**: `learn-huggingface-facebook-sam-3d-body-dinov3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/facebook/sam-3d-body-dinov3](https://huggingface.co/facebook/sam-3d-body-dinov3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:13:49.291Z  
+> **Harvest Timestamp**: 2026-11-26T03:55:04.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 18111 downloads | 1633 likes
+- **Stars / Engagement**: 20983 downloads | 2006 likes
 
 ---
 

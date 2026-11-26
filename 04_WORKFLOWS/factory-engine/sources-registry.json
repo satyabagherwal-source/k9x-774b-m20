@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T03:21:36.227Z",
-    "lastVerified": "2026-11-26T03:21:36.227Z",
+    "lastChecked": "2026-11-26T03:55:16.555Z",
+    "lastVerified": "2026-11-26T03:55:16.555Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T03:46:52.795Z",
-    "lastVerified": "2026-11-26T03:46:52.795Z",
+    "lastChecked": "2026-11-26T03:55:21.991Z",
+    "lastVerified": "2026-11-26T03:55:21.991Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1692,9 +1692,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-25T23:50:06.716Z",
+    "lastChecked": "2026-11-26T03:55:11.557Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-25T23:50:06.716Z"
+    "lastVerified": "2026-11-26T03:55:11.557Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -3585,14 +3585,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T02:28:59.517Z",
-    "lastVerified": "2026-11-25T02:28:59.517Z",
+    "lastChecked": "2026-11-26T03:55:18.475Z",
+    "lastVerified": "2026-11-26T03:55:18.475Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "dae30617af92e1d6776f377ca55c714ece1a6c69807d203a37154d20af577870",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "contentHash": "b1e8ec76ae85f9b3a634d85e4a698f30f55f1010dd1fe2b4de9cb4c0ec4e04c1",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6356,8 +6356,8 @@
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T03:36:48.599Z",
-    "lastVerified": "2026-11-25T03:36:48.599Z",
+    "lastChecked": "2026-11-26T03:55:09.050Z",
+    "lastVerified": "2026-11-26T03:55:09.050Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
@@ -7177,9 +7177,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-11-24T21:15:29.115Z",
+    "lastChecked": "2026-11-26T03:55:01.555Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-11-24T21:15:29.115Z"
+    "lastVerified": "2026-11-26T03:55:01.555Z"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
     "name": "mudler/locate-anything.cpp-gguf",
@@ -11175,9 +11175,9 @@
   "sindresorhus-keyboardshortcuts": {
     "name": "KeyboardShortcuts",
     "officialUrl": "https://github.com/sindresorhus/KeyboardShortcuts",
-    "lastChecked": "2026-11-23T18:15:54.643Z",
+    "lastChecked": "2026-11-26T03:55:06.643Z",
     "revisionIdentifier": "772133d9",
-    "lastVerified": "2026-11-23T18:15:54.643Z"
+    "lastVerified": "2026-11-26T03:55:06.643Z"
   },
   "syntax-tree-hast-util-from-html": {
     "name": "hast-util-from-html",
@@ -14420,12 +14420,12 @@
     "officialUrl": "https://huggingface.co/facebook/sam-3d-body-dinov3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T07:13:49.291Z",
-    "lastVerified": "2026-11-22T07:13:49.291Z",
+    "lastChecked": "2026-11-26T03:55:04.066Z",
+    "lastVerified": "2026-11-26T03:55:04.066Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
-    "contentHash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
+    "contentHash": "f1f58e8ec23aff876cbd693d4def997a3eabbc8c93720402ac71a86359866206",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

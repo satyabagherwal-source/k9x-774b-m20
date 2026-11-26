@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T03:46:55.233Z",
+  "last_updated": "2026-11-26T03:55:55.627Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T03:46:54.300Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-26T03:38:27.700Z",
+      "processed_at": "2026-11-26T03:55:54.211Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -363,9 +363,9 @@
       "staged_for_review": 1
     },
     "matrixorigin-matrixone-learnings.md": {
-      "processed_at": "2026-11-24T06:55:23.409Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-26T03:55:53.523Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "arkivanov-decompose-learnings.md": {
       "processed_at": "2026-11-25T01:01:04.865Z",
@@ -1223,7 +1223,7 @@
       "staged_for_review": 1
     },
     "hf-facebook-sam-3d-body-dinov3-learnings.md": {
-      "processed_at": "2026-11-22T07:14:01.654Z",
+      "processed_at": "2026-11-26T03:55:22.155Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4362,
-  "total_canonical_promoted": 550,
-  "total_staged_for_review": 3309
+  "total_dossiers_evaluated": 4365,
+  "total_canonical_promoted": 551,
+  "total_staged_for_review": 3310
 }

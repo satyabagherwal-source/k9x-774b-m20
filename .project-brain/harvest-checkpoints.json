@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T03:46:41.018Z",
+  "last_updated": "2026-11-26T03:55:19.042Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "dae30617af92e1d6776f377ca55c714ece1a6c69807d203a37154d20af577870",
-      "verified_at": "2026-11-25T02:29:00.658Z",
+      "content_hash": "b1e8ec76ae85f9b3a634d85e4a698f30f55f1010dd1fe2b4de9cb4c0ec4e04c1",
+      "verified_at": "2026-11-26T03:55:19.042Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T02:29:00.658Z"
+      "last_updated": "2026-11-26T03:55:19.042Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -18681,14 +18681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-facebook-sam-3d-body-dinov3",
-      "content_hash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
-      "verified_at": "2026-11-22T07:13:49.945Z",
+      "content_hash": "f1f58e8ec23aff876cbd693d4def997a3eabbc8c93720402ac71a86359866206",
+      "verified_at": "2026-11-26T03:55:04.801Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:13:49.945Z"
+      "last_updated": "2026-11-26T03:55:04.801Z"
     },
     "agentes-chat/agentes-chat": {
       "repository": "agentes-chat/agentes-chat",
