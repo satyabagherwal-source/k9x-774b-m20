@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:38:17.467Z",
-  "total_cycles_completed": 12539,
-  "total_learnings_persisted": 12539,
+  "last_updated": "2026-11-26T02:46:38.808Z",
+  "total_cycles_completed": 12540,
+  "total_learnings_persisted": 12540,
   "total_rules_promoted": 11479,
   "history": [
-    {
-      "timestamp": "2026-11-25T07:48:40.280Z",
-      "repository": "vanniktech/gradle-maven-publish-plugin",
-      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:48:44.209Z",
       "repository": "gardener/gardener",
@@ -1403,6 +1396,13 @@
       "repository": "RevenueCat/purchases-ios",
       "learningId": "learn-github-revenuecat-purchases-ios",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:46:38.808Z",
+      "repository": "MiniMaxAI/MiniMax-H3-Image",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

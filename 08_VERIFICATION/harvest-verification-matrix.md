@@ -13211,3 +13211,4 @@
 | `CYCLE-20261126-M29O` | `2026-11-26T02:26:59.196Z` | `tencent/Qwen3.8-27B-DSpine-b16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md` | Yes (`13c0bac3...`) |
 | `CYCLE-20261126-0GJ3` | `2026-11-26T02:38:10.863Z` | `VideoRebirthAI/hyperflow-h3-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md` | Yes (`ed205455...`) |
 | `CYCLE-20261126-0LM9` | `2026-11-26T02:38:17.457Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10588` | Yes (`da2d43a6...`) |
+| `CYCLE-20261126-BCG6` | `2026-11-26T02:46:38.790Z` | `MiniMaxAI/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | Yes (`6fcd38a8...`) |

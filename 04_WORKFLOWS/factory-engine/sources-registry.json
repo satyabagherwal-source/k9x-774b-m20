@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T02:09:44.788Z",
-    "lastVerified": "2026-11-26T02:09:44.788Z",
+    "lastChecked": "2026-11-26T02:46:50.306Z",
+    "lastVerified": "2026-11-26T02:46:50.306Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T02:38:22.632Z",
-    "lastVerified": "2026-11-26T02:38:22.632Z",
+    "lastChecked": "2026-11-26T02:46:50.318Z",
+    "lastVerified": "2026-11-26T02:46:50.318Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -987,8 +987,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T15:47:35.860Z",
-    "lastVerified": "2026-11-25T15:47:35.860Z",
+    "lastChecked": "2026-11-26T02:46:45.307Z",
+    "lastVerified": "2026-11-26T02:46:45.307Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -3081,8 +3081,8 @@
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-25T01:18:26.520Z",
-    "lastVerified": "2026-11-25T01:18:26.520Z",
+    "lastChecked": "2026-11-26T02:46:47.776Z",
+    "lastVerified": "2026-11-26T02:46:47.776Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-liyupi-yu-ai-agent",
@@ -5807,9 +5807,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-25T02:20:14.291Z",
+    "lastChecked": "2026-11-26T02:46:42.792Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-25T02:20:14.291Z"
+    "lastVerified": "2026-11-26T02:46:42.792Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -6555,9 +6555,9 @@
   "graykode-abtop": {
     "name": "abtop",
     "officialUrl": "https://github.com/graykode/abtop",
-    "lastChecked": "2026-11-24T19:27:32.511Z",
+    "lastChecked": "2026-11-26T02:46:35.306Z",
     "revisionIdentifier": "4b965686",
-    "lastVerified": "2026-11-24T19:27:32.511Z"
+    "lastVerified": "2026-11-26T02:46:35.306Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -10974,9 +10974,9 @@
   "kruszoneq-macusb": {
     "name": "macUSB",
     "officialUrl": "https://github.com/Kruszoneq/macUSB",
-    "lastChecked": "2026-11-23T17:03:27.460Z",
+    "lastChecked": "2026-11-26T02:46:40.407Z",
     "revisionIdentifier": "777ed534",
-    "lastVerified": "2026-11-23T17:03:27.460Z"
+    "lastVerified": "2026-11-26T02:46:40.407Z"
   },
   "html5lib-html5lib-python": {
     "name": "html5lib-python",
@@ -14265,12 +14265,12 @@
     "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T05:59:32.295Z",
-    "lastVerified": "2026-11-22T05:59:32.295Z",
+    "lastChecked": "2026-11-26T02:46:38.117Z",
+    "lastVerified": "2026-11-26T02:46:38.117Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
-    "contentHash": "d3c4fc0f3bcbe921623fe840d02a87d6b9c247f72b5e47456938a4f32e868d12",
+    "contentHash": "6fcd38a88b3b5fae9422265995249451352caf75055c69e2045145ebef0d5e4d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

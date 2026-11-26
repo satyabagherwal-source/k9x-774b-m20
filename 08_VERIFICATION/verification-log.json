@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-U1DS",
-    "timestamp": "2026-11-24T12:45:42.400Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "430caead01ee490cd7ca08a4c30ad092a9623028d8eb9fa0a855c86a4ce857d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-U2NY",
     "timestamp": "2026-11-24T12:45:44.062Z",
     "repository": "DefGuard/defguard",
@@ -7492,6 +7477,21 @@
     "contentHash": "da2d43a6219f447cef6af29b025d5f3f86faba12543e82824bcff9f0dbfb9dd7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-BCG6",
+    "timestamp": "2026-11-26T02:46:38.790Z",
+    "repository": "MiniMaxAI/MiniMax-H3-Image",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
+    "contentHash": "6fcd38a88b3b5fae9422265995249451352caf75055c69e2045145ebef0d5e4d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

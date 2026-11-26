@@ -13244,3 +13244,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-qwen3-8-27b-dspine-b16` | `https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-26T02:26:59.200Z |
 | `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-26T02:38:10.868Z |
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `8c1ff472` | Multi-dimensional audit evidence | 2026-11-26T02:38:17.461Z |
+| `learn-huggingface-minimaxai-minimax-h3-image` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-26T02:46:38.795Z |
