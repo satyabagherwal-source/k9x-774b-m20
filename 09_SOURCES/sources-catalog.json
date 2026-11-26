@@ -1075,8 +1075,8 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "b2a36bda4b54510b47a4a22c17496c7fb8f0f66ecf20e03d658ecff3ed380327",
-    "lastHarvestedAt": "2026-11-23T13:54:35.620Z",
+    "contentHash": "f9058470b8df4203aefb271e2782ea45389979504026eee63a519b7546bd507e",
+    "lastHarvestedAt": "2026-11-26T22:38:47.743Z",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf"
   },
   "hf-naiveai-naive-n0.5-flash": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "e5d6f92f",
+    "sourceVersion": "9531e591",
     "license": "Apache-2.0",
-    "contentHash": "b1e8ec76ae85f9b3a634d85e4a698f30f55f1010dd1fe2b4de9cb4c0ec4e04c1",
-    "lastHarvestedAt": "2026-11-26T03:55:19.028Z",
+    "contentHash": "705cb1f43cfc3ad88e16aeeebfede4814594e19f74e93244aa280c039e2337d2",
+    "lastHarvestedAt": "2026-11-26T22:39:03.185Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "90b55382",
+    "sourceVersion": "f710b6d8",
     "license": "MIT",
-    "contentHash": "e99435686fc2639bb54b00c270e1dc79ea1879e13aeeab3189f4639f646bb077",
-    "lastHarvestedAt": "2026-11-26T18:24:24.157Z",
+    "contentHash": "146b86cffff9da83c209c25b7a2e701ebf402f6ea6dff69726663148addfa130",
+    "lastHarvestedAt": "2026-11-26T22:38:58.635Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4403,10 +4403,10 @@
     "repository": "keybase/client",
     "platform": "github",
     "sourceUrl": "https://github.com/keybase/client",
-    "sourceVersion": "87059b9d",
+    "sourceVersion": "02a1da1c",
     "license": "BSD-3-Clause",
-    "contentHash": "f80a285d3298d31113cfe6e5bbf486f0abd360dc2a198b9294f5c77711c99317",
-    "lastHarvestedAt": "2026-11-24T14:33:22.800Z",
+    "contentHash": "7cf7f093b163982ad5d7c0636a4fc962289d1344709eec4dba26f550f4bf10ff",
+    "lastHarvestedAt": "2026-11-26T22:38:56.312Z",
     "learningId": "learn-github-keybase-client"
   },
   "sealerio-sealer": {

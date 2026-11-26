@@ -13611,3 +13611,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-inclusionai-lingsante-3-1-flash` | `https://huggingface.co/inclusionAI/LingSante-3.1-flash` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-26T22:30:12.201Z |
 | `learn-github-nihildigit-piko` | `https://github.com/NihilDigit/piko` | `a35cb654` | Multi-dimensional audit evidence | 2026-11-26T22:30:20.789Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `7674bd86` | Multi-dimensional audit evidence | 2026-11-26T22:30:22.872Z |
+| `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-11-26T22:38:47.743Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `02a1da1c` | Multi-dimensional audit evidence | 2026-11-26T22:38:56.312Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `f710b6d8` | Multi-dimensional audit evidence | 2026-11-26T22:38:58.635Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `9531e591` | Multi-dimensional audit evidence | 2026-11-26T22:39:03.185Z |
+| `learn-dom-d-a715b2e4` | `project://projectdiscovery-nuclei` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | 2026-11-26T22:39:36.591Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T22:30:28.352Z",
-  "total_records": 2786,
+  "last_updated": "2026-11-26T22:39:36.948Z",
+  "total_records": 2787,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1030,
+      "total": 1031,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1103,7 +1103,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-1-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-kandinskylab-kandinsky-imagesr-2-0-core-invarian",
         "DOM-D-95F35A51",
-        "domain_intelligence-research-knowledge-intelligence-hf-kandinskylab-kandinsky-imagesr-2-0-learnings-"
+        "domain_intelligence-research-knowledge-intelligence-hf-kandinskylab-kandinsky-imagesr-2-0-learnings-",
+        "DOM-D-A715B2E4"
       ]
     },
     "E": {
@@ -14157,8 +14158,8 @@
       "title": "Architecture Intelligence: keybase/client Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-architecture-intelligence-keybase-client-core-invariants.md",
       "repository": "keybase/client",
-      "content_hash": "da69b484d0f6d1402a8b8f986ea59b52e54749f111b0aae18ef7eb0c510180fd",
-      "created_at": "2026-11-24T14:33:23.361Z"
+      "content_hash": "6369d972ffcd0536bb33862937b242c376e81c6b9ad48f4c4665428bc809e372",
+      "created_at": "2026-11-26T22:38:56.806Z"
     },
     "DOM-D-C791DEC9": {
       "record_id": "DOM-D-C791DEC9",
@@ -14217,8 +14218,8 @@
       "title": "Architecture Intelligence: keybase-client-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-keybase-client-learnings-architecture-intelligence-keybase-client-learnings-core.md",
       "repository": "keybase-client-learnings",
-      "content_hash": "51e80f83f6133f6c960e2995fb734346aeabcec9d49c13062832de362d8b5dba",
-      "created_at": "2026-11-24T14:33:32.965Z"
+      "content_hash": "3f2986f146334dd6bb4937cffa00f94c81393b8314a5fc5956f74768a683a985",
+      "created_at": "2026-11-26T22:39:07.981Z"
     },
     "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
@@ -15013,8 +15014,8 @@
       "title": "Research & Knowledge Intelligence: Venastine-Research/Xing4.0-29B-A4B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-venastine-research-xing4-0-29b-a4b-gguf-research-knowledge-intelligence-venas.md",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "content_hash": "65b6ab7eea28f5ba20714284452bfba4c16ab28f2b5c1c8ee48c69e7c0c6f8d7",
-      "created_at": "2026-11-23T13:54:35.819Z"
+      "content_hash": "2b9007b08f8d6e52ef71a4f6f6a15be0514d89b1e9730fc4249b3ada0fef44e2",
+      "created_at": "2026-11-26T22:38:47.980Z"
     },
     "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants",
@@ -15073,8 +15074,8 @@
       "title": "Research & Knowledge Intelligence: hf-venastine-research-xing4.0-29b-a4b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-venastine-research-xing4-0-29b-a4b-gguf-learnings-research-knowledge-intellig.md",
       "repository": "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings",
-      "content_hash": "f683e0e77315a8391df9485185f37815c3a350ac5e5933899eb4aea2abaf3f69",
-      "created_at": "2026-11-23T13:54:38.882Z"
+      "content_hash": "bae6d41fbe849d026fd3e2258212ce8c213b5144e32a8c87c3c9fb578121d2e6",
+      "created_at": "2026-11-26T22:39:07.195Z"
     },
     "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants",
@@ -16135,8 +16136,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "591dc3e9ca05f8c8dfe63606f47d820d04b5d74b0f5527b3836ebd85bb4d85be",
-      "created_at": "2026-11-26T18:24:24.907Z"
+      "content_hash": "300b42d41bb9a9eaba73f6f5ba6737f1e0d145c1f591cd5fea3cb09048674dd2",
+      "created_at": "2026-11-26T22:38:58.932Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -20684,8 +20685,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "58379b6077ca6682d435d9554de1a175959c770067941d72db81a8ae5a216814",
-      "created_at": "2026-11-26T18:24:32.373Z"
+      "content_hash": "9fb09b474eeae05b194d21c532131bfe39e48b1944331a1e04d055b9095d909d",
+      "created_at": "2026-11-26T22:39:36.948Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -22356,8 +22357,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "7fcfffbdff645ee2c3de01ff6a79b07765561af5a1ca761648628b499e79b7d9",
-      "created_at": "2026-11-26T03:55:19.283Z"
+      "content_hash": "9fb2741fa3af6fc726a1c24ffef399cd57b60fe4e8b18182995298d0f3dde6ff",
+      "created_at": "2026-11-26T22:39:03.691Z"
     },
     "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian": {
       "record_id": "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian",
@@ -47005,6 +47006,48 @@
       "repository": "aws-amplify-amplify-js-learnings",
       "content_hash": "0ea8db4bee73ef61c330de326840ed64d266810aa00a9f67c355821f225c32aa",
       "created_at": "2026-11-26T22:10:52.264Z"
+    },
+    "DOM-D-A715B2E4": {
+      "record_id": "DOM-D-A715B2E4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): projectdiscovery/nuclei",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  \n> **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  \n> **Source Version**: `f710b6d8`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-s",
+      "content_hash": "2324c0d84191d7f31f669a97b7b56913823342907bb1d9a3a3a5e73e35c2478e",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  \n> **Source**: github ([https://github.com/pr -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  \n> **Source**: github ([https://github.com/pr",
+      "provenance": {
+        "source_uri": "project://projectdiscovery-nuclei/projectdiscovery-nuclei-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T22:39:08.394Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (projectdiscovery-nuclei)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of projectdiscovery-nuclei"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T22:39:36.546Z"
     }
   }
 }

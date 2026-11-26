@@ -13578,3 +13578,8 @@
 | `CYCLE-20261126-LEQT` | `2026-11-26T22:30:12.197Z` | `inclusionAI/LingSante-3.1-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md` | Yes (`3579a4cc...`) |
 | `CYCLE-20261126-LLDD` | `2026-11-26T22:30:20.785Z` | `NihilDigit/piko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10784` | Yes (`ff127879...`) |
 | `CYCLE-20261126-LMZ8` | `2026-11-26T22:30:22.868Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10785` | Yes (`26f4c34d...`) |
+| `CYCLE-20261126-WGJF` | `2026-11-26T22:38:47.739Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`f9058470...`) |
+| `CYCLE-20261126-WN5E` | `2026-11-26T22:38:56.306Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10786` | Yes (`7cf7f093...`) |
+| `CYCLE-20261126-WOXY` | `2026-11-26T22:38:58.630Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`146b86cf...`) |
+| `CYCLE-20261126-WSGC` | `2026-11-26T22:39:03.180Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`705cb1f4...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T22:39:36.591Z` | `projectdiscovery-nuclei` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A715B2E4` [Domain D] | Yes (`2324c0d8...`) |

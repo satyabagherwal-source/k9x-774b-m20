@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-KJQ6",
-    "timestamp": "2026-11-25T11:30:00.798Z",
-    "repository": "openbmb/MiniCPM-OCR-1.0",
-    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-    "contentHash": "16726921b187b6ccaad5e5b6c35737a7d959e723c333316e9e4712eaf5c4f585",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-KL17",
-    "timestamp": "2026-11-25T11:30:02.491Z",
-    "repository": "ClementTsang/bottom",
-    "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "3ff0e801aad0b1eebedf80ab740fdfea8b21648929bc071717ec6d3f2875b566",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-KSTJ",
-    "timestamp": "2026-11-25T11:30:12.583Z",
-    "repository": "kubeedge/kubeedge",
-    "learningId": "learn-github-kubeedge-kubeedge",
-    "contentHash": "849bbf0b61d6c856912f4a411cfef5c05cc228a1a6e75556e3f55e0c134e2e39",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-0GBM",
-    "timestamp": "2026-11-25T11:42:22.882Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-    "contentHash": "4975dbe933053bb5dd120542c19172b2daefc96e2d88e6819a3ee9ea0a35b8a8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-0SE2",
     "timestamp": "2026-11-25T11:42:38.522Z",
     "repository": "MariaDB/server",
@@ -7492,6 +7432,66 @@
     "contentHash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WGJF",
+    "timestamp": "2026-11-26T22:38:47.739Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "f9058470b8df4203aefb271e2782ea45389979504026eee63a519b7546bd507e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WN5E",
+    "timestamp": "2026-11-26T22:38:56.306Z",
+    "repository": "keybase/client",
+    "learningId": "learn-github-keybase-client",
+    "contentHash": "7cf7f093b163982ad5d7c0636a4fc962289d1344709eec4dba26f550f4bf10ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WOXY",
+    "timestamp": "2026-11-26T22:38:58.630Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "146b86cffff9da83c209c25b7a2e701ebf402f6ea6dff69726663148addfa130",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-WSGC",
+    "timestamp": "2026-11-26T22:39:03.180Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "705cb1f43cfc3ad88e16aeeebfede4814594e19f74e93244aa280c039e2337d2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

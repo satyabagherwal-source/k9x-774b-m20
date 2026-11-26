@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T22:30:22.893Z",
+  "last_updated": "2026-11-26T22:39:03.229Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1415,14 +1415,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "content_hash": "b2a36bda4b54510b47a4a22c17496c7fb8f0f66ecf20e03d658ecff3ed380327",
-      "verified_at": "2026-11-23T13:54:35.627Z",
+      "content_hash": "f9058470b8df4203aefb271e2782ea45389979504026eee63a519b7546bd507e",
+      "verified_at": "2026-11-26T22:38:47.756Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T13:54:35.627Z"
+      "last_updated": "2026-11-26T22:38:47.756Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "b1e8ec76ae85f9b3a634d85e4a698f30f55f1010dd1fe2b4de9cb4c0ec4e04c1",
-      "verified_at": "2026-11-26T03:55:19.042Z",
+      "content_hash": "705cb1f43cfc3ad88e16aeeebfede4814594e19f74e93244aa280c039e2337d2",
+      "verified_at": "2026-11-26T22:39:03.228Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T03:55:19.042Z"
+      "last_updated": "2026-11-26T22:39:03.228Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "e99435686fc2639bb54b00c270e1dc79ea1879e13aeeab3189f4639f646bb077",
-      "verified_at": "2026-11-26T18:24:24.182Z",
+      "content_hash": "146b86cffff9da83c209c25b7a2e701ebf402f6ea6dff69726663148addfa130",
+      "verified_at": "2026-11-26T22:38:58.693Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T18:24:24.182Z"
+      "last_updated": "2026-11-26T22:38:58.693Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "f80a285d3298d31113cfe6e5bbf486f0abd360dc2a198b9294f5c77711c99317",
-      "verified_at": "2026-11-24T14:33:22.820Z",
+      "content_hash": "7cf7f093b163982ad5d7c0636a4fc962289d1344709eec4dba26f550f4bf10ff",
+      "verified_at": "2026-11-26T22:38:56.339Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:33:22.820Z"
+      "last_updated": "2026-11-26T22:38:56.339Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",

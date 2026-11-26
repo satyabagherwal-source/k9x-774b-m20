@@ -4,22 +4,22 @@
 {
   "source_repository": "matrixorigin/matrixone",
   "source_url": "https://github.com/matrixorigin/matrixone",
-  "source_version": "ca5325ce",
+  "source_version": "9531e591",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T02:29:00.894Z",
+  "timestamp": "2026-11-26T22:39:03.482Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-matrixorigin-matrixone",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `ca5325ce`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T02:29:00.894Z`  
+> **Provenance**: Harvested from [matrixorigin/matrixone](https://github.com/matrixorigin/matrixone) (Revision: `9531e591`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T22:39:03.482Z`  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `matrixorigin/matrixone` (Commit: `ca5325ce`)
+- **Target Repository**: `matrixorigin/matrixone` (Commit: `9531e591`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:28:59.517Z  
+> **Harvest Timestamp**: 2026-11-26T22:39:02.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2360,11 +2360,14 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #33188** (2026-11-25): **test(optools): accept a KILL-escalated drain in the publication latch test**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #33187  ## What this PR does / why we need it:  `optools` / `TestEmbeddedPrebuiltPublicationCancellationLatch/test_pids` failed the UT Coverage job of #33144 with `PUBLICATION_CANCELLED 90` (expected 143). That also blocked the coverage merge, so the PR got no coverage verdict. ([run](https://github.com/matrixorigin/matrixone/actions/runs/45494828845))  ### Cause  The test checks the publication latch: every admitted process group is drained before cancellation is acknowledged. It also required the mock test process to stop on TERM, and write `stopped-execute-a` (otherwise status 90).  The drain (`terminate_ut_process_groups`) gives TERM a fixed grace of 20 ticks (5 s), then sends KILL. - On CI the subtest took 8.24 s, against 0.55 s locally. The grace ran out, and the log shows the mock being `Killed`. - A killed process runs no trap, so the marker was missing, although the drain had completed.  ### Change  Test only; no runner script changes. The latch test now requires that the test process was started (its PID file exists) and is gone (the existing status-91 check), whether it stopped on TERM or was killed after the grace.  The graceful TERM path is still checked, deterministically, by the execution-cancellation test (`MOCK_TERM` / `TERM_ACK`).  I did not make the 20-tick child grace c
+- **Issue #33341** (2026-11-26): **fix(geo): reject null required GeoJSON arrays**
+  *Symptoms*: ## What changed  - preserve the distinction between missing, `null`, and empty array GeoJSON members - reject missing/`null` `coordinates` for coordinate geometries - reject missing/`null` `geometries` for geometry collections, including nested collections - keep explicit empty arrays valid for EMPTY geometries  Fixes #33195.  ## Regression evidence  Before the fix, `TestGeoJSONRequiredArrayMembers` failed because `{"type":"Point","coordinates":null}` was accepted as an EMPTY point.  After rebasing onto current `main`:  - `go test ./pkg/geo -run TestGeoJSONRequiredArrayMembers -count=1` - `go test ./pkg/geo -count=1` - `go test -race ./pkg/geo -count=1` - `go vet ./pkg/geo` - `git diff --check`  Independent review completed with no blocking findings.
 
-- **Issue #33187** (2026-11-25): **[Bug]: optools TestEmbeddedPrebuiltPublicationCancellationLatch fails when the TERM grace escalates to KILL**
-  *Symptoms*: ### Is there an existing issue for the same bug?  - [x] I have checked the existing issues.  ### Branch Name  main  ### Commit ID  c0cef5c9cc  ### Other Environment Information  ``` CI: Matrixone UT Coverage execution / legacy / UT Coverage on Ubuntu/x86 Run: https://github.com/matrixorigin/matrixone/actions/runs/45494828845 (PR #33144) ```  ### Actual Behavior  `optools` / `TestEmbeddedPrebuiltPublicationCancellationLatch/test_pids` fails intermittently with `PUBLICATION_CANCELLED 90` (expected 143). The subtest took 8.24 s on CI; it takes 0.55 s locally.  Status 90 means the mock test process never wrote its `stopped-execute-a` marker. `terminate_ut_process_groups` gives admitted process groups a fixed TERM grace of 20 ticks (5 s), then sends KILL. The CI log shows the mock being `Killed`, so the grace ran out before the mock's TERM trap ran. A killed process runs no trap, so there is no marker.  The failure blocks the coverage merge ("a required producer did not publish a complete coverage profile"), so the PR gets no coverage verdict.  ### Expected Behavior  The test checks the publication latch: every admitted process group is drained before cancellation is acknowledged. A drain that ends with the KILL escalation is still a completed drain, so the test should pass. The graceful TERM path is already covered by the execution-cancellation test (`MOCK_TERM` / `TERM_ACK`).  ### Steps to Reproduce  ``` Make the execute-cancel mock ignore TERM, so the drain escalates to KILL (i
+- **Issue #33340** (2026-11-26): **fix(geo): reject null required GeoJSON arrays**
+  *Symptoms*: Superseded because `main` advanced while this PR was being opened. The identical two-file fix was rebased and republished from a fresh branch.
+  **Post-Mortem & Fix Analysis**:
+  > ### Qodo reviews are paused for this user.  Troubleshooting steps vary by plan [Learn more →](https://docs.qodo.ai/subscription-plans#what-you%E2%80%99ll-see-when-reviews-are-paused)   **On a Teams plan?** Reviews resume once this user has a paid seat *and* their Git account is linked in Qodo. [Link Git account →](https://docs.qodo.ai/subscription-plans#linking-a-git-account)  **Using GitHub Enterprise Server, GitLab Self-Managed, or Bitbucket Data Center?** These require an Enterprise plan - Contact us [Contact us →](https://docs.qodo.ai/qodo-support#support) 
+  > This pull request is closed, so it cannot be queued. Reopen it to get the box back. <!-- mergify:queue-control-withdrawn:queue -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2381,1462 +2384,1441 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `568f0f4f` (2026-11-24)
-**Commit Message**: test(embed): measure execution memory headroom against a per-process limit (#33142)
-
-## What type of PR is this?
-
-- [x] Test and CI
-
-## Which issue(s) this PR fixes:
-
-issue #33077
-
-Also seen on #33115 (run 45332505615):
-`TestSnapshotDatabasePublicationReplayBoundaries/incomplete_view_scope`
-failed on `use mo_catalog` with
-
-```
-execution resource admission rejected: requested=48 used=0 cap=0;
-physical memory headroom: sampled_available=1014726656 safety_reserve=1073741824 growth_headroom=0
-```
-
-## What this PR does / why we need it:
-
-Coverage UT runs 8 packages at once (`-p 8`) on a 15 GiB runner. A CN in
-an embedded test cluster admits execution memory against the **host's**
-available memory minus a 1 GiB margin. When other test binaries hold the
-host near that margin, every new allocation is refused, even 48 bytes,
-and whichever embedded test runs a query at that moment fails. The
-failure has nothing to do with the test or the PR under test.
-
-This PR lets a process give execution admission a **private memory
-limit**:
-
-- `process.SetExecutionPrivateMemoryLimit(limit)`: when non-zero,
-physical headroom is `limit − this process's resident memory`
-(`system.ProcessResidentMemory`). The
-
-**File**: `pkg/common/system/system.go` (modified, +10/-0)
-```diff
-@@ -524,6 +524,16 @@ func MemoryAvailableIncludingCache() (avail uint64, measured bool) {
- 	return mem.ActualFree, true
- }
- 
-+// ProcessResidentMemory returns the resident set size of this process. The
-+// second return is false when it cannot be read.
-+func ProcessResidentMemory() (uint64, bool) {
-+	var mem gosigar.ProcMem
-+	if err := mem.Get(pid); err != nil {
-+		return 0, false
-+	}
-+	return mem.Resident, true
-+}
-+
- func MemoryUsed() uint64 {
- 	if InContainer() {
- 		used, err := cgroup.GetMemUsage(pid)
-```
-
-**File**: `pkg/common/system/system_test.go` (modified, +6/-0)
-```diff
-@@ -650,3 +650,9 @@ func TestReclaimableCgroupCache(t *testing.T) {
- 	_, ok := reclaimableCgroupCache(filepath.Join(t.TempDir(), "absent.stat"))
- 	require.False(t, ok)
- }
-+
-+func TestProcessResidentMemory(t *testing.T) {
-+	resident, ok := ProcessResidentMemory()
-+	require.True(t, ok)
-+	require.NotZero(t, resident)
-+}
-```
-
-**File**: `pkg/embed/cluster.go` (modified, +1/-0)
-```diff
-@@ -178,6 +178,7 @@ func (c *cluster) Start() (err error) {
- 	c.logTestSetup("port-lease", time.Since(phaseStarted), nil)
- 
- 	if c.options.testing {
-+		useTestProcessMemoryLimit()
- 		if c.testAdmission != nil {
- 			return moerr.NewInvalidStateNoCtx(
- 				"embedded test cluster cleanup is incomplete",
-```
-
-**File**: `pkg/embed/test_memory_limit.go` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//	http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package embed
-+
-+import (
-+	"github.com/matrixorigin/matrixone/pkg/vm/process"
-+)
-+
-+// testProcessMemoryLimit is the private memory limit of a process that runs
-+// embedded test clusters. CI runs several test binaries on one runner, so the
-+// host's available memory mostly reflects the other binaries; measuring
-+// admission against it made queries fail at random. Against a private limit,
-+// execution admission still rejects when this process itself grows too large,
-+// but other processes no longer decide the outcome.
-+const testProcessMemoryLimit = uint64(8 << 30)
-+
-+// useTestProcessMemoryLimit is called before a test cluster starts. Every test
-+// cluster in the process wants the same limit, so storing it again is
-+// harmless.
-+func useTestProcessMemoryLimit() {
-+	process.SetExecutionPrivateMemoryLimit(testProcessMemoryLimit)
-+}
-```
-
-**File**: `pkg/vm/process/execution_private_memory_limit.go` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//	http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package process
-+
-+import (
-+	"sync/atomic"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/system"
-+)
-+
-+// executionPrivateMemoryLimit is zero in a server. When set, every CN
-+// execution budget in this process measures physical headroom against this
-+// limit on the process's own resident memory, as if the process ran alone in
-+// a container of that size.
-+var executionPrivateMemoryLimit atomic.Uint64
-+
-+// SetExecutionPrivateMemoryLimit gives this process a private memory limit
-+// for execution admission; zero restores the host measurement. It exists for
-+// processes that share a host with unrelated memory users whose usage must
-+// not decide admission, such as test binaries running in parallel on one CI
-+// runner. Budgets pick up the change on their next headroom sample.
-+func SetExecutionPrivateMemoryLimit(limit uint64) {
-+	executionPrivateMemoryLimit.Store(limit)
-+}
-+
-+// executionPhysicalMemoryHeadroom is the physical headroom source of every CN
-+// execution budget: the host (or cgroup) available memory, or the room left
-+// under the private limit when one is set.
-+func executionPhysicalMemoryHeadroom() (uint64, bool) {
-+	limit := executionPrivateMemoryLimit.Load()
-+	if limit == 0 {
-+		return system.MemoryAvailableIncludingCache()
-+	}
-+	resident, ok := system.ProcessResidentMemory()
-+	if !ok {
-+		return 0, false
-+	}
-+	return privateMemoryHeadroom(limit, resident), true
-+}
-+
-+func privateMemoryHeadroom(limit, resident uint64) uint64 {
-+	if resident >= limit {
-+		return 0
-+	}
-+	return limit - resident
-+}
-```
-
-**File**: `pkg/vm/process/execution_private_memory_limit_test.go` (added, +108/-0)
-```diff
-@@ -0,0 +1,108 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//	http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package process
-+
-+import (
-+	"testing"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/system"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func setPrivateMemoryLimitForTest(t *testing.T, limit uint64) {
-+	t.Helper()
-+	previous := executionPrivateMemoryLimit.Load()
-+	SetExecutionPrivateMemoryLimit(limit)
-+	t.Cleanup(func() { SetExecutionPrivateMemoryLimit(previous) })
-+}
-+
-+func TestPrivateMemoryHeadroom(t *testing.T) {
-+	require.Equal(t, uint64(30), privateMemoryHeadroom(100, 70))
-+	require.Zero(t, privateMemoryHeadroom(100, 100))
-+	require.Zero(t, privateMemoryHeadroom(100, 170))
-+}
-+
-+// With a private limit the headroom is the room left under the limit by this
-+// process's own resident memory; the host's free memory plays no part.
-+func TestExecutionPhysicalMemoryHeadroomUsesPrivateLimit(t *testing.T) {
-+	const gib = uint64(1 << 30)
-+	before, ok := system.ProcessResidentMemory()
-+	require.True(t, ok)
-+	require.NotZero(t, before)
-+
-+	setPrivateMemoryLimitForTest(t, 1)
-+	available, measured := executionPhysicalMemoryHeadroom()
-+	require.True(t, measured)
-+	require.Zero(t, available, "a process above its private limit has no headroom")
-+
-+	limit := before + 4*gib
-+	SetExecutionPrivateMemoryLimit(limit)
-+	available, measured = executionPhysicalMemoryHeadroom()
-+	require.True(t, measured)
-+	after, ok := system.ProcessResidentMemory()
-+	require.True(t, ok)
-+	require.LessOrEqual(t, available, limit-min(before, after))
-+	require.GreaterOrEqual(t, available, limit-max(before, after))
-+}
-+
-+func TestExecutionMemoryHeadroomSafetyUsesPrivateLimit(t *testing.T) {
-+	const gib = uint64(1 << 30)
-+	ceiling := ExecutionMemoryCeiling{EffectiveCN: 100 * gib, Reserve: 20 * gib}
-+	require.Equal(t, 5*gib, executionMemoryHeadroomSafety(ceiling))
-+
-+	// The margin is sized from the private limit, so a large host does not
-+	// reserve more than the process may use.
-+	setPrivateMemoryLimitForTest(t, 8*gib)
-+	require.Equal(t, gib, executionMemoryHeadroomSafety(ceiling))
-+	SetExecutionPrivateMemoryLimit(60 * gib)
-+	require.Equal(t, 3*gib, executionMemoryHeadroomSafety(ceiling))
-+	// A limit above the CN's effective memory changes nothing.
-+	SetExecutionPrivateMemoryLimit(200 * gib)
-+	require.Equal(t, 5*gib, executionMemoryHeadroomSafety(ceiling))
-+}
-+
-+// Admission through the CN headroom source follows this process's own size
-+// under a private limit.
-+func TestExecutionAdmissionFollowsPrivateMemoryLimit(t *testing.T) {
-+	const gib = uint64(1 << 30)
-+	for _, tc := range []struct {
-+		name     string
-+		limit    func(resident uint64) uint64
-+		admitted bool
-+	}{
-+		{name: "process above its limit", limit: func(uint64) uint64 { return 1 }},
-+		{name: "room under the limit", limit: func(resident uint64) uint64 { return resident + 2*gib }, admitted: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			resident, ok := system.ProcessResidentMemory()
-+			require.True(t, ok)
-+			setPrivateMemoryLimitForTest(t, tc.limit(resident))
-+			budget := MustNewExecutionResourceBudget(1000, 800)
-+			budget.memoryHeadroomProvider = executionPhysicalMemoryHeadroom
-+			budget.memoryHeadroomSafety = 100
-+			generation, err := budget.OpenGeneration(1)
-+			require.NoError(t, err)
-+			defer generation.Close()
-+			reservation, err := generation.ReserveTransientMemory(48)
-+			if tc.admitted {
-+				require.NoError(t, err)
-+				require.True(t, reservation.Release())
-+				return
-+			}
-+			require.ErrorIs(t, err, ErrExecutionResourceAdmission)
-+			require.Nil(t, reservation)
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/vm/process/execution_resource_budget.go` (modified, +8/-2)
-```diff
-@@ -2021,7 +2021,13 @@ type ExecutionMemoryCeiling struct {
- }
- 
- func executionMemoryHeadroomSafety(ceiling ExecutionMemoryCeiling) uint64 {
--	safety := ceiling.EffectiveCN / 20
-+	effective := ceiling.EffectiveCN
-+	// A private limit stands in for a smaller container: the margin is sized
-+	// from what this process may use, not from the whole host.
-+	if limit := executionPrivateMemoryLimit.Load(); limit > 0 && limit < effective {
-+		effective = limit
-+	}
-+	safety := effective / 20
- 	if safety < executionResourceMinimumRuntimeHeadroom {
- 		safety = executionResourceMinimumRuntimeHeadroom
- 	}
-@@ -2160,7 +2166,7 @@ func (proc *Process) getExecutionResourceBudget(withSpill bool) (*ExecutionResou
- 			if createErr != nil {
- 				return nil
- 			}
--			b.memoryHeadroomProvider = system.MemoryAvailableIncludingCache
-+			b.memoryHeadroomProvider = executionPhysicalMemoryHeadroom
- 			b.memoryHeadroomTTL = executionResourceBudgetCapRefreshTTL
- 			b.memoryHeadroomNow = time.Now
- 			b.memoryHeadroomSafety = executionMemoryHeadroomSafety(ceiling)
-```
-
----
-
-### Incident Patch 2: `af99c169` (2026-11-24)
-**Commit Message**: Fix worker capture vector cleanup in parallel DedupJoin (#33127)
+### Incident Patch 1: `9531e591` (2026-11-26)
+**Commit Message**: refactor(types): type dispatch design (#10181), oidscan, DML dispatch fixes, traits table (#33338)
 
 ## What type of PR is this?
 
 - [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
+- [ ] BUG
+- [x] Improvement
+- [x] Documentation
 - [ ] Feature
 - [ ] Test and CI
-- [ ] Code Refactoring
+- [x] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Fixes #33123
+issue #10181
 
 ## What this PR does / why we need it:
 
-A parallel `DedupJoin` worker transfers captured old-column vectors to the merger, but the vectors still belong to the worker's allocation pool. Freeing them with the merger's process pool caused a panic during finalize and another while draining queued messages. Downstream operators then waited for an end signal until the SQL client timed out.
+Design plus steps 1–3 of the plan in `docs/design/20261126-type-vft.md`.
 
-The worker records the allocation pool when it creates the capture vectors. It transfers that pool with the vectors in `WorkerJoinMsg` only on successful publication; on a rejected send the worker still owns the captures. Local cleanup, normal merger consumption, and mailbox draining all pass the recorded worker pool to `Vector.Free`, preserving its independent ownership check. No query timeout changes.
+**Design doc.** Measures the type-id switches in `pkg/` and proposes an
+`Oid`-indexed type table (`types.Traits`) and per-package operation
+tables with completeness tests. The switches that stay are covered by
+extending the existing `TestTypeSwitchFamilies` check (more families,
+plus an "all types" rule for dispatch switches). The table is indexed by
+`Oid` rather than stored as a pointer in `types.Type`, because `Type`
+has a fixed 16-byte stored layout.
 
-The regression test runs real worker finalization against merger consumption and the error-drain path. A separate negative test verifies tha
+**Step 1: `optools/oidscan`.** A standalone, standard-library-only
+module that reports switch counts, a case-count histogram, the switches
+inside loops, and which of those have a type that is fixed for the loop.
+It is a report, not a check. `go run . -root ../.. -loops -invariant`
+gives the worklist for step 6.
 
-**File**: `pkg/sql/colexec/dedupjoin/join_test.go` (modified, +60/-23)
+**Step 2: dispa
+
+**File**: `docs/design/20261126-type-vft.md` (added, +330/-0)
 ```diff
-@@ -18,6 +18,7 @@ import (
- 	"bytes"
- 	"context"
- 	"errors"
+@@ -0,0 +1,330 @@
++# Type dispatch tables: consolidating `switch typ.Oid`
++
++## Scope and trigger
++
++Issue [#10181](https://github.com/matrixorigin/matrixone/issues/10181)
++("[Refactoring]: VFT of types").
++
++MatrixOne decides what to do with a value by switching on its type id
++(`types.T`, the `Oid` of a `types.Type`) all over the codebase. The issue
++names two problems:
++
++1. **Adding a type means editing many places, and missing one fails
++   quietly.** A new `T_` constant falls into whatever `default:` branch each
++   switch has. Depending on the site, that is a panic, an "unsupported type"
++   error, or a wrong result.
++2. **Some switches run once per row.** The cost of a switch whose type is the
++   same on every row is small, but these sites usually also box values into
++   `any`, which is the larger cost.
++
++This document measures the problem, proposes a design and lays out a
++step-by-step plan. It changes no code; each implementation step will be its
++own PR.
++
++## Measurements
++
++The numbers come from `optools/oidscan`, a `go/ast` scan of every non-test
++`.go` file under `pkg/` (skipping `testdata/`), at commit `5e3893a298`. A
++"type switch" is any `switch` statement with at least one `case` naming a
++`T_*` constant. To reproduce:
++
++```
++cd optools/oidscan
++go run . -root ../..                     # the summary below
++go run . -root ../.. -loops              # every switch inside a loop
++go run . -root ../.. -loops -invariant   # only those whose type is fixed for the loop
++```
++
++Counts drift as `main` moves; the tool gives the current numbers.
++
++### How many and where
++
++| | Count |
++|---|---|
++| Type switches | 949 |
++| Switches with a `default:` branch | 636 |
++| `case types.T_…` lines (grep) | ~7,500 |
++
++The 949 switches by number of `T_` constants named in their cases:
++
++| Cases | Switches | Usual purpose |
++|---|---|---|
++| 20 or more | 225 | Full physical dispatch: "for each Go representation, call `f[T]`" |
++| 4–19 | 450 | A family of types: numeric, temporal, string-like |
++| 1–3 | 274 | A special case: "if JSON then …", "if decimal then …" |
++
++Packages with the most switches having 20 or more cases: `sql/plan/function`
++(59), `frontend` (21), `sql/plan` (18), `container/vector` (18),
++`vm/engine/readutil` (10), `sql/compile` (9), `sql/colexec/aggexec` (9),
++`vm/engine/tae/containers` (6).
++
++### Switches inside a loop over rows
++
++128 switches sit inside a `for` or `range` in the same function. Most of
++those loops run over columns, arguments, plan nodes or schema fields, so the
++switch runs once per batch or once per plan and costs nothing worth
++measuring. The ones that run once per row:
++
++**Hot paths**
++
++| Site | Path |
++|---|---|
++| `common/hashmap/strhashmap.go` `fillNullableStr` | Hash join and group-by key encoding, per row and per key column |
++| `frontend/mysql_protocol.go` `appendResultSetTextRow2`, `appendResultSetBinaryRow2` | Every result row sent to a client, per column |
++| `frontend/export.go` `constructByte`, `constructJSONLine` | `SELECT … INTO OUTFILE` and JSON export, per row and per column |
++| `sql/plan/function/func_cast.go` `jsonToNumeric`, `castToJSON` | Cast evaluation |
++| `sql/plan/function/func_unary.go` `NormalizeL2Array` | Vector-function evaluation |
++| `sql/plan/function/func_builtin.go` internal metadata functions | Function evaluation (rarely called) |
++
++**The type does not change inside the loop; move the switch out**
++
++- `sql/colexec/multi_update/insert.go` `checkZeroTemporalInStrictMode`
++- `sql/colexec/preinsert/preinsert.go` `checkZeroTemporalInStrictMode`
++- `sql/colexec/postdml/postdml.go` `runPostDml`
++
++**Switches hidden in helpers called once per row**
++
++A loop scan misses these because the switch sits in the callee:
++
++- `vector.AppendAny`
++- `containers.UpdateValue` (TAE)
++- `getNonNullValue`, which exists twice, in `vm/engine/tae/containers/utils.go`
++  and `sql/colexec/deletion/types.go`
++- The `Get`, `Append` and `Update` methods of the TAE vector wrapper, built on
++  the helpers above
++
++For a switch whose type never changes inside the loop, branch prediction
++hides most of the cost. The measurable overhead at these sites is boxing
++every value into `any` and the call made for each value. The fix is therefore
++"resolve the type once per vector, then run a typed loop", not only "remove
++the switch".
++
++### What already exists
++
++`TestTypeSwitchFamilies` (`pkg/container/types/typeswitch_test.go`, described in
++`pkg/container/types/testdata/README.md`) already enforces completeness for two
++families, float (`T_float*`, `T_bf*`) and vector (`T_array_*`): a switch, `||`
++chain or type list that names some members of a family must name all of them,
++or one whole subfamily, or carry `// typeswitch:partial <reason>`. Switches that
++predate the check are listed in `typeswitch_baseline.txt`, which may only
++shrink. This is the same idea this design needs for the switches that stay,
++already accepted in the repository, so the design exte
+```
+
+**File**: `optools/oidscan/go.mod` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++module github.com/matrixorigin/matrixone/optools/oidscan
++
++go 1.27.1
+```
+
+**File**: `optools/oidscan/main.go` (added, +130/-0)
+```diff
+@@ -0,0 +1,130 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// Command oidscan reports the switch statements over type ids (types.T) in
++// MatrixOne's pkg/ tree, as input for docs/design/20261126-type-vft.md.
++//
++// It is a report, not a check: TestTypeSwitchFamilies in pkg/container/types
++// is the check.
++//
++//	cd optools/oidscan
++//	go run . -root ../..                  # summary
++//	go run . -root ../.. -loops           # switches inside a loop, TSV
++//	go run . -root ../.. -loops -invariant # only those whose type is loop-invariant
++package main
++
++import (
++	"flag"
 +	"fmt"
- 	"io"
- 	"os"
- 	"sync"
-@@ -1218,15 +1219,14 @@ func TestDedupFinalizeWorkerPublicationBoundaries(t *testing.T) {
- 		proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
- 		mailbox := NewWorkerJoinMailbox(2)
- 		mailbox.stopAndDrain()
--		worker := &DedupJoin{
--			NumCPU:   2,
--			IsMerger: false,
--			Mailbox:  mailbox,
--		}
-+		worker, account := newFinalizeCaptureWorker(t, proc, mailbox)
- 
- 		require.NoError(t, worker.ctr.finalize(worker, proc))
- 		require.False(t, worker.ctr.roundStatusPublished)
- 		require.Equal(t, End, worker.ctr.state)
-+		require.Positive(t, account.Snapshot().Used)
-+		worker.Reset(proc, false, nil)
-+		require.Zero(t, account.Snapshot().Used)
- 	})
- 
- 	t.Run("full mailbox", func(t *testing.T) {
-@@ -1381,11 +1381,29 @@ func TestDedupFinalizeConcurrentCancellationReturns(t *testing.T) {
- 	}
- }
- 
-+func newFinalizeCaptureWorker(t *testing.T, proc *process.Process, mailbox *WorkerJoinMailbox) (*DedupJoin, *mpool.AllocationAccount) {
-+	t.Helper()
-+	worker := &DedupJoin{
-+		NumCPU:                          uint64(mailbox.participants),
-+		Mailbox:                         mailbox,
-+		LeftTypes:                       []types.Type{types.T_int32.ToType()},
-+		OldColCaptureProbeIdxList:       []int32{0},
-+		OldColCapturePlaceholderIdxList: []int32{0},
++	"io"
++	"os"
++	"path"
++	"sort"
++	"strings"
++)
++
++func main() {
++	root := flag.String("root", ".", "repository root (the directory that holds pkg/)")
++	loops := flag.Bool("loops", false, "list switches inside a loop instead of the summary")
++	invariant := flag.Bool("invariant", false, "with -loops, list only switches whose subject does not change in the innermost loop")
++	flag.Parse()
++
++	switches, err := Scan(*root)
++	if err != nil {
++		fmt.Fprintln(os.Stderr, "oidscan:", err)
++		os.Exit(1)
 +	}
-+	account := installTestAllocation(t, worker)
-+	worker.ctr.mp = message.NewJoinMap(message.GroupSels{}, nil, nil, nil, nil, proc.Mp())
-+	worker.ctr.mp.IncRef(1)
-+	t.Cleanup(func() { worker.Free(proc, false, nil) })
-+	worker.ctr.batchRowCount = 1
-+	require.NoError(t, worker.ctr.initCaptureBuffers(worker, proc))
-+	require.Positive(t, account.Snapshot().Used)
-+	return worker, account
++	if *loops {
++		writeLoops(os.Stdout, switches, *invariant)
++		return
++	}
++	writeSummary(os.Stdout, switches)
 +}
 +
- func TestDedupFinalizeWorkerFailureCleansTransferredMessages(t *testing.T) {
- 	proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
-+	t.Cleanup(proc.Free)
- 	baseline := proc.Mp().CurrNB()
--	captured := vector.NewVec(types.T_int32.ToType(), proc.Mp())
--	require.NoError(t, vector.AppendFixed(captured, int32(1), false, proc.Mp()))
- 
- 	workerErr := moerr.NewInternalErrorNoCtx("worker failed")
- 	mailbox := NewWorkerJoinMailbox(3)
-@@ -1398,30 +1416,49 @@ func TestDedupFinalizeWorkerFailureCleansTransferredMessages(t *testing.T) {
- 	arg.ctr.state = Finalize
- 	arg.ctr.matched = &bitmap.Bitmap{}
- 	arg.ctr.matched.InitWithSize(1)
--	require.True(t, func() bool {
--		sent, _, _ := mailbox.trySend(&WorkerJoinMsg{aborted: true, err: workerErr})
--		return sent
--	}())
--	require.True(t, func() bool {
--		sent, _, _ := mailbox.trySend(&WorkerJoinMsg{
--			capturedVecs: []*vector.Vector{captured},
--			capturedMP:   proc.Mp(),
--		})
--		return sent
--	}())
--	t.Cleanup(func() {
--		arg.Free(proc, true, workerErr)
--		freeTestChildren(arg)
--		proc.Free()
--	})
-+	t.Cleanup(func() { arg.Free(proc, true, workerErr) })
-+	worker, account := newFinalizeCaptureWorker(t, proc, mailbox)
-+	var wg sync.WaitGroup
-+	var finalizeErr error
-+	wg.Go(func() { finalizeErr = worker.ctr.finalize(worker, proc) })
-+	defer func() { mailbox.stopAndDrain(); wg.Wait() }()
++// writeLoops writes one TSV line per switch inside a loop:
++// file:line, function, oid count, invariant, loops (innermost first).
++func writeLoops(w io.Writer, switches []Switch, invariantOnly bool) {
++	for _, s := range switches {
++		if len(s.Loops) == 0 || (invariantOnly && !s.Invariant) {
++			continue
++		}
++		inv := "-"
++		if s.Invariant {
++			inv = "invariant"
++		}
++		fmt.Fprintf(w, "%s:%d\t%s\t%d\t%s\t%s\n",
++			s.File, s.Line, s.Func, s.Oids, inv, strings.Join(s.Loops, " | "))
++	}
++}
 +
-+	// Wait for real publication, then queue the abort ahead of the capture
-+	// so the merger must release the capture through its error-drain path.
-+	ctx, cancel := context.WithTimeout(proc.Ctx, 2*time.Second)
-+	defer cancel()
-+	msg, err := receiveWorkerMsg(ctx, mailbox)
-+	require.NoError(t, err)
-+	sent, _, _ := mailbox.trySend(&WorkerJoinMsg{aborted: true, err: workerErr})
-+	require.True(t, sent)
-+	sent, _, _ = mailbox.trySend(msg)
-+	require.True(t, sent)
- 
- 	result, err := arg.Call(proc)
- 	require.ErrorIs(t, err, workerErr)
- 	require.Nil(t, result.Batch)
- 	require.Empty(t, mailbox.ch)
-+	wg.Wait()
-+	require.NoError(t, finalizeErr)
-+	require.Zero(t, account.Snapshot().Used)
- 	require.Equal(t, baseline, proc.Mp().CurrNB())
- }
- 
-+func TestWorkerJoinMsgRejectsMismatchedCapturePool(t *testing.T) {
-+	proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
-+	defer proc.Free()
-+	worker := &DedupJoin{}
-+	installTestAllocation(t, worker)
-+	mp, err := worker.stateMP(proc)
-+	require.NoError(t, err)
-+	v := vector.NewVec(types.T_int32.ToType(), mp)
-+	defer v.Free(mp)
-+	msg := &WorkerJoinMsg{capturedVecs: []*vector.Vector{v}, capturedMP: proc.Mp()}
-+	require.PanicsWithError(t, fmt.Sprintf("internal error: vector mpool mismatch: vector belongs to %p, call passed %p", mp, proc.Mp()), func() {
-+		freeWorkerJoinMsg(msg)
++// bucket names the size class a switch with n type ids falls in.
++func bucket(n int) string {
++	switch {
++	case n >= 20:
++		return "20+"
++	case n >= 10:
++		return "10-19"
++	case n >= 4:
++		return "4-9"
++	default:
++		return "1-3"
++	}
++}
++
++func writeSummary(w io.Writer, switches []Switch) {
++	var withDefault, inLoop, invariant int
++	buckets := map[string]int{}
++	bigByPkg := map[string]int{}
++	for _, s := range switches {
++		if s.HasDefault {
++			withDefault++
++		}
++		if len(s.Loops) > 0 {
++			inLoop++
++			if s.Invariant {
++				invariant++
++			}
++		}
++		b := bucket(s.Oids)
++		buckets[b]++
++		if b == "20+" {
++			bigByPkg[path.Dir(s.File)]++
++		}
++	}
++	fmt.Fprintf(w, "type switches:            %d\n", len(switches))
++	fmt.Fprintf(w, "  with a default branch:  %d\n", withDefault)
++	fmt.Fprintf(w, "  inside a loop:          %d\n", inLoop)
++	fmt.Fprintf(w, "    loop-invariant type:  %d\n", invariant)
++	fmt.Fprintln(w, "by number of type ids named:")
++	for _, b := range []string{"20+", "10-19", "4-9", "1-3"} {
++		fmt.Fprintf(w, "  %-6s %d\n", b, buckets[b])
++	}
++	fmt.Fprintln(w, "packages with the most 20+ switches:")
++	pkgs := make([]string, 0, len(bigByPkg))
++	for p := range bigByPkg {
++		pkgs = append(pkgs, p)
++	}
++	sort.Slice(pkgs, func(i, j int) bool {
++		if bigByPkg[pkgs[i]] != bigByPkg[pkgs[j]] {
++			return bigByPkg[pkgs[i]] > bigByPkg[pkgs[j]]
++		}
++		return pkgs[i] < pkgs[j]
 +	})
-+}
-+
- func TestDedupFinalizeWorkerFailureDoesNotWaitForMissingWorker(t *testing.T) {
- 	proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
- 	workerErr := moerr.NewInternalErrorNoCtx("worker failed")
-```
-
----
-
-### Incident Patch 3: `835455b3` (2026-11-24)
-**Commit Message**: fix(data branch): compare clones against older ancestor snapshots (#32970)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-issue #32968
-
-## What this PR does / why we need it:
-
-### Summary
-Fixes `DATA BRANCH DIFF` (and related snapshot/LCA probe paths) when
-comparing a cloned branch against an older ancestor snapshot (`T_old <
-CloneTS`), along with snapshot handling and probe bugs exposed during
-that scenario.
-
-### Root Cause & Changes
-1. **Older-ancestor clone diff & snapshot anchor propagation
-(`pkg/frontend/data_branch.go`, `pkg/frontend/data_branch_types.go`,
-`pkg/frontend/data_branch_hashdiff.go`)**:
-- Replaced separate `tarLCASnapshot` / `baseLCASnapshot` heuristics with
-explicit `lcaProbeAnchors` and `lcaProbeSnapshots` so `DATA BRANCH DIFF`
-comparing a clone against an older ancestor snapshot collects ancestor
-writes between `T_old` and `CloneTS` properly and preserves PICK
-conflict behavior when requested.
-- Tracked background transaction snapshot timestamps (`tarRelSnapshot`,
-`baseRelSnapshot`, `lcaRelSnapshot`, `resolvedRelSnapshots`) i
-
-**File**: `pkg/frontend/data_branch.go` (modified, +152/-52)
-```diff
-@@ -1273,6 +1273,9 @@ func handleBranchMerge(
- 	ses *Session,
- 	stmt *tree.DataBranchMerge,
- ) (err error) {
-+	if stmt.DstTable.AtTsExpr != nil {
-+		return moerr.NewInvalidInputNoCtx("destination snapshot option is not supported for DATA BRANCH MERGE")
++	if len(pkgs) > 10 {
++		pkgs = pkgs[:10]
 +	}
- 	if dataBranchMergeTxnNotAllowed(ses) {
- 		return moerr.NewInternalError(execCtx.reqCtx, dataBranchMergePickTxnErrorInfo())
- 	}
-@@ -1331,6 +1334,7 @@ func getTableStuff(
- 	var tarTblDef *plan.TableDef
- 
- 	if tblStuff.tarRel, tblStuff.baseRel, tblStuff.tarSnap, tblStuff.baseSnap,
-+		tblStuff.tarRelSnapshot, tblStuff.baseRelSnapshot,
- 		tblStuff.tarOperand, tblStuff.baseOperand, err = getRelations(
- 		ctx, ses, bh, srcTable, dstTable,
- 	); err != nil {
-@@ -1424,6 +1428,24 @@ func reconcileDataBranchEndpointSchema(
- 		resolveBaseColumn = func(tarCol *plan.ColDef) *plan.ColDef {
- 			return dataBranchEndpointColumnDef(baseDef, tarCol)
- 		}
-+		tarSP, baseSP := tables.resolvedSnapshots(ses)
-+		baseAnchorsProbe := baseSP.LT(&tarSP)
-+		tables.def.lcaColNames = make([]string, len(tables.def.colNames))
-+		idx := -1
-+		for _, tarCol := range tarDef.Cols {
-+			if tarCol.Name == catalog.Row_ID {
-+				continue
-+			}
-+			idx++
-+			baseCol := resolveBaseColumn(tarCol)
-+			if baseCol == nil {
-+				continue
-+			}
-+			tables.def.lcaColNames[idx] = tarCol.Name
-+			if baseAnchorsProbe {
-+				tables.def.lcaColNames[idx] = baseCol.Name
-+			}
-+		}
- 	} else if dagInfo.hasLCA() {
- 		tarSP, baseSP := tables.resolvedSnapshots(ses)
- 		tarIdent, baseIdent := tables.endpointIdentities(ctx, ses)
-@@ -1450,29 +1472,48 @@ func reconcileDataBranchEndpointSchema(
- 		if err != nil {
- 			return err
- 		}
--		tables.def.lcaColNames = make([]string, len(tables.def.colNames))
--		tarDataIdx := -1
-+		resolveBaseColumn = func(tarCol *plan.ColDef) *plan.ColDef {
-+			if baseCol := endpointColumns[strings.ToLower(tarCol.Name)]; baseCol != nil {
-+				return baseCol
-+			}
-+			if !isDataBranchUserVisibleColumn(tarCol) {
-+				return dataBranchColumnDefByLogicalName(baseDef, tarCol)
-+			}
-+			return nil
-+		}
-+		tables.def.tarLCAColNames = make([]string, len(tables.def.colNames))
-+		tables.def.baseLCAColNames = make([]string, len(tables.def.colNames))
-+		idx := -1
- 		for _, tarCol := range tarDef.Cols {
- 			if tarCol.Name == catalog.Row_ID {
- 				continue
- 			}
--			tarDataIdx++
--			reachesLCA, lcaCol, redefined := dataBranchColumnReachesLCA(
-+			idx++
-+			reaches, tarLCACol, tarForkCol, redefined := dataBranchColumnAtFork(
- 				tarDefs, dagInfo.pathFromLCAToTarLineageOnly, tarCol,
- 			)
--			if !reachesLCA || redefined || lcaCol == nil {
-+			if !reaches || redefined || tarLCACol == nil {
- 				continue
- 			}
--			tables.def.lcaColNames[tarDataIdx] = lcaCol.Name
--		}
--		resolveBaseColumn = func(tarCol *plan.ColDef) *plan.ColDef {
--			if baseCol := endpointColumns[strings.ToLower(tarCol.Name)]; baseCol != nil {
--				return baseCol
-+			tables.def.tarLCAColNames[idx] = tarLCACol.Name
-+			if tarForkCol != nil {
-+				tables.def.tarLCAColNames[idx] = tarForkCol.Name
- 			}
--			if !isDataBranchUserVisibleColumn(tarCol) {
--				return dataBranchColumnDefByLogicalName(baseDef, tarCol)
-+			// Keep the target's lineage name as a default when the base has no
-+			// lineage match, as in the shared probe layout.
-+			tables.def.baseLCAColNames[idx] = tables.def.tarLCAColNames[idx]
-+			if reaches, _, baseForkCol, redefined := dataBranchColumnAtFork(
-+				baseDefs, dagInfo.pathFromLCAToBaseLineageOnly, resolveBaseColumn(tarCol),
-+			); reaches && !redefined && baseForkCol != nil {
-+				tables.def.baseLCAColNames[idx] = baseForkCol.Name
- 			}
--			return nil
-+		}
-+		// The earlier anchor observes the shared LCA generation. Sibling PICK
-+		// selects each side's fork names separately.
-+		tarAnchor, baseAnchor, _ := dagInfo.lcaProbeAnchors(tarSP, baseSP)
-+		tables.def.lcaColNames = tables.def.tarLCAColNames
-+		if baseAnchor.LT(&tarAnchor) {
-+			tables.def.lcaColNames = tables.def.baseLCAColNames
- 		}
- 	}
- 
-@@ -1586,16 +1627,23 @@ func diffOnBase(
- 
- 	if dagInfo.hasLCA() {
- 		tarSp, baseSp := tblStuff.resolvedSnapshots(ses)
-+		tarRelSp, baseRelSp := tblStuff.resolvedRelSnapshots(ses)
- 		lcaProbe := dagInfo.lcaProbeSnapshot(tarSp, baseSp)
- 		tarIdent, baseIdent := tblStuff.endpointIdentities(ctx, ses)
- 		lcaCandidates := dedupeBranchIdentities(tarIdent, baseIdent)
-+		tarID := tblStuff.tarRel.GetTableID(ctx)
-+		baseID := tblStuff.baseRel.GetTableID(ctx)
- 		var lcaWinner branchIdentity
--		switch dagInfo.lcaTableId {
--		case tblStuff.tarRel.GetTableID(ctx):
-+		// When both operands are the LCA table, use the handle at the
-+		// earlier observation so the fallback sees that snapshot's schema.
-+		switch {
-+		case dagInfo.lcaTableId == tarID && (tarID != baseID || !baseSp.LT(&tarSp)):
- 			tblStuff.lcaRel = tblStuff.tarRel
-+			tblStuff.lcaRelSnapshot = tarRelSp
- 			lcaWinner = tarIdent
--		case tblStuff.baseRel.GetTableID(ctx):
-+		case dagInfo.lcaTableId == baseID:
- 			tblStuff.lcaRel = tblStuff.baseRel
-+			tblStuff.lcaRelSnapshot = baseRelSp
- 		
-```
-
-**File**: `pkg/frontend/data_branch_hashdiff.go` (modified, +152/-84)
-```diff
-@@ -126,18 +126,21 @@ func lcaProbeResultTargetIndexes(
- 	return append([]int(nil), layout.targetIdxes...), nil
- }
- 
--// lcaProbeColumnLayout selects compatible common columns from the LCA and
-+// buildLCAProbeColumnLayout selects compatible common columns from the LCA and
- // target layouts. The caller reconstructs target-only columns as NULL because
- // they are excluded from endpoint comparison and MERGE apply even when an
- // ancestor generation still contains an older representation of the column.
--func lcaProbeColumnLayout(
--	lcaDef *plan2.TableDef,
--	targetDef *plan2.TableDef,
-+func buildLCAProbeColumnLayout(
-+	lcaDef, targetDef *plan2.TableDef,
- 	targetColNames []string,
- 	targetColTypes []types.Type,
- 	targetOnlyIdxes []int,
- 	lcaColNames []string,
-+	resolvedSnapshot bool,
- ) (lcaProbeLayout, error) {
-+	if lcaDef == nil {
-+		return lcaProbeLayout{}, moerr.NewInternalErrorNoCtx("DATA BRANCH LCA table definition is unavailable")
-+	}
- 	targetOnly := make(map[int]struct{}, len(targetOnlyIdxes))
- 	for _, idx := range targetOnlyIdxes {
- 		targetOnly[idx] = struct{}{}
-@@ -205,7 +208,7 @@ func lcaProbeColumnLayout(
- 		if lcaCol == nil {
- 			continue
- 		}
--		if lcaAttrName == "" {
-+		if resolvedSnapshot || lcaAttrName == "" {
- 			lcaAttrName = lcaCol.Name
- 		}
- 		derivedCompositePK := isDataBranchDerivedCompositePKColumn(
-@@ -227,6 +230,41 @@ func lcaProbeColumnLayout(
- 	return layout, nil
- }
- 
-+func lcaProbeTableDefAtSnapshot(
-+	ctx context.Context, ses *Session, tblStuff tableStuff, snapshotTS types.TS,
-+) (rel engine.Relation, def *plan2.TableDef, sqlReady bool, err error) {
-+	scanCtx := identityCtx(ctx, tblStuff.resolvedLCAIdentity(ctx, ses))
-+	var lookupErr error
-+	if handler := ses.GetTxnHandler(); handler != nil {
-+		storage, txnOp := handler.GetStorage(), handler.GetTxn()
-+		if storage != nil && txnOp != nil {
-+			if !snapshotTS.IsEmpty() {
-+				txnOp = txnOp.CloneSnapshotOp(snapshotTS.ToTimestamp())
-+			}
-+			_, _, snapshotRel, lookupErrAtSnapshot := storage.GetRelationById(scanCtx, txnOp, tblStuff.lcaProbeTableID(scanCtx))
-+			lookupErr = lookupErrAtSnapshot
-+			if lookupErr == nil && snapshotRel != nil {
-+				if snapshotDef := snapshotRel.GetTableDef(scanCtx); snapshotDef != nil {
-+					return snapshotRel, snapshotDef, true, nil
-+				}
-+			}
-+		}
-+	}
-+	// A relation already opened at this exact snapshot can feed the reader.
-+	// Only a successful historical lookup enables the SQL path.
-+	if fallbackRel := tblStuff.lcaFallbackRangeRel(snapshotTS); fallbackRel != nil {
-+		if def := fallbackRel.GetTableDef(scanCtx); def != nil {
-+			return fallbackRel, def, false, nil
-+		}
-+	}
-+	if lookupErr != nil {
-+		return nil, nil, false, lookupErr
-+	}
-+	return nil, nil, false, moerr.NewInternalErrorNoCtxf(
-+		"DATA BRANCH LCA table definition is unavailable at snapshot %s", snapshotTS.ToString(),
-+	)
-+}
-+
- // should read the LCA table to get all column values.
- func handleDelsOnLCA(
- 	ctx context.Context,
-@@ -244,9 +282,8 @@ func handleDelsOnLCA(
- 	var (
- 		sqlRet           executor.Result
- 		fullTargetLayout bool
--
--		lcaTblDef    = tblStuff.lcaRel.GetTableDef(ctx)
--		targetTblDef = tblStuff.tarRel.GetTableDef(ctx)
-+		lcaLayout        lcaProbeLayout
-+		lcaTableName     string
- 
- 		colTypes        = tblStuff.def.colTypes
- 		probePKColIdxes = tblStuff.def.pkColIdxes
-@@ -259,14 +296,6 @@ func handleDelsOnLCA(
- 		// column rather than from the first visible column.
- 		probePKColIdxes = []int{tblStuff.def.pkColIdx}
- 	}
--	lcaLayout, err := lcaProbeColumnLayout(
--		lcaTblDef, targetTblDef, tblStuff.def.colNames, tblStuff.def.colTypes,
--		tblStuff.def.tarOnlyIdxes, tblStuff.def.lcaColNames,
--	)
--	if err != nil {
--		return nil, err
--	}
--
- 	// The SQL probe resolves db.table by name under the statement account.
- 	// A lineage node owned by another account (design §6.4, e.g. reopened
- 	// under a subscription source owner) would resolve that name to a
-@@ -275,13 +304,32 @@ func handleDelsOnLCA(
- 	lcaOwnerMismatch := tblStuff.resolvedLCAIdentity(ctx, ses).account != ses.GetAccountId()
- 	forceReaderProbe := lcaOwnerMismatch ||
- 		(tblStuff.lcaReaderProbeMode != nil && tblStuff.lcaReaderProbeMode.Load())
--	if forceReaderProbe {
--		sqlRet, err = runLCAProbeWithReaderFallback(ctx, ses, tBat, tblStuff, snapshotTS)
-+	var lcaSnapshotRel engine.Relation
-+	var lcaTblDef *plan2.TableDef
-+	var sqlReady bool
-+	if !forceReaderProbe {
-+		lcaSnapshotRel, lcaTblDef, sqlReady, err = lcaProbeTableDefAtSnapshot(ctx, ses, tblStuff, snapshotTS)
-+		if err != nil {
-+			return nil, err
-+		}
-+	}
-+	if !sqlReady {
-+		sqlRet, err = runLCAProbeWithReaderFallbackWithPreopened(
-+			ctx, ses, tBat, tblStuff, snapshotTS, lcaSnapshotRel, lcaTblDef,
-+		)
- 		if err != nil {
- 			return nil, err
- 		}
- 		fullTargetLayout = true
- 	} else {
-+		lcaLayout, err = buildLCAProbeColumnLayout(
-+			lcaTblDef, tblStuff.tarRel.GetTableDef(ctx), tblStuff.def.colNames, tblStuff.def.colTypes,
-+			tblStuff.def.tarOnlyIdxes, tblStuff.def.lcaColNames, true,
-+		)
-+		if err != n
-```
-
-**File**: `pkg/frontend/data_branch_hashdiff_test.go` (modified, +619/-23)
-```diff
-@@ -1034,16 +1034,17 @@ func TestRunLCAProbeWithReaderFallback_PrepareAndPropagateReaderError(t *testing
- 
- 	txnOp := mock_frontend.NewMockTxnOperator(ctrl)
- 	txnOp.EXPECT().SnapshotTS().Return(types.BuildTS(10, 0).ToTimestamp()).AnyTimes()
--	txnOp.EXPECT().CloneSnapshotOp(gomock.Any()).Return(txnOp).Times(1)
-+	txnOp.EXPECT().CloneSnapshotOp(types.BuildTS(10, 0).ToTimestamp()).Return(txnOp)
- 
- 	eng := mock_frontend.NewMockEngine(ctrl)
- 	rangeRel := mock_frontend.NewMockRelation(ctrl)
-+	lcaDef := newTestBranchTableDef("lca_tbl", "name")
-+	rangeRel.EXPECT().GetTableDef(gomock.Any()).Return(lcaDef).Times(2)
- 	rangeRel.EXPECT().Ranges(gomock.Any(), gomock.Any()).
- 		Return(readutil.NewBlockListRelationData(0), nil).
- 		Times(1)
- 	eng.EXPECT().GetRelationById(gomock.Any(), txnOp, uint64(77)).
--		Return("db1", "lca_tbl", rangeRel, nil).
--		Times(1)
-+		Return("db1", "lca_tbl", rangeRel, nil)
- 
- 	ses.txnHandler = &TxnHandler{
- 		storage: eng,
-@@ -1052,7 +1053,6 @@ func TestRunLCAProbeWithReaderFallback_PrepareAndPropagateReaderError(t *testing
- 
- 	tblStuff := newTestBranchTableStuff(ctrl)
- 	tblStuff.lcaRel = mock_frontend.NewMockRelation(ctrl)
--	lcaDef := newTestBranchTableDef("lca_tbl", "name")
- 	tblStuff.lcaRel.(*mock_frontend.MockRelation).EXPECT().GetTableDef(gomock.Any()).Return(lcaDef).AnyTimes()
- 	tblStuff.lcaRel.(*mock_frontend.MockRelation).EXPECT().GetTableID(gomock.Any()).Return(uint64(77)).AnyTimes()
- 
-@@ -1075,6 +1075,67 @@ func TestRunLCAProbeWithReaderFallback_PrepareAndPropagateReaderError(t *testing
- 	ret.Close()
- }
- 
-+func TestLCAProbeReaderFallbackRequiresSnapshotMatchedRange(t *testing.T) {
-+	fork := types.BuildTS(10, 2)
-+	for _, tc := range []struct {
-+		name                 string
-+		openedAt             types.TS
-+		definitionLookupHits bool
-+	}{
-+		{name: "live ancestor endpoint", openedAt: types.BuildTS(20, 0)},
-+		{name: "earlier sibling fork", openedAt: types.BuildTS(10, 1)},
-+		{name: "reuse relation opened at the fork", openedAt: types.BuildTS(20, 0), definitionLookupHits: true},
-+		{name: "matching historical relation", openedAt: fork},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx := context.Background()
-+			ctrl := gomock.NewController(t)
-+			ses := newValidateSession(t)
-+			tables := newTestBranchTableStuff(ctrl)
-+			lcaRel := mock_frontend.NewMockRelation(ctrl)
-+			lcaRel.EXPECT().GetTableID(gomock.Any()).Return(uint64(77)).AnyTimes()
-+			tables.lcaRel = lcaRel
-+			tables.lcaRelSnapshot = tc.openedAt
-+			lcaDef := newTestBranchTableDef("lca_tbl", "name")
-+
-+			txnOp := mock_frontend.NewMockTxnOperator(ctrl)
-+			probeTxn := mock_frontend.NewMockTxnOperator(ctrl)
-+			txnOp.EXPECT().CloneSnapshotOp(fork.ToTimestamp()).Return(probeTxn)
-+			eng := mock_frontend.NewMockEngine(ctrl)
-+			lookupErr := moerr.NewInternalErrorNoCtx("cannot reopen historical relation")
-+			wantErr := lookupErr
-+			var rangeRel *mock_frontend.MockRelation
-+			switch {
-+			case tc.definitionLookupHits:
-+				snapshotRel := mock_frontend.NewMockRelation(ctrl)
-+				eng.EXPECT().GetRelationById(gomock.Any(), probeTxn, uint64(77)).
-+					Return("db1", "lca_tbl", snapshotRel, nil)
-+				rangeRel = snapshotRel
-+			case tc.openedAt == fork:
-+				eng.EXPECT().GetRelationById(gomock.Any(), probeTxn, uint64(77)).
-+					Return("", "", nil, lookupErr)
-+				rangeRel = lcaRel
-+			default:
-+				eng.EXPECT().GetRelationById(gomock.Any(), probeTxn, uint64(77)).
-+					Return("", "", nil, lookupErr)
-+			}
-+			ses.txnHandler = &TxnHandler{storage: eng, txnOp: txnOp}
-+
-+			if rangeRel != nil {
-+				rangeRel.EXPECT().GetTableDef(gomock.Any()).Return(lcaDef).Times(2)
-+				wantErr = moerr.NewInternalErrorNoCtx("historical ranges reached")
-+				rangeRel.EXPECT().Ranges(gomock.Any(), gomock.Any()).Return(nil, wantErr)
-+			}
-+			// A mismatched relation has no expectations for GetTableDef or Ranges.
-+			tombstones := buildIntDataBatch(t, ses.proc.Mp(), []string{"id"}, tables.def.colTypes[:1], [][]any{{int64(1)}})
-+			defer tombstones.Clean(ses.proc.Mp())
-+			ret, err := runLCAProbeWithReaderFallback(ctx, ses, tombstones, tables, fork)
-+			defer ret.Close()
-+			require.ErrorIs(t, err, wantErr)
-+		})
++	for _, p := range pkgs {
++		fmt.Fprintf(w, "  %4d  %s\n", bigByPkg[p], p)
 +	}
 +}
-+
- func TestRunLCAProbeWithReaderFallback_AllHitsPreserveInputOrder(t *testing.T) {
- 	ctx := context.Background()
- 	ses := newValidateSession(t)
-@@ -1085,14 +1146,15 @@ func TestRunLCAProbeWithReaderFallback_AllHitsPreserveInputOrder(t *testing.T) {
- 	lcaRel.EXPECT().GetTableDef(gomock.Any()).Return(newTestBranchTableDef("lca_tbl", "name"))
- 	lcaRel.EXPECT().GetTableID(gomock.Any()).Return(uint64(77)).AnyTimes()
- 	tblStuff.lcaRel = lcaRel
-+	tblStuff.lcaRelSnapshot = types.BuildTS(10, 0)
- 
- 	keys := batch.NewWithSize(1)
- 	defer keys.Clean(mp)
- 	keys.Vecs[0] = vector.NewVec(types.T_int64.ToType(), mp)
- 	require.NoError(t, vector.AppendFixedList(keys.Vecs[0], []int64{20, 10}, nil, mp))
- 	keys.SetRowCount(2)
- 
--	stub := gostub.Stub(&scanSnapshotRelationByIDWithFallback, func(
-+	stub := gostub.Stub(&scanSnapshotRelationWithPreopened, func(
 ```
 
-**File**: `pkg/frontend/data_branch_helpers.go` (modified, +40/-31)
+**File**: `optools/oidscan/scan.go` (added, +290/-0)
 ```diff
-@@ -36,6 +36,7 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/container/types"
- 	"github.com/matrixorigin/matrixone/pkg/container/vector"
- 	"github.com/matrixorigin/matrixone/pkg/logutil"
-+	"github.com/matrixorigin/matrixone/pkg/objectio"
- 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
- 	"github.com/matrixorigin/matrixone/pkg/util/executor"
- 	"github.com/matrixorigin/matrixone/pkg/vm/engine"
-@@ -361,29 +362,28 @@ func scanSnapshotRelationByID(
- 	scanParallelism int,
- 	onBatch func(*batch.Batch) error,
- ) error {
--	return scanSnapshotRelationByIDWithFallback(
-+	return scanSnapshotRelationWithPreopened(
- 		ctx, caller, ses, tableID, snapshotTS, nil,
- 		attrs, colTypes, filterExpr, scanParallelism, onBatch,
- 	)
- }
- 
--// scanSnapshotRelationByIDWithFallback prefers current-view ranges, but can
--// fall back to a relation that was already opened at snapshotTS. ALTER drops
--// replaced physical generations from the current catalog, while bounded data
--// branch operations may still need to hydrate rows from such a generation.
-+// scanSnapshotRelationWithPreopened uses a relation already resolved by the
-+// caller for the requested table ID, owner, and exact snapshot. Without one,
-+// it opens the relation by ID at that snapshot.
- //
- // It is a var so unit tests can substitute a deterministic blocked reader
- // (the reopenDataBranchRelationByID precedent) and prove cancellation and
- // owner routing through the LCA scan without a storage engine.
--var scanSnapshotRelationByIDWithFallback = scanSnapshotRelationByIDWithFallbackImpl
-+var scanSnapshotRelationWithPreopened = scanSnapshotRelationWithPreopenedImpl
- 
--func scanSnapshotRelationByIDWithFallbackImpl(
-+func scanSnapshotRelationWithPreopenedImpl(
- 	ctx context.Context,
- 	caller string,
- 	ses *Session,
- 	tableID uint64,
- 	snapshotTS types.TS,
--	fallbackRangeRel engine.Relation,
-+	preopenedRel engine.Relation,
- 	attrs []string,
- 	colTypes []types.Type,
- 	filterExpr *plan.Expr,
-@@ -401,13 +401,29 @@ func scanSnapshotRelationByIDWithFallbackImpl(
- 		)
- 	}
- 
--	storage := ses.GetTxnHandler().GetStorage()
--	baseTxnOp := ses.GetTxnHandler().GetTxn()
--	rangeTxnOp := baseTxnOp
--	if !snapshotTS.IsEmpty() {
--		rangeTxnOp = baseTxnOp.CloneSnapshotOp(snapshotTS.ToTimestamp())
-+	if err := ctx.Err(); err != nil {
-+		return err
-+	}
-+	rangeRel, rangeTS := preopenedRel, snapshotTS
-+	if rangeRel == nil {
-+		handler := ses.GetTxnHandler()
-+		rangeTxnOp := handler.GetTxn()
-+		if !snapshotTS.IsEmpty() {
-+			rangeTxnOp = rangeTxnOp.CloneSnapshotOp(snapshotTS.ToTimestamp())
-+		}
-+		rangeTS = types.TimestampToTS(rangeTxnOp.SnapshotTS())
-+		var err error
-+		_, _, rangeRel, err = handler.GetStorage().GetRelationById(ctx, rangeTxnOp, tableID)
+@@ -0,0 +1,290 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package main
++
++import (
++	"bytes"
++	"go/ast"
++	"go/parser"
++	"go/printer"
++	"go/token"
++	"io/fs"
++	"path/filepath"
++	"sort"
++	"strings"
++)
++
++// Switch is one switch statement that dispatches on a type id: at least one of
++// its case expressions names a T_* constant.
++type Switch struct {
++	File string // slash-separated, relative to the scan root
++	Line int
++	Func string // enclosing function or method declaration
++
++	// Oids is the number of distinct T_* constants its cases name.
++	Oids       int
++	HasDefault bool
++
++	// Loops are the for/range statements around the switch inside the same
++	// function body, innermost first, as one-line source headers. Loops
++	// outside a function literal that holds the switch are not included.
++	Loops []string
++
++	// Invariant reports that the switch is inside a loop and its tag (for a
++	// tagless switch, its case expressions) uses no variable that the
++	// innermost loop declares or assigns, so the switch can move out of the
++	// loop. It is a syntactic check: a call in the tag is assumed to return
++	// the same result on every iteration.
++	Invariant bool
++}
++
++// Scan parses every non-test .go file under root/pkg (skipping testdata and
++// vendor directories) and returns its type-id switches, ordered by file and
++// line.
++func Scan(root string) ([]Switch, error) {
++	var out []Switch
++	fset := token.NewFileSet()
++	base := filepath.Join(root, "pkg")
++	err := filepath.WalkDir(base, func(path string, d fs.DirEntry, err error) error {
 +		if err != nil {
 +			return err
 +		}
-+		if rangeRel == nil {
-+			return moerr.NewInternalErrorNoCtxf(
-+				"scanSnapshotRelationByID: cannot resolve range relation by id %d at snapshot %s",
-+				tableID, rangeTS.ToString(),
-+			)
++		if d.IsDir() {
++			if n := d.Name(); n == "testdata" || n == "vendor" {
++				return filepath.SkipDir
++			}
++			return nil
 +		}
- 	}
--	rangeTS := types.TimestampToTS(rangeTxnOp.SnapshotTS())
- 	logutil.Info(
- 		"DataBranch-SnapshotScan-Start",
- 		zap.String("caller", caller),
-@@ -419,26 +435,19 @@ func scanSnapshotRelationByIDWithFallbackImpl(
- 		zap.Int("scan-parallelism", scanParallelism),
- 	)
- 
--	_, _, rangeRel, resolveErr := storage.GetRelationById(ctx, rangeTxnOp, tableID)
--	if resolveErr != nil || rangeRel == nil {
--		if fallbackRangeRel == nil {
--			if resolveErr != nil {
--				return resolveErr
--			}
-+	rangeDef := rangeRel.GetTableDef(ctx)
-+	for _, attr := range attrs {
-+		name := strings.ToLower(attr)
-+		// The snapshot reader assigns reserved sequence numbers to these attributes.
-+		if objectio.IsPhysicalAddr(name) || name == objectio.DefaultCommitTS_Attr {
++		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
++			return nil
++		}
++		f, err := parser.ParseFile(fset, path, nil, parser.SkipObjectResolution)
++		if err != nil {
++			return err
++		}
++		rel, err := filepath.Rel(root, path)
++		if err != nil {
++			return err
++		}
++		out = append(out, scanFile(fset, filepath.ToSlash(rel), f)...)
++		return nil
++	})
++	sort.Slice(out, func(i, j int) bool {
++		if out[i].File != out[j].File {
++			return out[i].File < out[j].File
++		}
++		return out[i].Line < out[j].Line
++	})
++	return out, err
++}
++
++func scanFile(fset *token.FileSet, rel string, f *ast.File) []Switch {
++	var out []Switch
++	for _, decl := range f.Decls {
++		fd, ok := decl.(*ast.FuncDecl)
++		if !ok || fd.Body == nil {
 +			continue
 +		}
-+		if rangeDef == nil || dataBranchColumnDefByName(rangeDef, name) == nil {
- 			return moerr.NewInternalErrorNoCtxf(
--				"scanSnapshotRelationByID: cannot resolve range relation by id %d at snapshot %s",
--				tableID, rangeTS.ToString(),
-+				"scanSnapshotRelationByID: column %q is unavailable for table %d at snapshot %s",
-+				attr, tableID, snapshotTS.ToString(),
- 			)
- 		}
--		logutil.Info(
--			"DataBranch-SnapshotScan-HistoricalRangeFallback",
--			zap.String("caller", caller),
--			zap.Uint64("table-id", tableID),
--			zap.String("snapshot-ts", snapshotTS.ToString()),
--			zap.Error(resolveErr),
--		)
--		rangeRel = fallbackRangeRel
--		rangeTS = snapshotTS
- 	}
- 
- 	rangesParam := engine.DefaultRangesParam
++		var stack []ast.Node
++		ast.Inspect(fd.Body, func(n ast.Node) bool {
++			if n == nil {
++				stack = stack[:len(stack)-1]
++				return true
++			}
++			stack = append(stack, n)
++			sw, ok := n.(*ast.SwitchStmt)
++			if !ok {
++				return true
++			}
++			oids, hasDefault := caseOids(sw)
++			if oids == 0 {
++				return true
++			}
++			s := Switch{
++				File:       rel,
++				Line:       fset.Position(sw.Pos()).Line,
++				Func:       fd.Name.Name,
++				Oids:       oids,
++				HasDefault: hasDefault,
++			}
++			var innermost ast.Node
++		outer:
++			for i := len(stack) - 2; i >= 0; i-- {
++				switch l := stack[i].(type) {
++				case *ast.FuncLit:
++					break outer
++				case *ast.ForStmt, *ast.RangeStmt:
++					if innermost == nil {
++						innermost = l
++					}
++					s.Loops = append(s.Loops, loopHeader(fset, l))
++				}
++			}
++			if innermost != nil {
++				s.Invariant = !usesAny(switchSubject(sw), loopAssigned(innermost, sw))
++			}
++			out = append(out, s)
++			return true
++		})
++	}
++	return out
++}
++
++// caseOids counts the distinct T_* names in sw's case expressions.
++func caseOids(sw *ast.SwitchStmt) (n int, hasDefault bool) {
++	seen := map[string]bool{}
++	for _, st := range sw.Body.List {
++		cc := st.(*ast.CaseClause)
++		if cc.List == nil {
++			hasDefault = true
++		}
++		for _, e := range cc.List {
++			ast.Inspect(e, func(m ast.Node) bool {
++				var name string
++				switch x := m.(type) {
++				case *ast.SelectorExpr:
++					name = x.Sel.Name
++				case *ast.Ident:
++					name = x.Name
++				}
++				if strings.HasPrefix(name, "T_") {
++					seen[name] = true
++				}
++				return true
++			})
++		}
++	}
++	return len(seen), hasDefault
++}
++
++// switchSubject is what decides the branch: the tag, plus the init statement,
++// or the case expressions of a tagless switch.
++func switchSubject(sw *ast.SwitchStmt) []ast.Node {
++	var nodes []ast.Node
++	if sw.Init != nil {
++		nodes = append(nodes, sw.Init)
++	}
++	if sw.Tag != nil {
++		return append(node
 ```
 
-**File**: `pkg/frontend/data_branch_helpers_test.go` (modified, +32/-10)
+**File**: `optools/oidscan/scan_test.go` (added, +198/-0)
 ```diff
-@@ -245,7 +245,7 @@ func TestRunSQL_DataBranchUserIdentifiersUseInternalExec(t *testing.T) {
- 	}
- }
- 
--func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
-+func TestDataBranchScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
- 	ses := newValidateSession(t)
- 
- 	t.Run("empty attrs returns nil", func(t *testing.T) {
-@@ -315,21 +315,17 @@ func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
- 		require.ErrorIs(t, err, wantErr)
- 	})
- 
--	t.Run("uses historical fallback when current relation is gone", func(t *testing.T) {
-+	t.Run("uses preopened historical relation without a lookup", func(t *testing.T) {
- 		ctrl := gomock.NewController(t)
- 		defer ctrl.Finish()
- 
- 		txnOp := mock_frontend.NewMockTxnOperator(ctrl)
--		txnOp.EXPECT().SnapshotTS().Return(types.BuildTS(10, 0).ToTimestamp()).AnyTimes()
--		txnOp.EXPECT().CloneSnapshotOp(gomock.Any()).Return(txnOp).Times(1)
--
--		currentLookupErr := moerr.NewInternalErrorNoCtx("can not find table by id 7")
- 		eng := mock_frontend.NewMockEngine(ctrl)
--		eng.EXPECT().GetRelationById(gomock.Any(), txnOp, uint64(7)).
--			Return("", "", nil, currentLookupErr).
--			Times(1)
- 
- 		historicalRel := mock_frontend.NewMockRelation(ctrl)
-+		historicalRel.EXPECT().GetTableDef(gomock.Any()).Return(&planpb.TableDef{
-+			Cols: []*planpb.ColDef{{Name: "id"}},
-+		})
- 		wantErr := moerr.NewInternalErrorNoCtx("historical ranges reached")
- 		historicalRel.EXPECT().Ranges(gomock.Any(), gomock.Any()).
- 			Return(nil, wantErr).
-@@ -340,7 +336,7 @@ func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
- 			txnOp:   txnOp,
- 		}
- 
--		err := scanSnapshotRelationByIDWithFallback(
-+		err := scanSnapshotRelationWithPreopened(
- 			context.Background(),
- 			"unit-test",
- 			ses,
-@@ -390,6 +386,29 @@ func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
- 		require.Contains(t, err.Error(), "cannot resolve range relation")
- 	})
- 
-+	t.Run("rejects a renamed column before opening ranges", func(t *testing.T) {
-+		ctrl := gomock.NewController(t)
-+		snapshot := types.BuildTS(20, 2)
-+		txnOp := mock_frontend.NewMockTxnOperator(ctrl)
-+		txnOp.EXPECT().SnapshotTS().Return(snapshot.ToTimestamp())
-+		txnOp.EXPECT().CloneSnapshotOp(snapshot.ToTimestamp()).Return(txnOp)
-+		rangeRel := mock_frontend.NewMockRelation(ctrl)
-+		rangeRel.EXPECT().GetTableDef(gomock.Any()).Return(&planpb.TableDef{
-+			Cols: []*planpb.ColDef{{Name: "id"}, {Name: "v"}},
-+		})
-+		eng := mock_frontend.NewMockEngine(ctrl)
-+		eng.EXPECT().GetRelationById(gomock.Any(), txnOp, uint64(7)).Return("db", "t0", rangeRel, nil)
-+		ses.txnHandler = &TxnHandler{storage: eng, txnOp: txnOp}
+@@ -0,0 +1,198 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+		err := scanSnapshotRelationByID(
-+			context.Background(), "lca-reader-fallback", ses, 7, snapshot,
-+			[]string{"id", "w"}, []types.Type{types.T_int64.ToType(), types.T_int64.ToType()},
-+			nil, 0, nil,
-+		)
-+		require.True(t, moerr.IsMoErrCode(err, moerr.ErrInternal))
-+		require.ErrorContains(t, err, `column "w" is unavailable for table 7 at snapshot 20-2`)
-+	})
++package main
 +
- 	t.Run("propagates ranges error", func(t *testing.T) {
- 		ctrl := gomock.NewController(t)
- 		defer ctrl.Finish()
-@@ -399,6 +418,9 @@ func TestScanSnapshotRelationByID_EarlyAndErrorPaths(t *testing.T) {
- 		txnOp.EXPECT().CloneSnapshotOp(gomock.Any()).Return(txnOp).Times(1)
- 
- 		rangeRel := mock_frontend.NewMockRelation(ctrl)
-+		rangeRel.EXPECT().GetTableDef(gomock.Any()).Return(&planpb.TableDef{
-+			Cols: []*planpb.ColDef{{Name: "id"}},
-+		})
- 		wantErr := moerr.NewInternalErrorNoCtx("ranges failed")
- 		rangeRel.EXPECT().Ranges(gomock.Any(), gomock.Any()).
- 			Return(nil, wantErr).
++import (
++	"bytes"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++const fixture = `package p
++
++import "types"
++
++func notInLoop(t types.T) {
++	switch t {
++	case types.T_int8, types.T_int16:
++	default:
++	}
++}
++
++func notATypeSwitch(x int) {
++	for i := 0; i < x; i++ {
++		switch x {
++		case 1:
++		}
++	}
++}
++
++// the type is fixed for the loop: invariant
++func perRowInvariant(vec *Vector) {
++	for row := 0; row < vec.Length(); row++ {
++		switch vec.GetType().Oid {
++		case types.T_date:
++		case types.T_datetime:
++		}
++	}
++}
++
++// the switch subject changes per iteration: not invariant
++func perColumn(vecs []*Vector) {
++	for _, vec := range vecs {
++		switch vec.GetType().Oid {
++		case types.T_int32:
++		}
++	}
++}
++
++// assigned in the loop body: not invariant
++func assignedInBody(vecs []*Vector) {
++	var typ types.T
++	for i := range vecs {
++		typ = vecs[i].GetType().Oid
++		switch typ {
++		case types.T_int32:
++		}
++	}
++}
++
++// the switch's own init does not make it variant
++func ownInit(vec *Vector, n int) {
++	for i := 0; i < n; i++ {
++		switch t := vec.GetType().Oid; t {
++		case types.T_int32, types.T_int64:
++		}
++	}
++}
++
++// tagless: the case expressions decide
++func tagless(vecs []*Vector) {
++	for _, v := range vecs {
++		switch {
++		case v.GetType().Oid == types.T_json:
++		}
++	}
++}
++
++// a closure is a function boundary: the outer loop is not reported
++func closure(vecs []*Vector) {
++	for range vecs {
++		f := func(t types.T) {
++			switch t {
++			case types.T_bool:
++			}
++		}
++		_ = f
++	}
++}
++`
++
++func writeFixture(t *testing.T) string {
++	t.Helper()
++	root := t.TempDir()
++	dir := filepath.Join(root, "pkg", "p")
++	for _, d := range []string{dir, filepath.Join(dir, "testdata")} {
++		if err := os.MkdirAll(d, 0o755); err != nil {
++			t.Fatal(err)
++		}
++	}
++	files := map[string]string{
++		filepath.Join(dir, "p.go"):             fixture,
++		filepath.Join(dir, "p_test.go"):        fixture,
++		filepath.Join(dir, "testdata", "x.go"): fixture,
++	}
++	for name, src := range files {
++		if err := os.WriteFile(name, []byte(src), 0o644); err != nil {
++			t.Fatal(err)
++		}
++	}
++	return root
++}
++
++func TestScan(t *testing.T) {
++	switches, err := Scan(writeFixture(t))
++	if err != nil {
++		t.Fatal(err)
++	}
++	type want struct {
++		oids       int
++		hasDefault bool
++		loops      int
++		invariant  bool
++	}
++	wants := map[string]want{
++		"notInLoop":       {2, true, 0, false},
++		"perRowInvariant": {2, false, 1, true},
++		"perColumn":       {1, false, 1, false},
++		"assignedInBody":  {1, false, 1, false},
++		"ownInit":         {2, false, 1, true},
++		"tagless":         {1, false, 1, false},
++		"closure":         {1, false, 0, false},
++	}
++	got := map[string]Switch{}
++	for _, s := range switches {
++		if s.File != "pkg/p/p.go" {
++			t.Errorf("scanned %s: test and testdata files must be skipped", s.File)
++		}
++		got[s.Func] = s
++	}
++	if len(got) != len(wants) {
++		t.Errorf("found switches in %d functions, want %d: %+v", len(got), len(wants), switches)
++	}
++	for fn, w := range wants {
++		s, ok := got[fn]
++		if !ok {
++			t.Errorf("%s: switch not found", fn)
++			continue
++		}
++		if s.Oids != w.oids || s.HasDefault != w.hasDefault || len(s.Loops) != w.loops || s.Invariant != w.invariant {
++			t.Errorf("%s: got oids=%d default=%v loops=%v invariant=%v, want %+v",
++				fn, s.Oids, s.HasDefault, s.Loops, s.Invariant, w)
++		}
++	}
++}
++
++func TestReports(t *testing.T) {
++	switches, err := Scan(writeFixture(t))
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	var b bytes.Buffer
++	writeSummary(&b, switches)
++	for _, line := range []string{
++		"type switches:            7",
++		"  with a default branch:  1",
++		"  inside a loop:          5",
++		"    loop-invariant type:  2",
++		"  1-3    7",
++	} {
++		if !strings.Contains(b.String(), line+"\n") {
++			t.Errorf("summary lacks %q:\n%s", line, b.String())
++		}
++	}
++
++	b.Reset()
++	writeLoops(&b, switches, true)
++	lines := strings.Split(strings.TrimSpace(b.String()), "\n")
++	if len(lines) != 2 ||
++		!strings.Contains(lines[0], "\tperRowInvariant\t2\tinvariant\tfor row < vec.Length()") ||
++		!strings.Contains(lines[1], "\townInit\t2\tinvariant\tfor i < n") {
++		t.Errorf("unexpected -loops -invariant output:\n%s", b.String())
++	}
++}
 ```
 
-**File**: `pkg/frontend/data_branch_owner_scoped_test.go` (modified, +9/-10)
+**File**: `pkg/container/types/testdata/typeswitch_baseline.txt` (modified, +0/-13)
 ```diff
-@@ -196,7 +196,7 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
- 		scannerRecovers
- 	)
- 	var mode scannerMode
--	stub := gostub.Stub(&scanSnapshotRelationByIDWithFallback,
-+	stub := gostub.Stub(&scanSnapshotRelationWithPreopened,
- 		func(
- 			scanCtx context.Context,
- 			_ string,
-@@ -218,6 +218,7 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
+@@ -25,8 +25,6 @@ pkg/common/hashmap/strhashmap.go	fillFlatFixedNullableStr	float	1
+ pkg/common/hashmap/strhashmap.go	fillNullableStr	float	1
+ pkg/container/arrowbridge/bind.go	validateLoadTargetType	float	1
+ pkg/container/types/types.go	GetArrayElementSize	vector	1
+-pkg/container/types/types.go	IsArrayRelate	vector chain	1
+-pkg/container/types/types.go	IsOrdered	float	1
+ pkg/container/vector/vector.go	InplaceSort	vector	1
+ pkg/container/vector/vector.go	InplaceSortAndCompact	vector	1
+ pkg/container/vector/vector.go	supportsInplaceSort	vector	1
+@@ -47,7 +45,6 @@ pkg/frontend/databranchutils/branch_hashmap.go	encodeValue	float	1
+ pkg/frontend/databranchutils/branch_hashmap.go	encodeValue	vector	1
+ pkg/frontend/mysql_cmd_executor.go	estimatePreparedCursorArrayCopyBytes	vector	1
+ pkg/frontend/user_var_migration.go	decodeUserDefinedVarValue	float	1
+-pkg/frontend/util.go	convertRowsIntoBatch	float	1
+ pkg/iscp/cuvs_writer.go	NewCuvsCdcWriter	vector	1
+ pkg/iscp/index_sqlwriter.go	NewHnswSqlWriter	vector	1
+ pkg/iscp/index_sqlwriter.go	toIvfflatUpsert	vector chain	1
+@@ -103,8 +100,6 @@ pkg/sql/colexec/aggexec/vardev2.go	makeVarStdDevExec	float	1
+ pkg/sql/colexec/aggexec/vector_matmul.go	VectorMatmulVecSupported	vector	1
+ pkg/sql/colexec/aggexec/vector_matmul.go	parseVectorMatmulConfig	vector	1
+ pkg/sql/colexec/dedup_key.go	FormatDedupKey	float chain	1
+-pkg/sql/colexec/deletion/types.go	getNonNullValue	float	1
+-pkg/sql/colexec/deletion/types.go	getNonNullValue	vector	1
+ pkg/sql/colexec/evalExpression.go	finiteVectorEndpoints	float	1
+ pkg/sql/colexec/evalExpression.go	finiteZoneMapEndpoints	float	1
+ pkg/sql/colexec/evalExpression.go	zoneMapInVectorOrderIsKnown	vector	1
+@@ -119,8 +114,6 @@ pkg/sql/colexec/fill/fill.go	setDecimal128Value	float chain	1
+ pkg/sql/colexec/fill/fill.go	setLinearInterpolatedValue	float	1
+ pkg/sql/colexec/fill/fill.go	setValue	float	1
+ pkg/sql/colexec/group/exec2.go	GetKeyWidth	vector chain	1
+-pkg/sql/colexec/group/helper.go	hllFloatAddStateSupported	float chain	1
+-pkg/sql/colexec/group/helper.go	hllVectorStateSupported	vector	1
+ pkg/sql/colexec/hashbuild/hashmap.go	hasNonReflexiveFloatKey	float chain	1
+ pkg/sql/colexec/hashbuild/hashmap.go	hasNonReflexiveFloatKey	vector chain	1
+ pkg/sql/colexec/lock_range.go	SupportsTotalLockTableRange	float	1
+@@ -137,16 +130,12 @@ pkg/sql/colexec/table_function/ivf_create.go	start	vector	1
+ pkg/sql/colexec/window/window.go	searchRightWithLocation	float	1
+ pkg/sql/colexec/window/window.go	validateRangeFrameBound	float	1
+ pkg/sql/compile/compile.go	evalAggOptimize	float	2
+-pkg/sql/compile/compile.go	hasLegacyFloatDistinctKeyWire	float chain	1
+-pkg/sql/compile/compile.go	isCanonicalFloatHLLAddType	float chain	1
+-pkg/sql/compile/compile.go	isCanonicalVectorHLLAddType	vector	1
+ pkg/sql/compile/fuzzyCheck.go	newFuzzyCheck	float chain	1
+ pkg/sql/compile/fuzzyCheck.go	vectorToString	float	1
+ pkg/sql/compile/fuzzyCheck.go	vectorToString	vector	1
+ pkg/sql/compile/operator.go	getPercentileConfigValue	float	1
+ pkg/sql/compile/remoterun.go	DecodeMergeGroup	float	1
+ pkg/sql/compile/remoterun.go	EncodeMergeGroup	float	1
+-pkg/sql/compile/remoterun.go	orderedSetPercentileDiscUsesExtendedType	float	1
+ pkg/sql/compile/sirius_batch.go	siriusElementSize	float	1
+ pkg/sql/iceberg/dml_matched_batch.go	dmlVectorValue	float	1
+ pkg/sql/mongodb/converter.go	appendValue	float	1
+@@ -203,10 +192,8 @@ pkg/sql/plan/function/func_binary.go	getCount	float	1
+ pkg/sql/plan/function/func_binary.go	makeExportSetBitsGetter	float	1
+ pkg/sql/plan/function/func_builtin.go	ToIntervalMicrosecond	float	1
+ pkg/sql/plan/function/func_builtin.go	internalNumericScale	float	1
+-pkg/sql/plan/function/func_builtin_json.go	preparedTextToJSONValueWithType	float	1
+ pkg/sql/plan/function/func_builtin_leastgreatest.go	greatestFn	float	1
+ pkg/sql/plan/function/func_builtin_leastgreatest.go	greatestFn	vector	1
+-pkg/sql/plan/function/func_builtin_leastgreatest.go	hasUnsupportedLeastGreatestMixedType	vector	1
+ pkg/sql/plan/function/func_builtin_leastgreatest.go	leastFn	float	1
+ pkg/sql/plan/function/func_builtin_leastgreatest.go	leastFn	vector	1
+ pkg/sql/plan/function/func_builtin_leastgreatest.go	leastGreatestExecutorSupportsOid	float	1
+```
+
+**File**: `pkg/container/types/traits.go` (added, +111/-0)
+```diff
+@@ -0,0 +1,111 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package types
++
++import (
++	"fmt"
++	"sort"
++)
++
++// Per-type facts live in one table, indexed by T, instead of in a switch per
++// fact. The rows are in traits_table.go: adding a T_ constant means adding a
++// row there, and TestTraitsCoverEveryOid fails until it is added. See
++// docs/design/20261126-type-vft.md.
++
++// traitFlags are the type families the T.IsXxx predicates report.
++type traitFlags uint16
++
++const (
++	flagSignedInt         traitFlags = 1 << iota // IsSignedInt: int8..int64 (not int128)
++	flagUnsignedInt                              // IsUnsignedInt: uint8..uint64 (not uint128)
++	flagFloat                                    // IsFloat: float32, float64 and the low-precision floats
++	flagLowPrecisionFloat                        // IsLowPrecisionFloat: bf16, float16, float8, float4
++	flagDecimal                                  // IsDecimal
++	flagDateRelate                               // IsDateRelate: date, time, datetime, timestamp, year
++	flagMySQLString                              // IsMySQLString: char, varchar, binary, varbinary, blob, text
++	flagArrayRelate                              // IsArrayRelate: fixed-element vector types
++	flagBlockScaledArray                         // IsBlockScaledArray: vecf8, vecf4
++	flagOrdered                                  // IsOrdered
++)
++
++// size is a size in bytes that a type may not have. The zero value is "no
++// size": a method asked for it panics, as for a type id with no row, so a row
++// that forgets a size fails loudly instead of reporting 0.
++type size struct {
++	n  int32
++	ok bool
++}
++
++func sz(n int32) size { return size{n: n, ok: true} }
++
++// defaultType is what T.TryToType returns. The zero value means TryToType
++// reports false.
++type defaultType struct {
++	size  int32
++	width int32
++	ok    bool
++}
++
++func def(size, width int32) defaultType { return defaultType{size: size, width: width, ok: true} }
++
++// typeTraits is one row of the table.
++type typeTraits struct {
++	flags traitFlags
++	// defined marks a row for a T_ constant; a T value with no row reads the
++	// zero row.
++	defined bool
++
++	typeLen  size // T.TypeLen
++	fixedLen size // T.FixedLength: negative for variable-length types
++	deflt    defaultType
++
++	name    string // T.String; "" reports "unexpected type: <n>"
++	oidName string // T.OidString; "" reports "unknown_type"
++}
++
++// traitRow is a typeTraits with the type id it belongs to, as written in
++// traits_table.go.
++type traitRow struct {
++	oid T
++	typeTraits
++}
++
++// traits holds a row for every T value; T is uint8, so indexing is never out
++// of range. Built by a package-level initializer, it is filled before any
++// init function or other package runs.
++var traits, allOids = buildTraits(traitRows)
++
++func buildTraits(rows []traitRow) (tbl [256]typeTraits, oids []T) {
++	for _, r := range rows {
++		if tbl[r.oid].defined {
++			panic(fmt.Sprintf("types: two traits rows for type id %d", r.oid))
++		}
++		tbl[r.oid] = r.typeTraits
++		tbl[r.oid].defined = true
++		oids = append(oids, r.oid)
++	}
++	sort.Slice(oids, func(i, j int) bool { return oids[i] < oids[j] })
++	return
++}
++
++// AllOids returns every type id that has a row in the traits table, in
++// ascending order: the T_ constants. The caller owns the returned slice.
++//
++// A table keyed by type id elsewhere can test its completeness against it.
++func AllOids() []T {
++	return append([]T(nil), allOids...)
++}
++
++func (t T) is(f traitFlags) bool { return traits[t].flags&f != 0 }
+```
+
+**File**: `pkg/container/types/traits_legacy_test.go` (added, +534/-0)
+```diff
+@@ -0,0 +1,534 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package types
++
++// The implementations of the T methods before they moved onto the traits
++// table (traits_table.go), kept verbatim as the oracle for
++// TestTraitsMatchLegacy. Delete this file once the table has been the only
++// implementation for a release.
++
++import (
++	"fmt"
++
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++)
++
++func legacyString(t T) string {
++	switch t {
++	case T_any:
++		return "ANY"
++	case T_bool:
++		return "BOOL"
++	case T_bit:
++		return "BIT"
++	case T_int8:
++		return "TINYINT"
++	case T_int16:
++		return "SMALLINT"
++	case T_int32:
++		return "INT"
++	case T_int64:
++		return "BIGINT"
++	case T_uint8:
++		return "TINYINT UNSIGNED"
++	case T_uint16:
++		return "SMALLINT UNSIGNED"
++	case T_uint32:
++		return "INT UNSIGNED"
++	case T_uint64:
++		return "BIGINT UNSIGNED"
++	case T_float32:
++		return "FLOAT"
++	case T_float64:
++		return "DOUBLE"
++	case T_bf16:
++		return "BF16"
++	case T_float16:
++		return "FLOAT16"
++	case T_float8:
++		return "FLOAT8"
++	case T_float4:
++		return "FLOAT4"
++	case T_date:
++		return "DATE"
++	case T_datetime:
++		return "DATETIME"
++	case T_time:
++		return "TIME"
++	case T_timestamp:
++		return "TIMESTAMP"
++	case T_char:
++		return "CHAR"
++	case T_varchar:
++		return "VARCHAR"
++	case T_binary:
++		return "BINARY"
++	case T_varbinary:
++		return "VARBINARY"
++	case T_json:
++		return "JSON"
++	case T_geometry:
++		return "GEOMETRY"
++	case T_geometry32:
++		return "GEOMETRY32"
++	case T_tuple:
++		return "TUPLE"
++	case T_decimal64:
++		return "DECIMAL64"
++	case T_decimal128:
++		return "DECIMAL128"
++	case T_decimal256:
++		return "DECIMAL256"
++	case T_blob:
++		return "BLOB"
++	case T_text:
++		return "TEXT"
++	case T_datalink:
++		return "DATALINK"
++	case T_TS:
++		return "TRANSACTION TIMESTAMP"
++	case T_Objectid:
++		return "OBJECTID"
++	case T_Rowid:
++		return "ROWID"
++	case T_uuid:
++		return "UUID"
++	case T_Blockid:
++		return "BLOCKID"
++	case T_interval:
++		return "INTERVAL"
++	case T_year:
++		return "YEAR"
++	case T_array_float32:
++		return "VECF32"
++	case T_array_float64:
++		return "VECF64"
++	case T_array_bf16:
++		return "VECBF16"
++	case T_array_float16:
++		return "VECF16"
++	case T_array_int8:
++		return "VECINT8"
++	case T_array_uint8:
++		return "VECUINT8"
++	case T_array_float8:
++		return "VECF8"
++	case T_array_float4:
++		return "VECF4"
++	case T_enum:
++		return "ENUM"
++	}
++	return fmt.Sprintf("unexpected type: %d", t)
++}
++
++func legacyOidString(t T) string {
++	switch t {
++	case T_uuid:
++		return "T_uuid"
++	case T_json:
++		return "T_json"
++	case T_geometry:
++		return "T_geometry"
++	case T_geometry32:
++		return "T_geometry32"
++	case T_bool:
++		return "T_bool"
++	case T_bit:
++		return "T_bit"
++	case T_int64:
++		return "T_int64"
++	case T_int32:
++		return "T_int32"
++	case T_int16:
++		return "T_int16"
++	case T_int8:
++		return "T_int8"
++	case T_float64:
++		return "T_float64"
++	case T_float32:
++		return "T_float32"
++	case T_bf16:
++		return "T_bf16"
++	case T_float16:
++		return "T_float16"
++	case T_float8:
++		return "T_float8"
++	case T_float4:
++		return "T_float4"
++	case T_uint8:
++		return "T_uint8"
++	case T_uint16:
++		return "T_uint16"
++	case T_uint32:
++		return "T_uint32"
++	case T_uint64:
++		return "T_uint64"
++	case T_char:
++		return "T_char"
++	case T_varchar:
++		return "T_varchar"
++	case T_binary:
++		return "T_binary"
++	case T_varbinary:
++		return "T_varbinary"
++	case T_date:
++		return "T_date"
++	case T_datetime:
++		return "T_datetime"
++	case T_time:
++		return "T_time"
++	case T_timestamp:
++		return "T_timestamp"
++	case T_decimal64:
++		return "T_decimal64"
++	case T_decimal128:
++		return "T_decimal128"
++	case T_decimal256:
++		return "T_decimal256"
++	case T_blob:
++		return "T_blob"
++	case T_text:
++		return "T_text"
++	case T_datalink:
++		return "T_datalink"
++	case T_TS:
++		return "T_TS"
++	case T_Rowid:
++		return "T_Rowid"
++	case T_Blockid:
++		return "T_Blockid"
++	case T_interval:
++		return "T_interval"
++	case T_year:
++		return "T_year"
++	case T_enum:
++		return "T_enum"
++	case T_array_float32:
++		return "T_array_float32"
++	case T_array_float64:
++		return "T_array_float64"
++	case T_array_bf16:
++		return "T_array_bf16"
++	case T_array_float16:
++		return "T_array_float16"
++	case T_array_int8:
++		return "T_array_int8"
++	case T_array_uint8:
++		return "T_array_uint8"
++	case T_array_float8:
++		return "T_array_float8"
++	case T_array_float4:
++		return "T_array_float4"
++	}
++	return "unknown_type"
++}
++
+
+```
+
+---
+
+### Incident Patch 2: `76f36753` (2026-11-26)
+**Commit Message**: test: reduce race UT model and engine fixture costs (#33322)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [ ] BUG
+- [x] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [x] Test and CI
+- [x] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Related to #28933. Follow-up to #33313.
+
+## What this PR does / why we need it:
+
+Three parts of race UT spend resources on fixture work that can be
+reduced while keeping their behavioral checks:
+
+- The S3-FIFO reference model still runs 80,000 seeded operations and
+checks accounting and the full resident set after each one. It checks
+the public membership API for the operated key and checks all resident
+keys, their expected shard, and cardinality directly. This avoids
+locking for each of the 400 possible keys.
+- The index-file engine test writes 66 chunks. The test runs two real
+INSERTs (65 + 1 chunks) against the same registered source and
+transaction. The first crosses the table function's 64-row output
+boundary and the second carries the short final chunk. Reconstruction,
+cache, persistence, duplicate rejection and rollback, snapshot and
+range-filter assertions remain. The existing table-function test
+separately runs public Write across 
+
+**File**: `pkg/fileservice/s3fifo/model_test.go` (modified, +16/-10)
+```diff
+@@ -215,19 +215,25 @@ func TestMatchesModel(t *testing.T) {
+ 				c.Set(k, newValue(k, &misuse), size)
+ 				m.set(k, size)
  			}
- 			readBatch := batch.NewWithSize(len(attrs))
- 			mp := ses.proc.Mp()
-+			defer readBatch.Clean(mp)
- 			for i := range attrs {
- 				readBatch.Vecs[i] = vector.NewVec(types.T_varchar.ToType(), mp)
- 				if i == 0 {
-@@ -227,12 +228,12 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
+-			require.Equal(t, m.used(), c.Used(), "capacity %d, op %d", capacity, i)
+-			require.Equal(t, m.smallBytes(), c.smallBytes.Load(), "capacity %d, op %d", capacity, i)
+-			require.Equal(t, m.mainBytes(), c.mainBytes.Load(), "capacity %d, op %d", capacity, i)
++			small, main := m.smallBytes(), m.mainBytes()
++			require.Equal(t, small+main, c.Used(), "capacity %d, op %d", capacity, i)
++			require.Equal(t, small, c.smallBytes.Load(), "capacity %d, op %d", capacity, i)
++			require.Equal(t, main, c.mainBytes.Load(), "capacity %d, op %d", capacity, i)
+ 			require.Equal(t, m.ghostBytes(), c.ghostBytes.Load(), "capacity %d, op %d", capacity, i)
+-			// Keep the exhaustive membership oracle after every operation. The
+-			// 32 million successful boolean comparisons need no reflection or
+-			// testing helper bookkeeping; retain full coordinates on failure.
+-			for k := 0; k < 400; k++ {
+-				want := m.objects[k] != nil
+-				if got := c.Contains(k); got != want {
+-					t.Fatalf("capacity %d, op %d, key %d: contains = %t, want %t", capacity, i, k, got, want)
++			require.Equal(t, m.objects[k] != nil, c.Contains(k), "capacity %d, op %d, key %d", capacity, i, k)
++
++			// This test is sequential. Check the complete resident set after
++			// each operation without locking for every absent key.
++			residents := 0
++			for shard := range c.index {
++				for key, entry := range c.index[shard].index {
++					if entry == nil || m.objects[key] == nil || c.indexOf(c.opts.Hash(key)) != &c.index[shard] {
++						t.Fatalf("capacity %d, op %d: unexpected key %d in shard %d", capacity, i, key, shard)
++					}
++					residents++
  				}
  			}
- 			readBatch.SetRowCount(1)
--			defer readBatch.Clean(mp)
- 			return onBatch(readBatch)
- 		})
- 	t.Cleanup(stub.Reset)
- 
--	fixture := func() (*batch.Batch, tableStuff) {
-+	snapshotTS := types.BuildTS(100, 1)
-+	fixture := func(t *testing.T) (*batch.Batch, tableStuff) {
- 		lcaRel := mock_frontend.NewMockRelation(ctrl)
- 		tarRel := mock_frontend.NewMockRelation(ctrl)
- 		lcaRel.EXPECT().GetTableID(gomock.Any()).Return(uint64(777)).AnyTimes()
-@@ -242,6 +243,7 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
- 
- 		var tblStuff tableStuff
- 		tblStuff.lcaRel = lcaRel
-+		tblStuff.lcaRelSnapshot = snapshotTS
- 		tblStuff.tarRel = tarRel
- 		tblStuff.tarOperand = &branchOperand{
- 			physAccount: 100, physDb: "pubdb",
-@@ -255,17 +257,15 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
- 		tblStuff.def.pkColIdx = 0
- 
- 		tBat := batch.NewWithSize(1)
-+		t.Cleanup(func() { tBat.Clean(ses.proc.Mp()) })
- 		tBat.Vecs[0] = vector.NewVec(types.T_varchar.ToType(), ses.proc.Mp())
- 		require.NoError(t, vector.AppendBytes(tBat.Vecs[0], []byte("k1"), false, ses.proc.Mp()))
- 		tBat.SetRowCount(1)
- 		return tBat, tblStuff
++			require.Equal(t, len(m.objects), residents, "capacity %d, op %d: resident count", capacity, i)
+ 		}
  	}
--	snapshotTS := types.BuildTS(100, 1)
--
- 	t.Run("child cancellation terminates the blocked in-flight probe", func(t *testing.T) {
- 		mode = scannerBlocks
--		tBat, tblStuff := fixture()
--		defer tBat.Clean(ses.proc.Mp())
-+		tBat, tblStuff := fixture(t)
- 
- 		child, cancel := context.WithCancel(ctx)
- 		defer cancel()
-@@ -293,18 +293,17 @@ func TestLCAScanDerivesOwnerContextFromLiveCallerContext(t *testing.T) {
- 
- 	t.Run("owner-scoped scan recovers and returns matching rows", func(t *testing.T) {
- 		mode = scannerRecovers
--		tBat, tblStuff := fixture()
--		defer tBat.Clean(ses.proc.Mp())
-+		tBat, tblStuff := fixture(t)
- 
- 		sqlRet, probeErr := runLCAProbeWithReaderFallback(ctx, ses, tBat, tblStuff, snapshotTS)
- 		require.NoError(t, probeErr)
-+		defer sqlRet.Close()
- 		seen := <-scanSeen
- 		require.Equal(t, uint32(100), seen.account)
- 		require.NotEmpty(t, sqlRet.Batches)
- 		require.Equal(t, 1, sqlRet.Batches[0].RowCount(),
- 			"the row recovered under the segment owner reaches the probe result")
- 		// The probe output is [input index, target columns...]: c1 is vec 1.
- 		require.Equal(t, "k1", string(sqlRet.Batches[0].Vecs[1].GetRawBytesAt(0)))
--		sqlRet.Close()
- 	})
- }
+ 	require.Zero(t, misuse.Load())
 ```
 
-**File**: `pkg/frontend/data_branch_test.go` (modified, +586/-2)
+**File**: `pkg/vm/engine/test/indexfile_test.go` (modified, +15/-2)
 ```diff
-@@ -24,6 +24,8 @@ import (
- 	"os"
- 	"path/filepath"
- 	"strings"
-+	"sync"
-+	"sync/atomic"
+@@ -21,6 +21,7 @@ import (
+ 	"encoding/hex"
+ 	"fmt"
+ 	"io"
++	"strings"
+ 	"sync"
  	"testing"
+ 	"time"
+@@ -203,13 +204,25 @@ func indexFileBytes(n int, seed byte) []byte {
  
- 	"github.com/golang/mock/gomock"
-@@ -39,13 +41,16 @@ import (
- 	"github.com/matrixorigin/matrixone/pkg/fileservice"
- 	"github.com/matrixorigin/matrixone/pkg/frontend/databranchutils"
- 	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
-+	"github.com/matrixorigin/matrixone/pkg/objectio"
- 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
- 	"github.com/matrixorigin/matrixone/pkg/pb/txn"
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
- 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
- 	"github.com/matrixorigin/matrixone/pkg/stage"
- 	"github.com/matrixorigin/matrixone/pkg/testutil"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine"
-+	"github.com/panjf2000/ants/v2"
- 	"github.com/stretchr/testify/require"
- )
+ func TestIndexFileWriteOpenThroughEngine(t *testing.T) {
+ 	e := setupIndexFileEngine(t)
+-	base := indexFileBytes((indexfile.ChunksPerStatement+3)*indexfile.ChunkSize+99, 1)
++	base := indexFileBytes(65*indexfile.ChunkSize+99, 1)
+ 	frame := indexFileBytes(2*indexfile.ChunkSize+5, 2)
  
-@@ -2429,6 +2434,96 @@ func TestCheckSchemaCompatibility_FakePKRejectsTargetOnlyColumns(t *testing.T) {
- 	require.Contains(t, err.Error(), "require an explicit primary key")
- }
+ 	txn1 := e.txn()
+ 	writeCache := e.cache()
+-	baseRef, err := e.write(txn1, writeCache, indexfile.Ref{DB: "ifdb", Table: "idx", IndexID: "idx:1:0"}, base)
++	baseRef := indexfile.Ref{DB: "ifdb", Table: "idx", IndexID: "idx:1:0"}
++	size, sum, err := indexfile.Write(e.ctx, e.env(txn1, writeCache), baseRef, bytes.NewReader(base), func(sql string) error {
++		// Run two SQL statements against the same registered source and transaction.
++		// The first also crosses the table function's 64-row output batch boundary.
++		// TestIndexFileChunksWriteRoundTrip checks the production INSERT split.
++		prefix, ok := strings.CutSuffix(sql, ", 0, 66) AS f")
++		require.True(t, ok, "unexpected chunk INSERT: %s", sql)
++		if err := e.run(txn1, prefix+", 0, 65) AS f"); err != nil {
++			return err
++		}
++		return e.run(txn1, prefix+", 65, 1) AS f")
++	})
+ 	require.NoError(t, err)
++	baseRef.Size, baseRef.Checksum = size, sum
+ 	frameRef, err := e.write(txn1, writeCache, indexfile.Ref{DB: "ifdb", Table: "idx", IndexID: "cdc_tail", Tag: 1, FirstChunk: 40}, frame)
+ 	require.NoError(t, err)
  
-+func TestDataBranchGetRelationsUsesOpeningTransactionSnapshots(t *testing.T) {
-+	foreground := types.BuildTS(20, 2)
-+	background := types.BuildTS(30, 1)
-+	pinned := types.BuildTS(10, 0)
-+	for _, tc := range []struct {
-+		name         string
-+		pinnedTarget bool
-+		pinnedBase   bool
-+	}{
-+		{name: "both endpoints current"},
-+		{name: "target pinned", pinnedTarget: true},
-+		{name: "base pinned", pinnedBase: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx := context.Background()
-+			ctrl := gomock.NewController(t)
-+			ses := newValidateSession(t)
-+			ses.txnCompileCtx = &TxnCompilerContext{execCtx: &ExecCtx{reqCtx: ctx, ses: ses}}
-+			foregroundTxn := mock_frontend.NewMockTxnOperator(ctrl)
-+			foregroundTxn.EXPECT().SnapshotTS().Return(foreground.ToTimestamp()).AnyTimes()
-+			backgroundTxn := mock_frontend.NewMockTxnOperator(ctrl)
-+			backgroundTxn.EXPECT().SnapshotTS().Return(background.ToTimestamp()).AnyTimes()
-+			storage := mock_frontend.NewMockEngine(ctrl)
-+			ses.txnHandler = &TxnHandler{storage: storage, txnOp: foregroundTxn}
-+			ses.proc.Base.SessionInfo.StorageEngine = storage
-+			getPu(ses.GetService()).StorageEngine = storage
-+			bh := &backExec{backSes: &backSession{feSessionImpl: feSessionImpl{
-+				txnHandler: &TxnHandler{txnOp: backgroundTxn},
-+			}}}
-+
-+			open := func(name string, id uint64, pin bool) (tree.TableName, engine.Relation, types.TS, types.TS) {
-+				var hint *tree.AtTimeStamp
-+				txnOp := backgroundTxn
-+				wantObserved, wantOpened := foreground, background
-+				if pin {
-+					hint = newMoTimestampHint(pinned.Physical())
-+					txnOp = mock_frontend.NewMockTxnOperator(ctrl)
-+					backgroundTxn.EXPECT().CloneSnapshotOp(pinned.ToTimestamp()).Return(txnOp)
-+					txnOp.EXPECT().SnapshotTS().Return(pinned.ToTimestamp())
-+					wantObserved, wantOpened = pinned, pinned
-+				}
-+				db := mock_frontend.NewMockDatabase(ctrl)
-+				storage.EXPECT().Database(gomock.Any(), name, txnOp).Return(db, nil).Times(2)
-+				db.EXPECT().IsSubscription(gomock.Any()).Return(false)
-+				rel := mock_frontend.NewMockRelation(ctrl)
-+				rel.EXPECT().GetTableID(gomock.Any()).Return(id).AnyTimes()
-+				rel.EXPECT().GetTableDef(gomock.Any()).Return(newTestBranchTableDef(name, "name")).AnyTimes()
-+				db.EXPECT().Relation(gomock.Any(), name, nil).Return(rel, nil)
-+				return newQualifiedCloneTableName(name, name, hint), rel, wantObserved, wantOpened
-+			}
-+			tarName, tarRel, wantTarObserved, wantTarOpened := open("target", 77, tc.pinnedTarget)
-+			baseName, baseRel, wantBaseObserved, wantBaseOpened := open("base", 78, tc.pinnedBase)
-+			tables, err := getTableStuff(ctx, ses, bh, tarName, baseName)
-+			require.NoError(t, err)
-+			require.Same(t, tarRel, tables.tarRel)
-+			require.Same(t, baseRel, tables.baseRel)
-+			require.Equal(t, wantTarOpened, tables.tarRelSnapshot)
-+			require.Equal(t, wantBaseOpened, tables.baseRelSnapshot)
-+			tarSP, baseSP := tables.resolvedSnapshots(ses)
-+			require.Equal(t, wantTarObserved, tarSP)
-+			require.Equal(t, wantBaseObserved, baseSP)
-+			tarRelSP, baseRelSP := tables.resolvedRelSnapshots(ses)
-+			require.Equal(t, wantTarOpened, tarRelSP)
-+			require.Equal(t, wantBaseOpened, baseRelSP)
-+
-+			lookupErr := errors.New("cannot reopen at observation snapshot")
-+			probeTxn := mock_frontend.NewMockTxnOperator(ctrl)
-+			keys := buildIntDataBatch(t, ses.proc.Mp(), []string{"id"}, tables.def.colTypes[:1], [][]any{{int64(1)}})
-+			defer keys.Clean(ses.proc.Mp())
-+			for _, side := range []struct {
-+				rel              engine.Relation
-+				observed, opened types.TS
-+			}{{tarRel, tarSP, tarRelSP}, {baseRel, baseSP, baseRelSP}} {
-+				tables.lcaRel, tables.lcaRelSnapshot = side.rel, side.opened
-+				if side.observed == side.opened {
-+					require.Same(t, side.rel, tables.lcaFallbackRangeRel(side.observed))
-+					continue
-+				}
-+				require.Nil(t, tables.lcaFallbackRangeRel(side.observed))
-+			
 ```
 
-**File**: `pkg/frontend/data_branch_types.go` (modified, +111/-52)
+**File**: `pkg/vm/engine/test/publication_test.go` (modified, +17/-17)
 ```diff
-@@ -84,6 +84,7 @@ type collectRange struct {
- 	from             []types.TS
- 	end              []types.TS
- 	rel              []engine.Relation
-+	relSnapshot      []types.TS // The snapshot at which each relation was opened.
- 	startBoundaryRel []engine.Relation
- 	// idents carries the physical identity each segment was opened under
- 	// (design §6): the walking side's endpoint identity for the endpoint
-@@ -100,6 +101,13 @@ func (r collectRange) segmentIdentity(i int, fallback branchIdentity) branchIden
- 	return fallback
+@@ -1140,6 +1140,13 @@ func TestExecuteIterationDatabaseLevel(t *testing.T) {
+ 	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
  }
  
-+func (r collectRange) segmentSnapshot(i int, fallback types.TS) types.TS {
-+	if i >= 0 && i < len(r.relSnapshot) {
-+		return r.relSnapshot[i]
++func logPublicationCatalogOnFailure(t *testing.T, storage *testutil.TestTxnStorage) {
++	t.Helper()
++	if t.Failed() {
++		t.Log(storage.GetDB().Catalog.SimplePPString(3))
 +	}
-+	return fallback
 +}
 +
- func (r collectRange) startBoundary(i int) engine.Relation {
- 	if i < 0 || i >= len(r.startBoundaryRel) {
- 		return nil
-@@ -170,70 +178,77 @@ func (m *branchMetaInfo) hasLCA() bool {
- 	return m.lcaTableId != 0
+ func TestExecuteIterationWithIndex(t *testing.T) {
+ 	enableWorkspaceDebugForTest(t)
+ 	catalog.SetupDefines("")
+@@ -1179,6 +1186,8 @@ func TestExecuteIterationWithIndex(t *testing.T) {
+ 		rpcAgent.Close()
+ 	}()
+ 
++	defer logPublicationCatalogOnFailure(t, taeHandler)
++
+ 	// Disable sync protection validator for this test since we're not registering sync protection
+ 	taeHandler.GetDB().Runtime.SyncProtectionValidator = nil
+ 
+@@ -1279,16 +1288,14 @@ func TestExecuteIterationWithIndex(t *testing.T) {
+ 	err = exec_sql(disttaeEngine, srcCtxWithTimeout, createTableSQL)
+ 	require.NoError(t, err)
+ 
+-	// Insert data into source table using SQL
+-	// Insert 10 rows with consistent column definitions
++	// Seed the same ten rows before replication starts.
++	rows := make([]string, 0, 10)
+ 	for i := 0; i < 10; i++ {
+-		insertSQL := fmt.Sprintf(
+-			`INSERT INTO %s.%s (id, value_col, name) VALUES (%d, %d, 'name_%d')`,
+-			srcDBName, srcTableName, i, i*10, i,
+-		)
+-		err = exec_sql(disttaeEngine, srcCtxWithTimeout, insertSQL)
+-		require.NoError(t, err)
++		rows = append(rows, fmt.Sprintf("(%d, %d, 'name_%d')", i, i*10, i))
+ 	}
++	err = exec_sql(disttaeEngine, srcCtxWithTimeout,
++		fmt.Sprintf("INSERT INTO %s.%s (id, value_col, name) VALUES %s", srcDBName, srcTableName, strings.Join(rows, ", ")))
++	require.NoError(t, err)
+ 
+ 	// Step 2: Write mo_ccpr_log table in destination account context
+ 	taskID := uuid.New().String()
+@@ -1381,8 +1388,6 @@ func TestExecuteIterationWithIndex(t *testing.T) {
+ 		nil,                  // syncProtectionRetryOpt
+ 	)
+ 
+-	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
+-
+ 	// Signal checkpoint goroutine to stop
+ 	close(checkpointDone)
+ 
+@@ -1485,8 +1490,6 @@ func TestExecuteIterationWithIndex(t *testing.T) {
+ 	err = txn3.Commit(queryIndexCtx)
+ 	require.NoError(t, err)
+ 
+-	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
+-
+ 	// Step 8: Delete the upstream table
+ 	txnDelete, err := disttaeEngine.NewTxnOperator(srcCtxWithTimeout, disttaeEngine.Now())
+ 	require.NoError(t, err)
+@@ -1606,8 +1609,6 @@ func TestExecuteIterationWithIndex(t *testing.T) {
+ 
+ 	err = txn5.Commit(queryDestCtx2)
+ 	require.NoError(t, err)
+-
+-	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
  }
  
--// tarLCASnapshot is the snapshot of the LCA at which tar's view of
--// the LCA's state is anchored. It is one of the two per-side anchors
--// that lcaProbeSnapshot composes into the shared divergence point
--// both sides resolve against.
--//
--// When tar forked off the LCA (len(pathFromLCAToTar) > 1), the
--// anchor is tar's own first-child CloneTS — the moment tar diverged.
--// When tar IS the LCA (length-1 path), tar inherits the meeting
--// point from base: base's first-child CloneTS, or baseSP if base is
--// also the LCA (case-0 same-table diff).
--func (m *branchMetaInfo) tarLCASnapshot(baseSP types.TS) types.TS {
--	if ts, ok := firstDataBranchForkTS(
--		m.pathFromLCAToTarTS, m.pathFromLCAToTarLineageOnly,
--	); ok {
--		return ts
-+func firstDataBranchForkIndex(lineageOnly []bool, pathLen int) (int, bool) {
-+	for i := 1; i < pathLen; i++ {
-+		if i < len(lineageOnly) && lineageOnly[i] {
-+			continue
+ func TestGetObjectChunk(t *testing.T) {
+@@ -3045,6 +3046,8 @@ func TestCCPRAlterTable(t *testing.T) {
+ 		rpcAgent.Close()
+ 	}()
+ 
++	defer logPublicationCatalogOnFailure(t, taeHandler)
++
+ 	// Disable sync protection validator for this test since we're not registering sync protection
+ 	taeHandler.GetDB().Runtime.SyncProtectionValidator = nil
+ 
+@@ -3285,8 +3288,6 @@ func TestCCPRAlterTable(t *testing.T) {
+ 	err = txn.Commit(queryDestCtx)
+ 	require.NoError(t, err)
+ 
+-	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
+-
+ 	// Step 8: Delete the source table
+ 	txnDelete, err := disttaeEngine.NewTxnOperator(srcCtxWithTimeout, disttaeEngine.Now())
+ 	require.NoError(t, err)
+@@ -3369,7 +3370,6 @@ func TestCCPRAlterTable(t *testing.T) {
+ 		nil,                  // syncProtectionRetryOpt
+ 	)
+ 
+-	t.Log(taeHandler.GetDB().Catalog.SimplePPString(3))
+ 	// Signal checkpoint goroutine to stop
+ 	close(checkpointDone2)
+ 
+```
+
+---
+
+### Incident Patch 3: `57507ff0` (2026-11-26)
+**Commit Message**: fix(plan): prune composite DATETIME ranges across precisions (#33319)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #33305
+
+## What this PR does / why we need it:
+
+`system.statement_info` has a `DATETIME(6)` leading cluster column. The
+`DATETIME(0)` cutoff from `NOW() - INTERVAL 1 MINUTE` was rejected by
+the composite range filter, so the scan loaded metadata for historical
+objects.
+
+Generate a `prefix_in_range` block filter from the raw microsecond value
+of the `DATETIME` cutoff alongside the SQL row predicate.
+
+**Validation**
+
+- The planner regression fails without the fix and passes on the rebased
+branch.
+- With seven historical objects and one recent object persisted, the
+original query and its explicit-cast control each load metadata for one
+object and return the same row. Microsecond, UTC+8 and DST cases match
+the unclustered SQL control.
+- Local SCA passed for 111 packages, including test variants and reverse
+dependencies. Selected with `SCA_LOCAL_BASE=origin/main node
+.github/ci/static-analysis.cjs` and checked with `make
+static-ch
+
+**File**: `pkg/sql/plan/expr_opt.go` (modified, +2/-1)
+```diff
+@@ -984,8 +984,9 @@ func (builder *QueryBuilder) leadingCompositeRangeBlockFilter(filter *plan.Expr,
+ 		if lit := stripConstLiteralCasts(bound).GetLit(); lit != nil && lit.Isnull {
+ 			return false
+ 		}
++		// DATETIME comparison and SERIAL both use the raw microsecond value.
+ 		return isRuntimeConstExpr(bound) && bound.Typ.Id == col.Typ.Id &&
+-			bound.Typ.Scale == col.Typ.Scale
++			(bound.Typ.Scale == col.Typ.Scale || types.T(col.Typ.Id) == types.T_datetime)
+ 	}
+ 	key := &plan.Expr{Typ: tableDef.Cols[compoundPos].Typ, Expr: &plan.Expr_Col{Col: &plan.ColRef{
+ 		RelPos: tag, ColPos: compoundPos, Name: tableDef.Cols[compoundPos].Name,
+```
+
+**File**: `pkg/sql/plan/expr_opt_test.go` (modified, +16/-7)
+```diff
+@@ -436,20 +436,29 @@ func TestLeadingCompositeRangeReachableFromSQL(t *testing.T) {
+ 	table := makeExprOptCompositeClusterKeyTableDef()
+ 	table.Name = "range_probe"
+ 	table.TblId = 29507
+-	for i, col := range table.Cols {
+-		col.Seqnum = uint32(i + 1)
++	temporalTable := makeExprOptCompositeClusterKeyTableDef()
++	temporalTable.Name = "datetime_range_probe"
++	temporalTable.TblId = 29510
++	temporalTable.Cols[0].Typ = planpb.Type{Id: int32(types.T_datetime), Scale: 6}
++	for _, def := range []*planpb.TableDef{table, temporalTable} {
++		for i, col := range def.Cols {
++			col.Seqnum = uint32(i + 1)
 +		}
-+		return i, true
++		ctx.tables[def.Name] = def
++		ctx.objects[def.Name] = &planpb.ObjectRef{Obj: int64(def.TblId), ObjName: def.Name, SchemaName: "tpch"}
  	}
--	if ts, ok := firstDataBranchForkTS(
--		m.pathFromLCAToBaseTS, m.pathFromLCAToBaseLineageOnly,
--	); ok {
--		return ts
-+	return 0, false
-+}
-+
-+func firstDataBranchForkTS(pathTS []types.TS, lineageOnly []bool) (types.TS, bool) {
-+	if i, ok := firstDataBranchForkIndex(lineageOnly, len(pathTS)); ok {
-+		return pathTS[i], true
- 	}
--	return baseSP
-+	return types.TS{}, false
-+}
-+
-+// lcaProbeSnapshot is the shared baseline used to open the LCA relation.
-+func (m *branchMetaInfo) lcaProbeSnapshot(tarSP, baseSP types.TS) types.TS {
-+	probe, _ := m.lcaProbeSnapshots(tarSP, baseSP, false)
-+	return probe
- }
- 
--// baseLCASnapshot is the mirror of tarLCASnapshot for the base side.
--func (m *branchMetaInfo) baseLCASnapshot(tarSP types.TS) types.TS {
--	if ts, ok := firstDataBranchForkTS(
--		m.pathFromLCAToBaseTS, m.pathFromLCAToBaseLineageOnly,
--	); ok {
--		return ts
-+// lcaProbeAnchors anchors each side at its first branch fork, or its
-+// endpoint snapshot if it observes the LCA directly (possibly through ALTER
-+// generations).
-+func (m *branchMetaInfo) lcaProbeAnchors(tarSP, baseSP types.TS) (tarAnchor, baseAnchor types.TS, bothForked bool) {
-+	tarAnchor, tarForked := firstDataBranchForkTS(m.pathFromLCAToTarTS, m.pathFromLCAToTarLineageOnly)
-+	baseAnchor, baseForked := firstDataBranchForkTS(m.pathFromLCAToBaseTS, m.pathFromLCAToBaseLineageOnly)
-+	if !tarForked {
-+		tarAnchor = tarSP
- 	}
--	if ts, ok := firstDataBranchForkTS(
--		m.pathFromLCAToTarTS, m.pathFromLCAToTarLineageOnly,
--	); ok {
--		return ts
-+	if !baseForked {
-+		baseAnchor = baseSP
- 	}
--	return tarSP
-+	return tarAnchor, baseAnchor, tarForked && baseForked
- }
- 
--func firstDataBranchForkTS(pathTS []types.TS, lineageOnly []bool) (types.TS, bool) {
--	for i := 1; i < len(pathTS); i++ {
--		if i < len(lineageOnly) && lineageOnly[i] {
--			continue
--		}
--		return pathTS[i], true
-+// lcaProbeSnapshots uses the earlier observation as the shared baseline.
-+func (m *branchMetaInfo) lcaProbeSnapshots(
-+	tarSP, baseSP types.TS, preservePickConflicts bool,
-+) (tarProbe, baseProbe types.TS) {
-+	tarAnchor, baseAnchor, bothForked := m.lcaProbeAnchors(tarSP, baseSP)
-+	// For sibling PICK, each side's conflict baseline includes the state it
-+	// inherited at its own fork. With an ancestor operand both probes must
-+	// honor the shared baseline, including an endpoint older than the fork.
-+	if preservePickConflicts && bothForked {
-+		return tarAnchor, baseAnchor
- 	}
--	return types.TS{}, false
-+	if tarAnchor.LT(&baseAnchor) {
-+		return tarAnchor, tarAnchor
-+	}
-+	return baseAnchor, baseAnchor
- }
- 
--// lcaProbeSnapshot is the shared divergence point of the two
--// lineages: the earlier of the two per-side fork anchors. diffOnBase
--// uses it to fetch the LCA relation handle when the LCA is a
--// third-party node (neither tar nor base), so the handle is valid on
--// both sides' views, and hashDiffIfHasLCA uses it to anchor both
--// sides' tombstone resolution so the LCA's writes between the two
--// forks surface as the later-forked side's divergence instead of
--// being absorbed into that side's fork baseline.
--func (m *branchMetaInfo) lcaProbeSnapshot(tarSP, ba
+-	ctx.tables[table.Name] = table
+-	ctx.objects[table.Name] = &planpb.ObjectRef{Obj: int64(table.TblId), ObjName: table.Name, SchemaName: "tpch"}
+ 	for _, tc := range []struct {
+ 		sql      string
++		table    *planpb.TableDef
+ 		readCols []string
+ 	}{
+-		{"select a from range_probe where a >= 10 and a < 20", []string{"a"}},
+-		{"select a from range_probe where a > 10", []string{"a"}},
+-		{"select b from range_probe where a > 10", []string{"a", "b"}},
++		{"select a from range_probe where a >= 10 and a < 20", table, []string{"a"}},
++		{"select a from range_probe where a > 10", table, []string{"a"}},
++		{"select b from range_probe where a > 10", table, []string{"a", "b"}},
++		{"select a from datetime_range_probe where a >= now() - interval 1 minute order by a desc limit 1", temporalTable, []string{"a"}},
+ 	} {
+ 		t.Run(tc.sql, func(t *testing.T) {
++			table := tc.table
+ 			stmt, err := mysql.ParseOne(ctx.GetContext(), tc.sql, 1)
+ 			require.NoError(t, err)
+ 			built, err := BuildPlan(ctx, stmt, false, nil)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #33188** (2026-11-25): test(optools): accept a KILL-escalated drain in the publication latch test (@fengttt)
-- **PR #33186** (2026-11-25): test(aggexec): compare vecblock JSON decode allocations at their least (@cpegeric)
-- **PR #33183** (2026-11-24): docs(design): row selection with bitmaps and RemapList (@fengttt)
-- **PR #33175** (2026-11-24): fix(ci): adopt the merged Coverage UT cache 404 fix (@Ariznawlll)
-- **PR #33173** (2026-11-24): fix(ci): resolve Coverage UT workflows from merged CI #475 (@Ariznawlll)
-- **PR #33169** (2026-11-24): fix(compile): preserve committed rows on single remote scans (4.2-dev) (@LeftHandCold)
+- **PR #33341** (closed): fix(geo): reject null required GeoJSON arrays (@MatrixAdventurer)
+- **PR #33340** (closed): fix(geo): reject null required GeoJSON arrays (@MatrixAdventurer)
+- **PR #33338** (2026-11-26): refactor(types): type dispatch design (#10181), oidscan, DML dispatch fixes, traits table (@fengttt)
+- **PR #33332** (closed): fix(function): reject CURTIME/CURRENT_TIME precision above 6 (@MatrixAdventurer)
+- **PR #33328** (2026-11-26): [4.2-dev] Bound skewed indexed equality estimates with cached zone maps (@XuPeng-SH)
+- **PR #33326** (closed): fix: keep session executor in stage helpers (@MatrixAdventurer)
 
 ---
 
@@ -3856,30 +3838,49 @@ conflict behavior when requested.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(embed): measure execution memory headroom against a per-process limit
+## X. types): type dispatch design, oidscan, DML dispatch fixes, traits table
 
 **RULE**:
-When implementing operations in `pkg/common/system/system.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/20261126-type-vft.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `568f0f4f`: test(embed): measure execution memory headroom against a per-process limit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9531e591`: types): type dispatch design, oidscan, DML dispatch fixes, traits table. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/common/system/system.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261126-type-vft.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// ProcessResidentMemory returns the resident set size of this process. The
-// second return is false when it cannot be read.
-func ProcessResidentMemory() (uint64, bool) {
-	var mem gosigar.ProcMem
-	if err := mem.Get(pid); err != nil {
-		return 0, false
-	}
-	return mem.Resident, true
-}
+# Type dispatch tables: consolidating `switch typ.Oid`
 
+## Scope and trigger
+
+Issue [#10181](https://github.com/matrixorigin/matrixone/issues/10181)
+("[Refactoring]: VFT of types").
+
+MatrixOne decides what to do with a value by switching on its type id
+(`types.T`, the `Oid` of a `types.Type`) all over the codebase. The issue
+names two problems:
+
+1. **Adding a type means editing many places, and missing one fails
+   quietly.** A new `T_` constant falls into whatever `default:` branch each
+   switch has. Depending on the site, that is a panic, an "unsupported type"
+   error, or a wrong result.
+2. **Some switches run once per row.** The cost of a switch whose type is the
+   same on every row is small, but these sites usually also box values into
+   `any`, which is the larger cost.
+
+This document measures the problem, proposes a design and lays out a
+step-by-step plan. It changes no code; each implementation step will be its
+own PR.
+
+## Measurements
+
+The numbers come from `optools/oidscan`, a `go/ast` scan of every non-test
+`.go` file under `pkg/` (skipping `testdata/`), at commit `5e3893a298`. A
+"type switch" is any `switch` statement with at least one `case` naming a
+`T_*` constant. 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3889,7 +3890,7 @@ func ProcessResidentMemory() (uint64, bool) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `568f0f4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9531e591` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
