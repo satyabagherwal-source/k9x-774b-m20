@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:39:23.251Z",
+  "last_updated": "2026-11-26T04:47:55.917Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T03:46:54.300Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-26T04:39:22.475Z",
+      "processed_at": "2026-11-26T04:47:54.941Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1258,7 +1258,7 @@
       "staged_for_review": 1
     },
     "medialab-xan-learnings.md": {
-      "processed_at": "2026-11-24T22:30:16.166Z",
+      "processed_at": "2026-11-26T04:47:53.400Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2448,7 +2448,7 @@
       "staged_for_review": 0
     },
     "hf-edge0-edge0-145b-nvfp4-learnings.md": {
-      "processed_at": "2026-11-22T08:09:34.054Z",
+      "processed_at": "2026-11-26T04:47:54.447Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4380,
+  "total_dossiers_evaluated": 4383,
   "total_canonical_promoted": 552,
-  "total_staged_for_review": 3321
+  "total_staged_for_review": 3323
 }

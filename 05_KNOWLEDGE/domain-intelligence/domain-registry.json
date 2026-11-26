@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T04:39:22.951Z",
+  "last_updated": "2026-11-26T04:47:55.536Z",
   "total_records": 2705,
   "domains": {
     "A": {
@@ -9438,8 +9438,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "027d677a727fae32ab9a78fc60546757caa1e242faa3b5ab2674973238f73014",
-      "created_at": "2026-11-26T04:39:22.951Z"
+      "content_hash": "6f18c5c1493eb33b669e96ff924bc8abad8bf2a3c51ee15fb319fe7032a6d5f5",
+      "created_at": "2026-11-26T04:47:55.536Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -14614,8 +14614,8 @@
       "title": "Research & Knowledge Intelligence: Edge0/Edge0-145B-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-edge0-145b-nvfp4-research-knowledge-intelligence-edge0-edge0-145b-nvfp4.md",
       "repository": "Edge0/Edge0-145B-NVFP4",
-      "content_hash": "e7a9b30533e9b450e848561a9398a58e3c87d603b5d4650d9a06defc0b8f769d",
-      "created_at": "2026-11-22T08:09:19.350Z"
+      "content_hash": "f4166248dd6459da914032b6731f9fb7666b4c4a8443b3ab3708cb6f4ba60eed",
+      "created_at": "2026-11-26T04:47:42.211Z"
     },
     "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
@@ -14674,8 +14674,8 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-edge0-145b-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-edge0-145b-nvfp4-learnings-research-knowledge-intelligence-hf-edge0-edg.md",
       "repository": "hf-edge0-edge0-145b-nvfp4-learnings",
-      "content_hash": "e7868b3263eefd7aadbb388319ca16d4e35b7fd8f32bb173746916e73a31a352",
-      "created_at": "2026-11-22T08:09:34.306Z"
+      "content_hash": "a4a9c5c3e6d744c8ccbfcf83d3c3d87369a714028054ed47c2c217c6ba44825c",
+      "created_at": "2026-11-26T04:47:54.715Z"
     },
     "DOM-D-302F93C6": {
       "record_id": "DOM-D-302F93C6",
@@ -23699,8 +23699,8 @@
       "title": "Technical Construction Intelligence: medialab/xan Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-technical-construction-intelligence-medialab-xan-core-invariants.md",
       "repository": "medialab/xan",
-      "content_hash": "d387fbf5b48e7ea437e300f6a7193dce87d223c47c282726fcf5ac8332776fae",
-      "created_at": "2026-11-23T19:42:53.492Z"
+      "content_hash": "b0962296ce499368fa23215c859622d741eee984592aef851868148a228d3bb3",
+      "created_at": "2026-11-26T04:47:44.318Z"
     },
     "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rickclephas-kmp-nativecoroutines-core-invariants",
@@ -23717,8 +23717,8 @@
       "title": "Technical Construction Intelligence: medialab-xan-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-medialab-xan-learnings-technical-construction-intelligence-medialab-xan-learning.md",
       "repository": "medialab-xan-learnings",
-      "content_hash": "7e9d81bc8138ead371665a099ba1a05f08e2f74031b6d34318dc13aa4d43ce1b",
-      "created_at": "2026-11-23T19:43:07.261Z"
+      "content_hash": "f064396118a8a6a69ba044cc8b29d48a33f1ca0e7f709b284a2e8925bd76cdc6",
+      "created_at": "2026-11-26T04:47:54.003Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-relayvsr-learnings-core-invariants",

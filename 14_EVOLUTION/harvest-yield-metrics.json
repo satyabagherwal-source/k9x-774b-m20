@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:39:17.783Z",
-  "total_cycles_completed": 12567,
-  "total_learnings_persisted": 12567,
-  "total_rules_promoted": 11491,
+  "last_updated": "2026-11-26T04:47:43.773Z",
+  "total_cycles_completed": 12569,
+  "total_learnings_persisted": 12569,
+  "total_rules_promoted": 11492,
   "history": [
-    {
-      "timestamp": "2026-11-25T09:54:15.019Z",
-      "repository": "XHToken/Spark-X2.6-4B-GGUF",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T09:54:17.264Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T09:54:29.563Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T04:39:17.783Z",
       "repository": "juicedata/juicefs",
       "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:47:41.932Z",
+      "repository": "Edge0/Edge0-145B-NVFP4",
+      "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:47:43.773Z",
+      "repository": "medialab/xan",
+      "learningId": "learn-github-medialab-xan",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

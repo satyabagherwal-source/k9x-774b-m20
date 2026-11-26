@@ -13241,3 +13241,5 @@
 | `CYCLE-20261126-1IE0` | `2026-11-26T04:30:58.392Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10597` | Yes (`70cc56f8...`) |
 | `CYCLE-20261126-BZZO` | `2026-11-26T04:39:07.764Z` | `chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md` | Yes (`cd22b4bd...`) |
 | `CYCLE-20261126-C7PK` | `2026-11-26T04:39:17.768Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10598` | Yes (`eadcb599...`) |
+| `CYCLE-20261126-N0PM` | `2026-11-26T04:47:41.914Z` | `Edge0/Edge0-145B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md` | Yes (`9c6b3a9f...`) |
+| `CYCLE-20261126-N22L` | `2026-11-26T04:47:43.677Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10599` | Yes (`67f34c12...`) |

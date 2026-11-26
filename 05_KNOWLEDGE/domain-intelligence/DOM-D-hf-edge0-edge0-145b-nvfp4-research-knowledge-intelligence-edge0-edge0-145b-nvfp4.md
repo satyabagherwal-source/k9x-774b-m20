@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Edge0/Edge0-145B-NVFP4",
   "source_version": "hf-edge0-edge0-145b-nvfp4",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T08:09:19.349Z",
+  "timestamp": "2026-11-26T04:47:42.210Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-edge0-edge0-145b-nvfp4",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Edge0/Edge0-145B-NVFP4](https://huggingface.co/Edge0/Edge0-145B-NVFP4) (Revision: `hf-edge0-e`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T08:09:19.349Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:47:42.210Z`  
 > **Learning ID**: `learn-huggingface-edge0-edge0-145b-nvfp4`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Edge0/Edge0-145B-NVFP4](https://huggingface.co/Edge0/Edge0-145B-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T08:09:12.361Z  
+> **Harvest Timestamp**: 2026-11-26T04:47:41.164Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 88713 downloads | 698 likes
+- **Stars / Engagement**: 104914 downloads | 835 likes
 
 ---
 

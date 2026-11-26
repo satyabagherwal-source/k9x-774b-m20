@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T22:30:16.459Z",
+  "timestamp": "2026-11-26T04:47:53.661Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-medialab-xan-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [medialab-xan-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T22:30:16.459Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:47:53.661Z`  
 > **Learning ID**: `LEARN-EVO-medialab-xan-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `dfbb3093`  
+> **Source Version**: `93db1c80`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T22:30:06.575Z  
+> **Timestamp**: 2026-11-26T04:47:42.372Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T22:30:06.324Z  
+> **Harvest Timestamp**: 2026-11-26T04:47:42.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4562 stars
+- **Stars / Engagement**: 4564 stars
 
 ---
 
@@ -421,6 +421,40 @@ pub fn errif_greater_one_stdin(inps: &[Config]) -> Result<(), String> {
     Ok(())
 }
 
+pub fn glob_but_for<E>(
+    pattern: &str,
+    excluded_path_opt: Option<&str>,
+) -> Result<impl Iterator<Item = Result<String, E>>, E>
+where
+    E: From<io::Error> + From<glob::PatternError>,
+{
+    let excluded_path_opt = excluded_path_opt
+        .map(|path| Path::new(path).canonicalize())
+        .transpose()?;
+
+    Ok(
+        glob::glob(pattern)?.filter_map(move |result| -> Option<Result<String, E>> {
+            if let Ok(path) = result {
+                let string_path = path.to_string_lossy().into_owned();
+
+                if let (Ok(canonicalized_path), Some(output)) =
+                    (path.canonicalize(), &excluded_path_opt)
+                {
+                    if output != &canonicalized_path {
+                        Some(Ok(string_path))
+                    } else {
+                        None
+                    }
+                } else {
+                    Some(Ok(string_path))
+                }
+            } else {
+                None
+            }
+        }),
+    )
+}
+
 pub type Idx = Option<usize>;
 
 pub fn range(start: Idx, end: Idx, len: Idx, index: Idx) -> Result<(usize, usize), String> {
@@ -528,48 +562,7 @@ pub fn acquire_stty_size() -> Option<termsize::Size> {
         let parts = text.split_whitespace().take(2).collect::<Vec<_>>();
 
         if parts.len() < 2 {
-            return None;
-        }
-
-        let cols: u16 = if let Ok(c) = parts[1].parse() {
-            c
-        } else {
-            return None;
-        };
-
-        let rows: u16 = if let Ok(r) = parts[0].parse() {
-            r
-        } else {
-            return None;
-        };
-
-        return Some(termsize::Size { cols, rows });
-    }
-
-    None
-}
-
-// NOTE: some terminals (e.g. pseudo-terminals without a window size) report
-// a size of 0x0, which must be considered as unknown.
-fn acquire_term_size() -> Option<termsize::Size> {
-    termsize::get()
-        .or_else(acquire_stty_size)
-        .filter(|size| size.cols > 0 && size.rows > 0)
-}
-
-pub fn acquire_term_cols(cols_override: &Option<usize>) -> usize {
-    match cols_override {
-        None => match acquire_term_size() {
-            None => 80,
-            Some(size) => size.cols as usize,
-        },
-        Some(c) => *c,
-    }
-}
-
-pub fn acquire_term_rows(rows_override: &Option<usize>) -> usize {
-    match rows_override {
-        None => match a
+            re
 ```
 
 ### Core Architecture Module: `src/cmd/agg.rs`
@@ -1897,7 +1890,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
 }
 
 impl Args {
-    fn paths(&self) -> CliResult<Box<dyn Iterator<Item = CliResult<String>>>> {
+    fn paths(&self) -> CliResult<Box<dyn Iterator<Item = CliResult<String>> + '_>> {
         let modes = self.flag_paths.is_some() as u8
             + !self.arg_inputs.is_empty() as u8
             + self.flag_glob.is_some() as u8;
@@ -1911,9 +1904,10 @@ impl Args {
         if let Some(paths_path) = self.flag_paths.as_ref() {
             Config::new(&Some(paths_path.clone())).lines(&self.flag_path_column)
         } else if let Some(pattern) = self.flag_glob.as_ref() {
-            Ok(Box::new(glob::glob(pattern)?.map(|result| {
-                Ok(result.unwrap().to_string_lossy().into_owned())
-            })))
+            Ok(Box::new(utils::glob_but_for(
+                pattern,
+                self.flag_output.as_deref(),
+            )?))
         } else {
             Ok(Box::new(self.arg_inputs.clone().into_iter().map(Ok)))
         }
@@ -1963,7 +1957,7 @@ impl Args {
 
     fn cat_rows(&self) -> CliResult<()> {
         let mut record = ByteRecord::new();
-        let mut wtr = Config::new(&self.flag_outp
+        let mut wtr = Config::new(&self.flag_output).sim
 ```
 
 
@@ -1993,221 +1987,131 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dfbb3093` (2026-11-24)
-**Commit Message**: Adding seekable zst support
-Related to #902
+### Incident Patch 1: `93db1c80` (2026-11-25)
+**Commit Message**: Documentation fixes
 
-**File**: `Cargo.lock` (modified, +14/-4)
+**File**: `docs/blog/notes/simd.md` (modified, +1/-1)
 ```diff
-@@ -3330,6 +3330,7 @@ dependencies = [
-  "url",
-  "uuid",
-  "xan_docopt",
-+ "zeekstd",
-  "zmij",
-  "zstd",
- ]
-@@ -3369,6 +3370,15 @@ dependencies = [
-  "synstructure 0.14.0",
- ]
+@@ -4,7 +4,7 @@
  
-+[[package]]
-+name = "zeekstd"
-+version = "0.6.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "8feb00c783a66abad34c225271e18b59ac7d09f6f294a90c8643262a2c49d2c1"
-+dependencies = [
-+ "zstd-safe",
-+]
-+
- [[package]]
- name = "zerocopy"
- version = "0.8.27"
-@@ -3494,18 +3504,18 @@ dependencies = [
- 
- [[package]]
- name = "zstd-safe"
--version = "8.0.0"
-+version = "8.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ae42c0555055784c70058d19ba8e275528e8a99a706684868ace5da4e716a4ab"
-+checksum = "5a9ea9cc2576c2fcc104e9cec04f46e3ede564f4fbc206831e4ef7e859a4140d"
- dependencies = [
-  "zstd-sys",
- ]
- 
- [[package]]
- name = "zstd-sys"
--version = "2.1.0+zstd.1.5.7"
-+version = "2.1.3+zstd.1.5.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0ef0a8027ec3ee71300ab3bcbcd0393f434aa72b91ca6d635a39941deae8eea0"
-+checksum = "f729a06d0257428fd9d997ac8db7e1407bd0262ab016b085b36bc52957c0052d"
- dependencies = [
-  "cc",
-  "pkg-config",
+ - Historical outline wrt simd-json etc.
+ - Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
+-- copy must not happen per cell in larger swathes, see new byterecord design. check full design notes
++- copy must not happen per cell but in larger swathes, see new byterecord design. check full design notes
+ - Shuffling, PCMESTRI, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
+ - You cannot expect x16 or x32, that is just not realistic.
+ - Branching is data-dependent and cannot be avoided.
 ```
 
-**File**: `Cargo.toml` (modified, +1/-0)
+**File**: `docs/cookbook/frequency_tables.md` (modified, +1/-1)
 ```diff
-@@ -142,6 +142,7 @@ unicode-segmentation = "1.13.3"
- unicode-width = "0.2.2"
- url = "2.5.8"
- uuid = { version = "1.26.1", features = ["v4"] }
-+zeekstd = "0.6.3"
- zmij = "1.0.23"
- zstd = "0.14.0"
+@@ -74,7 +74,7 @@ Here is the result:
+ | meta.com      | 11    |
+ | zorba.net     | 16    |
  
-```
-
-**File**: `src/config.rs` (modified, +32/-17)
-```diff
-@@ -198,7 +198,10 @@ pub struct Config {
+-Note how this is reminiscent of SQL. The `groupby` command is able to perform a lot of different aggregations on the grouped rows. Run `xan groupby --aggs` to read the full list of what is available.
++Note how this is reminiscent of SQL. The `groupby` command is able to perform a lot of different aggregations on the grouped rows. Run `xan help aggs` to read the full list of what is available.
  
- impl Config {
-     pub fn has_known_extension(path: &str) -> bool {
--        let uncompressed_path = path.strip_suffix(".gz").unwrap_or(path);
-+        let uncompressed_path = path
-+            .strip_suffix(".gz")
-+            .or_else(|| path.strip_suffix(".zst"))
-+            .unwrap_or(path);
+ And now, if we want the top 3 entries (in a real life scenario we would of course have millions of domains, not just 6), we can use the `xan top` command like so:
  
-         [
-             ".csv", ".tsv", ".tab", ".ssv", ".scsv", ".psv", ".cdx", ".ndjson", ".jsonl", ".vcf",
-@@ -215,6 +218,10 @@ impl Config {
- 
-         if path.ends_with(".gz") {
-             Self::new(&Some(path.to_string())).has_seekable_index()
-+        } else if path.ends_with(".zst") {
-+            Self::new(&Some(path.to_string()))
-+                .seekable_io_reader()
-+                .is_ok()
-         } else {
-             true
-         }
-@@ -600,24 +607,32 @@ impl Config {
-             None => Err(error_msg)?,
-             Some(ref p) => match fs::File::open(p) {
-                 Ok(mut x) => {
--                    if let Some(Compression::Gzip) = self.compression {
--                        if let Some(index_path) =
--                            self.compression.unwrap().index_path(p.to_str().unwrap())
--                        {
--                            let reader = BGZFReader::new(x)?;
--                            let index = BGZFIndex::from_reader(fs::File::open(index_path)?)?;
--                            let mut indexed_reader = IndexedBGZFReader::new(reader, index)?;
--
--                            self.process_typical_headers_seek(&mut indexed_reader)?;
-+                    match self.compression {
-+                        Some(compression @ Compression::Gzip) => {
-+                            if let Some(index_path) = compression.index_path(p.to_str().unwrap()) {
-+                                let reader = BGZFReader::new(x)?;
-+                                let index = BGZFIndex::from_reader(fs::File::open(index_path)?)?;
-+                                let mut indexed_reader = IndexedBGZFReader::new(reader, index)?;
-+
-+                                self.process_typical_headers_seek(&mut indexed_reader)?;
-+
-+                                return Ok(Box::new(indexed_reader));
-+                            } else {
-+                                Err(error_msg)?;
-+                            }
-+                        }
-+                        Some(Compression::Zstd) => {
-+                            if let Ok(mut decoder) = zeekstd::Decoder::new(x) {
-+                                self.process_typical_headers_seek(&mut decoder)?;
- 
--                            return Ok(Box::new(indexed_reader));
--                        } else {
--                            Err(error_msg)?;
-+                                return Ok(Box::new(decoder));
-+                            } else {
-+                                return Err(error_msg)?;
-+                            }
-+                        }
-+                        None => {
-+                            self.process_typical_headers_seek(&mut x)?;
-                         }
--                    } else if self.compression.is_some() {
--                        Err(error_msg)?;
--                    } else {
--                        self.process_typical_headers_seek(&mut x)?;
-                     }
- 
-                     match x.borrow().stream_position() {
 ```
 
 ---
 
-### Incident Patch 2: `68b092c8` (2026-11-24)
-**Commit Message**: Improving performance of EmojiSanitizer::sanitize
+### Incident Patch 2: `640727c9` (2026-11-25)
+**Commit Message**: Fixing moonblade negative string indexing
 
-**File**: `src/cmd/view.rs` (modified, +4/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -618,13 +618,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-                         }
-                     }
-                     _ => {
--                        let mut cell = utils::sanitize_text_for_single_line_printing(cell);
-+                        let cell = utils::sanitize_text_for_single_line_printing(cell);
+@@ -66,6 +66,7 @@ The **laminated** update.
+ * Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
+ * Fixing `xan explode --evaluate --drop-empty` semantics.
+ * Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
++* Fixing moonblade negative string indexing.
  
-                         if let Some(sanitizer) = &emoji_sanitizer_opt {
--                            cell = sanitizer.sanitize(&cell);
-+                            processed_record.push_field(&sanitizer.sanitize(&cell));
-+                        } else {
-+                            processed_record.push_field(&cell);
-                         }
--
--                        processed_record.push_field(&cell);
-                     }
-                 };
-             }
+ *Performance*
+ 
 ```
 
-**File**: `src/utils.rs` (modified, +12/-14)
+**File**: `src/moonblade/functions/maps.rs` (modified, +15/-36)
 ```diff
-@@ -817,21 +817,19 @@ impl EmojiSanitizer {
-         EmojiSanitizer { pattern }
-     }
+@@ -1,4 +1,5 @@
+ use std::borrow::Cow;
++use std::str::from_utf8;
  
--    pub fn sanitize(&self, string: &str) -> String {
--        self.pattern
--            .replace_all(string, |caps: &Captures| {
--                format!(
--                    ":{}:",
--                    match emojis::get(&caps[0]) {
-+    pub fn sanitize<'s>(&self, string: &'s str) -> Cow<'s, str> {
-+        self.pattern.replace_all(string, |caps: &Captures| {
-+            format!(
-+                ":{}:",
-+                match emojis::get(&caps[0]) {
-+                    None => "unknown_emoji",
-+                    Some(emoji) => match emoji.shortcode() {
-                         None => "unknown_emoji",
--                        Some(emoji) => match emoji.shortcode() {
--                            None => "unknown_emoji",
--                            Some(shortcode) => shortcode,
--                        },
--                    }
--                )
--            })
--            .to_string()
-+                        Some(shortcode) => shortcode,
-+                    },
-+                }
-+            )
-+        })
-     }
- }
+ use crate::collections::HashMap;
+ 
+@@ -7,47 +8,25 @@ use crate::moonblade::types::{BoundArgument, BoundArguments, BoundContainer, Dyn
+ 
+ use super::FunctionResult;
+ 
++fn nth_char(string: &str, index: i64) -> Option<char> {
++    if index < 0 {
++        string.chars().nth_back((index.unsigned_abs() - 1) as usize)
++    } else {
++        string.chars().nth(index as usize)
++    }
++}
++
+ fn get_subroutine<'v>(
+     target: BoundContainer<'v>,
+     key: BoundArgument,
+ ) -> Result<Option<Cow<'v, DynamicValue>>, EvaluationError> {
+     Ok(match target {
+-        BoundContainer::String(value) => {
+-            let mut index = key.try_as_i64()?;
+-
+-            if index < 0 {
+-                index += value.len() as i64;
+-            }
+-
+-            if index < 0 {
+-                None
+-            } else {
+-                value
+-                    .chars()
+-                    .nth(index as usize)
+-                    .map(DynamicValue::from)
+-                    .map(Cow::Owned)
+-            }
+-        }
+-        BoundContainer::Bytes(value) => {
+-            let mut index = key.try_as_i64()?;
+-
+-            if index < 0 {
+-                index += value.len() as i64;
+-            }
+-
+-            if index < 0 {
+-                None
+-            } else {
+-                let value = std::str::from_utf8(value)?;
+-
+-                value
+-                    .chars()
+-                    .nth(index as usize)
+-                    .map(DynamicValue::from)
+-                    .map(Cow::Owned)
+-            }
+-        }
++        BoundContainer::String(value) => nth_char(value, key.try_as_i64()?)
++            .map(DynamicValue::from)
++            .map(Cow::Owned),
++        BoundContainer::Bytes(value) => nth_char(from_utf8(value)?, key.try_as_i64()?)
++            .map(DynamicValue::from)
++            .map(Cow::Owned),
+         BoundContainer::List(list) => {
+             let mut index = key.try_as_i64()?;
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1251** (closed): Count chars, not bytes, for negative string indices in get (@mansur-akhmadi)
 - **PR #1247** (closed): Document bivariate heatmaps and regex highlighting (@rayw-lab)
 - **PR #1246** (closed): Add xan view --plain aligned output (@mvanhorn)
 - **PR #1239** (2026-11-16): Added --combinations flag to xan explode (@clothilde-ml)
 - **PR #1224** (closed): Add a plain aligned table preset to xan view (@mvanhorn)
 - **PR #1223** (2026-11-04): Xml highlight (Issue #1215) (@clothilde-ml)
-- **PR #1222** (closed): Add a plain theme to xan view (@mvanhorn)
 
 ---
 
@@ -2227,47 +2131,31 @@ Related to #902
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Adding seekable zst support
+## X. Documentation fixes
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/blog/notes/simd.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dfbb3093`: Adding seekable zst support. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93db1c80`: Documentation fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/blog/notes/simd.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "zeekstd",
-[[package]]
-name = "zeekstd"
-version = "0.6.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8feb00c783a66abad34c225271e18b59ac7d09f6f294a90c8643262a2c49d2c1"
-dependencies = [
- "zstd-safe",
-]
-
-version = "8.3.0"
-checksum = "5a9ea9cc2576c2fcc104e9cec04f46e3ede564f4fbc206831e4ef7e859a4140d"
-version = "2.1.3+zstd.1.5.7"
-checksum = "f729a06d0257428fd9d997ac8db7e1407bd0262ab016b085b36bc52957c0052d"
+- copy must not happen per cell but in larger swathes, see new byterecord design. check full design notes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "8.0.0"
-checksum = "ae42c0555055784c70058d19ba8e275528e8a99a706684868ace5da4e716a4ab"
-version = "2.1.0+zstd.1.5.7"
-checksum = "0ef0a8027ec3ee71300ab3bcbcd0393f434aa72b91ca6d635a39941deae8eea0"
+- copy must not happen per cell in larger swathes, see new byterecord design. check full design notes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dfbb3093` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93db1c80` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:39:22.787Z",
+  "last_updated": "2026-11-26T04:47:55.334Z",
   "directives": [
     {
       "id": "CD-001",
@@ -56034,11 +56034,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-CBKW",
+      "id": "CD-NB28",
       "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-CBKW-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-NB28-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -63229,6 +63229,35 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-679693-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-N9VM",
+      "directive_title": "Documentation fixes",
+      "source_repo": "medialab-xan-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-N9VM-documentation-fixes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-39F835",
+      "directive_title": "Documentation fixes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "medialab-xan",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-39F835-documentation-fixes.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-3D5D7A",
+      "directive_title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3D5D7A-deps-bump-url-to-2-5-9-and-heapless-to-0.md",
       "staged_date": "2026-11-26"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T19:43:06.960Z",
+  "timestamp": "2026-11-26T04:47:53.661Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-medialab-xan-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [medialab-xan-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T19:43:06.960Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T04:47:53.661Z`  
 > **Learning ID**: `LEARN-EVO-medialab-xan-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source**: github ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
-> **Source Version**: `0038ce76`  
+> **Source Version**: `93db1c80`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T19:42:51.983Z  
+> **Timestamp**: 2026-11-26T04:47:42.372Z  
 > **Learning ID**: `learn-github-medialab-xan`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/medialab-xan-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/medialab/xan](https://github.com/medialab/xan))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:42:51.978Z  
+> **Harvest Timestamp**: 2026-11-26T04:47:42.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The CSV magician
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4559 stars
+- **Stars / Engagement**: 4564 stars
 
 ---
 
@@ -424,6 +424,40 @@ pub fn errif_greater_one_stdin(inps: &[Config]) -> Result<(), String> {
     Ok(())
 }
 
+pub fn glob_but_for<E>(
+    pattern: &str,
+    excluded_path_opt: Option<&str>,
+) -> Result<impl Iterator<Item = Result<String, E>>, E>
+where
+    E: From<io::Error> + From<glob::PatternError>,
+{
+    let excluded_path_opt = excluded_path_opt
+        .map(|path| Path::new(path).canonicalize())
+        .transpose()?;
+
+    Ok(
+        glob::glob(pattern)?.filter_map(move |result| -> Option<Result<String, E>> {
+            if let Ok(path) = result {
+                let string_path = path.to_string_lossy().into_owned();
+
+                if let (Ok(canonicalized_path), Some(output)) =
+                    (path.canonicalize(), &excluded_path_opt)
+                {
+                    if output != &canonicalized_path {
+                        Some(Ok(string_path))
+                    } else {
+                        None
+                    }
+                } else {
+                    Some(Ok(string_path))
+                }
+            } else {
+                None
+            }
+        }),
+    )
+}
+
 pub type Idx = Option<usize>;
 
 pub fn range(start: Idx, end: Idx, len: Idx, index: Idx) -> Result<(usize, usize), String> {
@@ -531,48 +565,7 @@ pub fn acquire_stty_size() -> Option<termsize::Size> {
         let parts = text.split_whitespace().take(2).collect::<Vec<_>>();
 
         if parts.len() < 2 {
-            return None;
-        }
-
-        let cols: u16 = if let Ok(c) = parts[1].parse() {
-            c
-        } else {
-            return None;
-        };
-
-        let rows: u16 = if let Ok(r) = parts[0].parse() {
-            r
-        } else {
-            return None;
-        };
-
-        return Some(termsize::Size { cols, rows });
-    }
-
-    None
-}
-
-// NOTE: some terminals (e.g. pseudo-terminals without a window size) report
-// a size of 0x0, which must be considered as unknown.
-fn acquire_term_size() -> Option<termsize::Size> {
-    termsize::get()
-        .or_else(acquire_stty_size)
-        .filter(|size| size.cols > 0 && size.rows > 0)
-}
-
-pub fn acquire_term_cols(cols_override: &Option<usize>) -> usize {
-    match cols_override {
-        None => match acquire_term_size() {
-            None => 80,
-            Some(size) => size.cols as usize,
-        },
-        Some(c) => *c,
-    }
-}
-
-pub fn acquire_term_rows(rows_override: &Option<usize>) -> usize {
-    match rows_override {
-        None => match a
+            re
 ```
 
 ### Core Architecture Module: `src/cmd/agg.rs`
@@ -1900,7 +1893,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
 }
 
 impl Args {
-    fn paths(&self) -> CliResult<Box<dyn Iterator<Item = CliResult<String>>>> {
+    fn paths(&self) -> CliResult<Box<dyn Iterator<Item = CliResult<String>> + '_>> {
         let modes = self.flag_paths.is_some() as u8
             + !self.arg_inputs.is_empty() as u8
             + self.flag_glob.is_some() as u8;
@@ -1914,9 +1907,10 @@ impl Args {
         if let Some(paths_path) = self.flag_paths.as_ref() {
             Config::new(&Some(paths_path.clone())).lines(&self.flag_path_column)
         } else if let Some(pattern) = self.flag_glob.as_ref() {
-            Ok(Box::new(glob::glob(pattern)?.map(|result| {
-                Ok(result.unwrap().to_string_lossy().into_owned())
-            })))
+            Ok(Box::new(utils::glob_but_for(
+                pattern,
+                self.flag_output.as_deref(),
+            )?))
         } else {
             Ok(Box::new(self.arg_inputs.clone().into_iter().map(Ok)))
         }
@@ -1966,7 +1960,7 @@ impl Args {
 
     fn cat_rows(&self) -> CliResult<()> {
         let mut record = ByteRecord::new();
-        let mut wtr = Config::new(&self.flag_outp
+        let mut wtr = Config::new(&self.flag_output).sim
 ```
 
 
@@ -1996,168 +1990,131 @@ impl Args {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0038ce76` (2026-11-23)
-**Commit Message**: Adding notes wrt SIMD
+### Incident Patch 1: `93db1c80` (2026-11-25)
+**Commit Message**: Documentation fixes
 
-**File**: `docs/blog/notes/simd.md` (added, +29/-0)
+**File**: `docs/blog/notes/simd.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,29 @@
-+# SIMD design article notes
-+
-+*Designing the fastest general-purpose SIMD CSV parser*
-+
-+- Historical outline wrt simd-json etc.
-+- Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
-+- Shuffling, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
-+- You cannot expect x16 or x32, that is just not realistic.
-+- Branching is data-dependent and cannot be avoided.
-+- Complete branchlessness requires too much SIMD work with is not amortized vs. scalar in the case of CSV (the same cannot be said of JSON). JSON is way more expensive to parse.
-+- Zero copy is not very convenient and takes a performance hit as soon as we must unescape more than a single cell. Else we need too much bookkeeping and we could as well do copy parsing.
-+- Typical `memchr` SIMD string searches. The necessity to amortize the mask for dense sections. But also the structure of CSV makes it useful to have a "two-speed" approach wrt quoting.
-+- The desing needs to remain practical for a wide range of CSV data and not favor one specific case (it is easy to have a SIMD parser out-perform on files having very large records & cells).
-+- Discussing the three-bytes Searcher vs. two-bytes/more branching on delimiter version.
-+- Show the bench table for reference.
-+- Keeping a field start state is complex and can kill performance by introducing too much branching
-+
-+Things tried:
-+
-+- Pooling the SIMD operations (Sep's approach) and running the state machine over collected structural characters. This means you can have aligned/cache buffers for the SIMD calls etc. and they are not throttled by the scalar side. It does not seem to out-perform the interleaved/inline operation.
-+- Doing all the parse inside the amortized mask section under-peforms vs. the two-speed switch. Which means branching the state machine once per structural char.
-+- Alternative method with one quote+newline movemask and one delimiter movemask to deal with delimiters branchlessly. This under-performs because of the additional movemask, and branchlessness over little chunks of data still pays the cost of the loop.
-+- AVX2 underperforms (in the unquote sections), vzeroupper makes code generation tricky (I tried complex non-inlined version to avoid this). Unrolled SSE2 is on par for cases where AVX2 shines and is better for other cases, and is better for compatibility.
-+- Two-bytes searching (delimiter + newline) only, with a state for field start: more robust, less performant and result in a splitter that does not agree with the others.
-+
-+Regarding CSV Writer:
-+
-+- SIMD to find if a cell must be quoted is generally bad, because of the distribution of cell lengths and first byte to quote. The unrolled table test from burntsushi is the best.
-+- SIMD is useful to perform the quoting again because of the same intuition behind two-speed.
+@@ -4,7 +4,7 @@
+ 
+ - Historical outline wrt simd-json etc.
+ - Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
+-- copy must not happen per cell in larger swathes, see new byterecord design. check full design notes
++- copy must not happen per cell but in larger swathes, see new byterecord design. check full design notes
+ - Shuffling, PCMESTRI, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
+ - You cannot expect x16 or x32, that is just not realistic.
+ - Branching is data-dependent and cannot be avoided.
+```
+
+**File**: `docs/cookbook/frequency_tables.md` (modified, +1/-1)
+```diff
+@@ -74,7 +74,7 @@ Here is the result:
+ | meta.com      | 11    |
+ | zorba.net     | 16    |
+ 
+-Note how this is reminiscent of SQL. The `groupby` command is able to perform a lot of different aggregations on the grouped rows. Run `xan groupby --aggs` to read the full list of what is available.
++Note how this is reminiscent of SQL. The `groupby` command is able to perform a lot of different aggregations on the grouped rows. Run `xan help aggs` to read the full list of what is available.
+ 
+ And now, if we want the top 3 entries (in a real life scenario we would of course have millions of domains, not just 6), we can use the `xan top` command like so:
+ 
 ```
 
 ---
 
-### Incident Patch 2: `6884dbb3` (2026-11-23)
-**Commit Message**: Adding xan p map --tmp-dir
+### Incident Patch 2: `640727c9` (2026-11-25)
+**Commit Message**: Fixing moonblade negative string indexing
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -46,7 +46,7 @@ The **laminated** update.
- * Adding `xan explode -C/--combinations <k> & -I/--drop-incomplete`.
- * Adding `xan matrix --normalize`.
- * Adding `xan join --strict`.
--* Adding `xan parallel map --inplace & --replace & --atomicity`.
-+* Adding `xan parallel map --inplace, --replace, --atomicity & --tmp-dir`.
+@@ -66,6 +66,7 @@ The **laminated** update.
+ * Fixing performance issues when calling a command with a lot of positional arguments (e.g. 10k paths to `xan scrape`).
+ * Fixing `xan explode --evaluate --drop-empty` semantics.
+ * Fixing `xan bivar` to abide by correct coordinates and flip y axis to fit intuition.
++* Fixing moonblade negative string indexing.
  
- *Fixes*
+ *Performance*
  
 ```
 
-**File**: `docs/cmd/parallel.md` (modified, +2/-0)
+**File**: `src/moonblade/functions/maps.rs` (modified, +15/-36)
 ```diff
-@@ -176,6 +176,8 @@ parallel map options:
-     --inplace              Replace target files, without changing their names, instead
-                            of adding new ones beside them.
-     --replace              Replace target files instead of adding new ones beside them.
-+    --tmp-dir <dir>        Where to write temporary files.
-+                           Will default to "/tmp" or equivalent.
-     --atomicity <mode>     When using --inplace, use to select when finished files are
-                            replaced. Must be one of the following:
-                                 - "all":  the command will wait for every file to be
-```
-
-**File**: `src/cmd/parallel.rs` (modified, +10/-1)
-```diff
-@@ -682,6 +682,8 @@ parallel map options:
-     --inplace              Replace target files, without changing their names, instead
-                            of adding new ones beside them.
-     --replace              Replace target files instead of adding new ones beside them.
-+    --tmp-dir <dir>        Where to write temporary files.
-+                           Will default to \"/tmp\" or equivalent.
-     --atomicity <mode>     When using --inplace, use to select when finished files are
-                            replaced. Must be one of the following:
-                                 - \"all\":  the command will wait for every file to be
-@@ -751,6 +753,7 @@ pub struct Args {
-     pub flag_ties: bool,
-     flag_inplace: bool,
-     flag_replace: bool,
-+    flag_tmp_dir: Option<String>,
-     flag_atomicity: Atomicity,
- }
+@@ -1,4 +1,5 @@
+ use std::borrow::Cow;
++use std::str::from_utf8;
  
-@@ -1684,7 +1687,13 @@ impl Args {
-         }
+ use crate::collections::HashMap;
  
-         let tmp_dir_opt = (self.flag_inplace || self.flag_replace)
--            .then(TempDir::new)
-+            .then(|| {
-+                if let Some(dir) = &self.flag_tmp_dir {
-+                    TempDir::new_in(dir)
-+                } else {
-+                    TempDir::new()
-+                }
-+            })
-             .transpose()?;
+@@ -7,47 +8,25 @@ use crate::moonblade::types::{BoundArgument, BoundArguments, BoundContainer, Dyn
  
-         let tmp_files_mutex_opt: Option<Mutex<Vec<(PersistMode, NamedTempFile)>>> =
-```
-
-**File**: `tests/test_parallel.rs` (modified, +4/-0)
-```diff
-@@ -394,6 +394,7 @@ fn parallel_map_inplace() {
-     let mut cmd = wrk.command("parallel");
-     cmd.arg("map")
-         .arg("--inplace")
-+        .args(["--tmp-dir", wrk.dir_as_str()])
-         .args(["-P", "slice -l 1"])
-         .arg("data1.csv")
-         .arg("data2.csv");
-@@ -431,6 +432,7 @@ fn parallel_map_replace() {
-     let mut cmd = wrk.command("parallel");
-     cmd.arg("map")
-         .arg("--replace")
-+        .args(["--tmp-dir", wrk.dir_as_str()])
-         .arg("{}_slice.csv")
-         .args(["-P", "slice -l 1"])
-         .arg("data1.csv")
-@@ -469,6 +471,7 @@ fn parallel_map_inplace_file_atomicity() {
-     let mut cmd = wrk.command("parallel");
-     cmd.arg("map")
-         .arg("--inplace")
-+        .args(["--tmp-dir", wrk.dir_as_str()])
-         .args(["--atomicity", "file"])
-         .args(["-P", "slice -l 1"])
-         .arg("data1.csv")
-@@ -507,6 +510,7 @@ fn parallel_map_replace_file_atomicity() {
-     let mut cmd = wrk.command("parallel");
-     cmd.arg("map")
-         .arg("--replace")
-+        .args(["--tmp-dir", wrk.dir_as_str()])
-         .args(["--atomicity", "file"])
-         .arg("{}_slice.csv")
-         .args(["-P", "slice -l 1"])
-```
-
-**File**: `tests/workdir.rs` (modified, +4/-0)
-```diff
-@@ -48,6 +48,10 @@ impl Workdir {
-         }
-     }
+ use super::FunctionResult;
  
-+    pub fn dir_as_str(&self) -> &str {
-+        self.dir.to_str().unwrap()
++fn nth_char(string: &str, index: i64) -> Option<char> {
++    if index < 0 {
++        string.chars().nth_back((index.unsigned_abs() - 1) as usize)
++    } else {
++        string.chars().nth(index as usize)
 +    }
++}
 +
-     pub fn ls(&self) -> Vec<String> {
-         let mut paths: Vec<_> = fs::read_dir(&self.dir)
-             .unwrap()
+ fn get_subroutine<'v>(
+     target: BoundContainer<'v>,
+     key: BoundArgument,
+ ) -> Result<Option<Cow<'v, DynamicValue>>, EvaluationError> {
+     Ok(match target {
+-        BoundContainer::String(value) => {
+-            let mut index = key.try_as_i64()?;
+-
+-            if index < 0 {
+-                index += value.len() as i64;
+-            }
+-
+-            if index < 0 {
+-                None
+-            } else {
+-                value
+-                    .chars()
+-                    .nth(index as usize)
+-                    .map(DynamicValue::from)
+-                    .map(Cow::Owned)
+-            }
+-        }
+-        BoundContainer::Bytes(value) => {
+-            let mut index = key.try_as_i64()?;
+-
+-            if index < 0 {
+-                index += value.len() as i64;
+-            }
+-
+-            if index < 0 {
+-                None
+-            } else {
+-                let value = std::str::from_utf8(value)?;
+-
+-                value
+-                    .chars()
+-                    .nth(index as usize)
+-                    .map(DynamicValue::from)
+-                    .map(Cow::Owned)
+-            }
+-        }
++        BoundContainer::String(value) => nth_char(value, key.try_as_i64()?)
++            .map(DynamicValue::from)
++            .map(Cow::Owned),
++        BoundContainer::Bytes(value) => nth_char(from_utf8(value)?, key.try_as_i64()?)
++            .map(DynamicValue::from)
++            .map(Cow::Owned),
+         BoundContainer::List(list) => {
+             let mut index = key.try_as_i64()?;
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1251** (closed): Count chars, not bytes, for negative string indices in get (@mansur-akhmadi)
 - **PR #1247** (closed): Document bivariate heatmaps and regex highlighting (@rayw-lab)
 - **PR #1246** (closed): Add xan view --plain aligned output (@mvanhorn)
 - **PR #1239** (2026-11-16): Added --combinations flag to xan explode (@clothilde-ml)
 - **PR #1224** (closed): Add a plain aligned table preset to xan view (@mvanhorn)
 - **PR #1223** (2026-11-04): Xml highlight (Issue #1215) (@clothilde-ml)
-- **PR #1222** (closed): Add a plain theme to xan view (@mvanhorn)
 
 ---
 
@@ -2177,13 +2134,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Adding notes wrt SIMD
+## X. Documentation fixes
 
 **RULE**:
 When implementing operations in `docs/blog/notes/simd.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in medialab/xan. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0038ce76`: Adding notes wrt SIMD. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93db1c80`: Documentation fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/blog/notes/simd.md`.
@@ -2191,29 +2148,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# SIMD design article notes
-
-*Designing the fastest general-purpose SIMD CSV parser*
-
-- Historical outline wrt simd-json etc.
-- Why hasn't it happened already? (IO-bound, streaming, branching not invalidated, very good existing scalar designs)
-- Shuffling, LUTs and PCLMULQDQ seems globally bad in the case of CSV. simd-json searches for many more characters than what is needed in CSV
-- You cannot expect x16 or x32, that is just not realistic.
-- Branching is data-dependent and cannot be avoided.
-- Complete branchlessness requires too much SIMD work with is not amortized vs. scalar in the case of CSV (the same cannot be said of JSON). JSON is way more expensive to parse.
-- Zero copy is not very convenient and takes a performance hit as soon as we must unescape more than a single cell. Else we need too much bookkeeping and we could as well do copy parsing.
-- Typical `memchr` SIMD string searches. The necessity to amortize the mask for dense sections. But also the structure of CSV makes it useful to have a "two-speed" approach wrt quoting.
-- The desing needs to remain practical for a wide range of CSV data and not favor one specific case (it is easy to have a SIMD parser out-perform on 
+- copy must not happen per cell but in larger swathes, see new byterecord design. check full design notes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- copy must not happen per cell in larger swathes, see new byterecord design. check full design notes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0038ce76` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93db1c80` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

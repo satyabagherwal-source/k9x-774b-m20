@@ -13274,3 +13274,5 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `27111e49` | Multi-dimensional audit evidence | 2026-11-26T04:30:58.395Z |
 | `learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized` | `https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized` | `hf-chatrla` | Multi-dimensional audit evidence | 2026-11-26T04:39:07.767Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `99cf558e` | Multi-dimensional audit evidence | 2026-11-26T04:39:17.772Z |
+| `learn-huggingface-edge0-edge0-145b-nvfp4` | `https://huggingface.co/Edge0/Edge0-145B-NVFP4` | `hf-edge0-e` | Multi-dimensional audit evidence | 2026-11-26T04:47:41.918Z |
+| `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `93db1c80` | Multi-dimensional audit evidence | 2026-11-26T04:47:43.705Z |

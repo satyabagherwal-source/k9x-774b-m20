@@ -6913,10 +6913,10 @@
     "repository": "medialab/xan",
     "platform": "github",
     "sourceUrl": "https://github.com/medialab/xan",
-    "sourceVersion": "dfbb3093",
+    "sourceVersion": "93db1c80",
     "license": "Unlicense",
-    "contentHash": "928ed21ade5926461a651206980fbc018d2c54069025fd69e68ce8b4501c23c9",
-    "lastHarvestedAt": "2026-11-24T22:30:08.013Z",
+    "contentHash": "67f34c1283c332ef97c7ef36465dfa02cea1bd9129b37a94f51aaba7f2d374ff",
+    "lastHarvestedAt": "2026-11-26T04:47:43.705Z",
     "learningId": "learn-github-medialab-xan"
   },
   "onejs-one": {
@@ -12505,8 +12505,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Edge0-145B-NVFP4",
     "sourceVersion": "hf-edge0-edge0-145b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "0a2c1ee08df254d97839b07a50c880198635e86960ec5f3bd48b4544eb8cb02d",
-    "lastHarvestedAt": "2026-11-22T08:09:19.064Z",
+    "contentHash": "9c6b3a9f2273856ae8d15240e92ff5f045a39c2acaf77249699ed1ec06bb9548",
+    "lastHarvestedAt": "2026-11-26T04:47:41.918Z",
     "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4"
   },
   "lingyired-status-trio": {

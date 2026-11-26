@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-CVPP",
-    "timestamp": "2026-11-24T14:24:20.365Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "1ace596c2a6f355c17b207b443ab0f9ab1be242b6ade770efd95abb750bd93d1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-OEKN",
-    "timestamp": "2026-11-24T14:33:18.023Z",
-    "repository": "NihilDigit/piko",
-    "learningId": "learn-github-nihildigit-piko",
-    "contentHash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-OI97",
     "timestamp": "2026-11-24T14:33:22.795Z",
     "repository": "keybase/client",
@@ -7490,6 +7460,36 @@
     "repository": "juicedata/juicefs",
     "learningId": "learn-github-juicedata-juicefs",
     "contentHash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-N0PM",
+    "timestamp": "2026-11-26T04:47:41.914Z",
+    "repository": "Edge0/Edge0-145B-NVFP4",
+    "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
+    "contentHash": "9c6b3a9f2273856ae8d15240e92ff5f045a39c2acaf77249699ed1ec06bb9548",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-N22L",
+    "timestamp": "2026-11-26T04:47:43.677Z",
+    "repository": "medialab/xan",
+    "learningId": "learn-github-medialab-xan",
+    "contentHash": "67f34c1283c332ef97c7ef36465dfa02cea1bd9129b37a94f51aaba7f2d374ff",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
