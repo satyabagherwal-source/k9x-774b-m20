@@ -13346,3 +13346,7 @@ Every entry in this ledger must capture:
 | `learn-github-rafsoh-dimeapp` | `https://github.com/rafsoh/dimeApp` | `67b0c7d3` | Multi-dimensional audit evidence | 2026-11-26T08:57:29.147Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `29fa7be9` | Multi-dimensional audit evidence | 2026-11-26T08:57:31.499Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `410c10f3` | Multi-dimensional audit evidence | 2026-11-26T08:57:35.663Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-26T09:12:18.291Z |
+| `learn-huggingface-sand-ai-magi-2-preview` | `https://huggingface.co/sand-ai/MAGI-2-preview` | `hf-sand-ai` | Multi-dimensional audit evidence | 2026-11-26T09:12:19.785Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `dd2df86c` | Multi-dimensional audit evidence | 2026-11-26T09:12:29.125Z |
+| `learn-dom-d-b8d29b23` | `project://hf-sand-ai-magi-2-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md` | 2026-11-26T09:13:05.394Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T08:57:41.958Z",
-  "total_records": 2723,
+  "last_updated": "2026-11-26T09:13:07.504Z",
+  "total_records": 2726,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1017,
+      "total": 1020,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1089,7 +1089,10 @@
         "DOM-D-760DF4AB",
         "DOM-D-5C5BC093",
         "DOM-D-E4E82055",
-        "DOM-D-D64D33E0"
+        "DOM-D-D64D33E0",
+        "domain_intelligence-research-knowledge-intelligence-sand-ai-magi-2-preview-core-invariants",
+        "DOM-D-B8D29B23",
+        "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria"
       ]
     },
     "E": {
@@ -16072,8 +16075,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "fccd817404674dcdf31a432c02e9e809ca10395d17a39173ac0382d206781623",
-      "created_at": "2026-11-24T19:00:39.709Z"
+      "content_hash": "fe10febc13fa7bc55c650d18ffbdb5ea35930770a0af41369f441b3e18749544",
+      "created_at": "2026-11-26T09:12:29.662Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -20621,8 +20624,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "5958aa458cc21a4f12459eefbe87401bf07db68e64a973916ebe341c8552a6cd",
-      "created_at": "2026-11-24T19:00:46.773Z"
+      "content_hash": "1c3c31fea9b56d2effc43ba542df53c25e73b092b87f717475d4035aeaa17673",
+      "created_at": "2026-11-26T09:13:07.504Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -29436,8 +29439,8 @@
       "title": "Research & Knowledge Intelligence: Edge0/Audio8-ASR-Infinite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-asr-infinite-research-knowledge-intelligence-edge0-audio8-asr-in.md",
       "repository": "Edge0/Audio8-ASR-Infinite",
-      "content_hash": "b10f5bd8b98b978c639f984dbcc46daa93446bfb4d4006576a0ea52a7fc54d95",
-      "created_at": "2026-11-22T16:12:18.250Z"
+      "content_hash": "e28d9dbafc765275133a65b55f213fdb5a34ccb02eb03f08ec54597923afb8d0",
+      "created_at": "2026-11-26T09:12:18.574Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-asr-infinite-learnings-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-asr-infinite-learnings-core-inva",
@@ -29445,8 +29448,8 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-audio8-asr-infinite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-asr-infinite-learnings-research-knowledge-intelligence-hf-edge0-.md",
       "repository": "hf-edge0-audio8-asr-infinite-learnings",
-      "content_hash": "3a556a02b8466de0dbed366c62bc2710b8b3d5423d2bc51a0278ee528d536b80",
-      "created_at": "2026-11-22T16:12:38.459Z"
+      "content_hash": "e13c8800dde081510b25d662e9c68cd4f8218885401b3a4565d47bd883224d25",
+      "created_at": "2026-11-26T09:13:06.501Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-gguf-lear": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-abenzerps-qwen-image-2-1-uncensored-gguf-lear",
@@ -46012,6 +46015,66 @@
       "repository": "sfu-db-connector-x-learnings",
       "content_hash": "03312db8574a8259145eb19ffbec76eb72a5c6d65ad283504c4b6249c6e2148e",
       "created_at": "2026-11-26T08:26:42.111Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sand-ai-magi-2-preview-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sand-ai-magi-2-preview-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sand-ai/MAGI-2-preview Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sand-ai-magi-2-preview-research-knowledge-intelligence-sand-ai-magi-2-preview.md",
+      "repository": "sand-ai/MAGI-2-preview",
+      "content_hash": "632ef36a3adf8fbbb6143d6cdcea297abd46b79bf0b8e915bb598260f514a1d2",
+      "created_at": "2026-11-26T09:12:20.088Z"
+    },
+    "DOM-D-B8D29B23": {
+      "record_id": "DOM-D-B8D29B23",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): sand-ai/MAGI-2-preview",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/sand-ai/MAGI-2-preview](https://huggingface.co/sand-ai/MAGI-2-preview))  \n> **Source Version**: `hf-sand-ai-m`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "11add5919c5ede87018bd69422126188c9a7bb8fd2a24b47fc39efa547a51c47",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-sand-ai-magi-2-preview/hf-sand-ai-magi-2-preview-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T09:12:32.844Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sand-ai-magi-2-preview)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-sand-ai-magi-2-preview"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T09:13:05.327Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sand-ai-magi-2-preview-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sand-ai-magi-2-preview-learnings-research-knowledge-intelligence-hf-sand-ai-m.md",
+      "repository": "hf-sand-ai-magi-2-preview-learnings",
+      "content_hash": "24134c8e4f2a43f32fa67f32e2ac2391b24860010fc8e665802ff99a3a784a23",
+      "created_at": "2026-11-26T09:13:05.800Z"
     }
   }
 }

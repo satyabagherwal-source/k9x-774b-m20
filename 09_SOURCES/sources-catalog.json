@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "ad47f7cf5e82ac2c941fddb464808b8af14b51f9281f1ff9d6c554a5b7a8bfa3",
-    "lastHarvestedAt": "2026-11-22T16:12:17.978Z",
+    "contentHash": "4a97637284b4c00fffc1a7be418e872ccc2ac02ec523bff8b18e829bf9e60f19",
+    "lastHarvestedAt": "2026-11-26T09:12:18.291Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "12d12a40",
+    "sourceVersion": "dd2df86c",
     "license": "MIT",
-    "contentHash": "5099bcd96453875e2387b8b1b600bcb231e2fd9138998eb28f9dce76d89ec1e7",
-    "lastHarvestedAt": "2026-11-24T19:00:39.214Z",
+    "contentHash": "d29e96e54662731e5c1b3b53b987516affe2fe73be061ab040b94af5d7aafa6e",
+    "lastHarvestedAt": "2026-11-26T09:12:29.125Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -13508,5 +13508,15 @@
     "contentHash": "d9960b7a0cecad18e63bb7f31414633ae012a012b281b8abc047033a30a5eee0",
     "lastHarvestedAt": "2026-11-26T07:48:27.090Z",
     "learningId": "learn-github-nexu-io-openmotion"
+  },
+  "hf-sand-ai-magi-2-preview": {
+    "repository": "sand-ai/MAGI-2-preview",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/sand-ai/MAGI-2-preview",
+    "sourceVersion": "hf-sand-ai-magi-2-preview",
+    "license": "Open-Source",
+    "contentHash": "f9a901171a071639dd086322732769283383812c6478099d27e6411be8b70b4c",
+    "lastHarvestedAt": "2026-11-26T09:12:19.785Z",
+    "learningId": "learn-huggingface-sand-ai-magi-2-preview"
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `12d12a40`  
+> **Source Version**: `dd2df86c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T19:00:38.034Z  
+> **Timestamp**: 2026-11-26T09:12:28.170Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:00:38.028Z  
+> **Harvest Timestamp**: 2026-11-26T09:12:28.164Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33250 stars
+- **Stars / Engagement**: 33308 stars
 
 ---
 
@@ -1658,313 +1658,95 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12d12a40` (2026-11-24)
-**Commit Message**: Merge pull request #8200 from linzch3/fix/pdcp-scanid-warning-logger
+### Incident Patch 1: `dd2df86c` (2026-11-26)
+**Commit Message**: Merge pull request #8110 from projectdiscovery/bump-goja-fixes
 
-fix(pdcp): log invalid scan id warning via the writer logger
+bump goja to pick up the nesting depth limit and the context argument fix
 
-**File**: `internal/pdcp/writer.go` (modified, +1/-1)
+**File**: `go.mod` (modified, +2/-2)
 ```diff
-@@ -128,7 +128,7 @@ func newUploadClient() *retryablehttp.Client {
- // SetScanID sets the scan id for the upload writer
- func (u *UploadWriter) SetScanID(id string) error {
- 	if !xidRegex.MatchString(id) {
--		gologger.Warning().Msgf("invalid asset id provided (unknown xid format): %s", id)
-+		u.Logger.Warning().Msgf("invalid asset id provided (unknown xid format): %s", id)
- 	}
- 	u.scanID = id
- 	return nil
+@@ -85,7 +85,7 @@ require (
+ 	github.com/projectdiscovery/gcache v0.0.0-20241015120333-12546c6e3f4c
+ 	github.com/projectdiscovery/goflags v0.2.1
+ 	github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb
+-	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
++	github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed
+ 	github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d
+ 	github.com/projectdiscovery/gologger v1.1.76
+ 	github.com/projectdiscovery/gostruct v0.0.2
+@@ -234,7 +234,7 @@ require (
+ 	github.com/dimchansky/utfbom v1.1.1 // indirect
+ 	github.com/distribution/reference v0.6.0 // indirect
+ 	github.com/djherbis/times v1.6.0 // indirect
+-	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
++	github.com/dlclark/regexp2/v2 v2.11.0 // indirect
+ 	github.com/docker/cli v29.2.0+incompatible // indirect
+ 	github.com/docker/go-connections v0.7.0 // indirect
+ 	github.com/dop251/goja v0.0.0-20260311135729-065cd970411c // indirect
 ```
 
-**File**: `internal/pdcp/writer_logger_test.go` (added, +30/-0)
+**File**: `go.sum` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,30 @@
-+package pdcp
+@@ -356,8 +356,8 @@ github.com/djherbis/times v1.6.0 h1:w2ctJ92J8fBvWPxugmXIv7Nz7Q3iDMKNx9v5ocVH20c=
+ github.com/djherbis/times v1.6.0/go.mod h1:gOHeRAz2h+VJNZ5Gmc/o7iD9k4wW7NMVqieYCY99oc0=
+ github.com/dlclark/regexp2 v1.11.5 h1:Q/sSnsKerHeCkc/jSTNq1oCm7KiVgUMZRDUoRu0JQZQ=
+ github.com/dlclark/regexp2 v1.11.5/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
+-github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=
+-github.com/dlclark/regexp2/v2 v2.2.1/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
++github.com/dlclark/regexp2/v2 v2.11.0 h1:z5uRPHav+eTVpoffDSuUP2KPS4f1ONZaPDK73S8HA0w=
++github.com/dlclark/regexp2/v2 v2.11.0/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
+ github.com/docker/cli v29.2.0+incompatible h1:9oBd9+YM7rxjZLfyMGxjraKBKE4/nVyvVfN4qNl9XRM=
+ github.com/docker/cli v29.2.0+incompatible/go.mod h1:JLrzqnKDaYBop7H2jaqPtU4hHvMKP+vjCwu2uszcLI8=
+ github.com/docker/go-connections v0.7.0 h1:6SsRfJddP22WMrCkj19x9WKjEDTB+ahsdiGYf0mN39c=
+@@ -943,8 +943,8 @@ github.com/projectdiscovery/goflags v0.2.1 h1:XnSYvsCjUwHbZaaJUZ3YznCJPoXRk/IhTF
+ github.com/projectdiscovery/goflags v0.2.1/go.mod h1:7nAP1r2Dqgn/rwmOE3EWbZWUCEJKNIhVSBGpuzJAIns=
+ github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb h1:+L1yW2PblRHSSHQRTmvxLkGDPZnM52N62oeBd2xHKF0=
+ github.com/projectdiscovery/goimpacket v0.1.1-0.20261007205806-6042a8213eeb/go.mod h1:bfgULaYf+6pjjcLCekpXIYElnLJbmhvTttxMAbQJvhY=
+-github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c h1:4H/CfVNlue9PIwsCM1IGxOynDI7cir+emXuDvGJTLJs=
+-github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c/go.mod h1:SO0AP+uKfYeeoR6jyVH/PKRYJE/f5gJrPMAM00iGEMc=
++github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed h1:h6aBYgIrjnapch77HWnpCPPz+bTU2OMfWOrr1fr0knA=
++github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed/go.mod h1:sjYPrVMMCZNujHasGmCZGs3Hx8DymbJA2plsJjlC3LA=
+ github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d h1:fqqH9LHpN2WDz9QuxFrhKNxXSRtzk+Sa6jAhbB7tXcQ=
+ github.com/projectdiscovery/goja_nodejs v0.0.0-20260618132410-8519f75f703d/go.mod h1:Ezmbgdaw4EunGGBU4MQViLoGMJc37LA3ip55YV3KeRI=
+ github.com/projectdiscovery/gologger v1.1.76 h1:QeIZ2VT9ZdRNx+XBuE7XkH3S33plPYtKA4l/TgsSsks=
+```
+
+**File**: `pkg/js/compiler/goja_regression_test.go` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++package compiler
 +
 +import (
-+	"bytes"
++	"strings"
 +	"testing"
 +
-+	"github.com/projectdiscovery/gologger"
-+	"github.com/projectdiscovery/gologger/formatter"
-+	"github.com/projectdiscovery/gologger/levels"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/utils"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+func TestSetScanIDWarnsOnWriterLogger(t *testing.T) {
-+	var buf bytes.Buffer
-+	logger := &gologger.Logger{}
-+	logger.SetWriter(&utils.CaptureWriter{Buffer: &buf})
-+	logger.SetFormatter(formatter.NewCLI(true))
-+	logger.SetMaxLevel(levels.LevelWarning)
-+
-+	u := &UploadWriter{Logger: logger}
-+	require.NoError(t, u.SetScanID("invalid-id"))
-+	require.Equal(t, "invalid-id", u.scanID)
-+	require.Contains(t, buf.String(), "invalid asset id provided (unknown xid format): invalid-id")
-+
-+	// a valid xid doesn't log anything
-+	buf.Reset()
-+	require.NoError(t, u.SetScanID("abcdefghij0123456789"))
-+	require.Empty(t, buf.String())
++// A Set that contains itself used to overflow the Go stack on export and kill the process.
++func TestExecuteSelfReferencingSetResult(t *testing.T) {
++	result, err := executeScript(t, t.Name(), false, `var s = new Set(); s.add(s); s`)
++	require.NoError(t, err)
++	require.NotNil(t, result["response"])
 +}
-```
-
----
-
-### Incident Patch 2: `6a1fdb88` (2026-11-23)
-**Commit Message**: Merge branch 'dev' into fix/pdcp-scanid-warning-logger
-
-**File**: `.github/workflows/auto-merge.yaml` (modified, +11/-19)
-```diff
-@@ -1,24 +1,16 @@
- name: 🔀 Auto merge PR
- 
- on:
--  # pull_request:
--  #   types: [opened, synchronize, reopened, ready_for_review]
--  # pull_request_review:
--  #   types: [submitted]
--  workflow_run:
--    workflows: ["♾️ Compatibility Checks"]
--    types: [completed]
--
--permissions:
--  contents: write
--  pull-requests: write
-+  pull_request:
-+    branches:
-+      - dev
- 
- jobs:
--  auto-merge-dependabot:
--    runs-on: ubuntu-latest
--    if: ${{ github.event.workflow_run.conclusion == 'success' }}
--    steps:
--      - uses: projectdiscovery/actions/pr/approve@v1
--      - uses: projectdiscovery/actions/pr/merge@v1
--        with:
--          auto: "true"
-\ No newline at end of file
-+  dependabot:
-+    uses: projectdiscovery/workflows/.github/workflows/dependabot-auto-merge.yaml@v1
-+    permissions:
-+      contents: write
-+      pull-requests: write
-+    with:
-+      go-compat-checks: true
-+      release-test: true
-```
-
-**File**: `.github/workflows/compat-checks.yaml` (removed, +0/-19)
-```diff
-@@ -1,19 +0,0 @@
--name: ♾️ Compatibility Checks
--
--on:
--  pull_request:
--    types: [opened, synchronize]
--    branches:
--      - dev
--
--jobs:
--  compat-checks:
--    if: ${{ github.actor == 'dependabot[bot]' }}
--    runs-on: ubuntu-latest
--    permissions:
--      contents: write
--    steps:
--      - uses: actions/checkout@v7.0.1
--      - uses: projectdiscovery/actions/setup/go/compat-checks@v1
--        with:
--          release-test: true
-```
-
-**File**: `README.md` (modified, +3/-3)
-```diff
-@@ -143,7 +143,7 @@ TARGET:
-    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
-    -targets-inline string        inline multiline target list (for use in template profiles)
-    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
--   -resume string                resume scan from and save to specified file (clustering will be disabled)
-+   -resume string                resume scan from and save to specified file
-    -sa, -scan-all-ips            scan all the IP's associated with dns record
-    -iv, -ip-version string[]     IP version to scan of hostname (4,6); default uses dialer fallback, -sa scans all addresses
-    -dun, -disable-url-normalization  keep targets exactly as supplied instead of collapsing urls that address the same resource
-@@ -173,7 +173,7 @@ TEMPLATES:
-    -td, -template-display                 displays the templates content
-    -tl                                    list all templates matching current filters
-    -tgl                                   list all available tags
--   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
-+   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
-    -code                                  enable loading code protocol-based templates
-    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
-    -esc, -enable-self-contained           enable loading self-contained templates
-@@ -322,7 +322,7 @@ OPTIMIZATIONS:
-    -timeout int                     time to wait in seconds before timeout (default 10)
-    -retries int                     number of times to retry a failed request (default 1)
-    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
--   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
-+   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
-    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
-    -nmhe, -no-mhe                   disable skipping host from scan based on errors
-    -project                         use a project folder to avoid sending same request multiple times
-```
-
-**File**: `README_CN.md` (modified, +3/-3)
-```diff
-@@ -143,7 +143,7 @@ TARGET:
-    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
-    -targets-inline string        inline multiline target list (for use in template profiles)
-    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
--   -resume string                resume scan from and save to specified file (clustering will be disabled)
-+   -resume string                resume scan from and save to specified file
-    -sa, -scan-all-ips            scan all the IP's associated with dns record
-    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
- 
-@@ -171,7 +171,7 @@ TEMPLATES:
-    -td, -template-display                 displays the templates content
-    -tl                                    list all templates matching current filters
-    -tgl                                   list all available tags
--   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
-+   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
-    -code                                  enable loading code protocol-based templates
-    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
-    -esc, -enable-self-contained           enable loading self-contained templates
-@@ -315,7 +315,7 @@ OPTIMIZATIONS:
-    -timeout int                     time to wait in seconds before timeout (default 10)
-    -retries int                     number of times to retry a failed request (default 1)
-    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
--   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
-+   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
-    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
-    -nmhe, -no-mhe                   disable skipping host from scan based on errors
-    -project                         use a project folder to avoid sending same request multiple times
-```
-
-**File**: `README_ES.md` (modified, +3/-3)
-```diff
-@@ -143,7 +143,7 @@ TARGET:
-    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
-    -targets-inline string        inline multiline target list (for use in template profiles)
-    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
--   -resume string                resume scan from and save to specified file (clustering will be disabled)
-+   -resume string                resume scan from and save to specified file
-    -sa, -scan-all-ips            scan all the IP's associated with dns record
-    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
- 
-@@ -171,7 +171,7 @@ TEMPLATES:
-    -td, -template-display                 displays the templates content
-    -tl                                    list all templates matching current filters
-    -tgl                                   list all available tags
--   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
-+   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
-    -code                                  enable loading code protocol-based templates
-    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
-    -esc, -enable-self-contained           enable loading self-contained templates
-@@ -315,7 +315,7 @@ OPTIMIZATIONS:
-    -timeout int                     time to wait in seconds before timeout (default 10)
-    -retries int                     number of times to retry a failed request (default 1)
-    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
--   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
-+   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
-    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
-    -nmhe, -no-mhe                   disable skipping host from scan based on errors
-    -project                         use a project folder to avoid sending same request multiple times
-```
-
-**File**: `README_FA.md` (modified, +3/-3)
-```diff
-@@ -158,7 +158,7 @@ TARGET:
-    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
-    -targets-inline string        inline multiline target list (for use in template profiles)
-    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
--   -resume string                resume scan from and save to specified file (clustering will be disabled)
-+   -resume string                resume scan from and save to specified file
-    -sa, -scan-all-ips            scan all the IP's associated with dns record
-    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
-    -dun, -disable-url-normalization  keep targets exactly as supplied instead of collapsing urls that address the same resource
-@@ -188,7 +188,7 @@ TEMPLATES:
-    -td, -template-display                 displays the templates content
-    -tl                                    list all templates matching current filters
-    -tgl                                   list all available tags
--   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
-+   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
-    -code                                  enable loading code protocol-based templates
-    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
-    -esc, -enable-self-contained           enable loading self-contained templates
-@@ -335,7 +335,7 @@ OPTIMIZATIONS:
-    -timeout int                     time to wait in seconds before timeout (default 10)
-    -retries int                     number of times to retry a failed request (default 1)
-    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
--   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
-+   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
-    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
-    -nmhe, -no-mhe                   disable skipping host from scan based on errors
-    -project                         use a project folder to avoid sending same request multiple times
-```
-
-**File**: `README_ID.md` (modified, +3/-3)
-```diff
-@@ -143,7 +143,7 @@ TARGET:
-    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
-    -targets-inline string        inline multiline target list (for use in template profiles)
-    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
--   -resume string                resume scan from and save to specified file (clustering will be disabled)
-+   -resume string                resume scan from and save to specified file
-    -sa, -scan-all-ips            scan all the IP's associated with dns record
-    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
- 
-@@ -171,7 +171,7 @@ TEMPLATES:
-    -td, -template-display                 displays the templates content
-    -tl                                    list all templates matching current filters
-    -tgl                                   list all available tags
--   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
-+   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
-    -code                                  enable loading code protocol-based templates
-    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
-    -esc, -enable-self-contained           enable loading self-contained templates
-@@ -315,7 +315,7 @@ OPTIMIZATIONS:
-    -timeout int                     time to wait in seconds before timeout (default 10)
-    -retries int                     number of times to retry a failed request (default 1)
-    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
--   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
-+   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
-    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
-    -nmhe, -no-mhe                   disable skipping host from scan based on errors
-    -project                         use a project folder to avoid sending same request multiple times
-```
-
-**File**: `README_JP.md` (modified, +3/-3)
-```diff
-@@ -143,7 +143,7 @@ TARGET:
-    -l, -list string              path to file containing a list of target URLs/hosts to scan (one per line)
-    -targets-inline string        inline multiline target list (for use in template profiles)
-    -eh, -exclude-hosts string[]  hosts to exclude to scan from the input list (ip, cidr, hostname)
--   -resume string                resume scan from and save to specified file (clustering will be disabled)
-+   -resume string                resume scan from and save to specified file
-    -sa, -scan-all-ips            scan all the IP's associated with dns record
-    -iv, -ip-version string[]     IP version to scan of hostname (4,6) - (default 4)
- 
-@@ -171,7 +171,7 @@ TEMPLATES:
-    -td, -template-display                 displays the templates content
-    -tl                                    list all templates matching current filters
-    -tgl                                   list all available tags
--   -sign                                  signs the templates with the private key defined in NUCLEI_SIGNATURE_PRIVATE_KEY env variable
-+   -sign                                  signs the templates with the key in NUCLEI_USER_PRIVATE_KEY and NUCLEI_USER_CERTIFICATE, or in the keys folder
-    -code                                  enable loading code protocol-based templates
-    -dut, -disable-unsigned-templates      disable running unsigned templates or templates with mismatched signature
-    -esc, -enable-self-contained           enable loading self-contained templates
-@@ -315,7 +315,7 @@ OPTIMIZATIONS:
-    -timeout int                     time to wait in seconds before timeout (default 10)
-    -retries int                     number of times to retry a failed request (default 1)
-    -ldp, -leave-default-ports       leave default HTTP/HTTPS ports (eg. host:80,host:443)
--   -mhe, -max-host-error int        max errors for a host before skipping from scan (default 30)
-+   -mhe, -max-host-error int        max http errors for a host:port before skipping requests to it (default 30)
-    -te, -track-error string[]       adds given error to max-host-error watchlist (standard, file)
-    -nmhe, -no-mhe                   disable skipping host from scan based on errors
-    -project                         use a project folder to avoid sending same request multiple times
++
++// Deeply nested source used to overflow the Go stack in the parser.
++func TestCompileDeepNesting(t *testing.T) {
++	const n = 1000000
++	_, err := SourceAutoMode(strings.Repeat("(", n)+"a"+strings.Repeat(")", n), false)
++	require.ErrorContains(t, err, "Maximum nesting depth exceeded")
++}
++
++// A context-first Go function called with fewer arguments used to panic in reflect.
++// The missing port must reach GetServerInfo as 0, so its dial error names 127.0.0.1:0.
++func TestContextFunctionMissingArguments(t *testing.T) {
++	result, err := executeScript(t, t.Name(), false, `require("nuclei/redis").GetServerInfo("127.0.0.1")`)
++	require.ErrorContains(t, err, "127.0.0.1:0")
++	errText, _ := result["error"].(string)
++	require.Contains(t, errText, "127.0.0.1:0")
++	require.NotContains(t, errText, "reflect")
++	require.NotContains(t, errText, "panic")
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1993,28 +1775,30 @@ fix(pdcp): log invalid scan id warning via the writer logger
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in writer.go
+## X. Empirical Invariant Guard in go.mod
 
 **RULE**:
-When implementing operations in `internal/pdcp/writer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12d12a40`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd2df86c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/pdcp/writer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		u.Logger.Warning().Msgf("invalid asset id provided (unknown xid format): %s", id)
+	github.com/projectdiscovery/goja v0.0.0-20261105204359-4285f3c977ed
+	github.com/dlclark/regexp2/v2 v2.11.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		gologger.Warning().Msgf("invalid asset id provided (unknown xid format): %s", id)
+	github.com/projectdiscovery/goja v0.0.0-20261012075649-9b78f2e05b9c
+	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12d12a40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd2df86c` are properly handled with clean fallback behavior.

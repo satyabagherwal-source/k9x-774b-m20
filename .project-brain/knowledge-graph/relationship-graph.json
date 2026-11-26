@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T05:57:45.930Z",
+  "updated_at": "2026-11-26T09:13:05.391Z",
   "statistics": {
-    "total_nodes": 557,
-    "total_edges": 229,
+    "total_nodes": 558,
+    "total_edges": 230,
     "domain_distribution": {
-      "D": 335,
+      "D": 336,
       "M": 1,
       "H": 102,
       "J": 22,
@@ -22,7 +22,7 @@
       "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 225,
+      "CONSTRAINED_BY_ARCHITECTURE": 226,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12429,6 +12429,29 @@
       ],
       "created_at": "2026-11-26T05:57:45.930Z",
       "updated_at": "2026-11-26T05:57:45.930Z"
+    },
+    "DOM-D-B8D29B23": {
+      "id": "DOM-D-B8D29B23",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): sand-ai/MAGI-2-preview",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-sand-ai-magi-2-preview/hf-sand-ai-magi-2-preview-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T09:12:32.844Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sand-ai-magi-2-preview)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-26T09:13:05.390Z",
+      "updated_at": "2026-11-26T09:13:05.390Z"
     }
   },
   "edges": [
@@ -14721,6 +14744,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-4E1550AF [H] with Domain A",
       "created_at": "2026-11-26T05:19:38.975Z"
+    },
+    {
+      "id": "EDGE-53B57061BE86",
+      "sourceId": "DOM-D-B8D29B23",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-B8D29B23 [D] with Domain M",
+      "created_at": "2026-11-26T09:13:05.391Z"
     }
   ]
 }

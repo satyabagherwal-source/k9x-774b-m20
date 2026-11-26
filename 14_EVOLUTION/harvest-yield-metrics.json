@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T08:57:35.675Z",
-  "total_cycles_completed": 12634,
-  "total_learnings_persisted": 12634,
-  "total_rules_promoted": 11531,
+  "last_updated": "2026-11-26T09:12:29.140Z",
+  "total_cycles_completed": 12637,
+  "total_learnings_persisted": 12637,
+  "total_rules_promoted": 11532,
   "history": [
-    {
-      "timestamp": "2026-11-25T14:05:09.677Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T14:14:23.304Z",
-      "repository": "SulphurAI/Sulphur-3",
-      "learningId": "learn-huggingface-sulphurai-sulphur-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T14:14:32.756Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T14:14:35.679Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T08:57:35.675Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T09:12:18.306Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T09:12:19.805Z",
+      "repository": "sand-ai/MAGI-2-preview",
+      "learningId": "learn-huggingface-sand-ai-magi-2-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T09:12:29.140Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

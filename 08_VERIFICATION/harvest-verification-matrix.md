@@ -13313,3 +13313,7 @@
 | `CYCLE-20261126-K8XI` | `2026-11-26T08:57:29.142Z` | `rafsoh/dimeApp` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md` | Yes (`b76afc01...`) |
 | `CYCLE-20261126-KAQU` | `2026-11-26T08:57:31.494Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10635` | Yes (`8eb7d11f...`) |
 | `CYCLE-20261126-KDYI` | `2026-11-26T08:57:35.658Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10636` | Yes (`26783d36...`) |
+| `CYCLE-20261126-3AZY` | `2026-11-26T09:12:18.286Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`4a976372...`) |
+| `CYCLE-20261126-3C5G` | `2026-11-26T09:12:19.780Z` | `sand-ai/MAGI-2-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md` | Yes (`f9a90117...`) |
+| `CYCLE-20261126-3JCW` | `2026-11-26T09:12:29.120Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8879` | Yes (`d29e96e5...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T09:13:05.394Z` | `hf-sand-ai-magi-2-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B8D29B23` [Domain D] | Yes (`11add591...`) |

@@ -5430,3 +5430,7 @@ https://github.com/oshai/kotlin-logging
 # --- Automatically Discovered by AI Scout Engine [2026-11-26T07:48:21.462Z] ---
 # [AI-AGENTS] nexu-io/openmotion (9186 score) - The open-source Claude Motion & CapCut alternative. Turn a reference video into 
 https://github.com/nexu-io/openmotion
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-26T09:12:09.346Z] ---
+# [HUGGINGFACE-AI-MODELS] sand-ai/MAGI-2-preview (2380 score) - Verified Hugging Face Model: sand-ai/MAGI-2-preview (238 likes, 0 downloads)
+https://huggingface.co/sand-ai/MAGI-2-preview

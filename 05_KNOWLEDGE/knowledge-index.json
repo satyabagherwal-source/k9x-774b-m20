@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T08:57:42.174Z",
-  "total_verified_learnings": 9124,
+  "last_updated": "2026-11-26T09:13:07.764Z",
+  "total_verified_learnings": 9125,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25775,
+  "total_items": 25778,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -232105,8 +232105,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "12d12a40",
-      "content_hash": "5099bcd96453875e2387b8b1b600bcb231e2fd9138998eb28f9dce76d89ec1e7",
+      "source_version": "dd2df86c",
+      "content_hash": "d29e96e54662731e5c1b3b53b987516affe2fe73be061ab040b94af5d7aafa6e",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -232134,6 +232134,11 @@
           "number": 8817,
           "title": "Empirical Invariant Guard in interactsh.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8879,
+          "title": "Empirical Invariant Guard in go.mod",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 8962,
@@ -232191,7 +232196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:00:38.990Z",
+      "verified_at": "2026-11-26T09:12:28.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232233,10 +232238,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "12d12a40",
-      "content_hash": "fccd817404674dcdf31a432c02e9e809ca10395d17a39173ac0382d206781623",
+      "source_version": "dd2df86c",
+      "content_hash": "fe10febc13fa7bc55c650d18ffbdb5ea35930770a0af41369f441b3e18749544",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T19:00:39.709Z"
+      "persisted_at": "2026-11-26T09:12:29.662Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -232245,10 +232250,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "12d12a40",
-      "content_hash": "a18329d0a4bfa4be109e50569cd0545f04809a130b2a5a8a5b009187dfb81e28",
+      "source_version": "dd2df86c",
+      "content_hash": "05aa463a60a82d2a078cf0faaf097c8b6bbfda2761d45e21f0e642db380fb4fb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:00:39.953Z"
+      "persisted_at": "2026-11-26T09:12:29.953Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -246674,9 +246679,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "5958aa458cc21a4f12459eefbe87401bf07db68e64a973916ebe341c8552a6cd",
+      "content_hash": "1c3c31fea9b56d2effc43ba542df53c25e73b092b87f717475d4035aeaa17673",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T19:00:46.773Z"
+      "persisted_at": "2026-11-26T09:13:07.504Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -246686,9 +246691,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e2305a8587b0c8a7d206ac5a45b25cdc72a7975615e91d04fff8ce5e65f8469",
+      "content_hash": "eebb23e5481ea33546849c94d05f7ebac2a2970367e96ed577ae7738fdc06a59",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:00:46.959Z"
+      "persisted_at": "2026-11-26T09:13:07.764Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -271808,26 +271813,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8879,
       "title": "Empirical Invariant Guard in go.mod",
-      "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "a99e9208",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "dd2df86c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T17:03:42.346Z"
+      "verified_at": "2026-11-26T09:12:28.791Z"
     },
     "candidate_directive-empirical-invariant-guard-in-go-mod": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-go-mod",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-M73O-empirical-invariant-guard-in-go-mod.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4CR6-empirical-invariant-guard-in-go-mod.md",
       "title": "Empirical Invariant Guard in go.mod",
-      "repository": "etcd-io-etcd-learnings",
+      "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "bca7018122756db9856f681d9180359f676b37fc15ed260883cf220f0fe4c9fa",
+      "content_hash": "152c0d0ba822879fe49e97bb58cdbb1b6f17c927b959cab628f285ae164fe332",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T17:03:52.692Z"
+      "persisted_at": "2026-11-26T09:13:07.219Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
@@ -283721,7 +283726,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "ad47f7cf5e82ac2c941fddb464808b8af14b51f9281f1ff9d6c554a5b7a8bfa3",
+      "content_hash": "4a97637284b4c00fffc1a7be418e872ccc2ac02ec523bff8b18e829bf9e60f19",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [],
@@ -283730,7 +283735,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:12:17.697Z",
+      "verified_at": "2026-11-26T09:12:17.938Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283747,9 +283752,9 @@
       "title": "Research & Knowledge Intelligence: Edge0/Audio8-ASR-Infinite Core Invariants",
       "repository": "Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "b10f5bd8b98b978c639f984dbcc46daa93446bfb4d4006576a0ea52a7fc54d95",
+      "content_hash": "e28d9dbafc765275133a65b55f213fdb5a34ccb02eb03f08ec54597923afb8d0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T16:12:18.250Z"
+      "persisted_at": "2026-11-26T09:12:18.574Z"
     },
     "rule-9057": {
       "learning_id": "rule-9057",
@@ -283849,9 +283854,9 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-audio8-asr-infinite-learnings Core Invariants",
       "repository": "hf-edge0-audio8-asr-infinite-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a556a02b8466de0dbed366c62bc2710b8b3d5423d2bc51a0278ee528d536b80",
+      "content_hash": "e13c8800dde081510b25d662e9c68cd4f8218885401b3a4565d47bd883224d25",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T16:12:38.459Z"
+      "persisted_at": "2026-11-26T09:13:06.501Z"
     },
     "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf": {
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
@@ -353019,6 +353024,57 @@
       "content_hash": "a60f1628dca6f292d600d60bff830fad7b8027f27b6094c9455c1a590ff04439",
       "domain_letter": "I",
       "persisted_at": "2026-11-26T08:57:39.911Z"
+    },
+    "learn-huggingface-sand-ai-magi-2-preview": {
+      "learning_id": "learn-huggingface-sand-ai-magi-2-preview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sand-ai/MAGI-2-preview",
+      "repository": "sand-ai/MAGI-2-preview",
+      "slug": "hf-sand-ai-magi-2-preview",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sand-ai/MAGI-2-preview",
+      "source_version": "hf-sand-ai-magi-2-preview",
+      "content_hash": "f9a901171a071639dd086322732769283383812c6478099d27e6411be8b70b4c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-26T09:12:19.422Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-sand-ai-magi-2-preview-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-sand-ai-magi-2-preview-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sand-ai-magi-2-preview-research-knowledge-intelligence-sand-ai-magi-2-preview.md",
+      "title": "Research & Knowledge Intelligence: sand-ai/MAGI-2-preview Core Invariants",
+      "repository": "sand-ai/MAGI-2-preview",
+      "source_version": "hf-sand-ai-magi-2-preview",
+      "content_hash": "632ef36a3adf8fbbb6143d6cdcea297abd46b79bf0b8e915bb598260f514a1d2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T09:12:20.088Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sand-ai-magi-2-preview-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sand-ai-magi-2-preview-learnings-research-knowledge-intelligence-hf-sand-ai-m.md",
+      "title": "Research & Knowledge Intelligence: hf-sand-ai-magi-2-preview-learnings Core Invariants",
+      "repository": "hf-sand-ai-magi-2-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "24134c8e4f2a43f32fa67f32e2ac2391b24860010fc8e665802ff99a3a784a23",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T09:13:05.800Z"
     }
   },
   "ai-builder-brain": {

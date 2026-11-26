@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T08:57:35.679Z",
+  "last_updated": "2026-11-26T09:12:29.149Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -52,14 +52,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
-      "content_hash": "ad47f7cf5e82ac2c941fddb464808b8af14b51f9281f1ff9d6c554a5b7a8bfa3",
-      "verified_at": "2026-11-22T16:12:17.989Z",
+      "content_hash": "4a97637284b4c00fffc1a7be418e872ccc2ac02ec523bff8b18e829bf9e60f19",
+      "verified_at": "2026-11-26T09:12:18.309Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T16:12:17.989Z"
+      "last_updated": "2026-11-26T09:12:18.309Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "5099bcd96453875e2387b8b1b600bcb231e2fd9138998eb28f9dce76d89ec1e7",
-      "verified_at": "2026-11-24T19:00:39.231Z",
+      "content_hash": "d29e96e54662731e5c1b3b53b987516affe2fe73be061ab040b94af5d7aafa6e",
+      "verified_at": "2026-11-26T09:12:29.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:00:39.231Z"
+      "last_updated": "2026-11-26T09:12:29.148Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -20384,6 +20384,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-26T07:48:27.106Z"
+    },
+    "sand-ai/MAGI-2-preview": {
+      "repository": "sand-ai/MAGI-2-preview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-sand-ai-magi-2-preview",
+      "content_hash": "f9a901171a071639dd086322732769283383812c6478099d27e6411be8b70b4c",
+      "verified_at": "2026-11-26T09:12:19.808Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-26T09:12:19.808Z"
     }
   },
   "repos": {

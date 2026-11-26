@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T08:57:41.479Z",
+  "updated_at": "2026-11-26T09:13:05.436Z",
   "stats": {
-    "total_discovered": 9716,
-    "approved_pending_harvest": 9216,
+    "total_discovered": 9717,
+    "approved_pending_harvest": 9217,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9203,
+      "COMMUNITY_AND_EXPERT": 9204,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210279,6 +210279,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rafsoh-dimeapp-learnings.md",
         "fileName": "rafsoh-dimeapp-learnings.md"
+      }
+    },
+    "SRC-326020B4A210": {
+      "id": "SRC-326020B4A210",
+      "url": "https://huggingface.co/sand-ai/MAGI-2-preview",
+      "title": "https://huggingface.co/sand-ai/MAGI-2-preview",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:13:05.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md",
+        "fileName": "hf-sand-ai-magi-2-preview-learnings.md"
       }
     }
   }

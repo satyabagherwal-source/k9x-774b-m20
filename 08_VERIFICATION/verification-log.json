@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-A9NM",
-    "timestamp": "2026-11-24T18:34:15.010Z",
-    "repository": "AtomicChat/Inkling-2-Mini-GGUF",
-    "learningId": "learn-huggingface-atomicchat-inkling-2-mini-gguf",
-    "contentHash": "c5354480a39d73734be92fe7c3fec31ee178920986bd6bee7fabbf3ff776208e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-AM1N",
-    "timestamp": "2026-11-24T18:34:31.067Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "fa402ee3c1473a0f86098e47f7f0f18c2821089a377bbe321562f1d38dcc0abf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-ANZY",
-    "timestamp": "2026-11-24T18:34:33.598Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "66670a95a808cb1cbb67f681f14cfa58eeab9fb79bf5c6b52e36defdd63007cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-M7XI",
     "timestamp": "2026-11-24T18:43:32.646Z",
     "repository": "kgateway-dev/kgateway",
@@ -7490,6 +7445,51 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "26783d36fa73f82ab8c903ace32d51c327a4e68461ecff443bc7600d4e42ff49",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3AZY",
+    "timestamp": "2026-11-26T09:12:18.286Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "4a97637284b4c00fffc1a7be418e872ccc2ac02ec523bff8b18e829bf9e60f19",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3C5G",
+    "timestamp": "2026-11-26T09:12:19.780Z",
+    "repository": "sand-ai/MAGI-2-preview",
+    "learningId": "learn-huggingface-sand-ai-magi-2-preview",
+    "contentHash": "f9a901171a071639dd086322732769283383812c6478099d27e6411be8b70b4c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-3JCW",
+    "timestamp": "2026-11-26T09:12:29.120Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "d29e96e54662731e5c1b3b53b987516affe2fe73be061ab040b94af5d7aafa6e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
