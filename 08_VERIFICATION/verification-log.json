@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-0FSB",
-    "timestamp": "2026-11-25T05:10:27.563Z",
-    "repository": "Comfy-Org/MOSS-Image",
-    "learningId": "learn-huggingface-comfy-org-moss-image",
-    "contentHash": "0335908ccb5f8e064f57209f94b2e6f618c1acf274f6442110e675943ebe8383",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-0SFM",
-    "timestamp": "2026-11-25T05:10:43.954Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "020b66cf0decbd45c1114aaba6a2b43cb2b708250d4be6ef67438788150d3f0b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-CCL3",
-    "timestamp": "2026-11-25T05:19:43.287Z",
-    "repository": "Comfy-Org/Z-Image-Turbo",
-    "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-    "contentHash": "d57c8cdb5f67ec713e948151e778cc1c96c474805e8ee607199a825830eef1b3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-CKM9",
-    "timestamp": "2026-11-25T05:19:53.697Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "9d2e2bd30c83aa7bc840bc6d4e17aa6a9c99d26f352d36324f98fd4a305e5ddd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-O76E",
     "timestamp": "2026-11-25T05:28:56.150Z",
     "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
@@ -7492,6 +7432,66 @@
     "contentHash": "9a6b42f17a8c1b842af6b30e920298534296e38b4763a8923c891b0483e8113d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-BULV",
+    "timestamp": "2026-11-26T17:14:50.419Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-cloudflare-clef-flash",
+    "contentHash": "df009af6ef6635fce892e982019b24d30a7d5de014213e98e10d15d50c00106d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-BWOB",
+    "timestamp": "2026-11-26T17:14:53.099Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "5588d1902decf8ba677c1850966f576a226cdd1293b2aaf5a965401ed872c029",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-C22K",
+    "timestamp": "2026-11-26T17:15:00.092Z",
+    "repository": "dosco/deeporg",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "4682356480872992907876dc9430e919e75926a6426f63aefd809b8f76a59d05",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-C65H",
+    "timestamp": "2026-11-26T17:15:05.381Z",
+    "repository": "weaviate/weaviate",
+    "learningId": "learn-github-weaviate-weaviate",
+    "contentHash": "71e5270d5be77dfbbafadea8a614d460a63c1ecd33cac2148d33ac35f96d79eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

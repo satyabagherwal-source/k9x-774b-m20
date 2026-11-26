@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T17:06:30.273Z",
+  "last_updated": "2026-11-26T17:15:11.312Z",
   "total_records": 2763,
   "domains": {
     "A": {
@@ -10297,8 +10297,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "6d9a201cac7e19400be6df8a0c14625597cf679391d98380251a1a663303d965",
-      "created_at": "2026-11-25T15:47:43.525Z"
+      "content_hash": "b33ac903d6ef6f9563c3828036643f21a98325f5d08bd88ec832dd570ade16d0",
+      "created_at": "2026-11-26T17:15:05.835Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -11047,8 +11047,8 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef-flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-flash-research-knowledge-intelligence-cloudflare-clef-flash-c.md",
       "repository": "Cloudflare/clef-flash",
-      "content_hash": "6e8f0d0be4d2507e6f7cdb65fe4796d3047f9e11b6be211b21521daf7bd3c93c",
-      "created_at": "2026-11-23T00:12:44.547Z"
+      "content_hash": "c65795a9f3c66421d5d52ca97239971aaac49fc13b227269d41ef86ba653edb1",
+      "created_at": "2026-11-26T17:14:50.655Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants",
@@ -11134,8 +11134,8 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-flash-learnings-research-knowledge-intelligence-hf-cloudflare.md",
       "repository": "hf-cloudflare-clef-flash-learnings",
-      "content_hash": "b87eda86d2829dc0eca84c4f5d73ece8cd32dc155ae74a7d29c86f738509ff72",
-      "created_at": "2026-11-23T00:12:47.536Z"
+      "content_hash": "ea3d97e520c11f900dabeaaecb7839518137ecfeef2dfb29cac3ea23fa1533d8",
+      "created_at": "2026-11-26T17:15:10.290Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi",
@@ -35305,8 +35305,8 @@
       "title": "Technical Construction Intelligence: Kuddev/pebrel Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-technical-construction-intelligence-kuddev-pebrel-core-invariants.md",
       "repository": "Kuddev/pebrel",
-      "content_hash": "928bfe989c5e3483e785955a47e9a7f7bcbd201f7bb80f0d80b49a282e57b562",
-      "created_at": "2026-11-20T02:14:55.302Z"
+      "content_hash": "57da6cd55693f8b0c65e08dd1dd344b4acfd24990d4ddf72f1284c62dd4f6824",
+      "created_at": "2026-11-26T17:14:53.548Z"
     },
     "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -37605,8 +37605,8 @@
       "title": "Technical Construction Intelligence: dosco/deeporg Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
       "repository": "dosco/deeporg",
-      "content_hash": "9e0c5b2c8b61f94baa9f3cb69db2dafa16ccbfcf2f08209cc1d711911ab9d67f",
-      "created_at": "2026-11-21T01:08:19.466Z"
+      "content_hash": "38235f640c4323f1eb2890cd99016e4cbc0f04f286b19e0dc9add1a8a656b660",
+      "created_at": "2026-11-26T17:15:00.602Z"
     },
     "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dosco-deeporg-learnings-core-invariants",
@@ -37614,8 +37614,8 @@
       "title": "Technical Construction Intelligence: dosco-deeporg-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-learnings-technical-construction-intelligence-dosco-deeporg-learni.md",
       "repository": "dosco-deeporg-learnings",
-      "content_hash": "61321ab7eae77561d8bdedc98d976bf2a51a0ec7008c1fd366dd076ff795506a",
-      "created_at": "2026-11-21T01:08:35.914Z"
+      "content_hash": "993ae04dfa76f13f863c84deac33b93ca6f06a3a5348189483605fb6532645f8",
+      "created_at": "2026-11-26T17:15:11.312Z"
     },
     "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-core-invariants",
@@ -38433,8 +38433,8 @@
       "title": "Research & Knowledge Intelligence: kuddev-pebrel-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-kuddev-pebrel-learnings-research-knowledge-intelligence-kuddev-pebrel-learnings-.md",
       "repository": "kuddev-pebrel-learnings",
-      "content_hash": "d3d3f52767aed83c27b68c05fe17a240fc73e8a654e34411325996f79b5a9ba2",
-      "created_at": "2026-11-21T16:40:21.608Z"
+      "content_hash": "5175900ba8c5ed692096a98e84c82d6e15bb29a139912b85be71429e8716711c",
+      "created_at": "2026-11-26T17:15:09.653Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nanbeige-nanbeige4-3-33b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",

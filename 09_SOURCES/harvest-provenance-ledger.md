@@ -13513,3 +13513,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-26T17:06:12.938Z |
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `6c1bd527` | Multi-dimensional audit evidence | 2026-11-26T17:06:21.035Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `66b78886` | Multi-dimensional audit evidence | 2026-11-26T17:06:25.023Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-26T17:14:50.423Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `cda74a88` | Multi-dimensional audit evidence | 2026-11-26T17:14:53.104Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `c57c1b1c` | Multi-dimensional audit evidence | 2026-11-26T17:15:00.097Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `5d678d7a` | Multi-dimensional audit evidence | 2026-11-26T17:15:05.385Z |

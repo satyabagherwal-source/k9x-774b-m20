@@ -4,24 +4,24 @@
 {
   "source_repository": "dosco/deeporg",
   "source_url": "https://github.com/dosco/deeporg",
-  "source_version": "e828492b",
+  "source_version": "c57c1b1c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T01:08:19.308Z",
+  "timestamp": "2026-11-26T17:15:00.400Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dosco-deeporg",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/deeporg) (Revision: `e828492b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T01:08:19.308Z`  
+> **Provenance**: Harvested from [dosco/deeporg](https://github.com/dosco/deeporg) (Revision: `c57c1b1c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T17:15:00.400Z`  
 > **Learning ID**: `learn-github-dosco-deeporg`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), B (Product Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dosco/deeporg:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-deeporg-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/deeporg](https://github.com/dosco/deeporg))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:08:18.185Z  
+> **Harvest Timestamp**: 2026-11-26T17:14:59.482Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: DeepORG (formerly GraphJin) — one AI agent for your whole organization: databases, APIs, files, and code over MCP
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3237 stars
+- **Stars / Engagement**: 3239 stars
 
 ---
 
@@ -542,14 +542,14 @@ type RunManifest struct {
 func (m RunManifest) Complete() bool { return m.Status == RunStatusComplete }
 
 func (m RunManifest) ResumeCommand() string {
-	args := []string{"graphjin", "eval", string(m.Intent)}
+	args := []string{"deeporg", "eval", string(m.Intent)}
 	args = append(args, m.InvocationArgs...)
 	args = append(args, "--resume", m.RunID, "--yes")
 	return strings.Join(args, " ")
 }
 
 func (m RunManifest) RestartCommand() string {
-	args := []string{"graphjin", "eval", string(m.Intent)}
+	args := []string{"deeporg", "eval", string(m.Intent)}
 	args = append(args, m.InvocationArgs...)
 	args = append(args, "--restart", "--yes")
 	return strings.Join(args, " ")
@@ -759,7 +759,7 @@ func manifestCompatibilityMismatches(have, want RunManifest) []string {
 	check(have.EpisodeSchemaVersion == want.EpisodeSchemaVersion, "episode_schema_version")
 	check(have.ReportSchemaVersion == want.ReportSchemaVersion, "report_schema_version")
 	check(have.RewardVersion == want.RewardVersion, "reward_version")
-	check(have.
+	check(have.Ge
 ```
 
 ### Core Architecture Module: `agent/stated_change.go`
@@ -1208,7 +1208,7 @@ func renderWorldReadme(world worldSpec) string {
 	var out strings.Builder
 	fmt.Fprintf(&out, "# %s\n\nA generated GraphJin world: domain %s, seed %d.\n\n",
 		world.Name, world.Domain, world.Seed)
-	out.WriteString("Regenerate exactly:\n\n```bash\ngraphjin env new-world " +
+	out.WriteString("Regenerate exactly:\n\n```bash\ndeeporg env new-world " +
 		worldRegenerateFlags(world) + fmt.Sprintf(" --tables %d", len(world.Tables)))
 	if len(world.Applied) != 0 {
 		out.WriteString(" --pathologies " + strings.Join(world.Applied, ","))
@@ -1229,7 +1229,7 @@ func renderWorldReadme(world worldSpec) string {
 			fmt.Fprintf(&out, "- **%s** — %s\n", name, pathologyDescription(name))
 		}
 	}
-	out.WriteString("\n## Use\n\n```bash\ngraphjin eval create --path . --writable --scale 300 --composition coverage\ngraphjin env serve --path . --suite eval/suite.yml --pool 4\n```\n")
+	out.WriteString("\n## Use\n\n```bash\ndeeporg eval create --path . --writable --scale 300 --composition coverage\ndeeporg env serve --path . --suite eval/suite.yml --pool 4\n```\n")
 	return out.String()
 }
 
@@ -1240,13 +1240,13 @@ func pathologyDescription(name string) string {
 	case PathologySynonymCollision:
 		return "one word meaning two things in one schema, with nothing marking which is which"
 	case PathologyLegacyColumns:
-		return "a column that looks authoritative and is stale, so answering from it is
+		return "a column that looks authoritative and is stale, so answering from it is wr
 ```
 
 ### Core Architecture Module: `core/api.go`
 ```
 // Package core provides an API to include and use the GraphJin compiler with your own code.
-// For detailed documentation visit https://graphjin.com
+// For detailed documentation visit https://deeporg.io
 package core
 
 import (
@@ -1562,7 +1562,7 @@ func (g *GraphJin) getEngine() (*graphjinEngine, error) {
 	return gj, nil
 }
 
-// FilesystemBackend returns the backend ins
+// FilesystemBackend returns the backend insta
 ```
 
 ### Core Architecture Module: `core/args.go`
@@ -2566,974 +2566,490 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bc79e50b` (2026-11-13)
-**Commit Message**: fix(introspection): expose columns of Postgres functions returning table rows (#693)
+### Incident Patch 1: `ab2b14e1` (2026-11-26)
+**Commit Message**: docs: quick start and README describe the setup flow
 
-Postgres functions that return rows of a table were not queryable through
-GraphJin. `RETURNS TABLE (LIKE users)` was discovered as a single output
-column named "like", so selecting any real column failed with
-"field 'id' is not a column or a function; available columns: like".
-`RETURNS SETOF users` and `RETURNS users` were discovered with no output
-columns at all and were not exposed.
+The quick start began by writing a config file. It now follows what a new
+install does: run deeporg, create the admin, connect a database or the sample
+data, choose a model, ask a question, then connect Claude Code and invite the
+team. The config-file path stays as a section for people who run DeepORG as
+an API service.
 
-Function discovery read row columns from information_schema.attributes,
-which only lists standalone composite types, never the row types of
-tables, views or materialized views. Read them from pg_attribute through
-the return type's typrelid instead. This covers tables, views,
-materialized views, foreign and partitioned tables and composite types,
-skips dropped columns, and reports column types with format_type like
-table discovery does. The single OUT parameter that holds the whole row
-is no longer reported as a column, because Postgres expands it into the
-row's columns. Enum and domain outputs keep their existing behaviour.
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-Function output columns now also carry the array flag and honour the
-configured blocklist, s
-
-**File**: `core/internal/introspection/sql/postgres_functions.sql` (modified, +30/-13)
+**File**: `README.md` (modified, +17/-15)
 ```diff
-@@ -1,3 +1,16 @@
-+WITH row_type_routines AS (
-+	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
-+	-- composite_type and RETURNS TABLE (LIKE tbl).
-+	SELECT r.specific_name,
-+		t.typrelid
-+	FROM information_schema.routines r
-+		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
-+		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
-+		AND t.typname = r.type_udt_name
-+	WHERE r.routine_type = 'FUNCTION'
-+		AND r.data_type = 'USER-DEFINED'
-+		AND t.typrelid != 0
-+)
- SELECT r.specific_name as func_id,
- 	r.routine_schema as func_schema,
- 	r.routine_name as func_name,
-@@ -18,6 +31,15 @@ FROM information_schema.routines r
- 	)
- WHERE r.routine_type = 'FUNCTION'
- 	AND r.data_type != 'void'
-+	-- The single OUT parameter of a row type function holds the whole row.
-+	-- Postgres expands it into the row's columns, returned by the SELECT below.
-+	AND NOT (
-+		p.parameter_mode = 'OUT'
-+		AND r.specific_name IN (
-+			SELECT specific_name
-+			FROM row_type_routines
-+		)
-+	)
- 	AND r.specific_schema NOT IN (
- 		'_graphjin',
- 		'information_schema',
-@@ -31,25 +53,20 @@ SELECT r.specific_name as func_id,
- 	r.routine_schema as func_schema,
- 	r.routine_name as func_name,
- 	'record' as data_type,
--	a.ordinal_position as param_id,
--	COALESCE(
--		a.attribute_name,
--		CAST(a.ordinal_position as CHAR(3))
--	) as param_name,
--	a.data_type as param_type,
-+	f.attnum as param_id,
-+	f.attname as param_name,
-+	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
- 	'OUT' as param_kind
- FROM information_schema.routines r
--	RIGHT JOIN information_schema.attributes a ON (
--		r.data_type = 'USER-DEFINED'
--		AND a.udt_schema = r.type_udt_schema
--		AND a.udt_name = r.type_udt_name
--	)
--WHERE r.routine_type = 'FUNCTION'
-+	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
-+	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
-+WHERE f.attnum > 0
-+	AND f.attisdropped = false
- 	AND r.specific_schema NOT IN (
- 		'_graphjin',
- 		'information_schema',
- 		'performance_schema',
- 		'pg_catalog',
- 		'mysql',
- 		'sys'
--	);
-\ No newline at end of file
-+	);
-```
-
-**File**: `core/internal/qcode/schema.go` (modified, +4/-3)
-```diff
-@@ -147,9 +147,10 @@ func parseTFieldsFunction(fn *sdata.DBFunction, fields []graph.TField) (
- 			paramType += "(" + dir.TypeSuffix + ")"
- 		}
- 		p := sdata.DBFuncParam{
--			ID:   i,
--			Name: f.Name,
--			Type: paramType,
-+			ID:    i,
-+			Name:  f.Name,
-+			Type:  paramType,
-+			Array: f.List,
- 		}
- 		switch {
- 		case dir.Input:
-```
-
-**File**: `core/internal/sdata/schema_test.go` (modified, +31/-0)
-```diff
-@@ -88,3 +88,34 @@ func TestAddRemoteRelWithParentStillWorks(t *testing.T) {
- 		t.Fatalf("row-join remote (parented) should still build: %v", err)
- 	}
- }
-+
-+func TestNewDBInfoFunctionOutputColumns(t *testing.T) {
-+	fn := DBFunction{
-+		Schema: "public",
-+		Name:   "get_users",
-+		Type:   "record",
-+		Inputs: []DBFuncParam{{ID: 1, Name: "max_id", Type: "bigint"}},
-+		Outputs: []DBFuncParam{
-+			{ID: 1, Name: "id", Type: "bigint"},
-+			{ID: 2, Name: "password", Type: "text"},
-+			{ID: 3, Name: "tags", Type: "text[]", Array: true},
-+		},
-+	}
-+	di := NewDBInfo("postgres", 140000, "public", "db", nil, []DBFunction{fn}, []string{"password"})
-+
-+	if len(di.Tables) != 1 || di.Tables[0].Type != "function" {
-+		t.Fatalf("expected one function table, got %+v", di.Tables)
-+	}
-+	want := map[string]struct{ blocked, array bool }{
-+		"id":       {},
-+		"password": {blocked: true},
-+		"tags":     {array: true},
-+	}
-+	for _, col := range di.Tables[0].Columns {
-+		w := want[col.Name]
-+		if col.Blocked != w.blocked || col.Array != w.array {
-+			t.Errorf("column %s: blocked=%v array=%v, want blocked=%v array=%v",
-+				col.Name, col.Blocked, col.Array, w.blocked, w.array)
-+		}
-+	}
-+}
-```
-
-**File**: `core/internal/sdata/tables.go` (modified, +5/-3)
-```diff
-@@ -125,9 +125,11 @@ func NewDBInfo(
- 		var cols []DBColumn
- 		for _, v := range f.Outputs {
- 			cols = append(cols, DBColumn{
--				ID:   int32(v.ID),
--				Name: v.Name,
--				Type: v.Type,
-+				ID:      int32(v.ID),
-+				Name:    v.Name,
-+				Type:    v.Type,
-+				Array:   v.Array,
-+				Blocked: isInList(v.Name, blockList),
- 			})
- 		}
- 		t := NewDBTable(f.Schema, f.Name, "function", cols)
-```
-
-**File**: `core/schema.go` (modified, +2/-2)
-```diff
-@@ -124,8 +124,8 @@ const schemaTemplate = `# dbinfo:{{if .Type}}{{ .Type }}{{else}}postgres{{end}},
- {{- if ne .Name "" }}{{ .Name }}{{ else }}_arg{{ .ID }}{{ end }}:
- {{- "\t"}}
- {{- $var := .Type|dbtype }}
--{{- (index $var 0)|pascal }}
--{{- if .Array}}[]{{end}}
-+{{- $type := (index $var 0)|pascal }}
-+{{- if .Array}}[{{ $type }}]{{else}}{{ $type }}{{end}}
- {{- "\t"}}
- {{- if ne (index $var 1) ""}} @type_args(args: {{ (index $var 1) | printf "%q" }}){{end}}
- {{- end -}}
-```
-
-**File**: `core/schema_test.go` (modified, +31/-0)
-```diff
-@@ -50,6 +50,37 @@ func TestCreateSchema(t *testing.T) {
+@@ -62,30 +62,32 @@ are on the same page, and Docker is `docker pull dosco/deeporg`.
+ ## Try it
  
- }
+ ```bash
+-deeporg serve --demo
++deeporg
+ ```
  
-+func TestCreateSchemaFunctionArrayParams(t *testing.T) {
-+	var buf bytes.Buffer
+-This starts a demo SaaS company (accounts, subscriptions, invoices, support
+-tickets) with seeded data. Put a model key in `./.env` (`OPENAI_API_KEY`,
+-`ANTHROPIC_API_KEY` or `GOOGLE_API_KEY`) and ask it something:
++This starts DeepORG and opens a setup page in your browser. You create an admin
++account, connect a database or choose the sample data, and pick a model. Then
++you ask a question. There is no config file to write: DeepORG keeps its own
++files in `~/.deeporg/`.
+ 
+-```bash
+-curl -sS localhost:8083/api/v1/agent \
+-  -H 'content-type: application/json' \
+-  -d '{"instruction": "Which account is most at risk of churning?"}'
+-```
++The setup steps are in the [quick start](https://deeporg.io/start/quick-start/).
++For a larger demo company with routines and saved work already in it, run
++`deeporg serve --demo`; see [Demos](https://deeporg.io/start/demos/).
+ 
+-Or chat with it at <http://localhost:8083/agent>. More demos:
+-[Demos](https://deeporg.io/start/demos/).
++## Use it from Claude Code
+ 
+-## Use it from Claude, Codex or any MCP client
++Open **Connect** in the console and copy the command it shows:
+ 
+ ```bash
+-deeporg mcp add claude http://localhost:8083
++claude mcp add --transport http --scope user deeporg http://127.0.0.1:8080/api/v1/mcp
+ ```
+ 
+-Other clients: [MCP](https://deeporg.io/agentic/mcp/). Hosted servers with sign-in:
+-[MCP OAuth](https://deeporg.io/agentic/oauth/).
++Then type `/mcp` in Claude Code, choose `deeporg` and Authenticate. Your browser
++opens on DeepORG, where you choose Allow. There is no token to copy. Claude Code
++asks DeepORG's built-in agent, so choose a model during setup first.
 +
-+	fn := sdata.DBFunction{
-+		Schema:  "public",
-+		Name:    "get_products",
-+		Type:    "record",
-+		Inputs:  []sdata.DBFuncParam{{ID: 1, Name: "ids", Type: "bigint[]", Array: true}},
-+		Outputs: []sdata.DBFuncParam{{ID: 1, Name: "tags", Type: "text[]", Array: true}},
-+	}
-+	di := sdata.NewDBInfo("postgres", 140000, "public", "db", nil, []sdata.DBFunction{fn}, nil)
-+	if err := writeSchema(di, &buf); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	ds, err := qcode.ParseSchema(buf.Bytes())
-+	if err != nil {
-+		t.Fatalf("parse exported schema: %v\n%s", err, buf.String())
-+	}
-+	if len(ds.Functions) != 1 {
-+		t.Fatalf("expected one function, got %+v", ds.Functions)
-+	}
-+	got := ds.Functions[0]
-+	if len(got.Inputs) != 1 || got.Inputs[0].Type != "bigint" || !got.Inputs[0].Array {
-+		t.Errorf("input changed through schema export: %+v", got.Inputs)
-+	}
-+	if len(got.Outputs) != 1 || got.Outputs[0].Type != "text" || !got.Outputs[0].Array {
-+		t.Errorf("output changed through schema export: %+v", got.Outputs)
-+	}
-+}
-+
- func TestWriteSchemaWithDatabase(t *testing.T) {
- 	var buf bytes.Buffer
++Other clients: [MCP](https://deeporg.io/agentic/mcp/). Servers that sign people
++in through an identity provider: [MCP OAuth](https://deeporg.io/agentic/oauth/).
+ 
+ ## Learn more
  
 ```
 
-**File**: `tests/postgres.sql` (modified, +12/-0)
+**File**: `website/content/start/quick-start.md` (modified, +68/-24)
 ```diff
-@@ -268,6 +268,18 @@ SELECT EXISTS (
-     where p.product_id = id
-   );
- $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_users_up_to(max_id bigint) RETURNS TABLE (LIKE users) AS $$
-+SELECT u.*
-+FROM users u
-+WHERE u.id <= max_id $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_products_up_to(max_id bigint) RETURNS SETOF products AS $$
-+SELECT p.*
-+FROM products p
-+WHERE p.id <= max_id $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_user_row(user_id bigint) RETURNS users AS $$
-+SELECT u.*
-+FROM users u
-+WHERE u.id = user_id $$ LANGUAGE SQL;
- -- graph relationships
- CREATE TABLE graph_node (id TEXT PRIMARY KEY, label TEXT);
- CREATE TABLE graph_edge (
+@@ -1,50 +1,94 @@
+ ---
+ title: "Quick Start"
+-description: "Run the smallest useful DeepORG query against a discovered schema."
++description: "Install DeepORG, run one command, and ask your first question about your own data."
+ nav_group: "start"
+ doc_kind: "guide"
+ weight: 20
+ ---
+ 
+-Want seeded data and the built-in agent immediately? Boot a [demo vertical](/start/demos/) first - this page is for pointing DeepORG at your own database.
++This page takes you from nothing to a first answer from your own data. It takes about five minutes, and you do not write a config file.
+ 
+-## Minimal config
++## 1. Install and start
+ 
+-Point DeepORG at your database in `config/dev.yml`. New source-aware projects should use `sources:`:
++[Install the CLI](/start/install/), then run it:
++
++```bash
++curl -fsSL https://deeporg.io/install.sh | bash
++deeporg
++```
++
++DeepORG starts and opens a setup page in your browser. If it cannot open a browser, it prints the link for you to open.
++
++It keeps its own files in `~/.deeporg/`: a small start config and a database for its own data. Nothing is written to the directory you ran it in. If port 8080 is already in use on your computer, DeepORG uses the next free port and tells you which.
++
++## 2. Create your admin account
++
++The first screen asks for an email and a password. This is the account you sign in with, and the one that can change settings later.
++
++## 3. Connect your data
++
++Paste your database's connection URL, such as `postgres://user:password@host:5432/database`, or fill in the host, user and database name separately. DeepORG tests the connection before it saves it, and then tells you how many tables it found. If the connection fails, the page says why and what to change.
++
++If you have no database to hand, choose **Use sample data**. It connects a small sample company: accounts, users, subscriptions, invoices, payments, support tickets and usage events.
++
++By default everyone who signs in can read every table in the databases you connect, and nobody can write to them. You limit this later with [roles and filters](/configure/auth-rbac/).
++
++## 4. Choose a model
++
++The built-in agent uses a model from a provider you have an account with: OpenAI, Anthropic or Google Gemini. Paste an API key. DeepORG checks it with one small request and keeps it encrypted.
++
++You can leave this for later. Until you choose a model, the built-in agent is off.
++
++## 5. Ask your first question
++
++Setup ends on the agent page, with a few questions suggested from your own tables, such as "How many accounts are there?". Pick one, or type your own.
++
++## Connect Claude Code
++
++You can also ask from Claude Code. Open **Connect** in the console and copy the command it shows:
++
++```bash
++claude mcp add --transport http --scope user deeporg http://127.0.0.1:8080/api/v1/mcp
++```
++
++Then start Claude Code, type `/mcp`, choose `deeporg` and then Authenticate. Your browser opens on DeepORG, where you choose **Allow**. Claude Code signs in as you, so there is no token to copy.
++
++Claude Code gets its answers by asking DeepORG's built-in agent, so choose a model first.
++
++## Invite your team
++
++Open **Admin → Setup**, enter a teammate's email, and send them the link it makes. They choose their own password. The same page is where you connect another database or change the model.
++
++## Run it on a server
++
++Set the address to listen on, then open the setup link DeepORG prints. The link is written for the server itself, so replace the host with the server's address if you open it from another computer.
++
++```bash
++DEEPORG_LISTEN=0.0.0.0:8080 deeporg
++```
++
++There is one limit to know about: DeepORG keeps its own data in a local file for now, so the server needs a disk that survives restarts.
++
++## Using config files instead
++
++Before this setup flow, DeepORG was configured with YAML files, and that still works. If the directory you start it in has a `config/` folder, DeepORG uses those files and shows no setup page. This is the path to use when you run DeepORG as an API service for an application, with [saved queries](/start/saved-queries/) and no agent.
+ 
+ ```yaml
++# config/dev.yml
+ sources:
+   - name: app
+     kind: database
+     type: postgres
+     default: true
+-    connection_string: ${DATABASE_URL}
++    connection_string: postgres://user:password@localhost:5432/app
+     schema: public
+ ```
+ 
+-Then start the service:
+-
+ ```bash
+ deeporg serve
+ ```
+ 
+-## Open the Web UI
+-
+-Open [http://localhost:8080/](http://localhost:8080/) after the service starts. The console opens in the **User** workspace with the built-in Agent. Use the User/Admin switcher at the top to move between using the agent and administering the server.
+-
+-Open **Admin → Runtime** directly at [http://localhost:8080/admin/runtime](http://localhost:8080/admin/runtime). It is a quick visual check that DeepORG discovered the configured sources and is serving the built-in system roots.
+-
+-<figure class="doc-screenshot">
+-  <img src="/assets/webui-runt
 ```
 
-**File**: `tests/query_pg_test.go` (modified, +118/-0)
+**File**: `website/content/why/complete-agent.md` (modified, +1/-1)
 ```diff
-@@ -329,6 +329,124 @@ func Example_queryWithFunctionReturingUserDefinedTypes() {
- 	// Output: {"get_product":[{"id":1,"name":"Product 1"},{"id":2,"name":"Product 2"}]}
- }
+@@ -101,7 +101,7 @@ Every DeepORG server includes a first-party console. Ask the agent, inspect sour
  
-+func Example_queryWithFunctionReturningTableLike() {
-+	// `RETURNS TABLE (LIKE users)` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_users_up_to":[{"email":"user1@test.com","full_name":"User 1","id":1},{"email":"user2@test.com","full_name":"User 2","id":2}]}`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_users_up_to(order_by: { id: asc }, args: { max_id: 2 }) {
-+			id
-+			full_name
-+			email
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
-+	} else {
-+		printJSON(res.Data)
-+	}
-+	// Output: {"get_users_up_to":[{"email":"user1@test.com","full_name":"User 1","id":1},{"email":"user2@test.com","full_name":"User 2","id":2}]}
-+}
-+
-+func Example_queryWithFunctionReturningSetofTable() {
-+	// `RETURNS SETOF products` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_products_up_to":[{"id":1,"name":"Product 1","tags":["Tag 1","Tag 2","Tag 3","Tag 4","Tag 5"]}]}`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_products_up_to(where: { tags: { contains: ["Tag 1"] } }, order_by: { id: asc }, limit: 1, args: { max_id: 2 }) {
-+			id
-+			name
-+			tags
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
-+	} else {
-+		printJSON(res.Data)
-+	}
-+	// Output: {"get_products_up_to":[{"id":1,"name":"Product 1","tags":["Tag 1","Tag 2","Tag 3","Tag 4","Tag 5"]}]}
-+}
-+
-+func Example_queryWithFunctionReturningTableRow() {
-+	// `RETURNS users` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_user_row":[{"full_name":"User 3","id":3}]}`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_user_row(args: { user_id: 3 }) {
-+			id
-+			full_name
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
-+	} else {
-+		printJSON(res.Data)
-+	}
-+	// Output: {"get_user_row":[{"full_name":"User 3","id":3}]}
-+}
-+
-+func Example_queryWithFunctionReturningTableBlockedColumn() {
-+	// `RETURNS TABLE (LIKE users)` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`column: 'public.get_users_up_to.email' blocked`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_users_up_to(args: { max_id: 2 }) {
-+			id
-+			email
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true, Blocklist: []string{"email"}})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	_, err = gj.GraphQL(context.Background(), gql, nil, nil)
-+	fmt.Println(err)
-+	// Output: column: 'public.get_users_up_to.email' blocked
-+}
-+
- func Example_queryWithFunctionAndDirectives() {
- 	// Skip for MongoDB/Snowflake emulator: custom database functions not supported
- 	if dbType == "mongodb" || dbType == "snowflake" {
+ <div class="console-gallery"><figure class="console-shot"><img src="/assets/webui-runtime-overview.webp" width="1440" height="900" alt="DeepORG Console Admin Runtime view showing source health, table discovery, catalog readiness, and security posture." loading="lazy" decoding="async"><figcaption><strong>Runtime</strong><span>Source health, table discovery, catalog readiness, and effective security posture.</span></figcaption></figure><figure class="console-shot"><img src="/assets/webui-workbench-query.webp" width="1440" height="900" alt="DeepORG Console Workbench running a read-only GraphQL query with JSON results." loading="lazy" decoding="async"><figcaption><strong>Workbench</strong><span>Run application and system-root queries against the same GraphQL endpoint your clients use.</span></figcaption></figure></div>
+ 
+-<div class="home-actions"><a class="button-primary" href="/start/quick-start/#open-the-web-ui">Open it locally</a><a class="button-secondary" href="/#quickstart">Run the 2-minute demo</a></div>
++<div class="home-actions"><a class="button-primary" href="/start/quick-start/">Run it on your computer</a><a class="button-secondary" href="/#quickstart">Run the 2-minute demo</a></div>
+ 
+ {{< endband >}}
+ 
 ```
 
 ---
 
-### Incident Patch 2: `ffd03671` (2026-11-19)
-**Commit Message**: fix(eval): benchmark test-version labels drop "governed" on the next publish
+### Incident Patch 2: `d2315e1e` (2026-11-26)
+**Commit Message**: fix(cli): mcp add sets up the client named as an argument
 
-The benchmark pages describe each test version with a label, and the
-first ones read "governed read-only Q&A" and "governed retail Q&A (...,
-governance)". They are now "read-only Q&A" and "retail Q&A (...,
-refusals)", matching the site, which dropped the word.
+`deeporg mcp add claude <url>` read the client from its arguments and then
+ignored it: without a terminal it set up Codex, and with one it asked which
+client was meant. This is the command the server prints when it starts.
 
-Publish writes these labels only when a benchmark's data has none, and
-the published data already lists test versions this build does not
-know. So the new wording alone would never reach the pages. Each
-publish now rewords the retired phrases in the stored labels and keeps
-everything else in them. The live pages change on the next publish of
-each benchmark.
+When the server has the client sign in for itself, the guide printed
+afterwards now says how: type /mcp in Claude Code, choose the server and
+Authenticate.
 
-A test runs a real publish over data holding the old wording and a test
-version the build does not know, and fails when the rewording is not
-called.
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `cmd/cmd_eval_publish.go` (modified, +32/-7)
+**File**: `cmd/mcp_install.go` (modified, +35/-16)
 ```diff
-@@ -19,9 +19,9 @@ const (
- 	benchmarkDataVersion  = "graphjin.benchmark.data/v3"
- 	defaultBenchmarkSlug  = "deeporg"
- 	defaultBenchmarkName  = "DeepORG — The Organizational Agent Benchmark"
--	defaultBenchmarkScope = "2026.1/2026.2 — governed read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
-+	defaultBenchmarkScope = "2026.1/2026.2 — read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
- 
--	deepcontosoBenchmarkScope = "2026.1 — governed retail Q&A (aggregations, time windows, schema discovery, governance)"
-+	deepcontosoBenchmarkScope = "2026.1 — " + deepcontosoFirstScope
- )
- 
- type benchmarkIdentity struct {
-@@ -378,10 +378,9 @@ func runEvalPublish(cmd *cobra.Command, evalOpts *evalCLIOptions, opts *evalPubl
- 	if benchmark.Slug == defaultBenchmarkSlug && len(data.Suite.GenerationScopes) == 0 {
- 		data.Suite.GenerationScopes = defaultBenchmarkGenerationScopes()
- 	} else if benchmark.Slug == DeepContosoBenchmarkSlug && len(data.Suite.GenerationScopes) == 0 {
--		data.Suite.GenerationScopes = map[string]string{
--			"2026.1": "governed retail Q&A (aggregations, time windows, schema discovery, governance)",
--		}
-+		data.Suite.GenerationScopes = map[string]string{"2026.1": deepcontosoFirstScope}
- 	}
-+	rewordRetiredScopes(&data.Suite)
- 	if existing >= 0 {
- 		data.Runs[existing] = entry
- 	} else {
-@@ -556,10 +555,36 @@ func benchmarkSuiteFromReport(report gjeval.Report) benchmarkSuite {
- 	}
+@@ -46,6 +46,8 @@ type mcpInstallOptions struct {
+ 	NoBrowser   bool
+ 	ConfigPath  string
+ 	DeviceStart *deviceStartResp
++	// SignIn is true when the server asked the client to sign in for itself.
++	SignIn bool
  }
  
-+// deepcontosoFirstScope describes DeepContoso's first test version.
-+const deepcontosoFirstScope = "retail Q&A (aggregations, time windows, schema discovery, refusals)"
-+
-+// retiredScopeWording is wording the published test-version labels used
-+// before, and what each says now. The labels are written once, when a
-+// benchmark's data has none, so a change of wording reaches the published
-+// pages only by rewording the stored labels on the next publish.
-+//
-+// "Governed" was dropped from the site on 2026-11-19: few readers knew what
-+// it meant.
-+var retiredScopeWording = []struct{ old, new string }{
-+	{"governed retail Q&A (aggregations, time windows, schema discovery, governance)", deepcontosoFirstScope},
-+	{"governed read-only Q&A", "read-only Q&A"},
-+}
-+
-+// rewordRetiredScopes rewrites retired wording in a suite's test-version
-+// labels, keeping everything else in them.
-+func rewordRetiredScopes(suite *benchmarkSuite) {
-+	for _, w := range retiredScopeWording {
-+		suite.ScopeLabel = strings.ReplaceAll(suite.ScopeLabel, w.old, w.new)
-+		for generation, scope := range suite.GenerationScopes {
-+			suite.GenerationScopes[generation] = strings.ReplaceAll(scope, w.old, w.new)
-+		}
-+	}
-+}
-+
- func defaultBenchmarkGenerationScopes() map[string]string {
- 	return map[string]string{
--		"2026.1": "governed read-only Q&A",
--		"2026.2": "governed read-only Q&A",
-+		"2026.1": "read-only Q&A",
-+		"2026.2": "read-only Q&A",
- 		"2027.1": "adds writes, alerts, follow-ups, multi-source",
- 		"2028.1": "intent-phrased tasks with execution twins, v10 ruler",
- 		"2028.2": "cross-source ruler fix (v11): argument-free file reads count",
-```
-
-**File**: `cmd/cmd_eval_publish_test.go` (modified, +61/-0)
-```diff
-@@ -6,6 +6,7 @@ import (
- 	"math"
- 	"os"
- 	"path/filepath"
-+	"reflect"
- 	"strings"
- 	"testing"
- 	"time"
-@@ -684,3 +685,63 @@ func publishTestBenchmark(t *testing.T) benchmarkIdentity {
- func publishTestDataPath(site string) string {
- 	return filepath.Join(site, "data", "benchmarks", "deeporg.yaml")
- }
-+
-+// Stored test-version labels are written once, so a change of their wording
-+// reaches the published pages when the next publish rewords them. Wording that
-+// is not retired, and versions this build does not know, are kept.
-+func TestEvalPublishRewordsRetiredScopeLabels(t *testing.T) {
-+	project, site := t.TempDir(), t.TempDir()
-+	first := publishTestReport("20260803T101112.000000000Z-first")
-+	writePublishTestReport(t, project, first)
-+	if err := publishTestRun(t, project, site, first.RunID, &evalPublishOptions{Site: site}); err != nil {
-+		t.Fatal(err)
-+	}
-+	dataPath := publishTestDataPath(site)
-+	data, err := loadBenchmarkData(dataPath, publishTestBenchmark(t))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	data.Suite.ScopeLabel = "2026.1/2026.2 — governed read-only Q&A · 2028.4 — tasks state what they grade"
-+	data.Suite.GenerationScopes = map[string]string{
-+		"2026.1": "governed read-only Q&A",
-+		"2027.1": "adds writes, alerts, follow-ups, multi-source",
-+		"2028.4": "tasks state what they grade",
-+	}
-+	raw, err := marshalBenchmarkData(data)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.WriteFile(dataPath, raw, 0o644); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	second := publishTestReport("20260804T101112.000000000Z-second")
-+	writePublishTestReport(t, project, second)
-+	if err := publishTestRun(t, project, site, second.RunID, &evalPublishOptions{Site: site}); err != nil {
-+		t.Fatal(err)
-+	}
-+	data, err = loadBenchmarkData(dataPath, publishTestBenchmark(t))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if want := "2026.1/2026.2 — read-only Q&A · 2028.4 — tasks state what they grade"; data.Suite.ScopeLabel != want {
-+		t.Fatalf("scope label = %q, want %q", data.Suite.ScopeLabel, want)
-+	}
-+	want := map[string]string{"2026.1": "read-only Q&A", "2027.1": "adds writes, alerts, follow-ups, multi-source", "2028.4": "tasks state what they grade"}
-+	if !reflect.DeepEqual(data.Suite.GenerationScopes, want) {
-+		t.Fatalf("generation scopes = %v, want %v", data.Suite.GenerationScopes, want)
-+	}
-+	for _, s := range append([]string{defaultBenchmarkScope, deepcontosoBenchmarkScope}, mapValues(defaultBenchmarkGenerationScopes())...) {
-+		if strings.Contains(strings.ToLower(s), "governed") {
-+			t.Fatalf("a label this build writes still says governed: %q", s)
-+		}
-+	}
-+}
-+
-+func mapValues(m map[string]string) []string {
-+	out := make([]string, 0, len(m))
-+	for _, v := range m {
-+		out = append(out, v)
-+	}
-+	return out
-+}
-```
-
----
-
-### Incident Patch 3: `1d5b14f7` (2026-11-19)
-**Commit Message**: feat(agent): the data agent can be built to read a result before going on
-
-Off, and nothing a person running GraphJin can set: it is an option for
-GraphJin's own tests and measurements (WithResultFeedback).
-
-Without it the data agent's model writes one program: look up the
-table, run the query, call final. The query is written before the
-look-up has returned, so from a guess at the columns and how values are
-spelled, and nothing a function returns is seen by a model again unless
-the program prints it. With it, Ax ends a block after a function whose
-result has to be read and gives the model a fresh call with that result
-in front of it. "lookups" does that for catalog and help look-ups and
-lets a query's rows be followed by dependent code; "all" does it for
-every function.
-
-How it has to be wired, each learned by experiment:
-
-- Ax decides whether a block can end early when the agent is built,
-  from the runtime it is built with. A {language, usageInstructions}
-  record there, with the runtime passed per call, leaves it off. The
-  runtime then also supplies the usage instructions.
-- Ax's own registration of each function is the one that has to run,
-  and each is also bound under its b
-
-**File**: `agent/agent.go` (modified, +28/-6)
-```diff
-@@ -407,6 +407,7 @@ type Agent struct {
- 	rateLimiter   *ProviderRateLimiter
- 	customClient  bool
- 	newSelector   ProgramFactory
-+	feedback      resultFeedback
- }
- 
- func New(gj *core.GraphJin, config Config, options ...Option) (*Agent, error) {
-@@ -749,7 +750,13 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 	runtime.WithCodeBlockBudget(cfg.TimeoutSeconds)
- 	runtime.WithHandoffFallback(protocol.state.runtimeHandoffEvidence)
- 	runtime.WithClarificationNudge(protocol.state.clarificationNudge)
-+	feedback := a.feedback
-+	// With result feedback on, Ax registers the functions itself, through the
-+	// wrapper that reads a result back to the model (RegisterHostCallable).
- 	for _, tool := range tools {
-+		if feedback != feedbackOff {
-+			break
-+		}
- 		t := tool
- 		registerAdvertisedCallable(runtime.RegisterCallable, t.Name, func(params ax.Value) (ax.Value, error) {
- 			return t.Handler(asMap(params))
-@@ -765,8 +772,13 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 		})
- 	}
- 
-+	functions := toolArray(tools)
-+	if feedback != feedbackOff {
-+		functions = feedback.functions(tools)
-+	}
-+	usage := runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions
- 	options := map[string]ax.Value{
--		"functions":         toolArray(tools),
-+		"functions":         functions,
- 		"functionDiscovery": false,
- 		// Every GraphJin answer requires model-driven discovery, either a
- 		// runtime distillation or a catalog/help call. Ax's automatic respond()
-@@ -790,7 +802,7 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 			// filtered domain guides and capability-denial guidance are rendered
- 			// only for the executor, where Ax also renders the authoritative skill
- 			// documents. The distiller intentionally has no skill documents.
--			"usageInstructions": runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions,
-+			"usageInstructions": usage,
- 		},
- 		"max_actor_steps": maxSteps,
- 	}
-@@ -811,8 +823,7 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
+ type mcpInstallResolveInput struct {
+@@ -162,24 +164,16 @@ func newMCPInstallCommand(cfg mcpInstallCommandConfig) *cobra.Command {
+ 				log.Fatalf("failed to get absolute config path: %s", err)
  			}
- 			return values
- 		})
--		options["instructionAddenda"] = []ax.Value{executorHandoffInstructions, capabilityInstructions, preparedDiscoveryInstructions}
--		runtimeOptions := options["runtime"].(map[string]ax.Value)
-+		options["instructionAddenda"] = []ax.Value{executorHandoffInstructions, capabilityInstructions, feedback.rewrite(preparedDiscoveryInstructions)}
- 		var selectedGuides strings.Builder
- 		for _, guide := range skills {
- 			if prepared.unselected {
-@@ -828,9 +839,20 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
- 		// skills option loads guides into the executor only; put the selected
- 		// guides in the shared runtime instructions so early execution follows
- 		// the same computation, syntax, and governance contracts.
--		runtimeOptions["usageInstructions"] = runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions + "\n\n" + preparedDiscoveryInstructions + selectedGuides.String()
-+		usage += "\n\n" + preparedDiscoveryInstructions + selectedGuides.String()
- 	}
--	program = a.newProgram(agentSignature, options)
-+	signature := agentSignature
-+	if feedback == feedbackOff {
-+		options["runtime"].(map[string]ax.Value)["usageInstructions"] = usage
-+	} else {
-+		// Ax decides whether a block can end after a function's result when
-+		// the agent is built, from the runtime it is built with: a
-+		// {language, usageInstructions} record there, with the runtime passed
-+		// per call, leaves it off.
-+		options["runtime"] = runtime.WithResultFeedback(feedback.rewrite(usage))
-+		signature = feedback.rewrite(agentSignature)
-+	}
-+	program = a.newProgram(signature, options)
- 	if prepared != nil {
- 		installPreparedHandoff(ctx, program, prepared, a.runtime, req)
- 	}
-```
-
-**File**: `agent/result_feedback.go` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
-+package agent
-+
-+import (
-+	"strings"
-+
-+	ax "github.com/ax-llm/ax/packages/go"
-+)
-+
-+// resultFeedback is whether a run reads what a function returned before it
-+// writes the code that depends on it.
-+//
-+// Without it the model writes one program: look up the table, run the query,
-+// call final. The query is written before the look-up has returned, so it is
-+// written from the model's guess at the columns and the spelling of values,
-+// and nothing the functions return is seen by a model again unless the
-+// program prints it. A note attached to a result went unread in every run
-+// that was traced.
-+//
-+// With it, Ax ends the block after a function whose result has to be read and
-+// gives the model a fresh turn with that result in front of it. A function
-+// whose result is plain data may still be followed by dependent code in the
-+// same block.
-+type resultFeedback string
-+
-+const (
-+	feedbackOff resultFeedback = ""
-+	// feedbackLookups: catalog and help look-ups are read on a fresh turn;
-+	// a query's rows are data, so the block that runs it may also finish.
-+	feedbackLookups resultFeedback = "lookups"
-+	// feedbackAll: every function's result is read on a fresh turn.
-+	feedbackAll resultFeedback = "all"
-+)
-+
-+// WithResultFeedback sets how a run reads its functions' results: "lookups",
-+// "all", or "" for off.
-+func WithResultFeedback(mode string) Option {
-+	return func(a *Agent) {
-+		switch resultFeedback(strings.TrimSpace(mode)) {
-+		case feedbackLookups:
-+			a.feedback = feedbackLookups
-+		case feedbackAll:
-+			a.feedback = feedbackAll
-+		default:
-+			a.feedback = feedbackOff
+ 
+-			posClient := ""
+-			posServer := ""
+-			if len(args) > 0 {
+-				if looksLikeURLish(args[0]) {
+-					posServer = args[0]
+-				} else {
+-					posClient = args[0]
+-				}
+-			}
+-			if len(args) > 1 {
+-				posServer = args[1]
+-			}
++			posClient, posServer := splitMCPAddArgs(args)
+ 			if posClient != "" && !cmd.Flags().Changed("client") {
+ 				client = posClient
+ 			}
+ 			if posServer != "" && !cmd.Flags().Changed("server") {
+ 				server = posServer
+ 			}
++			// A client or server named on the command line has been chosen,
++			// whether it came as a flag or as a plain argument.
++			clientSet := cmd.Flags().Changed("client") || posClient != ""
+ 			serverSet := cmd.Flags().Changed("server") || posServer != ""
+ 
+ 			interactive := isInteractiveTTY() && !yes
+@@ -190,7 +184,7 @@ func newMCPInstallCommand(cfg mcpInstallCommandConfig) *cobra.Command {
+ 
+ 			opts, err := resolveInstallOptions(mcpInstallResolveInput{
+ 				Client:      client,
+-				ClientSet:   cmd.Flags().Changed("client"),
++				ClientSet:   clientSet,
+ 				Scope:       scope,
+ 				ScopeSet:    cmd.Flags().Changed("scope"),
+ 				Server:      server,
+@@ -356,6 +350,23 @@ func resolveInstallOptions(in mcpInstallResolveInput) (mcpInstallOptions, error)
+ 	return opts, nil
+ }
+ 
++// splitMCPAddArgs reads `deeporg mcp add [client] [server-url]`. Either part
++// may be left out, so a lone argument is told apart by whether it looks like
++// an address.
++func splitMCPAddArgs(args []string) (client, server string) {
++	if len(args) > 0 {
++		if looksLikeURLish(args[0]) {
++			server = args[0]
++		} else {
++			client = args[0]
 +		}
 +	}
-+}
-+
-+// policy is Ax's result policy for one of the agent's functions.
-+func (m resultFeedback) policy(function string) string {
-+	if m == feedbackLookups && function == "execute_graphql" {
-+		return "data"
++	if len(args) > 1 {
++		server = args[1]
 +	}
-+	return "inspect"
++	return client, server
 +}
 +
-+// functions hands Ax the agent's functions as plain records. Ax runs a typed
-+// Tool through a path that ends the whole run when its handler returns an
-+// error; a record's error is returned to the model's code, and the run goes
-+// on. Every recovery this agent sends the model (the real column names after
-+// an unknown column, the corrected query, the detail to inspect first) is a
-+// returned error.
-+func (m resultFeedback) functions(tools []ax.Tool) ax.Value {
-+	records := make([]ax.Value, 0, len(tools))
-+	for _, tool := range tools {
-+		records = append(records, functionRecord(tool, tool.Handler, m.policy(tool.Name)))
-+	}
-+	return ax.Array(records...)
-+}
-+
-+// functionRecord is one function as a plain record, with Ax's result policy
-+// for it: "inspect" ends the block so the result is read on a fresh turn,
-+// "data" lets the code that follows the call run.
-+func functionRecord(tool ax.Tool, handler func(map[string]ax.Value) (ax.Value, error), policy string) ax.Value {
-+	return map[string]ax.Value{
-+		"name":         tool.Name,
-+		"description":  tool.Description,
-+		"parameters":   tool.Schema(),
-+		"handler":      handler,
-+		"resultPolicy": policy,
-+	}
-+}
-+
-+// feedbackRewrite is one sentence of the standing instructions that tells the
-+// model to look up and act in a single program, with what replaces it when a
-+// look-up ends the block.
-+type feedbackRewrite struct {
-+	in      string // where the sentence lives, for the test that keeps these in step
-+	old     string
-+	lookups string
-+	all     string
-+}
-+
-+var feedbackRewrites = []feedbackRewrite{
-+	{
-+		in:      "agentSignature",
-+		old:     "Author the query and call query_catalog({id:...}) in the same code block as execution; these lookups reuse verified prefetched facts locally. Avoid a separate turn printing the hidden seed to find IDs or known columns.",
-+		lookups: "Call query_catalog({id:...}) for the exact detail and end the block there: its result is shown to you on the next turn, and the query is written from what it shows. Do not spend a turn printing the hidden seed to find IDs or known columns.",
-+	},
-+	{
-+		in:      "runtimeSeedUsageInstructions",
-+		old:     `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}), author the query with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_graphql, and final from its result.`,
-+		lookups: `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}) and end the block; on the next turn its result is in front of you, so author the query from the columns and values it shows, with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_graphql, and final from its result.`,
-+		all:     `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}) and end the block; on the next turn its result is in front of you, so author the query from the columns and values it shows, with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_gra
+ func looksLikeURLish(v string) bool {
+ 	v = strings.TrimSpace(v)
+ 	return strings.Contains(v, "://") ||
+@@ -478,6 +489,7 @@ func applyMCPProbeResult(ctx context.Context, cmd *cobra.Command, opts *mcpInsta
+ 	switch probe.Kind {
+ 	case mcpProbeNoAuth, mcpProbeOAuth:
+ 		opts.Mode = mcpInstallModeDirect
++		opts.SignIn = probe.Kind == mcpProbeOAuth
+ 		return nil
+ 	case mcpProbeAuthLogin:
+ 		opts.Mode = mcpInstallModeProxy
+@@ -866,9 +878,16 @@ func printPostInstallGuide(w io.Writer, opts mcpInstallOptions, codexPlan codexI
+ 	fmt.Fprintf(w, "Server: %s\n", opts.Server)
+ 
+ 	if usesClaude(opts.Client) {
+-		fmt.Fprintf(w, "\nClaude Desktop / Claude Code\n")
+-		fmt.Fprintf(w, "  1) Restart Claude Desktop.\n")
+-		fmt.Fprintf(w, "  2) Verify with: claude mcp list\n")
++		if opts.SignIn {
++			fmt.Fprintf(w, "\nClaude Code\n")
++			fmt.Fprintf(w, "  1) Start Claude Code and type /mcp.\n")
++			fmt.Fprintf(w, "  2) Choose %s, then Authenticate.\n", claudeMCPServerName)
++			fmt.Fprintf(w, "  3) Your browser opens on the server. Sign in and choose Allow.\n")
++		} else {
++			fmt.Fprintf(w, "\nClaude Desktop / Claude Code\n")
++			fmt.Fprintf(w, "  1) Restart Claude Desktop.\n")
++			fmt.Fprintf(w, "  2) Verify with: claude mcp list\n")
++		}
+ 	}
+ 
+ 	if usesCodex(opts.Client) {
 ```
 
-**File**: `agent/result_feedback_test.go` (added, +186/-0)
+**File**: `cmd/mcp_install_test.go` (modified, +46/-0)
 ```diff
-@@ -0,0 +1,186 @@
-+package agent
+@@ -473,3 +473,49 @@ func TestPrintPostInstallGuide(t *testing.T) {
+ 		t.Fatalf("expected codex config path note, got:\n%s", out)
+ 	}
+ }
++
++// `deeporg mcp add claude <url>` is the command the server prints when it
++// starts. The client named there was read and then thrown away, so the
++// command set up Codex, or asked which client was meant.
++func TestSplitMCPAddArgs(t *testing.T) {
++	for _, tc := range []struct {
++		args           []string
++		client, server string
++	}{
++		{nil, "", ""},
++		{[]string{"claude"}, "claude", ""},
++		{[]string{"http://127.0.0.1:8080"}, "", "http://127.0.0.1:8080"},
++		{[]string{"localhost:8080"}, "", "localhost:8080"},
++		{[]string{"claude", "http://127.0.0.1:8080"}, "claude", "http://127.0.0.1:8080"},
++		{[]string{"all", "data.example.com"}, "all", "data.example.com"},
++	} {
++		client, server := splitMCPAddArgs(tc.args)
++		if client != tc.client || server != tc.server {
++			t.Errorf("splitMCPAddArgs(%q) = %q, %q; want %q, %q", tc.args, client, server, tc.client, tc.server)
++		}
++	}
++
++	// The client named as an argument is the one set up, with no prompt.
++	client, _ := splitMCPAddArgs([]string{"claude", "http://127.0.0.1:8080"})
++	opts, err := resolveInstallOptions(mcpInstallResolveInput{Client: client, ClientSet: client != "", Server: "http://127.0.0.1:8080", ServerSet: true})
++	if err != nil || opts.Client != "claude" {
++		t.Fatalf("the named client was not used: %q, %v", opts.Client, err)
++	}
++}
++
++// When the server has the client sign in for itself, the next step is in
++// Claude Code, and the person has to be told what it is.
++func TestPostInstallGuideSaysHowToSignIn(t *testing.T) {
++	var out bytes.Buffer
++	printPostInstallGuide(&out, mcpInstallOptions{Client: "claude", Server: "http://127.0.0.1:8080/api/v1/mcp", SignIn: true}, codexInstallPlan{})
++	for _, want := range []string{"type /mcp", "then Authenticate", "choose Allow"} {
++		if !strings.Contains(out.String(), want) {
++			t.Errorf("the guide does not say %q:\n%s", want, out.String())
++		}
++	}
++	out.Reset()
++	printPostInstallGuide(&out, mcpInstallOptions{Client: "claude", Server: "http://127.0.0.1:8080/api/v1/mcp"}, codexInstallPlan{})
++	if strings.Contains(out.String(), "Authenticate") {
++		t.Errorf("a server with no sign-in was given sign-in steps:\n%s", out.String())
++	}
++}
+```
+
+---
+
+### Incident Patch 3: `29a0ff52` (2026-11-26)
+**Commit Message**: fix(mcp): describe a field of any type as an object schema
+
+A tool's output schema described a field that can hold anything with the
+schema `true`. The MCP client library Claude Code is built on accepts only an
+object where a schema goes and rejects the whole tool list over one `true`,
+so every tool disappeared for such a client. On an agentic server the first
+tool listed, ask_graphjin_agent, has six such fields.
+
+These fields are now described as `{}`, which means the same thing. Found by
+connecting a client built on that library to a real server.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `serv/internal/mcpcompat/mcp/mcp.go` (modified, +27/-0)
+```diff
+@@ -274,11 +274,38 @@ func WithOutputSchema[T any]() ToolOption {
+ 			if out.Type == "" && reflect.TypeOf(zero) != nil {
+ 				out.Type = "object"
+ 			}
++			for name, prop := range out.Properties {
++				out.Properties[name] = objectSchema(prop)
++			}
+ 			t.OutputSchema = out
+ 		}
+ 	}
+ }
+ 
++// objectSchema rewrites the schema `true`, which a field of any type reflects
++// to, as the empty schema `{}`. The two mean the same thing, but the MCP
++// client library Claude Code is built on only accepts an object where a
++// schema goes and otherwise throws the whole tool list away.
++func objectSchema(schema any) any {
++	switch v := schema.(type) {
++	case bool:
++		if v {
++			return map[string]any{}
++		}
++		return map[string]any{"not": map[string]any{}}
++	case map[string]any:
++		if props, ok := v["properties"].(map[string]any); ok {
++			for name, prop := range props {
++				props[name] = objectSchema(prop)
++			}
++		}
++		if items, ok := v["items"]; ok {
++			v["items"] = objectSchema(items)
++		}
++	}
++	return schema
++}
++
+ type ReadResourceParams struct{ URI string }
+ type ReadResourceRequest struct{ Params ReadResourceParams }
+ 
+```
+
+**File**: `serv/internal/mcpcompat/mcp/output_schema_test.go` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++package mcp
 +
 +import (
-+	"context"
-+	"errors"
++	"encoding/json"
 +	"strings"
 +	"testing"
-+
-+	ax "github.com/ax-llm/ax/packages/go"
 +)
 +
-+// feedbackRuntime counts the look-ups and queries a run makes, and remembers
-+// how many model calls had been made when each query ran.
-+type feedbackRuntime struct {
-+	fakeRuntime
-+	client       *recordingClient
-+	lookups      int
-+	queries      int
-+	queryAtCalls []int
-+	queryErr     error
++type outputSchemaSample struct {
++	Answer string           `json:"answer"`
++	Data   any              `json:"data,omitempty"`
++	Raw    json.RawMessage  `json:"raw,omitempty"`
++	Rows   []any            `json:"rows,omitempty"`
++	Nested outputSchemaNest `json:"nested"`
 +}
 +
-+func (r *feedbackRuntime) QueryCatalog(ctx context.Context, args map[string]any) (any, error) {
-+	if len(detailIDsFromArgs(args)) != 0 {
-+		r.lookups++
-+	}
-+	return r.fakeRuntime.QueryCatalog(ctx, args)
++type outputSchemaNest struct {
++	Variables any `json:"variables,omitempty"`
 +}
 +
-+func (r *feedbackRuntime) ExecuteGraphQL(_ context.Context, args map[string]any) (any, error) {
-+	r.queries++
-+	r.queryAtCalls = append(r.queryAtCalls, len(r.client.calls))
-+	if r.queryErr != nil {
-+		err := r.queryErr
-+		r.queryErr = nil
-+		return nil, err
++// A field that can hold anything reflects to the schema `true`. The MCP client
++// library Claude Code is built on accepts only objects where a schema goes,
++// and rejects the whole tool list over one `true`, so every tool disappears.
++func TestOutputSchemaNeverUsesABooleanSchema(t *testing.T) {
++	tool := NewTool("sample", WithOutputSchema[outputSchemaSample]())
++	raw, err := json.Marshal(tool.OutputSchema)
++	if err != nil {
++		t.Fatal(err)
 +	}
-+	return map[string]any{"data": map[string]any{"accounts": []any{map[string]any{"id": 1, "name": "Meridian Robotics"}}}}, nil
-+}
-+
-+const (
-+	// The program models write today: look up, query and finish in one go.
-+	oneProgram     = `{"javascriptCode":"const d = await query_catalog({id:'table:app:main.accounts'}); const r = await execute_graphql({query:'query { accounts { id name } }'}); await final('Answer from the rows.', {rows: r.data});"}`
-+	queryAndFinish = `{"javascriptCode":"const r = await execute_graphql({query:'query { accounts { id name } }'}); await final('Answer from the rows.', {rows: r.data});"}`
-+	finishOnly     = `{"javascriptCode":"await final('Answer from the rows.', {rows: r.data});"}`
-+	reply          = `{"status":"answered","answer":"Meridian Robotics"}`
-+)
-+
-+func runWithFeedback(t *testing.T, mode string, rt *feedbackRuntime, responses ...string) *recordingClient {
-+	t.Helper()
-+	rec := &recordingClient{responses: responses}
-+	rt.client = rec
-+	runner := newAgent(
-+		Config{Provider: "openai", APIKeyEnv: "GRAPHJIN_UNUSED", TimeoutSeconds: 50, MaxSteps: 6},
-+		rt,
-+		WithClientFactory(func(Config) (ax.AIClient, error) { return rec, nil }),
-+		WithResultFeedback(mode),
-+	)
-+	if _, err := runner.Run(context.Background(), Request{Instruction: "Which accounts do we have?", Capabilities: profileWithRoleAndRoots("user")}); err != nil {
-+		t.Fatalf("%q: %v", mode, err)
++	var schema struct {
++		Type       string         `json:"type"`
++		Properties map[string]any `json:"properties"`
 +	}
-+	return rec
-+}
-+
-+// Off, the whole program runs: the query is sent in the same model call that
-+// asked for the table's detail, so it was written before that detail was read.
-+// With result feedback the look-up ends the block: the query runs only after
-+// a model call that was shown what the look-up returned.
-+func TestResultFeedbackShowsALookupBeforeTheQueryRuns(t *testing.T) {
-+	off := &feedbackRuntime{}
-+	rec := runWithFeedback(t, "", off, oneProgram, reply)
-+	if off.lookups != 1 || off.queries != 1 || off.queryAtCalls[0] != 1 {
-+		t.Fatalf("off: lookups=%d queries=%d ran after %v model calls; want one program doing both", off.lookups, off.queries, off.queryAtCalls)
++	if err := json.Unmarshal(raw, &schema); err != nil {
++		t.Fatal(err)
 +	}
-+	if len(rec.calls) != 2 {
-+		t.Fatalf("off: %d model calls, want 2", len(rec.calls))
++	if schema.Type != "object" || len(schema.Properties) != 5 {
++		t.Fatalf("unexpected schema: %s", raw)
 +	}
-+
-+	for mode, script := range map[string][]string{
-+		"lookups": {oneProgram, queryAndFinish, reply},
-+		"all":     {oneProgram, queryAndFinish, finishOnly, reply},
-+	} {
-+		rt := &feedbackRuntime{}
-+		rec := runWithFeedback(t, mode, rt, script...)
-+		if rt.lookups != 1 || rt.queries != 1 {
-+			t.Fatalf("%s: lookups=%d queries=%d, want one of each", mode, rt.lookups, rt.queries)
-+		}
-+		if rt.queryAtCalls[0] != 2 {
-+			t.Fatalf("%s: the query ran after %d model calls, want it held until the second", mode, rt.queryAtCalls[0])
-+		}
-+		if len(rec.calls) != len(script) {
-+			t.Fatalf("%s: %d model calls, want %d", mode, len(rec.calls), len(script))
-+		}
-+		// The second model call is shown what the look-up returned, without
-+		// the program having printed it.
-+		second := dumpAXValue(rec.calls[1].values)
-+		for _, want := range []string{"table:app:main.accounts", "Execution paused before"} {
-+			if !strings.Contains(second, want) {
-+				t.Errorf("%s: the model call after the look-up does not carry %q", mode, want)
-+			}
-+		}
-+		if mode == "all" {
-+			third := dumpAXValue(rec.calls[2].values)
-+			if !strings.Contains(third, "Meridian Robotics") {
-+				t.Errorf("all: the model call after the query was not shown its rows")
-+			}
++	for name, prop := range schema.Properties {
++		if _, ok := prop.(map[string]any); !ok {
++			t.Errorf("property %q is %v, not an object schema", name, prop)
 +		}
 +	}
-+}
-+
-+// A function's error is a message for the model. Run through Ax's own
-+// registration it used to end the run; handed over as a plain record it is
-+// returned to the model's code, shown on the next turn, and the run goes on,
-+// whichever name the code called the function by.
-+func TestResultFeedbackReturnsAFunctionErrorToTheModel(t *testing.T) {
-+	const hint = "this call did NOT return data: field 'amount' is not a column; available columns: id, name, mrr_cents"
-+	for _, name := range []string{"execute_graphql", axFlatFunctionNamespace + ".execute_graphql"} {
-+		broken := `{"javascriptCode":"const r = await ` + name + `({query:'qu
-```
-
-**File**: `agent/runtime_handoff.go` (modified, +45/-1)
-```diff
-@@ -32,6 +32,26 @@ type graphJinCodeRuntime struct {
- 	pendingContinuation    func() string
- 	completionContinuation func() string
- 	clarificationNudge     func() string
-+	// feedback is set when the run reads its functions' results on a fresh
-+	// turn; usage is then GraphJin's instruction text for the code stages,
-+	// which Ax asks the runtime for when the runtime is what it is built with.
-+	feedback bool
-+	usage    string
-+}
-+
-+// WithResultFeedback makes this the runtime Ax is constructed with, so Ax can
-+// see that it supports ending a block after a function whose result has to be
-+// read. usage is the instruction text for the stages that write code.
-+func (r *graphJinCodeRuntime) WithResultFeedback(usage string) *graphJinCodeRuntime {
-+	r.feedback = true
-+	r.usage = usage
-+	return r
-+}
-+
-+// SupportsObservationBoundaries is how Ax asks a runtime whether a block can
-+// be ended after a function result that has to be read.
-+func (r *graphJinCodeRuntime) SupportsObservationBoundaries() bool {
-+	return r.feedback
- }
- 
- // WithHandoffFallback supplies runtime-only evidence gathered by GraphJin
-@@ -77,6 +97,9 @@ func (r *graphJinCodeRuntime) Language() string {
- }
- 
- func (r *graphJinCodeRuntime) UsageInstructions() string {
-+	if r.usage != "" {
-+		return r.usage
++	// Nested schemas and array items are rewritten too.
++	for _, bad := range []string{`"variables":true`, `"items":true`, `"data":true`, `"raw":true`} {
++		if strings.Contains(string(raw), bad) {
++			t.Errorf("the schema still contains %s: %s", bad, raw)
++		}
 +	}
- 	return r.base.UsageInstructions()
- }
- 
-@@ -97,8 +120,29 @@ func (r *graphJinCodeRuntime) RegisterCallable(name string, handler axgoja.HostC
- // instead, whenever the model had called the function the way the prompt
- // shows it. Called by the bare name, the same error reached the model and the
- // run went on.
-+//
-+// With result feedback on, Ax's registrations are the ones that run. Reading a
-+// result on a fresh turn is done by Ax's own wrapper around each function: it
-+// records what the function returned and holds back the next call. The agent
-+// then hands Ax its functions as plain records (resultFeedback.functions),
-+// whose errors that wrapper returns to the model's code. Each function is
-+// also bound under its bare name, the spelling GraphJin's instructions use.
- func (r *graphJinCodeRuntime) RegisterHostCallable(name string, handler func(ax.Value) (ax.Value, error)) {
--	registerAxPrimitive(r.base, name, handler)
-+	if !r.feedback {
-+		registerAxPrimitive(r.base, name, handler)
-+		return
++	// A typed field keeps its type.
++	if answer, _ := schema.Properties["answer"].(map[string]any); answer["type"] != "string" {
++		t.Errorf("a typed field lost its type: %s", raw)
 +	}
-+	registerAxCallable(r.base, name, handler)
 +}
-+
-+// registerAxCallable keeps a registration Ax makes, and binds a function Ax
-+// registers under its qualified name (utils.ask_graphjin) under its bare name
-+// as well, the spelling GraphJin's instructions use.
-+func registerAxCallable(base *axgoja.Runtime, name string, handler func(ax.Value) (ax.Value, error)) {
-+	base.RegisterHostCallable(name, handler)
-+	if bare, qualified := strings.CutPrefix(name, axFlatFunctionNamespace+"."); qualified && bare != "" {
-+		base.RegisterHostCallable(bare, handler)
-+	}
- }
- 
- func (r *graphJinCodeRuntime) CreateSession(globals map[string]ax.Value, options map[string]ax.Value) (ax.CodeSession, error) {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #695** (closed): Update the homepage testimonial to use DeepORG (@dosco)
+- **PR #694** (2026-11-22): feat(core): update a list of rows in one mutation, matched by primary key (@officialasishkumar)
 - **PR #693** (2026-11-13): fix(introspection): expose columns of Postgres functions returning table rows (@officialasishkumar)
 - **PR #692** (2026-10-31): fix(discovery): aggregate SQLite index statistics per table (@rudycelekli)
 - **PR #691** (2026-11-06): fix(openapi): discover fields inherited through allOf response schemas (@rudycelekli)
 - **PR #690** (2026-10-31): fix(graph): require complete standalone argument values (@rudycelekli)
-- **PR #689** (2026-11-06): fix(graph): resolve fragments independently of definition order (@rudycelekli)
 
 ---
 
@@ -3553,72 +3069,61 @@ How it has to be wired, each learned by experiment:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. introspection): expose columns of Postgres functions returning table rows
+## X. docs: quick start and README describe the setup flow
 
 **RULE**:
-When implementing operations in `core/internal/introspection/sql/postgres_functions.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bc79e50b`: introspection): expose columns of Postgres functions returning table rows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ab2b14e1`: docs: quick start and README describe the setup flow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/internal/introspection/sql/postgres_functions.sql`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-WITH row_type_routines AS (
-	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
-	-- composite_type and RETURNS TABLE (LIKE tbl).
-	SELECT r.specific_name,
-		t.typrelid
-	FROM information_schema.routines r
-		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
-		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
-		AND t.typname = r.type_udt_name
-	WHERE r.routine_type = 'FUNCTION'
-		AND r.data_type = 'USER-DEFINED'
-		AND t.typrelid != 0
-)
-	-- The single OUT parameter of a row type function holds the whole row.
-	-- Postgres expands it into the row's columns, returned by the SELECT below.
-	AND NOT (
-		p.parameter_mode = 'OUT'
-		AND r.specific_name IN (
-			SELECT specific_name
-			FROM row_type_routines
-		)
-	)
-	f.attnum as param_id,
-	f.attname as param_name,
-	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
-	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
-	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
-WHERE f.attnum > 0
-	AND f.attisdropped = false
-	);
+deeporg
+This starts DeepORG and opens a setup page in your browser. You create an admin
+account, connect a database or choose the sample data, and pick a model. Then
+you ask a question. There is no config file to write: DeepORG keeps its own
+files in `~/.deeporg/`.
+The setup steps are in the [quick start](https://deeporg.io/start/quick-start/).
+For a larger demo company with routines and saved work already in it, run
+`deeporg serve --demo`; see [Demos](https://deeporg.io/start/demos/).
+## Use it from Claude Code
+Open **Connect** in the console and copy the command it shows:
+claude mcp add --transport http --scope user deeporg http://127.0.0.1:8080/api/v1/mcp
+Then type `/mcp` in Claude Code, choose `deeporg` and Authenticate. Your browser
+opens on DeepORG, where you choose Allow. There is no token to copy. Claude Code
+asks DeepORG's built-in agent, so choose a model during setup first.
+
+Other clients: [MCP](https://deeporg.io/agentic/mcp/). Servers that sign people
+in through an identity provider: [MCP OAuth](https://deeporg.io/agentic/oauth/).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	a.ordinal_position as param_id,
-	COALESCE(
-		a.attribute_name,
-		CAST(a.ordinal_position as CHAR(3))
-	) as param_name,
-	a.data_type as param_type,
-	RIGHT JOIN information_schema.attributes a ON (
-		r.data_type = 'USER-DEFINED'
-		AND a.udt_schema = r.type_udt_schema
-		AND a.udt_name = r.type_udt_name
-	)
-WHERE r.routine_type = 'FUNCTION'
-	);
+deeporg serve --demo
+This starts a demo SaaS company (accounts, subscriptions, invoices, support
+tickets) with seeded data. Put a model key in `./.env` (`OPENAI_API_KEY`,
+`ANTHROPIC_API_KEY` or `GOOGLE_API_KEY`) and ask it something:
+```bash
+curl -sS localhost:8083/api/v1/agent \
+  -H 'content-type: application/json' \
+  -d '{"instruction": "Which account is most at risk of churning?"}'
+```
+Or chat with it at <http://localhost:8083/agent>. More demos:
+[Demos](https://deeporg.io/start/demos/).
+## Use it from Claude, Codex or any MCP client
+deeporg mcp add claude http://localhost:8083
+Other clients: [MCP](https://deeporg.io/agentic/mcp/). Hosted servers with sign-in:
+[MCP OAuth](https://deeporg.io/agentic/oauth/).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc79e50b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ab2b14e1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

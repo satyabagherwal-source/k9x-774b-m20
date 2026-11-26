@@ -4,24 +4,24 @@
 {
   "source_repository": "Kuddev/pebrel",
   "source_url": "https://github.com/Kuddev/pebrel",
-  "source_version": "e7405725",
+  "source_version": "cda74a88",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-20T02:14:55.093Z",
+  "timestamp": "2026-11-26T17:14:53.345Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-kuddev-pebrel",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Kuddev/pebrel](https://github.com/Kuddev/pebrel) (Revision: `e7405725`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-20T02:14:55.093Z`  
+> **Provenance**: Harvested from [Kuddev/pebrel](https://github.com/Kuddev/pebrel) (Revision: `cda74a88`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-26T17:14:53.345Z`  
 > **Learning ID**: `learn-github-kuddev-pebrel`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), B (Product Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Kuddev/pebrel:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:14:53.363Z  
+> **Harvest Timestamp**: 2026-11-26T17:14:51.911Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3852 stars
+- **Stars / Engagement**: 3915 stars
 
 ---
 
@@ -686,7 +686,7 @@ async function supportsSettled(): Promise<boolean> {
   return false;
 }
 
-// Only provider IDs and the first JSONL metadata line are recovery identities.
+// Only provider IDs and the native session header are recovery identities.
 // A timestamped basename or a process ID cannot be handed to pi --session.
 function sessionFor(ctx: any): { session_id?: string; session_file?: string } {
   let direct: string | undefined;
@@ -699,9 +699,15 @@ function sessionFor(ctx: any): { session_id?: string; session_file?: string } {
       fd = openSync(file, "r");
       const buffer = Buffer.alloc(16384);
       const length = readSync(fd, buffer, 0, buffer.length, 0);
-      const end = buffer.indexOf(10, 0);
-      if (end >= 0 && end < length) {
-        const header = JSON.parse(buffer.subarray(0, end).toString("utf8"));
+      const prefix = buffer.subarray(0, length);
+      const end = prefix.indexOf(10);
+      if (end >= 0) {
+        let header = JSON.parse(prefix.subarray(0, end).toString("utf8"));
+        // OMP 18 writes a fixed-width title record before its session header.
+        if (SOURCE === "omp" && end === 255 && header.type === "title" && header.v === 1) {
+          const next = prefix.indexOf(10, end + 1);
+          if (next > end) header = JSON.parse(prefix.subarray(end + 1, next).toString("utf8"));
+        }
         if (header.type === "session" && typeof header.id === "string" && header.id
             && (!direct || direct === header.id)) {
           return { session_id: header.id, session_file: file };
@@ -912,6 +918,22 @@ def stream_state(token, identity):
             yield state
 
 
+def completion_field(source, native, payload):
+    if (source == "claude" or native) and payload.get("hook_event_name") == "Stop":
+        return "last_assistant_message"
+    if source == "codex" and not native and payload.get("type") == "agent-turn-complete":
+        return "last-assistant-message"
+    if source in ("opencode", "pi") and payload.get("kind") == "done":
+        return "message"
+    return None
+
+
+def encode_envelope(header, payload):
+    return header.encode() + b"\n" + json.dumps(
+        payload, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")
+
+
 def send(source, native, mode, payload, token, owner=None, route=None, deadline=None):
     owner = owner or process_identity(source)
     with stream_state(token, owner or source) as state:
@@ -932,18 +954,22 @@ def send(source, native, mode, payload, token, owner=None, route=None, deadline=
             header += " tmux=" + route["context"]
         if native:
             header += " codex_hooks=" + mode.split("=", 1)[1]
-        encoded = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-        envelope = header.encode() + b"\n" + encoded
+        envelope = encode_envelope(header, payload)
         if len(envelope) > MAX_ENVELOPE:
-            # Lifecycle must still arrive when a tool or answer is huge. Keep
-            # protocol identities and drop content, without inventing a result.
             keep = ("hook_event_name", "type", "kind", "session_id", "session_file", "transcript_path", "thread-id", "turn_id", "turn-id", "source", "bridge_instance", "bridge_sequence", "event_id", "notification_type", "permission_mode", "stop_reason", "error", "background_tasks", "agent_id", "agent_type")
-            question_input = payload.get("tool_input") if payload.get("tool_name") in ("request_user_input", "AskUserQuestion") else None
-            tool_name = payload.get("tool_name")
-            payload = {key: payload[key] for key in keep if key in payload}
-            if question_input is not None:
-                payload.update(tool_name=tool_name, tool_input=question_input)
-            envelope = header.encode() + b"\n" + json.dumps(payload, separators=(",", ":")).encode()
+            compact = {key: payload[key] for key in keep if key in payload}
+            if payload.get("tool_name") in ("request_user_input", "AskUserQuestion") and payload.get("tool_input") is not None:
+                compact.update(tool_name=payload["tool_name"], tool_input=payload["tool_input"])
+            if source == "opencode" and payload.get("outcome") in ("succeeded", "failed", "cancelled"):
+                compact["outcome"] = payload["outcome"]
+            envelope = encode_envelope(header, compact)
+            field = completion_field(source, native, payload)
+            answer = payload.get(field)
+            if field and isinstance(answer, str) and len(answer) <= MAX_ENVELOPE - len(envelope):
+                compact[field] = answer
+                with_answer = encode_envelope(header, compact)
+                if len(with_answer) <= MAX_ENVELOPE:
+                    envelope = with_answer
         if len(envelope) > MAX_ENVELOPE:
             return
         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
@@ -999,28 +1025,7 @@ def write_terminal(osc, source=None, route=None, deadline=None, *, exit_owner=No
         if route:
             info = os.fstat(fd)
             if not stat.S_ISCHR(info.st_mode) or info.st_rdev != route["device"]:
-                raise ValueError("SSH terminal identity changed")
-        while offset < len(osc):
-            remaining = deadline - time.monotonic()
-            if remaining <= 0 or not select.select([], [fd], [], remaining)[1]:
-                raise TimeoutError("terminal output is full")
-            try:
-                offset += os.write(fd, osc[offset:])
-            except BlockingIOError:
-                continue
-    finally:
-        if 0 < offset < len(osc):
-            # Cancel a partial OSC so a failed hook cannot swallow future output.
-            try:
-                if select.select([], [fd], [], 0.1)[1]:
-                    os.write(fd, b"\x18")
-            except OSError:
-                pass
-        os.close(fd)
-
-
-def run(args):
-    if not args or args[0] 
+                raise V
 ```
 
 ### Core Architecture Module: `pebrel_app/res/hooks/remote_files.py`
@@ -1508,11 +1513,11 @@ def destinations(owner, deadline):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1028** (2026-11-19): **[Bug] 无法启用"登录时自启动"选项**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 25H2, 150%, 1 monitor  ### Pebrel version / 版本号  2.5.9  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  No, it never worked / 一直如此  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 启动 Perbel，打开设置页 2. 尝试启用"登录时自启动"选项  ### Expected behavior / 期望结果  选项被正常启用  ### Actual behavior / 实际结果  选项没有启用，并报错“”  ### Logs / screenshots / 日志或截图  <img width="1967" height="1075" alt="图片" src="https://github.com/user-attachments/assets/536de216-602a-47f7-94b9-9c4c89c7eda6" />  ### Non-default settings / 改过的设置  还尝试了使用管理员权限启动，没有解决此问题  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #1078** (2026-11-21): **[Bug] JumpServer（KoKo）直连 SSH 登录仍卡住，无法进入远端 shell（#856 后续）**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 10 Pro 22H2（19045）  ### Pebrel version / 版本号  2.6.1（本机当前运行版本）  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  bash  ### Program running in the pane / 面板里正在跑的程序  ssh client / remote shell — 远程 shell  ### Connection type / 连接方式  SSH via Pebrel host list / Pebrel 内 SSH 主机  ### Affected area / 影响范围  SSH / proxy / jump host — SSH、代理、跳板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 在 `~/.ssh/config` 中配置 JumpServer（KoKo）直连目标资产的主机别名，例如：     ```sshconfig    Host my-hpc        HostName <JumpServer 地址>        Port 2222        User <JumpServer 用户>@<资产账号>@<资产 IP>        IdentityFile ~/.ssh/<密钥文件名>    ```  2. 启动 Pebrel，在 SSH 窗格中打开 `my-hpc`。 3. 等待目标主机的 shell 提示符出现。  ### Expected behavior / 期望结果  登录完成后，SSH 窗格应显示目标主机的 shell 提示符，并能执行 `pwd` 等命令。  ### Actual behavior / 实际结果  和 #856 相同的直连配置下，#858 修复后已经看不到 `PEBREL_PTY_…=not a tty:<pid>` 这行输出，但 SSH 窗格仍然卡住，没有出现可用的远端 shell，无法登录服务器。  目前无法从窗格输出判断连接卡在哪一步。希望能用实际的 KoKo 直连会话验证，直到可以在目标主机执行命令。  ### Logs / screenshots / 日志或截图  #856 中记录的旧输出（标识和进程号已省略）：  ```text PEBREL_PTY_<token>=not a tty:<pid> ```  本次卡住时，窗格已不再显示这行输出。暂无本次连接的调试日志。  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 
 
-- **Issue #1016** (2026-11-19): **[Bug] 无法粘贴图片：unsupported clipboard image format: Tiff**
-  *Symptoms*: ### Operating system / 操作系统  macOS  ### OS version and display / 系统版本与显示  macos26.0  ### Pebrel version / 版本号  2.5.8  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  bash  ### Program running in the pane / 面板里正在跑的程序  Codex CLI  ### Connection type / 连接方式  SSH via Pebrel host list / Pebrel 内 SSH 主机  ### Affected area / 影响范围  SSH / proxy / jump host — SSH、代理、跳板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  截图后粘贴出现 tiff 格式无法粘贴的情况  ### Expected behavior / 期望结果  希望支持下截图 tiff 粘贴  ### Actual behavior / 实际结果  <img width="404" height="59" alt="image" src="https://github.com/user-attachments/assets/ed7abd98-861f-49f8-90a4-40f17a793362" />  ### Logs / screenshots / 日志或截图  如上  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #1063** (2026-11-20): **[Bug] 在win11 powershell 7 下执行`ls env:`查看环境变量报错**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 Pro 23H2（build 22631）  ### Pebrel version / 版本号  2.6.0 (5ff71de)  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 启动 Pebrel，新开 PowerShell 7 标签页 2. 执行 `ls env:` 3. 每个环境变量报一条 `InvalidOperation`  ❯ ls env: InvalidOperation: ...\pebrel-shell\2.6.0-9b9c4248...\pebrel_prompt.ps1:363  363 |          $date = '{0,12}' -f $i.LastWriteTime.ToString('MMM d HH:mm',  …      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      | 不能对值为 Null 的表达式调用方法。 -rw-r--r--       1    all_proxy ...  ## 改过的设置  `follow_system_theme=0`、`shell=pwsh`、`refresh_environment=1`；`builtin_ls` 未设置，保持默认 `1`。  ## 补充观察：先执行一次 `pwsh` 就不报错  报错来自 Pebrel 启动时注入的脚本（启动参数 `-Command ". '<temp>\pebrel_prompt.ps1'"`），预先手敲执行的 `pwsh` 子会话不加载它，`ls` 退回原生别名：  | 场景                            | `(Get-Command ls).Definition` | `ls env:` 错误数 | | ------------------------------- | ----------------------------- | ---------------- 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1529,125 +1534,407 @@ def destinations(owner, deadline):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7405725` (2026-11-19)
-**Commit Message**: Integrate reviewed changes from #1004 with the verified merge queue
+### Incident Patch 1: `cda74a88` (2026-11-26)
+**Commit Message**: Merge pull request #1107 from Kuddev/fix/dsh-hook-1105-20261126
 
-**File**: `CHANGELOG.md` (modified, +4/-4)
+feat(agents): support DSH TUI launch and DeepSeek branding
+
+**File**: `extra/logo/LICENSE-deepseek-harness` (added, +21/-0)
 ```diff
-@@ -2049,7 +2049,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包；Linux x64 包以及 macOS App
- - Fixed queued AI resume commands and session identities being lost during Shell initialization. Compact Codex resume screens are recognized without another AI message, and exiting the CLI clears the foreground identity.
- - Fixed long WSL directory titles overlapping distribution labels in the sidebar and top tabs.
- - Fixed quiet terminals retaining an intermediate startup size. The final viewport size reaches the terminal even when no more output arrives.
--- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-+- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
- - Fixed the top Settings tab disappearing when switching to another tab. It now remains available until explicitly closed, including when tabs overflow or the tab layout changes.
- - Fixed `Alt+1–9` and `Ctrl+1–9` tab shortcuts losing priority to terminal input. They now work while a terminal or CLI has focus and respect custom shortcut changes without restarting.
- - Fixed WSL filename search failing when the directory path contains spaces or shell punctuation. Cancelling a search stops its own directory scan.
-@@ -2300,7 +2300,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包，不再提供旧名兼容安
- 
- <a href="https://github.com/Sakyvo"><img src="https://github.com/Sakyvo.png?size=96" width="64" height="64" alt="@Sakyvo avatar"></a><a href="https://github.com/821869798"><img src="https://github.com/821869798.png?size=96" width="64" height="64" alt="@821869798 avatar"></a>
- 
--**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-+**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
- 
- **[@821869798](https://github.com/821869798)** - Contributed `Shift+Enter` multiline input and Antigravity completion and permission-state detection. / 贡献 `Shift+Enter` 多行输入，以及 Antigravity 回答结束与权限状态识别。（[#96](https://github.com/Kuddev/pebrel/pull/96)）
- 
-@@ -2497,7 +2497,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包，不再提供旧名兼容安
- - **Panes and live managed Agents support bounded bracketed paste from literal text, stdin, or a file.** Prompt, paste, control-key, argv, and multiline validation prevent arbitrary terminal bytes from bypassing the public API, and generation-aware targeting keeps delayed input from reaching a restarted Agent with the same display name.
- - **Quick Jump searches tabs, panes, frequent directories, configured SSH hosts, and recoverable AI sessions in one palette.** Results retain tab and pane location, cwd, remote destination, provider, and session metadata, then expose direct focus, open, launch, or resume actions. File and Recipe scopes remain hidden because those backends are not yet end-to-end.
- - **Selected terminal or document text can be sent to an explicitly chosen live Agent.** The searchable Send to Chat dialog previews the selection as a quote, preserves blank lines, accepts an optional comment, can copy the composed message, labels remote SSH targets, and reports the destination after sending. If no live Agent exists, the action is disabled instead of guessing a pane.
--- **Windows terminal tabs can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
-+- **Terminal tabs on Windows can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
- - **Windows taskbar progress reflects OSC 9;4 emitted by terminal applications.** Normal, indeterminate, error, paused, and cleared states map to the native taskbar indicator; unsupported or unknown states clear stale progress instead of leaving the task
+@@ -0,0 +1,21 @@
++MIT License
++
++Copyright (c) 2026 DeepSeek
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
 ```
 
-**File**: `docs/release-notes/v1.6.0.md` (modified, +1/-1)
+**File**: `extra/logo/README.md` (modified, +21/-0)
 ```diff
-@@ -82,7 +82,7 @@
+@@ -243,6 +243,27 @@ dims proportionally. The committed bytes keep the source colors. The icon
+ identifies running `kimi` and `kimi-code` processes and does not imply
+ endorsement by Moonshot AI.
  
- <a href="https://github.com/Sakyvo"><img src="https://github.com/Sakyvo.png?size=96" width="64" height="64" alt="@Sakyvo avatar"></a><a href="https://github.com/821869798"><img src="https://github.com/821869798.png?size=96" width="64" height="64" alt="@821869798 avatar"></a>
++### DeepSeek Harness / DSH TUI
++
++`ai_deepseek.svg` is the unchanged DeepSeek whale mark from the official
++DeepSeek Harness repository, downloaded on 2026-11-26:
++
++- Source: https://github.com/deepseek-ai/deepseek-harness/blob/4b399c39a6d1479cd84ca591b4d7c88e24d38a96/apps/web/public/favicon.svg
++- License: [MIT](LICENSE-deepseek-harness), copyright DeepSeek.
++- SVG SHA-256: `9e983b4f649c25c6ca0623a50be1a6e705fd8f49f756638b980fa13b40575ab6`.
++
++The adjacent SVGZ is lossless gzip with timestamp zero. Both shells render this
++monochrome mark with theme ink so it remains visible on light and dark surfaces.
++No PNG is embedded or required for this vector asset.
++
++The official npm package `@deepseek-ai/dsh` exposes `dsh` as its executable.
++The terminal interface uses `@tomowang/dsh-tui`, installed with
++`dsh plugin --profile tui add @tomowang/dsh-tui` and launched with
++`dsh --profile tui`. Runtime launches and resumes target that profile;
++manually entered commands retain the user's own arguments. Sources:
++https://github.com/deepseek-ai/deepseek-harness/tree/master/apps/cli and
++https://github.com/tomowang/dsh-tui#install.
++
+ ### Oh My Pi
  
--**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-+**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
- 
- **[@821869798](https://github.com/821869798)** - Contributed `Shift+Enter` multiline input and Antigravity completion and permission-state detection. / 贡献 `Shift+Enter` 多行输入，以及 Antigravity 回答结束与权限状态识别。（[#96](https://github.com/Kuddev/pebrel/pull/96)）
- 
+ `ai_omp.svg` is a Pebrel-drawn purple gradient π mark following the maintainer's
 ```
 
-**File**: `docs/release-notes/v1.8.0.md` (modified, +1/-1)
+**File**: `extra/logo/ai_deepseek.svg` (added, +3/-0)
 ```diff
-@@ -22,7 +22,7 @@
- - Fixed queued AI resume commands and session identities being lost during Shell initialization. Compact Codex resume screens are recognized without another AI message, and exiting the CLI clears the foreground identity.
- - Fixed long WSL directory titles overlapping distribution labels in the sidebar and top tabs.
- - Fixed quiet terminals retaining an intermediate startup size. The final viewport size reaches the terminal even when no more output arrives.
--- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-+- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
- - Fixed the top Settings tab disappearing when switching to another tab. It now remains available until explicitly closed, including when tabs overflow or the tab layout changes.
- - Fixed `Alt+1–9` and `Ctrl+1–9` tab shortcuts losing priority to terminal input. They now work while a terminal or CLI has focus and respect custom shortcut changes without restarting.
- - Fixed WSL filename search failing when the directory path contains spaces or shell punctuation. Cancelling a search stops its own directory scan.
+@@ -0,0 +1,3 @@
++<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="50.000000" height="50.000000" viewBox="0 0 50 50" fill="none">
++	<path id="path" d="M48.8354 10.0479C48.3232 9.79199 48.1025 10.2798 47.8032 10.5278C47.7007 10.6079 47.6143 10.7119 47.5273 10.8076C46.7793 11.624 45.9048 12.1597 44.7622 12.0957C43.0923 12 41.666 12.5356 40.4058 13.8398C40.1377 12.2319 39.2476 11.272 37.8926 10.6558C37.1836 10.3359 36.4668 10.0156 35.9702 9.31982C35.6235 8.82373 35.5293 8.27197 35.356 7.72754C35.2456 7.3999 35.1353 7.06396 34.7651 7.00781C34.3633 6.94385 34.2056 7.2876 34.0479 7.57568C33.418 8.75195 33.1733 10.0479 33.1973 11.3599C33.2524 14.312 34.4736 16.6641 36.8999 18.3359C37.1758 18.5278 37.2466 18.7197 37.1597 19C36.9946 19.5757 36.7974 20.1357 36.624 20.7119C36.5137 21.0801 36.3486 21.1597 35.9624 21C34.6309 20.4321 33.481 19.5918 32.4644 18.5757C30.7393 16.8721 29.1792 14.9917 27.2334 13.52C26.7764 13.1758 26.3193 12.856 25.8467 12.5518C23.8618 10.584 26.1069 8.96777 26.627 8.77588C27.1704 8.57568 26.8159 7.8877 25.0591 7.896C23.3022 7.90381 21.6953 8.50391 19.647 9.30371C19.3477 9.42383 19.0322 9.51172 18.7095 9.58398C16.8501 9.22363 14.9199 9.14355 12.9033 9.37598C9.10596 9.80762 6.07275 11.6396 3.84326 14.7681C1.16455 18.5278 0.53418 22.7998 1.30664 27.2559C2.11768 31.9521 4.46582 35.8398 8.07373 38.8799C11.8159 42.0322 16.1255 43.5762 21.041 43.2803C24.0269 43.104 27.3516 42.6963 31.1016 39.4561C32.0469 39.936 33.0396 40.1279 34.686 40.272C35.9546 40.3921 37.1758 40.208 38.1211 40.0078C39.6021 39.688 39.4995 38.2881 38.9639 38.0322C34.623 35.9678 35.5762 36.8081 34.71 36.1279C36.9155 33.4639 40.2402 30.6958 41.54 21.728C41.6426 21.0161 41.5557 20.5679 41.54 19.9917C41.5322 19.6396 41.6108 19.5039 42.0049 19.4639C43.0923 19.3359 44.1479 19.0317 45.1167 18.4878C47.9292 16.9199 49.064 14.3438 49.3315 11.2559C49.3711 10.7837 49.3237 10.2959 48.8354 10.0479ZM24.3262 37.8398C20.1196 34.4639 18.0791 33.3521 17.2358 33.3999C16.4482 33.4482 16.5898 34.3682 16.7632 34.9678C16.9443 35.5601 17.1812 35.9683 17.5117 36.4878C17.7402 36.832 17.8979 37.3442 17.2832 37.728C15.9282 38.584 13.5728 37.4399 13.4624 37.3838C10.7207 35.7358 8.42822 33.5601 6.81348 30.584C5.25342 27.7197 4.34766 24.6479 4.19775 21.3677C4.1582 20.5757 4.38672 20.2959 5.15869 20.1519C6.17529 19.96 7.22314 19.9199 8.23926 20.0718C12.5327 20.7119 16.1885 22.6719 19.2529 25.7759C21.002 27.5439 22.3252 29.6558 23.6885 31.7202C25.1377 33.9121 26.6978 36 28.6831 37.7119C29.3843 38.312 29.9434 38.7681 30.479 39.104C28.8643 39.2881 26.1699 39.3281 24.3262 37.8398ZM26.3433 24.6001C26.3433 24.248 26.6191 23.9678 26.9658 23.9678C27.0444 23.9678 27.1152 23.9839 27.1782 24.0078C27.2651 24.04 27.3438 24.0879 27.4067 24.1602C27.5171 24.272 27.5801 24.4321 27.5801 24.6001C27.5801 24.9521 27.3042 25.2319 26.9575 25.2319C26.6108 25.2319 26.3433 24.9521 26.3433 24.6001ZM32.6064 27.8799C32.2046 28.0479 31.8027 28.1919 31.4165 28.208C30.8179 28.2397 30.1641 27.9922 29.8096 27.688C29.2583 27.2158 28.8643 26.9521 28.6987 26.1279C28.6279 25.7759 28.6675 25.2319 28.7305 24.9199C28.8721 24.248 28.7144 23.8159 28.2495 23.4238C27.8716 23.104 27.3911 23.0161 26.8633 23.0161C26.666 23.0161 26.4849 22.9277 26.3511 22.856C26.1304 22.7441 25.9492 22.4639 26.1226 22.1201C26.1777 22.0078 26.4458 21.7358 26.5088 21.688C27.2256 21.272 28.0527 21.4077 28.8169 21.7197C29.5259 22.0161 30.0615 22.5601 30.834 23.3281C31.6216 24.2559 31.7632 24.5117 32.2124 25.208C32.5669 25.752 32.8901 26.312 33.1104 26.9521C33.2446 27.3521 33.0713 27.6802 32.6064 27.8799Z" fill="#000" fill-opacity="1.000000" fill-rule="nonzero"/>
++</svg>
+```
+
+**File**: `pebrel_app/src/ai_agents.rs` (modified, +52/-2)
+```diff
+@@ -54,10 +54,11 @@ pub enum AgentKind {
+     Trae,
+     CodeBuddy,
+     CommandCode,
++    Dsh,
+ }
+ 
+ impl AgentKind {
+-    pub const ALL: [Self; 28] = [
++    pub const ALL: [Self; 29] = [
+         Self::Claude,
+         Self::Codex,
+         Self::Gemini,
+@@ -86,6 +87,7 @@ impl AgentKind {
+         Self::Trae,
+         Self::CodeBuddy,
+         Self::CommandCode,
++        Self::Dsh,
+     ];
+ 
+     pub fn slug(self) -> &'static str {
+@@ -118,6 +120,7 @@ impl AgentKind {
+             Self::Trae => "trae-cli",
+             Self::CodeBuddy => "codebuddy",
+             Self::CommandCode => "command-code",
++            Self::Dsh => "dsh",
+         }
+     }
+ 
+@@ -151,6 +154,7 @@ impl AgentKind {
+             Self::Trae => "Trae CLI",
+             Self::CodeBuddy => "CodeBuddy Code",
+             Self::CommandCode => "Command Code",
++            Self::Dsh => "DeepSeek Harness",
+         }
+     }
+ 
+@@ -194,6 +198,7 @@ impl AgentKind {
+             Self::CodeBuddy => &["codebuddy", "cbc", "codebuddy-code", "codebuddy-lowmem"],
+             // The package's `cmd` bin is omitted: it is the Windows Command Prompt.
+             Self::CommandCode => &["command-code", "commandcode", "cmdc"],
++            Self::Dsh => &["dsh"],
+         }
+     }
+ 
+@@ -253,7 +258,14 @@ impl AgentKind {
+             // The prewarm helper also lives inside the codebuddy-code package;
+             // its parent directory alone must not identify it as a live CLI.
+             .filter(|token| launcher_stem(token) != "cbc-prewarm")
+-            .find_map(|token| token.split(['/', '\\']).find_map(Self::parse))
++            .find_map(|token| {
++                // npm 的版本后缀不属于可执行文件名，只在已知包入口上解析。
++                if token.strip_prefix("@deepseek-ai/dsh@").is_some_and(|version| !version.is_empty()) {
++                    Some(Self::Dsh)
++                } else {
++                    token.split(['/', '\\']).find_map(Self::parse)
++                }
++            })
+     }
+ 
+     /// Shell-safe resume command. Session ids are untrusted hook/file input,
+@@ -289,6 +301,7 @@ impl AgentKind {
+             | Self::Trae => return None,
+             Self::Kimi => format!("kimi --session {session_id}"),
+             Self::CommandCode => format!("command-code --resume {session_id}"),
++            Self::Dsh => format!("dsh --profile tui --resume {session_id}"),
+         })
+     }
+ 
+@@ -306,6 +319,8 @@ impl AgentKind {
+             Self::Kimi => Some("kimi".to_owned()),
+             Self::CommandCode => Some("command-code".to_owned()),
+             Self::Hermes => Some("hermes".to_owned()),
++            // 官方启动器按 profile 选择界面；终端入口使用 dsh-tui 的安装约定。
++            Self::Dsh => Some("dsh --profile tui".to_owned()),
+             _ => None,
+         }
+     }
+@@ -1043,6 +1058,41 @@ mod tests {
+         assert_eq!(AgentKind::Trae.fork_command("session-1"), None);
+     }
+ 
++    #[test]
++    fn dsh_cli_entry_points_and_tui_launches() {
++        for executable in ["dsh", "DSH.CMD", r"C:\tools\dsh.ps1", "/usr/local/bin/dsh"] {
++            assert_eq!(AgentKind::parse(executable), Some(AgentKind::Dsh), "{executable}");
++        }
++        for command in [
++            "dsh web",
++            "dsh --profile tui",
++            "dsh --profile custom --resume session-1",
++            "npx --yes @deepseek-ai/dsh --profile tui",
++            "npx @deepseek-ai/dsh@0.2.2-rc.5 --profile tui",
++            "npm exec @deepseek-ai/dsh -- --profile tui",
++            "node /opt/node_modules/@deepseek-ai/dsh/lib/bin.js --profile tui",
++            r"node.exe C:\npm\node_modules\@deepseek-ai\dsh\lib\bin.js --profile tui",
++        ] {
++            assert_eq!(AgentKind::parse_command(command), Some(AgentKind::Dsh), "{command}");
++        }
++        for command in [
++            "dsh-helper",
++            "cat dsh.md",
++            "npx @tomowang/dsh-tui",
++            "npx @deepseek-ai/dsh-base",
++            "node server.js",
++        ] {
++            assert_eq!(AgentKind::parse_command(command), None, "{command}");
++        }
++        assert_eq!(AgentKind::Dsh.start_command().as_deref(), Some("dsh --profile tui"));
++        assert_eq!(
++            AgentKind::Dsh.resume_command("session-1").as_deref(),
++            Some("dsh --profile tui --resume session-1")
++        );
++        assert_eq!(AgentKind::Dsh.resume_command("session; calc"), None);
++        assert_eq!(AgentKind::Dsh.fork_command("session-1"), None);
++    }
++
+     #[test]
+     fn codebuddy_entry_points_identify_the_cli_without_claiming_its_helper() {
+         for command in [
+```
+
+**File**: `pebrel_app/src/ai_hook/integrations.rs` (modified, +17/-1)
+```diff
+@@ -6,7 +6,7 @@ use pebrel_settings::AgentHook;
+ 
+ use crate::ai_agents::AgentKind;
+ 
+-pub(crate) const AGENTS: [AgentKind; 15] = [
++pub(crate) const AGENTS: [AgentKind; 16] = [
+     AgentKind::Claude,
+     AgentKind::Codex,
+     AgentKind::OpenCode,
+@@ -22,6 +22,7 @@ pub(crate) const AGENTS: [AgentKind; 15] = [
+     AgentKind::Droid,
+     AgentKind::Antigravity,
+     AgentKind::Hermes,
++    AgentKind::Dsh,
+ ];
+ 
+ #[derive(Clone, Debug, Default)]
+@@ -238,4 +239,19 @@ mod tests {
+         assert_eq!(AgentKind::parse_command("hermes"), Some(AgentKind::Hermes));
+         assert_eq!(AgentKind::parse("HERMES.EXE"), Some(AgentKind::Hermes));
+     }
++
++    #[test]
++    fn dsh_discovery_accepts_the_npm_launcher_without_installing_hooks() {
++        assert!(AGENTS.contains(&AgentKind::Dsh));
++        assert_eq!(hook_for(AgentKind::Dsh), None);
++        let dir = tempfile::tempdir().unwrap();
++        let bin = dir.path().join("npm");
++        let mut path = executable(&bin, "dsh");
++        if crate::platform::Platform::current() == crate::platform::Platform::Windows {
++            let shim = path.with_extension("cmd");
++            std::fs::rename(&path, &shim).unwrap();
++            path = shim;
++        }
++        assert_eq!(find_executable(AgentKind::Dsh, &[bin]), Some(path));
++    }
+ }
+```
+
+**File**: `pebrel_app/src/display/mod.rs` (modified, +6/-6)
+```diff
+@@ -2210,12 +2210,12 @@ impl Display {
+         // and light marks, selected to match the chrome ink without tinting.
+         let grok_uses_light_mark =
+             u32::from(ink.r) * 299 + u32::from(ink.g) * 587 + u32::from(ink.b) * 114 >= 128_000;
+-        let key = match logo {
+-            AiLogo::Grok if grok_uses_light_mark => (logo, [255, 255, 255], target_size),
+-            AiLogo::OpenAi | AiLogo::OpenCode | AiLogo::Pi | AiLogo::Kimi | AiLogo::Grok => {
+-                (logo, [ink.r, ink.g, ink.b], target_size)
+-            },
+-            _ => (logo, [0, 0, 0], target_size),
++        let key = if logo == AiLogo::Grok && grok_uses_light_mark {
++            (logo, [255, 255, 255], target_size)
++        } else if logo.shares_theme_texture() {
++            (logo, [0, 0, 0], target_size)
++        } else {
++            (logo, [ink.r, ink.g, ink.b], target_size)
+         };
+         if let Some(cached) = self.nebula_ai_logo_cache.get(&key) {
+             return Some(cached.clone());
+```
+
+**File**: `pebrel_app/src/display/program_identity.rs` (modified, +11/-4)
+```diff
+@@ -14,10 +14,11 @@ pub enum AiLogo {
+     OhMyPi,
+     CodeBuddy,
+     Kimi,
++    DeepSeek,
+ }
+ 
+ impl AiLogo {
+-    pub(crate) const ALL: [Self; 10] = [
++    pub(crate) const ALL: [Self; 11] = [
+         Self::Claude,
+         Self::OpenAi,
+         Self::OpenCode,
+@@ -28,6 +29,7 @@ impl AiLogo {
+         Self::OhMyPi,
+         Self::CodeBuddy,
+         Self::Kimi,
++        Self::DeepSeek,
+     ];
+ 
+     /// 每种标志只嵌入一个无损压缩的矢量源，两个壳按当前 DPI 共用它。
+@@ -43,6 +45,7 @@ impl AiLogo {
+             Self::OhMyPi => include_bytes!("../../../extra/logo/ai_omp.svgz"),
+             Self::CodeBuddy => include_bytes!("../../../extra/logo/ai_codebuddy.svgz"),
+             Self::Kimi => include_bytes!("../../../extra/logo/ai_kimi.svgz"),
++            Self::DeepSeek => include_bytes!("../../../extra/logo/ai_deepseek.svgz"),
+         }
+     }
+ 
+@@ -75,12 +78,14 @@ impl AiLogo {
+             Self::OhMyPi => include_bytes!("../../../extra/logo/ai_omp.png"),
+             Self::CodeBuddy => include_bytes!("../../../extra/logo/ai_codebuddy.png"),
+             Self::Kimi => include_bytes!("../../../extra/logo/ai_kimi.png"),
++            // 新标志直接采用矢量源，没有历史 PNG 需要核对。
++            Self::DeepSeek => panic!("DeepSeek has no historical PNG fixture"),
+         }
+     }
+ 
+     fn tint_preserves_luma(self) -> Option<bool> {
+         match self {
+-            Self::OpenAi | Self::Pi => Some(false),
++            Self::OpenAi | Self::Pi | Self::DeepSeek => Some(false),
+             // OpenCode stores a luma map: the frame is white, the inner block gray.
+             // Kimi's letterform is solid white with a small blue accent: embedded
+             // unchanged it vanishes on light themes, so it rides the luma map too —
+@@ -210,6 +215,7 @@ pub(crate) fn ai_logo_for_program(program: &str) -> Option<AiLogo> {
+         AgentKind::OhMyPi => Some(AiLogo::OhMyPi),
+         AgentKind::CodeBuddy => Some(AiLogo::CodeBuddy),
+         AgentKind::Kimi => Some(AiLogo::Kimi),
++        AgentKind::Dsh => Some(AiLogo::DeepSeek),
+         _ => None,
+     }
+ }
+@@ -228,7 +234,7 @@ pub(crate) fn program_icon(program: &str) -> &'static str {
+         "gemini" => "\u{f0ce6}",
+         "copilot" => "\u{f4b8}",
+         "cursor" | "cursor-agent" => "\u{f0ec3}",
+-        "aider" | "goose" | "crush" | "ollama" => "\u{f06a9}",
++        "aider" | "goose" | "crush" | "ollama" | "dsh" => "\u{f06a9}",
+         "opencode" | "trae-cli" => "\u{f489}",
+         "pi" | "omp" | "oh-my-pi" => "\u{f135}",
+         "codebuddy" | "cbc" | "codebuddy-code" | "codebuddy-lowmem" => "\u{f06a9}",
+@@ -293,6 +299,7 @@ mod tests {
+         }
+ 
+         assert_eq!(logo_for_command("codex"), Some(AiLogo::OpenAi));
++        assert_eq!(logo_for_command("dsh --profile tui"), Some(AiLogo::DeepSeek));
+         assert_eq!(logo_for_command("C:\\Tools\\CLAUDE.EXE --resume"), Some(AiLogo::Claude));
+         assert_eq!(program_icon("cargo"), "\u{e7a8}");
+         assert_eq!(logo_for_command("unlisted-program"), None);
+@@ -432,7 +439,7 @@ mod tests {
+             logo.tint_pixels(&mut pixels, ink);
+             assert_eq!(pixels, source);
+         }
+-        for logo in [AiLogo::OpenAi, AiLogo::Pi] {
++        for logo in [AiLogo::OpenAi, AiLogo::Pi, AiLogo::DeepSeek] {
+             let mut pixels = source;
+             logo.tint_pixels(&mut pixels, ink);
+             assert_eq!(pixels, [100, 200, 240, 128, 100, 200, 240, 64]);
+```
+
+**File**: `pebrel_app/src/gpui_shell/settings_pane/agents.rs` (modified, +1/-0)
+```diff
+@@ -272,6 +272,7 @@ impl SettingsPane {
+                 | AgentKind::Droid
+                 | AgentKind::Antigravity
+                 | AgentKind::Hermes
++                | AgentKind::Dsh
+         ) {
+             self.provider_brand(agent)
+         } else if let Some(path) = match agent {
 ```
 
 ---
 
-### Incident Patch 2: `a2243319` (2026-11-19)
-**Commit Message**: Integrate reviewed changes from #1033 with the verified merge queue
+### Incident Patch 2: `2fb959c4` (2026-11-26)
+**Commit Message**: test(ui): account for the DeepSeek theme textures
 
-**File**: `pebrel_app/Cargo.toml` (modified, +1/-1)
+**File**: `pebrel_app/src/gpui_shell/workspace/logos.rs` (modified, +5/-1)
 ```diff
-@@ -162,7 +162,7 @@ regex = "1.13.1"
- # `image` 被 GPUI 壳的壁纸、文档 tab、行内图片、数学视图无条件使用，必须是
- # 无条件依赖；此前按 `cfg(not(target_os = "macos"))` 排除会让 macOS 目标在
- # 编译期找不到 crate（2026-09-02 交叉 check 首个暴露的问题）。
--image = { version = "0.25.8", default-features = false, features = ["bmp", "gif", "jpeg", "png", "webp"] }
-+image = { version = "0.25.8", default-features = false, features = ["bmp", "gif", "jpeg", "png", "tiff", "webp"] }
- rusqlite = { version = "0.40.2", features = ["bundled"] }
- sha1 = "0.11.0"
- 
+@@ -127,7 +127,11 @@ mod tests {
+             let images = sidebar_logo_images(target, &AtomicBool::new(false)).unwrap();
+             assert_eq!(images.len(), AiLogo::ALL.len() * 2);
+             let unique = images.values().map(Arc::as_ptr).collect::<std::collections::HashSet<_>>();
+-            assert_eq!(unique.len(), 15, "five color assets must not be prepared twice");
++            assert_eq!(
++                unique.len(),
++                AiLogo::ALL.len() * 2 - 5,
++                "five color assets must not be prepared twice"
++            );
+             for logo in AiLogo::ALL {
+                 let light = &images[&(logo, false)];
+                 let dark = &images[&(logo, true)];
 ```
 
-**File**: `pebrel_app/src/gpui_shell/terminal/inline_image.rs` (modified, +9/-9)
+---
+
+### Incident Patch 3: `f652d4f3` (2026-11-26)
+**Commit Message**: test(agents): reuse platform identity in DSH discovery fixture
+
+**File**: `pebrel_app/src/ai_hook/integrations.rs` (modified, +1/-1)
 ```diff
-@@ -523,6 +523,7 @@ pub(super) fn clipboard_png(data: &[u8]) -> Result<Vec<u8>, String> {
-             | ImageFormat::Jpeg
-             | ImageFormat::Gif
-             | ImageFormat::Bmp
-+            | ImageFormat::Tiff
-             | ImageFormat::WebP
-     ) {
-         return Err(format!("unsupported clipboard image format: {format:?}"));
-@@ -982,15 +983,14 @@ mod tests {
-     #[test]
-     fn clipboard_bitmaps_become_png_without_extending_terminal_protocol_formats() {
-         let pixels = image::RgbaImage::from_pixel(2, 1, image::Rgba([10, 20, 30, 255]));
--        let mut output = std::io::Cursor::new(Vec::new());
--        image::DynamicImage::ImageRgba8(pixels.clone())
--            .write_to(&mut output, ImageFormat::Bmp)
--            .unwrap();
--        let bmp = output.into_inner();
--        assert!(decode_bytes(&bmp).is_err());
--        let png = clipboard_png(&bmp).unwrap();
--        assert_eq!(image::guess_format(&png).unwrap(), ImageFormat::Png);
--        assert_eq!(image::load_from_memory(&png).unwrap().into_rgba8(), pixels);
-+        for format in [ImageFormat::Bmp, ImageFormat::Tiff] {
-+            let mut bitmap = std::io::Cursor::new(Vec::new());
-+            pixels.write_to(&mut bitmap, format).unwrap();
-+            assert!(decode_bytes(bitmap.get_ref()).is_err());
-+            let png = clipboard_png(bitmap.get_ref()).unwrap();
-+            assert_eq!(image::guess_format(&png).unwrap(), ImageFormat::Png);
-+            assert_eq!(image::load_from_memory(&png).unwrap().into_rgba8(), pixels);
-+        }
-     }
- 
-     #[test]
+@@ -247,7 +247,7 @@ mod tests {
+         let dir = tempfile::tempdir().unwrap();
+         let bin = dir.path().join("npm");
+         let mut path = executable(&bin, "dsh");
+-        if cfg!(windows) {
++        if crate::platform::Platform::current() == crate::platform::Platform::Windows {
+             let shim = path.with_extension("cmd");
+             std::fs::rename(&path, &shim).unwrap();
+             path = shim;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1035** (2026-11-19): Reset terminal mouse reporting after a killed Bash foreground command (@Kuddev)
-- **PR #1034** (2026-11-19): Create a missing Windows Startup directory when enabling login launch (@Kuddev)
-- **PR #1033** (2026-11-19): Accept TIFF screenshots in terminal clipboard pastes (@Kuddev)
-- **PR #1023** (2026-11-19): Collect host resource metrics with comparable CPU samples and a fixed Docker target (@Kuddev)
-- **PR #1021** (2026-11-17): Establish confirmed foreground ownership before exercising transcript scan limits (@Kuddev)
-- **PR #1020** (2026-11-17): Import Niu installations as independent terminal profiles (@Kuddev)
+- **PR #1107** (2026-11-26): feat(agents): support DSH TUI launch and DeepSeek branding (@Kuddev)
+- **PR #1097** (2026-11-26): Unify light workspace wallpaper composition (@Kuddev)
+- **PR #1085** (2026-11-21): Add cached wallpaper glass and collapsible appearance settings (@Kuddev)
+- **PR #1079** (2026-11-21): Use the interactive SSH shell when the gateway gives exec commands no terminal (@Kuddev)
+- **PR #1076** (2026-11-21): Use the configured imported shell for splits from host panes (@Kuddev)
+- **PR #1075** (2026-11-21): Avoid local web port collisions when restoring multiple CodeBuddy panes (@Kuddev)
 
 ---
 
@@ -1667,35 +1954,51 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Integrate reviewed changes from #1004 with the verified merge queue
+## X. Empirical Invariant Guard in LICENSE-deepseek-harness
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `extra/logo/LICENSE-deepseek-harness`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7405725`: Integrate reviewed changes from #1004 with the verified merge queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cda74a88`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `extra/logo/LICENSE-deepseek-harness`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-- **Terminal tabs on Windows can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
+MIT License
+
+Copyright (c) 2026 DeepSeek
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-- **Windows terminal tabs can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7405725` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cda74a88` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

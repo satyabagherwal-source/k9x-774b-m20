@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T16:58:34.516Z",
+  "updated_at": "2026-11-26T17:15:09.106Z",
   "stats": {
-    "total_discovered": 9912,
-    "approved_pending_harvest": 9400,
+    "total_discovered": 9915,
+    "approved_pending_harvest": 9403,
     "harvested_count": 0,
     "rejected_count": 512,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9396,
+      "COMMUNITY_AND_EXPERT": 9399,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -214507,6 +214507,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/flox-flox-learnings.md",
         "fileName": "flox-flox-learnings.md"
+      }
+    },
+    "SRC-6A70E60D0F25": {
+      "id": "SRC-6A70E60D0F25",
+      "url": "https://github.com/deepseek-ai/deepseek-harness/blob/4b399c39a6d1479cd84ca591b4d7c88e24d38a96/apps/web/public/favicon.svg",
+      "title": "https://github.com/deepseek-ai/deepseek-harness/blob/4b399c39a6d1479cd84ca591b4d7c88e24d38a96/apps/web/public/favicon.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T17:15:08.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-A40B40720284": {
+      "id": "SRC-A40B40720284",
+      "url": "https://github.com/deepseek-ai/deepseek-harness/tree/master/apps/cli",
+      "title": "https://github.com/deepseek-ai/deepseek-harness/tree/master/apps/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T17:15:09.035Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-8C4E0BE4F622": {
+      "id": "SRC-8C4E0BE4F622",
+      "url": "https://github.com/tomowang/dsh-tui",
+      "title": "https://github.com/tomowang/dsh-tui",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T17:15:09.106Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
       }
     }
   }

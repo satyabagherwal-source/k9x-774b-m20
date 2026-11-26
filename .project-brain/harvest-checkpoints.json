@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T17:06:25.091Z",
+  "last_updated": "2026-11-26T17:15:05.407Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -875,14 +875,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
-      "content_hash": "86ffacf0652dee778e9723bd6e490e4434e04f5fed89da943a2a0d8c9617058b",
-      "verified_at": "2026-11-23T00:12:44.383Z",
+      "content_hash": "df009af6ef6635fce892e982019b24d30a7d5de014213e98e10d15d50c00106d",
+      "verified_at": "2026-11-26T17:14:50.437Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T00:12:44.383Z"
+      "last_updated": "2026-11-26T17:14:50.437Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "371858ea20c6e098a20aaae15f47d7e72fe2749b159f1cecdf5430434326e9d9",
-      "verified_at": "2026-11-21T16:40:03.963Z",
+      "content_hash": "5588d1902decf8ba677c1850966f576a226cdd1293b2aaf5a965401ed872c029",
+      "verified_at": "2026-11-26T17:14:53.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T16:40:03.963Z"
+      "last_updated": "2026-11-26T17:14:53.124Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "db99fc107a578e50bc797c4cc0dd26bd55e4d67571550e005b29e028653710a6",
-      "verified_at": "2026-11-25T15:47:43.295Z",
+      "content_hash": "71e5270d5be77dfbbafadea8a614d460a63c1ecd33cac2148d33ac35f96d79eb",
+      "verified_at": "2026-11-26T17:15:05.406Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:47:43.295Z"
+      "last_updated": "2026-11-26T17:15:05.406Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "22b110b1b32592e8ce2fe4d24b8bb21448a693f1b5c4e82953fc8bf4c4d4e13c",
-      "verified_at": "2026-11-26T15:22:12.341Z",
+      "content_hash": "4682356480872992907876dc9430e919e75926a6426f63aefd809b8f76a59d05",
+      "verified_at": "2026-11-26T17:15:00.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T15:22:12.341Z"
+      "last_updated": "2026-11-26T17:15:00.152Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",

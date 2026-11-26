@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T17:06:30.633Z",
+  "last_updated": "2026-11-26T17:15:11.509Z",
   "total_verified_learnings": 9130,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26051,
+  "total_items": 26057,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -115017,10 +115017,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "repository": "weaviate/weaviate",
-      "source_version": "9f6b1e49",
-      "content_hash": "6d9a201cac7e19400be6df8a0c14625597cf679391d98380251a1a663303d965",
+      "source_version": "5d678d7a",
+      "content_hash": "b33ac903d6ef6f9563c3828036643f21a98325f5d08bd88ec832dd570ade16d0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T15:47:43.525Z"
+      "persisted_at": "2026-11-26T17:15:05.835Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-weaviate-weaviate",
@@ -115029,10 +115029,10 @@
       "relative_path": "08_VERIFICATION/weaviate-weaviate-verification-protocol-empirical-defect-shield-for-weaviate-wea.md",
       "title": "Verification Protocol: Empirical Defect Shield for weaviate/weaviate",
       "repository": "weaviate/weaviate",
-      "source_version": "9f6b1e49",
-      "content_hash": "da1f7afa2818c3ff3b5e412f6c3067b282dd5b3f5326b48ebf17e2fb6cad5aac",
+      "source_version": "5d678d7a",
+      "content_hash": "a4669a52d8991b287704eb2c47843c414f8d6978e60c9807943636b92546b884",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:47:43.706Z"
+      "persisted_at": "2026-11-26T17:15:06.028Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-learnings-core-invariants",
@@ -215224,7 +215224,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "86ffacf0652dee778e9723bd6e490e4434e04f5fed89da943a2a0d8c9617058b",
+      "content_hash": "df009af6ef6635fce892e982019b24d30a7d5de014213e98e10d15d50c00106d",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [],
@@ -215233,7 +215233,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T00:12:44.166Z",
+      "verified_at": "2026-11-26T17:14:50.156Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215250,9 +215250,9 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef-flash Core Invariants",
       "repository": "Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "6e8f0d0be4d2507e6f7cdb65fe4796d3047f9e11b6be211b21521daf7bd3c93c",
+      "content_hash": "c65795a9f3c66421d5d52ca97239971aaac49fc13b227269d41ef86ba653edb1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:12:44.547Z"
+      "persisted_at": "2026-11-26T17:14:50.655Z"
     },
     "learn-github-salvo-rs-salvo": {
       "learning_id": "learn-github-salvo-rs-salvo",
@@ -215580,9 +215580,9 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-flash-learnings Core Invariants",
       "repository": "hf-cloudflare-clef-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "b87eda86d2829dc0eca84c4f5d73ece8cd32dc155ae74a7d29c86f738509ff72",
+      "content_hash": "ea3d97e520c11f900dabeaaecb7839518137ecfeef2dfb29cac3ea23fa1533d8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T00:12:47.536Z"
+      "persisted_at": "2026-11-26T17:15:10.290Z"
     },
     "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs": {
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
@@ -245746,8 +245746,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "76f74be1",
-      "content_hash": "371858ea20c6e098a20aaae15f47d7e72fe2749b159f1cecdf5430434326e9d9",
+      "source_version": "cda74a88",
+      "content_hash": "5588d1902decf8ba677c1850966f576a226cdd1293b2aaf5a965401ed872c029",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -245770,6 +245770,11 @@
           "number": 9493,
           "title": "Integrate reviewed changes from #1004 with the verified merge queue",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10733,
+          "title": "Empirical Invariant Guard in LICENSE-deepseek-harness",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245777,7 +245782,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T16:40:03.631Z",
+      "verified_at": "2026-11-26T17:14:52.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245817,10 +245822,10 @@
       "relative_path": "08_VERIFICATION/kuddev-pebrel-verification-protocol-empirical-defect-shield-for-kuddev-pebrel.md",
       "title": "Verification Protocol: Empirical Defect Shield for Kuddev/pebrel",
       "repository": "Kuddev/pebrel",
-      "source_version": "76f74be1",
-      "content_hash": "5fd86da81c6bdb10592c682d4ec0967b55a691098f19a0a29cef37f1f71d2b2b",
+      "source_version": "cda74a88",
+      "content_hash": "4d9c95b448bc620b9caeba7d94dd11b5d1ddcd513b33e8c0b51a9b3e73a399ea",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:40:04.681Z"
+      "persisted_at": "2026-11-26T17:14:53.763Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -245842,9 +245847,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kuddev-pebrel-learnings",
       "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "63a68e53f6a712ce494bacc69751d5698d6847f42360be50f5e0f6db3f04780a",
+      "content_hash": "fde646f2a42cbd76aa964093b01d5e90af8a5ed3cf13c35811c736a5dedbe63e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T16:40:21.859Z"
+      "persisted_at": "2026-11-26T17:15:09.857Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le",
@@ -262088,8 +262093,8 @@
       "slug": "weaviate-weaviate",
       "platform": "github",
       "source_url": "https://github.com/weaviate/weaviate",
-      "source_version": "9f6b1e49",
-      "content_hash": "db99fc107a578e50bc797c4cc0dd26bd55e4d67571550e005b29e028653710a6",
+      "source_version": "5d678d7a",
+      "content_hash": "71e5270d5be77dfbbafadea8a614d460a63c1ecd33cac2148d33ac35f96d79eb",
       "dossier_path": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/weaviate-weaviate-learnings.md",
       "promoted_rules": [
@@ -262122,6 +262127,11 @@
           "number": 10358,
           "title": "Empirical Invariant Guard in doc.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10734,
+          "title": "Empirical Invariant Guard in merge.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -262129,7 +262139,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T15:47:43.065Z",
+      "verified_at": "2026-11-26T17:15:05.137Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -305363,10 +305373,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kuddev-pebrel-technical-construction-intelligence-kuddev-pebrel-core-invariants.md",
       "title": "Technical Construction Intelligence: Kuddev/pebrel Core Invariants",
       "repository": "Kuddev/pebrel",
-      "source_version": "e7405725",
-      "content_hash": "928bfe989c5e3483e785955a47e9a7f7bcbd201f7bb80f0d80b49a282e57b562",
+      "source_version": "cda74a88",
+      "content_hash": "57da6cd55693f8b0c65e08dd1dd344b4acfd24990d4ddf72f1284c62dd4f6824",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:14:55.302Z"
+      "persisted_at": "2026-11-26T17:14:53.548Z"
     },
     "rule-9494": {
       "learning_id": "rule-9494",
@@ -314523,13 +314533,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-graphjin",
+      "slug": "dosco-deeporg",
       "platform": "github",
-      "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "7e3f05c1",
-      "content_hash": "22b110b1b32592e8ce2fe4d24b8bb21448a693f1b5c4e82953fc8bf4c4d4e13c",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "source_url": "https://github.com/dosco/deeporg",
+      "source_version": "c57c1b1c",
+      "content_hash": "4682356480872992907876dc9430e919e75926a6426f63aefd809b8f76a59d05",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
@@ -314572,7 +314582,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T15:22:11.952Z",
+      "verified_at": "2026-11-26T17:14:59.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -314588,22 +314598,22 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dosco-deeporg-technical-construction-intelligence-dosco-deeporg-core-invariants.md",
       "title": "Technical Construction Intelligence: dosco/deeporg Core Invariants",
       "repository": "dosco/deeporg",
-      "source_version": "e828492b",
-      "content_hash": "9e0c5b2c8b61f94baa9f3cb69db2dafa16ccbfcf2f08209cc1d711911ab9d67f",
+      "source_version": "c57c1b1c",
+      "content_hash": "38235f640c4323f1eb2890cd99016e4cbc0f04f286b19e0dc9add1a8a656b660",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:08:19.466Z"
+      "persisted_at": "2026-11-26T17:15:00.602Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "7e3f05c1",
-      "content_hash": "1b033a507b94ac87d625eb216ffd9ac5d16a70a119c5978d79cf213f757fa530",
+      "source_version": "c57c1b1c",
+      "content_hash": "a4d6182c07914e966b96a4945b4643798b8f20781b570727063d99b2b0e5b7ab",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T15:22:13.241Z"
+      "persisted_at": "2026-11-26T17:15:00.809Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -314665,9 +314675,9 @@
       "title": "Technical Construction Intelligence: dosco-deeporg-learnings Core Invariants",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "61321ab7eae77561d8bdedc98d976bf2a51a0ec7008c1fd366dd076ff795506a",
+      "content_hash": "993ae04dfa76f13f863c84deac33b93ca6f06a3a5348189483605fb6532645f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:08:35.914Z"
+      "persisted_at": "2026-11-26T17:15:11.312Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg-learnings",
@@ -314677,9 +314687,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-deeporg-learnings",
       "repository": "dosco-deeporg-learnings",
       "source_version": "HEAD",
-      "content_hash": "c65fa98047cbf0fed52576442897ed44344a6e5df73314a8a8d635e63d0c2028",
+      "content_hash": "ac4755084a47ad9e42a2a9f3f8a7899384fbeb80435add0919daa8fb1b54ac21",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:32:45.175Z"
+      "persisted_at": "2026-11-26T17:15:11.509Z"
     },
     "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo": {
       "item_id": "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo",
@@ -319146,9 +319156,9 @@
       "title": "Research & Knowledge Intelligence: kuddev-pebrel-learnings Core Invariants",
       "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3d3f52767aed83c27b68c05fe17a240fc73e8a654e34411325996f79b5a9ba2",
+      "content_hash": "5175900ba8c5ed692096a98e84c82d6e15bb29a139912b85be71429e8716711c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T16:40:21.608Z"
+      "persisted_at": "2026-11-26T17:15:09.653Z"
     },
     "candidate_directive-text-input-place-accessories-and-label-correctly-in-rtl": {
       "item_id": "candidate_directive-text-input-place-accessories-and-label-correctly-in-rtl",
@@ -357103,6 +357113,82 @@
       "content_hash": "851e52657e6d10c71c4dda20759db519a8533b9ab9c6dbf6c58c12751601a497",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T17:06:30.100Z"
+    },
+    "rule-10733": {
+      "learning_id": "rule-10733",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10733,
+      "title": "Empirical Invariant Guard in LICENSE-deepseek-harness",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "cda74a88",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T17:14:52.855Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-license-deepseek-harness": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-license-deepseek-harness",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C99Z-empirical-invariant-guard-in-license-deepseek-harness.md",
+      "title": "Empirical Invariant Guard in LICENSE-deepseek-harness",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "171936f15158f56bcacc1599b77fc64b63277dcdfaf4175aec6d027a4243be9d",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T17:15:09.435Z"
+    },
+    "candidate_directive-quick-start-and-readme-describe-the-setup-flow": {
+      "item_id": "candidate_directive-quick-start-and-readme-describe-the-setup-flow",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C2B3-quick-start-and-readme-describe-the-setup-flow.md",
+      "title": "quick start and README describe the setup flow",
+      "repository": "dosco/deeporg",
+      "source_version": "c57c1b1c",
+      "content_hash": "75c6e5af3e414cba151759d705d66b65cd6927a996e2fecd1cb88e5d6ed8366e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T17:15:00.403Z"
+    },
+    "rule-10734": {
+      "learning_id": "rule-10734",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10734,
+      "title": "Empirical Invariant Guard in merge.go",
+      "source_url": "https://github.com/weaviate/weaviate",
+      "source_version": "5d678d7a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T17:15:05.137Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-merge-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-merge-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C6CL-empirical-invariant-guard-in-merge-go.md",
+      "title": "Empirical Invariant Guard in merge.go",
+      "repository": "weaviate/weaviate",
+      "source_version": "5d678d7a",
+      "content_hash": "a5f167a80d7f9e60b5812ef4721e3aea090089c6ff1ac6dae3912c73b1cb49fc",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T17:15:05.641Z"
+    },
+    "candidate_directive-docs-quick-start-and-readme-describe-the-setup-flow": {
+      "item_id": "candidate_directive-docs-quick-start-and-readme-describe-the-setup-flow",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CAKM-docs-quick-start-and-readme-describe-the-setup-flow.md",
+      "title": "docs: quick start and README describe the setup flow",
+      "repository": "dosco-deeporg-learnings",
+      "source_version": "HEAD",
+      "content_hash": "38612c8180fc4531e30765770fb05931a871d28caf2f67285ebf9152a0a06629",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T17:15:11.113Z"
     }
   },
   "ai-builder-brain": {

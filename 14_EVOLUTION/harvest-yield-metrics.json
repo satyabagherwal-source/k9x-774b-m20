@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:06:25.087Z",
-  "total_cycles_completed": 12793,
-  "total_learnings_persisted": 12793,
-  "total_rules_promoted": 11637,
+  "last_updated": "2026-11-26T17:15:05.399Z",
+  "total_cycles_completed": 12797,
+  "total_learnings_persisted": 12797,
+  "total_rules_promoted": 11639,
   "history": [
-    {
-      "timestamp": "2026-11-26T06:18:30.457Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:26:51.620Z",
-      "repository": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
-      "learningId": "learn-huggingface-hauhaucs-qwen3-8-27b-uncensored-hauhaucs-aggressive-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:26:53.486Z",
-      "repository": "oshai/kotlin-logging",
-      "learningId": "learn-github-oshai-kotlin-logging",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:35:20.865Z",
-      "repository": "n4ze3m/tiny-voca",
-      "learningId": "learn-huggingface-n4ze3m-tiny-voca",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T06:35:24.033Z",
       "repository": "xevrion/hatchzip",
@@ -1403,6 +1375,34 @@
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:14:50.435Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:14:53.117Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:15:00.149Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:15:05.399Z",
+      "repository": "weaviate/weaviate",
+      "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

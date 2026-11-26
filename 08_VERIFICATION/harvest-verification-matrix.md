@@ -13480,3 +13480,7 @@
 | `CYCLE-20261126-0RBA` | `2026-11-26T17:06:12.934Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | Yes (`035da65b...`) |
 | `CYCLE-20261126-0XK7` | `2026-11-26T17:06:21.031Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10732` | Yes (`51e14593...`) |
 | `CYCLE-20261126-10MZ` | `2026-11-26T17:06:25.019Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | Yes (`9a6b42f1...`) |
+| `CYCLE-20261126-BULV` | `2026-11-26T17:14:50.419Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`df009af6...`) |
+| `CYCLE-20261126-BWOB` | `2026-11-26T17:14:53.099Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10733` | Yes (`5588d190...`) |
+| `CYCLE-20261126-C22K` | `2026-11-26T17:15:00.092Z` | `dosco/deeporg` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dosco-deeporg-learnings.md` | Yes (`46823564...`) |
+| `CYCLE-20261126-C65H` | `2026-11-26T17:15:05.381Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10734` | Yes (`71e5270d...`) |

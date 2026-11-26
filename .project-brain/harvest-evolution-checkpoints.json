@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T17:06:30.791Z",
+  "last_updated": "2026-11-26T17:15:11.677Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T16:49:26.796Z",
@@ -488,7 +488,7 @@
       "staged_for_review": 1
     },
     "kuddev-pebrel-learnings.md": {
-      "processed_at": "2026-11-21T16:40:21.111Z",
+      "processed_at": "2026-11-26T17:15:08.890Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2143,7 +2143,7 @@
       "staged_for_review": 0
     },
     "hf-cloudflare-clef-flash-learnings.md": {
-      "processed_at": "2026-11-23T00:12:47.346Z",
+      "processed_at": "2026-11-26T17:15:10.043Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3648,7 +3648,7 @@
       "staged_for_review": 1
     },
     "dosco-deeporg-learnings.md": {
-      "processed_at": "2026-11-25T23:32:44.551Z",
+      "processed_at": "2026-11-26T17:15:10.513Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3983,7 +3983,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4593,
+  "total_dossiers_evaluated": 4596,
   "total_canonical_promoted": 565,
-  "total_staged_for_review": 3459
+  "total_staged_for_review": 3461
 }

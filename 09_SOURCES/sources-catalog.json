@@ -695,8 +695,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "86ffacf0652dee778e9723bd6e490e4434e04f5fed89da943a2a0d8c9617058b",
-    "lastHarvestedAt": "2026-11-23T00:12:44.377Z",
+    "contentHash": "df009af6ef6635fce892e982019b24d30a7d5de014213e98e10d15d50c00106d",
+    "lastHarvestedAt": "2026-11-26T17:14:50.423Z",
     "learningId": "learn-huggingface-cloudflare-clef-flash"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "76f74be1",
+    "sourceVersion": "cda74a88",
     "license": "GPL-3.0",
-    "contentHash": "371858ea20c6e098a20aaae15f47d7e72fe2749b159f1cecdf5430434326e9d9",
-    "lastHarvestedAt": "2026-11-21T16:40:03.952Z",
+    "contentHash": "5588d1902decf8ba677c1850966f576a226cdd1293b2aaf5a965401ed872c029",
+    "lastHarvestedAt": "2026-11-26T17:14:53.104Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "9f6b1e49",
+    "sourceVersion": "5d678d7a",
     "license": "NOASSERTION",
-    "contentHash": "db99fc107a578e50bc797c4cc0dd26bd55e4d67571550e005b29e028653710a6",
-    "lastHarvestedAt": "2026-11-25T15:47:43.281Z",
+    "contentHash": "71e5270d5be77dfbbafadea8a614d460a63c1ecd33cac2148d33ac35f96d79eb",
+    "lastHarvestedAt": "2026-11-26T17:15:05.385Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -13123,10 +13123,10 @@
     "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/deeporg",
-    "sourceVersion": "6acc0f9b",
+    "sourceVersion": "c57c1b1c",
     "license": "Apache-2.0",
-    "contentHash": "8343d23013dc1bc103f370a5cf82f27f86d7abacb016c3aeef52ba29a3a81013",
-    "lastHarvestedAt": "2026-11-25T23:32:33.779Z",
+    "contentHash": "4682356480872992907876dc9430e919e75926a6426f63aefd809b8f76a59d05",
+    "lastHarvestedAt": "2026-11-26T17:15:00.097Z",
     "learningId": "learn-github-dosco-deeporg"
   },
   "hf-openai-clip-vit-large-patch14": {
