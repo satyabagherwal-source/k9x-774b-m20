@@ -4,22 +4,22 @@
 {
   "source_repository": "risingwavelabs/risingwave",
   "source_url": "https://github.com/risingwavelabs/risingwave",
-  "source_version": "78d02432",
+  "source_version": "151572e0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T09:18:41.069Z",
+  "timestamp": "2026-11-26T05:29:20.407Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-risingwavelabs-risingwave",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave) (Revision: `78d02432`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T09:18:41.069Z`  
+> **Provenance**: Harvested from [risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave) (Revision: `151572e0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T05:29:20.407Z`  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `risingwavelabs/risingwave` (Commit: `78d02432`)
+- **Target Repository**: `risingwavelabs/risingwave` (Commit: `151572e0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T09:18:39.816Z  
+> **Harvest Timestamp**: 2026-11-26T05:29:18.626Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9428 stars
+- **Stars / Engagement**: 9430 stars
 
 ---
 
@@ -1088,280 +1088,789 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78d02432` (2026-11-24)
-**Commit Message**: chore(deps): Bump opendal from 0.58.1 to 0.59.5 (#27393)
+### Incident Patch 1: `30d05555` (2026-11-25)
+**Commit Message**: feat(connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts (#28169)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Dylan Chen <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Li0k <[REDACTED_EMAIL]>
-Co-authored-by: Li0k <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +84/-273)
+**File**: `Cargo.lock` (modified, +80/-151)
 ```diff
-@@ -6993,7 +6993,7 @@ dependencies = [
-  "futures",
-  "iceberg",
-  "once_cell",
-- "opendal 0.59.3",
-+ "opendal",
-  "opendal-layer-prometheus",
-  "prometheus",
-  "reqsign-aws-v4",
-@@ -9976,78 +9976,33 @@ dependencies = [
- 
- [[package]]
- name = "opendal"
--version = "0.58.1"
-+version = "0.59.5"
+@@ -266,7 +266,7 @@ version = "0.21.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4f20562cc7447fcc915fc5c23df305a412ea80a733c9f2fd9e2d267e2815be6d"
-+checksum = "46081824c74bac9f68f0bc4408077f77b0e315c006514719c97af1c2227ac2d2"
+ checksum = "36fa98bc79671c7981272d91a8753a928ff6a1cd8e4f20a44c45bd5d313840bf"
  dependencies = [
-  "ctor 1.0.12",
-- "opendal-core 0.58.1",
-- "opendal-http-transport-reqwest 0.58.1",
-- "opendal-layer-concurrent-limit 0.58.1",
-- "opendal-layer-logging 0.58.1",
-- "opendal-layer-retry 0.58.1",
-- "opendal-layer-timeout 0.58.1",
-- "opendal-service-azblob 0.58.1",
-+ "opendal-core",
-+ "opendal-http-transport-reqwest",
-+ "opendal-layer-concurrent-limit",
-+ "opendal-layer-logging",
-+ "opendal-layer-retry",
-+ "opendal-layer-timeout",
-+ "opendal-service-azblob",
-+ "opendal-service-azdls",
-  "opendal-service-azfile",
-- "opendal-service-fs 0.58.1",
-- "opendal-service-gcs 0.58.1",
-+ "opendal-service-fs",
-+ "opendal-service-gcs",
-  "opendal-service-obs",
-  "opendal-service-oss",
-- "opendal-service-s3 0.58.1",
-+ "opendal-service-s3",
-  "opendal-service-webhdfs",
- ]
- 
--[[package]]
--name = "opendal"
--version = "0.59.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ef16fe6b19b73b49ce39e3e0f4cec27e54789eee5d5f752cb2d26bd3e9449686"
--dependencies = [
-- "ctor 1.0.12",
-- "opendal-core 0.59.3",
-- "opendal-http-transport-reqwest 0.59.3",
-- "opendal-layer-concurrent-limit 0.59.3",
-- "opendal-layer-logging 0.59.3",
-- "opendal-layer-retry 0.59.3",
-- "opendal-layer-timeout 0.59.3",
-- "opendal-service-azblob 0.59.3",
-- "opendal-service-azdls",
-- "opendal-service-fs 0.59.3",
-- "opendal-service-gcs 0.59.3",
-- "opendal-service-s3 0.59.3",
--]
--
- [[package]]
- name = "opendal-core"
--version = "0.58.1"
-+version = "0.59.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ec75551ff4cf3e57da98979f6a937aaa9ddb3915bf68cc17d03df733be6646ed"
--dependencies = [
-- "anyhow",
-- "base64 0.23.1",
-- "bytes",
-- "futures",
-- "http",
-- "jiff",
-- "log",
-- "md-5 0.11.0",
-- "mea",
-- "percent-encoding",
-- "quick-xml 0.41.0",
-- "reqsign-core",
-- "serde",
-- "serde_json",
-- "tokio",
-- "url",
-- "uuid",
-- "web-time",
--]
--
--[[package]]
--name = "opendal-core"
--version = "0.59.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ddff5c648dcb3922c2bec71e0d26e881ddf9c367cb7c9a59ed7f2d39a4f38218"
-+checksum = "33d5a635dfea36a7a0c3bbb2ca34c97af17f98dd69b0cdf31a1d436a346e0a12"
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "bon",
+  "crc32fast",
+  "digest 0.10.7",
+@@ -292,7 +292,7 @@ name = "apache-avro"
+ version = "0.21.0"
+ source = "git+https://github.com/risingwavelabs/avro-rs?rev=1f2723802d4fb77b97fa084f7bb81e3b60b9e03f#1f2723802d4fb77b97fa084f7bb81e3b60b9e03f"
  dependencies = [
-  "anyhow",
-  "asyncband",
-@@ -10059,7 +10014,7 @@ dependencies = [
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "bon",
+  "digest 0.10.7",
   "log",
-  "md-5 0.11.0",
-  "percent-encoding",
-- "quick-xml 0.41.0",
-+ "quick-xml 0.42.0",
-  "reqsign-core",
+@@ -748,7 +748,7 @@ dependencies = [
+  "rand 0.10.1",
+  "regex",
+  "ring",
+- "rustls-native-certs 0.8.1",
++ "rustls-native-certs",
+  "rustls-pki-types",
+  "rustls-webpki 0.103.15",
   "serde",
-  "serde_json",
-@@ -10071,174 +10026,96 @@ dependencies = [
+@@ -758,7 +758,7 @@ dependencies = [
+  "thiserror 2.0.21",
+  "time",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tokio-stream 0.1.17",
+  "tokio-util",
+  "tokio-websockets",
+@@ -873,9 +873,9 @@ checksum = "f2d85fd3d291fabcc40c7232c92c280ec1754fd7b5d7ea769f143222143e179a"
  
  [[package]]
- name = "opendal-http-transport-reqwest"
--version = "0.58.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ad4d4f19c3ce01126a30611f8e544eaa217104a278c889ac17c9374fe4f9e4ef"
--dependencies = [
-- "bytes",
-- "futures",
-- "http",
-- "http-body",
-- "opendal-core 0.58.1",
-- "reqwest 0.13.4",
--]
--
--[[package]]
--name = "opendal-http-transport-reqwest"
--version = "0.59.3"
-+version = "0.59.5"
+ name = "asynchronous-codec"
+-version = "0.6.2"
++version = "0.7.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "56fcee7ac4b4b815d38346ceb4f3a5d7ef18869c369e000cc7f622b51bcfa938"
-+checksum = "fc025e163c43993e30cf1829a30b791934e5b0f7cd4d7e03acc902a9efb7e8f5"
+-checksum = "4057f2c32adbb2fc158e22fb38433c8e9bbf76b75a4732c7c0cbaf695fb65568"
++checksum = "a860072022177f903e59730004fb5dc13db9275b79bb2aef7ba8ce831956c233"
  dependencies = [
   "bytes",
-  "futures",
-  "http",
-  "http-body",
-- "opendal-core 0.59.3",
-+ "opendal-core",
-  "reqwest 0.13.4",
+  "futures-sink",
+@@ -1422,11 +1422,11 @@ dependencies = [
+  "hyper-rustls",
+  "hyper-util",
+  "pin-project-lite",
+- "rustls 0.23.46",
+- "rustls-native-certs 0.8.1",
++ "rustls",
++ "rustls-native-certs",
+  "rustls-pki-types",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tower",
+  "tracing",
  ]
- 
- [[package]]
- name = "opendal-layer-concurrent-limit"
--version = "0.58.1"
-+version = "0.59.5"
+@@ -1830,17 +1830,6 @@ version = "0.5.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "249ac5b0aa5a7a6c3737342d10456067937f9c9a6f3f02544271f7908ab91081"
+ checksum = "3a8241f3ebb85c056b509d4327ad0358fbbba6ffb340bf388f26350aeda225b1"
+ 
+-[[package]]
+-name = "bigdecimal"
+-version = "0.3.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a6773ddc0eafc0e509fb60e48dff7f450f8e674a0686ae8605e8d9901bd5eefa"
 -dependencies = [
-- "futures",
-- "http",
-- "mea",
-- "opendal-core 0.58.1",
+- "num-bigint 0.4.6",
+- "num-integer",
+- "num-traits",
 -]
 -
--[[package]]
--name = "opendal-layer-concurrent-limit"
--version = "0.59.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b454e68e5f6b331bd079a2ee02ebe05078fc0ddaae6822767ef54ab3c2ac0aa8"
-+checksum = "06b44bdf694cccb7d90515b3eac6623975a2813abf4f5c438b4949a329d6a45b"
+ [[package]]
+ name = "bigdecimal"
+ version = "0.4.10"
+@@ -2622,7 +2611,7 @@ dependencies = [
+  "hyper-util",
+  "lz4_flex 0.14.0",
+  "rand 0.9.5",
+- "rustls 0.23.46",
++ "rustls",
+  "serde",
+  "serde_json",
+  "thiserror 2.0.21",
+@@ -4315,7 +4304,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b1d71cb454da682b2af7488e1fc1ddd72ee1b28f19297b8ccad73f0a21ee9a69"
  dependencies = [
-  "asyncband",
-  "futures",
+  "arrow",
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "chrono",
+  "datafusion-common",
+  "datafusion-expr",
+@@ -5963,7 +5952,7 @@ dependencies = [
+  "async-trait",
+  "backon",
+  "base64 0.22.1",
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "gcloud-auth",
+  "gcloud-gax",
+  "gcloud-googleapis",
+@@ -6731,11 +6720,11 @@ dependencies = [
   "http",
-- "opendal-core 0.59.3",
-+ "opendal-core",
+  "hyper",
+  "hyper-util",
+- "rustls 0.23.46",
+- "rustls-native-certs 0.8.1",
++ "rustls",
++ "rustls-native-certs",
+  "rustls-pki-types",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tower-service",
+  "webpki-roots 0.26.1",
  ]
+@@ -8419,11 +8408,11 @@ dependencies = [
+  "log",
+  "nom 7.1.3",
+  "percent-encoding",
+- "rustls 0.23.46",
+- "rustls-native-certs 0.8.1",
++ "rustls",
++ "rustls-native-certs",
+  "thiserror 2.0.21",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tokio-stream 0.1.17",
+  "tokio-util",
+  "url",
+@@ -9378,7 +9367,7 @@ dependencies = [
+  "percent-encoding",
+  "rand 0.9.5",
+  "rustc_version_runtime",
+- "rustls 0.23.46",
++ "rustls",
+  "serde",
+  "serde_bytes",
+  "serde_with",
+@@ -9390,7 +9379,7 @@ dependencies = [
+  "take_mut",
+  "thiserror 2.0.21",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tokio-util",
+  "typed-builder 0.22.0",
+  "uuid",
+@@ -9548,7 +9537,7 @@ dependencies = [
+  "openssl-probe 0.2.1",
+  "openssl-sys",
+  "schannel",
+- "security-framework 3.5.1",
++ "security-framework",
+  "security-framework-sys",
+  "tempfile",
+ ]
+@@ -10994,7 +10983,7 @@ name = "pg_bigdecimal"
+ version = "0.1.5"
+ source = "git+https://github.com/risingwavelabs/rust-pg_bigdecimal?rev=0b7893d88894ca082b4525f94f812da034486f7c#0b7893d88894ca082b4525f94f812da034486f7c"
+ dependencies = [
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "byteorder",
+  "bytes",
+  "num-bigint 0.4.6",
+@@ -11035,8 +11024,8 @@ dependencies = [
+  "reqwest 0.13.4",
+  "risingwave_common",
+  "risingwave_sqlparser",
+- "rustls 0.23.46",
+- "rustls-native-certs 0.8.1",
++ "rustls",
++ "rustls-native-certs",
+  "rustls-pki-types",
+  "serde",
+  "serde_json",
+@@ -11507,9 +11496,9 @@ dependencies = [
  
  [[package]]
- name = "opendal-layer-logging"
--version = "0.58.1"
-+version = "0.59.5"
+ name = "pretty-hex"
+-version = "0.3.0"
++version = "0.4.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5c75411ab00f77851ff086b686c1e9ca8175ac18c15afa2cb75b9036436cb06c"
-+checksum = "520d3de5d246c82a246c431ef0f52b8d2f091c7c49a3fd7a6f0ff519b1e7725f"
- dependencies = [
-  "log",
-- "opendal-core 0.58.1",
--]
--
--[[package]]
--name = "opendal-layer-logging"
--version = "0.59.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e6fd30cc4be601d5adf4936f3bcc186be5e09046
+-checksum = "c6fa0831dd7cc608c38a5e323422a0077678fa5744aa2be4ad91c4ece8eec8d5"
++checksum = "9a65843dfefbafd3c879c683306959a6de478443ffe9c9adf02f5976432402d7"
+ 
+ [[package]]
+ name = "pretty-xmlish"
+@@ -12177,7 +12166,7 @@ dependencies = [
+
 ```
 
-**File**: `Cargo.toml` (modified, +2/-2)
+**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_cdc.slt.serial` (modified, +20/-0)
 ```diff
-@@ -206,8 +206,8 @@ mysql_async = { version = "0.37", features = [
-     "native-tls-tls",
-     "rust_decimal",
- ] }
--opendal = "0.58.1"
--opendal-http-transport-reqwest = "0.58.1"
-+opendal = "0.59.5"
-+opendal-http-transport-reqwest = "0.59.5"
- openssl = "0.10.80"
- opentelemetry = "0.31"
- opentelemetry-otlp = { version = "0.31", features = ["grpc-tonic"] }
+@@ -650,6 +650,26 @@ select count(*) from shared_single_type_schema_table;
+ ----
+ 2
+ 
++# SQL Server does not enforce well-formed UTF-16 in nvarchar/ntext. A lone surrogate is read as
++# U+FFFD instead of failing the backfill. The rows are inserted before CDC is enabled, so they reach
++# RisingWave only through the backfill.
++system ok
++sqlcmd -C -Q "CREATE TABLE ill_formed_utf16 (id INT PRIMARY KEY, c_nvarchar NVARCHAR(10), c_ntext NTEXT); INSERT INTO ill_formed_utf16 VALUES (1, N'a' + NCHAR(0xD83D) + N'b', CAST(N'c' + NCHAR(0xDC00) AS NTEXT)), (2, N'ok', N'ok'); EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = 'ill_formed_utf16', @role_name = NULL;" -b
++
++statement ok
++CREATE TABLE shared_ill_formed_utf16 (
++    id INT,
++    c_nvarchar VARCHAR,
++    c_ntext VARCHAR,
++    PRIMARY KEY (id)
++) from mssql_source table 'mydb.dbo.ill_formed_utf16';
++
++query ITT retry 20 backoff 1s
++SELECT id, c_nvarchar, c_ntext FROM shared_ill_formed_utf16 ORDER BY id;
++----
++1 a�b c�
++2 ok ok
++
+ # ------------ drop stage ------------
+ statement ok
+ drop source upper_mssql_source cascade;
 ```
 
-**File**: `src/object_store/src/object/opendal_engine/concurrent_limit.rs` (modified, +19/-4)
+**File**: `src/connector/Cargo.toml` (modified, +3/-3)
 ```diff
-@@ -18,8 +18,9 @@ use opendal::layers::{
-     ConcurrentLimitLayer as OpendalConcurrentLimitLayer, ConcurrentLimitSemaphore,
- };
- use opendal::raw::{
--    Layer, OpCopier, OpCopy, OpCreateDir, OpList, OpPresign, OpRead, OpRename, OpStat, OpWrite,
--    RpCreateDir, RpPresign, RpRename, RpStat, Service, ServiceInfo, Servicer, oio,
-+    Layer, OpCompose, OpCopy, OpCreateDir, OpList, OpPresign, OpRead, OpRename, OpRestore, OpStat,
-+    OpWrite, RpCreateDir, RpPresign, RpRename, RpRestore, RpStat, Service, ServiceInfo, Servicer,
-+    oio,
- };
- use opendal::{Capability, OperationContext, Result};
- use tokio::sync::{OwnedSemaphorePermit, Semaphore};
-@@ -94,6 +95,7 @@ struct ConcurrentLimitService {
+@@ -191,9 +191,9 @@ strum_macros = "0.28"
+ tempfile = "3"
+ thiserror = { workspace = true }
+ thiserror-ext = { workspace = true }
+-# To easiy get the type_name and impl IntoSql for rust_decimal, we fork the crate.
+-# Another reason is that we are planning to refactor their IntoSql trait to allow specifying the type to convert.
+-tiberius = { git = "https://github.com/risingwavelabs/tiberius.git", rev = "cd69774fb1a4e08c0a3ea3b2041de7cc09662464", default-features = false, features = [
++# Forked to decode money as the exact scaled i64 instead of a lossy f64, and to bound
++# reading the rest of a dropped result stream by `command_timeout`.
++tiberius = { git = "https://github.com/risingwavelabs/tiberius.git", rev = "35aeb71059ebd849abe3561d86607a7e5b909a07", default-features = false, features = [
+     "chrono",
+     "sql-browser-tokio",
+     "rustls",
+```
+
+**File**: `src/connector/src/connector_common/sql_server.rs` (modified, +140/-5)
+```diff
+@@ -12,6 +12,8 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use std::time::Duration;
++
+ use anyhow::{Context, anyhow};
+ use futures::TryStreamExt;
+ use risingwave_common::types::DataType;
+@@ -44,6 +46,49 @@ pub struct MssqlConnectionConfig {
+     pub trust_cert: bool,
  }
  
- impl Service for ConcurrentLimitService {
-+    type Composer = oio::Composer;
-     type Copier = oio::Copier;
-     type Deleter = oio::Deleter;
-     type Lister = ConcurrentLimitLister;
-@@ -148,9 +150,22 @@ impl Service for ConcurrentLimitService {
-         from: &str,
-         to: &str,
-         args: OpCopy,
--        opts: OpCopier,
-     ) -> Result<Self::Copier> {
--        self.limited.copy(ctx, from, to, args, opts)
-+        self.limited.copy(ctx, from, to, args)
++/// How long a SQL Server client waits. `None` waits without a limit.
++#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
++pub struct MssqlTimeouts {
++    /// Establishing a connection: TCP connect, TLS and login, including a routing redirect.
++    pub connect: Option<Duration>,
++    /// Each response of the server while a statement runs, including the first one. This does not
++    /// limit the total time of a statement.
++    pub command: Option<Duration>,
++}
++
++impl MssqlTimeouts {
++    /// Builds the limits from option values in milliseconds, where unset or `0` means no limit.
++    pub fn from_millis(connect_ms: Option<u64>, command_ms: Option<u64>) -> Self {
++        let limit = |ms: Option<u64>| ms.filter(|&ms| ms > 0).map(Duration::from_millis);
++        Self {
++            connect: limit(connect_ms),
++            command: limit(command_ms),
++        }
++    }
++}
++
++/// Start of the message of tiberius' command timeout error. An operating system timeout is also an
++/// `Io` error of kind `TimedOut`, so only the message tells them apart.
++const COMMAND_TIMEOUT_MESSAGE: &str = "the server did not send the next part of the command result";
++
++/// Converts a tiberius error. A command timeout error suggests tiberius' own
++/// `Config::command_timeout`, so also name `option`, the setting users have.
++pub fn hint_command_timeout(error: tiberius::error::Error, option: &str) -> anyhow::Error {
++    let is_command_timeout = matches!(
++        &error,
++        tiberius::error::Error::Io { kind: std::io::ErrorKind::TimedOut, message }
++            if message.starts_with(COMMAND_TIMEOUT_MESSAGE)
++    );
++    let error = anyhow::Error::from(error);
++    if is_command_timeout {
++        error.context(format!(
++            "the wait exceeded `{option}`; raise it, or set it to 0 to wait without a limit"
++        ))
++    } else {
++        error
++    }
++}
++
+ /// Create an authenticated `tiberius::Client` connected to a SQL Server
+ /// instance. Uses tokio's TCP stream wrapped with `TokioAsyncWriteCompatExt`
+ /// to bridge between tokio's async I/O and tiberius's `futures-io` traits.
+@@ -68,7 +113,7 @@ pub async fn create_mssql_client(config: &MssqlConnectionConfig) -> anyhow::Resu
+     }
+     tiberius_config.authentication(AuthMethod::sql_server(&config.user, &config.password));
+ 
+-    create_mssql_client_with_config(tiberius_config)
++    create_mssql_client_with_config(tiberius_config, MssqlTimeouts::default())
+         .await
+         .with_context(|| {
+             format!(
+@@ -94,17 +139,36 @@ async fn connect_mssql_tcp(config: &Config, after_routing: bool) -> anyhow::Resu
+ /// SQL Server gateways, notably Azure SQL, can return one routing redirect
+ /// during login. Follow that redirect here so query, CDC, and sink callers all
+ /// use identical connection behavior.
+-pub async fn create_mssql_client_with_config(mut config: Config) -> anyhow::Result<MssqlClient> {
++pub async fn create_mssql_client_with_config(
++    mut config: Config,
++    timeouts: MssqlTimeouts,
++) -> anyhow::Result<MssqlClient> {
++    // SQL Server does not enforce well-formed UTF-16 in nvarchar/nchar/ntext values. Decode a
++    // lone surrogate as U+FFFD instead of failing the row, which would stall CDC backfill on it.
++    config.lossy_utf16_decoding(true);
++    // `timeouts.connect` bounds the whole connection below, including the login.
++    config.handshake_timeout(None);
++    config.command_timeout(timeouts.command);
++    match timeouts.connect {
++        Some(limit) => tokio::time::timeout(limit, connect_mssql(config))
++            .await
++            .map_err(|_| anyhow!("timed out after {limit:?} while connecting to sql server"))?,
++        None => connect_mssql(config).await,
++    }
++}
++
++async fn connect_mssql(mut config: Config) -> anyhow::Result<MssqlClient> {
+     let tcp = connect_mssql_tcp(&config, false).await?;
+-    let connect_result = Client::connect(config.clone(), tcp.compat_write()).await;
++    // Box the login futures; they are large (see `clippy::large_futures`).
++    let connect_result = Box::pin(Client::connect(config.clone(), tcp.compat_write())).await;
+ 
+     match connect_result {
+         Ok(client) => Ok(client),
+         Err(tiberius::error::Error::Routing { host, port }) => {
+             config.host(&host);
+             config.port(port);
+             let tcp = connect_mssql_tcp(&config, true).await?;
+-            Client::connect(config, tcp.compat_write())
++            Box::pin(Client::connect(config, tcp.compat_write()))
+                 .await
+                 .context("failed to authenticate with sql server after routing")
+         }
+@@ -222,9 +286,15 @@ pub fn mssql_t
+```
+
+**File**: `src/connector/src/error.rs` (modified, +11/-1)
+```diff
+@@ -60,7 +60,6 @@ def_anyhow_newtype! {
+     sqlx::Error => transparent, // believed to be self-explanatory
+     mysql_async::Error => "MySQL error",
+     tokio_postgres::Error => "Postgres error",
+-    tiberius::error::Error => "Sql Server error",
+     apache_avro::Error => "Avro error",
+     rdkafka::error::KafkaError => "Kafka error",
+     pulsar::Error => "Pulsar error",
+@@ -101,6 +100,17 @@ impl From<ConnectorError> for RpcError {
+     }
+ }
+ 
++impl From<tiberius::error::Error> for ConnectorError {
++    fn from(error: tiberius::error::Error) -> Self {
++        crate::connector_common::sql_server::hint_command_timeout(
++            error,
++            "database.command.timeout.ms",
++        )
++        .context("Sql Server error")
++        .into()
++    }
++}
++
+ #[expect(clippy::disallowed_types)]
+ impl From<iceberg::Error> for ConnectorError {
+     fn from(value: iceberg::Error) -> Self {
+```
+
+**File**: `src/connector/src/sink/mod.rs` (modified, +4/-1)
+```diff
+@@ -1312,7 +1312,10 @@ impl From<RedisError> for SinkError {
+ 
+ impl From<tiberius::error::Error> for SinkError {
+     fn from(err: tiberius::error::Error) -> Self {
+-        SinkError::SqlServer(anyhow!(err))
++        SinkError::SqlServer(crate::connector_common::sql_server::hint_command_timeout(
++            err,
++            "sqlserver.command_timeout_ms",
++        ))
+     }
+ }
+ 
+```
+
+**File**: `src/connector/src/sink/sqlserver.rs` (modified, +18/-4)
+```diff
+@@ -32,7 +32,7 @@ use with_options::WithOptions;
+ use super::{
+     SINK_TYPE_APPEND_ONLY, SINK_TYPE_OPTION, SINK_TYPE_UPSERT, SinkError, SinkWriterMetrics,
+ };
+-use crate::connector_common::sql_server::create_mssql_client_with_config;
++use crate::connector_common::sql_server::{MssqlTimeouts, create_mssql_client_with_config};
+ use crate::enforce_secret::EnforceSecret;
+ use crate::sink::writer::{LogSinkerOf, SinkWriter, SinkWriterExt};
+ use crate::sink::{Result, Sink, SinkParam, SinkWriterParam};
+@@ -67,6 +67,16 @@ pub struct SqlServerConfig {
+     )]
+     #[serde_as(as = "DisplayFromStr")]
+     pub max_batch_rows: usize,
++    /// Milliseconds allowed to establish a connection: TCP connect, TLS and login. Unset or 0
++    /// means no limit.
++    #[serde(rename = "sqlserver.connect_timeout_ms", default)]
++    #[serde_as(as = "Option<DisplayFromStr>")]
++    pub connect_timeout_ms: Option<u64>,
++    /// Milliseconds to wait for each response of SQL Server while a statement runs, including the
++    /// first one. This does not limit the total time of a statement. Unset or 0 means no limit.
++    #[serde(rename = "sqlserver.command_timeout_ms", default)]
++    #[serde_as(as = "Option<DisplayFromStr>")]
++    pub command_timeout_ms: Option<u64>,
+     pub r#type: String, // accept "append-only" or "upsert"
+ 
+     #[serde(flatten)]
+@@ -80,6 +90,10 @@ pub fn sql_server_default_schema() -> String {
+ }
+ 
+ impl SqlServerConfig {
++    pub fn timeouts(&self) -> MssqlTimeouts {
++        MssqlTimeouts::from_millis(self.connect_timeout_ms, self.command_timeout_ms)
 +    }
 +
-+    // Forward compose and restore so they match capability(); the defaults return Unsupported.
-+    fn compose(&self, ctx: &OperationContext, to: &str, args: OpCompose) -> Result<Self::Composer> {
-+        self.limited.compose(ctx, to, args)
-+    }
-+
-+    async fn restore(
-+        &self,
-+        ctx: &OperationContext,
-+        path: &str,
-+        args: OpRestore,
-+    ) -> Result<RpRestore> {
-+        self.limited.restore(ctx, path, args).await
+     pub fn from_btreemap(properties: BTreeMap<String, String>) -> Result<Self> {
+         let config =
+             serde_json::from_value::<SqlServerConfig>(serde_json::to_value(properties).unwrap())
+@@ -543,11 +557,11 @@ impl SqlServerClient {
+         config.authentication(AuthMethod::sql_server(&msconfig.user, &msconfig.password));
+         config.database(&msconfig.database);
+         config.trust_cert();
+-        Self::new_with_config(config).await
++        Self::new_with_config(config, msconfig.timeouts()).await
      }
  
-     async fn rename(
+-    pub async fn new_with_config(config: Config) -> Result<Self> {
+-        let inner_client = create_mssql_client_with_config(config)
++    pub async fn new_with_config(config: Config, timeouts: MssqlTimeouts) -> Result<Self> {
++        let inner_client = create_mssql_client_with_config(config, timeouts)
+             .await
+             .map_err(SinkError::SqlServer)?;
+         Ok(Self { inner_client })
+```
+
+**File**: `src/connector/src/source/cdc/enumerator/mod.rs` (modified, +14/-3)
+```diff
+@@ -31,16 +31,18 @@ use risingwave_pb::connector_service::{SourceType, ValidateSourceRequest, Valida
+ use tiberius::Config;
+ use tokio_postgres::types::PgLsn;
+ 
++use crate::connector_common::sql_server::MssqlTimeouts;
+ use crate::connector_common::{SslMode, create_pg_client, pg_connection_config_from_properties};
+ use crate::error::ConnectorResult;
+ use crate::sink::sqlserver::SqlServerClient;
+ use crate::source::cdc::external::mysql::{
+     build_mariadb_connection_pool, build_mysql_connection_pool,
+ };
++use crate::source::cdc::external::sql_server::SqlServerCdcTimeouts;
+ use crate::source::cdc::split::{extract_binlog_file_seq, parse_sql_server_lsn_str};
+ use crate::source::cdc::{
+-    CdcProperties, CdcSourceTypeTrait, DebeziumCdcSplit, Mariadb, Mongodb, Mysql, Oracle, Postgres,
+-    SqlServer, table_schema_exclude_additional_columns,
++    CdcProperties, CdcSourceType, CdcSourceTypeTrait, DebeziumCdcSplit, Mariadb, Mongodb, Mysql,
++    Oracle, Postgres, SqlServer, table_schema_exclude_additional_columns,
+ };
+ use crate::source::monitor::metrics::EnumeratorMetrics;
+ use crate::source::{SourceEnumeratorContextRef, SplitEnumerator};
+@@ -58,6 +60,7 @@ pub struct DebeziumSplitEnumerator<T: CdcSourceTypeTrait> {
+     mariadb_cdc_binlog_file_seq_max: Option<LabelGuardedIntGauge>,
+     sqlserver_cdc_upstream_min_lsn: Option<LabelGuardedIntGauge>,
+     sqlserver_cdc_upstream_max_lsn: Option<LabelGuardedIntGauge>,
++    sqlserver_cdc_timeouts: MssqlTimeouts,
+     /// Properties specified in the WITH clause by user for database connection
+     properties: Arc<BTreeMap<String, String>>,
+     _phantom: PhantomData<T>,
+@@ -96,6 +99,12 @@ where
+ 
+         // Create Arc once and share it
+         let properties_arc = Arc::new(props.properties);
++        let sqlserver_cdc_timeouts = match T::source_type() {
++            CdcSourceType::SqlServer => {
++                SqlServerCdcTimeouts::from_properties(&properties_arc)?.timeouts()
++            }
++            _ => MssqlTimeouts::default(),
++        };
+         let properties_arc_for_validation = properties_arc.clone();
+         let table_schema_for_validation = props.table_schema;
+ 
+@@ -149,6 +158,7 @@ where
+             mariadb_cdc_binlog_file_seq_max: None,
+             sqlserver_cdc_upstream_min_lsn: None,
+             sqlserver_cdc_upstream_max_lsn: None,
++            sqlserver_cdc_timeouts,
+             properties: properties_arc,
+             _phantom: PhantomData,
+         })
+@@ -292,7 +302,8 @@ impl<T: CdcSourceTypeTrait> DebeziumSplitEnumerator<T> {
+         config.authentication(tiberius::AuthMethod::sql_server(username, password));
+         config.trust_cert();
+ 
+-        let mut client = SqlServerClient::new_with_config(config).await?;
++        let mut client =
++            SqlServerClient::new_with_config(config, self.sqlserver_cdc_timeouts).await?;
+         let row = client
+             .inner_client
+             .simple_query(
+```
+
+---
+
+### Incident Patch 2: `6bd970c5` (2026-11-25)
+**Commit Message**: fix(meta): notify worker deletion before refreshing cluster resources (#28174)
+
+**File**: `src/meta/src/controller/cluster.rs` (modified, +82/-6)
+```diff
+@@ -202,16 +202,15 @@ impl ClusterController {
+                 .notify_frontend_without_version(Operation::Delete, Info::Node(worker.clone()));
+         }
+ 
+-        // Keep license manager in sync with the latest cluster resource.
+-        self.update_cluster_resource_for_license().await?;
+-
+-        // Notify local subscribers.
+-        // Note: Any type of workers may pin some hummock resource. So `HummockManager` expect this
+-        // local notification.
++        // Any worker type may pin Hummock resources. Notify local subscribers before the
++        // fallible resource refresh so its failure cannot skip cleanup for a deleted worker.
+         self.env
+             .notification_manager()
+             .notify_local_subscribers(LocalNotification::WorkerNodeDeleted(worker.clone()));
+ 
++        // Keep license manager in sync with the latest cluster resource.
++        self.update_cluster_resource_for_license().await?;
++
+         Ok(worker)
+     }
+ 
+@@ -974,7 +973,12 @@ impl ClusterControllerInner {
+ 
+ #[cfg(test)]
+ mod tests {
++    use risingwave_hummock_sdk::version::MAX_HUMMOCK_VERSION_ID;
++    use risingwave_meta_model::hummock_pinned_version;
++    use sea_orm::ConnectionTrait;
++
+     use super::*;
++    use crate::hummock::test_utils::setup_compute_env;
+ 
+     fn mock_worker_hosts_for_test(count: usize) -> Vec<HostAddress> {
+         (0..count)
+@@ -1073,6 +1077,78 @@ mod tests {
+         Ok(())
+     }
+ 
++    #[tokio::test]
++    async fn test_delete_worker_notifies_on_resource_refresh_error() -> MetaResult<()> {
++        let (env, hummock_manager, cluster_ctl, worker_id) = setup_compute_env(5013).await;
++        let worker = cluster_ctl.get_worker_by_id(worker_id).await?.unwrap();
++        let remaining_worker_id = cluster_ctl
++            .add_worker(
++                PbWorkerType::ComputeNode,
++                HostAddress {
++                    host: "127.0.0.1".to_owned(),
++                    port: 5014,
++                },
++                AddNodeProperty::default(),
++                PbResource::default(),
++            )
++            .await?;
++        let pinned_version = hummock_manager.pin_version(worker_id).await.unwrap();
++        assert_eq!(
++            hummock_manager.get_min_pinned_version_id().await,
++            pinned_version.id
++        );
++
++        let (notification_tx, mut notification_rx) = unbounded_channel();
++        env.notification_manager()
++            .insert_local_sender(notification_tx);
++
++        // Inject a decoding error into the resource query only after worker deletion succeeds.
++        // The trigger affects this test's database without a process-wide failpoint.
++        let db = &env.meta_store_ref().conn;
++        db.execute_unprepared(&format!(
++            "CREATE TRIGGER fail_resource_refresh AFTER DELETE ON worker
++             WHEN OLD.worker_id = {worker_id}
++             BEGIN
++                 UPDATE worker_property SET parallelism = 'invalid integer'
++                 WHERE worker_id = {remaining_worker_id};
++             END"
++        ))
++        .await?;
++        cluster_ctl.cluster_resource().await?;
++
++        // Keep reporting the refresh error, even though deletion has already succeeded.
++        assert!(
++            cluster_ctl
++                .delete_worker(worker.host.unwrap())
++                .await
++                .is_err()
++        );
++        assert!(cluster_ctl.cluster_resource().await.is_err());
++        assert!(cluster_ctl.get_worker_by_id(worker_id).await?.is_none());
++        assert!(cluster_ctl.heartbeat(worker_id).await.is_err());
++        assert!(matches!(
++            notification_rx.try_recv().unwrap(),
++            LocalNotification::WorkerNodeDeleted(deleted) if deleted.id == worker_id
++        ));
++
++        // The running Hummock notification worker must release the pin without a meta restart.
++        tokio::time::timeout(Duration::from_secs(10), async {
++            while hummock_manager.get_min_pinned_version_id().await != MAX_HUMMOCK_VERSION_ID {
++                tokio::time::sleep(Duration::from_millis(10)).await;
++            }
++        })
++        .await
++        .expect("deleted worker's Hummock pin was not released");
++        assert!(
++            hummock_pinned_version::Entity::find_by_id(worker_id)
++                .one(db)
++                .await?
++                .is_none()
++        );
++
++        Ok(())
++    }
++
+     #[tokio::test]
+     async fn test_list_workers_include_meta_node() -> MetaResult<()> {
+         let env = MetaSrvEnv::for_test().await;
+```
+
+---
+
+### Incident Patch 3: `18b29990` (2026-11-25)
+**Commit Message**: fix: report cgroup memory usage without clamping to host usage (#27982)
+
+**File**: `docs/dev/src/benchmark-and-profile/memory-profiling.md` (modified, +1/-1)
+```diff
+@@ -124,7 +124,7 @@ For Cloud deployments, the necessary configuration is already done, and you can
+ 
+ The dumped files will be saved on the target node.
+ 
+-Besides manual dumps, RisingWave deployments on Cloud will also **auto dump** heap profiles when the process memory usage crosses a configured threshold. See `[server.heap_profiling]` section in the configuration file.
++Besides manual dumps, RisingWave deployments on Cloud will also **auto dump** heap profiles when memory usage crosses a configured threshold. The trigger uses cgroup memory usage in containers and falls back to host memory usage if the cgroup reading is unavailable. See the `[server.heap_profiling]` section in the configuration file.
+ 
+ ## Step 2 - Analyze Heap Dump
+ 
+```
+
+**File**: `src/common/heap_profiling/src/profiler.rs` (modified, +2/-1)
+```diff
+@@ -39,7 +39,8 @@ impl HeapProfiler {
+     /// # Arguments
+     ///
+     /// `total_memory` must be the total available memory for the process.
+-    /// It will be compared with the process resident memory.
++    /// The threshold derived from it is compared with cgroup memory usage in containers,
++    /// or system memory usage when cgroup usage is unavailable.
+     pub fn new(total_memory: usize, config: HeapProfilingConfig) -> Self {
+         let threshold_auto_dump_heap_profile =
+             (total_memory as f64 * config.threshold_auto as f64) as usize;
+```
+
+**File**: `src/utils/resource_util/src/lib.rs` (modified, +43/-17)
+```diff
+@@ -168,11 +168,11 @@ pub mod memory {
+         system_with_memory().used_memory() as usize
+     }
+ 
+-    /// Returns the total memory used by the system in bytes.
++    /// Returns the total memory used in bytes.
+     ///
+-    /// If running in container, this function will read the cgroup interface files for the
+-    /// memory used, if interface files are not found, will return the memory used in the system
+-    /// as default. The cgroup mount point is assumed to be at /sys/fs/cgroup by default.
++    /// In a container, this returns the cgroup's memory usage, including memory charged for
++    /// file cache. If the cgroup usage is unavailable or invalid, this returns the host's
++    /// used memory instead. The cgroup mount point is assumed to be at /sys/fs/cgroup.
+     ///
+     ///
+     /// # Examples
+@@ -186,7 +186,13 @@ pub mod memory {
+             "memory used",
+             super::Controller::Memory,
+             get_system_memory_used,
+-            get_container_memory_used,
++            |cgroup_version| {
++                let usage_path = match cgroup_version {
++                    super::CgroupVersion::V1 => V1_MEMORY_CURRENT_PATH,
++                    super::CgroupVersion::V2 => V2_MEMORY_CURRENT_PATH,
++                };
++                get_container_memory_used(usage_path)
++            },
+         )
+     }
+ 
+@@ -228,18 +234,38 @@ pub mod memory {
+         Ok(std::cmp::min(value, system))
+     }
+ 
+-    /// Returns the memory used in a container if running in a container else returns the system
+-    /// memory used.
+-    fn get_container_memory_used(
+-        cgroup_version: super::CgroupVersion,
+-    ) -> Result<usize, std::io::Error> {
+-        let usage_path = match cgroup_version {
+-            super::CgroupVersion::V1 => V1_MEMORY_CURRENT_PATH,
+-            super::CgroupVersion::V2 => V2_MEMORY_CURRENT_PATH,
+-        };
+-        let system = get_system_memory_used();
+-        let value = super::util::read_usize_or_max(usage_path, system)?;
+-        Ok(std::cmp::min(value, system))
++    fn get_container_memory_used(usage_path: &str) -> Result<usize, std::io::Error> {
++        // Host used memory can exclude reclaimable cache charged to the cgroup.
++        super::util::read_usize(usage_path)
++    }
++
++    #[cfg(test)]
++    mod tests {
++        use std::io::ErrorKind;
++
++        use super::get_container_memory_used;
++
++        #[test]
++        fn test_container_memory_usage() {
++            let dir = tempfile::tempdir().unwrap();
++            let usage_path = dir.path().join("memory.current");
++            let path = usage_path.to_str().unwrap();
++
++            // An intentionally large counter must be returned without a host-dependent cap.
++            std::fs::write(&usage_path, format!("{}\n", usize::MAX)).unwrap();
++            assert_eq!(get_container_memory_used(path).unwrap(), usize::MAX);
++
++            std::fs::write(&usage_path, "max\n").unwrap();
++            assert_eq!(
++                get_container_memory_used(path).unwrap_err().kind(),
++                ErrorKind::InvalidData
++            );
++            std::fs::remove_file(&usage_path).unwrap();
++            assert_eq!(
++                get_container_memory_used(path).unwrap_err().kind(),
++                ErrorKind::NotFound
++            );
++        }
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28150** (2026-11-23): cherry-pick feat(expr): backport AI_DECIDE to release-3.1 (#27933) (@hzxa21)
-- **PR #28149** (closed): cherry-pick feat(expr): add typed AI_DECIDE for batch and streaming SQL (backport #27933 to release-3.1) (@rw-jarvis-bot[bot])
-- **PR #28143** (2026-11-23): chore: update version to v3.1.2 (@cyliu0)
-- **PR #28136** (closed): perf(optimizer): avoid redundant sorts and TopN for ordered index scans (@Standing-Man)
-- **PR #28134** (closed): chore(deps): bump firestore from 0.57.3 to 0.62.0 (@dependabot[bot])
-- **PR #28133** (2026-11-23): chore(deps): align LanceDB with DataFusion 54 (@dependabot[bot])
+- **PR #28181** (2026-11-26): chore(deps): Bump axum-server from 0.8.0 to 0.9.2 (@dependabot[bot])
+- **PR #28174** (2026-11-25): fix(meta): notify worker deletion before refreshing cluster resources (@zwang28)
+- **PR #28169** (2026-11-25): feat(connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts (@yuhao-su)
+- **PR #28167** (closed): chore(deps): Bump jiff from 0.2.35 to 0.2.42 (@dependabot[bot])
+- **PR #28156** (closed): chore(deps): Bump jiff from 0.2.35 to 0.2.42 (@dependabot[bot])
+- **PR #28151** (closed): WIP: fix(meta): order frontend worker notifications against snapshots (@Li0k)
 
 ---
 
@@ -1381,13 +1890,13 @@ Co-authored-by: Li0k <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Bump opendal from 0.58.1 to 0.59.5
+## X. connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78d02432`: deps): Bump opendal from 0.58.1 to 0.59.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `30d05555`: connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1395,81 +1904,78 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "opendal",
-version = "0.59.5"
-checksum = "46081824c74bac9f68f0bc4408077f77b0e315c006514719c97af1c2227ac2d2"
- "opendal-core",
- "opendal-http-transport-reqwest",
- "opendal-layer-concurrent-limit",
- "opendal-layer-logging",
- "opendal-layer-retry",
- "opendal-layer-timeout",
- "opendal-service-azblob",
- "opendal-service-azdls",
- "opendal-service-fs",
- "opendal-service-gcs",
- "opendal-service-s3",
-version = "0.59.5"
-checksum = "33d5a635dfea36a7a0c3bbb2ca34c97af17f98dd69b0cdf31a1d436a346e0a12"
- "quick-xml 0.42.0",
-version = "0.59.5"
-checksum = "fc025e163c43993e30cf1829a30b791934e5b0f7cd4d7e03acc902a9efb7e8f5"
- "opendal-core",
-version = "0.59.5"
-checksum = "06b44bdf694cccb7d90515b3eac6623975a2813abf4f5c438b4949a329d6a45b"
- "opendal-core",
-version = "0.59.5"
-checksum = "520d3de5d246c82a246c431ef0f52b8d2f091c7c49a3fd7a6f0ff519b1e7725f"
+ "bigdecimal",
+ "bigdecimal",
+ "rustls-native-certs",
+ "tokio-rustls",
+version = "0.7.0"
+checksum = "a860072022177f903e59730004fb5dc13db9275b79bb2aef7ba8ce831956c233"
+ "rustls",
+ "rustls-native-certs",
+ "tokio-rustls",
+ "rustls",
+ "bigdecimal",
+ "bigdecimal",
+ "rustls",
+ "rustls-native-certs",
+ "tokio-rustls",
+ "rustls",
+ "rustls-native-certs",
+ "tokio-rustls",
+ "rustls",
+ "tokio-rustls",
+ "security-framework",
+ "bigdecimal",
+ "rustls",
+ "rustls-native-certs",
+version = "0.4.2"
+checksum = "9a65843dfefbafd3c879c683306959a6de478443ffe9c9adf02f5976432402d7"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "opendal 0.59.3",
-version = "0.58.1"
-checksum = "4f20562cc7447fcc915fc5c23df305a412ea80a733c9f2fd9e2d267e2815be6d"
- "opendal-core 0.58.1",
- "opendal-http-transport-reqwest 0.58.1",
- "opendal-layer-concurrent-limit 0.58.1",
- "opendal-layer-logging 0.58.1",
- "opendal-layer-retry 0.58.1",
- "opendal-layer-timeout 0.58.1",
- "opendal-service-azblob 0.58.1",
- "opendal-service-fs 0.58.1",
- "opendal-service-gcs 0.58.1",
- "opendal-service-s3 0.58.1",
+ "bigdecimal 0.4.10",
+ "bigdecimal 0.4.10",
+ "rustls-native-certs 0.8.1",
+ "tokio-rustls 0.26.4",
+version = "0.6.2"
+checksum = "4057f2c32adbb2fc158e22fb38433c8e9bbf76b75a4732c7c0cbaf695fb65568"
+ "rustls 0.23.46",
+ "rustls-native-certs 0.8.1",
+ "tokio-rustls 0.26.4",
 [[package]]
-name = "opendal"
-version = "0.59.3"
+name = "bigdecimal"
+version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef16fe6b19b73b49ce39e3e0f4cec27e54789eee5d5f752cb2d26bd3e9449686"
+checksum = "a6773ddc0eafc0e509fb60e48dff7f450f8e674a0686ae8605e8d9901bd5eefa"
 dependencies = [
- "ctor 1.0.12",
- "opendal-core 0.59.3",
- "opendal-http-transport-reqwest 0.59.3",
- "opendal-layer-concurrent-limit 0.59.3",
- "opendal-layer-logging 0.59.3",
- "opendal-layer-retry 0.59.3",
- "opendal-layer-timeout 0.59.3",
- "opendal-service-azblob 0.59.3",
- "opendal-service-azdls",
- "opendal-service-fs 0.59.3",
- "opendal-service-gcs 0.59.3",
- "opendal-service-s3 0.59.3",
+ "num-bigint 0.4.6",
+ "num-integer",
+ "num-traits",
 ]
 
-version = "0.58.1"
-checksum = "ec75551ff4cf3e57da98979f6a937aaa9ddb3915bf68cc17d03df733be6646ed"
-dependencies = [
- "anyhow",
- "base64 0.23.1",
- "bytes",
- "futures",
- "http
+ "rustls 0.23.46",
+ "bigdecimal 0.4.10",
+ "bigdecimal 0.4.10",
+ "rustls 0.23.46",
+ "rustls-native-certs 0.8.1",
+ "tokio-rustls 0.26.4",
+ "rustls 0.23.46",
+ "rustls-native-certs 0.8.1",
+ "tokio-rustls 0.26.4",
+ "rustls 0.23.46",
+ "tokio-rustls 0.26.4",
+ "security-framework 3.5.1",
+ "bigdecimal 0.4.10",
+ "rustls 0.23.46",
+ "rustls-native-certs 0.8.1",
+version = "0.3.0"
+checksum = "c6fa0831dd7cc608c38a5e323422a0077678fa5744aa2be4ad91c4ece8eec8d5"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78d02432` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `30d05555` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

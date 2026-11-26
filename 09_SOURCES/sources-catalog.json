@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "78d02432",
+    "sourceVersion": "151572e0",
     "license": "Apache-2.0",
-    "contentHash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
-    "lastHarvestedAt": "2026-11-24T09:18:40.855Z",
+    "contentHash": "186c077641e1a5b48e32f26c4f518576bfd36dcf8f55dfdb4391c77fa7b42577",
+    "lastHarvestedAt": "2026-11-26T05:29:20.070Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "103bc2d9",
+    "sourceVersion": "63911ea6",
     "license": "Apache-2.0",
-    "contentHash": "9d2e2bd30c83aa7bc840bc6d4e17aa6a9c99d26f352d36324f98fd4a305e5ddd",
-    "lastHarvestedAt": "2026-11-25T05:19:53.702Z",
+    "contentHash": "44436e631864d3a8aac510c6d06e22536d9f3d34cf591590e63bb5f48f3585bd",
+    "lastHarvestedAt": "2026-11-26T05:29:13.190Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {
@@ -12565,8 +12565,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2",
     "sourceVersion": "hf-deepseek-ai-deepseek-v3.2",
     "license": "Open-Source",
-    "contentHash": "6551c12b1a5d7da59472ffb897e5c1bd52b40d432f08ab8fee74ec86442e3527",
-    "lastHarvestedAt": "2026-11-22T09:25:49.235Z",
+    "contentHash": "bf7103da8cebdd3a2a7c10d6ed3ed316b84ce3292c3d208a1711a78b30604f83",
+    "lastHarvestedAt": "2026-11-26T05:29:04.447Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2"
   },
   "hf-higurashi-ai-haru-4b": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T05:18:14.258Z",
+  "last_updated": "2026-11-26T05:29:20.091Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
-      "verified_at": "2026-11-24T09:18:40.869Z",
+      "content_hash": "186c077641e1a5b48e32f26c4f518576bfd36dcf8f55dfdb4391c77fa7b42577",
+      "verified_at": "2026-11-26T05:29:20.091Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T09:18:40.869Z"
+      "last_updated": "2026-11-26T05:29:20.091Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "9d2e2bd30c83aa7bc840bc6d4e17aa6a9c99d26f352d36324f98fd4a305e5ddd",
-      "verified_at": "2026-11-25T05:19:53.727Z",
+      "content_hash": "44436e631864d3a8aac510c6d06e22536d9f3d34cf591590e63bb5f48f3585bd",
+      "verified_at": "2026-11-26T05:29:13.218Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T05:19:53.727Z"
+      "last_updated": "2026-11-26T05:29:13.218Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",
@@ -18906,14 +18906,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v3-2",
-      "content_hash": "6551c12b1a5d7da59472ffb897e5c1bd52b40d432f08ab8fee74ec86442e3527",
-      "verified_at": "2026-11-22T09:25:49.244Z",
+      "content_hash": "bf7103da8cebdd3a2a7c10d6ed3ed316b84ce3292c3d208a1711a78b30604f83",
+      "verified_at": "2026-11-26T05:29:04.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T09:25:49.244Z"
+      "last_updated": "2026-11-26T05:29:04.468Z"
     },
     "higurashi-ai/Haru-4B": {
       "repository": "higurashi-ai/Haru-4B",

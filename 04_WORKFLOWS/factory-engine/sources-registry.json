@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T05:18:18.305Z",
-    "lastVerified": "2026-11-26T05:18:18.305Z",
+    "lastChecked": "2026-11-26T05:29:23.661Z",
+    "lastVerified": "2026-11-26T05:29:23.661Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -171,9 +171,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-26T01:26:25.506Z",
+    "lastChecked": "2026-11-26T05:29:10.952Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-26T01:26:25.506Z"
+    "lastVerified": "2026-11-26T05:29:10.952Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-26T04:47:53.225Z",
+    "lastChecked": "2026-11-26T05:29:16.094Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-26T04:47:53.225Z"
+    "lastVerified": "2026-11-26T05:29:16.094Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -4233,22 +4233,21 @@
     "revisionIdentifier": "3beb4d3b"
   },
   "risingwavelabs-risingwave": {
-    "name": "risingwave",
+    "name": "risingwavelabs/risingwave",
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T04:07:41.457Z",
-    "lastVerified": "2026-11-25T04:07:41.457Z",
+    "lastChecked": "2026-11-26T05:29:18.626Z",
+    "lastVerified": "2026-11-26T05:29:18.626Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "b76e663dbf1546c722b44e47c6376b645181ca05113b520c3746d025c9ec012e",
+    "contentHash": "186c077641e1a5b48e32f26c4f518576bfd36dcf8f55dfdb4391c77fa7b42577",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "78d02432"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -7006,14 +7005,14 @@
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T05:19:52.297Z",
-    "lastVerified": "2026-11-25T05:19:52.297Z",
+    "lastChecked": "2026-11-26T05:29:12.469Z",
+    "lastVerified": "2026-11-26T05:29:12.469Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "9d2e2bd30c83aa7bc840bc6d4e17aa6a9c99d26f352d36324f98fd4a305e5ddd",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "44436e631864d3a8aac510c6d06e22536d9f3d34cf591590e63bb5f48f3585bd",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7832,9 +7831,9 @@
   "arxanas-git-branchless": {
     "name": "git-branchless",
     "officialUrl": "https://github.com/arxanas/git-branchless",
-    "lastChecked": "2026-11-24T23:13:39.822Z",
+    "lastChecked": "2026-11-26T05:29:00.997Z",
     "revisionIdentifier": "d0eceb7e",
-    "lastVerified": "2026-11-24T23:13:39.822Z"
+    "lastVerified": "2026-11-26T05:29:00.997Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -11383,9 +11382,9 @@
   "jasonjmcghee-rem": {
     "name": "rem",
     "officialUrl": "https://github.com/jasonjmcghee/rem",
-    "lastChecked": "2026-11-23T19:42:52.069Z",
+    "lastChecked": "2026-11-26T05:29:06.099Z",
     "revisionIdentifier": "f4f68049",
-    "lastVerified": "2026-11-23T19:42:52.069Z"
+    "lastVerified": "2026-11-26T05:29:06.099Z"
   },
   "aio-libs-aiohttp": {
     "name": "aio-libs/aiohttp",
@@ -14605,12 +14604,12 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T09:25:48.602Z",
-    "lastVerified": "2026-11-22T09:25:48.602Z",
+    "lastChecked": "2026-11-26T05:29:03.611Z",
+    "lastVerified": "2026-11-26T05:29:03.611Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
-    "contentHash": "6551c12b1a5d7da59472ffb897e5c1bd52b40d432f08ab8fee74ec86442e3527",
+    "contentHash": "bf7103da8cebdd3a2a7c10d6ed3ed316b84ce3292c3d208a1711a78b30604f83",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

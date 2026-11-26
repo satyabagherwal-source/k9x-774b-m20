@@ -4,24 +4,24 @@
 {
   "source_repository": "risingwavelabs/risingwave",
   "source_url": "https://github.com/risingwavelabs/risingwave",
-  "source_version": "5b172d1a",
+  "source_version": "151572e0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T03:26:22.419Z",
+  "timestamp": "2026-11-26T05:29:20.401Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-risingwavelabs-risingwave",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave) (Revision: `5b172d1a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T03:26:22.419Z`  
+> **Provenance**: Harvested from [risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave) (Revision: `151572e0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T05:29:20.401Z`  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 68%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from risingwavelabs/risingwave:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:26:21.090Z  
+> **Harvest Timestamp**: 2026-11-26T05:29:18.626Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9416 stars
+- **Stars / Engagement**: 9430 stars
 
 ---
 
@@ -1091,685 +1091,789 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab28399d` (2026-11-16)
-**Commit Message**: fix(connector): keep NULL for columns with a default in CDC change events (#28004)
-
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+control substitution on
-+
-+statement ok
-+drop source if exists postgres_null_with_default_source cascade;
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -c "
-+    SELECT pg_terminate_backend(active_pid)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
-+    SELECT pg_sleep(1);
-+    SELECT pg_drop_replication_slot(slot_name)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_null_with_default_slot';
-+    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
-+    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
-+    CREATE TABLE public.postgres_null_with_default (
-+        id int PRIMARY KEY,
-+        v int,
-+        c_text text DEFAULT 'x',
-+        c_jsonb jsonb DEFAULT '{}'::jsonb,
-+        c_ts timestamp DEFAULT now()
-+    );
-+    INSERT INTO public.postgres_null_with_default VALUES (1, 0, NULL, NULL, NULL);
-+    CREATE PUBLICATION postgres_null_with_default_pub FOR TABLE public.postgres_null_with_default;
-+    "
-+
-+statement ok
-+create source postgres_null_with_default_source with (
-+    connector = 'postgres-cdc',
-+    hostname = '${PGHOST:localhost}',
-+    port = '${PGPORT:5432}',
-+    username = '${PGUSER:$USER}',
-+    password = '${PGPASSWORD:}',
-+    database.name = '${PGDATABASE:postgres}',
-+    schema.name = 'public',
-+    publication.name = 'postgres_null_with_default_pub',
-+    publication.create.enable = 'false',
-+    slot.name = 'postgres_null_with_default_slot'
-+);
-+
-+statement ok
-+create table postgres_null_with_default_rw (*)
-+from postgres_null_with_default_source table 'public.postgres_null_with_default';
-+
-+query IITTT retry 30 backoff 1s
-+select id, v, c_text, c_jsonb, c_ts from postgres_null_with_default_rw order by id;
-+----
-+1 0 NULL NULL NULL
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -c "
-+    INSERT INTO public.postgres_null_with_default VALUES (2, 0, NULL, NULL, NULL);
-+    UPDATE public.postgres_null_with_default SET v = 1 WHERE id = 1;
-+    "
-+
-+query IITTT retry 30 backoff 1s
-+select id, v, c_text, c_jsonb, c_ts from postgres_null_with_default_rw order by id;
-+----
-+1 1 NULL NULL NULL
-+2 0 NULL NULL NULL
-+
-+statement ok
-+drop source postgres_null_with_default_source cascade;
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -c "
-+    SELECT pg_terminate_backend(active_pid)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
-+    SELECT pg_sleep(1);
-+    SELECT pg_drop_replication_slot(slot_name)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_null_with_default_slot';
-+    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
-+    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
-+    "
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzCdcEngine.java` (modified, +10/-12)
-```diff
-@@ -19,11 +19,10 @@
- import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
- import static io.debezium.schema.AbstractTopicNamingStrategy.*;
- 
--import com.risingwave.connector.api.source.SourceTypeE;
-+import com.risingwave.connector.source.common.DbzConnectorConfig;
- import com.risingwave.proto.ConnectorServiceProto;
- import io.debezium.embedded.Connect;
- import io.debezium.engine.DebeziumEngine;
--import java.util.Properties;
- import java.util.concurrent.ArrayBlockingQueue;
- import java.util.concurrent.BlockingQueue;
- 
-@@ -36,28 +35,27 @@ public class DbzCdcEngine implements Runnable {
- 
-     /** If config is not valid will throw exceptions */
-     public DbzCdcEngine(
--            SourceTypeE connector,
--            long sourceId,
--            Properties config,
--            DebeziumEngine.CompletionCallback completionCallback) {
--        var heartbeatTopicPrefix = config.getProperty(TOPIC_HEARTBEAT_PREFIX.name());
--        var topicPrefix = config.getProperty(TOPIC_PREFIX.name());
-+            DbzConnectorConfig config, DebeziumEngine.CompletionCallback completionCallback) {
-+        var dbzProps = config.getResolvedDebeziumProps();
-+        var heartbeatTopicPrefix = dbzProps.getProperty(TOPIC_HEARTBEAT_PREFIX.name());
-+        var topicPrefix = dbzProps.getProperty(TOPIC_PREFIX.name());
-         var transactionTopic = String.format("%s.%s", topicPrefix, DEFAULT_TRANSACTION_TOPIC);
-         var consumer =
-                 new DbzChangeEventConsumer(
--                        connector,
--                        sourceId,
-+                        config.getSourceType(),
-+                        config.getSourceId(),
-                         heartbeatTopicPrefix,
-                         transactionTopic,
-                         topicPrefix,
-+                        config.isBackfillSource(),
-                         new ArrayBlockingQueue<>(DEFAULT_QUEUE_CAPACITY));
- 
-         // Builds a debezium engine but not start it
--        this.id = sourceId;
-+        this.id = config.getSourceId();
-         this.changeEventConsumer = consumer;
-         this.engine =
-                 DebeziumEngine.create(Connect.class)
--                        .using(config)
-+                        .using(dbzProps)
-                         .using(completionCallback)
-                         .notifying(consumer)
-                         .build();
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzCdcEngineRunner.java` (modified, +2/-6)
-```diff
-@@ -45,9 +45,7 @@ public static DbzCdcEngineRunner newCdcEngineRunner(
-             var sourceId = config.getSourceId();
-             var engine =
-                     new DbzCdcEngine(
--                            config.getSourceType(),
--                            config.getSourceId(),
--                            config.getResolvedDebeziumProps(),
-+                            config,
-                             (success, message, error) -> {
-                                 if (!success) {
-                                     LOG.error(
-@@ -79,9 +77,7 @@ public static DbzCdcEngineRunner create(DbzConnectorConfig config, CdcSourceChan
-             final DbzCdcEngineRunner finalRunner = runner;
-             var engine =
-                     new DbzCdcEngine(
--                            config.getSourceType(),
--                            config.getSourceId(),
--                            config.getResolvedDebeziumProps(),
-+                            config,
-                             (success, message, error) -> {
-                                 if (!success) {
-                                     LOG.error(
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzChangeEventConsumer.java` (modified, +3/-1)
-```diff
-@@ -72,6 +72,7 @@ public class DbzChangeEventConsumer
-             String heartbeatTopicPrefix,
-             String transactionTopic,
-             String schemaChangeTopic,
-+            boolean isBackfillSource,
-             BlockingQueue<GetEventStreamResponse> queue) {
-         this.connector = connector;
-         this.sourceId = sourceId;
-@@ -85,11 +86,12 @@ public class DbzChangeEventConsumer
-         // to source parser, we use a customized JSON converter to avoid outputting the `schema`
-         // field.
-         var payloadConverter = new DbzJsonConverter();
--        final HashMap<String, Object> configs = new HashMap<>(2);
-+        final HashMap<String, Object> configs = new HashMap<>(3);
-         // only serialize the value part
-         configs.put(ConverterConfig.TYPE_CONFIG, ConverterType.VALUE.getName());
-         // include record schema to output JSON in { "schema": { ... }, "payload": { ... } } format
-         configs.put(JsonConverterConfig.SCHEMAS_ENABLE_CONFIG, true);
-+        configs.put(JsonConverterConfig.REPLACE_NULL_WITH_DEFAULT_CONFIG, !isBackfillSource);
-         payloadConverter.configure(configs);
-         this.payloadConverter = payloadConverter;
- 
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/core/DbzCdcEngineRunnerTest.java` (modified, +1/-5)
-```diff
-@@ -139,11 +139,7 @@ private static class WaitingEngine extends DbzCdcEngine {
-         boolean failStop;
- 
-         WaitingEngine(DbzConnectorConfig config) {
--            super(
--                    config.getSourceType(),
--                    config.getSourceId(),
--                    config.getResolvedDebeziumProps(),
--                    (success, message, error) -> {});
-+            super(config, (success, message, error) -> {});
-         }
- 
-         @Override
-```
-
----
-
-### Incident Patch 2: `8ac9c69f` (2026-11-16)
-**Commit Message**: fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978)
+### Incident Patch 1: `30d05555` (2026-11-25)
+**Commit Message**: feat(connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts (#28169)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `src/connector/src/allow_alter_on_fly_fields.rs` (modified, +7/-0)
+**File**: `Cargo.lock` (modified, +80/-151)
 ```diff
-@@ -178,6 +178,13 @@ pub static SOURCE_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<St
- pub static SINK_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<String>>> = LazyLock::new(|| {
-     use sink_properties::*;
-     let mut map = HashMap::new();
-+    // BigQueryConfig
-+    map.try_insert(
-+        std::any::type_name::<BigQueryConfig>().to_owned(),
-+        [
-+            "bigquery.change_sequence_number".to_owned(),
-+        ].into_iter().collect(),
-+    ).unwrap();
-     // ClickHouseConfig
-     map.try_insert(
-         std::any::type_name::<ClickHouseConfig>().to_owned(),
+@@ -266,7 +266,7 @@ version = "0.21.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "36fa98bc79671c7981272d91a8753a928ff6a1cd8e4f20a44c45bd5d313840bf"
+ dependencies = [
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "bon",
+  "crc32fast",
+  "digest 0.10.7",
+@@ -292,7 +292,7 @@ name = "apache-avro"
+ version = "0.21.0"
+ source = "git+https://github.com/risingwavelabs/avro-rs?rev=1f2723802d4fb77b97fa084f7bb81e3b60b9e03f#1f2723802d4fb77b97fa084f7bb81e3b60b9e03f"
+ dependencies = [
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "bon",
+  "digest 0.10.7",
+  "log",
+@@ -748,7 +748,7 @@ dependencies = [
+  "rand 0.10.1",
+  "regex",
+  "ring",
+- "rustls-native-certs 0.8.1",
++ "rustls-native-certs",
+  "rustls-pki-types",
+  "rustls-webpki 0.103.15",
+  "serde",
+@@ -758,7 +758,7 @@ dependencies = [
+  "thiserror 2.0.21",
+  "time",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tokio-stream 0.1.17",
+  "tokio-util",
+  "tokio-websockets",
+@@ -873,9 +873,9 @@ checksum = "f2d85fd3d291fabcc40c7232c92c280ec1754fd7b5d7ea769f143222143e179a"
+ 
+ [[package]]
+ name = "asynchronous-codec"
+-version = "0.6.2"
++version = "0.7.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4057f2c32adbb2fc158e22fb38433c8e9bbf76b75a4732c7c0cbaf695fb65568"
++checksum = "a860072022177f903e59730004fb5dc13db9275b79bb2aef7ba8ce831956c233"
+ dependencies = [
+  "bytes",
+  "futures-sink",
+@@ -1422,11 +1422,11 @@ dependencies = [
+  "hyper-rustls",
+  "hyper-util",
+  "pin-project-lite",
+- "rustls 0.23.46",
+- "rustls-native-certs 0.8.1",
++ "rustls",
++ "rustls-native-certs",
+  "rustls-pki-types",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tower",
+  "tracing",
+ ]
+@@ -1830,17 +1830,6 @@ version = "0.5.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3a8241f3ebb85c056b509d4327ad0358fbbba6ffb340bf388f26350aeda225b1"
+ 
+-[[package]]
+-name = "bigdecimal"
+-version = "0.3.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a6773ddc0eafc0e509fb60e48dff7f450f8e674a0686ae8605e8d9901bd5eefa"
+-dependencies = [
+- "num-bigint 0.4.6",
+- "num-integer",
+- "num-traits",
+-]
+-
+ [[package]]
+ name = "bigdecimal"
+ version = "0.4.10"
+@@ -2622,7 +2611,7 @@ dependencies = [
+  "hyper-util",
+  "lz4_flex 0.14.0",
+  "rand 0.9.5",
+- "rustls 0.23.46",
++ "rustls",
+  "serde",
+  "serde_json",
+  "thiserror 2.0.21",
+@@ -4315,7 +4304,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b1d71cb454da682b2af7488e1fc1ddd72ee1b28f19297b8ccad73f0a21ee9a69"
+ dependencies = [
+  "arrow",
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "chrono",
+  "datafusion-common",
+  "datafusion-expr",
+@@ -5963,7 +5952,7 @@ dependencies = [
+  "async-trait",
+  "backon",
+  "base64 0.22.1",
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "gcloud-auth",
+  "gcloud-gax",
+  "gcloud-googleapis",
+@@ -6731,11 +6720,11 @@ dependencies = [
+  "http",
+  "hyper",
+  "hyper-util",
+- "rustls 0.23.46",
+- "rustls-native-certs 0.8.1",
++ "rustls",
++ "rustls-native-certs",
+  "rustls-pki-types",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tower-service",
+  "webpki-roots 0.26.1",
+ ]
+@@ -8419,11 +8408,11 @@ dependencies = [
+  "log",
+  "nom 7.1.3",
+  "percent-encoding",
+- "rustls 0.23.46",
+- "rustls-native-certs 0.8.1",
++ "rustls",
++ "rustls-native-certs",
+  "thiserror 2.0.21",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tokio-stream 0.1.17",
+  "tokio-util",
+  "url",
+@@ -9378,7 +9367,7 @@ dependencies = [
+  "percent-encoding",
+  "rand 0.9.5",
+  "rustc_version_runtime",
+- "rustls 0.23.46",
++ "rustls",
+  "serde",
+  "serde_bytes",
+  "serde_with",
+@@ -9390,7 +9379,7 @@ dependencies = [
+  "take_mut",
+  "thiserror 2.0.21",
+  "tokio",
+- "tokio-rustls 0.26.4",
++ "tokio-rustls",
+  "tokio-util",
+  "typed-builder 0.22.0",
+  "uuid",
+@@ -9548,7 +9537,7 @@ dependencies = [
+  "openssl-probe 0.2.1",
+  "openssl-sys",
+  "schannel",
+- "security-framework 3.5.1",
++ "security-framework",
+  "security-framework-sys",
+  "tempfile",
+ ]
+@@ -10994,7 +10983,7 @@ name = "pg_bigdecimal"
+ version = "0.1.5"
+ source = "git+https://github.com/risingwavelabs/rust-pg_bigdecimal?rev=0b7893d88894ca082b4525f94f812da034486f7c#0b7893d88894ca082b4525f94f812da034486f7c"
+ dependencies = [
+- "bigdecimal 0.4.10",
++ "bigdecimal",
+  "byteorder",
+  "bytes",
+  "num-bigint 0.4.6",
+@@ -11035,8 +11024,8 @@ dependencies = [
+  "reqwest 0.13.4",
+  "risingwave_common",
+  "risingwave_sqlparser",
+- "rustls 0.23.46",
+- "rustls-native-certs 0.8.1",
++ "rustls",
++ "rustls-native-certs",
+  "rustls-pki-types",
+  "serde",
+  "serde_json",
+@@ -11507,9 +11496,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "pretty-hex"
+-version = "0.3.0"
++version = "0.4.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "c6fa0831dd7cc608c38a5e323422a0077678fa5744aa2be4ad91c4ece8eec8d5"
++checksum = "9a65843dfefbafd3c879c683306959a6de478443ffe9c9adf02f5976432402d7"
+ 
+ [[package]]
+ name = "pretty-xmlish"
+@@ -12177,7 +12166,7 @@ dependencies = [
+
 ```
 
-**File**: `src/connector/src/sink/big_query.rs` (modified, +112/-42)
+**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_cdc.slt.serial` (modified, +20/-0)
 ```diff
-@@ -21,6 +21,7 @@ use anyhow::{Context, anyhow};
- use async_trait::async_trait;
- use base64::Engine;
- use base64::prelude::BASE64_STANDARD;
-+use either::Either;
- use futures::future::pending;
- use futures::prelude::Future;
- use futures::{Stream, StreamExt};
-@@ -265,6 +266,14 @@ pub struct BigQueryConfig {
-     pub aws_auth_props: AwsAuthProps,
+@@ -650,6 +650,26 @@ select count(*) from shared_single_type_schema_table;
+ ----
+ 2
+ 
++# SQL Server does not enforce well-formed UTF-16 in nvarchar/ntext. A lone surrogate is read as
++# U+FFFD instead of failing the backfill. The rows are inserted before CDC is enabled, so they reach
++# RisingWave only through the backfill.
++system ok
++sqlcmd -C -Q "CREATE TABLE ill_formed_utf16 (id INT PRIMARY KEY, c_nvarchar NVARCHAR(10), c_ntext NTEXT); INSERT INTO ill_formed_utf16 VALUES (1, N'a' + NCHAR(0xD83D) + N'b', CAST(N'c' + NCHAR(0xDC00) AS NTEXT)), (2, N'ok', N'ok'); EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = 'ill_formed_utf16', @role_name = NULL;" -b
++
++statement ok
++CREATE TABLE shared_ill_formed_utf16 (
++    id INT,
++    c_nvarchar VARCHAR,
++    c_ntext VARCHAR,
++    PRIMARY KEY (id)
++) from mssql_source table 'mydb.dbo.ill_formed_utf16';
++
++query ITT retry 20 backoff 1s
++SELECT id, c_nvarchar, c_ntext FROM shared_ill_formed_utf16 ORDER BY id;
++----
++1 a�b c�
++2 ok ok
++
+ # ------------ drop stage ------------
+ statement ok
+ drop source upper_mssql_source cascade;
+```
+
+**File**: `src/connector/Cargo.toml` (modified, +3/-3)
+```diff
+@@ -191,9 +191,9 @@ strum_macros = "0.28"
+ tempfile = "3"
+ thiserror = { workspace = true }
+ thiserror-ext = { workspace = true }
+-# To easiy get the type_name and impl IntoSql for rust_decimal, we fork the crate.
+-# Another reason is that we are planning to refactor their IntoSql trait to allow specifying the type to convert.
+-tiberius = { git = "https://github.com/risingwavelabs/tiberius.git", rev = "cd69774fb1a4e08c0a3ea3b2041de7cc09662464", default-features = false, features = [
++# Forked to decode money as the exact scaled i64 instead of a lossy f64, and to bound
++# reading the rest of a dropped result stream by `command_timeout`.
++tiberius = { git = "https://github.com/risingwavelabs/tiberius.git", rev = "35aeb71059ebd849abe3561d86607a7e5b909a07", default-features = false, features = [
+     "chrono",
+     "sql-browser-tokio",
+     "rustls",
+```
+
+**File**: `src/connector/src/connector_common/sql_server.rs` (modified, +140/-5)
+```diff
+@@ -12,6 +12,8 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use std::time::Duration;
++
+ use anyhow::{Context, anyhow};
+ use futures::TryStreamExt;
+ use risingwave_common::types::DataType;
+@@ -44,6 +46,49 @@ pub struct MssqlConnectionConfig {
+     pub trust_cert: bool,
+ }
+ 
++/// How long a SQL Server client waits. `None` waits without a limit.
++#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
++pub struct MssqlTimeouts {
++    /// Establishing a connection: TCP connect, TLS and login, including a routing redirect.
++    pub connect: Option<Duration>,
++    /// Each response of the server while a statement runs, including the first one. This does not
++    /// limit the total time of a statement.
++    pub command: Option<Duration>,
++}
++
++impl MssqlTimeouts {
++    /// Builds the limits from option values in milliseconds, where unset or `0` means no limit.
++    pub fn from_millis(connect_ms: Option<u64>, command_ms: Option<u64>) -> Self {
++        let limit = |ms: Option<u64>| ms.filter(|&ms| ms > 0).map(Duration::from_millis);
++        Self {
++            connect: limit(connect_ms),
++            command: limit(command_ms),
++        }
++    }
++}
++
++/// Start of the message of tiberius' command timeout error. An operating system timeout is also an
++/// `Io` error of kind `TimedOut`, so only the message tells them apart.
++const COMMAND_TIMEOUT_MESSAGE: &str = "the server did not send the next part of the command result";
++
++/// Converts a tiberius error. A command timeout error suggests tiberius' own
++/// `Config::command_timeout`, so also name `option`, the setting users have.
++pub fn hint_command_timeout(error: tiberius::error::Error, option: &str) -> anyhow::Error {
++    let is_command_timeout = matches!(
++        &error,
++        tiberius::error::Error::Io { kind: std::io::ErrorKind::TimedOut, message }
++            if message.starts_with(COMMAND_TIMEOUT_MESSAGE)
++    );
++    let error = anyhow::Error::from(error);
++    if is_command_timeout {
++        error.context(format!(
++            "the wait exceeded `{option}`; raise it, or set it to 0 to wait without a limit"
++        ))
++    } else {
++        error
++    }
++}
++
+ /// Create an authenticated `tiberius::Client` connected to a SQL Server
+ /// instance. Uses tokio's TCP stream wrapped with `TokioAsyncWriteCompatExt`
+ /// to bridge between tokio's async I/O and tiberius's `futures-io` traits.
+@@ -68,7 +113,7 @@ pub async fn create_mssql_client(config: &MssqlConnectionConfig) -> anyhow::Resu
+     }
+     tiberius_config.authentication(AuthMethod::sql_server(&config.user, &config.password));
+ 
+-    create_mssql_client_with_config(tiberius_config)
++    create_mssql_client_with_config(tiberius_config, MssqlTimeouts::default())
+         .await
+         .with_context(|| {
+             format!(
+@@ -94,17 +139,36 @@ async fn connect_mssql_tcp(config: &Config, after_routing: bool) -> anyhow::Resu
+ /// SQL Server gateways, notably Azure SQL, can return one routing redirect
+ /// during login. Follow that redirect here so query, CDC, and sink callers all
+ /// use identical connection behavior.
+-pub async fn create_mssql_client_with_config(mut config: Config) -> anyhow::Result<MssqlClient> {
++pub async fn create_mssql_client_with_config(
++    mut config: Config,
++    timeouts: MssqlTimeouts,
++) -> anyhow::Result<MssqlClient> {
++    // SQL Server does not enforce well-formed UTF-16 in nvarchar/nchar/ntext values. Decode a
++    // lone surrogate as U+FFFD instead of failing the row, which would stall CDC backfill on it.
++    config.lossy_utf16_decoding(true);
++    // `timeouts.connect` bounds the whole connection below, including the login.
++    config.handshake_timeout(None);
++    config.command_timeout(timeouts.command);
++    match timeouts.connect {
++        Some(limit) => tokio::time::timeout(limit, connect_mssql(config))
++            .await
++            .map_err(|_| anyhow!("timed out after {limit:?} while connecting to sql server"))?,
++        None => connect_mssql(config).await,
++    }
++}
++
++async fn connect_mssql(mut config: Config) -> anyhow::Result<MssqlClient> {
+     let tcp = connect_mssql_tcp(&config, false).await?;
+-    let connect_result = Client::connect(config.clone(), tcp.compat_write()).await;
++    // Box the login futures; they are large (see `clippy::large_futures`).
++    let connect_result = Box::pin(Client::connect(config.clone(), tcp.compat_write())).await;
+ 
+     match connect_result {
+         Ok(client) => Ok(client),
+         Err(tiberius::error::Error::Routing { host, port }) => {
+             config.host(&host);
+             config.port(port);
+             let tcp = connect_mssql_tcp(&config, true).await?;
+-            Client::connect(config, tcp.compat_write())
++            Box::pin(Client::connect(config, tcp.compat_write()))
+                 .await
+                 .context("failed to authenticate with sql server after routing")
+         }
+@@ -222,9 +286,15 @@ pub fn mssql_t
+```
+
+**File**: `src/connector/src/error.rs` (modified, +11/-1)
+```diff
+@@ -60,7 +60,6 @@ def_anyhow_newtype! {
+     sqlx::Error => transparent, // believed to be self-explanatory
+     mysql_async::Error => "MySQL error",
+     tokio_postgres::Error => "Postgres error",
+-    tiberius::error::Error => "Sql Server error",
+     apache_avro::Error => "Avro error",
+     rdkafka::error::KafkaError => "Kafka error",
+     pulsar::Error => "Pulsar error",
+@@ -101,6 +100,17 @@ impl From<ConnectorError> for RpcError {
+     }
+ }
+ 
++impl From<tiberius::error::Error> for ConnectorError {
++    fn from(error: tiberius::error::Error) -> Self {
++        crate::connector_common::sql_server::hint_command_timeout(
++            error,
++            "database.command.timeout.ms",
++        )
++        .context("Sql Server error")
++        .into()
++    }
++}
++
+ #[expect(clippy::disallowed_types)]
+ impl From<iceberg::Error> for ConnectorError {
+     fn from(value: iceberg::Error) -> Self {
+```
+
+**File**: `src/connector/src/sink/mod.rs` (modified, +4/-1)
+```diff
+@@ -1312,7 +1312,10 @@ impl From<RedisError> for SinkError {
+ 
+ impl From<tiberius::error::Error> for SinkError {
+     fn from(err: tiberius::error::Error) -> Self {
+-        SinkError::SqlServer(anyhow!(err))
++        SinkError::SqlServer(crate::connector_common::sql_server::hint_command_timeout(
++            err,
++            "sqlserver.command_timeout_ms",
++        ))
+     }
+ }
+ 
+```
+
+**File**: `src/connector/src/sink/sqlserver.rs` (modified, +18/-4)
+```diff
+@@ -32,7 +32,7 @@ use with_options::WithOptions;
+ use super::{
+     SINK_TYPE_APPEND_ONLY, SINK_TYPE_OPTION, SINK_TYPE_UPSERT, SinkError, SinkWriterMetrics,
+ };
+-use crate::connector_common::sql_server::create_mssql_client_with_config;
++use crate::connector_common::sql_server::{MssqlTimeouts, create_mssql_client_with_config};
+ use crate::enforce_secret::EnforceSecret;
+ use crate::sink::writer::{LogSinkerOf, SinkWriter, SinkWriterExt};
+ use crate::sink::{Result, Sink, SinkParam, SinkWriterParam};
+@@ -67,6 +67,16 @@ pub struct SqlServerConfig {
+     )]
+     #[serde_as(as = "DisplayFromStr")]
+     pub max_batch_rows: usize,
++    /// Milliseconds allowed to establish a connection: TCP connect, TLS and login. Unset or 0
++    /// means no limit.
++    #[serde(rename = "sqlserver.connect_timeout_ms", default)]
++    #[serde_as(as = "Option<DisplayFromStr>")]
++    pub connect_timeout_ms: Option<u64>,
++    /// Milliseconds to wait for each response of SQL Server while a statement runs, including the
++    /// first one. This does not limit the total time of a statement. Unset or 0 means no limit.
++    #[serde(rename = "sqlserver.command_timeout_ms", default)]
++    #[serde_as(as = "Option<DisplayFromStr>")]
++    pub command_timeout_ms: Option<u64>,
      pub r#type: String, // accept "append-only" or "upsert"
  
-+    /// Write `_CHANGE_SEQUENCE_NUMBER` on upsert rows, so that `BigQuery` applies the changes of
-+    /// each key in the order they are sent. Once a table has rows written with it, turning it off
-+    /// makes `BigQuery` ignore later changes to those rows.
-+    #[serde(rename = "bigquery.change_sequence_number", default)]
-+    #[serde_as(as = "DisplayFromStr")]
-+    #[with_option(allow_alter_on_fly)]
-+    pub change_sequence_number: bool,
-+
      #[serde(flatten)]
-     pub unknown_fields: std::collections::HashMap<String, String>,
+@@ -80,6 +90,10 @@ pub fn sql_server_default_schema() -> String {
  }
-@@ -538,6 +547,11 @@ impl Sink for BigQuerySink {
  
-     crate::impl_validate_sink_unknown_fields!();
- 
-+    fn validate_alter_config(config: &BTreeMap<String, String>) -> Result<()> {
-+        BigQueryConfig::from_btreemap(config.clone())?;
-+        Ok(())
+ impl SqlServerConfig {
++    pub fn timeouts(&self) -> MssqlTimeouts {
++        MssqlTimeouts::from_millis(self.connect_timeout_ms, self.command_timeout_ms)
 +    }
 +
-     async fn new_log_sinker(&self, _writer_param: SinkWriterParam) -> Result<Self::LogSinker> {
-         let (writer, resp_stream) = BigQuerySinkWriter::new(
-             self.config.clone(),
-@@ -696,13 +710,15 @@ impl BigQuerySinkWriter {
-                 ..Default::default()
-             };
-             descriptor_proto.field.push(field);
--            let field = FieldDescriptorProto {
--                name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
--                number: Some((schema.len() + 2) as i32),
--                r#type: Some(field_descriptor_proto::Type::String.into()),
--                ..Default::default()
--            };
--            descriptor_proto.field.push(field);
-+            if config.change_sequence_number {
-+                let field = FieldDescriptorProto {
-+                    name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
-+                    number: Some((schema.len() + 2) as i32),
-+                    r#type: Some(field_descriptor_proto::Type::String.into()),
-+                    ..Default::default()
-+                };
-+                descriptor_proto.field.push(field);
-+            }
-         }
- 
-         let descriptor_pool = build_protobuf_descriptor_pool(&descriptor_proto)?;
-@@ -724,7 +740,7 @@ impl BigQuerySinkWriter {
-         } else {
-             None
-         };
--        let change_sequence_number_field = if !is_append_only {
-+        let change_sequence_number_field = if !is_append_only && config.change_sequence_number {
-             let field = message_descriptor
-                 .get_field_by_name(CHANGE_SEQUENCE_NUMBER)
-                 .ok_or_else(|| {
-@@ -772,7 +788,11 @@ impl BigQuerySinkWriter {
+     pub fn from_btreemap(properties: BTreeMap<String, String>) -> Result<Self> {
+         let config =
+             serde_json::from_value::<SqlServerConfig>(serde_json::to_value(properties).unwrap())
+@@ -543,11 +557,11 @@ impl SqlServerClient {
+         config.authentication(AuthMethod::sql_server(&msconfig.user, &msconfig.password));
+         config.database(&msconfig.database);
+         config.trust_cert();
+-        Self::new_with_config(config).await
++        Self::new_with_config(config, msconfig.timeouts()).await
      }
  
-     fn upsert(&mut self, chunk: StreamChunk) -> Result<Vec<Vec<u8>>> {
--        let sequence_numbers = CHANGE_SEQUENCE_CLOCK.reserve(chunk.cardinality());
-+        let sequence_numbers = if self.change_sequence_number_field.is_some() {
-+            Either::Left(CHANGE_SEQUENCE_CLOCK.reserve(chunk.cardinality()).map(Some))
-+        } else {
-+            Either::Right(std::iter::repeat_n(None, chunk.cardinality()))
-+        };
-         let mut serialized_rows: Vec<Vec<u8>> = Vec::with_capacity(chunk.capacity());
-         for ((op, row), sequence_number) in chunk.rows().zip_eq_debug(sequence_numbers) {
-             if op == Op::UpdateDelete {
-@@ -803,13 +823,15 @@ impl BigQuerySinkWriter {
-                     )
-                     .map_err(|e| SinkError::BigQuery(e.into()))?,
-             };
--            pb_row
--                .message
--                .try_set_field(
--                    self.change_sequence_number_field.as_ref().unwrap(),
--                    prost_reflect::Value::String(sequence_number),
--                )
--                .map_err(|e| SinkError::BigQuery(e.into()))?;
-+            if let Some(sequence_number) = sequence_number {
-+                pb_row
-+                    .message
-+                    .try_set_field(
-+                        self.change_sequence_number_field.as_ref().unwrap(),
-+                        prost_reflect::Value::String(sequence_number),
-+                    )
-+                    .map_err(|e| SinkError::BigQuery(e.into()))?;
-+            }
- 
-             serialized_rows.push(pb_row.ser_to()?)
-         }
-@@ -1120,12 +1142,14 @@ mod test {
-     use risingwave_common::types::{DataType, StructType};
-     use tokio::sync::mpsc;
- 
-+    use crate::allow_alter_on_fly_fields::check_sink_allow_alter_on_fly_fields;
-     use crate::connector_common::AwsAuthProps;
-     use crate::sink::big_query::{
--        BigQueryCommon, BigQueryConfig, BigQuerySink, BigQuerySinkWriter, CHANGE_SEQUENCE_NUMBER,
--        CHANGE_TYPE, ChangeSequenceClock, StorageWriterClient, build_protobuf_descriptor_pool,
--        build_protobuf_schema,
-+      
+-    pub async fn new_with_config(config: Config) -> Result<Self> {
+-        let inner_client = create_mssql_client_with_config(config)
++    pub async fn new_with_config(config: Config, timeouts: MssqlTimeouts) -> Result<Self> {
++        let inner_client = create_mssql_client_with_config(config, timeouts)
+             .await
+             .map_err(SinkError::SqlServer)?;
+         Ok(Self { inner_client })
 ```
 
-**File**: `src/connector/with_options_sink.yaml` (modified, +9/-0)
+**File**: `src/connector/src/source/cdc/enumerator/mod.rs` (modified, +14/-3)
 ```diff
-@@ -115,6 +115,15 @@ BigQueryConfig:
-   - name: r#type
-     field_type: String
-     required: true
-+  - name: bigquery.change_sequence_number
-+    field_type: bool
-+    comments: |-
-+      Write `_CHANGE_SEQUENCE_NUMBER` on upsert rows, so that `BigQuery` applies the changes of
-+      each key in the order they are sent. Once a table has rows written with it, turning it off
-+      makes `BigQuery` ignore later changes to those rows.
-+    required: false
-+    default: Default::default
-+    allow_alter_on_fly: true
- ClickHouseConfig:
-   fields:
-   - name: clickhouse.url
+@@ -31,16 +31,18 @@ use risingwave_pb::connector_service::{SourceType, ValidateSourceRequest, Valida
+ use tiberius::Config;
+ use tokio_postgres::types::PgLsn;
+ 
++use crate::connector_common::sql_server::MssqlTimeouts;
+ use crate::connector_common::{SslMode, create_pg_client, pg_connection_config_from_properties};
+ use crate::error::ConnectorResult;
+ use crate::sink::sqlserver::SqlServerClient;
+ use crate::source::cdc::external::mysql::{
+     build_mariadb_connection_pool, build_mysql_connection_pool,
+ };
++use crate::source::cdc::external::sql_server::SqlServerCdcTimeouts;
+ use crate::source::cdc::split::{extract_binlog_file_seq, parse_sql_server_lsn_str};
+ use crate::source::cdc::{
+-    CdcProperties, CdcSourceTypeTrait, DebeziumCdcSplit, Mariadb, Mongodb, Mysql, Oracle, Postgres,
+-    SqlServer, table_schema_exclude_additional_columns,
++    CdcProperties, CdcSourceType, CdcSourceTypeTrait, DebeziumCdcSplit, Mariadb, Mongodb, Mysql,
++    Oracle, Postgres, SqlServer, table_schema_exclude_additional_columns,
+ };
+ use crate::source::monitor::metrics::EnumeratorMetrics;
+ use crate::source::{SourceEnumeratorContextRef, SplitEnumerator};
+@@ -58,6 +60,7 @@ pub struct DebeziumSplitEnumerator<T: CdcSourceTypeTrait> {
+     mariadb_cdc_binlog_file_seq_max: Option<LabelGuardedIntGauge>,
+     sqlserver_cdc_upstream_min_lsn: Option<LabelGuardedIntGauge>,
+     sqlserver_cdc_upstream_max_lsn: Option<LabelGuardedIntGauge>,
++    sqlserver_cdc_timeouts: MssqlTimeouts,
+     /// Properties specified in the WITH clause by user for database connection
+     properties: Arc<BTreeMap<String, String>>,
+     _phantom: PhantomData<T>,
+@@ -96,6 +99,12 @@ where
+ 
+         // Create Arc once and share it
+         let properties_arc = Arc::new(props.properties);
++        let sqlserver_cdc_timeouts = match T::source_type() {
++            CdcSourceType::SqlServer => {
++                SqlServerCdcTimeouts::from_properties(&properties_arc)?.timeouts()
++            }
++            _ => MssqlTimeouts::default(),
++        };
+         let properties_arc_for_validation = properties_arc.clone();
+         let table_schema_for_validation = props.table_schema;
+ 
+@@ -149,6 +158,7 @@ where
+             mariadb_cdc_binlog_file_seq_max: None,
+             sqlserver_cdc_upstream_min_lsn: None,
+             sqlserver_cdc_upstream_max_lsn: None,
++            sqlserver_cdc_timeouts,
+             properties: properties_arc,
+             _phantom: PhantomData,
+         })
+@@ -292,7 +302,8 @@ impl<T: CdcSourceTypeTrait> DebeziumSplitEnumerator<T> {
+         config.authentication(tiberius::AuthMethod::sql_server(username, password));
+         config.trust_cert();
+ 
+-        let mut client = SqlServerClient::new_with_config(config).await?;
++        let mut client =
++            SqlServerClient::new_with_config(config, self.sqlserver_cdc_timeouts).await?;
+         let row = client
+             .inner_client
+             .simple_query(
 ```
 
 ---
 
-### Incident Patch 3: `5b172d1a` (2026-11-17)
-**Commit Message**: fix(storage): preserve listing pagination across full GC batches (#27766)
+### Incident Patch 2: `6bd970c5` (2026-11-25)
+**Commit Message**: fix(meta): notify worker deletion before refreshing cluster resources (#28174)
 
-**File**: `src/ctl/src/cmd_impl/hummock/migrate_legacy_object.rs` (modified, +1/-1)
+**File**: `src/meta/src/controller/cluster.rs` (modified, +82/-6)
 ```diff
-@@ -55,7 +55,7 @@ pub async fn migrate_legacy_object(
-     let ObjectStoreImpl::Opendal(opendal) = store else {
-         return Err(anyhow!("OpenDAL is required"));
-     };
--    let mut iter = opendal.list(source_dir, None, None).await?;
-+    let mut iter = opendal.list(source_dir).await?;
-     let mut count = 0;
-     println!("Migration is started: from {source_dir} to {target_dir}.");
-     let mut from_to = Vec::with_capacity(concurrency as usize);
-```
-
-**File**: `src/ctl/src/cmd_impl/hummock/sst_dump.rs` (modified, +1/-1)
-```diff
-@@ -141,7 +141,7 @@ pub async fn sst_dump(context: &CtlContext, args: SstDumpArgs) -> anyhow::Result
-             .await?;
-         } else {
-             let mut metadata_iter = sstable_store
--                .list_sst_object_metadata_from_object_store(None, None, None)
-+                .list_sst_object_metadata_from_object_store(None)
-                 .await?;
-             while let Some(obj) = metadata_iter.try_next().await? {
-                 print_object(&obj);
-```
-
-**File**: `src/jni_core/src/opendal_schema_history.rs` (modified, +2/-8)
-```diff
-@@ -243,10 +243,7 @@ pub extern "system" fn Java_com_risingwave_java_binding_Binding_listObject<'a>(
-         let files: Vec<String> = JAVA_BINDING_ASYNC_RUNTIME.block_on(async {
-             let object_store = get_object_store().await;
-             let mut prefix_stripped_paths = Vec::new();
--            let mut stream = object_store
--                .list(&dir, None, None)
--                .await
--                .map_err(|e| anyhow!(e))?;
-+            let mut stream = object_store.list(&dir).await.map_err(|e| anyhow!(e))?;
-             use futures::StreamExt;
-             while let Some(obj) = stream.next().await {
-                 let obj = obj.map_err(|e| anyhow!(e))?;
-@@ -292,10 +289,7 @@ pub extern "system" fn Java_com_risingwave_java_binding_Binding_deleteObjects<'a
-         JAVA_BINDING_ASYNC_RUNTIME.block_on(async {
-             let object_store = get_object_store().await;
-             let mut keys = Vec::new();
--            let mut stream = object_store
--                .list(&dir, None, None)
--                .await
--                .map_err(|e| anyhow!(e))?;
-+            let mut stream = object_store.list(&dir).await.map_err(|e| anyhow!(e))?;
-             use futures::StreamExt;
-             while let Some(obj) = stream.next().await {
-                 let obj = obj.map_err(|e| anyhow!(e))?;
-```
-
-**File**: `src/meta/src/backup_restore/restore.rs` (modified, +1/-3)
-```diff
-@@ -293,9 +293,7 @@ async fn validate_integrity(
-         )
-         .await,
-     );
--    let mut iter = object_store
--        .list(hummock_storage_directory, None, None)
--        .await?;
-+    let mut iter = object_store.list(hummock_storage_directory).await?;
-     while let Some(obj) = iter.try_next().await? {
-         let Some(obj_id) = try_get_object_id_from_path(&obj.key) else {
-             continue;
-```
-
-**File**: `src/meta/src/hummock/manager/gc.rs` (modified, +227/-46)
-```diff
-@@ -95,11 +95,9 @@ impl GcManager {
-     async fn list_object_metadata_from_object_store(
-         &self,
-         prefix: Option<String>,
--        start_after: Option<String>,
--        limit: Option<usize>,
-     ) -> Result<ObjectMetadataIter> {
-         let list_path = format!("{}/{}", self.path_prefix, prefix.unwrap_or("".into()));
--        let raw_iter = self.store.list(&list_path, start_after, limit).await?;
-+        let raw_iter = self.store.list(&list_path).await?;
-         let valid_suffixes = VALID_OBJECT_ID_SUFFIXES.map(|suffix| format!(".{}", suffix));
-         let iter = raw_iter.filter(move |r| match r {
-             Ok(i) => future::ready(valid_suffixes.iter().any(|suffix| i.key.ends_with(suffix))),
-@@ -108,41 +106,23 @@ impl GcManager {
-         Ok(Box::pin(iter))
+@@ -202,16 +202,15 @@ impl ClusterController {
+                 .notify_frontend_without_version(Operation::Delete, Info::Node(worker.clone()));
+         }
+ 
+-        // Keep license manager in sync with the latest cluster resource.
+-        self.update_cluster_resource_for_license().await?;
+-
+-        // Notify local subscribers.
+-        // Note: Any type of workers may pin some hummock resource. So `HummockManager` expect this
+-        // local notification.
++        // Any worker type may pin Hummock resources. Notify local subscribers before the
++        // fallible resource refresh so its failure cannot skip cleanup for a deleted worker.
+         self.env
+             .notification_manager()
+             .notify_local_subscribers(LocalNotification::WorkerNodeDeleted(worker.clone()));
+ 
++        // Keep license manager in sync with the latest cluster resource.
++        self.update_cluster_resource_for_license().await?;
++
+         Ok(worker)
      }
  
--    /// Returns **filtered** object ids, and **unfiltered** total object count and size.
--    pub async fn list_objects(
--        &self,
-+    /// Consumes a batch from the same listing, preserving the backend's pagination state.
-+    /// Returns object ids filtered by retention, and the batch's count and size before that filter.
-+    async fn list_objects_batch(
-+        metadata_iter: &mut ObjectMetadataIter,
-         object_retention_watermark: u64,
--        prefix: Option<String>,
--        start_after: Option<String>,
--        limit: Option<u64>,
--    ) -> Result<(HashSet<HummockObjectId>, u64, u64, Option<String>)> {
--        tracing::debug!(
--            object_retention_watermark,
--            prefix,
--            start_after,
--            limit,
--            "Try to list objects."
--        );
-+        limit: usize,
-+    ) -> Result<(HashSet<HummockObjectId>, u64, u64)> {
-         let mut total_object_count = 0;
-         let mut total_object_size = 0;
--        let mut next_start_after: Option<String> = None;
--        let metadata_iter = self
--            .list_object_metadata_from_object_store(prefix, start_after, limit.map(|i| i as usize))
--            .await?;
-         let filtered = metadata_iter
-+            .by_ref()
-+            .take(limit)
-             .filter_map(|r| {
-                 let result = match r {
-                     Ok(o) => {
-                         total_object_count += 1;
-                         total_object_size += o.total_size;
--                        // Determine if the LIST has been truncated.
--                        // A false positives would at most cost one additional LIST later.
--                        if let Some(limit) = limit
--                            && limit == total_object_count
--                        {
--                            next_start_after = Some(o.key.clone());
--                            tracing::debug!(next_start_after, "set next start after");
--                        }
-                         if o.last_modified < object_retention_watermark as f64 {
-                             Some(Ok(get_object_id_from_path(&o.key)))
-                         } else {
-@@ -155,12 +135,7 @@ impl GcManager {
-             })
-             .try_collect::<HashSet<HummockObjectId>>()
-             .await?;
--        Ok((
--            filtered,
--            total_object_count,
--            total_object_size as u64,
--            next_start_after,
--        ))
-+        Ok((filtered, total_object_count, total_object_size as u64))
+@@ -974,7 +973,12 @@ impl ClusterControllerInner {
+ 
+ #[cfg(test)]
+ mod tests {
++    use risingwave_hummock_sdk::version::MAX_HUMMOCK_VERSION_ID;
++    use risingwave_meta_model::hummock_pinned_version;
++    use sea_orm::ConnectionTrait;
++
+     use super::*;
++    use crate::hummock::test_utils::setup_compute_env;
+ 
+     fn mock_worker_hosts_for_test(count: usize) -> Vec<HostAddress> {
+         (0..count)
+@@ -1073,6 +1077,78 @@ mod tests {
+         Ok(())
      }
  
-     pub fn add_may_delete_object_ids(
-@@ -271,8 +246,11 @@ impl HummockManager {
-             object_retention_time,
-             Duration::from_secs(self.env.opts.min_sst_retention_time_sec),
-         );
--        let limit = self.env.opts.full_gc_object_limit;
--        let mut start_after = None;
-+        let limit = usize::try_from(self.env.opts.full_gc_object_limit)
-+            .map_err(|_| anyhow::anyhow!("full_gc_object_limit exceeds usize::MAX"))?;
-+        if limit == 0 {
-+            return Err(anyhow::anyhow!("full_gc_object_limit must be greater than zero").into());
-+        }
-         let object_retention_watermark = self
-             .now()
-             .await?
-@@ -285,21 +263,24 @@ impl HummockManager {
-             limit,
-             "Start GC."
-         );
-+        // Keep one lister across batches so backends such as Azure Blob can use their
-+        // continuation tokens without requiring support for listing after an object key.
-+        let mut metadata_iter = self
-+            .gc_manager
-+            .list_object_metadata_from_object_store(prefix.clone())
++    #[tokio::test]
++    async fn test_delete_worker_notifies_on_resource_refresh_error() -> MetaResult<()> {
++        let (env, hummock_manager, cluster_ctl, worker_id) = setup_compute_env(5013).await;
++        let worker = cluster_ctl.get_worker_by_id(worker_id).await?.unwrap();
++        let remaining_worker_id = cluster_ctl
++            .add_worker(
++                PbWorkerType::ComputeNode,
++                HostAddress {
++                    host: "127.0.0.1".to_owned(),
++                    port: 5014,
++                },
++                AddNodeProperty::default(),
++                PbResource::default(),
++            )
 +            .await?;
-         loop {
-             tracing::debug!(
-                 retention_sec = object_retention_time.as_secs(),
-                 prefix,
--                start_after,
-                 limit,
-                 "Start a GC batch."
-             );
--            let (object_ids, batch_object_count, batch_object_size, next_start_after) = self
--                .gc_manager
--                .list_objects(
-+            let (object_ids, batch_object_count, batch_object_size) =
-+                GcManager::list_objects_batch(
-+                    &mut metadata_iter,
++        let pinned_version = hummock_manager.pin_version(worker_id).await.unwrap();
++        assert_eq!(
++            hummock_manager.get_min_pinned_version_id().await,
++            pinned_version.id
++        );
++
++        let (notification_tx, mut notification_rx) = unbounded_channel();
++        env.notification_manager()
++            .insert_local_sender(notification_tx);
++
++        // Inject a decoding error into the resource query only after worker deletion succeeds.
++        // The trigger affects this test's database without a process-wide failpoint.
++        let db = &env.meta_store_ref().conn;
++        db.execute_unprepared(&format!(
++            "CREATE TRIGGER fail_resource_refresh AFTER DELETE ON worker
++             WHEN OLD.worker_id = {worker_id}
++             BEGIN
++                 UPDATE worker_property SET parallelism = 'invalid integer'
++                 WHERE worker_id = {remaining_worker_id};
++             END"
++        ))
++        .await?;
++        cluster_ctl.cluster_resource().await?;
++
++        // Keep reporting the refresh error, even though deletion has already succeeded.
++        assert!(
++            cluster_ctl
++                .delete_worker(worker.host.unwrap())
++                .await
++                .is_err()
++        );
++        assert!(cluster_ctl.cluster_resource().await.is_err());
++        assert!(cluster_ctl.get_worker_by_id(worker_id).await?.is_none());
++        assert!(cluster_ctl.heartbeat(worker_id).await.is_err());
++        assert!(matches!(
++            notification_rx.try_recv().unwrap(),
++            LocalNotification::WorkerNodeDeleted(deleted) if deleted.id == worker_id
++        ));
++
++        // The running Hummock notification worker must release the pin without a meta restart.
++        tokio::time::timeout(Duration::from_secs(10), async {
++            while hummock_manager.get_min_pinned_version_id().await != MAX_HUMMOCK_VERSION_ID {
++                tokio::time::sleep(Duration::from_millis(10)).await;
++            }
++        })
++        .await
++        .expect("deleted worker's Hummock pin was not released");
++        assert!(
++            hummock_pinned_version::Entity::find_by_id(worker_id)
++                .one(db)
++                .await?
++                .is_none()
++        );
++
++        Ok(())
++    }
++
+     #[tokio::test]
+     async fn test_list_workers_include_meta_node() -> MetaResult<()> {
+         let env = MetaSrvEnv::for_test().await;
+```
+
+---
+
+### Incident Patch 3: `18b29990` (2026-11-25)
+**Commit Message**: fix: report cgroup memory usage without clamping to host usage (#27982)
+
+**File**: `docs/dev/src/benchmark-and-profile/memory-profiling.md` (modified, +1/-1)
+```diff
+@@ -124,7 +124,7 @@ For Cloud deployments, the necessary configuration is already done, and you can
+ 
+ The dumped files will be saved on the target node.
+ 
+-Besides manual dumps, RisingWave deployments on Cloud will also **auto dump** heap profiles when the process memory usage crosses a configured threshold. See `[server.heap_profiling]` section in the configuration file.
++Besides manual dumps, RisingWave deployments on Cloud will also **auto dump** heap profiles when memory usage crosses a configured threshold. The trigger uses cgroup memory usage in containers and falls back to host memory usage if the cgroup reading is unavailable. See the `[server.heap_profiling]` section in the configuration file.
+ 
+ ## Step 2 - Analyze Heap Dump
  
 ```
 
-**File**: `src/meta/src/hummock/manager/worker.rs` (modified, +1/-1)
+**File**: `src/common/heap_profiling/src/profiler.rs` (modified, +2/-1)
 ```diff
-@@ -142,7 +142,7 @@ async fn try_clean_up_cdc_source_schema_history(
-     // The path should follow that defined in OpenDalSchemaHIstory.java prefixed by data_directory.
-     let object_dir: String = format!("{data_directory}/rw-cdc-schema-history/source-{source_id}");
-     let mut keys: Vec<String> = Vec::new();
--    let mut stream = object_store.list(&object_dir, None, None).await?;
-+    let mut stream = object_store.list(&object_dir).await?;
-     use futures::StreamExt;
-     while let Some(obj) = stream.next().await {
-         let obj = obj?;
+@@ -39,7 +39,8 @@ impl HeapProfiler {
+     /// # Arguments
+     ///
+     /// `total_memory` must be the total available memory for the process.
+-    /// It will be compared with the process resident memory.
++    /// The threshold derived from it is compared with cgroup memory usage in containers,
++    /// or system memory usage when cgroup usage is unavailable.
+     pub fn new(total_memory: usize, config: HeapProfilingConfig) -> Self {
+         let threshold_auto_dump_heap_profile =
+             (total_memory as f64 * config.threshold_auto as f64) as usize;
 ```
 
-**File**: `src/object_store/src/benchmark/basic.rs` (modified, +3/-8)
+**File**: `src/utils/resource_util/src/lib.rs` (modified, +43/-17)
 ```diff
-@@ -213,7 +213,7 @@ pub(super) async fn metadata(
-             async move {
-                 Outcome::from_result(
-                     async {
--                        let mut stream = s.list(&prefix, None, None).await?;
-+                        let mut stream = s.list(&prefix).await?;
-                         let mut count = 0;
-                         while stream.try_next().await?.is_some() {
-                             count += 1;
-@@ -417,7 +417,7 @@ pub(super) async fn preflight(
-                     );
-                 }
-                 let listed = store
--                    .list(&prefix, None, None)
-+                    .list(&prefix)
-                     .await
-                     .context("preflight LIST")?
-                     .try_collect::<Vec<_>>()
-@@ -431,12 +431,7 @@ pub(super) async fn preflight(
-                     .await
-                     .context("preflight DELETE")?;
-                 ensure!(
--                    store
--                        .list(&prefix, None, None)
--                        .await?
--                        .try_next()
--                        .await?
--                        .is_none(),
-+                    store.list(&prefix).await?.try_next().await?.is_none(),
-                     "preflight object is still listed after DELETE"
-                 );
-                 Ok(Sample {
-```
-
-**File**: `src/object_store/src/benchmark/tests.rs` (modified, +5/-11)
-```diff
-@@ -168,13 +168,7 @@ async fn all_profiles_clean_only_owned_objects() {
-             30
-         );
+@@ -168,11 +168,11 @@ pub mod memory {
+         system_with_memory().used_memory() as usize
      }
--    let remaining: Vec<_> = store
--        .list("", None, None)
--        .await
--        .unwrap()
--        .try_collect()
--        .await
--        .unwrap();
-+    let remaining: Vec<_> = store.list("").await.unwrap().try_collect().await.unwrap();
-     assert_eq!(remaining.len(), 1);
-     assert_eq!(remaining[0].key, "production/object");
-     assert!(!report.backpressure_verified);
-@@ -286,7 +280,7 @@ async fn kept_data_and_pre_cancelled_run() {
-     assert!(report.succeeded());
-     assert_eq!(
-         store
--            .list("risectl-bench/kept/", None, None)
-+            .list("risectl-bench/kept/")
-             .await
-             .unwrap()
-             .try_collect::<Vec<_>>()
-@@ -325,7 +319,7 @@ async fn kept_data_and_pre_cancelled_run() {
-     assert_eq!(report.cleanup_status, "completed");
-     assert!(
-         store
--            .list("risectl-bench/cancelled/", None, None)
-+            .list("risectl-bench/cancelled/")
-             .await
-             .unwrap()
-             .try_collect::<Vec<_>>()
-@@ -660,7 +654,7 @@ async fn real_s3_profiles() {
-     assert!(report.succeeded(), "{report:#?}");
-     assert!(
-         store
--            .list(&prefix, None, None)
-+            .list(&prefix)
-             .await
-             .unwrap()
-             .try_collect::<Vec<_>>()
-@@ -742,7 +736,7 @@ async fn basic_caps_measurement_reuses_keys_and_replenishes_deletes() {
-     assert_eq!(deleted.items, 12); // Two five-object rounds and one two-object batch.
-     assert!(deleted.wall_elapsed_ms >= deleted.elapsed_ms + deleted.setup_elapsed_ms);
-     let remaining = store
--        .list("risectl-bench/budget/", None, None)
-+        .list("risectl-bench/budget/")
-         .await
-         .unwrap()
-         .try_collect::<Vec<_>>()
+ 
+-    /// Returns the total memory used by the system in bytes.
++    /// Returns the total memory used in bytes.
+     ///
+-    /// If running in container, this function will read the cgroup interface files for the
+-    /// memory used, if interface files are not found, will return the memory used in the system
+-    /// as default. The cgroup mount point is assumed to be at /sys/fs/cgroup by default.
++    /// In a container, this returns the cgroup's memory usage, including memory charged for
++    /// file cache. If the cgroup usage is unavailable or invalid, this returns the host's
++    /// used memory instead. The cgroup mount point is assumed to be at /sys/fs/cgroup.
+     ///
+     ///
+     /// # Examples
+@@ -186,7 +186,13 @@ pub mod memory {
+             "memory used",
+             super::Controller::Memory,
+             get_system_memory_used,
+-            get_container_memory_used,
++            |cgroup_version| {
++                let usage_path = match cgroup_version {
++                    super::CgroupVersion::V1 => V1_MEMORY_CURRENT_PATH,
++                    super::CgroupVersion::V2 => V2_MEMORY_CURRENT_PATH,
++                };
++                get_container_memory_used(usage_path)
++            },
+         )
+     }
+ 
+@@ -228,18 +234,38 @@ pub mod memory {
+         Ok(std::cmp::min(value, system))
+     }
+ 
+-    /// Returns the memory used in a container if running in a container else returns the system
+-    /// memory used.
+-    fn get_container_memory_used(
+-        cgroup_version: super::CgroupVersion,
+-    ) -> Result<usize, std::io::Error> {
+-        let usage_path = match cgroup_version {
+-            super::CgroupVersion::V1 => V1_MEMORY_CURRENT_PATH,
+-            super::CgroupVersion::V2 => V2_MEMORY_CURRENT_PATH,
+-        };
+-        let system = get_system_memory_used();
+-        let value = super::util::read_usize_or_max(usage_path, system)?;
+-        Ok(std::cmp::min(value, system))
++    fn get_container_memory_used(usage_path: &str) -> Result<usize, std::io::Error> {
++        // Host used memory can exclude reclaimable cache charged to the cgroup.
++        super::util::read_usize(usage_path)
++    }
++
++    #[cfg(test)]
++    mod tests {
++        use std::io::ErrorKind;
++
++        use super::get_container_memory_used;
++
++        #[test]
++        fn test_container_memory_usage() {
++            let dir = tempfile::tempdir().unwrap();
++            let usage_path = dir.path().join("memory.current");
++            let path = usage_path.to_str().unwrap();
++
++            // An intentionally large counter must be returned without a host-dependent cap.
++            std::fs::write(&usage_path, format!("{}\n", usize::MAX)).unwrap();
++            assert_eq!(get_container_memory_used(path).unwrap(), usize::MAX);
++
++            std::fs::write(&usage_path, "max\n").unwrap();
++            assert_eq!(
++                get_container_memory_used(path).unwrap_err().kind(),
++                ErrorKind::InvalidData
++            );
++            std::fs::remove_file(&usage_path).unwrap();
++            assert_eq!(
++                get_container_memory_used(path).unwrap_err().kind(),
++                ErrorKind::NotFound
++            );
++        }
+     }
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28013** (2026-11-16): cherry-pick fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) to release-3.0 (@yuhao-su)
-- **PR #28011** (2026-11-16): cherry-pick fix(optimizer): keep the outer column type when eliminating a correlated apply (#28003) to release-3.1 (@chenzl25)
-- **PR #28008** (2026-11-16): fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) (@risingwave-ci)
-- **PR #28004** (2026-11-16): fix(connector): keep NULL for columns with a default in CDC change events (@anlowee)
-- **PR #28003** (2026-11-16): fix(optimizer): keep the outer column type when eliminating a correlated apply (@chenzl25)
-- **PR #27987** (2026-11-16): fix(build): patch native dependencies for modern GCC and glibc (@silver-ymz)
+- **PR #28181** (2026-11-26): chore(deps): Bump axum-server from 0.8.0 to 0.9.2 (@dependabot[bot])
+- **PR #28174** (2026-11-25): fix(meta): notify worker deletion before refreshing cluster resources (@zwang28)
+- **PR #28169** (2026-11-25): feat(connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts (@yuhao-su)
+- **PR #28167** (closed): chore(deps): Bump jiff from 0.2.35 to 0.2.42 (@dependabot[bot])
+- **PR #28156** (closed): chore(deps): Bump jiff from 0.2.35 to 0.2.42 (@dependabot[bot])
+- **PR #28151** (closed): WIP: fix(meta): order frontend worker notifications against snapshots (@Li0k)
 
 ---
 
@@ -1789,63 +1893,92 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. connector): keep NULL for columns with a default in CDC change events
+## X. connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts
 
 **RULE**:
-When implementing operations in `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab28399d`: connector): keep NULL for columns with a default in CDC change events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `30d05555`: connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-control substitution on
-
-statement ok
-drop source if exists postgres_null_with_default_source cascade;
-
-system ok
-PGDATABASE=${PGDATABASE:-postgres} psql -c "
-    SELECT pg_terminate_backend(active_pid)
-    FROM pg_replication_slots
-    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
-    SELECT pg_sleep(1);
-    SELECT pg_drop_replication_slot(slot_name)
-    FROM pg_replication_slots
-    WHERE slot_name = 'postgres_null_with_default_slot';
-    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
-    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
-    CREATE TABLE public.postgres_null_with_default (
-        id int PRIMARY KEY,
-        v int,
-        c_text text DEFAULT 'x',
-        c_jsonb jsonb DEFAULT '{}'::jsonb,
-        c_ts timestamp DEFAULT now()
-    );
-    INSERT INTO public.postgres_null_with_default VALUES (1, 0, NULL, NULL, NULL);
-    CREATE PUBLICATION postgres_null_with_default_pub FOR TABLE public.postgres_null_with_default;
-    "
-
-statement ok
-create source postgres_null_with_default_source with (
-    connector = 'postgres-cdc',
-    hostname = '${PGHOST:localhost}',
-    port = '${PGPORT:5432}',
-    username = '${PGUS
+ "bigdecimal",
+ "bigdecimal",
+ "rustls-native-certs",
+ "tokio-rustls",
+version = "0.7.0"
+checksum = "a860072022177f903e59730004fb5dc13db9275b79bb2aef7ba8ce831956c233"
+ "rustls",
+ "rustls-native-certs",
+ "tokio-rustls",
+ "rustls",
+ "bigdecimal",
+ "bigdecimal",
+ "rustls",
+ "rustls-native-certs",
+ "tokio-rustls",
+ "rustls",
+ "rustls-native-certs",
+ "tokio-rustls",
+ "rustls",
+ "tokio-rustls",
+ "security-framework",
+ "bigdecimal",
+ "rustls",
+ "rustls-native-certs",
+version = "0.4.2"
+checksum = "9a65843dfefbafd3c879c683306959a6de478443ffe9c9adf02f5976432402d7"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+ "bigdecimal 0.4.10",
+ "bigdecimal 0.4.10",
+ "rustls-native-certs 0.8.1",
+ "tokio-rustls 0.26.4",
+version = "0.6.2"
+checksum = "4057f2c32adbb2fc158e22fb38433c8e9bbf76b75a4732c7c0cbaf695fb65568"
+ "rustls 0.23.46",
+ "rustls-native-certs 0.8.1",
+ "tokio-rustls 0.26.4",
+[[package]]
+name = "bigdecimal"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a6773ddc0eafc0e509fb60e48dff7f450f8e674a0686ae8605e8d9901bd5eefa"
+dependencies = [
+ "num-bigint 0.4.6",
+ "num-integer",
+ "num-traits",
+]
+
+ "rustls 0.23.46",
+ "bigdecimal 0.4.10",
+ "bigdecimal 0.4.10",
+ "rustls 0.23.46",
+ "rustls-native-certs 0.8.1",
+ "tokio-rustls 0.26.4",
+ "rustls 0.23.46",
+ "rustls-native-certs 0.8.1",
+ "tokio-rustls 0.26.4",
+ "rustls 0.23.46",
+ "tokio-rustls 0.26.4",
+ "security-framework 3.5.1",
+ "bigdecimal 0.4.10",
+ "rustls 0.23.46",
+ "rustls-native-certs 0.8.1",
+version = "0.3.0"
+checksum = "c6fa0831dd7cc608c38a5e323422a0077678fa5744aa2be4ad91c4ece8eec8d5"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab28399d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `30d05555` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

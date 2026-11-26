@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T05:19:41.910Z",
-  "total_records": 2710,
+  "last_updated": "2026-11-26T05:30:05.311Z",
+  "total_records": 2711,
   "domains": {
     "A": {
       "total": 22,
@@ -71,7 +71,7 @@
       ]
     },
     "D": {
-      "total": 1016,
+      "total": 1017,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1088,7 +1088,8 @@
         "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-comfy-core-invariants",
         "DOM-D-760DF4AB",
         "DOM-D-5C5BC093",
-        "DOM-D-E4E82055"
+        "DOM-D-E4E82055",
+        "DOM-D-D64D33E0"
       ]
     },
     "E": {
@@ -10874,8 +10875,8 @@
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "repository": "linkerd/linkerd2",
-      "content_hash": "8290444bc05c913d1c5ea458277355a59b6cb15127938638151b723c2b7542e4",
-      "created_at": "2026-11-25T05:19:54.304Z"
+      "content_hash": "f4273ee2a10bab9be917d8bb415511192adc5e0a9a17d7b6e584cbac23b35854",
+      "created_at": "2026-11-26T05:29:13.571Z"
     },
     "DOM-D-43004423": {
       "record_id": "DOM-D-43004423",
@@ -10934,8 +10935,8 @@
       "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-learnings-architecture-intelligence-linkerd-linkerd2-learnings-.md",
       "repository": "linkerd-linkerd2-learnings",
-      "content_hash": "c1e79e72efc14341c8a0c240542a1b86425683b40f654327842c788a0f9be074",
-      "created_at": "2026-11-25T05:19:58.936Z"
+      "content_hash": "c37acdaefac307c629ade33a21e3fd35b08ac626bf1a57d7938f28311550989b",
+      "created_at": "2026-11-26T05:30:03.827Z"
     },
     "DOM-D-4CA3BD2A": {
       "record_id": "DOM-D-4CA3BD2A",
@@ -14505,8 +14506,8 @@
       "title": "Technical Construction Intelligence: risingwavelabs/risingwave Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-risingwavelabs-risingwave-technical-construction-intelligence-risingwavelabs-ris.md",
       "repository": "risingwavelabs/risingwave",
-      "content_hash": "13ecc18449d1c144e1fd7af6dd480ea3e45b318011f6a09a33c18a3df3a41f45",
-      "created_at": "2026-11-17T03:26:22.570Z"
+      "content_hash": "8cdb9fd3654e933898c6480cd1e399c8d2c999d29cce3394804a3d755850b03b",
+      "created_at": "2026-11-26T05:29:20.651Z"
     },
     "DOM-D-683CD8F2": {
       "record_id": "DOM-D-683CD8F2",
@@ -14574,8 +14575,8 @@
       "title": "Technical Construction Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-risingwavelabs-risingwave-learnings-technical-construction-intelligence-risingwa.md",
       "repository": "risingwavelabs-risingwave-learnings",
-      "content_hash": "2b68c78b42733197a523e00118f8306c168fb0bcd38f75b7d88195fc8a66ac85",
-      "created_at": "2026-11-14T06:06:27.363Z"
+      "content_hash": "f8e104729cc9ef971159498ba793516420537e753743835d1728435148a6935b",
+      "created_at": "2026-11-26T05:30:05.311Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-core-invariants",
@@ -15615,8 +15616,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V3.2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-2-research-knowledge-intelligence-deepseek-ai-deepsee.md",
       "repository": "deepseek-ai/DeepSeek-V3.2",
-      "content_hash": "3235c1a0e4f17ac0d4143764ebf509b9ce0ba0080e16de5bc5a60bd6d196edb3",
-      "created_at": "2026-11-22T09:25:49.443Z"
+      "content_hash": "fcae86e05504464837c95df773973399ea05128a0cd5fcdc93eaa71c2efa7c70",
+      "created_at": "2026-11-26T05:29:04.771Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openai-community-gpt2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openai-community-gpt2-core-invariants",
@@ -15684,8 +15685,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v3.2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-2-learnings-research-knowledge-intelligence-hf-deepse.md",
       "repository": "hf-deepseek-ai-deepseek-v3.2-learnings",
-      "content_hash": "82a6b688857e8e42ab32080cd3db4d0cfd5762ca259755ce3c9c551bfe61074f",
-      "created_at": "2026-11-22T09:26:09.245Z"
+      "content_hash": "497501fefa7de4ff0f7ef221a4015b1bc3610bdb6ff5e7d03ad6f942e36c77b4",
+      "created_at": "2026-11-26T05:29:24.177Z"
     },
     "DOM-D-E4E3EE21": {
       "record_id": "DOM-D-E4E3EE21",
@@ -45816,6 +45817,48 @@
       "repository": "hf-adventists-ai-sophon-realtime-v1-learnings",
       "content_hash": "68a2d0bae83a9c6d260857585f261f7c1ca44fe203e753ef013ab069f1b1e70b",
       "created_at": "2026-11-26T05:19:39.941Z"
+    },
+    "DOM-D-D64D33E0": {
+      "record_id": "DOM-D-D64D33E0",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): linkerd/linkerd2",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  \n> **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  \n> **Source Version**: `63911ea6`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synt",
+      "content_hash": "96d4e8e5c773fabe2839aadac9d708e4dd0346c5710eba6b5bfed809e0826baa",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  \n> **Source**: github ([https://github.com/linkerd/l -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  \n> **Source**: github ([https://github.com/linkerd/l",
+      "provenance": {
+        "source_uri": "project://linkerd-linkerd2/linkerd-linkerd2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T05:29:24.439Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (linkerd-linkerd2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of linkerd-linkerd2"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T05:30:03.045Z"
     }
   }
 }

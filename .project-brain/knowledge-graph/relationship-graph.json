@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T05:19:38.975Z",
+  "updated_at": "2026-11-26T05:30:03.085Z",
   "statistics": {
-    "total_nodes": 555,
+    "total_nodes": 556,
     "total_edges": 229,
     "domain_distribution": {
-      "D": 334,
+      "D": 335,
       "M": 1,
       "H": 101,
       "J": 22,
@@ -12385,6 +12385,28 @@
       "tags": [],
       "created_at": "2026-11-26T05:19:38.974Z",
       "updated_at": "2026-11-26T05:19:38.974Z"
+    },
+    "DOM-D-D64D33E0": {
+      "id": "DOM-D-D64D33E0",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): linkerd/linkerd2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  \n> **Source**: github ([https://github.com/linkerd/l -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  \n> **Source**: github ([https://github.com/linkerd/l",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://linkerd-linkerd2/linkerd-linkerd2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T05:29:24.439Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (linkerd-linkerd2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-26T05:30:03.085Z",
+      "updated_at": "2026-11-26T05:30:03.085Z"
     }
   },
   "edges": [

@@ -13287,3 +13287,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-adventists-ai-sophon-realtime-v1` | `https://huggingface.co/adventists-ai/Sophon-Realtime-v1` | `hf-adventi` | Multi-dimensional audit evidence | 2026-11-26T05:18:14.240Z |
 | `learn-dom-d-e4e82055` | `project://crate-ci-typos` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-ci-typos-learnings.md` | 2026-11-26T05:18:54.900Z |
 | `learn-dom-h-4e1550af` | `project://hf-adventists-ai-sophon-realtime-v1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md` | 2026-11-26T05:19:38.978Z |
+| `learn-huggingface-deepseek-ai-deepseek-v3-2` | `https://huggingface.co/deepseek-ai/DeepSeek-V3.2` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-26T05:29:04.447Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `63911ea6` | Multi-dimensional audit evidence | 2026-11-26T05:29:13.190Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `151572e0` | Multi-dimensional audit evidence | 2026-11-26T05:29:20.070Z |
+| `learn-dom-d-d64d33e0` | `project://linkerd-linkerd2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md` | 2026-11-26T05:30:03.088Z |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T05:19:41.639Z",
+  "last_updated": "2026-11-26T05:30:05.041Z",
   "directives": [
     {
       "id": "CD-001",
@@ -63368,6 +63368,28 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5C32B9-stop-a-failed-explain-from-aborting-the-.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-4KK1",
+      "directive_title": "bump tiberius to 0.13.0 with configurable SQL Server timeouts",
+      "source_repo": "risingwavelabs/risingwave",
+      "source_commit": "151572e0",
+      "staged_file": "11_INBOX/candidate-directives/CD-4KK1-bump-tiberius-to-0-13-0-with-configurable-sql-server-timeouts.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-5IZM",
+      "directive_title": "connector): bump tiberius to 0.13.0 with configurable SQL Server timeouts",
+      "source_repo": "risingwavelabs-risingwave-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5IZM-connector-bump-tiberius-to-0-13-0-with-configurable-sql-server-timeouts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "H"
     }
   ]
 }

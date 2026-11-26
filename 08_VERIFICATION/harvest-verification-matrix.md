@@ -13254,3 +13254,7 @@
 | `CYCLE-20261126-QAJF` | `2026-11-26T05:18:14.235Z` | `adventists-ai/Sophon-Realtime-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10603, Rule 10604` | Yes (`cb8b3ba3...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T05:18:54.900Z` | `crate-ci-typos` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E4E82055` [Domain D] | Yes (`80321417...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T05:19:38.978Z` | `hf-adventists-ai-sophon-realtime-v1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-4E1550AF` [Domain H] | Yes (`b95af0de...`) |
+| `CYCLE-20261126-488Q` | `2026-11-26T05:29:04.442Z` | `deepseek-ai/DeepSeek-V3.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md` | Yes (`bf7103da...`) |
+| `CYCLE-20261126-4EZL` | `2026-11-26T05:29:13.185Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md` | Yes (`44436e63...`) |
+| `CYCLE-20261126-4KAP` | `2026-11-26T05:29:20.065Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10605` | Yes (`186c0776...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T05:30:03.088Z` | `linkerd-linkerd2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D64D33E0` [Domain D] | Yes (`96d4e8e5...`) |
