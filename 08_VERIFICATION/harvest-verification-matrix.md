@@ -13381,3 +13381,5 @@
 | `CYCLE-20261126-4CED` | `2026-11-26T12:29:04.069Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10677` | Yes (`2856cbce...`) |
 | `CYCLE-20261126-4E4V` | `2026-11-26T12:29:06.319Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10678` | Yes (`fe17adad...`) |
 | `CYCLE-20261126-4GEH` | `2026-11-26T12:29:09.257Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`a07c33fe...`) |
+| `CYCLE-20261126-GIAI` | `2026-11-26T12:38:31.578Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`cc0212c7...`) |
+| `CYCLE-20261126-GRCU` | `2026-11-26T12:38:43.326Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10679` | Yes (`0f52ac72...`) |

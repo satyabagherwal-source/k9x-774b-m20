@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-NXYM",
-    "timestamp": "2026-11-24T23:24:49.198Z",
-    "repository": "webpack/webpack",
-    "learningId": "learn-github-webpack-webpack",
-    "contentHash": "f4a66f6570770ad124e9b1f0b0259f158eb0bd627756113d206c7af7ca53b4ca",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-NYLC",
-    "timestamp": "2026-11-24T23:24:50.016Z",
-    "repository": "mikepenz/AboutLibraries",
-    "learningId": "learn-github-mikepenz-aboutlibraries",
-    "contentHash": "c15d2054a7e0fda0ef464108eb87498f016dc055e4ed051597177449df319b27",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-O2Q6",
     "timestamp": "2026-11-24T23:24:55.374Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7490,6 +7460,36 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "a07c33fe08d7799ce692a7834d45a2312c7c455c0d32f9e283be00a95ab96790",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GIAI",
+    "timestamp": "2026-11-26T12:38:31.578Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "cc0212c7c7f117f2e48de9bf6a825850c7e406f12ff51e842f1381e68fc30661",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-GRCU",
+    "timestamp": "2026-11-26T12:38:43.326Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "0f52ac720e83a8b47a7143f70cb3e9afec93ac3df0cfa5a380fd8272279dbab5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

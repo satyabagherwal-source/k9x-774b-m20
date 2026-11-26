@@ -365,8 +365,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "8127065dae1e0801180ffe9e88d59829f391dfb680353b100a25ff8bb5ccac6d",
-    "lastHarvestedAt": "2026-11-22T19:31:26.742Z",
+    "contentHash": "cc0212c7c7f117f2e48de9bf6a825850c7e406f12ff51e842f1381e68fc30661",
+    "lastHarvestedAt": "2026-11-26T12:38:31.583Z",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "28cc85d1",
+    "sourceVersion": "83f2cb7e",
     "license": "NOASSERTION",
-    "contentHash": "c74ddc86936e454ece4a70189dfb170ac56149e0520c12f27f5fe98681f3eb90",
-    "lastHarvestedAt": "2026-11-26T07:19:12.421Z",
+    "contentHash": "0f52ac720e83a8b47a7143f70cb3e9afec93ac3df0cfa5a380fd8272279dbab5",
+    "lastHarvestedAt": "2026-11-26T12:38:43.331Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

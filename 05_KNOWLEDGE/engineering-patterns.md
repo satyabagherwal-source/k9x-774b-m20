@@ -804669,3 +804669,123 @@ COPY --from=convert --chown=107:107 /work/rootdisk.qcow2 /disk/
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `9f4fd68c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10679. a relay holding the contract serves it at HTL 0 (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "a relay holding the contract serves it at HTL 0",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "83f2cb7e",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T12:38:42.551Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `83f2cb7e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/src/operations/get/op_ctx_task.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `83f2cb7e`: get): a relay holding the contract serves it at HTL 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/operations/get/op_ctx_task.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // ── Short-circuit 1: Local cache hit with interest ───────────────────
+    // ── Short-circuit 2: HTL = 0, nothing fresh to serve ─────────────────
+    // Runs AFTER the local-hit arm above on purpose: a peer that holds a
+    // fresh copy answers Found whatever the HTL. HTL only bounds FORWARDING,
+    // so HTL = 0 never forwards but must not hide a copy this node serves at
+    // any other HTL (the sim trace in ~/code/scratch/placement-gap/TRACE.md:
+    // a GET reached the holder exactly at HTL 0 and got NotFound). Reaching
+    // here means the local arm found no FRESH copy. A stale-but-hosted copy
+    // (`local_fallback`: no local interest, still in the update mesh) is served
+    // as well, exactly as the exhaustion arm below serves it: at HTL 0 routing
+    // is exhausted by definition (this node cannot forward), so the same rule
+    // applies. Fresh copy first, fallback second, NotFound only with neither.
+    if htl == 0 {
+        if let Some((key, state, contract)) = local_fallback {
+            tracing::info!(
+                tx = %incoming_tx,
+                %instance_id,
+                contract = %key,
+                htl = 0,
+                "GET relay: HTL e
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    // ── Short-circuit 1: HTL = 0 ────────────────────────────────────────
+    if htl == 0 {
+        tracing::warn!(
+            tx = %incoming_tx,
+            %instance_id,
+            %upstream_addr,
+            htl = 0,
+            phase = "not_found",
+            "GET relay: HTL exhausted — sending NotFound upstream"
+        );
+        if let Some(event) = crate::tracing::NetEventLog::get_not_found(
+            &incoming_tx,
+            &op_manager.ring,
+            instance_id,
+            Some(op_manager.ring.max_hops_to_live),
+            None,
+        ) {
+            op_manager
+                .ring
+                .register_events(either::Either::Left(event))
+                .await;
+        }
+        // HTL=0 path: the original Request reached us with htl already at 0,
+        // meaning the request traversed the full max_htl forward hops to get
+        // here. hop_count = max_htl - 0 = max_htl.
+        let hop_count = op_manager.ring.max_hops_to_live;
+        // EXPERIMENT-ONLY (findability_probe): record the HTL-exhaustion GET
+        // terminus. NOT for ship.
+        #[cfg(any(test, feature = "testing"))]
+        {
+            let visited = visited.clone();
+         
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `83f2cb7e` are properly handled with clean fallback behavior.

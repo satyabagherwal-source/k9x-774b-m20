@@ -13414,3 +13414,5 @@ Every entry in this ledger must capture:
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `8d514548` | Multi-dimensional audit evidence | 2026-11-26T12:29:04.073Z |
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `9f4fd68c` | Multi-dimensional audit evidence | 2026-11-26T12:29:06.323Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `f2c57796` | Multi-dimensional audit evidence | 2026-11-26T12:29:09.262Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-26T12:38:31.583Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `83f2cb7e` | Multi-dimensional audit evidence | 2026-11-26T12:38:43.331Z |

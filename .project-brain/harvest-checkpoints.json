@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T12:29:09.280Z",
+  "last_updated": "2026-11-26T12:38:43.360Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "8127065dae1e0801180ffe9e88d59829f391dfb680353b100a25ff8bb5ccac6d",
-      "verified_at": "2026-11-22T19:31:26.752Z",
+      "content_hash": "cc0212c7c7f117f2e48de9bf6a825850c7e406f12ff51e842f1381e68fc30661",
+      "verified_at": "2026-11-26T12:38:31.604Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:31:26.752Z"
+      "last_updated": "2026-11-26T12:38:31.604Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "c74ddc86936e454ece4a70189dfb170ac56149e0520c12f27f5fe98681f3eb90",
-      "verified_at": "2026-11-26T07:19:12.438Z",
+      "content_hash": "0f52ac720e83a8b47a7143f70cb3e9afec93ac3df0cfa5a380fd8272279dbab5",
+      "verified_at": "2026-11-26T12:38:43.360Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T07:19:12.438Z"
+      "last_updated": "2026-11-26T12:38:43.360Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",

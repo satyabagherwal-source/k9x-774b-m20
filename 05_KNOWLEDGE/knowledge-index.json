@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T12:29:15.219Z",
+  "last_updated": "2026-11-26T12:38:50.699Z",
   "total_verified_learnings": 9127,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25899,
+  "total_items": 25902,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111970,9 +111970,9 @@
       "title": "Research & Knowledge Intelligence: Viggle/Qwen-Image-2.1-viggle-turbo Core Invariants",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "2fab40658933ee6c5440906c550b8e7e5ff26961df90113e46fcbf014d208eb8",
+      "content_hash": "9c8595df9777227103a87290c146ec656b7b4152edafabdd9ce21b3d1b68b2c7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:31:26.981Z"
+      "persisted_at": "2026-11-26T12:38:31.923Z"
     },
     "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture": {
       "item_id": "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture",
@@ -112018,9 +112018,9 @@
       "title": "Research & Knowledge Intelligence: hf-viggle-qwen-image-2.1-viggle-turbo-learnings Core Invariants",
       "repository": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2abd37ca41beca2d94a0d2cff32d26173339ea60e670a9d14d6aa03e0905355",
+      "content_hash": "10a63783b3f0bb721be301354c3ef88d2af84836cf333b3bf4e622e5b7457efa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T19:31:30.136Z"
+      "persisted_at": "2026-11-26T12:38:47.661Z"
     },
     "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants": {
       "item_id": "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a8e529977df61a5c5afd77ef3996da8cb568059e72153c437d5dd1d42806eab",
+      "content_hash": "a3bc92e0ad79e0d574d6ac3de67d1ce9819909147f310c5170a7503b2f63b9ea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:02:07.452Z"
+      "persisted_at": "2026-11-26T12:38:50.155Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "aeeac3acf0f0f371f2104706e39a597cca9be5d6fce1d83d5a39fce6c8fcc1d2",
+      "content_hash": "1a66d98901fde2c02b00d7f2872cbf3614a817686715ad313b8b2455327ef197",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:02:07.716Z"
+      "persisted_at": "2026-11-26T12:38:50.437Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "369a1d6d2a361acca7876ddd7d6d826c5a8064be5400d7190ff2190fe1b04043",
+      "content_hash": "2f8f17f2135adbdd87f9c35fc3366649e51eca76a4932d5d14779a670f82b934",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:02:07.904Z"
+      "persisted_at": "2026-11-26T12:38:50.699Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "28cc85d1",
-      "content_hash": "668d72e59dbeaa416956b692b9b7834ad8967786e3fa88bb6428d2dd62d8bdb7",
+      "source_version": "83f2cb7e",
+      "content_hash": "a705aacf7865ba2c6724b678c0010cbd7f795d433139443915ee2d2b5badcec2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T07:19:12.940Z"
+      "persisted_at": "2026-11-26T12:38:43.975Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "28cc85d1",
-      "content_hash": "70eb723d8e26a72a83d32a4f2da3dad66f324d1b0fac8f466ca4758c6e59b5c9",
+      "source_version": "83f2cb7e",
+      "content_hash": "ccaf324753c602bd33877c4ddd8969a5bab9eb6f2519ae3acf169083f5e80379",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:19:13.162Z"
+      "persisted_at": "2026-11-26T12:38:44.250Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "94e3a2b70717359e72abce50802aabe41560a58e77c2674b83e9da2278f68afa",
+      "content_hash": "15dd95b048a374a8b51c645fcf648ba5bab42c9d2906740533021d1de57c2421",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T07:19:18.512Z"
+      "persisted_at": "2026-11-26T12:38:48.641Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac0a3b6afe4c31923f23e8c7bd5667db03f3ce5ccf848f680724cfcc1f8ddf0b",
+      "content_hash": "c183b53d9536a31254b40790cd4fc716b9e08e13e5a64c06b7807d833ee4aee8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:19:18.800Z"
+      "persisted_at": "2026-11-26T12:38:48.917Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -221081,8 +221081,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "28cc85d1",
-      "content_hash": "c74ddc86936e454ece4a70189dfb170ac56149e0520c12f27f5fe98681f3eb90",
+      "source_version": "83f2cb7e",
+      "content_hash": "0f52ac720e83a8b47a7143f70cb3e9afec93ac3df0cfa5a380fd8272279dbab5",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221260,6 +221260,11 @@
           "number": 10623,
           "title": "default simulations to QUIC data (prefer, 100%)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10679,
+          "title": "a relay holding the contract serves it at HTL 0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221267,7 +221272,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T07:19:12.099Z",
+      "verified_at": "2026-11-26T12:38:42.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286772,7 +286777,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "8127065dae1e0801180ffe9e88d59829f391dfb680353b100a25ff8bb5ccac6d",
+      "content_hash": "cc0212c7c7f117f2e48de9bf6a825850c7e406f12ff51e842f1381e68fc30661",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [],
@@ -286781,7 +286786,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:31:26.476Z",
+      "verified_at": "2026-11-26T12:38:31.226Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -352000,13 +352005,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5OTE-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GWEM-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "00bf751f795f6a5c17129bfe440fcba1671e035ebca347020ddc75be463e2cd5",
+      "content_hash": "0267ed4b9306ee78a0be1edb81572ce0e62808bfbd6a0997cb1e769267a575cf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:02:07.203Z"
+      "persisted_at": "2026-11-26T12:38:49.876Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
@@ -354854,6 +354859,44 @@
       "content_hash": "af34ec0c02166330f6c2003a0d0daab02e820258f8d5c8f3758cb0afe78e54b0",
       "domain_letter": "D",
       "persisted_at": "2026-11-26T12:29:06.782Z"
+    },
+    "rule-10679": {
+      "learning_id": "rule-10679",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10679,
+      "title": "a relay holding the contract serves it at HTL 0",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "83f2cb7e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T12:38:42.992Z"
+    },
+    "candidate_directive-a-relay-holding-the-contract-serves-it-at-htl-0": {
+      "item_id": "candidate_directive-a-relay-holding-the-contract-serves-it-at-htl-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GRMU-a-relay-holding-the-contract-serves-it-at-htl-0.md",
+      "title": "a relay holding the contract serves it at HTL 0",
+      "repository": "freenet/freenet-core",
+      "source_version": "83f2cb7e",
+      "content_hash": "e014d2371234e59f7c31abf5834ba7f3592fd47ac7fd3126a6dbdaf822269f6d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T12:38:43.693Z"
+    },
+    "candidate_directive-get-a-relay-holding-the-contract-serves-it-at-htl-0": {
+      "item_id": "candidate_directive-get-a-relay-holding-the-contract-serves-it-at-htl-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GV7W-get-a-relay-holding-the-contract-serves-it-at-htl-0.md",
+      "title": "get): a relay holding the contract serves it at HTL 0",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fb2064b0f40178d6df7447500b7ac89e9f9106b2425a0417834624457920b11a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T12:38:48.339Z"
     }
   },
   "ai-builder-brain": {
