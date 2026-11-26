@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T16:40:44.165Z",
+  "last_updated": "2026-11-26T16:49:13.769Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19446,14 +19446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
-      "content_hash": "4cf01de3e7652f3106b2a38fe8d2f99f6979d2f3f1d3be63afcd3f63864cd57b",
-      "verified_at": "2026-11-22T23:41:15.214Z",
+      "content_hash": "3a7c856e576c15556295caeae206d606e29a2c5648ebea527e92bb15e10a4e42",
+      "verified_at": "2026-11-26T16:49:13.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:41:15.214Z"
+      "last_updated": "2026-11-26T16:49:13.768Z"
     },
     "erkamyaman/rust-anything": {
       "repository": "erkamyaman/rust-anything",

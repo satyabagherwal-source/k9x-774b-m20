@@ -12905,8 +12905,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
     "sourceVersion": "hf-huggingfacetb-smolvlm2-256m-video-instruct",
     "license": "Open-Source",
-    "contentHash": "4cf01de3e7652f3106b2a38fe8d2f99f6979d2f3f1d3be63afcd3f63864cd57b",
-    "lastHarvestedAt": "2026-11-22T23:41:15.205Z",
+    "contentHash": "3a7c856e576c15556295caeae206d606e29a2c5648ebea527e92bb15e10a4e42",
+    "lastHarvestedAt": "2026-11-26T16:49:13.754Z",
     "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct"
   },
   "erkamyaman-rust-anything": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T16:41:29.995Z",
+  "last_updated": "2026-11-26T16:49:27.343Z",
   "total_records": 2763,
   "domains": {
     "A": {
@@ -8578,8 +8578,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "7bf2e4d62f9b0222b8068e3aca85050f270b0d8973a98a0df119244eb0732b4a",
-      "created_at": "2026-11-26T13:08:32.288Z"
+      "content_hash": "f1db195527326cb392b2dd42dd17f83f5641ff3c94cecaf714a45febe4eaae5d",
+      "created_at": "2026-11-26T16:49:27.343Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9496,8 +9496,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "7619893b81068ea6f0a046c7f8cd549d2b7bec068e72b5de1a19ca6862837805",
-      "created_at": "2026-11-26T10:31:05.518Z"
+      "content_hash": "5bcc7cca32181e9d890b00649e2071a3244186c18e197e677d1537c147cf0c90",
+      "created_at": "2026-11-26T16:49:26.447Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -32345,8 +32345,8 @@
       "title": "Research & Knowledge Intelligence: HuggingFaceTB/SmolVLM2-256M-Video-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacetb-smolvlm2-256m-video-instruct-research-knowledge-intelligence-hu.md",
       "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
-      "content_hash": "2b43e4210de3ac64acce91168512dd938c9ee7d8e652cbdfabb85803c8c37298",
-      "created_at": "2026-11-22T23:41:15.412Z"
+      "content_hash": "bfc83839bfc18b78af6debfe145152a5b414d8827dba7cd09076d344338b5cb7",
+      "created_at": "2026-11-26T16:49:13.972Z"
     },
     "DOM-D-9D26CBBB": {
       "record_id": "DOM-D-9D26CBBB",
@@ -32396,8 +32396,8 @@
       "title": "Research & Knowledge Intelligence: hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings-research-knowledge-intel.md",
       "repository": "hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings",
-      "content_hash": "a52acb700e6e02c98cedbc0c62f3b47607e4a95ee9f21fd7818eec6da83c5f91",
-      "created_at": "2026-11-22T23:41:27.257Z"
+      "content_hash": "aebfe6c44bea3251ea2c1a0365761e104fcf12537562b34e9ef372e8fedd753c",
+      "created_at": "2026-11-26T16:49:25.782Z"
     },
     "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-core-invariants",

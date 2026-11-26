@@ -13472,3 +13472,4 @@
 | `CYCLE-20261126-3UQ2` | `2026-11-26T16:40:37.706Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10727` | Yes (`3c6e5c55...`) |
 | `CYCLE-20261126-3ZON` | `2026-11-26T16:40:44.135Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10728` | Yes (`e5381e48...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T16:41:28.835Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7DD90772` [Domain H] | Yes (`39076f83...`) |
+| `CYCLE-20261126-EWWN` | `2026-11-26T16:49:13.751Z` | `HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md` | Yes (`3a7c856e...`) |

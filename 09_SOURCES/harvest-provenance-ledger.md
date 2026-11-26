@@ -13505,3 +13505,4 @@ Every entry in this ledger must capture:
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `b91c1ab9` | Multi-dimensional audit evidence | 2026-11-26T16:40:37.712Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `bd95fd9b` | Multi-dimensional audit evidence | 2026-11-26T16:40:44.140Z |
 | `learn-dom-h-7dd90772` | `project://react-hook-form-react-hook-form` | `b91c1ab9` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-26T16:41:28.835Z |
+| `learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct` | `https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-26T16:49:13.754Z |

@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:41:30.573Z",
+  "last_updated": "2026-11-26T16:49:27.659Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-26T13:08:31.535Z",
+      "processed_at": "2026-11-26T16:49:26.796Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-26T10:31:04.785Z",
+      "processed_at": "2026-11-26T16:49:25.973Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3453,7 +3453,7 @@
       "staged_for_review": 1
     },
     "hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md": {
-      "processed_at": "2026-11-22T23:41:27.041Z",
+      "processed_at": "2026-11-26T16:49:25.555Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3983,7 +3983,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4584,
+  "total_dossiers_evaluated": 4587,
   "total_canonical_promoted": 565,
-  "total_staged_for_review": 3452
+  "total_staged_for_review": 3454
 }

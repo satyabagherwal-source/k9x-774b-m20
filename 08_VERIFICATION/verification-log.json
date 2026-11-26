@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-WOS5",
-    "timestamp": "2026-11-25T04:39:32.981Z",
-    "repository": "XcodesOrg/XcodesApp",
-    "learningId": "learn-github-xcodesorg-xcodesapp",
-    "contentHash": "32fc704269b0395990313aca38ef4d5fe69962e1c6440fbf88ceb82131adfe59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-WQWK",
     "timestamp": "2026-11-25T04:39:35.732Z",
     "repository": "rook/rook",
@@ -7492,6 +7477,21 @@
     "contentHash": "e5381e48e8cd19f2aafe04496d843e971b2c4c286af26be3f9aff80de6f24fe5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-EWWN",
+    "timestamp": "2026-11-26T16:49:13.751Z",
+    "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
+    "contentHash": "3a7c856e576c15556295caeae206d606e29a2c5648ebea527e92bb15e10a4e42",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

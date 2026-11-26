@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T23:41:27.146Z",
+  "timestamp": "2026-11-26T16:49:25.677Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T23:41:27.146Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T16:49:25.677Z`  
 > **Learning ID**: `LEARN-EVO-hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-huggingfa`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T23:41:14.676Z  
+> **Timestamp**: 2026-11-26T16:49:13.254Z  
 > **Learning ID**: `learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct](https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:41:14.527Z  
+> **Harvest Timestamp**: 2026-11-26T16:49:13.060Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 44701 downloads | 421 likes
+- **Stars / Engagement**: 46005 downloads | 446 likes
 
 ---
 
