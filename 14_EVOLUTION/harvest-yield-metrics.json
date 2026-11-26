@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T22:21:49.416Z",
-  "total_cycles_completed": 12885,
-  "total_learnings_persisted": 12885,
-  "total_rules_promoted": 11690,
+  "last_updated": "2026-11-26T22:30:22.890Z",
+  "total_cycles_completed": 12888,
+  "total_learnings_persisted": 12888,
+  "total_rules_promoted": 11692,
   "history": [
-    {
-      "timestamp": "2026-11-26T12:11:29.430Z",
-      "repository": "yyjeqhc/webcodex",
-      "learningId": "learn-github-yyjeqhc-webcodex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T12:11:31.844Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T12:11:33.334Z",
-      "repository": "iliyami/MacSai",
-      "learningId": "learn-github-iliyami-macsai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T12:19:57.244Z",
       "repository": "Lightricks/LTX-2.5",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T22:21:49.416Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:30:12.213Z",
+      "repository": "inclusionAI/LingSante-3.1-flash",
+      "learningId": "learn-huggingface-inclusionai-lingsante-3-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:30:20.811Z",
+      "repository": "NihilDigit/piko",
+      "learningId": "learn-github-nihildigit-piko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T22:30:22.890Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -4,24 +4,24 @@
 {
   "source_repository": "juicedata/juicefs",
   "source_url": "https://github.com/juicedata/juicefs",
-  "source_version": "99cf558e",
+  "source_version": "7674bd86",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T04:39:17.997Z",
+  "timestamp": "2026-11-26T22:30:23.115Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-juicedata-juicefs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [juicedata/juicefs](https://github.com/juicedata/juicefs) (Revision: `99cf558e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T04:39:17.997Z`  
+> **Provenance**: Harvested from [juicedata/juicefs](https://github.com/juicedata/juicefs) (Revision: `7674bd86`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T22:30:23.115Z`  
 > **Learning ID**: `learn-github-juicedata-juicefs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: J (Search & Distribution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 70%
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from juicedata/juicefs:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T04:39:16.648Z  
+> **Harvest Timestamp**: 2026-11-26T22:30:21.651Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14783 stars
+- **Stars / Engagement**: 14787 stars
 
 ---
 
@@ -1054,6 +1054,9 @@ func (m *baseMeta) Remove(ctx Context, parent Ino, name string, skipTrash bool, 
 		numThreads = 255
 	}
 	logger.Debugf("Start emptyEntry with %d concurrent threads .", numThreads)
+	// emptyDir cancels ctx on failure; keep that within this removal.
+	ctx = WrapWithCancel(ctx, ctx.Pid(), ctx.Uid(), ctx.Gids())
+	defer ctx.Cancel()
 	concurrent := make(chan int, numThreads)
 	return m.emptyEntry(ctx, parent, name, inode, skipTrash, count, concurrent)
 }
@@ -1073,12 +1076,7 @@ func (m *baseMeta) GetSummary(ctx Context, inode Ino, summary *Summary, recursiv
 	}
 	summary.Dirs++
 	summary.Size += uint64(align4K(0))
-	concurrent := make(chan struct{}, 50)
-	inode = m.checkRoot(inode)
-	return m.getDirSummary(ctx, inode, summary, recursive, strict, concurrent, nil)
-}
-
-func (m *baseMeta) g
+	concurrent := make(ch
 ```
 
 ### Core Architecture Module: `pkg/meta/utils_darwin.go`
@@ -1175,15 +1173,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7914** (2026-11-25): **meta: fix tree summary root type**
-  *Symptoms*: ## Problem  A tree summary for a regular file reports its root as a directory.  ## Change  Set the root type from the inode attributes already read by `GetTreeSummary`.  ## Validation  A regular-file check on memkv failed before the fix and passed after it. The existing metadata summary and VFS summary cancellation tests also passed. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/juicedata/juicefs/pull/7914?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.70%. Comparing base ([`861e851`](https://app.codecov.io/gh/juicedata/juicefs/commit/861e8510850eacbef3825bb96ab1f33876e75c0c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)) to head ([`dea7300`](https://app.codecov.io/gh/juicedata/juicefs/commit/dea73006bb8c9846b0035e9cd208ea7d6e4d0252?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##   
+- **Issue #7924** (2026-11-26): **fs: fix write bounds and chunk sizing**
+  *Symptoms*: ## Problem  The Go SDK's `Write` and `WriteAt` pass the offset and the entire buffer to `pkg/fs.File.Pwrite`. That path reaches the chunk writer without applying the file size check used by the mount path.  - **Out-of-range offsets.** The writer computes the chunk index as `offset / chunkSize` and converts it to `uint32`. Once the index exceeds that type's range, it wraps. The write can then overwrite an earlier chunk in the same file. - **A write that stalls.** The writer converts the remaining buffer length to `uint32` before limiting it to the space left in the current chunk. When 4 GiB remains in one call, the conversion yields zero. A zero-length chunk write can succeed, leaving `data[n:]` unchanged. The loop keeps advancing the chunk index while holding the writer lock and consuming no input.  ## Change  Validate the full write range before opening the writer. Limit each chunk write before converting its length to `uint32`.  ## Validation  - `go test ./sdk/go ./pkg/fs ./pkg/vfs -count=1 -timeout=90s` passed with Redis 7. Regression tests cover invalid offsets, the file size boundary, and the first chunk of a 4 GiB write. - `make test.pkg` could not build the GlusterFS backend because `pkg-config` is missing.  
 
-- **Issue #7913** (2026-11-25): **meta: skip quota checks during changelog replay**
-  *Symptoms*: Skip quota checks (volume capacity/inodes, directory, user, and group quotas) when `m.replay.Load() != nil` so replaying operations that already succeeded on the source won't fail with `EDQUOT`/`ENOSPC`.
-  **Post-Mortem & Fix Analysis**:
-  > Merged into #7787.
+- **Issue #7923** (2026-11-26): **ci: use go.mod for cached Go setup**
+  *Symptoms*: ## Problem  Cached builds install Go 1.25.0, while `go.mod` requires Go 1.25.10. Before restoring the cache, `setup-go` runs `go env`, which downloads and extracts the newer toolchain into `GOMODCACHE`. Cache extraction then fails on those existing files, and successful PR jobs save another copy under the PR merge ref. [Example CI job](https://github.com/juicedata/juicefs/actions/runs/45778902560/job/139769253443)  ## Change  Use `go-version-file: go.mod` in the shared build action and the chaos workflow so `setup-go` installs the project's toolchain before restoring the cache. Keep caching enabled and preserve the Go version matrix in `verify`.  ## Validation  - Both YAML files passed the repository's `check-yaml` hook and `git diff --check`. - A local before-and-after check with isolated Go caches confirmed that `go env GOPATH` unpacked the toolchain into `GOMODCACHE` with the old configuration and skipped toolchain extraction with the new configuration. Both configurations ran Go 1.25.10. - GitHub Actions will validate the workflow on the PR. Cross-ref cache reuse can be checked after `main` writes the new cache key. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1200,138 +1194,225 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4f2cf81` (2026-11-25)
-**Commit Message**: meta: fix tree summary root type (#7914)
+### Incident Patch 1: `ece6c92c` (2026-11-26)
+**Commit Message**: meta/redis: avoid deadlock in batched readdir attribute fetches (#7920)
 
-Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
-
-**File**: `.github/scripts/pysdk/pysdk_test.py` (modified, +1/-1)
+**File**: `pkg/meta/redis.go` (modified, +15/-22)
 ```diff
-@@ -397,7 +397,7 @@ def setUp(self):
- 
-     def test_summary(self):
-         res = self.v.summary(TESTFILE, depth=258, entries=2)
--        self.assertTrue(normalize(res)==normalize({"Path": "file", "Type": 2, "Files":1, "Dirs":0, "Size":4096}))
-+        self.assertTrue(normalize(res)==normalize({"Path": "file", "Type": 1, "Files":1, "Dirs":0, "Size":4096}))
-         res = self.v.summary(TESTFN)
-         self.assertTrue(normalize(res)==normalize({"Path": "test", "Type": 2, "Files":2, "Dirs":3, "Size":20480}))
-         res = self.v.summary(TESTFN, depth=257, entries=1)
-```
-
-**File**: `cmd/summary.go` (modified, +12/-2)
-```diff
-@@ -169,8 +169,7 @@ func summary(ctx *cli.Context) error {
- 	if err != nil {
- 		logger.Fatalf("summary: %s", err)
- 	}
--	results := [][]string{{"PATH", "SIZE", "DIRS", "FILES", "COST"}}
--	renderTree(&results, &resp.Tree, csv)
-+	results := renderSummaryTree(&resp.Tree, dpath, csv)
- 	if csv {
- 		printCSVResult(results)
- 	} else {
-@@ -179,6 +178,17 @@ func summary(ctx *cli.Context) error {
- 	return nil
+@@ -2922,7 +2922,7 @@ func (m *redisMeta) doLink(ctx Context, inode, parent Ino, name string, attr *At
+ 	}, m.inodeKey(parent), m.entryKey(parent), m.inodeKey(inode)))
  }
  
-+func renderSummaryTree(tree *meta.TreeSummary, dpath string, csv bool) [][]string {
-+	if tree != nil && tree.Path == "" && tree.Type != meta.TypeDirectory {
-+		root := *tree
-+		root.Path = filepath.Base(dpath)
-+		tree = &root
-+	}
-+	results := [][]string{{"PATH", "SIZE", "DIRS", "FILES", "COST"}}
-+	renderTree(&results, tree, csv)
-+	return results
-+}
-+
- func printCSVResult(results [][]string) {
- 	w := csv.NewWriter(os.Stdout)
- 	for _, r := range results {
+-func (m *redisMeta) fillAttr(ctx Context, es []*Entry) error {
++func (m *redisMeta) fillAttr(ctx context.Context, es []*Entry) error {
+ 	if len(es) == 0 {
+ 		return nil
+ 	}
+@@ -2981,30 +2981,23 @@ func (m *redisMeta) doReaddir(ctx Context, inode Ino, plus uint8, entries *[]*En
+ 		if nEntries <= batchSize {
+ 			err = m.fillAttr(ctx, *entries)
+ 		} else {
+-			indexCh := make(chan []*Entry, 10)
+-			var wg sync.WaitGroup
+-			for i := 0; i < 2; i++ {
+-				wg.Add(1)
+-				go func() {
+-					defer wg.Done()
+-					for es := range indexCh {
+-						e := m.fillAttr(ctx, es)
+-						if e != nil {
+-							err = e
+-							break
+-						}
+-					}
+-				}()
+-			}
++			group, batchCtx := errgroup.WithContext(ctx)
++			group.SetLimit(2)
+ 			for i := 0; i < nEntries; i += batchSize {
+-				if i+batchSize > nEntries {
+-					indexCh <- (*entries)[i:]
+-				} else {
+-					indexCh <- (*entries)[i : i+batchSize]
++				if err = batchCtx.Err(); err != nil {
++					break
+ 				}
++				batch := (*entries)[i:min(i+batchSize, nEntries)]
++				group.Go(func() error {
++					if err := batchCtx.Err(); err != nil {
++						return err
++					}
++					return m.fillAttr(batchCtx, batch)
++				})
++			}
++			if batchErr := group.Wait(); batchErr != nil {
++				err = batchErr
+ 			}
+-			close(indexCh)
+-			wg.Wait()
+ 		}
+ 		if err != nil {
+ 			return errno(err)
 ```
 
-**File**: `cmd/summary_test.go` (added, +58/-0)
+---
+
+### Incident Patch 2: `ab0efb17` (2026-11-26)
+**Commit Message**: fs: fix write bounds and chunk sizing (#7924)
+
+**File**: `pkg/fs/fs.go` (modified, +13/-4)
 ```diff
-@@ -0,0 +1,58 @@
-+/*
-+ * JuiceFS, Copyright 2026 Juicedata, Inc.
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
+@@ -51,6 +51,8 @@ type Ino = meta.Ino
+ type Attr = meta.Attr
+ type LogContext = vfs.LogContext
+ 
++const maxFileSize = meta.ChunkSize << 31
 +
-+package cmd
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/juicedata/juicefs/pkg/meta"
-+	"github.com/stretchr/testify/assert"
-+)
-+
-+func TestRenderSummaryTree(t *testing.T) {
-+	fileTree := &meta.TreeSummary{
-+		Type:     meta.TypeFile,
-+		Size:     4096,
-+		Files:    1,
-+		Duration: 1500 * time.Microsecond,
+ func IsExist(err error) bool {
+ 	return err == syscall.EEXIST || err == syscall.EACCES || err == syscall.EPERM
+ }
+@@ -1682,6 +1684,13 @@ func (f *File) Pwrite(ctx meta.Context, b []byte, offset int64) (n int, err sysc
+ }
+ 
+ func (f *File) pwrite(ctx meta.Context, b []byte, offset int64) (n int, err syscall.Errno) {
++	size := len(b)
++	if offset < 0 {
++		return 0, syscall.EINVAL
 +	}
-+	assert.Equal(t, [][]string{
-+		{"PATH", "SIZE", "DIRS", "FILES", "COST"},
-+		{"file.txt", "4.0 KiB", "0", "1", "1ms"},
-+	}, renderSummaryTree(fileTree, "/mnt/jfs/dir/file.txt", false))
-+	assert.Equal(t, [][]string{
-+		{"PATH", "SIZE", "DIRS", "FILES", "COST"},
-+		{"file.txt", "4096", "0", "1", "1"},
-+	}, renderSummaryTree(fileTree, "/mnt/jfs/dir/file.txt", true))
-+	assert.Empty(t, fileTree.Path)
-+
-+	dirTree := &meta.TreeSummary{
-+		Type:  meta.TypeDirectory,
-+		Size:  8192,
-+		Dirs:  1,
-+		Files: 1,
-+		Children: []*meta.TreeSummary{
-+			{Path: "file.txt", Type: meta.TypeFile, Size: 4096, Files: 1},
-+		},
++	if offset >= maxFileSize || int64(size) >= maxFileSize-offset {
++		return 0, syscall.EFBIG
 +	}
-+	assert.Equal(t, [][]string{
-+		{"PATH", "SIZE", "DIRS", "FILES", "COST"},
-+		{"/", "8192", "1", "1", "0"},
-+		{"file.txt", "4096", "0", "1", "0"},
-+	}, renderSummaryTree(dirTree, "/mnt/jfs/dir", true))
-+}
+ 	if f.wdata == nil {
+ 		f.wdata = f.fs.writer.Open(f.inode, uint64(f.info.Size()), f.info.attr.Tier)
+ 	}
+@@ -1691,11 +1700,11 @@ func (f *File) pwrite(ctx meta.Context, b []byte, offset int64) (n int, err sysc
+ 		f.wdata = nil
+ 		return
+ 	}
+-	if offset+int64(len(b)) > int64(f.info.attr.Length) {
+-		f.info.attr.Length = uint64(offset + int64(len(b)))
++	if end := offset + int64(size); end > int64(f.info.attr.Length) {
++		f.info.attr.Length = uint64(end)
+ 	}
+-	f.fs.writtenSizeHistogram.Observe(float64(len(b)))
+-	return len(b), 0
++	f.fs.writtenSizeHistogram.Observe(float64(size))
++	return size, 0
+ }
+ 
+ func (f *File) Truncate(ctx meta.Context, length uint64) (err syscall.Errno) {
 ```
 
-**File**: `pkg/meta/utils.go` (modified, +1/-0)
+**File**: `pkg/fs/fs_test.go` (modified, +9/-0)
 ```diff
-@@ -516,6 +516,7 @@ func (m *baseMeta) GetTreeSummary(ctx Context, root *TreeSummary, depth, topN ui
- 	if st := m.GetAttr(ctx, root.Inode, &attr); st != 0 {
- 		return st
+@@ -99,6 +99,15 @@ func TestFileSystem(t *testing.T) {
+ 	if fi, err := f.Stat(); err != nil || fi.Mode() != 0644 {
+ 		t.Fatalf("stat: %s %+v", err, fi)
  	}
-+	root.Type = attr.Typ
- 	if updateProgress != nil {
- 		updateProgress(1, uint64(align4K(0)))
++	if n, err := f.Pwrite(ctx, []byte("x"), -1); n != 0 || err != syscall.EINVAL {
++		t.Fatalf("pwrite at -1: got (%d, %s), want (0, EINVAL)", n, err)
++	}
++	const limit = int64(meta.ChunkSize) << 31
++	for _, off := range []int64{limit - 1, limit} {
++		if n, err := f.Pwrite(ctx, []byte("x"), off); n != 0 || err != syscall.EFBIG {
++			t.Fatalf("pwrite at %d: got (%d, %s), want (0, EFBIG)", off, n, err)
++		}
++	}
+ 	if n, err := f.Write(ctx, []byte("world")); err != 0 || n != 5 {
+ 		t.Fatalf("write 5 bytes: %d %s", n, err)
  	}
+```
+
+**File**: `pkg/vfs/vfs_test.go` (modified, +31/-0)
+```diff
+@@ -25,6 +25,7 @@ import (
+ 	"math/rand"
+ 	"reflect"
+ 	"slices"
++	"strconv"
+ 	"strings"
+ 	"syscall"
+ 	"testing"
+@@ -197,6 +198,36 @@ func TestVFSBasic(t *testing.T) {
+ 
+ }
+ 
++type recordingChunkWriter struct {
++	chunk.Writer
++	size int
++}
++
++func (w *recordingChunkWriter) WriteAt(data []byte, _ int64) (int, error) {
++	w.size = len(data)
++	return 0, syscall.EIO
++}
++
++func TestWriteChunkSize(t *testing.T) {
++	if strconv.IntSize < 64 {
++		t.Skip("a 4 GiB slice requires a 64-bit process")
++	}
++	// Reserve an address range. The stub only inspects the first slice's length.
++	size := int64(1) << 32
++	data, err := unix.Mmap(-1, 0, int(size), unix.PROT_NONE, unix.MAP_PRIVATE|unix.MAP_ANON)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, unix.Munmap(data)) })
++
++	const pos = 1
++	sink := &recordingChunkWriter{}
++	f := &fileWriter{w: &dataWriter{store: &blockingChunkStore{}, blockSize: meta.ChunkSize, bufferSize: 1 << 30}}
++	c := &chunkWriter{file: f}
++	c.slices = []*sliceWriter{{chunk: c, off: pos, writer: sink}}
++	f.chunks = map[uint32]*chunkWriter{0: c}
++	require.Equal(t, syscall.EIO, f.Write(meta.Background(), pos, data))
++	require.Equal(t, meta.ChunkSize-pos, sink.size)
++}
++
+ func TestVFSIO(t *testing.T) {
+ 	v, _ := createTestVFS(nil, "")
+ 	ctx := NewLogContext(meta.Background())
+```
+
+**File**: `pkg/vfs/writer.go` (modified, +1/-4)
+```diff
+@@ -376,10 +376,7 @@ func (f *fileWriter) Write(ctx meta.Context, off uint64, data []byte) syscall.Er
+ 	indx := uint32(off / meta.ChunkSize)
+ 	pos := uint32(off % meta.ChunkSize)
+ 	for len(data) > 0 {
+-		n := uint32(len(data))
+-		if pos+n > meta.ChunkSize {
+-			n = meta.ChunkSize - pos
+-		}
++		n := uint32(min(len(data), int(meta.ChunkSize-pos)))
+ 		if st := f.writeChunk(ctx, indx, pos, data[:n]); st != 0 {
+ 			return st
+ 		}
+```
+
+---
+
+### Incident Patch 3: `0d98d562` (2026-11-26)
+**Commit Message**: utils: fix data race when setting log levels (#7921)
+
+**File**: `pkg/utils/logger.go` (modified, +1/-1)
+```diff
+@@ -148,7 +148,7 @@ func SetLogLevel(lvl logrus.Level) {
+ 	mu.Lock()
+ 	defer mu.Unlock()
+ 	for _, logger := range loggers {
+-		logger.Level = lvl
++		logger.SetLevel(lvl)
+ 	}
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7914** (2026-11-25): meta: fix tree summary root type (@myangitzh)
-- **PR #7913** (closed): meta: skip quota checks during changelog replay (@zxh326)
-- **PR #7910** (closed): object: add in-process STS credential provider with static-AK fallback (@hiltonhe)
-- **PR #7908** (2026-11-24): ci: cache Hadoop tarball and add archive mirror fallback (@zxh326)
-- **PR #7907** (2026-11-24): refactor: move jfs object storage from cmd to pkg/fs (@jiefenghuang)
-- **PR #7904** (2026-11-24): test: fix FlushAfterRmdir ut (@myangitzh)
+- **PR #7924** (2026-11-26): fs: fix write bounds and chunk sizing (@myangitzh)
+- **PR #7923** (2026-11-26): ci: use go.mod for cached Go setup (@jiefenghuang)
+- **PR #7922** (2026-11-26): fs: validate xattr lengths (@myangitzh)
+- **PR #7921** (2026-11-26): utils: fix data race when setting log levels (@jiefenghuang)
+- **PR #7920** (2026-11-26): meta/redis: avoid deadlock in batched readdir attribute fetches (@jiefenghuang)
+- **PR #7919** (2026-11-26): meta: cancel sibling GetSummary scans on error (@jiefenghuang)
 
 ---
 
@@ -1351,31 +1432,66 @@ Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta: fix tree summary root type
+## X. meta/redis: avoid deadlock in batched readdir attribute fetches
 
 **RULE**:
-When implementing operations in `.github/scripts/pysdk/pysdk_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/meta/redis.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d4f2cf81`: meta: fix tree summary root type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ece6c92c`: meta/redis: avoid deadlock in batched readdir attribute fetches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/pysdk/pysdk_test.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/redis.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        self.assertTrue(normalize(res)==normalize({"Path": "file", "Type": 1, "Files":1, "Dirs":0, "Size":4096}))
+func (m *redisMeta) fillAttr(ctx context.Context, es []*Entry) error {
+			group, batchCtx := errgroup.WithContext(ctx)
+			group.SetLimit(2)
+				if err = batchCtx.Err(); err != nil {
+					break
+				batch := (*entries)[i:min(i+batchSize, nEntries)]
+				group.Go(func() error {
+					if err := batchCtx.Err(); err != nil {
+						return err
+					}
+					return m.fillAttr(batchCtx, batch)
+				})
+			}
+			if batchErr := group.Wait(); batchErr != nil {
+				err = batchErr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        self.assertTrue(normalize(res)==normalize({"Path": "file", "Type": 2, "Files":1, "Dirs":0, "Size":4096}))
+func (m *redisMeta) fillAttr(ctx Context, es []*Entry) error {
+			indexCh := make(chan []*Entry, 10)
+			var wg sync.WaitGroup
+			for i := 0; i < 2; i++ {
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
+					for es := range indexCh {
+						e := m.fillAttr(ctx, es)
+						if e != nil {
+							err = e
+							break
+						}
+					}
+				}()
+			}
+				if i+batchSize > nEntries {
+					indexCh <- (*entries)[i:]
+				} else {
+					indexCh <- (*entries)[i : i+batchSize]
+			close(indexCh)
+			wg.Wait()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d4f2cf81` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ece6c92c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

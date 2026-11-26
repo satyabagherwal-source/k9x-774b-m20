@@ -13575,3 +13575,6 @@
 | `CYCLE-20261126-WFI2` | `2026-11-26T22:10:46.778Z` | `aws-amplify/amplify-js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10782` | Yes (`05c50587...`) |
 | `CYCLE-20261126-AENV` | `2026-11-26T22:21:38.875Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`716a360c...`) |
 | `CYCLE-20261126-AMS3` | `2026-11-26T22:21:49.395Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10783` | Yes (`66274e1b...`) |
+| `CYCLE-20261126-LEQT` | `2026-11-26T22:30:12.197Z` | `inclusionAI/LingSante-3.1-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md` | Yes (`3579a4cc...`) |
+| `CYCLE-20261126-LLDD` | `2026-11-26T22:30:20.785Z` | `NihilDigit/piko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10784` | Yes (`ff127879...`) |
+| `CYCLE-20261126-LMZ8` | `2026-11-26T22:30:22.868Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10785` | Yes (`26f4c34d...`) |

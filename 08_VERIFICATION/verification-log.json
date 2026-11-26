@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-WPEF",
-    "timestamp": "2026-11-25T11:11:28.407Z",
-    "repository": "apache/incubator-pegasus",
-    "learningId": "learn-github-apache-incubator-pegasus",
-    "contentHash": "a9341c4018422f7fa7070b4b4d97c9e56f9a5ab64ac533b53f3d9d3afdb373bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-7K3N",
-    "timestamp": "2026-11-25T11:19:54.755Z",
-    "repository": "prithivMLmods/Gender-Classifier-Mini",
-    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-    "contentHash": "8933be30f4de8e955ffe1d4319f706cd72c89bfac72ba670c9c262137de1a735",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-7UMV",
-    "timestamp": "2026-11-25T11:20:08.407Z",
-    "repository": "StarTrail-org/LEANN",
-    "learningId": "learn-github-startrail-org-leann",
-    "contentHash": "3ce6b9d9112fe3bb614c9653f2ac5e290e865721d80dacab1feaad19bb9447bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-KJQ6",
     "timestamp": "2026-11-25T11:30:00.798Z",
     "repository": "openbmb/MiniCPM-OCR-1.0",
@@ -7490,6 +7445,51 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "66274e1b65287ec45e82db02861c10a31853f347a98fcf569154e6ca2d80d37d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LEQT",
+    "timestamp": "2026-11-26T22:30:12.197Z",
+    "repository": "inclusionAI/LingSante-3.1-flash",
+    "learningId": "learn-huggingface-inclusionai-lingsante-3-1-flash",
+    "contentHash": "3579a4cc7563f2897b59000e47ed9a589e03a7c3f8459143a479357778a2b45a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LLDD",
+    "timestamp": "2026-11-26T22:30:20.785Z",
+    "repository": "NihilDigit/piko",
+    "learningId": "learn-github-nihildigit-piko",
+    "contentHash": "ff127879f584a2e7d6cca93f7fbf7f5320e3b9013bd22dcd9ad953b3b6904ed0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-LMZ8",
+    "timestamp": "2026-11-26T22:30:22.868Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

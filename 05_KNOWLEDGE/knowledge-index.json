@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T22:21:56.082Z",
+  "last_updated": "2026-11-26T22:30:28.535Z",
   "total_verified_learnings": 9137,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26223,
+  "total_items": 26228,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212832,8 +212832,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "99cf558e",
-      "content_hash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
+      "source_version": "7674bd86",
+      "content_hash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -212886,6 +212886,11 @@
           "number": 10598,
           "title": "fix tree summary root type",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10785,
+          "title": "meta/redis: avoid deadlock in batched readdir attribute fetches",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212893,7 +212898,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T04:39:17.553Z",
+      "verified_at": "2026-11-26T22:30:22.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212921,10 +212926,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "repository": "juicedata/juicefs",
-      "source_version": "99cf558e",
-      "content_hash": "ba6dd7abd4cae857d7606bf59d8e0b4c34cb3fedb74a4899556128d1fc499f32",
+      "source_version": "7674bd86",
+      "content_hash": "67d256e3c0c596628fa7ca670f025d5ac9f68c735aef327014cb1284b5c09d43",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T04:39:18.170Z"
+      "persisted_at": "2026-11-26T22:30:23.329Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs",
@@ -212945,10 +212950,10 @@
       "relative_path": "08_VERIFICATION/juicedata-juicefs-verification-protocol-empirical-defect-shield-for-juicedata-ju.md",
       "title": "Verification Protocol: Empirical Defect Shield for juicedata/juicefs",
       "repository": "juicedata/juicefs",
-      "source_version": "99cf558e",
-      "content_hash": "dca6e451855b9b8b46ae94bbb0baae88fee2149cf71729b986267b24eb80ef56",
+      "source_version": "7674bd86",
+      "content_hash": "8cc569750ba2f79cffe7597278694c1a7a4ca74d527d7513036b0c0f2a78dd63",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:39:18.335Z"
+      "persisted_at": "2026-11-26T22:30:23.543Z"
     },
     "learn-github-clockworklabs-spacetimedb": {
       "learning_id": "learn-github-clockworklabs-spacetimedb",
@@ -260693,9 +260698,9 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "cc169cd12d90c7ceeaed9fbd598203558d8967842dd01f49dbe0ecbfcc9bc18a",
+      "content_hash": "851d5229426eeaa48d0e724eb31e2c985427e136451e72934fe1815676576f0f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T04:39:22.154Z"
+      "persisted_at": "2026-11-26T22:30:28.352Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings",
@@ -260717,9 +260722,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for juicedata-juicefs-learnings",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5a5f0ea6ed9e0c1b2f0722608ca3994cc61d09e8a5f7922f2260df2825b9b02",
+      "content_hash": "a517da48cb9406836ad0392f86fcf15dad5e1b0d1f076318a0f958f89e4e5576",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:39:22.321Z"
+      "persisted_at": "2026-11-26T22:30:28.535Z"
     },
     "learn-huggingface-pika-labs-pika-h3-flex": {
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
@@ -329941,7 +329946,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/LingSante-3.1-flash",
       "source_version": "hf-inclusionai-lingsante-3.1-flash",
-      "content_hash": "483bbd5e882dd4da6670e7f2bb72400994e9f8c81db33e7e1483dea66a0961f2",
+      "content_hash": "3579a4cc7563f2897b59000e47ed9a589e03a7c3f8459143a479357778a2b45a",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md",
       "promoted_rules": [],
@@ -329950,7 +329955,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T13:24:22.528Z",
+      "verified_at": "2026-11-26T22:30:11.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -329967,9 +329972,9 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/LingSante-3.1-flash Core Invariants",
       "repository": "inclusionAI/LingSante-3.1-flash",
       "source_version": "hf-inclusionai-lingsante-3.1-flash",
-      "content_hash": "6949623cce3f3915e30e331805cb04999c0d873014df43c0896476a0231f0177",
+      "content_hash": "601041ff997cb0074c17b97d1b9c06bd6dfc5fe48d9438d8d69af69edfe048e5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T13:24:23.106Z"
+      "persisted_at": "2026-11-26T22:30:12.434Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-lingsante-3-1-flash-learnings-cor",
@@ -329979,9 +329984,9 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-lingsante-3.1-flash-learnings Core Invariants",
       "repository": "hf-inclusionai-lingsante-3.1-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "f35fed2113670527e6bd151cb2efabfad348190dcb80a58b69ce258ab5320744",
+      "content_hash": "4cd1a51988832fbe7975f45dd88d4b4d409e8b9a97c9e04a92c30eba2602cbf1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T13:25:05.410Z"
+      "persisted_at": "2026-11-26T22:30:26.648Z"
     },
     "candidate_directive-merge-stop-build-sh-when-the-swift-build-fails": {
       "item_id": "candidate_directive-merge-stop-build-sh-when-the-swift-build-fails",
@@ -339241,14 +339246,19 @@
       "slug": "nihildigit-piko",
       "platform": "github",
       "source_url": "https://github.com/NihilDigit/piko",
-      "source_version": "638367bd",
-      "content_hash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
+      "source_version": "a35cb654",
+      "content_hash": "ff127879f584a2e7d6cca93f7fbf7f5320e3b9013bd22dcd9ad953b3b6904ed0",
       "dossier_path": "07_PROJECT_LEARNING/nihildigit-piko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nihildigit-piko-learnings.md",
       "promoted_rules": [
         {
           "number": 10279,
           "title": "add biometric app lock, recents privacy flag, and launcher icon disgui",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10784,
+          "title": "fix Android emulator crashpad_handler hang and clean up job name",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -339257,7 +339267,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:33:17.754Z",
+      "verified_at": "2026-11-26T22:30:20.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -339299,10 +339309,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nihildigit-piko-architecture-intelligence-nihildigit-piko-core-invariants.md",
       "title": "Architecture Intelligence: NihilDigit/piko Core Invariants",
       "repository": "NihilDigit/piko",
-      "source_version": "638367bd",
-      "content_hash": "14f21acffcb04e7b755d519514ae3a70ed315873cf78a733b051719946a9b6ed",
+      "source_version": "a35cb654",
+      "content_hash": "c33209cd9725da9f89d11cb436247ab348756d54de41a561668584e91d28ec02",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T14:33:18.629Z"
+      "persisted_at": "2026-11-26T22:30:21.268Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nihildigit-piko": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nihildigit-piko",
@@ -339311,10 +339321,10 @@
       "relative_path": "08_VERIFICATION/nihildigit-piko-verification-protocol-empirical-defect-shield-for-nihildigit-pik.md",
       "title": "Verification Protocol: Empirical Defect Shield for NihilDigit/piko",
       "repository": "NihilDigit/piko",
-      "source_version": "638367bd",
-      "content_hash": "db4195d8cef4bf4773b97da545e088dd016f225a81ee654bff7020a34fd1df03",
+      "source_version": "a35cb654",
+      "content_hash": "273ffa69a1aafb8994ac7231b781d2ea9fb0a3ef265a8907864943e0d6b15856",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:33:18.868Z"
+      "persisted_at": "2026-11-26T22:30:21.467Z"
     },
     "rule-10280": {
       "learning_id": "rule-10280",
@@ -339388,9 +339398,9 @@
       "title": "Architecture Intelligence: nihildigit-piko-learnings Core Invariants",
       "repository": "nihildigit-piko-learnings",
       "source_version": "HEAD",
-      "content_hash": "32ae1a4a98c9405951ebc6fdfac5693a5735fbe1afdcff59fecfc5820bcd949d",
+      "content_hash": "84fa7595f534d535ece73a30483b10ee4be13e72e9e38c81384dee459f66a232",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T14:33:31.884Z"
+      "persisted_at": "2026-11-26T22:30:27.444Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nihildigit-piko-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nihildigit-piko-learnings",
@@ -339400,9 +339410,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nihildigit-piko-learnings",
       "repository": "nihildigit-piko-learnings",
       "source_version": "HEAD",
-      "content_hash": "625658a7b26751af347f88a5d864e32e1537d77965ca3d353f38762cef2efcc8",
+      "content_hash": "f1134c66d7f94ab9d35debacb7a6607da61b7096f2f0cc92f23bc519f2f79bef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:33:32.115Z"
+      "persisted_at": "2026-11-26T22:30:27.644Z"
     },
     "candidate_directive-deps-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro": {
       "item_id": "candidate_directive-deps-legend-list-3-9-reanimated-4-8-worklets-0-14-webview-17-rn-cli-21-dro",
@@ -359638,6 +359648,70 @@
       "content_hash": "f2c41fd6f993cb255c617515b1d7f25e861edb6664731a821cb05d1c729a01ed",
       "domain_letter": "A",
       "persisted_at": "2026-11-26T22:21:54.826Z"
+    },
+    "rule-10784": {
+      "learning_id": "rule-10784",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10784,
+      "title": "fix Android emulator crashpad_handler hang and clean up job name",
+      "source_url": "https://github.com/NihilDigit/piko",
+      "source_version": "a35cb654",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T22:30:20.541Z"
+    },
+    "candidate_directive-fix-android-emulator-crashpad_handler-hang-and-clean-up-job-name": {
+      "item_id": "candidate_directive-fix-android-emulator-crashpad_handler-hang-and-clean-up-job-name",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LLL5-fix-android-emulator-crashpad_handler-hang-and-clean-up-job-name.md",
+      "title": "fix Android emulator crashpad_handler hang and clean up job name",
+      "repository": "NihilDigit/piko",
+      "source_version": "a35cb654",
+      "content_hash": "fb2635111483755be5740c460697bd3737c853d6befd880354815b705de04015",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T22:30:21.069Z"
+    },
+    "rule-10785": {
+      "learning_id": "rule-10785",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10785,
+      "title": "meta/redis: avoid deadlock in batched readdir attribute fetches",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "7674bd86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T22:30:22.619Z"
+    },
+    "candidate_directive-meta-redis-avoid-deadlock-in-batched-readdir-attribute-fetches": {
+      "item_id": "candidate_directive-meta-redis-avoid-deadlock-in-batched-readdir-attribute-fetches",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LR2D-meta-redis-avoid-deadlock-in-batched-readdir-attribute-fetches.md",
+      "title": "meta/redis: avoid deadlock in batched readdir attribute fetches",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7b4cb3d8fb35cdda1e88d64070079355d874a2774f7b0335e308545852418fd7",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T22:30:28.165Z"
+    },
+    "candidate_directive-ci-fix-android-emulator-crashpad_handler-hang-and-clean-up-job-name": {
+      "item_id": "candidate_directive-ci-fix-android-emulator-crashpad_handler-hang-and-clean-up-job-name",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LQC5-ci-fix-android-emulator-crashpad_handler-hang-and-clean-up-job-name.md",
+      "title": "ci: fix Android emulator crashpad_handler hang and clean up job name",
+      "repository": "nihildigit-piko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ad90cc88b71abb9f02909694a1d2962ea4d709decc326797b4717c9c67970798",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T22:30:27.224Z"
     }
   },
   "ai-builder-brain": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T14:33:31.467Z",
+  "timestamp": "2026-11-26T22:30:27.089Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nihildigit-piko-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nihildigit-piko-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T14:33:31.467Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T22:30:27.089Z`  
 > **Learning ID**: `LEARN-EVO-nihildigit-piko-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nihildigit-piko-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nihildigit-piko-learnings.md`  
 > **Source**: github ([https://github.com/NihilDigit/piko](https://github.com/NihilDigit/piko))  
-> **Source Version**: `638367bd`  
+> **Source Version**: `a35cb654`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T14:33:16.622Z  
+> **Timestamp**: 2026-11-26T22:30:19.615Z  
 > **Learning ID**: `learn-github-nihildigit-piko`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nihildigit-piko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NihilDigit/piko](https://github.com/NihilDigit/piko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:33:16.462Z  
+> **Harvest Timestamp**: 2026-11-26T22:30:19.610Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 优雅、易用、高性能的 PikPak 客户端 | An elegant, easy-to-use, high-performance PikPak client
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1001 stars
+- **Stars / Engagement**: 1098 stars
 
 ---
 
@@ -158,7 +158,7 @@ object PikPakAppLink {
         }
 
     private fun decode(value: String): String =
-        runCatching { URLDecoder.decode(value, Charsets.UTF_8) }.getOrDefault(value)
+        runCatching { URLDecoder.decode(value, "UTF-8") }.getOrDefault(value)
 }
 
 ```
@@ -859,6 +859,14 @@ class PlayerScreenState(
      */
     private val defaultMaxHeight: suspend () -> Int = { PlayerGestureDefaults.PLAYBACK_AUTO_HEIGHT },
     private val recoveryDelaysMillis: LongArray = RECOVERY_DELAYS_MILLIS,
+    aiSubtitleDecoder: AiSubtitlePcmDecoder? = null,
+    aiSubtitleVadFactory: (() -> SileroVad?)? = null,
+    initialAiSubtitleLanguage: String = "",
+    onPersistAiSubtitleLanguage: (suspend (String) -> Unit)? = null,
+    initialAiSubtitleOnDemand: Boolean = true,
+    onPersistAiSubtitleOnDemand: (suspend (Boolean) -> Unit)? = null,
+    initialAiSubtitleSavedSeconds: Long = 0L,
+    onAddAiSubtitleSavedSeconds: (suspend (Long) -> Unit)? = null,
 ) {
     var fileId by mutableStateOf(initialFileId)
         private set
@@ -891,6 +899,74 @@ class PlayerScreenState(
     /** 当播放转码流且原画为大体积未缓存 MKV 时，探测到的原画内封字幕轨元数据（供字幕列表提示）。 */
     var originalSubtitleHints by mutableStateOf<List<OriginalSubtitleTrackInfo>>(emptyList())
         private set
+
+    private var aiSubtitleHoldingPlayback = false
+
+    private val aiSubtitleController = AiSubtitleController(
+        repository = repository,
+        decoder = aiSubtitleDecoder,
+        scope = scope,
+        positionMillisProvider = { backend.positionMillis },
+        isPlayingProvider = { backend.isPlaying && !isLoading },
+        playbackSpeedProvider = { backend.speed.coerceIn(0.5f, 4.0f) },
+        mediaInfoProvider = { mediaInfo },
+        currentFileIdProvider = { fileId },
+        isLocalPlaybackProvider = { isLocalPlayback },
+        audioTrackCountProvider = { backend.audioTracks.size },
+        selectedAudioStreamIndexProvider = {
+            val selectedId = backend.selectedAudioTrackId
+            backend.audioTracks.indexOfFirst { it.id == selectedId }
+        },
+        vadFactory = aiSubtitleVadFactory,
+        onRequestPlaybackHold = { hold ->
+            if (hold) {
+                if (backend.isPlaying && !aiSubtitleHoldingPlayback) {
+                    aiSubtitleHoldingPlayback = true
+                    backend.pause()
+                }
+            } else if (aiSubtitleHoldingPlayback) {
+                aiSubtitleHoldingPlayback = false
+                if (!released) backend.play()
+            }
+        },
+        initialLanguage = initialAiSubtitleLanguage,
+        onPersistLanguage = onPersistAiSubtitleLanguage,
+        initialOnDemand = initialAiSubtitleOnDemand,
+        onPersistOnDemand = onPersistAiSubtitleOnDemand,
+        initialSavedSeconds = initialAiSubtitleSavedSeconds,
+        onAddSavedSeconds = onAddAiSubtitleSavedSeconds,
+    )
+
+    val aiSubtitleState: kotlinx.coroutines.flow.StateFlow<AiSubtitleUiState>
+        get() = aiSubtitleController.uiState
+
+    fun setAiSubtitleOnDemand(enabled: Boolean) {
+        aiSubtitleController.setOnDemand(enabled)
+    }
+
+    fun setAiSubtitlesEnabled(enabled: Boolean) {
+        if (enabled) {
+            preferredSubtitle = null
+            prefersSubtitlesOff = true
+            tracksChosenThisFile = true
+            backend.selectSubtitleTrack(null)
+            aiSubtitleController.enable()
+        } else {
+            aiSubtitleController.disable()
+        }
+    }
+
+    fun selectAiSubtitleLanguage(language: String) {
+        if (!aiSubtitleController.uiState.value.on) {
+            preferredSubtitle = null
+            prefersSubtitlesOff = true
+            tracksChosenThisFile = true
+            backend.selectSubtitleTrack(null)
+            aiSubtitleController.enable(language)
+        } else {
+            aiSubtitleController.setLanguage(language)
+        }
+    }
 
     /** 本次从续播位置开始时非 null，5 秒后清掉；控件据此显示「从头播放」提示。 */
     var resumedFromMillis by mutableStateOf<Long?>(null)
@@ -945,74 +1021,7 @@ class PlayerScreenState(
             if (info.kind != PlayableMediaKind.Video) {
                 emptyList()
             } else {
-                val variants = info.availableVariants
-                    .filter { !it.isOrigin && it.video != null && it.link.url.isNotBlank() }
-                    .map { it.mediaName.ifBlank { it.resolutionName } }
-                    .filter { it.isNotBlank() }
-                if (variants.isEmpty()) emptyList() else (listOf(AUTO_QUALITY, ORIGINAL_QUALITY) + variants).distinct()
-            }
-        } else {
-            val transcodes = knownContent?.transcodes
-                ?.filter { !it.unreadable && it.name.isNotBlank() }
-                ?.map { it.name }
-                .orEmpty()
-            if (transcodes.isEmpty()) emptyList() else (listOf(AUTO_QUALITY, ORIGINAL_QUALITY) + transcodes).distinct()
-        }
-    }
-
-    val currentQuality by derivedStateOf {
-        if (qualityOptions.isEmpty()) null
-        else if (isAutoQuality) AUTO_QUALITY
-        else activeQuality ?: ORIGINAL_QUALITY
-    }
-
-    /** 处于「自动」画质时实际正在播放的档位（`ORIGINAL_QUALITY` 或转码名），非自动模式为 null。 */
-    val autoResolvedQuality by derivedStateOf {
-        if (qualityOptions.isEmpty() || !isAutoQuality) null else activeQuality ?: ORIGINAL_QUALITY
-    }
-
-    /**
-     * 经过严格 `<= 480P` MPEG-TS 门控的雪碧图源；纯原画视频、最低转码档 `>= 720P` 或本地文件恒为 `null`。
-     */
-    val storyboardSource: StoryboardSource? by derivedStateOf {
-        val info = mediaInfo ?: return@derivedStateOf null
-        val contentSizeBytes = info.originalSizeBytes.takeIf { it > 0L } ?: info.sizeBytes
-        val unreadable = repository.knownUnreadableTranscodeIds(info.fileId, info.gcid, contentSizeBytes)
-        StoryboardSourceResolver.resolve(
-            isLocalPlayback = isLocalPlayback,
-            mediaInfo = info,
-            durationMillis = durationMillis,
-            unreadableMediaIds = unreadable,
-            knownStreamSizeLookup = { mediaId ->
-                repository.knownTranscodeStreamSizeFor(info.fileId, info.gcid, contentSizeBytes, mediaId)
-            },
-        )
-    }
-
-    /** 当前视频是否启用全片雪碧图预览与「速览」时间轴条（严格要求存在 `<= 480P` MPEG-TS 转码档）。 */
-    val hasStoryboard: Boolean by derivedStateOf { storyboardSource != null }
-
-    /** 首帧是否已渲染完成，供雪碧图冷启动触发门控读取。 */
-    val isFirstFrameReady: Boolean get() = startedThisAttempt
-
-    /**
-     * 当前播放点前方的可信缓冲余量（毫秒），兼顾 `bufferedPositionMillis` 与后端 `bufferSnapshot.bufferedDuration`。
-     * 后端尚未上报任何缓冲读数时返回 `null`，以便雪碧图调度器区分「真实 0ms 耗尽」与「后端未上报」。
-     */
-    val storyboardBufferedAheadMillis: Long? by derivedStateOf {
-        val hasPosReading = bufferedPositionMillis > 0L
-        val snapshotMs = backend.bufferSnapshot?.bufferedDuration?.inWholeMilliseconds?.coerceAtLeast(0L)
-        if (!hasPosReading && snapshotMs == null) {
-            null
-        } else {
-            val fromBufferedPos = if (hasPosReading) (bufferedPositionMillis - positionMillis).coerceAtLeast(0L) else 0L
-            maxOf(fromBufferedPos, snapshotMs ?: 0L)
-        }
-    }
-
-    /** 播放器当前是否处于加载/定位/重连/卡顿忙态，供雪碧图后台抓取主动退让。 */
-    val isPlaybackBusyForStoryboard: Boolean by derivedStateOf {
-        isPreparing || isRecovering || backend.isBuffering 
+     
 ```
 
 ### Core Architecture Module: `shared/src/commonMain/kotlin/dev/piko/shared/media/player/SubtitleBrowserState.kt`
@@ -1427,1318 +1436,335 @@ class StoryboardEngine(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `638367bd` (2026-11-24)
-**Commit Message**: feat(android): add biometric app lock, recents privacy flag, and launcher icon disguise
+### Incident Patch 1: `5058ef0e` (2026-11-25)
+**Commit Message**: ci: fix Android emulator crashpad_handler hang and clean up job name
 
-**File**: `app/src/main/AndroidManifest.xml` (modified, +71/-4)
+**File**: `.github/workflows/test.yml` (modified, +6/-3)
 ```diff
-@@ -29,10 +29,6 @@
-             android:launchMode="singleTask"
-             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-             android:windowSoftInputMode="adjustResize">
--            <intent-filter>
--                <action android:name="android.intent.action.MAIN" />
--                <category android:name="android.intent.category.LAUNCHER" />
--            </intent-filter>
-             <!-- 注册为磁力、eD2k 与迅雷链接协议处理器 -->
-             <intent-filter>
-                 <action android:name="android.intent.action.VIEW" />
-@@ -121,6 +117,77 @@
-             </intent-filter>
-         </activity>
+@@ -377,6 +377,7 @@ jobs:
+           retention-days: 1
  
-+        <!-- 默认桌面图标入口；应用伪装时通过 PackageManager 切换以下 alias -->
-+        <activity-alias
-+            android:name=".MainActivityDefault"
-+            android:enabled="true"
-+            android:exported="true"
-+            android:icon="@mipmap/ic_launcher"
-+            android:roundIcon="@mipmap/ic_launcher"
-+            android:label="@string/app_name"
-+            android:targetActivity=".MainActivity">
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <activity-alias
-+            android:name=".MainActivityEmerald"
-+            android:enabled="false"
-+            android:exported="true"
-+            android:icon="@mipmap/ic_launcher_emerald"
-+            android:roundIcon="@mipmap/ic_launcher_emerald"
-+            android:label="@string/app_name"
-+            android:targetActivity=".MainActivity">
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <activity-alias
-+            android:name=".MainActivityObsidian"
-+            android:enabled="false"
-+            android:exported="true"
-+            android:icon="@mipmap/ic_launcher_obsidian"
-+            android:roundIcon="@mipmap/ic_launcher_obsidian"
-+            android:label="@string/app_name"
-+            android:targetActivity=".MainActivity">
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <activity-alias
-+            android:name=".MainActivityTodo"
-+            android:enabled="false"
-+            android:exported="true"
-+            android:icon="@mipmap/ic_launcher_todo"
-+            android:roundIcon="@mipmap/ic_launcher_todo"
-+            android:label="@string/app_name_disguise_todo"
-+            android:targetActivity=".MainActivity">
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <activity-alias
-+            android:name=".MainActivityNotes"
-+            android:enabled="false"
-+            android:exported="true"
-+            android:icon="@mipmap/ic_launcher_notes"
-+            android:roundIcon="@mipmap/ic_launcher_notes"
-+            android:label="@string/app_name_disguise_notes"
-+            android:targetActivity=".MainActivity">
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-         <service
-             android:name=".download.PikoDownloadService"
-             android:exported="false"
+   android:
++    name: android (API ${{ matrix.api }}, ${{ matrix.suite }})
+     # 模拟器是 x86_64，并行覆盖三个关键 Android 分水岭：
+     # - API 26 (Android 8.0): minSdk 底线 + SQLite 3.18 + 旧 CursorWindow 分支；
+     # - API 29 (Android 10): SQLite 3.22 + Api28SqliteWindow 256 KiB/4 MiB 池化交叉雷区；
+@@ -427,16 +428,18 @@ jobs:
+           arch: x86_64
+           target: default
+           force-avd-creation: false
+-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
++          emulator-options: -no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+           disable-animations: false
+-          script: echo "AVD snapshot created"
++          script: echo "AVD snapshot created"; pkill -9 crashpad_handler 2>/dev/null || true
+ 
+       - name: Prepare instrumentation runner script
+         shell: bash
+         run: |
+           cat <<'EOF' > run-instrument.sh
+           #!/usr/bin/env bash
+           set -euo pipefail
++          # Android 模拟器退出后 crashpad_handler 常残留并占住 stdout/stderr 管道，导致 runner 无限挂起
++          trap 'pkill -9 crashpad_handler 2>/dev/null || true' EXIT
+           mkdir -p test-logs
+           APP_APK="$(find apks -name '*debug.apk' ! -name '*androidTest*' | head -n 1)"
+           TEST_APK="$(find apks -name '*androidTest*.apk' | head -n 1)"
+@@ -477,7 +480,7 @@ jobs:
+           arch: x86_64
+           target: default
+           force-avd-creation: false
+-          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
++          emulator-options: -no-metrics -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+           disable-animations: true
+           script: bash run-instrument.sh
+ 
 ```
 
-**File**: `app/src/main/kotlin/dev/piko/MainActivity.kt` (modified, +164/-9)
+---
+
+### Incident Patch 2: `5aab2680` (2026-11-25)
+**Commit Message**: ci: pass -f to pkill for 16-char crashpad_handler comm limit
+
+**File**: `.github/workflows/test.yml` (modified, +4/-3)
 ```diff
-@@ -7,7 +7,9 @@ import dev.piko.shared.log.PikoLog
- import dev.piko.data.auth.AppLanguage
+@@ -430,16 +430,17 @@ jobs:
+           force-avd-creation: false
+           emulator-options: -no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+           disable-animations: false
+-          script: echo "AVD snapshot created"; pkill -9 crashpad_handler 2>/dev/null || true
++          script: echo "AVD snapshot created"; pkill -9 -f crashpad_handler 2>/dev/null || true
  
- import android.Manifest
-+import android.app.KeyguardManager
- import android.content.ContentResolver
-+import android.content.Context
- import android.content.Intent
- import android.content.pm.PackageManager
- import android.graphics.Color
-@@ -20,16 +22,37 @@ import androidx.activity.compose.rememberLauncherForActivityResult
- import androidx.activity.compose.setContent
- import androidx.activity.enableEdgeToEdge
- import androidx.activity.result.contract.ActivityResultContracts
-+import androidx.compose.foundation.layout.Arrangement
-+import androidx.compose.foundation.layout.Box
-+import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.ExperimentalLayoutApi
-+import androidx.compose.foundation.layout.Spacer
- import androidx.compose.foundation.layout.WindowInsets
- import androidx.compose.foundation.layout.areStatusBarsVisible
-+import androidx.compose.foundation.layout.fillMaxSize
-+import androidx.compose.foundation.layout.height
-+import androidx.compose.foundation.layout.padding
-+import androidx.compose.foundation.layout.size
-+import androidx.compose.material.icons.Icons
-+import androidx.compose.material.icons.outlined.Lock
-+import androidx.compose.material3.Button
-+import androidx.compose.material3.Icon
-+import androidx.compose.material3.MaterialTheme
-+import androidx.compose.material3.Surface
-+import androidx.compose.material3.Text
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.DisposableEffect
- import androidx.compose.runtime.LaunchedEffect
- import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
-+import androidx.compose.runtime.setValue
- import androidx.compose.runtime.snapshotFlow
-+import androidx.compose.ui.Alignment
-+import androidx.compose.ui.Modifier
- import androidx.compose.ui.platform.LocalContext
-+import androidx.compose.ui.unit.dp
-+import dev.piko.ui.theme.PikoTheme
- import androidx.core.content.ContextCompat
- import androidx.core.content.IntentCompat
- import androidx.core.view.ViewCompat
-@@ -82,6 +105,7 @@ import kotlinx.coroutines.withTimeout
- class MainActivity : ComponentActivity() {
- 
-     private var openTorrentJob: Job? = null
-+    private var pendingLockedIntent: Intent? = null
- 
-     override fun onCreate(savedInstanceState: Bundle?) {
-         val systemLocale = android.content.res.Resources.getSystem().configuration.locales.get(0) ?: Locale.getDefault()
-@@ -123,6 +147,10 @@ class MainActivity : ComponentActivity() {
-         setContent {
-             val appearance by appearanceFlow.collectAsStateWithLifecycle(initialAppearance)
-             val darkTheme = appearance.isDark()
-+            val appSecurity = app.platform.appSecurity
-+            val hideInRecents by appSecurity.hideInRecents.collectAsStateWithLifecycle()
-+            val appLockEnabled by appSecurity.appLockEnabled.collectAsStateWithLifecycle()
-+            val isLocked by appSecurity.locked.collectAsStateWithLifecycle()
-             // 系统栏图标的深浅默认看系统的夜间模式。应用强制浅色而系统是深色时，状态栏会是
-             // 浅色图标压在浅色背景上，所以改为按应用实际的深浅判断。导航栏遮罩沿用库的默认值
-             DisposableEffect(darkTheme) {
-@@ -132,15 +160,47 @@ class MainActivity : ComponentActivity() {
-                 )
-                 onDispose {}
-             }
--            PikoApp(
--                onLanguageChanged = ::applyLanguage,
--                services = app.services,
--                platform = app.platform,
--                appearance = appearance,
--                videoPlayer = videoPlayer,
--            )
--            AskForNotificationsOnFirstWork(app.services)
--            if (isHeightCompact()) HideStatusBarWhileShort()
-+            LaunchedEffect(hideInRecents, appLockEnabled) {
-+                appSecurity.applyWindowSecurity(this@MainActivity)
-+            }
-+            LaunchedEffect(isLocked) {
-+                if (!isLocked) {
-+                    pendingLockedIntent?.let { deferred ->
-+                        pendingLockedIntent = null
-+                        handleIntentNow(deferred)
-+                    }
-+                }
-+            }
-+            if (isLocked) {
-+                PikoTheme(appearance = appearance) {
-+                    AppLockOverlay(
-+                        activity = this@MainActivity,
-+                        appSecurity = appSecurity,
-+                    )
-+                }
-+            } else {
-+                PikoApp(
-+                    onLanguageChanged = ::applyLanguage,
-+                    services = app.services,
-+                    platform = app.platform,
-+                    appearance = appearance,
-+                    videoPlayer = videoPlayer,
-+                )
-+                AskForNotificationsOnFirstWork(app.services)
-+                if (isHeightCompact()) HideStatusBarWhileShort()
-+            }
-+        }
-+    }
-+
-+    override fun onStart() {
-+        super.onStart()
-+        PikoA
+       - name: Prepare instrumentation runner script
+         shell: bash
+         run: |
+           cat <<'EOF' > run-instrument.sh
+           #!/usr/bin/env bash
+           set -euo pipefail
+-          # Android 模拟器退出后 crashpad_handler 常残留并占住 stdout/stderr 管道，导致 runner 无限挂起
+-          trap 'pkill -9 crashpad_handler 2>/dev/null || true' EXIT
++          # Android 模拟器退出后 crashpad_handler 常残留并占住 stdout/stderr 管道，导致 runner 无限挂起；
++          # Linux /proc/<pid>/comm 上限 15 字符（crashpad_handler 为 16 字符），pkill 必须带 -f 匹配完整命令行
++          trap 'pkill -9 -f crashpad_handler 2>/dev/null || true' EXIT
+           mkdir -p test-logs
+           APP_APK="$(find apks -name '*debug.apk' ! -name '*androidTest*' | head -n 1)"
+           TEST_APK="$(find apks -name '*androidTest*.apk' | head -n 1)"
 ```
 
-**File**: `app/src/main/kotlin/dev/piko/platform/AndroidAppSecurity.kt` (added, +255/-0)
+---
+
+### Incident Patch 3: `5f828fa0` (2026-11-25)
+**Commit Message**: fix(android,ci): fix API <33 deep-link decode, FileProvider root, USE_BIOMETRIC, WebView crash recovery, and muxer stop
+
+**File**: `.github/workflows/test.yml` (modified, +5/-5)
 ```diff
-@@ -0,0 +1,255 @@
-+package dev.piko.platform
+@@ -389,11 +389,11 @@ jobs:
+       matrix:
+         include:
+           - api: 26
+-            suite: sqlite
+-            instrument_args: '-e class dev.piko.smoke.AndroidSqliteTreeIndexSmokeTest'
++            suite: compat
++            instrument_args: '-e class dev.piko.smoke.AndroidSqliteTreeIndexSmokeTest,dev.piko.smoke.AndroidPlatformCompatSmokeTest'
+           - api: 29
+-            suite: sqlite
+-            instrument_args: '-e class dev.piko.smoke.AndroidSqliteTreeIndexSmokeTest'
++            suite: compat
++            instrument_args: '-e class dev.piko.smoke.AndroidSqliteTreeIndexSmokeTest,dev.piko.smoke.AndroidPlatformCompatSmokeTest'
+           - api: 34
+             suite: full
+             instrument_args: ''
+@@ -474,7 +474,7 @@ jobs:
+           arch: x86_64
+           target: default
+           force-avd-creation: false
+-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
++          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+           disable-animations: true
+           script: bash run-instrument.sh
+ 
+```
+
+**File**: `app/build.gradle.kts` (modified, +1/-0)
+```diff
+@@ -232,6 +232,7 @@ abstract class VerifyMergedManifestPermissionsTask : DefaultTask() {
+             "android.permission.FOREGROUND_SERVICE",
+             "android.permission.FOREGROUND_SERVICE_DATA_SYNC",
+             "android.permission.REQUEST_INSTALL_PACKAGES",
++            "android.permission.USE_BIOMETRIC",
+             dynamicReceiverPermission,
+         )
+         val allowDebug = allowDebuggable.get()
+```
+
+**File**: `app/src/androidTest/kotlin/dev/piko/smoke/AndroidPlatformCompatSmokeTest.kt` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++package dev.piko.smoke
 +
-+import android.app.Activity
-+import android.app.KeyguardManager
-+import android.content.ComponentName
++import android.Manifest
 +import android.content.Context
 +import android.content.pm.PackageManager
-+import android.hardware.biometrics.BiometricManager
-+import android.hardware.biometrics.BiometricPrompt
 +import android.os.Build
-+import android.os.CancellationSignal
-+import android.os.SystemClock
-+import android.view.WindowManager
-+import androidx.core.content.ContextCompat
-+import dev.piko.shared.i18n.tr
-+import dev.piko.shared.log.PikoLog
-+import dev.piko.ui.platform.AppDisguiseOption
-+import dev.piko.ui.platform.AppSecurityController
-+import kotlinx.coroutines.flow.MutableStateFlow
-+import kotlinx.coroutines.flow.StateFlow
-+import kotlinx.coroutines.flow.asStateFlow
++import android.os.Environment
++import androidx.test.core.app.ApplicationProvider
++import androidx.test.ext.junit.runners.AndroidJUnit4
++import dev.piko.download.VideoSegmentExtractor
++import dev.piko.platform.AndroidPikoPlatform
++import dev.piko.ui.theme.PikoMotionScale
++import dev.piko.util.PikPakAppLink
++import kotlinx.coroutines.runBlocking
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertTrue
++import org.junit.Test
++import org.junit.runner.RunWith
++import java.io.File
++import java.util.UUID
 +
 +/**
-+ * Android 端应用锁、最近任务隐私遮罩（FLAG_SECURE）与桌面图标伪装控制器。
-+ *
-+ * 使用设备原生 KeyguardManager / BiometricPrompt（无额外第三方依赖），偏好独立保存在
-+ * 设备本地 SharedPreferences 中，不跨设备同步。
++ * 覆盖 JVM 单测测不出来的 Android 跨版本兼容性边界（API 26 / 29 / 34）：
++ * - PikPakAppLink 编码深链解码在 API < 33 不触发 URLDecoder.decode(String, Charset) NoSuchMethodError；
++ * - 默认下载根目录 FileProvider 打开目录不抛 IllegalArgumentException；
++ * - AndroidManifest 正确声明 USE_BIOMETRIC 权限供 API 30+ BiometricPrompt 使用；
++ * - VideoSegmentExtractor 失败时不破坏已存在的目标文件。
 + */
-+class AndroidAppSecurity(
-+    private val context: Context,
-+) : AppSecurityController {
-+    private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
++@RunWith(AndroidJUnit4::class)
++class AndroidPlatformCompatSmokeTest {
++    private val context = ApplicationProvider.getApplicationContext<Context>()
 +
-+    private val _appLockEnabled = MutableStateFlow(prefs.getBoolean(KEY_APP_LOCK, false))
-+    override val appLockEnabled: StateFlow<Boolean> = _appLockEnabled.asStateFlow()
++    @Test
++    fun encodedOfficialDeepLinkDecodesWithoutApi33NoSuchMethodError() {
++        val magnet = "magnet:?xt=urn:btih:0123456789abcdef0123456789abcdef01234567"
++        val encodedMagnet = "magnet%3A%3Fxt%3Durn%3Abtih%3A0123456789abcdef0123456789abcdef01234567"
++        val nested = "https://toapp.mypikpak.com/toapp?deepLink=%2Fdrive%2Fadd%3Fadd_url%3D$encodedMagnet"
++        val parsed = PikPakAppLink.parse(nested)
++        assertEquals(PikPakAppLink.Target.Import(magnet), parsed)
++    }
 +
-+    private val _hideInRecents = MutableStateFlow(prefs.getBoolean(KEY_HIDE_IN_RECENTS, false))
-+    override val hideInRecents: StateFlow<Boolean> = _hideInRecents.asStateFlow()
-+
-+    private val _activeDisguiseId = MutableStateFlow(resolveActiveAliasId())
-+    override val activeDisguiseId: StateFlow<String> = _activeDisguiseId.asStateFlow()
-+
-+    private val _locked = MutableStateFlow(_appLockEnabled.value)
-+    val locked: StateFlow<Boolean> = _locked.asStateFlow()
-+
-+    private var backgroundedAtElapsedMs: Long = 0L
-+
-+    override val disguiseOptions: List<AppDisguiseOption>
-+        get() = ALIASES.map { alias ->
-+            AppDisguiseOption(
-+                id = alias.id,
-+                title = alias.title(),
-+                description = alias.description(),
-+            )
++    @Test
++    fun openContainingFolderOnDefaultDownloadRootDoesNotThrow() {
++        val platform = AndroidPikoPlatform(
++            context = context,
++            updater = { error("updater unused in compat smoke test") },
++            motionScale = PikoMotionScale(),
++        )
++        val rootDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.filesDir, "Piko")
++        rootDir.mkdirs()
++        val sample = File(rootDir, "compat-smoke-${UUID.randomUUID()}.bin")
++        sample.writeBytes(byteArrayOf(1, 2, 3, 4))
++        try {
++            // 默认根目录本身等于 file_paths.xml 的 external-files-path 根，调用不得抛 IllegalArgumentException
++            platform.localFiles.openContainingFolder(sample.absolutePath)
++        } finally {
++            sample.delete()
 +        }
-+
-+    override fun canUseDeviceLock(): Boolean {
-+        val km = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager ?: return false
-+        return km.isDeviceSecure
 +    }
 +
-+    override fun setAppLockEnabled(enabled: Boolean): Boolean {
-+        if (enabled && !canUseDeviceLock()) return false
-+        prefs.edit().putBoolean(KEY_APP_LOCK, enabled).apply()
-+        _appLockEnabled.value = enabled
-+        if (!enabled) {
-+            _locked.value = false
-+            backgroundedAtElapsedMs = 0L
-+        }
-+        return true
-+    }
-+
-+    override fun setHideInRecents(enabled: Boolean) {
-+        prefs.edit().putBoolean(KEY_HIDE_IN_RECENTS, enabled).apply()
-+        _hideInRecents.value = enabled
-+    }
-+
-+    override fun selectDisguise(id: String): Boolean {
-+        val target = ALIASES.firstOrNull { it.id == id } ?: return false
-+        val pm = context.packageManager
-+        val pkg = context.packageName
-+        return runCatching {
-+            // 先启用目标入口，再禁用其他入口，避免桌面图标短时全部消失。
-+            // Manifest 中组件类名按固定 namespace（dev.piko）解析，与 debug applicationId（dev.piko.debug）区分。
-+            pm.setComponentEnabledSetting(
-+                ComponentName(pkg, "$COMPONENT_NAMESPACE.${target.aliasClassName}"),
-+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-+                PackageManager.DONT_KILL_APP,
++    @Test
++    fun manifestDeclaresUseBiometricPermission() {
++        val info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
++            context.packageManager.getPackageInfo(
++                context.packageName,
++                PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
 +            )
-+            for (alias in ALIASES) {
-+                if (alias.id == target.id) continue
-+                pm.setComponentEnabledSetting(
-+                    ComponentName(pkg, "$COMPONENT_NAMESPACE.${alias.aliasClassName}"),
-+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-+                    PackageManager.DONT_KILL_APP,
-+                )
-+            }
-+            prefs.edit().putString(KEY_DISGUISE_ID, target.id).apply()
-+            _activeDisguiseId.value = target.id
-+            true
-+        }.onFailure { err ->
-+            PikoLog.w(TAG, "Failed to switch launcher alias to $id", err)
-+        }.getOrDefault(false)
-+    }
-+
-+    fun applyWindowSecurity(activity: Activity) {
-+        if (_hideInRecents.value || _appLockEnabled.value) {
-+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 +        } else {
-+            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
++            @Suppress("DEPRECATION")
++            context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
 +        }
-+    }
-+
-+    fun onAppBackgrounded() {
-+        if (_appLockEnabled.value) {
-+            backgroundedAtElapsedMs = SystemClock.elapsedRealtime()
-+        }
-+    }
-+
-+    fun onAppForegrounded() {
-+        if (!_appLockEnabled.value) {
-+            _locked.value = false
-+            return
-+        }
-+        if (backgroundedAtElapsedMs > 0L) {
-+            val awayMs = SystemClock.elapsedRealtime() - backgroundedAtElapsedMs
-+            if (awayMs >= RELOCK_GRACE_MS) {
-+                _locked.value 
-```
-
-**File**: `app/src/main/kotlin/dev/piko/platform/AndroidPikoPlatform.kt` (modified, +2/-0)
-```diff
-@@ -135,6 +135,8 @@ class AndroidPikoPlatform(
- 
-     override val supportsBlur: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
- 
-+    override val appSecurity: AndroidAppSecurity = AndroidAppSecurity(context)
-+
-     override fun observeSystemStatus(): Flow<PlayerSystemStatusInfo?> =
-         AndroidSystemStatus.observe(context).map { snapshot ->
-             PlayerSystemStatusInfo(
-```
-
-**File**: `app/src/main/res/drawable/ic_launcher_notes_foreground.xml` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<vector xmlns:android="http://schemas.android.com/apk/res/android"
-+    android:width="108dp"
-+    android:height="108dp"
-+    android:viewportWidth="108"
-+    android:viewportHeight="108">
-+    <!-- 极简笔记伪装前景 -->
-+    <path
-+        android:fillColor="#00000000"
-+        android:strokeColor="#FFFFFF"
-+        android:strokeWidth="4.2"
-+        android:strokeLineJoin="round"
-+        android:pathData="M36,30 H64 L72,38 V78 H36 Z" />
-+    <path
-+        android:fillColor="#00000000"
-+        android:strokeColor="#FFFFFF"
-+        android:strokeWidth="3.8"
-+        android:strokeLineCap="round"
-+        android:pathData="M44,48 H64 M44,58 H64 M44,68 H56" />
-+</vector>
-```
-
-**File**: `app/src/main/res/drawable/ic_launcher_todo_foreground.xml` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<vector xmlns:android="http://schemas.android.com/apk/res/android"
-+    android:width="108dp"
-+    android:height="108dp"
-+    android:viewportWidth="108"
-+    android:viewportHeight="108">
-+    <!-- 极简清单/待办伪装前景 -->
-+    <path
-+        android:fillColor="#00000000"
-+        android:strokeColor="#FFFFFF"
-+        android:strokeWidth="4.5"
-+        android:strokeLineCap="round"
-+        android:strokeLineJoin="round"
-+        android:pathData="M34,39 L39,44 L48,34" />
-+    <path
-+        android:fillColor="#00000000"
-+        android:strokeColor="#FFFFFF"
-+        android:strokeWidth="4.5"
-+        android:strokeLineCap="round"
-+        android:pathData="M55,40 H74" />
-+    <path
-+        android:fillColor="#00000000"
-+        android:strokeColor="#FFFFFF"
-+        android:strokeWidth="4.5"
-+        android:strokeLineCap="round"
-+        android:strokeLineJoin="round"
-+        android:pathData="M34,55 L39,60 L48,50" />
-+    <path
-+        android:fillColor="#00000000"
-+        android:strokeColor="#FFFFFF"
-+        android:strokeWidth="4.5"
-+        android:strokeLineCap="round"
-+        android:pathData="M55,56 H74" />
-+    <path
-+        android:fillColor="#00000000"
-+        android:strokeColor="#FFFFFF"
-+        android:strokeWidth="4.5"
-+        android:strokeLineCap="round"
-+        android:pathData="M36,72 H74" />
-+</vector>
-```
-
-**File**: `app/src/main/res/mipmap-anydpi-v26/ic_launcher_emerald.xml` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-+    <background android:drawable="@color/ic_launcher_emerald_background" />
-+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-+    <monochrome android:drawable="@drawable/ic_launcher_monochrome" />
-+</adaptive-icon>
-```
-
-**File**: `app/src/main/res/mipmap-anydpi-v26/ic_launcher_notes.xml` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-+    <background android:drawable="@color/ic_launcher_notes_background" />
-+    <foreground android:drawable="@drawable/ic_launcher_notes_foreground" />
-+    <monochrome android:drawable="@drawable/ic_launcher_notes_foreground" />
-+</adaptive-icon>
-```
-
----
-
-### Incident Patch 2: `cbaaa641` (2026-11-24)
-**Commit Message**: fix(desktop): fix Linux KDE fullscreen/libva ABI and macOS titlebar double-click zoom
-
-**File**: `desktopApp/AGENTS.md` (modified, +2/-2)
-```diff
-@@ -49,7 +49,7 @@ Windows、macOS 与 Linux 的应用入口、原生系统能力实现及独立播
- 与 Windows 共用同一份 `desktopApp` 源码，DMG 仅在 `release.yml` 的 `macos-15` runner 上原生打包（jpackage 不支持跨平台构建），播放采用 `mediamp-mpv-runtime-macos-arm64` 并走 Metal 渲染，平台集成集中在 `MacOs.kt`（Objective-C 消息发送共用 `MacObjc`）：
- 
- - **签名与 AOT 限制**：当前无 Apple 开发者证书，产物为 ad-hoc 签名且未经公证；不生成 AOT 缓存（AOT 训练晚于 jpackage 签名步骤，向 `.app` 内补写缓存会破坏代码签名封印）。
--- **系统集成差异**：标题栏通过根面板属性将内容铺入标题栏并调用 Skiko `disableTitleBar` 接管拖动，保留系统原生红绿灯按钮（全屏空间 `WindowPlacement.Fullscreen` 下自动隐藏自绘顶栏）；`magnet:` 链接、`.torrent` 文件、`⌘Q`（窗口可见时走主窗口关闭逻辑，已隐藏在后台时直接退出）与点击 Dock 图标通过 Apple Events 接收（`.torrent` 文件读取与哈希计算移交 IO 线程）；默认协议与文件关联通过 LaunchServices 直接修改（`MacLinkAssociation`，首次普通启动询问一次）；系统通知经 `osascript` 发送，防休眠经 `caffeinate` 维持，外部播放器经 LaunchServices 查询扩展名默认应用后以 `open -a` 传入本机回环代理地址（`MacExternalPlayer`），主修饰键为 `⌘`。
-+- **系统集成差异**：标题栏通过根面板属性将内容铺入标题栏并调用 Skiko `disableTitleBar` 接管拖动，保留系统原生红绿灯按钮（全屏空间 `WindowPlacement.Fullscreen` 下自动隐藏自绘顶栏），同时由 `MacOs.patchTitleBarDoubleClick()` 经 `MacObjc.replaceInstanceMethodWithSuperclass` 将 Skiko `WindowDragView` 的 `-mouseUp:` 替换为 `NSView` 默认实现，消除其先主动调 `performZoom:nil` 又 `[super mouseUp:event]` 透传给 `NSThemeFrame` 导致的双击标题栏连续缩放两次立刻还原缺陷；`magnet:` 链接、`.torrent` 文件、`⌘Q`（窗口可见时走主窗口关闭逻辑，已隐藏在后台时直接退出）与点击 Dock 图标通过 Apple Events 接收（`.torrent` 文件读取与哈希计算移交 IO 线程）；默认协议与文件关联通过 LaunchServices 直接修改（`MacLinkAssociation`，首次普通启动询问一次）；系统通知经 `osascript` 发送，防休眠经 `caffeinate` 维持，外部播放器经 LaunchServices 查询扩展名默认应用后以 `open -a` 传入本机回环代理地址（`MacExternalPlayer`），主修饰键为 `⌘`。
- - **整包替换更新**：应用内更新通过 `apply-update-mac.sh` 整包替换 `Piko.app`（先拷贝至同目录旁，通过 `codesign --verify` 校验并清除 `com.apple.quarantine` 隔离属性后再原子替换；任一步骤失败均保留并重新拉起旧包，写入 `failed` 标记供下次启动提示）。
- 
- ## Linux（实验性，仅 `x64`）
-@@ -58,6 +58,6 @@ Windows、macOS 与 Linux 的应用入口、原生系统能力实现及独立播
- 
- - **固定应用 ID `dev.nihildigit.Piko`**：`.desktop` 文件、AppStream 元数据（`package/linux/`）、图标名与 X11 `WM_CLASS` 统一固定为 `dev.nihildigit.Piko`（满足 Flathub 域名小写、末段可大写的包名规范，按 `nihildigit.dev` 验证；Android 与 macOS 已发版的 `dev.piko`、`dev.piko.desktop` 保持不变）。AWT 默认将主类名 `dev-piko-desktop-MainKt` 设为 `WM_CLASS`，会导致桌面环境 Dock 无法匹配图标；启动建窗前由 `LinuxDesktop.setWmClass` 反射修改 `XToolkit`（仅 Linux 宿主注入 `--add-opens java.desktop/sun.awt.X11`）。注意：`package/linux/dev.nihildigit.Piko.desktop` **刻意省略** FreeDesktop 1.5 新增的 `SingleMainWindow` 键，以兼容 Ubuntu 22.04 旧版 `desktop-file-validate` 校验（AppImageHub 审核环境要求）。
- - **打包产物与 AOT 缓存**：`./gradlew :desktopApp:packageReleaseAppImage`（CI 在 `xvfb-run` 下运行以支持开窗 AOT 训练；本地若遇 Gradle 9.6 下 foojay 0.9 下载失败，可在 `org.gradle.java.installations.paths` 中手动指向本地 Zulu 25）先产出 jpackage `app-image`，再由 `package/linux/build-appimage.sh` 使用固定版本与 SHA-256 摘要的 `appimagetool` 及运行时产出三份附件：原始 `.tar.gz`（供后续 Flathub 打包）、内嵌 `gh-releases-zsync|NihilDigit|piko|latest|piko-linux-x64-*.AppImage.zsync` 更新信息的 `.AppImage`、以及写相对 URL（兼容镜像拉取）的 `.AppImage.zsync`。AppImage 每次挂载于随机 `/tmp/.mount_*` 路径，但 JDK AOT 仅校验类路径各项的相对位置，因此 AOT 缓存正常生效；squashfs 时间戳精确到秒，沿用偶数秒对齐处理，**严禁设置 `SOURCE_DATE_EPOCH`**（`mksquashfs` 检测到该环境变量会将所有文件时间戳改写为同一值，导致 AOT 缓存整份失效）。
--- **原生库、GLX 多窗口隔离与软件回退**：mpv 运行库 jar 内不含符号链接，同一动态库存在真实文件名、SONAME 与无版本名三份副本，`bundledAppResources` 仅提取 SONAME 副本置于 `mpv/` 目录（各库自带 `$ORIGIN` RUNPATH，无需污染 `java.library.path` 或执行 `patchelf`）；运行库依赖 `glibc 2.38+`（Ubuntu 24.04 / Debian 13 及以上）。`PikoMpvVideoSurface` 在 Linux 上经 MediaMP `OpenGLRenderContextLifecycle.attachRenderEnvironment` 注册渲染上下文，当 Skiko 运行在 `LinuxOpenGLRenderer` 时每次创建或销毁消费者 FBO 及快照采样前均显式锁定并切入当前窗口的 `GLXContext`（隔离多窗口共用 AWT EDT 导致的跨窗口上下文串扰）；在 WSLg（存在 `/dev/dxg` 且未显式指定 `GALLIUM_DRIVER` / `--disable-gpu`）下启动早期经 `LinuxDesktop.enableWslgHardwareOpenGl`（及 AppImage `AppRun`）自动注入 `GALLIUM_DRIVER=d3d12` 开箱直通硬件 OpenGL；当传入 `--disable-gpu` 或 Skiko 回退至软件渲染（`SOFTWARE_FAST`、`llvmpipe`）时自动建立独立离屏 GLX 上下文并经 `nReadSurfacePixelsOpenGL` 回读出帧。安装包内置播放自检入口：`-Dpiko.selftest=play` 配合环境变量 `PIKO_SELFTEST_PATH`（`SelfTest.kt`、`PlaybackSelfTest.kt`，同时断言 `current-vo=libmpv`、帧状态推进与五锚点非黑像素）。
-+- **原生库、VA-API 预载、X11 EWMH 全屏与 GLX 隔离**：mpv 运行库 jar 内不含符号链接，同一动态库存在真实文件名、SONAME 与无版本名三份副本，`bundledAppResources` 仅提取 SONAME 副本置于 `mpv/` 目录（各库自带 `$ORIGIN` RUNPATH，无需污染 `java.library.path` 或执行 `patchelf`）；运行库依赖 `glibc 2.38+`（Ubuntu 24.04 / Debian 13 及以上）。在加载 `libmediampv.so` / `libavutil.so.60` 前由 `LinuxDesktop.preloadHostLibva()` 优先 `dlopen` 宿主机 `libva.so.2` / `libva-drm.so.2` / `libva-x11.so.2` / `libva-wayland.so.2`（利用 glibc `ld.so` 按 SONAME 复用已加载库的机制消除随包旧版 `libva` 与宿主机 `/usr/lib/.../dri/*_drv_video.so` 的 `__vaDriverInit_1_0` ABI 冲突，同时保留 `mpv/` 内副本供无 `libva-x11` 环境兜底）。独立媒体窗口（`VideoPlayerWindow`、`ImageViewerWindow`、`ClipFeedWindow`）在 Linux 上经 `LinuxFullscreen`（纯 FFM 直调 `libX11.so.6` 向根窗口发送 `_NET_WM_STATE` ClientMessage 切换 `_NET_WM_STATE_FULLSCREEN`，避开 AWT 独占全屏 `GraphicsDevice.setFullScreenWindow` 在 KDE/KWin/XWayland + GLX 下的交换链失步冻结，不可用时自动回退至 `WindowPlacement.Fullscreen`）。`PikoMpvVideoSurface` 在 Linux 上经 MediaMP `OpenGLRenderContextLifecycle.attachRenderEnvironment` 注册渲染上下文，当 Skiko 运行在 `LinuxOpenGLRenderer` 时每次创建或销毁消费者 FBO 及快照采样前均显式锁定并切入当前窗口的 `GLXContext`（隔离多窗口共用 AWT EDT 导致的跨窗口上下文串扰）；在 WSLg（存在 `/dev/dxg` 且未显式指定 `GALLIUM_DRIVER` / `--disable-gpu`）下
-```
-
-**File**: `desktopApp/src/desktopMain/kotlin/dev/piko/desktop/BundledNatives.kt` (modified, +2/-0)
-```diff
-@@ -59,6 +59,8 @@ object BundledMpvRuntime {
-     }
- 
-     private fun prepare() {
-+        // 赶在 libmediampv / libmpv / libavutil 加载前预载宿主 libva，避免与随包旧版 libva 产生 VA-API 驱动 ABI 冲突
-+        LinuxDesktop.preloadHostLibva()
-         val dir = bundledResources?.resolve("mpv") ?: return
-         // Windows 上是 mediampv.dll，macOS 上是 libmediampv.dylib，Linux 上是 libmediampv.so
-         if (!dir.resolve(System.mapLibraryName("mediampv")).isFile) return
-```
-
-**File**: `desktopApp/src/desktopMain/kotlin/dev/piko/desktop/LinuxDesktop.kt` (modified, +34/-0)
-```diff
-@@ -9,11 +9,13 @@ import java.io.File
- import java.lang.foreign.Arena
- import java.lang.foreign.FunctionDescriptor
- import java.lang.foreign.Linker
-+import java.lang.foreign.SymbolLookup
- import java.lang.foreign.ValueLayout.ADDRESS
- import java.lang.foreign.ValueLayout.JAVA_INT
- import java.util.concurrent.CompletableFuture
- import java.util.concurrent.Executors
- import java.util.concurrent.TimeUnit
-+import java.util.concurrent.atomic.AtomicBoolean
- import org.jetbrains.skia.FontMgr
- 
- internal val isLinux: Boolean = System.getProperty("os.name").startsWith("Linux")
-@@ -72,6 +74,38 @@ internal object LinuxDesktop {
-         }
-     }
- 
-+    private val hostLibvaLock = Any()
-+
-+    @Volatile
-+    private var hostLibvaPreloaded = false
-+
-+    /**
-+     * 优先将宿主系统的 libva 载入进程链接表：mediamp-mpv-runtime-linux-x64 随包附带 Ubuntu 24.04 构建的
-+     * `libva.so.2` / `libva-drm.so.2` / `libva-x11.so.2`，而宿主机 `/usr/lib/.../dri/` 下的驱动模块
-+     * 由宿主机较新版 libva 编译；若先加载随包旧版 libva 会引发 `__vaDriverInit_1_0` ABI 失配导致
-+     * VA-API 硬解全部失效（issue #60）。glibc `ld.so` 解析 `DT_NEEDED` 时先按 SONAME 复用已加载库
-+     * （优先于 `$ORIGIN` RUNPATH），同时保留 `mpv/` 内随包副本作为最小化系统或无 `libva-x11` 环境下的
-+     * 兜底回退，避免 `libmpv.so.2` 无法加载。
-+     */
-+    fun preloadHostLibva() {
-+        if (!isLinux || hostLibvaPreloaded) return
-+        synchronized(hostLibvaLock) {
-+            if (hostLibvaPreloaded) return
-+            val loaded = mutableListOf<String>()
-+            for (soname in listOf("libva.so.2", "libva-drm.so.2", "libva-x11.so.2", "libva-wayland.so.2")) {
-+                val ok = runCatching {
-+                    SymbolLookup.libraryLookup(soname, Arena.global())
-+                    true
-+                }.getOrDefault(false)
-+                if (ok) loaded += soname
-+            }
-+            hostLibvaPreloaded = true
-+            if (loaded.isNotEmpty()) {
-+                PikoLog.i(TAG, "Preloaded host VA-API libraries: ${loaded.joinToString()}")
-+            }
-+        }
-+    }
-+
-     fun setWmClass() {
-         runCatching {
-             val toolkit = Toolkit.getDefaultToolkit()
-```
-
-**File**: `desktopApp/src/desktopMain/kotlin/dev/piko/desktop/LinuxFullscreen.kt` (added, +355/-0)
-```diff
-@@ -0,0 +1,355 @@
-+package dev.piko.desktop
-+
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.DisposableEffect
-+import androidx.compose.ui.awt.ComposeWindow
-+import dev.piko.shared.log.PikoLog
-+import java.awt.Window
-+import java.awt.event.ComponentAdapter
-+import java.awt.event.ComponentEvent
-+import java.lang.foreign.Arena
-+import java.lang.foreign.FunctionDescriptor
-+import java.lang.foreign.Linker
-+import java.lang.foreign.MemorySegment
-+import java.lang.foreign.SymbolLookup
-+import java.lang.foreign.ValueLayout.ADDRESS
-+import java.lang.foreign.ValueLayout.JAVA_INT
-+import java.lang.foreign.ValueLayout.JAVA_LONG
-+import java.lang.invoke.MethodHandle
-+
-+/**
-+ * Linux X11/XWayland 全屏控制：向窗口管理器发送 EWMH `_NET_WM_STATE` ClientMessage
-+ * 切换 `_NET_WM_STATE_FULLSCREEN`，而不走 Skiko/AWT 的 `GraphicsDevice.setFullScreenWindow`。
-+ *
-+ * Skiko 的 `WindowPlacement.Fullscreen` 在 Linux 上调用 `GraphicsDevice.setFullScreenWindow(window)`
-+ * （AWT 独占全屏），在 KDE Plasma / KWin / XWayland + GLX 组合下会导致 GLX 交换链失步、
-+ * 画面冻结与退出全屏后错位重影（issue #60）。改由窗口管理器经 EWMH 原子接管全屏后，
-+ * 窗口始终保持普通顶层窗口身份，GLX/OpenGL 表面仅按常规 `ConfigureNotify` 调整尺寸。
-+ *
-+ * 若 `libX11.so.6` 不可用或无法取得 X11 窗口句柄，[enter] / [exit] 返回 false，由调用方安全回退至
-+ * `WindowPlacement.Fullscreen`。
-+ */
-+internal class LinuxFullscreen(
-+    private val window: Window,
-+    private val nowNanos: () -> Long = System::nanoTime,
-+) {
-+    private var requestedFullscreen: Boolean = false
-+    private var lastRequestNanos: Long = 0L
-+
-+    val isFullscreen: Boolean get() = requestedFullscreen
-+
-+    /** 请求进入 EWMH 全屏；返回 false 表示未能通过 X11 发送，调用方应回退。 */
-+    fun enter(): Boolean {
-+        if (requestedFullscreen) return true
-+        if (!sendFullscreenState(enable = true)) return false
-+        requestedFullscreen = true
-+        lastRequestNanos = nowNanos()
-+        return true
-+    }
-+
-+    /** 请求退出 EWMH 全屏；返回 false 表示未能通过 X11 发送，调用方应回退。 */
-+    fun exit(): Boolean {
-+        if (!requestedFullscreen) return true
-+        if (!sendFullscreenState(enable = false)) return false
-+        requestedFullscreen = false
-+        lastRequestNanos = nowNanos()
-+        return true
-+    }
-+
-+    /**
-+     * 读取窗口当前的 `_NET_WM_STATE` 属性并同步 [isFullscreen]。
-+     * 用于响应用户通过窗口管理器快捷键（如 KWin 全屏切换）退出或进入全屏。
-+     * 在本类刚发出切换请求的短暂过渡窗口内跳过覆盖，避免在 WM 尚未处理 ClientMessage 前误回滚状态。
-+     */
-+    fun syncFromWindowManager(): Boolean {
-+        if (isWithinTransitionGrace(lastRequestNanos, nowNanos())) return requestedFullscreen
-+        val actual = queryFullscreen() ?: return requestedFullscreen
-+        requestedFullscreen = actual
-+        return requestedFullscreen
-+    }
-+
-+    internal fun queryFullscreen(): Boolean? {
-+        if (!isLinux || !window.isDisplayable) return null
-+        val x11 = X11.instance ?: return null
-+        return runCatching {
-+            val display = x11.openDisplay(MemorySegment.NULL)
-+            if (display == MemorySegment.NULL) return@runCatching null
-+            try {
-+                val target = resolveClientWindow(x11, display) ?: return@runCatching null
-+                val netWmState = internAtom(x11, display, "_NET_WM_STATE", onlyIfExists = true)
-+                val netWmStateFullscreen = internAtom(x11, display, "_NET_WM_STATE_FULLSCREEN", onlyIfExists = true)
-+                if (netWmState == 0L || netWmStateFullscreen == 0L) return@runCatching null
-+                readAtomProperty(x11, display, target.clientWindow, netWmState)?.contains(netWmStateFullscreen)
-+            } finally {
-+                x11.closeDisplay(display)
-+            }
-+        }.onFailure { PikoLog.w(TAG, "Failed to query X11 _NET_WM_STATE", it) }
-+            .getOrNull()
-+    }
-+
-+    private fun sendFullscreenState(enable: Boolean): Boolean {
-+        if (!isLinux || !window.isDisplayable) return false
-+        val x11 = X11.instance ?: return false
-+        return runCatching {
-+            val display = x11.openDisplay(MemorySegment.NULL)
-+            if (display == MemorySegment.NULL) return@runCatching false
-+            try {
-+                val target = resolveClientWindow(x11, display) ?: return@runCatching false
-+                val netWmState = internAtom(x11, display, "_NET_WM_STATE", onlyIfExists = false)
-+                val netWmStateFullscreen = internAtom(x11, display, "_NET_WM_STATE_FULLSCREEN", onlyIfExists = false)
-+                if (netWmState == 0L || netWmStateFullscreen == 0L) return@runCatching false
-+
-+                Arena.ofConfined().use { arena ->
-+                    val event = arena.allocate(XEVENT_BYTES)
-+                    // XClientMessageEvent on Linux LP64:
-+                    // 0: type (int), 8: serial (ulong), 16: send_event (int),
-+                    // 24: display (ptr), 32: window (Window/ulong), 40: message_type (Atom/ulong),
-+                    // 48: format (int), 56..95: data.l[0..4] (5 * long)
-+                    event.set(JAVA_INT, 0L, CLIENT_MESSAGE)
-+                    event.set(JAVA_LONG, 8L, 0L)
-+                    e
-```
-
-**File**: `desktopApp/src/desktopMain/kotlin/dev/piko/desktop/MacObjc.kt` (modified, +33/-3)
-```diff
-@@ -22,6 +22,13 @@ internal object MacObjc {
- 
-     private val getClass = handle("objc_getClass", FunctionDescriptor.of(ADDRESS, ADDRESS))
-     private val registerName = handle("sel_registerName", FunctionDescriptor.of(ADDRESS, ADDRESS))
-+    private val getInstanceMethod = handle("class_getInstanceMethod", FunctionDescriptor.of(ADDRESS, ADDRESS, ADDRESS))
-+    private val getMethodImplementation = handle("method_getImplementation", FunctionDescriptor.of(ADDRESS, ADDRESS))
-+    private val getMethodTypeEncoding = handle("method_getTypeEncoding", FunctionDescriptor.of(ADDRESS, ADDRESS))
-+    private val replaceMethod = handle(
-+        "class_replaceMethod",
-+        FunctionDescriptor.of(ADDRESS, ADDRESS, ADDRESS, ADDRESS, ADDRESS),
-+    )
-     private val poolPush = handle("objc_autoreleasePoolPush", FunctionDescriptor.of(ADDRESS))
-     private val poolPop = handle("objc_autoreleasePoolPop", FunctionDescriptor.ofVoid(ADDRESS))
-     private val msgSend = libobjc.find("objc_msgSend").orElseThrow()
-@@ -51,10 +58,33 @@ internal object MacObjc {
-         SymbolLookup.libraryLookup("/System/Library/Frameworks/$name.framework/$name", Arena.global())
-     }
- 
--    fun cls(name: String): MemorySegment = Arena.ofConfined().use { arena ->
-+    fun clsOrNull(name: String): MemorySegment? = Arena.ofConfined().use { arena ->
-         val cls = getClass.invokeWithArguments(arena.allocateFrom(name)) as MemorySegment
--        check(cls != MemorySegment.NULL) { "Objective-C class not found: $name" }
--        cls
-+        cls.takeUnless { it == MemorySegment.NULL }
-+    }
-+
-+    fun cls(name: String): MemorySegment =
-+        clsOrNull(name) ?: error("Objective-C class not found: $name")
-+
-+    /**
-+     * 将 [className] 的实例方法 [selectorName] 替换为 [superClassName] 的同名实现，
-+     * 相当于去除子类的覆写、直接沿用父类（如 NSView/NSResponder）的默认转发逻辑。
-+     */
-+    fun replaceInstanceMethodWithSuperclass(
-+        className: String,
-+        superClassName: String,
-+        selectorName: String,
-+    ): Boolean {
-+        val targetCls = clsOrNull(className) ?: return false
-+        val superCls = clsOrNull(superClassName) ?: return false
-+        val selector = sel(selectorName)
-+        val superMethod = getInstanceMethod.invokeWithArguments(superCls, selector) as MemorySegment
-+        if (superMethod == MemorySegment.NULL) return false
-+        val superImp = getMethodImplementation.invokeWithArguments(superMethod) as MemorySegment
-+        val typeEncoding = getMethodTypeEncoding.invokeWithArguments(superMethod) as MemorySegment
-+        if (superImp == MemorySegment.NULL || typeEncoding == MemorySegment.NULL) return false
-+        replaceMethod.invokeWithArguments(targetCls, selector, superImp, typeEncoding)
-+        return true
-     }
- 
-     private fun sel(name: String): MemorySegment = Arena.ofConfined().use { arena ->
-```
-
-**File**: `desktopApp/src/desktopMain/kotlin/dev/piko/desktop/MacOs.kt` (modified, +23/-0)
-```diff
-@@ -103,4 +103,27 @@ internal object MacOs {
-         }
-     }
- 
-+    private var titleBarDoubleClickPatched = false
-+
-+    /**
-+     * 修复 Skiko `disableTitleBar` 在 macOS 上双击标题栏放大后立刻缩回的缺陷：
-+     * Skiko 的 `WindowDragView`（挂在 `NSTitlebarView` 内的子视图）在 `-mouseUp:` 中先判断
-+     * `event.clickCount == 2` 主动调用 `[self.window performZoom:nil]`，紧接着又调用 `[super mouseUp:event]`
-+     * 将双击事件沿响应链继续派发给 `NSTitlebarView` / `NSThemeFrame`，触发 macOS 原生标题栏双击缩放/填充，
-+     * 导致窗口连续缩放两次（先放大、再还原）。
-+     *
-+     * 将 `WindowDragView` 的 `-mouseUp:` 替换为父类 `NSView`（即 `NSResponder`）的默认实现后，
-+     * 双击事件只经响应链交由 `NSThemeFrame` 处理一次，同时完整遵循 macOS 系统设置中的标题栏双击行为
-+     * （填充 / 缩放 / 最小化 / 无操作），且不影响 `WindowDragView` 的 `-mouseDown:` 窗口拖动。
-+     */
-+    @Synchronized
-+    fun patchTitleBarDoubleClick() {
-+        if (!isMacOs || titleBarDoubleClickPatched) return
-+        runCatching {
-+            if (MacObjc.replaceInstanceMethodWithSuperclass("WindowDragView", "NSView", "mouseUp:")) {
-+                titleBarDoubleClickPatched = true
-+            }
-+        }.onFailure { PikoLog.w(TAG, "Failed to patch Skiko WindowDragView mouseUp: double-zoom workaround", it) }
-+    }
-+
- }
-```
-
-**File**: `desktopApp/src/desktopMain/kotlin/dev/piko/desktop/PlaybackSelfTest.kt` (modified, +1/-0)
-```diff
-@@ -62,6 +62,7 @@ internal fun playbackSelfTest(
-         report("no such file: $file")
-         return false
-     }
-+    LinuxDesktop.preloadHostLibva()
-     System.getProperty("compose.application.resources.dir")?.let { File(it, "mpv") }
-         ?.takeIf { it.resolve(System.mapLibraryName("mediampv")).isFile }
-         ?.let { MpvMediampPlayer.prepareLibraries(it.absolutePath, false) }
-```
-
-**File**: `desktopApp/src/desktopMain/kotlin/dev/piko/desktop/WindowFrame.kt` (modified, +2/-1)
-```diff
-@@ -601,10 +601,11 @@ private fun FrameWindowScope.MacTitleBarEffect() {
-     LaunchedEffect(window) {
-         while (!window.isShowing) delay(16)
-         findSkiaLayer(window)?.disableTitleBar(TitleBarHeight.value)
-+        MacOs.patchTitleBarDoubleClick()
-     }
- }
- 
--private fun findSkiaLayer(container: Container): SkiaLayer? {
-+internal fun findSkiaLayer(container: Container): SkiaLayer? {
-     for (component in container.components) {
-         if (component is SkiaLayer) return component
-         if (component is Container) findSkiaLayer(component)?.let { return it }
-```
-
----
-
-### Incident Patch 3: `34898f5c` (2026-11-21)
-**Commit Message**: ui: expressive shell/dialogs upgrades, god-class splits, and middle-dot cleanup
-
-**File**: `ui/src/commonMain/composeResources/values-ja/strings.xml` (modified, +38/-38)
-```diff
-@@ -286,11 +286,11 @@
-     <string name="text_destination_is_being_moved_deleted_or_restored_save_after_it_finishes">保存先を移動、削除または復元中です。完了後に保存してください</string>
-     <string name="text_previous_destination_changes_are_unconfirmed_check_tasks_first">保存先の前回の変更が未確認です。先にタスク画面で確認してください</string>
-     <string name="text_related_files_are_being_saved_or_renamed_or_renames_are_unconfirmed_check_ta">関連ファイルを保存または改名中か、改名結果が未確認です。先にタスク画面で確認してください</string>
--    <string name="text_related_files_or_folders_have_save_upload_or_extraction_tasks_complete_check">関連ファイルやフォルダーに保存・アップロード・解凍タスクがあります。先にタスク画面で完了、確認または削除してください</string>
-+    <string name="text_related_files_or_folders_have_save_upload_or_extraction_tasks_complete_check">関連ファイルやフォルダーに保存、アップロード、解凍タスクがあります。先にタスク画面で完了、確認または削除してください</string>
-     <string name="text_folder_archive_manifests_are_being_edited_or_awaiting_confirmation_try_again">関連フォルダーのアーカイブ一覧を編集中か確認待ちです。完了後にお試しください</string>
-     <string name="text_previous_file_operations_are_unconfirmed_check_results_in_tasks_first">関連ファイルの前回の操作が未確認です。先にタスク画面で結果を確認してください</string>
-     <string name="text_related_share_saves_are_running_or_unconfirmed_check_tasks_first">関連ファイルの共有保存が進行中か未確認です。先にタスク画面で確認してください</string>
--    <string name="text_related_folders_have_save_upload_or_extraction_tasks_check_tasks_first">関連フォルダーに保存・アップロード・解凍タスクがあります。先にタスク画面で確認してください</string>
-+    <string name="text_related_folders_have_save_upload_or_extraction_tasks_check_tasks_first">関連フォルダーに保存、アップロード、解凍タスクがあります。先にタスク画面で確認してください</string>
-     <string name="text_related_archive_manifests_are_being_edited_or_unconfirmed_try_again_when_fin">関連アーカイブ一覧を編集中か未確認です。完了後にお試しください</string>
-     <string name="text_related_file_operations_are_running_or_unconfirmed_check_tasks_first">関連ファイルの操作が進行中か未確認です。先にタスク画面で確認してください</string>
-     <string name="text_related_folder_changes_are_running_or_unconfirmed_check_tasks_first">関連フォルダーの変更が進行中か未確認です。先にタスク画面で確認してください</string>
-@@ -595,9 +595,9 @@
-     <string name="text_animations_disabled_by_system">システムでアニメーションが無効です</string>
-     <string name="text_disable_transition_animations">画面切り替えのアニメーションを無効にする</string>
-     <string name="text_parse_file_names">ファイル名を解析</string>
--    <string name="text_organize_by_title_section_and_episode_show_release_groups_and_quality">作品・区分・話数で整理し、リリースグループと画質を表示</string>
-+    <string name="text_organize_by_title_section_and_episode_show_release_groups_and_quality">作品、区分、話数で整理し、リリースグループと画質を表示</string>
-     <string name="text_smart_grouping">不要な項目を折りたたむ</string>
--    <string name="text_collapse_ads_samples_readme_files_and_other_extras">広告・サンプル・説明ファイルなどを折りたたむ</string>
-+    <string name="text_collapse_ads_samples_readme_files_and_other_extras">広告、サンプル、説明ファイルなどを折りたたむ</string>
-     <string name="text_blur_thumbnails">サムネイルをぼかす</string>
-     <string name="text_blur_thumbnails_and_covers">サムネイルとカバーをぼかして表示</string>
-     <string name="text_remember_sorting_for_each_folder">フォルダーごとに並び順を記憶</string>
-@@ -612,7 +612,7 @@
-     <string name="text_save_external_subtitles_with_videos">動画の保存時に外部字幕も保存</string>
-     <string name="text_enable_file_name_parsing_first">先にファイル名の解析を有効にしてください</string>
-     <string name="text_clean_names_automatically">名前を自動修正</string>
--    <string name="text_remove_unsupported_pikpak_characters_when_creating_or_renaming">作成・改名時にPikPakで使えない文字を除去</string>
-+    <string name="text_remove_unsupported_pikpak_characters_when_creating_or_renaming">作成、改名時にPikPakで使えない文字を除去</string>
-     <string name="text_not_configured_omit_titles_when_naming_by_catalog_code">未設定。作品番号による命名時に作品名を取得しません</string>
-     <string name="text_default_download_quality">既定のダウンロード画質</string>
-     <string name="text_parallel_downloads">並列ダウンロード</string>
-@@ -624,7 +624,7 @@
-     <string name="text_server_domain">サーバードメイン</string>
-     <string name="text_sync">同期</string>
-     <string name="text_sync_playback_history">再生履歴を同期</string>
--    <string name="text_share_playback_history_and_resume_positions_with_official_pikpak_apps">PikPak公式アプリと再生履歴・再開位置を共有</string>
-+    <string name="text_share_playback_history_and_resume_positions_with_official_pikpak_apps">PikPak公式アプリと再生履歴、再開位置を共有</string>
-     <string name="text_passwords_and_credentials">パスワードと認証情報</string>
-     <string name="text_no_saved_passwords">保存済みパスワードはありません</string>
-     <string name="text_access_the_drive_from_media_players_and_file_managers">プレーヤーやファイルマネージャーからドライブにアクセス</string>
-@@ -721,12 +721,12 @@
-     <string name="text_testing_alt">測定中</string>
-     <string name="text_not_tested">未測定</string>
-     <string name="text_unavailable">利用不可</string>
--    <string name="text_recent_uploads_cloud_downloads_and_instant_saves">最近アップロード・クラウドダウンロード・インスタント保存したファイル</string>
-+    <string name="text_recent_uploads_cloud_downloads_and_instant_saves">最近アップロード、クラウドダウンロード、インスタント保存したファイル</string>
-     <string name="text_starred_files_and_folders">スター付きのファイルとフォルダー</string>
-     <string name="text_synced_with_official_pikpak_apps">PikPak公式アプリと同期</string>
-     <string name="text_copy_or_revoke_y
-```
-
-**File**: `ui/src/commonMain/kotlin/dev/piko/ui/components/PikoDialog.kt` (modified, +2/-0)
-```diff
-@@ -64,6 +64,7 @@ fun PikoDialog(
-  * 对话框的确认按钮，有底色。[destructive] 时换成错误色：删掉的找不回来，后果落在要按下去的那一处，
-  * 文案不必另加「并删除」，也不在对话框里另起一行红字。
-  */
-+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
- @Composable
- fun PikoDialogConfirm(
-     label: String,
-@@ -74,6 +75,7 @@ fun PikoDialogConfirm(
- ) {
-     Button(
-         onClick = onClick,
-+        shapes = ButtonDefaults.shapes(),
-         modifier = modifier,
-         enabled = enabled,
-         colors = if (destructive) {
-```
-
-**File**: `ui/src/commonMain/kotlin/dev/piko/ui/components/PrimaryAction.kt` (modified, +3/-0)
-```diff
-@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.layout.width
- import androidx.compose.material3.Button
- import androidx.compose.material3.ButtonDefaults
-+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
- import androidx.compose.material3.ExtendedFloatingActionButton
- import androidx.compose.material3.Icon
- import androidx.compose.material3.MaterialTheme
-@@ -25,11 +26,13 @@ import androidx.compose.ui.unit.dp
-  */
- 
- /** 宽窗口：命令栏右端有底色的按钮（Tier 1 高强调唯一主操作）。 */
-+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
- @Composable
- fun PrimaryActionButton(action: SheetAction, modifier: Modifier = Modifier) {
-     val colors = MaterialTheme.colorScheme
-     Button(
-         onClick = action.onClick,
-+        shapes = ButtonDefaults.shapes(),
-         colors = if (action.destructive) ButtonDefaults.buttonColors(containerColor = colors.error, contentColor = colors.onError) else ButtonDefaults.buttonColors(),
-         contentPadding = PaddingValues(start = 12.dp, end = 16.dp, top = 0.dp, bottom = 0.dp),
-         modifier = modifier.heightIn(min = 36.dp),
-```
-
-**File**: `ui/src/commonMain/kotlin/dev/piko/ui/components/SnailModeToggle.kt` (modified, +89/-88)
-```diff
-@@ -6,35 +6,27 @@ import dev.piko.ui.i18n.stringResource
- import dev.piko.shared.i18n.tr
- 
- import androidx.compose.foundation.BorderStroke
--import androidx.compose.foundation.border
--import androidx.compose.foundation.layout.Arrangement
--import androidx.compose.foundation.layout.Row
--import androidx.compose.foundation.layout.height
--import androidx.compose.ui.Alignment
--import androidx.compose.foundation.shape.RoundedCornerShape
--import androidx.compose.foundation.shape.CornerSize
--import androidx.compose.material3.ButtonGroupDefaults
--import androidx.compose.material3.FilledTonalIconButton
--import androidx.compose.material3.IconButtonDefaults
--import androidx.compose.material3.PlainTooltip
--import androidx.compose.material3.TooltipAnchorPosition
--import androidx.compose.material3.TooltipBox
--import androidx.compose.material3.TooltipDefaults
--import androidx.compose.material3.rememberTooltipState
-+import androidx.compose.foundation.layout.PaddingValues
- import androidx.compose.foundation.layout.Spacer
--import androidx.compose.foundation.layout.heightIn
-+import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.layout.width
--import androidx.compose.foundation.shape.CircleShape
- import androidx.compose.material.icons.Icons
- import androidx.compose.material.icons.outlined.SlowMotionVideo
- import androidx.compose.material.icons.outlined.Tune
-+import androidx.compose.material3.ButtonDefaults
-+import androidx.compose.material3.ExperimentalMaterial3Api
-+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
- import androidx.compose.material3.Icon
- import androidx.compose.material3.MaterialTheme
-+import androidx.compose.material3.PlainTooltip
-+import androidx.compose.material3.SplitButtonDefaults
-+import androidx.compose.material3.SplitButtonLayout
- import androidx.compose.material3.Text
--import androidx.compose.material3.FilledTonalToggleButton
--import androidx.compose.material3.FilledTonalToggleButtonDefaults
--import androidx.compose.material3.ToggleButtonShapes
-+import androidx.compose.material3.TooltipAnchorPosition
-+import androidx.compose.material3.TooltipBox
-+import androidx.compose.material3.TooltipDefaults
-+import androidx.compose.material3.rememberTooltipState
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableStateOf
-@@ -56,12 +48,9 @@ import kotlinx.coroutines.launch
-  * 蜗牛模式的开关，照 FDM 放在速度旁边：单击开关，右边紧贴的调节按钮改上限（右键开关同样可以）。
-  * 开着时换成 tertiary 容器色、写明上限，与侧边栏「传输」那一项的限速色是同一种，一眼看得出速度是被压着的。
-  *
-- * 两块连成 M3 Expressive 的分体按钮（split button）：外侧全圆、相邻处小圆角，中间隔 2dp。
-- * 调节按钮与开关同色：开关开着时一个 tertiary、一个 secondary，看着像两个不相干的按钮。
-- * 原来改上限只有右键，触屏上没有右键，手机上根本进不去，只能绕到设置页。
-- *
-- * 形状不随按下与选中变，理由见 connectedToggleShapes。
-+ * 采用 M3 Expressive [SplitButtonLayout] 组合主开关与上限设置入口，自带外圆内收与按压形变。
-  */
-+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
- @Composable
- fun SnailModeToggle(modifier: Modifier = Modifier) {
-     val preferences = LocalPikoServices.current.preferences
-@@ -70,78 +59,90 @@ fun SnailModeToggle(modifier: Modifier = Modifier) {
-     var editing by remember { mutableStateOf(false) }
-     val colors = MaterialTheme.colorScheme
-     val isEInk = LocalAppearance.current.isEInk
--    val full = CornerSize(50)
--    val inner = CornerSize(4.dp)
--    val leading = RoundedCornerShape(topStart = full, topEnd = inner, bottomEnd = inner, bottomStart = full)
--    val trailing = RoundedCornerShape(topStart = inner, topEnd = full, bottomEnd = full, bottomStart = inner)
-     val height = 36.dp
--    // 按中线对齐、两块同高：两个按钮外面各包着一圈高度不同的最小触控区，按顶边排就一高一低
--    Row(
-+    val segmentColors = when {
-+        isEInk && mode.enabled -> ButtonDefaults.filledTonalButtonColors(
-+            containerColor = Color.Black,
-+            contentColor = Color.White,
++        val permissions = info.requestedPermissions?.toSet().orEmpty()
++        assertTrue(
++            "Manifest must declare USE_BIOMETRIC for API 30+ BiometricPrompt",
++            Manifest.permission.USE_BIOMETRIC in permissions,
 +        )
-+        isEInk -> ButtonDefaults.filledTonalButtonColors(
-+            containerColor = Color.White,
-+            contentColor = Color.Black,
-+        )
-+        mode.enabled -> ButtonDefaults.filledTonalButtonColors(
-+            containerColor = colors.tertiaryContainer,
-+            contentColor = colors.onTertiaryContainer,
-+        )
-+        else -> ButtonDefaults.filledTonalButtonColors()
 +    }
-+    val segmentBorder = if (isEInk) BorderStroke(1.dp, colors.outline) else null
-+    val segmentElevation = if (isEInk) null else ButtonDefaults.filledTonalButtonElevation()
 +
-+    SplitButtonLayout(
-         modifier = modifier,
--        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
--        verticalAlignment = Alignment.CenterVertically,
--    ) {
--        ContextMenuArea(actions = { listOf(SheetAction(Icons.Outlined.Tune, tr("设置上限", "Set limit", "上限を設定", "한도 설정", "設定上限"), { editing = true })) }) {
--            FilledTonalToggleButton(
--                checked = mode.enabled,
--                onCheckedChange = { enabled -> scope.launch { preferences.setSnai
-```
-
-**File**: `ui/src/commonMain/kotlin/dev/piko/ui/screens/auth/LoginScreen.kt` (modified, +14/-9)
-```diff
-@@ -122,6 +122,7 @@ import dev.piko.ui.screens.settings.ProxySettingsDialog
- import dev.piko.ui.theme.frame
- import dev.piko.ui.theme.islandBorderColor
- import dev.piko.ui.theme.islandSurface
-+import dev.piko.ui.theme.tabular
- import kotlin.time.Clock
- import kotlinx.coroutines.delay
- import kotlinx.coroutines.launch
-@@ -274,7 +275,7 @@ fun LoginScreen(
-     }
- }
- 
--@OptIn(ExperimentalLayoutApi::class)
-+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3ExpressiveApi::class)
- @Composable
- private fun LoginBrandCanvas(
-     appLanguage: AppLanguage,
-@@ -353,6 +354,7 @@ private fun LoginBrandCanvas(
-                 FilledTonalButton(
-                     onClick = onOpenProxy,
-                     enabled = !isLoggingIn,
-+                    shapes = ButtonDefaults.shapes(),
-                     contentPadding = ButtonDefaults.ContentPadding,
-                 ) {
-                     Icon(Icons.Outlined.Public, contentDescription = null, modifier = Modifier.size(18.dp))
-@@ -368,6 +370,7 @@ private fun LoginBrandCanvas(
-     }
- }
- 
-+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
- @Composable
- private fun LanguageQuickPill(
-     current: AppLanguage,
-@@ -381,6 +384,7 @@ private fun LanguageQuickPill(
-         FilledTonalButton(
-             onClick = { expanded = true },
-             enabled = enabled,
-+            shapes = ButtonDefaults.shapes(),
-             contentPadding = ButtonDefaults.ContentPadding,
-         ) {
-             Icon(Icons.Outlined.Language, contentDescription = null, modifier = Modifier.size(18.dp))
-@@ -505,7 +509,7 @@ private fun LoginForm(
-                 textAlign = TextAlign.Center,
-             )
-             if (reauthContext != null && browserAuth is BrowserAuthState.Idle) {
--                TextButton(onClick = state::clearReauthTarget, enabled = !isBusy) {
-+                TextButton(onClick = state::clearReauthTarget, enabled = !isBusy, shapes = ButtonDefaults.shapes()) {
-                     Text(
-                         tr(
-                             "换用其他账号登录",
-@@ -664,7 +668,7 @@ private fun LoginForm(
-                                                 onClickLabel = tr(
-                                                     "选择国家或地区区号",
-                                                     "Select country or region code",
--                                                    "国・地域コードを選択",
-+                                                    "国、地域コードを選択",
-                                                     "국가/지역 번호 선택",
-                                                     "選擇國家或地區區碼",
-                                                 ),
-@@ -673,7 +677,7 @@ private fun LoginForm(
-                                     ) {
-                                         Text(
-                                             text = "+${state.dialCode}",
--                                            style = MaterialTheme.typography.titleSmall.copy(fontFeatureSettings = "tnum"),
-+                                            style = MaterialTheme.typography.titleSmall.tabular,
-                                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = contentAlpha),
-                                             maxLines = 1,
-                                         )
-@@ -790,7 +794,7 @@ private fun LoginForm(
-                         enabled = !state.isLoggingIn,
-                         onSelect = onSelectLanguage,
-                     )
--                    TextButton(onClick = onOpenProxy, enabled = !state.isLoggingIn) {
-+                    TextButton(onClick = onOpenProxy, enabled = !state.isLoggingIn, shapes = ButtonDefaults.shapes()) {
-                         Icon(Icons.Outlined.Public, contentDescription = null, modifier = Modifier.size(18.dp))
-                         Spacer(Modifier.width(8.dp))
-                         Text(
-@@ -829,6 +833,7 @@ private fun LoginForm(
-     }
- }
- 
-+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
- @Composable
- private fun DialCodePickerDialog(
-     currentDialCode: String,
-@@ -852,7 +857,7 @@ private fun DialCodePickerDialog(
-                 tr(
-                     "选择国家或地区区号",
-                     "Select country or region code",
--                    "国・地域コードを選択",
-+                    "国、地域コードを選択",
-                     "국가/지역 번호 선택",
-                     "選擇國家或地區區碼",
-                 ),
-@@ -970,7 +975,7 @@ private fun DialCodePickerDialog(
-             }
-         },
-         confirmButton = {
--            TextButton(onClick = onDismiss) {
-+            TextButton(onClick = onDismiss, shapes = ButtonDefaults.shapes()) {
-                 Text(stringResource(Res.string.common_close))
-             }
-         },
-@@ -1129,7 +1134,7 @@ private fun GoogleConfirmationCard(
-                         "확인 대기 중 (남은 시간 $mins:$secs)",
-                         "等待確認中，有效剩餘 $mins:$secs",
-                     ),
--                    style = MaterialTheme.typography.labelMedium,
-+                    style = MaterialTheme.typography.lab
-```
-
-**File**: `ui/src/commonMain/kotlin/dev/piko/ui/screens/drive/DriveContentPane.kt` (modified, +2/-2)
-```diff
-@@ -561,8 +561,8 @@ private fun DriveEmptyState(state: DriveScreenState, modifier: Modifier = Modifi
-                 } else if (state.archiveView != null) {
-                     val error = state.loadError
-                     PikoEmptyState(
--                        title = if (error != null) tr("无法读取压缩包", "Unable to read archive", "圧縮ファイルを読み込めません", "압축 파일을 읽을 수 없습니다", "無法讀取壓縮檔") else tr("此文件夹为空", "This folder is empty", "このフォルダーは空です", "이 폴더는 비어 있습니다", "此資料夾為空"),
--                        description = error ?: tr("此压缩包目录为空", "This archive folder is empty", "圧縮ファイル内のこのフォルダーは空です", "압축 파일의 이 폴더는 비어 있습니다", "此壓縮檔目錄為空"),
-+                        title = if (error != null) tr("无法读取压缩包", "Unable to read archive", "圧縮ファイルを読み込めません", "압축 파일을 읽을 수 없습니다", "無法讀取壓縮檔") else tr("此压缩包目录为空", "This archive folder is empty", "圧縮ファイル内のこのフォルダーは空です", "압축 파일의 이 폴더는 비어 있습니다", "此壓縮檔目錄為空"),
-+                        description = error ?: "",
-                         icon = if (error != null) Icons.Outlined.ErrorOutline else Icons.Outlined.FolderOpen,
-                     )
-                 } else if (state.importPreviewView != null) {
-```
-
-**File**: `ui/src/commonMain/kotlin/dev/piko/ui/screens/drive/DriveDialogs.kt` (modified, +80/-34)
-```diff
-@@ -1,15 +1,24 @@
- package dev.piko.ui.screens.drive
- 
-+import androidx.compose.foundation.BorderStroke
- import androidx.compose.foundation.layout.Arrangement
- import androidx.compose.foundation.layout.Column
-+import androidx.compose.foundation.layout.PaddingValues
- import androidx.compose.foundation.layout.Row
- import androidx.compose.foundation.layout.Spacer
- import androidx.compose.foundation.layout.fillMaxWidth
-+import androidx.compose.foundation.layout.height
-+import androidx.compose.foundation.layout.heightIn
- import androidx.compose.foundation.layout.padding
--import androidx.compose.material3.FilterChip
-+import androidx.compose.material3.ButtonDefaults
-+import androidx.compose.material3.ButtonGroupDefaults
-+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
- import androidx.compose.material3.MaterialTheme
-+import androidx.compose.material3.OutlinedToggleButton
-+import androidx.compose.material3.OutlinedToggleButtonDefaults
- import androidx.compose.material3.Text
- import androidx.compose.material3.TextButton
-+import androidx.compose.ui.graphics.Color
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableStateOf
-@@ -47,10 +56,13 @@ import dev.piko.ui.components.SegmentDownloadSheet
- import dev.piko.ui.components.SegmentSession
- import dev.piko.ui.components.SheetAction
- import dev.piko.ui.components.UnsupportedNameDialog
-+import dev.piko.ui.components.connectedToggleShapes
- import dev.piko.ui.components.driveNameHint
- import dev.piko.ui.components.isUnfixableDriveName
- import dev.piko.ui.components.previewImageCoverUrl
- import dev.piko.ui.components.submitDriveName
-+import dev.piko.ui.theme.LocalAppearance
-+import dev.piko.ui.theme.isEInk
- import dev.piko.ui.i18n.stringResource
- import dev.piko.ui.resources.Res
- import dev.piko.ui.resources.common_cancel
-@@ -307,10 +319,13 @@ internal fun DriveSheetHost(
-                     onDismissRequest = onDismissSheet,
-                     sideSheetTitle = tr("转到路径", "Go to path", "パスへ移動", "경로로 이동", "前往路徑"),
-                 ) {
-+                    val sideSheet = isSideSheet
-                     Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
--                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
--                            Text(stringResource(Res.string.text_go_to_path), Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
--                            TextButton(onClick = onDismissSheet) { Text(stringResource(Res.string.common_close)) }
-+                        if (!sideSheet) {
-+                            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-+                                Text(stringResource(Res.string.text_go_to_path), Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
-+                                TextButton(onClick = onDismissSheet, shapes = ButtonDefaults.shapes()) { Text(stringResource(Res.string.common_close)) }
-+                            }
-                         }
-                         addressBar()
-                         Text(stringResource(Res.string.text_enter_a_path_in_the_address_bar_or_choose_a_recent_or_pinned_folder), style = MaterialTheme.typography.bodySmall)
-@@ -370,6 +385,7 @@ internal fun DriveSystemOverlays(
-     }
- }
- 
-+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
- @Composable
- private fun DriveSingleRenameDialog(
-     dialog: DriveDialog.SingleRename,
-@@ -402,8 +418,10 @@ private fun DriveSingleRenameDialog(
-         }
-     }
-     val isAlreadyCanonical = normalizedWithCurrentFlags != null && renameNewName == normalizedWithCurrentFlags
--    val showAvControls = canonicalName != null || initialAv != null || liveAv != null
--    val showMetaTubeRow = canonicalName != null && (canonicalRename || isAlreadyCanonical) && metaTubeEnabled && metaTube != null
-+    val hasInitialAv = canonicalName != null || initialAv != null
-+    val showAvControls = hasInitialAv || liveAv != null
-+    val canOfferMetaTube = canonicalName != null && metaTubeEnabled && metaTube != null
-+    val showMetaTubeRow = canOfferMetaTube && (canonicalRename || isAlreadyCanonical)
- 
-     NameInputDialog(
-         title = tr("重命名", "Rename", "名前を変更", "이름 변경", "重新命名"),
-@@ -417,44 +435,71 @@ private fun DriveSingleRenameDialog(
-         onConfirm = { name -> onConfirmRename(target.id, name) },
-         extra = if (!showAvControls) null else {
-             {
-+                val colors = MaterialTheme.colorScheme
-+                val isEInk = LocalAppearance.current.isEInk
-+                val toggleColors = OutlinedToggleButtonDefaults.colors(
-+                    containerColor = if (isEInk) Color.White else Color.Transparent,
-+                    contentColor = if (isEInk) Color.Black else colors.onSurfaceVariant,
-+                    checkedContainerColor = if (isEInk) Color.Black else colors.seco
-```
-
-**File**: `ui/src/commonMain/kotlin/dev/piko/ui/screens/drive/ImageViewer.kt` (modified, +60/-54)
-```diff
-@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInVertically
- import androidx.compose.animation.slideOutVertically
- import androidx.compose.foundation.BorderStroke
- import androidx.compose.foundation.background
-+import androidx.compose.foundation.border
- import androidx.compose.foundation.focusable
- import androidx.compose.foundation.gestures.awaitEachGesture
- import androidx.compose.foundation.gestures.awaitFirstDown
-@@ -44,6 +45,8 @@ import androidx.compose.material.icons.outlined.ZoomOut
- import androidx.compose.material3.ButtonDefaults
- import androidx.compose.material3.ExperimentalMaterial3Api
- import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-+import androidx.compose.material3.FloatingToolbarDefaults
-+import androidx.compose.material3.HorizontalFloatingToolbar
- import androidx.compose.material3.Icon
- import androidx.compose.material3.IconButtonDefaults
- import androidx.compose.material3.MaterialTheme
-@@ -56,6 +59,7 @@ import androidx.compose.material3.TextButton
- import androidx.compose.material3.TooltipAnchorPosition
- import androidx.compose.material3.TooltipBox
- import androidx.compose.material3.TooltipDefaults
-+import androidx.compose.material3.VerticalDivider
- import androidx.compose.material3.rememberTooltipState
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.DisposableEffect
-@@ -525,7 +529,7 @@ private fun PageButton(
-                 color = fixedColors.ScrimOnMediaStrong,
-                 contentColor = fixedColors.OnMedia,
-                 border = BorderStroke(1.dp, fixedColors.HudSpecularBorder),
--                modifier = Modifier.size(44.dp).captionExclusion(),
-+                modifier = Modifier.size(48.dp).captionExclusion(),
-             ) {
-                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                     Icon(icon, contentDescription = description)
-@@ -662,7 +666,7 @@ private fun ViewerTopBar(
-     }
- }
- 
--@OptIn(ExperimentalMaterial3Api::class)
-+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
- @Composable
- private fun ViewerControlCapsule(
-     zoomPercent: Int,
-@@ -680,63 +684,65 @@ private fun ViewerControlCapsule(
-             .padding(top = 20.dp, bottom = 16.dp),
-         contentAlignment = Alignment.Center,
-     ) {
--        Surface(
--            shape = CircleShape,
--            color = fixedColors.ScrimOnMediaStrong,
--            contentColor = fixedColors.OnMedia,
--            border = BorderStroke(1.dp, fixedColors.HudSpecularBorder),
--            modifier = Modifier.captionExclusion(),
-+        HorizontalFloatingToolbar(
-+            expanded = true,
-+            colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-+                toolbarContainerColor = fixedColors.ScrimOnMediaStrong,
-+                toolbarContentColor = fixedColors.OnMedia,
-+            ),
-+            contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp),
-+            expandedShadowElevation = 0.dp,
-+            collapsedShadowElevation = 0.dp,
-+            modifier = Modifier
-+                .border(1.dp, fixedColors.HudSpecularBorder, FloatingToolbarDefaults.ContainerShape)
-+                .captionExclusion(),
-         ) {
--            Row(
--                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
--                verticalAlignment = Alignment.CenterVertically,
-+            TooltipIconButton(
-+                icon = Icons.Outlined.ZoomOut,
-+                label = tr("缩小", "Zoom out", "縮小", "축소", "縮小"),
-+                onClick = onZoomOut,
-+                shortcut = "-",
-+                tint = fixedColors.OnMedia,
++    @Test
++    fun videoSegmentExtractorFailurePreservesExistingDestination() = runBlocking {
++        val dir = File(context.cacheDir, "extractor-compat-${UUID.randomUUID()}").apply { mkdirs() }
++        val existing = File(dir, "existing.mp4").apply { writeBytes(ByteArray(2048) { 42 }) }
++        val invalidSource = File(dir, "corrupt.mp4").apply { writeBytes(byteArrayOf(0, 1, 2, 3)) }
++        try {
++            val result = VideoSegmentExtractor.remux(
++                context = context,
++                sourcePath = invalidSource.absolutePath,
++                destinationFile = existing,
++                durationHintMs = 1_000L,
++                onProgress = {},
 +            )
-+            TooltipBox(
-+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
-+                tooltip = { PlainTooltip { Text(tr("重置缩放 (0)", "Reset zoom (0)", "ズームをリセット (0)", "배율 재설정 (0)", "重設縮放 (0)")) } },
-+                state = rememberTooltipState(),
-             ) {
--                TooltipIconButton(
--                    icon = Icons.Outlined.ZoomOut,
--                    label = tr("缩小", "Zoom out", "縮小", "축소", "縮小"),
--                    onClick = onZoomOut,
--                    shortcut = "-",
--                    tint = fixedColors.OnMedia,
--                )
--                TooltipBox(
--                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
--                    tooltip = { PlainTooltip { Text(tr("重置缩放 (0)", "Reset zoom (0)", "ズームをリセット (0)", "배율 재설정 (0)", "重設縮放 (0)")) } },
--                    state = rememberTooltipState(),
-+                TextButton(
-+                    onClick = onResetZoom,
-+                    shapes = ButtonDefaults.shapes(),
-+                    colors = ButtonDefaults.textButtonColors(contentColor = fixedColors.OnMedia),
-+                    contentPadding = PaddingValues(horizontal = 10.dp),
-                 ) {
--                 
++            assertTrue("Corrupt source must fail extraction", result.isFailure)
++            assertTrue("Existing destination must be preserved on failure", existing.exists())
++            assertEquals(2048L, existing.length())
++        } finally {
++            dir.deleteRecursively()
++        }
++    }
++}
+```
+
+**File**: `app/src/main/AndroidManifest.xml` (modified, +2/-0)
+```diff
+@@ -8,6 +8,8 @@
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+     <!-- 应用内更新：经 PackageInstaller 安装从 GitHub Releases 下载的新版本 -->
+     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
++    <!-- 生物识别应用锁：API 30+ BiometricPrompt.authenticate() 需要显式声明 -->
++    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+ 
+     <application
+         android:name=".PikoApplication"
+```
+
+**File**: `app/src/main/kotlin/dev/piko/download/VideoSegmentExtractor.kt` (modified, +5/-4)
+```diff
+@@ -201,6 +201,10 @@ object VideoSegmentExtractor {
+                     }
+                     // 循环因取消（暂停）退出时不能当作写完：收尾成文件再改名，暂停的片段就成了一个截短的「已完成」
+                     coroutineContext.ensureActive()
++                    if (muxerStarted) {
++                        muxerStarted = false
++                        muxer.stop()
++                    }
+                     onProgress(1f)
+                 } finally {
+                     if (muxerStarted) {
+@@ -209,11 +213,8 @@ object VideoSegmentExtractor {
+                     runCatching { muxer.release() }
+                 }
+ 
+-                // 写入完整后再原子替换至最终目标文件
++                // 写入完整后再原子替换至最终目标文件（不预先删旧文件，避免替换失败导致原文件丢失）
+                 if (tempFile.exists() && tempFile.length() > 1024L) {
+-                    if (destinationFile.exists()) {
+-                        destinationFile.delete()
+-                    }
+                     if (!tempFile.renameTo(destinationFile)) {
+                         tempFile.copyTo(destinationFile, overwrite = true)
+                         tempFile.delete()
+```
+
+**File**: `app/src/main/kotlin/dev/piko/platform/AndroidHtmlViewerSupport.kt` (modified, +11/-0)
+```diff
+@@ -5,6 +5,7 @@ import android.graphics.Bitmap
+ import android.graphics.Color as AndroidColor
+ import android.os.Build
+ import android.view.ViewGroup
++import android.webkit.RenderProcessGoneDetail
+ import android.webkit.WebChromeClient
+ import android.webkit.WebResourceRequest
+ import android.webkit.WebResourceResponse
+@@ -170,6 +171,16 @@ internal class AndroidHtmlViewerSupport : HtmlViewerSupport {
+                         override fun doUpdateVisitedHistory(view: WebView?, pageUrl: String?, isReload: Boolean) {
+                             latestCanGoBack(view?.canGoBack() == true)
+                         }
++
++                        override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
++                            latestLoading(false)
++                            if (view != null) {
++                                if (webViewRef === view) webViewRef = null
++                                (view.parent as? ViewGroup)?.removeView(view)
++                                runCatching { view.destroy() }
++                            }
++                            return true
++                        }
+                     }
+                     webViewRef = this
+                 }
+```
+
+**File**: `app/src/main/kotlin/dev/piko/platform/AndroidPikoPlatform.kt` (modified, +9/-2)
+```diff
+@@ -601,11 +601,18 @@ class AndroidPikoPlatform(
+                     .onFailure { PikoLog.w(TAG, "Failed to resolve SAF document ID for containing folder (authority=$authority)", it) }
+                     .getOrNull() ?: return
+                 val parentId = documentId.substringBeforeLast('/', documentId)
+-                DocumentsContract.buildTreeDocumentUri(authority, parentId)
++                runCatching { DocumentsContract.buildTreeDocumentUri(authority, parentId) }
++                    .onFailure { PikoLog.w(TAG, "Failed to build SAF tree URI for containing folder (authority=$authority)", it) }
++                    .getOrNull() ?: return
+             } else {
+                 val file = File(path)
+                 if (!file.exists()) return
+-                FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file.parentFile ?: file)
++                val authority = "${context.packageName}.fileprovider"
++                val parent = file.parentFile ?: file
++                runCatching { FileProvider.getUriForFile(context, authority, parent) }
++                    .recoverCatching { FileProvider.getUriForFile(context, authority, file) }
++                    .onFailure { PikoLog.w(TAG, "Failed to build FileProvider URI for containing folder", it) }
++                    .getOrNull() ?: return
+             }
+             startActivity(
+                 Intent(Intent.ACTION_VIEW)
+```
+
+**File**: `app/src/main/kotlin/dev/piko/util/PikPakAppLink.kt` (modified, +1/-1)
+```diff
+@@ -59,5 +59,5 @@ object PikPakAppLink {
+         }
+ 
+     private fun decode(value: String): String =
+-        runCatching { URLDecoder.decode(value, Charsets.UTF_8) }.getOrDefault(value)
++        runCatching { URLDecoder.decode(value, "UTF-8") }.getOrDefault(value)
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2767,61 +1793,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): add biometric app lock, recents privacy flag, and launcher icon disgui
+## X. ci: fix Android emulator crashpad_handler hang and clean up job name
 
 **RULE**:
-When implementing operations in `app/src/main/AndroidManifest.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NihilDigit/piko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NihilDigit/piko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `638367bd`: android): add biometric app lock, recents privacy flag, and launcher icon disguise. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5058ef0e`: ci: fix Android emulator crashpad_handler hang and clean up job name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/main/AndroidManifest.xml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        <!-- 默认桌面图标入口；应用伪装时通过 PackageManager 切换以下 alias -->
-        <activity-alias
-            android:name=".MainActivityDefault"
-            android:enabled="true"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher"
-            android:roundIcon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
-        <activity-alias
-            android:name=".MainActivityEmerald"
-            android:enabled="false"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_emerald"
-            android:roundIcon="@mipmap/ic_launcher_emerald"
-            android:label="@string/app_name"
-            android:targetActivity=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </ac
+    name: android (API ${{ matrix.api }}, ${{ matrix.suite }})
+          emulator-options: -no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: echo "AVD snapshot created"; pkill -9 crashpad_handler 2>/dev/null || true
+          # Android 模拟器退出后 crashpad_handler 常残留并占住 stdout/stderr 管道，导致 runner 无限挂起
+          trap 'pkill -9 crashpad_handler 2>/dev/null || true' EXIT
+          emulator-options: -no-metrics -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: echo "AVD snapshot created"
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `638367bd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5058ef0e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

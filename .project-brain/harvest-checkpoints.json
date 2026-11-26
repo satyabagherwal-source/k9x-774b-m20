@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T22:21:49.419Z",
+  "last_updated": "2026-11-26T22:30:22.893Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
-      "verified_at": "2026-11-26T04:39:17.785Z",
+      "content_hash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
+      "verified_at": "2026-11-26T22:30:22.892Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T04:39:17.786Z"
+      "last_updated": "2026-11-26T22:30:22.892Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -20001,14 +20001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-lingsante-3-1-flash",
-      "content_hash": "483bbd5e882dd4da6670e7f2bb72400994e9f8c81db33e7e1483dea66a0961f2",
-      "verified_at": "2026-11-23T13:24:22.833Z",
+      "content_hash": "3579a4cc7563f2897b59000e47ed9a589e03a7c3f8459143a479357778a2b45a",
+      "verified_at": "2026-11-26T22:30:12.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T13:24:22.833Z"
+      "last_updated": "2026-11-26T22:30:12.216Z"
     },
     "Fei-Craft/DS-Bot": {
       "repository": "Fei-Craft/DS-Bot",
@@ -20136,14 +20136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nihildigit-piko",
-      "content_hash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
-      "verified_at": "2026-11-24T14:33:18.048Z",
+      "content_hash": "ff127879f584a2e7d6cca93f7fbf7f5320e3b9013bd22dcd9ad953b3b6904ed0",
+      "verified_at": "2026-11-26T22:30:20.814Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:33:18.048Z"
+      "last_updated": "2026-11-26T22:30:20.814Z"
     },
     "indexable-inc/blaze": {
       "repository": "indexable-inc/blaze",

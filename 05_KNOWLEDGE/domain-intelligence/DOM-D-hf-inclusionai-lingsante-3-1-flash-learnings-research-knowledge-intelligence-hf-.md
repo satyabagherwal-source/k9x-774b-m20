@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T13:25:05.284Z",
+  "timestamp": "2026-11-26T22:30:26.526Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-inclusionai-lingsante-3.1-flash-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-inclusionai-lingsante-3.1-flash-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T13:25:05.284Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T22:30:26.526Z`  
 > **Learning ID**: `LEARN-EVO-hf-inclusionai-lingsante-3.1-flash-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-inclusion`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T13:24:22.151Z  
+> **Timestamp**: 2026-11-26T22:30:11.637Z  
 > **Learning ID**: `learn-huggingface-inclusionai-lingsante-3-1-flash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-lingsante-3.1-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/inclusionAI/LingSante-3.1-flash](https://huggingface.co/inclusionAI/LingSante-3.1-flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T13:23:15.007Z  
+> **Harvest Timestamp**: 2026-11-26T22:30:11.510Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 397 downloads | 86 likes
+- **Stars / Engagement**: 1487 downloads | 227 likes
 
 ---
 

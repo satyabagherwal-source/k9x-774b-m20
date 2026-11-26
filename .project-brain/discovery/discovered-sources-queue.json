@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T22:21:54.550Z",
+  "updated_at": "2026-11-26T22:30:27.912Z",
   "stats": {
-    "total_discovered": 10087,
-    "approved_pending_harvest": 9564,
+    "total_discovered": 10089,
+    "approved_pending_harvest": 9566,
     "harvested_count": 0,
     "rejected_count": 523,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9567,
+      "COMMUNITY_AND_EXPERT": 9569,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -218280,6 +218280,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
         "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-977AA7EA6989": {
+      "id": "SRC-977AA7EA6989",
+      "url": "https://toapp.mypikpak.com/toapp?deepLink=%2Fdrive%2Fadd%3Fadd_url%3D%24encodedMagnet",
+      "title": "https://toapp.mypikpak.com/toapp?deepLink=%2Fdrive%2Fadd%3Fadd_url%3D%24encodedMagnet",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T22:30:26.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nihildigit-piko-learnings.md",
+        "fileName": "nihildigit-piko-learnings.md"
+      }
+    },
+    "SRC-8DD4585B1B4D": {
+      "id": "SRC-8DD4585B1B4D",
+      "url": "https://github.com/juicedata/juicefs/actions/runs/45778902560/job/139769253443",
+      "title": "https://github.com/juicedata/juicefs/actions/runs/45778902560/job/139769253443",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T22:30:27.912Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
       }
     }
   }

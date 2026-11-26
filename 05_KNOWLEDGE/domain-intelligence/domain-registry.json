@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T22:21:55.897Z",
+  "last_updated": "2026-11-26T22:30:28.352Z",
   "total_records": 2786,
   "domains": {
     "A": {
@@ -10554,8 +10554,8 @@
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "repository": "juicedata/juicefs",
-      "content_hash": "ba6dd7abd4cae857d7606bf59d8e0b4c34cb3fedb74a4899556128d1fc499f32",
-      "created_at": "2026-11-26T04:39:18.170Z"
+      "content_hash": "67d256e3c0c596628fa7ca670f025d5ac9f68c735aef327014cb1284b5c09d43",
+      "created_at": "2026-11-26T22:30:23.329Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants",
@@ -24521,8 +24521,8 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-learnings-architecture-intelligence-juicedata-juicefs-learning.md",
       "repository": "juicedata-juicefs-learnings",
-      "content_hash": "cc169cd12d90c7ceeaed9fbd598203558d8967842dd01f49dbe0ecbfcc9bc18a",
-      "created_at": "2026-11-26T04:39:22.154Z"
+      "content_hash": "851d5229426eeaa48d0e724eb31e2c985427e136451e72934fe1815676576f0f",
+      "created_at": "2026-11-26T22:30:28.352Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",
@@ -40904,8 +40904,8 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/LingSante-3.1-flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-flash-research-knowledge-intelligence-inclusionai-l.md",
       "repository": "inclusionAI/LingSante-3.1-flash",
-      "content_hash": "6949623cce3f3915e30e331805cb04999c0d873014df43c0896476a0231f0177",
-      "created_at": "2026-11-23T13:24:23.106Z"
+      "content_hash": "601041ff997cb0074c17b97d1b9c06bd6dfc5fe48d9438d8d69af69edfe048e5",
+      "created_at": "2026-11-26T22:30:12.434Z"
     },
     "DOM-D-ED1762B4": {
       "record_id": "DOM-D-ED1762B4",
@@ -40955,8 +40955,8 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-lingsante-3.1-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-lingsante-3-1-flash-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-inclusionai-lingsante-3.1-flash-learnings",
-      "content_hash": "f35fed2113670527e6bd151cb2efabfad348190dcb80a58b69ce258ab5320744",
-      "created_at": "2026-11-23T13:25:05.410Z"
+      "content_hash": "4cd1a51988832fbe7975f45dd88d4b4d409e8b9a97c9e04a92c30eba2602cbf1",
+      "created_at": "2026-11-26T22:30:26.648Z"
     },
     "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-daveebbelaar-bama-learnings-core-invariants",
@@ -42811,8 +42811,8 @@
       "title": "Architecture Intelligence: NihilDigit/piko Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nihildigit-piko-architecture-intelligence-nihildigit-piko-core-invariants.md",
       "repository": "NihilDigit/piko",
-      "content_hash": "14f21acffcb04e7b755d519514ae3a70ed315873cf78a733b051719946a9b6ed",
-      "created_at": "2026-11-24T14:33:18.629Z"
+      "content_hash": "c33209cd9725da9f89d11cb436247ab348756d54de41a561668584e91d28ec02",
+      "created_at": "2026-11-26T22:30:21.268Z"
     },
     "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nihildigit-piko-learnings-core-invariants",
@@ -42820,8 +42820,8 @@
       "title": "Architecture Intelligence: nihildigit-piko-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nihildigit-piko-learnings-architecture-intelligence-nihildigit-piko-learnings-co.md",
       "repository": "nihildigit-piko-learnings",
-      "content_hash": "32ae1a4a98c9405951ebc6fdfac5693a5735fbe1afdcff59fecfc5820bcd949d",
-      "created_at": "2026-11-24T14:33:31.884Z"
+      "content_hash": "84fa7595f534d535ece73a30483b10ee4be13e72e9e38c81384dee459f66a232",
+      "created_at": "2026-11-26T22:30:27.444Z"
     },
     "domain_intelligence-technical-construction-intelligence-citusdata-citus-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-citusdata-citus-core-invariants",

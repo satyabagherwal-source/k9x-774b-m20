@@ -13608,3 +13608,6 @@ Every entry in this ledger must capture:
 | `learn-github-aws-amplify-amplify-js` | `https://github.com/aws-amplify/amplify-js` | `c08112f4` | Multi-dimensional audit evidence | 2026-11-26T22:10:46.783Z |
 | `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-11-26T22:21:38.886Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `b5eaaaa9` | Multi-dimensional audit evidence | 2026-11-26T22:21:49.399Z |
+| `learn-huggingface-inclusionai-lingsante-3-1-flash` | `https://huggingface.co/inclusionAI/LingSante-3.1-flash` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-26T22:30:12.201Z |
+| `learn-github-nihildigit-piko` | `https://github.com/NihilDigit/piko` | `a35cb654` | Multi-dimensional audit evidence | 2026-11-26T22:30:20.789Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `7674bd86` | Multi-dimensional audit evidence | 2026-11-26T22:30:22.872Z |

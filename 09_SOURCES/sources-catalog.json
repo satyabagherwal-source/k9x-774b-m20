@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "99cf558e",
+    "sourceVersion": "7674bd86",
     "license": "Apache-2.0",
-    "contentHash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
-    "lastHarvestedAt": "2026-11-26T04:39:17.772Z",
+    "contentHash": "26f4c34d2e717b419937da469c76a882518046317ec153d63c7e3337f01f7ad2",
+    "lastHarvestedAt": "2026-11-26T22:30:22.872Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -13255,8 +13255,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/LingSante-3.1-flash",
     "sourceVersion": "hf-inclusionai-lingsante-3.1-flash",
     "license": "Open-Source",
-    "contentHash": "483bbd5e882dd4da6670e7f2bb72400994e9f8c81db33e7e1483dea66a0961f2",
-    "lastHarvestedAt": "2026-11-23T13:24:22.822Z",
+    "contentHash": "3579a4cc7563f2897b59000e47ed9a589e03a7c3f8459143a479357778a2b45a",
+    "lastHarvestedAt": "2026-11-26T22:30:12.201Z",
     "learningId": "learn-huggingface-inclusionai-lingsante-3-1-flash"
   },
   "fei-craft-ds-bot": {
@@ -13343,10 +13343,10 @@
     "repository": "NihilDigit/piko",
     "platform": "github",
     "sourceUrl": "https://github.com/NihilDigit/piko",
-    "sourceVersion": "638367bd",
+    "sourceVersion": "a35cb654",
     "license": "AGPL-3.0",
-    "contentHash": "38de43536602be5ac1c0d3ffbd64fd5037fba1e4a6a38052fe0a7f4e7e345f7f",
-    "lastHarvestedAt": "2026-11-24T14:33:18.028Z",
+    "contentHash": "ff127879f584a2e7d6cca93f7fbf7f5320e3b9013bd22dcd9ad953b3b6904ed0",
+    "lastHarvestedAt": "2026-11-26T22:30:20.789Z",
     "learningId": "learn-github-nihildigit-piko"
   },
   "indexable-inc-blaze": {
