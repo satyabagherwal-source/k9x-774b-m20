@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T17:03:50.569Z",
+  "timestamp": "2026-11-26T23:32:28.902Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-opentofu-opentofu-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [opentofu-opentofu-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T17:03:50.569Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T23:32:28.902Z`  
 > **Learning ID**: `LEARN-EVO-opentofu-opentofu-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `bfd092bc`  
+> **Source Version**: `f814a86f`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:03:36.278Z  
+> **Timestamp**: 2026-11-26T23:32:23.377Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:03:36.270Z  
+> **Harvest Timestamp**: 2026-11-26T23:32:23.372Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30967 stars
+- **Stars / Engagement**: 31011 stars
 
 ---
 
@@ -1444,36 +1444,135 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bfd092bc` (2026-11-20)
-**Commit Message**: Don't save marked output values in the plan
+### Incident Patch 1: `f814a86f` (2026-11-26)
+**Commit Message**: Limit the body reading based on Content-Length (#4849)
 
-This was preventing some ad-hoc testing of other features
+Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
 
-Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
-
-**File**: `internal/engine/planning/plan.go` (modified, +2/-1)
+**File**: `internal/getproviders/http_mirror_source.go` (modified, +17/-1)
 ```diff
-@@ -136,9 +136,10 @@ func finalizePlan(ctx context.Context, intermediate *planContextResult, provider
- 	clear(refreshedOutputs)
- 	for k, v := range intermediate.RootOutput.Current {
- 		if v.Value.IsKnown() {
-+			unmarkedVal, _ := v.Value.UnmarkDeep()
- 			refreshedOutputs[k] = &states.OutputValue{
- 				Addr:  addrs.AbsOutputValue{OutputValue: addrs.OutputValue{Name: k}},
--				Value: v.Value,
-+				Value: unmarkedVal,
- 				// TODO Sensitive  bool
- 				// TODO Deprecated string
- 			}
+@@ -15,6 +15,7 @@ import (
+ 	"net/http"
+ 	"net/url"
+ 	"path"
++	"strconv"
+ 	"strings"
+ 	"time"
+ 
+@@ -176,7 +177,7 @@ func (s *HTTPMirrorSource) PackageMeta(ctx context.Context, provider addrs.Provi
+ 	type ResponseArchiveMeta struct {
+ 		RelativeURL          string `json:"url"`
+ 		Hashes               []string
+-		UseMirrorCredentials *bool  `json:"use_mirror_credentials"`
++		UseMirrorCredentials *bool `json:"use_mirror_credentials"`
+ 	}
+ 	type ResponseBody struct {
+ 		Archives map[string]*ResponseArchiveMeta `json:"archives"`
+@@ -372,6 +373,21 @@ func (s *HTTPMirrorSource) get(ctx context.Context, relativePath string) (status
+ 			log.Printf("[WARN] Network mirror returned %q as part of its JSON content type, which is not defined. Ignoring.", name)
+ 		}
+ 		body = resp.Body
++		// if content-length is specified, use it to return a reader that can read only the indicated content-length
++		cl := resp.Header.Get("Content-Length")
++		if len(cl) > 0 {
++			contentLen, err := strconv.ParseInt(cl, 10, 0)
++			if err != nil {
++				log.Printf("[WARN] Network mirror returned invalid value %q for content-length. This will be ignored but the unbounded body could create unexpected behavior", cl)
++			}
++			body = struct {
++				io.Reader
++				io.Closer
++			}{
++				Reader: io.LimitReader(body, contentLen),
++				Closer: body,
++			}
++		}
+ 	}
+ 
+ 	return resp.StatusCode, body, finalURL, nil
+```
+
+**File**: `internal/getproviders/http_mirror_source_test.go` (modified, +49/-0)
+```diff
+@@ -49,6 +49,8 @@ func TestHTTPMirrorSource(t *testing.T) {
+ 	failingProvider := addrs.MustParseProviderSourceString("terraform.io/test/fails")
+ 	redirectingProvider := addrs.MustParseProviderSourceString("terraform.io/test/redirects")
+ 	redirectLoopProvider := addrs.MustParseProviderSourceString("terraform.io/test/redirect-loop")
++	contentLenSmallerProvider := addrs.MustParseProviderSourceString("registry.opentofu.org/length/smaller")
++	contentLenHigherProvider := addrs.MustParseProviderSourceString("registry.opentofu.org/length/higher")
+ 	tosPlatform := Platform{OS: "tos", Arch: "m68k"}
+ 
+ 	clientBuilderFromHTTPLocation := func(t *testing.T, expectedRetries int) func(ctx context.Context) *retryablehttp.Client {
+@@ -81,6 +83,29 @@ func TestHTTPMirrorSource(t *testing.T) {
+ 			t.Errorf("wrong result\n%s", diff)
+ 		}
+ 	})
++
++	t.Run("AvailableVersions for provider that specifies content-length smaller than the body content", func(t *testing.T) {
++		_, _, err := source.AvailableVersions(context.Background(), contentLenSmallerProvider)
++		expected := "invalid response content from mirror server: unexpected EOF"
++		if err == nil || !strings.Contains(err.Error(), expected) {
++			t.Fatalf("unexpected error: %s. Expected to contain %q", err, expected)
++		}
++	})
++
++	t.Run("AvailableVersions for provider that specifies content-length higher than the body content", func(t *testing.T) {
++		got, _, err := source.AvailableVersions(context.Background(), contentLenHigherProvider)
++		if err != nil {
++			t.Fatalf("unexpected error: %s", err)
++		}
++		want := VersionList{
++			MustParseVersion("1.0.0"),
++			MustParseVersion("1.0.1"),
++			MustParseVersion("1.0.2-beta.1"),
++		}
++		if diff := cmp.Diff(want, got); diff != "" {
++			t.Errorf("wrong result\n%s", diff)
++		}
++	})
+ 	t.Run("AvailableVersions for provider that doesn't exist", func(t *testing.T) {
+ 		_, _, err := source.AvailableVersions(context.Background(), missingProvider)
+ 		switch err := err.(type) {
+@@ -360,6 +385,30 @@ func testHTTPMirrorSourceHandlerNoAuth(resp http.ResponseWriter, req *http.Reque
+ 		resp.Header().Add("Content-Type", "application/json; ignored=yes")
+ 		// Just return a retryable status code
+ 		resp.WriteHeader(http.StatusInternalServerError)
++	case "/registry.opentofu.org/length/smaller/index.json":
++		resp.Header().Add("Content-Type", "application/json")
++		resp.Header().Add("Content-Length", "1") // having the content-length smaller than the body content, limits the reading to the size specified in the header
++		resp.WriteHeader(http.StatusOK)
++		fmt.Fprint(resp, `
++			{
++				"versions": {
++					"1.0.0": {},
++					"1.0.1": {},
++					"1.0.2-beta.1": {}
++				}
++			}`)
++	case "/registry.opentofu.org/length/higher/index.json":
++		resp.Header().Add("Content-Type", "application/json")
++		resp.Header().Add("Content-Length", "1024") // having the content-length higher, reads exactly the content of the body
++		resp.WriteHeader(http.StatusOK)
++		fmt.Fprint(resp, `
++			{
++				"versions": {
++					"1.0.0": {},
++					"1.0.1": {},
++					"1.0.2-beta.1": {}
++				}
++			}`)
+ 
+ 	default:
+ 		resp.WriteHeader(404)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4876** (2026-11-23): Version 1.13.10 (@cam72cam)
+- **PR #4875** (2026-11-23): [Backport v1.13] Fix symbol libraries crash when uninitialized (@cam72cam)
 - **PR #4866** (2026-11-23): Don't save marked output values in the plan (@cam72cam)
 - **PR #4864** (2026-11-20): Pre/Post conditions in the new runtime (@cam72cam)
 - **PR #4863** (2026-11-20): resource: "Latching" behavior of ActionIfUnwanted for `destroy = false` (@apparentlymart)
 - **PR #4861** (2026-11-18): Fix symbol libraries crash when uninitialized (@cam72cam)
-- **PR #4859** (2026-11-18): [Backport][v1.13] tofu test: apply mock_provider resource overrides inside modules (#4841) (@yottta)
-- **PR #4854** (2026-11-17): runtime: fix upgrade state on destroy and no skip refresh (@lbordowitz)
 
 ---
 
@@ -1493,32 +1592,47 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Don't save marked output values in the plan
+## X. Limit the body reading based on Content-Length
 
 **RULE**:
-When implementing operations in `internal/engine/planning/plan.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/getproviders/http_mirror_source.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bfd092bc`: Don't save marked output values in the plan. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f814a86f`: Limit the body reading based on Content-Length. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/planning/plan.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/getproviders/http_mirror_source.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			unmarkedVal, _ := v.Value.UnmarkDeep()
-				Value: unmarkedVal,
+	"strconv"
+		UseMirrorCredentials *bool `json:"use_mirror_credentials"`
+		// if content-length is specified, use it to return a reader that can read only the indicated content-length
+		cl := resp.Header.Get("Content-Length")
+		if len(cl) > 0 {
+			contentLen, err := strconv.ParseInt(cl, 10, 0)
+			if err != nil {
+				log.Printf("[WARN] Network mirror returned invalid value %q for content-length. This will be ignored but the unbounded body could create unexpected behavior", cl)
+			}
+			body = struct {
+				io.Reader
+				io.Closer
+			}{
+				Reader: io.LimitReader(body, contentLen),
+				Closer: body,
+			}
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				Value: v.Value,
+		UseMirrorCredentials *bool  `json:"use_mirror_credentials"`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bfd092bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f814a86f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

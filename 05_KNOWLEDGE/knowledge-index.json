@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T23:24:18.704Z",
+  "last_updated": "2026-11-26T23:32:30.574Z",
   "total_verified_learnings": 9137,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26252,
+  "total_items": 26254,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a34185f7c4e9b492b904a973372cef1974bd622fd3970baa5c76bde6212e7cf",
+      "content_hash": "21b20cb3aaa513943c24e214ddd56e315894e519c394e78968a788f23157d6b4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T23:24:18.704Z"
+      "persisted_at": "2026-11-26T23:32:30.574Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -215491,8 +215491,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "bfd092bc",
-      "content_hash": "a04dc0e197350ff33b4aa6db724e6d40a2bd476fb057c4da96c9cb339878532b",
+      "source_version": "f814a86f",
+      "content_hash": "d0d3f2c72c9d15d09059ff111557a48d657a965e0b95d3102bcbea070cc97f17",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -215525,6 +215525,11 @@
           "number": 10075,
           "title": "Don't save marked output values in the plan",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10793,
+          "title": "Limit the body reading based on Content-Length",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215532,7 +215537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:03:37.407Z",
+      "verified_at": "2026-11-26T23:32:24.302Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215574,10 +215579,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "repository": "opentofu/opentofu",
-      "source_version": "bfd092bc",
-      "content_hash": "3b778dbbd9b2beb6ece9f95d298f220db4f4eab161787e0b2ccdcdd6473d952d",
+      "source_version": "f814a86f",
+      "content_hash": "0b1bba8cb0e7c3f559c679d50c6426d06ee1dce24b8608984330ba3ec4e1c010",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:03:38.231Z"
+      "persisted_at": "2026-11-26T23:32:25.051Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu",
@@ -215586,10 +215591,10 @@
       "relative_path": "08_VERIFICATION/opentofu-opentofu-verification-protocol-empirical-defect-shield-for-opentofu-ope.md",
       "title": "Verification Protocol: Empirical Defect Shield for opentofu/opentofu",
       "repository": "opentofu/opentofu",
-      "source_version": "bfd092bc",
-      "content_hash": "d978b3935c7fdbe566cd9cca1896f930705226f22024e9f04efea58b3cac1987",
+      "source_version": "f814a86f",
+      "content_hash": "f46b6f65df3c2f4844446232bbf965efc28a65c2d10b36b6a623e67f6b35ba01",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:03:38.458Z"
+      "persisted_at": "2026-11-26T23:32:25.296Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -229977,7 +229982,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "3d86d05bf3f98947003b2e2f04cd5b911e2843b233fba2ebf6588a77576da73c",
+      "content_hash": "1ba5fb68be1f8ec8d62151405d7ea586a3843b702789a544be51013a3cab5d54",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [],
@@ -229986,7 +229991,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:46:23.811Z",
+      "verified_at": "2026-11-26T23:32:15.016Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230003,9 +230008,9 @@
       "title": "Research & Knowledge Intelligence: jonatasgrosman/wav2vec2-large-xlsr-53-japanese Core Invariants",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "9cd2b0b8707ba79f848350c41a2aef76467d6e821adccaf1bf6cfc26a3f55acf",
+      "content_hash": "2e64643c5b4859125bc336bfdcd141b3cb389685388467e92258b097fba1c0f6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:46:24.242Z"
+      "persisted_at": "2026-11-26T23:32:15.513Z"
     },
     "learn-huggingface-laion-clap-htsat-fused": {
       "learning_id": "learn-huggingface-laion-clap-htsat-fused",
@@ -230066,9 +230071,9 @@
       "title": "Research & Knowledge Intelligence: hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings Core Invariants",
       "repository": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb7540f15c227b5ef4b8848d8ef802e3354640db8f76aa6419e3febde0a19d61",
+      "content_hash": "052458e1e38f2000860cc74041dc6dee13e4a98c72dc9c0063325f3a5697fe37",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:46:45.798Z"
+      "persisted_at": "2026-11-26T23:32:28.387Z"
     },
     "learn-huggingface-facebookai-xlm-roberta-base": {
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
@@ -280396,9 +280401,9 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "repository": "opentofu-opentofu-learnings",
       "source_version": "HEAD",
-      "content_hash": "9667863ef68a4e4abedaf7a16b519831640c2af5c114f289e3a83505ea533fd5",
+      "content_hash": "1ecbed5a8bab660722211a8f6f08a2b25175dd4ed09b1a37efbb80382281efff",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T17:03:50.952Z"
+      "persisted_at": "2026-11-26T23:32:29.281Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings",
@@ -280408,9 +280413,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for opentofu-opentofu-learnings",
       "repository": "opentofu-opentofu-learnings",
       "source_version": "HEAD",
-      "content_hash": "be2eebd0f838d46a6e4db463b780ef9e4350a7bb15530f84fdf30b6f2272b698",
+      "content_hash": "35fb6d26fde724b7d9fd860ec42d34a59eec4f68d5ce41ad15e2a4240729bca6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T17:03:51.178Z"
+      "persisted_at": "2026-11-26T23:32:29.547Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
@@ -357735,13 +357740,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-IZAZ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TIYM-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "cce57b23e098f8b12f7e8ebe2fc2673b31104a6cd49afd366e27631ce778a0b3",
+      "content_hash": "f586d8c736edb6ec51be3669cfee0f8b3c582027ddd08ac78ce6ba7c05cce769",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T23:24:18.111Z"
+      "persisted_at": "2026-11-26T23:32:30.145Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357751,9 +357756,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d058ff500b3cb18905b731d58236f53c39019592214e0bf625af143db53903d4",
+      "content_hash": "9da4d60eda891e28be28bbda0da0198a79c412f2e2969437d4b69d5ee85be0dc",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T23:24:18.411Z"
+      "persisted_at": "2026-11-26T23:32:30.384Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -360054,6 +360059,32 @@
       "content_hash": "81af82f4fcf53400bb75cbb5d7bfe4a4aaa7c3b10ab5ce9bdd12cdb7d2d31405",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T23:24:16.893Z"
+    },
+    "rule-10793": {
+      "learning_id": "rule-10793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10793,
+      "title": "Limit the body reading based on Content-Length",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "f814a86f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T23:32:24.302Z"
+    },
+    "candidate_directive-limit-the-body-reading-based-on-content-length": {
+      "item_id": "candidate_directive-limit-the-body-reading-based-on-content-length",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TI3M-limit-the-body-reading-based-on-content-length.md",
+      "title": "Limit the body reading based on Content-Length",
+      "repository": "opentofu-opentofu-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9bc9854baf2af1d9d626f81d233159eab3fd1b5770d507c7c23bddf5286e61b7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T23:32:29.027Z"
     }
   },
   "ai-builder-brain": {

@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:24:18.951Z",
+  "last_updated": "2026-11-26T23:32:30.748Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-26T23:24:17.495Z",
+      "processed_at": "2026-11-26T23:32:29.720Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -198,7 +198,7 @@
       "staged_for_review": 1
     },
     "opentofu-opentofu-learnings.md": {
-      "processed_at": "2026-11-23T17:03:50.188Z",
+      "processed_at": "2026-11-26T23:32:28.595Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2518,7 +2518,7 @@
       "staged_for_review": 0
     },
     "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md": {
-      "processed_at": "2026-11-23T14:46:45.586Z",
+      "processed_at": "2026-11-26T23:32:28.152Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4008,7 +4008,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4713,
+  "total_dossiers_evaluated": 4716,
   "total_canonical_promoted": 569,
-  "total_staged_for_review": 3537
+  "total_staged_for_review": 3540
 }

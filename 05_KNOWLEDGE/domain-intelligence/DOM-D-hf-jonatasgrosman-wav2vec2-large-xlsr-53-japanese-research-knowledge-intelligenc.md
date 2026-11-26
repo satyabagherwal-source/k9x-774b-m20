@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
   "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T14:46:24.241Z",
+  "timestamp": "2026-11-26T23:32:15.512Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [jonatasgrosman/wav2vec2-large-xlsr-53-japanese](https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese) (Revision: `hf-jonatas`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T14:46:24.241Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T23:32:15.512Z`  
 > **Learning ID**: `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese](https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:46:23.446Z  
+> **Harvest Timestamp**: 2026-11-26T23:32:14.524Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 15376671 downloads | 121 likes
+- **Stars / Engagement**: 15444672 downloads | 121 likes
 
 ---
 

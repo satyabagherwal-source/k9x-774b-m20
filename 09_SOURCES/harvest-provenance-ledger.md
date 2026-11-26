@@ -13627,3 +13627,5 @@ Every entry in this ledger must capture:
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `71e34a45` | Multi-dimensional audit evidence | 2026-11-26T23:11:48.279Z |
 | `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-26T23:24:01.144Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `55f7ecc2` | Multi-dimensional audit evidence | 2026-11-26T23:24:11.217Z |
+| `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-26T23:32:15.281Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `f814a86f` | Multi-dimensional audit evidence | 2026-11-26T23:32:24.540Z |

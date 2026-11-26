@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T23:24:11.244Z",
+  "last_updated": "2026-11-26T23:32:24.562Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1490,14 +1490,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "3d86d05bf3f98947003b2e2f04cd5b911e2843b233fba2ebf6588a77576da73c",
-      "verified_at": "2026-11-23T14:46:24.047Z",
+      "content_hash": "1ba5fb68be1f8ec8d62151405d7ea586a3843b702789a544be51013a3cab5d54",
+      "verified_at": "2026-11-26T23:32:15.296Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T14:46:24.047Z"
+      "last_updated": "2026-11-26T23:32:15.296Z"
     },
     "FacebookAI/xlm-roberta-base": {
       "repository": "FacebookAI/xlm-roberta-base",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "a04dc0e197350ff33b4aa6db724e6d40a2bd476fb057c4da96c9cb339878532b",
-      "verified_at": "2026-11-23T17:03:37.703Z",
+      "content_hash": "d0d3f2c72c9d15d09059ff111557a48d657a965e0b95d3102bcbea070cc97f17",
+      "verified_at": "2026-11-26T23:32:24.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:03:37.703Z"
+      "last_updated": "2026-11-26T23:32:24.561Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",

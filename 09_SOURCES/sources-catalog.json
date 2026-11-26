@@ -1125,8 +1125,8 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "3d86d05bf3f98947003b2e2f04cd5b911e2843b233fba2ebf6588a77576da73c",
-    "lastHarvestedAt": "2026-11-23T14:46:24.038Z",
+    "contentHash": "1ba5fb68be1f8ec8d62151405d7ea586a3843b702789a544be51013a3cab5d54",
+    "lastHarvestedAt": "2026-11-26T23:32:15.281Z",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "bfd092bc",
+    "sourceVersion": "f814a86f",
     "license": "MPL-2.0",
-    "contentHash": "a04dc0e197350ff33b4aa6db724e6d40a2bd476fb057c4da96c9cb339878532b",
-    "lastHarvestedAt": "2026-11-23T17:03:37.692Z",
+    "contentHash": "d0d3f2c72c9d15d09059ff111557a48d657a965e0b95d3102bcbea070cc97f17",
+    "lastHarvestedAt": "2026-11-26T23:32:24.540Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

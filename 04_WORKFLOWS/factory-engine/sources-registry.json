@@ -21,8 +21,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T19:07:41.386Z",
-    "lastVerified": "2026-11-26T19:07:41.386Z",
+    "lastChecked": "2026-11-26T23:32:21.967Z",
+    "lastVerified": "2026-11-26T23:32:21.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T23:24:15.046Z",
-    "lastVerified": "2026-11-26T23:24:15.046Z",
+    "lastChecked": "2026-11-26T23:32:27.999Z",
+    "lastVerified": "2026-11-26T23:32:27.999Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T22:51:01.166Z",
-    "lastVerified": "2026-11-26T22:51:01.166Z",
+    "lastChecked": "2026-11-26T23:32:27.049Z",
+    "lastVerified": "2026-11-26T23:32:27.049Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -3975,9 +3975,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-11-26T04:39:16.808Z",
+    "lastChecked": "2026-11-26T23:32:24.338Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-11-26T04:39:16.808Z"
+    "lastVerified": "2026-11-26T23:32:24.338Z"
   },
   "mfontanini-presenterm": {
     "name": "presenterm",
@@ -4138,9 +4138,9 @@
   "react-native-image-picker-react-native-image-picker": {
     "name": "react-native-image-picker",
     "officialUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
-    "lastChecked": "2026-11-24T15:17:13.593Z",
+    "lastChecked": "2026-11-26T23:32:17.002Z",
     "revisionIdentifier": "61c0cd41",
-    "lastVerified": "2026-11-24T15:17:13.593Z"
+    "lastVerified": "2026-11-26T23:32:17.002Z"
   },
   "go-chassis-go-chassis": {
     "name": "go-chassis",
@@ -5123,12 +5123,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "grpc-grpc-rust": {
-    "name": "grpc/grpc-rust",
+    "name": "grpc-rust",
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T23:11:41.718Z",
-    "lastVerified": "2026-11-25T23:11:41.718Z",
+    "lastChecked": "2026-11-26T23:32:11.913Z",
+    "lastVerified": "2026-11-26T23:32:11.913Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
@@ -5137,7 +5137,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "39b3ea7c"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",
@@ -6133,12 +6134,12 @@
     "officialUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T14:46:23.446Z",
-    "lastVerified": "2026-11-23T14:46:23.446Z",
+    "lastChecked": "2026-11-26T23:32:14.524Z",
+    "lastVerified": "2026-11-26T23:32:14.524Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "3d86d05bf3f98947003b2e2f04cd5b911e2843b233fba2ebf6588a77576da73c",
+    "contentHash": "1ba5fb68be1f8ec8d62151405d7ea586a3843b702789a544be51013a3cab5d54",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7129,22 +7130,21 @@
     "lastVerified": "2026-11-24T22:50:55.271Z"
   },
   "opentofu-opentofu": {
-    "name": "opentofu",
+    "name": "opentofu/opentofu",
     "officialUrl": "https://github.com/opentofu/opentofu",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T05:38:35.297Z",
-    "lastVerified": "2026-11-26T05:38:35.297Z",
+    "lastChecked": "2026-11-26T23:32:23.372Z",
+    "lastVerified": "2026-11-26T23:32:23.372Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "a04dc0e197350ff33b4aa6db724e6d40a2bd476fb057c4da96c9cb339878532b",
+    "contentHash": "d0d3f2c72c9d15d09059ff111557a48d657a965e0b95d3102bcbea070cc97f17",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bfd092bc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "genkit-ai-genkit": {
     "name": "genkit-ai/genkit",
