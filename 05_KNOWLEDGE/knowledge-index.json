@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T13:36:14.077Z",
+  "last_updated": "2026-11-26T13:44:59.442Z",
   "total_verified_learnings": 9129,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25942,
+  "total_items": 25951,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112245,10 +112245,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "9f52b997",
-      "content_hash": "4eebc065889d286068ca575bd2365c2366029d874b78986f18161fec9bbc1929",
+      "source_version": "cb5fcfa0",
+      "content_hash": "53d0e1491da031001d2f6d34f713ee37b8dc9ecfd7342519748c044245a44372",
       "domain_letter": "H",
-      "persisted_at": "2026-11-25T12:29:10.215Z"
+      "persisted_at": "2026-11-26T13:44:51.403Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112257,10 +112257,10 @@
       "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "c0b9d750",
-      "content_hash": "5a8d937f2994dc063b74b218c32e41e2e32d73023422fdfd0670e7dbe616cecb",
+      "source_version": "cb5fcfa0",
+      "content_hash": "607a0168601d49d1fc6181698b749a5c77e121d03bada18bf1e55b5dd30075cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:23:11.153Z"
+      "persisted_at": "2026-11-26T13:44:51.665Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -113145,10 +113145,10 @@
       "relative_path": "08_VERIFICATION/a2ui-project-a2ui-verification-protocol-empirical-defect-shield-for-a2ui-project.md",
       "title": "Verification Protocol: Empirical Defect Shield for a2ui-project/a2ui",
       "repository": "a2ui-project/a2ui",
-      "source_version": "c26be2dd",
-      "content_hash": "8d462ce78d9045660b5e9b12b9637cbb402d4207b48319193409e429aa66b2fa",
+      "source_version": "36725eee",
+      "content_hash": "3147e0cc16c9c027f4f1209679fcbe92917bd87451e0581ab7d05d7db70082aa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:22:36.894Z"
+      "persisted_at": "2026-11-26T13:44:42.676Z"
     },
     "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414": {
       "item_id": "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414",
@@ -113218,9 +113218,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for a2ui-project-a2ui-learnings",
       "repository": "a2ui-project-a2ui-learnings",
       "source_version": "HEAD",
-      "content_hash": "fdcf6c79434c2be70acdb1d48e63e1e3ad4b27e85a3bc10af158fdfa9879951c",
+      "content_hash": "37d68731385d4f5b4c2a9215840e0d3ae1a3b68e23bf9784668258def84427ae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T03:22:47.025Z"
+      "persisted_at": "2026-11-26T13:44:59.442Z"
     },
     "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria": {
       "item_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
@@ -113314,9 +113314,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "a010577c7b1d2fe3a1bfb3d0cbeec9d73b180fe02c8d31d597d6a01012d44eaf",
+      "content_hash": "263bb91b0a873d08a51ecfdd3dc8dac6bc543ddd0d7bd2f61734108e7fb644ee",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:35:35.503Z"
+      "persisted_at": "2026-11-26T13:44:35.160Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar",
@@ -113326,9 +113326,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
       "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "b82c6fed6908711d275244ccda771533e6dcbf3ceba4c6942a84f26f9facac81",
+      "content_hash": "abd3d635ff3b01dd6c4f772421ab3832e8bff1a1d1de9779ab1d07bf2e5f88fd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:35:52.323Z"
+      "persisted_at": "2026-11-26T13:44:56.332Z"
     },
     "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
@@ -239810,8 +239810,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "d14aa58e",
-      "content_hash": "8fb3a23578f98fe64f16afde4bf97504474974fd9b8b060290acd02b09bd8109",
+      "source_version": "f06f7917",
+      "content_hash": "1783d1838ba58b528479dade1ef6fff31f958874b1a57711a7626c19abc90450",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -239854,6 +239854,11 @@
           "number": 10464,
           "title": "8 AI agent observability best practices blog post",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10692,
+          "title": "date the 0.27.0 changelog and pin the tutorial to the 0.27 SDKs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239861,7 +239866,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T05:45:25.326Z",
+      "verified_at": "2026-11-26T13:44:36.688Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239903,10 +239908,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
       "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
       "repository": "iii-hq/iii",
-      "source_version": "d14aa58e",
-      "content_hash": "4e90655f9f0216a98aafab1978a283765dc0b97e5cdb332d62525cb4b1555733",
+      "source_version": "f06f7917",
+      "content_hash": "e1c161172054b1c65d48dcb2073949382f74e524356fda8b75673083adf72639",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T05:45:25.949Z"
+      "persisted_at": "2026-11-26T13:44:37.535Z"
     },
     "agent_contract-agent-contract-iii-hq-iii-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-iii-hq-iii-autonomous-specialist-persona",
@@ -239915,10 +239920,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/iii-hq-iii-agent-contract-iii-hq-iii-autonomous-specialist-persona.md",
       "title": "Agent Contract: iii-hq/iii Autonomous Specialist Persona",
       "repository": "iii-hq/iii",
-      "source_version": "d14aa58e",
-      "content_hash": "b0eb9c5d29a73cf46fe63a6b51d0524c72d3d9353089012423ac893f39acdf9d",
+      "source_version": "f06f7917",
+      "content_hash": "cfe49ebebdf4056b734776e976e5dbadc12a9eb1778dd1214fc5b2c95691e352",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T05:45:26.135Z"
+      "persisted_at": "2026-11-26T13:44:37.760Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii",
@@ -239927,10 +239932,10 @@
       "relative_path": "08_VERIFICATION/iii-hq-iii-verification-protocol-empirical-defect-shield-for-iii-hq-iii.md",
       "title": "Verification Protocol: Empirical Defect Shield for iii-hq/iii",
       "repository": "iii-hq/iii",
-      "source_version": "d14aa58e",
-      "content_hash": "92cdb32a0315dbd519dcebc64e813507236f09657d48697ac88c7e6348f2d336",
+      "source_version": "f06f7917",
+      "content_hash": "1d4d3b369b31724692da7a616bf18b170dfbdf732fa4c246f0cb3cbcd14ce521",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:45:26.291Z"
+      "persisted_at": "2026-11-26T13:44:37.960Z"
     },
     "learn-github-meshery-meshery": {
       "learning_id": "learn-github-meshery-meshery",
@@ -240090,9 +240095,9 @@
       "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e385360dc6d82662851a4300b2aa4f02ca995d5449aad1f2d1566bab781ec76",
+      "content_hash": "0f0285ae15c53c4ac6fdff74be36a2c41f021d13f54e50664a1d10090cc600e2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T05:45:38.516Z"
+      "persisted_at": "2026-11-26T13:44:55.421Z"
     },
     "agent_contract-agent-contract-iii-hq-iii-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-iii-hq-iii-learnings-autonomous-specialist-persona",
@@ -240102,9 +240107,9 @@
       "title": "Agent Contract: iii-hq-iii-learnings Autonomous Specialist Persona",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "85d4e6f6e158bc852e78503711ad719ffc00402684ea565279ac72eff0973fd1",
+      "content_hash": "12c0c7ce198867780de9b9ff16b0d8f262eeec7160747e1785eb6e66b5b16fb8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T05:45:38.716Z"
+      "persisted_at": "2026-11-26T13:44:55.642Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii-learnings",
@@ -240114,9 +240119,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for iii-hq-iii-learnings",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "29993bcb3e888dd03990e64c4e7954b54983b16f28da519b23f96b5c2753391e",
+      "content_hash": "7bc726da5a95ee8f38297a489d2113bd06c497bb746149475fc29e1da699b225",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T05:45:38.861Z"
+      "persisted_at": "2026-11-26T13:44:55.840Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear",
@@ -240979,8 +240984,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "9f52b997",
-      "content_hash": "a2314fc11064c08a76e4f43af95fb79d373d5cc19e599ceb1c36daf361290329",
+      "source_version": "cb5fcfa0",
+      "content_hash": "8ba9ecb975b18080f8663e49e759088e7dd7a04ade88397cbeb40b3ea6fed238",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -241028,6 +241033,11 @@
           "number": 10317,
           "title": "bound RDB loader allocations by the source size",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10694,
+          "title": "Treat nil-arrays as empty containers.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241035,7 +241045,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T12:29:09.693Z",
+      "verified_at": "2026-11-26T13:44:50.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271608,8 +271618,8 @@
       "slug": "a2ui-project-a2ui",
       "platform": "github",
       "source_url": "https://github.com/a2ui-project/a2ui",
-      "source_version": "c26be2dd",
-      "content_hash": "f8533d537f2d81a335674c9e3e0b2829cbb2f19d014e71461fd44145ebf2fe65",
+      "source_version": "36725eee",
+      "content_hash": "8fae3cfa3a6c9aea44f0608f2c1422845ab7d1c9d3e34ab3cd1cc39ca82a8da9",
       "dossier_path": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "promoted_rules": [
@@ -271627,6 +271637,11 @@
           "number": 10185,
           "title": "pin Python dependencies in requirements-docs.txt",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10693,
+          "title": "spec,python): give the v0.9.1 schemas their own $ids",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271634,7 +271649,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T03:22:36.062Z",
+      "verified_at": "2026-11-26T13:44:41.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287743,7 +287758,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "a4c4734149db5ec1697adfdca838d6e13b41e9100edbcd72e8ba37fbc5b0a942",
+      "content_hash": "e0dd0c0c17337545968447fa8c16325c3a817d3b11e77df4898e21d5cd460b9d",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [],
@@ -287752,7 +287767,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:35:35.071Z",
+      "verified_at": "2026-11-26T13:44:34.510Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -355493,6 +355508,120 @@
       "content_hash": "fb68bb5ad0570672973ee367a55c69bc69a341f06b8d4f34232844c4c976dc72",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T13:36:13.716Z"
+    },
+    "rule-10692": {
+      "learning_id": "rule-10692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10692,
+      "title": "date the 0.27.0 changelog and pin the tutorial to the 0.27 SDKs",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "f06f7917",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:44:36.688Z"
+    },
+    "candidate_directive-date-the-0-27-0-changelog-and-pin-the-tutorial-to-the-0-27-sdks": {
+      "item_id": "candidate_directive-date-the-0-27-0-changelog-and-pin-the-tutorial-to-the-0-27-sdks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TI8C-date-the-0-27-0-changelog-and-pin-the-tutorial-to-the-0-27-sdks.md",
+      "title": "date the 0.27.0 changelog and pin the tutorial to the 0.27 SDKs",
+      "repository": "iii-hq/iii",
+      "source_version": "f06f7917",
+      "content_hash": "72871597d83884c5f1c137f5ab3108ece4b0114f8e7a04ba3f4e0a4ecee797d3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T13:44:37.266Z"
+    },
+    "rule-10693": {
+      "learning_id": "rule-10693",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10693,
+      "title": "spec,python): give the v0.9.1 schemas their own $ids",
+      "source_url": "https://github.com/a2ui-project/a2ui",
+      "source_version": "36725eee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:44:41.594Z"
+    },
+    "candidate_directive-spec-python-give-the-v0-9-1-schemas-their-own-ids": {
+      "item_id": "candidate_directive-spec-python-give-the-v0-9-1-schemas-their-own-ids",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TYZP-spec-python-give-the-v0-9-1-schemas-their-own-ids.md",
+      "title": "spec,python): give the v0.9.1 schemas their own $ids",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "30e1cd764572189ac2ba14acc6cea735ff0a7741a3ef3172fc29b435e56d8183",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T13:44:58.986Z"
+    },
+    "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-a2ui-project-a2ui-content-information-intelligence-a2ui-project-a2ui-core-invari.md",
+      "title": "Content & Information Intelligence: a2ui-project/a2ui Core Invariants",
+      "repository": "a2ui-project/a2ui",
+      "source_version": "36725eee",
+      "content_hash": "4cf00a35c262abb7bc6d94c432df2c3687f35e77ed5e17dd4b92d113c57856ca",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T13:44:42.393Z"
+    },
+    "rule-10694": {
+      "learning_id": "rule-10694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10694,
+      "title": "Treat nil-arrays as empty containers.",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "cb5fcfa0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:44:50.390Z"
+    },
+    "candidate_directive-treat-nil-arrays-as-empty-containers": {
+      "item_id": "candidate_directive-treat-nil-arrays-as-empty-containers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TSYU-treat-nil-arrays-as-empty-containers.md",
+      "title": "Treat nil-arrays as empty containers.",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "cb5fcfa0",
+      "content_hash": "8ef8d2da90996de46b63d80c520bc64fd1322595b2e83e86cb0fb6c0aec8d5e7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T13:44:51.180Z"
+    },
+    "candidate_directive-docs-date-the-0-27-0-changelog-and-pin-the-tutorial-to-the-0-27-sdks": {
+      "item_id": "candidate_directive-docs-date-the-0-27-0-changelog-and-pin-the-tutorial-to-the-0-27-sdks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TW0Y-docs-date-the-0-27-0-changelog-and-pin-the-tutorial-to-the-0-27-sdks.md",
+      "title": "docs: date the 0.27.0 changelog and pin the tutorial to the 0.27 SDKs",
+      "repository": "iii-hq-iii-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b27b14a9c0bfc27e8a652b2a2f1516202e543e83612eb7f7d7aa6356d0a82951",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T13:44:55.145Z"
+    },
+    "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-a2ui-project-a2ui-learnings-content-information-intelligence-a2ui-project-a2ui-l.md",
+      "title": "Content & Information Intelligence: a2ui-project-a2ui-learnings Core Invariants",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "75be1800f05b22ca0972bed821ad8fcdcff6a058ae1055e3447773550aa72cd1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T13:44:59.208Z"
     }
   },
   "ai-builder-brain": {

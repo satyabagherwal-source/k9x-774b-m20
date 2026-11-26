@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `9f52b997`  
+> **Source Version**: `cb5fcfa0`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:29:09.346Z  
+> **Timestamp**: 2026-11-26T13:44:49.401Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:29:09.341Z  
+> **Harvest Timestamp**: 2026-11-26T13:44:49.394Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31928 stars
+- **Stars / Engagement**: 31941 stars
 
 ---
 
@@ -1123,6 +1123,7 @@ inline bool CollectionEntry::operator==(std::string_view sv) const {
 #pragma once
 
 #include <absl/base/internal/endian.h>
+#include <absl/types/span.h>
 
 #include <memory>
 #include <optional>
@@ -1465,13 +1466,12 @@ class CompactObj {
 
   void GetString(std::string* res) const;
 
+  // `str` must not point into the storage of this object.
   void SetString(std::string_view str);
   void ReserveString(size_t size);
   void AppendString(std::string_view str);
 
-  // Will set this to hold OBJ_JSON, after that it is safe to call GetJson
-  // NOTE: in order to avid copy which can be expensive in this case,
-  // y
+  // Will set this to hold OBJ_JSON, after that it is safe to c
 ```
 
 ### Core Architecture Module: `src/core/cuckoo.h`
@@ -2321,422 +2321,170 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4caf7a21` (2026-11-24)
-**Commit Message**: fix: match replies of zset, stream, sort, geo and float increment commands (#8861)
+### Incident Patch 1: `2b05bcb6` (2026-11-26)
+**Commit Message**: fix(server): Treat nil-arrays as empty containers. (#8883)
 
-* fix: match replies of zset, stream, sort, geo and float increment commands
+fix(server): Reject nil-array on copy cmd args
 
-Several data-type commands replied in shapes or with values that clients do not expect:
-ZRANDMEMBER without a count sent an array, ZPOPMIN/ZPOPMAX without COUNT and ZDIFF without
-WITHSCORES nested their replies under RESP3, XPENDING sent consumer counts as integers, deleted
-pending entries came back with empty fields, SORT GET sent empty strings for missing keys, the
-geohash was a string or a double, distances had full precision, and INCRBYFLOAT/HINCRBYFLOAT
-computed in double and replied with a RESP3 double.
+A nil array does not have any elements but does return SIZE_MAX as a
+sentinel size. It passes any Empty() check and yet accessing its
+elements causes a segfault.
 
-- ZRANDMEMBER without a count replies with the member itself.
-- ZPOPMIN and ZPOPMAX without COUNT reply with a flat member and score in both protocols.
-- ZDIFF without WITHSCORES sends plain members under RESP3. ZDIFF, ZUNION and ZINTER use a new
-  SendScoredArray overload for score-first string views, so the protocol is chosen in one place.
-- XPENDING sends the per-consumer count as a bulk string, and XREADGROUP sends null fields for a
-  pending entry deleted from the stream.
-- SORT ... GET replies null for a missin
+Adjust the Empty() check to return empty for nil arrays.
 
-**File**: `src/facade/reply_builder.cc` (modified, +0/-26)
+Signed-off-by: Abhijat Malviya <[REDACTED_EMAIL]>
+
+**File**: `src/facade/resp_parser.h` (modified, +1/-1)
 ```diff
-@@ -524,32 +524,6 @@ void RedisReplyBuilder::SendBulkStrArr(const facade::ArgRange& strs, CollectionT
-     SendBulkString(str);
- }
- 
--void RedisReplyBuilder::SendScoredArray(ScoredArray arr, bool with_scores) {
--  ReplyScope scope(this);
--  StartArray((with_scores && !IsResp3()) ? arr.size() * 2 : arr.size());
--  for (const auto& [str, score] : arr) {
--    if (with_scores && IsResp3())
--      StartArray(2);
--    SendBulkString(str);
--    if (with_scores)
--      SendDouble(score);
--  }
--}
--
--void RedisReplyBuilder::SendLabeledScoredArray(std::string_view arr_label, ScoredArray arr) {
--  ReplyScope scope(this);
--
--  StartArray(2);
--
--  SendBulkString(arr_label);
--  StartArray(arr.size());
--  for (const auto& [str, score] : arr) {
--    StartArray(2);
--    SendBulkString(str);
--    SendDouble(score);
--  }
--}
--
- template <typename I> void RedisReplyBuilder::SendLongArr(absl::Span<const I> longs) {
-   static_assert(std::is_integral_v<I>, "Must use integral type");
-   ReplyScope scope(this);
-```
-
-**File**: `src/facade/reply_builder.h` (modified, +0/-4)
-```diff
-@@ -286,8 +286,6 @@ class RedisReplyBuilderBase : public SinkReplyBuilder {
- // Non essential redis reply builder functions implemented on top of the base resp protocol
- class RedisReplyBuilder : public RedisReplyBuilderBase {
-  public:
--  using ScoredArray = absl::Span<const std::pair<std::string, double>>;
--
-   RedisReplyBuilder(util::FiberSocketBase* socket) : RedisReplyBuilderBase(socket) {
+@@ -73,7 +73,7 @@ class RESPArray {
    }
  
-@@ -312,8 +310,6 @@ class RedisReplyBuilder : public RedisReplyBuilderBase {
-   void SendBulkStrArr(const facade::ArgRange& strs, CollectionType ct = CollectionType::ARRAY);
-   template <typename I> void SendLongArr(absl::Span<const I> longs);
- 
--  void SendScoredArray(ScoredArray arr, bool with_scores);
--  void SendLabeledScoredArray(std::string_view arr_label, ScoredArray arr);
-   void StartArray(unsigned len);
-   void SendEmptyArray();
- };
-```
-
-**File**: `src/facade/reply_builder_test.cc` (modified, +0/-52)
-```diff
-@@ -843,58 +843,6 @@ TEST_F(RedisReplyBuilderTest, SendStringArrayAsSet) {
-       << "SendStringArrayAsSet Resp3 Failed.";
- }
- 
--TEST_F(RedisReplyBuilderTest, SendScoredArray) {
--  const std::vector<std::pair<std::string, double>> scored_array{
--      {"e1", 1.1}, {"e2", 2.2}, {"e3", 3.3}};
--
--  builder_->SetRespVersion(RespVersion::kResp2);
--  builder_->SendScoredArray(scored_array, false);
--  ASSERT_TRUE(NoErrors());
--  ASSERT_EQ(TakePayload(), "*3\r\n$2\r\ne1\r\n$2\r\ne2\r\n$2\r\ne3\r\n")
--      << "Resp2 WITHOUT scores failed.";
--
--  builder_->SetRespVersion(RespVersion::kResp3);
--  builder_->SendScoredArray(scored_array, false);
--  ASSERT_TRUE(NoErrors());
--  ASSERT_EQ(TakePayload(), "*3\r\n$2\r\ne1\r\n$2\r\ne2\r\n$2\r\ne3\r\n")
--      << "Resp3 WITHOUT scores failed.";
--
--  builder_->SetRespVersion(RespVersion::kResp2);
--  builder_->SendScoredArray(scored_array, true);
--  ASSERT_TRUE(NoErrors());
--  ASSERT_EQ(TakePayload(),
--            "*6\r\n$2\r\ne1\r\n$3\r\n1.1\r\n$2\r\ne2\r\n$3\r\n2.2\r\n$2\r\ne3\r\n$3\r\n3.3\r\n")
--      << "Resp3 WITHSCORES failed.";
--
--  builder_->SetRespVersion(RespVersion::kResp3);
--  builder_->SendScoredArray(scored_array, true);
--  ASSERT_TRUE(NoErrors());
--  ASSERT_EQ(TakePayload(),
--            "*3\r\n*2\r\n$2\r\ne1\r\n,1.1\r\n*2\r\n$2\r\ne2\r\n,2.2\r\n*2\r\n$2\r\ne3\r\n,3.3\r\n")
--      << "Resp3 WITHSCORES failed.";
--}
--
--TEST_F(RedisReplyBuilderTest, SendLabeledScoredArray) {
--  const std::vector<std::pair<std::string, double>> scored_array{
--      {"e1", 1.1}, {"e2", 2.2}, {"e3", 3.3}};
--
--  builder_->SetRespVersion(RespVersion::kResp2);
--  builder_->SendLabeledScoredArray("foobar", scored_array);
--  ASSERT_TRUE(NoErrors());
--  ASSERT_EQ(TakePayload(),
--            "*2\r\n$6\r\nfoobar\r\n*3\r\n*2\r\n$2\r\ne1\r\n$3\r\n1.1\r\n*2\r\n$2\r\ne2\r\n$3\r\n2."
--            "2\r\n*2\r\n$2\r\ne3\r\n$3\r\n3.3\r\n")
--      << "Resp3 failed.\n";
--
--  builder_->SetRespVersion(RespVersion::kResp3);
--  builder_->SendLabeledScoredArray("foobar", scored_array);
--  ASSERT_TRUE(NoErrors());
--  ASSERT_EQ(TakePayload(),
--            "*2\r\n$6\r\nfoobar\r\n*3\r\n*2\r\n$2\r\ne1\r\n,1.1\r\n*2\r\n$2\r\ne2\r\n,2.2\r\n*"
--            "2\r\n$2\r\ne3\r\n,3.3\r\n")
--      << "Resp3 failed.";
--}
--
- TEST_F(RedisReplyBuilderTest, BasicCapture) {
-   using namespace std;
-   string_view kTestSws[] = {"a1"sv, "a2"sv, "a3"sv, "a4"sv};
-```
-
-**File**: `src/server/common.cc` (modified, +41/-0)
-```diff
-@@ -5,15 +5,21 @@
- #include "server/common.h"
- 
- #include <absl/random/random.h>
-+#include <absl/strings/ascii.h>
- #include <absl/strings/match.h>
- #include <absl/strings/str_cat.h>
-+#include <absl/strings/str_format.h>
- #include <fast_float/fast_float.h>
- 
- #include <algorithm>
-+#include <cerrno>
-+#include <cmath>
-+#include <limits>
- #include <system_error>
- 
- extern "C" {
- #include "redis/rdb.h"
-+#include "redis/util.h"
- }
- 
- #include "base/flags.h"
-@@ -148,6 +154,41 @@ bool ParseDouble(string_view src, double* value) {
-   return true;
- }
- 
-+bool ParseLongDouble(string_view src, long double* value) {
-+  if (src.empty() || src.size() >= MAX_LONG_DOUBLE_CHARS || absl::ascii_isspace(src[0]))
-+    return false;
-+
-+  // strtold needs a terminated string.
-+  const string str{src};
-+  char* end = nullptr;
-+  errno = 0;
-+  const long double res = strtold(str.c_str(), &end);
-+  if (end != str.c_str() + str.size() || isnan(res) ||
-+      (errno == ERANGE && (isinf(res) || res == 0)))
-+    return false;
-+
-+  *value = res;
-+  return true;
-+}
-+
-+string FormatLongDouble(long double value) {
-+  // Where long double is no wider than double, 17 decimals would show only binary noise.
-+  if constexpr (numeric_limits<long double>::digits <= numeric_limits<double>::digits) {
-+    char buf[64];
-+    return facade::RedisReplyBuilder::FormatDouble(static_cast<double>(value), buf, sizeof(buf));
-+  } else {
-+    // printf needs up to ~35 KB of fiber stack for the widest values, StrFormat a few KB.
-+    string res = absl::StrFormat("%.17Lf", value);
-+
-+    // The fraction loses its trailing zeros, and the point if nothing is left.
-+    while (res.back() == '0')
-+      res.pop_back();
-+    if (res.back() == '.')
-+      res.pop_back();
-+    return res == "-0" ? "0" : res;
-+  }
-+}
-+
- OpResult<ScanOpts> ScanOpts::TryFrom(const facade::ParsedArgs& args, bool allow_novalues) {
-   using namespace facade;
-   ScanOpts scan_opts;
-```
-
-**File**: `src/server/common.h` (modified, +6/-0)
-```diff
-@@ -74,6 +74,12 @@ const char* GlobalStateName(GlobalState gs);
- bool ParseHumanReadableBytes(std::string_view str, int64_t* num_bytes);
- bool ParseDouble(std::string_view src, double* value);
- 
-+// Parses an INCRBYFLOAT operand: no spaces or trailing characters, no nan, no overflow.
-+bool ParseLongDouble(std::string_view src, long double* value);
-+
-+// Formats an INCRBYFLOAT result: up to 17 decimals where long double is wider than double.
-+std::string FormatLongDouble(long double value);
-+
- const char* RdbTypeName(unsigned type);
- 
- // Globally used atomics for memory readings
-```
-
-**File**: `src/server/generic_family.cc` (modified, +26/-15)
-```diff
-@@ -1721,7 +1721,7 @@ namespace {
- struct SortEntryBase {
-   string key;
-   const string* bound_value = nullptr;
--  vector<string> get_values;  // Stores fetched GET pattern values
-+  vector<std::optional<string>> get_values;  // Stores fetched GET pattern values
- 
-   void BindValue(const std::string* value) {
-     bound_value = value;
-@@ -1890,15 +1890,25 @@ OpResult<pair<vector<string>, CompactObjType>> OpFetchContainerElements(const Op
-   return std::make_pair(std::move(elements), obj_type);
- }
- 
--// Fetch a string value from a key (for BY and GET pattern lookups)
--OpResult<string> OpFetchStringValue(const OpArgs& op_args, std::string_view key) {
-+// Fetches a BY or GET pattern value, nullopt for a missing or non-string key.
-+OpResult<std::optional<string>> OpFetchStringValue(const OpArgs& op_args, std::string_view key) {
-   auto it = op_args.GetDbSlice().FindReadOnly(op_args.db_cntx, key);
-   if (!IsValid(it) || it->second.ObjType() != OBJ_STRING) {
--    return string{};  // Missing key defaults to empty string
-+    return std::optional<string>{};
+   bool Empty() const {
+-    return Size() == 0;
++    return Size() == 0 || Size() == SIZE_MAX;
    }
  
--  return ReadStringValue(op_args.db_cntx.db_index, key, it->second,
--                         op_args.shard->tiered_storage());
-+  auto value =
-+      ReadStringValue(op_args.db_cntx.db_index, key, it->second, op_args.shard->tiered_storage());
-+  RETURN_ON_BAD_STATUS(value);
-+  return std::optional<string>{std::move(*value)};
-+}
-+
-+// A GET of a missing or non-string key replies null.
-+void SendGetValue(const std::optional<string>& value, RedisReplyBuilder* rb) {
-+  if (value)
-+    rb->SendBulkString(*value);
-+  else
-+    rb->SendNull();
- }
- 
- // Runs `cb` on every shard in parallel fibers (it may block) and returns the first non-OK status.
-@@ -1933,9 +1943,9 @@ OpResult<uint32_t> OpStore(const OpArgs& op_args, std::string_view key, Iterator
- 
-   for (auto it = start_it; it != end_it; ++it) {
-     if (has_get_patterns) {
--      // Store all GET pattern values for this entry
-+      // Store all GET pattern values for this entry, a missing one as an empty string
-       for (const auto& value : it->get_values)
--        add_item(value);
-+        add_item(value ? string_view{*value} : string_view{});
-     } else {
-       // No GET patterns - store the element itself
-       add_item(it->ResultKey());
-@@ -2085,7 +2095,7 @@ OpStatus PopulateGetPatternValues(const SortParams& params, const DbContext& db_
-   return FetchGetPatternValues(
-       params, db_cntx, *entries,
-       [&](size_t idx) -> std::string_view { return (*entries)[idx].ResultKey(); },
--      [&](size_t entry_idx, size_t pattern_idx, string value) {
-+      [&](size_t entry_idx, size_t pattern_idx, std::optional<string> value) {
-         (*entries)[entry_idx].get_values[pattern_idx] = std::move(value);
-       });
- }
-@@ -2142,7 +2152,7 @@ struct SortVisitor {
-         if (has_get_patterns && !it->get_values.empty()) {
-           // Send all GET pattern values for this entry
-           for (const auto& value : it->get_values) {
--            rb->SendBulkString(value);
-+            SendGetValue(value, rb);
-           }
-         } else {
-           // No GET patterns - send the element itself
-@@ -2204,7 +2214,7 @@ OpStatus PopulateSortEntriesFromByPattern(const SortParams& params,
-             if (!external_value)
-               return external_value.status();
-             auto& entry = dest[idx];
--            if (!entry.Parse(std::move(*external_value)))
-+            if (!entry.Parse(std::move(*external_value).value_or(string{})))
-               return OpStatus::INVALID_NUMERIC_RESULT;
-             entry.BindValue(&raw_elements[idx]);
-           }
-@@ -2371,16 +2381,17 @@ void SortGeneric(CmdArgParser parser, CommandContext* cmd_cntx, bool is_read_onl
-   DCHECK(!raw_elements.empty());
- 
-   // Fetch GET pattern values if needed (for unsorted path)
--  vector<vector<string>> get_values_per_element;
-+  vector<vector<std::optional<string>>> get_values_per_element;
-   if (!params.get_patterns.empty()) {
-     // Pre-allocate storage for GET pattern values
--    get_values_per_element.resize(raw_elements.size(), vector<string>(params.get_patterns.size()));
-+    get_values_per_element.resize(raw_elements.size(),
-+                                  vector<std::optional<string>>(params.get_patterns.size()));
- 
-     // Use generic fetcher with lambdas to access raw_elements and store in get_values_per_element
-     OpStatus status = FetchGetPatternValues(
-         params, db_cntx, raw_elements,
-         [&](size_t idx) -> std::string_view { return raw_elements[idx]; },
--        [&](size_t elem_idx, size_t pattern_idx, string value) {
-+        [&](size_t elem_idx, size_t pattern_idx, std::optional<string> value) {
-           get_values_per_element[elem_idx][pattern_idx] = std::move(value);
-         });
-     if (status != OpStatus::OK)
-@@ -2441,7 +2452,7 @@ void SortGeneric(CmdArgParser parser, CommandContext* cmd_cntx, bool is_read_onl
-   for (auto it = start_it; it != end_it; ++it, ++elem_idx) {
-     if (!get_value
+   RESPObj operator[](size_t index) const {
 ```
 
-**File**: `src/server/generic_family_test.cc` (modified, +9/-2)
+---
+
+### Incident Patch 2: `a7d94f87` (2026-11-26)
+**Commit Message**: fix(facade): preallocate a bulk argument only when its data has arrived (#8882)
+
+* fix(facade): preallocate a bulk argument only when its data has arrived
+
+The parser allocated a declared bulk length of up to 1MB as soon as the "$<len>" header
+was parsed, before any of the data arrived: a 16-byte "*2\r\n\r\n" request held
+at least 1MB per connection. Preallocate a bulk only when it is already complete in the
+read buffer; otherwise grow it as the data arrives, as bulks above 1MB already did.
+kBulkEagerLimit is no longer needed.
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+* test: move the pending 1MB bulk case into its own parser test
+
+The case was added to HugeBulkNoEagerAlloc and reset the fixture by assigning a temporary
+BackedArguments. gcc 13.3 fails the Release build on that line with
+-Werror=maybe-uninitialized: the move copies the inline buffer of the temporary, which was
+never written. A separate test starts from a fresh fixture, so no reset is needed, and
+HugeBulkNoEagerAlloc is back to its previous text.
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+**File**: `src/facade/resp_srv_parser.cc` (modified, +3/-6)
 ```diff
-@@ -2494,10 +2494,17 @@ TEST_F(GenericFamilyTest, SortGet) {
-   resp = Run({"sort", "mylist", "BY", "weight_*", "GET", "#", "GET", "obj_*"});
-   ASSERT_THAT(resp, RespElementsAre("3", "third", "2", "second", "1", "first"));
+@@ -12,11 +12,6 @@
  
--  // Test 6: GET with missing keys (should return empty strings, sorted: 1,2,3)
-+  // Test 6: GET of a missing or non-string key returns null, STORE keeps an empty string
-   Run({"del", "obj_2"});
-   resp = Run({"sort", "mylist", "GET", "obj_*"});
--  ASSERT_THAT(resp, RespElementsAre("first", "", "third"));
-+  ASSERT_THAT(resp, RespElementsAre("first", ArgType(RespExpr::NIL), "third"));
-+  resp = Run({"sort", "mylist", "BY", "nosort", "GET", "obj_*"});
-+  ASSERT_THAT(resp, RespElementsAre("third", ArgType(RespExpr::NIL), "first"));
-+  ASSERT_THAT(Run({"sort", "mylist", "GET", "obj_*", "STORE", "result"}), IntArg(3));
-+  ASSERT_THAT(Run({"lrange", "result", "0", "-1"}), RespElementsAre("first", "", "third"));
-+  Run({"hset", "obj_2", "f", "v"});
-+  resp = Run({"sort", "mylist", "GET", "obj_*"});
-+  ASSERT_THAT(resp, RespElementsAre("first", ArgType(RespExpr::NIL), "third"));
+ namespace facade {
  
-   // Restore obj_2 for further tests
-   Run({"set", "obj_2", "second"});
+-namespace {
+-// Above this declared bulk length the buffer grows as data arrives instead of upfront.
+-constexpr size_t kBulkEagerLimit = 1u << 20;
+-}  // namespace
+-
+ using namespace std;
+ 
+ auto RespSrvParser::Parse(Buffer str, uint32_t* consumed, cmn::BackedArguments* args) -> Result {
+@@ -272,7 +267,9 @@ auto RespSrvParser::ParseArg(Buffer str, cmn::BackedArguments* args) -> ResultCo
+ 
+   bulk_len_ = len;
+   state_ = BULK_STR_S;
+-  bulk_append_ = size_t(len) > kBulkEagerLimit;
++
++  // Preallocate only a bulk that has fully arrived: a declared length costs the client nothing.
++  bulk_append_ = size_t(len) > str.size() - res.second;
+   args->PushArg(bulk_append_ ? size_t(0) : size_t(len));
+ 
+   return {OK, res.second};
 ```
 
-**File**: `src/server/geo_family.cc` (modified, +13/-4)
+**File**: `src/facade/resp_srv_parser_test.cc` (modified, +6/-0)
 ```diff
-@@ -3,6 +3,7 @@
- //
- 
- #include <absl/strings/ascii.h>
-+#include <absl/strings/str_format.h>
- 
- extern "C" {
- #include "redis/geo.h"
-@@ -202,6 +203,12 @@ double ParseGeoUnit(std::string_view arg, facade::RuleError& err) {
-   return -1;
+@@ -220,6 +220,12 @@ TEST_F(RespSrvParserTest, HugeBulkNoEagerAlloc) {
+   EXPECT_LT(args_.HeapMemory() + parser_.UsedMemory(), 64u * 1024);
  }
  
-+// Distances are text with four decimals, rounded as llrint rounds the scaled value.
-+string FormatDistance(double dist) {
-+  const long long scaled = llrint(dist * 10000);
-+  return absl::StrFormat("%d.%04d", scaled / 10000, scaled % 10000);
++TEST_F(RespSrvParserTest, PendingBulkNoEagerAlloc) {
++  // A bulk of any size is not allocated before its data arrives.
++  ASSERT_EQ(RespSrvParser::INPUT_PENDING, Parse("*2\r\n$1048576\r\n"));
++  EXPECT_LT(args_.HeapMemory() + parser_.UsedMemory(), 64u * 1024);
 +}
 +
- void ParseCircularShape(CmdArgParser* parser, GeoShape* shape, GeoSearchOpts* geo_ops) {
-   shape->t.radius = parser->Next<double>();
-   if (shape->t.radius <= 0) {
-@@ -448,8 +455,8 @@ void CmdGeoDist(CmdArgParser parser, CommandContext* cmd_cntx) {
+ TEST_F(RespSrvParserTest, BulkOverEagerLimitAssembled) {
+   const size_t kLen = 2'000'000;
+   ASSERT_EQ(RespSrvParser::INPUT_PENDING, Parse(absl::StrCat("*1\r\n$", kLen, "\r\n")));
+```
+
+---
+
+### Incident Patch 3: `f39cbcdc` (2026-11-25)
+**Commit Message**: test: fix flaky ClientKillTest.Filters when two clients share a source port (#8879)
+
+ClientKillTest.Filters rarely failed with a kill count one short, e.g. CLIENT KILL TYPE pubsub
+returned 3 instead of 4. The test runs CLIENT KILL ADDR with the address of its admin client.
+connect() picks a source port that is unique only per destination, so a client of the main
+listener could get the same address as the admin client. CLIENT KILL ADDR then killed that
+client too, and its reply "Killed 1 client(s), but unable to kill 1 admin client(s)." still
+contained the expected substring.
+
+- RawRespClient binds to an ephemeral port before it connects, so no two test clients share an
+  address.
+- The admin error checks expect the whole reply, so an unexpected kill fails at its own line.
+
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
+
+**File**: `src/server/dragonfly_connection_test.cc` (modified, +12/-6)
+```diff
+@@ -58,9 +58,12 @@ class RawRespClient {
+ 
+     sockaddr_in address{};
+     address.sin_family = AF_INET;
+-    address.sin_port = htons(port);
+     address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+-    if (connect(fd_, reinterpret_cast<sockaddr*>(&address), sizeof(address)) != 0) {
++
++    // Bind first: a port picked by connect() can repeat for a client of another listener.
++    const bool bound = ::bind(fd_, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == 0;
++    address.sin_port = htons(port);
++    if (!bound || connect(fd_, reinterpret_cast<sockaddr*>(&address), sizeof(address)) != 0) {
+       close(fd_);
+       fd_ = -1;
      }
-   }
- 
--  return rb->SendDouble(geohashGetDistance(xyxy[0], xyxy[1], xyxy[2], xyxy[3]) /
--                        distance_multiplier);
-+  return rb->SendBulkString(
-+      FormatDistance(geohashGetDistance(xyxy[0], xyxy[1], xyxy[2], xyxy[3]) / distance_multiplier));
- }
- 
- namespace {
-@@ -696,10 +703,12 @@ void GeoSearchStoreGeneric(Transaction* tx, facade::SinkReplyBuilder* builder,
-       }
-       rb->SendBulkString(p.member);
-       if (geo_ops.withdist) {
--        rb->SendDouble(p.dist / geo_ops.conversion);
-+        // Short enough to be copied inline, so it may die before the reply scope ends.
-+        const string dist = FormatDistance(p.dist / geo_ops.conversion);
-+        rb->SendBulkString(string_view{dist});
-       }
-       if (geo_ops.withhash) {
--        rb->SendDouble(p.score);
-+        rb->SendLong(static_cast<int64_t>(p.score));
-       }
-       if (geo_ops.withcoord) {
-         rb->StartArray(2);
+@@ -683,13 +686,16 @@ TEST_F(ClientKillTest, Filters) {
+               ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
+   const std::vector<std::string> admin_info =
+       absl::StrSplit(Run({"CLIENT", "LIST", "ID", admin_id}).GetString(), absl::ByAnyChar(" ="));
+-  EXPECT_THAT(Run({"CLIENT", "KILL", "ADDR", admin_info.at(3)}), ErrArg("unable to kill 1 admin"));
++  EXPECT_THAT(Run({"CLIENT", "KILL", "ADDR", admin_info.at(3)}),
++              ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
+   EXPECT_THAT(Run({"CLIENT", "KILL", "LADDR", absl::StrCat("127.0.0.1:", admin_port_)}),
+-              ErrArg("unable to kill 1 admin"));
++              ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
+   RawRespClient admin_replica{admin_port_};
+   ASSERT_TRUE(Call(admin_replica, "REPLCONF CAPA dragonfly"));
+-  EXPECT_THAT(Run({"CLIENT", "KILL", "TYPE", "replica"}), ErrArg("unable to kill 1 admin client"));
+-  EXPECT_THAT(Run({"CLIENT", "KILL", "TYPE", "slave"}), ErrArg("unable to kill 1 admin client"));
++  EXPECT_THAT(Run({"CLIENT", "KILL", "TYPE", "replica"}),
++              ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
++  EXPECT_THAT(Run({"CLIENT", "KILL", "TYPE", "slave"}),
++              ErrArg("Killed 0 client(s), but unable to kill 1 admin client(s)."));
+   EXPECT_EQ(Call(admin, "CLIENT KILL TYPE replica"), ":1\r\n");
+   EXPECT_THAT(Run({"CLIENT", "KILL", "USER", "u1"}), IntArg(2));
+   EXPECT_TRUE(u1.ReadEof() && u1_other.ReadEof());
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8885** (2026-11-26): feat: store values inline for OAHMap (@BorysTheDev)
+- **PR #8883** (2026-11-26): fix(server): Treat nil-arrays as empty containers. (@abhijat)
+- **PR #8882** (2026-11-26): fix(facade): preallocate a bulk argument only when its data has arrived (@vyavdoshenko)
+- **PR #8879** (2026-11-25): test: fix flaky ClientKillTest.Filters when two clients share a source port (@vyavdoshenko)
+- **PR #8878** (2026-11-25): fix(rdb): don't reject split collections by their element count (@vyavdoshenko)
 - **PR #8877** (2026-11-25): refactor(server): callers of Load() hold the LOADING state (@kostasrim)
-- **PR #8876** (2026-11-25): test: disable HIncrByFloatJournalsValue on macOS (@vyavdoshenko)
-- **PR #8875** (2026-11-25): Match Valkey replies for SRANDMEMBER and SMOVE (@romange)
-- **PR #8873** (2026-11-24): fix: bump helio (@vyavdoshenko)
-- **PR #8871** (2026-11-23): chore: update helio to abseil 20260817.0 (@vyavdoshenko)
-- **PR #8870** (2026-11-23): fix(zset): handle lex sentinel bounds and unchanged scores in SortedMap (@romange)
 
 ---
 
@@ -2750,3 +2498,34 @@ computed in double and replied with a RESP3 double.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. server): Treat nil-arrays as empty containers.
+
+**RULE**:
+When implementing operations in `src/facade/resp_parser.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2b05bcb6`: server): Treat nil-arrays as empty containers.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/facade/resp_parser.h`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+    return Size() == 0 || Size() == SIZE_MAX;
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+    return Size() == 0;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2b05bcb6` are properly handled with clean fallback behavior.

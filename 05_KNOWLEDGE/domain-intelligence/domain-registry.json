@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T13:36:13.896Z",
-  "total_records": 2751,
+  "last_updated": "2026-11-26T13:44:59.208Z",
+  "total_records": 2753,
   "domains": {
     "A": {
       "total": 23,
@@ -2379,7 +2379,7 @@
       ]
     },
     "I": {
-      "total": 161,
+      "total": 163,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2541,7 +2541,9 @@
         "domain_intelligence-content-information-intelligence-databendlabs-databend-core-invariants",
         "DOM-I-F9C7458B",
         "domain_intelligence-content-information-intelligence-helixdb-helix-db-core-invariants",
-        "domain_intelligence-content-information-intelligence-kube-rs-kube-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-kube-rs-kube-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-core-invariants",
+        "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8584,8 +8586,8 @@
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "4eebc065889d286068ca575bd2365c2366029d874b78986f18161fec9bbc1929",
-      "created_at": "2026-11-25T12:29:10.215Z"
+      "content_hash": "53d0e1491da031001d2f6d34f713ee37b8dc9ecfd7342519748c044245a44372",
+      "created_at": "2026-11-26T13:44:51.403Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -9154,8 +9156,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-research-knowledge-intelligence-orcarouter-orcasaq-2.md",
       "repository": "orcarouter/OrcaSAQ-2-27B",
-      "content_hash": "a010577c7b1d2fe3a1bfb3d0cbeec9d73b180fe02c8d31d597d6a01012d44eaf",
-      "created_at": "2026-11-22T20:35:35.503Z"
+      "content_hash": "263bb91b0a873d08a51ecfdd3dc8dac6bc543ddd0d7bd2f61734108e7fb644ee",
+      "created_at": "2026-11-26T13:44:35.160Z"
     },
     "DOM-D-1FD73085": {
       "record_id": "DOM-D-1FD73085",
@@ -9205,8 +9207,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-learnings-research-knowledge-intelligence-hf-orcarou.md",
       "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
-      "content_hash": "b82c6fed6908711d275244ccda771533e6dcbf3ceba4c6942a84f26f9facac81",
-      "created_at": "2026-11-22T20:35:52.323Z"
+      "content_hash": "abd3d635ff3b01dd6c4f772421ab3832e8bff1a1d1de9779ab1d07bf2e5f88fd",
+      "created_at": "2026-11-26T13:44:56.332Z"
     },
     "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
@@ -18525,8 +18527,8 @@
       "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
       "repository": "iii-hq/iii",
-      "content_hash": "4e90655f9f0216a98aafab1978a283765dc0b97e5cdb332d62525cb4b1555733",
-      "created_at": "2026-11-25T05:45:25.949Z"
+      "content_hash": "e1c161172054b1c65d48dcb2073949382f74e524356fda8b75673083adf72639",
+      "created_at": "2026-11-26T13:44:37.535Z"
     },
     "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants",
@@ -18534,8 +18536,8 @@
       "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-learnings-architecture-intelligence-iii-hq-iii-learnings-core-invaria.md",
       "repository": "iii-hq-iii-learnings",
-      "content_hash": "7e385360dc6d82662851a4300b2aa4f02ca995d5449aad1f2d1566bab781ec76",
-      "created_at": "2026-11-25T05:45:38.516Z"
+      "content_hash": "0f0285ae15c53c4ac6fdff74be36a2c41f021d13f54e50664a1d10090cc600e2",
+      "created_at": "2026-11-26T13:44:55.421Z"
     },
     "DOM-D-73A9B4FE": {
       "record_id": "DOM-D-73A9B4FE",
@@ -46424,6 +46426,24 @@
       "repository": "zhouxiaoka-autoclip-learnings",
       "content_hash": "6537a1fff974998b570e3fe88aa2c276efb17906dcd238daab1656114667bae1",
       "created_at": "2026-11-26T13:26:50.153Z"
+    },
+    "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: a2ui-project/a2ui Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-a2ui-project-a2ui-content-information-intelligence-a2ui-project-a2ui-core-invari.md",
+      "repository": "a2ui-project/a2ui",
+      "content_hash": "4cf00a35c262abb7bc6d94c432df2c3687f35e77ed5e17dd4b92d113c57856ca",
+      "created_at": "2026-11-26T13:44:42.393Z"
+    },
+    "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: a2ui-project-a2ui-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-a2ui-project-a2ui-learnings-content-information-intelligence-a2ui-project-a2ui-l.md",
+      "repository": "a2ui-project-a2ui-learnings",
+      "content_hash": "75be1800f05b22ca0972bed821ad8fcdcff6a058ae1055e3447773550aa72cd1",
+      "created_at": "2026-11-26T13:44:59.208Z"
     }
   }
 }

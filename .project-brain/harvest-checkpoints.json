@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T13:36:08.702Z",
+  "last_updated": "2026-11-26T13:44:50.901Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -545,14 +545,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "a4c4734149db5ec1697adfdca838d6e13b41e9100edbcd72e8ba37fbc5b0a942",
-      "verified_at": "2026-11-22T20:35:35.303Z",
+      "content_hash": "e0dd0c0c17337545968447fa8c16325c3a817d3b11e77df4898e21d5cd460b9d",
+      "verified_at": "2026-11-26T13:44:34.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:35:35.303Z"
+      "last_updated": "2026-11-26T13:44:34.907Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "8fb3a23578f98fe64f16afde4bf97504474974fd9b8b060290acd02b09bd8109",
-      "verified_at": "2026-11-25T05:45:25.546Z",
+      "content_hash": "1783d1838ba58b528479dade1ef6fff31f958874b1a57711a7626c19abc90450",
+      "verified_at": "2026-11-26T13:44:36.993Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T05:45:25.546Z"
+      "last_updated": "2026-11-26T13:44:36.993Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "a2314fc11064c08a76e4f43af95fb79d373d5cc19e599ceb1c36daf361290329",
-      "verified_at": "2026-11-25T12:29:09.945Z",
+      "content_hash": "8ba9ecb975b18080f8663e49e759088e7dd7a04ade88397cbeb40b3ea6fed238",
+      "verified_at": "2026-11-26T13:44:50.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T12:29:09.945Z"
+      "last_updated": "2026-11-26T13:44:50.900Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -18111,14 +18111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-a2ui-project-a2ui",
-      "content_hash": "f8533d537f2d81a335674c9e3e0b2829cbb2f19d014e71461fd44145ebf2fe65",
-      "verified_at": "2026-11-24T03:22:36.294Z",
+      "content_hash": "8fae3cfa3a6c9aea44f0608f2c1422845ab7d1c9d3e34ab3cd1cc39ca82a8da9",
+      "verified_at": "2026-11-26T13:44:41.892Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T03:22:36.294Z"
+      "last_updated": "2026-11-26T13:44:41.892Z"
     },
     "milind-soni/OpenMausBot": {
       "repository": "milind-soni/OpenMausBot",

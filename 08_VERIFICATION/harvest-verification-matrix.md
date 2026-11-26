@@ -13403,3 +13403,7 @@
 | `CYCLE-20261126-IH1T` | `2026-11-26T13:36:02.513Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | Yes (`f4fbdf3c...`) |
 | `CYCLE-20261126-IJP7` | `2026-11-26T13:36:05.947Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10690` | Yes (`2b9e961d...`) |
 | `CYCLE-20261126-ILT1` | `2026-11-26T13:36:08.677Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10691` | Yes (`e0649035...`) |
+| `CYCLE-20261126-TGEE` | `2026-11-26T13:44:34.886Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`e0dd0c0c...`) |
+| `CYCLE-20261126-TI06` | `2026-11-26T13:44:36.966Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10692` | Yes (`1783d183...`) |
+| `CYCLE-20261126-TLS8` | `2026-11-26T13:44:41.864Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10693` | Yes (`8fae3cfa...`) |
+| `CYCLE-20261126-TSQG` | `2026-11-26T13:44:50.872Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10694` | Yes (`8ba9ecb9...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:36:14.251Z",
+  "last_updated": "2026-11-26T13:44:59.635Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -273,7 +273,7 @@
       "staged_for_review": 1
     },
     "iii-hq-iii-learnings.md": {
-      "processed_at": "2026-11-25T05:45:37.942Z",
+      "processed_at": "2026-11-26T13:44:54.600Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1958,7 +1958,7 @@
       "staged_for_review": 0
     },
     "a2ui-project-a2ui-learnings.md": {
-      "processed_at": "2026-11-24T03:22:46.446Z",
+      "processed_at": "2026-11-26T13:44:56.594Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1968,7 +1968,7 @@
       "staged_for_review": 1
     },
     "hf-orcarouter-orcasaq-2-27b-learnings.md": {
-      "processed_at": "2026-11-22T20:35:52.129Z",
+      "processed_at": "2026-11-26T13:44:56.054Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3978,7 +3978,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4530,
+  "total_dossiers_evaluated": 4533,
   "total_canonical_promoted": 561,
-  "total_staged_for_review": 3418
+  "total_staged_for_review": 3420
 }

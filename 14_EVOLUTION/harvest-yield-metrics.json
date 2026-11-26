@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T13:36:08.694Z",
-  "total_cycles_completed": 12720,
-  "total_learnings_persisted": 12720,
-  "total_rules_promoted": 11589,
+  "last_updated": "2026-11-26T13:44:50.891Z",
+  "total_cycles_completed": 12724,
+  "total_learnings_persisted": 12724,
+  "total_rules_promoted": 11592,
   "history": [
-    {
-      "timestamp": "2026-11-26T01:26:21.025Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:26:29.649Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:36:21.148Z",
-      "repository": "PrunaAI/P-Image-OSS",
-      "learningId": "learn-huggingface-prunaai-p-h3-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T01:36:36.986Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T01:45:06.085Z",
       "repository": "Viggle/Viggle-Remake",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T13:36:08.694Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:44:34.904Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:44:36.984Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:44:41.884Z",
+      "repository": "a2ui-project/a2ui",
+      "learningId": "learn-github-a2ui-project-a2ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:44:50.891Z",
+      "repository": "dragonflydb/dragonfly",
+      "learningId": "learn-github-dragonflydb-dragonfly",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

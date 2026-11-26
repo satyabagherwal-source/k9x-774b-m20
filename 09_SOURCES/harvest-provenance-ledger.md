@@ -13436,3 +13436,7 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `2910d1e2` | Multi-dimensional audit evidence | 2026-11-26T13:36:02.517Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `aa4f044b` | Multi-dimensional audit evidence | 2026-11-26T13:36:05.951Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a8825a25` | Multi-dimensional audit evidence | 2026-11-26T13:36:08.682Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-26T13:44:34.891Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `f06f7917` | Multi-dimensional audit evidence | 2026-11-26T13:44:36.970Z |
+| `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `36725eee` | Multi-dimensional audit evidence | 2026-11-26T13:44:41.869Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `cb5fcfa0` | Multi-dimensional audit evidence | 2026-11-26T13:44:50.876Z |

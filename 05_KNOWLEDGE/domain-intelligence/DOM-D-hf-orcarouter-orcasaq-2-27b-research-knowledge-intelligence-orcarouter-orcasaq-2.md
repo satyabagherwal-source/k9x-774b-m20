@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
   "source_version": "hf-orcarouter-orcasaq-2-27b",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T20:35:35.502Z",
+  "timestamp": "2026-11-26T13:44:35.159Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B) (Revision: `hf-orcarou`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T20:35:35.502Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T13:44:35.159Z`  
 > **Learning ID**: `learn-huggingface-orcarouter-orcasaq-2-27b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:35:34.637Z  
+> **Harvest Timestamp**: 2026-11-26T13:44:33.871Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1072 downloads | 291 likes
+- **Stars / Engagement**: 1055 downloads | 292 likes
 
 ---
 

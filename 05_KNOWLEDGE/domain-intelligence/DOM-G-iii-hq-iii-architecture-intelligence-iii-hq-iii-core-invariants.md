@@ -4,24 +4,24 @@
 {
   "source_repository": "iii-hq/iii",
   "source_url": "https://github.com/iii-hq/iii",
-  "source_version": "d14aa58e",
+  "source_version": "f06f7917",
   "license": "PERMISSIVE_OPEN_SOURCE",
-  "timestamp": "2026-11-25T05:45:25.771Z",
+  "timestamp": "2026-11-26T13:44:37.261Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-iii-hq-iii",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [iii-hq/iii](https://github.com/iii-hq/iii) (Revision: `d14aa58e`).  
-> **License**: PERMISSIVE_OPEN_SOURCE | **Timestamp**: `2026-11-25T05:45:25.771Z`  
+> **Provenance**: Harvested from [iii-hq/iii](https://github.com/iii-hq/iii) (Revision: `f06f7917`).  
+> **License**: PERMISSIVE_OPEN_SOURCE | **Timestamp**: `2026-11-26T13:44:37.261Z`  
 > **Learning ID**: `learn-github-iii-hq-iii`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 70%
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from iii-hq/iii:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T05:45:24.413Z  
+> **Harvest Timestamp**: 2026-11-26T13:44:35.673Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Effortlessly compose, extend, observe, discover, and react to every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18939 stars
+- **Stars / Engagement**: 18977 stars
 
 ---
 
@@ -165,6 +165,16 @@ pub struct ReadinessBaseline {
 }
 
 impl EngineClient {
+    /// A client that never starts a connection thread, for isolated unit tests.
+    #[cfg(test)]
+    pub(crate) fn disconnected() -> Self {
+        Self {
+            client: IIIClient::new("ws://127.0.0.1:1/ws"),
+            namespace: "status-test".to_string(),
+            exited: Default::default(),
+        }
+    }
+
     /// Connects as `daemon_id` in `namespace`, the same one its containers
     /// register in.
     ///
@@ -297,15 +307,7 @@ impl EngineClient {
             )
             .await
             .map_err(|err| ComposeError::ConfigFetchFailed {
-                name: name.into(),
-                message: format!("runtime configuration injection failed: {err}"),
-            })?;
-        Ok(())
-    }
-
-    /// Ask the configuration authority to migrate the exact previous default.
-    /// Returns true only when both source and destination are missing.
-    /// A missing functio
+           
 ```
 
 ### Core Architecture Module: `crates/iii-compose/src/engine_compat.rs`
@@ -901,7 +903,6 @@ impl Drop for HookProcess {
 
 use std::{
     collections::BTreeMap,
-    process::ExitStatus,
     time::{Duration, Instant},
 };
 
@@ -916,7 +917,7 @@ use crate::{
     error::{ComposeError, Result},
     hooks,
     logs::LogStore,
-    manifest::{StartSpec, VmSpec},
+    manifest::StartSpec,
     process::{Outcome, Supervised, spawn_supervised_piped},
     report, restart,
     spawn::{SpawnCtx, resolve_working_dir, spawn_plan},
@@ -958,13 +959,115 @@ pub struct ContainerResult {
 pub struct OpError {
     pub code: String,
     pub message: String,
+    /// What a `BUILD_FAILED` carries: the build's own error.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cause: Option<OpErrorCause>,
+}
+
+/// The error under a `BUILD_FAILED`: the build's own code and message (spec 4.1).
+#[derive(Debug, Clone, Serialize, schemars::JsonSchema, PartialEq, Eq)]
+pub struct OpErrorCause {
+    pub code: String,
+    pub message: String,
 }
 
 impl From<&ComposeError> for OpError {
     fn from(error: &ComposeError) -> Self {
+        let cause = match error {
+            ComposeError::BuildFailed { code, message, .. }
+            | ComposeError::PackageRebuildFailed { code, message, .. } => Some(OpErrorCause {
+                code: code.clone(),
+                message: message.clone(),
+            }),
+            _ => None,
+        };
         Self {
             code: error.code().to_string(),
             message: error.to_string(),
+            cause,
+        }
+    }
+}
+
+impl OpError {
+    /// An error that is not a [`ComposeError`], such as a build's own.
+    pub(crate) fn from_parts(code: String, message: String) -> Self {
+        Self {
+            code,
+            message,
+            cause: None,
+        }
+    }
+}
+
+/// How one container's build ended in `compose::build` (spec 7.4).
+#[derive(Debug, Clone, Copy, Serialize, schemars::JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum BuildStatus {
+    Built,
+    Failed,
+    /// No `scripts.build`, or `""`: nothing to build.
+    Skipped,
+}
+
+/// What one `compose::build` did: a result per container it reached, and whether a
+/// `compose::cancel` or a `down` stopped it, which makes the operation `cancelled` whatever its
+/// results say (a build its stop killed shows as `failed`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BuildRun {
+    pub results: Vec<BuildResult>,
+    pub cancelled: bool,
+}
+
+/// What [`Project::rebuild_changed`](crate::project::Project::rebuild_changed) did.
+#[derive(Debug, Default)]
+pub(crate) struct Rebuilt {
+    /// Rebuilt for their new package: their restart runs it.
+    pub built: Vec<String>,
+    /// Whose rebuild failed: they keep running on their old build.
+    pub failed: Vec<(String, ComposeError)>,
+    /// The operation was cancelled, and nothing more was built.
+    pub cancelled: bool,
+}
+
+/// One container's entry in the `results` of a finished `compose::build`.
+#[derive(Debug, Clone, Serialize, schemars::JsonSchema, PartialEq, Eq)]
+pub struct BuildResult {
+    pub worker: String,
+    pub status: BuildStatus,
+    /// The image a VM build wrote.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub build_id: Option<String>,
+    /// The build's own `{ code, message }` (spec 4.1).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error: Option<OpError>,
+}
+
+impl BuildResult {
+    pub(crate) fn built(worker: &str, build_id: Option<String>) -> Self {
+        Self {
+            worker: worker.to_string(),
+            status: BuildStatus::Built,
+            build_id,
+            error: None,
+        }
+    }
+
+    pub(crate) fn failed(worker: &str, error: OpError) -> Self {
+        Self {
+            worker: worker.to_string(),
+            status: BuildStatus::Failed,
+            build_id: None,
+            error: Some(error),
+        }
+    }
+
+    pub(crate) fn skipped(worker: &str) -> Self {
+        Self {
+            worker: worker.to_string(),
+            status: BuildStatus::Skipped,
+            build_id: None,
+            error: None,
         }
     }
 }
@@ -999,6 +1102,28 @@ pub struct LifecycleCtx<'a> {
     /// is started with and what a call to its `worker::*` functions carries.
     pub sandbox_token: &'a str,
     pub(crate) empty_env_diagnostics: &'a crate::config::EmptyEnvDiagnostics,
+    /// The VMs a 0.26 daemon left running, by container: each is stopped when its container
+    /// next starts (spec 7.3, step 2).
+    pub(crate) legacy_vms: &'a std::sync::Mutex<BTreeMap<String, crate::state::VmRecord>>,
+}
+
+impl LifecycleCtx<'_> {
+    /// The VM a 0.26 daemon left running for container `key`, if one is still to be stopped.
+    pub(crate) fn legacy_vm(&self, key: &str) -> Option<crate::state::VmRecord> {
+        self.legacy_vms
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .get(key)
+            .cloned()
+    }
+
+    /// Forgets the VM [`Self::legacy_vm`] named, once it is stopped.
+    pub(crate) fn forget_legacy_vm(&self, key: &str) {
+        self.legacy_vms
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .remove(key);
+    }
 }
 
 /// What one container's start produced: which one, how long it took, and
@@ -1030,42 +1155,9 @@ impl From<ComposeError> for StartFailure {
     }
 }
 
-/// One supervised container: a local process group, or a VM its adapter runs.
-pub enum Child {
-    Process(Supervised),
-    Vm(crate::sandbox::RemoteVm),
-}
-
-impl Child {
-    pub fn poll(&self) -> Outcome {
-        match self {
-            Self::Process(process) => process.poll(),
-            Self::Vm(vm) => vm.poll(),
-        }
-    }
-
-    pub async fn wait(&self) -> ExitStatus {
-        match self {
-            Self::Process(process) => process.wait().await,
-            Self::Vm(vm) => vm.wait().await,
-        }
-    }
-
-    pub async fn stop(&self, grace: Duration) -> ExitStatus {
-        match self {
-            Self::Process(process) => process.stop(grace).await,
-            Self::Vm(vm) => vm.stop(grace).await,
-        }
-    }
-
-    /// Inherited from an earlier daemon rather than started here.
-    pub fn is_adopted(&self) -> bool {
-        match self {
-            Self::Process(process) => process.is_adopted(),
-            Self::Vm(vm) => vm.is_adopted(),
-        }
-    }
-}
+/// One supervised container: a local process group. A VM container is one too: the
+/// `iii call sandbox::start` that boots its VM (spec 7.6).
+pub type Child = Supervised;
 
 /// Containers currently supervised by this daemon, keyed by container id.
 pub type Children = BTreeMap<String, Child>;
@@ -1090,101 +1182,7 @@ pub async fn up(
         Some(ctx.shutdown.signal()),
     )
     .await
-    .unwrap_or_else(|| cancelled_op(operation_id))
-}
-
-/// Starts the foreground project's graph, rolling back this operation when an
-/// OS shutdown signal arrives.
-pub(crate) async fn up_until_shutdown(
-    ctx: &LifecycleCtx<'_>,
-    children: &mut Children,
-    records: &mut BTreeMap<String, ChildRecord>,
-    target: Option<&str>,
-    operation_id: String,
-    shutdown: crate::shutdown::ShutdownSignal,
-) -> Option<OpResult> {
-    up_inner(
-        ctx,
-        children,
-        records,
-        target,
-        operation_id,
-        Some(shutdown.or(ctx.shutdown.signal())),
-    )
-    .await
-}
-
-async fn up_inner(
-    ctx: &LifecycleCtx<'_>,
-    children: &mut Children,
-    records: &mut BTreeMap<String, ChildRecord>,
-    target: Option<&str>,
-    operation_id: String,
-    shutdown: Option<crate::shutdown::ShutdownSignal>,
-) -> Option<OpResult> {
-    report::in_project_scope(
-        &ctx.file.path,
-        up_scoped(ctx, children, records, target, operation_id, shutdown),
-    )
-    .await
-}
-
-async fn up_scoped(
-    ctx: &LifecycleCtx<'_>,
-    children: &mut Children,
-    records: &mut BTreeMap<String, ChildRecord>,
-    target: Option<&str>,
-    operation_id: String,
-    shutdown: Option<crate::shutdown::ShutdownSignal>,
-) -> Option<OpResult> {
-    let began = Instant::now();
-    let order = match plan_targets(ctx.file, target) {
-        Ok(order) => order,
-        Err(error) => {
-            report::summary_failed("up", error.code(), began.elapsed());
-            return Some(failed_op(operation_id, target, &error));
-        }
-    };
-
-    let mut results: Vec<ContainerResult> = Vec::new();
-    // Only what *this* operation started may be rolled back.
-    let mut started: Vec<String> = Vec::new();
-    // Containers that failed and said their failure does not fail the
-    // operation. Named so the closing line reports the partial project.
-    let mut not_required_failures = Vec::new();
-    let max_parallel_workers = crate::parallelism::max_parallel_workers();
-
-    // Everything this operation will touch, drawn before any of it moves, so an
-    // operator sees the shape rather than a line at a time.
-    let versions = version_labels(ctx.file, order.iter().map(String::as_str));
-    if target.is_none() {
-        report::plan_full_labeled(&dag::outline(ctx.file, &order), &versions);
-    } else {
-        report::plan_labeled(&dag::outline(ctx.file, &order), &versions);
-    }
-    if let Some(operation) = crate::operation::active(&operation_id) {
-        let outline = dag::outline(ctx.file, &order);
-        operation.plan(outline.len()).await;
-        for (key, depth) in &outline {
-            operation
-                .emit_tree(key, *depth, "waiting for dependencies")
-                .await;
-        }
-    }
-
-    // Grouped rather than listed: only a declared dependency has to wait, and
-    // in a project of fourteen where one worker calls the other thirteen, the
-    // thirteen have nothing to wait for.
-    for wave in dag::waves(ctx.file, &order) {
-        if shutdown.as_ref().is_some_and(|signal| signal.requested()) {
-            report::plan_done();
-            rollback(ctx, children, records, &started, &mut results).await;
-            return None;
-        }
-
-        let mut starting: Vec<String> = Vec::new();
-        for key in &wave {
-       
+    .unwrap_or_else(|| cance
 ```
 
 ### Core Architecture Module: `crates/iii-compose/src/managed_engine.rs`
@@ -1581,7 +1579,8 @@ pub struct ChildRecord {
     /// never signalled again.
     #[serde(default)]
     pub birth: Option<BirthIdentity>,
-    /// The VM a VM container runs, at the adapter that runs it.
+    /// The VM a 0.26 daemon booted for this container, at the adapter that runs it. Only read:
+    /// it is stopped when the container next starts, then dropped (spec 7.3, step 2).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub vm: Option<VmRecord>,
     pub status: ChildStatus,
@@ -1619,17 +1618,7 @@ impl ChildRecord {
     }
 
     pub fn from_child(child: &crate::lifecycle::Child, status: ChildStatus) -> Self {
-        match child {
-            crate::lifecycle::Child::Process(process) => Self::from_supervised(process, status),
-            crate::lifecycle::Child::Vm(vm) => Self {
-                pid: None,
-                birth: None,
-                vm: Some(vm.record.clone()),
-                status,
-                started_at: now_unix(),
-                last_error: None,
-            },
-        }
+        Self::from_supervised(child, status)
     }
 }
 
@@ -1746,7 +1735,16 @@ pub fn reconcile(record: &ChildRecord) -> Reconciliation {
     }
     // No process: a VM container, which only its adapter can answer for.
     let (Some(pid), Some(birth)) = (record.pid, &record.birth) else {
-        return Reconcili
+        return Reconciliation::Gone;
+    };
+    if !crate::process::is_running(pid) {
+        return Reconciliation::Gone;
+    }
+    if birth.matches(&birth_identity(pid)) {
+        Reconciliation::Adopt
+    } else {
+        Reconciliation::Unverifiable
+    
 ```
 
 ### Core Architecture Module: `crates/iii-sandbox-contract/src/worker.rs`
@@ -1754,8 +1752,8 @@ pub fn reconcile(record: &ChildRecord) -> Reconciliation {
 // Copyright Motia LLC and/or licensed to Motia LLC under one or more
 // contributor license agreements. Licensed under the Elastic License 2.0.
 
-//! Request and response types of the `<adapter>::worker::*` operations. `iii sandbox` calls
-//! them to run one Compose container's VM through the adapter.
+//! Request and response types of the `<adapter>::worker::*` operations. `sandbox::build` and
+//! `sandbox::start` call them to run one Compose container's VM through the adapter.
 //!
 //! Every request carries `auth`: the project token, or, with
 //! [`FEATURE_SCOPED_AUTH`](crate::FEATURE_SCOPED_AUTH), the token scoped to the VM's state key
@@ -1811,8 +1809,30 @@ pub enum WorkerSource {
     Bundle {
         /// Manifest name, not the container key.
         package: String,
-        /// The bundle in Compose's package cache.
+        /// The container's directory in the project's `.iii/workers/`,
+        /// `<project>/.iii/workers/<container>`. `worker::build` copies it into the image; a
+        /// `worker::start` with `build` does not mount it. Before contract 1.3 it was the bundle
+        /// in Compose's package cache.
         host_path: String,
+    },
+    /// A `binary` package's Linux build, run as the worker in the VM. Since contract 1.4
+    /// ([`FEATURE_BINARY`](crate::FEATURE_BINARY)).
+    ///
+    /// Only `worker::build`, which needs [`WorkerBuildRequest::base_image`], and a
+    /// `worker::start` with `build` take it; `worker::prepare` and a `worker::start` without
+    /// `build` refuse it with `S501`. The guest runs `/workspace/<executable>` with no arguments.
+    Binary {
+        /// Manifest name, not the container key.
+        package: String,
+        /// The container's package directory, as for `Bundle`, where Compose put the binary's
+        /// Linux build for the host's architecture. `worker::build` copies it into the image.
+        /// It may hold an `iii.worker.yaml`; if it does, its name must equal `package`, it may
+        /// not set `scripts.setup`, and its `scripts.install` and `env` apply. A manifest that
+        /// breaks this gets `S501`.
+        host_path: String,
+        /// Path of the executable, relative to `host_path`: normal components only, inside
+        /// `host_path`, not a symlink, and a regular executable file. Any other gets `S501`.
+        executable: String,
     },
     /// Local sources always sync into the VM.
     Local {
@@ -1836,6 +1856,61 @@ pub struct WorkerPrepareRequest {
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct WorkerPrepareResponse {}
 
+/// Builds a fresh VM image, pulling its base, without a preceding prepare (contract 1.3).
+/// Publishes `image.erofs` then `image.id` atomically in `output_dir`; running VMs keep their image.
+/// One build per `state_key`: concurrent builds get `S509`; setup/install or write failures get `S507`.
+/// Closing or failing `logs` cancels the build, preserves the previous image and releases the key.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerBuildRequest {
+    /// The project token or the VM's scoped token.
+    pub auth: String,
+    /// The VM the build is for; a scoped token is checked against it.
+    pub state_key: String,
+    /// Container key, for logs and errors.
+    pub worker_name: String,
+    pub source: WorkerSource,
+    /// Absolute host directory of the build: `<project>/.iii/build/<container>`. Must be under the
+    /// adapter's host roots. The adapter writes `image.erofs` there through a temporary file
+    /// and a rename.
+    pub output_dir: String,
+    /// Env of the setup/install steps: `guest_env`, nothing from the host.
+    pub env: BTreeMap<String, String>,
+    /// Writer end of a channel for the build's output, one `LogRecord` JSON per text frame.
+    /// Required: the build lives as long as the caller reads it. When it has had no output to
+    /// write for 5 s, the adapter writes a one-byte binary frame to keep the channel alive;
+    /// readers take records from text frames only.
+    pub logs: StreamChannelRef,
+    /// The image reference the build starts from, instead of the manifest's
+    /// `runtime.base_image`; `None` keeps the manifest's. Required with a
+    /// [`WorkerSource::Binary`], whose package names no base image: a binary build without it
+    /// gets `S001`, and so does an implausible reference with any source. An older adapter
+    /// ignores the field, so a caller sends it only to one that announces
+    /// [`FEATURE_BINARY`](crate::FEATURE_BINARY). Since contract 1.4.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub base_image: Option<String>,
+}
+
+/// Reply of `worker::build`, once the image is in place. Since contract 1.3.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerBuildResponse {
+    /// Digest of the image written, `sha256:<hex>`; passed back on `worker::start`.
+    pub build_id: String,
+    /// The base image the build started from.
+    pub base_image: BaseImageRef,
+    /// When the build finished, in milliseconds since the Unix epoch.
+    pub built_at_ms: u64,
+}
+
+/// The base image a build started from. Since contract 1.3.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct BaseImageRef {
+    /// The image reference the adapter pulled, e.g. `docker.io/iiidev/node:latest`.
+    pub reference: String,
+    /// Resolved digest, `None` when the cached rootfs carries none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub digest: Option<String>,
+}
+
 /// Boots the VM. The adapter reads resources from the worker's manifest.
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct WorkerStartRequest {
@@ -1853,6 +1928,23 @@ pub struct WorkerStartRequest {
     pub env: BTreeMap<String, String>,
     /// The engine's URL as seen from the host.
     pub engine_url: String,
+    /// Boot the image `worker::build` wrote, without running `scripts.setup`/`scripts.install`.
+    /// With it, the caller does not call `worker::prepare`. An older adapter ignores the field,
+    /// so a caller sends it only to one that announces [`FEATURE_BUILD`](crate::FEATURE_BUILD).
+    /// Since contract 1.3.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub build: Option<WorkerBuildRef>,
+}
+
+/// The build `worker::start` boots. The adapter compares `build_id` with `build_dir/image.id`
+/// and refuses a mismatch or a missing file with `S508`; it does not hash the image on start.
+/// Since contract 1.3.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerBuildRef {
+    /// [`WorkerBuildResponse::build_id`] of the build.
+    pub build_id: String,
+    /// The `output_dir` the build was written to.
+    pub build_dir: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -1864,103 +1956,7 @@ pub struct WorkerStartResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct WorkerStatusRequest {
-    pub auth: String,
-    pub vm_id: String,
-    pub instance: u64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-pub enum State {
-    Preparing,
-    Running,
-    Exited,
-    Stopped,
-    Unknown,
-}
-
-/// Reply of `worker::status` and `worker::stop`.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct WorkerStatus {
-    pub vm_id: String,
-    pub instance: u64,
-    pub state: State,
-    pub exit_code: Option<i32>,
-    /// The signal that ended the VM, if one did.
-    pub signal: Option<i32>,
-    pub started_at_ms: u64,
-    pub ended_at_ms: Option<u64>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct WorkerLogsRequest {
-    pub auth: String,
-    pub vm_id: String,
-    /// `LogRecord.cursor` of the last record the caller has; reading resumes right after it.
-    /// Opaque to the caller. A cursor past the end of the log (after a rotation) reads from the
-    /// start.
-    pub cursor: Option<u64>,
-    /// Keep the channel open while the instance runs.
-    pub follow: bool,
-    /// Writer end of a channel the caller created; one `LogRecord` JSON per text frame.
-    pub channel: StreamChannelRef,
-    /// Start after the record that is last when the request arrives, ignoring `cursor`: a client
-    /// that reattaches to a running instance gets only what follows, not the log again. Since
-    /// contract 1.2 ([`FEATURE_LOGS_FROM_END`](crate::FEATURE_LOGS_FROM_END)); an older adapter
-    /// ignores it. The response's `cursor` says where the stream started.
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub from_end: bool,
-}
-
-/// Returned once the log pump starts; the records travel over the channel.
-#[derive(Debug, Clone, Default, Serialize, Deserialize, JsonSchema)]
-pub struct WorkerLogsResponse {
-    /// With `from_end`: the cursor of the record that was last when the request arrived, the
-    /// one the stream starts after, so a stream reopened later resumes there instead of at the
-    /// end again; `None` when the log was empty. Since contract 1.2.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub cursor: Option<u64>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-pub enum LogStream {
-    Stdout,
-    Stderr,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct LogRecord {
-    pub stream: LogStream,
-    pub line: String,
-    pub ts_ms: u64,
-    /// Resume point: pass it as `WorkerLogsRequest.cursor` to continue after this record.
-    pub cursor: u64,
-}
-
-/// Idempotent; `grace_ms: 0` kills. Replies with the final `WorkerStatus`.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct WorkerStopRequest {
-    pub auth: String,
-    pub vm_id: String,
-    /// Names the boot to stop, so a stale stop cannot hit a newer one.
-    pub instance: u64,
-    pub grace_ms: u64,
-}
-
-/// Refused while the VM is running.
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct WorkerDestroyRequest {
-    pub auth: String,
-    pub state_key: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct WorkerDestroyResponse {
-    pub destroyed: bool,
-}
-
+pub struct Wor
 ```
 
 ### Core Architecture Module: `crates/scaffolder-core/src/cli.rs`
@@ -2251,63 +2247,408 @@ pub use tui::run;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d14aa58e` (2026-11-24)
-**Commit Message**: feat(website): 8 AI agent observability best practices blog post (#2596)
+### Incident Patch 1: `f06f7917` (2026-11-25)
+**Commit Message**: docs: date the 0.27.0 changelog and pin the tutorial to the 0.27 SDKs (#2623)
 
-**File**: `website/content/blog/ai-agent-observability-best-practices.md` (added, +362/-0)
+Co-authored-by: iii harness (claude-code/claude-opus-5-5) <[REDACTED_EMAIL]>
+
+**File**: `docs/changelog/index.mdx` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,362 @@
+@@ -7,7 +7,7 @@ type: "reference"
+ 
+ <Visibility for="humans">
+ 
+-<Update label="0.27.0" description="Unreleased">
++<Update label="0.27.0" description="November 2026">
+   ## Streams in call payloads and results
+ 
+   Every SDK (TypeScript for Node and the browser, Python, Rust, and Go) replaces the Channels API
+```
+
+**File**: `docs/next/tutorials/linkly/_workspace/browser-stand-in/package.json` (modified, +1/-1)
+```diff
+@@ -4,6 +4,6 @@
+   "private": true,
+   "type": "module",
+   "dependencies": {
+-    "iii-browser-sdk": "0.26.0"
++    "iii-browser-sdk": "0.27.0"
+   }
+ }
+```
+
+**File**: `docs/next/tutorials/linkly/agentic.mdx` (modified, +1/-1)
+```diff
+@@ -615,7 +615,7 @@ Turn a browser tab into a worker.
+   the tab's user::confirm_destructive_op in the `browser-${session}` namespace, which it builds from
+   the session id the caller passes.
+ - Create a Vite React app in frontend/ with `npm create vite@latest frontend -- --template
+-  react-ts --no-interactive`, install iii-browser-sdk@0.26.0, and write frontend/src/iii.ts and
++  react-ts --no-interactive`, install iii-browser-sdk@0.27.0, and write frontend/src/iii.ts and
+   frontend/src/App.tsx that connect in a per-tab `browser-<session>` namespace, call link::create
+   in the default namespace, and register user::confirm_destructive_op. For a live click counter,
+   observe click-streamer::on-click (namespace "default", deliver "output") with ui::on_click as the
+```
+
+**File**: `docs/next/tutorials/linkly/agentic.mdx.skill.md` (modified, +1/-1)
+```diff
+@@ -613,7 +613,7 @@ Turn a browser tab into a worker.
+   the tab's user::confirm_destructive_op in the `browser-${session}` namespace, which it builds from
+   the session id the caller passes.
+ - Create a Vite React app in frontend/ with `npm create vite@latest frontend -- --template
+-  react-ts --no-interactive`, install iii-browser-sdk@0.26.0, and write frontend/src/iii.ts and
++  react-ts --no-interactive`, install iii-browser-sdk@0.27.0, and write frontend/src/iii.ts and
+   frontend/src/App.tsx that connect in a per-tab `browser-<session>` namespace, call link::create
+   in the default namespace, and register user::confirm_destructive_op. For a live click counter,
+   observe click-streamer::on-click (namespace "default", deliver "output") with ui::on_click as the
+```
+
+**File**: `docs/next/tutorials/linkly/foundations.mdx` (modified, +2/-2)
+```diff
+@@ -134,8 +134,8 @@ TypeScript source directly and reloads the worker whenever you save a change.
+     "start": "tsx watch src/index.ts"
+   },
+   "dependencies": {
+-    "iii-sdk": "0.26.0",
+-    "@iii-dev/helpers": "0.26.0",
++    "iii-sdk": "0.27.0",
++    "@iii-dev/helpers": "0.27.0",
+     "tsx": "^4.22.3"
+   },
+   "devDependencies": {
+```
+
+**File**: `docs/next/tutorials/linkly/foundations.mdx.skill.md` (modified, +2/-2)
+```diff
+@@ -130,8 +130,8 @@ TypeScript source directly and reloads the worker whenever you save a change.
+     "start": "tsx watch src/index.ts"
+   },
+   "dependencies": {
+-    "iii-sdk": "0.26.0",
+-    "@iii-dev/helpers": "0.26.0",
++    "iii-sdk": "0.27.0",
++    "@iii-dev/helpers": "0.27.0",
+     "tsx": "^4.22.3"
+   },
+   "devDependencies": {
+```
+
+**File**: `docs/next/tutorials/linkly/frontend.mdx` (modified, +3/-3)
+```diff
+@@ -207,11 +207,11 @@ Now install the dependencies:
+ ```bash
+ cd frontend
+ npm install
+-npm install iii-browser-sdk@0.26.0
++npm install iii-browser-sdk@0.27.0
+ ```
+ 
+-`iii-browser-sdk` is pinned to 0.26.0, the same version as the `iii-sdk` the backend workers pin:
+-the tab uses the 0.26 `observe` and `call` API. Each one connects to the engine, never to the other.
++`iii-browser-sdk` is pinned to 0.27.0, the same version as the `iii-sdk` the backend workers pin:
++the tab uses the 0.27 `observe` and `call` API. Each one connects to the engine, never to the other.
+ 
+ Then tell the app where the proxy is and which token to send. Create `frontend/.env.local`; Vite
+ reads it at startup. `VITE_LINKLY_TOKEN` must equal `LINKLY_BROWSER_TOKEN` in the project's `.env`,
+```
+
+**File**: `docs/next/tutorials/linkly/frontend.mdx.skill.md` (modified, +3/-3)
+```diff
+@@ -203,11 +203,11 @@ Now install the dependencies:
+ ```bash
+ cd frontend
+ npm install
+-npm install iii-browser-sdk@0.26.0
++npm install iii-browser-sdk@0.27.0
+ ```
+ 
+-`iii-browser-sdk` is pinned to 0.26.0, the same version as the `iii-sdk` the backend workers pin:
+-the tab uses the 0.26 `observe` and `call` API. Each one connects to the engine, never to the other.
++`iii-browser-sdk` is pinned to 0.27.0, the same version as the `iii-sdk` the backend workers pin:
++the tab uses the 0.27 `observe` and `call` API. Each one connects to the engine, never to the other.
+ 
+ Then tell the app where the proxy is and which token to send. Create `frontend/.env.local`; Vite
+ reads it at startup. `VITE_LINKLY_TOKEN` must equal `LINKLY_BROWSER_TOKEN` in the project's `.env`,
+```
+
+---
+
+### Incident Patch 2: `9c0ac2ea` (2026-11-25)
+**Commit Message**: chore: bump versions for release -- iii(iii/v0.27.0)
+
+Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +7/-7)
+```diff
+@@ -1657,7 +1657,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "iii"
+-version = "0.26.1-rc.2"
++version = "0.27.0"
+ dependencies = [
+  "anyhow",
+  "arc-swap",
+@@ -1798,7 +1798,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "iii-filter"
+-version = "0.26.1-rc.2"
++version = "0.27.0"
+ dependencies = [
+  "criterion",
+  "serde",
+@@ -1807,7 +1807,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "iii-helpers"
+-version = "0.26.1-rc.2"
++version = "0.27.0"
+ dependencies = [
+  "futures-util",
+  "opentelemetry",
+@@ -1828,14 +1828,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "iii-observability"
+-version = "0.26.1-rc.2"
++version = "0.27.0"
+ dependencies = [
+  "iii-helpers",
+ ]
+ 
+ [[package]]
+ name = "iii-sandbox-contract"
+-version = "0.26.1-rc.2"
++version = "0.27.0"
+ dependencies = [
+  "hex",
+  "hmac",
+@@ -1848,7 +1848,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "iii-sdk"
+-version = "0.26.1-rc.2"
++version = "0.27.0"
+ dependencies = [
+  "arc-swap",
+  "async-trait",
+@@ -3496,7 +3496,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "scaffolder-core"
+-version = "0.26.1-rc.2"
++version = "0.27.0"
+ dependencies = [
+  "anyhow",
+  "cliclack",
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -15,17 +15,17 @@ members = [
+ ]
+ 
+ [workspace.package]
+-version = "0.26.1-rc.2"
++version = "0.27.0"
+ edition = "2024"
+ authors = ["Motia LLC"]
+ repository = "https://github.com/iii-hq/iii"
+ homepage = "https://iii.dev"
+ 
+ [workspace.dependencies]
+ iii-sdk = { path = "sdk/packages/rust/iii" }
+-iii-observability = { path = "sdk/packages/rust/observability", version = "0.26.1-rc.2" }
+-iii-helpers = { path = "sdk/packages/rust/helpers", version = "0.26.1-rc.2" }
+-iii-filter = { path = "crates/iii-filter", version = "0.26.1-rc.2" }
++iii-observability = { path = "sdk/packages/rust/observability", version = "0.27.0" }
++iii-helpers = { path = "sdk/packages/rust/helpers", version = "0.27.0" }
++iii-filter = { path = "crates/iii-filter", version = "0.27.0" }
+ scaffolder-core = { path = "crates/scaffolder-core" }
+ 
+ # Shared dependencies used by tooling crates
+```
+
+**File**: `docs/0-26-0/assets/favicon-black.svg` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++<svg viewBox="0 0 1075.74 1075.74" xmlns="http://www.w3.org/2000/svg" fill="#000000">
++  <rect y="0.05" width="268.94" height="268.94"/>
++  <rect y="403.45" width="268.94" height="672.24"/>
++  <rect x="403.4" y="0.05" width="268.94" height="268.94"/>
++  <rect x="403.4" y="403.45" width="268.94" height="672.24"/>
++  <rect x="806.81" y="0.05" width="268.94" height="268.94"/>
++  <rect x="806.81" y="403.45" width="268.94" height="672.24"/>
++</svg>
+```
+
+**File**: `docs/0-26-0/assets/favicon-white.svg` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++<svg viewBox="0 0 1075.74 1075.74" xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF">
++  <rect y="0.05" width="268.94" height="268.94"/>
++  <rect y="403.45" width="268.94" height="672.24"/>
++  <rect x="403.4" y="0.05" width="268.94" height="268.94"/>
++  <rect x="403.4" y="403.45" width="268.94" height="672.24"/>
++  <rect x="806.81" y="0.05" width="268.94" height="268.94"/>
++  <rect x="806.81" y="403.45" width="268.94" height="672.24"/>
++</svg>
+```
+
+**File**: `docs/0-26-0/assets/favicon.svg` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++<svg viewBox="0 0 1075.74 1075.74" xmlns="http://www.w3.org/2000/svg">
++  <style>
++    .bar { fill: #000000; }
++    @media (prefers-color-scheme: dark) {
++      .bar { fill: #FFFFFF; }
++    }
++  </style>
++  <rect class="bar" y="0.05" width="268.94" height="268.94"/>
++  <rect class="bar" y="403.45" width="268.94" height="672.24"/>
++  <rect class="bar" x="403.4" y="0.05" width="268.94" height="268.94"/>
++  <rect class="bar" x="403.4" y="403.45" width="268.94" height="672.24"/>
++  <rect class="bar" x="806.81" y="0.05" width="268.94" height="268.94"/>
++  <rect class="bar" x="806.81" y="403.45" width="268.94" height="672.24"/>
++</svg>
+```
+
+**File**: `docs/0-26-0/assets/iii-black.svg` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<svg id="Camada_1" data-name="Camada 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1075.74 1075.74">
++  <rect x="806.81" y="403.45" width="268.94" height="672.24"/>
++  <rect x="403.4" y="403.45" width="268.94" height="672.24"/>
++  <rect x="0" y="403.45" width="268.94" height="672.24"/>
++  <rect x="806.81" y=".05" width="268.94" height="268.94"/>
++  <rect x="403.4" y=".05" width="268.94" height="268.94"/>
++  <rect x="0" y=".05" width="268.94" height="268.94"/>
++</svg>
+\ No newline at end of file
+```
+
+**File**: `docs/0-26-0/assets/iii-white.svg` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<svg id="Camada_1" data-name="Camada 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1075.74 1075.74">
++  <defs>
++    <style>
++      .cls-1 {
++        fill: #f4f4f4;
++      }
++    </style>
++  </defs>
++  <path class="cls-1" d="M1008.82,1025.81h-13.67v-6.06h34.68v6.06h-13.82v37.22h-7.19v-37.22ZM1043.08,1028.77v34.26h-6.77v-43.28h9.73l13.67,27.91,13.11-27.91h9.3v43.28h-7.05v-34.82l-13.39,27.77h-5.22l-13.39-27.21Z"/>
++  <g>
++    <rect class="cls-1" x="806.81" y="403.45" width="268.94" height="672.24"/>
++    <rect class="cls-1" x="403.4" y="403.45" width="268.94" height="672.24"/>
++    <rect class="cls-1" x="0" y="403.45" width="268.94" height="672.24"/>
++    <rect class="cls-1" x="806.81" y=".05" width="268.94" height="268.94"/>
++    <rect class="cls-1" x="403.4" y=".05" width="268.94" height="268.94"/>
++    <rect class="cls-1" x="0" y=".05" width="268.94" height="268.94"/>
++  </g>
++</svg>
+\ No newline at end of file
+```
+
+**File**: `docs/0-26-0/cli-reference/index.mdx` (added, +223/-0)
+```diff
+@@ -0,0 +1,223 @@
 +---
-+title: '8 AI agent observability best practices for tracing tool execution'
-+seoTitle: '8 AI Agent Observability Best Practices for Tool Calls'
-+description: 'Learn 8 AI agent observability best practices for tracing tool calls, tracking latency and token usage, and protecting sensitive data, with examples in iii.'
-+pubDate: 2026-11-23
-+tags: ['agents', 'observability', 'tracing', 'opentelemetry', 'harness']
-+ogImage: ../../assets/blog/ai-agent-observability-best-practices/og.png
-+faq:
-+  - q: 'What are traces in AI agents?'
-+    a: 'A trace is a tree of timed spans that records the instrumented steps in an agent execution, such as model calls, tool calls, and handoffs. The spans share a trace_id. The turn sits at the root, model and tool calls nest below it, and outbound service calls nest below those. Each span has a start time, an end time, attributes, and optionally span events for richer data like function inputs and outputs.'
-+  - q: 'How does agent observability differ from LLM monitoring?'
-+    a: 'LLM monitoring watches model calls: latency, token counts, and errors at the inference boundary. Agent observability follows the whole run, including every tool the agent called, the downstream services those tools reached, and the handoffs between workers. OpenTelemetry''s GenAI agent-span conventions use a similar hierarchy: an invoke_agent span is intended to be the parent of the agent''s tool and task spans.'
-+  - q: 'Can an agent read its own traces?'
-+    a: 'In iii, yes. The engine exposes engine::traces::list and engine::traces::tree, which a worker can call to retrieve trace data for the current or past sessions. The AI Agent Harness only allows calls to functions it has been explicitly authorized to reach, so you can deliberately grant an agent access to trace functions. Grant read-only access only when the agent needs it, with the same scrutiny you would apply to other operational data.'
++title: "CLI reference"
++description: "Every flag, argument, and subcommand of the iii CLI, generated from the CLI definitions in source."
++owner: "devrel"
++type: "reference"
 +---
 +
-+![Tracing agent tool calls: an agent turn with a model call and a tool call nested beneath it.](../../assets/blog/ai-agent-observability-best-practices/banner.png)
++{/* AUTO-GENERATED FILE, DO NOT EDIT. Generated from the clap CLI definitions by the hidden `gen-cli-docs` subcommand. Regenerate with `scripts/generate-cli-docs.sh`. */}
 +
-+Your agent says it added a label to a GitHub issue, but the label isn't there. You go into the logs to debug.
++Reference for the `iii` binary. Running `iii` with no subcommand starts the engine. The same information is available from the binary itself via `iii --help` and `iii <subcommand> --help`. For a guided overview, see [CLI](../using-iii/cli).
 +
-+The logs show a request and a response, but there's no shared ID to connect them. You can't tell when the function started or finished, or whether it succeeded or hid an upstream error. The data is there, but the logs don't show how the steps fit together.
++## `iii`
 +
-+Agent observability connects those steps so you can follow a run from start to finish. This guide covers what to record on tool calls, how to set up tracing, and 8 practices that make traces easier to use. The walkthrough shows what end-to-end tracing looks like in iii.
++Process communication engine
 +
-+> **Versions:** the worked example runs through a TypeScript worker that calls the GitHub REST API using iii engine 0.25.0, AI Agent Harness 1.8.61, and the ade console 1.9.70, verified October 22 to 23, 2026. iii traces SDK-handled worker calls and supports HTTP and queue handoffs in its console without any instrumentation code.
++```text
++iii [OPTIONS] [COMMAND]
++```
 +
-+## What to record for every tool call
++| Option | Description |
++| ------ | ----------- |
++| `-c, --config <CONFIG>` | Path to the config file [default: config.yaml]. When the file does not exist, `iii` offers to create it with an empty workers list (and creates it without asking in non-interactive sessions) |
++| `-v, --version` | Print version and exit |
++| `--no-update-check` | Disable background update and security advisory checks |
 +
-+Give each call an ID that travels with it and nest it under the agent turn that ran it. Record its outcome, timing, and the step's token use. To connect a model's tool call to its result, pair the model's tool call ID with your trace and span IDs, and keep the result on the same span as the call.
++**Subcommands:**
 +
-+The [OpenTelemetry GenAI conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) define names for commonly recorded fields. They have "Development" status as of October 23, 2026, so those names may change.
++| Command | Description |
++| ------- | ----------- |
++| [`call`](#iii-call) | Call a function on a running iii engine |
++| `cloud` | Manage iii Cloud deployments. Dispatches to the external `iii-cloud` binary, which is temporarily maintained outside this repository; run `iii cloud --help` for its current surface. |
++| [`compose`](#iii-compose) | Serve worker-compose projects or prepare their registry packages |
++| [`kill`](#iii-kill) | Stop iii processes by engine port, by compose project, or every orphaned worker |
++| [`project`](#iii-project) | Manage iii projects (init, generate-docker) |
++| [`ps`](#iii-ps) | List iii processes on this machine: engines, compose daemons and workers, with the compose project each belongs to |
++| [`update`](#iii-update) | Update iii and managed binaries to their latest versions |
 +
-+| Field | OpenTelemetry name (Development status) | Where iii records it |
-+| --- | --- | --- |
-+| Trace and span ID | `trace_id`, `span_id` (W3C `traceparent`) | Every span, automatically |
-+| Run and turn ID | `gen_ai.conversation.id` | `iii.session.id` and `iii.message.id`, propagated via baggage onto recording spans |
-+| Tool call ID | `gen_ai.tool.call.id` | Not recorded as a span attribute. The provider's raw call ID (for example, Anthropic's `tool_use.id`) is preserved in the `FunctionCall` and `FunctionResult` content blocks of the session transcript (`session::messages`), which pair each call with its result. An execute span is a sibling of `router::chat` under the same turn step. Its position does not carry the call ID or distinguish calls when a turn requests multiple tools. |
-+| Tool name | `gen_ai.tool.name` | Span name: `execute` plus the function ID |
-+| Arguments and result | `gen_ai.tool.call.arguments`, `gen_ai.tool.call.result` (opt-in in the OTel spec) | `iii.invocation.input` and `iii.invocation.output` span events, recorded by default |
-+| Outcome and error | Span status, `error.type` | Span status, `iii.payload.ok`, `iii.turn.status` |
-+| Timing | Span start and end time | Every span, visible in the console waterfall |
-+| Token usage | `gen_ai.usage.input_tokens`, `gen_ai.usage.ou
++### `iii call`
++
++Call a function on a running iii engine
++
++Alias: `trigger`, `t`
++
++```text
++iii call [OPTIONS] [FUNCTION_PATH] [KV]...
++```
++
++| Argument | Description |
++| -------- | ----------- |
++| `[FUNCTION_PATH]` | Function path (e.g. `my::fn`, `sandbox::create`). Positional |
++| `[KV]...` | Key=value payload tokens (`a=10 b="hello world"`). Combinable with `--json`: kv pairs override individual keys of the json object |
++
++| Option | Description |
++| ------ | ----------- |
++| `--json <JSON>` | JSON payload (`--json '{"a":1}'`). When combined with kv pairs the json must be an object; kv pairs override its keys (shallow merge) |
++| `--engine <URL>` | Engine WebSocket address (`ws://host:port`). Overrides `III_URL` and the working directory's compose file. The local default is used when none of them supplies a URL. Encrypted (`wss://`) connections are not supported |
++| `--address <ADDRESS>` | DEPRECATED: use `--engine ws://host:port`. Engine host address. Taken from `--engine`, `III_URL` or the working directory's compose file when omitted, else `localhost` |
++| `--port <PORT>` | DEPRECATED: use `--engine ws://host:port`. Engine WebSocket port. Taken from `--engine`, `III_URL` or the working directory's compose file when omitted, else 49134 |
++| `--timeout-ms <TIMEOUT_MS>` | Max time to wait for the invocation result (milliseconds) [default: 30000] |
++| `-n, --namespace <NS>` | Namespace to resolve FUNCTION_PATH in. Omit to resolve in the engine's `default` namespace; routing is strict, so a function registered in another namespace is only reachable with this flag |
++
++<Note>
++  `iii call <function> --help` also queries a running engine for the function's description, request schema and observer args, and says when the function is private (observed, not called). That output depends on which workers are registered and is not part of this page; see [Creating Workers / Functions](../creating-workers/functions#attach-request-and-response-schemas).
++</Note>
++
++### `iii compose`
++
++Serve worker-compose projects or prepare their registry packages.
++
++Without `--up`, worker-compose.yaml supplies daemon defaults but no project starts. Projects are then managed through `compose::*` calls. With `--up`, the initial project also starts, together with its declared engine unless `--engine` selects an existing one. `build` downloads packages without starting an engine or worker.
++
++```text
++iii compose [OPTIONS]
++iii compose <COMMAND>
++```
++
++| Option | Description |
++| ------ | ----------- |
++| `--engine <URL>` | Existing engine WebSocket address. Overrides the compose file and III_URL. The local default is used when none of them supplies a URL |
++| `-n, --namespace <NS>` | Namespace this daemon answers `compose::*` in and applies to every project it loads. Several daemons attach to one engine; this is what tells them apart |
++| `--up` | Serve with one project brought up first, starting its declared engine unless `--engine` selects an existing one |
++| `--frozen` | Require worker-compose.loc
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2623** (2026-11-25): docs: date the 0.27.0 changelog and pin the tutorial to the 0.27 SDKs (@guibeira)
 - **PR #2619** (2026-11-24): docs(compose): make the rest of Using iii / Compose a how-to page (@guibeira)
 - **PR #2618** (2026-11-24): docs(compose): leave the cloud block out of the docs for now (@guibeira)
 - **PR #2617** (2026-11-24): chore(compose): stop rewriting iii sandbox run and build lines (@guibeira)
 - **PR #2616** (2026-11-24): feat(cli): drop --stdout, --stderr and --stdin FIELD from iii call (@guibeira)
 - **PR #2615** (2026-11-24): docs(compose): keep Using iii to how-to and move VM detail out (@guibeira)
-- **PR #2614** (2026-11-24): feat(cli): fold --no-bind into --no-follow for iii call (@guibeira)
 
 ---
 
@@ -2327,42 +2668,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. website): 8 AI agent observability best practices blog post
+## X. docs: date the 0.27.0 changelog and pin the tutorial to the 0.27 SDKs
 
 **RULE**:
-When implementing operations in `website/content/blog/ai-agent-observability-best-practices.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/changelog/index.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d14aa58e`: website): 8 AI agent observability best practices blog post. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f06f7917`: docs: date the 0.27.0 changelog and pin the tutorial to the 0.27 SDKs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/content/blog/ai-agent-observability-best-practices.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/changelog/index.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-title: '8 AI agent observability best practices for tracing tool execution'
-seoTitle: '8 AI Agent Observability Best Practices for Tool Calls'
-description: 'Learn 8 AI agent observability best practices for tracing tool calls, tracking latency and token usage, and protecting sensitive data, with examples in iii.'
-pubDate: 2026-11-23
-tags: ['agents', 'observability', 'tracing', 'opentelemetry', 'harness']
-ogImage: ../../assets/blog/ai-agent-observability-best-practices/og.png
-faq:
-  - q: 'What are traces in AI agents?'
-    a: 'A trace is a tree of timed spans that records the instrumented steps in an agent execution, such as model calls, tool calls, and handoffs. The spans share a trace_id. The turn sits at the root, model and tool calls nest below it, and outbound service calls nest below those. Each span has a start time, an end time, attributes, and optionally span events for richer data like function inputs and outputs.'
-  - q: 'How does agent observability differ from LLM monitoring?'
-    a: 'LLM monitoring watches model calls: latency, token counts, and errors at the inference boundary. Agent observability follows the whole run, including every tool the agent called, the d
+<Update label="0.27.0" description="November 2026">
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+<Update label="0.27.0" description="Unreleased">
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d14aa58e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f06f7917` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

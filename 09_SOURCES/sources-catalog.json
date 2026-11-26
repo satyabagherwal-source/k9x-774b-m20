@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "a4c4734149db5ec1697adfdca838d6e13b41e9100edbcd72e8ba37fbc5b0a942",
-    "lastHarvestedAt": "2026-11-22T20:35:35.295Z",
+    "contentHash": "e0dd0c0c17337545968447fa8c16325c3a817d3b11e77df4898e21d5cd460b9d",
+    "lastHarvestedAt": "2026-11-26T13:44:34.891Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "d14aa58e",
+    "sourceVersion": "f06f7917",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "8fb3a23578f98fe64f16afde4bf97504474974fd9b8b060290acd02b09bd8109",
-    "lastHarvestedAt": "2026-11-25T05:45:25.533Z",
+    "contentHash": "1783d1838ba58b528479dade1ef6fff31f958874b1a57711a7626c19abc90450",
+    "lastHarvestedAt": "2026-11-26T13:44:36.970Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "9f52b997",
+    "sourceVersion": "cb5fcfa0",
     "license": "NOASSERTION",
-    "contentHash": "a2314fc11064c08a76e4f43af95fb79d373d5cc19e599ceb1c36daf361290329",
-    "lastHarvestedAt": "2026-11-25T12:29:09.925Z",
+    "contentHash": "8ba9ecb975b18080f8663e49e759088e7dd7a04ade88397cbeb40b3ea6fed238",
+    "lastHarvestedAt": "2026-11-26T13:44:50.876Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -12033,10 +12033,10 @@
     "repository": "a2ui-project/a2ui",
     "platform": "github",
     "sourceUrl": "https://github.com/a2ui-project/a2ui",
-    "sourceVersion": "c26be2dd",
+    "sourceVersion": "36725eee",
     "license": "Apache-2.0",
-    "contentHash": "f8533d537f2d81a335674c9e3e0b2829cbb2f19d014e71461fd44145ebf2fe65",
-    "lastHarvestedAt": "2026-11-24T03:22:36.277Z",
+    "contentHash": "8fae3cfa3a6c9aea44f0608f2c1422845ab7d1c9d3e34ab3cd1cc39ca82a8da9",
+    "lastHarvestedAt": "2026-11-26T13:44:41.869Z",
     "learningId": "learn-github-a2ui-project-a2ui"
   },
   "milind-soni-openmausbot": {
