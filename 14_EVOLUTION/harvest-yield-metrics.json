@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:09:43.382Z",
-  "total_cycles_completed": 12534,
-  "total_learnings_persisted": 12534,
-  "total_rules_promoted": 11477,
+  "last_updated": "2026-11-26T02:18:35.008Z",
+  "total_cycles_completed": 12536,
+  "total_learnings_persisted": 12536,
+  "total_rules_promoted": 11478,
   "history": [
-    {
-      "timestamp": "2026-11-25T07:39:18.345Z",
-      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:39:19.342Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:39:27.199Z",
       "repository": "kube-rs/kube",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T02:09:43.382Z",
       "repository": "bridgecrewio/checkov",
       "learningId": "learn-github-bridgecrewio-checkov",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:18:33.453Z",
+      "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:18:35.008Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

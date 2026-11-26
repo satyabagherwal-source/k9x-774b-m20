@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-V1SP",
-    "timestamp": "2026-11-24T12:18:29.977Z",
-    "repository": "invertase/react-native-firebase",
-    "learningId": "learn-github-invertase-react-native-firebase",
-    "contentHash": "efb427fc80374ac8d7b24e3d5a99c2de06722e1799263a182d36da5e8d454e13",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-6G9S",
-    "timestamp": "2026-11-24T12:27:21.952Z",
-    "repository": "Nasiko-Labs/nasiko",
-    "learningId": "learn-github-nasiko-labs-nasiko",
-    "contentHash": "1f48d9fe654a4eb312529ccab70afa176ec5e9b4862a3224e42a470192605bcb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-6LHR",
     "timestamp": "2026-11-24T12:27:28.719Z",
     "repository": "linkerd/linkerd2",
@@ -7490,6 +7460,36 @@
     "repository": "bridgecrewio/checkov",
     "learningId": "learn-github-bridgecrewio-checkov",
     "contentHash": "9bd277d4866ba5645cac89e38bfd470a24d323974ef9d2b68e6cc119f89d29ae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-B80R",
+    "timestamp": "2026-11-26T02:18:33.435Z",
+    "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+    "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
+    "contentHash": "10dbb74fd38de60255847b4d161b43ea025c6d53bf8711ad4233e3aa37796c23",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-B986",
+    "timestamp": "2026-11-26T02:18:34.998Z",
+    "repository": "Dicklesworthstone/destructive_command_guard",
+    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+    "contentHash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

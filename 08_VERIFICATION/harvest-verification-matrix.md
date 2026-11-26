@@ -13206,3 +13206,5 @@
 | `CYCLE-20261126-ZSS9` | `2026-11-26T02:09:40.473Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10585` | Yes (`7b26159b...`) |
 | `CYCLE-20261126-ZV0T` | `2026-11-26T02:09:43.373Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10586` | Yes (`9bd277d4...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T02:10:14.264Z` | `duongductrong-snapzy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-973FB0DB` [Domain F] | Yes (`2dd30ac9...`) |
+| `CYCLE-20261126-B80R` | `2026-11-26T02:18:33.435Z` | `autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md` | Yes (`10dbb74f...`) |
+| `CYCLE-20261126-B986` | `2026-11-26T02:18:34.998Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10587` | Yes (`ef078426...`) |

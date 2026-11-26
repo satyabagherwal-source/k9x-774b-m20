@@ -13239,3 +13239,5 @@ Every entry in this ledger must capture:
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `193d9422` | Multi-dimensional audit evidence | 2026-11-26T02:09:40.477Z |
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `a8ee1c49` | Multi-dimensional audit evidence | 2026-11-26T02:09:43.377Z |
 | `learn-dom-f-973fb0db` | `project://duongductrong-snapzy` | `193d9422` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md` | 2026-11-26T02:10:14.264Z |
+| `learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2` | `https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-26T02:18:33.440Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `2e7cf695` | Multi-dimensional audit evidence | 2026-11-26T02:18:35.002Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T02:09:43.392Z",
+  "last_updated": "2026-11-26T02:18:35.025Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "7ec0fec095c4536195067a92ce849b73b8a4a6a836f1647a16f90ddef8304109",
-      "verified_at": "2026-11-24T19:00:29.294Z",
+      "content_hash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
+      "verified_at": "2026-11-26T02:18:35.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:00:29.294Z"
+      "last_updated": "2026-11-26T02:18:35.024Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",
@@ -18426,14 +18426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
-      "content_hash": "b616c1389d81ea2913e42276bf9e3aebc51612ebd7718ec21566d78d2bad5cb5",
-      "verified_at": "2026-11-22T05:28:03.838Z",
+      "content_hash": "10dbb74fd38de60255847b4d161b43ea025c6d53bf8711ad4233e3aa37796c23",
+      "verified_at": "2026-11-26T02:18:33.455Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T05:28:03.838Z"
+      "last_updated": "2026-11-26T02:18:33.455Z"
     },
     "sceneview/sceneview": {
       "repository": "sceneview/sceneview",

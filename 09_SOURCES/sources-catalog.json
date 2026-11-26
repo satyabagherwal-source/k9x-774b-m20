@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "4e6cb47a",
+    "sourceVersion": "2e7cf695",
     "license": "NOASSERTION",
-    "contentHash": "7ec0fec095c4536195067a92ce849b73b8a4a6a836f1647a16f90ddef8304109",
-    "lastHarvestedAt": "2026-11-24T19:00:29.277Z",
+    "contentHash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
+    "lastHarvestedAt": "2026-11-26T02:18:35.002Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -12245,8 +12245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
     "sourceVersion": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2",
     "license": "Open-Source",
-    "contentHash": "b616c1389d81ea2913e42276bf9e3aebc51612ebd7718ec21566d78d2bad5cb5",
-    "lastHarvestedAt": "2026-11-22T05:28:03.828Z",
+    "contentHash": "10dbb74fd38de60255847b4d161b43ea025c6d53bf8711ad4233e3aa37796c23",
+    "lastHarvestedAt": "2026-11-26T02:18:33.440Z",
     "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2"
   },
   "sceneview-sceneview": {

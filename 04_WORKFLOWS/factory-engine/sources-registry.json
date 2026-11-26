@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T02:09:46.851Z",
-    "lastVerified": "2026-11-26T02:09:46.851Z",
+    "lastChecked": "2026-11-26T02:18:45.310Z",
+    "lastVerified": "2026-11-26T02:18:45.310Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T01:45:17.874Z",
-    "lastVerified": "2026-11-26T01:45:17.874Z",
+    "lastChecked": "2026-11-26T02:18:45.301Z",
+    "lastVerified": "2026-11-26T02:18:45.301Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -739,8 +739,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T15:21:34.637Z",
-    "lastVerified": "2026-11-25T15:21:34.637Z",
+    "lastChecked": "2026-11-26T02:18:40.317Z",
+    "lastVerified": "2026-11-26T02:18:40.317Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -2892,9 +2892,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-25T00:52:04.172Z",
+    "lastChecked": "2026-11-26T02:18:42.821Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-25T00:52:04.172Z"
+    "lastVerified": "2026-11-26T02:18:42.821Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -5609,9 +5609,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-25T01:52:48.721Z",
+    "lastChecked": "2026-11-26T02:18:37.870Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-25T01:52:48.721Z"
+    "lastVerified": "2026-11-26T02:18:37.870Z"
   },
   "apache-shardingsphere": {
     "name": "apache/shardingsphere",
@@ -6313,14 +6313,14 @@
     "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T19:00:27.672Z",
-    "lastVerified": "2026-11-24T19:00:27.672Z",
+    "lastChecked": "2026-11-26T02:18:33.824Z",
+    "lastVerified": "2026-11-26T02:18:33.824Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "7ec0fec095c4536195067a92ce849b73b8a4a6a836f1647a16f90ddef8304109",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "contentHash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10883,9 +10883,9 @@
   "signerlabs-shipswift": {
     "name": "ShipSwift",
     "officialUrl": "https://github.com/signerlabs/ShipSwift",
-    "lastChecked": "2026-11-23T16:36:57.471Z",
+    "lastChecked": "2026-11-26T02:18:35.396Z",
     "revisionIdentifier": "d05d75e7",
-    "lastVerified": "2026-11-23T16:36:57.471Z"
+    "lastVerified": "2026-11-26T02:18:35.396Z"
   },
   "archivebox-archivebox": {
     "name": "ArchiveBox/ArchiveBox",
@@ -14212,12 +14212,12 @@
     "officialUrl": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T05:28:00.264Z",
-    "lastVerified": "2026-11-22T05:28:00.264Z",
+    "lastChecked": "2026-11-26T02:18:32.789Z",
+    "lastVerified": "2026-11-26T02:18:32.789Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
-    "contentHash": "b616c1389d81ea2913e42276bf9e3aebc51612ebd7718ec21566d78d2bad5cb5",
+    "contentHash": "10dbb74fd38de60255847b4d161b43ea025c6d53bf8711ad4233e3aa37796c23",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

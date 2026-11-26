@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:10:16.372Z",
+  "last_updated": "2026-11-26T02:18:47.793Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T01:36:42.577Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-25T13:49:40.091Z",
+      "processed_at": "2026-11-26T02:18:46.936Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2748,7 +2748,7 @@
       "staged_for_review": 0
     },
     "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md": {
-      "processed_at": "2026-11-22T05:28:21.403Z",
+      "processed_at": "2026-11-26T02:18:45.447Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3073,7 +3073,7 @@
       "staged_for_review": 0
     },
     "dicklesworthstone-destructive_command_guard-learnings.md": {
-      "processed_at": "2026-11-23T17:12:00.373Z",
+      "processed_at": "2026-11-26T02:18:45.901Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3948,7 +3948,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4329,
+  "total_dossiers_evaluated": 4332,
   "total_canonical_promoted": 550,
-  "total_staged_for_review": 3287
+  "total_staged_for_review": 3289
 }

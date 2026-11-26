@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T17:12:00.633Z",
+  "timestamp": "2026-11-26T02:18:46.094Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dicklesworthstone-destructive_command_guard-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dicklesworthstone-destructive_command_guard-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T17:12:00.633Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T02:18:46.094Z`  
 > **Learning ID**: `LEARN-EVO-dicklesworthstone-destructive_command_guard-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of dicklesworthstone-destructive_command_guard-learnings,
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `b4f82a73`  
+> **Source Version**: `2e7cf695`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:11:47.745Z  
+> **Timestamp**: 2026-11-26T02:18:33.833Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of dicklesworthstone-destructive_command_guard-learnings,
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:11:47.739Z  
+> **Harvest Timestamp**: 2026-11-26T02:18:33.824Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of dicklesworthstone-destructive_command_guard-learnings,
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6378 stars
+- **Stars / Engagement**: 6382 stars
 
 ---
 
@@ -560,6 +560,14 @@ pub enum MatchError {
         language: ScriptLanguage,
         detail: String,
     },
+    /// The code parsed, but a semantic analysis could not resolve it within
+    /// its structural limits. Retrying with a longer timeout cannot help.
+    AnalysisIncomplete {
+        language: ScriptLanguage,
+        /// Stable operation name used in incomplete-analysis diagnostics.
+        stage: &'static str,
+        detail: String,
+    },
     /// Pattern matching exceeded timeout.
     Timeout { elapsed_ms: u64, budget_ms: u64 },
     /// Pattern compilation failed (should not happen with static patterns).
@@ -593,6 +601,11 @@ impl std::fmt::Display for MatchError {
             }
             Self::ParseError { language, detail } => {
                 write!(f, "AST parse error for {language:?}: {detail}")
+            }
+            Self::AnalysisIncomplete {
+                language, detail, ..
+            } => {
+                write!(f, "AST analysis incomplete for {language:?}: {detail}")
             }
             Self::Timeout {
                 elapsed_ms,
@@ -631,24 +644,7 @@ pub struct CompiledPattern {
     /// `call_expression`, so the pattern matches nothing, anywhere, ever.
     /// `Pattern::try_new` still returns `Ok` for it and
     /// [`Pattern::has_error`](ast_grep_core::Pattern::has_error) still returns
-    /// `false`, so neither the compile step nor a compile-only test can see the
-    /// problem (#465).
-    ///
-    /// Such a language states its pattern inside the smallest enclosing
-    /// construct that parses (`func f() { … }`) and names the node to extract.
-    pub selector: Option<String>,
-    /// Stable rule ID.
-    pub rule_id: String,
-    /// Human-readable reason.
-    pub reason: String,
-    /// Match severity.
-    pub severity: Severity,
-    /// Optional safe alternative suggestion.
-    pub suggestion: Option<String>,
-}
-
-impl CompiledPattern {
-    /// Create a new compiled patte
+    /// `false`, so neither the compile step nor a compile-only 
 ```
 
 ### Core Architecture Module: `src/history/queue_budget.rs`
@@ -2537,1203 +2533,859 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3459216e` (2026-11-22)
-**Commit Message**: fix: bind lookaround exemptions to their segments (#671) [skip ci]
+### Incident Patch 1: `beedc5c7` (2026-11-25)
+**Commit Message**: chore(deps): refresh Cargo.lock within the current version requirements [skip ci]
 
-Keep full-command custom matches tied to their innermost owning segment so
-a parent's local safe match cannot suppress a child's lookaround. Preserve
-explicit inherited grants and half-open ownership of zero-width positions.
+`cargo update` on the existing manifest; no Cargo.toml change.
 
-Retain the raw pass's exclusion for already-checked masked children without
-hiding visible substitution syntax or later matches.
+Runtime crates:
+- clap 4.6.9 -> 4.6.10, clap_builder 4.6.7 -> 4.6.10
+- hashbrown 0.17.1 -> 0.17.2 (through indexmap: serde_json, toml)
+- rich_rust 0.2.3 -> 0.2.4, which moves to fancy-regex 0.20 and drops the
+  duplicate fancy-regex 0.18.0 from the tree (pulls in lru 0.19.2)
+- globset 0.4.21 -> 0.4.22, ignore 0.4.34 -> 0.4.35 (vendored
+  ast-grep-language-dcg)
+- h2 0.4.20 -> 0.4.21, hyper 1.12.0 -> 1.13.0 (reqwest, self-update only)
+- crc32fast 1.5.5 -> 1.5.6, zlib-rs 0.6.8 -> 0.6.9 (flate2: history export
+  and self-update)
+Build and dev only: anyhow 1.0.104 -> 1.0.105 and the gix-* patch releases
+under vergen-gix (which add faster-hex 2.0, parking_lot 0.13, lock_api 0.5,
+parking_lot_core 0.10, redox_syscall 0.9.5 and winreg 0.56); litrs 1.0.1 ->
+1.1.0; zerocopy 0.8.64 -> 0.8.65 (criterion).
 
-Add nine CLI and hook regression tests for lookahead, lookbehind, scoped
-rules, source spans, exemptions, overlapping matches, and masked
-substitutions. Document the contract and format the upstream regressions.
+Held (breaking; each needs its own change):
+- ast-grep-core 0.45.3 -> 0.51.3: needs tree-sitter 0.27 and a matching
+  update of the vendored ast-grep-language-dcg crate, and it is the parser
+  on the hook's hot path.
+- rust-mcp-sdk 1.0.1 -> 2.0.0: 
 
-Validation:
-- cargo fmt --check and git diff --check passed.
-- The checksum-verified v0.17.0 baseline reproduced seven fail-opens and
-  passed four controls.
-- Independent production and regression-test reviews completed.
-- UBS completed the full three-file static scan with exit 1: all five
-  critical findings are in unchanged test harness code; no finding
-  intersects the changed production code.
-- Patched tests did not execute: DCG library rustc received SIGKILL in
-  serial builds both with and without incremental compilation, without
-  a Rust source diag
-
-**File**: `docs/custom-packs.md` (modified, +16/-4)
+**File**: `Cargo.lock` (modified, +161/-102)
 ```diff
-@@ -193,10 +193,14 @@ Omit the key to leave the rule unscoped, matching anywhere in the command as
- before. An explicitly empty list is rejected so a misspelled scope cannot
- silently become broader or turn into a dead rule.
+@@ -99,9 +99,9 @@ dependencies = [
  
--Unscoped rules retain the complete matching context across shell separators,
--including text read by lookahead and lookbehind assertions outside the consumed
--match. Safe-pattern exemptions still apply to the segment they authorize;
--skipping an exempt match does not hide later matches of the same rule.
-+Unscoped destructive rules are checked against individual segments and the
-+complete, data-sanitized command. In the complete-command check, lookarounds
-+retain that full context even when the text they consume stays inside one
-+segment. For example, `mytool(?=[^\r\n]*?publish)` can match `mytool status;
-+publish`: the lookahead reads the later segment without including it in the
-+highlighted match. This also applies to the original custom-policy view that
-+preserves assignments and wrappers. Rules with `executables` keep their
-+segment-local matching context.
+ [[package]]
+ name = "anyhow"
+-version = "1.0.104"
++version = "1.0.105"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
++checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
  
- ### Safe Pattern Fields
+ [[package]]
+ name = "approx"
+@@ -454,19 +454,19 @@ dependencies = [
  
-@@ -268,6 +272,14 @@ new exemption. Use anchors to constrain the command forms you authorize.
- Losing a safe match means destructive evaluation continues; it does not by
- itself deny a command that no destructive rule covers.
+ [[package]]
+ name = "clap"
+-version = "4.6.9"
++version = "4.6.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
++checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
+ dependencies = [
+  "clap_builder",
+  "clap_derive",
+ ]
  
-+A whole-command search continues past an occurrence covered by its innermost
-+segment's safe exemption, so an exempt earlier occurrence cannot hide a later
-+one. An enclosing segment's local safe match cannot be borrowed to authorize a
-+child. Grants from a complete carrier still follow the inheritance rules above.
-+A match that consumes text from multiple segments cannot borrow the safe
-+exemption of just one segment. Exempt segments remain visible as context for
-+other matches' lookarounds.
+ [[package]]
+ name = "clap_builder"
+-version = "4.6.7"
++version = "4.6.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
++checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
+ dependencies = [
+  "anstream",
+  "anstyle",
+@@ -653,9 +653,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "crc32fast"
+-version = "1.5.5"
++version = "1.5.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
++checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
+ dependencies = [
+  "cfg-if",
+ ]
+@@ -762,7 +762,7 @@ dependencies = [
+  "derive_more",
+  "document-features",
+  "mio",
+- "parking_lot",
++ "parking_lot 0.12.5",
+  "rustix",
+  "signal-hook 0.3.18",
+  "signal-hook-mio",
+@@ -856,9 +856,9 @@ dependencies = [
+  "cfg-if",
+  "crossbeam-utils",
+  "hashbrown 0.14.5",
+- "lock_api",
++ "lock_api 0.4.14",
+  "once_cell",
+- "parking_lot_core",
++ "parking_lot_core 0.9.12",
+ ]
+ 
+ [[package]]
+@@ -947,7 +947,7 @@ dependencies = [
+  "criterion",
+  "ctrlc",
+  "dirs",
+- "fancy-regex 0.20.2",
++ "fancy-regex",
+  "flate2",
+  "fs2",
+  "glob",
+@@ -1140,17 +1140,6 @@ version = "0.1.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a"
+ 
+-[[package]]
+-name = "fancy-regex"
+-version = "0.18.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e1e1dacd0d2082dfcf1351c4bdd566bbe89a2b263235a2b50058f1e130a47277"
+-dependencies = [
+- "bit-set 0.8.0",
+- "regex-automata",
+- "regex-syntax",
+-]
+-
+ [[package]]
+ name = "fancy-regex"
+ version = "0.20.2"
+@@ -1174,6 +1163,16 @@ dependencies = [
+  "serde",
+ ]
+ 
++[[package]]
++name = "faster-hex"
++version = "2.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "e4ede54fe330383a5de28c0a1f06668ff9dbf06c8094e1c5150c39488a5e911d"
++dependencies = [
++ "defmt 0.3.101",
++ "serde",
++]
 +
- ### Substitutions inside prose arguments
+ [[package]]
+ name = "fastrand"
+ version = "2.5.0"
+@@ -1442,7 +1441,7 @@ dependencies = [
+  "gix-worktree-stream",
+  "gix-zlib",
+  "nonempty",
+- "parking_lot",
++ "parking_lot 0.12.5",
+  "signal-hook 0.4.6",
+  "smallvec",
+ ]
+@@ -1477,27 +1476,27 @@ dependencies = [
  
- Custom destructive rules can recognize active POSIX command substitutions in
+ [[package]]
+ name = "gix-bitmap"
+-version = "0.6.1"
++version = "0.6.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "422cd23418fd80e9e965595323975d72abd6364a66ff8f0daade5c105a7f35d2"
++checksum = "9543567ee22142c81fdf75b2811160bec749a5b9f48665e4763f88b1789b8612"
+ dependencies = [
+  "gix-error",
+ ]
+ 
+ [[package]]
+ name = "gix-chunk"
+-version = "0.10.1"
++version = "0.10.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "dc6a775aba54f0d65698126cc4214b6bf8ddb208312e4ef4240dfe34b0697b87"
++checksum = "60cd5f0e47ffae98bad241ccbc031693765004fb4c2a419f7fda2963232af1e3"
+ dependencies = [
+  "gix-error",
+ ]
+ 
+ [[package]]
+ name = "gix-command"
+-version = "0.12.1"
++version = "0.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "df63215f103299169e239dfe76f5cfa4a3d6d4adf69a01774085e3e0423cba34"
++checksum = "2986e78ebad43510ccd7dd18bd9f22e9afd52f2de791e2979b9c715bacb6f0a8"
+ dependencies = [
+  "bstr",
+  "gix-error",
+@@ -1542,9 +1541,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-config-value"
+-version = "0.21.1"
++version = "0.21.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6cdada8bd9c97dc6522505c08226d9c88f0a1286f2c06b9e1bf51c3bf7ad7b2b"
++checksum = "d7666081ef0ecc5e1dc54bc6ce16dac9d7b9490780f6c130393ef9e50c909d4a"
+ dependencies = [
+  "bitflags 2.13.2",
+  "bstr",
+@@ -1647,9 +1646,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "gix-error"
+-version = "0.5.2"
++version = "0.5.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d87ff4b3f3daf01234d38d176b0ec00e92de514cc0e3fb8a8898c5cb7ccd22bb"
++checksum = "50ad6c42fa50280f382026ff838a8afa7ab2ad83e92349cab4392972baae69cd"
+ dependencies = [
+  "bstr",
+ ]
+@@ -1710,7 +1709,7 @@ version = "0.28.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b4802
 ```
 
-**File**: `src/evaluator.rs` (modified, +43/-36)
+---
+
+### Incident Patch 2: `3573fcd3` (2026-11-24)
+**Commit Message**: fix(cli): report the heredoc fallback settings under their config keys (#555) [skip ci]
+
+`dcg config --format json` listed `[heredoc] fallback_on_parse_error` and
+`fallback_on_timeout` as `fail_open_on_parse_error` and `fail_open_on_timeout`.
+That reads as "allow when analysis fails", which neither setting does: `true`
+selects bounded fallback scanning (one retry under the structural budget for
+a timeout), and `false` blocks on the incomplete analysis. A user reading the
+JSON could not find the key they configure, and the name suggested the
+opposite of the behaviour. The JSON now uses the config key names.
+
+A test in config_toggles_e2e reads both settings back from the JSON at their
+defaults and with both set to false, and checks that no `fail_open*` key is
+left in the heredoc section.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
 ```diff
-@@ -766,8 +766,9 @@ impl<'a> SafePatternInputs<'a> {
-         })
-     }
+@@ -30,6 +30,13 @@ never see the body of a `$(...)`. Known false positive: the unquoted
+ the rules (BSD `pkill` reading `-P 1` as patterns; a `kill_tree` walk from
+ launchd). The pack is off by default.
  
--    /// A full-command match is exempt only when its own segment has a safe
--    /// grant. Its consumed span does not bound the context read by lookarounds.
-+    /// A whole-command match belongs to its innermost segment. An enclosing
-+    /// segment's local safe match cannot replace a child's own or inherited
-+    /// grant. An already-checked masked child must not become a new match.
-     fn match_is_exempt(
-         &self,
-         pack: &crate::packs::Pack,
-@@ -777,43 +778,49 @@ impl<'a> SafePatternInputs<'a> {
-         sanitize_segment: bool,
-         deadline: Option<&Deadline>,
-     ) -> bool {
-+        if sanitize_segment && pack.safe_patterns.is_empty() {
-+            return false;
-+        }
-+        let Some(matched) = detection_command.get(span.start..span.end) else {
-+            return false;
-+        };
-+        let trimmed = matched.trim();
-+        let (match_start, match_end) = if trimmed.is_empty() {
-+            // Preserve authored whitespace and zero-width positions rather
-+            // than moving them into a neighboring command's grant.
-+            (span.start, span.end)
-+        } else {
-+            let start = span.start + matched.len() - matched.trim_start().len();
-+            (start, start + trimmed.len())
-+        };
-+        // A zero-width point belongs to a half-open segment, never to the
-+        // previous segment's closing boundary or an empty segment.
-+        let Some(&(start, end)) = segment_ranges
-+            .iter()
-+            .filter(|&&(start, end)| match_start >= start && match_end <= end && match_start < end)
-+            .min_by_key(|&&(start, end)| end - start)
-+        else {
-+            return false;
-+        };
-+        let Some(segment) = detection_command.get(start..end) else {
-+            return false;
-+        };
-+        if !sanitize_segment && segment.trim().is_empty() {
-+            // The raw segment pass already skipped this checked child. Keep
-+            // that exclusion even when the pack has no safe patterns.
-+            return true;
-+        }
-         if pack.safe_patterns.is_empty() {
-             return false;
-         }
--        let trimmed_span = detection_command
--            .get(span.start..span.end)
--            .and_then(|matched| {
--                let trimmed = matched.trim();
--                if trimmed.is_empty() {
--                    return None;
--                }
--                let start = span.start + matched.len() - matched.trim_start().len();
--                Some(MatchSpan {
--                    start,
--                    end: start + trimmed.len(),
--                })
--            });
--        segment_ranges.iter().any(|&(start, end)| {
--            let contains = |candidate: MatchSpan| {
--                candidate.start >= start
--                    && candidate.end <= end
--                    && (candidate.start < end || start == end)
--            };
--            if !(contains(span) || trimmed_span.is_some_and(contains)) {
--                return false;
--            }
--            let Some(segment) = detection_command.get(start..end) else {
--                return false;
--            };
--            // Keep the same detection input as the corresponding segment
--            // pass. The custom source view already carries its own masks.
--            let detection_input = if sanitize_segment {
--                sanitize_for_pattern_matching(segment)
--            } else {
--                Cow::Borrowed(segment)
--            };
--            self.matches(pack, detection_input.as_ref(), Some((start, end)), deadline)
--        })
-+        // Keep the same detection input as the corresponding segment pass.
-+        // The custom source view already carries its own masks.
-+        let detection_input = if sanitize_segment {
-+            sanitize_for_pattern_matching(segment)
-+        } else {
-+            Cow::Borrowed(segment)
-+        };
-+        self.matches(pack, detection_input.as_ref(), Some((start, end)), deadline)
-     }
++**`dcg config --format json` reports the heredoc fallback settings under their
++config keys (#555).** The `heredoc` object listed `fallback_on_parse_error` and
++`fallback_on_timeout` as `fail_open_on_parse_error` and `fail_open_on_timeout`,
++which read as "allow when analysis fails". The settings choose bounded fallback
++scanning, and the JSON now uses the names you write in `[heredoc]`. Scripts that
++parse this output need the new key names.
++
+ ---
+ 
+ ## [v0.17.1](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.1) -- 2026-11-23 [Release]
+```
+
+**File**: `src/cli.rs` (modified, +6/-2)
+```diff
+@@ -7183,8 +7183,12 @@ fn show_config_json(config: &Config, sources: &[ConfigSourceOutcome]) {
+             "max_body_bytes": heredoc.limits.max_body_bytes,
+             "max_body_lines": heredoc.limits.max_body_lines,
+             "max_heredocs": heredoc.limits.max_heredocs,
+-            "fail_open_on_parse_error": heredoc.fallback_on_parse_error,
+-            "fail_open_on_timeout": heredoc.fallback_on_timeout,
++            // Named after the `[heredoc]` config keys they report. The settings
++            // select bounded fallback scanning when parsing fails or times out;
++            // the old `fail_open_on_*` names read as "allow when analysis
++            // fails", which is not what they do (#555).
++            "fallback_on_parse_error": heredoc.fallback_on_parse_error,
++            "fallback_on_timeout": heredoc.fallback_on_timeout,
+             "languages": languages,
+         },
+         "overrides": {
+```
+
+**File**: `tests/config_toggles_e2e.rs` (modified, +54/-0)
+```diff
+@@ -547,6 +547,60 @@ fn test_partial_config_only_explanations() {
+     eprintln!("=== Partial config test PASSED ===");
  }
  
++/// `dcg config --format json` names the heredoc fallback settings by their
++/// configuration keys (#555). They used to appear as `fail_open_on_*`, which
++/// reads as "allow when analysis fails"; the settings select bounded fallback
++/// scanning, and a user reading the JSON should find the key they configure.
++#[test]
++fn config_json_names_heredoc_fallback_settings_by_their_config_keys() {
++    let env = TestEnv::new();
++    let read = |config: &str| -> serde_json::Value {
++        fs::write(&env.config_path, config).expect("write config");
++        let output = Command::new(dcg_binary())
++            .env_clear()
++            .env("HOME", &env.home_dir)
++            .env("USERPROFILE", &env.home_dir)
++            .env("XDG_CONFIG_HOME", &env.xdg_config_dir)
++            .env("DCG_CONFIG", &env.config_path)
++            .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++            .current_dir(env.temp_dir.path())
++            .args(["config", "--format", "json"])
++            .output()
++            .expect("run dcg config");
++        assert!(
++            output.status.success(),
++            "dcg config failed: {}",
++            String::from_utf8_lossy(&output.stderr)
++        );
++        serde_json::from_slice(&output.stdout).expect("config JSON")
++    };
++
++    for (config, expected) in [
++        ("[heredoc]\nenabled = true\n", true),
++        (
++            "[heredoc]\nfallback_on_parse_error = false\nfallback_on_timeout = false\n",
++            false,
++        ),
++    ] {
++        let json = read(config);
++        let heredoc = json["heredoc"].as_object().expect("heredoc section");
++        assert_eq!(
++            heredoc.get("fallback_on_parse_error"),
++            Some(&serde_json::Value::Bool(expected)),
++            "{config}: {heredoc:?}"
++        );
++        assert_eq!(
++            heredoc.get("fallback_on_timeout"),
++            Some(&serde_json::Value::Bool(expected)),
++            "{config}: {heredoc:?}"
++        );
++        assert!(
++            !heredoc.keys().any(|key| key.starts_with("fail_open")),
++            "{config}: {heredoc:?}"
++        );
++    }
++}
++
+ // =============================================================================
+ // Verbose Failure Logging Test
+ // =============================================================================
 ```
 
-**File**: `tests/cli_e2e.rs` (modified, +390/-5)
+---
+
+### Incident Patch 3: `21e57462` (2026-11-26)
+**Commit Message**: fix(analyzer): preserve Python helper identity across file reads [skip ci]
+
+Model the built-in read-only open of a known path and a no-argument read on its file handle. Keep shadowed openers, custom conversions, and opaque calls conservative.
+
+Classify structural Python analysis limits separately from worker and clock failures. Retain the first incomplete step on the evaluation result so the hook and CLI can explain unverified input, while independent rule findings and actual deadlines still take precedence.
+
+Fixes #673
+
+**File**: `fuzz/fuzz_targets/ast_matcher_fuzz.rs` (modified, +2/-0)
 ```diff
-@@ -10904,11 +10904,6 @@ safe_patterns:
-             destructive_pattern: &str,
-             keywords: &[&str],
-         ) -> Self {
--            let root = tempfile::tempdir().expect("isolated safe-pattern fixture");
--            for directory in ["home", "tmp", "cwd", "xdg"] {
--                std::fs::create_dir_all(root.path().join(directory)).expect("fixture directory");
--            }
--            let pack_path = root.path().join("pack.yaml");
-             let mut pack = format!(
-                 "schema_version: 1\nid: synthetic.environment\nname: Environment exemption regression\n\
-                  version: 1.0.0\nkeywords: {}\ndestructive_patterns:\n  - name: requires-review\n    pattern: {}\n    severity: critical\n    description: This command requires explicit review\nsafe_patterns:\n",
-@@ -10927,6 +10922,15 @@ safe_patterns:
-                     .expect("append safe pattern");
+@@ -96,7 +96,9 @@ fn assert_expected_fail_open_error(error: MatchError) {
+     match error {
+         MatchError::UnsupportedLanguage(_)
+         | MatchError::ParseError { .. }
++        | MatchError::AnalysisIncomplete { .. }
+         | MatchError::Timeout { .. }
++        | MatchError::Unavailable { .. }
+         | MatchError::PatternError { .. } => {}
+     }
+ }
+```
+
+**File**: `src/ast_matcher/python_paths.rs` (modified, +98/-17)
+```diff
+@@ -131,6 +131,7 @@ enum Symbol {
+     TemporaryDirectory,
+     Str,
+     Print,
++    Open,
+     Getattr,
+     Builtins,
+ }
+@@ -389,6 +390,8 @@ enum Value {
+     Delete(Delete),
+     Join(Path),
+     PathRead,
++    ReadOnlyFile,
++    FileRead,
+     LocalFunction(Arc<LocalFunction>),
+ }
+ 
+@@ -882,8 +885,9 @@ impl<'a> Scan<'a> {
+     fn check<D: Doc>(&mut self, node: &Node<'_, D>, depth: usize) -> Result<(), MatchError> {
+         check_ast_timeout(self.started, self.timeout, self.budget_ms, self.cancel)?;
+         if depth >= MAX_DEPTH || self.remaining == 0 {
+-            return Err(MatchError::Unavailable {
++            return Err(MatchError::AnalysisIncomplete {
+                 language: ScriptLanguage::Python,
++                stage: "python_path_bindings",
+                 detail: "Python path-binding analysis exhausted its traversal limit".to_string(),
+             });
+         }
+@@ -1018,6 +1022,7 @@ impl<'a> Scan<'a> {
+         for (name, symbol) in [
+             ("str", Symbol::Str),
+             ("print", Symbol::Print),
++            ("open", Symbol::Open),
+             ("getattr", Symbol::Getattr),
+         ] {
+             if !writes.contains(name) && !imported_names.contains(name) {
+@@ -1033,7 +1038,7 @@ impl<'a> Scan<'a> {
+         };
+         env.values
+             .insert("getattr".to_string(), Value::Symbol(Symbol::Getattr).lost());
+-        for name in ["str", "print", "getattr"] {
++        for name in ["str", "print", "open", "getattr"] {
+             if let Some(value) = self.immutable.get(name) {
+                 env.values.insert(name.to_string(), value.clone());
+             }
+@@ -3288,8 +3293,9 @@ impl<'a> Scan<'a> {
+                     if possible.direct & MAY_LOCAL != 0 {
+                         return Err(local_call_error("exhausted local return-depth summary"));
+                     }
+-                    return Err(MatchError::Unavailable {
++                    return Err(MatchError::AnalysisIncomplete {
+                         language: ScriptLanguage::Python,
++                        stage: "python_container_selector",
+                         detail:
+                             "Python container selector analysis exhausted its return-depth limit"
+                                 .to_string(),
+@@ -3387,6 +3393,15 @@ impl<'a> Scan<'a> {
+                     Value::Directory(path)
                  }
              }
-+            Self::from_pack(&pack)
-+        }
-+
-+        fn from_pack(pack: &str) -> Self {
-+            let root = tempfile::tempdir().expect("isolated safe-pattern fixture");
-+            for directory in ["home", "tmp", "cwd", "xdg"] {
-+                std::fs::create_dir_all(root.path().join(directory)).expect("fixture directory");
++            // Only the builtin with a proved path and plain read mode yields
++            // this receiver. A custom opener, codec, or path conversion can
++            // execute Python and must still invalidate the caller's bindings.
++            Value::Symbol(Symbol::Open)
++                if env.trusted && plain && read_only_open(&args.positional) =>
++            {
++                Value::ReadOnlyFile
 +            }
-+            let pack_path = root.path().join("pack.yaml");
-             std::fs::write(&pack_path, pack).expect("write custom pack");
-             let config = root.path().join("config.toml");
-             std::fs::write(
-@@ -11131,6 +11135,387 @@ safe_patterns:
-         }
-     }
- 
-+    // The exact pack from #671. Every candidate below is passed as data to
-+    // dcg; none of these synthetic programs is executed.
-+    const LOOKAROUND_PACK: &str = r"schema_version: 1
-+id: probe.c2
-+name: Probe claim 2, lookaround horizon
-+version: 1.0.0
-+keywords: [zzka, zzkb, zzkc]
-+destructive_patterns:
-+  - name: la-only
-+    pattern: 'zzka(?=[^\r\n]*?zzend)'
-+    severity: critical
-+    description: probe rule
-+  - name: la-consume
-+    pattern: 'zzkb(?=[^\r\n]*?zzend)[^\r\n]*?zzend'
-+    severity: critical
-+    description: probe rule
-+  - name: lb-only
-+    pattern: '(?<=zzpre[^\r\n]{3})zzkc'
-+    severity: critical
-+    description: probe rule
-+";
-+
-+    fn lookaround_fixture(pack: &str) -> SafePatternFixture {
-+        let fixture = SafePatternFixture::from_pack(pack);
-+        std::fs::write(
-+            &fixture.config,
-+            format!(
-+                "[general]\nself_heal_hook = false\nunverified_decision = \"ask\"\n\
-+                 fail_closed = true\nhook_timeout_ms = 3000\n\
-+                 [packs]\nenabled = []\ncustom_paths = [{}]\n",
-+                serde_json::to_string(&fixture.root.path().join("pack.yaml"))
-+                    .expect("serialize reporter pack path")
-+            ),
-+        )
-+        .expect("write reporter configuration");
-+        fixture
-+    }
-+
-+    fn assert_lookaround_test(
-+        fixture: &SafePatternFixture,
-+        candidate: &str,
-+        dialect: &str,
-+        rule: Option<&str>,
-+    ) -> serde_json::Value {
-+        let mut child = fixture
-+            .command()
-+            .args(["test", "--stdin", "--dialect", dialect, "--format", "json"])
-+            .spawn()
-+            .expect("spawn lookaround CLI test");
-+        child
-+            .stdin
-+            .take()
-+            .expect("CLI stdin")
-+            .write_all(candidate.as_bytes())
-+            .expect("write candidate as stdin data");
-+        let output = child.wait_with_output().expect("lookaround CLI output");
-+        assert_eq!(
-+            output.status.code(),
-+            Some(i32::from(rule.is_some())),
-+            "[{dialect}] {candidate:?}: {output:?}"
-+        );
-+        let json: serde_json::Value = serde_json::from_slice(&output.stdout)
-+            .unwrap_or_else(|error| panic!("[{dialect}] {candidate:?}: {error}; {output:?}"));
-+        assert_eq!(
-+            json["decision"],
-+            if rule.is_some() { "deny" } else { "allow" },
-+            "[{dialect}] {candidate:?}: {json}"
-+        );
-+        assert_eq!(json["rule_id"].as_str(), rule, "{candidate:?}: {json}");
-+        json
-+    }
-+
-+    fn assert_lookaround_hook(
-+        fixture: &SafePatternFixture,
-+        candidate: &str,
-+        tool: &str,
-+        rule: Option<&str>,
-+    ) {
-+        let payload = serde_json::json!({
-+            "hook_event_name": "PreToolUse",
-+            "tool_name": tool,
-+            "tool_input": {"command": candidate},
-+        });
-+        let mut child = fixture
-+            .command()
-+            .args(["--agent", "claude-code", "hook"])
-+            .spawn()
-+            .expect("spawn lookaround hook");
-+        child
-+            .stdin
-+            .take()
-+            .expect("hook stdin")
-+            .write_all(payload.to_string().as_bytes())
-+            .expect("write candidate as hook JSON data");
-+        let output = child.wait_with_output().expect("lookaround hook output");
-+     
-```
-
-**File**: `tests/repro_402_external_pack_keyword_gating.rs` (modified, +6/-5)
-```diff
-@@ -569,7 +569,10 @@ fn issue_671_lookarounds_read_across_shell_segments() {
-     let fixture = Fixture::new();
-     let config = fixture.lookaround_config(LOOKAROUND_PACK);
-     for separator in [";", "&&", "|", "||", "&"] {
--        for (prefix, rule) in [("zzka", "probe.c2:la-only"), ("zzkb", "probe.c2:la-consume")] {
-+        for (prefix, rule) in [
-+            ("zzka", "probe.c2:la-only"),
-+            ("zzkb", "probe.c2:la-consume"),
-+        ] {
-             fixture.assert_lookaround_verdict(
-                 &config,
-                 &format!("{prefix} abc{separator} zzend"),
-@@ -788,13 +791,11 @@ impl Fixture {
-                 let json: serde_json::Value = serde_json::from_slice(&hook.stdout)
-                     .unwrap_or_else(|error| panic!("{tool}: {command:?}: {error}: {hook:?}"));
-                 assert_eq!(
--                    json["hookSpecificOutput"]["permissionDecision"],
--                    "deny",
-+                    json["hookSpecificOutput"]["permissionDecision"], "deny",
-                     "{tool}: {command:?}: {json}"
-                 );
-                 assert_eq!(
--                    json["hookSpecificOutput"]["ruleId"],
--                    rule,
-+                    json["hookSpecificOutput"]["ruleId"], rule,
-                     "{tool}: {command:?}: {json}"
-                 );
-             } else {
-```
-
----
-
-### Incident Patch 2: `6faca3fa` (2026-11-22)
-**Commit Message**: fix: preserve custom rule lookaround context (#671) [skip ci]
-
-Retain full-command matches for unscoped external patterns when their
-lookarounds read across shell segments. Suppress only actual safe grants,
-then continue searching the intact subject for later or overlapping matches.
-
-Keep source-preserving custom matching available for assertions involving
-assignments or wrappers. Preserve single-command authorization, scoped and
-built-in behavior, source spans, UTF-8 boundaries, and deadline handling.
-
-Add six real-binary regression tests covering 40 command cases through Bash
-and PowerShell hooks and POSIX/PowerShell CLI inputs. Document the matching
-contract and the fix in the changelog.
-
-Validation: independent static production and regression-test reviews
-completed. Cargo checks, rustfmt, Clippy, UBS, and tests could not run because
-the execution environment became unavailable.
-
-Fixes #671
-
-**File**: `CHANGELOG.md` (modified, +11/-0)
-```diff
-@@ -11,6 +11,17 @@ Repository: <https://github.com/Dicklesworthstone/destructive_command_guard>
- 
- ---
- 
-+## Unreleased
-+
-+**Unscoped custom-pack lookarounds retain whole-command context (#671).** A
-+lookahead or lookbehind can depend on text across a shell separator even when
-+the rule consumes text inside only one segment. Those matches no longer get
-+discarded as duplicates of a segment-only evaluation. Source-preserving custom
-+matching also retains assignments and wrappers needed by such assertions.
-+Safe-pattern exemptions and rule allowlists still apply; an exempt occurrence
-+cannot hide a later or overlapping match of the same rule. Searches preserve
-+anchors, lookbehind, UTF-8 boundaries, and the evaluation deadline.
-+
- ## [v0.17.0](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.0) -- 2026-11-21 [Release]
- 
- This release closes more commands that ran unguarded (PowerShell
-```
-
-**File**: `docs/custom-packs.md` (modified, +5/-0)
-```diff
-@@ -193,6 +193,11 @@ Omit the key to leave the rule unscoped, matching anywhere in the command as
- before. An explicitly empty list is rejected so a misspelled scope cannot
- silently become broader or turn into a dead rule.
- 
-+Unscoped rules retain the complete matching context across shell separators,
-+including text read by lookahead and lookbehind assertions outside the consumed
-+match. Safe-pattern exemptions still apply to the segment they authorize;
-+skipping an exempt match does not hide later matches of the same rule.
-+
- ### Safe Pattern Fields
- 
- | Field | Type | Required | Description |
-```
-
-**File**: `src/evaluator.rs` (modified, +145/-11)
-```diff
-@@ -765,6 +765,56 @@ impl<'a> SafePatternInputs<'a> {
-                     }))
-         })
-     }
-+
-+    /// A full-command match is exempt only when its own segment has a safe
-+    /// grant. Its consumed span does not bound the context read by lookarounds.
-+    fn match_is_exempt(
-+        &self,
-+        pack: &crate::packs::Pack,
-+        detection_command: &str,
-+        span: MatchSpan,
-+        segment_ranges: &[(usize, usize)],
-+        sanitize_segment: bool,
-+        deadline: Option<&Deadline>,
-+    ) -> bool {
-+        if pack.safe_patterns.is_empty() {
-+            return false;
-+        }
-+        let trimmed_span = detection_command
-+            .get(span.start..span.end)
-+            .and_then(|matched| {
-+                let trimmed = matched.trim();
-+                if trimmed.is_empty() {
-+                    return None;
-+                }
-+                let start = span.start + matched.len() - matched.trim_start().len();
-+                Some(MatchSpan {
-+                    start,
-+                    end: start + trimmed.len(),
-+                })
-+            });
-+        segment_ranges.iter().any(|&(start, end)| {
-+            let contains = |candidate: MatchSpan| {
-+                candidate.start >= start
-+                    && candidate.end <= end
-+                    && (candidate.start < end || start == end)
-+            };
-+            if !(contains(span) || trimmed_span.is_some_and(contains)) {
-+                return false;
-+            }
-+            let Some(segment) = detection_command.get(start..end) else {
-+                return false;
-+            };
-+            // Keep the same detection input as the corresponding segment
-+            // pass. The custom source view already carries its own masks.
-+            let detection_input = if sanitize_segment {
-+                sanitize_for_pattern_matching(segment)
-+            } else {
-+                Cow::Borrowed(segment)
-+            };
-+            self.matches(pack, detection_input.as_ref(), Some((start, end)), deadline)
-+        })
-+    }
++            Value::FileRead if env.trusted && plain && args.positional.is_empty() => Value::Unknown,
+             Value::PathRead | Value::Symbol(Symbol::Print) => Value::Unknown,
+             Value::LocalFunction(function) => {
+                 self.local_call(node, &function, &args, env, depth + 1)?
+@@ -3577,8 +3592,9 @@ fn bounded_container(container: Container) -> Value {
  }
  
- fn compute_normalized_offset(command_for_match: &str, normalized: &str) -> Option<usize> {
-@@ -28616,6 +28666,9 @@ fn evaluate_packs_with_allowlists_at_depth(
-     let original_len = original_command.len();
-     let segment_ranges = command_segment_ranges_in_dialect(command_for_packs, shell_dialect);
-     let safe_inputs = SafePatternInputs::new(command_for_packs, input_command, shell_dialect);
-+    // Only external policies need the source-preserving view. Share its
-+    // segment correspondence between the local pass and full-context retry.
-+    let custom_pattern_inputs = std::cell::OnceCell::new();
-     let has_cmd_grouping_or_separator = shell_dialect == ShellDialect::Cmd
-         && tokenize_for_shell_dialect(command_for_packs, ShellDialect::Cmd)
-             .iter()
-@@ -28781,6 +28834,7 @@ fn evaluate_packs_with_allowlists_at_depth(
-         } else {
-             continue;
-         };
-+        let is_external_pack = REGISTRY.get_entry(pack_id).is_none();
-         if deadline_exceeded(deadline) || remaining_below(deadline, &crate::perf::PATTERN_MATCH) {
-             return EvaluationResult::indeterminate_due_to_budget();
-         }
-@@ -28831,15 +28885,18 @@ fn evaluate_packs_with_allowlists_at_depth(
-         // in their destructive regex (#598). Keep that detection input in
-         // addition to the normalized one. It also retains substitution syntax
-         // in data arguments (#614), while the prose and checked bodies stay masked.
--        if REGISTRY.get_entry(pack_id).is_none() && custom_command_for_match != command_for_packs {
-+        if is_external_pack && custom_command_for_match != command_for_packs {
-             // Both views preserve source offsets. Split the source: blanking a
-             // checked child body removes its segment from the detection view,
-             // but must not break the correspondence used to authorize a safe
-             // pattern against the complete original parent or a later sibling.
--            let raw_ranges = command_segment_ranges_in_dialect(original_command, shell_dialect);
--            let raw_safe_inputs =
--                SafePatternInputs::new(original_command, input_command, shell_dialect);
--            for &(start, end) in &raw_ranges {
-+            let (raw_ranges, raw_safe_inputs) = custom_pattern_inputs.get_or_init(|| {
-+                (
-+                    command_segment_ranges_in_dialect(original_command, shell_dialect),
-+                    SafePatternInputs::new(original_command, input_command, shell_dialect),
-+                )
-+            });
-+            for &(start, end) in raw_ranges {
-                 let segment = &custom_command_for_match[start..end];
-                 // A checked child's body can be entirely masked. It remains
-                 // in the source map, but is not a new empty command to match.
-@@ -29646,14 +29703,69 @@ fn evaluate_packs_with_allowlists_at_depth(
-             /
-```
-
-**File**: `tests/repro_402_external_pack_keyword_gating.rs` (modified, +285/-0)
-```diff
-@@ -542,7 +542,292 @@ destructive_patterns:
+ fn local_call_error(detail: &str) -> MatchError {
+-    MatchError::Unavailable {
++    MatchError::AnalysisIncomplete {
+         language: ScriptLanguage::Python,
++        stage: "python_local_call_analysis",
+         detail: format!("Python local-call analysis incomplete: {detail}"),
      }
  }
+@@ -3832,6 +3848,7 @@ fn attribute(object: Value, member: &str) -> Value {
+             Value::Symbol(Symbol::TemporaryDirectory)
+         }
+         (Value::Directory(path), "name") => Value::Text(path.clone()),
++        (Value::ReadOnlyFile, "read") => Value::FileRead,
+         (Value::Path(path), "joinpath") => Value::Join(path.clone()),
+         (
+             Value::Path(_),
+@@ -3860,6 +3877,19 @@ fn fold_paths(values: &[Value]) -> Option<Path> {
+     Some(path)
+ }
  
-+/// #671: only the consumed match span is segment-local. The lookarounds
-+/// still need the complete command, including sibling shell segments.
-+const LOOKAROUND_PACK: &str = r"schema_version: 1
-+id: probe.c2
-+name: Lookaround horizon regression
-+version: 1.0.0
-+keywords: [zzka, zzkb, zzkc]
-+destructive_patterns:
-+  - name: la-only
-+    pattern: 'zzka(?=[^\r\n]*?zzend)'
-+    severity: critical
-+    description: Lookahead reads beyond the consumed match
-+  - name: la-consume
-+    pattern: 'zzkb(?=[^\r\n]*?zzend)[^\r\n]*?zzend'
-+    severity: critical
-+    description: Consuming cross-segment control
-+  - name: lb-only
-+    pattern: '(?<=zzpre[^\r\n]{3})zzkc'
-+    severity: critical
-+    description: Lookbehind reads before the consumed match
-+";
++fn read_only_open(positional: &[Value]) -> bool {
++    match positional {
++        [Value::Text(_) | Value::Path(_)] => true,
++        [
++            Value::Text(_) | Value::Path(_),
++            Value::Text(Path::Literal(mode)),
++        ] => {
++            matches!(mode.as_ref(), "r" | "rt" | "tr" | "rb" | "br")
++        }
++        _ => false,
++    }
++}
 +
-+#[test]
-+fn issue_671_lookarounds_read_across_shell_segments() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(LOOKAROUND_PACK);
-+    for separator in [";", "&&", "|", "||", "&"] {
-+        for (prefix, rule) in [("zzka", "probe.c2:la-only"), ("zzkb", "probe.c2:la-consume")] {
-+            fixture.assert_lookaround_verdict(
-+                &config,
-+                &format!("{prefix} abc{separator} zzend"),
-+                Some(rule),
+ fn factory_arguments(args: &Args) -> bool {
+     if args.uncertain || args.positional.len() > 3 {
+         return false;
+@@ -3955,6 +3985,45 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn repeated_local_calls_keep_identity_across_builtin_file_reads() {
++        for read in ["open(p).read()", "open(p, 'rb').read()"] {
++            let source = format!(
++                "def edit(p, pairs):\n    s = {read}\nedit('x', [('a', 'b')])\nedit('y', [('a', 'remove')])"
 +            );
++            assert_blocked(&source, false);
 +        }
-+    }
-+    // Exactly three characters must separate zzpre from the consumed zzkc.
-+    for command in [
-+        "zzpre ; zzkc",
-+        "zzpre &&zzkc",
-+        "zzpre | zzkc",
-+        "zzpre ||zzkc",
-+        "zzpre & zzkc",
-+    ] {
-+        fixture.assert_lookaround_verdict(&config, command, Some("probe.c2:lb-only"));
-+    }
-+    for (command, rule) in [
-+        ("zzka abc zzend", "probe.c2:la-only"),
-+        (r#"zzka "abc; zzend""#, "probe.c2:la-only"),
-+        ("zzkb abc zzend", "probe.c2:la-consume"),
-+        ("zzpre , zzkc", "probe.c2:lb-only"),
-+    ] {
-+        fixture.assert_lookaround_verdict(&config, command, Some(rule));
-+    }
-+    // A missing assertion is a completed nonmatch, not an incomplete result.
-+    for command in ["zzka abc; zzother", "zzkb abc; zzother", "zzother ; zzkc"] {
-+        fixture.assert_lookaround_verdict(&config, command, None);
-+    }
-+}
-+
-+#[test]
-+fn issue_671_safe_segments_do_not_hide_later_lookaround_matches() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(&format!(
-+        "{LOOKAROUND_PACK}safe_patterns:\n  - name: safe-command\n    pattern: '^zzka safe$'\n"
-+    ));
-+    fixture.assert_lookaround_verdict(&config, "zzka safe; zzend", None);
-+    // The first full-command match is exempt. Continue searching with the
-+    // original lookaround context so the later occurrence cannot disappear.
-+    for command in ["zzka safe; zzka abc; zzend", "zzka abc; zzka safe; zzend"] {
-+        fixture.assert_lookaround_verdict(&config, command, Some("probe.c2:la-only"));
-+    }
-+}
-+
-+#[test]
-+fn issue_671_lookaround_rule_allowlists_remain_rule_scoped() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(LOOKAROUND_PACK);
-+    fs::create_dir_all(fixture.root.join("config/dcg")).unwrap();
-+    fs::write(
-+        fixture.root.join("config/dcg/allowlist.toml"),
-+        "[[allow]]\nrule = \"probe.c2:la-only\"\nreason = \"Authorize only this probe rule\"\n",
-+    )
-+    .unwrap();
-+    fixture.assert_lookaround_verdict(&config, "zzka abc; zzend", None);
-+    fixture.assert_lookaround_verdict(&config, "zzpre ; zzkc", Some("probe.c2:lb-only"));
-+    fixture.assert_lookaround_verdict(
-+        &config,
-+        "zzka abc; zzend; zzpre ; zzkc",
-+        Some("probe.c2:lb-only"),
-+    );
-+}
-+
-+#[test]
-+fn issue_671_source_preserving_lookarounds_keep_assignment_context() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(
-+        r"schema_version: 1
-+id: probe.assignment
-+name: Source-preserving lookaround
-+version: 1.0.0
-+keywords: [zzka]
-+destructive_patterns:
-+  - name: assignment-lookaround
-+    pattern: '(?<=ZZENV=deny )zzka(?=[^\r\n]*?zzend)'
-+    severity: critical
-+    description: Both the assignment and a later segment are required
-+",
-+    );
-+    for command in ["ZZENV=deny zzka abc zzend", "ZZENV=deny zzka abc; zzend"] {
-+        fixture.assert_lookaround_verdict(
-+            &config,
-+            command,
-+            Some("probe.assignment:assignment-lookaround"),
-+        );
-+    }
-+    fixture.assert_lookaround_verdict(&config, "ZZENV=allow zzka abc; zzend", None);
-+}
-+
-+#[test]
-+fn issue_671_lookarounds_respect_executable_scope() {
-+    let fixture = Fixture::new();
-+    let config = fixture.lookaround_config(
-+        r"schema_version: 1
-+id: probe.scoped
-+name: Scoped lookaround
-+version: 1.0.0
-+keywords: [zzka]
-+destructive_patterns:
-+  - name: la-only
-+    pattern: 'zzka(?=[^\r\n]*?zzend)'
-+    executables: [zzka]
-+    severity: critical
-+    description: Match only inside a zzka invocation
-+",
-+    );
-+    fixture.assert_lookaround_verdict(&config, "zzka abc zzend", S
++        // The second call must still analyze the helper with its new callback.
++        assert_blocked(
++           
 ```
 
----
-
-### Incident Patch 3: `b4f82a73` (2026-11-23)
-**Commit Message**: fix: tri-state guardrail proof, minimal-container install.sh, and release v0.17.1 [skip ci]
-
-- Fix bd-guardrails-global-options: add tri-state DcgSegmentAction /
-  DcgControlActionProof (Action / Inert / Unprovable) so static inert
-  dcg argument data (e.g. --agent="dcg --robot allow-once ...") skips
-  only dcg-command regex fallback within proven-inert segments while
-  preserving all self-weakening DENY controls, leading env-var overrides
-  (DCG_BYPASS / DCG_DISABLE), dynamic expansions, and redirections.
-- Fix install.sh in minimal containers without python3: delegate Claude
-  Code settings.json hook merge to native `dcg install` when python3 is
-  unavailable, guard optional agent hook configuration calls against
-  exiting under set -e, and fix Linux procps-ng pgrep -fl Cursor
-  self-match detection via cursor_process_running().
-- Update cookie 0.18.2 -> 0.18.3 (RUSTSEC-2026-0594).
-- Bump version to 0.17.1 and update CHANGELOG.md (also shipping the #671
-  lookaround fixes on main).
-
-**File**: `.beads/issues.jsonl` (modified, +1/-1)
+**File**: `src/ast_matcher/tempfile_provenance.rs` (modified, +3/-1)
 ```diff
-@@ -84,7 +84,7 @@
- {"id":"bd-f16f","title":"Segment-scope overrides.allow matching: naive substring patterns allow chained unrelated destruction (#327 sharp edge)","status":"closed","priority":2,"issue_type":"task","created_at":"2026-08-20T18:11:54.866705Z","created_by":"jemanuel","updated_at":"2026-09-22T18:21:24.894261767Z","closed_at":"2026-09-22T18:21:24.878665477Z","close_reason":"Already implemented under #340: CompiledOverrides::check_allow is segment-scoped, so an allow entry must cover every segment. Pinned by src/config.rs tests unanchored_allow_override_does_not_launder_later_segments (&&, ;, ||, |), allow_override_does_not_launder_command_substitution, allow_override_permits_fully_covered_compound.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
- {"id":"bd-fg8f","title":"P4.7: Update scan command progress and results display","status":"closed","priority":2,"issue_type":"task","created_at":"2026-01-19T21:12:05.227501776Z","created_by":"ubuntu","updated_at":"2026-01-21T21:53:05.030745430Z","closed_at":"2026-01-21T21:53:05.030657314Z","source_repo":".","compaction_level":0,"original_size":0,"dependencies":[{"issue_id":"bd-fg8f","depends_on_id":"bd-2cvj","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2e8p","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2jp9","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2loz","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""}]}
- {"id":"bd-git-backslash-attribution-ptpo","title":"Windows-separator .git paths deny under the escaped-path rule, not git-internals","status":"closed","priority":2,"issue_type":"bug","created_at":"2026-09-24T16:23:11.237677557Z","created_by":"ubuntu","updated_at":"2026-09-24T17:50:29.885365887Z","closed_at":"2026-09-24T17:50:29.884650196Z","close_reason":"Measured; converted to GitHub #492. The attribution is POSIX-correct (> .git\\config opens .gitconfig there), so the live defect is grantability, not naming: allowlisting the High redirect-truncate-dynamic-path also grants the Windows-separator spellings of two Critical rules. Repair changes existing allowlist meaning, so it is a maintainer decision, filed with options and a recommendation.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
--{"id":"bd-guardrails-global-options","title":"Enabled guardrails pack misses dcg self-weakening commands with global options","description":"## Confirmed defect\n\nA fresh isolated probe against executable source content corresponding to published commit 10bc819cc0906019037024d4ab6d769bb3d9b6db confirms that the explicitly enabled careful_company_running_windows.guardrails pack denies direct dcg self-weakening subcommands but permits the same commands when the valid global --robot option precedes the subcommand.\n\nPaired fixture results:\n- dcg allow-once abc123 --yes -> deny; dcg --robot allow-once abc123 --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg allowlist add core.git:reset-hard --reason approved -> deny; dcg --robot allowlist add core.git:reset-hard --reason approved -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-policy-self-weakening.\n- dcg uninstall --yes -> deny; dcg --robot uninstall --yes -> allow. Expected rule: careful_company_running_windows.guardrails:dcg-bypass-or-uninstall.\n\n## Retained reproduction evidence\n\nThe six results are retained in /tmp/dcg-guardrails-repro-f5f64oyl/results.json. Recorded binary SHA-256: a735d6be7fea590c1dd8472e9a92658e35b73471b7a07692b58fa4c40ee6ea00. Probe invocation: dcg test --stdin --config <empty isolated config> --with-packs careful_company_running_windows.guardrails --format json, with isolated HOME/config/state. All three direct forms exited 1 with the expected denial rule; all three --robot-prefixed forms exited 0 with decision allow. The inputs were inert fixture strings: target commands were never executed.\n\n## Code evidence and scope\n\nThe guardrails rules in src/packs/careful_company_running_windows/guardrails.rs require dcg (or dcg.exe) immediately followed by uninstall, allow-once, allow, or allowlist add/add-command/import. src/cli.rs declares robot as a global CLI argument, so --robot before a subcommand is valid but defeats those adjacent-token patterns. Verify supported global-option positions using actual CLI argv semantics; do not solve this by treating arbitrary argument text as an executed dcg subcommand.\n\nThis is a correctness defect in an explicitly enabled protection. The separate default-on/self-approval policy question remains tracked by bd-hgm5; resolving that policy
-```
-
-**File**: `CHANGELOG.md` (modified, +33/-1)
-```diff
-@@ -11,7 +11,15 @@ Repository: <https://github.com/Dicklesworthstone/destructive_command_guard>
- 
- ---
- 
--## Unreleased
-+## [v0.17.1](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.1) -- 2026-11-23 [Release]
-+
-+This patch release ships whole-command lookaround preservation for custom
-+packs (`#671`), finishes the `careful_company_running_windows.guardrails`
-+tri-state native argv proof so command-looking `--agent` argument data with
-+escaped quotes is not falsely blocked while preserving all self-weakening and
-+environment-override blocks, fixes `install.sh` on minimal containers lacking
-+`python3` (plus Linux `procps-ng` Cursor detection), and resolves
-+`RUSTSEC-2026-0594` (`cookie` `0.18.3`).
- 
- **Unscoped custom-pack lookarounds retain whole-command context (#671).** A
- lookahead or lookbehind can depend on text across a shell separator even when
-@@ -22,6 +30,30 @@ Safe-pattern exemptions and rule allowlists still apply; an exempt occurrence
- cannot hide a later or overlapping match of the same rule. Searches preserve
- anchors, lookbehind, UTF-8 boundaries, and the evaluation deadline.
- 
-+**Guardrails pack tri-state argv proof & leading env-var overrides (`bd-guardrails-global-options`).**
-+`dcg_segment_action_span` now returns a tri-state proof (`Action` / `Inert` /
-+`Unprovable`). Proven-inert top-level `dcg` invocations with command-looking
-+`--agent` values (including escaped quotes such as POSIX `"`, ANSI-C `\'`
-+and PowerShell backtick-escaped quotes) no longer trigger the regex fallback's
-+`dcg`-command branch, while all self-weakening subcommands (`allow-once`,
-+`allow`, `allowlist add|add-command|import`, `uninstall`), unprovable segments
-+(wrappers, substitutions, unknown flags, redirections), and environment
-+override branches (`DCG_BYPASS=1`, `DCG_DISABLE=...`, `Set-Item env:DCG_BYPASS`,
-+including leading `NAME=value` prefixes) remain strictly blocked.
-+
-+**Minimal-container `install.sh` without `python3` & Linux `pgrep` Cursor detection.**
-+When `python3` is unavailable and `~/.claude/settings.json` already exists,
-+`configure_claude_code` now delegates to the freshly installed native `dcg
-+install` binary (atomic, host-field-preserving pure-Rust merge) and falls back
-+gracefully with a non-fatal warning when native merge is inapplicable; all
-+`configure_*` calls in `install.sh` are guarded so a hook-merge failure never
-+aborts installation under `set -e`. Cursor process detection now captures
-+`pgrep -fa` on Linux (`-fl` on macOS) before filtering so `procps-ng`'s short
-+process name output no longer matches its own `grep` sibling on bare containers.
-+
-+**Security advisory fix (`RUSTSEC-2026-0594`).** Updated `cookie` from
-+`0.18.2` to `0.18.3` in `Cargo.lock` (`cargo audit`: 0 vulnerabilities).
-+
- ## [v0.17.0](https://github.com/Dicklesworthstone/destructive_command_guard/releases/tag/v0.17.0) -- 2026-11-21 [Release]
- 
- This release closes more commands that ran unguarded (PowerShell
-```
-
-**File**: `Cargo.lock` (modified, +3/-3)
-```diff
-@@ -593,9 +593,9 @@ dependencies = [
- 
- [[package]]
- name = "cookie"
--version = "0.18.2"
-+version = "0.18.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a373e3602691c3cdea496d2f0ee5935151e6168fe87739483c463db1b2f2f87"
-+checksum = "d55f2d6c30eeec7d5c6f98bd4395d4abb1895629eab97ee6522d340623615f8a"
- dependencies = [
-  "percent-encoding",
-  "time",
-@@ -931,7 +931,7 @@ dependencies = [
- 
- [[package]]
- name = "destructive_command_guard"
--version = "0.17.0"
-+version = "0.17.1"
- dependencies = [
-  "aho-corasick",
-  "assert_cmd",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "destructive_command_guard"
--version = "0.17.0"
-+version = "0.17.1"
- edition = "2024"
- resolver = "2"
- authors = [
-```
-
-**File**: `install.sh` (modified, +111/-22)
-```diff
-@@ -5,7 +5,7 @@
- # Authenticate a pinned release installer before running this script:
- #   https://github.com/Dicklesworthstone/destructive_command_guard#quick-install-verified-release
- # After verifying the signature and pinned digest, run the local file:
--#   bash ./install.sh --version v0.17.0 --require-minisign
-+#   bash ./install.sh --version v0.17.1 --require-minisign
- #
- # Options:
- #   --version vX.Y.Z   Install specific version (default: latest)
-@@ -31,7 +31,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
-   printf '%s\n' \
-     'dcg installer: this script needs bash. Authenticate the release installer first:' \
-     '  https://github.com/Dicklesworthstone/destructive_command_guard#quick-install-verified-release' \
--    'Then run the verified local file with bash ./install.sh --version v0.17.0 --require-minisign' >&2
-+    'Then run the verified local file with bash ./install.sh --version v0.17.1 --require-minisign' >&2
-   exit 1
- fi
- # bash run as `sh` starts in POSIX mode, which rejects the process
-@@ -436,6 +436,36 @@ reasonix_home_dir() {
-   printf '%s\n' "$dir"
- }
- 
-+# Check whether a Cursor IDE process is running without matching a sibling
-+# grep process or macOS CursorUIViewService system helpers.
-+# On Linux procps-ng, `pgrep -fl` prints only the short process name (not full
-+# args, which requires `-fa`), so piping into `grep -qv CursorUIViewService`
-+# matched the grep sibling itself on bare Linux containers. Capturing pgrep
-+# output first avoids any live grep sibling, and `-fa` (Linux) / `-fl` (macOS)
-+# inspects full command lines cleanly.
-+cursor_process_running() {
-+  command -v pgrep >/dev/null 2>&1 || return 1
-+  local procs=""
-+  local pgrep_rc=0
-+  case "$(uname -s 2>/dev/null || true)" in
-+    Darwin)
-+      procs=$(pgrep -fl "[Cc]ursor" 2>/dev/null) || return 1
-+      ;;
-+    *)
-+      procs=$(pgrep -fa "[Cc]ursor" 2>/dev/null) || pgrep_rc=$?
-+      if [ "$pgrep_rc" -gt 1 ]; then
-+        procs=$(pgrep -fl "[Cc]ursor" 2>/dev/null) || return 1
-+      elif [ "$pgrep_rc" -ne 0 ]; then
-+        return 1
-+      fi
-+      ;;
-+  esac
-+  [ -n "$procs" ] || return 1
-+  printf '%s\n' "$procs" |
-+    grep -Ev 'CursorUIViewService|/System/Library/' |
-+    grep -qvE '^[0-9]+[[:space:]]+(pgrep|grep)([[:space:]]|$)'
-+}
-+
- detect_agents() {
-   DETECTED_AGENTS=()
- 
-@@ -484,10 +514,8 @@ detect_agents() {
-   local cursor_settings_linux="$HOME/.config/Cursor/User/settings.json"
-   if [[ -d "$HOME/.cursor" ]] || [[ -f "$cursor_settings_mac" ]] || [[ -f "$cursor_settings_linux" ]] || command -v cursor &>/dev/null; then
-     cursor_detected=1
--  elif command -v pgrep >/dev/null 2>&1; then
--    if pgrep -fl "[Cc]ursor" 2>/dev/null | grep -qv 'CursorUIViewService\|/System/Library/'; then
--      cursor_detected=1
--    fi
-+  elif cursor_process_running; then
-+    cursor_detected=1
-   fi
- 
-   if [ "$cursor_detected" -eq 1 ]; then
-@@ -2316,8 +2344,54 @@ PYEOF
-     fi
- 
-     if ! command -v python3 >/dev/null 2>&1; then
-+      # Without python3, delegate to the freshly installed native dcg binary
-+      # when available and no legacy git_safety_guard predecessor cleanup is
-+      # needed. `dcg install` applies the same #582 atomic, host-field-preserving
-+      # JSON merge semantics in pure Rust without requiring Python.
-+      local settings_base="${settings_file##*/}"
-+      if [ "$settings_base" = "settings.json" ] && [ -x "$DEST/dcg" ] &&
-+         { [ "$cleanup_predecessor" -eq 0 ] || ! grep -qF "git_safety_guard" "$settings_file" 2>/dev/null; }; then
-+        local backup_base backup_suffix=0
-+        backup_base="${settings_file}.bak.$(date +%Y%m%d%H%M%S)"
-+        CLAUDE_BACKUP="$backup_base"
-+        while [ -e "$CLAUDE_BACKUP" ] || [ -L "$CLAUDE_BACKUP" ]; do
-+          backup_suffix=$((backup_suffix + 1))
-+          CLAUDE_BACKUP="${backup_base}.${backup_suffix}"
-+        done
-+        if ! cp "$settings_file" "$CLAUDE_BACKUP"; then
-+          CLAUDE_STATUS="failed"
-+          CLAUDE_FAILURE_REASON="could not back up existing settings.json; left unchanged"
-+          CLAUDE_BACKUP=""
-+          return 0
-+        fi
-+        local native_out=""
-+        local native_rc=0
-+        native_out=$(CLAUDE_CONFIG_DIR="$settings_dir" NO_COLOR=1 "$DEST/dcg" install 2>&1) || native_rc=$?
-+        if [ "$native_rc" -eq 0 ]; then
-+          if printf '%s\n' "$native_out" | grep -qF "Hook installed successfully!"; then
-+            CLAUDE_STATUS="merged"
-+            AUTO_CONFIGURED=1
-+            return 0
-+          elif printf '%s\n' "$native_out" | grep -qF "Hook already installed!"; then
-+            rm -f "$CLAUDE_BACKUP" 2>/dev/null || true
-+            CLAUDE_BACKUP=""
-+            CLAUDE_STATUS="already"
-+            AUTO_CONFIGURED=1
-+            return 0
-+          fi
-+        fi
-+        rm -f "$CLAUDE_BACKUP" 2>/dev/null || true
-+        CLAUDE_BACKUP=""
-+        if [ "$native_rc" -ne 0 ] && [ -n "$native_out" ]; then
-+          CLAUDE_STATUS="failed"
-+          CLAUDE_FAILURE_REASON="native merge faile
-```
-
-**File**: `src/evaluator.rs` (modified, +118/-56)
-```diff
-@@ -29738,40 +29738,70 @@ fn evaluate_packs_with_allowlists_at_depth(
-                         )
-                 },
+@@ -915,7 +915,9 @@ mod tests {
+                 case.id
              );
-+            let guardrail_env_rule = pack_id == "careful_company_running_windows.guardrails"
-+                && matches!(
-+                    pattern.name,
-+                    Some("dcg-bypass-or-uninstall" | "dcg-policy-self-weakening")
-+                );
-             if matched_span.is_none()
--                && unscoped_external
-+                && (unscoped_external || guardrail_env_rule)
-                 && custom_command_for_match != command_for_packs
-             {
--                // Normalization may remove an assignment or wrapper read by
--                // the assertion. Retry the complete source-preserving view,
--                // retaining its masks and byte-for-byte source mapping.
--                let (raw_ranges, raw_safe_inputs) = custom_pattern_inputs.get_or_init(|| {
--                    (
--                        command_segment_ranges_in_dialect(original_command, shell_dialect),
--                        SafePatternInputs::new(original_command, input_command, shell_dialect),
--                    )
--                });
-+                // Normalization strips leading `NAME=value` assignments and
-+                // wrappers. Retry the complete source-preserving view for
-+                // unscoped custom rules (#671) and for guardrail env-var
-+                // branches (`DCG_BYPASS=1 ...`, `DCG_DISABLE=...`), accepting
-+                // only non-`dcg`-command branches on the guardrail retry so a
-+                // harmless leading `FOO=bar` never bypasses a proven-inert
-+                // `dcg` segment.
-                 matching_command = custom_command_for_match;
-                 matching_offset = Some(0);
--                matched_span = find_actionable_command_pattern_span(
--                    pack_id,
--                    pattern.name,
--                    &pattern.regex,
--                    matching_command,
--                    Some((original_command, 0)),
--                    shell_dialect,
--                    deadline,
--                    |span| {
--                        !raw_safe_inputs.match_is_exempt(
--                            pack,
--                            matching_command,
--                            span,
--                            raw_ranges,
--                            false,
--                            deadline,
-+                if unscoped_external {
-+                    let (raw_ranges, raw_safe_inputs) = custom_pattern_inputs.get_or_init(|| {
-+                        (
-+                            command_segment_ranges_in_dialect(original_command, shell_dialect),
-+                            SafePatternInputs::new(original_command, input_command, shell_dialect),
-                         )
--                    },
--                );
-+                    });
-+                    matched_span = find_actionable_command_pattern_span(
-+                        pack_id,
-+                        pattern.name,
-+                        &pattern.regex,
-+                        matching_command,
-+                        Some((original_command, 0)),
-+                        shell_dialect,
-+                        deadline,
-+                        |span| {
-+                            !raw_safe_inputs.match_is_exempt(
-+                                pack,
-+                                matching_command,
-+                                span,
-+                                raw_ranges,
-+                                false,
-+                                deadline,
-+                            )
-+                        },
-+                    );
-+                } else {
-+                    matched_span = find_actionable_command_pattern_span(
-+                        pack_id,
-+                        pattern.name,
-+                        &pattern.regex,
-+                        matching_command,
-+                        Some((original_command, 0)),
-+                        shell_dialect,
-+                        deadline,
-+                        |span| {
-+                            !matching_command
-+                                .get(span.start..span.end)
-+                                .and_then(|matched| matched.split_ascii_whitespace().next())
-+                                .is_some_and(|word| {
-+                                    word.eq_ignore_ascii_case("dcg")
-+                                        || word.eq_ignore_ascii_case("dcg.exe")
-+                                })
-+                        },
-+                    );
-+                }
-             }
- 
-             if deadline_exceeded(deadline) {
-@@ -36655,40 +36685,56 @@ fn find_actionable_command_pattern_span(
-     if deadline_exceeded(deadline) {
-         return None;
-     }
--    // The guardrails regex also covers environment/control mutations. Add a
--    // native argv proof for its DCG-command branches so an escaped space in
--    // 
+             match result {
+-                Err(super::super::MatchError::Unavailable { language, detail }) => {
++                Err(super::super::MatchError::AnalysisIncomplete {
++                    language, detail, ..
++                }) => {
+                     assert_eq!(language, ScriptLanguage::Python, "{}", case.id);
+                     assert_eq!(&detail, expected, "{}", case.id);
+                 }
 ```
 
-**File**: `src/packs/careful_company_running_windows/guardrails.rs` (modified, +387/-43)
+**File**: `src/ast_pattern_engine.rs` (modified, +21/-0)
 ```diff
-@@ -76,6 +76,42 @@ macro_rules! dcg_global_options {
-     };
- }
- 
-+/// Tri-state outcome of native argv analysis for a single top-level `dcg`
-+/// command segment.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+enum DcgSegmentAction {
-+    /// Native argv parsing proved this segment performs `expected_rule` over
-+    /// the returned byte range.
-+    Action(Range<usize>),
-+    /// Native argv parsing proved this segment is a complete, static,
-+    /// top-level `dcg` invocation that does NOT perform `expected_rule`
-+    /// (covering the full segment byte range).
-+    Inert(Range<usize>),
-+    /// Native argv parsing could not certify the segment (not a literal `dcg`
-+    /// invocation, dynamic/unquoted expansion, unknown option, redirection,
-+    /// incomplete quoting, or grouped syntax). The regex fallback must remain
-+    /// active on this segment.
-+    Unprovable,
-+}
-+
-+/// Result of native `dcg` guardrail proof across all top-level segments of a
-+/// command string.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) enum DcgControlActionProof {
-+    /// Native argv or authorization-store analysis proved `expected_rule` at
-+    /// this byte range.
-+    Action(Range<usize>),
-+    /// No action was proved. `proven_inert_segments` contains byte ranges of
-+    /// complete top-level `dcg` invocations proven inert for `expected_rule`
-+    /// under native dialect argv semantics; `dcg`-command regex hits lying
-+    /// wholly inside one of those ranges are command-looking argument data,
-+    /// while env-var / `uninstall.ps1` branches and unproved segments still
-+    /// fall through to the regex.
-+    NoAction {
-+        proven_inert_segments: Vec<Range<usize>>,
+@@ -172,6 +172,14 @@ pub enum MatchError {
+         language: ScriptLanguage,
+         detail: String,
+     },
++    /// The code parsed, but a semantic analysis could not resolve it within
++    /// its structural limits. Retrying with a longer timeout cannot help.
++    AnalysisIncomplete {
++        language: ScriptLanguage,
++        /// Stable operation name used in incomplete-analysis diagnostics.
++        stage: &'static str,
++        detail: String,
 +    },
-+}
-+
- /// Prove a dcg control action from native argv boundaries without rewriting
- /// opaque agent values. This supplements the regex view, whose whitespace
- /// boundaries cannot represent unquoted escaped spaces in one argv word.
-@@ -88,22 +124,28 @@ pub(crate) fn dcg_control_action_span(
-     dialect: ShellDialect,
-     expected_rule: &str,
- ) -> Option<std::ops::Range<usize>> {
--    dcg_control_action_span_in_source(command, dialect, expected_rule, None)
-+    match dcg_control_action_proof_in_source(command, dialect, expected_rule, None) {
-+        DcgControlActionProof::Action(span) => Some(span),
-+        DcgControlActionProof::NoAction { .. } => None,
-+    }
- }
- 
- /// Preserve the enclosing request when a pack evaluates one command segment.
- /// Relative write destinations depend on directory changes before that segment.
--pub(crate) fn dcg_control_action_span_in_source(
-+pub(crate) fn dcg_control_action_proof_in_source(
-     command: &str,
-     dialect: ShellDialect,
-     expected_rule: &str,
-     source_context: Option<(&str, usize)>,
--) -> Option<std::ops::Range<usize>> {
-+) -> DcgControlActionProof {
-+    let no_action = || DcgControlActionProof::NoAction {
-+        proven_inert_segments: Vec::new(),
-+    };
-     if !matches!(
-         expected_rule,
-         "dcg-bypass-or-uninstall" | "dcg-policy-self-weakening"
-     ) {
--        return None;
-+        return no_action();
-     }
-     let dialect = if dialect == ShellDialect::Unknown {
-         ShellDialect::Posix
-@@ -114,15 +156,20 @@ pub(crate) fn dcg_control_action_span_in_source(
-         && let Some(span) =
-             authorization_store_write_span_from_source(command, dialect, source_context)
-     {
--        return Some(span);
-+        return DcgControlActionProof::Action(span);
-     }
-     let tokens = tokenize_for_shell_dialect(command, dialect);
-+    let mut proven_inert_segments = Vec::new();
-     let mut start = 0;
-     let mut depth = 0usize;
-     let mut grouped = false;
-     let mut comment = false;
-     for (index, token) in tokens.iter().enumerate() {
--        let raw = token.text(command)?;
-+        let Some(raw) = token.text(command) else {
-+            return DcgControlActionProof::NoAction {
-+                proven_inert_segments,
-+            };
-+        };
-         let newline = matches!(raw, "\n" | "\r" | "\r\n");
-         if comment {
-             if newline {
-@@ -134,16 +181,19 @@ pub(crate) fn dcg_control_action_span_in_source(
-         }
-         if token.kind == NormalizeTokenKind::Word {
-             if dialect != ShellDialect::Cmd && raw.starts_with('#') {
--                if depth == 0
--                    && !grouped
--                    && let Some(span) = dcg_segment_action_span(
-+                if depth == 0 && !grouped {
-+                    match dcg_segment_action_span(
-                         command,
-                         &tokens[start..index],
-                         dialect,
-                         expected_rule,
--                    )
--                {
--                    return Some(span);
-+                    ) {
-+                        DcgSegmentAction::Action(span) => {
-+                            return DcgControlActionProof::Action(span);
-+                        }
-+                        DcgSegmentAction::Inert(span) 
+     /// Pattern matching exceeded timeout.
+     Timeout { elapsed_ms: u64, budget_ms: u64 },
+     /// Pattern compilation failed (should not happen with static patterns).
+@@ -206,6 +214,11 @@ impl std::fmt::Display for MatchError {
+             Self::ParseError { language, detail } => {
+                 write!(f, "AST parse error for {language:?}: {detail}")
+             }
++            Self::AnalysisIncomplete {
++                language, detail, ..
++            } => {
++                write!(f, "AST analysis incomplete for {language:?}: {detail}")
++            }
+             Self::Timeout {
+                 elapsed_ms,
+                 budget_ms,
+@@ -7498,6 +7511,14 @@ mod tests {
+             .is_transient()
+         );
+         assert!(!MatchError::UnsupportedLanguage(ScriptLanguage::Unknown).is_transient());
++        assert!(
++            !MatchError::AnalysisIncomplete {
++                language: ScriptLanguage::Python,
++                stage: "python_local_call_analysis",
++                detail: "unresolved local callable".into()
++            }
++            .is_transient()
++        );
+         assert!(
+             !MatchError::PatternError {
+                 pattern: "p".into(),
 ```
 
-**File**: `tests/install/agent_config_test.bats` (modified, +75/-0)
+**File**: `src/cli.rs` (modified, +25/-2)
 ```diff
-@@ -6393,3 +6393,78 @@ MOCKEOF
-     [ -x "$HOME/.local/bin/dcg" ]
-     cmp -s "$TEST_TMPDIR/escaped-factory-before.json" "$HOME/.factory/settings.json"
- }
-+
-+@test "installer: minimal container without python3 and existing Claude settings completes cleanly" {
-+    log_test "Testing full install.sh without python3 when settings.json already exists..."
-+
-+    make_claude_installer_artifact
-+    mkdir -p "$HOME/.claude"
-+    printf '%s\n' '{"theme":"dark","hooks":{"PreToolUse":[{"matcher":"Read","hooks":[{"type":"command","command":"unrelated"}]}]}}' > "$HOME/.claude/settings.json"
-+    cp "$HOME/.claude/settings.json" "$TEST_TMPDIR/before-nopy.json"
-+
-+    # Build a PATH without python3 while retaining standard POSIX utilities.
-+    local no_python_path="$TEST_TMPDIR/minimal-path"
-+    mkdir -p "$no_python_path"
-+    local tool
-+    for tool in bash sh env uname id dirname basename mkdir rm mv cp cat chmod head tail grep sed awk tr wc cut sort uniq date mktemp tar xz gzip curl touch ln ls find printf true false ps pgrep; do
-+        if command -v "$tool" >/dev/null 2>&1; then
-+            ln -sf "$(command -v "$tool")" "$no_python_path/$tool"
-+        fi
-+    done
-+
-+    run env PATH="$no_python_path" HOME="$HOME" DCG_SELF_HEAL_HOOK=0 SHELL=/bin/false \
-+        bash "$INSTALL_SCRIPT" \
-+            --version v9.9.9 \
-+            --artifact-url "file://$CLAUDE_FIXTURE_ARTIFACT" \
-+            --dest "$HOME/.local/bin" \
-+            --easy-mode --offline --no-verify --no-gum
-+    log_test "status=$status output=$output"
-+
-+    [ "$status" -eq 0 ]
-+    [ -x "$HOME/.local/bin/dcg" ]
-+    [[ "$output" == *"Claude Code: Configuration failed (python3 required for merge)"* ]]
-+    cmp -s "$TEST_TMPDIR/before-nopy.json" "$HOME/.claude/settings.json"
+@@ -1087,11 +1087,22 @@ const CLASSIFY_OUTPUT_SCHEMA_VERSION: u32 = 1;
+ /// pattern has been proven, but execution is still blocked conservatively.
+ const INDETERMINATE_REASON: &str = "Safety evaluation did not complete within the analysis budget";
+ 
++fn indeterminate_stage(result: &EvaluationResult) -> Option<&'static str> {
++    result
++        .incomplete_stage
++        .filter(|_| !result.skipped_due_to_budget)
 +}
 +
-+@test "configure_claude_code: delegates to native dcg install when python3 is absent" {
-+    log_test "Testing native dcg install fallback when python3 is unavailable..."
+ /// Describe the failure attached to this evaluation, never a stale thread-local
+ /// observation. A regex work limit is independent of the hook's wall clock;
+ /// retain the deadline wording when the evaluator actually exhausted it, with
+ /// the known regex failure as additional context.
+ fn indeterminate_reason(result: &EvaluationResult) -> std::borrow::Cow<'static, str> {
++    if let Some(stage) = indeterminate_stage(result) {
++        return std::borrow::Cow::Owned(format!(
++            "Safety evaluation could not finish (incomplete: {stage}). The command was not verified."
++        ));
++    }
+     if !result.skipped_due_to_budget
+         && let Some(failure) = &result.regex_failure
+     {
+@@ -5625,7 +5636,14 @@ fn test_command(
+                     "Execution is blocked because DCG could not complete safety analysis."
+                         .to_string(),
+                 ),
+-                source: Some("analysis_budget".to_string()),
++                source: Some(
++                    if indeterminate_stage(&result).is_some() {
++                        "analysis_incomplete"
++                    } else {
++                        "analysis_budget"
++                    }
++                    .to_string(),
++                ),
+                 matched_span: None,
+                 severity: None,
+                 allowlist: None,
+@@ -6207,7 +6225,12 @@ fn classify_command(config: &Config, command: &str, format: ClassifyFormat, no_c
+             "unknown".to_string(),
+             1.0,
+             vec![ClassifyReason {
+-                rule_id: "dcg:analysis-budget".to_string(),
++                rule_id: if indeterminate_stage(&result).is_some() {
++                    "dcg:analysis-incomplete"
++                } else {
++                    "dcg:analysis-budget"
++                }
++                .to_string(),
+                 severity: "unknown".to_string(),
+                 explanation: indeterminate_reason(&result).into_owned(),
+             }],
+```
+
+**File**: `src/evaluator.rs` (modified, +71/-13)
+```diff
+@@ -989,6 +989,9 @@ pub struct EvaluationResult {
+     /// executed child. Contains bounded rule identifiers and engine limits,
+     /// never command text, pattern source, or execution context.
+     pub regex_failure: Option<crate::perf::RegexFailure>,
++    /// The analysis step that stopped first, when the failure was outside the
++    /// regex engine. Belongs to this request, including its executed children.
++    pub incomplete_stage: Option<&'static str>,
+     /// Whether the evaluator proved that no enabled-pack keyword was present
+     /// and returned through the bounded quick-reject fast path.
+     pub quick_rejected: bool,
+@@ -1030,6 +1033,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1061,6 +1065,7 @@ impl EvaluationResult {
+             quick_rejected: true,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1085,6 +1090,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1115,6 +1121,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1145,6 +1152,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1186,6 +1194,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1247,6 +1256,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1315,6 +1325,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1346,6 +1357,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1376,6 +1388,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1413,6 +1426,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1450,6 +1464,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1490,6 +1505,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurrence: None,
+             graduated_response: None,
+@@ -1518,6 +1534,7 @@ impl EvaluationResult {
+             quick_rejected: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             branch_context: None,
+             session_occurren
+```
+
+**File**: `src/main.rs` (modified, +28/-9)
+```diff
+@@ -294,17 +294,25 @@ impl IndeterminateDetail {
+ 
+ /// Use the selected evaluation's provenance, not a prior diagnostic or policy
+ /// probe on this thread. Keep deadline evidence independently of regex failure.
+-fn take_evaluation_exhaustion(failure: Option<perf::RegexFailure>) -> perf::BudgetExhaustion {
++fn take_evaluation_exhaustion(
++    failure: Option<perf::RegexFailure>,
++    stage: Option<&'static str>,
++) -> perf::BudgetExhaustion {
+     let mut exhaustion = perf::take_budget_exhaustion();
+     if let Some(failure) = failure {
+         let phase = match failure.operation {
+             perf::RegexOperation::Compile => ProfilePhase::RegexCompile,
+             _ => ProfilePhase::RegexMatch,
+         };
+         exhaustion.incomplete = Some((failure.operation.as_str(), Some(phase)));
+-    } else if exhaustion.regex_failure.is_some() {
+-        // An unrelated regex note cannot identify this result's failed step.
+-        exhaustion.incomplete = None;
++    } else {
++        exhaustion.incomplete = stage.map(|stage| {
++            let phase = exhaustion
++                .incomplete
++                .filter(|(observed, _)| *observed == stage)
++                .and_then(|(_, phase)| phase);
++            (stage, phase)
++        });
+     }
+     exhaustion.regex_failure = failure;
+     exhaustion
+@@ -2812,7 +2820,7 @@ fn attempt_rebase_recovery(
+     // This independent evaluation must not inherit a confidence probe's notes.
+     let _ = perf::take_budget_exhaustion();
+     if ctx.deadline.is_exceeded() {
+-        return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(None)));
++        return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(None, None)));
+     }
+     let relaxed = rebase_recovery::relaxed_allowlist(ctx.allowlists);
+     let residual = evaluate_command_with_pack_order_deadline_at_path_in_dialect(
+@@ -2857,6 +2865,7 @@ fn attempt_rebase_recovery(
+     if residual.decision == EvaluationDecision::Indeterminate || residual.skipped_due_to_budget {
+         return RecoveryAttempt::Indeterminate(Box::new(take_evaluation_exhaustion(
+             residual.regex_failure,
++            residual.incomplete_stage,
+         )));
+     }
+     if residual.decision == EvaluationDecision::Deny {
+@@ -2991,7 +3000,10 @@ fn resolve_hook_command(
+         return ResolvedCommandOutcome::DeadlineExhausted {
+             command: command.to_string(),
+             stage: "evaluation",
+-            exhaustion: Box::new(take_evaluation_exhaustion(result.regex_failure)),
++            exhaustion: Box::new(take_evaluation_exhaustion(
++                result.regex_failure,
++                result.incomplete_stage,
++            )),
+         };
+     }
+ 
+@@ -4979,7 +4991,7 @@ mod tests {
+         };
+         perf::note_regex_failure(prior);
+         perf::note_deadline_exhausted();
+-        let deadline = take_evaluation_exhaustion(None);
++        let deadline = take_evaluation_exhaustion(None, None);
+         assert!(deadline.deadline.is_some());
+         assert!(deadline.regex_failure.is_none());
+         assert!(deadline.incomplete.is_none());
+@@ -4991,7 +5003,7 @@ mod tests {
+             operation: perf::RegexOperation::FindFrom,
+             cause: perf::RegexFailureCause::BacktrackLimit { steps: 100_000 },
+         };
+-        let exhaustion = take_evaluation_exhaustion(Some(selected));
++        let exhaustion = take_evaluation_exhaustion(Some(selected), None);
+         assert_eq!(exhaustion.regex_failure, Some(selected));
+         assert_eq!(
+             exhaustion.incomplete,
+@@ -5000,12 +5012,19 @@ mod tests {
+         assert!(exhaustion.deadline.is_none());
+ 
+         perf::note_incomplete_analysis("interpreter_literal_recovery");
+-        let generic = take_evaluation_exhaustion(None);
++        let generic = take_evaluation_exhaustion(None, Some("interpreter_literal_recovery"));
+         assert_eq!(
+             generic.incomplete.unwrap().0,
+             "interpreter_literal_recovery"
+         );
+         assert!(generic.regex_failure.is_none());
 +
-+    CLAUDE_SETTINGS="$HOME/.claude/settings.json"
-+    mkdir -p "$HOME/.claude" "$DEST"
-+    printf '%s\n' '{"theme":"dark"}' > "$CLAUDE_SETTINGS"
-+
-+    # Mock native dcg binary implementing `dcg install`
-+    cat > "$DEST/dcg" <<'MOCKEOF'
-+#!/bin/bash
-+if [ "${1:-}" = "install" ]; then
-+    target="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
-+    printf '{"theme":"dark","hooks":{"PreToolUse":[{"matcher":"Bash|PowerShell|Monitor","hooks":[{"type":"command","command":"%s"}]}]}}
-+' "$0" > "$target"
-+    printf 'Hook installed successfully!\n'
-+    exit 0
-+fi
-+exit 1
-+MOCKEOF
-+    chmod +x "$DEST/dcg"
-+
-+    local no_python_path="$TEST_TMPDIR/no-python-native"
-+    mkdir -p "$no_python_path"
-+    local tool
-+    for tool in dirname mkdir cp date grep sed tr rm mv cat printf bash; do
-+        ln -sf "$(command -v "$tool")" "$no_python_path/$tool"
-+    done
-+
-+    local old_path="$PATH"
-+    PATH="$no_python_path"
-+    local rc=0
-+    configure_claude_code "$CLAUDE_SETTINGS" "0" || rc=$?
-+    PATH="$old_path"
-+
-+    log_test "CLAUDE_STATUS=$CLAUDE_STATUS rc=$rc backup=$CLAUDE_BACKUP"
-+    [ "$rc" -eq 0 ]
-+    [ "$CLAUDE_STATUS" = "merged" ]
-+    [ -n "$CLAUDE_BACKUP" ]
-+    [ -f "$CLAUDE_BACKUP" ]
-+    grep -qF '"theme":"dark"' "$CLAUDE_SETTINGS"
-+    grep -qF 'Bash|PowerShell|Monitor' "$CLAUDE_SETTINGS"
-+}
++        perf::note_incomplete_analysis("interpreter_literal_recovery");
++        let local_call = take_evaluation_exhaustion(None, Some("python_local_call_analysis"));
++        assert_eq!(
++            local_call.incomplete,
++            Some(("python_local_call_analysis", None))
++        );
+     }
+ 
+     #[test]
+```
+
+**File**: `src/output/test.rs` (modified, +1/-0)
+```diff
+@@ -1055,6 +1055,7 @@ mod tests {
+             skipped_due_to_budget: false,
+             regex_evaluation_incomplete: false,
+             regex_failure: None,
++            incomplete_stage: None,
+             quick_rejected: false,
+             branch_context: None,
+             session_occurrence: None,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #672** (2026-11-23): deps(deps): bump nix from 0.31.4 to 0.32.0 (@dependabot[bot])
 - **PR #659** (2026-11-17): deps(deps): bump rusqlite from 0.41.1 to 0.42.0 (@dependabot[bot])
 - **PR #658** (2026-11-17): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
 - **PR #657** (2026-11-17): ci(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 in the actions group (@dependabot[bot])
 - **PR #651** (closed): ci(deps): bump sigstore/cosign-installer from 4.1.2 to 4.1.3 in the actions group (@dependabot[bot])
 - **PR #650** (closed): deps(deps): bump flate2 from 1.1.10 to 1.1.11 in the rust-minor-patch group (@dependabot[bot])
-- **PR #637** (closed): fix(powershell): preserve call/dot-source operators across compound statements, scriptblock .Invoke(), and *.exe tool names (@stevemoraco)
 
 ---
 
@@ -3753,49 +3405,96 @@ Fixes #671
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bind lookaround exemptions to their segments [skip ci]
+## X. deps): refresh Cargo.lock within the current version requirements [skip ci]
 
 **RULE**:
-When implementing operations in `docs/custom-packs.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3459216e`: bind lookaround exemptions to their segments [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `beedc5c7`: deps): refresh Cargo.lock within the current version requirements [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/custom-packs.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Unscoped destructive rules are checked against individual segments and the
-complete, data-sanitized command. In the complete-command check, lookarounds
-retain that full context even when the text they consume stays inside one
-segment. For example, `mytool(?=[^\r\n]*?publish)` can match `mytool status;
-publish`: the lookahead reads the later segment without including it in the
-highlighted match. This also applies to the original custom-policy view that
-preserves assignments and wrappers. Rules with `executables` keep their
-segment-local matching context.
-A whole-command search continues past an occurrence covered by its innermost
-segment's safe exemption, so an exempt earlier occurrence cannot hide a later
-one. An enclosing segment's local safe match cannot be borrowed to authorize a
-child. Grants from a complete carrier still follow the inheritance rules above.
-A match that consumes text from multiple segments cannot borrow the safe
-exemption of just one segment. Exempt segments remain visible as context for
-other matches' lookarounds.
+version = "1.0.105"
+checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
+version = "4.6.10"
+checksum = "50066ca966813ca8957ee15361752f19424a8ff620dbe9c8993d9f99d99b04b3"
+version = "4.6.10"
+checksum = "a0ed97c96ef4efb3cc84e09fa388df4463e7cc3224ec38d7b1d9e45749333590"
+version = "1.5.6"
+checksum = "fd9ae8fcb3ea71b0b26338b4ffb13006bb175de8fd07921089a906ce7e5e6945"
+ "parking_lot 0.12.5",
+ "lock_api 0.4.14",
+ "parking_lot_core 0.9.12",
+ "fancy-regex",
+[[package]]
+name = "faster-hex"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e4ede54fe330383a5de28c0a1f06668ff9dbf06c8094e1c5150c39488a5e911d"
+dependencies = [
+ "defmt 0.3.101",
+ "serde",
+]
 
+ "parking_lot 0.12.5",
+version = "0.6.2"
+checksum = "9543567ee22142c81fdf75b2811160bec749a5b9f48665e4763f88b1789b8612"
+version = "0.10.2"
+checksum = "60cd5f0e47ffae98bad241ccbc031693765004fb4c2a419f7fda2963232af1e3"
+version = "0.12.2"
+checksum = "2986e78ebad43510ccd7dd18bd9f22e9afd52f2de791e2979b9c715bacb6f0a8"
+version = "0.21.2"
+checksum = "d7666081ef0ecc5e1dc54bc6ce16dac9d7b9490780f6c130393ef9e50c909d4a"
+version = "0.5.3"
+checksum = "50ad6c42fa50280f382026ff838a8afa7ab2ad83e923
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-Unscoped rules retain the complete matching context across shell separators,
-including text read by lookahead and lookbehind assertions outside the consumed
-match. Safe-pattern exemptions still apply to the segment they authorize;
-skipping an exempt match does not hide later matches of the same rule.
+version = "1.0.104"
+checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
+version = "4.6.9"
+checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
+version = "4.6.7"
+checksum = "ec0797fb7aeb1406c84efac526901f7ec3ead2124f946b494e72879d4b54704d"
+version = "1.5.5"
+checksum = "2b929dd2a135771f40afabd1073f85eed59c800b7c61901e5c254270497dad64"
+ "parking_lot",
+ "lock_api",
+ "parking_lot_core",
+ "fancy-regex 0.20.2",
+[[package]]
+name = "fancy-regex"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e1e1dacd0d2082dfcf1351c4bdd566bbe89a2b263235a2b50058f1e130a47277"
+dependencies = [
+ "bit-set 0.8.0",
+ "regex-automata",
+ "regex-syntax",
+]
+
+ "parking_lot",
+version = "0.6.1"
+checksum = "422cd23418fd80e9e965595323975d72abd6364a66ff8f0daade5c105a7f35d2"
+version = "0.10.1"
+checksum = "dc6a775aba54f0d65698126cc4214b6bf8ddb208312e4ef4240dfe34b0697b87"
+version = "0.12.1"
+checksum = "df63215f103299169e239dfe76f5cfa4a3d6d4adf69a01774085e3e0423cba34"
+version = "0.21.1"
+checksum = "6cdada8bd9c97dc6522505c08226d9c88f0a1286f2c06b9e1bf51c3bf7ad7b2b"
+version = "0.5.2"
+checksum = "d87ff4b3f3daf01234d38d176b0ec00e92de514
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3459216e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `beedc5c7` are properly handled with clean fallback behavior.
 
 
 ## Consequences
