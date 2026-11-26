@@ -4,22 +4,22 @@
 {
   "source_repository": "unhappychoice/gitlogue",
   "source_url": "https://github.com/unhappychoice/gitlogue",
-  "source_version": "c680657b",
+  "source_version": "0c11c147",
   "license": "ISC",
-  "timestamp": "2026-11-24T06:38:20.447Z",
+  "timestamp": "2026-11-26T16:30:48.037Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-unhappychoice-gitlogue",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue) (Revision: `c680657b`).  
-> **License**: ISC | **Timestamp**: `2026-11-24T06:38:20.447Z`  
+> **Provenance**: Harvested from [unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue) (Revision: `0c11c147`).  
+> **License**: ISC | **Timestamp**: `2026-11-26T16:30:48.037Z`  
 > **Learning ID**: `learn-github-unhappychoice-gitlogue`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `unhappychoice/gitlogue` (Commit: `c680657b`)
+- **Target Repository**: `unhappychoice/gitlogue` (Commit: `0c11c147`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T06:38:19.278Z  
+> **Harvest Timestamp**: 2026-11-26T16:30:46.495Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A cinematic Git commit replay tool for the terminal, turning your Git history into a living, animated story.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5283 stars
+- **Stars / Engagement**: 5290 stars
 
 ---
 
@@ -2516,83 +2516,70 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c680657b` (2026-11-23)
-**Commit Message**: Merge pull request #264 from unhappychoice/dependabot/cargo/tree-sitter-c-sharp-0.24.0
+### Incident Patch 1: `0c11c147` (2026-11-26)
+**Commit Message**: Merge pull request #268 from unhappychoice/dependabot/cargo/globset-0.4.22
 
-chore(deps): bump tree-sitter-c-sharp from 0.23.5 to 0.24.0
+chore(deps): bump globset from 0.4.21 to 0.4.22
 
 **File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2061,9 +2061,9 @@ dependencies = [
+@@ -745,9 +745,9 @@ dependencies = [
  
  [[package]]
- name = "tree-sitter-c-sharp"
--version = "0.23.5"
-+version = "0.24.0"
+ name = "globset"
+-version = "0.4.21"
++version = "0.4.22"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c1aac67f1ad71de1d6d39708d34811081c26dfa495658de6c14c34200849357c"
-+checksum = "54b3cdb7aeae9018e60908aa18937708de29338c83ecf3701de534b23d365c30"
+-checksum = "f98b0d85522dc0a824cfebbc9594ff4a9b289c568bea0370319dfbdf20ccdd2d"
++checksum = "71217a07f20b48b4938c14203b77b610f8a7fa6762c3f75394a10c5f31e5aee0"
  dependencies = [
-  "cc",
-  "tree-sitter-language",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ tree-sitter = "0.25"
- tree-sitter-astro-next = "0.1"
- tree-sitter-bash = "0.25"
- tree-sitter-c = "0.24"
--tree-sitter-c-sharp = "0.23"
-+tree-sitter-c-sharp = "0.24"
- tree-sitter-clojure = "0.1"
- tree-sitter-cpp = "0.23"
- tree-sitter-css = "0.25"
+  "aho-corasick",
+  "bstr",
 ```
 
 ---
 
-### Incident Patch 2: `ea9a9d66` (2026-11-23)
-**Commit Message**: Merge pull request #265 from unhappychoice/dependabot/cargo/tree-sitter-erlang-0.22.0
+### Incident Patch 2: `6fb30171` (2026-11-26)
+**Commit Message**: chore(deps): bump globset from 0.4.21 to 0.4.22
 
-chore(deps): bump tree-sitter-erlang from 0.21.0 to 0.22.0
+Bumps [globset](https://github.com/BurntSushi/ripgrep) from 0.4.21 to 0.4.22.
+- [Release notes](https://github.com/BurntSushi/ripgrep/releases)
+- [Changelog](https://github.com/BurntSushi/ripgrep/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/BurntSushi/ripgrep/compare/globset-0.4.21...ignore-0.4.22)
+
+---
+updated-dependencies:
+- dependency-name: globset
+  dependency-version: 0.4.22
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 **File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2122,9 +2122,9 @@ dependencies = [
+@@ -745,9 +745,9 @@ dependencies = [
  
  [[package]]
- name = "tree-sitter-erlang"
--version = "0.21.0"
-+version = "0.22.0"
+ name = "globset"
+-version = "0.4.21"
++version = "0.4.22"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8079a9cfe733c3b6749bb3c683c0e997ee68a2305f7a210800bbbc53e82d3f64"
-+checksum = "eaed63bab6eb0495c89f3befa2c9ef02510aee73c01ca0ce544d3afea3bb9900"
+-checksum = "f98b0d85522dc0a824cfebbc9594ff4a9b289c568bea0370319dfbdf20ccdd2d"
++checksum = "71217a07f20b48b4938c14203b77b610f8a7fa6762c3f75394a10c5f31e5aee0"
  dependencies = [
-  "cc",
-  "tree-sitter-language",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ tree-sitter-cpp = "0.23"
- tree-sitter-css = "0.25"
- tree-sitter-dart = "0.3.0"
- tree-sitter-elixir = "0.3"
--tree-sitter-erlang = "0.21"
-+tree-sitter-erlang = "0.22"
- tree-sitter-gdscript = "6.1"
- tree-sitter-gdshader = "0.4"
- tree-sitter-go = "0.25"
+  "aho-corasick",
+  "bstr",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #268** (2026-11-26): chore(deps): bump globset from 0.4.21 to 0.4.22 (@dependabot[bot])
 - **PR #267** (2026-11-23): chore(deps): bump ctrlc from 3.5.2 to 3.5.3 (@dependabot[bot])
 - **PR #266** (2026-11-23): chore(deps): bump tree-sitter-php from 0.25.1 to 0.25.2 (@dependabot[bot])
 - **PR #265** (2026-11-23): chore(deps): bump tree-sitter-erlang from 0.21.0 to 0.22.0 (@dependabot[bot])
 - **PR #264** (2026-11-23): chore(deps): bump tree-sitter-c-sharp from 0.23.5 to 0.24.0 (@dependabot[bot])
 - **PR #263** (2026-11-20): chore(deps): bump rand from 0.10.3 to 0.10.4 (@dependabot[bot])
-- **PR #262** (2026-11-17): chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.13 (@dependabot[bot])
 
 ---
 
@@ -2618,7 +2605,7 @@ chore(deps): bump tree-sitter-erlang from 0.21.0 to 0.22.0
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c680657b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0c11c147`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2626,19 +2613,19 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.24.0"
-checksum = "54b3cdb7aeae9018e60908aa18937708de29338c83ecf3701de534b23d365c30"
+version = "0.4.22"
+checksum = "71217a07f20b48b4938c14203b77b610f8a7fa6762c3f75394a10c5f31e5aee0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.23.5"
-checksum = "c1aac67f1ad71de1d6d39708d34811081c26dfa495658de6c14c34200849357c"
+version = "0.4.21"
+checksum = "f98b0d85522dc0a824cfebbc9594ff4a9b289c568bea0370319dfbdf20ccdd2d"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c680657b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0c11c147` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

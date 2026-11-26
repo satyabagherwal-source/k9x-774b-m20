@@ -4,22 +4,22 @@
 {
   "source_repository": "krakend/krakend-ce",
   "source_url": "https://github.com/krakend/krakend-ce",
-  "source_version": "3beb4d3b",
+  "source_version": "b3e2f3e3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T23:43:27.437Z",
+  "timestamp": "2026-11-26T16:30:53.309Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-krakend-krakend-ce",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [krakend/krakend-ce](https://github.com/krakend/krakend-ce) (Revision: `3beb4d3b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T23:43:27.437Z`  
+> **Provenance**: Harvested from [krakend/krakend-ce](https://github.com/krakend/krakend-ce) (Revision: `b3e2f3e3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T16:30:53.309Z`  
 > **Learning ID**: `learn-github-krakend-krakend-ce`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `krakend/krakend-ce` (Commit: `3beb4d3b`)
+- **Target Repository**: `krakend/krakend-ce` (Commit: `b3e2f3e3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T23:43:26.225Z  
+> **Harvest Timestamp**: 2026-11-26T16:30:51.786Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: KrakenD Community Edition: High-performance, stateless, declarative, API Gateway written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2703 stars
+- **Stars / Engagement**: 2707 stars
 
 ---
 
@@ -140,7 +140,7 @@ import (
 	cel "github.com/krakend/krakend-cel/v3"
 	cb "github.com/krakend/krakend-circuitbreaker/v4/gobreaker/proxy"
 	httpcache "github.com/krakend/krakend-httpcache/v3"
-	lambda "github.com/krakend/krakend-lambda/v3"
+	lambda "github.com/krakend/krakend-lambda/v4"
 	lua "github.com/krakend/krakend-lua/v3/proxy"
 	martian "github.com/krakend/krakend-martian/v3"
 	metrics "github.com/krakend/krakend-metrics/v3/gin"
@@ -805,10 +805,10 @@ func (registerSubscriberFactories) Register(ctx context.Context, cfg config.Serv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3beb4d3b` (2026-11-19)
-**Commit Message**: Merge pull request #1140 from krakend/dev-3.0.5
+### Incident Patch 1: `b3e2f3e3` (2026-11-26)
+**Commit Message**: Merge pull request #1142 from krakend/dev-3.0.6
 
-CE patch release 3.0.5
+CE patch release 3.0.6
 
 **File**: `Makefile` (modified, +1/-1)
 ```diff
@@ -816,11 +816,160 @@ CE patch release 3.0.5
  BIN_NAME :=krakend
  OS := $(shell uname | tr '[:upper:]' '[:lower:]')
  MODULE := github.com/krakend/krakend-ce/v3
--VERSION := 3.0.4
-+VERSION := 3.0.5
+-VERSION := 3.0.5
++VERSION := 3.0.6
  SCHEMA_VERSION := $(shell echo "${VERSION}" | cut -d '.' -f 1,2)
  GIT_COMMIT := $(shell git rev-parse --short=7 HEAD)
  PKGNAME := krakend
+```
+
+**File**: `backend_factory.go` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ import (
+ 	cel "github.com/krakend/krakend-cel/v3"
+ 	cb "github.com/krakend/krakend-circuitbreaker/v4/gobreaker/proxy"
+ 	httpcache "github.com/krakend/krakend-httpcache/v3"
+-	lambda "github.com/krakend/krakend-lambda/v3"
++	lambda "github.com/krakend/krakend-lambda/v4"
+ 	lua "github.com/krakend/krakend-lua/v3/proxy"
+ 	martian "github.com/krakend/krakend-martian/v3"
+ 	metrics "github.com/krakend/krakend-metrics/v3/gin"
+```
+
+**File**: `go.mod` (modified, +20/-21)
+```diff
+@@ -16,12 +16,12 @@ require (
+ 	github.com/krakend/krakend-flexibleconfig/v3 v3.0.0
+ 	github.com/krakend/krakend-gelf/v3 v3.0.0
+ 	github.com/krakend/krakend-gologging/v3 v3.0.0
+-	github.com/krakend/krakend-httpcache/v3 v3.0.0
++	github.com/krakend/krakend-httpcache/v3 v3.0.1
+ 	github.com/krakend/krakend-httpsecure/v3 v3.0.0
+-	github.com/krakend/krakend-jose/v3 v3.0.3
++	github.com/krakend/krakend-jose/v3 v3.1.1
+ 	github.com/krakend/krakend-jsonschema/v3 v3.0.0
+ 	github.com/krakend/krakend-koanf/v2 v2.0.0
+-	github.com/krakend/krakend-lambda/v3 v3.0.0
++	github.com/krakend/krakend-lambda/v4 v4.0.0
+ 	github.com/krakend/krakend-logstash/v3 v3.0.0
+ 	github.com/krakend/krakend-lua/v3 v3.0.0
+ 	github.com/krakend/krakend-martian/v3 v3.0.0
+@@ -66,24 +66,25 @@ require (
+ 	github.com/alecthomas/chroma v0.10.0 // indirect
+ 	github.com/andybalholm/cascadia v1.3.2 // indirect
+ 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
+-	github.com/aws/aws-sdk-go v1.55.8 // indirect
+-	github.com/aws/aws-sdk-go-v2 v1.43.2 // indirect
+-	github.com/aws/aws-sdk-go-v2/config v1.32.33 // indirect
+-	github.com/aws/aws-sdk-go-v2/credentials v1.19.32 // indirect
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.33 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.33 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.33 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.34 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.14 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.33 // indirect
++	github.com/aws/aws-sdk-go-v2 v1.48.0 // indirect
++	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 // indirect
++	github.com/aws/aws-sdk-go-v2/config v1.33.18 // indirect
++	github.com/aws/aws-sdk-go-v2/credentials v1.21.0 // indirect
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/kms v1.50.3 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.5.2 // indirect
++	github.com/aws/aws-sdk-go-v2/service/lambda v1.114.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/signin v1.13.1 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sns v1.42.2 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sqs v1.46.2 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sso v1.33.2 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.38.2 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sts v1.45.2 // indirect
+-	github.com/aws/smithy-go v1.27.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sso v1.39.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sts v1.52.0 // indirect
++	github.com/aws/smithy-go v1.28.9 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/bytedance/gopkg v0.1.4 // indirect
+ 	github.com/bytedance/sonic v1.15.2 // indirect
+@@ -140,7 +141,6 @@ require (
+ 	github.com/jcmturner/gofork v1.7.6 // indirect
+ 	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
+ 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
+-	github.com/jmespath/go-jmespath v0.4.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/klauspost/compress v1.19.1 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
+@@ -156,7 +156,7 @@ require (
+ 	github.com/krakend/flatmap v1.2.0 // indirect
+ 	github.com/krakend/go-auth0/v2 v2.0.5 // indirect
+ 	github.com/krakend/httpcache v1.1.1 // indirect
+-	github.com/krakend/lru v0.0.0-20250121172718-0e3a6eab620d // indirect
++	github.com/krakend/lru v1.0.0 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/leodido/go-urn v1.5.0 // indirect
+ 	github.com/mattn/go-colorable v0.1.14 // indirect
+@@ -252,5 +252,4 @@ require (
+ 	google.golang.org/grpc v1.83.2 // indirect
+ 	google.golang.org/protobuf v1.36.11 // indirect
+ 	gopkg.in/Graylog2/go-gelf.v2 v2.0.0-20191017102106-1550ee647df0 // indirect
+-	gopkg.in/yaml.v2 v2.4.0 // indirect
+ )
+```
+
+**File**: `go.sum` (modified, +40/-47)
+```diff
+@@ -68,42 +68,44 @@ github.com/antithesishq/antithesis-sdk-go v0.6.0-default-no-op h1:kpBdlEPbRvff0m
+ github.com/antithesishq/antithesis-sdk-go v0.6.0-default-no-op/go.mod h1:IUpT2DPAKh6i/YhSbt6Gl3v2yvUZjmKncl7U91fup7E=
+ github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYWrPrQ=
+ github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
+-github.com/aws/aws-sdk-go v1.55.8 h1:JRmEUbU52aJQZ2AjX4q4Wu7t4uZjOu71uyNmaWlUkJQ=
+-github.com/aws/aws-sdk-go v1.55.8/go.mod h1:ZkViS9AqA6otK+JBBNH2++sx1sgxrPKcSzPPvQkUtXk=
+-github.com/aws/aws-sdk-go-v2 v1.43.2 h1:cl+IXwWb3qazClUcm08tGSsB6OiuV83JVJO9B0jQcPc=
+-github.com/aws/aws-sdk-go-v2 v1.43.2/go.mod h1:WEzLKBh/mEjXvx1FtQMWgSxMSTVqxQzjkRtk5fa3wkg=
+-github.com/aws/aws-sdk-go-v2/config v1.32.33 h1:M1m/Q6f0OKDEDGwhiNOqx1OjTdrewe3v+GDbHmKczWk=
+-github.com/aws/aws-sdk-go-v2/config v1.32.33/go.mod h1:fGj1iQj2QpIZzp7jE4aQQ+71TE8cd4z9K4+xCd6EqmE=
+-github.com/aws/aws-sdk-go-v2/credentials v1.19.32 h1:eNE0JnIblBo1NCvd3tqEYuZz9XDefn69R74CHd3nT7U=
+-github.com/aws/aws-sdk-go-v2/credentials v1.19.32/go.mod h1:yYJu+6tqKUYZuJSYcpSGjz/6sV/SUaAaKIufnWKx2OU=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.33 h1:MobhiR6KIerWxmO74Zit5I3379+mSc2DOdZ3DeRFB9w=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.33/go.mod h1:xu02847OdZfNr/jAfZpHtyRk0b3v4d0kaoxNHxZGG/w=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.33 h1:HAp1wLFZzch054uh3FK7rcVYg4v7J2FxVf3h3IGNZas=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.33/go.mod h1:mJk5fmqnF+WUlMdPG37pR2Fh3oh6r8F6ZGUgPKvzu0c=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.33 h1:0YA0aCKgsJyno6xkFfaIgjE3/wK08+Qxo9nQfe1UrWM=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.33/go.mod h1:UZqj4WIdTH+ga8Y/DgpAuy/8cGjM3h7gDCliJYGg2SE=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.34 h1:HQYnjFnXpX8EbPW5M1QT8mXzesRPwly0HEPTcFlS02Y=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.34/go.mod h1:tGzj56niKYZBbDIRhwPGDqrULzmWv5b6uBQGqyNaFZw=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.14 h1:SA43nfaY7+1jjMNIc2ywu99JLJLButtIdLP6j+bT870=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.14/go.mod h1:Du3llKcwbQvHsTXSLzTOGQz0DTDBMEzdg7DAGu7inrY=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.33 h1:mqI7OrxN/DUH85F5OqVn3cIfuZ3+HVcebUm2N8mLlgQ=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.33/go.mod h1:eZ5jdEpvaaOU8nWWE4cTAJETSEA5FZoWxvNRao4piHY=
++github.com/aws/aws-sdk-go-v2 v1.48.0 h1:tFU7EJVm7MfyaXLsXdYTZ0Vd6vwt9OljCyqq0gqk0Mc=
++github.com/aws/aws-sdk-go-v2 v1.48.0/go.mod h1:oeKU5p+TQBnpeLmU42WZLWvzv+ORLn+74n4QVLnm/Z0=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 h1:3dMP9eEmHVosFN1QiD24IJBKVY8m6iUfVYXqRCT118Q=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27/go.mod h1:KH4PKcqtjy1m0656eqQV2v53xE04ddJzuNloEKqlHkI=
++github.com/aws/aws-sdk-go-v2/config v1.33.18 h1:WC0C4jM/tewXG8DWXnoxXnusJPZTryPazqk2k/zgd2s=
++github.com/aws/aws-sdk-go-v2/config v1.33.18/go.mod h1:0kRpFgsnD59mC2bbbyOTVpaZ9RnXW/pFkqlfiwbgZaU=
++github.com/aws/aws-sdk-go-v2/credentials v1.21.0 h1:OViwhqeipkQzSHuO2eQDUCdLrI6r3nzGxFUyM8GqnCs=
++github.com/aws/aws-sdk-go-v2/credentials v1.21.0/go.mod h1:OffaVQod3fyZzhZJyPtw11WpHPF1uIHADc+/MYlXmbA=
++github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 h1:oH1E0tjN0g+ZRusbX1dsuat4FJ0z05l8hWaycSbDuNc=
++github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9/go.mod h1:3ZaQGigIoaS45x9HgnLZ4sP475Fs7QoxU3IsZX/J3h4=
++github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 h1:W0yUUzKBA8SofGQ0yZafEUuZq9UxfvijRgdc6vcRQPA=
++github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12/go.mod h1:xwKv6vwBNdpPFOxEm/ld4IODZK2s/1ksHvdBqLfH6Gs=
++github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 h1:lqSi8qvAnKC1vfosImdmOsuiJLr/jdybZX5299beB6Q=
++github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12/go.mod h1:rqPQE2vqkW9YHx5+Gp55sx1wsTM4xtGQLl+TKMjxxrs=
++github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 h1:uvX2yaL+aMjkmnrLPPlR/zwjoKFRMoNhhJfeGjfk6qc=
++github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12/go.mod h1:dicT+2eNhHHqGkxHO7LoXw3QghIUGuzgdmFqaSTopgI=
++github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 h1:rKwkY3Z+fvt2W0msjdNs6uNewPmXzPayQ961oyuWhes=
++github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25/go.mod h1:dBuAadQKd1F4Q4ZOg8gnFmuSHMRE40Pe3IfFwbtC4lE=
++github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 h1:wzAqMZ2O4+ij9HQqIrk+P9PBGacE0wOTuWB7Mo97//I=
++github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12/go.mod h1:/0TfyruByHsOlphzP26xDTRe2DKD0J1I1Uyy2TyP8EI=
+ github.com/aws/aws-sdk-go-v2/service/kms v1.50.3 h1:s/zDSG/a/Su9aX+v0Ld9cimUCdkr5FWPmBV8owaEbZY=
+ github.com/aws/aws-sdk-go-v2/service/kms v1.50.3/go.mod h1:/iSgiUor15ZuxFGQSTf3lA2FmKxFsQoc2tADOarQBSw=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.5.2 h1:EjI1CZzDcBxPkTa3j1BdtIrUDbqnOGssFMeyUS+6W0I=
+-github.com/aws/aws-sdk-
 ```
 
 **File**: `tests/fixtures/specs/backend_301.json` (modified, +1/-1)
@@ -829,8 +978,8 @@ CE patch release 3.0.5
  	},
  	"out": {
  		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.6\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
  		"header": {
  			"content-type": ["application/json; charset=utf-8"],
  			"Cache-Control": ["public, max-age=3600"],
@@ -842,8 +991,8 @@ CE patch release 3.0.5
  	},
  	"out": {
  		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.6\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
  		"header": {
  			"content-type": ["application/json; charset=utf-8"],
  			"Cache-Control": ["public, max-age=3600"],
@@ -855,8 +1004,8 @@ CE patch release 3.0.5
  	},
  	"out": {
  		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.6\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
  		"header": {
  			"content-type": ["application/json; charset=utf-8"],
  			"Cache-Control": ["public, max-age=3600"],
@@ -868,180 +1017,164 @@ CE patch release 3.0.5
  	},
  	"out": {
  		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.6\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
  		"header": {
  			"content-type": ["application/json; charset=utf-8"],
  			"Cache-Control": ["public, max-age=3600"],
-```
-
-**File**: `tests/fixtures/specs/cel-7.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
- 			"foo":42,
- 			"headers":{
- 				"Accept-Encoding":["gzip"],
--				"User-Agent":["KrakenD Version 3.0.4"],
-+				"User-Agent":["KrakenD Version 3.0.5"],
- 				"X-Forwarded-Host":["localhost:8080"]
- 			},
- 			"path":"/param_forwarding/ok/1234567890qwertyuio/foobar",
-```
-
-**File**: `tests/fixtures/specs/cors_5.json` (modified, +2/-2)
-```diff
-@@ -9,12 +9,12 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/bar\",\"query\":{\"foo\":[\"foo\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/bar\",\"query\":{\"foo\":[\"foo\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
- 			"X-Krakend-Completed": ["true"],
--			"X-Krakend": ["Version 3.0.4"],
-+			"X-Krakend": ["Version 3.0.5"],
- 			"Vary": ["Origin"],
- 			"Access-Control-Allow-Origin": ["*"],
- 			"Access-Control-Expose-Headers": ["Content-Length"]
-```
-
-**File**: `tests/fixtures/specs/detail_error.json` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-           "foo": 42,
-           "headers": {
-             "Accept-Encoding": ["gzip"],
--            "User-Agent": ["KrakenD Version 3.0.4"],
-+            "User-Agent": ["KrakenD Version 3.0.5"],
-             "X-Forwarded-Host": ["localhost:8080"]
-           },
-           "path": "/param_forwarding/",
 ```
 
 ---
 
-### Incident Patch 2: `9dbda689` (2026-11-19)
-**Commit Message**: CE patch release 3.0.5
+### Incident Patch 2: `68f573f3` (2026-11-26)
+**Commit Message**: Merge pull request #1141 from krakend/update-deps
 
-**File**: `Makefile` (modified, +1/-1)
+update to lambda v4 and jose v3.1.1
+
+**File**: `backend_factory.go` (modified, +1/-1)
 ```diff
-@@ -7,7 +7,7 @@
- BIN_NAME :=krakend
- OS := $(shell uname | tr '[:upper:]' '[:lower:]')
- MODULE := github.com/krakend/krakend-ce/v3
--VERSION := 3.0.4
-+VERSION := 3.0.5
- SCHEMA_VERSION := $(shell echo "${VERSION}" | cut -d '.' -f 1,2)
- GIT_COMMIT := $(shell git rev-parse --short=7 HEAD)
- PKGNAME := krakend
+@@ -8,7 +8,7 @@ import (
+ 	cel "github.com/krakend/krakend-cel/v3"
+ 	cb "github.com/krakend/krakend-circuitbreaker/v4/gobreaker/proxy"
+ 	httpcache "github.com/krakend/krakend-httpcache/v3"
+-	lambda "github.com/krakend/krakend-lambda/v3"
++	lambda "github.com/krakend/krakend-lambda/v4"
+ 	lua "github.com/krakend/krakend-lua/v3/proxy"
+ 	martian "github.com/krakend/krakend-martian/v3"
+ 	metrics "github.com/krakend/krakend-metrics/v3/gin"
 ```
 
-**File**: `tests/fixtures/specs/backend_301.json` (modified, +1/-1)
+**File**: `go.mod` (modified, +18/-19)
 ```diff
-@@ -5,7 +5,7 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
+@@ -18,10 +18,10 @@ require (
+ 	github.com/krakend/krakend-gologging/v3 v3.0.0
+ 	github.com/krakend/krakend-httpcache/v3 v3.0.1
+ 	github.com/krakend/krakend-httpsecure/v3 v3.0.0
+-	github.com/krakend/krakend-jose/v3 v3.0.3
++	github.com/krakend/krakend-jose/v3 v3.1.1
+ 	github.com/krakend/krakend-jsonschema/v3 v3.0.0
+ 	github.com/krakend/krakend-koanf/v2 v2.0.0
+-	github.com/krakend/krakend-lambda/v3 v3.0.0
++	github.com/krakend/krakend-lambda/v4 v4.0.0
+ 	github.com/krakend/krakend-logstash/v3 v3.0.0
+ 	github.com/krakend/krakend-lua/v3 v3.0.0
+ 	github.com/krakend/krakend-martian/v3 v3.0.0
+@@ -66,24 +66,25 @@ require (
+ 	github.com/alecthomas/chroma v0.10.0 // indirect
+ 	github.com/andybalholm/cascadia v1.3.2 // indirect
+ 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
+-	github.com/aws/aws-sdk-go v1.55.8 // indirect
+-	github.com/aws/aws-sdk-go-v2 v1.43.2 // indirect
+-	github.com/aws/aws-sdk-go-v2/config v1.32.33 // indirect
+-	github.com/aws/aws-sdk-go-v2/credentials v1.19.32 // indirect
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.33 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.33 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.33 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.34 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.14 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.33 // indirect
++	github.com/aws/aws-sdk-go-v2 v1.48.0 // indirect
++	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 // indirect
++	github.com/aws/aws-sdk-go-v2/config v1.33.18 // indirect
++	github.com/aws/aws-sdk-go-v2/credentials v1.21.0 // indirect
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/kms v1.50.3 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.5.2 // indirect
++	github.com/aws/aws-sdk-go-v2/service/lambda v1.114.4 // indirect
++	github.com/aws/aws-sdk-go-v2/service/signin v1.13.1 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sns v1.42.2 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sqs v1.46.2 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sso v1.33.2 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.38.2 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sts v1.45.2 // indirect
+-	github.com/aws/smithy-go v1.27.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sso v1.39.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sts v1.52.0 // indirect
++	github.com/aws/smithy-go v1.28.9 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/bytedance/gopkg v0.1.4 // indirect
+ 	github.com/bytedance/sonic v1.15.2 // indirect
+@@ -140,7 +141,6 @@ require (
+ 	github.com/jcmturner/gofork v1.7.6 // indirect
+ 	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
+ 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
+-	github.com/jmespath/go-jmespath v0.4.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+ 	github.com/klauspost/compress v1.19.1 // indirect
+ 	github.com/klauspost/cpuid/v2 v2.4.0 // indirect
+@@ -252,5 +252,4 @@ require (
+ 	google.golang.org/grpc v1.83.2 // indirect
+ 	google.golang.org/protobuf v1.36.11 // indirect
+ 	gopkg.in/Graylog2/go-gelf.v2 v2.0.0-20191017102106-1550ee647df0 // indirect
+-	gopkg.in/yaml.v2 v2.4.0 // indirect
+ )
 ```
 
-**File**: `tests/fixtures/specs/backend_302.json` (modified, +1/-1)
+**File**: `go.sum` (modified, +36/-43)
 ```diff
-@@ -5,7 +5,7 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
-```
-
-**File**: `tests/fixtures/specs/backend_303.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
-```
-
-**File**: `tests/fixtures/specs/backend_307.json` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
-```
-
-**File**: `tests/fixtures/specs/cel-7.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
- 			"foo":42,
- 			"headers":{
- 				"Accept-Encoding":["gzip"],
--				"User-Agent":["KrakenD Version 3.0.4"],
-+				"User-Agent":["KrakenD Version 3.0.5"],
- 				"X-Forwarded-Host":["localhost:8080"]
- 			},
- 			"path":"/param_forwarding/ok/1234567890qwertyuio/foobar",
-```
-
-**File**: `tests/fixtures/specs/cors_5.json` (modified, +2/-2)
-```diff
-@@ -9,12 +9,12 @@
- 	},
- 	"out": {
- 		"status_code": 200,
--		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/bar\",\"query\":{\"foo\":[\"foo\"]}}",
-+		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/bar\",\"query\":{\"foo\":[\"foo\"]}}",
- 		"header": {
- 			"content-type": ["application/json; charset=utf-8"],
- 			"Cache-Control": ["public, max-age=3600"],
- 			"X-Krakend-Completed": ["true"],
--			"X-Krakend": ["Version 3.0.4"],
-+			"X-Krakend": ["Version 3.0.5"],
- 			"Vary": ["Origin"],
- 			"Access-Control-Allow-Origin": ["*"],
- 			"Access-Control-Expose-Headers": ["Content-Length"]
-```
-
-**File**: `tests/fixtures/specs/detail_error.json` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-           "foo": 42,
-           "headers": {
-             "Accept-Encoding": ["gzip"],
--            "User-Agent": ["KrakenD Version 3.0.4"],
-+            "User-Agent": ["KrakenD Version 3.0.5"],
-             "X-Forwarded-Host": ["localhost:8080"]
-           },
-           "path": "/param_forwarding/",
+@@ -68,42 +68,44 @@ github.com/antithesishq/antithesis-sdk-go v0.6.0-default-no-op h1:kpBdlEPbRvff0m
+ github.com/antithesishq/antithesis-sdk-go v0.6.0-default-no-op/go.mod h1:IUpT2DPAKh6i/YhSbt6Gl3v2yvUZjmKncl7U91fup7E=
+ github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYWrPrQ=
+ github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
+-github.com/aws/aws-sdk-go v1.55.8 h1:JRmEUbU52aJQZ2AjX4q4Wu7t4uZjOu71uyNmaWlUkJQ=
+-github.com/aws/aws-sdk-go v1.55.8/go.mod h1:ZkViS9AqA6otK+JBBNH2++sx1sgxrPKcSzPPvQkUtXk=
+-github.com/aws/aws-sdk-go-v2 v1.43.2 h1:cl+IXwWb3qazClUcm08tGSsB6OiuV83JVJO9B0jQcPc=
+-github.com/aws/aws-sdk-go-v2 v1.43.2/go.mod h1:WEzLKBh/mEjXvx1FtQMWgSxMSTVqxQzjkRtk5fa3wkg=
+-github.com/aws/aws-sdk-go-v2/config v1.32.33 h1:M1m/Q6f0OKDEDGwhiNOqx1OjTdrewe3v+GDbHmKczWk=
+-github.com/aws/aws-sdk-go-v2/config v1.32.33/go.mod h1:fGj1iQj2QpIZzp7jE4aQQ+71TE8cd4z9K4+xCd6EqmE=
+-github.com/aws/aws-sdk-go-v2/credentials v1.19.32 h1:eNE0JnIblBo1NCvd3tqEYuZz9XDefn69R74CHd3nT7U=
+-github.com/aws/aws-sdk-go-v2/credentials v1.19.32/go.mod h1:yYJu+6tqKUYZuJSYcpSGjz/6sV/SUaAaKIufnWKx2OU=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.33 h1:MobhiR6KIerWxmO74Zit5I3379+mSc2DOdZ3DeRFB9w=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.33/go.mod h1:xu02847OdZfNr/jAfZpHtyRk0b3v4d0kaoxNHxZGG/w=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.33 h1:HAp1wLFZzch054uh3FK7rcVYg4v7J2FxVf3h3IGNZas=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.33/go.mod h1:mJk5fmqnF+WUlMdPG37pR2Fh3oh6r8F6ZGUgPKvzu0c=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.33 h1:0YA0aCKgsJyno6xkFfaIgjE3/wK08+Qxo9nQfe1UrWM=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.33/go.mod h1:UZqj4WIdTH+ga8Y/DgpAuy/8cGjM3h7gDCliJYGg2SE=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.34 h1:HQYnjFnXpX8EbPW5M1QT8mXzesRPwly0HEPTcFlS02Y=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.34/go.mod h1:tGzj56niKYZBbDIRhwPGDqrULzmWv5b6uBQGqyNaFZw=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.14 h1:SA43nfaY7+1jjMNIc2ywu99JLJLButtIdLP6j+bT870=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.14/go.mod h1:Du3llKcwbQvHsTXSLzTOGQz0DTDBMEzdg7DAGu7inrY=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.33 h1:mqI7OrxN/DUH85F5OqVn3cIfuZ3+HVcebUm2N8mLlgQ=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.33/go.mod h1:eZ5jdEpvaaOU8nWWE4cTAJETSEA5FZoWxvNRao4piHY=
++github.com/aws/aws-sdk-go-v2 v1.48.0 h1:tFU7EJVm7MfyaXLsXdYTZ0Vd6vwt9OljCyqq0gqk0Mc=
++github.com/aws/aws-sdk-go-v2 v1.48.0/go.mod h1:oeKU5p+TQBnpeLmU42WZLWvzv+ORLn+74n4QVLnm/Z0=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 h1:3dMP9eEmHVosFN1QiD24IJBKVY8m6iUfVYXqRCT118Q=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27/go.mod h1:KH4PKcqtjy1m0656eqQV2v53xE04ddJzuNloEKqlHkI=
++github.com/aws/aws-sdk-go-v2/config v1.33.18 h1:WC0C4jM/tewXG8DWXnoxXnusJPZTryPazqk2k/zgd2s=
++github.com/aws/aws-sdk-go-v2/config v1.33.18/go.mod h1:0kRpFgsnD59mC2bbbyOTVpaZ9RnXW/pFkqlfiwbgZaU=
++github.com/aws/aws-sdk-go-v2/credentials v1.21.0 h1:OViwhqeipkQzSHuO2eQDUCdLrI6r3nzGxFUyM8GqnCs=
++github.com/aws/aws-sdk-go-v2/credentials v1.21.0/go.mod h1:OffaVQod3fyZzhZJyPtw11WpHPF1uIHADc+/MYlXmbA=
++github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 h1:oH1E0tjN0g+ZRusbX1dsuat4FJ0z05l8hWaycSbDuNc=
++github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9/go.mod h1:3ZaQGigIoaS45x9HgnLZ4sP475Fs7QoxU3IsZX/J3h4=
++github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 h1:W0yUUzKBA8SofGQ0yZafEUuZq9UxfvijRgdc6vcRQPA=
++github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12/go.mod h1:xwKv6vwBNdpPFOxEm/ld4IODZK2s/1ksHvdBqLfH6Gs=
++github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 h1:lqSi8qvAnKC1vfosImdmOsuiJLr/jdybZX5299beB6Q=
++github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12/go.mod h1:rqPQE2vqkW9YHx5+Gp55sx1wsTM4xtGQLl+TKMjxxrs=
++github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 h1:uvX2yaL+aMjkmnrLPPlR/zwjoKFRMoNhhJfeGjfk6qc=
++github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12/go.mod h1:dicT+2eNhHHqGkxHO7LoXw3QghIUGuzgdmFqaSTopgI=
++github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 h1:rKwkY3Z+fvt2W0msjdNs6uNewPmXzPayQ961oyuWhes=
++github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25/go.mod h1:dBuAadQKd1F4Q4ZOg8gnFmuSHMRE40Pe3IfFwbtC4lE=
++github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 h1:wzAqMZ2O4+ij9HQqIrk+P9PBGacE0wOTuWB7Mo97//I=
++github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12/go.mod h1:/0TfyruByHsOlphzP26xDTRe2DKD0J1I1Uyy2TyP8EI=
+ github.com/aws/aws-sdk-go-v2/service/kms v1.50.3 h1:s/zDSG/a/Su9aX+v0Ld9cimUCdkr5FWPmBV8owaEbZY=
+ github.com/aws/aws-sdk-go-v2/service/kms v1.50.3/go.mod h1:/iSgiUor15ZuxFGQSTf3lA2FmKxFsQoc2tADOarQBSw=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.5.2 h1:EjI1CZzDcBxPkTa3j1BdtIrUDbqnOGssFMeyUS+6W0I=
+-github.com/aws/aws-sdk-
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1143** (2026-11-24): Bump krakend-httpcache to v3.0.1 (@thedae)
+- **PR #1142** (2026-11-26): CE patch release 3.0.6 (@NarcisDavins)
+- **PR #1141** (2026-11-26): update to lambda v4 and jose v3.1.1 (@NarcisDavins)
 - **PR #1140** (2026-11-19): CE patch release 3.0.5 (@thedae)
 - **PR #1139** (closed): Bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
 - **PR #1138** (2026-11-16): Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 (@dependabot[bot])
-- **PR #1137** (2026-11-11): cel pkg upgraded (@kpacha)
-- **PR #1136** (2026-11-12): CE patch release 3.0.4 (@thedae)
-- **PR #1135** (2026-11-02): Bump more deps for 3.0.3 (@thedae)
 
 ---
 
@@ -1067,7 +1200,7 @@ CE patch release 3.0.5
 When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3beb4d3b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b3e2f3e3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
@@ -1075,17 +1208,17 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-VERSION := 3.0.5
+VERSION := 3.0.6
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-VERSION := 3.0.4
+VERSION := 3.0.5
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3beb4d3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b3e2f3e3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

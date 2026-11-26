@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:21:34.860Z",
+  "last_updated": "2026-11-26T16:31:10.995Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T13:08:31.535Z",
@@ -438,7 +438,7 @@
       "staged_for_review": 1
     },
     "unhappychoice-gitlogue-learnings.md": {
-      "processed_at": "2026-11-24T06:38:32.197Z",
+      "processed_at": "2026-11-26T16:31:01.247Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2098,7 +2098,7 @@
       "staged_for_review": 1
     },
     "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md": {
-      "processed_at": "2026-11-22T23:25:09.708Z",
+      "processed_at": "2026-11-26T16:31:03.100Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3263,7 +3263,7 @@
       "staged_for_review": 1
     },
     "dkhamsing-open-source-ios-apps-learnings.md": {
-      "processed_at": "2026-11-24T06:38:33.042Z",
+      "processed_at": "2026-11-26T16:31:03.771Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3983,7 +3983,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4578,
+  "total_dossiers_evaluated": 4581,
   "total_canonical_promoted": 564,
-  "total_staged_for_review": 3449
+  "total_staged_for_review": 3451
 }

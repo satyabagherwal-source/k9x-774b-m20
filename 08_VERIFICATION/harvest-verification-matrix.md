@@ -13462,3 +13462,8 @@
 | `CYCLE-20261126-EWJT` | `2026-11-26T16:21:13.673Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10722` | Yes (`7a13154c...`) |
 | `CYCLE-20261126-F10H` | `2026-11-26T16:21:19.457Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10723` | Yes (`4c8f1a44...`) |
 | `CYCLE-20261126-F6Z3` | `2026-11-26T16:21:27.183Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10724` | Yes (`ca044f09...`) |
+| `CYCLE-20261126-R3K3` | `2026-11-26T16:30:42.627Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`94fe316a...`) |
+| `CYCLE-20261126-R7G0` | `2026-11-26T16:30:47.664Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`35efb1e5...`) |
+| `CYCLE-20261126-R90E` | `2026-11-26T16:30:49.694Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3068` | Yes (`e84cfca1...`) |
+| `CYCLE-20261126-RBIL` | `2026-11-26T16:30:52.941Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9295` | Yes (`3f16d94c...`) |
+| `CYCLE-20261126-REVD` | `2026-11-26T16:30:57.289Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10725` | Yes (`9a4f0fbf...`) |

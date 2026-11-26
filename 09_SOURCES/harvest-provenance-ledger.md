@@ -13495,3 +13495,8 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `8f225c1f` | Multi-dimensional audit evidence | 2026-11-26T16:21:13.678Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `e9871f12` | Multi-dimensional audit evidence | 2026-11-26T16:21:19.462Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `b830b0cd` | Multi-dimensional audit evidence | 2026-11-26T16:21:27.188Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-26T16:30:42.633Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `0c11c147` | Multi-dimensional audit evidence | 2026-11-26T16:30:47.669Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `a701192d` | Multi-dimensional audit evidence | 2026-11-26T16:30:49.700Z |
+| `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `b3e2f3e3` | Multi-dimensional audit evidence | 2026-11-26T16:30:52.946Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `3aef432d` | Multi-dimensional audit evidence | 2026-11-26T16:30:57.295Z |

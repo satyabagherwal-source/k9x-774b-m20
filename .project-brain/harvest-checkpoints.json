@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T16:21:27.216Z",
+  "last_updated": "2026-11-26T16:30:57.324Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -770,14 +770,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "content_hash": "adf1ad4e0a5cdaa40084eb81a27152d63ab9da02eab74e611fc4f3ca7fb410d3",
-      "verified_at": "2026-11-22T23:24:57.679Z",
+      "content_hash": "94fe316a94829ae4bd2b9c8bd72bb9b7625477505ff141578e63c7dfe7c662d5",
+      "verified_at": "2026-11-26T16:30:42.654Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:24:57.679Z"
+      "last_updated": "2026-11-26T16:30:42.655Z"
     },
     "unsloth/Qwen3.8-27B-GGUF": {
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "93bec2770c031591bcbc0d09ebbf5d1e187c2419b2f3922db06fef5e391e895b",
-      "verified_at": "2026-11-24T06:38:25.060Z",
+      "content_hash": "e84cfca113d5d36d1256cbd01c3310dd8cc4f548b1a5f9623c119311388cd8b9",
+      "verified_at": "2026-11-26T16:30:49.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:38:25.060Z"
+      "last_updated": "2026-11-26T16:30:49.728Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "6df6245408101b4b49df8ed3ac4ff4cbb8dc3af02d0caf675ab5b179cbddfe5f",
-      "verified_at": "2026-11-24T06:38:20.225Z",
+      "content_hash": "35efb1e5d60e8b63b37924a93de6de748f36768d66366a3ab39839e58f9c3afc",
+      "verified_at": "2026-11-26T16:30:47.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T06:38:20.225Z"
+      "last_updated": "2026-11-26T16:30:47.695Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -6141,14 +6141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-krakend-krakend-ce",
-      "content_hash": "d1f2d02ea81de209641bc5580bc09beadc3dd367dcc257fdb2c51346eaa3d8bd",
-      "verified_at": "2026-11-19T23:43:27.182Z",
+      "content_hash": "3f16d94c86e0ba778b356cc89afe40765080931ed6075edcfebd813053271bfc",
+      "verified_at": "2026-11-26T16:30:52.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T23:43:27.182Z"
+      "last_updated": "2026-11-26T16:30:52.976Z"
     },
     "trailbaseio/trailbase": {
       "repository": "trailbaseio/trailbase",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "01c0a9fe45209fa914c55232b855ad7c4b1e97c8478137e07104b54fdd356ee9",
-      "verified_at": "2026-11-24T19:44:56.988Z",
+      "content_hash": "9a4f0fbf4d62786c12b3fe2cae1e1f5b158c2f5b8d7dbf65e76718920c0e3ce4",
+      "verified_at": "2026-11-26T16:30:57.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T19:44:56.988Z"
+      "last_updated": "2026-11-26T16:30:57.323Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",

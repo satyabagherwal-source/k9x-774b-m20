@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T16:21:34.631Z",
+  "last_updated": "2026-11-26T16:31:10.749Z",
   "total_verified_learnings": 9130,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26030,
+  "total_items": 26032,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -53280,13 +53280,13 @@
       "rule_number": 3068,
       "title": "[auto] [ci skip] Generate content",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "d7a14f21",
+      "source_version": "a701192d",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T12:19:41.253Z"
+      "verified_at": "2026-11-26T16:30:49.351Z"
     },
     "rule-3069": {
       "learning_id": "rule-3069",
@@ -114994,9 +114994,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dkhamsing-open-source-ios-apps-learnings",
       "repository": "dkhamsing-open-source-ios-apps-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb8e80bc6ed103f8ef1e78536f794206736750d4f1835d11ccf55a0561dbd99d",
+      "content_hash": "7c233d7037bcade5e461ba8c65c4a30475af29154bc1ca986aa35ef3cd0c9cc5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:38:35.689Z"
+      "persisted_at": "2026-11-26T16:31:10.749Z"
     },
     "candidate_directive-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change": {
       "item_id": "candidate_directive-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change",
@@ -213284,7 +213284,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "adf1ad4e0a5cdaa40084eb81a27152d63ab9da02eab74e611fc4f3ca7fb410d3",
+      "content_hash": "94fe316a94829ae4bd2b9c8bd72bb9b7625477505ff141578e63c7dfe7c662d5",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -213304,7 +213304,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:24:57.442Z",
+      "verified_at": "2026-11-26T16:30:42.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213321,9 +213321,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "148559fca2db933f02dc24cabc58bc8745c2fbd45bc7e7a26237efe292ad1668",
+      "content_hash": "0087153f558b0265bafa789d2dbd0a85e0099a7059fbe43f15a1e5a572922993",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:24:57.877Z"
+      "persisted_at": "2026-11-26T16:30:42.970Z"
     },
     "learn-github-nervjs-taro": {
       "learning_id": "learn-github-nervjs-taro",
@@ -213882,9 +213882,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "037cf43b325841a3433ad1844d8152761041be007d4dc7bd948b09c6f4a517e3",
+      "content_hash": "67795143e25be3f3406a8d9218dc71a5d898aacececafd242d3eba259aaff3a7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:25:09.922Z"
+      "persisted_at": "2026-11-26T16:31:03.438Z"
     },
     "candidate_directive-taro-components-advanced-avoid-updating-state-while-virtualwaterfall-virtualli": {
       "item_id": "candidate_directive-taro-components-advanced-avoid-updating-state-while-virtualwaterfall-virtualli",
@@ -216356,26 +216356,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "ecf5907c",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "0c11c147",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-26T07:10:27.767Z"
+      "verified_at": "2026-11-26T16:30:47.322Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QMOR-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RIOU-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ecf5907c",
-      "content_hash": "defc873a9edc29dadbd73d01a56d5f1101bb63f0d6f08910edfdb07304e328b3",
+      "repository": "unhappychoice-gitlogue-learnings",
+      "source_version": "HEAD",
+      "content_hash": "af7ba3196bde7e7fa4c7f7ea36083a19369bede5d81d997b1dead3aea13026da",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T07:10:28.447Z"
+      "persisted_at": "2026-11-26T16:31:02.246Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -245029,8 +245029,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "d6b4a0a3",
-      "content_hash": "01c0a9fe45209fa914c55232b855ad7c4b1e97c8478137e07104b54fdd356ee9",
+      "source_version": "3aef432d",
+      "content_hash": "9a4f0fbf4d62786c12b3fe2cae1e1f5b158c2f5b8d7dbf65e76718920c0e3ce4",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -245068,6 +245068,11 @@
           "number": 10350,
           "title": "PageSearchClient and PageExtractClient give their PageIndexClient as .documents,",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10725,
+          "title": "docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245075,7 +245080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:44:56.705Z",
+      "verified_at": "2026-11-26T16:30:56.949Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245129,10 +245134,10 @@
       "relative_path": "08_VERIFICATION/vectifyai-pageindex-verification-protocol-empirical-defect-shield-for-vectifyai-.md",
       "title": "Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "d6b4a0a3",
-      "content_hash": "595585c6645a3bf8abe5055e76a147925aeb9bb17dbebd357d1d0f02cdd26ffe",
+      "source_version": "3aef432d",
+      "content_hash": "1d50ded1c9f7aff9101f899ae7c2eebd607a6ab667068bfeb16a334ef8b238df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:44:57.659Z"
+      "persisted_at": "2026-11-26T16:30:58.214Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
@@ -261192,10 +261197,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-content-information-intelligence-vectifyai-pageindex-core-in.md",
       "title": "Content & Information Intelligence: VectifyAI/PageIndex Core Invariants",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "add6b17c",
-      "content_hash": "2d457d9231bbb24fc4badf71d004dcc201486c1ce488a27bf84d6a0318388270",
+      "source_version": "3aef432d",
+      "content_hash": "a798fec8dccec15e436ed5c994022892d96f260215174533728ad0e445de4bf2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T21:49:08.636Z"
+      "persisted_at": "2026-11-26T16:30:57.934Z"
     },
     "rule-8745": {
       "learning_id": "rule-8745",
@@ -272143,8 +272148,8 @@
       "slug": "krakend-krakend-ce",
       "platform": "github",
       "source_url": "https://github.com/krakend/krakend-ce",
-      "source_version": "3beb4d3b",
-      "content_hash": "d1f2d02ea81de209641bc5580bc09beadc3dd367dcc257fdb2c51346eaa3d8bd",
+      "source_version": "b3e2f3e3",
+      "content_hash": "3f16d94c86e0ba778b356cc89afe40765080931ed6075edcfebd813053271bfc",
       "dossier_path": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "promoted_rules": [
@@ -272164,7 +272169,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T23:43:26.900Z",
+      "verified_at": "2026-11-26T16:30:52.598Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272206,10 +272211,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-krakend-krakend-ce-architecture-intelligence-krakend-krakend-ce-core-invariants.md",
       "title": "Architecture Intelligence: krakend/krakend-ce Core Invariants",
       "repository": "krakend/krakend-ce",
-      "source_version": "3beb4d3b",
-      "content_hash": "03f6ee3eec459e870bacc12bf996e787fb808de7576a0c1f628d5f84b0dc2bee",
+      "source_version": "b3e2f3e3",
+      "content_hash": "e7b95637ee6fa4c8a7b1b098ef4db61c14b606b621383076573d7d8addf2ac54",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T23:43:27.680Z"
+      "persisted_at": "2026-11-26T16:30:53.599Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-krakend-krakend-ce": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-krakend-krakend-ce",
@@ -272218,10 +272223,10 @@
       "relative_path": "08_VERIFICATION/krakend-krakend-ce-verification-protocol-empirical-defect-shield-for-krakend-kra.md",
       "title": "Verification Protocol: Empirical Defect Shield for krakend/krakend-ce",
       "repository": "krakend/krakend-ce",
-      "source_version": "3beb4d3b",
-      "content_hash": "598ddf94b1f48f19c88904f0ce878b4bb0bb01c7bf10f7a62389359750783cbb",
+      "source_version": "b3e2f3e3",
+      "content_hash": "350ce47f91130ee6917d65df77767d2820a5ce842ecb2165ccb50cfeb0fcf5de",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T23:43:27.885Z"
+      "persisted_at": "2026-11-26T16:30:53.899Z"
     },
     "rule-8880": {
       "learning_id": "rule-8880",
@@ -275196,8 +275201,8 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "18d19e32",
-      "content_hash": "93bec2770c031591bcbc0d09ebbf5d1e187c2419b2f3922db06fef5e391e895b",
+      "source_version": "a701192d",
+      "content_hash": "e84cfca113d5d36d1256cbd01c3310dd8cc4f548b1a5f9623c119311388cd8b9",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
@@ -275227,7 +275232,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:38:24.842Z",
+      "verified_at": "2026-11-26T16:30:49.351Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275281,10 +275286,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dkhamsing-open-source-ios-apps-content-information-intelligence-dkhamsing-open-s.md",
       "title": "Content & Information Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
       "repository": "dkhamsing/open-source-ios-apps",
-      "source_version": "d7a14f21",
-      "content_hash": "6519a7b69d863bf946e29648cd716d42ab91ca34125d022d290adac6c3929a78",
+      "source_version": "a701192d",
+      "content_hash": "865ad7ef617a99043a9eeddc8bb050a7f7db0f2d3fc7fd12ebe9101c294e8454",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T12:19:42.026Z"
+      "persisted_at": "2026-11-26T16:30:50.340Z"
     },
     "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants",
@@ -275330,9 +275335,9 @@
       "title": "Content & Information Intelligence: dkhamsing-open-source-ios-apps-learnings Core Invariants",
       "repository": "dkhamsing-open-source-ios-apps-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e4c965b84181ffe6344c1ba8b45ccf1d43e39071dff34b2b4e699fda3803133",
+      "content_hash": "dcfcb756e452fb2b652fbe1e99f8823e11d9566e5bcf031f65a4c62ba56b59a2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T12:19:54.272Z"
+      "persisted_at": "2026-11-26T16:31:10.454Z"
     },
     "agent_contract-agent-contract-hashicorp-terraform-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-hashicorp-terraform-learnings-autonomous-specialist-persona",
@@ -288555,8 +288560,8 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "c680657b",
-      "content_hash": "6df6245408101b4b49df8ed3ac4ff4cbb8dc3af02d0caf675ab5b179cbddfe5f",
+      "source_version": "0c11c147",
+      "content_hash": "35efb1e5d60e8b63b37924a93de6de748f36768d66366a3ab39839e58f9c3afc",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
@@ -288571,7 +288576,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T06:38:19.998Z",
+      "verified_at": "2026-11-26T16:30:47.322Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -288587,10 +288592,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-design-intelligence-unhappychoice-gitlogue-core-invariant.md",
       "title": "Design Intelligence: unhappychoice/gitlogue Core Invariants",
       "repository": "unhappychoice/gitlogue",
-      "source_version": "c680657b",
-      "content_hash": "1be9a2aa74f0525e1c43ccbfaa19daba6ccfdf578a65863ac525489a38f8ed54",
+      "source_version": "0c11c147",
+      "content_hash": "bee13c138fe77a62d23daff389be9c6ff2d4faf0e02ec9785eefb5c2ba96b343",
       "domain_letter": "F",
-      "persisted_at": "2026-11-24T06:38:20.609Z"
+      "persisted_at": "2026-11-26T16:30:48.321Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue",
@@ -288599,10 +288604,10 @@
       "relative_path": "08_VERIFICATION/unhappychoice-gitlogue-verification-protocol-empirical-defect-shield-for-unhappy.md",
       "title": "Verification Protocol: Empirical Defect Shield for unhappychoice/gitlogue",
       "repository": "unhappychoice/gitlogue",
-      "source_version": "c680657b",
-      "content_hash": "ebdcbf012e1979a9673c43c2a239b66927e0cd5c8106898e97e85ed257157fa0",
+      "source_version": "0c11c147",
+      "content_hash": "cd4c3c2e7df59513e3b3cd37a55c3c9855a2d042da02755b3c37ace8cd941dad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:38:20.764Z"
+      "persisted_at": "2026-11-26T16:30:48.603Z"
     },
     "rule-9126": {
       "learning_id": "rule-9126",
@@ -288664,9 +288669,9 @@
       "title": "Design Intelligence: unhappychoice-gitlogue-learnings Core Invariants",
       "repository": "unhappychoice-gitlogue-learnings",
       "source_version": "HEAD",
-      "content_hash": "685b7d00601a750f38a91530a40c4d948726677be75496f9b97bc6f3dda4ff2c",
+      "content_hash": "fab189ad5e353ec8c2362524b90214abab36bcaa12be107460b46dbae2bfeef1",
       "domain_letter": "F",
-      "persisted_at": "2026-11-24T06:38:32.726Z"
+      "persisted_at": "2026-11-26T16:31:02.542Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue-learnin",
@@ -288676,9 +288681,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for unhappychoice-gitlogue-learnings",
       "repository": "unhappychoice-gitlogue-learnings",
       "source_version": "HEAD",
-      "content_hash": "45cdfe0a1b98d4bfdba9d79c6a71915854ce3c166e0a63cc1626b6dfa745bcbd",
+      "content_hash": "3b4646b0b37fef44bea9e74455cf337ac4ec298ff078be14149f3a3c6f9a8471",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T06:38:32.895Z"
+      "persisted_at": "2026-11-26T16:31:02.826Z"
     },
     "learn-huggingface-efficient-large-model-open-h3-regenerate-2k": {
       "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
@@ -296969,26 +296974,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9295,
       "title": "Empirical Invariant Guard in Makefile",
-      "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "e4cf2bb0",
+      "source_url": "https://github.com/krakend/krakend-ce",
+      "source_version": "b3e2f3e3",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T04:58:10.178Z"
+      "verified_at": "2026-11-26T16:30:52.598Z"
     },
     "candidate_directive-empirical-invariant-guard-in-makefile": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-makefile",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DGYY-empirical-invariant-guard-in-makefile.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RBSS-empirical-invariant-guard-in-makefile.md",
       "title": "Empirical Invariant Guard in Makefile",
-      "repository": "etcd-io-etcd-learnings",
-      "source_version": "HEAD",
-      "content_hash": "cb553b9f29f85b5160bc2914a46c3075a1000d21ca61c70629a7bae910b475c7",
+      "repository": "krakend/krakend-ce",
+      "source_version": "b3e2f3e3",
+      "content_hash": "f91654fc208eebf6b59b179c851d907c119ad8e95440b016895c9134b83e0350",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T04:58:14.699Z"
+      "persisted_at": "2026-11-26T16:30:53.309Z"
     },
     "rule-9296": {
       "learning_id": "rule-9296",
@@ -317983,13 +317988,13 @@
       "item_id": "candidate_directive-auto-ci-skip-generate-content",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-LAOF-auto-ci-skip-generate-content.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ROSU-auto-ci-skip-generate-content.md",
       "title": "[auto] [ci skip] Generate content",
       "repository": "dkhamsing-open-source-ios-apps-learnings",
       "source_version": "HEAD",
-      "content_hash": "05a23686e8d9d93e361d9d097a6725e2c77938cd9038303a1de5fd840e1042f9",
+      "content_hash": "f7212ad51d2c3668833c541e6d42cb5ba6a2723cbef83b9b16602c720f82f4c2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T12:19:54.063Z"
+      "persisted_at": "2026-11-26T16:31:10.165Z"
     },
     "rule-9777": {
       "learning_id": "rule-9777",
@@ -356795,6 +356800,32 @@
       "content_hash": "ebf25080754571b03bfb42c3730389d186104cf6156b3d69dc6c63d6880484a2",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T16:21:31.908Z"
+    },
+    "rule-10725": {
+      "learning_id": "rule-10725",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10725,
+      "title": "docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "3aef432d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T16:30:56.949Z"
+    },
+    "candidate_directive-docs-extract-pageextractclient-extract-names-the-tiers-it-takes-max-0-10": {
+      "item_id": "candidate_directive-docs-extract-pageextractclient-extract-names-the-tiers-it-takes-max-0-10",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RF5A-docs-extract-pageextractclient-extract-names-the-tiers-it-takes-max-0-10.md",
+      "title": "docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10",
+      "repository": "VectifyAI/PageIndex",
+      "source_version": "3aef432d",
+      "content_hash": "7e55632353b900cef6daa2a16e9304e282b2082893fcd3827ca3029af1215786",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T16:30:57.648Z"
     }
   },
   "ai-builder-brain": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T16:21:34.364Z",
+  "last_updated": "2026-11-26T16:31:10.454Z",
   "total_records": 2762,
   "domains": {
     "A": {
@@ -10584,8 +10584,8 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-research-knowledge-intelligence-i.md",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "content_hash": "148559fca2db933f02dc24cabc58bc8745c2fbd45bc7e7a26237efe292ad1668",
-      "created_at": "2026-11-22T23:24:57.877Z"
+      "content_hash": "0087153f558b0265bafa789d2dbd0a85e0099a7059fbe43f15a1e5a572922993",
+      "created_at": "2026-11-26T16:30:42.970Z"
     },
     "domain_intelligence-technical-construction-intelligence-nervjs-taro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nervjs-taro-core-invariants",
@@ -10671,8 +10671,8 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-learnings-research-knowledge-inte.md",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
-      "content_hash": "037cf43b325841a3433ad1844d8152761041be007d4dc7bd948b09c6f4a517e3",
-      "created_at": "2026-11-22T23:25:09.922Z"
+      "content_hash": "67795143e25be3f3406a8d9218dc71a5d898aacececafd242d3eba259aaff3a7",
+      "created_at": "2026-11-26T16:31:03.438Z"
     },
     "domain_intelligence-technical-construction-intelligence-nervjs-taro-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nervjs-taro-learnings-core-invariants",
@@ -24569,8 +24569,8 @@
       "title": "Content & Information Intelligence: VectifyAI/PageIndex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-content-information-intelligence-vectifyai-pageindex-core-in.md",
       "repository": "VectifyAI/PageIndex",
-      "content_hash": "2d457d9231bbb24fc4badf71d004dcc201486c1ce488a27bf84d6a0318388270",
-      "created_at": "2026-11-21T21:49:08.636Z"
+      "content_hash": "a798fec8dccec15e436ed5c994022892d96f260215174533728ad0e445de4bf2",
+      "created_at": "2026-11-26T16:30:57.934Z"
     },
     "DOM-D-3870AF12": {
       "record_id": "DOM-D-3870AF12",
@@ -26627,8 +26627,8 @@
       "title": "Architecture Intelligence: krakend/krakend-ce Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-krakend-krakend-ce-architecture-intelligence-krakend-krakend-ce-core-invariants.md",
       "repository": "krakend/krakend-ce",
-      "content_hash": "03f6ee3eec459e870bacc12bf996e787fb808de7576a0c1f628d5f84b0dc2bee",
-      "created_at": "2026-11-19T23:43:27.680Z"
+      "content_hash": "e7b95637ee6fa4c8a7b1b098ef4db61c14b606b621383076573d7d8addf2ac54",
+      "created_at": "2026-11-26T16:30:53.599Z"
     },
     "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants",
@@ -27121,8 +27121,8 @@
       "title": "Content & Information Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dkhamsing-open-source-ios-apps-content-information-intelligence-dkhamsing-open-s.md",
       "repository": "dkhamsing/open-source-ios-apps",
-      "content_hash": "6519a7b69d863bf946e29648cd716d42ab91ca34125d022d290adac6c3929a78",
-      "created_at": "2026-11-21T12:19:42.026Z"
+      "content_hash": "865ad7ef617a99043a9eeddc8bb050a7f7db0f2d3fc7fd12ebe9101c294e8454",
+      "created_at": "2026-11-26T16:30:50.340Z"
     },
     "DOM-K-8B2A4B0A": {
       "record_id": "DOM-K-8B2A4B0A",
@@ -27207,8 +27207,8 @@
       "title": "Content & Information Intelligence: dkhamsing-open-source-ios-apps-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dkhamsing-open-source-ios-apps-learnings-content-information-intelligence-dkhams.md",
       "repository": "dkhamsing-open-source-ios-apps-learnings",
-      "content_hash": "9e4c965b84181ffe6344c1ba8b45ccf1d43e39071dff34b2b4e699fda3803133",
-      "created_at": "2026-11-21T12:19:54.272Z"
+      "content_hash": "dcfcb756e452fb2b652fbe1e99f8823e11d9566e5bcf031f65a4c62ba56b59a2",
+      "created_at": "2026-11-26T16:31:10.454Z"
     },
     "DOM-K-93409B61": {
       "record_id": "DOM-K-93409B61",
@@ -30459,8 +30459,8 @@
       "title": "Design Intelligence: unhappychoice/gitlogue Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-design-intelligence-unhappychoice-gitlogue-core-invariant.md",
       "repository": "unhappychoice/gitlogue",
-      "content_hash": "1be9a2aa74f0525e1c43ccbfaa19daba6ccfdf578a65863ac525489a38f8ed54",
-      "created_at": "2026-11-24T06:38:20.609Z"
+      "content_hash": "bee13c138fe77a62d23daff389be9c6ff2d4faf0e02ec9785eefb5c2ba96b343",
+      "created_at": "2026-11-26T16:30:48.321Z"
     },
     "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants",
@@ -30468,8 +30468,8 @@
       "title": "Design Intelligence: unhappychoice-gitlogue-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-learnings-design-intelligence-unhappychoice-gitlogue-lear.md",
       "repository": "unhappychoice-gitlogue-learnings",
-      "content_hash": "685b7d00601a750f38a91530a40c4d948726677be75496f9b97bc6f3dda4ff2c",
-      "created_at": "2026-11-24T06:38:32.726Z"
+      "content_hash": "fab189ad5e353ec8c2362524b90214abab36bcaa12be107460b46dbae2bfeef1",
+      "created_at": "2026-11-26T16:31:02.542Z"
     },
     "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants",

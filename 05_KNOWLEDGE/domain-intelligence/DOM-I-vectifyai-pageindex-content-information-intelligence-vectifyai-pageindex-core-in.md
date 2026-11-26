@@ -4,24 +4,24 @@
 {
   "source_repository": "VectifyAI/PageIndex",
   "source_url": "https://github.com/VectifyAI/PageIndex",
-  "source_version": "add6b17c",
+  "source_version": "3aef432d",
   "license": "MIT",
-  "timestamp": "2026-11-21T21:49:08.462Z",
+  "timestamp": "2026-11-26T16:30:57.647Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vectifyai-pageindex",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `add6b17c`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T21:49:08.462Z`  
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `3aef432d`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T16:30:57.647Z`  
 > **Learning ID**: `learn-github-vectifyai-pageindex`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), C (Market & Business Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from VectifyAI/PageIndex:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:49:07.103Z  
+> **Harvest Timestamp**: 2026-11-26T16:30:55.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40684 stars
+- **Stars / Engagement**: 40795 stars
 
 ---
 
@@ -1397,13 +1397,13 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #696** (2026-11-21): **docs(cookbook): the citations notebook asks with cite_with_boxes and resolves with resolve_citations(), as the docs do**
-  *Symptoms*: The citations notebook still taught block citations, which the docs no longer describe. It now runs the [citations cookbook](https://pageindex.ai/docs/cookbook/citations) step by step, so the Colab link on that page opens the same code.  ## Changes  - **Ask.** `chat(..., citations="cite_with_boxes")` in one call, in place of `citations=True` with a streamed Responses call. - **Resolve.** `resolve_citations()` in place of `get_citations()`, as the [Chat page](https://pageindex.ai/docs/sdk/chat#citations) teaches. - **Highlight.** `highlight_region(..., scale=1)` draws the citation's `box`, in fractions of the page, in place of a block's `bbox`. - **Model.** `gpt-6.2-sol`, as on the page. - **Cost section removed.** The page has none, and its prices were for gpt-5.6.  The website page changes with it: VectifyAI/homepage#186.  ## Verification  - Ran the whole notebook with pageindex 0.7.4 from PyPI in a clean Python 3.12 environment and a real OpenAI key. The answer cites page 51 with a box, `resolve_citations()` returns its `doc_id`, page and box, and the highlight frames the Revenue row of the income statement. - The pip cell was skipped, since that environment already had the packages, so it has no output. - The five code cells match the five code blocks on the website page character for character. 
+- **Issue #698** (2026-11-26): **docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10 a page) included**
+  *Symptoms*: ## What changes  The Extract API has taken `tier="max"` since compute v0.30.4. `extract()` already passes any `tier` string through, so `tier="max"` works today; only its docstring said `"standard" (default) or "pro"`. It now names the three tiers and their prices.  Docs: VectifyAI/homepage#191. JavaScript SDK: VectifyAI/pageindex-js-sdk#12.  ## Test plan  Docstring only: no test.
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"5051436b0d933e2b0f4f006d1edd65263ca8ae24","mergeGateEnabled":false,"pullRequestNumber":696,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T09:07:54.958463Z">2026-11-21T09:07:54.958463Z</relative-time> | `5051436` | PR opened | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"5cb02b1d50bf7565f2bedd9936d8e2f9dd8113a9","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"5cb02b1d50bf7565f2bedd9936d8e2f9dd8113a9","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"5cb02b1d50bf7565f2bedd9936d8e2f9dd8113a9","mergeGateEnabled":false,"pullRequestNumber":698,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-26T07:59:45.531231Z">2026-11-26T07:59:45.531231Z</relative-time> | `5cb02b1` | PR opened | | 🔒
 
-- **Issue #695** (2026-11-21): **docs(readme): lead with the November launches and OCR-free Cloud, sho…**
-  *Symptoms*: …w a boxed citation, and move Cloud after Quickstart  Updates open with PageIndex Agent, Page Extract API and the Do We Still Need OCR? post; the Flash and File System entries go, as do the cookbook links. Local indexing is described without the Flash name. PageIndex Cloud now sits after Quickstart, says it reads pages with no OCR step, and shows citations="cite_with_boxes" on AMD's 2025 10-K with the highlighted page.
+- **Issue #697** (2026-11-24): **feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning**
+  *Symptoms*: ## Summary  `PageSearchClient` and `PageExtractClient` expose their `PageIndexClient` as `client.documents`. Docs now read `client.documents.page_image(doc_id, 5)` and `client.documents.create_collection(...)` instead of `client.pageindex...`, whose name said nothing about what it is for. `documents` is also what the old `pageindex-search` / `pageindex-extract` SDKs called this namespace.  `client.pageindex` keeps working: it returns the same object and raises a `DeprecationWarning` saying it will be removed in a future release.  ## Test plan  - [x] `pytest tests/test_client.py -k "own_older_key or cloud_only"`: key resolution reads `.documents`, and `.pageindex` warns and returns the same object as `.documents`, for both clients (8 passed)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1420,79 +1420,30 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76ce6ae8` (2026-11-21)
-**Commit Message**: docs(readme): lead with the November launches and OCR-free Cloud, show a boxed citation, and move Cloud after Quickstart
+### Incident Patch 1: `3aef432d` (2026-11-26)
+**Commit Message**: docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10 a page) included (#698)
 
-Updates open with PageIndex Agent, Page Extract API and the Do We Still Need OCR? post; the Flash
-and File System entries go, as do the cookbook links. Local indexing is described without the Flash
-name. PageIndex Cloud now sits after Quickstart, says it reads pages with no OCR step, and shows
-citations="cite_with_boxes" on AMD's 2025 10-K with the highlighted page.
-
-**File**: `README.md` (modified, +71/-59)
+**File**: `pageindex/page_extract.py` (modified, +2/-1)
 ```diff
-@@ -30,10 +30,11 @@
- <details open>
- <summary><h2>Updates</h2></summary>
- 
--- [Oct '26] 🔥 [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
-+- [Nov '26] 🔥 [**PageIndex Agent**](https://pageindex.ai/blog/pageindex-agent): vectorless, OCR-free, multimodal RAG for complex documents, with line-level citations for every answer.
-+- [Nov '26] 🔥 [**Page Extract API**](https://pageindex.ai/blog/page-extract-api): describe the fields you want in a JSON Schema and get them back from any PDF. *#1 on ExtractBench*, and its standard tier beats every other method at $0.03 a page.
-+- [Nov '26] [**Do We Still Need OCR?**](https://pageindex.ai/blog/do-we-need-ocr): we removed OCR from every PageIndex product. Reading the original pages raised accuracy and lowered cost.
-+- [Oct '26] [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
- - [Aug '26] [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
--- [Aug '26] ⚡ [**PageIndex Flash**](#step-2-index-your-documents): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
--- [Scale PageIndex to Millions of Documents](https://pageindex.ai/docs/documents/folders): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
- - [PageIndex App](https://app.pageindex.ai): a human-like document analysis agent for long professional documents.<!-- Also available via [MCP](https://pageindex.ai/developer) or [API](https://pageindex.ai/developer). -->
- 
- </details>
-@@ -105,7 +106,70 @@ print(answer)
- - **`index=`: a basic model is sufficient.** The tree structure itself is extracted from the document layout without an LLM; the index model only summarizes and refines it, which a basic model does well.
- - **`chat=`: use the best model you can afford.** The chat model searches the tree to retrieve information. See [Query cost and accuracy](#query-cost-and-accuracy).
- 
--**Have a Claude subscription?** PageIndex can use your subscription to call Claude models through Claude Code: usage is covered by your plan, no API key needed. Install with `pip install -U "pageindex[claude]"`, then prefix model names with `claude-code/`, e.g., `index="claude-code/haiku"`, `chat="claude-code/opus"` (see [example](https://github.com/VectifyAI/PageIndex/blob/main/cookbook/pageindex-claude-subscription.py)).
-+**Have a Claude subscription?** PageIndex can use your subscription to call Claude models through Claude Code: usage is covered by your plan, no API key needed. Install with `pip install -U "pageindex[claude]"`, then prefix model names with `claude-code/`, e.g., `index="claude-code/haiku"`, `chat="claude-code/opus"`.
-+
-+# PageIndex Cloud
-+
-+The open-source version is ideal for text-heavy PDFs and local workflows. With **PageIndex Cloud, document indexing and storage run in the cloud**: PageIndex reads every page visually, with no OCR step ([why](https://pageindex.ai/blog/do-we-need-ocr)), builds the tree index, and stores it for you. The chat and retrieval layer remains **compatible with your model**, so you can search the cloud-hosted index using the model provider your application already uses.
-+
-+Moving indexing and storage from Local to Cloud only requires a [PageIndex API key](https://developer.pageindex.ai/):
-+
-+```python
-+import os
-+from pageindex import PageIndexClient
-+
-+os.environ["PAGEINDEX_API_KEY"] = "your-pageindex-key"
-+os.environ["OPENAI_API_KEY"] = "your-openai-key"
-+
-+client = PageIndexClient(
-+    index="cloud",                       # build and store the index in PageIndex Cloud
-+    chat="gpt-6.2-sol",                  # use your preferred compatible model for chat
-+)
-+doc_id = client.submit_document("report.pdf", wait=True)["doc_id"]
-+print(client.chat("What was the 2023 operating margin?", doc_id=doc_id))
-+```
-+
-+### Citations you can see
-+
-+On Cloud, `citations="cite_with_boxes"` cites each claim with its page and a box around the evidence on that page, so you can show the reader exactly where the answer came from. On AMD's 2025 Form 10-K:
-+
-+```python
-+answer = client.chat("What was total net revenue in fiscal 2025?", doc_id=doc_id, citations="cite_with_boxes")
-+print(answer)
-+```
-+
-+```text
-+AMD’s total net revenue was **$34.639 billion in fiscal 2025**, up **$8.854 billion (34%)** from **$25.785 bi
+@@ -74,7 +74,8 @@ def extract(
+                 ``wait=False`` raises PageIndexAPIError (HTTP 409).
+             schema (dict | type): A JSON Schema whose top is an object or an
+                 array, or a Pydantic model class.
+-            tier (str): "standard" (default) or "pro".
++            tier (str): "standard" (default, $0.03 a page), "pro" ($0.05)
++                or "max" ($0.10, the most accurate).
+             pages (str | int | tuple, optional): Extract from these pages
+                 only: "3-9", (3, 9) or 3. The extraction is charged for them
+                 alone.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #698** (2026-11-26): docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10 a page) included (@rejojer)
+- **PR #697** (2026-11-24): feat: PageSearchClient and PageExtractClient give their PageIndexClient as .documents, and .pageindex still works with a DeprecationWarning (@rejojer)
 - **PR #696** (2026-11-21): docs(cookbook): the citations notebook asks with cite_with_boxes and resolves with resolve_citations(), as the docs do (@rejojer)
 - **PR #695** (2026-11-21): docs(readme): lead with the November launches and OCR-free Cloud, sho… (@zmtomorrow)
 - **PR #694** (2026-11-20): docs(readme): usage guide fold titles and group labels end with a colon, and streaming comes before citations (@rejojer)
 - **PR #693** (2026-11-20): docs(readme): a self-contained local usage guide, since the docs site now covers only the cloud (@rejojer)
-- **PR #692** (2026-11-19): feat: PageIndexClient.collection_context() gives the collection targeting text for an agent you run yourself (@rejojer)
-- **PR #691** (2026-11-19): fix: extract(file) uploads the file again when the stored document it waited for is deleted, and its docstrings say only a completed job is charged (@rejojer)
 
 ---
 
@@ -1512,38 +1463,32 @@ citations="cite_with_boxes" on AMD's 2025 10-K with the highlighted page.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c
+## X. docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10 
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/page_extract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76ce6ae8`: docs(readme): lead with the November launches and OCR-free Cloud, show a boxed citation, and move Cloud after Quickstart. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3aef432d`: docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10 a page) included. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/page_extract.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- [Nov '26] 🔥 [**PageIndex Agent**](https://pageindex.ai/blog/pageindex-agent): vectorless, OCR-free, multimodal RAG for complex documents, with line-level citations for every answer.
-- [Nov '26] 🔥 [**Page Extract API**](https://pageindex.ai/blog/page-extract-api): describe the fields you want in a JSON Schema and get them back from any PDF. *#1 on ExtractBench*, and its standard tier beats every other method at $0.03 a page.
-- [Nov '26] [**Do We Still Need OCR?**](https://pageindex.ai/blog/do-we-need-ocr): we removed OCR from every PageIndex product. Reading the original pages raised accuracy and lowered cost.
-- [Oct '26] [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
-**Have a Claude subscription?** PageIndex can use your subscription to call Claude models through Claude Code: usage is covered by your plan, no API key needed. Install with `pip install -U "pageindex[claude]"`, then prefix model names with `claude-code/`, e.g.
+            tier (str): "standard" (default, $0.03 a page), "pro" ($0.05)
+                or "max" ($0.10, the most accurate).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-- [Oct '26] 🔥 [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
-- [Aug '26] ⚡ [**PageIndex Flash**](#step-2-index-your-documents): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
-- [Scale PageIndex to Millions of Documents](https://pageindex.ai/docs/documents/folders): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
-**Have a Claude subscription?** PageIndex can use your subscription to call Claude models through Claude Code: usage is covered by your plan, no API key needed. Install with `pip install -U "pageindex[claude]"`, then prefix model names with `claude-code/`, e.g., `index="claude-code/haiku"`, `chat="claude-code/opus"` (see [example](https://github.com/VectifyAI/PageIndex/blob/main/cookbook/pageindex-claude-subscription.py)).
+            tier (str): "standard" (default) or "pro".
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76ce6ae8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3aef432d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

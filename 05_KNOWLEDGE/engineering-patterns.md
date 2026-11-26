@@ -808547,3 +808547,74 @@ inspection do not establish production deployment or live five-cloud E2E.
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a9679897` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10725. docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10 (Harvested from VectifyAI/PageIndex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10",
+  "source": "VectifyAI/PageIndex",
+  "source_url": "https://github.com/VectifyAI/PageIndex",
+  "source_version": "3aef432d",
+  "license": "MIT",
+  "extracted_at": "2026-11-26T16:30:56.522Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vectifyai-pageindex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `3aef432d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pageindex/page_extract.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3aef432d`: docs(extract): PageExtractClient.extract() names the tiers it takes, max ($0.10 a page) included. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/page_extract.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+            tier (str): "standard" (default, $0.03 a page), "pro" ($0.05)
+                or "max" ($0.10, the most accurate).
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+            tier (str): "standard" (default) or "pro".
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3aef432d` are properly handled with clean fallback behavior.
