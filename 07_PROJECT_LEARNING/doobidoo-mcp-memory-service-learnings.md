@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `02f525cb`  
+> **Source Version**: `91fdde93`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T04:13:34.957Z  
+> **Timestamp**: 2026-11-26T23:00:01.263Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T04:13:34.951Z  
+> **Harvest Timestamp**: 2026-11-26T23:00:01.256Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2155 stars
+- **Stars / Engagement**: 2157 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2136** (2026-11-26): **Milvus: a purge between the two count reads reports tombstones as live memories**
+  *Symptoms*: Greptile raised this on #2133 after the merge: https://github.com/doobidoo/mcp-memory-service/pull/2133#discussion_r4702553083. It is right, and the code is on `main` as of 02f525cb.  ## What happens  `count_all_memories()`, `count_memories_by_tag()` and both figures in `get_stats()` compute a live total as  ``` count(*) over the filter  -  tombstones found by a later scan ```  These are two separate reads. If `purge_deleted()` removes the tombstones between them, the first number still contains them and the second no longer finds them, so deleted rows are reported as live. Two tombstones and no live row give a total of 2 next to an empty listing.  The window is small and the next call is correct again, but `memory_list` shows this total next to a page, and the entity rebuild compares it against `get_all_memories_with_store()`.  ## Reproduction  Against Milvus Lite: store two memories, tombstone both, then run `purge_deleted()` between the count's two reads (a wrapper around `_drain_rows` is enough). `count_all_memories()` returns 2, the listing is empty.  ## Fix  Do not subtract. Count the rows whose metadata never mentions `deleted_at` with `count(*)`, and add the rows that mention it and are live anyway (`"deleted_at": null`) from the narrowed scan. Neither read counts a tombstone, so a purge between them cannot inflate the total, and the count stays a `count(*)` instead of a full scan. 
+
 - **Issue #2100** (2026-11-20): **POST /api/server/update ignores MCP_UPDATE_GIT_REMOTE/BRANCH and takes no backup**
   *Symptoms*: ## What is wrong  `POST /api/server/update` (the "Update" button in the dashboard) does two things an operator would not expect. Both are in `src/mcp_memory_service/web/api/server.py`, line numbers on `main` today.  1. **It ignores the configured remote and branch.** `check_for_updates()` reads `MCP_UPDATE_GIT_REMOTE` and `MCP_UPDATE_GIT_BRANCH` (lines 318-319, documented in `.env.example`), so "update available" is computed against, say, `upstream/stable`. `update_server()` then runs a hardcoded `git pull origin main` (line 481). An install that set those variables is told about one branch and updated from another. 2. **It changes the checkout without a backup.** The update pulls, reinstalls and restarts. A new release can migrate the database on that restart, and nothing was saved before it. The backup service that `POST /api/backup/now` uses is right there.  Found while writing #2098, which left this endpoint alone on purpose.  ## Scope (settled)  1. Resolve remote and branch in one place and use it in both `check_for_updates()` and `update_server()`. Same variables, same defaults (`origin`, `main`). The pull becomes `git pull <remote> <branch>`. 2. Before the `git pull`, call `get_backup_service().create_backup(description=...)` (from `mcp_memory_service.backup.scheduler`, the way `web/api/backup.py` does).    - Backup succeeded: go on. Put the backup's filename into the response message or a new optional field on `UpdateResponse`.    - `BackupService.db_path` is `None` (
-
-- **Issue #2093** (2026-11-22): **[Bug]: CSVLoader delimiter auto-detection fails on files with trailing newlines**
-  *Symptoms*: ### Bug Description   ### Bug Description  In `CSVLoader._detect_delimiter()` (`src/mcp_memory_service/ingestion/csv_loader.py`), delimiter auto-detection samples lines using `content.split('\n')[:5]`. A trailing newline creates an empty sampled line with zero delimiter occurrences. This breaks the consistency check `len(set(counts)) == 1`, causing the detector to fall back to comma.  Consequently, semicolon-, tab-, pipe-, and colon-delimited CSV files with trailing newlines or blank lines can be parsed as single-column records, losing their headers and table structure.  ### Pre-submission Checklist  - [x] I've searched existing issues and this is not a duplicate. - [x] I've specified the relevant version. - [x] I've included available environment information. - [x] I've redacted sensitive information.   ### Steps to Reproduce  ```python from mcp_memory_service.ingestion.csv_loader import CSVLoader  loader = CSVLoader() content = "name;age;city\nJohn;25;New York\nJane;30;San Francisco\n" detected = loader._detect_delimiter(content) print(repr(detected))  # Currently returns ',' ```   ### Expected Behavior  The detector should return `';'` despite trailing newlines or blank lines.   ### Actual Behavior  Returns `','`, resulting in single-column extraction and fallback headers `['col_1']`.   ### Storage Backend  sqlite-vec (local)  ### Operating System  Linux  ### Python Version  Python 3.11+  ### MCP Memory Service Version  v8.17.0 (or current main)  ### Installation Method  S
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,1420 +2932,692 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5b8b8b7c` (2026-11-25)
-**Commit Message**: fix(ontology): point coerced-type warnings at `memory ontology add` (#2127) (#2131)
+### Incident Patch 1: `a6b27bf8` (2026-11-26)
+**Commit Message**: docs(agents): add repository guidelines and refresh the GitNexus block (#2138)
 
-Both store paths warned that an unknown memory_type was stored as
-observation and told the caller to set MCP_CUSTOM_MEMORY_TYPES, which only
-takes effect after a restart. They now name `memory ontology add <name>`
-first and keep the env var as the startup alternative.
+* docs(agents): add repository guidelines and refresh the GitNexus block
 
-The text could not change in place: handle_store_memory and the REST
-store_memory sat over the complexity budget, so any edit to them blocked
-the gate. Both are split into module-level helpers first:
+AGENTS.md gets a "Repository Guidelines" section in front of the claim
+rules, and the generated GitNexus block is refreshed to the current
+index. The old block pointed at `.claude/skills/gitnexus/<name>/`, a
+path that never existed here; the skills live in
+`.claude/skills/gitnexus-<name>/`.
 
-- handle_store_memory: restore_deleted validation, the refused/failed
-  responses, the failed-chunk check, the response message (headline,
-  dedup, coercion, contradiction notes) and the on-store NLI and belief
-  checks each get their own function.
-- store_memory: hostname, agent tag, SSE broadcast, the coercion warning,
-  the refused-chunks note and the success and not-stored responses.
+The two skills the new block links to, gitnexus-cli and gitnexus-guide,
+were only in the working tree and are added with it.
 
-Every other part of both responses is unchanged, and the guidance test
-gets the two source-file assertions back.
+Carried over unchanged from the working tree of the main checkout so it
+is not lost. The guidelines text still needs a pass against CLAUDE.md
+before it goes to main: it names bare `python`/`pytest` where this repo
+requires `.venv/bin/...`, and `node .gitnexus/run.cjs` refers to a
+gitignored directory.
 
-**File**: `changelog.d/2127.fixed.md` (added, +8/-0)
+* docs(claude): add the generated GitNexus block to CLAUDE.md
+
+Same generated block as in AGENTS.md, appended after the graphify
+section. Kept as its own commit because it is the part to decide on:
+it adds "MUST run impact before editing" rules for every agent next to
+the existing graphify route, and can be dropped withou
+
+**File**: `.claude/skills/gitnexus-cli/SKILL.md` (added, +110/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+- **A coerced memory type still pointed at the env var that needs a restart (#2127, Dhruv-Sharma29).**
-+  When a store names a type the ontology does not know, the MCP `memory_store` response and
-+  `POST /api/memories` warn that it was stored as `observation`. Both warnings told the caller
-+  to set `MCP_CUSTOM_MEMORY_TYPES`, which only takes effect after a restart, although #2126
-+  added a runtime path. They now name `memory ontology add <name>` first and keep the env var
-+  as the startup alternative. To make that one-line change possible, `handle_store_memory` and
-+  the REST `store_memory` were split into module-level helpers (failure handling, the response
-+  message, the on-store checks); every other part of both responses is unchanged.
+@@ -0,0 +1,110 @@
++---
++name: gitnexus-cli
++description: "Use when the user needs to run GitNexus CLI commands like analyze/index a repo, check status, clean the index, generate a wiki, or list indexed repos. Examples: \"Index this repo\", \"Reanalyze the codebase\", \"Generate a wiki\""
++---
++
++# GitNexus CLI Commands
++
++Commands below use `node .gitnexus/run.cjs <command>` — the project-local runner `gitnexus analyze` drops next to the index. It auto-selects an available runner at call time (global `gitnexus`, else `pnpm dlx`, else `bunx`, else `npx`), so no package-manager assumption and no global install is required — including on a bun-only machine, which has no npm, npx or pnpm at all.
++
++> **Not analyzed yet, or `node .gitnexus/run.cjs` reports `Cannot find module`** (the gitignored runner is absent — e.g. a fresh clone or `git clean`)? (Re)generate it with `npx gitnexus analyze` from the project root, or `bunx gitnexus@latest analyze` on a bun-only machine. On **npm 11.x**, if `npx` crashes during install (`node.target is null`), install once with `npm i -g gitnexus` (then `gitnexus analyze`), or use `bunx gitnexus@latest analyze`, or `pnpm --allow-build=@ladybugdb/core --allow-build=gitnexus --allow-build=tree-sitter dlx gitnexus@latest analyze`. See [#1939](https://github.com/abhigyanpatwari/GitNexus/issues/1939).
++
++## Commands
++
++### analyze — Build or refresh the index
++
++```bash
++node .gitnexus/run.cjs analyze
++```
++
++Run from the project root. This parses all source files, builds the knowledge graph, writes it to `.gitnexus/`, and generates CLAUDE.md / AGENTS.md context files.
++
++| Flag           | Effect                                                           |
++| -------------- | ---------------------------------------------------------------- |
++| `--watch`      | Keep a Git repository index current with serialized refreshes    |
++| `--debounce <ms>` | Watch quiet period before refresh (default: 300 ms)            |
++| `--force`      | Force full re-index even if up to date                           |
++| `--embeddings` | Enable embedding generation for semantic search (off by default) |
++| `--drop-embeddings` | Drop existing embeddings on rebuild. By default, an `analyze` without `--embeddings` preserves them. |
++| `--pdg` | Build the program-dependence layers used by `explain` and `pdg_query` (taint, CDG, and REACHING_DEF). |
++| `--spring-actuator <path>` | Import opt-in Spring Boot Actuator mappings, beans, conditions, configprops, and env snapshots. Forces a full rebuild; unsupported with `--watch`. |
++| `--asyncapi-spec <path>` | Read opt-in AsyncAPI 3.x documents (directory or single file) and mint `Destination` nodes from their operations. 2.x is refused, not mapped. Unsupported with `--watch`. |
++
++**When to run:** First time in a project, after major code changes, or when `gitnexus://repo/{name}/context` reports the index is stale. In Claude Code, a PostToolUse hook detects staleness after `git commit` and `git merge` and notifies the agent to run `analyze` — the hook does not run analyze itself, to avoid blocking the agent for up to 120s and risking KuzuDB corruption on timeout.
++
++For Spring runtime enrichment, pass a JSON bundle, one endpoint JSON file, or a directory containing endpoint files. Route evidence is authoritative only when `runtimeConfirmed === true`; `runtimeSource` records provenance and may also accompany `handler-conflict`. Env/configprops values are never persisted.
++
++## Index storage and retention
++
++Default location is `<repo>/.gitnexus/`. Override with environment variables (also documented in README):
++
++| Env | Effect |
++| --- | ------ |
++| `GITNEXUS_STORAGE_PATH` | One complete external index directory. Wins if both storage vars are set. |
++| `GITNEXUS_STORAGE_ROOT` | Absolute root; GitNexus creates an isolated `<repo-basename>-<12-hex>/` slot per repository. |
++| `GITNEXUS_CONTENT_RETENTION` | `full` (default) keeps file text; `symbol` keeps snippets; `none` keeps the graph only. |
++
++`list_repos`, `gitnexus://repo/{name}/context`, and HTTP `GET /api/repos` / `GET /api/repo` expose `storagePath`, `contentRetention`, and `sourceAvailable`. HTTP `/api/file` and `/api/grep` return 410 unless retention is `full`. MCP `include_content` may still return symbol spans when retention is `symbol`.
++
++Use `node .gitnexus/run.cjs analyze --watch` for a long-lived local Git repository. It performs an initial analysis, queues scanner-admitted file changes, and retries intact failed batches with bounded backoff. Watch refreshes update only the graph: they skip AGENTS.md / CLAUDE.md injection and standard skill installation, so run a one-shot `analyze` when those generated files need updating. Watch rejects one-shot or context-output flags including `--force`, embedding flags, `--skills`, `--default-branch`, `--skip-agents-md`, `--skip-skills`, `--no-stats`, `--self-commit`, `--index-only`, and `--skip-git`. It never pulls remotes. Scheduled remote clone/pull is a di
 ```
 
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +176/-144)
+**File**: `.claude/skills/gitnexus-guide/SKILL.md` (added, +138/-0)
 ```diff
-@@ -294,6 +294,172 @@ async def _auto_capture_note(server, arguments: dict, content, result: dict, con
-     return ""
- 
- 
-+def _restore_deleted_flag(arguments: dict) -> bool:
-+    """The caller's restore_deleted, which must be a real boolean (#1560).
+@@ -0,0 +1,138 @@
++---
++name: gitnexus-guide
++description: "Use when the user asks about GitNexus itself — available tools, how to query the knowledge graph, MCP resources, graph schema, or workflow reference. Examples: \"What GitNexus tools are available?\", \"How do I use GitNexus?\""
++---
 +
-+    `bool("false")` is True. The /mcp route hands tool arguments to this
-+    handler without validating them against the tool schema, so a restore
-+    must be asked for with a real boolean, never a string.
-+    """
-+    restore_deleted = arguments.get("restore_deleted", False)
-+    if not isinstance(restore_deleted, bool):
-+        raise ValueError(
-+            "restore_deleted must be a boolean (true/false), "
-+            f"got {type(restore_deleted).__name__}"
-+        )
-+    return restore_deleted
++# GitNexus Guide
 +
++Quick reference for all GitNexus MCP tools, resources, and the knowledge graph schema.
 +
-+def _not_stored_response(result: dict) -> List[types.TextContent]:
-+    """Answer a store the MemoryService refused, or raise when it failed."""
-+    error_msg = f"{result.get('error', 'Unknown error')}{_dedup_outcome_note(result)}"
-+    if result.get("refused_recreate"):
-+        # #1560: a refused re-create is the answer the caller chose by not
-+        # passing restore_deleted — plain text, not isError. Unlike the
-+        # failures #1601 covers, nothing was lost here: the tombstone is
-+        # intact and the message says how to proceed.
-+        return [types.TextContent(type="text", text=error_msg)]
-+    # A refused write is a failure. Return-as-text made the MCP envelope
-+    # report isError=False while nothing was stored, so automation counted
-+    # it as success (#1601). Raise: the SDK answers isError=True.
-+    raise RuntimeError(f"Error storing memory: {error_msg}")
++## Always Start Here
 +
++For any task involving code understanding, debugging, impact analysis, or refactoring:
 +
-+def _raise_on_failed_chunks(result: dict) -> None:
-+    """Partial writes are failures too (#1601).
++1. **Read `gitnexus://repo/{name}/context`** — codebase overview + check index freshness
++2. **Match your task to a skill below** and **read that skill file**
++3. **Follow the skill's workflow and checklist**
 +
-+    Some chunks never reached the database, so reporting success lets a
-+    harvester skip them permanently.
-+    """
-+    failed_chunks = result.get("failed_chunks") or 0
-+    if failed_chunks:
-+        raise RuntimeError(
-+            f"Error storing memory: {failed_chunks} of "
-+            f"{result.get('total_chunks', '?')} chunks failed to store"
-+        )
++> If step 1 warns the index is stale, run `node .gitnexus/run.cjs analyze` in the terminal first.
 +
++## Skills
 +
-+def _stored_headline(result: dict) -> tuple:
-+    """The success line with its dedup notes, and the type the memory was stored as."""
-+    if "memories" in result:
-+        # Chunked response - multiple memories created
-+        num_chunks = len(result["memories"])
-+        original_hash = result.get("original_hash", "unknown")
-+        message = f"Successfully stored {num_chunks} memory chunks (original hash: {original_hash})"
-+        effective_type = result["memories"][0].get("memory_type") if result["memories"] else None
-+    else:
-+        message = f"Memory stored successfully (hash: {result['memory']['content_hash']})"
-+        effective_type = result["memory"].get("memory_type")
-+    return message + _dedup_outcome_note(result), effective_type
++| Task                                         | Skill to read       |
++| -------------------------------------------- | ------------------- |
++| Understand architecture / "How does X work?" | `gitnexus-exploring`         |
++| Blast radius / "What breaks if I change X?"  | `gitnexus-impact-analysis`   |
++| Trace bugs / "Why is X failing?"             | `gitnexus-debugging`         |
++| Rename / extract / split / refactor          | `gitnexus-refactoring`       |
++| Tools, resources, schema reference           | `gitnexus-guide` (this file) |
++| Index, status, clean, wiki CLI commands      | `gitnexus-cli`               |
 +
++## Tools Reference
 +
-+def _coercion_warning(requested, effective) -> str:
-+    """Name the runtime registration when an unknown memory_type was coerced (#2127).
++| Tool             | What it gives you                                                        |
++| ---------------- | ------------------------------------------------------------------------ |
++| `query`          | Process-grouped code intelligence — execution flows related to a concept |
++| `context`        | 360-degree symbol view — categorized refs, processes it participates in  |
++| `impact`         | Symbol blast radius — what breaks at depth 1/2/3 with confidence         |
++| `trace`          | Shortest path between two symbols — "how does A reach B?" in one call     |
++| `detect_changes` | Git-diff impact — what do your current changes affect                    |
++| `rename`         | Multi-file coordinated rename with confidence-tagged edits               |
++| `cypher`         | Raw graph queries (read `gitnexus://repo/{name}/schema` first)           |
++| `explain`        | Persisted taint findings — source→sink data flows (needs `analyze --pdg`) |
++| `pdg_query`      | Control/data dependence — what gates X (CDG) / where Y flows (REACHING_DEF); needs `analyze --pdg` |
++| `check`          | Check graph invariants such as circular imports                          |
++| `route_map`      | API route map — which components/hooks fetch which endpoints, and the handler files that serve them |
++| `shape_check`    | Response-shape drift — keys each route returns vs keys its consumers access (flags MISMATCH) |
++| `api_impact`     | Pre-change report for an API route — consumers, middleware, shape mismatches, risk level |
++| `tool_map`       | MCP/RPC tool definitions and the files that handle them                  |
++| `group_list`     | List configured multi-repo groups, or one group's config                 |
++| `group_sync`     | Rebuild a group's Contract Registry (cross-repo HTTP contract links); run after `group.yaml` changes or member re-index |
++| `list_repos`     | Discover indexed repos (paginated — `limit`/`offset`)                    |
 +
-+    Memory.__post_init__ rewrites a type the ontology does not know to
-+    "observation" and only logs it. Without this echo the caller sees
-+    "success" while their type filter silently breaks.
-+    """
-+    if not effective or effective == requested:
-+        return ""
-+    return (
-+        f"\nWarning: requested memory_type '{requested}' is not in the "
-+        f"ontology — stored as '{effective}'. "
-+        f"Register it without a restart with `memory ontology add {requested}`, "
-+        f"or at startup via the MCP_CUSTOM_MEMORY_TYPES env var, "
-+        f"e.g. '{{\"{requested}\": []}}'."
-+    )
++### Paginating `list_repos`
 +
++`list_repos` is paginated so a large registry is not truncated by MCP/LLM token limits. It takes optional `limit` (default **50**, max **200**) and `offset`, and returns:
 +
-+def _contradiction_note(result: dict) -> str:
-+    """Issue #1216 (1b): say when a near-duplicate was filed as a contradiction."""
-+    if result.get("filed_as_contradiction"):
-+        # A value-swap rescued from dedup rejection, not silently dropped.
-+        return (
-+            "\n⚠️ Filed as a contradiction of an existing near-duplicate and "
-+            "quarantined, rather than dropped as a duplicate."
-+        )
-+    failed = result.get("contradiction_filing_failed")
-+    if not failed:
-+        return ""
-+    # Stored past dedup, but the quarantine step failed: say so, and name the
-+    # memory so it can be quarantined or deleted by hand.
-+    stored_hash = (result.get("memory") or {}).get("content_hash", "")
-+    err = (failed.get("quarantine") or {}).get("message", "unknown error")
-+    # The backend error can carry paths / SQL / provider detail: keep it in
-+    # the log (sanitized), give the client a stable public message.
-+    logger.warning(
-+        "Quarantine filing failed for %s (contradicts %s): %s",
-+        stored_hash[:8], str(failed.get("contradicts", ""))[:8], _sanitize_log_value(err),
-+    )
-+    return (
-+        f"\n⚠️ Stored past semantic dedup because it contradicts near-duplicate "
-+        f"{failed.get('contradicts', '')[:8]}, but quarantining it FAILED. "
-+        f"It i
++```jsonc
++{
++  "repositories": [
++    { "name": "...", "path": "...", "indexedAt": "...", "lastCommit": "...", "stats": { } }
++  ],
++  "pagination": {
++    "total": 437,
++    "limit": 50,
++    "offset": 0,
++    "returned": 50,
++    "hasMore": true,
++    "nextOffset": 50
++  }
++}
++```
++
++To enumerate **every** repository, keep calling with `offset` set to `pagination.nextOffset` until `hasMore` is `false`:
++
++```text
++list_repos {}               → repos 1–50,    nextOffset 50,  hasMore true
++list_repos { offset: 50 }   → repos 51–100,  nextOffset 100, hasMore true
++…
++list_repos { offset: 400 }  → repos 401–437,                 hasMore false   (done)
++```
++
++Notes: `offset` ≥ `total` returns an empty page (with `total` still reported). Out-of-range or malformed `limit`/`offset` (non-integer, `limit` outside `[1, 200]`, `offset < 0`) are rejected with a clear error — `limit` above the max is rejected, not silently capped. The order is deterministic (lower-cased name, then path), so paging never skips or duplicates an entry while the registry is unchanged.
++
++### Taint findings (`explain`)
++
++`explain` returns taint findings recorded by `gitnexus analyze --pdg` — intra-procedural `TAINTED` edges plus cross-function `TAINT_PATH` hops where the interprocedural taint phase found a function-level so
 ```
 
-**File**: `src/mcp_memory_service/web/api/memories.py` (modified, +118/-118)
+**File**: `AGENTS.md` (modified, +85/-51)
 ```diff
-@@ -216,6 +216,117 @@ def memory_to_response(memory: Memory) -> MemoryResponse:
-     )
+@@ -1,68 +1,102 @@
+-## Issue claim automation
++# Repository Guidelines
++
++## Project Structure & Module Organization
++
++MCP Memory Service is a Python 3.11+ package. Source lives in
++`src/mcp_memory_service/`, including storage backends, embeddings, MCP handlers,
++and the HTTP API. Dashboard assets live in `src/mcp_memory_service/web/static/`.
++Tests live in `tests/`, including `unit/`, `integration/`, and `consolidation/`.
++Use `docs/` for documentation, `scripts/` for tooling, and `changelog.d/` for
++per-change release fragments.
++
++## Build, Test, and Development Commands
++
++The project environment is the virtualenv at `.venv` (Python 3.12). The system
++`python` and `pytest` are not the project interpreter, so call the venv binaries
++from the repository root:
++
++- `.venv/bin/python install.py`: install with platform-specific dependency selection.
++- `.venv/bin/python -m pip install -e '.[dev]'`: install editable code and development tools.
++  A venv made by `uv` has no pip; use `uv pip install --python .venv/bin/python -e '.[dev]'` there.
++- `.venv/bin/python scripts/validation/check_dev_setup.py`: verify the editable installation.
++- `.venv/bin/memory launch`: start the HTTP service and dashboard; `.venv/bin/memory server` runs MCP stdio.
++- `.venv/bin/pytest tests/`: run tests; `.venv/bin/pytest tests/unit/<test_file>.py -q` targets a file.
++- `.venv/bin/pytest --cov=mcp_memory_service tests/`: collect coverage.
++- `.venv/bin/python -m build`: build distribution artifacts.
++- `bash scripts/pr/pre_pr_check.sh`: the pre-PR gate; it picks `.venv/bin/python` itself.
++
++## Coding Style & Naming Conventions
++
++Follow PEP 8 with four-space indentation, 88-character lines, and double
++quotes. The tree is not Black- or Ruff-clean, so do not run a formatter over
++files you touch; keep the diff to your change. Use `snake_case` for functions/modules and `PascalCase` for classes.
++Add type hints to function signatures and Google-style docstrings to public APIs.
++Follow neighboring code and use specific exceptions.
++
++## Testing Guidelines
++
++Use pytest and pytest-asyncio; name files and functions `test_*`. For `src/`
++changes, provide a regression test that fails against the base code and passes
++with the change; pure removals are exempt. Exercise real storage and handlers;
++mock external services. Cover changed behavior, edge cases, and error paths.
++See [CONTRIBUTING.md](CONTRIBUTING.md) for CI proof requirements.
++
++## Commit & Pull Request Guidelines
++
++Branch before committing, using names such as `fix/issue-description`. Follow
++semantic commits, e.g. `fix(storage): handle literal tag wildcards`. Open PRs on
++GitHub with the problem, solution, linked issue, test commands/results, and
++screenshots for UI changes. Changes under `src/` need
++`changelog.d/<number>.<category>.md`; categories are `added`, `fixed`, `removed`,
++or `internal`. Codeberg is an archive.
++
++## Issue Claim Automation
  
+ Issues labelled `auto-assign` accept a standalone `/claim` comment. Wait for the actual assignment and confirmation before working;
+ the confirmation approves only the issue's prepared scope. Other issues retain
+ manual maintainer confirmation. See CONTRIBUTING.md for the full rules.
  
-+def _client_hostname(request: MemoryCreateRequest, http_request: Request) -> Optional[str]:
-+    """Hostname for consistent tagging (the tagging itself happens in the service).
+ <!-- gitnexus:start -->
+-# GitNexus MCP
++# GitNexus — Code Intelligence
 +
-+    Client-provided hostname first, then the X-Client-Hostname header, then
-+    this server's hostname (the original behavior).
-+    """
-+    if not INCLUDE_HOSTNAME:
-+        return None
-+    return (
-+        request.client_hostname
-+        or http_request.headers.get('X-Client-Hostname')
-+        or socket.gethostname()
-+    )
++This project is indexed by GitNexus as **mcp-memory-service** (30132 symbols, 60251 relationships, 1069 execution flows).
 +
-+
-+def _tags_with_agent(request: MemoryCreateRequest, http_request: Request) -> List[str]:
-+    """The request's tags, plus agent:<id> when the X-Agent-ID header names one."""
-+    tags = list(request.tags)
-+    agent_id = http_request.headers.get('X-Agent-ID')
-+    if agent_id and f"agent:{agent_id}" not in tags:
-+        tags.append(f"agent:{agent_id}")
-+    return tags
-+
-+
-+async def _broadcast_stored(result: dict, store: str) -> None:
-+    """Send the memory_stored SSE event; a failed broadcast never fails the request."""
-+    try:
-+        # A chunked store is announced with its first chunk.
-+        stored = result["memory"] if "memory" in result else result["memories"][0]
-+        memory_data = {
-+            "content_hash": stored["content_hash"],
-+            "content": stored["content"],
-+            "tags": stored["tags"],
-+            "memory_type": stored["memory_type"],
-+        }
-+        await sse_manager.broadcast_event(create_memory_stored_event(memory_data, store=store))
-+    except Exception as e:
-+        logger.warning("Failed to broadcast memory_stored event: %s", _sanitize_log_value(e))
-+
-+
-+def _coercion_warning(requested: Optional[str], effective: Optional[str]) -> str:
-+    """Name the runtime registration when an unknown memory_type was coerced (#2127).
-+
-+    Memory.__post_init__ rewrites a type the ontology does not know to
-+    "observation". Without an explicit warning the caller sees "success"
-+    while their type filter silently breaks. `is not None` (not truthy), so
-+    an explicit empty string, also coerced to 'observation', still warns;
-+    this mirrors the MCP handler's presence-based check.
-+    """
-+    if requested is None or not effective or requested == effective:
-+        return ""
-+    return (
-+        f" Warning: requested memory_type '{requested}' is not in "
-+        f"the ontology — stored as '{effective}'. Register it without a "
-+        f"restart with `memory ontology add {requested}`, or at startup via "
-+        f"MCP_CUSTOM_MEMORY_TYPES, e.g. '{{\"{requested}\": []}}'."
-+    )
-+
-+
-+def _refused_chunks_note(result: dict) -> str:
-+    """#1560: name the chunks a recorded delete kept out, and how to bring them back."""
-+    refused_chunks = result.get("refused_chunks") or []
-+    if not refused_chunks:
-+        return ""
-+    return (
-+        f"; {len(refused_chunks)} chunk(s) not stored: deleted on "
-+        f"{refused_chunks[0]['deleted_at']}, pass restore_deleted=true "
-+        f"to bring them back"
-+    )
-+
-+
-+def _created_response(result: dict, requested_type: Optional[str]) -> MemoryCreateResponse:
-+    """The success response for a single memory, or for a chunked store by its first chunk."""
-+    if "memory" in result:
-+        stored = result["memory"]
-+        message = _with_supersede_note(result, "Memory stored successfully")
-+    else:
-+        stored = result["memories"][0]
-+        message = _with_supersede_note(
-+            result, f"Memory stored as {result['total_chunks']} chunks"
-+        ) + _refused_chunks_note(result)
-+    return MemoryCreateResponse(
-+        success=True,
-+        message=message + _coercion_warning(requested_type, stored.get("memory_type")),
-+        content_hash=stored["content_hash"],
-+        memory=stored,
-+        **_dedup_response_fields(result),
-+    )
-+
-+
-+def _not_stored_response(result: dict) -> MemoryCreateResponse:
-+    """The answer to a store the MemoryService did not perform."""
-+    refused = result.get("refused_recreate")
-+    if refused:
-+        # #1560: re-sending content this server deleted conflicts with the
-+        # recorded delete — 409, naming the delete, until the client says
-+        # restore_deleted=true. Not a 200/success=false: bundled clients
-+        # would log and move on, and the memory would quietly come back
-+        # on the next sync.
-+        raise HTTPException(
-+            status_code=409,
-+            detail={"message": result.get("error", "Not stored"), **refused},
-+        )
-+    return MemoryCreateResponse(
-+        success=False,
-+        message=str(result.get("error", "Failed to store memory")),
-+        content_hash=None,
-+        **_dedup_response_fields(result),
-+    )
-+
-+
- @router.post("/memories", response_model=MemoryCreateResponse, tags=["memories"])
- async def store_memory(
-     request: MemoryCreateRequest,
-@@ -230,27 +341,8 @@ async def store_memory(
-```
-
-**File**: `tests/server/test_store_memory_handler.py` (modified, +2/-0)
-```diff
-@@ -173,6 +173,8 @@ async def test_store_memory_unknown_type_warns_about_coercion():
-     assert "Warning" in text
-     assert "'foo'" in text
-     assert "'observation'" in text
-+    # #2127: the runtime command first, the env var as the startup alternative.
-+    assert "memory ontology add foo" in text
-     assert "MCP_CUSTOM_MEMORY_TYPES" in text
++> Index stale? Run `node .gitnexus/run.cjs analyze --index-only` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? Bootstrap with `npx`, `bunx`, or `pnpm dlx` — e.g. `bunx gitnexus@latest analyze` (npm 11 npx crash; #1939).
  
+-This project is indexed by GitNexus as **mcp-memory-service** (6259 symbols, 18031 relationships, 300 execution flows).
++## Always Do
  
-```
-
-**File**: `tests/unit/test_ontology_registration_guidance.py` (modified, +26/-0)
-```diff
-@@ -69,3 +69,29 @@ def test_documents_the_runtime_command(self, relative_path):
-         source = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
- 
-         assert CLI_HINT in source
-+
-+
-+@pytest.mark.parametrize(
-+    "relative_path",
-+    [
-+        "src/mcp_memory_service/server/handlers/memory.py",
-+        "src/mcp_memory_service/web/api/memories.py",
-+    ],
-+)
-+class TestCoercionWarnings:
-+    """The warning a caller reads right after a coerced store (#2127).
-+
-+    Both files build it at the moment the caller wants the answer, so both name
-+    the command that needs no restart and keep the env var for startup.
-+    """
-+
-+    def test_names_the_runtime_command(self, relative_path):
-+        source = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
-+
-+        assert CLI_HINT in source
-+
-+    def test_keeps_the_env_var_as_the_startup_alternative(self, relative_path):
-+        source = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
-+
-+        assert "MCP_CUSTOM_MEMORY_TYPES" in source
-+        assert "at startup" in source
-```
-
-**File**: `tests/web/api/test_memories_api.py` (modified, +16/-0)
-```diff
-@@ -117,6 +117,22 @@ def test_store_memory_with_agent_id_header_appends_agent_tag(test_app):
-     assert "rate-limit" in stored_tags
- 
- 
-+@pytest.mark.integration
-+def test_store_memory_coercion_warning_names_the_runtime_command(test_app):
-+    """#2127: an unknown memory_type is coerced; the warning says how to register it now."""
-+    response = test_app.post(
-+        "/api/memories",
-+        json={"content": "A lesson about retries and backoff", "memory_type": "bogus_type_2127"},
-+    )
-+
-+    assert response.status_code == 200
-+    data = response.json()
-+    assert data["memory"]["memory_type"] == "observation"
-+    assert "requested memory_type 'bogus_type_2127'" in data["message"]
-+    assert "memory ontology add bogus_type_2127" in data["message"]
-+    assert "MCP_CUSTOM_MEMORY_TYPES" in data["message"]
-+
-+
- @pytest.mark.integration
- def test_store_memory_without_agent_id_header_no_agent_tag(test_app):
-     """Without X-Agent-ID header, no agent: tag is added."""
+-GitNexus provides a knowledge graph over this codebase — call chains, blast radius, execution flows, and semantic search.
++- **MUST run impact before editing.** Use `impact({target: "symbolName", direction: "upstream"})` or `node .gitnexus/run.cjs impact "symbolName" --direction upstream --repo .`; report callers, processes, and risk. Never substitute grep for graph analysis.
++- **MUST analyze graph changes before committing.** Use `detect_changes({scope: "all"})` (MCP) or `node .gitnexus/run.cjs detect-changes --scope all --repo .` (CLI fallback). `partial: true` or `truncated: true` is not a clean check — a zero means unseen, not unaffected; re-run it. For regression review: `detect_changes({scope: "compare", base_ref: "main"})` or `node .gitnexus/run.cjs detect-changes --scope compare --base-ref "main" --repo .`.
++- MUST warn on HIGH/CRITICAL `risk` pre-edit; never use `riskSharedAxes` to waive a HIGH/CRITICAL `risk` warning. Compare File/symbol: MCP File omits axes; Graph-RAG expands File.
++- **MUST treat `risk: UNKNOWN` as unresolved, not as low.** An empty caller set is not evidence the symbol is unused — it can also mean the callers are not re
 ```
 
 ---
 
-### Incident Patch 2: `02f525cb` (2026-11-25)
-**Commit Message**: fix(milvus): confine the read paths to the claimed store (#1958) (#2133)
+### Incident Patch 2: `1e692710` (2026-11-26)
+**Commit Message**: fix(milvus): count live rows from one scan (#2139)
 
-* fix(milvus): confine the read paths to the claimed store (#1958)
+* fix(milvus): count live rows from one scan (#2136)
 
-* fix(milvus): confine the read paths to the claimed store
+The first attempt on this branch still made two reads, a count(*) over
+the rows that never mention deleted_at plus a scan of the ones that do.
+A metadata write between them that adds the key without tombstoning the
+row moved it from the first set into the second, and it was counted
+twice (review on #2137).
 
-Since #1962 the hash-addressed calls confine, but the eleven read paths accepted
-`store` and dropped it, several with a comment saying so. A `read:<store>`
-credential would have searched, listed, counted and recalled across every
-partition, which is why `get_by_hash_is_store_scoped` stayed `False` here.
+_drain_live_rows() reads the rows once and the totals are counted from
+that: count_all_memories (both include_superseded branches share it
+now), count_memories_by_tag, and get_stats, whose total and this-week
+figure come from the same scan. A count costs a scan instead of a
+count(*); the include_superseded=False branch already paid that.
 
-Each path now resolves its scope through `_store_scope()`: `None` and `"all"`
-stay unscoped, `"default"` confines like the other backends, and a collection
-without the `store` field refuses a named store instead of serving every
-partition. `get_graph_visualization_data` reads the association collection's own
-`store` field from #2119 and fails closed when that collection predates it; the
-analytics endpoints do accept a store, and `require_store_read`, so it is
-reachable by a per-store credential and had to be confined too.
+* docs(changelog): move the count entry to this PR's fragment
 
-With every read path confining or refusing, the capability flag is `True`.
+The fragment check wants a fragment added by the PR, and one entry for
+the whole fix reads better than two.
 
-Two functions exceeded the complexity budget once touched, so they are split:
-`search_m
+* docs(changelog): give the one-scan change its own fragment
 
-**File**: `changelog.d/1958.fixed.md` (added, +1/-0)
+The fragment check counts added files only and git reads the move as a
+rename. The #2136 entry goes back to what main has, which still
+describes what #2137 did.
+
+**File**: `changelog.d/2139.fixed.md` (added, +7/-0)
 ```diff
-@@ -0,0 +1 @@
-+- **Milvus read paths honour the claimed store, and the backend claims store scoping (#1958, part of #1683).** Since #1962 the hash-addressed calls confine, but the eleven read paths accepted `store` and dropped it — `search_memories`, `retrieve`, `recall`, `get_all_memories`, `count_all_memories`, `get_memories_by_time_range`, `get_by_exact_content`, `get_all_tags_with_counts`, `get_memory_timestamps`, `delete_by_tags` and `get_graph_visualization_data`. A `read:<store>` credential would have searched, listed, counted and recalled across every partition, which is why `get_by_hash_is_store_scoped` stayed `False` on this backend. Each path now builds its filter through `_store_scope()`, so `None` and `"all"` stay unscoped and `"default"` confines like the other backends; a collection without the `store` field refuses a named store instead of serving every partition. The graph view reads the association collection's own `store` field from #2119 and fails closed when that collection predates it. The flag is `True` now, so `memory_explore` and `memory_detail` can take per-store grants once #2120 adds them to `STORE_CONFINED_TOOLS`.
+@@ -0,0 +1,7 @@
++- **A Milvus live total is counted from one scan, so a concurrent metadata write cannot
++  count a memory twice (#2139).** The fix for #2136 still made two reads: a `count(*)`
++  over the rows whose metadata never mentions `deleted_at` and a scan of the rows that
++  do. A write that added `"deleted_at": null` between them moved a live row from the
++  first set into the second. `count_all_memories`, `count_memories_by_tag` and both
++  totals in `get_stats` now read the rows once; the price is a scan where there was a
++  `count(*)`.
 ```
 
-**File**: `src/mcp_memory_service/server/handlers/entity_rebuild.py` (modified, +0/-7)
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +24/-41)
 ```diff
-@@ -86,13 +86,6 @@ async def _rebuild(server: Any, dry_run: bool, report: dict) -> None:
-             raise RuntimeError(
-                 "Memory scan was incomplete or the store changed; no edges deleted"
-             )
--        # Milvus listings include tombstones stored inside metadata, unlike
--        # SQLite's deleted_at SQL filter. Verify the raw count before filtering.
--        if isinstance(graph, MilvusGraphStorage):
--            rows = [
--                (m, store) for m, store in rows
--                if m.metadata.get("deleted_at") is None
--            ]
-         memories = [m for m, _ in rows]
-         store_of = None
-         if isinstance(graph, MilvusGraphStorage) and await _confines_store(graph):
-```
-
-**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +731/-354)
-```diff
-@@ -208,6 +208,11 @@ class MilvusMemoryStorage(MemoryStorage):
-     # A named-store call against a legacy collection is refused with one
-     # warning per instance, not one per call.
-     _legacy_store_warned = False
-+    # Whether the paired graph collection carries ``store`` (#2119). None until
-+    # probed. Every read path confines now, and a legacy collection refuses a
-+    # named store, so the flag can be claimed (#1958).
-+    _graph_has_store: Optional[bool] = None
-+    get_by_hash_is_store_scoped = True
+@@ -4016,7 +4016,7 @@ async def count_memories_by_tag(self, tags: List[str]) -> int:
  
-     @property
-     def max_content_length(self) -> Optional[int]:
-@@ -882,6 +887,44 @@ def _store_scope(self, store: Optional[str]) -> Tuple[bool, Optional[str]]:
-             )
-         return True, None
- 
-+    async def _graph_collection_has_store(self) -> bool:
-+        """Whether ``{collection}_graph`` carries the ``store`` field (#2119).
-+
-+        Probed once. A graph collection created before #2119 has none, so an
-+        edge cannot be attributed to a partition and a named-store graph view
-+        fails closed rather than showing every one.
-+        """
-+        if self._graph_has_store is not None:
-+            return self._graph_has_store
-+        graph_collection = f"{self.collection_name}_graph"
-+        try:
-+            described = await self._call_client(
-+                "describe_collection", collection_name=graph_collection
-+            )
-+            fields = {field.get("name") for field in described.get("fields", [])}
-+        except Exception as exc:  # noqa: BLE001
-+            logger.warning(
-+                "Could not describe graph collection '%s': %s",
-+                _sanitize_log_value(graph_collection),
-+                _sanitize_log_value(exc),
-+            )
-+            return False
-+        self._graph_has_store = "store" in fields
-+        if not self._graph_has_store:
-+            logger.warning(
-+                "Graph collection '%s' has no 'store' field; a store-scoped "
-+                "graph view is refused until it is recreated (#2123).",
-+                _sanitize_log_value(graph_collection),
-+            )
-+        return self._graph_has_store
-+
-+    @staticmethod
-+    def _store_filter(confine_to: Optional[str]) -> Optional[str]:
-+        """``store == "<name>"`` for a confined read, or None when unscoped (#1958)."""
-+        if confine_to is None:
-+            return None
-+        return f'store == "{escape_expr_value(confine_to)}"'
-+
-     def _row_fields(self, base: Tuple[str, ...]) -> List[str]:
-         """``base`` plus ``store`` when the collection has it."""
-         fields = list(base)
-@@ -2300,9 +2343,14 @@ async def retrieve(
-         if query_embedding is None:
-             return []
- 
-+        refused, confine_to = self._store_scope(store)
-+        if refused:
-+            return []
-+
-         tag_filter, ok = self._build_tag_filter(tags)
-         if not ok:
-             return []
-+        tag_filter = self._combine_filter(tag_filter, self._store_filter(confine_to))
- 
-         fetch_n = self._retrieve_fetch_limit(n_results, tag_filter)
-         if self._has_bm25:
-@@ -2511,11 +2559,18 @@ async def delete_by_tags(self, tags: List[str], store: Optional[str] = None) ->
-         if not tags:
-             return 0, "No tags provided", []
- 
-+        refused, confine_to = self._store_scope(store)
-+        if refused:
-+            return 0, f"Store-scoped delete is not supported by this collection", []
-+
-         tag_filter, matched = self._tag_like_clauses(tags, joiner="or")
-         if not matched:
-             return 0, f"No memories found matching any of the {len(tags)} tags", []
- 
--        hashes = await self._collect_hashes(tag_filter, any_of_tags=tags)
-+        hashes = await self._collect_hashes(
-+            self._combine_filter(tag_filter, self._store_filter(confine_to)),
-+            any_of_tags=tags,
-+        )
-         if not hashes:
-             return 0, f"No memories found matching any of the {len(tags)} tags", []
- 
-@@ -2722,26 +2777,63 @@ async def get_by_exact_content(self, content: str, store: Optional[str] = None)
+         try:
+             # The paged tag listing drops tombstones, so its total does too.
+-            return await self._count_live(tag_filter)
++            return len(await self._drain_live_rows(tag_filter, ["id"]))
+         except Exception as exc:  # noqa: BLE001
+             logger.error("count_memories_by_tag failed: %s", _sanitize_log_value(exc))
+             return 0
+@@ -4241,12 +4241,14 @@ async def get_stats(self) -> Dict[str, Any]:
          if not self._ensure_initialized():
-             return []
+             return {"error": "Milvus storage not initialized"}
  
-+        refused, _ = self._store_scope(store)
-+        if refused:
-+            return []
-+
-         if not self._has_content_lower:
--            return await self._get_by_exact_content_fallback(content)
-+            return await self._get_by_exact_content_fallback(content, store=store)
+-        recent_filter = f"created_at >= {time.time() - 7 * 24 * 60 * 60}"
++        week_ago = time.time() - 7 * 24 * 60 * 60
  
-         needle = _escape_like(content.lower())
-         if not needle:
-             return []
-         safe = escape_expr_value(needle)
--        filter_expr = f'content_lower like "%{safe}%"'
-+        refused, confine_to = self._store_scope(store)
-+        if refused:
-+            return []
-+        filter_expr = self._combine_filter(
-+            f'content_lower like "%{safe}%"', self._store_filter(confine_to)
+         try:
+             # Live rows only, like the listings these totals are shown with.
+-            total = await self._count_live("")
+-            recent = await self._count_live(recent_filter)
++            # Both figures come from the same scan, so they agree with each other.
++            rows = await self._drain_live_rows("", ["id", "created_at"])
++            total = len(rows)
++            recent = sum(1 for row in rows if row.get("created_at", 0) >= week_ago)
+         except Exception as exc:  # noqa: BLE001
+             logger.warning("Milvus stats query failed: %s", _sanitize_log_value(exc))
+             total = recent = 0
+@@ -4899,59 +4901,40 @@ async def count_all_memories(
+                 filter_expr, stale_days, drop_superseded=not include_superseded,
+             )
+ 
+-        if not include_superseded:
+-            # superseded_by lives in the metadata JSON, which Milvus cannot
+-            # filter on, so count(*) would include old versions. Scan the
+-            # metadata and count the current ones instead.
+-            try:
+-                rows = await self._drain_rows(filter_expr, ["id", "metadata"])
+-            except Exception as exc:  # noqa: BLE001
+-                logger.warning("count_all_memories failed: %s", _sanitize_log_value(exc))
+-                if should_raise_read_error():
+-                    raise
+-                return 0
+-            return sum(
+-                1 for row in rows
+-                if self._row_is_live(row) and not self._row_is_superseded(row)
+-            )
+-
++        # Tombstones and superseded_by both live in the metadata JSON, which
++        # Milvus cannot filter on, so the rows are scanned and counted here.
+         try:
+-            return await self._count_live(filter_expr)
++            rows = await self._drain_live_rows(filter_expr, ["id"])
+         except Exception as exc:  # noqa: BLE001
+             logger.warning("count_all_memories failed: %s", _sanitize_log_value(exc))
+             if should_raise_read_error():
+                 raise
+             return 0
++        if include_superseded:
++            return len(rows)
++        return sum(1 for row in rows if not self._row_is_superseded(row))
+ 
+     @staticmethod
+     def _row_is_superseded(row: Dict[str, Any]) -> bool:
+         """True for a raw row whose metadata names a replacing version."""
+         metadata = _safe_json_loads(row.get("metadata", ""), "milvus_superseded_row")
+         return bool(metadata.get("superseded_by"))
+ 
+-    async def _count_live(self, filter_expr: str) -> int:
++    async def _drain_live_rows(
++        self, filter_expr: str, output_fields: List[str],
++    ) -> List[Dict[str, Any]]:
+         """Rows under ``filter_expr`` that carry no soft-delete tombstone.
+ 
+-        ``count(*)`` cannot look inside the metadata JSON, so it counts the
+-        rows whose metadata never mentions the key, and a scan adds the ones
+-        that mention it and are live anyway (a stored ``"deleted_at": null``;
+-        :meth:`_row_is_live` decides). Neither read counts a tombstone, so a
+-        purge between the two cannot turn deleted rows into live ones, which
+-        subtracting a later tombstone scan from a raw count did (#2133 review).
++        The live totals are counted from this one scan. ``count(*)`` cannot look
++        inside the metadata JSON, and pairing it with a second read for the
++        tombstones lets a write between the two reads count a deleted row as
++        live or a live row twice (#2136).
+         """
+-        mentions_key = 'metadata like "%deleted_at%"'
+-        counted = await self._call_client(
+-            "query",
+-            collection_name=self.collection_name,
+-            filter=self._combine_filter(filter_expr, f"not ({mentions_key})"),
+-            output_fields=["count(*)"],
+-        )
+-        rows = await self._drain_rows(
+-            self._combine_filter(filter_expr, mentions_key), ["id", "metadata"],
+-        )
+-        return self._extract_count(counted) + sum(
+-            1 for row in rows if self._row_is_live(row)
+-        )
++        # A full scan per count. A scalar ``deleted`` field would let count(*)
++        # answer this again, should the scan show up on large coll
+```
+
+**File**: `tests/storage/test_milvus_low_priority.py` (modified, +5/-3)
+```diff
+@@ -133,9 +133,11 @@ class TestCountMemoriesByTag:
+ 
+     @pytest.mark.asyncio
+     async def test_returns_count(self):
+-        """Returns the count from Milvus query."""
++        """Returns the number of live rows the scan yields."""
+         storage = _make_storage()
+-        storage._call_client = AsyncMock(return_value=[{"count(*)": 42}])
++        storage._drain_rows = AsyncMock(
++            return_value=[{"id": str(i), "metadata": "{}"} for i in range(42)]
 +        )
-         return await self._query_memories(
-             filter_expr=filter_expr,
-             limit=None,
-             sort_desc_key="created
-```
-
-**File**: `tests/storage/test_milvus_low_priority.py` (modified, +3/-1)
-```diff
-@@ -11,6 +11,7 @@
  
- from __future__ import annotations
+         count = await storage.count_memories_by_tag(["python"])
  
-+import asyncio
- import json
- import time
- from typing import Any, Dict, List, Optional
-@@ -31,7 +32,6 @@
+@@ -153,7 +155,7 @@ async def test_empty_tags_returns_zero(self):
+     async def test_query_failure_returns_zero(self):
+         """Returns 0 on query failure."""
+         storage = _make_storage()
+-        storage._call_client = AsyncMock(side_effect=Exception("network error"))
++        storage._drain_rows = AsyncMock(side_effect=Exception("network error"))
  
- def _make_storage() -> MilvusMemoryStorage:
-     """Return a MilvusMemoryStorage skipping __init__."""
--    import asyncio
-     storage = MilvusMemoryStorage.__new__(MilvusMemoryStorage)
-     storage.collection_name = "unit_test_collection"
-     storage.embedding_dimension = 4
-@@ -44,6 +44,8 @@ def _make_storage() -> MilvusMemoryStorage:
-     storage._lock = None
-     storage._write_lock = asyncio.Lock()
-     storage._call_client = AsyncMock()
-+    # The count reads subtract the tombstones a scan finds; none by default.
-+    storage._drain_rows = AsyncMock(return_value=[])
-     storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
-     return storage
+         count = await storage.count_memories_by_tag(["python"])
  
 ```
 
-**File**: `tests/storage/test_milvus_parity_methods.py` (modified, +11/-6)
+**File**: `tests/storage/test_milvus_read_paths_store_scope.py` (modified, +19/-9)
 ```diff
-@@ -56,8 +56,10 @@ def _make_storage(uri: str = "./milvus.db") -> MilvusMemoryStorage:
-     storage._has_access_collection = False
-     storage._lock = None
-     storage._call_client = AsyncMock()
-+    # The count reads subtract the tombstones a scan finds; none by default.
-+    storage._drain_rows = AsyncMock(return_value=[])
-     storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
--    storage._fetch_live_hashes = AsyncMock(side_effect=lambda hashes: set(hashes))
-+    storage._fetch_live_hashes = AsyncMock(side_effect=lambda hashes, store=None: set(hashes))
-     return storage
- 
- 
-@@ -206,7 +208,7 @@ async def test_min_connections_filters_nodes(self):
-             _edge("a", "b"), _edge("a", "c"), _edge("d", "e"),
+@@ -363,22 +363,32 @@ async def test_timestamps_skip_tombstoned_rows(self):
+     async def test_count_leaves_tombstoned_rows_out(self):
+         """`memory_list` pairs this total with a listing that drops tombstones."""
+         storage = _make_storage()
+-        # One row whose metadata never mentions the key.
+-        storage._call_client = AsyncMock(return_value=[{"count(*)": 1}])
+         storage._drain_rows = AsyncMock(return_value=[
++            {"id": "h1", "metadata": "{}"},
+             {"id": "h2", "metadata": '{"deleted_at": 1.0}'},
+             # Mentions the key without being deleted: still a live row.
+             {"id": "h3", "metadata": '{"deleted_at": null}'},
          ])
-         storage._fetch_memories_by_hashes = AsyncMock(
--            side_effect=lambda hashes: [_memory(h) for h in hashes]
-+            side_effect=lambda hashes, store=None: [_memory(h) for h in hashes]
-         )
  
-         result = await storage.get_graph_visualization_data(min_connections=2)
-@@ -222,7 +224,7 @@ async def test_connection_count_uses_distinct_targets(self):
-             _edge("a", "b", "causes"), _edge("a", "b", "related"),
-         ])
-         storage._fetch_memories_by_hashes = AsyncMock(
--            side_effect=lambda hashes: [_memory(h) for h in hashes]
-+            side_effect=lambda hashes, store=None: [_memory(h) for h in hashes]
-         )
- 
-         result = await storage.get_graph_visualization_data()
-@@ -254,10 +256,10 @@ async def test_deleted_targets_do_not_consume_node_limit(self):
-         ])
-         live_hashes = {"live-source", "live-target"}
-         storage._fetch_live_hashes = AsyncMock(
--            side_effect=lambda hashes: set(hashes) & live_hashes
-+            side_effect=lambda hashes, store=None: set(hashes) & live_hashes
-         )
-         storage._fetch_memories_by_hashes = AsyncMock(
--            side_effect=lambda hashes: [_memory(h) for h in hashes]
-+            side_effect=lambda hashes, store=None: [_memory(h) for h in hashes]
-         )
- 
-         result = await storage.get_graph_visualization_data(limit=1)
-@@ -274,7 +276,7 @@ async def test_bounded_graph_loads_only_selected_source_records(self):
-             _edge("a", "b"), _edge("c", "d"), _edge("e", "f"),
-         ])
-         storage._fetch_memories_by_hashes = AsyncMock(
--            side_effect=lambda hashes: [_memory(h) for h in hashes]
-+            side_effect=lambda hashes, store=None: [_memory(h) for h in hashes]
-         )
- 
-         result = await storage.get_graph_visualization_data(limit=1)
-@@ -470,6 +472,9 @@ async def test_full_iterator_scan_holds_write_lock(self):
-         storage._call_client = MilvusMemoryStorage._call_client.__get__(
-             storage, MilvusMemoryStorage,
-         )
-+        storage._drain_rows = MilvusMemoryStorage._drain_rows.__get__(
-+            storage, MilvusMemoryStorage,
-+        )
-         scan_started = threading.Event()
-         release_scan = threading.Event()
-         delete_started = threading.Event()
-```
-
-**File**: `tests/storage/test_milvus_read_paths_store_scope.py` (added, +398/-0)
-```diff
-@@ -0,0 +1,398 @@
-+# Copyright 2024 Heinrich Krupp
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License");
-+# you may not use this file except in compliance with the License.
-+# You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+
-+"""Milvus read paths confine to the claimed store (#1958).
-+
-+#1962 taught the hash-addressed operations to confine and left
-+`get_by_hash_is_store_scoped` at `False`, because the read paths still ignored
-+`store`: a `read:<store>` credential could have searched, listed, counted and
-+recalled across every partition. Eleven methods accepted `store` and dropped it,
-+several with a comment saying so.
-+
-+This pins the confinement at the layer each method drives — the filter
-+expression it hands to the query helper — so a later refactor cannot quietly
-+stop passing it. The legacy case is the other half: a collection without the
-+`store` field refuses a named store instead of serving every partition, which is
-+what lets the capability flag be `True`.
-+"""
-+
-+from __future__ import annotations
-+
-+from typing import Any
-+from unittest.mock import AsyncMock, MagicMock
-+
-+import pytest
-+
-+from mcp_memory_service.storage.milvus import MilvusMemoryStorage
-+
-+STORE = "alpha"
-+OTHER = "beta"
-+
-+
-+def _make_storage(has_store: bool = True) -> MilvusMemoryStorage:
-+    """A MilvusMemoryStorage with __init__ skipped and the client mocked."""
-+    storage = MilvusMemoryStorage.__new__(MilvusMemoryStorage)
-+    storage.uri = "./milvus.db"
-+    storage.collection_name = "unit_test_collection"
-+    storage.embedding_dimension = 4
-+    storage.embedding_model_name = "test-model"
-+    storage.embedding_model = MagicMock()
-+    storage._initialized = True
-+    storage.client = MagicMock()
-+    storage._has_content_lower = True
-+    storage._has_bm25 = False
-+    storage._has_access_collection = False
-+    storage._has_store = has_store
-+    storage._legacy_store_warned = False
-+    storage._graph_has_store = None
-+    storage.semantic_dedup_enabled = False
-+    storage._generate_embedding = MagicMock(return_value=[0.1, 0.2, 0.3, 0.4])
-+    storage._detect_conflicts = AsyncMock(return_value=[])
-+    storage._delete_graph_edges = AsyncMock()
-+    return storage
-+
-+
-+def _captured_filter(call: Any) -> str:
-+    """The filter expression a mocked helper was called with."""
-+    kwargs = call.kwargs or {}
-+    if "filter_expr" in kwargs:
-+        return kwargs["filter_expr"]
-+    if "store_filter" in kwargs:
-+        return kwargs["store_filter"] or ""
-+    args = call.args or ()
-+    return next((a for a in args if isinstance(a, str)), "")
-+
-+
-+class TestFlagIsClaimed:
-+    def test_milvus_claims_store_scoping(self):
-+        """Only safe because every read path confines or refuses below."""
-+        assert MilvusMemoryStorage.get_by_hash_is_store_scoped is True
-+
-+
-+class TestQueryFiltersCarryTheStore:
-+    async def test_get_by_exact_content(self):
-+        storage = _make_storage()
-+        storage._query_memories = AsyncMock(return_value=[])
-+
-+        await storage.get_by_exact_content("needle", store=STORE)
-+
-+        assert f'store == "{STORE}"' in _captured_filter(storage._query_memories.call_args)
-+
-+    async def test_get_memories_by_time_range(self):
-+        storage = _make_storage()
-+        storage._query_memories = AsyncMock(return_value=[])
-+
-+        await storage.get_memories_by_time_range(1.0, 2.0, store=STORE)
-+
-+        assert f'store == "{STORE}"' in _captured_filter(storage._query_memories.call_args)
-+
-+    async def test_get_all_memories(self):
-+        storage = _make_storage()
-+        storage._query_memories = AsyncMock(return_value=[])
-+
-+        await storage.get_all_memories(store=STORE)
-+
-+        assert f'store == "{STORE}"' in _captured_filter(storage._query_memories.call_args)
-+
-+    async def test_search_memories(self):
-+        storage = _make_storage()
-+        storage._query_memories = AsyncMock(return_value=[])
-+        storage._drain_rows = AsyncMock(return_value=[])
-+
-+        # Without a query the scan branch runs and hands its filter to
-+        # _query_memories(filter_expr=...).
-+        await storage.search_memories(query=None, store=STORE)
-+
-+        assert f'store == "{STORE}"' in _captured_filter(storage._query_memories.call_args)
-+
-+    async def test_get_memory_timestamps(self):
-+        storage = _make_storage()
-+        storage._drain_rows = AsyncMock(return_value=[])
-+
-+        await storage.get_memory_timestamps(store=STORE)
-+
+         assert await storage.count_all_memories(store=STORE) == 2
+-        counted = storage._call_client.call_args.kwargs["filter"]
+-        assert 'not (metadata like "%deleted_at%")' in counted
+-        assert f'store == "{STORE}"' in counted
+-        narrowed = _captured_filter(storage._drain_rows.call_args)
+-        assert 'metadata like "%deleted_at%"' in narrowed
+-        assert "not (" not in narrowed
+-        assert f'store == "{STORE}"' in narrowed
 +        assert f'store == "{STORE}"' in _captured_filter(storage._drain_rows.call_args)
 +
-+    async def test_get_all_tags_with_counts(self):
-+        storag
++    @pytest.mark.parametrize("live_total", [
++        lambda storage: storage.count_all_memories(),
++        lambda storage: storage.count_memories_by_tag(["t"]),
++        lambda storage: storage.get_stats(),
++    ], ids=["count_all_memories", "count_memories_by_tag", "get_stats"])
++    async def test_a_live_total_is_one_read(self, live_total):
++        """Two reads let a write between them count a row twice or revive a tombstone (#2136)."""
++        storage = _make_storage()
++        storage._call_client = AsyncMock(return_value=[{"count(*)": 5}])
++        storage._drain_rows = AsyncMock(return_value=[])
++        storage.get_all_tags = AsyncMock(return_value=[])
++
++        await live_total(storage)
++
++        storage._drain_rows.assert_awaited_once()
++        storage._call_client.assert_not_called()
+ 
+     async def test_count_without_superseded_skips_tombstoned_rows(self):
+         storage = _make_storage()
 ```
 
-**File**: `tests/storage/test_milvus_search_methods.py` (modified, +5/-3)
+---
+
+### Incident Patch 3: `18adcc31` (2026-11-26)
+**Commit Message**: fix(milvus): count live rows without subtracting tombstones (#2136) (#2137)
+
+* fix(milvus): count live rows without subtracting tombstones (#2136)
+
+count_all_memories, count_memories_by_tag and the two totals in
+get_stats took a raw count(*) and subtracted a later tombstone scan.
+A purge_deleted() between the two reads left the first number with the
+tombstones and the second without them, so deleted rows were reported
+as live for that call.
+
+_count_live() replaces _count_tombstones(): count(*) over the rows whose
+metadata never mentions deleted_at, plus the rows that mention it and
+are live anyway. Neither read counts a tombstone, so no interleaving
+with a purge can inflate the total, and it stays a count(*) rather than
+a full scan.
+
+* docs(changelog): scope the #2136 entry to the purge case
+
+The count still consists of two reads; the entry claimed more than the
+change closes.
+
+**File**: `changelog.d/2136.fixed.md` (added, +6/-0)
 ```diff
-@@ -282,7 +282,9 @@ async def test_exact_mode_uses_get_by_exact_content(self):
-         result = await storage.search_memories(query="exact match", mode="exact")
+@@ -0,0 +1,6 @@
++- **A Milvus count no longer reports purged tombstones as live memories (#2136).**
++  `count_all_memories`, `count_memories_by_tag` and the two totals in `get_stats`
++  subtracted a later tombstone scan from an earlier raw `count(*)`, so a
++  `purge_deleted()` landing between the two reads turned the deleted rows into live
++  ones for that call. The count now adds up rows that carry no tombstone instead of
++  subtracting the ones that do, so a purge between the reads has nothing to inflate.
+```
+
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +23/-37)
+```diff
+@@ -4015,14 +4015,8 @@ async def count_memories_by_tag(self, tags: List[str]) -> int:
+             return 0
  
-         assert result["total"] == 1
--        storage.get_by_exact_content.assert_called_once_with("exact match")
-+        # The fallback carries the scope through, otherwise it would read every
-+        # partition while the pushed-down path confines (#1958).
-+        storage.get_by_exact_content.assert_called_once_with("exact match", store="default")
+         try:
+-            rows = await self._call_client(
+-                "query",
+-                collection_name=self.collection_name,
+-                filter=tag_filter,
+-                output_fields=["count(*)"],
+-            )
+             # The paged tag listing drops tombstones, so its total does too.
+-            return self._extract_count(rows) - await self._count_tombstones(tag_filter)
++            return await self._count_live(tag_filter)
+         except Exception as exc:  # noqa: BLE001
+             logger.error("count_memories_by_tag failed: %s", _sanitize_log_value(exc))
+             return 0
+@@ -4250,21 +4244,9 @@ async def get_stats(self) -> Dict[str, Any]:
+         recent_filter = f"created_at >= {time.time() - 7 * 24 * 60 * 60}"
  
-     @pytest.mark.asyncio
-     async def test_time_filter_pushed_to_milvus(self):
-@@ -366,7 +368,7 @@ async def test_time_only_search_reconnects_lite_after_channel_death(self, monkey
-         Before, the error escaped the iterator and search_memories returned an
-         empty successful result, and every later search failed the same way.
+         try:
+-            total_rows = await self._call_client(
+-                "query",
+-                collection_name=self.collection_name,
+-                filter="",
+-                output_fields=["count(*)"],
+-            )
+-            recent_rows = await self._call_client(
+-                "query",
+-                collection_name=self.collection_name,
+-                filter=recent_filter,
+-                output_fields=["count(*)"],
+-            )
+             # Live rows only, like the listings these totals are shown with.
+-            total = self._extract_count(total_rows) - await self._count_tombstones("")
+-            recent = self._extract_count(recent_rows) - await self._count_tombstones(recent_filter)
++            total = await self._count_live("")
++            recent = await self._count_live(recent_filter)
+         except Exception as exc:  # noqa: BLE001
+             logger.warning("Milvus stats query failed: %s", _sanitize_log_value(exc))
+             total = recent = 0
+@@ -4934,13 +4916,7 @@ async def count_all_memories(
+             )
+ 
+         try:
+-            rows = await self._call_client(
+-                "query",
+-                collection_name=self.collection_name,
+-                filter=filter_expr,
+-                output_fields=["count(*)"],
+-            )
+-            return self._extract_count(rows) - await self._count_tombstones(filter_expr)
++            return await self._count_live(filter_expr)
+         except Exception as exc:  # noqa: BLE001
+             logger.warning("count_all_memories failed: %s", _sanitize_log_value(exc))
+             if should_raise_read_error():
+@@ -4953,19 +4929,29 @@ def _row_is_superseded(row: Dict[str, Any]) -> bool:
+         metadata = _safe_json_loads(row.get("metadata", ""), "milvus_superseded_row")
+         return bool(metadata.get("superseded_by"))
+ 
+-    async def _count_tombstones(self, filter_expr: str) -> int:
+-        """Rows under ``filter_expr`` that carry a soft-delete tombstone.
++    async def _count_live(self, filter_expr: str) -> int:
++        """Rows under ``filter_expr`` that carry no soft-delete tombstone.
+ 
+-        ``count(*)`` cannot look inside the metadata JSON, so the count read
+-        subtracts these. The ``like`` only narrows the scan to rows that mention
+-        the key at all; :meth:`_row_is_live` then decides, so a stored
+-        ``"deleted_at": null`` is not taken for a tombstone.
++        ``count(*)`` cannot look inside the metadata JSON, so it counts the
++        rows whose metadata never mentions the key, and a scan adds the ones
++        that mention it and are live anyway (a stored ``"deleted_at": null``;
++        :meth:`_row_is_live` decides). Neither read counts a tombstone, so a
++        purge between the two cannot turn deleted rows into live ones, which
++        subtracting a later tombstone scan from a raw count did (#2133 review).
          """
--        import mcp_memory_service.storage.milvus as milvus_module
-+        import mcp_memory_service.storage.milvus as milvus_module  # inline import: patched per test
++        mentions_key = 'metadata like "%deleted_at%"'
++        counted = await self._call_client(
++            "query",
++            collection_name=self.collection_name,
++            filter=self._combine_filter(filter_expr, f"not ({mentions_key})"),
++            output_fields=["count(*)"],
++        )
+         rows = await self._drain_rows(
+-            self._combine_filter(filter_expr, 'metadata like "%deleted_at%"'),
+-            ["id", "metadata"],
++            self._combine_filter(filter_expr, mentions_key), ["id", "metadata"],
++        )
++        return self._extract_count(counted) + sum(
++            1 for row in rows if self._row_is_live(row)
+         )
+-        return sum(1 for row in rows if not self._row_is_live(row))
  
-         storage = _make_storage()
-         storage.uri = "milvus-test.db"
-@@ -401,7 +403,7 @@ async def test_time_only_search_reconnects_lite_after_channel_death(self, monkey
-     @pytest.mark.asyncio
-     async def test_iterator_scan_does_not_reconnect_on_other_errors(self, monkeypatch):
-         """Only the Lite dead-channel signature triggers a reconnect."""
--        import mcp_memory_service.storage.milvus as milvus_module
-+        import mcp_memory_service.storage.milvus as milvus_module  # inline import: patched per test
- 
-         storage = _make_storage()
-         storage.uri = "milvus-test.db"
+     async def _drain_stale_rows(
+         self, base_filter: str, stale_days: int, drop_superseded: bool,
 ```
 
-**File**: `tests/storage/test_milvus_soft_delete_e2e.py` (modified, +30/-0)
+**File**: `tests/storage/test_milvus_read_paths_store_scope.py` (modified, +9/-4)
 ```diff
-@@ -110,3 +110,33 @@ async def test_live_memory_is_visible_and_not_deleted(storage):
- @pytest.mark.asyncio
- async def test_is_deleted_false_for_absent_memory(storage):
-     assert (await storage.is_deleted(generate_content_hash("never stored"))) is False
+@@ -360,19 +360,24 @@ async def test_timestamps_skip_tombstoned_rows(self):
+ 
+         assert await storage.get_memory_timestamps() == [2.0]
+ 
+-    async def test_count_subtracts_tombstoned_rows(self):
++    async def test_count_leaves_tombstoned_rows_out(self):
+         """`memory_list` pairs this total with a listing that drops tombstones."""
+         storage = _make_storage()
+-        storage._call_client = AsyncMock(return_value=[{"count(*)": 2}])
++        # One row whose metadata never mentions the key.
++        storage._call_client = AsyncMock(return_value=[{"count(*)": 1}])
+         storage._drain_rows = AsyncMock(return_value=[
+             {"id": "h2", "metadata": '{"deleted_at": 1.0}'},
+-            # Mentions the key without being deleted: must not be subtracted.
++            # Mentions the key without being deleted: still a live row.
+             {"id": "h3", "metadata": '{"deleted_at": null}'},
+         ])
+ 
+-        assert await storage.count_all_memories(store=STORE) == 1
++        assert await storage.count_all_memories(store=STORE) == 2
++        counted = storage._call_client.call_args.kwargs["filter"]
++        assert 'not (metadata like "%deleted_at%")' in counted
++        assert f'store == "{STORE}"' in counted
+         narrowed = _captured_filter(storage._drain_rows.call_args)
+         assert 'metadata like "%deleted_at%"' in narrowed
++        assert "not (" not in narrowed
+         assert f'store == "{STORE}"' in narrowed
+ 
+     async def test_count_without_superseded_skips_tombstoned_rows(self):
+```
+
+**File**: `tests/storage/test_milvus_soft_delete_e2e.py` (modified, +35/-0)
+```diff
+@@ -140,3 +140,38 @@ async def test_count_and_listing_agree_once_a_memory_is_tombstoned(storage):
+     assert await storage.count_memories_by_tag(["t"]) == 1
+     stats = await storage.get_stats()
+     assert (stats["total_memories"], stats["memories_this_week"]) == (1, 1)
++
++
++async def _stats_totals(storage):
++    stats = await storage.get_stats()
++    return stats["total_memories"] + stats["memories_this_week"]
 +
 +
 +@pytest.mark.asyncio
-+async def test_count_and_listing_agree_once_a_memory_is_tombstoned(storage):
-+    """`memory_list` shows a page next to this total, so both drop the tombstone.
++@pytest.mark.parametrize("live_total", [
++    lambda storage: storage.count_all_memories(),
++    lambda storage: storage.count_memories_by_tag(["t"]),
++    _stats_totals,
++], ids=["count_all_memories", "count_memories_by_tag", "get_stats"])
++async def test_purge_between_the_count_reads_does_not_revive_tombstones(
++    storage, monkeypatch, live_total,
++):
++    """A purge landing between a count's two reads leaves the total at the live rows.
 +
-+    Runs against a real collection because the count narrows its tombstone scan
-+    with a ``like`` on the metadata string, which a mocked client cannot vouch
-+    for (#2133 review).
++    The count used to subtract a later tombstone scan from an earlier raw
++    ``count(*)``, so tombstones purged in between were reported as live
++    memories (#2136).
 +    """
-+    kept = await _store_live(storage, "a memory that stays")
-+    gone = await _store_live(storage, "a memory that gets tombstoned")
-+    ok, msg = await storage.update_memory_metadata(
-+        gone, {"metadata": {"deleted_at": time.time()}}
-+    )
-+    assert ok, msg
-+
-+    listed = await storage.get_all_memories(limit=None)
-+
-+    assert [m.content_hash for m in listed] == [kept]
-+    assert await storage.count_all_memories() == 1
-+    assert await storage.count_all_memories(include_superseded=False) == 1
-+    assert await storage.count_all_memories(memory_type="note", tags=["t"]) == 1
-+    assert [m.content_hash for m, _ in await storage.get_all_memories_with_store()] == [kept]
-+    # The tag total sits next to the paged tag listing, the stats total next to
-+    # the dashboard's list: neither may count the tombstone either.
-+    assert [m.content_hash for m in await storage.search_by_tags(["t"])] == [kept]
-+    assert await storage.count_memories_by_tag(["t"]) == 1
-+    stats = await storage.get_stats()
-+    assert (stats["total_memories"], stats["memories_this_week"]) == (1, 1)
-```
-
----
-
-### Incident Patch 3: `a68237b3` (2026-11-25)
-**Commit Message**: fix(milvus): rebuild entities without cross-store shares_entity pairs (#2123) (#2130)
-
-* fix(milvus): rebuild entities without cross-store shares_entity pairs (#2123)
-
-Since #2119 the Milvus graph refuses a shares_entity pair whose two
-memories live in different stores. The rebuild planned such pairs, deleted
-every entity edge, then stopped on the first refused write.
-
-The Milvus scan the rebuild counts now carries each row's store, and the
-plan drops pairs across two stores, or with an end it cannot attribute,
-in build(), so the preview counts them. A preview reads the association
-schema, and an unreadable schema stops before anything is deleted.
-
-* changelog: name the fragment after the PR (#2130)
-
----------
-
-Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/2130.fixed.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+- **An entity rebuild over a multi-store Milvus backend completes instead of stopping
-+  after it has deleted the old edges (#2123).** Since #2119 the Milvus graph refuses a
-+  `shares_entity` pair whose two memories live in different stores, and the rebuild
-+  planned such pairs, deleted every entity edge, then raised on the first refused write.
-+  The Milvus scan the rebuild counts now carries each row's store, and the plan drops a
-+  pair whose ends are in two stores, or whose store it cannot tell, before the preview is
-+  shown. The report gains `shares_entity_pairs_skipped_cross_store` and
-+  `shares_entity_pairs_skipped_unknown_store`, with one warning per run. A preview now
-+  reads the association collection's schema, and an unreadable schema stops the rebuild
-+  before anything is deleted, with a message that names it. SQLite and hybrid are
-+  unchanged.
-```
-
-**File**: `src/mcp_memory_service/reasoning/entity_rebuild.py` (modified, +44/-2)
-```diff
-@@ -1,11 +1,14 @@
- """Plan entity-graph replacement before making any destructive writes."""
- 
-+import logging
- from collections import Counter, defaultdict, deque
--from typing import Any, Callable
-+from typing import Any, Callable, Optional
- 
- from .entities import Entity, EntityExtractor
- from .entity_linker import ENTITY_RELATIONSHIPS, EntityLinker, MAX_LINKS_PER_ENTITY
- 
-+logger = logging.getLogger(__name__)
-+
- 
- def _tags(value: object) -> list[str]:
-     """Accept current list tags and legacy comma-separated metadata tags."""
-@@ -29,12 +32,23 @@ class EntityRebuildPlan:
-     including the just-inserted memory. Protected pairs cannot be overwritten
-     by symmetric shares_entity writes. Counts are physical edge rows; pairs
-     are reported separately.
-+
-+    ``store_of`` maps each scanned memory hash to its store. With a map, a
-+    shares_entity pair is kept only when both ends are known and in the same
-+    store, the rule the Milvus graph enforces at store time (#2119, #2123);
-+    without one (SQLite and hybrid) every pair is kept, as before.
-     """
- 
-     def __init__(
--        self, snapshot: list[dict], entity_key: Callable[[str], str]
-+        self,
-+        snapshot: list[dict],
-+        entity_key: Callable[[str], str],
-+        store_of: Optional[dict[str, str]] = None,
-     ) -> None:
-         self.entity_key = entity_key
-+        self.store_of = store_of
-+        self.skipped_cross_store = 0
-+        self.skipped_unknown_store = 0
-         self.protected = {
-             (row["source_hash"], row["target_hash"])
-             for row in snapshot
-@@ -109,6 +123,32 @@ async def build(self, memories: list) -> None:
-                 memory.content_hash, [e.name for e in entities], self
-             )
-             self.memories_scanned += 1
-+        if self.store_of is not None:
-+            self._drop_pairs_outside_one_store()
-+
-+    def _drop_pairs_outside_one_store(self) -> None:
-+        """Remove pairs the store-scoped graph would refuse, so apply() never sees them.
-+
-+        Done once after the replay, so the preview counts them too. Equivalent
-+        to refusing them as they are proposed: the candidate window holds at
-+        most MAX_LINKS_PER_ENTITY hashes, so the linker's cap never cuts a
-+        candidate and a dropped pair cannot have displaced another.
-+        """
-+        for pair in list(self.associations):
-+            stores = [self.store_of.get(memory_hash) for memory_hash in pair]
-+            if None in stores:
-+                self.skipped_unknown_store += 1
-+            elif stores[0] != stores[1]:
-+                self.skipped_cross_store += 1
-+            else:
-+                continue
-+            del self.associations[pair]
-+        if self.skipped_cross_store or self.skipped_unknown_store:
-+            logger.warning(
-+                "Entity rebuild skipped %d cross-store and %d unattributed "
-+                "shares_entity pairs; the graph keeps edges within one store (#2123)",
-+                self.skipped_cross_store, self.skipped_unknown_store,
-+            )
- 
-     def describe(self) -> dict:
-         """Return the preview without exposing memory contents."""
-@@ -122,6 +162,8 @@ def describe(self) -> dict:
-             "shares_entity_pairs_before": self.pairs_before,
-             "shares_entity_pairs_after": len(self.associations),
-             "protected_edges": len(self.protected),
-+            "shares_entity_pairs_skipped_cross_store": self.skipped_cross_store,
-+            "shares_entity_pairs_skipped_unknown_store": self.skipped_unknown_store,
-         }
- 
-     async def apply(self, graph: Any, report: dict) -> None:
-```
-
-**File**: `src/mcp_memory_service/server/handlers/entity_rebuild.py` (modified, +38/-5)
-```diff
-@@ -46,27 +46,60 @@ async def _open_graph(
-         await graph.close()
- 
- 
-+async def _confines_store(graph: MilvusGraphStorage) -> bool:
-+    """Whether the Milvus graph refuses a shares_entity pair across two stores.
-+
-+    True when the association collection carries ``store``, and for a preview
-+    of a missing collection, which the real run creates with the field. An
-+    unreadable schema refuses every write, so the rebuild stops before it
-+    deletes anything rather than after.
-+    """
-+    if graph._has_store is None:
-+        if await graph._call_client(
-+            "has_collection", collection_name=graph.collection_name
-+        ):
-+            raise RuntimeError(
-+                "Milvus association collection schema could not be read, so "
-+                "every graph write would be refused (#2119); no edges deleted"
-+            )
-+        return True
-+    return graph._has_store
-+
-+
- async def _rebuild(server: Any, dry_run: bool, report: dict) -> None:
-     storage = await server._ensure_storage_initialized()
-     primary = storage.primary if isinstance(storage, HybridMemoryStorage) else storage
-     async with _open_graph(primary, dry_run) as graph:
-         # None means every named store; limit=None drains Milvus's full iterator.
-+        # On Milvus the same scan carries each row's store, so the list that is
-+        # counted is the list the pairs are attributed from (#2123).
-         with strict_reads():
--            memories = await primary.get_all_memories(limit=None, store=None)
-+            if isinstance(primary, MilvusMemoryStorage):
-+                rows = await primary.get_all_memories_with_store()
-+            else:
-+                rows = [
-+                    (m, None)
-+                    for m in await primary.get_all_memories(limit=None, store=None)
-+                ]
-             expected = await primary.count_all_memories(store=None)
--        if len(memories) != expected:
-+        if len(rows) != expected:
-             raise RuntimeError(
-                 "Memory scan was incomplete or the store changed; no edges deleted"
-             )
-         # Milvus listings include tombstones stored inside metadata, unlike
-         # SQLite's deleted_at SQL filter. Verify the raw count before filtering.
-         if isinstance(graph, MilvusGraphStorage):
--            memories = [
--                m for m in memories if m.metadata.get("deleted_at") is None
-+            rows = [
-+                (m, store) for m, store in rows
-+                if m.metadata.get("deleted_at") is None
-             ]
-+        memories = [m for m, _ in rows]
-+        store_of = None
-+        if isinstance(graph, MilvusGraphStorage) and await _confines_store(graph):
-+            store_of = {m.content_hash: store for m, store in rows}
-         snapshot = await graph.get_edge_snapshot()
-         key = (lambda name: name) if isinstance(graph, GraphStorage) else _entity_key
--        plan = EntityRebuildPlan(snapshot, entity_key=key)
-+        plan = EntityRebuildPlan(snapshot, entity_key=key, store_of=store_of)
-         await plan.build(memories)
-         report.update(plan.describe())
-         if not dry_run:
-```
-
-**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +28/-0)
-```diff
-@@ -4516,6 +4516,27 @@ async def get_all_memories(
-             drop_superseded=not include_superseded,
-         )
- 
-+    async def get_all_memories_with_store(self) -> List[Tuple[Memory, str]]:
-+        """Every row, newest first, paired with the store it belongs to.
-+
-+        The same scan as ``get_all_memories(limit=None, store=None)``, with
-+        ``store`` added to the requested fields, so the entity rebuild checks one
-+        list against ``count_all_memories`` and attributes every pair from that
-+        same list (#2123). Rows of a collection without the field, and rows
-+        written without the key, report ``"default"``, as :meth:`_row_store`
-+        does everywhere else.
-+        """
-+        if not self._ensure_initialized():
-+            return []
-+        rows = await self._iterate_all_rows("", with_store=True)
-+        pairs: List[Tuple[Memory, str]] = []
-+        for row in rows:
-+            mem = self._entity_to_memory(row)
-+            if mem is not None:
-+                pairs.append((mem, self._row_store(row)))
-+        pairs.sort(key=lambda pair: pair[0].created_at or 0.0, reverse=True)
-+        return pairs
-+
-     async def count_all_memories(
-         self,
-         memory_type: Optional[str] = None,
-@@ -5379,6 +5400,7 @@ async def _iterate_all_rows(
-         self,
-         filter_expr: str,
-         include_embeddings: bool = False,
-+        with_store: bool = False,
-     ) -> List[Dict[str, Any]]:
-         """Collect every row matching ``filter_expr`` using ``QueryIterator``.
- 
-@@ -5389,12 +5411,15 @@ async def _iterate_all_rows(
-             include_embeddings: If True, request the ``vector`` field in
-                 ``output_fields`` so :meth:`_entity_to_memory` can hydrate
-                 ``Memory.embedding``.
-+            with_store: If True, also request ``store`` when the collection
-+                has it, for :meth:`_row_store`.
-         """
-         async with self._write_lock:
-             if self.client is None:
-                 raise RuntimeError("MilvusMemoryStorage was not initialized")
-             return await self._scan_with_lite_retry(
-                 self._drain_query_iterator, filter_expr, include_embeddings,
-+                with_store,
-             )
- 
-     async def _scan_with_lite_retry(self, drain, *args):
-@@ -5424,6 +5449,7 @@ def _drain_query_iterator(
-         self,
-         filter_expr: str,
-         include_embeddings: bool = False,
-+        with_store: bool = False,
-     ) -> List[Dict[str, Any]]:
-         """Sync helper that drains a ``QueryIterator`` into a plain list.
- 
-@@ -5437,6 +5463,8 @@ def _drain_query_iterator(
-             if include_embeddings
-             else self._OUTPUT_FIELDS_BASE
-         )
-+        if with_store:
-+            fields = tuple(self._row_fields(fields))
-         iterator = self.client.query_iterator(
-             collection_name=self.collection_name,
-             filter=filter_expr or "",
-```
-
-**File**: `src/mcp_memory_service/storage/milvus_graph.py` (modified, +13/-1)
-```diff
-@@ -199,10 +199,22 @@ def __init__(
-     # -- Initialization ------------------------------------------------------
- 
-     async def initialize(self, create_if_missing: bool = True) -> None:
--        """Connect, optionally leaving an absent collection untouched for previews."""
-+        """Connect, optionally leaving an absent collection untouched for previews.
-+
-+        A preview still reads the schema of a collection that exists, so its
-+        store-field state is the one a real run would act on (#2123).
-+        """
-         await asyncio.to_thread(self._connect_client)
-         if create_if_missing:
-             await asyncio.to_thread(self._ensure_collection)
-+        else:
-+            await asyncio.to_thread(self._detect_existing_store_field)
-+
-+    def _detect_existing_store_field(self) -> None:
-+        """Read the store-field state without creating a missing collection."""
-+        assert self.client is not None
-+        if self.client.has_collection(collection_name=self.collection_name):
-+            self._detect_store_field()
- 
-     def _connect_client(self) -> None:
-         kwargs: Dict[str, Any] = {"uri": self.uri}
-```
-
-**File**: `tests/quality/test_rebuild_entities.py` (modified, +15/-5)
-```diff
-@@ -167,21 +167,31 @@ async def test_rebuild_covers_all_stores_and_deleted_rows(backend, monkeypatch):
-     assert await graph.store_entity_link(gone.content_hash, "stale", "tag")
-     if isinstance(primary, MilvusMemoryStorage):
-         tombstone = await _store(primary, 4, ["task:tombstone"])
--        assert (await primary.update_memory_metadata(
--            tombstone.content_hash, {"metadata": {"deleted_at": time.time()}}
--        ))[0]
-+        # Link before the tombstone: since #2119 the graph refuses a new link
-+        # on a soft-deleted memory, so the stale edge has to predate it.
-         assert await graph.store_entity_link(
-             tombstone.content_hash, "tombstone", "tag"
-         )
-+        assert (await primary.update_memory_metadata(
-+            tombstone.content_hash, {"metadata": {"deleted_at": time.time()}}
-+        ))[0]
-     snapshots = [await primary.get_by_hash(m.content_hash) for m in (a, b)]
- 
-     result = await _run(storage, dry_run=False)
-     assert result["success"], result
-     assert result["memories_scanned"] == 2
--    assert result["edges_after"] == {"has_entity": 2, "shares_entity": 2}
-     assert await graph.get_entities_for_memory(gone.content_hash) == []
-     assert await graph.find_memories_by_entity("tombstone") == []
--    assert await graph.has_edge(a.content_hash, b.content_hash, "shares_entity")
-+    # a and b are in different stores. SQLite writes the pair and hides it from
-+    # store-scoped reads (#2121); Milvus refuses it, so the rebuild skips it (#2123).
-+    cross_store = isinstance(primary, MilvusMemoryStorage)
-+    assert result["edges_after"] == {
-+        "has_entity": 2, "shares_entity": 0 if cross_store else 2,
-+    }
-+    assert result["shares_entity_pairs_skipped_cross_store"] == int(cross_store)
-+    assert await graph.has_edge(
-+        a.content_hash, b.content_hash, "shares_entity"
-+    ) is not cross_store
-     assert [await primary.get_by_hash(m.content_hash) for m in (a, b)] == snapshots
- 
- 
-```
-
-**File**: `tests/storage/test_milvus_rebuild_store_scope.py` (added, +156/-0)
-```diff
-@@ -0,0 +1,156 @@
-+"""Entity rebuild over a multi-store Milvus backend, on Milvus Lite (#2123).
-+
-+Since #2119 the Milvus graph refuses a ``shares_entity`` pair whose two
-+memories live in different stores. The rebuild used to plan such pairs, delete
-+every entity edge and then stop on the first refused write. These cases drive
-+the real ``rebuild_entities`` tool against a real Milvus Lite memory collection
-+and association collection; only the embedding is stubbed.
-+
-+Run: pytest tests/storage/test_milvus_rebuild_store_scope.py -v
-+"""
-+
-+import hashlib
-+import json
-+import uuid
-+
-+import numpy as np
-+import pytest
-+import pytest_asyncio
-+
-+pymilvus = pytest.importorskip("pymilvus")
-+milvus_lite = pytest.importorskip("milvus_lite")
-+
-+import mcp_memory_service.config as cfg
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.server import MemoryServer
-+from mcp_memory_service.storage.milvus import MilvusMemoryStorage
-+from mcp_memory_service.storage.milvus_graph import MilvusGraphStorage
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+
-+class _Encoder:
-+    """Offline embeddings, independent of the graph behaviour under test."""
-+
-+    def encode(self, texts, **kwargs):
-+        return np.array([
-+            np.random.default_rng(int(hashlib.sha256(t.encode()).hexdigest()[:8], 16))
-+            .standard_normal(64).astype(np.float32)
-+            for t in texts
-+        ])
-+
-+
-+@pytest_asyncio.fixture
-+async def backend(tmp_path, monkeypatch):
-+    async def offline_embeddings(self):
-+        self.embedding_model = _Encoder()
-+        self.embedding_dimension = 64
-+
-+    monkeypatch.setattr(
-+        MilvusMemoryStorage, "_initialize_embedding_model", offline_embeddings
-+    )
-+    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    monkeypatch.setattr(cfg, "MCP_ENTITY_TAG_INCLUDE", "")
-+    monkeypatch.setattr(cfg, "MCP_ENTITY_TAG_EXCLUDE", "")
-+    monkeypatch.setattr(cfg, "MCP_ENTITY_CUSTOM_TERMS", "")
-+    monkeypatch.setenv("MCP_ENTITY_LINKING_ENABLED", "true")
-+    storage = MilvusMemoryStorage(
-+        uri=str(tmp_path / "milvus.db"),
-+        collection_name=f"rebuild_{uuid.uuid4().hex[:12]}",
-+        embedding_model="offline",
-+    )
-+    await storage.initialize()
-+    graph = await storage._get_graph_storage()
-+    try:
-+        yield storage, graph
-+    finally:
-+        await graph.close()
-+        await storage.close()
-+
-+
-+async def _store(storage, index, tags, store="default"):
-+    content = f"plain note number {index}"
-+    memory = Memory(
-+        content=content,
-+        content_hash=generate_content_hash(content),
-+        tags=tags,
-+        created_at=1_700_000_000.0 + index,
-+    )
-+    ok, message = await storage.store(memory, store=store)
-+    assert ok, message
-+    return memory.content_hash
-+
-+
-+async def _run(storage, **arguments):
-+    server = MemoryServer(storage=storage)
-+    result = await server.handle_memory_quality(
-+        {"action": "rebuild_entities", **arguments}
-+    )
-+    return json.loads(result[0].text)
-+
-+
-+async def _shares_entity_pairs(graph):
-+    rows = await graph._drain_edges(
-+        'relationship_type == "shares_entity"', ["source_hash", "target_hash"]
-+    )
-+    return {tuple(sorted((r["source_hash"], r["target_hash"]))) for r in rows}
-+
-+
-+async def test_multi_store_rebuild_skips_cross_store_pairs(backend):
-+    storage, graph = backend
-+    a = await _store(storage, 1, ["shared"], store="docs")
-+    b = await _store(storage, 2, ["shared"], store="docs")
-+    c = await _store(storage, 3, ["shared"], store="notes")
-+    assert graph._has_store is True
-+
-+    preview = await _run(storage)
-+    assert preview["success"], preview
-+    assert preview["shares_entity_pairs_after"] == 1
-+    assert preview["shares_entity_pairs_skipped_cross_store"] == 2
-+    assert preview["shares_entity_pairs_skipped_unknown_store"] == 0
-+
-+    result = await _run(storage, dry_run=False)
-+    assert result["success"], result
-+    assert result["edges_created"] == {"has_entity": 3, "shares_entity": 2}
-+    assert result["edges_created"] == preview["edges_after"]
-+    assert result["shares_entity_pairs_skipped_cross_store"] == 2
-+    assert await _shares_entity_pairs(graph) == {tuple(sorted((a, b)))}
-+    assert c not in {h for pair in await _shares_entity_pairs(graph) for h in pair}
-+
-+
-+async def test_preview_of_a_missing_collection_counts_the_skips(backend):
-+    storage, graph = backend
-+    await _store(storage, 1, ["shared"], store="docs")
-+    await _store(storage, 2, ["shared"], store="notes")
-+    await storage._call_client(
-+        "drop_collection", collection_name=graph.collection_name
-+    )
-+
-+    preview = await _run(storage)
-+    assert preview["success"], preview
-+    assert preview["shares_entity_pairs_skipped_cross_store"] == 1
-+    assert not await storage._call_client(
-+        "has_collection", collection_name=graph.collection_name
-+    )
-+    applied = await _run(storage, dry_run=Fals
-```
-
-**File**: `tests/unit/test_entity_rebuild_store_scope.py` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+"""The rebuild plan keeps shares_entity pairs inside one store when asked (#2123).
-+
-+Backend-free: the plan is fed Memory objects and a store map directly, and its
-+output is written to a stand-in graph that refuses a cross-store pair the way
-+MilvusGraphStorage.store_association does since #2119. The Milvus Lite cases are
-+in tests/storage/test_milvus_rebuild_store_scope.py.
-+"""
-+
-+import pytest
-+
-+import mcp_memory_service.config as cfg
-+from mcp_memory_service.models.memory import Memory
-+from mcp_memory_service.reasoning.entity_rebuild import EntityRebuildPlan
-+from mcp_memory_service.utils.hashing import generate_content_hash
-+
-+
-+def _key(name):
-+    return name
-+
-+
-+@pytest.fixture(autouse=True)
-+def _entity_config(monkeypatch):
-+    monkeypatch.setattr(cfg, "MCP_ENTITY_TAG_INCLUDE", "")
-+    monkeypatch.setattr(cfg, "MCP_ENTITY_TAG_EXCLUDE", "")
-+    monkeypatch.setattr(cfg, "MCP_ENTITY_CUSTOM_TERMS", "")
-+
-+
-+def _memory(index):
-+    content = f"plain note number {index}"
-+    return Memory(
-+        content=content,
-+        content_hash=generate_content_hash(content),
-+        tags=["shared"],
-+        created_at=1_700_000_000.0 + index,
-+    )
-+
-+
-+class _OneStoreGraph:
-+    """Accepts a pair only when both ends are known and in the same store."""
-+
-+    def __init__(self, store_of):
-+        self.store_of = store_of
-+        self.pairs = []
-+        self.links = []
-+
-+    async def delete_edges_by_relationship_types(self, kinds):
-+        return 0
-+
-+    async def store_entity_link(self, memory_hash, name, kind):
-+        self.links.append(memory_hash)
-+        return True
-+
-+    async def store_association(self, source_hash, target_hash, **edge):
-+        source = self.store_of.get(source_hash)
-+        if source is None or source != self.store_of.get(target_hash):
-+            return False
-+        self.pairs.append(tuple(sorted((source_hash, target_hash))))
-+        return True
-+
-+
-+def _report():
-+    return {"edges_deleted": 0, "edges_created": {"has_entity": 0, "shares_entity": 0}}
-+
-+
-+async def test_cross_store_pairs_are_dropped_and_counted_before_apply():
-+    a, b, c = (_memory(i) for i in range(3))
-+    store_of = {a.content_hash: "docs", b.content_hash: "docs", c.content_hash: "notes"}
-+    plan = EntityRebuildPlan([], entity_key=_key, store_of=store_of)
-+    await plan.build([a, b, c])
-+
-+    preview = plan.describe()
-+    assert preview["shares_entity_pairs_after"] == 1
-+    assert preview["shares_entity_pairs_skipped_cross_store"] == 2
-+    assert preview["shares_entity_pairs_skipped_unknown_store"] == 0
-+    assert preview["edges_after"] == {"has_entity": 3, "shares_entity": 2}
-+
-+    graph, report = _OneStoreGraph(store_of), _report()
-+    await plan.apply(graph, report)
-+    assert graph.pairs == [tuple(sorted((a.content_hash, b.content_hash)))]
-+    assert report["edges_created"] == preview["edges_after"]
-+
-+
-+async def test_an_endpoint_without_a_store_is_skipped_separately():
-+    a, b, c = (_memory(i) for i in range(3))
-+    store_of = {a.content_hash: "docs", b.content_hash: "docs"}
-+    plan = EntityRebuildPlan([], entity_key=_key, store_of=store_of)
-+    await plan.build([a, b, c])
-+
-+    preview = plan.describe()
-+    assert preview["shares_entity_pairs_skipped_unknown_store"] == 2
-+    assert preview["shares_entity_pairs_skipped_cross_store"] == 0
-+    # apply() is never handed a pair the plan could not attribute.
-+    await plan.apply(_OneStoreGraph(store_of), _report())
-+
-+
-+async def test_without_a_store_map_every_pair_is_kept():
-+    memories = [_memory(i) for i in range(3)]
-+    plan = EntityRebuildPlan([], entity_key=_key)
-+    await plan.build(list(memories))
-+    unscoped = plan.describe()
-+    assert unscoped["shares_entity_pairs_after"] == 3
-+    assert unscoped["shares_entity_pairs_skipped_cross_store"] == 0
-+    assert unscoped["shares_entity_pairs_skipped_unknown_store"] == 0
-+
-+    same_store = EntityRebuildPlan(
-+        [], entity_key=_key,
-+        store_of={m.content_hash: "default" for m in memories},
-+    )
-+    await same_store.build(list(memories))
-+    assert same_store.associations == plan.associations
++    for content in ("first tombstone", "second tombstone"):
++        gone = await _store_live(storage, content)
++        await storage.update_memory_metadata(gone, {"metadata": {"deleted_at": time.time()}})
++    drain = storage._drain_rows
++
++    async def _purge_then_drain(filter_expr, output_fields):
++        monkeypatch.setattr(storage, "_drain_rows", drain)
++        assert await storage.purge_deleted(older_than_days=-1) == 2
++        return await drain(filter_expr, output_fields)
++
++    monkeypatch.setattr(storage, "_drain_rows", _purge_then_drain)
++
++    assert await live_total(storage) == 0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2141** (2026-11-26): docs(claude-md): move detail into directives and cut what the rules already say (@doobidoo)
+- **PR #2140** (closed): docs: add Protodex verification badge to README (@manja316)
+- **PR #2139** (2026-11-26): fix(milvus): count live rows from one scan (@doobidoo)
+- **PR #2138** (2026-11-26): docs(agents): add repository guidelines and refresh the GitNexus block (@doobidoo)
+- **PR #2137** (2026-11-26): fix(milvus): count live rows from one scan (#2136) (@doobidoo)
 - **PR #2133** (2026-11-25): fix(milvus): confine the read paths to the claimed store (#1958) (@doobidoo)
-- **PR #2132** (2026-11-25): refactor(logging): guard storage/sync/orchestrator.py and wrap the apply reason (#1146) (@massimiliano1991)
-- **PR #2131** (2026-11-25): fix(ontology): point coerced-type warnings at `memory ontology add` (#2127) (@Dhruv-Sharma29)
-- **PR #2130** (2026-11-25): fix(milvus): rebuild entities without cross-store shares_entity pairs (#2123) (@massimiliano1991)
-- **PR #2128** (2026-11-25): feat(ontology): let an agent register a type without a restart (#2126) (@doobidoo)
-- **PR #2125** (2026-11-25): chore(deps): bump the uv group with 9 updates (@dependabot[bot])
 
 ---
 
@@ -4365,28 +3637,30 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ontology): point coerced-type warnings at `memory ontology add`
+## X. docs(agents): add repository guidelines and refresh the GitNexus block
 
 **RULE**:
-When implementing operations in `changelog.d/2127.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/gitnexus-cli/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5b8b8b7c`: ontology): point coerced-type warnings at `memory ontology add`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a6b27bf8`: docs(agents): add repository guidelines and refresh the GitNexus block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2127.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/gitnexus-cli/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **A coerced memory type still pointed at the env var that needs a restart (#2127, Dhruv-Sharma29).**
-  When a store names a type the ontology does not know, the MCP `memory_store` response and
-  `POST /api/memories` warn that it was stored as `observation`. Both warnings told the caller
-  to set `MCP_CUSTOM_MEMORY_TYPES`, which only takes effect after a restart, although #2126
-  added a runtime path. They now name `memory ontology add <name>` first and keep the env var
-  as the startup alternative. To make that one-line change possible, `handle_store_memory` and
-  the REST `store_memory` were split into module-level helpers (failure handling, the response
-  message, the on-store checks); every other part of both responses is unchanged.
+---
+name: gitnexus-cli
+description: "Use when the user needs to run GitNexus CLI commands like analyze/index a repo, check status, clean the index, generate a wiki, or list indexed repos. Examples: \"Index this repo\", \"Reanalyze the codebase\", \"Generate a wiki\""
+---
+
+# GitNexus CLI Commands
+
+Commands below use `node .gitnexus/run.cjs <command>` — the project-local runner `gitnexus analyze` drops next to the index. It auto-selects an available runner at call time (global `gitnexus`, else `pnpm dlx`, else `bunx`, else `npx`), so no package-manager assumption and no global install is required — including on a bun-only machine, which has no npm, npx or pnpm at all.
+
+> **Not analyzed yet, or `node .gitnexus/run.cjs` reports `Cannot find module`** (the gitignored runner is absent — e.g. a fresh clone or `git clean`)? (Re)generate it with `npx gitnexus analyze` from the project root, or `bunx gitnexus@latest analyze` on a bun-only machine. On **npm 11.x**, if `npx` crashes during install (`node.target is null`), install once with `npm i -g gitnexus` (then `gitnexus analyze`), or use `bunx gitnexus@latest analyze`, or `pnpm --allow-build=@ladybugdb/core --allow-build=gitnexus --allow-
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4396,4 +3670,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5b8b8b7c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a6b27bf8` are properly handled with clean fallback behavior.

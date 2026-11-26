@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T22:51:04.006Z",
+  "last_updated": "2026-11-26T23:00:09.289Z",
   "total_verified_learnings": 9137,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26236,
+  "total_items": 26240,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214319,8 +214319,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "94618dd3",
-      "content_hash": "75e1089a762017dfe2aa3636aad9c625925f863940da32e5919a5654a0e86755",
+      "source_version": "3dc49738",
+      "content_hash": "ad834bff8c77176fecdfd18a2a3e5fe5b2ab3f5790332e79fe4d103503d4ca42",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -214363,6 +214363,11 @@
           "number": 10601,
           "title": "build(deps): bump the dependencies group across 2 directories with 8 updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Update builtin availability in other interpreters",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214370,7 +214375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T05:05:19.585Z",
+      "verified_at": "2026-11-26T22:59:57.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214412,10 +214417,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "repository": "open-policy-agent/opa",
-      "source_version": "94618dd3",
-      "content_hash": "1e4735fcce9a47296109b6ab29bd43b48ad58bd9d16972304d95a0b757440d02",
+      "source_version": "3dc49738",
+      "content_hash": "15f24bcbf67d8b272e67b54f8fddec91b9f84b4f98d367c112d9349a5f6b900e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T05:05:20.246Z"
+      "persisted_at": "2026-11-26T22:59:57.862Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa",
@@ -214424,10 +214429,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-opa-verification-protocol-empirical-defect-shield-for-open-pol.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/opa",
       "repository": "open-policy-agent/opa",
-      "source_version": "94618dd3",
-      "content_hash": "4e9fc30c629b9cc51ca947584b003dcb5178bb63f581b01d4924a51273320744",
+      "source_version": "3dc49738",
+      "content_hash": "a1fc971d9707a1e05bfcdd28b3f204acb2604a87a62ae671c8ae2d0edf9bd359",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:05:20.454Z"
+      "persisted_at": "2026-11-26T22:59:58.066Z"
     },
     "learn-github-cilium-cilium": {
       "learning_id": "learn-github-cilium-cilium",
@@ -214813,9 +214818,9 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7aca4157e181c49c8dc47b43ee64afefa159ff9decbc2e3971e8cce6064a55a",
+      "content_hash": "e36b93cf5d1bf18d468f1f1a5408e83bf64c034ab0fd798efcff75f09bf10bc4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T05:05:26.840Z"
+      "persisted_at": "2026-11-26T23:00:07.610Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-opa-learning",
@@ -214825,9 +214830,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent-opa-learnings",
       "repository": "open-policy-agent-opa-learnings",
       "source_version": "HEAD",
-      "content_hash": "b75f64f234e5b8c039bcd5afaf127c80b39dac0a7de08701014eba347f8dacac",
+      "content_hash": "3997406ef7d8ba1c1a0d81088dab3099c35bcbf30cdf6bfe7289494408137278",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T05:05:27.029Z"
+      "persisted_at": "2026-11-26T23:00:07.877Z"
     },
     "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
@@ -225055,8 +225060,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "02f525cb",
-      "content_hash": "1207486f59bcb945d7ec1bac8ff1e4c1a287aa9dbe08218e7bc76d101456cb97",
+      "source_version": "91fdde93",
+      "content_hash": "20c54337607ccbc4738db08046bd402cb71880387ad26b3127924e543447fe27",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -225114,6 +225119,11 @@
           "number": 10595,
           "title": "point coerced-type warnings at `memory ontology add`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10788,
+          "title": "docs(agents): add repository guidelines and refresh the GitNexus block",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225121,7 +225131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T04:13:35.905Z",
+      "verified_at": "2026-11-26T23:00:02.325Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225163,10 +225173,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "02f525cb",
-      "content_hash": "e2755fb2cab4511e66b2d53f03ec534ec12882dc40f047403656a97fbb044e2d",
+      "source_version": "91fdde93",
+      "content_hash": "e1f77eeeef5a30caf67a8879122238af8e522b87c8b60ceface190ac2ff33d08",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:13:36.573Z"
+      "persisted_at": "2026-11-26T23:00:03.149Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
@@ -225175,10 +225185,10 @@
       "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "02f525cb",
-      "content_hash": "e7830e820672a7ef0ddb52568c080e1930122a21ef24353c2c395a9582afa005",
+      "source_version": "91fdde93",
+      "content_hash": "698ea4cb589ed616a744abed874fe37eaaedf275807ba6a4f7899f705017f94a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:13:36.768Z"
+      "persisted_at": "2026-11-26T23:00:03.352Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
@@ -225187,10 +225197,10 @@
       "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "02f525cb",
-      "content_hash": "06af72b0035331321fe05fa3b1bfc6805ea5d4e9eca177eab8ec6c7967457b36",
+      "source_version": "91fdde93",
+      "content_hash": "caf6753418ab40bdfc9f0426d1d27b13a7d59cef168f71d1607c53e818fbf97f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:13:36.920Z"
+      "persisted_at": "2026-11-26T23:00:03.520Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
@@ -229102,7 +229112,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "70cbe293b350241407c546df9c3f9fea622a6e4ae3ac22588e9041920559e8b8",
+      "content_hash": "17dcd681bcc874c6c04bab3559fa4b17e8f7621e06be77d23bcd865c19c81786",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [],
@@ -229111,7 +229121,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T14:21:02.179Z",
+      "verified_at": "2026-11-26T22:59:47.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229128,9 +229138,9 @@
       "title": "Research & Knowledge Intelligence: openai/clip-vit-base-patch32 Core Invariants",
       "repository": "openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "b7779359b829d21ae362b96e95f1014938727fcd520fe47e3741fcdf7c6e7474",
+      "content_hash": "a0277c1e67915669951baee6537c5a151d3a73fd4daeb7617bf2b53325e6aa05",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:21:02.646Z"
+      "persisted_at": "2026-11-26T22:59:47.975Z"
     },
     "learn-github-beclab-olares": {
       "learning_id": "learn-github-beclab-olares",
@@ -229254,9 +229264,9 @@
       "title": "Research & Knowledge Intelligence: hf-openai-clip-vit-base-patch32-learnings Core Invariants",
       "repository": "hf-openai-clip-vit-base-patch32-learnings",
       "source_version": "HEAD",
-      "content_hash": "66be20b5de28eb83d71df244d5446b56517dd8eb87fc5d4d11735d1c5eed3ffc",
+      "content_hash": "590cf6ad6b340ccabfe1dfc4df20db3bcdc2e2b147ac2a3b4ae2a1de83d7ece5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T14:21:15.412Z"
+      "persisted_at": "2026-11-26T23:00:06.652Z"
     },
     "candidate_directive-docs-clarify-1-12-8-upgrade-guide": {
       "item_id": "candidate_directive-docs-clarify-1-12-8-upgrade-guide",
@@ -252510,9 +252520,9 @@
       "title": "Technical Construction Intelligence: doobidoo-mcp-memory-service-learnings Core Invariants",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "6623f396ba3432de318a17b61b35afb655cd42f029fd9af6af15e6af3d531973",
+      "content_hash": "24a61cc7b88ab0158a674757c20aed49de7479e371671378d2d34110cc9a9d1a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:14:10.042Z"
+      "persisted_at": "2026-11-26T23:00:08.910Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service-learnin",
@@ -252522,9 +252532,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "317591685dbd0ab4b512e3151b66e6390edc7b2a58d5cad9fad3c833d98480c2",
+      "content_hash": "3c0e60e830f6f8270f9e2cead1c5b8d1187c9676288333487b43c897f2ee8537",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T04:14:10.251Z"
+      "persisted_at": "2026-11-26T23:00:09.119Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service-le",
@@ -252534,9 +252544,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo-mcp-memory-service-learnings",
       "repository": "doobidoo-mcp-memory-service-learnings",
       "source_version": "HEAD",
-      "content_hash": "e049bc2973a60a9eb3b1a4d219093e6290a677a4192171c105cbc47bb8189ee2",
+      "content_hash": "eae97e29d3bafb775b8c85297e2b5fbf888deb43ec9b9adac0cb4947e10377af",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T04:14:10.418Z"
+      "persisted_at": "2026-11-26T23:00:09.289Z"
     },
     "learn-github-lottie-react-native-lottie-react-native": {
       "learning_id": "learn-github-lottie-react-native-lottie-react-native",
@@ -359822,6 +359832,56 @@
       "content_hash": "2729f0296aea115ecdffdcda0c45afa1a7bc441af82abd9fffe2e70d6d0b3891",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T22:51:01.886Z"
+    },
+    "candidate_directive-update-builtin-availability-in-other-interpreters": {
+      "item_id": "candidate_directive-update-builtin-availability-in-other-interpreters",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NODC-update-builtin-availability-in-other-interpreters.md",
+      "title": "Update builtin availability in other interpreters",
+      "repository": "open-policy-agent/opa",
+      "source_version": "3dc49738",
+      "content_hash": "c0a72f1ff0858f9694621db4a948c2a4832c49a746fe15799bcfeb54d4937e19",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T22:59:57.601Z"
+    },
+    "rule-10788": {
+      "learning_id": "rule-10788",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10788,
+      "title": "docs(agents): add repository guidelines and refresh the GitNexus block",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "91fdde93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T23:00:02.325Z"
+    },
+    "candidate_directive-docs-agents-add-repository-guidelines-and-refresh-the-gitnexus-block": {
+      "item_id": "candidate_directive-docs-agents-add-repository-guidelines-and-refresh-the-gitnexus-block",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NWXM-docs-agents-add-repository-guidelines-and-refresh-the-gitnexus-block.md",
+      "title": "docs(agents): add repository guidelines and refresh the GitNexus block",
+      "repository": "doobidoo-mcp-memory-service-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4a835962e325394fc597fd6b2ac4dfc93db5c24f818e94e3465a52404abfd702",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T23:00:08.701Z"
+    },
+    "candidate_directive-docs-update-builtin-availability-in-other-interpreters": {
+      "item_id": "candidate_directive-docs-update-builtin-availability-in-other-interpreters",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NVXM-docs-update-builtin-availability-in-other-interpreters.md",
+      "title": "docs: Update builtin availability in other interpreters",
+      "repository": "open-policy-agent-opa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aaa1ece66d021b4eeb38cc4fdb20dd87791bd293cf6cceb7dc7e361aabb12bdb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T23:00:07.403Z"
     }
   },
   "ai-builder-brain": {

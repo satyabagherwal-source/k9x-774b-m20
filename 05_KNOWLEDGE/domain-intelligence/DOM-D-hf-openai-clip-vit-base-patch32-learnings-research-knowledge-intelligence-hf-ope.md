@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T14:21:15.315Z",
+  "timestamp": "2026-11-26T23:00:06.519Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-openai-clip-vit-base-patch32-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-openai-clip-vit-base-patch32-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T14:21:15.315Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T23:00:06.519Z`  
 > **Learning ID**: `LEARN-EVO-hf-openai-clip-vit-base-patch32-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-openai-cl`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T14:21:01.890Z  
+> **Timestamp**: 2026-11-26T22:59:47.108Z  
 > **Learning ID**: `learn-huggingface-openai-clip-vit-base-patch32`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai/clip-vit-base-patch32](https://huggingface.co/openai/clip-vit-base-patch32))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T14:21:01.762Z  
+> **Harvest Timestamp**: 2026-11-26T22:59:46.954Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: zero-shot-image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 16883285 downloads | 1291 likes
+- **Stars / Engagement**: 16508304 downloads | 1293 likes
 
 ---
 

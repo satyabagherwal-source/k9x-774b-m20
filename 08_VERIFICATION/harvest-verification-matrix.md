@@ -13585,3 +13585,6 @@
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T22:39:36.591Z` | `projectdiscovery-nuclei` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A715B2E4` [Domain D] | Yes (`2324c0d8...`) |
 | `CYCLE-20261126-BXHO` | `2026-11-26T22:50:49.548Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`24c5e9b3...`) |
 | `CYCLE-20261126-BZP5` | `2026-11-26T22:50:52.409Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10787` | Yes (`186f2247...`) |
+| `CYCLE-20261126-NGQR` | `2026-11-26T22:59:47.715Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`17dcd681...`) |
+| `CYCLE-20261126-NO5I` | `2026-11-26T22:59:57.318Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`ad834bff...`) |
+| `CYCLE-20261126-NS8W` | `2026-11-26T23:00:02.624Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10788` | Yes (`20c54337...`) |

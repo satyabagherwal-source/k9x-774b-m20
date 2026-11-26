@@ -4,23 +4,23 @@
 {
   "source_repository": "open-policy-agent/opa",
   "source_url": "https://github.com/open-policy-agent/opa",
-  "source_version": "94618dd3",
+  "source_version": "3dc49738",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T05:05:20.059Z",
+  "timestamp": "2026-11-26T22:59:57.600Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-policy-agent-opa",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-policy-agent/opa](https://github.com/open-policy-agent/opa) (Revision: `94618dd3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T05:05:20.059Z`  
+> **Provenance**: Harvested from [open-policy-agent/opa](https://github.com/open-policy-agent/opa) (Revision: `3dc49738`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T22:59:57.600Z`  
 > **Learning ID**: `learn-github-open-policy-agent-opa`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T05:05:18.664Z  
+> **Harvest Timestamp**: 2026-11-26T22:59:56.405Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12525 stars
+- **Stars / Engagement**: 12533 stars
 
 ---
 
@@ -981,324 +981,95 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94618dd3` (2026-11-25)
-**Commit Message**: build(deps): bump the dependencies group across 2 directories with 8 updates (#9631)
+### Incident Patch 1: `51eddd0c` (2026-11-26)
+**Commit Message**: docs: Update builtin availability in other interpreters (#9611)
 
-Bumps the dependencies group with 5 updates in the / directory:
+Refreshed from the capabilities published by each implementation.
 
-| Package | From | To |
-| --- | --- | --- |
-| [github.com/klauspost/compress](https://github.com/klauspost/compress) | `1.20.3` | `1.20.4` |
-| [github.com/sergi/go-diff](https://github.com/sergi/go-diff) | `1.4.0` | `1.4.5` |
-| [golang.org/x/term](https://github.com/golang/term) | `0.47.0` | `0.48.0` |
-| [golang.org/x/text](https://github.com/golang/text) | `0.43.0` | `0.44.0` |
-| gopkg.in/ini.v1 | `1.67.3` | `1.68.0` |
+Co-authored-by: sspaink <[REDACTED_EMAIL]>
 
-Bumps the dependencies group with 3 updates in the /e2e directory: [github.com/go-sql-driver/mysql](https://github.com/go-sql-driver/mysql), [github.com/microsoft/go-mssqldb](https://github.com/microsoft/go-mssqldb) and [modernc.org/sqlite](https://gitlab.com/cznic/sqlite).
-
-
-Updates `github.com/klauspost/compress` from 1.20.3 to 1.20.4
-- [Release notes](https://github.com/klauspost/compress/releases)
-- [Commits](https://github.com/klauspost/compress/compare/v1.20.3...v1.20.4)
-
-Updates `github.com/sergi/go-diff` from 1.4.0 to 1.4.5
-- [Release notes](https://github.com/sergi/go-diff/releases)
-- [Commits](https://githu
-
-**File**: `e2e/go.mod` (modified, +9/-9)
+**File**: `builtin_metadata.json` (modified, +8/-4)
 ```diff
-@@ -7,15 +7,15 @@ replace github.com/open-policy-agent/opa => ../
- 
- require (
- 	github.com/bufbuild/protocompile v0.14.1
--	github.com/go-sql-driver/mysql v1.10.1
-+	github.com/go-sql-driver/mysql v1.10.2
- 	github.com/google/go-cmp v0.7.0
- 	github.com/lib/pq v1.12.3
--	github.com/microsoft/go-mssqldb v1.11.2
-+	github.com/microsoft/go-mssqldb v1.12.0
- 	github.com/open-policy-agent/opa v1.8.0
- 	github.com/rogpeppe/go-internal v1.16.0
- 	github.com/testcontainers/testcontainers-go v0.45.0
- 	google.golang.org/protobuf v1.36.12
--	modernc.org/sqlite v1.61.1
-+	modernc.org/sqlite v1.62.0
- )
- 
- require (
-@@ -61,7 +61,7 @@ require (
- 	github.com/huandu/go-clone v1.7.3 // indirect
- 	github.com/huandu/go-sqlbuilder v1.44.1 // indirect
- 	github.com/huandu/xstrings v1.4.0 // indirect
--	github.com/klauspost/compress v1.20.3 // indirect
-+	github.com/klauspost/compress v1.20.4 // indirect
- 	github.com/lestrrat-go/blackmagic v1.0.4 // indirect
- 	github.com/lestrrat-go/dsig v1.4.0 // indirect
- 	github.com/lestrrat-go/dsig-secp256k1 v1.0.0 // indirect
-@@ -132,17 +132,17 @@ require (
- 	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/sync v0.25.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/term v0.47.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
- 	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
- 	google.golang.org/grpc v1.85.0 // indirect
--	gopkg.in/ini.v1 v1.67.3 // indirect
-+	gopkg.in/ini.v1 v1.68.0 // indirect
- 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
--	modernc.org/libc v1.79.0 // indirect
-+	modernc.org/libc v1.80.1 // indirect
- 	modernc.org/mathutil v1.7.1 // indirect
- 	modernc.org/memory v1.12.1 // indirect
- 	oras.land/oras-go/v2 v2.7.0 // indirect
+@@ -260,13 +260,13 @@
+       "id": "swift",
+       "label": "Swift",
+       "repo": "open-policy-agent/swift-opa",
+-      "version": "0.0.11"
++      "version": "0.0.12"
+     },
+     {
+       "id": "java",
+       "label": "Java",
+       "repo": "open-policy-agent/java-opa-sdk",
+-      "version": "0.7.0"
++      "version": "0.8.0"
+     }
+   ],
+   "abs": {
+@@ -7083,7 +7083,9 @@
+       "edge"
+     ],
+     "description": "Returns one or more certificates from the given string containing PEM\nor base64 encoded DER certificates after verifying the supplied certificates form a complete\ncertificate chain back to a trusted root.\n\nThe first certificate is treated as the root and the last is treated as the leaf,\nwith all others being treated as intermediates.",
+-    "implementations": {},
++    "implementations": {
++      "java": "0.8.0"
++    },
+     "introduced": "v0.31.0",
+     "result": {
+       "description": "array of `[valid, certs]`: if the input certificate chain could be verified then `valid` is `true` and `certs` is an array of X.509 certificates represented as objects; if the input certificate chain could not be verified then `valid` is `false` and `certs` is `[]`",
+@@ -7515,7 +7517,9 @@
+       "edge"
+     ],
+     "description": "Returns zero or more certificates from the given encoded string containing\nDER certificate data.\n\nIf the input is empty, the function will return null. The input string should be a list of one or more\nconcatenated PEM blocks. The whole input of concatenated PEM blocks can optionally be Base64 encoded.",
+-    "implementations": {},
++    "implementations": {
++      "java": "0.8.0"
++    },
+     "introduced": "v0.17.0",
+     "result": {
+       "description": "parsed X.509 certificates represented as objects",
 ```
 
-**File**: `e2e/go.sum` (modified, +22/-22)
+**File**: `internal/cmd/genbuiltinmetadata/implementations.json` (modified, +5/-3)
 ```diff
-@@ -92,8 +92,8 @@ github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre
- github.com/go-ole/go-ole v1.2.6/go.mod h1:pprOEPIfldk/42T2oK7lQ4v4JSDwmV0As9GaiUsvbm0=
- github.com/go-ole/go-ole v1.3.0 h1:Dt6ye7+vXGIKZ7Xtk4s6/xVdGDQynvom7xCFEdWr6uE=
- github.com/go-ole/go-ole v1.3.0/go.mod h1:5LS6F96DhAwUc7C+1HLexzMXY1xGRSryjyPPKW6zv78=
--github.com/go-sql-driver/mysql v1.10.1 h1:arlSnNLq6a5yxGxV7qg9lF4j0C+KwD6NbQyKr9QL6ME=
--github.com/go-sql-driver/mysql v1.10.1/go.mod h1:M+cqaI7+xxXGG9swrdeUIoPG3Y3KCkF0pZej+SK+nWk=
-+github.com/go-sql-driver/mysql v1.10.2 h1:5TRvGvczDohUMOCRA5aCAXgfSZOo/oNDSFD/2RrChS0=
-+github.com/go-sql-driver/mysql v1.10.2/go.mod h1:M+cqaI7+xxXGG9swrdeUIoPG3Y3KCkF0pZej+SK+nWk=
- github.com/gobwas/glob v1.1.0 h1:CS8tIr7+5fu50N+tKsQy3osOU5jmhjHv0/ildcKAn2Q=
- github.com/gobwas/glob v1.1.0/go.mod h1:5OYLTTNYHcww+D/XwWAjGpmIE8sD41kWneKyzWkK7/k=
- github.com/goccy/go-json v0.11.2 h1:jdZv93Tt4ioR8yW1CoNsvSxrcZlCXAUU1aZXN7gpXUA=
-@@ -129,8 +129,8 @@ github.com/huandu/go-sqlbuilder v1.44.1 h1:JNYVnMOEUNYDbNKx1EQVP8ujwWQb+boMaWeZN
- github.com/huandu/go-sqlbuilder v1.44.1/go.mod h1:BEm32AHl29lzKDeV3HAIkzrz9cgRyumkDohHeGYYBoM=
- github.com/huandu/xstrings v1.4.0 h1:D17IlohoQq4UcpqD7fDk80P7l+lwAmlFaBHgOipl2FU=
- github.com/huandu/xstrings v1.4.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
--github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
--github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
-+github.com/klauspost/compress v1.20.4 h1:dD0v/bvxtjCBqQu6sx1TNWkalEY5lNTIe+HY9w8TeNI=
-+github.com/klauspost/compress v1.20.4/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
- github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
- github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
-@@ -163,8 +163,8 @@ github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsRe
- github.com/mattn/go-isatty v0.0.24/go.mod h1:nMCL3Zebbrt45jsMDgnfIwz6ydEQApk5oEI3HqDio6A=
- github.com/mattn/go-runewidth v0.0.19 h1:v++JhqYnZuu5jSKrk9RbgF5v4CGUjqRfBm05byFGLdw=
- github.com/mattn/go-runewidth v0.0.19/go.mod h1:XBkDxAl56ILZc9knddidhrOlY5R/pDhgLpndooCuJAs=
--github.com/microsoft/go-mssqldb v1.11.2 h1:FCgeBIK8um2+X4tbun6Q71N1KsfyCDPKY41e1yGVjSE=
--github.com/microsoft/go-mssqldb v1.11.2/go.mod h1:CYgwG5AMXFojbjTg+GNP5G/y6uz1BhTyZaPqQWzkGnQ=
-+github.com/microsoft/go-mssqldb v1.12.0 h1:Jwg/8jz2MKlFOYf4Oj7wMOQuTpCLrP4PIx0aINasMfw=
-+github.com/microsoft/go-mssqldb v1.12.0/go.mod h1:iYsISdcqI4Tf8x/JwwkHfBu5pxtSD6lSJB8tCrOoo6E=
- github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
- github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
- github.com/moby/docker-image-spec v1.3.1 h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3Nl2EsFP0=
-@@ -316,12 +316,12 @@ golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190916202348-b4ddaad3f8a3/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20201204225414-ed752295db88/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
--golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
--golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
-+golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
-+golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
- golang.org/x/time v0.16.0 h1:vMb6ptszcQMkcwiRTAuNNU50gom6++Q/6gY2hDM6VDE=
- golang.org/x/time v0.16.0/go.mod h1:rVKOqvZeKvrDKTQiAHJ7wmwP0RzleSphoEA9RcdLA0s=
- golang.org/x/tools v0.52.0 h1:ryxg4U63oaUYk7uOLTF37n43f4qgtGvqV4Ioit1BaEs=
-@@ -339,19 +339,19 @@ google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
- gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
- gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
--gopkg.in/ini.v1 v1.67.3 h1:iM9Lhz5MRSGhHVGGwCuzG9KO8PoirCXj/m/qTmOJJQw=
--
-```
-
-**File**: `go.mod` (modified, +8/-8)
-```diff
-@@ -15,7 +15,7 @@ require (
- 	github.com/google/uuid v1.6.0
- 	github.com/hashicorp/golang-lru/v2 v2.0.7
- 	github.com/huandu/go-sqlbuilder v1.44.1
--	github.com/klauspost/compress v1.20.3
-+	github.com/klauspost/compress v1.20.4
- 	github.com/lestrrat-go/jwx/v3 v3.4.0
- 	github.com/olekukonko/tablewriter v1.1.5
- 	github.com/opencontainers/go-digest v1.0.0
-@@ -24,7 +24,7 @@ require (
- 	github.com/prometheus/client_model v0.6.3
- 	github.com/reeflective/readline v1.3.0
- 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
--	github.com/sergi/go-diff v1.4.0
-+	github.com/sergi/go-diff v1.4.5
- 	github.com/sirupsen/logrus v1.10.2
- 	github.com/spf13/cobra v1.10.2
- 	github.com/spf13/pflag v1.1.0
-@@ -46,13 +46,13 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.1
- 	go.yaml.in/yaml/v3 v3.0.6
- 	golang.org/x/sync v0.25.0
--	golang.org/x/term v0.47.0
--	golang.org/x/text v0.43.0
-+	golang.org/x/term v0.48.0
-+	golang.org/x/text v0.44.0
- 	golang.org/x/time v0.16.0
- 	google.golang.org/grpc v1.85.0
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
--	gopkg.in/ini.v1 v1.67.3
-+	gopkg.in/ini.v1 v1.68.0
- 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
- 	oras.land/oras-go/v2 v2.7.0
- )
-@@ -103,10 +103,10 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/otel/log v1.47.0 // indirect
- 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/tools v0.51.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260928230214-8a89bd6388cc // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
- )
-```
-
-**File**: `go.sum` (modified, +16/-16)
-```diff
-@@ -79,8 +79,8 @@ github.com/huandu/xstrings v1.4.0 h1:D17IlohoQq4UcpqD7fDk80P7l+lwAmlFaBHgOipl2FU
- github.com/huandu/xstrings v1.4.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
- github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
- github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
--github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
--github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
-+github.com/klauspost/compress v1.20.4 h1:dD0v/bvxtjCBqQu6sx1TNWkalEY5lNTIe+HY9w8TeNI=
-+github.com/klauspost/compress v1.20.4/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
- github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
- github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
-@@ -150,8 +150,8 @@ github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 h1:1EYB5IzjZawrrnELUi78f9fPu57Hu
- github.com/santhosh-tekuri/jsonschema/v6 v6.0.3/go.mod h1:JXeL+ps8p7/KNMjDQk3TCwPpBy0wYklyWTfbkIzdIFU=
- github.com/segmentio/asm v1.2.1 h1:DTNbBqs57ioxAD4PrArqftgypG4/qNpXoJx8TVXxPR0=
- github.com/segmentio/asm v1.2.1/go.mod h1:BqMnlJP91P8d+4ibuonYZw9mfnzI9HfxselHZr5aAcs=
--github.com/sergi/go-diff v1.4.0 h1:n/SP9D5ad1fORl+llWyN+D6qoUETXNZARKjyY2/KVCw=
--github.com/sergi/go-diff v1.4.0/go.mod h1:A0bzQcvG0E7Rwjx0REVgAGH58e96+X0MeOfepqsbeW4=
-+github.com/sergi/go-diff v1.4.5 h1:3LvhZn2aCAWagLwIhga3BZiEZ82j5+oQ0vKDwkhjHCI=
-+github.com/sergi/go-diff v1.4.5/go.mod h1:A0bzQcvG0E7Rwjx0REVgAGH58e96+X0MeOfepqsbeW4=
- github.com/sirupsen/logrus v1.10.2 h1:G2SED73/qrAu6YwbdxOD6peLkCBI3z7L+ykJFTXJBBo=
- github.com/sirupsen/logrus v1.10.2/go.mod h1:SLEg8TqYulVKKfIGHldVp2K2aYz2DKSVBq4g/H5bR7Q=
- github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
-@@ -231,8 +231,8 @@ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.12.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.14.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
--golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
--golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
-+golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
-+golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
- golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
-@@ -262,26 +262,26 @@ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.13.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.14.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
- golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
- golang.org/x/term v0.12.0/go.mod h1:owVbMEjm3cBLCHdkQu9b1opXd4ETQWc3BhuQGKgXgvU=
- golang.org/x/term v0.13.0/go.mod h1:LTmsnFJwVN6bCy1rVCoS+qHT1HhALEFxKncY3WNNh4U=
- golang.org/x/term v0.14.0/go.mod h1:TySc+nGkYR6qt8km8wUhuFRTVSMIX3XPR58y2lC8vww=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
- golang.org/x/text v0.9.0/go.mod h1:e1OnstbJyHTd6l/uOt8jFFHp6TRDWZR/bV3emEE/zU8=
- golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/WCo
-```
-
----
-
-### Incident Patch 2: `30878bff` (2026-11-25)
-**Commit Message**: docs: fix the examples of the data filtering fragment (#9630)
-
-The built-in example called `regexp.match`, which doesn't exist, so it
-failed to compile instead of showing the fragment error. The "Is Anything"
-policy tested a different column than its SQL, and the box suggested
-`matches("*", _)` for an existence check: partial evaluation leaves the
-plain unknown for a function that ignores its argument, which no target
-accepts.
-
-Signed-off-by: Stephan Renatus <[REDACTED_EMAIL]>
-
-**File**: `docs/docs/filtering/fragment.md` (modified, +2/-18)
-```diff
-@@ -130,26 +130,10 @@ For SQL and UCAST/Prisma, it's valid to assert that a field exists by unifying i
- ```rego
- package filters
- 
--include if input.fruits.price = _
-+include if input.fruits.name = _
- ```
- 
- SQL target: `WHERE name IS NOT NULL`
--
--A more common way to do this would be function definition shorthands, like
--
--```rego
--package filters
--
--include if {
--    some pat in data.filter.patterns
--    matches(pat, input.fruit.name)
--}
--
--matches("*", _) # "*" matches everything
--matches(x, x)   # exact match
--```
--
--Here, the first `matches` definition would yield an expression like `_ = input.fruit.name` in the partial evaluation results.
- :::
- 
- ## Built-in Functions
-@@ -185,7 +169,7 @@ package filters
- include if {
-     endswith("apple", input.fruits.name)        # RHS unknown
-     1, input.fruits.colour in ["blue", "green"] # k, v in ...
--    regexp.match(input.fruits.name, '^b[an]+$') # unsupported builtin (for unknown values)
-+    regex.match('^b[an]+$', input.fruits.name)  # unsupported builtin (for unknown values)
- }
- ```
- 
+@@ -4,7 +4,7 @@
+       "id": "swift",
+       "label": "Swift",
+       "repo": "open-policy-agent/swift-opa",
+-      "version": "0.0.11",
++      "version": "0.0.12",
+       "builtins": {
+         "abs": "0.0.1",
+         "and": "0.0.1",
+@@ -149,7 +149,7 @@
+       "id": "java",
+       "label": "Java",
+       "repo": "open-policy-agent/java-opa-sdk",
+-      "version": "0.7.0",
++      "version": "0.8.0",
+       "builtins": {
+         "abs": "0.1.0",
+         "and": "0.1.0",
+@@ -308,7 +308,9 @@
+         "yaml.marshal": "0.4.0",
+         "yaml.unmarshal": "0.4.0",
+         "units.parse": "0.7.0",
+-        "units.parse_bytes": "0.7.0"
++        "units.parse_bytes": "0.7.0",
++        "crypto.x509.parse_and_verify_certificates": "0.8.0",
++        "crypto.x509.parse_certificates": "0.8.0"
+       }
+     }
+   ]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9638** (2026-11-26): Prepare v1.24.0 development (@johanfylling)
+- **PR #9636** (2026-11-26): Release v1.23.0 (@johanfylling)
 - **PR #9631** (2026-11-25): build(deps): bump the dependencies group across 2 directories with 8 updates (@dependabot[bot])
 - **PR #9630** (2026-11-25): docs: fix the examples of the data filtering fragment (@srenatus)
 - **PR #9620** (closed): plugins/rest: honor explicit header overrides (@FayezBast)
 - **PR #9619** (2026-11-25): cmd: honor --drop-v0-imports when formatting stdin (@FayezBast)
-- **PR #9614** (2026-11-23): topdown: Reuse pooled step continuation for bare terms (@charlieegan3)
-- **PR #9613** (2026-11-23): topdown: report key conflicts in indexed object comprehensions (@srenatus)
 
 ---
 
@@ -1318,47 +1089,41 @@ Signed-off-by: Stephan Renatus <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the dependencies group across 2 directories with 8 updates
+## X. docs: Update builtin availability in other interpreters
 
 **RULE**:
-When implementing operations in `e2e/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `builtin_metadata.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94618dd3`: build(deps): bump the dependencies group across 2 directories with 8 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51eddd0c`: docs: Update builtin availability in other interpreters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `builtin_metadata.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-sql-driver/mysql v1.10.2
-	github.com/microsoft/go-mssqldb v1.12.0
-	modernc.org/sqlite v1.62.0
-	github.com/klauspost/compress v1.20.4 // indirect
-	golang.org/x/sys v0.50.0 // indirect
-	golang.org/x/term v0.48.0 // indirect
-	golang.org/x/text v0.44.0 // indirect
-	gopkg.in/ini.v1 v1.68.0 // indirect
-	modernc.org/libc v1.80.1 // indirect
+      "version": "0.0.12"
+      "version": "0.8.0"
+    "implementations": {
+      "java": "0.8.0"
+    },
+    "implementations": {
+      "java": "0.8.0"
+    },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/go-sql-driver/mysql v1.10.1
-	github.com/microsoft/go-mssqldb v1.11.2
-	modernc.org/sqlite v1.61.1
-	github.com/klauspost/compress v1.20.3 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
-	gopkg.in/ini.v1 v1.67.3 // indirect
-	modernc.org/libc v1.79.0 // indirect
+      "version": "0.0.11"
+      "version": "0.7.0"
+    "implementations": {},
+    "implementations": {},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94618dd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51eddd0c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

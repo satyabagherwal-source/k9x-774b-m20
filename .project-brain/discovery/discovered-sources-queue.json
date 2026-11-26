@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T22:30:27.912Z",
+  "updated_at": "2026-11-26T23:00:08.423Z",
   "stats": {
-    "total_discovered": 10089,
-    "approved_pending_harvest": 9566,
+    "total_discovered": 10091,
+    "approved_pending_harvest": 9568,
     "harvested_count": 0,
     "rejected_count": 523,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9569,
+      "COMMUNITY_AND_EXPERT": 9571,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -218324,6 +218324,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
         "fileName": "juicedata-juicefs-learnings.md"
+      }
+    },
+    "SRC-E8EED3D1B0A8": {
+      "id": "SRC-E8EED3D1B0A8",
+      "url": "https://github.com/doobidoo/mcp-memory-service/pull/2133",
+      "title": "https://github.com/doobidoo/mcp-memory-service/pull/2133",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T23:00:08.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
+      }
+    },
+    "SRC-3E4DA31A3B4B": {
+      "id": "SRC-3E4DA31A3B4B",
+      "url": "https://github.com/abhigyanpatwari/GitNexus/issues/1939",
+      "title": "https://github.com/abhigyanpatwari/GitNexus/issues/1939",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T23:00:08.423Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
+        "fileName": "doobidoo-mcp-memory-service-learnings.md"
       }
     }
   }

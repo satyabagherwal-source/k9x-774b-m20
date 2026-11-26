@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-BQKI",
-    "timestamp": "2026-11-25T11:51:09.378Z",
-    "repository": "LiquidAI/LFM3-Omni-2B",
-    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-    "contentHash": "5e7f590838cb19d1098c198243c9902e1c74e7d2d41aa57c34d76b0b6606eca7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-BY9A",
-    "timestamp": "2026-11-25T11:51:19.342Z",
-    "repository": "authzed/spicedb",
-    "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "e0722288a057c8411b4644b96c7abd40f1ad92ff77d2fac5efd351c9134a23f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-C36I",
-    "timestamp": "2026-11-25T11:51:25.722Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "540807b7295c69d0e493a0080fd1f987e5d25389659901340c1b0a797cc7f1b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-MPPC",
     "timestamp": "2026-11-25T11:59:41.472Z",
     "repository": "thinkingmachines/TML-d24-varloop-research",
@@ -7490,6 +7445,51 @@
     "repository": "actix/actix-web",
     "learningId": "learn-github-actix-actix-web",
     "contentHash": "186f2247cc5eec3cca3110dbed012879892bf7bbefb0f071f4974c399630bdfe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-NGQR",
+    "timestamp": "2026-11-26T22:59:47.715Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "17dcd681bcc874c6c04bab3559fa4b17e8f7621e06be77d23bcd865c19c81786",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-NO5I",
+    "timestamp": "2026-11-26T22:59:57.318Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "ad834bff8c77176fecdfd18a2a3e5fe5b2ab3f5790332e79fe4d103503d4ca42",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-NS8W",
+    "timestamp": "2026-11-26T23:00:02.624Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "20c54337607ccbc4738db08046bd402cb71880387ad26b3127924e543447fe27",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
