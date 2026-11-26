@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-26T15:12:39.572Z",
+  "updated_at": "2026-11-26T15:38:42.059Z",
   "statistics": {
-    "total_nodes": 563,
-    "total_edges": 231,
+    "total_nodes": 564,
+    "total_edges": 232,
     "domain_distribution": {
-      "D": 339,
+      "D": 340,
       "M": 1,
       "H": 104,
       "J": 22,
@@ -22,7 +22,7 @@
       "A": 1
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 227,
+      "CONSTRAINED_BY_ARCHITECTURE": 228,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 2
     }
@@ -12563,6 +12563,29 @@
       ],
       "created_at": "2026-11-26T15:12:39.571Z",
       "updated_at": "2026-11-26T15:12:39.571Z"
+    },
+    "DOM-D-2C3FC3C9": {
+      "id": "DOM-D-2C3FC3C9",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): llamaindex/OCRia-1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-llamaindex-ocria-1/hf-llamaindex-ocria-1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T15:38:12.026Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-llamaindex-ocria-1)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-26T15:38:42.058Z",
+      "updated_at": "2026-11-26T15:38:42.058Z"
     }
   },
   "edges": [
@@ -14875,6 +14898,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-CC34C8D8 [H] with Domain G",
       "created_at": "2026-11-26T15:12:39.572Z"
+    },
+    {
+      "id": "EDGE-33E26073D429",
+      "sourceId": "DOM-D-2C3FC3C9",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-2C3FC3C9 [D] with Domain M",
+      "created_at": "2026-11-26T15:38:42.058Z"
     }
   ]
 }

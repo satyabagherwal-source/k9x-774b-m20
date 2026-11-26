@@ -13478,3 +13478,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-26T15:22:01.035Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `e874a148` | Multi-dimensional audit evidence | 2026-11-26T15:22:03.168Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `7e3f05c1` | Multi-dimensional audit evidence | 2026-11-26T15:22:12.299Z |
+| `learn-huggingface-llamaindex-ocria-1` | `https://huggingface.co/llamaindex/OCRia-1` | `hf-llamain` | Multi-dimensional audit evidence | 2026-11-26T15:37:57.495Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-26T15:37:59.993Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `69f59581` | Multi-dimensional audit evidence | 2026-11-26T15:38:08.151Z |
+| `learn-dom-d-2c3fc3c9` | `project://hf-llamaindex-ocria-1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md` | 2026-11-26T15:38:42.062Z |

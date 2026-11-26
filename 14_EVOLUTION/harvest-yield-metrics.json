@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T15:22:12.326Z",
-  "total_cycles_completed": 12760,
-  "total_learnings_persisted": 12760,
+  "last_updated": "2026-11-26T15:38:08.203Z",
+  "total_cycles_completed": 12763,
+  "total_learnings_persisted": 12763,
   "total_rules_promoted": 11617,
   "history": [
-    {
-      "timestamp": "2026-11-26T04:13:36.142Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T04:22:30.761Z",
-      "repository": "thinkingmachines/Inkling-2-Small",
-      "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T04:30:48.796Z",
-      "repository": "meituan-longcat/LongCat-2.5",
-      "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T04:30:51.591Z",
       "repository": "domcyrus/rustnet",
@@ -1403,6 +1382,27 @@
       "repository": "dosco/deeporg",
       "learningId": "learn-github-dosco-deeporg",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:37:57.509Z",
+      "repository": "llamaindex/OCRia-1",
+      "learningId": "learn-huggingface-llamaindex-ocria-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:38:00.006Z",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T15:38:08.203Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

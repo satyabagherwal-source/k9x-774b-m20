@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "5977c9c00cd82e436f39735613eade89c6804c7911a2579179ee0857f6fbf519",
-    "lastHarvestedAt": "2026-11-22T22:37:17.596Z",
+    "contentHash": "a8d5565381b0d36e2586bb7300359febd3d9eecd3d0214dc21ad7bd451937ca9",
+    "lastHarvestedAt": "2026-11-26T15:37:59.993Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "e5411198",
+    "sourceVersion": "69f59581",
     "license": "MIT",
-    "contentHash": "7d50a6a7b59de036d15e29b57720d50bfafa307d93a3dba691fb42953fbb0609",
-    "lastHarvestedAt": "2026-11-24T05:28:19.683Z",
+    "contentHash": "479ad42f79deb461aee03dcdaa8a703162d3f9ea96f0b890b61e0e15680304b2",
+    "lastHarvestedAt": "2026-11-26T15:38:08.151Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {
@@ -13548,5 +13548,15 @@
     "contentHash": "40497fb07b871195d2a681cf6f606f0d42a60b03cee14788f208fd2369807faa",
     "lastHarvestedAt": "2026-11-26T13:26:28.460Z",
     "learningId": "learn-github-zhouxiaoka-autoclip"
+  },
+  "hf-llamaindex-ocria-1": {
+    "repository": "llamaindex/OCRia-1",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/llamaindex/OCRia-1",
+    "sourceVersion": "hf-llamaindex-ocria-1",
+    "license": "Open-Source",
+    "contentHash": "65c78f0f823067a6d590c3e0e69b1d0e23e988c475b8f622ef39d0a1d5e887d0",
+    "lastHarvestedAt": "2026-11-26T15:37:57.495Z",
+    "learningId": "learn-huggingface-llamaindex-ocria-1"
   }
 }

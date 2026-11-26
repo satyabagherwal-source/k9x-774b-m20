@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T15:22:20.097Z",
+  "last_updated": "2026-11-26T15:38:43.685Z",
   "directives": [
     {
       "id": "CD-001",
@@ -65686,6 +65686,26 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "D"
+    },
+    {
+      "id": "CD-W8YS",
+      "directive_title": "Agent guidelines: A migration note is for a breaking change or a deprecation",
+      "source_repo": "storybookjs-storybook-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W8YS-agent-guidelines-a-migration-note-is-for-a-breaking-change-or-a-deprecation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-27F9A9",
+      "directive_title": "Agent guidelines: A migration note is for a breaking change or a deprecation",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "storybookjs-storybook",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-27F9A9-agent-guidelines-a-migration-note-is-for.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }

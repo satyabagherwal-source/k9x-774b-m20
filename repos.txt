@@ -5446,3 +5446,7 @@ https://github.com/yetone/magpie
 # --- Automatically Discovered by AI Scout Engine [2026-11-26T13:26:22.060Z] ---
 # [AI-AGENTS] zhouxiaoka/autoclip (9287 score) - The open-source OpusClip alternative — local-first AI clipping & MCP server, zer
 https://github.com/zhouxiaoka/autoclip
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-26T15:37:50.846Z] ---
+# [HUGGINGFACE-AI-MODELS] llamaindex/OCRia-1 (1519 score) - Verified Hugging Face Model: llamaindex/OCRia-1 (110 likes, 419 downloads)
+https://huggingface.co/llamaindex/OCRia-1

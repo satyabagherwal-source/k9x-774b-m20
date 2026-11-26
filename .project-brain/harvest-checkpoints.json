@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T15:22:12.342Z",
+  "last_updated": "2026-11-26T15:38:08.208Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -710,14 +710,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "content_hash": "5977c9c00cd82e436f39735613eade89c6804c7911a2579179ee0857f6fbf519",
-      "verified_at": "2026-11-22T22:37:17.608Z",
+      "content_hash": "a8d5565381b0d36e2586bb7300359febd3d9eecd3d0214dc21ad7bd451937ca9",
+      "verified_at": "2026-11-26T15:38:00.009Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T22:37:17.608Z"
+      "last_updated": "2026-11-26T15:38:00.009Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "7d50a6a7b59de036d15e29b57720d50bfafa307d93a3dba691fb42953fbb0609",
-      "verified_at": "2026-11-24T05:28:19.703Z",
+      "content_hash": "479ad42f79deb461aee03dcdaa8a703162d3f9ea96f0b890b61e0e15680304b2",
+      "verified_at": "2026-11-26T15:38:08.207Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T05:28:19.703Z"
+      "last_updated": "2026-11-26T15:38:08.207Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",
@@ -20444,6 +20444,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-26T13:26:28.478Z"
+    },
+    "llamaindex/OCRia-1": {
+      "repository": "llamaindex/OCRia-1",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-llamaindex-ocria-1",
+      "content_hash": "65c78f0f823067a6d590c3e0e69b1d0e23e988c475b8f622ef39d0a1d5e887d0",
+      "verified_at": "2026-11-26T15:37:57.512Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-26T15:37:57.512Z"
     }
   },
   "repos": {

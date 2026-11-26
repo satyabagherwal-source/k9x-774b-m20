@@ -4,24 +4,24 @@
 {
   "source_repository": "storybookjs/storybook",
   "source_url": "https://github.com/storybookjs/storybook",
-  "source_version": "1227202d",
+  "source_version": "69f59581",
   "license": "MIT",
-  "timestamp": "2026-11-18T09:57:19.663Z",
+  "timestamp": "2026-11-26T15:38:08.470Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-storybookjs-storybook",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [storybookjs/storybook](https://github.com/storybookjs/storybook) (Revision: `1227202d`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T09:57:19.663Z`  
+> **Provenance**: Harvested from [storybookjs/storybook](https://github.com/storybookjs/storybook) (Revision: `69f59581`).  
+> **License**: MIT | **Timestamp**: `2026-11-26T15:38:08.470Z`  
 > **Learning ID**: `learn-github-storybookjs-storybook`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), I (Content & Information Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from storybookjs/storybook:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:57:18.121Z  
+> **Harvest Timestamp**: 2026-11-26T15:38:07.538Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91621 stars
+- **Stars / Engagement**: 91731 stars
 
 ---
 
@@ -569,11 +569,11 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37514** (2026-11-17): **CLI: Delete stale Storybook cache directory on upgrade**
-  *Symptoms*: Closes # <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  After upgrading to Storybook 11.0.0-beta.3, some users hit errors on Storybook restart that went away after restarting Storybook again. Stale state in `node_modules/.cache/storybook` is the suspected cause, and the team confirmed the directory holds nothing that cannot be safely deleted.  This PR makes `storybook upgrade` delete the whole `node_modules/.cache/storybook` directory on every upgrade, regardless of the version transition:  - The deletion is best-effort: it is wrapped in a try/catch, failures are logged via `logger.debug`, and a failed deletion never fails the upgrade. - Dry runs (`--dry-run`) do not touch the filesystem, so the deletion is skipped there. - The path matches the fallback in `resolve-path-in-sb-cache.ts` (`join(process.cwd(), 'node_modules', '.cache', 'storybook')`).  **How it was tested:** new unit tests in `upgrade.skills.test.ts` cover that (1) the cache directory is removed on upgrade, (2) a d
+- **Issue #37795** (2026-11-26): **Sidebar: Fix ContextMenu focus handling after pointer dismissal**
+  *Symptoms*: ## What I did  The bug came from extra code I wrote that ensures the current TreeNode doesn't take a focus-visible style after closing its context menu. That code conflicted with react-aria internals. I removed that code and adjusted CSS selectors to use react-aria's `data-focus-visible` to ensure proper styling.   <details><summary>LLM word vomit</summary>  1. **Removed complex focus restoration logic** in `TreeNode.tsx` that attempted to blur focus when a context menu was dismissed by pointer. This logic was fragile and could cause focus loops.  2. **Updated focus behavior** to rely on react-aria's built-in focus management:    - When dismissed by pointer: Focus returns to the row but shows no keyboard focus indicator (no ring, status icon visible)    - When dismissed by keyboard (Escape): Focus returns to the row with keyboard focus visible (ring shown, context menu button visible)  3. **Updated CSS selectors** from `:focus-visible` to `[data-focus-visible]` to match react-aria's input modality tracking, which correctly handles scripted focus that follows pointer input.  4. **Extracted a reusable helper function** `openDualSlotRowMenu` in the stories to reduce duplication across multiple test scenarios.  5. **Replaced `ContextMenuOutsideDismissSurvivesFocusTrap` story** with `ContextMenuEscapeDismiss` to properly test keyboard dismissal behavior instead of testing an internal implementation detail. </details>   ## Checklist for Contributors  ### Testing  #### The changes i
 
-- **Issue #37511** (2026-11-17): **CLI: Update compatibility guidance URL in summary message**
-  *Symptoms*: Closes #  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  The Storybook doctor compatibility guidance link was incorrect, pointing to the issue about [Storybook 10 compatibility](https://github.com/storybookjs/storybook/issues/32836) and not [Storybook 11 compatibility](https://github.com/storybookjs/storybook/issues/36283). This PR fixes that!  ## Checklist for Contributors  ### Testing  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to communicate how to test your changes -->  #### The changes in this PR are covered in the following automated tests:  - [ ] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  #### Manual testing  It's such a minor change the only manual test you could do is check whether the link is correct  ### Documentation  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to indicate which documentation has been updated. -->  - [ ] Add or update docume
+- **Issue #37792** (2026-11-26): **CLI: Make upgrade and init work under a package age gate**
+  *Symptoms*: Closes #37665  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  In a project with a package age gate, `npx storybook@<fresh version> upgrade` and `npx storybook@<fresh version> init` failed in two places. Yarn 4.15 and later give new projects a one-day gate by default, so on Yarn this also affects projects that never opted in.  **1. The age gate blocked the download of the CLI itself.**  The `storybook` binary downloads `@storybook/cli` (for `upgrade`) or `create-storybook` (for `init`) through the project's package manager. Yarn, pnpm and npm apply the age gate to that download, so the command stopped with the package manager's own error before the age gate precheck in those commands could run:  ``` $ npx storybook@11.0.0-rc.0 upgrade --yes ➤ YN0016: │ @storybook/cli@npm:11.0.0-rc.0: All versions satisfying "11.0.0-rc.0" are quarantined ➤ YN0000: · Failed with errors in 0s 26ms ```  The dispatcher now runs that same precheck before the download. The precheck itself is unchanged: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -590,140 +590,122 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbb34286` (2026-11-17)
-**Commit Message**: fix(cli): check addon ranges that start with a 0.x canary part
+### Incident Patch 1: `44e786e3` (2026-11-26)
+**Commit Message**: Agent guidelines: A migration note is for a breaking change or a deprecation
 
-`checkPackageCompatibility` skipped any range matching `/^[~^]?0\./`, to
-ignore 0.x ranges it cannot compare. The regex tested the start of the whole
-range, so `^0.0.0-0 || ^10.0.0`, a common way for addons to accept canaries,
-was skipped as a whole. `storybook-addon-test-codegen@3.0.4` declares such a
-range, so doctor reported nothing on 11.0.0-beta.3 while the addon's preset
-failed to load (#37285).
-
-Skip a range only when every `||` part is 0.x. Canaries still satisfy the
-`^0.0.0-0` part when the whole range is compared.
+Agents and the review bots asked for a MIGRATION.md entry for changes users
+notice, bug fixes included. 18 of the 122 PRs that changed MIGRATION.md since
+August are labelled bug.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts` (modified, +28/-0)
+**File**: `.agents/guidelines/pull-requests.md` (modified, +8/-0)
 ```diff
-@@ -78,6 +78,34 @@ describe('checkPackageCompatibility', () => {
-     );
-   });
+@@ -15,6 +15,14 @@ Reproduce it locally against a real PR with `DANGER_GITHUB_API_TOKEN="$(gh auth
+ - **Do not add a `ci:*` label.** The review bot or a maintainer adds it once automated review has finished, so CI does not run on work that is still changing.
+ For a pkg.pr.new canary, follow the [canary skill](../skills/canary/SKILL.md) and [`CONTRIBUTING/RELEASING.md`](../../CONTRIBUTING/RELEASING.md).
  
-+  it.each([
-+    ['ignores a 0.x range', '^0.4.0', '11.0.0', false],
-+    [
-+      'flags a range whose canary part comes first',
-+      '^0.0.0-0 || ^10.0.0 || ^10.3.0-0',
-+      '11.0.0-beta.3',
-+      true,
-+    ],
-+    ['accepts a range with a canary part', '^0.0.0-0 || ^10.6.0-0 || ^11.0.0-0', '11.0.0', false],
-+    [
-+      'accepts a canary through the canary part',
-+      '^0.0.0-0 || ^10.0.0',
-+      '0.0.0-pr-1-sha-abc',
-+      false,
-+    ],
-+  ])('%s', async (_, range, currentStorybookVersion, hasIncompatibleDependencies) => {
-+    vi.mocked(packageManagerMock.getModulePackageJSON).mockResolvedValueOnce({
-+      name: 'my-storybook-package',
-+      version: '1.0.0',
-+      peerDependencies: { storybook: range },
-+    });
-+    const result = await checkPackageCompatibility('my-storybook-package', {
-+      currentStorybookVersion,
-+      packageManager: packageManagerMock as JsPackageManager,
-+    });
-+    expect(result.hasIncompatibleDependencies).toBe(hasIncompatibleDependencies);
-+  });
++## Migration notes
 +
-   it('returns that a package is incompatible and because it is core, can be upgraded', async () => {
-     const packageName = '@storybook/addon-docs';
++Add an entry to `MIGRATION.md` only for a breaking change or a deprecation: a change after which users have to change their code, config or setup, now or before the next major.
++
++A change is not breaking when the old behavior was a bug, even when users notice it. To decide, ask whether the change could ship in a minor release. If it could, it gets no entry, also while the next major is open on `next`. A user-visible fix belongs in the PR description, which the changelog links to.
++
++An entry is for removing or renaming an API, option or package, raising a supported version, or deprecating something. A fix that makes a name, an output or an error match what the docs or another part of Storybook already said gets none.
++
+ ## Greptile review
  
+ Greptile reviews a PR by itself when the PR leaves draft, and again on each push after that. It does not review a draft PR by itself. To ask for a review of a draft, comment `@greptileai review` on the PR (`gh pr comment <number> --body "@greptileai review"`). Greptile reacts with 👀, starts a "Greptile Review" check on the head commit, and posts a summary comment and inline comments after about five minutes. It reviews the head at the time of the comment, so push first. A local `greptile review` CLI run does not replace the review on the PR.
 ```
 
-**File**: `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.ts` (modified, +2/-2)
+**File**: `.agents/skills/code-review/rules.md` (modified, +1/-1)
 ```diff
-@@ -58,8 +58,8 @@ export const checkPackageCompatibility = async (
-         // prevent issues with "tag" based versions e.g. "latest" or "next" instead of actual numbers
-         return (
-           versionRange &&
--          // We can't check compatibility for 0.x packages, so we skip them
--          !/^[~^]?0\./.test(versionRange) &&
-+          // We can't check compatibility for 0.x packages, so we skip ranges that only allow 0.x
-+          versionRange.split('||').some((part) => !/^[~^]?0\./.test(part.trim())) &&
-           semver.validRange(versionRange) &&
-           !semver.satisfies(currentStorybookVersion, versionRange)
-         );
+@@ -24,7 +24,7 @@ Include a command a maintainer can rerun with the finding.
+ - Follow `package.json` `exports` and declaration generation; an internal filename does not establish a public export.
+ - Check accepted consumer expressions, inference, supported versions, and dependency ranges in affected sibling packages.
+ - A caller search inside this repository does not establish compatibility for external consumers.
+-- Check migration guidance when supported usage or peer dependency floors change.
++- A breaking change or a deprecation, such as a raised peer dependency floor, needs a `MIGRATION.md` entry, and no other change does. [Pull requests](../../guidelines/pull-requests.md#migration-notes) defines both.
+ - Internal APIs follow "migrate every caller, then delete the old path" in the same PR. Public APIs follow the deprecation process instead, so a compatibility layer there is expected, not debt.
+ 
+ ### Shared core, docs blocks, framework or renderer adapters
+```
+
+**File**: `.obvious/guidelines/pull-requests.md` (modified, +8/-0)
+```diff
+@@ -15,6 +15,14 @@ Reproduce it locally against a real PR with `DANGER_GITHUB_API_TOKEN="$(gh auth
+ - **Do not add a `ci:*` label.** The review bot or a maintainer adds it once automated review has finished, so CI does not run on work that is still changing.
+ For a pkg.pr.new canary, follow the [canary skill](../skills/canary/SKILL.md) and [`CONTRIBUTING/RELEASING.md`](../../CONTRIBUTING/RELEASING.md).
+ 
++## Migration notes
++
++Add an entry to `MIGRATION.md` only for a breaking change or a deprecation: a change after which users have to change their code, config or setup, now or before the next major.
++
++A change is not breaking when the old behavior was a bug, even when users notice it. To decide, ask whether the change could ship in a minor release. If it could, it gets no entry, also while the next major is open on `next`. A user-visible fix belongs in the PR description, which the changelog links to.
++
++An entry is for removing or renaming an API, option or package, raising a supported version, or deprecating something. A fix that makes a name, an output or an error match what the docs or another part of Storybook already said gets none.
++
+ ## Greptile review
+ 
+ Greptile reviews a PR by itself when the PR leaves draft, and again on each push after that. It does not review a draft PR by itself. To ask for a review of a draft, comment `@greptileai review` on the PR (`gh pr comment <number> --body "@greptileai review"`). Greptile reacts with 👀, starts a "Greptile Review" check on the head commit, and posts a summary comment and inline comments after about five minutes. It reviews the head at the time of the comment, so push first. A local `greptile review` CLI run does not replace the review on the PR.
+```
+
+**File**: `.obvious/skills/code-review/rules.md` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ Include a command a maintainer can rerun with the finding.
+ - Follow `package.json` `exports` and declaration generation; an internal filename does not establish a public export.
+ - Check accepted consumer expressions, inference, supported versions, and dependency ranges in affected sibling packages.
+ - A caller search inside this repository does not establish compatibility for external consumers.
+-- Check migration guidance when supported usage or peer dependency floors change.
++- A breaking change or a deprecation, such as a raised peer dependency floor, needs a `MIGRATION.md` entry, and no other change does. [Pull requests](../../guidelines/pull-requests.md#migration-notes) defines both.
+ - Internal APIs follow "migrate every caller, then delete the old path" in the same PR. Public APIs follow the deprecation process instead, so a compatibility layer there is expected, not debt.
+ 
+ ### Shared core, docs blocks, framework or renderer adapters
 ```
 
 ---
 
-### Incident Patch 2: `b637a776` (2026-11-17)
-**Commit Message**: Merge pull request #37506 from storybookjs/steve/addon-panel-code-tab-any-renderer
+### Incident Patch 2: `2069ff0a` (2026-11-26)
+**Commit Message**: Leave the migration note out: a story named like the preview names it is a fix
 
-E2E: Check the Code tab snippet by the story's label
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `code/e2e-sandbox/addon-panel.spec.ts` (modified, +4/-1)
+**File**: `MIGRATION.md` (modified, +0/-11)
 ```diff
-@@ -151,11 +151,14 @@ test.describe('addon panel', () => {
-     await sbPage.deepLinkToStory(storybookUrl, 'addons/docs/codePanel', 'default');
-     await expect(codeTab).toBeVisible();
-     await sbPage.viewAddonPanel('Code');
--    await expect(sbPage.panelContent()).toContainText('Button');
-+    // Each renderer prints the snippet its own way, and some fall back to the story as written, so
-+    // the story's label is what every snippet shares; the component name is not.
-+    await expect(sbPage.panelContent()).toContainText('e2eStoryDocsBefore');
-     await expect(sbPage.panelContent()).not.toContainText('Custom code');
+@@ -26,7 +26,6 @@
+     - [Svelte: the source snippet leaves out action args by value](#svelte-the-source-snippet-leaves-out-action-args-by-value)
+     - [Vue: slots come from the component's props](#vue-slots-come-from-the-components-props)
+   - [Deprecated CSF and manager type aliases removed](#deprecated-csf-and-manager-type-aliases-removed)
+-  - [Stories exported with `export { … }` are named like `export const` stories](#stories-exported-with-export----are-named-like-export-const-stories)
+   - [`docgenServer` is stable and enabled by default](#docgenserver-is-stable-and-enabled-by-default)
+     - [Temporary regressions on source snippet generation](#temporary-regressions-on-source-snippet-generation)
+   - [Builder docgen is deprecated](#builder-docgen-is-deprecated)
+@@ -1270,16 +1269,6 @@ Story context objects passed to loaders and play functions no longer carry the d
  
-     await sbPage.navigateToStory('addons/docs/codePanel', 'custom-code');
-     await expect(sbPage.panelContent()).toContainText('Custom code');
-+    await expect(sbPage.panelContent()).not.toContainText('e2eStoryDocsBefore');
+ The manager resolves `SELECT_STORY` payloads from `storyId` or `title`/`name`, and still accepts the deprecated `kind`/`story` payload that composed Storybooks built with Storybook 10.x or earlier send, so cross-story links inside those refs keep navigating. A payload without any of those keys is ignored with a warning. Composed refs must publish a story index (`stories.json`); the v2 format is no longer accepted and the legacy `setStories` event is no longer read.
  
-     await sbPage.navigateToStory('addons/docs/codePanel', 'without-panel');
-     await expect(codeTab).toBeHidden();
-```
-
----
-
-### Incident Patch 3: `6d069198` (2026-11-17)
-**Commit Message**: Merge pull request #37492 from storybookjs/fix/resolver-destructured-shadow-test
-
-Core: Update the stale expectation for a destructured export shadowing an `export *`
-
-**File**: `code/core/src/common/utils/resolve-meta-component.test.ts` (modified, +8/-2)
-```diff
-@@ -165,11 +165,17 @@ describe('createMetaComponentResolver', () => {
-       ).toMatchObject({ component: { path: join(FIXTURES, 'button.component.ts') } });
-     });
+-### Stories exported with `export { … }` are named like `export const` stories
+-
+-A story exported with `export { X }` or `export { a as X }` was named by its export name as it is: `export { primaryButton }` was named `primaryButton`. It is now named like a story exported with `export const`: by its `name` when the story object in the same file has one, else by its export name in start case (`Primary Button`). A story re-exported from another file, with `export { X } from './other.stories'`, is named by its export name in start case.
+-
+-This changes the story's name in the sidebar and the name of its Vitest test. The preview already used these names. Story ids and URLs do not change.
+-
+-Svelte CSF stories also get Vitest tests named like the stories: `<Story name="Hover Shows Full Date" />` had a test named `HoverShowsFullDate`, and now has one named `Hover Shows Full Date`.
+-
+-Vitest stores a snapshot under the name of its test. Run a renamed test that uses `toMatchSnapshot` or a screenshot once with `-u`.
+-
+ ### `docgenServer` is stable and enabled by default
  
--    it('does not follow an `export *` that a destructured export of the same name shadows', () => {
-+    it('follows a destructured export that shadows an `export *` to the file that declares the member', () => {
-       expect(
-         resolveInFixtures(`import { UI } from './barrel/destructured';
-                            export default { component: UI.Button };`)
--      ).toEqual({ reason: 'unreadable-component-expression', expression: 'UI.Button' });
-+      ).toMatchObject({
-+        component: {
-+          importId: '../button.component',
-+          importer: join(FIXTURES, 'barrel', 'destructured.ts'),
-+          path: join(FIXTURES, 'button.component.ts'),
-+        },
-+      });
-     });
- 
-     it('reports a named import that is not a namespace as unreadable', () => {
+ The `experimentalDocgenServer` feature is now `docgenServer`, and Storybook no longer reads the old name.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37514** (closed): CLI: Delete stale Storybook cache directory on upgrade (@obvious-autobuild[bot])
-- **PR #37513** (2026-11-17): CI: Show cancelled CircleCI jobs as pending instead of failed (@ndelangen)
-- **PR #37512** (2026-11-17): CLI: the skills-removal hint is optional and quotes the command (@obvious-autobuild[bot])
-- **PR #37511** (2026-11-17): CLI: Update compatibility guidance URL in summary message (@yannbf)
-- **PR #37506** (2026-11-17): E2E: Check the Code tab snippet by the story's label (@Sidnioulz)
-- **PR #37505** (closed): MCP: Stop announcing list-changed notifications, which made Claude Code wait 25 seconds (@kasperpeulen)
+- **PR #37801** (2026-11-26): Agents: Add a migration note only for a breaking change or a deprecation (@kasperpeulen)
+- **PR #37800** (2026-11-26): CI: Run the docs check in ci:focus when docs change (@valentinpalkovic)
+- **PR #37798** (2026-11-26): Docs: Fix the CSF 3 banner link in the JSDoc tags snippet (@valentinpalkovic)
+- **PR #37796** (closed): Docs: Compare skills-index paths drive-agnostically (@obvious-autobuild[bot])
+- **PR #37795** (2026-11-26): Sidebar: Fix ContextMenu focus handling after pointer dismissal (@Sidnioulz)
+- **PR #37794** (2026-11-26): Docs: Improve PR template guidance for describing changes (@Sidnioulz)
 
 ---
 
@@ -743,47 +725,27 @@ Core: Update the stale expectation for a destructured export shadowing an `expor
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): check addon ranges that start with a 0.x canary part
+## X. Agent guidelines: A migration note is for a breaking change or a deprecation
 
 **RULE**:
-When implementing operations in `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/guidelines/pull-requests.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbb34286`: cli): check addon ranges that start with a 0.x canary part. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `44e786e3`: Agent guidelines: A migration note is for a breaking change or a deprecation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/guidelines/pull-requests.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  it.each([
-    ['ignores a 0.x range', '^0.4.0', '11.0.0', false],
-    [
-      'flags a range whose canary part comes first',
-      '^0.0.0-0 || ^10.0.0 || ^10.3.0-0',
-      '11.0.0-beta.3',
-      true,
-    ],
-    ['accepts a range with a canary part', '^0.0.0-0 || ^10.6.0-0 || ^11.0.0-0', '11.0.0', false],
-    [
-      'accepts a canary through the canary part',
-      '^0.0.0-0 || ^10.0.0',
-      '0.0.0-pr-1-sha-abc',
-      false,
-    ],
-  ])('%s', async (_, range, currentStorybookVersion, hasIncompatibleDependencies) => {
-    vi.mocked(packageManagerMock.getModulePackageJSON).mockResolvedValueOnce({
-      name: 'my-storybook-package',
-      version: '1.0.0',
-      peerDependencies: { storybook: range },
-    });
-    const result = await checkPackageCompatibility('my-storybook-package', {
-      currentStorybookVersion,
-      packageManager: packageManagerMock as JsPackageManager,
-    });
-    expect(result.hasIncompatibleDependencies).toBe(hasIncompatibleDependencies);
-  });
+## Migration notes
+
+Add an entry to `MIGRATION.md` only for a breaking change or a deprecation: a change after which users have to change their code, config or setup, now or before the next major.
+
+A change is not breaking when the old behavior was a bug, even when users notice it. To decide, ask whether the change could ship in a minor release. If it could, it gets no entry, also while the next major is open on `next`. A user-visible fix belongs in the PR description, which the changelog links to.
+
+An entry is for removing or renaming an API, option or package, raising a supported version, or deprecating something. A fix that makes a name, an output or an error match what the docs or another part of Storybook already said gets none.
 
 ```
 
@@ -794,7 +756,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbb34286` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `44e786e3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

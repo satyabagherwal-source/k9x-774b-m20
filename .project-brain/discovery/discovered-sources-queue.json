@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T15:22:19.744Z",
+  "updated_at": "2026-11-26T15:38:42.100Z",
   "stats": {
-    "total_discovered": 9841,
-    "approved_pending_harvest": 9331,
+    "total_discovered": 9842,
+    "approved_pending_harvest": 9332,
     "harvested_count": 0,
     "rejected_count": 510,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9326,
+      "COMMUNITY_AND_EXPERT": 9327,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
@@ -212959,6 +212959,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
         "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-0C646D92E216": {
+      "id": "SRC-0C646D92E216",
+      "url": "https://huggingface.co/llamaindex/OCRia-1",
+      "title": "https://huggingface.co/llamaindex/OCRia-1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T15:38:42.100Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md",
+        "fileName": "hf-llamaindex-ocria-1-learnings.md"
       }
     }
   }

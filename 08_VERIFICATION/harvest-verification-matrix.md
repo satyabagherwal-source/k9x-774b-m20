@@ -13445,3 +13445,7 @@
 | `CYCLE-20261126-ARB9` | `2026-11-26T15:22:01.029Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`1216e9f9...`) |
 | `CYCLE-20261126-ASYJ` | `2026-11-26T15:22:03.163Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10714` | Yes (`14edecd9...`) |
 | `CYCLE-20261126-B006` | `2026-11-26T15:22:12.294Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10715` | Yes (`22b110b1...`) |
+| `CYCLE-20261126-V9BN` | `2026-11-26T15:37:57.491Z` | `llamaindex/OCRia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md` | Yes (`65c78f0f...`) |
+| `CYCLE-20261126-VB90` | `2026-11-26T15:37:59.988Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`a8d55653...`) |
+| `CYCLE-20261126-VHJM` | `2026-11-26T15:38:08.146Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md` | Yes (`479ad42f...`) |
+| `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T15:38:42.062Z` | `hf-llamaindex-ocria-1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2C3FC3C9` [Domain D] | Yes (`88bcb1e6...`) |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T15:22:20.371Z",
-  "total_records": 2757,
+  "last_updated": "2026-11-26T15:38:43.928Z",
+  "total_records": 2760,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1024,
+      "total": 1027,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1097,7 +1097,10 @@
         "DOM-D-439581EA",
         "DOM-D-68A82B80",
         "domain_intelligence-research-knowledge-intelligence-goodrain-rainbond-core-invariants",
-        "DOM-D-15A70146"
+        "DOM-D-15A70146",
+        "domain_intelligence-research-knowledge-intelligence-llamaindex-ocria-1-core-invariants",
+        "DOM-D-2C3FC3C9",
+        "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-1-learnings-core-invariants"
       ]
     },
     "E": {
@@ -10264,8 +10267,8 @@
       "title": "Research & Knowledge Intelligence: Alissonerdx/BFS-Best-Face-Swap Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-alissonerdx-bfs-best-face-swap-research-knowledge-intelligence-alissonerdx-bf.md",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "content_hash": "a001d63406b68031d4533583707c4b3841f8dd8a55f7697d6c842a7cd0c3655b",
-      "created_at": "2026-11-22T22:37:17.874Z"
+      "content_hash": "1f6fc1a697abfda7c03ded71ccb4abfd92d0ee1e8a6b764d14d222ddcaf08a50",
+      "created_at": "2026-11-26T15:38:00.264Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants",
@@ -26896,8 +26899,8 @@
       "title": "Architecture Intelligence: storybookjs/storybook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-storybookjs-storybook-architecture-intelligence-storybookjs-storybook-core-invar.md",
       "repository": "storybookjs/storybook",
-      "content_hash": "55fc632355726d9422618dc440a620d3804a21b85dc4366015978ffcef0e4346",
-      "created_at": "2026-11-18T09:57:19.842Z"
+      "content_hash": "eb8ba320e9d04fe2a4d1391202df88b351415237f8ab1a45a36a7c955c0fc429",
+      "created_at": "2026-11-26T15:38:08.712Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam-3d-body-dinov3-learnings-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam-3d-body-dinov3-learnings-core-in",
@@ -26956,8 +26959,8 @@
       "title": "Architecture Intelligence: storybookjs-storybook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-storybookjs-storybook-learnings-architecture-intelligence-storybookjs-storybook-.md",
       "repository": "storybookjs-storybook-learnings",
-      "content_hash": "8362e3d03dc2b642d73e2e1538090bdf9d418ffe7b77434ca739d143d1c5c6f5",
-      "created_at": "2026-11-18T09:57:33.696Z"
+      "content_hash": "1c3c324c889eff57f0682631e8240107a478f3100d01ca82df7616d00b45df03",
+      "created_at": "2026-11-26T15:38:43.928Z"
     },
     "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants",
@@ -30635,8 +30638,8 @@
       "title": "Research & Knowledge Intelligence: hf-alissonerdx-bfs-best-face-swap-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-alissonerdx-bfs-best-face-swap-learnings-research-knowledge-intelligence-hf-a.md",
       "repository": "hf-alissonerdx-bfs-best-face-swap-learnings",
-      "content_hash": "03ae801f11fccd72d617edbbf0bd2bd414be316332e42cfe1fcc0ba1bb90acb1",
-      "created_at": "2026-11-22T22:37:29.760Z"
+      "content_hash": "589de123e77e440e3dd054724082b1a3713bce6c80304f6f6e953d4fe0f54ec8",
+      "created_at": "2026-11-26T15:38:43.048Z"
     },
     "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants",
@@ -46550,6 +46553,66 @@
       "repository": "apache-pinot-learnings",
       "content_hash": "37310ed351c1fa0627e9cd41fb110a02c8f6ab0ac233686af8abf02c8fef06a6",
       "created_at": "2026-11-26T15:12:43.345Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-llamaindex-ocria-1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-llamaindex-ocria-1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: llamaindex/OCRia-1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-llamaindex-ocria-1-research-knowledge-intelligence-llamaindex-ocria-1-core-in.md",
+      "repository": "llamaindex/OCRia-1",
+      "content_hash": "a0a9622c23e9813149ab1e91f7b827839c2f33c96a89ed75e702b36b7b0ecfd7",
+      "created_at": "2026-11-26T15:37:57.765Z"
+    },
+    "DOM-D-2C3FC3C9": {
+      "record_id": "DOM-D-2C3FC3C9",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): llamaindex/OCRia-1",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/llamaindex/OCRia-1](https://huggingface.co/llamaindex/OCRia-1))  \n> **Source Version**: `hf-llamainde`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "88bcb1e6b13524468467d43e7329bded0bcd834cf21ba30a66d3d2dc86d2b7b2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-1-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-llamaindex-ocria-1/hf-llamaindex-ocria-1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-26T15:38:12.026Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-llamaindex-ocria-1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-llamaindex-ocria-1"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-26T15:38:42.028Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-1-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-llamaindex-ocria-1-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-llamaindex-ocria-1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-llamaindex-ocria-1-learnings-research-knowledge-intelligence-hf-llamaindex-oc.md",
+      "repository": "hf-llamaindex-ocria-1-learnings",
+      "content_hash": "893b7b2c6a6d5dfa6f787874642dd48b24217a425e5800c4bfee3e44e977b52b",
+      "created_at": "2026-11-26T15:38:42.452Z"
     }
   }
 }

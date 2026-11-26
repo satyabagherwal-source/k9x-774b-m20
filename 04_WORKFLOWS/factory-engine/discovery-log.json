@@ -22417,5 +22417,17 @@
     "qualityScore": 9287,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-26T13:22:56.705Z"
+  },
+  {
+    "name": "llamaindex/OCRia-1",
+    "fullName": "llamaindex/OCRia-1",
+    "url": "https://huggingface.co/llamaindex/OCRia-1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: llamaindex/OCRia-1 (110 likes, 419 downloads)",
+    "likes": 110,
+    "downloads": 419,
+    "qualityScore": 1519,
+    "discoveredAt": "2026-11-26T15:35:42.205Z"
   }
 ]
