@@ -3,7 +3,7 @@
 > **Source Version**: `hf-sensenova`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T13:58:59.913Z  
+> **Timestamp**: 2026-11-26T07:40:11.963Z  
 > **Learning ID**: `learn-huggingface-sensenova-sensenova-loop-9b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sensenova/SenseNova-Loop-9B](https://huggingface.co/sensenova/SenseNova-Loop-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T13:58:59.705Z  
+> **Harvest Timestamp**: 2026-11-26T07:40:11.833Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -25,9 +25,9 @@
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `sensenova/SenseNova-Loop-9B`
 - **Description**: image-text-to-text
-- **Primary Language / Ecosystem**: Model
+- **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1863 downloads | 478 likes
+- **Stars / Engagement**: 3268 downloads | 750 likes
 
 ---
 

@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T07:01:01.178Z",
-    "lastVerified": "2026-11-26T07:01:01.178Z",
+    "lastChecked": "2026-11-26T07:40:24.276Z",
+    "lastVerified": "2026-11-26T07:40:24.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T07:28:54.540Z",
-    "lastVerified": "2026-11-26T07:28:54.540Z",
+    "lastChecked": "2026-11-26T07:40:24.286Z",
+    "lastVerified": "2026-11-26T07:40:24.286Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -639,8 +639,8 @@
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T07:22:27.127Z",
-    "lastVerified": "2026-11-25T07:22:27.127Z",
+    "lastChecked": "2026-11-26T07:40:16.754Z",
+    "lastVerified": "2026-11-26T07:40:16.754Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
@@ -1434,8 +1434,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T03:30:01.575Z",
-    "lastVerified": "2026-11-26T03:30:01.575Z",
+    "lastChecked": "2026-11-26T07:40:19.262Z",
+    "lastVerified": "2026-11-26T07:40:19.262Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -5115,9 +5115,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-11-25T06:31:06.047Z",
+    "lastChecked": "2026-11-26T07:40:21.778Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-11-25T06:31:06.047Z"
+    "lastVerified": "2026-11-26T07:40:21.778Z"
   },
   "embassy-rs-embassy": {
     "name": "embassy-rs/embassy",
@@ -8439,9 +8439,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-11-25T01:18:13.915Z",
+    "lastChecked": "2026-11-26T07:40:09.318Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-11-25T01:18:13.915Z"
+    "lastVerified": "2026-11-26T07:40:09.318Z"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
     "name": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -11723,9 +11723,9 @@
   "dodo-reach-hermes-desktop": {
     "name": "hermes-desktop",
     "officialUrl": "https://github.com/dodo-reach/hermes-desktop",
-    "lastChecked": "2026-11-23T21:48:05.985Z",
+    "lastChecked": "2026-11-26T07:40:14.456Z",
     "revisionIdentifier": "3b772afa",
-    "lastVerified": "2026-11-23T21:48:05.985Z"
+    "lastVerified": "2026-11-26T07:40:14.456Z"
   },
   "sveltejs-svelte": {
     "name": "sveltejs/svelte",
@@ -14859,12 +14859,12 @@
     "officialUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T13:58:59.705Z",
-    "lastVerified": "2026-11-22T13:58:59.705Z",
+    "lastChecked": "2026-11-26T07:40:11.833Z",
+    "lastVerified": "2026-11-26T07:40:11.833Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
-    "contentHash": "a60b99ba0b8e6da729877a812e737911451263b4e16bf2201c90b2f2d7aef380",
+    "contentHash": "69bf9b7d53fd65330bfba482650bb8ea6415b364d89258b42b5ba694b50231f8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

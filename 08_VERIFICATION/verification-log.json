@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-ERKS",
-    "timestamp": "2026-11-24T17:13:46.012Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "d49c43ced8480e5afeb20d54f56faece3efdb46edfaf3aced6f4c4cb27612290",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-EU27",
     "timestamp": "2026-11-24T17:13:49.231Z",
     "repository": "RediSearch/RediSearch",
@@ -7492,6 +7477,21 @@
     "contentHash": "08380e00481374329940b03b2311f84e2733464e9223b5864bdd1e6c6d55df7b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-SVE6",
+    "timestamp": "2026-11-26T07:40:12.654Z",
+    "repository": "sensenova/SenseNova-Loop-9B",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
+    "contentHash": "69bf9b7d53fd65330bfba482650bb8ea6415b364d89258b42b5ba694b50231f8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

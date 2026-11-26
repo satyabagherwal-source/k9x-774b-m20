@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/sensenova/SenseNova-Loop-9B",
   "source_version": "hf-sensenova-sensenova-loop-9b",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T13:59:00.814Z",
+  "timestamp": "2026-11-26T07:40:12.923Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sensenova/SenseNova-Loop-9B](https://huggingface.co/sensenova/SenseNova-Loop-9B) (Revision: `hf-senseno`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T13:59:00.814Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T07:40:12.923Z`  
 > **Learning ID**: `learn-huggingface-sensenova-sensenova-loop-9b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sensenova/SenseNova-Loop-9B](https://huggingface.co/sensenova/SenseNova-Loop-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T13:58:59.705Z  
+> **Harvest Timestamp**: 2026-11-26T07:40:11.833Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,9 +39,9 @@ The following architectural invariants have been empirically discovered and reco
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `sensenova/SenseNova-Loop-9B`
 - **Description**: image-text-to-text
-- **Primary Language / Ecosystem**: Model
+- **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1863 downloads | 478 likes
+- **Stars / Engagement**: 3268 downloads | 750 likes
 
 ---
 

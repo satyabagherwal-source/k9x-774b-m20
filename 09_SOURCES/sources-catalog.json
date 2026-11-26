@@ -12805,8 +12805,8 @@
     "sourceUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B",
     "sourceVersion": "hf-sensenova-sensenova-loop-9b",
     "license": "Open-Source",
-    "contentHash": "a60b99ba0b8e6da729877a812e737911451263b4e16bf2201c90b2f2d7aef380",
-    "lastHarvestedAt": "2026-11-22T13:59:00.528Z",
+    "contentHash": "69bf9b7d53fd65330bfba482650bb8ea6415b364d89258b42b5ba694b50231f8",
+    "lastHarvestedAt": "2026-11-26T07:40:12.660Z",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b"
   },
   "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T07:28:50.822Z",
+  "last_updated": "2026-11-26T07:40:12.681Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19296,14 +19296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b",
-      "content_hash": "a60b99ba0b8e6da729877a812e737911451263b4e16bf2201c90b2f2d7aef380",
-      "verified_at": "2026-11-22T13:59:00.539Z",
+      "content_hash": "69bf9b7d53fd65330bfba482650bb8ea6415b364d89258b42b5ba694b50231f8",
+      "verified_at": "2026-11-26T07:40:12.680Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T13:59:00.539Z"
+      "last_updated": "2026-11-26T07:40:12.680Z"
     },
     "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored": {
       "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",

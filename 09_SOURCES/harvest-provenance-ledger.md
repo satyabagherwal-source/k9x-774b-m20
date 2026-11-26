@@ -13326,3 +13326,4 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `28cc85d1` | Multi-dimensional audit evidence | 2026-11-26T07:19:12.421Z |
 | `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-26T07:28:35.977Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `06717572` | Multi-dimensional audit evidence | 2026-11-26T07:28:50.795Z |
+| `learn-huggingface-sensenova-sensenova-loop-9b` | `https://huggingface.co/sensenova/SenseNova-Loop-9B` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-26T07:40:12.660Z |
