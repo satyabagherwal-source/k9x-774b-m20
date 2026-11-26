@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T04:56:44.819Z",
+  "updated_at": "2026-11-26T05:05:27.684Z",
   "stats": {
-    "total_discovered": 9589,
-    "approved_pending_harvest": 9090,
+    "total_discovered": 9599,
+    "approved_pending_harvest": 9100,
     "harvested_count": 0,
     "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9079,
+      "COMMUNITY_AND_EXPERT": 9089,
       "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -207492,6 +207492,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md",
         "fileName": "restatedev-restate-learnings.md"
+      }
+    },
+    "SRC-B7F606838072": {
+      "id": "SRC-B7F606838072",
+      "url": "https://github.com/sergi/go-diff",
+      "title": "https://github.com/sergi/go-diff",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:25.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-497AE552287C": {
+      "id": "SRC-497AE552287C",
+      "url": "https://github.com/golang/term",
+      "title": "https://github.com/golang/term",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:25.967Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-9E2562D623E2": {
+      "id": "SRC-9E2562D623E2",
+      "url": "https://github.com/golang/text",
+      "title": "https://github.com/golang/text",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:26.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-70766F52F539": {
+      "id": "SRC-70766F52F539",
+      "url": "https://github.com/microsoft/go-mssqldb",
+      "title": "https://github.com/microsoft/go-mssqldb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:26.133Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-C8D630D11E04": {
+      "id": "SRC-C8D630D11E04",
+      "url": "https://gitlab.com/cznic/sqlite",
+      "title": "https://gitlab.com/cznic/sqlite",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:26.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-843F09E576A7": {
+      "id": "SRC-843F09E576A7",
+      "url": "https://github.com/klauspost/compress/compare/v1.20.3...v1.20.4",
+      "title": "https://github.com/klauspost/compress/compare/v1.20.3...v1.20.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:26.312Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-12D13D00EB01": {
+      "id": "SRC-12D13D00EB01",
+      "url": "https://github.com/sergi/go-diff/releases",
+      "title": "https://github.com/sergi/go-diff/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:26.381Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-1547A905BCFF": {
+      "id": "SRC-1547A905BCFF",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:27.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-FDB61B7623C0": {
+      "id": "SRC-FDB61B7623C0",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:27.588Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-EA41F8D93616": {
+      "id": "SRC-EA41F8D93616",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T05:05:27.684Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }

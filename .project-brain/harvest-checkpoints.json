@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T04:56:04.284Z",
+  "last_updated": "2026-11-26T05:05:21.739Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "58a9d2032bac4fee15bf0f9ca058fd7e3ea530bcbf156f65978ed5f8b3c00c0e",
-      "verified_at": "2026-11-26T03:04:41.119Z",
+      "content_hash": "a82a171ca1e60dd6a2f2e3854227849d5410f15965ffe21f54403c09ea8ea33c",
+      "verified_at": "2026-11-26T05:05:21.738Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T03:04:41.119Z"
+      "last_updated": "2026-11-26T05:05:21.738Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "47bd3843da8976ccc97d7f9ce801b524af210169d690db67c26ebe319df512bb",
-      "verified_at": "2026-11-24T12:05:14.407Z",
+      "content_hash": "75e1089a762017dfe2aa3636aad9c625925f863940da32e5919a5654a0e86755",
+      "verified_at": "2026-11-26T05:05:19.829Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T12:05:14.407Z"
+      "last_updated": "2026-11-26T05:05:19.829Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -18861,14 +18861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-laion-clap-htsat-fused",
-      "content_hash": "d6f0b51a8f715ff982ac2ad4d10b96e3291dcdb283907631341671decc2f1910",
-      "verified_at": "2026-11-22T08:41:01.237Z",
+      "content_hash": "586a05e03990f63316e01a48248c42aae687b0ebdfceafd2fca5ec6d4beaf5a0",
+      "verified_at": "2026-11-26T05:05:09.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T08:41:01.237Z"
+      "last_updated": "2026-11-26T05:05:09.378Z"
     },
     "onehumanbeing/esp32-iphone-agent": {
       "repository": "onehumanbeing/esp32-iphone-agent",

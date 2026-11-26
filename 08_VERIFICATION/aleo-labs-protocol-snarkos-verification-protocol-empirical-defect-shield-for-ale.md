@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-  "source_version": "9c02ea4e",
+  "source_version": "ecf5907c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T01:08:10.557Z",
+  "timestamp": "2026-11-26T05:05:21.984Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `9c02ea4e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T01:08:10.557Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS) (Revision: `ecf5907c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T05:05:21.984Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `9c02ea4e`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `ecf5907c`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T01:08:09.466Z  
+> **Harvest Timestamp**: 2026-11-26T05:05:20.888Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1884,225 +1884,474 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9c02ea4e` (2026-11-25)
-**Commit Message**: Merge pull request #4791 from aleo-labs-protocol/build/test-profile-o1
+### Incident Patch 1: `ecf5907c` (2026-11-26)
+**Commit Message**: Merge pull request #4596 from aleo-labs-protocol/eran/authority-prune
 
-**File**: `Cargo.toml` (modified, +2/-1)
+Add opt-in pruning of old block authority data
+
+**File**: `Cargo.lock` (modified, +62/-63)
 ```diff
-@@ -353,7 +353,8 @@ lto = "thin"
- debug = "line-tables-only"
+@@ -5483,7 +5483,6 @@ dependencies = [
+  "anyhow",
+  "async-trait",
+  "bytes",
+- "cfg-if",
+  "colored",
+  "deadline",
+  "futures-util",
+@@ -5865,7 +5864,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "anyhow",
+  "rand 0.10.3",
+@@ -5884,7 +5883,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -5911,7 +5910,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5924,7 +5923,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5938,7 +5937,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5948,7 +5947,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5958,7 +5957,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5968,7 +5967,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5988,12 +5987,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
  
- [profile.test]
--opt-level = 2
-+# At 0 the snarkVM code in the tests runs 4-8x slower.
-+opt-level = 1
- 
- [package.metadata.cargo-machete]
- ignored = [
+ [[package]]
+ name = "snarkvm-circuit-network"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -6004,7 +6003,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-program"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c
 ```
 
----
-
-### Incident Patch 2: `e80cfae4` (2026-11-25)
-**Commit Message**: Build tests at opt-level 1
-
-O1 cuts test build time by about a fifth and costs the tests a few percent.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmNPAJoCY7J1GRtuy7h
-
-**File**: `Cargo.toml` (modified, +2/-1)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -353,7 +353,8 @@ lto = "thin"
- debug = "line-tables-only"
- 
- [profile.test]
--opt-level = 2
-+# At 0 the snarkVM code in the tests runs 4-8x slower.
-+opt-level = 1
- 
- [package.metadata.cargo-machete]
- ignored = [
-```
-
----
-
-### Incident Patch 3: `cbd9ab2c` (2026-11-25)
-**Commit Message**: Merge pull request #4785 from aleo-labs-protocol/fix/catch-vm-halts-in-cli
-
-**File**: `cli/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -118,7 +118,7 @@ workspace = true
- 
- [dependencies.snarkvm]
- workspace = true
--features = [ "parameters", "circuit", "package", "rocks" ]
-+features = [ "parameters", "circuit", "package", "rocks", "utilities" ]
- 
- [dependencies.sys-info]
- version = "0.9"
-```
-
-**File**: `cli/src/commands/developer/deploy.rs` (modified, +6/-6)
-```diff
-@@ -142,8 +142,8 @@ impl Deploy {
-         let process = package.get_process()?;
- 
-         // Generate the deployment
--        let mut deployment =
--            package.deploy::<A>(&process, None).with_context(|| "Failed to generate the deployment")?;
-+        let mut deployment = Developer::catch_halt(|| package.deploy::<A>(&process, None))
-+            .with_context(|| "Failed to generate the deployment")?;
- 
-         // Get the consensus version.
-         let consensus_version =
-@@ -179,7 +179,7 @@ impl Deploy {
-             let vm = VM::from(store).with_context(|| "Failed to initialize the virtual machine")?;
- 
-             // Prepare the fees.
--            let fee = match &self.record {
-+            let fee = Developer::catch_halt(|| match &self.record {
-                 Some(record) => {
-                     let fee_record =
-                         Developer::parse_record(&private_key, record).with_context(|| "Failed to parse record")?;
-@@ -192,7 +192,7 @@ impl Deploy {
-                         rng,
-                     )?;
-                     vm.execute_fee_authorization(fee_authorization, Some(&query), rng)
--                        .with_context(|| "Failed to execute fee authorization")?
-+                        .with_context(|| "Failed to execute fee authorization")
-                 }
-                 None => {
-                     let fee_authorization = vm.authorize_fee_public(
-@@ -203,9 +203,9 @@ impl Deploy {
-                         rng,
-                     )?;
-                     vm.execute_fee_authorization(fee_authorization, Some(&query), rng)
--                        .with_context(|| "Failed to execute fee authorization")?
-+                        .with_context(|| "Failed to execute fee authorization")
-                 }
--            };
-+            })?;
-             // Construct the owner.
-             let owner = ProgramOwner::new(&private_key, deployment_id, rng)
-                 .with_context(|| "Failed to construct program owner")?;
-```
-
-**File**: `cli/src/commands/developer/execute.rs` (modified, +11/-9)
-```diff
-@@ -171,15 +171,17 @@ impl Execute {
-             };
- 
-             // Create a new transaction.
--            vm.execute(
--                &private_key,
--                (program_id, function),
--                inputs.iter(),
--                fee_record,
--                self.priority_fee,
--                Some(&query),
--                rng,
--            )
-+            Developer::catch_halt(|| {
-+                vm.execute(
-+                    &private_key,
-+                    (program_id, function),
-+                    inputs.iter(),
-+                    fee_record,
-+                    self.priority_fee,
-+                    Some(&query),
-+                    rng,
-+                )
-+            })
-             .with_context(|| "VM failed to execute transaction locally")?
-         };
+@@ -45,7 +45,7 @@ members = [
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "4606f61d835394589b7bdf5c73b0886320db9dc5" #staging
++rev = "a8953a918c427ff9145001dc0928ea086e8f647e" #staging
+ #version = "=4.12.0"
+ default-features = false
  
 ```
 
-**File**: `cli/src/commands/developer/mod.rs` (modified, +32/-0)
+**File**: `README.md` (modified, +23/-1)
 ```diff
-@@ -37,6 +37,7 @@ use snarkvm::{
-     ledger::store::helpers::memory::BlockMemory,
-     package::Package,
-     prelude::{query::Query, *},
-+    utilities::{VmHalt, try_vm_runtime},
+@@ -19,6 +19,7 @@
+   * [3.1 Run an Aleo Client](#31-run-an-aleo-client)
+   * [3.2 Run an Aleo Validator](#32-run-an-aleo-validator)
+   * [3.3 Run an Aleo Prover](#33-run-an-aleo-prover)
++  * [3.4 Prune Old Authority Data](#34-prune-old-authority-data)
+ * [4. FAQs](#4-faqs)
+ * [5. Command Line Interface](#5-command-line-interface)
+ * [6. Development Guide](#6-development-guide)
+@@ -271,6 +272,24 @@ Enter the Aleo Prover account private key:
+ APrivateKey1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ ```
+ 
++## 3.4 Prune Old Authority Data
++
++Start a client or validator with `--prune-authority-data` to keep the authority data (the certificates) of
++only the last 500,000 blocks, about two weeks. Older blocks keep their headers and transactions.
++`/v2/block/{height}` answers `410 Gone` for them, and peers fetch them from other nodes.
++
++The first start with the flag prunes the existing ledger before the node joins the network. This can take a
++while on a large ledger. A pruned ledger that is opened without the flag keeps working and stops pruning.
++
++The flag requires router message version 34 (consensus version V23), which lets peers learn which blocks a
++node serves. On a network that has not scheduled V23, the node refuses to start. Until V23 activates, peers
++still on message version 33 stay connected, and those that request blocks the node has pruned are
++disconnected.
++
++If no peer serves the blocks a node needs, the node shuts down after 5 minutes, so that a restart syncs them
++from the CDN. With `--nocdn`, or `--dev` without `--cdn`, it keeps waiting: add a peer with `--peers`, or
++restore a ledger snapshot.
++
+ ## 4. FAQs
+ 
+ ### 1. My node is unable to compile.
+@@ -448,11 +467,14 @@ The following are the options for the `snarkos start` command:
+           For validators, it also contains the latest proposal cache, which is required to participate in consensus.
+ 
+       --cdn <CDN>
+-          Enables the node to prefetch initial blocks from a CDN
++          Enables the node to prefetch initial blocks from a CDN, also with `--dev` (which otherwise disables it)
+ 
+       --nocdn
+           If the flag is set, the node will not prefetch from a CDN
+ 
++      --prune-authority-data
++          Prune the authority data (certificates) of blocks older than the retention window. See "Prune Old Authority Data"
++
+       --dev <DEV>
+           Enables development mode used to set up test networks.
+           
+```
+
+**File**: `cli/src/commands/start.rs` (modified, +111/-28)
+```diff
+@@ -21,11 +21,12 @@ use crate::helpers::{
+ use snarkos_account::Account;
+ use snarkos_display::Display;
+ use snarkos_node::{
++    AuthorityRetention,
+     Node,
+     bft::MEMORY_POOL_PORT,
+     network::{NodeType, bootstrap_peers},
+     rest::{DEFAULT_REST_PORT, RestVerificationLimits},
+-    router::DEFAULT_NODE_PORT,
++    router::{DEFAULT_NODE_PORT, messages::Message},
  };
+ use snarkos_utilities::{DevHotswapConfig, NodeDataDir, SignalHandler, jwt_secret_file, node_data};
  
- use anyhow::{Context, Result, anyhow, bail, ensure};
-@@ -200,6 +201,17 @@ impl Developer {
-         }
-     }
+@@ -38,7 +39,14 @@ use snarkvm::{
+     ledger::{
+         block::Block,
+         committee::{Committee, MIN_DELEGATOR_STAKE, MIN_VALIDATOR_STAKE},
+-        store::{ConsensusStore, StorageMode, aleo_dir, aleo_ledger_dir, helpers::memory::ConsensusMemory},
++        store::{
++            AUTHORITY_RETENTION_BLOCKS,
++            ConsensusStore,
++            StorageMode,
++            aleo_dir,
++            aleo_ledger_dir,
++            helpers::memory::ConsensusMemory,
++        },
+     },
+     prelude::{FromBytes, Itertools, ToBits, ToBytes},
+     synthesizer::VM,
+@@ -341,14 +349,18 @@ pub struct Start {
+     #[clap(long)]
+     pub auto_db_checkpoints: Option<PathBuf>,
  
-+    /// Runs `operation`, which can halt the VM, and returns a halt as an error. Any other panic keeps unwinding.
-+    fn catch_halt<T, E: Into<anyhow::Error>>(operation: impl FnOnce() -> std::result::Result<T, E>) -> Result<T> {
-+        match try_vm_runtime(operation) {
-+            Ok(result) => result.map_err(Into::into),
-+            Err(payload) => match payload.downcast::<VmHalt>() {
-+                Ok(halt) => bail!("The program halted: {halt}"),
-+                Err(payload) => std::panic::resume_unwind(payload),
-+            },
-+        }
-+    }
+-    /// Enables the node to prefetch initial blocks from a CDN
++    /// Enables the node to prefetch initial blocks from a CDN, also with `--dev` (which otherwise disables it)
+     #[clap(long, conflicts_with = "nocdn")]
+     pub cdn: Option<http::Uri>,
+ 
+     /// If the flag is set, the node will not prefetch from a CDN
+     #[clap(long)]
+     pub nocdn: bool,
+ 
++    /// Prune the authority data (certificates) of blocks older than the retention window. See "Prune Old Authority Data"
++    #[clap(long)]
++    pub prune_authority_data: bool,
 +
-     /// Parses an endpoint URL or a JSON static query.
+     /// Enables development mode used to set up test networks.
      ///
-     /// Endpoint URLs are normalized before `Query::from_str`.
-@@ -649,4 +661,24 @@ mod tests {
-         assert_eq!(endpoint, format!("{base_uri_str}/{}/transaction/broadcast", CurrentNetwork::SHORT_NAME));
-         assert_eq!(api_version, ApiVersion::V2);
+     /// The purpose of this flag is to run multiple nodes on the same machine and in the same working directory.
+@@ -382,6 +394,11 @@ pub struct Start {
+     #[clap(long, group = "dev_flags", requires = "dev_num_validators", default_value_t = false)]
+     pub dev_on_prod: bool,
+ 
++    /// If development mode is enabled, set how many recent blocks' authority data this node keeps with
++    /// `--prune-authority-data`.
++    #[clap(long, group = "dev_flags", requires = "prune_authority_data", hide = true)]
++    pub dev_authority_retention_blocks: Option<u32>,
++
+     /// If the flag is set, the node will attempt to automatically migrate the node data to the new format.
+     #[clap(long)]
+     pub auto_migrate_node_data: bool,
+@@ -482,34 +499,58 @@ impl Start {
+         Ok(Some(url))
      }
-+
-+    #[test]
-+    fn test_catch_halt_returns_the_result() {
-+        assert_eq!(Developer::catch_halt(|| Ok::<_, anyhow::Error>(7)).expect("The operation succeeds"), 7);
-+        assert_eq!(Developer::catch_halt(|| -> Result<()> { bail!("an error") }).unwrap_err().to_string(), "an error");
+ 
++    /// Returns how much authority data the node keeps.
++    fn parse_authority_retention<N: Network>(&self) -> Result<AuthorityRetention> {
++        self.parse_authority_retention_with::<N>(Message::<N>::latest_message_version())
 +    }
 +
-+    #[test]
-+    fn test_catch_halt_returns_a_halt_as_an_error() {
-+        let error = Developer::catch_halt(|| Ok::<_, anyhow::Error>(Field::<CurrentNetwork>::one() / Field::zero()))
-+            .expect_err("A division by zero halts");
-+        assert!(error.to_string().starts_with("The program halted: Field division by zero"), "{error}");
++    /// Returns how much authority data the node keeps on a network whose latest scheduled router
++    /// message version is `latest_message_version`. Pruning is refused until
++    /// `Message::STATUS_MESSAGE_VERSION` is scheduled, as peers learn which blocks a node serves only
++    /// from its status replies and Ping floors. Until that version activates, peers on older
++    /// versions stay connected, and those that request blocks below the watermark are disconnected.
++    fn parse_authority_retention_with<N: Network>(&self, latest_message_version: u32) -> Result<AuthorityRetention> {
++        if !self.prune_authority_data {
++            return Ok(AuthorityRetention::default());
++        }
++        if !matches!(self.parse_node_type(), NodeType::Client | NodeType::Validator) {
++            bail!("`--prune-authority-data` prunes the ledger and is only supported on a client or validator");
++        }
++        let status_version = Message::<N>::STATUS_MESSAGE_VERSION;
++        ensure!(
++            latest_message_version >= status_version,
++            "--prune-authority-data needs router message version {status_version} (ConsensusVersion::V23), which \
++             this network has not scheduled."
++        );
++        AuthorityRetention::prune::<N>(self.dev_authority_retention_blocks.unwrap_or(AUTHORITY_RETENTION_BLOCKS))
 +    }
 +
-+    #[test]
-+    fn test_catch_halt_resumes_other_panics() {
-+        let payload = std::panic::catch_unwind(|| Developer::catch_halt(|| -> Result<()> { panic!("a bug") }))
-+            .expect_err("A panic that is not a halt keeps unwinding");
-+        assert_eq!(payload.downcast_ref::<&str>(), Some(&"a bug"));
-+    }
- }
+     /// Returns the CDN to prefetch initial blocks from, or `None` if fetching from the CDN is disabled.
+     fn parse_cdn<N: Network>(&self) -> Result<Option<http::Uri>> {
+-        // Disable CDN if:
+-        //  1. The node is in development mode.
+-        //  2. The user has explicitly disabled CDN.
+-        //  3. The node is a prover (no need to sync).
+-        let no_cdn_reasons = [("--dev", self.dev.is_some()), ("--nocdn", self.nocdn), ("--prover", self.prover)]
++        // Disable CDN if the user has explicitly disabled it, or the node is a prover (no need to sync).
++        let no_cdn_reasons = [("--nocdn", self.nocdn), ("--prover", self.prover)]
+             .into_iter()
+             .filter_map(|(reason, flag_set)| flag_set.then_some(reason))
+             .join(" and ");
+         if !no_cdn_reasons.is_em
 ```
 
-**File**: `cli/src/commands/developer/transfer_private.rs` (modified, +11/-9)
+**File**: `node/Cargo.toml` (modified, +0/-3)
 ```diff
-@@ -132,15 +132,17 @@ impl TransferPrivate {
-             ];
+@@ -56,9 +56,6 @@ workspace = true
+ [dependencies.bytes]
+ workspace = true
  
-             // Create a new transaction.
--            vm.execute(
--                &private_key,
--                ("credits.aleo", "transfer_private"),
--                inputs.iter(),
--                Some(fee_record),
--                priority_fee,
--                Some(&query),
--                rng,
--            )?
-+            Developer::catch_halt(|| {
-+                vm.execute(
-+                    &private_key,
-+                    ("credits.aleo", "transfer_private"),
-+                    inputs.iter(),
-+                    Some(fee_record),
-+                    priority_fee,
-+                    Some(&query),
-+                    rng,
-+                )
-+            })?
-         };
-         let locator = Locator::<N>::from_str("credits.aleo/transfer_private")?;
-         println!("✅ Created private transfer of {} microcredits to {}\n", &self.amount, recipient);
+-[dependencies.cfg-if]
+-workspace = true
+-
+ [dependencies.colored]
+ workspace = true
+ 
+```
+
+**File**: `node/bft/ledger-service/src/ledger.rs` (modified, +6/-1)
+```diff
+@@ -212,7 +212,7 @@ pub fn prepare_dev_committee_options(
+ }
+ 
+ /// Persists the given `start_round` to `<node_data_dir>/dev-committee-state` if the file
+-/// doesn't already exist. Called after [`Ledger::load_with_dev_committee`] so that the
++/// doesn't already exist. Called after the ledger loads with a dev committee, so that the
+ /// round chosen by snarkVM (its `latest_round()` default) survives restarts.
+ #[cfg(feature = "dev-committee-override")]
+ pub fn persist_dev_committee_start_round_if_unwritten(node_data_dir: &NodeDataDir, start_round: u64) -> Result<()> {
+@@ -259,6 +259,11 @@ impl<N: Network, C: ConsensusStorage<N>> LedgerService<N> for CoreLedgerService<
+         self.ledger.latest_height()
+     }
+ 
++    /// Returns the authority-pruning watermark of the block store.
++    fn authority_pruned_below(&self) -> Result<Option<u32>> {
++        self.ledger.vm().block_store().authority_pruned_below()
++    }
++
+     /// Returns the latest block in the ledger.
+     fn latest_block(&self) -> Block<N> {
+         self.ledger.latest_block()
+```
+
+**File**: `node/bft/ledger-service/src/mock.rs` (modified, +5/-0)
+```diff
+@@ -165,6 +165,11 @@ impl<N: Network> LedgerService<N> for MockLedgerService<N> {
+         unreachable!("MockLedgerService does not support get_blocks")
+     }
+ 
++    /// Returns `None`: the mock ledger prunes nothing.
++    fn authority_pruned_below(&self) -> Result<Option<u32>> {
++        Ok(None)
++    }
++
+     /// Returns the solution for the given solution ID.
+     fn get_solution(&self, _solution_id: &SolutionID<N>) -> Result<Option<Solution<N>>> {
+         unreachable!("MockLedgerService does not support get_solution")
+```
+
+**File**: `node/bft/ledger-service/src/prover.rs` (modified, +5/-0)
+```diff
+@@ -105,6 +105,11 @@ impl<N: Network> LedgerService<N> for ProverLedgerService<N> {
+         bail!("Blocks {heights:?} do not exist in prover")
+     }
+ 
++    /// Returns `None`: a prover has no ledger to prune.
++    fn authority_pruned_below(&self) -> Result<Option<u32>> {
++        Ok(None)
++    }
++
+     /// Returns the solution for the given solution ID.
+     fn get_solution(&self, solution_id: &SolutionID<N>) -> Result<Option<Solution<N>>> {
+         bail!("Solution '{solution_id}' does not exist in prover")
+```
+
+---
+
+### Incident Patch 2: `f3a5bc3e` (2026-11-26)
+**Commit Message**: Pin snarkVM to staging (a8953a918)
+
+**File**: `Cargo.lock` (modified, +61/-61)
+```diff
+@@ -5864,7 +5864,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "anyhow",
+  "rand 0.10.3",
+@@ -5883,7 +5883,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -5910,7 +5910,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5923,7 +5923,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5937,7 +5937,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-account"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5947,7 +5947,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5957,7 +5957,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-collections"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5967,7 +5967,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5987,12 +5987,12 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ 
+ [[package]]
+ name = "snarkvm-circuit-network"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -6003,7 +6003,7 @@ dependencies = [
+ [[package]]
+ name = "snarkvm-circuit-program"
+ version = "4.13.1"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=274c2797554e82fd457aeeeee42e32e838d436bd#274c2797554e82fd457aeeeee42e32e838d436bd"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a91
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ members = [
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "274c2797554e82fd457aeeeee42e32e838d436bd" # agent/prune-v23-integration-r7
++rev = "a8953a918c427ff9145001dc0928ea086e8f647e" #staging
+ #version = "=4.12.0"
+ default-features = false
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2131,32 +2380,46 @@ Claude-Session: https://claude.ai/code/session_01UYfmmNPAJoCY7J1GRtuy7h
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.toml
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9c02ea4e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecf5907c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# At 0 the snarkVM code in the tests runs 4-8x slower.
-opt-level = 1
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e8f647e"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=a8953a918c427ff9145001dc0928ea086e8f647e#a8953a918c427ff9145001dc0928ea086e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-opt-level = 2
+ "cfg-if",
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5c73b0886320db9dc5"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=4606f61d835394589b7bdf5c73b0886320db9dc5#4606f61d835394589b7bdf5
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9c02ea4e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecf5907c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:56:04.281Z",
-  "total_cycles_completed": 12571,
-  "total_learnings_persisted": 12571,
-  "total_rules_promoted": 11493,
+  "last_updated": "2026-11-26T05:05:21.735Z",
+  "total_cycles_completed": 12574,
+  "total_learnings_persisted": 12574,
+  "total_rules_promoted": 11495,
   "history": [
-    {
-      "timestamp": "2026-11-25T10:07:36.310Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T10:21:20.696Z",
-      "repository": "FastVideo/FastH3-Omni-Comfy",
-      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T10:24:13.975Z",
-      "repository": "ratatui/ratatui",
-      "learningId": "learn-github-ratatui-ratatui",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T10:25:31.280Z",
       "repository": "loft-sh/vcluster",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-26T04:56:04.281Z",
       "repository": "restatedev/restate",
       "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:05:09.375Z",
+      "repository": "laion/clap-htsat-fused",
+      "learningId": "learn-huggingface-laion-clap-htsat-fused",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:05:19.826Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T05:05:21.735Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

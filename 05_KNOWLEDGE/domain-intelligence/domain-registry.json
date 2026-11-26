@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T04:56:47.085Z",
+  "last_updated": "2026-11-26T05:05:28.117Z",
   "total_records": 2706,
   "domains": {
     "A": {
@@ -8810,10 +8810,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "ee776978c3e4e1cea88c3a55190165acb10d808b88064668cf4b804ec29a4c9e",
-      "created_at": "2026-11-26T03:04:41.683Z"
+      "content_hash": "295df7c6ceb5327a476cf994f668bb7b84a12fa668ee202f199b4a9207a535e7",
+      "created_at": "2026-11-26T05:05:22.168Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -10738,8 +10738,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "2f263ffe21e458f76f91fe8e18b0138e0533000994fc77ad4c384b342851a20e",
-      "created_at": "2026-11-24T12:05:14.830Z"
+      "content_hash": "1e4735fcce9a47296109b6ab29bd43b48ad58bd9d16972304d95a0b757440d02",
+      "created_at": "2026-11-26T05:05:20.246Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -10807,8 +10807,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
       "repository": "open-policy-agent-opa-learnings",
-      "content_hash": "64cb87347d5909a4c5bebb56b7ae88759166a3251b4a337965f2cd39a64b6a52",
-      "created_at": "2026-11-24T12:05:18.371Z"
+      "content_hash": "e7aca4157e181c49c8dc47b43ee64afefa159ff9decbc2e3971e8cce6064a55a",
+      "created_at": "2026-11-26T05:05:26.840Z"
     },
     "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
@@ -15368,8 +15368,8 @@
       "title": "Research & Knowledge Intelligence: laion/clap-htsat-fused Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-laion-clap-htsat-fused-research-knowledge-intelligence-laion-clap-htsat-fused.md",
       "repository": "laion/clap-htsat-fused",
-      "content_hash": "e1a06abff151780db7a1236559260aeda8b1bc62206fba908a7db51b32a56597",
-      "created_at": "2026-11-22T08:41:01.426Z"
+      "content_hash": "ceba975a0f4af3cba7b6ac17f1d0a28c31ebaab5ad1e6e7b2f2f6d4706c57182",
+      "created_at": "2026-11-26T05:05:09.595Z"
     },
     "DOM-D-7AAC58BB": {
       "record_id": "DOM-D-7AAC58BB",
@@ -15419,8 +15419,8 @@
       "title": "Research & Knowledge Intelligence: hf-laion-clap-htsat-fused-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-laion-clap-htsat-fused-learnings-research-knowledge-intelligence-hf-laion-cla.md",
       "repository": "hf-laion-clap-htsat-fused-learnings",
-      "content_hash": "1de4db1a43dedc5e57709bb18837f5fc0057bfcfd65a987f4e0dc6a4398a7cb0",
-      "created_at": "2026-11-22T08:41:04.473Z"
+      "content_hash": "29ad408b5784645cab8d6e7f74af6c19c30ad5448cf94a278226e06dc98a6e68",
+      "created_at": "2026-11-26T05:05:25.431Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanes",
@@ -24228,8 +24228,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "3c0aa1ffdbe8bd40ea815857ecc367ff8b10657f285944c19f551063e60d2346",
-      "created_at": "2026-11-26T01:08:19.059Z"
+      "content_hash": "da2b2d5c7fb370a4cd9089c95ab482045f308b61300f3b64b6f0d92a7f135f72",
+      "created_at": "2026-11-26T05:05:28.117Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

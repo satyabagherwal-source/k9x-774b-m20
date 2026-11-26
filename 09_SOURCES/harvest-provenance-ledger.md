@@ -13279,3 +13279,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-26T04:56:03.000Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `40ec0264` | Multi-dimensional audit evidence | 2026-11-26T04:56:04.267Z |
 | `learn-dom-f-c1405a3a` | `project://restatedev-restate` | `40ec0264` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/restatedev-restate-learnings.md` | 2026-11-26T04:56:44.382Z |
+| `learn-huggingface-laion-clap-htsat-fused` | `https://huggingface.co/laion/clap-htsat-fused` | `hf-laion-c` | Multi-dimensional audit evidence | 2026-11-26T05:05:09.362Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `94618dd3` | Multi-dimensional audit evidence | 2026-11-26T05:05:19.813Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `ecf5907c` | Multi-dimensional audit evidence | 2026-11-26T05:05:21.721Z |

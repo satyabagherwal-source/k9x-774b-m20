@@ -3,7 +3,7 @@
 > **Source Version**: `hf-laion-cla`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T08:41:00.738Z  
+> **Timestamp**: 2026-11-26T05:05:08.811Z  
 > **Learning ID**: `learn-huggingface-laion-clap-htsat-fused`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/laion/clap-htsat-fused](https://huggingface.co/laion/clap-htsat-fused))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T08:35:56.834Z  
+> **Harvest Timestamp**: 2026-11-26T05:05:08.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: audio-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8341816 downloads | 180 likes
+- **Stars / Engagement**: 7663222 downloads | 182 likes
 
 ---
 

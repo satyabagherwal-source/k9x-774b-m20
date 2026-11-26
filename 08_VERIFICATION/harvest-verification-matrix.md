@@ -13246,3 +13246,6 @@
 | `CYCLE-20261126-XRCJ` | `2026-11-26T04:56:02.995Z` | `DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md` | Yes (`ec1c9e22...`) |
 | `CYCLE-20261126-XSBQ` | `2026-11-26T04:56:04.262Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10600` | Yes (`ebb60dc9...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T04:56:44.382Z` | `restatedev-restate` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-C1405A3A` [Domain F] | Yes (`11d9a374...`) |
+| `CYCLE-20261126-9GX9` | `2026-11-26T05:05:09.357Z` | `laion/clap-htsat-fused` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md` | Yes (`586a05e0...`) |
+| `CYCLE-20261126-9OZL` | `2026-11-26T05:05:19.809Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10601` | Yes (`75e1089a...`) |
+| `CYCLE-20261126-9QGK` | `2026-11-26T05:05:21.716Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`a82a171c...`) |
