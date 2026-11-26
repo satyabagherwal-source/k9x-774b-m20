@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:23:05.845Z",
-  "total_cycles_completed": 12859,
-  "total_learnings_persisted": 12859,
-  "total_rules_promoted": 11678,
+  "last_updated": "2026-11-26T20:31:53.767Z",
+  "total_cycles_completed": 12861,
+  "total_learnings_persisted": 12861,
+  "total_rules_promoted": 11679,
   "history": [
-    {
-      "timestamp": "2026-11-26T10:41:01.157Z",
-      "repository": "loft-sh/vcluster",
-      "learningId": "learn-github-loft-sh-vcluster",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T10:41:05.675Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T10:50:29.361Z",
       "repository": "moonshotai/Kimi-K3",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T20:23:05.845Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:31:39.108Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-bigscience-bloom",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:31:53.767Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

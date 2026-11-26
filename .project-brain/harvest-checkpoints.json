@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T20:23:05.849Z",
+  "last_updated": "2026-11-26T20:31:53.771Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1235,14 +1235,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bigscience-bloom",
-      "content_hash": "eaf7ed6e08a33912548e196163590afe9c82d27376fb95d205ffa899e91a30b6",
-      "verified_at": "2026-11-23T07:05:28.010Z",
+      "content_hash": "6842696e9d15108d0a05b3c886742009d61a52c29391704af97ecc58b5eee000",
+      "verified_at": "2026-11-26T20:31:39.111Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T07:05:28.010Z"
+      "last_updated": "2026-11-26T20:31:39.111Z"
     },
     "openai/gpt-oss-20b": {
       "repository": "openai/gpt-oss-20b",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "3bc5f61ce194049093b7117fefb0b44a78aca6799d6d781927ddcd14a1a836df",
-      "verified_at": "2026-11-24T04:20:31.469Z",
+      "content_hash": "5b079f745e4d8ade7c71164387b508b2cb5b9cb9e9fcdad711da255973c3560a",
+      "verified_at": "2026-11-26T20:31:53.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T04:20:31.470Z"
+      "last_updated": "2026-11-26T20:31:53.770Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",

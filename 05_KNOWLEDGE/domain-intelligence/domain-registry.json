@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T20:23:12.476Z",
+  "last_updated": "2026-11-26T20:31:59.922Z",
   "total_records": 2774,
   "domains": {
     "A": {
@@ -8544,8 +8544,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "9366f8beb7f89190a80523c156e97892539c7746de9fb67ce441e8746cbe8970",
-      "created_at": "2026-11-26T19:55:12.309Z"
+      "content_hash": "ddc009db7cadd1f7f95de9406a915ceb853f5810da8d1f174230f214c8269544",
+      "created_at": "2026-11-26T20:31:59.922Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -12288,8 +12288,8 @@
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "repository": "Ontos-AI/knowhere",
-      "content_hash": "79ecec73165878e9fcba8c250e624c785bc226a6ad2020f7f772506d7030520b",
-      "created_at": "2026-11-23T05:06:48.286Z"
+      "content_hash": "dee65096ec5f981d5e6b3aef93c192e6d1585fe37c34b8923256a4aaba75648c",
+      "created_at": "2026-11-26T20:31:54.266Z"
     },
     "DOM-J-44A35728": {
       "record_id": "DOM-J-44A35728",
@@ -12354,8 +12354,8 @@
       "title": "Architecture Intelligence: ontos-ai-knowhere-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-learnings-architecture-intelligence-ontos-ai-knowhere-learning.md",
       "repository": "ontos-ai-knowhere-learnings",
-      "content_hash": "1ef90e4aa850741220571af7fd63cbc48eca851bda76d91ae4e659ef77927af6",
-      "created_at": "2026-11-15T13:09:11.191Z"
+      "content_hash": "f21266941552d954164067f169af5e9d27a7606cb9c54082228f6da51f40e776",
+      "created_at": "2026-11-26T20:31:58.612Z"
     },
     "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-gardener-gardener-core-invariants",
@@ -13610,8 +13610,8 @@
       "title": "Research & Knowledge Intelligence: bigscience/bloom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-research-knowledge-intelligence-bigscience-bloom-core-invari.md",
       "repository": "bigscience/bloom",
-      "content_hash": "24a330c1bea6a4cb9a71b10d86077ad4fe3c377760d6813f4ffea475a8c52f53",
-      "created_at": "2026-11-23T07:05:28.290Z"
+      "content_hash": "7b6cb5739457dd4e89fa6c36e211aaafdabb8a7747dcc0be263fe887989dc320",
+      "created_at": "2026-11-26T20:31:39.370Z"
     },
     "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants",
@@ -13670,8 +13670,8 @@
       "title": "Research & Knowledge Intelligence: hf-bigscience-bloom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-learnings-research-knowledge-intelligence-hf-bigscience-bloo.md",
       "repository": "hf-bigscience-bloom-learnings",
-      "content_hash": "c9cae36a94e75507189dac5aae03cf137d7fe41621d5e35ed8079d640eff59d9",
-      "created_at": "2026-11-23T07:05:40.003Z"
+      "content_hash": "6073daa2b871776024ec9e06f7aeaef1fb6e8923fdc08a10a03db74dfd193d0c",
+      "created_at": "2026-11-26T20:31:57.802Z"
     },
     "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants",

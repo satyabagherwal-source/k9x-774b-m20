@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/bigscience/bloom",
   "source_version": "hf-bigscience-bloom",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T07:05:28.288Z",
+  "timestamp": "2026-11-26T20:31:39.369Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-bigscience-bloom",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [bigscience/bloom](https://huggingface.co/bigscience/bloom) (Revision: `hf-bigscie`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T07:05:28.288Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T20:31:39.369Z`  
 > **Learning ID**: `learn-huggingface-bigscience-bloom`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/bigscience/bloom](https://huggingface.co/bigscience/bloom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T07:05:27.173Z  
+> **Harvest Timestamp**: 2026-11-26T20:31:38.298Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6877 downloads | 5096 likes
+- **Stars / Engagement**: 7057 downloads | 5096 likes
 
 ---
 

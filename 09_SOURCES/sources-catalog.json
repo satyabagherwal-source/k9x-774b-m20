@@ -945,8 +945,8 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "eaf7ed6e08a33912548e196163590afe9c82d27376fb95d205ffa899e91a30b6",
-    "lastHarvestedAt": "2026-11-23T07:05:27.999Z",
+    "contentHash": "6842696e9d15108d0a05b3c886742009d61a52c29391704af97ecc58b5eee000",
+    "lastHarvestedAt": "2026-11-26T20:31:39.094Z",
     "learningId": "learn-huggingface-bigscience-bloom"
   },
   "hf-openai-gpt-oss-20b": {
@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "da75fa74",
+    "sourceVersion": "0cc7bd5b",
     "license": "Apache-2.0",
-    "contentHash": "3bc5f61ce194049093b7117fefb0b44a78aca6799d6d781927ddcd14a1a836df",
-    "lastHarvestedAt": "2026-11-24T04:20:31.452Z",
+    "contentHash": "5b079f745e4d8ade7c71164387b508b2cb5b9cb9e9fcdad711da255973c3560a",
+    "lastHarvestedAt": "2026-11-26T20:31:53.745Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T13:09:11.006Z",
+  "timestamp": "2026-11-26T20:31:58.236Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ontos-ai-knowhere-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ontos-ai-knowhere-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T13:09:11.006Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T20:31:58.236Z`  
 > **Learning ID**: `LEARN-EVO-ontos-ai-knowhere-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ontos-ai-knowhere-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `208f3fc1`  
+> **Source Version**: `0cc7bd5b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T13:09:05.861Z  
+> **Timestamp**: 2026-11-26T20:31:52.420Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T13:09:05.856Z  
+> **Harvest Timestamp**: 2026-11-26T20:31:52.415Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4027 stars
+- **Stars / Engagement**: 4131 stars
 
 ---
 
@@ -667,9 +667,15 @@ from shared.core.exceptions import (
     UnknownException,
     ValidationException,
 )
-from shared.core.exceptions.domain_exceptions import RateLimitException, Violation
+from shared.core.exceptions.domain_exceptions import (
+    LLMServiceException,
+    RateLimitException,
+    UnavailableException,
+    Violation,
+)
 from shared.core.logging import LogEvent
 from shared.core.response import ErrorCodeMapper
+from shared.services.retrieval.required_query_embedding import RequiredQueryEmbeddingException
 
 
 def _get_request_id(request: Request) -> str:
@@ -855,13 +861,7 @@ async def validation_exception_handler(
     validation_exc = ValidationException(
         user_message="Request validation failed",
         violations=violations,
-    )
-
-    # Delegate to central handler
-    return await knowhere_exception_handler(request, validation_exc)
-
-
-async def general_exception_handler(request: Reque
+   
 ```
 
 ### Core Architecture Module: `apps/api/app/core/middleware/__init__.py`
@@ -1030,1029 +1030,229 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3c5db47` (2026-11-14)
-**Commit Message**: Potential fix for pull request finding 'CodeQL / Statement has no effect'
+### Incident Patch 1: `2b128da2` (2026-11-26)
+**Commit Message**: fix: keep maintenance dispatch on the gevent hub and delay turnover
 
-Co-authored-by: Copilot Autofix powered by AI <62310815+github-advanced-security[bot]@users.noreply.github.com>
+Staging showed two problems with the commit-time dispatch:
 
-**File**: `deploy/opensearch/metrics_recorder.py` (modified, +2/-1)
-```diff
-@@ -63,7 +63,8 @@
- 
- 
- class _Reader(Protocol):
--    def get(self, path: str) -> object: ...
-+    def get(self, path: str) -> object:
-+        raise NotImplementedError
- 
- 
- @dataclass(frozen=True)
-```
+- On the gevent worker, sending from a native background thread used the
+  shared Redis client and Celery producer pool from the wrong hub
+  ("Cannot switch to a different thread"), so dispatches failed. Send
+  inline under gevent; the API keeps its background pool.
+- Requesting turnover right after an index opened closed that index while
+  its first bulk write was running ("Lexical bulk did not acknowledge every
+  unit"). Delay the turnover task by five minutes, past the indexing
+  deadline.
 
----
-
-### Incident Patch 2: `7345e319` (2026-11-13)
-**Commit Message**: fix: grant OpenSearch build cleanup and check live application roles
-
-Worker build cleanup runs _delete_by_query?refresh=true, which scrolls,
-bulk-deletes and refreshes. The rendered worker role lacked the scroll,
-delete and refresh actions, so every retired build failed with HTTP 403 and
-was never collected.
-
-Application roles on the shared node are maintained by hand, and a missing
-action only shows up as a 403 on the path that needs it. The new
-`manage.py application-roles` command compares a saved role listing with the
-rendered API and worker roles and exits 1 while any action is missing. The
-cutover runbook runs it before Release 2.
+Dispatch warnings now include the error message.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `deploy/opensearch/README.md` (modified, +12/-0)
+**File**: `packages/shared-python/shared/services/retrieval/lexical/maintenance_signals.py` (modified, +22/-9)
 ```diff
-@@ -377,6 +377,18 @@ publication. The existing compatible PostgreSQL
- rollback uses its own reviewed task definitions and source coverage verification.
- It preserves additive schema, parsed results, charges and logical events.
+@@ -24,6 +24,7 @@
+ from dataclasses import dataclass
+ from typing import Final
  
-+Application roles on the shared node are maintained by hand, so check them
-+against the rendered roles before Release 2 and after any role change. Save the
-+security API's `GET /_plugins/_security/api/roles` response with the admin
-+certificate, then run
-+`manage.py application-roles --roles <saved-response> --index-prefix <prefix> --role-prefix <knowhere_prod_|knowhere_>`.
-+It lists every rendered action that a live API or worker role does not grant
-+and exits 1 until none are missing. Both roles write: the API publishes builds
-+when it retries indexing and writes a manifest when it archives a document, and
-+the worker's build cleanup scrolls, bulk-deletes and refreshes. A missing action
-+shows up only as HTTP 403 on that path, for example retrieval returning 503 or
-+retired builds that are never collected.
-+
- Use `launch-issuer.py --kind operator` with the `release` child command shown
- by `operator.py --help`. Review separate plans for `phase:"prepare"`,
- `"forward"` and `"rollback"`. Each plan binds `account_id`, exact source hash,
-```
-
-**File**: `deploy/opensearch/manage.py` (modified, +9/-2)
-```diff
-@@ -320,7 +320,11 @@ def _parseArguments() -> argparse.Namespace:
-     release.add_argument("--first-impact", required=True)
-     release.add_argument("--restoration-seconds", required=True, type=int)
-     release.add_argument("--margin-seconds", required=True, type=int)
--    for command in (preflight, cost, snapshot, cycle, bootstrap, verify, retention, restore, recovery, alerts, release):
-+    roles = commands.add_parser("application-roles", help="Compare live API and worker roles with the rendered roles")
-+    roles.add_argument("--roles", required=True, type=Path, help="GET /_plugins/_security/api/roles response")
-+    roles.add_argument("--index-prefix", required=True)
-+    roles.add_argument("--role-prefix", required=True, choices=("knowhere_", "knowhere_prod_"))
-+    for command in (preflight, cost, snapshot, cycle, bootstrap, verify, retention, restore, recovery, alerts, release, roles):
-         command.add_argument("--output", type=Path)
-     return parser.parse_args()
++from gevent.monkey import is_module_patched
+ from loguru import logger
+ from sqlalchemy import event
+ from sqlalchemy.orm import Session, attributes
+@@ -45,6 +46,10 @@
+ _FIRST_ATTEMPT_DELAY_SECONDS: Final[float] = 5
+ # Index opens can be frequent; one turnover check per window is enough below the hard limit.
+ _TURNOVER_REQUEST_WINDOW_SECONDS: Final[int] = 300
++# Turnover may close the least-recently-used index. Running it right after an open can
++# close the index that is still receiving its first bulk write, so it waits past the
++# indexing deadline instead.
++_TURNOVER_DELAY_SECONDS: Final[float] = 300
+ _PENDING_WORK_KEY: Final[str] = "lexical_maintenance_pending_work"
+ # Sends are short; a full pool drops work to the sweep instead of queueing in memory.
+ _DISPATCH_WORKERS: Final[int] = 4
+@@ -137,8 +142,8 @@ def dispatch(cls, taskName: str, identity: str, *, countdown: float = _FIRST_ATT
+                  hop: int = 0) -> bool:
+         """Queue one maintenance task send; ``hop`` counts reschedules so a task cannot loop forever.
  
-@@ -387,10 +391,13 @@ def _main() -> int:
-         previous: dict[str, object] = _requireObject(_readJson(arguments.state)) if arguments.state.exists() else {}
-         result = OpenSearchOperations.evaluateAlerts(_readJson(arguments.metrics), previous, nowSeconds=int(datetime.now(timezone.utc).timestamp()), repeatSeconds=arguments.repeat_seconds)
-         _writeJson(arguments.state, result["state"], replace=arguments.state.exists())
-+    elif command == "application-roles":
-+        result = OpenSearchOperations.checkApplicationRoles(_readJson(arguments.roles),
-+            indexPrefix=arguments.index_prefix, rolePrefix=arguments.role_prefix)
-     else:
-         result = OpenSearchOperations.planRelease(datetime.fromisoformat(arguments.first_impact), restorationSeconds=arguments.restoration_seconds, marginSeconds=arguments.margin_seconds)
-     _emit(result, arguments.output)
--    return 0
-+    return 1 if command == "application-roles" and not result["passed"] else 0
+-        The send runs on a background thread, because publishing to an unreachable
+-        broker blocks for many seconds. False means the work waits for the sweep.
++        Outside gevent the send runs on a background thread, because publishing to an
++        unreachable broker blocks for many seconds. False means the work waits for the sweep.
+         """
+         arguments: list[object] = [identity] if hop == 0 else [identity, hop]
  
+@@ -147,18 +152,25 @@ def send() -> None:
+                 from shared.core.celery_app import get_celery_app
+                 get_celery_app().send_task(taskName, args=arguments, countdown=countdown, retry=False)
+             except Exception as error:
+-                logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} identity={} error_type={}",
+-                    taskName, identity, type(error).__name__)
++                logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} identity={} error_type={} error={}",
++                    taskName, identity, type(error).__name__, str(error)[:200])
  
- if __name__ == "__main__":
-```
-
-**File**: `deploy/opensearch/operations.py` (modified, +74/-16)
-```diff
-@@ -9,14 +9,19 @@
- from __future__ import annotations
+         return cls._submit(send, description=taskName)
  
- from datetime import datetime, timedelta
-+from fnmatch import fnmatchcase
- from hashlib import sha256
- import json
-+import re
- from typing import Literal, Self
+     @classmethod
+     def requestTurnover(cls) -> bool:
+-        """Ask for one idle-index turnover after an index opens, without blocking admission."""
++        """Ask for one delayed idle-index turnover after an index opens, without blocking admission."""
+         return cls._submit(cls._sendTurnoverRequest, description=TURNOVER_TASK)
  
- from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
- 
- __all__: list[str] = ["OpenSearchOperations"]
- _DAY_MILLISECONDS: int = 86_400_000
-+_CLUSTER_READ: tuple[str, ...] = ("cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health")
-+_SEARCH: str = "indices:data/read/search*"
-+_INDEX_READ: tuple[str, ...] = (_SEARCH, "indices:admin/get", "indices:monitor/settings/get", "indices:monitor/stats")
- 
- 
- class _Installation(BaseModel):
-@@ -93,6 +98,25 @@ class _Fence(BaseModel):
-     proof_sha256: str = Field(pattern="^[a-f0-9]{64}$")
- 
- 
-+class _LiveIndexPermission(BaseModel):
-+    # The security API adds DLS, FLS and masking fields that this check does not use.
-+    model_config = ConfigDict(extra="ignore", frozen=True)
-+    index_patterns: list[str] = Field(default_factory=list)
-+    allowed_actions: list[str] = Field(default_factory=list)
-+
-+    def grants(self, index: str, action: str) -> bool:
-+        return any(fnmatchcase(action, granted) for granted in self.allowed_actions) and any(
-+            re.fullmatch(pattern[1:-1], index) is not None if pattern.startswith("/") and pattern.endswith("/")
-+            else fnmatchcase(index, pattern)
-+            for pattern in self.index_patterns)
-+
-+
-+class _LiveRole(BaseModel):
-+    model_config = ConfigDict(extra="ignore", frozen=True)
-+    cluster_permissions: list[str] = Field(default_factory=list)
-+    index_permissions: list[_LiveIndexPermission] = Field(default_factory=list)
-+
-+
- class _Shard(BaseModel):
-     stage: str
- 
-@@ -307,30 +331,37 @@ def renderBundle(value: object) -> dict[str, object]:
-         }
+     @classmethod
+     def _submit(cls, operation: Callable[[], None], *, description: str) -> bool:
++        if is_module_patched("threading"):
++            # Under gevent, Celery's producer pool and the shared Redis client belong to
++            # the hub that created them; a native background thread cannot use them
++            # ("Cannot switch to a different thread"). Sending inline only blocks the
++            # current greenlet.
++            operation()
++            return True
+         try:
+             if cls._dispatchPool is None:
+                 cls._dispatchPool = BackgroundWorkPool(name="lexical-maintenance-dispatch",
+@@ -167,8 +179,8 @@ def _submit(cls, operation: Callable[[], None], *, description: str) -> bool:
+                 return True
+             logger.warning("Lexical maintenance dispatch pool is saturated; the hourly sweep owns it: task={}", description)
+         except Exception as error:
+-            logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} error_type={}",
+-                description, type(error).__name__)
++            logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} error_type={} error={}",
++                description, type(error).__name__, str(error)[:200])
+         return False
  
      @staticmethod
--    def _renderRoles(installation: _Installation, *, isIndependent: bool = False) -> dict[str, object]:
--        clusterRead: list[str] = ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health"]
--        search: str = "indices:data/read/search*"
--        indexRead: list[str] = [search, "indices:admin/get", "indices:monitor/settings/get", "indices:monitor/stats"]
-+    def _renderApplicationRoles(indexPrefix: str) -> dict[str, dict[str, list]]:
-+        """Render the API and worker roles; both processes read and publish builds and manifests."""
-         publication: list[str] = ["indices:admin/create", "indices:admin/open", "indices:admin/close", "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count"]
--        scoped: str = installation.index_prefix + "-*"
-+        # Build cleanup runs _delete_by_query?refresh=true, which scrolls, bulk-deletes and then refreshes.
-+        cleanup: list[str] = ["indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh"]
-         # Namespace indexes use a 48-character fingerprint. Keep their actions off the manifest index.
--        namespacePattern: str = f"/{installation.index_prefix}-[a-f0-9]{{48}}/"
--        manifestIndex: str = f"{installation.index_prefix}-published-manifests"
-+        namespacePattern: str = f"/{indexPrefix}-[a-f0-9]{{48}}/"
-+        manifestIndex: str = f"{indexPrefix}-published-manifests"
-         # OpenSearch authorizes _create through the same index action as _doc.
-         manifestActions: list[str] = ["indices:admin/create", "indices:data/read/get", "indices:data/write/index"]
--        deploymentProbe: str = f"{installation.index_prefix}-deployment-probe"
--        applicationCluster: list[str] = [*clusterRead, "indices:data/write/bulk"]
--        roles: dict[str, object] = {"_meta": {"type": "roles", "config_version": 2},
-+        deploymentProbe: str = f"{indexPrefix}-deployment-probe"
-+        applicationCluster: list[str] = [*_CLUSTER_READ, "indices:data/write/bulk"]
-+        return {
-             "knowhere_api": {"cluster_permissions": applicationCluster, "index_permissions": [
--                {"index_patterns": [namespacePattern], "allowed_actions": [*indexRead, *publication]},
-+                {"index_patterns": [namespacePattern], "allowed_actions": [*_INDEX_READ, *publication]},
-                 {"index_patterns": [manifestIndex], "allowed_actions": manifestActions},
--                {"index_patterns": [deploymentProbe], "allowed_actions": [search]},
-+                {"index_patterns": [deploymentProbe], "allowed_actions": [_SEARCH]},
-             ]},
--            "knowhere_worker": {"cluster_permissions": applicationCluster, "index_permissions": [
--                {"index_patterns": [namespacePattern], "allowed_actions": [*indexRead, *publication, "indices:data/write/delete/byquery"]},
-+            "knowhere_worker": {"cluster_permissions": [*applicationCluster, "indices:data/read/scroll"], "index_permissions": [
-+                {"index_patterns": [namespacePattern], "allowed_actions": [*_INDEX_READ, *publication, *cleanup]},
-
+@@ -179,6 +191,7 @@ def _sendTurnoverRequest() -> None:
+                 if not acquired:
+                     return
+                 from shared.core.celery_app import get_celery_app
+-                get_celery_app().send_task(TURNOVER_TASK, retry=False)
++                get_celery_app().send_task(TURNOVER_TASK, countdown=_TURNOVER_DELAY_SECONDS, retry=False)
+         except Exception as error:
+-            logger.warning("Lexical turnover request deferred to the hourly sweep: error_type={}", type(error).__name__)
++            logger.warning("Lexical turnover request deferred to the hourly sweep: error_type={} error={}",
++                type(error).__name__, str(error)[:200])
 ```
 
-**File**: `deploy/opensearch/tests/test_command.py` (modified, +20/-0)
+**File**: `packages/shared-python/shared/tests/test_lazy_lexical_maintenance.py` (modified, +21/-3)
 ```diff
-@@ -57,3 +57,23 @@ def test_installer_defaults_to_command_plan_without_root_or_artifacts(tmp_path:
-     assert plan["mode"] == "dry-run"
-     assert plan["formats_volume"] is False
-     assert plan["starts_service"] is False
-+
-+
-+def test_application_roles_exits_non_zero_when_live_roles_miss_actions(tmp_path: Path) -> None:
-+    manifest: Path = tmp_path / "manifest.json"
-+    manifest.write_text(json.dumps(createManifest()))
-+    bundle: Path = tmp_path / "bundle"
-+    assert runCommand("render", "--manifest", str(manifest), "--directory", str(bundle)).returncode == 0
-+    complete: dict[str, object] = json.loads((bundle / "roles.yml").read_text())
-+    roles: Path = tmp_path / "roles.json"
-+    arguments: list[str] = ["application-roles", "--roles", str(roles), "--index-prefix", "knowhere-lexical-v1", "--role-prefix", "knowhere_"]
-+
-+    roles.write_text(json.dumps(complete))
-+    result = runCommand(*arguments)
-+    assert result.returncode == 0, result.stderr
-+    assert json.loads(result.stdout)["passed"] is True
-+
-+    roles.write_text(json.dumps({**complete, "knowhere_worker": {}}))
-+    result = runCommand(*arguments)
-+    assert result.returncode == 1, result.stderr
-+    assert json.loads(result.stdout)["missing"]["knowhere_worker"]
-```
-
-**File**: `deploy/opensearch/tests/test_operations.py` (modified, +83/-3)
-```diff
-@@ -138,17 +138,97 @@ def test_preserves_namespace_publication_and_deployment_probe_search(roleName: s
-         "indices:monitor/stats", "indices:admin/create", "indices:admin/open", "indices:admin/close",
-         "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count",
-     }
-+    expectedClusterActions: set[str] = {
-+        "cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health", "indices:data/write/bulk",
-+    }
-     if roleName == "knowhere_worker":
--        expectedNamespaceActions.add("indices:data/write/delete/byquery")
-+        # Build cleanup is _delete_by_query?refresh=true: scroll, bulk delete, then refresh.
-+        expectedNamespaceActions |= {
-+            "indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh",
-+        }
-+        expectedClusterActions.add("indices:data/read/scroll")
+@@ -57,13 +57,14 @@ def windowLock(name: str, period_seconds: int, buffer_seconds: int = 0) -> Itera
+         held.add(name)
+         yield acquired
  
-     assert getIndexActions(role, f"{prefix}-{namespaceSuffix}") == expectedNamespaceActions
-     assert getIndexActions(role, f"{prefix}-deployment-probe") == {"indices:data/read/search*"}
-     assert getIndexActions(role, f"knowhere-prod-lexical-v1-{namespaceSuffix}") == set()
--    assert set(role["cluster_permissions"]) == {
--        "cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health", "indices:data/write/bulk",
-+    assert set(role["cluster_permissions"]) == expectedClusterActions
-+
-+
-+def createSharedNodeRole(prefix: str, cluster: list[str], actions: list[str]) -> dict[str, object]:
-+    """A hand-maintained role on the shared node: one wildcard over the environment prefix."""
-+    return {"reserved": False, "cluster_permissions": cluster, "tenant_permissions": [], "index_permissions": [
-+        {"index_patterns": [f"{prefix}-*"], "allowed_actions": actions, "dls": "", "fls": [], "masked_fields": []},
-+    ]}
-+
-+
-+def test_application_role_check_passes_the_rendered_roles() -> None:
-+    operations: type = loadOperations()
-+    prefix: str = "knowhere-staging-lexical-v1"
-+    roles: dict[str, object] = cast(dict[str, object], operations.renderBundle({**createManifest(), "index_prefix": prefix})["roles.yml"])
-+
-+    result: dict[str, object] = operations.checkApplicationRoles(roles, indexPrefix=prefix, rolePrefix="knowhere_")
-+
-+    assert result["passed"] is True
-+    assert result["missing"] == {"knowhere_api": [], "knowhere_worker": []}
-+
-+
-+def test_application_role_check_reports_the_read_only_production_api_role() -> None:
-+    operations: type = loadOperations()
-+    prefix: str = "knowhere-prod-lexical-v1"
-+    namespace: str = f"{prefix}-{'0' * 48}"
-+    manifest: str = f"{prefix}-published-manifests"
-+    roles: dict[str, object] = {
-+        "knowhere_prod_api": createSharedNodeRole(prefix,
-+            ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health"],
-+            ["indices:data/read/search*", "indices:admin/get", "indices:monitor/settings/get",
-+                "indices:monitor/stats", "indices:data/read/count"]),
-+        "knowhere_prod_worker": createSharedNodeRole(prefix,
-+            ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health",
-+                "indices:data/write/bulk", "indices:data/read/scroll"],
-+            ["indices:data/read/search*", "indices:admin/get", "indices:monitor/settings/get",
-+                "indices:monitor/stats", "indices:admin/create", "indices:admin/open", "indices:admin/close",
-+                "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count",
-+                "indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh"]),
-+    }
-+
-+    result: dict[str, object] = operations.checkApplicationRoles(roles, indexPrefix=prefix, rolePrefix="knowhere_prod_")
-+
-+    assert result["passed"] is False
-+    assert result["missing"] == {
-+        "knowhere_prod_api": [
-+            "cluster indices:data/write/bulk",
-+            f"{namespace} indices:admin/create", f"{namespace} indices:admin/open",
-+            f"{namespace} indices:admin/close", f"{namespace} indices:data/write/bulk*",
-+            f"{namespace} indices:data/write/index",
-+            f"{manifest} indices:admin/create", f"{manifest} indices:data/read/get",
-+            f"{manifest} indices:data/write/index",
-+        ],
-+        "knowhere_prod_worker": [f"{manifest} indices:data/read/get"],
-     }
+-    sent: list[str] = []
++    sent: list[tuple[str, object]] = []
+     monkeypatch.setattr(maintenance_signals, "periodic_task_lock", windowLock)
+-    monkeypatch.setattr(celery_app, "send_task", lambda name, **options: sent.append(name))
++    monkeypatch.setattr(celery_app, "send_task", lambda name, **options: sent.append((name, options.get("countdown"))))
+     monkeypatch.setattr(LexicalMaintenanceSignals, "_dispatchPool", _InlinePool())
+     assert LexicalMaintenanceSignals.requestTurnover()
+     assert LexicalMaintenanceSignals.requestTurnover()
+-    assert sent == [TURNOVER_TASK]
++    # Delayed past the indexing deadline so it cannot close an index mid-write.
++    assert sent == [(TURNOVER_TASK, 300)]
  
  
-+def test_application_role_check_reports_a_missing_role_and_a_non_matching_regex() -> None:
-+    operations: type = loadOperations()
-+    prefix: str = "knowhere-staging-lexical-v1"
-+    roles: dict[str, object] = cast(dict[str, object], operations.renderBundle({**createManifest(), "index_prefix": prefix})["roles.yml"])
-+    worker: dict[str, object] = cast(dict[str, object], roles["knowhere_worker"])
-+    # A pattern for 47-character fingerprints never matches a namespace index.
-+    narrowed: list[dict[str, object]] = [
-+        {**permission, "index_patterns": [f"/{prefix}-[a-f0-9]{{47}}/"]}
-
+ def test_turnover_request_never_raises_into_index_admission(monkeypatch: pytest.MonkeyPatch) -> None:
+@@ -85,3 +86,20 @@ def test_saturated_dispatch_leaves_work_for_the_sweep(monkeypatch: pytest.Monkey
+     monkeypatch.setattr(LexicalMaintenanceSignals, "_dispatchPool",
+         SimpleNamespace(trySubmit=lambda operation: False, close=lambda: None))
+     assert not LexicalMaintenanceSignals.dispatch("task", "identity")
++
++
++def test_gevent_dispatch_sends_inline_without_a_native_thread(monkeypatch: pytest.MonkeyPatch) -> None:
++    from shared.core.celery_app import celery_app
++    from shared.services.retrieval.lexical import maintenance_signals
++    from shared.services.retrieval.lexical.maintenance_signals import LexicalMaintenanceSignals
++
++    def refuseNativeThread(operation: object) -> bool:
++        raise AssertionError("gevent workers must not send from a native thread")
++
++    sent: list[tuple[str, object]] = []
++    monkeypatch.setattr(maintenance_signals, "is_module_patched", lambda name: True)
++    monkeypatch.setattr(LexicalMaintenanceSignals, "_dispatchPool",
++        SimpleNamespace(trySubmit=refuseNativeThread, close=lambda: None))
++    monkeypatch.setattr(celery_app, "send_task", lambda name, **options: sent.append((name, options.get("args"))))
++    assert LexicalMaintenanceSignals.dispatch("task", "identity", hop=1)
++    assert sent == [("task", ["identity", 1])]
 ```
 
 ---
 
-### Incident Patch 3: `61f67726` (2026-11-13)
-**Commit Message**: fix: settle guarded uploads using stored object evidence
+### Incident Patch 2: `4c8175ef` (2026-11-26)
+**Commit Message**: Potential fix for pull request finding 'CodeQL / Empty except'
 
-Confirmation and expiry previously used processing time and could fail an on-time upload before its storage notification arrived. Verify the original and its storage timestamp before advancing or failing the waiting job. Persist definitive integrity failures and give verified uploads time to reach the worker after a short upload window.
+Co-authored-by: Copilot Autofix powered by AI <62310815+github-advanced-security[bot]@users.noreply.github.com>
 
-**File**: `apps/api/app/services/document_ingestion/creation_service.py` (modified, +2/-2)
+**File**: `packages/shared-python/shared/core/statement_deadline.py` (modified, +2/-2)
 ```diff
-@@ -19,7 +19,6 @@
- from sqlalchemy.exc import IntegrityError
- from sqlalchemy.ext.asyncio import AsyncSession
- 
--from shared.core.config import settings
- from shared.core.exceptions.domain_exceptions import (
-     JobOperationException,
-     ValidationException,
-@@ -28,6 +27,7 @@
- from shared.models.database.job import Job
- from shared.models.schemas.job import JobCreateBase, JobCreateV2, JobResponse
- from shared.models.schemas.job_metadata import JobMetadataHelper
-+from shared.services.jobs.source_upload_deadline import get_guarded_source_upload_lifetime_seconds
- from shared.services.redis import JobInfoRedisService, RedisServiceFactory
- from shared.services.redis.job_metadata_service import JobMetadataService
- from shared.services.storage.file_upload_service import FileUploadService
-@@ -172,7 +172,7 @@ async def _create_file_job(
-                 storage_key=s3_key,
-                 file_extension=file_extension,
-                 source_integrity=source_integrity,
--                expiration=settings.JOB_WAITING_EXPIRE_SECONDS,
-+                expiration=get_guarded_source_upload_lifetime_seconds(),
-             )
- 
-         job = await self._create_waiting_job(
-```
-
-**File**: `apps/api/app/services/document_ingestion/handoff_service.py` (modified, +54/-34)
-```diff
-@@ -1,8 +1,5 @@
- from __future__ import annotations
- 
--from app.services.document_ingestion.source_upload_deadline import (
--    get_remaining_source_upload_seconds,
--)
- from app.services.document_ingestion.worker_dispatcher import (
-     DocumentIngestionWorkerDispatcher,
- )
-@@ -21,6 +18,13 @@
- from shared.models.database.job import Job
- from shared.models.schemas.job_metadata import JobMetadataHelper
- from shared.models.schemas.source_integrity import SourceIntegrity
-+from shared.services.jobs.source_upload_deadline import (
-+    UPLOAD_EXPIRED_CODE,
-+    UPLOAD_EXPIRED_MESSAGE,
-+    UPLOAD_INTEGRITY_MISMATCH_CODE,
-+    UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
-+    classify_guarded_source_upload,
-+)
- from shared.services.jobs.upload_parse_dispatch import UploadParseOutbox
- from shared.services.storage.file_upload_service import FileUploadService
- 
-@@ -141,24 +145,25 @@ async def _verify_guarded_source(
-         self, db: AsyncSession, *, job: Job, source_integrity: SourceIntegrity
-     ) -> bool:
-         job_id = job.job_id
--        created_at = job.created_at
--        result = None
--        if get_remaining_source_upload_seconds(created_at) > 0:
--            if not job.s3_key:
--                raise ValidationException(
--                    user_message="Job is missing S3 key information",
--                    violations=[{"field": "s3_key", "description": "S3 key not set for this job"}],
--                )
--            result = await FileUploadService().verify_upload_integrity(
--                job.s3_key, source_integrity
-+        if not job.s3_key:
-+            raise ValidationException(
-+                user_message="Job is missing S3 key information",
-+                violations=[{"field": "s3_key", "description": "S3 key not set for this job"}],
-             )
-+        verification = await FileUploadService().verify_upload_integrity(
-+            job.s3_key, source_integrity
-+        )
-+        result = classify_guarded_source_upload(job.created_at, verification)
- 
--        # HEAD can run without a lock. Serialize the deadline decision and
--        # waiting-file transition after verification against concurrent triggers.
--        if not await self._lock_waiting_job(db, job_id):
-+        # Storage checks happen outside the row lock. The terminal decision and
-+        # parse handoff both recheck waiting-file under that same lock.
-+        locked_job = await self._lock_waiting_job(db, job_id)
-+        if locked_job is None:
-             return False
--        if get_remaining_source_upload_seconds(created_at) == 0:
--            await self._mark_locked_upload_expired(db, job_id)
-+        if result == "expired":
-+            await self._mark_locked_upload_failed(
-+                db, job=locked_job, code=UPLOAD_EXPIRED_CODE, message=UPLOAD_EXPIRED_MESSAGE
-+            )
-             raise ConflictException(
-                 user_message="The source upload has expired.",
-                 reason="ABORTED",
-@@ -170,9 +175,15 @@ async def _verify_guarded_source(
-                 user_message="S3 file does not exist, please upload the file first",
-                 violations=[{"field": "file", "description": "File not found in S3"}],
-             )
--        if result != "matched":
-+        if result == "mismatch":
-+            await self._mark_locked_upload_failed(
-+                db,
-+                job=locked_job,
-+                code=UPLOAD_INTEGRITY_MISMATCH_CODE,
-+                message=UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
-+            )
-             raise ValidationException(
--                user_message="The uploaded file does not match the expected original",
-+                user_message=UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
-                 violations=[{
-                     "field": "source_integrity",
-                     "description": "Stored length or SHA-256 does not match",
-@@ -181,33 +192,42 @@ async def _verify_guarded_source(
-         return True
- 
-     @staticmethod
--    async def _lock_waiting_job(db: AsyncSession, job_id: str) -> bool:
--        locked_job = await db.scalar(
--            select(Job.job_id)
-+    async def _lock_waiting_job(db: AsyncSession, job_id: str) -> Job | None:
-+        return await db.scalar(
-+            select(Job)
-             .where(Job.job_id == job_id, Job.status == JobStatus.WAITING_FILE.value)
-             .with_for_update()
-         )
--        return locked_job is not None
- 
-     async def mark_upload_expired(self, db: AsyncSession, *, job: Job) -> None:
--        if await self._lock_waiting_job(db, job.job_id):
--            await self._mark_locked_upload_expired(db, job.job_id)
-+        locked_job = await self._lock_waiting_job(db, job.job_id)
-+        if locked_job is not None:
-+            await self._mark_locked_upload_failed(
-+                db, job=locked_job, code=UPLOAD_EXPIRED_CODE, message=UPLOAD_EXPIRED_MESSAGE
-+            )
- 
--    async def _mark_locked_upload_expired(
--        self,
--        db: AsyncSession,
--        job_id: str,
-+    async def
-```
-
-**File**: `apps/api/app/services/document_ingestion/source_upload_deadline.py` (removed, +0/-14)
-```diff
-@@ -1,14 +0,0 @@
--from datetime import datetime, timedelta, timezone
--
--from shared.core.config import settings
--
--
--def get_remaining_source_upload_seconds(created_at: datetime) -> int:
--    """Give guarded uploads one lifetime across initial signing, renewal and handoff."""
--    created_utc = (
--        created_at
--        if created_at.tzinfo is not None
--        else created_at.replace(tzinfo=timezone.utc)
--    )
--    deadline = created_utc + timedelta(seconds=settings.JOB_WAITING_EXPIRE_SECONDS)
--    return max(0, int((deadline - datetime.now(timezone.utc)).total_seconds()))
-```
-
-**File**: `apps/api/app/services/jobs/source_upload_service.py` (modified, +1/-1)
-```diff
-@@ -5,7 +5,6 @@
- import asyncio
- from typing import Any
- 
--from app.services.document_ingestion.source_upload_deadline import get_remaining_source_upload_seconds
- from sqlalchemy import select
- from sqlalchemy.ext.asyncio import AsyncSession
- 
-@@ -15,6 +14,7 @@
- )
- from shared.models.database.job import Job
- from shared.models.schemas.job_metadata import JobMetadataHelper
-+from shared.services.jobs.source_upload_deadline import get_remaining_source_upload_seconds
- from shared.services.retrieval.demo_job_scope import validate_job_corpus
- from shared.services.storage.file_upload_service import FileUploadService
- from shared.services.storage.job_file_storage import JobFileStorage
-```
-
-**File**: `apps/api/tests/contract/test_guarded_upload_deadline_contract.py` (added, +156/-0)
-```diff
-@@ -0,0 +1,156 @@
-+from __future__ import annotations
-+
-+from base64 import b64encode
-+from collections.abc import Callable
-+from contextlib import AbstractAsyncContextManager
-+from datetime import datetime, timedelta, timezone
-+from hashlib import sha256
-+
-+import boto3
-+import pytest
-+from botocore.stub import Stubber
-+from httpx import AsyncClient
-+
-+from tests.support.contract_database import ContractDatabase
-+
-+_ORIGINAL = b"original upload bytes"
-+_DIGEST = sha256(_ORIGINAL).digest()
-+_CREATE_JOB = {
-+    "namespace": "guarded-deadline",
-+    "source_type": "file",
-+    "file_name": "original.pdf",
-+    "source_integrity": {"size_bytes": len(_ORIGINAL), "sha256": _DIGEST.hex()},
-+}
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("trigger", ["notification", "confirm"])
-+@pytest.mark.parametrize(
-+    ("upload_delay", "is_checksum_valid", "expected_error", "confirm_status"),
-+    [
-+        (timedelta(hours=1), True, None, 200),
-+        (timedelta(hours=2, minutes=30), True, "UPLOAD_EXPIRED", 409),
-+        (timedelta(hours=1), False, "UPLOAD_INTEGRITY_MISMATCH", 400),
-+    ],
-+    ids=["on-time-original", "late-original", "on-time-mismatch"],
-+)
-+async def test_guarded_upload_uses_storage_evidence_after_deadline(
-+    developer_api_client_factory: Callable[
-+        [], AbstractAsyncContextManager[AsyncClient]
-+    ],
-+    monkeypatch: pytest.MonkeyPatch,
-+    trigger: str,
-+    upload_delay: timedelta,
-+    is_checksum_valid: bool,
-+    expected_error: str | None,
-+    confirm_status: int,
-+) -> None:
-+    async with developer_api_client_factory() as client:
-+        from app.services.document_ingestion.worker_dispatcher import (
-+            DocumentIngestionWorkerDispatcher,
-+        )
-+        from shared.core.config import settings
-+        from shared.services.storage import job_file_storage
-+        from shared.services.storage.adapters.s3_adapter import S3StorageAdapter
-+
-+        monkeypatch.setattr(settings, "S3_TYPE", "s3")
-+        monkeypatch.setattr(settings, "S3_USE_SSL", True)
-+        s3 = boto3.client(
-+            "s3",
-+            region_name="us-west-1",
-+            aws_access_key_id="test",
-+            aws_secret_access_key="test",
-+        )
-+        bucket = settings.S3_BUCKET_NAME
-+        adapter = S3StorageAdapter(s3, bucket)
-+        monkeypatch.setattr(
-+            job_file_storage, "get_cached_storage_adapter", lambda: adapter
-+        )
-+        published_jobs: list[str] = []
-+
-+        async def publish(self: object, *, job_id: str, user_id: str) -> str:
-+            published_jobs.append(job_id)
-+            return "test-task"
-+
-+        monkeypatch.setattr(
-+            DocumentIngestionWorkerDispatcher, "start_uploaded_file_parse", publish
-+        )
-+
-+        created = await client.post("/api/v2/jobs", json=_CREATE_JOB)
-+        assert created.status_code == 200
-+        job_id: str = created.json()["job_id"]
-+        key = f"uploads/{job_id}.pdf"
-+        created_at = datetime.now(timezone.utc) - timedelta(hours=3)
-+        uploaded_at = created_at + upload_delay
-+        await ContractDatabase.execute(
-+            "UPDATE jobs SET created_at = :created_at, updated_at = :created_at WHERE job_id = :job_id",
-+            {"job_id": job_id, "created_at": created_at.replace(tzinfo=None)},
-+        )
-+        event = {
-+            "Records": [
-+                {
-+                    "eventVersion": "2.1",
-+                    "eventSource": "aws:s3",
-+                    "awsRegion": "us-west-1",
-+                    # A notification timestamp alone cannot admit an object whose HEAD is late.
-+                    "eventTime": (created_at + timedelta(hours=1)).isoformat(),
-+                    "eventName": "ObjectCreated:Put",
-+                    "s3": {"bucket": {"name": bucket}, "object": {"key": key}},
-+                }
-+            ]
-+        }
-+
-+        with Stubber(s3) as stubber:
-+            stubber.add_response(
-+                "head_object",
-+                {
-+                    "ContentLength": len(_ORIGINAL),
-+                    "ChecksumSHA256": b64encode(
-+                        _DIGEST if is_checksum_valid else bytes(32)
-+                    ).decode("ascii"),
-+                    "LastModified": uploaded_at,
-+                },
-+                {"Bucket": bucket, "Key": key, "ChecksumMode": "ENABLED"},
-+            )
-+            if trigger == "notification":
-+                response = await client.post("/api/v1/internal/s3-events", json=event)
-+            else:
-+                response = await client.post(f"/api/v2/jobs/{job_id}/confirm-upload")
-+            job = await ContractDatabase.fetch_job(job_id)
-+            assert job is not None
-+            assert job["error_code"] == expected_error
-+            if expected_error is None:
-+                assert job["status"] == "pending"
-+                assert published_jobs == [job_id]
-+            else:
-+                assert job["status"] == "failed"
-+                assert publishe
-```
-
-**File**: `apps/api/tests/contract/test_verified_source_upload_contract.py` (modified, +146/-70)
-```diff
-@@ -3,13 +3,14 @@
- from base64 import b64encode
- from collections.abc import Callable
- from contextlib import AbstractAsyncContextManager
-+from datetime import datetime, timezone
- from hashlib import sha256
- from urllib.parse import parse_qs, urlsplit
- 
- import boto3
- import pytest
- from botocore.stub import Stubber
--from httpx import AsyncClient
-+from httpx import AsyncClient, Response
- 
- from tests.support.contract_database import ContractDatabase
- 
-@@ -51,6 +52,24 @@ def _stub_uploaded_object(monkeypatch: pytest.MonkeyPatch) -> tuple[Stubber, str
-     return Stubber(client), bucket
- 
- 
-+def _upload_event(bucket: str, key: str) -> dict[str, object]:
-+    return {
-+        "Records": [
-+            {
-+                "eventVersion": "2.1",
-+                "eventSource": "aws:s3",
-+                "awsRegion": "us-west-1",
-+                "eventTime": datetime.now(timezone.utc).isoformat(),
-+                "eventName": "ObjectCreated:Put",
-+                "s3": {
-+                    "bucket": {"name": bucket},
-+                    "object": {"key": key, "size": len(_ORIGINAL)},
-+                },
-+            }
-+        ],
-+    }
-+
-+
- def _check_signed_upload(result: dict[str, object]) -> None:
-     assert result["upload_headers"] == {
-         "Content-Type": "application/pdf",
-@@ -139,7 +158,7 @@ async def test_integrity_requires_valid_file_metadata_and_supported_storage(
- 
- @pytest.mark.asyncio
- @pytest.mark.parametrize("trigger", ["manual", "s3"])
--async def test_handoff_requires_the_expected_stored_checksum_and_size(
-+async def test_unavailable_or_missing_upload_remains_waiting_until_verified(
-     developer_api_client_factory: Callable[
-         [], AbstractAsyncContextManager[AsyncClient]
-     ],
-@@ -167,94 +186,140 @@ async def _publish(self: object, *, job_id: str, user_id: str) -> str:
-         job_id: str = created.json()["job_id"]
-         key = f"uploads/{job_id}.pdf"
-         confirm_url = f"/api/v2/jobs/{job_id}/confirm-upload"
--        event = {
--            "Records": [
--                {
--                    "eventVersion": "2.1",
--                    "eventSource": "aws:s3",
--                    "awsRegion": "us-west-1",
--                    "eventTime": "2026-04-26T00:00:00.000Z",
--                    "eventName": "ObjectCreated:Put",
--                    "s3": {
--                        "bucket": {"name": bucket},
--                        "object": {"key": key, "size": len(_ORIGINAL)},
--                    },
--                }
--            ],
--        }
--
-+        event = _upload_event(bucket, key)
-         expected_head = {"Bucket": bucket, "Key": key, "ChecksumMode": "ENABLED"}
--        if trigger == "manual":
-+        for code in (403, 404):
-             stubber.add_client_error(
-                 "head_object",
--                service_error_code="403",
--                http_status_code=403,
-+                service_error_code=str(code),
-+                http_status_code=code,
-                 expected_params=expected_head,
-             )
--            stubber.add_client_error(
--                "head_object",
--                service_error_code="404",
--                http_status_code=404,
--                expected_params=expected_head,
--            )
--        for metadata in (
--            {
--                "ContentLength": len(_ORIGINAL),
--                "ChecksumSHA256": b64encode(bytes(32)).decode("ascii"),
--            },
--            {
--                "ContentLength": len(_ORIGINAL) + 1,
--                "ChecksumSHA256": b64encode(_DIGEST).decode("ascii"),
--            },
--            {"ContentLength": len(_ORIGINAL)},
-+        stubber.add_response(
-+            "head_object",
-             {
-                 "ContentLength": len(_ORIGINAL),
-                 "ChecksumSHA256": b64encode(_DIGEST).decode("ascii"),
-+                "LastModified": datetime.now(timezone.utc),
-             },
--        ):
--            stubber.add_response("head_object", metadata, expected_head)
--
--        async def _confirm(expected_violation: str | None = None) -> None:
--            response = (
--                await api_client.post(confirm_url)
--                if trigger == "manual"
--                else await api_client.post(
--                    "/api/v1/internal/s3-events",
--                    json=event,
--                )
--            )
--            if trigger == "s3":
--                assert response.status_code == 200
--            elif expected_violation is not None:
--                assert response.status_code == 400
--                assert (
--                    response.json()["error"]["details"]["violations"][0]["field"]
--                    == expected_violation
--                )
--            else:
--                assert response.status_code == 200
-+            expected_head,
-+        )
- 
--        with stubber:
--            rejected_fields = ["source_integrity"] * 3
-+        async def _confirm() -> Response:
-             if trigger == "manual":
--                unavailable 
-```
-
-**File**: `apps/worker/app/core/tasks/stale_job_sweeper.py` (modified, +65/-71)
-```diff
-@@ -1,12 +1,15 @@
- """
- Stale Job Sweeper — periodic Celery Beat task.
- 
--Scans for jobs stuck in any active state (pending, waiting-file, running, converting)
--beyond the global JOB_EXPIRE_SECONDS threshold and marks them as failed.
-+Settles overdue guarded uploads and expires other stale active Jobs.
- """
- 
--from datetime import datetime, timedelta, timezone
-+from datetime import datetime, timedelta
- 
-+from app.services.document_ingestion.guarded_upload_sweeper import (
-+    guarded_waiting_upload,
-+    sweep_guarded_uploads,
-+)
- from loguru import logger
- from sqlalchemy import and_, or_
- from sqlalchemy import select as sa_select
-@@ -20,8 +23,10 @@
-     JobStatus,
- )
- from shared.models.database.job import Job
-+from shared.services.jobs.upload_parse_dispatch import within_upload_parse_dispatch_window
- from shared.services.redis.periodic_task_lock import periodic_task_lock
- from shared.services.retrieval.lexical.settlement import IndexingSettlement
-+from shared.utils.utc_now import utc_now_naive
- 
- celery_app = get_celery_app()
- 
-@@ -36,7 +41,7 @@
- 
- @celery_app.task(name="app.core.tasks.stale_job_sweeper.expire_stale_jobs")
- def expire_stale_jobs() -> dict:
--    """Expire jobs stuck in non-terminal states beyond ``JOB_EXPIRE_SECONDS``.
-+    """Settle overdue uploads and expire stale parser Jobs.
- 
-     Runs every 30 minutes via Celery Beat. Uses ``SyncStateMachineService``
-     for CAS-protected state transitions and proper audit logging.
-@@ -58,74 +63,17 @@ def expire_stale_jobs() -> dict:
-         waiting_max_age: int = settings.JOB_WAITING_EXPIRE_SECONDS
-         processing_max_age: int = settings.JOB_PROCESSING_EXPIRE_SECONDS
- 
--        if waiting_max_age <= 0 or processing_max_age <= 0:
--            return {"status": "success", "reason": "Parser expiration config <= 0", "indexing": indexing}
--
--        # Timeouts: 4 hours (default) for processing, 2 hours (default) for waiting
--        now = datetime.now(timezone.utc).replace(tzinfo=None)
--        long_cutoff = now - timedelta(seconds=processing_max_age)
--        default_cutoff = now - timedelta(seconds=waiting_max_age)
--
--        expired_count = 0
--        skipped_count = 0
--
-+        now = utc_now_naive()
-+        legacy_expiration_enabled = waiting_max_age > 0 and processing_max_age > 0
+@@ -102,8 +102,8 @@ def _report(cls, connection: Any, elapsedSeconds: float, *, isCancel: bool) -> N
+         backendPid: int | None = None
          try:
--            state_machine = SyncStateMachineService()
--
--            with get_sync_db_context() as db:
--                stmt = (
--                    sa_select(Job)
--                    .where(
--                        Job.status.notin_(TERMINAL_STATES),
--                        Job.parsing_status != "completed",
--                        or_(
--                            and_(
--                                Job.status.in_(
--                                    [
--                                        JobStatus.RUNNING.value,
--                                        JobStatus.CONVERTING.value,
--                                    ]
--                                ),
--                                Job.updated_at < long_cutoff,
--                            ),
--                            and_(
--                                Job.status.notin_(
--                                    [
--                                        JobStatus.RUNNING.value,
--                                        JobStatus.CONVERTING.value,
--                                    ]
--                                ),
--                                Job.updated_at < default_cutoff,
--                            ),
--                        ),
--                    )
--                    .order_by(Job.updated_at)
--                    .limit(200)
--                )
--                expired_jobs = db.execute(stmt).scalars().all()
--
--                if not expired_jobs:
--                    logger.debug("Stale job sweeper: no expired jobs found")
--                    return {"status": "success", "expired": 0, "skipped": 0, "indexing": indexing}
--
--                for job in expired_jobs:
--                    outcome = state_machine.mark_failed_outcome(
--                        db,
--                        job.job_id,
--                        error_message=JOB_EXPIRED_ERROR_MESSAGE,
--                        error_code=JOB_EXPIRED_ERROR_CODE,
--                        metadata={"sweeper": True, "stale_status": job.status},
--                    )
--                    if outcome.succeeded:
--                        expired_count += 1
--                        logger.info(
--                            f"Expired stale job {job.job_id} (was {job.status})"
--                        )
--                    else:
--                        skipped_count += 1
--                        logger.debug(
--                            f"Job {job.job_id} was not expired: reason={outcome.reason}"
--                        )
-+            expired_count, skipped_count = (
-+                _expire_other_stale_jobs(now, waiting_max_age, processing_max_age)
-+                if legacy_expiration_enabled
-+            
+             backendPid = connection.info.backend_pid
+-        except Exception:
+-            pass
++        except Exception as error:
++            logger.debug("Unable to read PostgreSQL backend PID: {}", error)
+         logger.warning(
+             "Worker database statement {}: elapsed_s={:.1f} warning_s={} timeout_s={} backend_pid={} statement={}",
+             "cancelled at its deadline" if isCancel else "is slow",
 ```
 
-**File**: `apps/worker/app/services/document_ingestion/guarded_upload_sweeper.py` (added, +142/-0)
+---
+
+### Incident Patch 3: `aab5b96e` (2026-11-26)
+**Commit Message**: fix: let StatementDeadline.uninstall remove its wait callback
+
+Each access to cls.wait creates a new bound method, so the identity check never
+matched and the callback stayed installed. In CI the deadline test's 0.5 s bound
+then cancelled slower statements in later tests. Compare by equality and assert
+that uninstall restores blocking mode.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/api/tests/contract/test_statement_deadline_contract.py` (modified, +15/-0)
 ```diff
-@@ -0,0 +1,142 @@
-+"""Settle overdue guarded PUTs using the same storage evidence as confirmation."""
-+
-+from __future__ import annotations
-+
-+from datetime import datetime, timedelta
-+from time import monotonic
-+
-+from loguru import logger
-+from pydantic import ValidationError
-+from sqlalchemy import and_, select
-+
-+from shared.core.database_sync import get_sync_db_context
-+from shared.core.exceptions.domain_exceptions import (
-+    StorageServiceException,
-+    UnavailableException,
-+)
-+from shared.core.state_machine.service_sync import SyncStateMachineService
-+from shared.core.state_machine.states import JobStatus
-+from shared.models.database.job import Job
-+from shared.models.schemas.job_metadata import JobMetadataHelper
-+from shared.services.jobs.source_upload_deadline import (
-+    UPLOAD_EXPIRED_CODE,
-+    UPLOAD_EXPIRED_MESSAGE,
-+    UPLOAD_INTEGRITY_MISMATCH_CODE,
-+    UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
-+    classify_guarded_source_upload,
-+    get_guarded_source_upload_lifetime_seconds,
-+)
-+from shared.services.jobs.upload_parse_dispatch import UploadParseOutbox, has_source_integrity
-+from shared.services.storage.job_file_storage import JobFileStorage
-+from shared.utils.utc_now import utc_now_naive
-+
-+_MAX_GUARDED_JOBS_PER_SWEEP = 32
-+_SWEEP_BUDGET_SECONDS = 60
-+
-+guarded_waiting_upload = and_(
-+    Job.status == JobStatus.WAITING_FILE.value,
-+    has_source_integrity,
-+)
+@@ -116,3 +116,18 @@ def run(label: str, sql: str) -> None:
+         gevent.spawn(run, "fast", "select pg_sleep(0.1)")])
+     assert outcomes == {"slow": "cancelled", "fast": "finished"}
+     assert time.monotonic() - started < 2
 +
 +
-+def sweep_guarded_uploads(now: datetime) -> tuple[int, int]:
-+    cutoff = now - timedelta(seconds=get_guarded_source_upload_lifetime_seconds())
-+    with get_sync_db_context() as db:
-+        candidates = db.scalars(
-+            select(Job)
-+            .where(guarded_waiting_upload, Job.created_at <= cutoff)
-+            .order_by(Job.updated_at, Job.job_id)
-+            .limit(_MAX_GUARDED_JOBS_PER_SWEEP)
-+        ).all()
++def test_uninstall_restores_blocking_mode_for_later_code(greenDatabase: tuple[Connect, str, list[str]]) -> None:
++    from psycopg2.extensions import get_wait_callback
 +
-+    state_machine = SyncStateMachineService()
-+    storage = JobFileStorage()
-+    expires_at = monotonic() + _SWEEP_BUDGET_SECONDS
-+    expired_count = 0
-+    skipped_count = 0
-+    for candidate in candidates:
-+        if monotonic() >= expires_at:
-+            break
-+        try:
-+            expired = _settle_guarded_upload(state_machine, storage, candidate)
-+        except Exception as exc:
-+            logger.warning(
-+                "Guarded upload sweep will retry job {} after {}",
-+                candidate.job_id,
-+                type(exc).__name__,
-+            )
-+            expired = None
-+        expired_count += expired is True
-+        skipped_count += expired is None
-+    return expired_count, skipped_count
-+
-+
-+def _settle_guarded_upload(
-+    state_machine: SyncStateMachineService, storage: JobFileStorage, candidate: Job
-+) -> bool | None:
-+    """Return True if failed, False if recovered, or None if deferred or raced."""
-+    try:
-+        integrity = JobMetadataHelper.get_source_integrity(candidate.job_metadata)
-+        if integrity is None:
-+            return None
-+        if candidate.s3_key:
-+            verification = storage.verify_upload_integrity(candidate.s3_key, integrity)
-+            verdict = classify_guarded_source_upload(candidate.created_at, verification)
-+        else:
-+            verdict = "expired"
-+    except (StorageServiceException, UnavailableException, ValidationError) as exc:
-+        logger.warning(
-+            "Guarded upload sweep could not verify job {} ({})",
-+            candidate.job_id,
-+            type(exc).__name__,
-+        )
-+        verdict = "deferred"
-+
-+    with get_sync_db_context() as db:
-+        job = db.scalar(
-+            select(Job)
-+            .where(
-+                Job.job_id == candidate.job_id,
-+                Job.status == JobStatus.WAITING_FILE.value,
-+                Job.version == candidate.version,
-+            )
-+            .with_for_update(skip_locked=True)
-+        )
-+        if job is None:
-+            return None
-+        if verdict in {"missing", "deferred"}:
-+            # Rotate temporary failures behind other overdue jobs. The deadline
-+            # is based on created_at, so this only changes sweep ordering.
-+            job.updated_at = utc_now_naive()
-+            return None
-+
-+        is_failed = verdict != "matched"
-+        status = JobStatus.FAILED.value if is_failed else JobStatus.PENDING.value
-+        metadata = {"sweeper": True, "stale_status": JobStatus.WAITING_FILE.value}
-+        if is_failed:
-+            code, message = (
-+                (UPLOAD_INTEGRITY_MISMATCH_CODE, UPLOAD_INTEGRITY_MISMATCH_MESSAGE)
-+                if verdict == "mismatch"
-+                else (UPLOAD_EXPIRED_CODE, UPLOAD_EXPIRED_MESSAGE)
-+            )
-+            job.error_code = code
-+            job.error_message = message
-+            metadata.update(error_code=code, error_message=message)
-+
-+        transition = state_machine.transition_outcome(
-+            db,
-+            candidate.job_id,
-+            status,
-+            "mark_failed" if is_failed else "guarded_upload_recovered",
-+            metad
++    connect, _, messages = greenDatabase
++    StatementDeadline.install(warningSeconds=0.1, timeoutSeconds=0.2)
++    StatementDeadline.uninstall()
++    assert get_wait_callback() is None
++    connection = connect()
++    cursor = connection.cursor()
++    cursor.execute("select 7 from pg_sleep(0.4)")
++    assert cursor.fetchone() == (7,)
++    connection.close()
++    assert messages == []
+```
+
+**File**: `packages/shared-python/shared/core/statement_deadline.py` (modified, +2/-1)
+```diff
+@@ -54,7 +54,8 @@ def install(cls, *, warningSeconds: float, timeoutSeconds: float) -> None:
+     @classmethod
+     def uninstall(cls) -> None:
+         """Remove the wait callback and statement listeners (blocking psycopg2 again)."""
+-        if extensions.get_wait_callback() is cls.wait:
++        # Each ``cls.wait`` access is a new bound method, so compare by equality.
++        if extensions.get_wait_callback() == cls.wait:
+             extensions.set_wait_callback(None)
+         if event.contains(Engine, "before_cursor_execute", cls._recordStatement):
+             event.remove(Engine, "before_cursor_execute", cls._recordStatement)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #562** (2026-11-15): feat: release a stopped shadow backfill issuer while PostgreSQL serves (@suguanYang)
-- **PR #561** (2026-11-15): chore: promote the OpenSearch open-index limit, recorder and issuer recovery to main (@suguanYang)
-- **PR #560** (2026-11-14): feat: record shared OpenSearch node metrics every 30 minutes (@suguanYang)
-- **PR #559** (2026-11-14): feat: raise the production OpenSearch open-index limit to 600 (@suguanYang)
-- **PR #558** (2026-11-14): feat: make the OpenSearch open-index limit configurable (@suguanYang)
-- **PR #557** (2026-11-14): chore: promote main to staging (verified uploads) (@suguanYang)
+- **PR #587** (2026-11-26): feat: bound each worker database statement on the client (@suguanYang)
+- **PR #586** (2026-11-26): fix: resolve uncertain lexical indexes automatically (@suguanYang)
+- **PR #584** (2026-11-26): Dispatch lexical maintenance on commit so the database can idle (@suguanYang)
+- **PR #582** (2026-11-23): Reject NUL characters in corpus scope section paths (@suguanYang)
+- **PR #581** (2026-11-23): Rank documents by usage and freshness that decay over time (@EricNGOntos)
+- **PR #580** (2026-11-23): Fix production errors in billing, API keys, and retrieval (@suguanYang)
 
 ---
 
@@ -2072,32 +1272,56 @@ Confirmation and expiry previously used processing time and could fail an on-tim
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Potential fix for pull request finding 'CodeQL / Statement has no effect'
+## X. keep maintenance dispatch on the gevent hub and delay turnover
 
 **RULE**:
-When implementing operations in `deploy/opensearch/metrics_recorder.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/shared-python/shared/services/retrieval/lexical/maintenance_signals.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3c5db47`: Potential fix for pull request finding 'CodeQL / Statement has no effect'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b128da2`: keep maintenance dispatch on the gevent hub and delay turnover. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/opensearch/metrics_recorder.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/shared-python/shared/services/retrieval/lexical/maintenance_signals.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    def get(self, path: str) -> object:
-        raise NotImplementedError
+from gevent.monkey import is_module_patched
+# Turnover may close the least-recently-used index. Running it right after an open can
+# close the index that is still receiving its first bulk write, so it waits past the
+# indexing deadline instead.
+_TURNOVER_DELAY_SECONDS: Final[float] = 300
+        Outside gevent the send runs on a background thread, because publishing to an
+        unreachable broker blocks for many seconds. False means the work waits for the sweep.
+                logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} identity={} error_type={} error={}",
+                    taskName, identity, type(error).__name__, str(error)[:200])
+        """Ask for one delayed idle-index turnover after an index opens, without blocking admission."""
+        if is_module_patched("threading"):
+            # Under gevent, Celery's producer pool and the shared Redis client belong to
+            # the hub that created them; a native background thread cannot use them
+            # ("Cannot switch to a different thread"). Sending inline only blocks the
+            # current greenlet.
+            operation()
+            return True
+            logger.warning("L
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    def get(self, path: str) -> object: ...
+        The send runs on a background thread, because publishing to an unreachable
+        broker blocks for many seconds. False means the work waits for the sweep.
+                logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} identity={} error_type={}",
+                    taskName, identity, type(error).__name__)
+        """Ask for one idle-index turnover after an index opens, without blocking admission."""
+            logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} error_type={}",
+                description, type(error).__name__)
+                get_celery_app().send_task(TURNOVER_TASK, retry=False)
+            logger.warning("Lexical turnover request deferred to the hourly sweep: error_type={}", type(error).__name__)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3c5db47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b128da2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

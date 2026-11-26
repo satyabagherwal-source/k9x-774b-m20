@@ -13547,3 +13547,5 @@
 | `CYCLE-20261126-1MPL` | `2026-11-26T20:22:50.937Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`afb529ae...`) |
 | `CYCLE-20261126-1OAY` | `2026-11-26T20:22:53.002Z` | `vi/websocat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10770` | Yes (`8e4472c6...`) |
 | `CYCLE-20261126-1Y72` | `2026-11-26T20:23:05.822Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10771` | Yes (`7cc86e05...`) |
+| `CYCLE-20261126-CY8I` | `2026-11-26T20:31:39.090Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`6842696e...`) |
+| `CYCLE-20261126-D9JH` | `2026-11-26T20:31:53.741Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10772` | Yes (`5b079f74...`) |

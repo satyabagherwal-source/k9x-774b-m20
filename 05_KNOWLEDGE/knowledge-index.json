@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T20:23:12.698Z",
+  "last_updated": "2026-11-26T20:32:00.372Z",
   "total_verified_learnings": 9134,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26173,
+  "total_items": 26175,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9366f8beb7f89190a80523c156e97892539c7746de9fb67ce441e8746cbe8970",
+      "content_hash": "ddc009db7cadd1f7f95de9406a915ceb853f5810da8d1f174230f214c8269544",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:55:12.309Z"
+      "persisted_at": "2026-11-26T20:31:59.922Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6743fdc6a508834f54499805e47da24957c1990d2a70323bef6735939e5e4dc0",
+      "content_hash": "d12445d0fe48af29d8d09e76e88ca2ea026e231ecdc2cc7654e32f86c9a19390",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:55:12.588Z"
+      "persisted_at": "2026-11-26T20:32:00.146Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "98974ad71220bc7448044a3bedfaf32023d6dfb6ac6092c1d16d80ba7a8e34f2",
+      "content_hash": "e954bb3a2e45aec59d425417b276c72a52e9beb3026f6ba1143cd092e69e202a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T19:55:12.818Z"
+      "persisted_at": "2026-11-26T20:32:00.372Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -220110,8 +220110,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "da75fa74",
-      "content_hash": "3bc5f61ce194049093b7117fefb0b44a78aca6799d6d781927ddcd14a1a836df",
+      "source_version": "0cc7bd5b",
+      "content_hash": "5b079f745e4d8ade7c71164387b508b2cb5b9cb9e9fcdad711da255973c3560a",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -220154,6 +220154,11 @@
           "number": 10198,
           "title": "Empirical Invariant Guard in test_retrieval_tools_invoke_contract.py",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10772,
+          "title": "keep maintenance dispatch on the gevent hub and delay turnover",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220161,7 +220166,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T04:20:31.231Z",
+      "verified_at": "2026-11-26T20:31:53.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220203,10 +220208,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "90197327",
-      "content_hash": "79ecec73165878e9fcba8c250e624c785bc226a6ad2020f7f772506d7030520b",
+      "source_version": "0cc7bd5b",
+      "content_hash": "dee65096ec5f981d5e6b3aef93c192e6d1585fe37c34b8923256a4aaba75648c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T05:06:48.286Z"
+      "persisted_at": "2026-11-26T20:31:54.266Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere",
@@ -220215,10 +220220,10 @@
       "relative_path": "08_VERIFICATION/ontos-ai-knowhere-verification-protocol-empirical-defect-shield-for-ontos-ai-kno.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ontos-AI/knowhere",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "da75fa74",
-      "content_hash": "59b623925132f2ac5be2c1599b23be91c997f2b8f2495dac6020f94144a8e535",
+      "source_version": "0cc7bd5b",
+      "content_hash": "5b2edbc2e0a1c7d177f592d9b15d3b7022a679eb371456a46f62509593f36d49",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:20:32.210Z"
+      "persisted_at": "2026-11-26T20:31:54.519Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
@@ -220240,9 +220245,9 @@
       "title": "Architecture Intelligence: ontos-ai-knowhere-learnings Core Invariants",
       "repository": "ontos-ai-knowhere-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ef90e4aa850741220571af7fd63cbc48eca851bda76d91ae4e659ef77927af6",
+      "content_hash": "f21266941552d954164067f169af5e9d27a7606cb9c54082228f6da51f40e776",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T13:09:11.191Z"
+      "persisted_at": "2026-11-26T20:31:58.612Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere-learnings",
@@ -220252,9 +220257,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ontos-ai-knowhere-learnings",
       "repository": "ontos-ai-knowhere-learnings",
       "source_version": "HEAD",
-      "content_hash": "f003aaebeaf062c834d8391066060d496952ab4544bb87f84b00f0d28902e88a",
+      "content_hash": "97d436c8e35dcebfa733c8d18ee732c34e5ba6a4a3d73aefa862363646cdf3e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T04:20:39.685Z"
+      "persisted_at": "2026-11-26T20:31:58.836Z"
     },
     "learn-github-gardener-gardener": {
       "learning_id": "learn-github-gardener-gardener",
@@ -224244,7 +224249,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "eaf7ed6e08a33912548e196163590afe9c82d27376fb95d205ffa899e91a30b6",
+      "content_hash": "6842696e9d15108d0a05b3c886742009d61a52c29391704af97ecc58b5eee000",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [],
@@ -224253,7 +224258,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T07:05:27.708Z",
+      "verified_at": "2026-11-26T20:31:38.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224270,9 +224275,9 @@
       "title": "Research & Knowledge Intelligence: bigscience/bloom Core Invariants",
       "repository": "bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "24a330c1bea6a4cb9a71b10d86077ad4fe3c377760d6813f4ffea475a8c52f53",
+      "content_hash": "7b6cb5739457dd4e89fa6c36e211aaafdabb8a7747dcc0be263fe887989dc320",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T07:05:28.290Z"
+      "persisted_at": "2026-11-26T20:31:39.370Z"
     },
     "learn-github-moby-buildkit": {
       "learning_id": "learn-github-moby-buildkit",
@@ -224624,9 +224629,9 @@
       "title": "Research & Knowledge Intelligence: hf-bigscience-bloom-learnings Core Invariants",
       "repository": "hf-bigscience-bloom-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9cae36a94e75507189dac5aae03cf137d7fe41621d5e35ed8079d640eff59d9",
+      "content_hash": "6073daa2b871776024ec9e06f7aeaef1fb6e8923fdc08a10a03db74dfd193d0c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T07:05:40.003Z"
+      "persisted_at": "2026-11-26T20:31:57.802Z"
     },
     "candidate_directive-session-allow-large-filesync-pattern-lists": {
       "item_id": "candidate_directive-session-allow-large-filesync-pattern-lists",
@@ -352445,13 +352450,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-22P1-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DE37-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "61ddaa602ede2876930991d4ad10f8b5300f0b3d40fd17b00f3fcf2ccdcb13d7",
+      "content_hash": "f14fa557f62593b1d70a1136046cad6b91a2f463f3234754fa61810ddc43faad",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T19:55:12.037Z"
+      "persisted_at": "2026-11-26T20:31:59.635Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
@@ -358908,6 +358913,32 @@
       "content_hash": "392ea027f01610ddf89a237e3848b6b8c2c1a4671bc26510a83a11b8b83cef1b",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T20:23:12.252Z"
+    },
+    "rule-10772": {
+      "learning_id": "rule-10772",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10772,
+      "title": "keep maintenance dispatch on the gevent hub and delay turnover",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "0cc7bd5b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T20:31:53.404Z"
+    },
+    "candidate_directive-keep-maintenance-dispatch-on-the-gevent-hub-and-delay-turnover": {
+      "item_id": "candidate_directive-keep-maintenance-dispatch-on-the-gevent-hub-and-delay-turnover",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DD4C-keep-maintenance-dispatch-on-the-gevent-hub-and-delay-turnover.md",
+      "title": "keep maintenance dispatch on the gevent hub and delay turnover",
+      "repository": "ontos-ai-knowhere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "68dd53d7533c8fdfb7a8d27a2f347847bf049eaca7d1fcf36826b7ae36f817a8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T20:31:58.380Z"
     }
   },
   "ai-builder-brain": {

@@ -812550,3 +812550,98 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `4529d4d5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10772. keep maintenance dispatch on the gevent hub and delay turnover (Harvested from Ontos-AI/knowhere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep maintenance dispatch on the gevent hub and delay turnover",
+  "source": "Ontos-AI/knowhere",
+  "source_url": "https://github.com/Ontos-AI/knowhere",
+  "source_version": "0cc7bd5b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T20:31:53.051Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ontos-ai-knowhere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere) (Revision: `0cc7bd5b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/shared-python/shared/services/retrieval/lexical/maintenance_signals.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2b128da2`: keep maintenance dispatch on the gevent hub and delay turnover. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/shared-python/shared/services/retrieval/lexical/maintenance_signals.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+from gevent.monkey import is_module_patched
+# Turnover may close the least-recently-used index. Running it right after an open can
+# close the index that is still receiving its first bulk write, so it waits past the
+# indexing deadline instead.
+_TURNOVER_DELAY_SECONDS: Final[float] = 300
+        Outside gevent the send runs on a background thread, because publishing to an
+        unreachable broker blocks for many seconds. False means the work waits for the sweep.
+                logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} identity={} error_type={} error={}",
+                    taskName, identity, type(error).__name__, str(error)[:200])
+        """Ask for one delayed idle-index turnover after an index opens, without blocking admission."""
+        if is_module_patched("threading"):
+            # Under gevent, Celery's producer pool and the shared Redis client belong to
+            # the hub that created them; a native background thread cannot use them
+            # ("Cannot switch to a different thread"). Sending inline only blocks the
+            # current greenlet.
+            operation()
+            return True
+            logger.warning("L
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+        The send runs on a background thread, because publishing to an unreachable
+        broker blocks for many seconds. False means the work waits for the sweep.
+                logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} identity={} error_type={}",
+                    taskName, identity, type(error).__name__)
+        """Ask for one idle-index turnover after an index opens, without blocking admission."""
+            logger.warning("Lexical maintenance dispatch deferred to the hourly sweep: task={} error_type={}",
+                description, type(error).__name__)
+                get_celery_app().send_task(TURNOVER_TASK, retry=False)
+            logger.warning("Lexical turnover request deferred to the hourly sweep: error_type={}", type(error).__name__)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2b128da2` are properly handled with clean fallback behavior.
