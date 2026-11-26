@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T20:59:45.259Z",
-    "lastVerified": "2026-11-26T20:59:45.259Z",
+    "lastChecked": "2026-11-26T21:09:05.373Z",
+    "lastVerified": "2026-11-26T21:09:05.373Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -400,8 +400,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T20:31:50.692Z",
-    "lastVerified": "2026-11-26T20:31:50.692Z",
+    "lastChecked": "2026-11-26T21:09:01.682Z",
+    "lastVerified": "2026-11-26T21:09:01.682Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1266,14 +1266,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T17:06:24.539Z",
-    "lastVerified": "2026-11-26T17:06:24.539Z",
+    "lastChecked": "2026-11-26T21:09:00.177Z",
+    "lastVerified": "2026-11-26T21:09:00.177Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "9a6b42f17a8c1b842af6b30e920298534296e38b4763a8923c891b0483e8113d",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "396ac043b84988e16f903b08622b7cf52890274ae4611fbdf10ae8e605a0df53",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3031,9 +3031,9 @@
   "pingcap-autoflow": {
     "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-11-26T02:38:20.213Z",
+    "lastChecked": "2026-11-26T21:08:59.135Z",
     "revisionIdentifier": "01cdf88f",
-    "lastVerified": "2026-11-26T02:38:20.213Z"
+    "lastVerified": "2026-11-26T21:08:59.135Z"
   },
   "orange-opensource-hurl": {
     "name": "Orange-OpenSource/hurl",
@@ -3269,9 +3269,9 @@
   "jhen0409-react-native-debugger": {
     "name": "react-native-debugger",
     "officialUrl": "https://github.com/jhen0409/react-native-debugger",
-    "lastChecked": "2026-11-24T13:20:58.042Z",
+    "lastChecked": "2026-11-26T21:08:51.801Z",
     "revisionIdentifier": "bd3435a4",
-    "lastVerified": "2026-11-24T13:20:58.042Z"
+    "lastVerified": "2026-11-26T21:08:51.801Z"
   },
   "sorintlab-stolon": {
     "name": "stolon",
@@ -4340,9 +4340,9 @@
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
-    "lastChecked": "2026-11-25T14:14:19.841Z",
+    "lastChecked": "2026-11-26T21:08:46.639Z",
     "revisionIdentifier": "d762d9bb",
-    "lastVerified": "2026-11-25T14:14:19.841Z"
+    "lastVerified": "2026-11-26T21:08:46.639Z"
   },
   "hf-meta-llama-meta-llama-3-8b": {
     "name": "meta-llama/Meta-Llama-3-8B",
@@ -5315,12 +5315,12 @@
     "officialUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T07:44:58.342Z",
-    "lastVerified": "2026-11-23T07:44:58.342Z",
+    "lastChecked": "2026-11-26T21:08:49.234Z",
+    "lastVerified": "2026-11-26T21:08:49.234Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-    "contentHash": "92cd7973977098845a41b0492a13ae24d2c2d0e6b0ba04a86adc6236baa8d90c",
+    "contentHash": "19a8a71ac71624061ed6d626e5fd2436d5de8d911bf89e91f323710542aa25f7",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6205,9 +6205,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-26T03:29:59.037Z",
+    "lastChecked": "2026-11-26T21:08:54.142Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-26T03:29:59.037Z"
+    "lastVerified": "2026-11-26T21:08:54.142Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",

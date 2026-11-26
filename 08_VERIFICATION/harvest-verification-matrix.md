@@ -13559,3 +13559,5 @@
 | `CYCLE-20261126-CSM9` | `2026-11-26T20:59:31.425Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`893dbb83...`) |
 | `CYCLE-20261126-CUFZ` | `2026-11-26T20:59:33.791Z` | `svenstaro/miniserve` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10776` | Yes (`aa1f3a93...`) |
 | `CYCLE-20261126-D0FM` | `2026-11-26T20:59:41.554Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10777` | Yes (`fad9b6f6...`) |
+| `CYCLE-20261126-OROJ` | `2026-11-26T21:08:50.083Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`19a8a71a...`) |
+| `CYCLE-20261126-P0N4` | `2026-11-26T21:09:01.696Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10778` | Yes (`396ac043...`) |

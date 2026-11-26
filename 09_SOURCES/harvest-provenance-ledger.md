@@ -13592,3 +13592,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-26T20:59:31.430Z |
 | `learn-github-svenstaro-miniserve` | `https://github.com/svenstaro/miniserve` | `7dae3bbd` | Multi-dimensional audit evidence | 2026-11-26T20:59:33.797Z |
 | `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `452b4d01` | Multi-dimensional audit evidence | 2026-11-26T20:59:41.559Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-26T21:08:50.088Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `33bbc74e` | Multi-dimensional audit evidence | 2026-11-26T21:09:01.701Z |

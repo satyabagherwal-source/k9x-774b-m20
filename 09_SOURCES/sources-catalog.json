@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "92cd7973977098845a41b0492a13ae24d2c2d0e6b0ba04a86adc6236baa8d90c",
-    "lastHarvestedAt": "2026-11-23T07:44:58.993Z",
+    "contentHash": "19a8a71ac71624061ed6d626e5fd2436d5de8d911bf89e91f323710542aa25f7",
+    "lastHarvestedAt": "2026-11-26T21:08:50.088Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "66b78886",
+    "sourceVersion": "33bbc74e",
     "license": "NOASSERTION",
-    "contentHash": "9a6b42f17a8c1b842af6b30e920298534296e38b4763a8923c891b0483e8113d",
-    "lastHarvestedAt": "2026-11-26T17:06:25.023Z",
+    "contentHash": "396ac043b84988e16f903b08622b7cf52890274ae4611fbdf10ae8e605a0df53",
+    "lastHarvestedAt": "2026-11-26T21:09:01.701Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

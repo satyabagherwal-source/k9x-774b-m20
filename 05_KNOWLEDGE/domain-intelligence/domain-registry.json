@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T20:59:48.974Z",
+  "last_updated": "2026-11-26T21:09:08.380Z",
   "total_records": 2780,
   "domains": {
     "A": {
@@ -8550,8 +8550,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ddc009db7cadd1f7f95de9406a915ceb853f5810da8d1f174230f214c8269544",
-      "created_at": "2026-11-26T20:31:59.922Z"
+      "content_hash": "1ad63123105a71056bb75f677dea6addb2a58078b331f23dba6543d858fab284",
+      "created_at": "2026-11-26T21:09:08.380Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -10146,8 +10146,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "d460d79fd493ff7f8be6455c0ce20df5b8a488a2c0fd9f6666c809e041833a22",
-      "created_at": "2026-11-26T17:06:25.482Z"
+      "content_hash": "01ce5e4cb1e92d6bedd9c2c42bbf200b6463331e74a148c428dc81f8b5d168c0",
+      "created_at": "2026-11-26T21:09:02.307Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10224,8 +10224,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "6a5ea44298a473ecae74fd7831667a4a791ae6d5928ceadc371a0a400a800a6c",
-      "created_at": "2026-11-26T17:06:30.273Z"
+      "content_hash": "760e5bcbe0b1196904513305606fff659dc0003a0a809c0597c02cdbe72b966e",
+      "created_at": "2026-11-26T21:09:06.859Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -32899,8 +32899,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-research-knowledge-intelligence-meta-llama-llama-2-7b-c.md",
       "repository": "meta-llama/Llama-2-7b",
-      "content_hash": "ecffd42908b52bb44a42cce38b3bf6d3131b3908b84421118af5a145a6214288",
-      "created_at": "2026-11-23T07:44:59.199Z"
+      "content_hash": "acf69abd5ea23228ab2c2d5412673fa7c9f7bbd0eaf4490cc40ef038dde0b7b6",
+      "created_at": "2026-11-26T21:08:50.413Z"
     },
     "DOM-J-3CA866B9": {
       "record_id": "DOM-J-3CA866B9",
@@ -32956,8 +32956,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-learnings-research-knowledge-intelligence-hf-meta-llama.md",
       "repository": "hf-meta-llama-llama-2-7b-learnings",
-      "content_hash": "cfb5d6e6efaeadca14b81ba24c3f5e6c2b23e0101ccb112b10e50191422d3068",
-      "created_at": "2026-11-23T07:45:12.538Z"
+      "content_hash": "eb98178eb265ef04a278b2c2ca7251acca6f49a0940740f42a7ec35e11d118c1",
+      "created_at": "2026-11-26T21:09:05.916Z"
     },
     "DOM-H-DAFF8DAE": {
       "record_id": "DOM-H-DAFF8DAE",

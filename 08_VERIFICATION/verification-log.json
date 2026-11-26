@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-5PGX",
-    "timestamp": "2026-11-25T09:54:29.553Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "d722b1b62f77871a6a42f2e018f500877510522575e1d0d519720096fd254183",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-M7E1",
-    "timestamp": "2026-11-25T10:07:19.273Z",
-    "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-    "contentHash": "45564fae9b5e1c5676fe7a9f39437e81a81e9b7e513d85f732c229a7123c0607",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-MKJ0",
     "timestamp": "2026-11-25T10:07:36.300Z",
     "repository": "ydb-platform/ydb",
@@ -7490,6 +7460,36 @@
     "repository": "Checkmarx/kics",
     "learningId": "learn-github-checkmarx-kics",
     "contentHash": "fad9b6f699620008acfac0d399202833efab6eacae2a0970bc577b495d4d053a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-OROJ",
+    "timestamp": "2026-11-26T21:08:50.083Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "19a8a71ac71624061ed6d626e5fd2436d5de8d911bf89e91f323710542aa25f7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-P0N4",
+    "timestamp": "2026-11-26T21:09:01.696Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "396ac043b84988e16f903b08622b7cf52890274ae4611fbdf10ae8e605a0df53",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

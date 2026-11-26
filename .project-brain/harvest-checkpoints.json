@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T20:59:41.587Z",
+  "last_updated": "2026-11-26T21:09:01.727Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1280,14 +1280,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
-      "content_hash": "92cd7973977098845a41b0492a13ae24d2c2d0e6b0ba04a86adc6236baa8d90c",
-      "verified_at": "2026-11-23T07:44:59.002Z",
+      "content_hash": "19a8a71ac71624061ed6d626e5fd2436d5de8d911bf89e91f323710542aa25f7",
+      "verified_at": "2026-11-26T21:08:50.107Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T07:44:59.002Z"
+      "last_updated": "2026-11-26T21:08:50.107Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "9a6b42f17a8c1b842af6b30e920298534296e38b4763a8923c891b0483e8113d",
-      "verified_at": "2026-11-26T17:06:25.090Z",
+      "content_hash": "396ac043b84988e16f903b08622b7cf52890274ae4611fbdf10ae8e605a0df53",
+      "verified_at": "2026-11-26T21:09:01.726Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T17:06:25.090Z"
+      "last_updated": "2026-11-26T21:09:01.726Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
