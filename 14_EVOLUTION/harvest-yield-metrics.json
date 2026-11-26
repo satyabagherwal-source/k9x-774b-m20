@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:59:34.828Z",
-  "total_cycles_completed": 12706,
-  "total_learnings_persisted": 12706,
-  "total_rules_promoted": 11581,
+  "last_updated": "2026-11-26T13:08:25.379Z",
+  "total_cycles_completed": 12708,
+  "total_learnings_persisted": 12708,
+  "total_rules_promoted": 11582,
   "history": [
-    {
-      "timestamp": "2026-11-26T00:46:34.119Z",
-      "repository": "hashicorp/terraform",
-      "learningId": "learn-github-hashicorp-terraform",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T00:46:36.768Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T00:46:42.038Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T12:59:34.828Z",
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:08:09.015Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T13:08:25.379Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

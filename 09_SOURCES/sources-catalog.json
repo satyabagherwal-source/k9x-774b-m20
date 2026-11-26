@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "389d37f72759edcdd72a895aa8e0d4c4f8e1d3257b9883c353a0e6f7bb638d85",
-    "lastHarvestedAt": "2026-11-22T20:00:17.458Z",
+    "contentHash": "3fcfd0fc3b03b768bc7760edf300f0c307b7c2f6e3dc957941ab091c3687301d",
+    "lastHarvestedAt": "2026-11-26T13:08:09.001Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "699e6770",
+    "sourceVersion": "83e98ce8",
     "license": "Apache-2.0",
-    "contentHash": "540807b7295c69d0e493a0080fd1f987e5d25389659901340c1b0a797cc7f1b9",
-    "lastHarvestedAt": "2026-11-25T11:51:25.726Z",
+    "contentHash": "00b7e33243bd6224113a1f4568a8dba7e1ef670362fb573b6129a73b8b47328a",
+    "lastHarvestedAt": "2026-11-26T13:08:25.364Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

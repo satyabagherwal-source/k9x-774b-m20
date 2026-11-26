@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T12:59:40.543Z",
+  "last_updated": "2026-11-26T13:08:32.029Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53867,11 +53867,11 @@
       "staged_date": "2026-11-24"
     },
     {
-      "id": "CD-T5TE",
+      "id": "CD-J3IW",
       "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-T5TE-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-J3IW-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -65037,6 +65037,35 @@
       "source_repo": "karmada-io-karmada",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-46E8B9-empirical-invariant-guard-in-cache-go.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-J2EX",
+      "directive_title": "Empirical Invariant Guard in yarn.lock",
+      "source_repo": "vespa-engine-vespa-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-J2EX-empirical-invariant-guard-in-yarn-lock.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-C39054",
+      "directive_title": "Empirical Invariant Guard in yarn.lock",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vespa-engine-vespa",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C39054-empirical-invariant-guard-in-yarn-lock.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-63E843",
+      "directive_title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-63E843-server-events-dispatch-rerender-dm-statu.md",
       "staged_date": "2026-11-26"
     }
   ]

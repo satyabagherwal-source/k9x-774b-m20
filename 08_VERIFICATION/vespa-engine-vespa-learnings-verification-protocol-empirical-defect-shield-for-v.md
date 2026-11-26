@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T11:51:31.109Z",
+  "timestamp": "2026-11-26T13:08:30.446Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-vespa-engine-vespa-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vespa-engine-vespa-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T11:51:31.109Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T13:08:30.446Z`  
 > **Learning ID**: `LEARN-EVO-vespa-engine-vespa-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source**: github ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
-> **Source Version**: `699e6770`  
+> **Source Version**: `83e98ce8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T11:51:24.587Z  
+> **Timestamp**: 2026-11-26T13:08:23.921Z  
 > **Learning ID**: `learn-github-vespa-engine-vespa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T11:51:24.583Z  
+> **Harvest Timestamp**: 2026-11-26T13:08:23.916Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7199 stars
+- **Stars / Engagement**: 7201 stars
 
 ---
 
@@ -1090,59 +1090,194 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `060c812a` (2026-11-24)
-**Commit Message**: Fix flaky latency assertion in MetricAggregatingRequestLogTest
+### Incident Patch 1: `83e98ce8` (2026-11-26)
+**Commit Message**: Merge pull request #38673 from vespa-engine/dependabot/npm_and_yarn/client/js/app/brace-expansion-1.1.22
 
-The mock request says it was received at the moment latency is
-calculated, so latency is usually 0 ms but can be a few ms if the
-thread is paused in between. Assert non-negative instead of exactly 0.
+Bump brace-expansion from 1.1.18 to 1.1.22 in /client/js/app
 
-**File**: `container-disc/src/test/java/com/yahoo/jdisc/http/server/jetty/MetricAggregatingRequestLogTest.java` (modified, +4/-1)
+**File**: `client/js/app/yarn.lock` (modified, +3/-3)
 ```diff
-@@ -39,7 +39,10 @@ void latency_is_recorded() {
-         assertEquals(1, metricSnapshot.size());
-         var latencySample = metricSnapshot.entrySet().iterator().next();
-         assertEquals(200L, latencySample.getKey().get(MetricDefinitions.STATUS_CODE_DIMENSION));
--        assertEquals(0.0, latencySample.getValue());
-+        // Latency is measured from when the request was received. The mock request says it was received
-+        // at the moment latency is calculated, so latency is usually 0 ms, but can be a few ms if the
-+        // thread is paused in between (e.g. by GC)
-+        assertTrue(latencySample.getValue() >= 0.0);
-     }
+@@ -1047,9 +1047,9 @@ baseline-browser-mapping@^2.11.12:
+   integrity sha512-JyJ954WzuIR8/FFzX0o5krdSTrBAkcCSRfWSleRsIHSWV+cZe2FI1PKggVkFke1hBldRs+LRxUczzE9iPmgZww==
  
-     @Test
+ brace-expansion@^1.1.7:
+-  version "1.1.18"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
+-  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
++  version "1.1.22"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.22.tgz#82f87655acd0bae5c8a717bb0a81573e43ab42c0"
++  integrity sha512-CKLDTuSsN0+r1ThM0WkzzBI7dnPI6xEGfa/JnVYIK9JNBA1N1NyPwXVHor//NKD/y3sDxp764sZdLhFK7pH8XQ==
+   dependencies:
+     balanced-match "^1.0.0"
+     concat-map "0.0.1"
 ```
 
 ---
 
-### Incident Patch 2: `b0c05c13` (2026-11-25)
-**Commit Message**: Merge pull request #38652 from vespa-engine/hmusum/fix-race-in-test
+### Incident Patch 2: `2c237631` (2026-11-26)
+**Commit Message**: Bump brace-expansion from 1.1.18 to 1.1.22 in /client/js/app
 
-Fix flaky latency assertion in MetricAggregatingRequestLogTest
+Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion) from 1.1.18 to 1.1.22.
+- [Release notes](https://github.com/juliangruber/brace-expansion/releases)
+- [Commits](https://github.com/juliangruber/brace-expansion/compare/v1.1.18...v1.1.22)
 
-**File**: `container-disc/src/test/java/com/yahoo/jdisc/http/server/jetty/MetricAggregatingRequestLogTest.java` (modified, +4/-1)
+---
+updated-dependencies:
+- dependency-name: brace-expansion
+  dependency-version: 1.1.22
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `client/js/app/yarn.lock` (modified, +3/-3)
 ```diff
-@@ -39,7 +39,10 @@ void latency_is_recorded() {
-         assertEquals(1, metricSnapshot.size());
-         var latencySample = metricSnapshot.entrySet().iterator().next();
-         assertEquals(200L, latencySample.getKey().get(MetricDefinitions.STATUS_CODE_DIMENSION));
--        assertEquals(0.0, latencySample.getValue());
-+        // Latency is measured from when the request was received. The mock request says it was received
-+        // at the moment latency is calculated, so latency is usually 0 ms, but can be a few ms if the
-+        // thread is paused in between (e.g. by GC)
-+        assertTrue(latencySample.getValue() >= 0.0);
+@@ -1047,9 +1047,9 @@ baseline-browser-mapping@^2.11.12:
+   integrity sha512-JyJ954WzuIR8/FFzX0o5krdSTrBAkcCSRfWSleRsIHSWV+cZe2FI1PKggVkFke1hBldRs+LRxUczzE9iPmgZww==
+ 
+ brace-expansion@^1.1.7:
+-  version "1.1.18"
+-  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
+-  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
++  version "1.1.22"
++  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.22.tgz#82f87655acd0bae5c8a717bb0a81573e43ab42c0"
++  integrity sha512-CKLDTuSsN0+r1ThM0WkzzBI7dnPI6xEGfa/JnVYIK9JNBA1N1NyPwXVHor//NKD/y3sDxp764sZdLhFK7pH8XQ==
+   dependencies:
+     balanced-match "^1.0.0"
+     concat-map "0.0.1"
+```
+
+---
+
+### Incident Patch 3: `b7166eea` (2026-11-25)
+**Commit Message**: Merge pull request #38659 from vespa-engine/hakonhall/20261125-verify-sequence-of-prepares-from-builders-service-cluster-pairs
+
+Verify sequence of prepares from (builders, service cluster) pairs
+
+**File**: `config-model/src/test/java/com/yahoo/config/model/provision/EarlyProvisioningTest.java` (modified, +97/-84)
+```diff
+@@ -9,105 +9,104 @@
+ import com.yahoo.vespa.model.test.VespaModelTester;
+ import org.junit.jupiter.api.Test;
+ 
+-import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Set;
+ 
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+-import static org.junit.jupiter.api.Assertions.assertFalse;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ 
+ /**
+- * Verifies that the clusters collected for early provisioning, see
++ * Verifies which clusters are collected for early provisioning, see
+  * {@link com.yahoo.config.model.builder.xml.ConfigModelBuilder#collectAllocationRequests},
+- * are equal to those prepared.
++ * and that they are equal to those prepared.
+  *
+  * @author hakonhall
+  */
+ public class EarlyProvisioningTest {
+ 
+     @Test
+     void containerAndContentWithImplicitAdmin() {
+-        String services = """
+-                          <?xml version='1.0' encoding='utf-8' ?>
+-                          <services>
+-                            <container version='1.0' id='foo'>
+-                              <nodes count='2'/>
+-                            </container>
+-                            <content version='1.0' id='bar'>
+-                              <redundancy>2</redundancy>
+-                              <documents>
+-                                <document type='type1' mode='index'/>
+-                              </documents>
+-                              <nodes count='2'/>
+-                            </content>
+-                          </services>
+-                          """;
+-
+-        // TODO: Remove the cluster IDs below as collectAllocationRequests() is implemented for their builders
+-        assertEarlyProvisioning(services, 10, "foo");
++        assertPrepares("""
++                       <?xml version='1.0' encoding='utf-8' ?>
++                       <services>
++                         <container version='1.0' id='foo'>
++                           <nodes count='2'/>
++                         </container>
++                         <content version='1.0' id='bar'>
++                           <redundancy>2</redundancy>
++                           <documents>
++                             <document type='type1' mode='index'/>
++                           </documents>
++                           <nodes count='2'/>
++                         </content>
++                       </services>
++                       """,
++                       10,
++                       "(container.foo)", "admin.logserver", "content.bar", "admin.cluster-controllers");
      }
  
      @Test
+     void clusterControllersAreCollectedOnceWithSeveralContentClusters() {
+-        String services = """
+-                          <?xml version='1.0' encoding='utf-8' ?>
+-                          <services>
+-                            <container version='1.0' id='foo'>
+-                              <nodes count='2'/>
+-                            </container>
+-                            <content version='1.0' id='bar'>
+-                              <redundancy>2</redundancy>
+-                              <documents>
+-                                <document type='type1' mode='index'/>
+-                              </documents>
+-                              <nodes count='2'/>
+-                            </content>
+-                            <content version='1.0' id='baz'>
+-                              <redundancy>2</redundancy>
+-                              <documents>
+-                                <document type='type1' mode='index'/>
+-                              </documents>
+-                              <nodes count='2'/>
+-                            </content>
+-                          </services>
+-                          """;
+-
+-        // TODO: Remove the cluster IDs below as collectAllocationRequests() is implemented for their builders
+-        assertEarlyProvisioning(services, 10, "foo");
++        assertPrepares("""
++                       <?xml version='1.0' encoding='utf-8' ?>
++                       <services>
++                         <container version='1.0' id='foo'>
++                           <nodes count='2'/>
++                         </container>
++                         <content version='1.0' id='bar'>
++                           <redundancy>2</redundancy>
++                           <documents>
++                             <document type='type1' mode='index'/>
++                           </documents>
++                           <nodes count='2'/>
++                         </content>
++                         <content version='1.0' id='baz'>
++                           <redundancy>2</redundancy>
++                           <documents>
++                             <document type='type1' mode='index'/>
++                           </documents>
++                           <nodes count='2'/>
++                         </content>
++                       </services>
++                       """,
++                       10,
++                       "(conta
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38655** (2026-11-25): Use TypifyBasicType in attribute factories and attribute operations (@arnej27959)
-- **PR #38654** (2026-11-25): keep metrics bodies gzipped until parsed (@andreer)
-- **PR #38653** (2026-11-25): chore: update third-party attributions (@github-actions[bot])
-- **PR #38652** (2026-11-25): Fix flaky latency assertion in MetricAggregatingRequestLogTest (@hmusum)
-- **PR #38651** (2026-11-25): Collect allocation request for cluster controllers (@hakonhall)
-- **PR #38650** (2026-11-24): Avoid inline warning. (@toregge)
+- **PR #38673** (2026-11-26): Bump brace-expansion from 1.1.18 to 1.1.22 in /client/js/app (@dependabot[bot])
+- **PR #38670** (2026-11-26): Match UriPattern hosts case-insensitively and ignore a trailing dot (@glebashnik)
+- **PR #38668** (2026-11-26): Upgrade MCP Java SDK to 1.1.5 (CVE-2026-35568) (@ean)
+- **PR #38666** (2026-11-25): Wait longer for otelcol to start in test (@hmusum)
+- **PR #38665** (2026-11-26): Validate paths used in RankSetupValidator (@hmusum)
+- **PR #38664** (2026-11-26): Adjust variable names (main -> main_thread_service). (@toregge)
 
 ---
 
@@ -1162,34 +1297,35 @@ Fix flaky latency assertion in MetricAggregatingRequestLogTest
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flaky latency assertion in MetricAggregatingRequestLogTest
+## X. Empirical Invariant Guard in yarn.lock
 
 **RULE**:
-When implementing operations in `container-disc/src/test/java/com/yahoo/jdisc/http/server/jetty/MetricAggregatingRequestLogTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/js/app/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `060c812a`: flaky latency assertion in MetricAggregatingRequestLogTest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83e98ce8`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `container-disc/src/test/java/com/yahoo/jdisc/http/server/jetty/MetricAggregatingRequestLogTest.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/js/app/yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        // Latency is measured from when the request was received. The mock request says it was received
-        // at the moment latency is calculated, so latency is usually 0 ms, but can be a few ms if the
-        // thread is paused in between (e.g. by GC)
-        assertTrue(latencySample.getValue() >= 0.0);
+  version "1.1.22"
+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.22.tgz#82f87655acd0bae5c8a717bb0a81573e43ab42c0"
+  integrity sha512-CKLDTuSsN0+r1ThM0WkzzBI7dnPI6xEGfa/JnVYIK9JNBA1N1NyPwXVHor//NKD/y3sDxp764sZdLhFK7pH8XQ==
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        assertEquals(0.0, latencySample.getValue());
+  version "1.1.18"
+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz#3ce74d89885136be1535341f8c3d4425c29a5cab"
+  integrity sha512-Edep/X9fGqVNmzKBVsDYIOtD+z1tuezV70LBjdCst9Tqu76lsnvRiZ6oTic1n+/BIwX6QDGAO94PN4N2SADvtw==
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `060c812a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83e98ce8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

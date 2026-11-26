@@ -13422,3 +13422,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-26T12:59:19.725Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `6d007132` | Multi-dimensional audit evidence | 2026-11-26T12:59:30.899Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `e6521ee6` | Multi-dimensional audit evidence | 2026-11-26T12:59:34.815Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-26T13:08:09.001Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `83e98ce8` | Multi-dimensional audit evidence | 2026-11-26T13:08:25.364Z |

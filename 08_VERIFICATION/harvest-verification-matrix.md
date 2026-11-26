@@ -13389,3 +13389,5 @@
 | `CYCLE-20261126-79D4` | `2026-11-26T12:59:19.720Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`f37b18a6...`) |
 | `CYCLE-20261126-7HZI` | `2026-11-26T12:59:30.894Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10682` | Yes (`2eaa5721...`) |
 | `CYCLE-20261126-7L0A` | `2026-11-26T12:59:34.810Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10683` | Yes (`084ff4c7...`) |
+| `CYCLE-20261126-ILR8` | `2026-11-26T13:08:08.996Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md` | Yes (`3fcfd0fc...`) |
+| `CYCLE-20261126-IYDR` | `2026-11-26T13:08:25.359Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10684` | Yes (`00b7e332...`) |

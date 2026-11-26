@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T12:59:38.621Z",
+  "updated_at": "2026-11-26T13:08:30.293Z",
   "stats": {
-    "total_discovered": 9765,
-    "approved_pending_harvest": 9264,
+    "total_discovered": 9769,
+    "approved_pending_harvest": 9268,
     "harvested_count": 0,
     "rejected_count": 501,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9251,
+      "COMMUNITY_AND_EXPERT": 9254,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 157,
       "ENGINEERING_BLOGS": 7,
-      "SECURITY_ADVISORIES": 54,
+      "SECURITY_ADVISORIES": 55,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 9
     }
@@ -211350,6 +211350,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yetone-magpie-learnings.md",
         "fileName": "yetone-magpie-learnings.md"
+      }
+    },
+    "SRC-981BAD49478C": {
+      "id": "SRC-981BAD49478C",
+      "url": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz",
+      "title": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.18.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:08:29.996Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-26F1777AD21D": {
+      "id": "SRC-26F1777AD21D",
+      "url": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.22.tgz",
+      "title": "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.22.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:08:30.067Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-92F4872E8A42": {
+      "id": "SRC-92F4872E8A42",
+      "url": "https://github.com/juliangruber/brace-expansion/compare/v1.1.18...v1.1.22",
+      "title": "https://github.com/juliangruber/brace-expansion/compare/v1.1.18...v1.1.22",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:08:30.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
+      }
+    },
+    "SRC-ABA23346DCA4": {
+      "id": "SRC-ABA23346DCA4",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-35568",
+      "title": "Vulnerability Advisory CVE-2026-35568",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T13:08:30.293Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
+        "fileName": "vespa-engine-vespa-learnings.md"
       }
     }
   }

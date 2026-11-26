@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T12:59:34.835Z",
+  "last_updated": "2026-11-26T13:08:25.388Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -485,14 +485,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-lensvlm-9b",
-      "content_hash": "389d37f72759edcdd72a895aa8e0d4c4f8e1d3257b9883c353a0e6f7bb638d85",
-      "verified_at": "2026-11-22T20:00:17.465Z",
+      "content_hash": "3fcfd0fc3b03b768bc7760edf300f0c307b7c2f6e3dc957941ab091c3687301d",
+      "verified_at": "2026-11-26T13:08:09.018Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:00:17.465Z"
+      "last_updated": "2026-11-26T13:08:09.018Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "540807b7295c69d0e493a0080fd1f987e5d25389659901340c1b0a797cc7f1b9",
-      "verified_at": "2026-11-25T11:51:25.743Z",
+      "content_hash": "00b7e33243bd6224113a1f4568a8dba7e1ef670362fb573b6129a73b8b47328a",
+      "verified_at": "2026-11-26T13:08:25.387Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T11:51:25.743Z"
+      "last_updated": "2026-11-26T13:08:25.387Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",

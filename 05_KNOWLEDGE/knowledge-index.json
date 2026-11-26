@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T12:59:41.104Z",
+  "last_updated": "2026-11-26T13:08:32.524Z",
   "total_verified_learnings": 9128,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25916,
+  "total_items": 25918,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "468e98fe806adb8e39704b8072df0d390c396df1d674e5ae1f101fa8afe76fba",
+      "content_hash": "7bf2e4d62f9b0222b8068e3aca85050f270b0d8973a98a0df119244eb0732b4a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T07:40:26.361Z"
+      "persisted_at": "2026-11-26T13:08:32.288Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f4cb5787203b00a25546c361c8b93887b3b66a93dc46a6b2357f5c129337596a",
+      "content_hash": "e70a78e3d923031594c067ac75a960cc4becc998f2dc64d6e748def81a391372",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:40:26.547Z"
+      "persisted_at": "2026-11-26T13:08:32.524Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -112546,9 +112546,9 @@
       "title": "Research & Knowledge Intelligence: apple/LensVLM-9B Core Invariants",
       "repository": "apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "cdbb9063aa4a58329b3b5e5bb3c804d1762b15ccbac2b102d255a49208b8a4d8",
+      "content_hash": "9e0f4fc1af5dcf46803d9dc56dfa32cc7e182118dbd14b556d75abdfb506484e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:00:17.634Z"
+      "persisted_at": "2026-11-26T13:08:09.280Z"
     },
     "candidate_directive-deps-update-go-dependencies": {
       "item_id": "candidate_directive-deps-update-go-dependencies",
@@ -112678,9 +112678,9 @@
       "title": "Research & Knowledge Intelligence: hf-apple-lensvlm-9b-learnings Core Invariants",
       "repository": "hf-apple-lensvlm-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "06be453efa490caf91fed367de8d9bc38c61c0d09f3092db5e9c4bc26cdad34a",
+      "content_hash": "0b39fa5c803c70c1d9792f1e605f4211c1958d1a7f8cba83bf5cb4ab89f02f31",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T20:00:29.575Z"
+      "persisted_at": "2026-11-26T13:08:29.525Z"
     },
     "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
@@ -239387,8 +239387,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "699e6770",
-      "content_hash": "540807b7295c69d0e493a0080fd1f987e5d25389659901340c1b0a797cc7f1b9",
+      "source_version": "83e98ce8",
+      "content_hash": "00b7e33243bd6224113a1f4568a8dba7e1ef670362fb573b6129a73b8b47328a",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -239431,6 +239431,11 @@
           "number": 10517,
           "title": "flaky latency assertion in MetricAggregatingRequestLogTest",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10684,
+          "title": "Empirical Invariant Guard in yarn.lock",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239438,7 +239443,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T11:51:25.505Z",
+      "verified_at": "2026-11-26T13:08:24.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239480,10 +239485,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "699e6770",
-      "content_hash": "4cdb5536d8d6c933cebd4fc9fc874bea51603cfe1715b015c804a8d370ada6f6",
+      "source_version": "83e98ce8",
+      "content_hash": "3ab26d489db8f7c070c01ba05af926957c7c45ea8c3e4978544d133924a88660",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:51:26.151Z"
+      "persisted_at": "2026-11-26T13:08:25.880Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -239492,10 +239497,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "699e6770",
-      "content_hash": "421e365286a672da755084a8997b7c1e26cc94edf0e21f3d237780cca82e32c4",
+      "source_version": "83e98ce8",
+      "content_hash": "77ff79656a0892ac2b84cdbca1bb206263c2eb356c3565611a5d017750e1f33a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:51:26.329Z"
+      "persisted_at": "2026-11-26T13:08:26.130Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -239504,10 +239509,10 @@
       "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
       "repository": "vespa-engine/vespa",
-      "source_version": "699e6770",
-      "content_hash": "e55eb40e0bab24079d680e984af84f89e95636847716fd3df936edda04858279",
+      "source_version": "83e98ce8",
+      "content_hash": "4894c97e7b1294f86c6338c22ab69afcaf030614414323b8da535e250fedd401",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:51:26.478Z"
+      "persisted_at": "2026-11-26T13:08:26.325Z"
     },
     "candidate_directive-update-lock-file": {
       "item_id": "candidate_directive-update-lock-file",
@@ -239715,9 +239720,9 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "f73da6234df7d52e9193705251e7718a6b1ad64b2355ade0ab6e36fb72038b92",
+      "content_hash": "2cdcd344fb0616d431c6c86f49929d892f74b496b1551e182c2803b726ef4012",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:51:31.419Z"
+      "persisted_at": "2026-11-26T13:08:30.816Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona",
@@ -239727,9 +239732,9 @@
       "title": "Agent Contract: vespa-engine-vespa-learnings Autonomous Specialist Persona",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ace90a7419ee74762042ed6bf981b2648153b469174252a282cb76eb74201a0",
+      "content_hash": "8d2d64c7232c4f5bbbf3b916700193f8c36ed712102577472f2b74bc89c54635",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:51:31.599Z"
+      "persisted_at": "2026-11-26T13:08:31.097Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings",
@@ -239739,9 +239744,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine-vespa-learnings",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "e0f769a68e98c1ca1e95540ca49fbb2b7fd2596ffd07af3464321dd8247a9d96",
+      "content_hash": "750a2bed0ac2afe292a7d7c84c89043a484dbfe59b5c799161bbbd430d033d26",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:51:31.765Z"
+      "persisted_at": "2026-11-26T13:08:31.315Z"
     },
     "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2": {
       "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
@@ -287305,7 +287310,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "389d37f72759edcdd72a895aa8e0d4c4f8e1d3257b9883c353a0e6f7bb638d85",
+      "content_hash": "3fcfd0fc3b03b768bc7760edf300f0c307b7c2f6e3dc957941ab091c3687301d",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [],
@@ -287314,7 +287319,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T20:00:17.276Z",
+      "verified_at": "2026-11-26T13:08:08.686Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -337027,13 +337032,13 @@
       "item_id": "candidate_directive-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-T5TE-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-J3IW-server_events_dispatch-rerender-dm-status-emoji-on-emojiset-change.md",
       "title": "server_events_dispatch: Rerender DM status emoji on emojiset change.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a24b1c1c5373f05d88831c0698c86a891cf3fdc36c4dbfcfae3642676a7fbb01",
+      "content_hash": "e53847c66f62b972b89baf46c8e73325d0ca4c8aa13b31aa8b20bb68f50e71a4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T07:40:26.165Z"
+      "persisted_at": "2026-11-26T13:08:32.029Z"
     },
     "learn-github-xinatian-mroffice": {
       "learning_id": "learn-github-xinatian-mroffice",
@@ -355109,6 +355114,32 @@
       "content_hash": "b626a73bea0fd9d9d1faf214c3cc25dfbd85ad0a7cc58fe60992eb51b9413aad",
       "domain_letter": "K",
       "persisted_at": "2026-11-26T12:59:39.274Z"
+    },
+    "rule-10684": {
+      "learning_id": "rule-10684",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10684,
+      "title": "Empirical Invariant Guard in yarn.lock",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "83e98ce8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T13:08:24.887Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-yarn-lock": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-yarn-lock",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-J2EX-empirical-invariant-guard-in-yarn-lock.md",
+      "title": "Empirical Invariant Guard in yarn.lock",
+      "repository": "vespa-engine-vespa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c1432433dcd81a8d34ba41c4af95ed5d594a305be940c304a0d2c07f93e5fc5b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T13:08:30.585Z"
     }
   },
   "ai-builder-brain": {

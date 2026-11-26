@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/apple/LensVLM-9B",
   "source_version": "hf-apple-lensvlm-9b",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T20:00:17.634Z",
+  "timestamp": "2026-11-26T13:08:09.279Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-apple-lensvlm-9b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T20:00:17.634Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T13:08:09.279Z`  
 > **Learning ID**: `learn-huggingface-apple-lensvlm-9b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T20:00:16.894Z  
+> **Harvest Timestamp**: 2026-11-26T13:08:08.203Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 943 downloads | 294 likes
+- **Stars / Engagement**: 1222 downloads | 295 likes
 
 ---
 
