@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-NAX3",
-    "timestamp": "2026-11-25T08:44:11.655Z",
-    "repository": "apache/zookeeper",
-    "learningId": "learn-github-apache-zookeeper",
-    "contentHash": "882eaf13564c35d3725c85fb05e1be23b3b3e163a205b3ee7111d91cdf54c56d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-2IS3",
-    "timestamp": "2026-11-25T08:56:01.683Z",
-    "repository": "inclusionAI/LingSante-3.1-air-VL",
-    "learningId": "learn-huggingface-inclusionai-lingsante-3-1-air-vl",
-    "contentHash": "060d8c64aef561505f6c9356459677681ac0abc289b39283b751f3df1495900f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-2KRS",
     "timestamp": "2026-11-25T08:56:04.264Z",
     "repository": "HuggingFaceBio/Carbon-X",
@@ -7490,6 +7460,36 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "3b839d981083341d954c2990c3a73e7aa8aca39ddfd6de00eececb9ea1c0b411",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-Q4MA",
+    "timestamp": "2026-11-26T20:13:54.274Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "0dbd8e1e4a74dbd408822fc08d5446e4d620bdbd53c2dff6c8a5965fa07549d0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-QFAA",
+    "timestamp": "2026-11-26T20:14:08.098Z",
+    "repository": "CaviraOSS/LongMemory",
+    "learningId": "learn-github-caviraoss-longmemory",
+    "contentHash": "a6deabfa311465b5fe8467915160c60dfd1ff3a5d5fb0f7bfb635a95959a9487",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

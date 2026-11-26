@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:04:34.615Z",
-  "total_cycles_completed": 12854,
-  "total_learnings_persisted": 12854,
-  "total_rules_promoted": 11675,
+  "last_updated": "2026-11-26T20:14:08.126Z",
+  "total_cycles_completed": 12856,
+  "total_learnings_persisted": 12856,
+  "total_rules_promoted": 11676,
   "history": [
-    {
-      "timestamp": "2026-11-26T10:30:51.227Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T10:30:54.080Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T10:40:51.257Z",
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T20:04:34.615Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:13:54.296Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T20:14:08.126Z",
+      "repository": "CaviraOSS/LongMemory",
+      "learningId": "learn-github-caviraoss-longmemory",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

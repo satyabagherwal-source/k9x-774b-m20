@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T20:04:43.340Z",
+  "updated_at": "2026-11-26T20:14:13.549Z",
   "stats": {
-    "total_discovered": 10009,
-    "approved_pending_harvest": 9487,
+    "total_discovered": 10019,
+    "approved_pending_harvest": 9497,
     "harvested_count": 0,
     "rejected_count": 522,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9492,
+      "COMMUNITY_AND_EXPERT": 9502,
       "OFFICIAL_DOCUMENTATION": 286,
       "STANDARDS_AND_SPECIFICATIONS": 158,
       "ENGINEERING_BLOGS": 7,
@@ -216571,6 +216571,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
         "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-4E34E907864D": {
+      "id": "SRC-4E34E907864D",
+      "url": "https://github.com/CaviraOSS/LongMemory",
+      "title": "https://github.com/CaviraOSS/LongMemory",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:12.715Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-DEA8625E2C95": {
+      "id": "SRC-DEA8625E2C95",
+      "url": "https://img.shields.io/badge/GHCR-longmemory-2496ED?logo=docker",
+      "title": "https://img.shields.io/badge/GHCR-longmemory-2496ED?logo=docker",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:12.804Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-C7028497075F": {
+      "id": "SRC-C7028497075F",
+      "url": "https://github.com/CaviraOSS/LongMemory/pkgs/container/longmemory",
+      "title": "https://github.com/CaviraOSS/LongMemory/pkgs/container/longmemory",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:12.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-154E7D313972": {
+      "id": "SRC-154E7D313972",
+      "url": "https://img.shields.io/github/license/CaviraOSS/LongMemory",
+      "title": "https://img.shields.io/github/license/CaviraOSS/LongMemory",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:13.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-E8135C487626": {
+      "id": "SRC-E8135C487626",
+      "url": "https://img.youtube.com/vi/tREFsh3J0b0/maxresdefault.jpg",
+      "title": "https://img.youtube.com/vi/tREFsh3J0b0/maxresdefault.jpg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:13.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-25873573A47B": {
+      "id": "SRC-25873573A47B",
+      "url": "https://www.youtube.com/watch?v=tREFsh3J0b0",
+      "title": "https://www.youtube.com/watch?v=tREFsh3J0b0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:13.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-787E3C3F85F7": {
+      "id": "SRC-787E3C3F85F7",
+      "url": "https://trendshift.io/repositories/15645?amp%3Butm_medium=badge&amp%3Butm_campaign=badge-trendshift-15645",
+      "title": "https://trendshift.io/repositories/15645?amp%3Butm_medium=badge&amp%3Butm_campaign=badge-trendshift-15645",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:13.270Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-494DE7C72D0D": {
+      "id": "SRC-494DE7C72D0D",
+      "url": "https://trendshift.io/api/badge/trendshift/repositories/15645/daily?language=TypeScript",
+      "title": "https://trendshift.io/api/badge/trendshift/repositories/15645/daily?language=TypeScript",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:13.360Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-DE0BF28824E3": {
+      "id": "SRC-DE0BF28824E3",
+      "url": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+      "title": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:13.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
+      }
+    },
+    "SRC-78EE66424810": {
+      "id": "SRC-78EE66424810",
+      "url": "https://antigravity.google/schemas/v1/plugin.json",
+      "title": "https://antigravity.google/schemas/v1/plugin.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T20:14:13.549Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md",
+        "fileName": "caviraoss-longmemory-learnings.md"
       }
     }
   }

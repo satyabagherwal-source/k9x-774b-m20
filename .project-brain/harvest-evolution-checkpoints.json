@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:04:44.473Z",
+  "last_updated": "2026-11-26T20:14:16.188Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-26T19:25:31.773Z",
+      "processed_at": "2026-11-26T20:14:14.761Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -188,7 +188,7 @@
       "staged_for_review": 1
     },
     "caviraoss-longmemory-learnings.md": {
-      "processed_at": "2026-11-11T10:43:41.578Z",
+      "processed_at": "2026-11-26T20:14:12.665Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2343,7 +2343,7 @@
       "staged_for_review": 0
     },
     "hf-zai-org-glm-5.2-learnings.md": {
-      "processed_at": "2026-11-23T06:45:57.623Z",
+      "processed_at": "2026-11-26T20:14:12.004Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3998,7 +3998,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4653,
+  "total_dossiers_evaluated": 4656,
   "total_canonical_promoted": 566,
-  "total_staged_for_review": 3500
+  "total_staged_for_review": 3502
 }

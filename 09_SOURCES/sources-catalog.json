@@ -925,8 +925,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceVersion": "hf-zai-org-glm-5.2",
     "license": "Open-Source",
-    "contentHash": "476f4fd580a9214c9ec5e0ab56c6d27c804731926d8687fc2f4f2b2960dd85ba",
-    "lastHarvestedAt": "2026-11-23T06:45:39.841Z",
+    "contentHash": "0dbd8e1e4a74dbd408822fc08d5446e4d620bdbd53c2dff6c8a5965fa07549d0",
+    "lastHarvestedAt": "2026-11-26T20:13:54.280Z",
     "learningId": "learn-huggingface-zai-org-glm-5-2"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
@@ -12353,10 +12353,10 @@
     "repository": "CaviraOSS/LongMemory",
     "platform": "github",
     "sourceUrl": "https://github.com/CaviraOSS/LongMemory",
-    "sourceVersion": "aec98ced",
+    "sourceVersion": "9d1deee0",
     "license": "Apache-2.0",
-    "contentHash": "5d8720b6b6b7f59c92ce48711128c77972e5ad34a5e9efc67e3e70abd6b03fb8",
-    "lastHarvestedAt": "2026-11-11T10:43:35.158Z",
+    "contentHash": "a6deabfa311465b5fe8467915160c60dfd1ff3a5d5fb0f7bfb635a95959a9487",
+    "lastHarvestedAt": "2026-11-26T20:14:08.103Z",
     "learningId": "learn-github-caviraoss-longmemory"
   },
   "hf-comfy-org-relayvsr": {

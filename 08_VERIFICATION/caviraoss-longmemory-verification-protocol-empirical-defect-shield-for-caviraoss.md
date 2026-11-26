@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for caviraoss/longmemory
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for CaviraOSS/LongMemory
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "caviraoss/longmemory",
-  "source_url": "https://github.com/caviraoss/longmemory",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "CaviraOSS/LongMemory",
+  "source_url": "https://github.com/CaviraOSS/LongMemory",
+  "source_version": "9d1deee0",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-26T20:14:08.447Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-caviraoss-longmemory",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [caviraoss/longmemory](https://github.com/caviraoss/longmemory) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [CaviraOSS/LongMemory](https://github.com/CaviraOSS/LongMemory) (Revision: `9d1deee0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T20:14:08.447Z`  
+> **Learning ID**: `learn-github-caviraoss-longmemory`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `caviraoss/longmemory` (Commit: `historical`)
+- **Target Repository**: `CaviraOSS/LongMemory` (Commit: `9d1deee0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md`  
-> **Source**: github ([https://github.com/CaviraOSS/LongMemory](https://github.com/CaviraOSS/LongMemory))  
-> **Source Version**: `aec98ced`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:43:23.772Z  
-> **Learning ID**: `learn-github-caviraoss-longmemory`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): CaviraOSS/LongMemory
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/caviraoss-longmemory-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CaviraOSS/LongMemory](https://github.com/CaviraOSS/LongMemory))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:43:23.765Z  
+> **Harvest Timestamp**: 2026-11-26T20:14:06.588Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Local persistent memory store for LLM applications including claude desktop, github copilot, codex, antigravity, etc.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 4573 stars
+- **Stars / Engagement**: 4589 stars
 
 ---
 
@@ -562,6 +548,10 @@ const states = {
     conflicts: ['No unresolved conflicts', 'Project memory is consistent.'],
     tasks: ['No open tasks', 'Record work with longmemory agent after-run'],
     decisions: ['No decisions recorded', 'Use project memory to preserve architectural choices.'],
+    users: ['No control-plane users', 'Run longmemory auth:init --user <id>'],
+    teams: ['No control-plane teams', 'Run longmemory teams:create --id <id>'],
+    tokens: ['No tokens', 'Run longmemory tokens:create --user <id> --label <label>'],
+    spaces: ['No accessible spaces', 'Check the user and team memberships.'],
 } as const;
 export type empty_state_kind = keyof typeof states;
 
@@ -938,147 +928,198 @@ export function permission_contract(permission: connector_permission): Partial<C
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aceb2202` (2026-11-09)
-**Commit Message**: fix(memory): keep claims on every line of a note
+### Incident Patch 1: `9d1deee0` (2026-11-26)
+**Commit Message**: update plugin versions and improve README visuals
 
-Sentence patterns stop at a newline, so a multi-line note stored only the
-last line's claim and dropped earlier preferences and facts from the summary.
-
-Signed-off-by: Ting Zhang <[REDACTED_EMAIL]>
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `.gitignore` (modified, +1/-0)
 ```diff
-@@ -56,6 +56,8 @@ the end of this file for historical context.
- 
- ### Fixes
- 
-+- Notes with newline-separated preferences or facts now keep each claim in
-+  stored summaries without splitting wrapped lines into separate statements.
- - Embedded project-scoped writes. `longmemory_ingest` with a `project_id`,
-   `longmemory_remember_decision` and connector imports go through
-   `applyImportPlan`, which stored every node without a semantic vector, so
+@@ -27,3 +27,4 @@ benchmarks/runs/
+ .longmemory
+ # superpowers SDD scratch
+ .superpowers/
++superpowers/
+\ No newline at end of file
 ```
 
-**File**: `src/core/engine/claim_extractor.ts` (modified, +9/-1)
+**File**: `README.md` (modified, +3/-1)
 ```diff
-@@ -80,7 +80,15 @@ export function extract_claims(text: string): ExtractedClaim[] {
-     const prose = text.split(/\r?\n/).filter((line) => !line.trim().startsWith('|')).join('\n');
-     const protected_text = prose.replace(/[\p{L}\p{N}.!#$%&'*+/=?^_`{|}~-]+@[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+/gu, (email) => email.replaceAll('.', '<period>').replaceAll('!', '<exclaim>').replaceAll('?', '<question>'))
-         .replace(/(?<=\d)\.(?=\d)/g, '<period>').replace(/\b(Dr|Mr|Mrs|Ms|Prof|[A-Z])\./g, '$1<period>');
--    const statements = protected_text.split(/[.!?]+/)
-+    const lines = protected_text.split(/\n+/).reduce<string[]>((joined, line) => {
-+        const candidate = line.replace(/^\s*(?:[-*+]|\d+[.)])\s+/, '').replace(/^\s*(?:user|assistant|system|tool|function):\s*/i, '').trim();
-+        const starts_claim = [preference, moved_location, location, copula, first_person, contact, mode_change].some((pattern) => pattern.test(candidate));
-+        if (!joined.length || starts_claim || /^\s*(?:[-*+]|\d+[.)])\s+/.test(line)) joined.push(line);
-+        else joined[joined.length - 1] += ` ${line.trim()}`;
-+        return joined;
-+    }, []);
-+    const statements = lines
-+        .flatMap((line) => line.split(/[.!?]+/))
-         .flatMap((item) => item.split(/,\s*(?=(?:please\s+)?(?:ping|contact|message|reach)\s+me\b)/i))
-         .map((item) => item.replaceAll('<period>', '.').replaceAll('<exclaim>', '!').replaceAll('<question>', '?').replace(/^\s*(?:user|assistant|system|tool|function):\s*/i, '').trim()).filter(Boolean);
-     const prose_claims = statements.map((statement): ExtractedClaim => {
+@@ -22,7 +22,9 @@
+ [![Container](https://img.shields.io/badge/GHCR-longmemory-2496ED?logo=docker)](https://github.com/CaviraOSS/LongMemory/pkgs/container/longmemory)
+ [![License](https://img.shields.io/github/license/CaviraOSS/LongMemory)](LICENSE)
+ 
+-![LongMemory dashboard](.github/longmemory.gif)
++[![Watch Video](https://img.youtube.com/vi/tREFsh3J0b0/maxresdefault.jpg)](https://www.youtube.com/watch?v=tREFsh3J0b0)
++
++<a href="https://trendshift.io/repositories/15645?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-15645" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/15645/daily?language=TypeScript" alt="CaviraOSS%2FLongMemory | Trendshift" width="250" height="55"/></a>
+ 
+ LongMemory is a cognitive memory engine for LLM applications and autonomous agents.
+ 
 ```
 
-**File**: `tools/check-recall.ts` (modified, +7/-0)
+**File**: `apps/vscode-extension/package.json` (modified, +2/-2)
 ```diff
-@@ -14,6 +14,7 @@
- 
- import assert from 'node:assert/strict';
- import { createMemory } from '../src/index.js';
-+import { extract_claims } from '../src/core/engine/claim_extractor.js';
- 
- async function main() {
-     const memory = createMemory({ store: 'memory', embedding_dimension: 2 });
-@@ -40,6 +41,12 @@ async function main() {
-     assert.ok(worlds.some((world) => world.id === 'release-check' || world.name === 'release-check'), 'the ingested world should be listed');
- 
-     await memory.close();
-+    assert.deepEqual(extract_claims('I prefer dark mode\nI prefer light mode').map((claim) => claim.object), ['dark mode', 'light mode']);
-+    assert.deepEqual(extract_claims('I prefer dark mode because it reduces eye\nstrain.').map((claim) => claim.object), ['dark mode because it reduces eye strain']);
-+    assert.deepEqual(extract_claims('- I prefer dark mode\n- Alice is in Paris').map((claim) => [claim.predicate, claim.object]), [
-+        ['prefers', 'dark mode'],
-+        ['located_in', 'paris'],
-+    ]);
-     const preferences = createMemory({ store: 'memory', embedding_dimension: 2 });
-     try {
-         const at = Date.now() - 1000;
+@@ -1,9 +1,9 @@
+ {
+-    "name": "longmemory-vscode",
++    "name": "openmemory-vscode",
+     "displayName": "LongMemory",
+     "description": "Native Hydrograph memory workflows for VS Code",
+     "version": "2.1.0",
+-    "publisher": "CaviraOSS",
++    "publisher": "nullure",
+     "license": "Apache-2.0",
+     "repository": {
+         "type": "git",
+```
+
+**File**: `integrations/claude-code-longmemory/.claude-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+     "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+     "name": "longmemory",
+     "displayName": "LongMemory",
+-    "version": "0.2.0",
++    "version": "2.1.0",
+     "description": "Durable project memory, recall, decisions, tasks, and governed context for Claude Code.",
+     "author": {
+         "name": "CaviraOSS",
+```
+
+**File**: `integrations/codex-longmemory/.codex-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+     "name": "longmemory",
+-    "version": "0.1.0",
++    "version": "2.1.0",
+     "description": "Durable project memory, recall, decisions, tasks, and governed context for Codex and ChatGPT.",
+     "author": {
+         "name": "CaviraOSS",
+```
+
+**File**: `integrations/gemini-cli-longmemory/gemini-extension.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+     "name": "longmemory",
+-    "version": "0.1.0",
++    "version": "2.1.0",
+     "contextFileName": "GEMINI.md",
+     "mcpServers": {
+         "longmemory": {
+```
+
+**File**: `package.json` (modified, +0/-1)
+```diff
+@@ -45,7 +45,6 @@
+         "test:tools": "node --test tools/install-local.test.mjs tools/check-integrations.test.mjs tools/sync-integrations.test.mjs",
+         "integration:sync": "node tools/sync-integrations.mjs",
+         "test:integrations": "node --test tools/sync-integrations.test.mjs tools/check-integrations.test.mjs tools/install-local.test.mjs",
+-        "test:kilo": "tsx --test \"integrations/kilo-longmemory/test/**/*.test.ts\"",
+         "dev": "node --import tsx src/cli/index.ts status",
+         "test": "tsx --test \"src/**/*.test.ts\"",
+         "bench": "tsx benchmarks/src/cli.ts run --providers=longmemory --datasets=smoke --no-resume",
 ```
 
 ---
 
-### Incident Patch 2: `710cc95a` (2026-11-10)
-**Commit Message**: Merge pull request #222 from GPT-AGI/fix/newline-claim-extraction
+### Incident Patch 2: `a37b39e5` (2026-11-26)
+**Commit Message**: chore: bump version to 2.1.0
 
-fix(memory): keep claims on every line of a note
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `apps/vscode-extension/package.json` (modified, +1/-1)
 ```diff
-@@ -56,6 +56,8 @@ the end of this file for historical context.
- 
- ### Fixes
- 
-+- Notes with newline-separated preferences or facts now keep each claim in
-+  stored summaries without splitting wrapped lines into separate statements.
- - Embedded project-scoped writes. `longmemory_ingest` with a `project_id`,
-   `longmemory_remember_decision` and connector imports go through
-   `applyImportPlan`, which stored every node without a semantic vector, so
+@@ -2,7 +2,7 @@
+     "name": "longmemory-vscode",
+     "displayName": "LongMemory",
+     "description": "Native Hydrograph memory workflows for VS Code",
+-    "version": "0.2.0",
++    "version": "2.1.0",
+     "publisher": "CaviraOSS",
+     "license": "Apache-2.0",
+     "repository": {
 ```
 
-**File**: `src/core/engine/claim_extractor.ts` (modified, +9/-1)
+**File**: `integrations/antigravity-longmemory/plugin.json` (modified, +1/-1)
 ```diff
-@@ -80,7 +80,15 @@ export function extract_claims(text: string): ExtractedClaim[] {
-     const prose = text.split(/\r?\n/).filter((line) => !line.trim().startsWith('|')).join('\n');
-     const protected_text = prose.replace(/[\p{L}\p{N}.!#$%&'*+/=?^_`{|}~-]+@[\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+/gu, (email) => email.replaceAll('.', '<period>').replaceAll('!', '<exclaim>').replaceAll('?', '<question>'))
-         .replace(/(?<=\d)\.(?=\d)/g, '<period>').replace(/\b(Dr|Mr|Mrs|Ms|Prof|[A-Z])\./g, '$1<period>');
--    const statements = protected_text.split(/[.!?]+/)
-+    const lines = protected_text.split(/\n+/).reduce<string[]>((joined, line) => {
-+        const candidate = line.replace(/^\s*(?:[-*+]|\d+[.)])\s+/, '').replace(/^\s*(?:user|assistant|system|tool|function):\s*/i, '').trim();
-+        const starts_claim = [preference, moved_location, location, copula, first_person, contact, mode_change].some((pattern) => pattern.test(candidate));
-+        if (!joined.length || starts_claim || /^\s*(?:[-*+]|\d+[.)])\s+/.test(line)) joined.push(line);
-+        else joined[joined.length - 1] += ` ${line.trim()}`;
-+        return joined;
-+    }, []);
-+    const statements = lines
-+        .flatMap((line) => line.split(/[.!?]+/))
-         .flatMap((item) => item.split(/,\s*(?=(?:please\s+)?(?:ping|contact|message|reach)\s+me\b)/i))
-         .map((item) => item.replaceAll('<period>', '.').replaceAll('<exclaim>', '!').replaceAll('<question>', '?').replace(/^\s*(?:user|assistant|system|tool|function):\s*/i, '').trim()).filter(Boolean);
-     const prose_claims = statements.map((statement): ExtractedClaim => {
+@@ -2,7 +2,7 @@
+   "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+   "name": "longmemory",
+   "displayName": "LongMemory",
+-  "version": "0.2.0",
++  "version": "2.1.0",
+   "description": "Durable personal and team memory for coding agents: context, recall, decisions, tasks, and governed assets.",
+   "logo": "assets/logo.svg",
+   "suggestedPrompts": [
 ```
 
-**File**: `tools/check-recall.ts` (modified, +7/-0)
+**File**: `integrations/kilo-longmemory/package.json` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@
- 
- import assert from 'node:assert/strict';
- import { createMemory } from '../src/index.js';
-+import { extract_claims } from '../src/core/engine/claim_extractor.js';
- 
- async function main() {
-     const memory = createMemory({ store: 'memory', embedding_dimension: 2 });
-@@ -40,6 +41,12 @@ async function main() {
-     assert.ok(worlds.some((world) => world.id === 'release-check' || world.name === 'release-check'), 'the ingested world should be listed');
- 
-     await memory.close();
-+    assert.deepEqual(extract_claims('I prefer dark mode\nI prefer light mode').map((claim) => claim.object), ['dark mode', 'light mode']);
-+    assert.deepEqual(extract_claims('I prefer dark mode because it reduces eye\nstrain.').map((claim) => claim.object), ['dark mode because it reduces eye strain']);
-+    assert.deepEqual(extract_claims('- I prefer dark mode\n- Alice is in Paris').map((claim) => [claim.predicate, claim.object]), [
-+        ['prefers', 'dark mode'],
-+        ['located_in', 'paris'],
-+    ]);
-     const preferences = createMemory({ store: 'memory', embedding_dimension: 2 });
-     try {
-         const at = Date.now() - 1000;
+@@ -1,6 +1,6 @@
+ {
+     "name": "@caviraoss/kilo-longmemory",
+-    "version": "0.1.0",
++    "version": "2.1.0",
+     "description": "Bounded automatic LongMemory context for Kilo Code.",
+     "license": "Apache-2.0",
+     "type": "module",
+```
+
+**File**: `integrations/longmemory-agent-plugin/plugin.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+     "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+     "name": "longmemory",
+-    "version": "0.2.0",
++    "version": "2.1.0",
+     "description": "Durable personal and team memory for Cursor, GitHub Copilot, and Devin/Windsurf.",
+     "author": {
+         "name": "CaviraOSS",
+```
+
+**File**: `integrations/n8n-nodes-longmemory/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+     "name": "@cavira/n8n-nodes-longmemory",
+-    "version": "0.1.0",
++    "version": "2.1.0",
+     "description": "LongMemory community node for n8n workflows and AI agents",
+     "license": "MIT",
+     "homepage": "https://github.com/CaviraOSS/LongMemory",
+```
+
+**File**: `integrations/opencode-longmemory/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+     "name": "@caviraoss/opencode-longmemory",
+-    "version": "0.1.0",
++    "version": "2.1.0",
+     "description": "Automatic bounded LongMemory context for OpenCode.",
+     "license": "Apache-2.0",
+     "type": "module",
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+     "name": "longmemory",
+-    "version": "1.0.0",
++    "version": "2.1.0",
+     "description": "LongMemory Hydrograph TypeScript package: library, CLI, self-hosted API server, and benchmark harness.",
+     "license": "Apache-2.0",
+     "author": "CaviraOSS",
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #222** (2026-11-10): fix(memory): keep claims on every line of a note (@GPT-AGI)
+- **PR #220** (closed): docs: add an approved research-to-memory workflow with Parallel MCP (@georgeatparallel)
 - **PR #217** (2026-10-17): fix(ingest): embed project-scoped writes (#216) (@RockinPaul)
 - **PR #213** (closed): fix: return hits for contextual HSG queries instead of timing out (@vincenzopalazzo)
 - **PR #212** (closed): Stop default openmemory_query from dropping the HTTP session (@vincenzopalazzo)
 - **PR #211** (2026-08-24): feat(embeddings): accept DashScope API keys (@mameikagou)
-- **PR #210** (2026-08-25): feat(embeddings): add OpenRouter provider (@mameikagou)
 
 ---
 
@@ -1098,32 +1139,31 @@ fix(memory): keep claims on every line of a note
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): keep claims on every line of a note
+## X. update plugin versions and improve README visuals
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CaviraOSS/LongMemory. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CaviraOSS/LongMemory. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aceb2202`: memory): keep claims on every line of a note. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d1deee0`: update plugin versions and improve README visuals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- Notes with newline-separated preferences or facts now keep each claim in
-  stored summaries without splitting wrapped lines into separate statements.
+superpowers/
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aceb2202` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d1deee0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

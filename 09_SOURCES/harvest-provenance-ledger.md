@@ -13575,3 +13575,5 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `e1e64c4b` | Multi-dimensional audit evidence | 2026-11-26T20:04:26.535Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `bd944ba6` | Multi-dimensional audit evidence | 2026-11-26T20:04:31.955Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `ec2ea636` | Multi-dimensional audit evidence | 2026-11-26T20:04:34.592Z |
+| `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-26T20:13:54.280Z |
+| `learn-github-caviraoss-longmemory` | `https://github.com/CaviraOSS/LongMemory` | `9d1deee0` | Multi-dimensional audit evidence | 2026-11-26T20:14:08.103Z |

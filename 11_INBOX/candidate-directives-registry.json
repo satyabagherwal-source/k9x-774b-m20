@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T20:04:43.677Z",
+  "last_updated": "2026-11-26T20:14:15.392Z",
   "directives": [
     {
       "id": "CD-001",
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-ZXE6",
+      "id": "CD-QKWQ",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ZXE6-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-QKWQ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
@@ -66929,6 +66929,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-QJSJ",
+      "directive_title": "update plugin versions and improve README visuals",
+      "source_repo": "caviraoss-longmemory-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QJSJ-update-plugin-versions-and-improve-readme-visuals.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-3883E3",
+      "directive_title": "update plugin versions and improve README visuals",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "caviraoss-longmemory",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3883E3-update-plugin-versions-and-improve-readm.md",
+      "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-REV-AB0000",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AB0000-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }

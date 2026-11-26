@@ -13542,3 +13542,5 @@
 | `CYCLE-20261126-DYJL` | `2026-11-26T20:04:26.529Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6725` | Yes (`934985a2...`) |
 | `CYCLE-20261126-E2Q6` | `2026-11-26T20:04:31.950Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10767` | Yes (`3902e251...`) |
 | `CYCLE-20261126-E4RF` | `2026-11-26T20:04:34.587Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10768` | Yes (`3b839d98...`) |
+| `CYCLE-20261126-Q4MA` | `2026-11-26T20:13:54.274Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`0dbd8e1e...`) |
+| `CYCLE-20261126-QFAA` | `2026-11-26T20:14:08.098Z` | `CaviraOSS/LongMemory` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10769` | Yes (`a6deabfa...`) |

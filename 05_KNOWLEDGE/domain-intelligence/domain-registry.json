@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T20:04:43.952Z",
-  "total_records": 2772,
+  "last_updated": "2026-11-26T20:14:15.661Z",
+  "total_records": 2774,
   "domains": {
     "A": {
       "total": 23,
@@ -1717,7 +1717,7 @@
       ]
     },
     "H": {
-      "total": 672,
+      "total": 674,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2390,7 +2390,9 @@
         "domain_intelligence-technical-construction-intelligence-apache-pinot-learnings-core-invariants",
         "DOM-H-7DD90772",
         "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-learnings-core-invarian"
       ]
     },
     "I": {
@@ -13372,8 +13374,8 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-2-research-knowledge-intelligence-zai-org-glm-5-2-core-invarian.md",
       "repository": "zai-org/GLM-5.2",
-      "content_hash": "c46cd7a1d93399b1003d794f3c5c3a6d22ac8c1401b3383a11bb093ae8c52452",
-      "created_at": "2026-11-23T06:45:40.050Z"
+      "content_hash": "7fa5d0c839277efb472307488f3e9beaea1cd757f9e20f63e3c27dd094e31356",
+      "created_at": "2026-11-26T20:13:54.601Z"
     },
     "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants",
@@ -13441,8 +13443,8 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-2-learnings-research-knowledge-intelligence-hf-zai-org-glm-5-2-.md",
       "repository": "hf-zai-org-glm-5.2-learnings",
-      "content_hash": "6a582f60f4d7a327fafa931df4612de17c5884758bc1b07e49db07b74481e5f0",
-      "created_at": "2026-11-23T06:45:57.848Z"
+      "content_hash": "122a4dc80b952d24f66a774e3b48bdd43b5bc73e8a71efa2401c8b41a9862cf1",
+      "created_at": "2026-11-26T20:14:12.345Z"
     },
     "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants",
@@ -46719,8 +46721,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "52ff2f3ebabdfa22efaec472266ada657530cf90cd65058f3d29f8e084ce536e",
-      "created_at": "2026-11-26T19:25:32.451Z"
+      "content_hash": "a9de320aea4e4d637df644fd25c486a53b9527ccf15b5e889a8dce4a9b082ca3",
+      "created_at": "2026-11-26T20:14:15.661Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -46799,6 +46801,24 @@
       "repository": "hf-kandinskylab-kandinsky-imagesr-2.0-learnings",
       "content_hash": "ab7808d35a244d27783a7136eb32baef9b9c5c7ccfd86214d5fef99333179c31",
       "created_at": "2026-11-26T19:16:48.623Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: CaviraOSS/LongMemory Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-caviraoss-longmemory-technical-construction-intelligence-caviraoss-longmemory-co.md",
+      "repository": "CaviraOSS/LongMemory",
+      "content_hash": "e4da32ed624c0f71a346d77277801a236832277ada7c19e2d8cf77447a62dd16",
+      "created_at": "2026-11-26T20:14:08.719Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-learnings-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-caviraoss-longmemory-learnings-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: caviraoss-longmemory-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-caviraoss-longmemory-learnings-technical-construction-intelligence-caviraoss-lon.md",
+      "repository": "caviraoss-longmemory-learnings",
+      "content_hash": "a52ed4d6607a4b60465556b84e802334f7b7cc04227201adb2c3e93cc11cf755",
+      "created_at": "2026-11-26T20:14:14.225Z"
     }
   }
 }
