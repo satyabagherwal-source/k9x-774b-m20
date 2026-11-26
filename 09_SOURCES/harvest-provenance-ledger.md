@@ -13350,3 +13350,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sand-ai-magi-2-preview` | `https://huggingface.co/sand-ai/MAGI-2-preview` | `hf-sand-ai` | Multi-dimensional audit evidence | 2026-11-26T09:12:19.785Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `dd2df86c` | Multi-dimensional audit evidence | 2026-11-26T09:12:29.125Z |
 | `learn-dom-d-b8d29b23` | `project://hf-sand-ai-magi-2-preview` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md` | 2026-11-26T09:13:05.394Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-26T09:21:58.671Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `cde61b53` | Multi-dimensional audit evidence | 2026-11-26T09:22:00.771Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `adfdb353` | Multi-dimensional audit evidence | 2026-11-26T09:22:09.350Z |

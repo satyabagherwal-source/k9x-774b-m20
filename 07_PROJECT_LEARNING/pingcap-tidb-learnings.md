@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `e722f8f1`  
+> **Source Version**: `adfdb353`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T08:56:13.877Z  
+> **Timestamp**: 2026-11-26T09:22:08.147Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T08:56:13.871Z  
+> **Harvest Timestamp**: 2026-11-26T09:22:08.141Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40772 stars
+- **Stars / Engagement**: 40778 stars
 
 ---
 
@@ -1926,11 +1926,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73726** (2026-11-24): **tests: stabilize read-only staleness transaction test**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #65731  Problem Summary:  `TestValidateReadOnlyInStalenessTransaction` waits about one second after creating its tables, then reads at `NOW(3) - INTERVAL 5 SECOND`. The snapshot can precede the test DDL, so the test may see an older table definition or fail with `Table 'test.t' doesn't exist`. Both symptoms appeared in CheckDev2 for #73724.  ### What changed and how does it work?  Take a PD timestamp after both tables have been created, then wait for its physical component to advance. This keeps the snapshot after the DDL when `tidb_parse_tso` drops the logical bits. Use the same snapshot for both read-only transaction forms.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [x] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  With local PD and TiKV v8.5.7, the test reproduced the missing-table error bef
+- **Issue #73829** (2026-11-26): **executor: redact temporal input values in INSERT diagnostics**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #73163  Problem Summary:  Temporal conversion errors on INSERT use a custom errno 1292 message that omits the value’s redaction metadata. INSERT IGNORE exposes the same message as a warning.  ### What changed and how does it work?  Mark the input value (argument 1) as redactable in the INSERT-specific message. This keeps the type, column and row number visible. Cover OFF, ON and MARKER with the formatter used by both error and warning paths.  This fixes part B. The independent JSON path position fix (part A) is in #73171. The earlier #73212 addressing part B was closed without merging.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Verification: `go test -tags=intest,deadlock ./pkg/util/dbterror/exeerrors ./pkg/util/dbterror ./pkg/errno -count=1`. T
 
-- **Issue #73719** (2026-11-25): **statistics: stop passing the whole stats handle to its components**
-  *Symptoms*: ## Enhancement  Every component of the stats handle (`pkg/statistics/handle`) gets the whole `*Handle` (73 methods), and `Handle` embeds every component. So the components reach each other only through `Handle`, their real dependencies are hidden, and the handle and its components form a cycle.  ```mermaid flowchart TB   subgraph before["Before: every component depends on the whole Handle"]     H1["Handle<br/>73 methods, embeds every component"]     C1[cache] --> H1     RW1[read-writer] --> H1     SL1[sync load] --> H1     AA1[auto-analyze] --> H1     GM1[global merge] --> H1     H1 -.-> C1 & RW1 & SL1 & AA1 & GM1   end ```  Goal (a pure refactor with no behavior change): `NewHandle` builds each component in dependency order and gives it only its real dependencies.  ```mermaid flowchart TB   subgraph after["After: components depend on each other directly"]     H2[Handle]     H2 -.-> GM2[global merge] & AA2[auto-analyze] & SL2[sync load]     GM2 --> RW2[read-writer]     RW2 --> C2[cache]     SL2 --> C2     AA2 --> C2   end ```  A solid arrow means "depends on". A dotted arrow means that `Handle` holds the component; the figure shows only some of these.  This also lets ANALYZE use a set of components without a stats cache (#73495).  Implementation: #73688 
+- **Issue #73827** (2026-11-26): **planner: expand value-preserving virtual filters in MPP | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5**
+  *Symptoms*: ### What problem does this PR solve?  Issue Number: ref #73782  This follows up on #73789 and adapts the filter expansion from #73823 to the 8.5 FTS MPP scan path. A filter on a virtual column can prevent MPP even when TiFlash can compute the same value from stored columns.  ### What changed and how does it work?  - Use the same scan and column-pruning path for virtual filters that can be expanded into either a value-preserving expression or an explicit generated-column cast. - Allow same-type virtual integer aliases and `ABS` over a stored integer to expand using the existing MPP protocol. Keep the marked `TEXT` assignment cast from #73789 behind MPP v3. Its TiFlash support is in pingcap/tiflash#11380. - Leave projection and index substitution behavior unchanged. The boundary test checks that `txt_lower = 'x'` returns the row and `LOWER(txt) = 'x'` returns no rows, even with the generated-column index present.  ### Check List  - [x] Focused Go planner regressions for MPP v2 and v3 filters, root fallback, and the generated-column index boundary. - [x] Bazel planner build with nogo. - [x] Local TiDB and one TiFlash node using the #11380 implementation. Verified integer filter results on v2 and matching root results and warning 1406 for the original virtual TEXT query on v2, v3, and v3 shuffle. The v3 plans used an MPP Hash Semi Join.  ### Release note  ```release-note Allow eligible filter-only virtual integer columns defined as a stored integer or its absolute value to be eva
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1947,275 +1947,279 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c09f6278` (2026-11-25)
-**Commit Message**: ddl: fix hypothetical expression index creation (#72887)
+### Incident Patch 1: `452929bd` (2026-11-25)
+**Commit Message**: planner: fix ANALYZE panic when a skipped column is needed by a generated column or an index (#72160)
 
-close pingcap/tidb#72886
+close pingcap/tidb#72122
 
-**File**: `pkg/ddl/executor.go` (modified, +20/-7)
+**File**: `pkg/executor/test/analyzetest/analyze_test.go` (modified, +26/-5)
 ```diff
-@@ -5921,24 +5921,27 @@ func (e *executor) CreateIndex(ctx sessionctx.Context, stmt *ast.CreateIndexStmt
- }
+@@ -2103,6 +2103,10 @@ func TestIssue61609(t *testing.T) {
+ // | JSON column (not used by the generated columns)  | ❌ No           | Excluded by tidb_analyze_skip_column_types setting |
+ // | Index on virtual column                          | ✅ Yes          | Index entries are stored in TiKV                   |
+ // | Index on stored column                           | ✅ Yes          | Index entries are stored in TiKV                   |
++// | JSON column only used by skipped columns         | ❌ No           | Excluded by tidb_analyze_skip_column_types setting |
++// | Generated column depending on a skipped column   | ❌ No           | Its value needs a skipped column, at any depth     |
++// | Vector column used by an expression index        | ✅ Yes          | Needed to build the expression index statistics    |
++// | Expression index on the vector column            | ✅ Yes          | Index entries are stored in TiKV                   |
+ func TestGeneratedColumns(t *testing.T) {
+ 	store, dom := testkit.CreateMockStoreAndDomain(t)
+ 	tk := testkit.NewTestKit(t, store)
+@@ -2115,15 +2119,23 @@ func TestGeneratedColumns(t *testing.T) {
+ 		virtual_col VARCHAR(50) AS (JSON_UNQUOTE(JSON_EXTRACT(data, '$.name'))) VIRTUAL,
+ 		stored_col VARCHAR(50) AS (JSON_UNQUOTE(JSON_EXTRACT(data, '$.status'))) STORED,
+ 		json_but_not_used_by_generated_column JSON,
++		skipped_data JSON,
++		virtual_on_skipped INT AS (JSON_EXTRACT(skipped_data, '$.x')) VIRTUAL,
++		stored_on_skipped INT AS (JSON_EXTRACT(skipped_data, '$.x')) STORED,
++		virtual_on_virtual INT AS (virtual_on_skipped + 1) VIRTUAL,
++		virtual_on_stored INT AS (stored_on_skipped + 1) VIRTUAL,
++		stored_on_generated INT AS (virtual_on_virtual + virtual_on_stored) STORED,
++		vector_col VECTOR(3),
+ 		INDEX idx_virtual (virtual_col),
+-		INDEX idx_stored (stored_col)
++		INDEX idx_stored (stored_col),
++		INDEX idx_vector_is_null ((vector_col IS NULL))
+ 	)`)
  
- // addHypoIndexIntoCtx adds this index as a hypo-index into this ctx.
--func (*executor) addHypoIndexIntoCtx(ctx sessionctx.Context, schemaName, tableName ast.CIStr, indexInfo *model.IndexInfo) error {
-+func (*executor) addHypoIndexIntoCtx(ctx sessionctx.Context, schemaName, tableName ast.CIStr, indexInfo *model.IndexInfo, hiddenCols []*model.ColumnInfo) error {
- 	sctx := ctx.GetSessionVars()
- 	indexName := indexInfo.Name
+ 	// Insert test data with simple JSON
+-	tk.MustExec(`INSERT INTO test_gen_cols (id, data, json_but_not_used_by_generated_column) VALUES
+-		(1, '{"name": "user1", "status": "active"}', '{"category": "admin", "level": 1}'),
+-		(2, '{"name": "user2", "status": "inactive"}', '{"category": "user", "level": 2}'),
+-		(3, '{"name": "user3", "status": "active"}', '{"category": "user", "level": 1}')`)
++	tk.MustExec(`INSERT INTO test_gen_cols (id, data, json_but_not_used_by_generated_column, skipped_data, vector_col) VALUES
++		(1, '{"name": "user1", "status": "active"}', '{"category": "admin", "level": 1}', '{"x": 1}', '[1,2,3]'),
++		(2, '{"name": "user2", "status": "inactive"}', '{"category": "user", "level": 2}', '{"x": 2}', NULL),
++		(3, '{"name": "user3", "status": "active"}', '{"category": "user", "level": 1}', '{"x": 3}', '[4,5,6]')`)
  
- 	if sctx.HypoIndexes == nil {
--		sctx.HypoIndexes = make(map[string]map[string]map[string]*model.IndexInfo)
-+		sctx.HypoIndexes = make(map[string]map[string]map[string]*model.HypoIndexInfo)
- 	}
- 	if sctx.HypoIndexes[schemaName.L] == nil {
--		sctx.HypoIndexes[schemaName.L] = make(map[string]map[string]*model.IndexInfo)
-+		sctx.HypoIndexes[schemaName.L] = make(map[string]map[string]*model.HypoIndexInfo)
- 	}
- 	if sctx.HypoIndexes[schemaName.L][tableName.L] == nil {
--		sctx.HypoIndexes[schemaName.L][tableName.L] = make(map[string]*model.IndexInfo)
-+		sctx.HypoIndexes[schemaName.L][tableName.L] = make(map[string]*model.HypoIndexInfo)
- 	}
- 	if _, exist := sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L]; exist {
- 		return errors.Trace(errors.Errorf("conflict hypo index name %s", indexName.L))
- 	}
- 
--	sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L] = indexInfo
-+	sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L] = &model.HypoIndexInfo{
-+		IndexInfo:     indexInfo,
-+		HiddenColumns: hiddenCols,
+ 	// Analyze the table
+ 	tk.MustExec("ANALYZE TABLE test_gen_cols")
+@@ -2152,6 +2164,15 @@ func TestGeneratedColumns(t *testing.T) {
+ 	// For indexes on generated columns, we collect statistics because index entries are stored in TiKV regardless of whether the column is virtual or stored
+ 	require.True(t, tblStats.GetIdx(tbl.Meta().Indices[0].ID).IsAnalyzed())
+ 	require.True(t, tblStats.GetIdx(tbl.Meta().Indices[1].ID).IsAnalyzed())
++
++	// A skipped column also skips the generated columns over it, at any depth. See https://github.com/pingcap/tidb/issues/72122.
++	for _, name := range []string{"skipped_data", "virtual_on_skipped", "stored_on_skipped", "virtual_on_virtual", "virtual_on_stored", "stored_on_generated"} {
++		require.False(t, tblStats.GetCol(tbl.Meta().FindPublicColumnByName(name).ID).IsAnalyzed(), name)
 +	}
- 	return nil
++
++	// A vector column that an expression index needs is analyzed, like the base JSON column.
++	require.True(t, tblStats.GetCol(tbl.Meta().FindPublicColumnByName("vector_col").ID).IsAnalyzed())
++	require.True(t, tblStats.GetIdx(tbl.Meta().FindIndexByName("idx_vector_is_null").ID).IsAnalyzed())
  }
  
-@@ -6012,12 +6015,22 @@ func (e *executor) createIndex(ctx sessionctx.Context, ti ast.Ident, keyType ast
- 	}
- 
- 	if isHypo { // for hypo-index
--		indexInfo, err := BuildIndexInfo(metaBuildCtx, tblInfo, indexName, false, unique, model.ColumnarIndexTypeNA,
-+		hypoTblInfo := tblInfo
-+		if len(hiddenCols) > 0 {
-+			hypoTblInfo = tblInfo.Clone()
-+			hypoTblInfo.Columns = finalColumns
-+			for i, col := range hiddenCols {
-+				col.ID = tblInfo.MaxColumnID + int64(i) + 1
-+				col.Offset = len(tblInfo.Columns) + i
-+				col.State = model.StatePublic
-+			}
-+		}
-+		indexInfo, err := BuildIndexInfo(metaBuildCtx, hypoTblInfo, indexName, false, unique, model.ColumnarIndexTypeNA,
- 			indexPartSpecifications, indexOption, model.StatePublic)
- 		if err != nil {
- 			return err
- 		}
--		return e.addHypoIndexIntoCtx(ctx, ti.Schema, ti.Name, indexInfo)
-+		return e.addHypoIndexIntoCtx(ctx, ti.Schema, ti.Name, indexInfo, hiddenCols)
- 	}
- 
- 	splitOpt, autoPreSplit, err := buildIndexPreSplitOpt(indexOption)
+ // TestSkipStatsForGeneratedColumnsOnSkippedColumns verifies that when we skip JSON columns, the generated columns that depend on them are also skipped.
 ```
 
-**File**: `pkg/ddl/mv_index_test.go` (modified, +6/-0)
+**File**: `pkg/planner/core/planbuilder.go` (modified, +6/-6)
 ```diff
-@@ -132,6 +132,12 @@ func TestCreateUniqueIndexOnMaterializedView(t *testing.T) {
- 	)
- 	tk.MustExec("create index idx_mv_g1 on mv_unique_agg (g1)")
- 	tk.MustExec("alter table mv_unique_agg add key idx_mv_cnt (cnt)")
-+	tk.MustExec("create index idx_mv_hypo_expr type hypo on mv_unique_agg ((cnt + 1))")
-+	tk.MustExec("drop hypo index idx_mv_hypo_expr on mv_unique_agg")
-+	tk.MustExec("create index idx_mv_hypo type hypo on mv_unique_agg (cnt)")
-+	tk.MustExec("drop hypo index idx_mv_hypo on mv_unique_agg")
-+	tk.MustExec("create index idx_base_hypo_expr type hypo on t_mv_unique ((v1 + 1))")
-+	tk.MustExec("drop hypo index idx_base_hypo_expr on t_mv_unique")
- 
- 	tk.MustExec(`create table t_mv_nullable_key (
- 		id bigint not null primary key,
-```
-
-**File**: `pkg/executor/show.go` (modified, +2/-16)
-```diff
-@@ -1111,6 +1111,7 @@ func ConstructResultOfShowCreateTable(ctx sessionctx.Context, dbName ast.CIStr,
- 		ConstructResultOfShowCreateSequence(ctx, tableInfo, buf)
- 		return nil
+@@ -2618,12 +2618,9 @@ func (b *PlanBuilder) filterSkipColumnTypes(origin []*model.ColumnInfo, tbl *res
  	}
-+	tableInfo, hypoIndexes := ctx.GetSessionVars().GetHypoIndexTableInfo(dbName.L, tableInfo)
- 
- 	tblCharset := tableInfo.Charset
- 	if len(tblCharset) == 0 {
-@@ -1257,22 +1258,7 @@ func ConstructResultOfShowCreateTable(ctx sessionctx.Context, dbName ast.CIStr,
- 		}
- 	}
- 
--	// consider hypo-indexes
--	hypoIndexes := ctx.GetSessionVars().HypoIndexes
--	if hypoIndexes != nil {
--		schemaName := dbName.L
--		tblName := tableInfo.Name.L
--		if hypoIndexes[schemaName] != nil && hypoIndexes[schemaName][tblName] != nil {
--			hypoIndexList := make([]*model.IndexInfo, 0, len(hypoIndexes[schemaName][tblName]))
--			for _, index := range hypoIndexes[schemaName][tblName] {
--				hypoIndexList = append(hypoIndexList, index)
--			}
--			sort.Slice(hypoIndexList, func(i, j int) bool { // to make the result stable
--				return hypoIndexList[i].Name.O < hypoIndexList[j].Name.O
--			})
--			publicIndices = append(publicIndices, hypoIndexList...)
+ 	// If one column's type is in the skipTypes list and it doesn't exist in mustAnalyzedCols, we will skip it.
+ 	for _, colInfo := range origin {
+-		// Vector type is skip by hardcoded. Just because that collecting it is meanless for current TiDB.
+-		if colInfo.FieldType.GetType() == mysql.TypeTiDBVectorFloat32 {
+-			skipCol = append(skipCol, colInfo)
+-			continue
 -		}
--	}
-+	publicIndices = append(publicIndices, hypoIndexes...)
- 	if len(publicIndices) > 0 {
- 		buf.WriteString(",\n")
+ 		_, skip := skipTypes[types.TypeToStr(colInfo.FieldType.GetType(), colInfo.FieldType.GetCharset())]
++		// Vector columns are skipped whatever skipTypes says, since their statistics are useless for current TiDB.
++		skip = skip || colInfo.FieldType.GetType() == mysql.TypeTiDBVectorFloat32
+ 		// Currently, if the column exists in some index(except MV Index), we need to bring the column's sample values
+ 		// into TiDB to build the index statistics.
+ 		_, keep := mustAnalyze[colInfo.ID]
+@@ -2638,7 +2635,9 @@ func (b *PlanBuilder) filterSkipColumnTypes(origin []*model.ColumnInfo, tbl *res
+ 		skipColNameMap[colInfo.Name.L] = struct{}{}
  	}
+ 
+-	// Filter out generated columns that depend on skipped columns
++	// Filter out generated columns that depend on skipped columns.
++	// A generated column can only depend on generated columns defined before it, so adding each
++	// skipped one to skipColNameMap also skips the generated columns that depend on it.
+ 	filteredResult := make([]*model.ColumnInfo, 0, len(result))
+ 	for _, colInfo := range result {
+ 		shouldSkip := false
+@@ -2652,6 +2651,7 @@ func (b *PlanBuilder) filterSkipColumnTypes(origin []*model.ColumnInfo, tbl *res
+ 			for depName := range colInfo.Dependences {
+ 				if _, exists := skipColNameMap[depName]; exists && !decodableFromStorage {
+ 					skipCol = append(skipCol, colInfo)
++					skipColNameMap[colInfo.Name.L] = struct{}{}
+ 					shouldSkip = true
+ 					break
+ 				}
 ```
 
-**File**: `pkg/meta/model/index.go` (modified, +7/-0)
+---
+
+### Incident Patch 2: `4180d6d2` (2026-11-26)
+**Commit Message**: dumpling: fix integration CI timeout and duplicate cache saves (#73790)
+
+close pingcap/tidb#73786
+
+**File**: `.github/workflows/integration-test-dumpling.yml` (modified, +9/-1)
 ```diff
-@@ -297,6 +297,13 @@ type IndexInfo struct {
- 	RegionSplitPolicy  *RegionSplitPolicy `json:"region_split_policy,omitempty"` // RegionSplitPolicy is the persistent split policy.
+@@ -12,6 +12,7 @@ on:
+       - master
+       - release-*
+     paths:
++      - '.github/workflows/integration-test-dumpling.yml'
+       - "dumpling/**"
+       - "br/pkg/storage/**"
+       - "br/pkg/utils/**"
+@@ -26,6 +27,7 @@ on:
+       - master
+       - release-*
+     paths:
++      - '.github/workflows/integration-test-dumpling.yml'
+       - 'dumpling/**'
+       - 'br/pkg/storage/**'
+       - 'br/pkg/utils/**'
+@@ -53,7 +55,9 @@ jobs:
+           - 8.0.45
+           - 8.4.8
+     runs-on: ubuntu-latest
+-    timeout-minutes: 15
++    # Cold-cache runs build TiDB, Lightning and failpoint-enabled Dumpling.
++    # Reserve time for those builds and cache upload outside the integration step.
++    timeout-minutes: 30
+     services:
+       mysql:
+         image: mysql:${{ matrix.mysql_version }}
+@@ -72,6 +76,8 @@ jobs:
+         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+         with:
+           go-version-file: 'go.mod'
++          # The explicit cache step below owns the Go caches and their upload.
++          cache: false
+       - name: "try to use build cache"
+         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+         with:
+@@ -90,6 +96,8 @@ jobs:
+       - name: "build lightning"
+         run: make build_lightning
+       - name: "integration test"
++        # This target builds Dumpling before running the test scripts.
++        timeout-minutes: 15
+         run: make dumpling_integration_test VERBOSE="true"
+       - name: "dump tidb log on failure"
+         if: ${{ failure() }}
+```
+
+---
+
+### Incident Patch 3: `2698c937` (2026-11-25)
+**Commit Message**: planner: fix upper estimates for TopN and compound index ranges (#73727)
+
+ref pingcap/tidb#71999
+
+**File**: `pkg/planner/cardinality/row_count_column.go` (modified, +4/-2)
+```diff
+@@ -251,8 +251,9 @@ func betweenRowCountOnColumn(sctx planctx.PlanContext, c *statistics.Column, l,
+ 		return histBetweenCnt
+ 	}
+ 	topNCnt := float64(c.TopN.BetweenCount(sctx, lowEncoded, highEncoded))
+-	// Only add TopN count to the main estimate, keep min/max estimates from histogram
++	// The histogram excludes TopN values, which also contribute to the upper bound.
+ 	histBetweenCnt.Est += topNCnt
++	histBetweenCnt.MaxEst += topNCnt
+ 	return histBetweenCnt
  }
  
-+// HypoIndexInfo keeps a session-local index together with its expression columns.
-+// Embedding IndexInfo preserves the session-state JSON format of ordinary hypothetical indexes.
-+type HypoIndexInfo struct {
-+	*IndexInfo
-+	HiddenColumns []*ColumnInfo `json:"hidden_columns,omitempty"`
+@@ -343,5 +344,6 @@ func getPseudoRowCountWithPartialStats(sctx planctx.PlanContext, coll *statistic
+ 		maxCount += corrSelectivity * tableRowCount
+ 	}
+ 	totalCount = mathutil.Clamp(totalCount, 1, tableRowCount)
+-	return totalCount, maxCount, nil
++	// Disjoint ranges can share a histogram bucket's skew allowance.
++	return totalCount, min(maxCount, tableRowCount), nil
+ }
+```
+
+**File**: `pkg/planner/cardinality/selectivity_test.go` (modified, +66/-0)
+```diff
+@@ -1014,6 +1014,72 @@ func TestNewIndexWithLowNDVColumnStats(t *testing.T) {
+ 	require.Greater(t, estRows, 10.0)
+ }
+ 
++func TestMissingStatsIndexRangeMaxIncludesTopN(t *testing.T) {
++	ctx := mock.NewContext()
++	ctx.GetSessionVars().RiskRangeSkewRatio = 0
++	field := types.NewFieldType(mysql.TypeLonglong)
++	coll := statistics.NewHistColl(1, 1000, 0, 2, 0)
++	coll.CanNotTriggerLoad = true
++	topNEntry := func(value int64, count uint64) statistics.TopNMeta {
++		encoded, err := codec.EncodeKey(ctx.GetSessionVars().StmtCtx.TimeZone(), nil, types.NewIntDatum(value))
++		require.NoError(t, err)
++		return statistics.TopNMeta{Encoded: encoded, Count: count}
++	}
++	setColumnStats := func(id, ndv, lower, upper, bucketCount, repeat int64, topN ...statistics.TopNMeta) {
++		hist := statistics.NewHistogram(id, ndv, 0, 0, field, 1, 0)
++		lo, hi := types.NewIntDatum(lower), types.NewIntDatum(upper)
++		hist.AppendBucket(&lo, &hi, bucketCount, repeat)
++		coll.SetCol(id, &statistics.Column{
++			Histogram:         *hist,
++			Info:              &model.ColumnInfo{ID: id},
++			TopN:              &statistics.TopN{TopN: topN},
++			StatsLoadedStatus: statistics.NewStatsFullLoadStatus(),
++			StatsVer:          statistics.Version2,
++		})
++	}
++	setColumnStats(1, 2, 2, 2, 100, 100, topNEntry(1, 900))
++	setColumnStats(2, 101, 0, 100, 700, 10, topNEntry(15, 300))
++
++	// Estimate a = 1 AND 10 <= b AND b < 20 on an unanalyzed index (a, b).
++	// The range excludes the last histogram value but includes the TopN value 15.
++	one, ten, twenty := types.NewIntDatum(1), types.NewIntDatum(10), types.NewIntDatum(20)
++	binary := collate.GetBinaryCollator()
++	columnRange := &ranger.Range{
++		LowVal: []types.Datum{ten}, HighVal: []types.Datum{twenty},
++		HighExclude: true, Collators: []collate.Collator{binary},
++	}
++	indexRange := &ranger.Range{
++		LowVal: []types.Datum{one, ten}, HighVal: []types.Datum{one, twenty},
++		HighExclude: true, Collators: []collate.Collator{binary, binary},
++	}
++
++	columnEstimate, err := cardinality.GetRowCountByColumnRanges(ctx, coll, 2, []*ranger.Range{columnRange}, false)
++	require.NoError(t, err)
++	require.InDelta(t, 369, columnEstimate.Est, 1e-9)
++	require.InDelta(t, 69, columnEstimate.MinEst, 1e-9)
++	indexCols := []*expression.Column{{ID: 1, UniqueID: 1, RetType: field}, {ID: 2, UniqueID: 2, RetType: field}}
++	indexEstimate, err := cardinality.GetRowCountByIndexRanges(ctx, coll, 3, []*ranger.Range{indexRange}, indexCols)
++	require.NoError(t, err)
++	require.InDelta(t, 369*math.Sqrt(0.9), indexEstimate.Est, 1e-9)
++
++	// b's worst case is 690 histogram rows plus 300 TopN rows, capped by
++	// the 900 rows matching a when estimating the compound index range.
++	require.Equal(t, 900.0, indexEstimate.MaxEst)
++	require.Equal(t, 990.0, columnEstimate.MaxEst)
++
++	// Two disjoint ranges in the same histogram bucket can each use the bucket's
++	// skew bound. Their combined maximum still cannot exceed the table row count.
++	setColumnStats(2, 103, 0, 100, 400, 10, topNEntry(15, 300), topNEntry(35, 300))
++	otherRange := &ranger.Range{
++		LowVal: []types.Datum{one, types.NewIntDatum(30)}, HighVal: []types.Datum{one, types.NewIntDatum(40)},
++		HighExclude: true, Collators: []collate.Collator{binary, binary},
++	}
++	indexEstimate, err = cardinality.GetRowCountByIndexRanges(ctx, coll, 3, []*ranger.Range{indexRange, otherRange}, indexCols)
++	require.NoError(t, err)
++	require.InDelta(t, 2*339*math.Sqrt(0.9), indexEstimate.Est, 1e-9)
++	require.Equal(t, 1000.0, indexEstimate.MaxEst)
 +}
 +
- // Hash64 implement HashEquals interface.
- func (index *IndexInfo) Hash64(h base.Hasher) {
- 	h.HashInt64(index.ID)
-```
-
-**File**: `pkg/planner/core/integration_test.go` (modified, +32/-0)
-```diff
-@@ -905,6 +905,38 @@ func TestHypoIndexHint(t *testing.T) {
- 		testKit.MustHavePlan(`select 1 from t1, t2 where t1.a=1 and t1.b=t2.b`, "─HashJoin")
- 		testKit.MustHavePlan(`select /*+ HYPO_INDEX(t1, idx_ab, a, b), HYPO_INDEX(t2, idx_b, b) */ 1 from t1, t2 where t1.a=1 and t1.b=t2.b`, "IndexHashJoin")
- 
-+		// Expression hypothetical indexes must keep their hidden columns for planning.
-+		testKit.MustExec("insert into t1 values (41, 41, 44)")
-+		testKit.MustExec("create index hypo_expr_a type hypo on t1 ((a + 1))")
-+		checkRange := func(sql, index, indexRange string) {
-+			plan := fmt.Sprint(testKit.MustQuery("explain format = 'brief' " + sql).Rows())
-+			require.Contains(t, plan, "IndexRangeScan")
-+			require.Contains(t, plan, "index:"+index+"(")
-+			require.Contains(t, plan, "range:"+indexRange)
-+		}
-+		checkRange("select * from t1 where a + 1 = 42", "hypo_expr_a", "[42,42]")
-+		testKit.MustExec("create index hypo_expr_bc type hypo on t1 ((b + 2), c)")
-+		checkRange("select b + 2, c from t1 where b + 2 = 43 and c = 44", "hypo_expr_bc", "[43 44,43 44]")
-+		showCreate := testKit.MustQuery("show create table t1").Rows()[0][1].(string)
-+		require.Contains(t, showCreate, "KEY `hypo_expr_a` ((`a` + 1)) /* HYPO INDEX */")
-+		require.Contains(t, showCreate, "KEY `hypo_expr_bc` ((`b` + 2),`c`) /* HYPO INDEX */")
-+
-+		// The hypothetical columns must not leak into execution or another session.
-+		testKit.MustQuery("select * from t1").Check(testkit.Rows("41 41 44"))
-+		other := testkit.NewTestKit(t, testKit.Session().GetStore())
-+		require.NotContains(t, other.MustQuery("show create table test.t1").Rows()[0][1], "HYPO INDEX")
-+		other.MustQuery("select * from test.t1").Check(testkit.Rows("41 41 44"))
-+		tbl, err := domain.GetDomain(testKit.Session()).InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr("t1"))
-+		require.NoError(t, err)
-+		require.Len(t, tbl.Meta().Columns, 3)
-+		require.Empty(t, tbl.Meta().Indices)
-+
-+		testKit.MustExec("drop hypo index hypo_expr_a on t1")
-+		checkRange("select b + 2, c from t1 where b + 2 = 43 and c = 44", "hypo_expr_bc", "[43 44,43 44]")
-+		testKit.MustExec("drop hypo index hypo_expr_bc on t1")
-+		testKit.MustNotHavePlan("select * from t1 where a + 1 = 42", "IndexRangeScan")
-+		require.NotContains(t, testKit.MustQuery("show create table t1").Rows()[0][1], "HYPO INDEX")
-+
- 		// invalid cases
- 		testKit.MustHavePlan(`select /*+ HYPO_INDEX(t1, idx_a) */ a from t1 where a=1`, "TableFullScan")
- 		testKit.MustQuery(`show warnings`).Check(testkit.Rows("Warning 1105 Invalid HYPO_INDEX hint, valid usage: HYPO_INDEX(tableName, indexName, cols...)"))
-```
-
-**File**: `pkg/planner/core/logical_plan_builder.go` (modified, +13/-2)
-```diff
-@@ -5063,6 +5063,16 @@ func (b *PlanBuilder) buildDataSource(ctx context.Context, tn *ast.TableName, as
- 		}
- 	}
- 	tableInfo := tbl.Meta()
-+	if sessionVars.StmtCtx.InExplainStmt {
-+		hypoTblInfo, _ := sessionVars.GetHypoIndexTableInfo(dbName.L, tableInfo)
-+		if hypoTblInfo != tableInfo {
-+			tbl, err = table.TableFromMeta(tbl.Allocators(nil), hypoTblInfo)
-+			if err != nil {
-+				return nil, err
-+			}
-+			tableInfo = hypoTblInfo
-+		}
-+	}
- 
- 	if b.isCreateView && tableInfo.TempTableType == model.TempTableLocal {
- 		return nil, plannererrors.ErrViewSelectTemporaryTable.GenWithStackByArgs(tn.Name)
-@@ -5227,8 +5237,9 @@ func (b *PlanBuilder) buildDataSource(ctx context.Context, tn *ast.TableName, as
- 	}
- 
- 	// Try to substitute generate column only if there is an index on generate column.
--	for _, index := range tableInfo.Indices {
--		if index.State != model.StatePublic {
-+	for _, path := range possiblePaths {
-+		index := path.Index
-+		if index == nil || index.State != model.StatePublic {
- 			continue
- 		}
- 		for _, indexCol := range index.Columns {
-```
-
-**File**: `pkg/planner/core/planbuilder.go` (modified, +4/-7)
-```diff
-@@ -1448,13 +1448,10 @@ func getPossibleAccessPaths(ctx base.PlanContext, tableHints *hint.PlanHints, in
- 	}
- 
- 	// consider hypo-indexes
--	hypoIndexes := ctx.GetSessionVars().HypoIndexes // session level hypo-indexes
--	if ctx.GetSessionVars().StmtCtx.InExplainStmt && hypoIndexes != nil {
--		originalTableName := tblInfo.Name.L
--		if hypoIndexes[dbName.L] != nil && hypoIndexes[dbName.L][originalTableName] != nil {
--			for _, index := range hypoIndexes[dbName.L][originalTableName] {
--				publicPaths = append(publicPaths, &util.AccessPath{Index: index})
--			}
-+	if ctx.GetSessionVars().StmtCtx.InExplainStmt {
-+		_, hypoIndexes := ctx.GetSessionVars().GetHypoIndexTableInfo(dbName.L, tblInfo)
-+		for _, index := range hypoIndexes {
-+			publicPaths = append(publicPaths, &util.AccessPath{Index: index})
- 		}
- 	}
- 	if len(ctx.GetSessionVars().StmtCtx.HintedHypoIndexes) > 0 { // statement-level hypo-indexes from hints
-```
-
-**File**: `pkg/planner/indexadvisor/optimizer.go` (modified, +6/-4)
-```diff
-@@ -202,15 +202,17 @@ func (opt *optimizerImpl) addHypoIndex(hypoIndexes ...Index) error {
- 		}
- 
- 		if opt.sctx.GetSessionVars().HypoIndexes == nil {
--			opt.sctx.GetSessionVars().HypoIndexes = make(map[string]map[string]map[string]*model.IndexInfo)
-+			opt.sctx.GetSessionVars().HypoIndexes = make(map[string]map[string]map[string]*model.HypoIndexInfo)
- 		}
- 		if opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName] == nil {
--			opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName] = make(map[string]map[string]*model.IndexInfo)
-+			opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName] = make(map[string]map[string]*model.HypoIndexInfo)
- 		}
- 		if opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName] == nil {
--			opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName] = make(map[string]*model.IndexInfo)
-+			opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName] = make(map[string]*model.HypoIndexInfo)
-+		}
-+		opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName][h.IndexName] = &model.HypoIndexInfo{
-+			IndexInfo: idxInfo,
- 		}
--		opt.sctx.GetSessionVars().HypoIndexes[h.SchemaName][h.TableName][h.IndexName] = idxInfo
- 	}
- 	return nil
- }
+ func TestMissingStatsIndexWithVirtualColumn(t *testing.T) {
+ 	// An index without statistics on a virtual column (which has no column statistics) and a column with
+ 	// statistics must still account for the virtual column, and report its statistics as missing.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #73726** (2026-11-24): tests: stabilize read-only staleness transaction test (@winoros)
-- **PR #73718** (closed): planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078) (@ti-chi-bot[bot])
-- **PR #73705** (2026-11-25): br, docs: state that incremental restore skips masking policy DDL (@bb7133)
-- **PR #73701** (2026-11-24): mvservice: restore freshness alerts after rapid schedule changes (#73442) (@windtalker)
-- **PR #73700** (closed): planner: fall back to index stats when col has no stats (#69154) (@ti-chi-bot)
-- **PR #73699** (closed): objstore: support Volcengine TOS for metering-storage-uri and CLOUD_STORAGE_URI (@wd0517)
+- **PR #73829** (2026-11-26): executor: redact temporal input values in INSERT diagnostics (@YangKeao)
+- **PR #73827** (2026-11-26): planner: expand value-preserving virtual filters in MPP | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5 (@AilinKid)
+- **PR #73826** (2026-11-26): server: route PATCH status requests to HTTP (@D3Hunter)
+- **PR #73790** (2026-11-26): dumpling: fix integration CI timeout and duplicate cache saves (@expxiaoli)
+- **PR #73789** (2026-11-25): planner: push virtual TEXT filters down to TiFlash MPP | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5 (@AilinKid)
+- **PR #73763** (2026-11-25): *: update client-go to latest release-nextgen-202609 (@lcwangchao)
 
 ---
 
@@ -2235,53 +2239,46 @@ close pingcap/tidb#72886
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ddl: fix hypothetical expression index creation
+## X. planner: fix ANALYZE panic when a skipped column is needed by a generated column
 
 **RULE**:
-When implementing operations in `pkg/ddl/executor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/executor/test/analyzetest/analyze_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c09f6278`: ddl: fix hypothetical expression index creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `452929bd`: planner: fix ANALYZE panic when a skipped column is needed by a generated column or an index. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/executor.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/executor/test/analyzetest/analyze_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (*executor) addHypoIndexIntoCtx(ctx sessionctx.Context, schemaName, tableName ast.CIStr, indexInfo *model.IndexInfo, hiddenCols []*model.ColumnInfo) error {
-		sctx.HypoIndexes = make(map[string]map[string]map[string]*model.HypoIndexInfo)
-		sctx.HypoIndexes[schemaName.L] = make(map[string]map[string]*model.HypoIndexInfo)
-		sctx.HypoIndexes[schemaName.L][tableName.L] = make(map[string]*model.HypoIndexInfo)
-	sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L] = &model.HypoIndexInfo{
-		IndexInfo:     indexInfo,
-		HiddenColumns: hiddenCols,
-	}
-		hypoTblInfo := tblInfo
-		if len(hiddenCols) > 0 {
-			hypoTblInfo = tblInfo.Clone()
-			hypoTblInfo.Columns = finalColumns
-			for i, col := range hiddenCols {
-				col.ID = tblInfo.MaxColumnID + int64(i) + 1
-				col.Offset = len(tblInfo.Columns) + i
-				col.State = model.StatePublic
-			}
-		}
-		indexInfo, err := BuildIndexInfo(metaBuildCtx, hypoTblInfo, indexName, false, unique, model.ColumnarIndexTypeNA,
-		return e.addHypoIndexIntoCtx(ctx, ti.Schema, ti.Name, indexInfo, hiddenCols)
+// | JSON column only used by skipped columns         | ❌ No           | Excluded by tidb_analyze_skip_column_types setting |
+// | Generated column depending on a skipped column   | ❌ No           | Its value needs a skipped column, at any depth     |
+// | Vector column used by an expression index        | ✅ Yes          | Needed to build the expression index statistics    |
+// | Expression index on the vector column            | ✅ Yes          | Index entries are stored in TiKV                   |
+		skipped_data JSON,
+		virtual_on_skipped INT AS (JSON_EXTRACT(skipped_data, '$.x')) VIRTUAL,
+		stored_on_skipped INT AS (JSON_EXTRACT(skipped_data, '$.x')) STORED,
+		virtual_on_virtual INT AS (virtual_on_skipped + 1) VIRTUAL,
+		virtual_on_stored INT AS (stored_on_skipped + 1) VIRTUAL,
+		stored_on_generated INT AS (virtual_on_virtual + virtual_on_stored) STORED,
+		vector_col VECTOR(3),
+		INDEX idx_stored (stored_col),
+		INDEX idx_vector_is_null ((vector_col IS NULL))
+	tk.MustExec(`INSERT INTO test_gen_cols (id, data, json_but_not_used_by_generated_column, skipped_data, vector_col) VALUES
+		(1, '{"name": "user1", "status": "active"}', '{"category": "admin", "level": 1}', '{"x": 1}', '[1,2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-func (*executor) addHypoIndexIntoCtx(ctx sessionctx.Context, schemaName, tableName ast.CIStr, indexInfo *model.IndexInfo) error {
-		sctx.HypoIndexes = make(map[string]map[string]map[string]*model.IndexInfo)
-		sctx.HypoIndexes[schemaName.L] = make(map[string]map[string]*model.IndexInfo)
-		sctx.HypoIndexes[schemaName.L][tableName.L] = make(map[string]*model.IndexInfo)
-	sctx.HypoIndexes[schemaName.L][tableName.L][indexName.L] = indexInfo
-		indexInfo, err := BuildIndexInfo(metaBuildCtx, tblInfo, indexName, false, unique, model.ColumnarIndexTypeNA,
-		return e.addHypoIndexIntoCtx(ctx, ti.Schema, ti.Name, indexInfo)
+		INDEX idx_stored (stored_col)
+	tk.MustExec(`INSERT INTO test_gen_cols (id, data, json_but_not_used_by_generated_column) VALUES
+		(1, '{"name": "user1", "status": "active"}', '{"category": "admin", "level": 1}'),
+		(2, '{"name": "user2", "status": "inactive"}', '{"category": "user", "level": 2}'),
+		(3, '{"name": "user3", "status": "active"}', '{"category": "user", "level": 1}')`)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c09f6278` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `452929bd` are properly handled with clean fallback behavior.

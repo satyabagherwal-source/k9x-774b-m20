@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T09:13:05.436Z",
+  "updated_at": "2026-11-26T09:22:14.918Z",
   "stats": {
-    "total_discovered": 9717,
-    "approved_pending_harvest": 9217,
+    "total_discovered": 9723,
+    "approved_pending_harvest": 9223,
     "harvested_count": 0,
     "rejected_count": 500,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9204,
+      "COMMUNITY_AND_EXPERT": 9210,
       "OFFICIAL_DOCUMENTATION": 285,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -210301,6 +210301,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md",
         "fileName": "hf-sand-ai-magi-2-preview-learnings.md"
+      }
+    },
+    "SRC-46E6784622BD": {
+      "id": "SRC-46E6784622BD",
+      "url": "https://redirect.github.com/tafia/quick-xml",
+      "title": "https://redirect.github.com/tafia/quick-xml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:22:13.154Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-8E33E9C10929": {
+      "id": "SRC-8E33E9C10929",
+      "url": "https://redirect.github.com/tafia/quick-xml/blob/HEAD/Changelog.md",
+      "title": "https://redirect.github.com/tafia/quick-xml/blob/HEAD/Changelog.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:22:13.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-ADC54F9FC7F0": {
+      "id": "SRC-ADC54F9FC7F0",
+      "url": "https://redirect.github.com/tafia/quick-xml/compare/v0.41.0...v0.42.0",
+      "title": "https://redirect.github.com/tafia/quick-xml/compare/v0.41.0...v0.42.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:22:13.278Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-E184A66830E8": {
+      "id": "SRC-E184A66830E8",
+      "url": "https://github.com/astral-sh/ruff/commit/8c6fa3be8b0188e2f7aa0e7e69e93451fee52bfe",
+      "title": "https://github.com/astral-sh/ruff/commit/8c6fa3be8b0188e2f7aa0e7e69e93451fee52bfe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:22:13.365Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-8B9C94763672": {
+      "id": "SRC-8B9C94763672",
+      "url": "https://github.com/astral-sh/ruff/commit/083bdc421969a1c538425802d725b57fc7b2e0c8",
+      "title": "https://github.com/astral-sh/ruff/commit/083bdc421969a1c538425802d725b57fc7b2e0c8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:22:13.428Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-B2877FA3BC27": {
+      "id": "SRC-B2877FA3BC27",
+      "url": "https://github.com/pingcap/tidb/issues/72122",
+      "title": "https://github.com/pingcap/tidb/issues/72122",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T09:22:14.918Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
+        "fileName": "pingcap-tidb-learnings.md"
       }
     }
   }

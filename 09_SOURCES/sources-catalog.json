@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "6b3ff9c82f2b218919a9b7bd7b0e20fce3b1bdb974a3a53bc882811ec4fa61e6",
-    "lastHarvestedAt": "2026-11-22T16:29:01.483Z",
+    "contentHash": "f35692458ae5ba4fff5392175810898f75beba93380f930eb81a869c69f5af65",
+    "lastHarvestedAt": "2026-11-26T09:21:58.671Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "e722f8f1",
+    "sourceVersion": "adfdb353",
     "license": "Apache-2.0",
-    "contentHash": "be1627b5d3bd3ae1a8828ef5bbf5a6e51f3a1fcb2522ec63b28de64869411dd6",
-    "lastHarvestedAt": "2026-11-25T08:56:15.034Z",
+    "contentHash": "46da9f3618239aa5d707a11b8cee3e5e76357b8f504c44fb34af02833ece44d4",
+    "lastHarvestedAt": "2026-11-26T09:22:09.350Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "ce19ae70",
+    "sourceVersion": "cde61b53",
     "license": "MIT",
-    "contentHash": "2814f579fcd1579f4a35e9054f394df5e1b4bfe9ee36248f35d06871d652d7c8",
-    "lastHarvestedAt": "2026-11-25T02:10:24.418Z",
+    "contentHash": "4743a21c9f63ffeb47bd7205e77bc43b4c74b6bd50491fd13874da88953973c2",
+    "lastHarvestedAt": "2026-11-26T09:22:00.771Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

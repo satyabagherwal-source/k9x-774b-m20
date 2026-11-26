@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T02:10:34.536Z",
+  "timestamp": "2026-11-26T09:22:13.556Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-astral-sh-ruff-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [astral-sh-ruff-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T02:10:34.536Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T09:22:13.556Z`  
 > **Learning ID**: `LEARN-EVO-astral-sh-ruff-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `ce19ae70`  
+> **Source Version**: `cde61b53`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T02:10:23.275Z  
+> **Timestamp**: 2026-11-26T09:21:59.587Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T02:10:23.157Z  
+> **Harvest Timestamp**: 2026-11-26T09:21:59.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 51466 stars
+- **Stars / Engagement**: 51547 stars
 
 ---
 
@@ -2235,761 +2235,243 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb4e0b24` (2026-11-24)
-**Commit Message**: [`flake8-bugbear`] Detect jumps in nested branches (`B012`) (#30421)
+### Incident Patch 1: `807e61fe` (2026-11-25)
+**Commit Message**: Update Rust crate quick-xml to 0.42.0 (#30926)
 
-## Summary
+This PR contains the following updates:
 
-Ruff's B012 rule was missing some return statements inside nested else
-and except branches of finally blocks. I traced the issue to walk_stmt
-which only visited the main body of certain AST statements.
+| Package | Type | Update | Change |
+|---|---|---|---|
+| [quick-xml](https://redirect.github.com/tafia/quick-xml) |
+workspace.dependencies | minor | `0.41.0` → `0.42.0` |
 
-My change extends the traversal to cover elif/else clauses, exception
-handlers, try/else branches, and loop else branches. I also added
-regression cases to B012.py and updated the expected snapshot.
+---
 
-Fixes #30225.
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/10578) for more information.
 
-**File**: `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py` (modified, +38/-0)
+---
+
+### Release Notes
+
+<details>
+<summary>tafia/quick-xml (quick-xml)</summary>
+
+###
+[`v0.42.0`](https://redirect.github.com/tafia/quick-xml/blob/HEAD/Changelog.md#0420----2026-08-22)
+
+[Compare
+Source](https://redirect.github.com/tafia/quick-xml/compare/v0.41.0...v0.42.0)
+
+This is a large release. The primary change is an ergonomic improvement
+across the entire API -
+quick_xml now makes use of `&str` and `String` types where possible
+instead of
+`&[u8]` and `Vec<u8>`. This requires significant refactoring of
+downstream code,
+but should result in a net simplification as well as potential
+performance improvements,
+and opens up additional opportunities in future releases.
+
+The MSRV has been raised to 1.86. We now use Rust 2024 Edition.
+
+##### Breaking Changes
+
+- [#&#8203;963]: Reader now validate
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -127,3 +127,41 @@ def k():
-                 y = 0
-             case 0, *x:
-                 pass  # no warning
-+
-+
-+# Regression: return inside an if-else branch.
-+def regression_if_else(condition):
-+    try:
-+        pass
-+    finally:
-+        if condition:
-+            pass
-+        else:
-+            return 1  # warning
-+
-+
-+# Regression: return inside an except handler.
-+def regression_except():
-+    try:
-+        pass
-+    finally:
-+        try:
-+            pass
-+        except ValueError:
-+            return 2  # warning
-+
-+
-+# Regression: ordinary return outside finally.
-+def regression_no_warning():
-+    if True:
-+        return 3  # no warning
-+
-+
-+def regression_loop_else():
-+    try:
-+        pass
-+    finally:
-+        for item in []:
-+            pass
-+        else:
-+            return 6  # warning
-\ No newline at end of file
+@@ -2786,9 +2786,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "quick-xml"
+-version = "0.41.0"
++version = "0.42.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
++checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
+ dependencies = [
+  "memchr",
+ ]
 ```
 
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/rules/jump_statement_in_finally.rs` (modified, +32/-4)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -72,12 +72,40 @@ fn walk_stmt(checker: &Checker, body: &[Stmt], f: fn(&Stmt) -> bool) {
-             );
-         }
-         match stmt {
--            Stmt::While(ast::StmtWhile { body, .. }) | Stmt::For(ast::StmtFor { body, .. }) => {
-+            Stmt::While(ast::StmtWhile { body, orelse, .. })
-+            | Stmt::For(ast::StmtFor { body, orelse, .. }) => {
-                 walk_stmt(checker, body, Stmt::is_return_stmt);
-+                walk_stmt(checker, orelse, f);
-             }
--            Stmt::If(ast::StmtIf { body, .. })
--            | Stmt::Try(ast::StmtTry { body, .. })
--            | Stmt::With(ast::StmtWith { body, .. }) => {
-+            Stmt::If(ast::StmtIf {
-+                body,
-+                elif_else_clauses,
-+                ..
-+            }) => {
-+                walk_stmt(checker, body, f);
-+
-+                for clause in elif_else_clauses {
-+                    walk_stmt(checker, &clause.body, f);
-+                }
-+            }
-+
-+            Stmt::Try(ast::StmtTry {
-+                body,
-+                handlers,
-+                orelse,
-+                ..
-+            }) => {
-+                walk_stmt(checker, body, f);
-+
-+                for handler in handlers {
-+                    let ast::ExceptHandler::ExceptHandler(handler) = handler;
-+                    walk_stmt(checker, &handler.body, f);
-+                }
-+
-+                walk_stmt(checker, orelse, f);
-+            }
-+
-+            Stmt::With(ast::StmtWith { body, .. }) => {
-                 walk_stmt(checker, body, f);
-             }
-             Stmt::Match(ast::StmtMatch { cases, .. }) => {
+@@ -173,7 +173,7 @@ pep440_rs = { version = "0.7.1", default-features = false }
+ pretty_assertions = { version = "1.3.0", default-features = false, features = ["std"] }
+ proc-macro2 = { version = "1.0.79", default-features = false, features = ["proc-macro"] }
+ pyproject-toml = { version = "0.13.4", default-features = false }
+-quick-xml = { version = "0.41.0", default-features = false }
++quick-xml = { version = "0.42.0", default-features = false }
+ quickcheck = { version = "1.0.3", default-features = false }
+ quickcheck_macros = { version = "1.0.0", default-features = false }
+ quote = { version = "1.0.23", default-features = false, features = ["proc-macro"] }
 ```
 
-**File**: `crates/ruff_linter/src/rules/flake8_bugbear/snapshots/ruff_linter__rules__flake8_bugbear__tests__jump-statement-in-finally_B012.py.snap` (modified, +24/-0)
+**File**: `crates/ruff_db/src/diagnostic/render/junit.rs` (modified, +6/-5)
 ```diff
-@@ -106,3 +106,27 @@ B012 `break` inside `finally` blocks cause exceptions to be silenced
- 117 |             case 0, *x:
- 118 |                 break  # warning
-     |                 ^^^^^
-+
-+B012 `return` inside `finally` blocks cause exceptions to be silenced
-+   --> B012.py:140:13
-+    |
-+138 |             pass
-+139 |         else:
-+140 |             return 1  # warning
-+    |             ^^^^^^^^
-+
-+B012 `return` inside `finally` blocks cause exceptions to be silenced
-+   --> B012.py:151:13
-+    |
-+149 |             pass
-+150 |         except ValueError:
-+151 |             return 2  # warning
-+    |             ^^^^^^^^
-+
-+B012 `return` inside `finally` blocks cause exceptions to be silenced
-+   --> B012.py:167:13
-+    |
-+165 |             pass
-+166 |         else:
-+167 |             return 6  # warning
-+    |             ^^^^^^^^
+@@ -156,18 +156,19 @@ fn write_failure_case<W: std::io::Write>(
+                     .write_empty()?;
+                 Ok(())
+             })?;
++        let message = xml_string(case.message);
+         let description = if let Some(location) = case.location {
+             Cow::Owned(format!(
+-                "line {}, col {}, {}",
+-                location.line, location.column, case.message
++                "line {}, col {}, {message}",
++                location.line, location.column
+             ))
+         } else {
+-            Cow::Borrowed(case.message)
++            Cow::Borrowed(message.as_str())
+         };
+         writer
+             .create_element("failure")
+-            .with_attribute(("message", xml_string(case.message).as_str()))
+-            .write_text_content(BytesText::new(&xml_string(&description)))?;
++            .with_attribute(("message", message.as_str()))
++            .write_text_content(BytesText::new(&description))?;
+         Ok(())
+     })?;
+     Ok(())
 ```
 
 ---
 
-### Incident Patch 2: `a243d414` (2026-11-24)
-**Commit Message**: Fix caching for PEP 723 scripts with inline configurations (#30608)
+### Incident Patch 2: `fe4df0c6` (2026-11-25)
+**Commit Message**: [ty] Share repeated scope types with a fixed-size cache (#30895)
 
 ## Summary
 
-Today, a cached script can retain stale diagnostics or formatting
-results when an extended configuration changes or a CLI override changes
-only the script’s settings. For example, repeating a project setting on
-the command line can change which Python version Ruff targets for an
-unchanged script.
+When we finish inferring a scope, we use a hash table to assign an index
+to each distinct type. We then throw the table away.
 
-**`ruff.toml`**
+We now use 1 KiB of temporary storage to remember the last index in each
+of 256 hash buckets. We only reuse an index if the types match. This
+avoids allocating and growing a hash table per scope, at the cost of
+occasionally storing a type more than once. During cycle recovery, we
+still update each node separately.
 
-```toml
-preview = true
-target-version = "py310"
-per-file-target-version = { "script.py" = "py310" }
-lint.select = ["UP045"]
-```
+<!-- ty-pinned-project-instructions:start -->
 
-**`script.py`**
+In an earlier benchmark, the cache reduced instruction counts on all 28
+projects below, by 0.31% on average. The tables compare the same
+revision with and without the cache.
 
-```python
-# /// script
-# requires-python = ">=3.9"
-# ///
-from typing import Optional
-x: Optional[int]
-```
+<details>
+<summary>Instructions</summary>
 
-| Command | Project target for `script.py` | Script target | Expected
-result |
-| --- | --- | --- | --- |
-| `ruff check script.py` | 3.10 | 3.9 | Passes |
-| `ruff check --target-version py310 script.py` | 3.10 | 3.10 | Suggests
-`int \| None` |
-| `ruff check --config 'per-file-target-version = { "script.py" =
-"py310" }' script.py` | 3.10 | 3.10 | Suggests `int \| None` |
+Counts are medians of four single-worker Cachegrind runs. The change and
+range are calculated from the four paired percentages.
 
-In the first run, Ruff infers Python 3.9 from `requires-python`. That
-takes precedence over both the project’s target and its matching
-per-file target. Without `requires-python`
+| Project | [Without
+cache](https://github.com/astral-sh/ruff/commit/8c6fa3be8b0188e2f7aa0e7e69e93451fee52bfe)
+| [With
+cache](https://github.com/astral-sh/ruff/commit/083bdc421969a1c538425802d725b57fc7b2e0c8)
+| Change | Paired range |
+| --- | ---: | ---: | ---: | ---: |
+|
+[Black](htt
 
-**File**: `crates/ruff/src/args.rs` (modified, +6/-0)
+**File**: `crates/ty_python_core/src/frozen.rs` (modified, +48/-9)
 ```diff
-@@ -729,6 +729,12 @@ impl ConfigArguments {
-         self.config_file.as_deref()
-     }
+@@ -1,7 +1,7 @@
+-use std::hash::Hash;
++use std::hash::{BuildHasher, Hash};
  
-+    pub(crate) fn overrides_script_target(&self) -> bool {
-+        self.script_configuration() == ScriptConfiguration::Disabled
-+            || self.target_version().is_some()
-+            || self.overrides.per_file_target_version.is_some()
-+    }
-+
-     pub(crate) fn target_version(&self) -> Option<ast::PythonVersion> {
-         self.per_flag_overrides
-             .target_version
-```
-
-**File**: `crates/ruff/src/cache.rs` (modified, +106/-5)
-```diff
-@@ -18,26 +18,69 @@ use tempfile::NamedTempFile;
+ use ruff_index::{FrozenIndexVec, IndexVec, newtype_index};
+-use rustc_hash::FxHashMap;
++use rustc_hash::FxBuildHasher;
  
- use ruff_cache::{CacheKey, CacheKeyHasher};
- use ruff_linter::package::PackageRoot;
-+use ruff_linter::settings::types::PreviewMode;
- use ruff_linter::{VERSION, warn_user};
- use ruff_macros::CacheKey;
-+use ruff_python_ast::SourceType;
- use ruff_workspace::Settings;
- use ruff_workspace::resolver::Resolver;
-+use ruff_workspace::script::{Script, should_read_script_metadata};
-+
-+use crate::args::ConfigArguments;
- 
- /// [`Path`] that is relative to the package root in [`PackageCache`].
- pub(crate) type RelativePath = Path;
- /// [`PathBuf`] that is relative to the package root in [`PackageCache`].
- pub(crate) type RelativePathBuf = PathBuf;
- 
-+/// Part of the file key because an explicit Python target can override a script's
-+/// requirement while leaving the project's target and package cache key unchanged.
-+#[derive(Clone, Copy, CacheKey)]
-+pub(crate) enum ScriptCacheMode {
-+    /// Script metadata is disabled for this file.
-+    MetadataDisabled,
-+    /// Cache only scripts with no Ruff settings or Python requirement.
-+    ProjectOnly,
-+    /// A Python requirement is cacheable because it changes with the source.
-+    AllowRequirements,
-+}
-+
-+impl ScriptCacheMode {
-+    pub(crate) fn new(
-+        preview: PreviewMode,
-+        source_type: SourceType,
-+        overrides: &ConfigArguments,
-+    ) -> Self {
-+        if !should_read_script_metadata(preview, source_type) {
-+            Self::MetadataDisabled
-+        } else if overrides.overrides_script_target() {
-+            Self::ProjectOnly
-+        } else {
-+            Self::AllowRequirements
-+        }
-+    }
-+
-+    pub(crate) fn allows(self, script: Option<&Script>) -> bool {
-+        match (self, script) {
-+            (Self::MetadataDisabled, _) | (_, None) => true,
-+            (Self::ProjectOnly, Some(script)) => !script.declares_settings(),
-+            (Self::AllowRequirements, Some(script)) => !script.has_ruff_table(),
-+        }
-+    }
-+}
-+
- #[derive(CacheKey)]
- pub(crate) struct FileCacheKey {
-     /// Timestamp when the file was last modified before the (cached) check.
-     file_last_modified: FileTime,
-     /// Permissions of the file before the (cached) check.
-     file_permissions_mode: u32,
-+    /// Files with nested configurations can share a package cache with a different preview mode.
-+    script_mode: ScriptCacheMode,
+ /// A slice of 32-bit IDs stored at the narrowest width that fits every entry.
+ #[derive(Debug, PartialEq, Eq, get_size2::GetSize)]
+@@ -173,7 +173,7 @@ fn sort_and_deduplicate<K: Ord, V>(mut entries: Vec<(K, V)>) -> Vec<(K, V)> {
+     entries
  }
  
- impl FileCacheKey {
--    pub(crate) fn from_path(path: &Path) -> io::Result<FileCacheKey> {
-+    pub(crate) fn from_path(path: &Path, script_mode: ScriptCacheMode) -> io::Result<FileCacheKey> {
-         // Construct a cache key for the file
-         let metadata = path.metadata()?;
- 
-@@ -52,6 +95,7 @@ impl FileCacheKey {
-         Ok(FileCacheKey {
-             file_last_modified: FileTime::from_last_modification_time(&metadata),
-             file_permissions_mode: permissions,
-+            script_mode,
-         })
-     }
- }
-@@ -508,6 +552,7 @@ mod tests {
- 
-     use anyhow::Result;
-     use filetime::{FileTime, set_file_mtime};
-+    use indoc::indoc;
-     use itertools::Itertools;
-     use ruff_python_ast::SourceType;
-     use rustc_hash::FxHashMap;
-@@ -517,7 +562,7 @@ mod tests {
-     use ruff_linter::UnresolvedRuleSelector;
-     use ruff_linter::package::PackageRoot;
-     use ruff_linter::settings::flags;
--    use ruff_linter::settings::types::UnsafeFixes;
-+    use ruff_linter::settings::types::{PreviewMode, UnsafeFixes};
-     use ruff_python_ast::PySourceType;
-     use ruff_python_ast::PythonVersion;
-     use ruff_workspace::configuration::{Configuration, RuleSelection};
-@@ -526,7 +571,7 @@ mod tests {
-     use crate::args::ConfigArguments;
- 
-     use crate::cache::{self, ChangeData, FileCache, FileCacheData, FileCacheKey};
--    use crate::cache::{Cache, RelativePathBuf};
-+    use crate::cache::{Cache, RelativePathBuf, ScriptCacheMode};
-     use crate::commands::format::{FormatCommandError, FormatMode, FormatResult, format_path};
-     use crate::diagnostics::{Diagnostics, lint_path};
- 
-@@ -653,6 +698,58 @@ mod tests {
+-/// Compact immutable key-value entries that deduplicate repeated values.
++/// Compact immutable key-value entries that can share repeated values.
+ #[derive(Debug, Eq, PartialEq, get_size2::GetSize, salsa::SalsaValue)]
+ pub struct FrozenValueMap<K, V> {
+     entries: FrozenMap<K, FrozenValueIndex>,
+@@ -188,14 +188,24 @@ impl<K, V> FrozenValueMap<K, V> {
+         K: Ord,
+         V: Copy + Eq + Hash,
+     {
+-        let mut values = IndexVec::new();
+-        let mut value_indices = FxHashMap::default();
++        // Keep only the most recent index per hash bucket. This costs 1 KiB of
++        // scratch space and avoids allocating and growing a hash table per scope.
++        // A collision can leave extra copies of a value in the finished map.
++        let mut recent = [None; 256];
++        let entries = entries.into_iter();
++        let mut values = IndexVec::with_capacity(entries.size_hint().0.min(16));
+         let entries = entries
+-            .into_iter()
+             .map(|(key, value)| {
+-                let index = *value_indices
+-                    .entry(value)
+-                    .or_insert_with(|| values.push(value));
++                let bucket = FxBuildHasher.hash_one(value).to_le_bytes()[0];
++                let slot = &mut recent[usize::from(bucket)];
++                let index = match *slot {
++                    Some(index) if values[index] == value => index,
++                    _ => {
++                        let index = values.push(value);
++                        *slot = Some(index);
++                        index
++                    }
++                };
+                 (key, index)
+             })
+             .collect();
+@@ -352,6 +362,35 @@ mod tests {
          );
      }
  
 +    #[test]
-+    fn cache_skips_only_scripts_with_ruff_tables() -> Result<()> {
-+        let mut test = TestCache::new("cache_skips_only_scripts_with_ruff_tables");
-+        test.project.settings.preview = PreviewMode::Enabled;
-+        let cache = test.open();
-+        let check = |name: &str, source: &str| -> Result<()> {
-+            test.write_source_file(name, source.as_bytes());
-+            assert!(test.lint_file_with_cache(name, &cache)?.inner.is_empty());
-+            test.format_file_with_cache(name, &cache).unwrap();
-+            Ok(())
-+        };
-+        check(
-+            "version.py",
-+            indoc! {r#"
-+                # /// script
-+                # requires-python = ">=3.12"
-+                # ///
-+                x = 1
-+            "#},
-+        )?;
-+        check(
-+            "inline.py",
-+            indoc! {r#"
-+                # /// script
-+                # [tool.ruff]
-+                # ///
-+    
-```
-
-**File**: `crates/ruff/src/commands/format.rs` (modified, +13/-4)
-```diff
-@@ -32,6 +32,7 @@ use ruff_linter::registry::Rule;
- use ruff_linter::rules::flake8_quotes::settings::Quote;
- use ruff_linter::source_kind::{SourceError, SourceKind};
- use ruff_linter::{warn_user_once, warn_user_once_by_message};
-+use ruff_python_ast::script::ScriptTag;
- use ruff_python_ast::{PySourceType, SourceType};
- use ruff_python_formatter::{FormatModuleError, QuoteStyle, format_module_source, format_range};
- use ruff_source_file::{LineIndex, LineRanges, OneIndexed, SourceFile, SourceFileBuilder};
-@@ -43,7 +44,7 @@ use ruff_workspace::script::{ScriptSettingsError, script};
- use ruff_workspace::{FormatterSettings, Settings};
- 
- use crate::args::{ConfigArguments, FormatArguments, FormatRange};
--use crate::cache::{Cache, FileCacheKey, PackageCacheMap, PackageCaches};
-+use crate::cache::{Cache, FileCacheKey, PackageCacheMap, PackageCaches, ScriptCacheMode};
- use crate::{ExitStatus, resolve_default_files};
- 
- #[derive(Debug, Copy, Clone, is_macro::Is)]
-@@ -261,12 +262,13 @@ pub(crate) fn format_path(
-     range: Option<FormatRange>,
-     cache: Option<&Cache>,
- ) -> Result<FormatResult, FormatCommandError> {
-+    let script_mode = ScriptCacheMode::new(project.settings.preview, source_type, overrides);
-     if let Some(cache) = cache {
-         let relative_path = cache
-             .relative_path(path)
-             .expect("wrong package cache for file");
- 
--        if let Ok(cache_key) = FileCacheKey::from_path(path) {
-+        if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
-             if cache.is_formatted(relative_path, &cache_key) {
-                 return Ok(FormatResult::Unchanged);
-             }
-@@ -314,8 +316,14 @@ pub(crate) fn format_path(
-                     .write(&mut writer)
-                     .map_err(|err| FormatCommandError::Write(Some(path.to_path_buf()), err))?;
- 
-+                // Formatting can change script metadata or turn `#/// script` into a valid
-+                // opening marker. The rewritten file may now use different settings.
-+                let cache = cache.filter(|_| {
-+                    matches!(script_mode, ScriptCacheMode::MetadataDisabled)
-+                        || (script.is_none() && ScriptTag::parse(formatted.source_code()).is_none())
-+                });
-                 if let Some(cache) = cache {
--                    if let Ok(cache_key) = FileCacheKey::from_path(path) {
-+                    if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
-                         let relative_path = cache
-                             .relative_path(path)
-                             .expect("wrong package cache for file");
-@@ -331,8 +339,9 @@ pub(crate) fn format_path(
-             },
-         },
-         FormattedSource::Unchanged => {
-+            let cache = cache.filter(|_| script_mode.allows(script.as_ref()));
-             if let Some(cache) = cache {
--                if let Ok(cache_key) = FileCacheKey::from_path(path) {
-+                if let Ok(cache_key) = FileCacheKey::from_path(path, script_mode) {
-                     let relative_path = cache
-                         .relative_path(path)
-                         .expect("wrong package cache for file");
-```
-
-**File**: `crates/ruff/src/diagnostics.rs` (modified, +8/-4)
-```diff
-@@ -29,7 +29,7 @@ use ruff_workspace::script::script;
- use rustc_hash::FxHashMap;
- 
- use crate::args::ConfigArguments;
--use crate::cache::{Cache, FileCache, FileCacheKey};
-+use crate::cache::{Cache, FileCache, FileCacheKey, ScriptCacheMode};
- 
- /// A collection of [`Diagnostic`]s and additional information needed to render them.
- ///
-@@ -195,14 +195,17 @@ pub(crate) fn lint_path(
-     unsafe_fixes: UnsafeFixes,
- ) -> Result<Diagnostics> {
-     let settings = &project.settings.linter;
-+    let source_type = settings.extension.get_source_type(path);
-+    let script_mode = ScriptCacheMode::new(project.settings.preview, source_type, overrides);
-     // Check the cache.
--    let caching = match cache {
-+    let mut caching = match cache {
-         Some(cache) if noqa.is_enabled() => {
-             let relative_path = cache
-                 .relative_path(path)
-                 .expect("wrong package cache for file");
- 
--            let cache_key = FileCacheKey::from_path(path).context("Failed to create cache key")?;
-+            let cache_key =
-+                FileCacheKey::from_path(path, script_mode).context("Failed to create cache key")?;
-             let cached_diagnostics = cache
-                 .get(relative_path, &cache_key)
-                 .is_some_and(FileCache::linted);
-@@ -219,7 +222,7 @@ pub(crate) fn lint_path(
- 
-     debug!("Checking: {}", path.display());
- 
--    let source_type = match settings.extension.get_source_type(path) {
-+    let source_type = match source_type {
-         SourceType::Toml(source_type @ (TomlSourceType::Pyproject | TomlSourceType::Ruff)) => {
-             let (diagnostics, fixed) = if settings
-                 .rules
-@@ -307,6 +310,7 @@ pub(crate) fn lint_path(
-             ));
-         }
-     };
-+    caching = caching.filter(|_| script_mode.allows(script.as_ref()));
-     let package = script.as_ref().map_or(package, |script| {
-         script.package_root(path, &project.settings.linter, package, package_roots)
-     });
-```
-
-**File**: `crates/ruff/tests/cli/format.rs` (modified, +38/-0)
-```diff
-@@ -2546,6 +2546,44 @@ fn inline_script_configuration() -> Result<()> {
-     Ok(())
- }
- 
-+#[test]
-+fn formatting_activates_script_settings() -> Result<()> {
-+    let test = CliTest::with_file(
-+        "script.py",
-+        r#"
-+            #/// script
-+            # tool.ruff.format.quote-style = "single"
-+            # ///
-+            x = "hello"
-+        "#,
-+    )?;
-+    let args = ["format", "--preview", "--quiet", "script.py"];
++    fn frozen_value_map_preserves_values_on_hash_collisions() {
++        #[derive(Clone, Copy, Debug, Eq, PartialEq)]
++        struct Value(u8);
 +
-+    assert_cmd_snapshot!(test.command().args(args), @"
-+    success: true
-+    exit_code: 0
-+    ----- stdout -----
++        impl std::hash::Hash for Value {
++            fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
++                state.write_u8(0);
++            }
++        }
 +
-+    ----- stderr -----
-+    ");
-+    assert_cmd_snapshot!(test.command().args(args).arg("--check"), @r#"
-+    success: false
-+    exit_code: 1
-+    ----- stdout -----
-+    unformatted: File would be reformatted
-+     --> script.py:4:5
-+      |
-+    3 | # ///
-+      - x = "hello"
-+    4 + x = 'hello'
-+      |
++        let a = Value(1);
++        let b = Value(2);
++        let entries = [(0, a), (1, a), (2, b), (3, a)];
++        let mut map = FrozenValueMap::from_sorted(entries);
++        assert_eq!(map.values.len(), 3);
++        assert!(map.iter().eq(entries));
++        for (key, value) in entries {
++            assert_eq!(map.get(&key), Some(&value));
++        }
 +
-+
-+    ----- stderr -----
-+    "#);
-+    Ok(())
-+}
-+
- #[test]
- fn inline_script_conflicts() -> Result<()> {
-     let test = CliTest::with_files([
-```
-
-**File**: `crates/ruff/tests/cli/lint.rs` (modified, +18/-3)
-```diff
-@@ -4774,13 +4774,28 @@ fn cli_target_version_overrides_script_requirement() -> Result<()> {
-             x: Optional[int]
-         ",
-     )?;
--    assert_cmd_snapshot!(test.check_command().args(["--preview", "--select=UP045", "--target-version=py310", "script.py"]), @"
-+    test.write_file("ruff.toml", "target-version = 'py310'")?;
-+    let args = [
-+        "check",
-+        "--quiet",
-+        "--preview",
-+        "--select=UP045",
-+        "--output-format=concise",
-+        "script.py",
-+    ];
-+    // Warm the cache. The explicit override changes the script target but not the project target.
-+    assert_cmd_snapshot!(test.command().args(args), @"
-+    success: true
-+    exit_code: 0
-+    ----- stdout -----
-+
-+    ----- stderr -----
-+    ");
-+    assert_cmd_snapshot!(test.command().args(args).arg("--target-version=py310"), @"
-     success: false
-     exit_code: 1
-     ----- stdout -----
-     script.py:6:4: non-pep604-annotation-optional: [*] Use `X | None` for type annotations
--    Found 1 error.
--    [*] 1 fixable with `--fix`.
- 
-     ----- stderr -----
-     ");
-```
-
-**File**: `crates/ruff_workspace/src/script.rs` (modified, +14/-1)
-```diff
-@@ -44,6 +44,7 @@ pub enum ScriptConfiguration {
- /// A Python file with a PEP 723 script metadata header.
- #[derive(Debug)]
- pub struct Script {
-+    has_ruff_table: bool,
-     settings: ScriptSettings,
-     config_path: Option<PathBuf>,
- }
-@@ -56,6 +57,16 @@ impl Script {
-             .or_else(|| project.config_path())
-     }
- 
-+    /// Whether the script contains a `[tool.ruff]` table, even if empty or ignored.
-+    pub fn has_ruff_table(&self) -> bool {
-+        self.has_ruff_table
++        // Cycle normalization can assign different types to nodes that shared a value.
++        map.map_values(|key, value| if key == 1 { b } else { value });
++        assert_eq!(
++            map,
++            FrozenValueMap::from_sorted([(0, a), (1, b), (2, b), (3, a)])
++        );
 +    }
 +
-+    /// Whether the script declares `requires-python` or `[tool.ruff]`, even if ignored.
-+    pub fn declares_settings(&self) -> bool {
-+        matches!(self.settings, ScriptSettings::Declared(_))
-+    }
-+
-     /// Return the script's resolved settings, falling back to the project's settings.
-     pub fn settings<'a>(&'a self, project: &'a Settings) -> &'a Settings {
-         match &self.settings {
-@@ -152,7 +163,8 @@ pub fn script(
- 
-     let requires_python = metadata.requires_python.as_ref();
-     let options = metadata.tool.and_then(|tool| tool.ruff);
--    let declared = requires_python.is_some() || options.is_some();
-+    let has_ruff_table = options.is_some();
-+    let declared = requires_python.is_some() || has_ruff_table;
- 
-     let config_error = |err| ScriptSettingsError::configuration(path, &err);
-     let resolve = |configuration, root: &Path| {
-@@ -185,6 +197,7 @@ pub fn script(
-     };
- 
-     Ok(Some(Script {
-+        has_ruff_table,
-         config_path,
-         settings: if declared {
-             ScriptSettings::Declared(settings.map(Box::new))
-```
-
----
-
-### Incident Patch 3: `881dc619` (2026-11-24)
-**Commit Message**: [ty] Look up syntax node uses and scopes in fixed-size pages (#30886)
-
-## Summary
-
-To look up a name use, we binary search the pages of use IDs. To find
-its scope, we search the file’s full list of scope ranges.
-
-We now group AST nodes into fixed pages of 64. The node index tells us
-which page to read, and a bit mask gives us the offset into the packed
-array of uses. Each page also records how many scope ranges have started
-by its end. We only search the ranges that start on the page and the
-last one from an earlier page, which may still overlap.
-
-Pages without any uses now take space too.
-
-<!-- ty-pinned-project-instructions:start -->
-
-Across 28 projects, the mean change in instructions was −0.25% and the
-median was −0.24%.
-
-<details>
-<summary>Instruction counts by project</summary>
-
-Four single-worker Cachegrind pairs on Linux (x86-64). Both builds use
-the linked base, with the PR applied to the second.
-
-| Project | [Base
-instructions](https://github.com/astral-sh/ruff/commit/77203ea5529a70e55edb0857224eb05b286a077d)
-| [PR
-instructions](https://github.com/astral-sh/ruff/commit/bfef40f25c53b82caf87bc4dd6bbb9b7b118ee98)
-| Change | Paired range |
-| --- | ---: | ---: | ---: | ---: |
-
-
-**File**: `crates/ty_python_core/src/ast_ids.rs` (modified, +70/-43)
-```diff
-@@ -110,32 +110,33 @@ impl AstIdsBuilder {
-     /// Stores use IDs and their lexical places in node-index order.
-     /// The IDs themselves keep the order in which the flow builder visited uses in each scope.
-     pub(super) fn finish(self) -> AstIds {
--        let mut pages: Vec<UsePage> = Vec::new();
-+        let mut pages = Vec::with_capacity(self.root.len().div_ceil(NODES_PER_PAGE));
-         let mut use_ids = Vec::new();
-         let mut places_plus_one = Vec::new();
-         let mut scopes = Vec::new();
--        for (node, row) in (0..).map(ast::NodeIndex::from).zip(self.root) {
--            if let Some(scope) = row.scope {
--                ScopeRange::record(&mut scopes, node, scope);
--            }
--            let Some(use_id) = row.use_id else { continue };
--            if let Some(page) = pages.last_mut()
--                && let Some(bit) = page.bit(node)
--            {
--                page.mask |= bit;
--            } else {
--                // Each set bit accounts for one distinct node in the use array.
--                let first_use = pages
--                    .last()
--                    .map_or(0, |last| last.first_use + last.mask.count_ones());
--                pages.push(UsePage {
--                    first_node: node,
--                    first_use,
--                    mask: 1,
--                });
-+        for (first_node, rows) in (0_u32..)
-+            .step_by(NODES_PER_PAGE)
-+            .zip(self.root.chunks(NODES_PER_PAGE))
-+        {
-+            let first_use = u32::try_from(use_ids.len()).expect("more uses than node indices");
-+            let mut mask = 0;
-+            for (offset, row) in (0_u32..).zip(rows) {
-+                if let Some(scope) = row.scope {
-+                    let node = ast::NodeIndex::from(first_node + offset);
-+                    ScopeRange::record(&mut scopes, node, scope);
-+                }
-+                if let Some(use_id) = row.use_id {
-+                    mask |= 1_u64 << offset;
-+                    use_ids.push(use_id);
-+                    places_plus_one.push(row.place_plus_one);
-+                }
-             }
--            use_ids.push(use_id);
--            places_plus_one.push(row.place_plus_one);
-+            pages.push(UsePage {
-+                first_use,
-+                scope_count: u32::try_from(scopes.len())
-+                    .expect("more scope ranges than node indices"),
-+                mask,
-+            });
-         }
-         AstIds {
-             pages: pages.into_boxed_slice(),
-@@ -146,25 +147,21 @@ impl AstIdsBuilder {
-     }
- }
- 
--/// The set bits locate uses within 64 node indices of the first use on this page.
--/// Gaps between pages occupy no storage.
-+/// Number of nodes in a full [`UsePage`], one per bit in its use mask.
-+const NODES_PER_PAGE: usize = u64::BITS as usize;
-+
-+/// Indexes uses and scope ranges for up to [`NODES_PER_PAGE`] consecutive nodes in the root AST.
- #[derive(Debug, get_size2::GetSize)]
- struct UsePage {
--    first_node: ast::NodeIndex,
-+    /// Number of uses on earlier pages. This is the page's starting offset in
-+    /// `use_ids` and `places_plus_one`.
-     first_use: u32,
-+    /// Number of scope ranges that start on this page or an earlier page.
-+    scope_count: u32,
-+    /// Bit `i` is set if the node at offset `i` on this page has a use ID.
-     mask: u64,
- }
- 
--impl UsePage {
--    fn bit(&self, node: ast::NodeIndex) -> Option<u64> {
--        if node == self.first_node {
--            return Some(1);
--        }
--        let offset = node.as_u32()?.checked_sub(self.first_node.as_u32()?)?;
--        1_u64.checked_shl(offset)
--    }
--}
--
- #[derive(Debug, get_size2::GetSize)]
- struct ScopeRange {
-     start: ast::NodeIndex,
-@@ -204,9 +201,9 @@ impl AstIds {
-     /// Looks up a node in the packed use array. Each earlier set bit on the same page
-     /// accounts for one preceding entry in the array.
-     fn use_index(&self, node: ast::NodeIndex) -> Option<usize> {
--        let end = self.pages.partition_point(|page| page.first_node <= node);
--        let page = self.pages[..end].last()?;
--        let bit = page.bit(node)?;
-+        let node = node.as_u32()? as usize;
-+        let page = self.pages.get(node / NODES_PER_PAGE)?;
-+        let bit = 1_u64 << (node % NODES_PER_PAGE);
-         if page.mask & bit == 0 {
-             return None;
-         }
-@@ -215,8 +212,15 @@ impl AstIds {
-     }
- 
-     fn scope_at(&self, node: ast::NodeIndex) -> Option<FileScopeId> {
--        let index = self.scopes.partition_point(|range| range.end < node);
--        let range = self.scopes.get(index)?;
-+        let page_index = node.as_u32()? as usize / NODES_PER_PAGE;
-+        let end = self.pages.get(page_index)?.scope_count as usize;
-+        // A range started on an earlier page may extend across the boundary.
-+        let start = page_index.checked_sub(1).map_or(0, |previous| {
-+            self.pages[previous].scope_count.saturating_sub(1) as usize
-+        });
-+        let scopes = &self.scopes[star
+     #[test]
+     fn frozen_value_map_preserves_last_value_for_duplicate_keys() {
+         let map = FrozenValueMap::from_iter([(2, 20), (1, 10), (1, 11)]);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30911** (2026-11-25): [ty] Preserve peer context for collection literals in boolean and conditional expressions (@carljm)
-- **PR #30903** (2026-11-24): [ty] Skip inferring more decorated methods during abstract-method discovery (@AlexWaygood)
-- **PR #30899** (2026-11-24): [ty] Tiny refactor: add `FieldInstanceKind::is_attrs()` (@sharkdp)
-- **PR #30893** (2026-11-24): [ty] Restore folding for indented region comments (@MichaReiser)
-- **PR #30890** (2026-11-24): Recognize `frozendict.fromkeys` as immutable (@DrSkyle)
-- **PR #30887** (2026-11-24): [ty] Initialize constraint solver storage lazily (@charliermarsh)
+- **PR #30943** (closed): Skip per-character style lookups when rendering plain diagnostics (@charliermarsh)
+- **PR #30940** (2026-11-26): [ty] Skip union comparisons when tuple elements are disjoint (@charliermarsh)
+- **PR #30936** (closed): [refurb] Preserve parentheses in FURB181 auto-fix (@aloneangel45)
+- **PR #30932** (2026-11-25): [ty] attrs: Add mdtests for unannotated field discovery (@sharkdp)
+- **PR #30929** (2026-11-25): [ty] Prefer `reveal_type` for inferred types in mdtests (@carljm)
+- **PR #30928** (2026-11-25): Update Rust crate uuid to v1.29.0 (@renovate[bot])
 
 ---
 
@@ -3009,68 +2491,33 @@ instructions](https://github.com/astral-sh/ruff/commit/bfef40f25c53b82caf87bc4dd
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [`flake8-bugbear`] Detect jumps in nested branches (`B012`)
+## X. Update Rust crate quick-xml to 0.42.0
 
 **RULE**:
-When implementing operations in `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb4e0b24`: [`flake8-bugbear`] Detect jumps in nested branches (`B012`). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `807e61fe`: Update Rust crate quick-xml to 0.42.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B012.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-
-# Regression: return inside an if-else branch.
-def regression_if_else(condition):
-    try:
-        pass
-    finally:
-        if condition:
-            pass
-        else:
-            return 1  # warning
-
-
-# Regression: return inside an except handler.
-def regression_except():
-    try:
-        pass
-    finally:
-        try:
-            pass
-        except ValueError:
-            return 2  # warning
-
-
-# Regression: ordinary return outside finally.
-def regression_no_warning():
-    if True:
-        return 3  # no warning
-
-
-def regression_loop_else():
-    try:
-        pass
-    finally:
-        for item in []:
-            pass
-        else:
-            return 6  # warning
+version = "0.42.0"
+checksum = "41b1177fdf999d2321d3fb46ff47159d9c1fb9ad66a4879f8c50a0b504615e9b"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "0.41.0"
+checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb4e0b24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `807e61fe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

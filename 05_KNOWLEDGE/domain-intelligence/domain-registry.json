@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T09:13:07.504Z",
+  "last_updated": "2026-11-26T09:22:15.345Z",
   "total_records": 2726,
   "domains": {
     "A": {
@@ -12774,8 +12774,8 @@
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "daa1f09964d6ee866e00d499d6e80528f300b09c2bcb045f0aade0aae3306a5f",
-      "created_at": "2026-11-25T08:56:15.469Z"
+      "content_hash": "a8efb0da3861216d4cf7876c4339035c58ba19f213ab709ff1056a0ac7bf66bf",
+      "created_at": "2026-11-26T09:22:09.797Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
@@ -12843,8 +12843,8 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "d20169f15b39b49c42ed1840c2b0e1f27572a961c908220dd30f33f479a383b2",
-      "created_at": "2026-11-25T08:56:50.621Z"
+      "content_hash": "fe8039c4b13623503b3ff862f39d9aa2f0738f147aac9e98bdad444cb64d45f0",
+      "created_at": "2026-11-26T09:22:15.345Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
@@ -19125,10 +19125,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "1112f7fc26dc544c67a978a4bf12bb95d522b636e780cf053ade216d02ddbb08",
-      "created_at": "2026-11-25T16:05:55.788Z"
+      "content_hash": "82a9ced48ae938f584ae717a5b262ec6ee9dd4cc735d5eca2bf484257b09b7e8",
+      "created_at": "2026-11-26T09:21:58.909Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -24425,8 +24425,8 @@
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "repository": "astral-sh/ruff",
-      "content_hash": "f20dd78b619d2f0de6f854705eb6938bbd16757d539fcacf8005a3a499c75bd9",
-      "created_at": "2026-11-23T23:31:27.716Z"
+      "content_hash": "946ae6ff628f3640c474d36429de95f1567c2a371525c0c50ee819a67abbbdc1",
+      "created_at": "2026-11-26T09:22:01.228Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -24434,8 +24434,8 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-learnings-technical-construction-intelligence-astral-sh-ruff-lear.md",
       "repository": "astral-sh-ruff-learnings",
-      "content_hash": "e5aed7cabf31bd3fb71e72d4efefe98bcf58ca9609ebdd552a982064a75da2c7",
-      "created_at": "2026-11-23T23:31:40.937Z"
+      "content_hash": "881722fd60e058f2a9fe21bee20ff249f9fa94815d023a66a4090224a74e0ad7",
+      "created_at": "2026-11-26T09:22:13.896Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
@@ -29457,8 +29457,8 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-learnings-research-knowledge-intelli.md",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings",
-      "content_hash": "0e0f6d3bfcceca49b73461e3ad65c3801f9bdc2b87ce5773edfa216dee28c6bd",
-      "created_at": "2026-11-22T16:29:05.968Z"
+      "content_hash": "1acf42f39040478802e893b28115501f3b0fd5d182258621d60bcce5effc0b5f",
+      "created_at": "2026-11-26T09:22:14.475Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva",

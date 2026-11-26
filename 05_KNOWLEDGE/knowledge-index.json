@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T09:13:07.764Z",
+  "last_updated": "2026-11-26T09:22:15.543Z",
   "total_verified_learnings": 9125,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25778,
+  "total_items": 25783,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -221704,8 +221704,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "e722f8f1",
-      "content_hash": "be1627b5d3bd3ae1a8828ef5bbf5a6e51f3a1fcb2522ec63b28de64869411dd6",
+      "source_version": "adfdb353",
+      "content_hash": "46da9f3618239aa5d707a11b8cee3e5e76357b8f504c44fb34af02833ece44d4",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -221763,6 +221763,11 @@
           "number": 10493,
           "title": "fix hypothetical expression index creation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10638,
+          "title": "fix ANALYZE panic when a skipped column is needed by a generated column",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221770,7 +221775,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T08:56:14.810Z",
+      "verified_at": "2026-11-26T09:22:09.090Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221812,10 +221817,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "e722f8f1",
-      "content_hash": "daa1f09964d6ee866e00d499d6e80528f300b09c2bcb045f0aade0aae3306a5f",
+      "source_version": "adfdb353",
+      "content_hash": "a8efb0da3861216d4cf7876c4339035c58ba19f213ab709ff1056a0ac7bf66bf",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T08:56:15.469Z"
+      "persisted_at": "2026-11-26T09:22:09.797Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -221824,10 +221829,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "e722f8f1",
-      "content_hash": "0e9241a41d1e0e2dd46b90fb42258c9894fe83dfa0ebdc00a05e40d32087d6e1",
+      "source_version": "adfdb353",
+      "content_hash": "32121c1ac1be8d41a3796ae9d53f8d24034ab247d9f4e65f22cd4ea24714cf47",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:56:15.664Z"
+      "persisted_at": "2026-11-26T09:22:09.992Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -221899,9 +221904,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "d20169f15b39b49c42ed1840c2b0e1f27572a961c908220dd30f33f479a383b2",
+      "content_hash": "fe8039c4b13623503b3ff862f39d9aa2f0738f147aac9e98bdad444cb64d45f0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T08:56:50.621Z"
+      "persisted_at": "2026-11-26T09:22:15.345Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -221911,9 +221916,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "845be81599f46ee54273e1eb80f32d17a1ebe388668f86f5208dfbde1805e00a",
+      "content_hash": "2bdae791ab14be4ad83bd1619af187eef8d89567826b58920d5ce54b2975d327",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:56:50.828Z"
+      "persisted_at": "2026-11-26T09:22:15.543Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -235118,8 +235123,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "ce19ae70",
-      "content_hash": "2814f579fcd1579f4a35e9054f394df5e1b4bfe9ee36248f35d06871d652d7c8",
+      "source_version": "cde61b53",
+      "content_hash": "4743a21c9f63ffeb47bd7205e77bc43b4c74b6bd50491fd13874da88953973c2",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -235152,6 +235157,11 @@
           "number": 10428,
           "title": "[`flake8-bugbear`] Detect jumps in nested branches (`B012`)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10637,
+          "title": "Update Rust crate quick-xml to 0.42.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235159,7 +235169,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T02:10:24.194Z",
+      "verified_at": "2026-11-26T09:22:00.526Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235213,10 +235223,10 @@
       "relative_path": "08_VERIFICATION/astral-sh-ruff-verification-protocol-empirical-defect-shield-for-astral-sh-ruff.md",
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh/ruff",
       "repository": "astral-sh/ruff",
-      "source_version": "ce19ae70",
-      "content_hash": "1fc1d5e3f8ddd6933cfaa34d45320afbb741974dc9a84c76dcb249286c65dc47",
+      "source_version": "cde61b53",
+      "content_hash": "03c47f1e5fd5683ef02187261c312366faf26c94d2861b697d518a7f739365c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:10:25.027Z"
+      "persisted_at": "2026-11-26T09:22:01.429Z"
     },
     "learn-github-react-native-webrtc-react-native-webrtc": {
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
@@ -235321,9 +235331,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh-ruff-learnings",
       "repository": "astral-sh-ruff-learnings",
       "source_version": "HEAD",
-      "content_hash": "635d46324b94eb9bcd80b4f2593eac1150e617b257d768483986feca1f7ba031",
+      "content_hash": "af1a988d152b4adf031897f5b4d5d1cbe08b3eb420b794357f07205b85d9dd15",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T02:10:35.047Z"
+      "persisted_at": "2026-11-26T09:22:14.083Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant",
@@ -242093,13 +242103,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
-      "content_hash": "1112f7fc26dc544c67a978a4bf12bb95d522b636e780cf053ade216d02ddbb08",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "content_hash": "82a9ced48ae938f584ae717a5b262ec6ee9dd4cc735d5eca2bf484257b09b7e8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-25T16:05:55.788Z"
+      "persisted_at": "2026-11-26T09:21:58.909Z"
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -259970,10 +259980,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "repository": "astral-sh/ruff",
-      "source_version": "c2a50c31",
-      "content_hash": "f20dd78b619d2f0de6f854705eb6938bbd16757d539fcacf8005a3a499c75bd9",
+      "source_version": "cde61b53",
+      "content_hash": "946ae6ff628f3640c474d36429de95f1567c2a371525c0c50ee819a67abbbdc1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:31:27.716Z"
+      "persisted_at": "2026-11-26T09:22:01.228Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -259983,9 +259993,9 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "repository": "astral-sh-ruff-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5aed7cabf31bd3fb71e72d4efefe98bcf58ca9609ebdd552a982064a75da2c7",
+      "content_hash": "881722fd60e058f2a9fe21bee20ff249f9fa94815d023a66a4090224a74e0ad7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T23:31:40.937Z"
+      "persisted_at": "2026-11-26T09:22:13.896Z"
     },
     "rule-8730": {
       "learning_id": "rule-8730",
@@ -283867,7 +283877,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "6b3ff9c82f2b218919a9b7bd7b0e20fce3b1bdb974a3a53bc882811ec4fa61e6",
+      "content_hash": "f35692458ae5ba4fff5392175810898f75beba93380f930eb81a869c69f5af65",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -283876,7 +283886,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T16:29:01.171Z",
+      "verified_at": "2026-11-26T09:21:58.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283945,9 +283955,9 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e0f6d3bfcceca49b73461e3ad65c3801f9bdc2b87ce5773edfa216dee28c6bd",
+      "content_hash": "1acf42f39040478802e893b28115501f3b0fd5d182258621d60bcce5effc0b5f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T16:29:05.968Z"
+      "persisted_at": "2026-11-26T09:22:14.475Z"
     },
     "rule-9062": {
       "learning_id": "rule-9062",
@@ -353075,6 +353085,70 @@
       "content_hash": "24134c8e4f2a43f32fa67f32e2ac2391b24860010fc8e665802ff99a3a784a23",
       "domain_letter": "D",
       "persisted_at": "2026-11-26T09:13:05.800Z"
+    },
+    "rule-10637": {
+      "learning_id": "rule-10637",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10637,
+      "title": "Update Rust crate quick-xml to 0.42.0",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "cde61b53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T09:22:00.526Z"
+    },
+    "candidate_directive-update-rust-crate-quick-xml-to-0-42-0": {
+      "item_id": "candidate_directive-update-rust-crate-quick-xml-to-0-42-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G2F0-update-rust-crate-quick-xml-to-0-42-0.md",
+      "title": "Update Rust crate quick-xml to 0.42.0",
+      "repository": "astral-sh-ruff-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eb172bcf35682af6fae6515872fe790353c1574e1f0bcee6139a8c18535c9e67",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T09:22:13.696Z"
+    },
+    "rule-10638": {
+      "learning_id": "rule-10638",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10638,
+      "title": "fix ANALYZE panic when a skipped column is needed by a generated column",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "adfdb353",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T09:22:09.090Z"
+    },
+    "candidate_directive-fix-analyze-panic-when-a-skipped-column-is-needed-by-a-generated-column": {
+      "item_id": "candidate_directive-fix-analyze-panic-when-a-skipped-column-is-needed-by-a-generated-column",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FZ96-fix-analyze-panic-when-a-skipped-column-is-needed-by-a-generated-column.md",
+      "title": "fix ANALYZE panic when a skipped column is needed by a generated column",
+      "repository": "pingcap/tidb",
+      "source_version": "adfdb353",
+      "content_hash": "8dbd6f4bbb7a94116cb13962e58ab93e0697653d45aab75dffa333c6a4be2ced",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T09:22:09.599Z"
+    },
+    "candidate_directive-planner-fix-analyze-panic-when-a-skipped-column-is-needed-by-a-generated-column": {
+      "item_id": "candidate_directive-planner-fix-analyze-panic-when-a-skipped-column-is-needed-by-a-generated-column",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G3JS-planner-fix-analyze-panic-when-a-skipped-column-is-needed-by-a-generated-column.md",
+      "title": "planner: fix ANALYZE panic when a skipped column is needed by a generated column",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d880d15aafa16a68d17aca3091b8d7c1785e9b3ce13d59579459caf9b26343fa",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-26T09:22:15.163Z"
     }
   },
   "ai-builder-brain": {

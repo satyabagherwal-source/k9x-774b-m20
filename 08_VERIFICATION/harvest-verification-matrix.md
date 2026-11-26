@@ -13317,3 +13317,6 @@
 | `CYCLE-20261126-3C5G` | `2026-11-26T09:12:19.780Z` | `sand-ai/MAGI-2-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sand-ai-magi-2-preview-learnings.md` | Yes (`f9a90117...`) |
 | `CYCLE-20261126-3JCW` | `2026-11-26T09:12:29.120Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8879` | Yes (`d29e96e5...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T09:13:05.394Z` | `hf-sand-ai-magi-2-preview` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B8D29B23` [Domain D] | Yes (`11add591...`) |
+| `CYCLE-20261126-FQTM` | `2026-11-26T09:21:58.666Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`f3569245...`) |
+| `CYCLE-20261126-FSFZ` | `2026-11-26T09:22:00.767Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10637` | Yes (`4743a21c...`) |
+| `CYCLE-20261126-FZ2A` | `2026-11-26T09:22:09.346Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10638` | Yes (`46da9f36...`) |
