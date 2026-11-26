@@ -13175,3 +13175,7 @@
 | `CYCLE-20261126-LQ3W` | `2026-11-26T00:34:44.972Z` | `microsoft/Florence-2-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-florence-2-base-learnings.md` | Yes (`2beed75f...`) |
 | `CYCLE-20261126-LRFE` | `2026-11-26T00:34:46.682Z` | `indexable-inc/blaze` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10569` | Yes (`fbb740c2...`) |
 | `CYCLE-20261126-M0BK` | `2026-11-26T00:34:58.208Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10570` | Yes (`754141eb...`) |
+| `CYCLE-20261126-0P5T` | `2026-11-26T00:46:23.585Z` | `webAI-Official/TwIL-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md` | Yes (`78caf6c3...`) |
+| `CYCLE-20261126-0XA5` | `2026-11-26T00:46:34.109Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10571` | Yes (`714b5e86...`) |
+| `CYCLE-20261126-0ZBP` | `2026-11-26T00:46:36.757Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10572` | Yes (`d85656c4...`) |
+| `CYCLE-20261126-13E4` | `2026-11-26T00:46:42.028Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10573` | Yes (`2f3def12...`) |

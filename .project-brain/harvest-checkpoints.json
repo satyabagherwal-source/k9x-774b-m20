@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T00:34:58.226Z",
+  "last_updated": "2026-11-26T00:46:42.050Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "2a8628e9b0716311eaf6a690a88bc97e4e09824ff1eb9914f31d093cef09842f",
-      "verified_at": "2026-11-25T23:32:40.702Z",
+      "content_hash": "2f3def1226a529990dec69be1d6d554089d2dc7a81622536631885b027185976",
+      "verified_at": "2026-11-26T00:46:42.050Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T23:32:40.702Z"
+      "last_updated": "2026-11-26T00:46:42.050Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "d8c457a52df69568a53a82bdf511ba6c0e0ac2ed2883a7cd352a6f3b4c6efe4f",
-      "verified_at": "2026-11-25T08:44:08.981Z",
+      "content_hash": "d85656c4d64ac5fdeae788064cc5d6d8a1ca2564783a1a800ff51dd0654849e4",
+      "verified_at": "2026-11-26T00:46:36.779Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T08:44:08.981Z"
+      "last_updated": "2026-11-26T00:46:36.779Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "eed36a1c77c10efa86a03e9b70ef8410445a1921a4812f253ceaa479843b9eed",
-      "verified_at": "2026-11-25T00:26:47.818Z",
+      "content_hash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
+      "verified_at": "2026-11-26T00:46:34.130Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T00:26:47.818Z"
+      "last_updated": "2026-11-26T00:46:34.130Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -18156,14 +18156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-webai-official-twil-8b",
-      "content_hash": "79dc532c3182f3f55b44076b734484e5babf402361f6b847bf57ed5f7fefc01d",
-      "verified_at": "2026-11-22T03:37:44.052Z",
+      "content_hash": "78caf6c38f960aed2d717f64bf3591bce15b21b54bf3920a374a72515edbfcf6",
+      "verified_at": "2026-11-26T00:46:23.605Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:37:44.052Z"
+      "last_updated": "2026-11-26T00:46:23.605Z"
     },
     "unsloth/Qwen3.8-Flash-Next-GGUF": {
       "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",

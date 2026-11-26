@@ -13208,3 +13208,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-microsoft-florence-2-base` | `https://huggingface.co/microsoft/Florence-2-base` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-26T00:34:44.977Z |
 | `learn-github-indexable-inc-blaze` | `https://github.com/indexable-inc/blaze` | `a5b3c536` | Multi-dimensional audit evidence | 2026-11-26T00:34:46.687Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `7c3d68e9` | Multi-dimensional audit evidence | 2026-11-26T00:34:58.212Z |
+| `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-26T00:46:23.589Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `279a0c24` | Multi-dimensional audit evidence | 2026-11-26T00:46:34.113Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `f2c476cf` | Multi-dimensional audit evidence | 2026-11-26T00:46:36.761Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ac6641e3` | Multi-dimensional audit evidence | 2026-11-26T00:46:42.033Z |

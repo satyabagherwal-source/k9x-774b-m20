@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "d97fb2a0",
+  "source_version": "ac6641e3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T23:32:40.929Z",
+  "timestamp": "2026-11-26T00:46:42.316Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `d97fb2a0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T23:32:40.929Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `ac6641e3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T00:46:42.316Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:32:39.900Z  
+> **Harvest Timestamp**: 2026-11-26T00:46:40.784Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -72,6 +72,7 @@ pub fn generate(statement: &Stmt) -> String {
         Stmt::Assign { target, value } => assignment_source(target, value),
         Stmt::ValueAssign { target, value } => format!("{target}:={value}"),
         Stmt::NullishValueAssign { target, value } => format!("{target}??:={value}"),
+        Stmt::TruthyValueAssign { target, value } => format!("{target}&&:={value}"),
         Stmt::Expression(expression) => expression.to_string(),
         Stmt::If {
             condition,
@@ -520,9 +521,9 @@ impl Parser {
     }
 
     fn expression_statement(&mut self) -> Result<Stmt> {
-        let outer = self.nullish_assignment_depth.replace(self.depth + 1);
+        let outer = self.guarded_assignment_depth.replace(self.depth + 1);
         let expression = self.without_head_read(Self::expression);
-        self.nullish_assignment_depth = outer;
+        self.guarded_assignment_depth = outer;
         let expression = expression?;
 
         if self.starts_is_assignment(&expression) {
@@ -537,6 +538,17 @@ impl Parser {
     }
 
     pub(super) fn expression_tail(&mut self, expression: Expr) -> Result<Stmt> {
+        if self.starts_truthy_assignment() {
+            self.check_path_target(&expression, "Invalid value assignment target")?;
+            self.advance();
+            self.advance();
+            let value = self.receiving(&expression, Self::expression)?;
+            return Ok(Stmt::TruthyValueAssign {
+                target: expression,
+                value,
+            });
+        }
+
         if self.starts_nullish_assignment() {
             self.check_path_target(&expression, "Invalid value assignment target")?;
             self.advance();
@@ -561,6 +573,10 @@ impl Parser {
 
     pub(super) fn starts_nullish_assignment(&self) -> bool {
         self.check(&Token::QuestionQuestion) && self.peek_at(1) == &Token::ColonAssign
+    }
+
+    pub(super) fn starts_truthy_assignment(&self) -> bool {
+        self.check(&Token::AndAnd) && self.peek_at(1) == &Token::ColonAssign
     }
 
     fn return_statement(&mut self) -> Result<Stmt> {
@@ -595,26 +611,6 @@ impl Parser {
         let mut body = Vec::new();
         if !self.check(&Token::Colon) {
             let Some(premise) = self.suppose_premise() else {
-                return Ok(None);
-            };
-            body.push(premise);
-        }
-        body.extend(self.suite()?);
-
-        Ok(Some(Stmt::Suppose { target, body }))
-    }
-
-    pub(super) fn suppose_premise(&mut self) -> Option<Stmt> {
-        if self.starts_colon_statement_at(0)
-            || matches!(
-                self.peek(),
-                Token::Newline | Token::Semicolon | Token::Dedent | Token::RightBrace | Token::Eof
-            )
-        {
-            return None;
-        }
-
-        let attempt = (self.pos
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1570,423 +1566,536 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `715c2a03` (2026-11-25)
-**Commit Message**: NUC 147 Deferred Suites
+### Incident Patch 1: `ac6641e3` (2026-11-26)
+**Commit Message**: Draft NUC 152 Falsy Value Assignment
+
+Category: Runtime features. Mode: continuous; existing_comparable.
+
+Allocate only TARGET ||:= EXPR: use existing falsiness to choose one
+isolated ordinary := action, with a lazy, no-write truthy skip.
+Preserve all accepted forms, diagnostics, contexts and protected cases.
+Required lexer-token comparisons will use fresh accepted counterparts.
+
+The one uniform live-registry draw selected Runtime features.
+No stale allocated Draft or duplicate proposal was found.
+This allocation changes no runtime, corpus, test, export or grammar.
+No rubric or learning policy is configured.
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -108,6 +108,7 @@ Created: 31-Jul-2026
+ | [144](nuc-0144.md) | Nullish Value Assignment | Accepted |
+ | [147](nuc-0147.md) | Deferred Suites | Accepted |
+ | [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
++| [152](nuc-0152.md) | Falsy Value Assignment | Draft |
+ 
+ ### Utility enhancement
+ 
+@@ -357,6 +358,7 @@ Created: 31-Jul-2026
+ | [149](nuc-0149.md) | Newline-Separated List Elements | Standards Track | Syntax enhancement | Accepted |
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Standards Track | Language compatibility | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+ | [151](nuc-0151.md) | Truthy Value Assignment | Standards Track | Runtime features | Accepted |
++| [152](nuc-0152.md) | Falsy Value Assignment | Standards Track | Runtime features | Draft |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0152.md` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++# NUC 152 -- Falsy Value Assignment
++
++```
++NUC: 152
++Title: Falsy Value Assignment
++Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Draft
++Type: Standards Track
++Category: Runtime features
++Created: 26-Nov-2026
++Requires: 66, 144, 151
++```
++
++## Abstract
++
++- Add only `TARGET ||:= EXPR`: when the current target value is falsy under
++  the existing truthiness rules, perform one ordinary imperative value
++  assignment; otherwise do nothing and never evaluate the right-hand side.
++- Preserve the isolated target lookup, guard, taken action and flag
++  restoration of NUCs 144 and 151. A truthy skip must not replace a standing
++  declaration, subscribe to inputs, record history or write a value.
++- Reuse existing `||` and `:=` tokens, with contextual statement-head
++  parsing only. Preserve ordinary logical expressions, `||=`, `&&=`,
++  unconditional `:=`, nullish `??:=` and truthy `&&:=`; add no other form.
++- The caller's one uniform eligible-category draw selected Runtime
++  features. This continuous revision uses `existing_comparable`
++  applicability, with concrete accepted-syntax counterparts recorded
++  before implementation and required per-case lexer-token comparison.
++
++## Motivation
++
++- Fill or replace a disabled value once without changing an enabled target's
++  law, history, identity or dependencies. The skipped right-hand side may
++  be effectful or erroneous and must remain unevaluated.
++- Declarative `||=` installs a standing logical law. Unconditional
++  `target := target || value` still writes on a truthy skip. An ordinary
++  standing `if` can subscribe to its guard and gives its body a different
++  imperative-assignment context. None is a general isolated, no-write
++  conditional action.
++- Reuse accepted truthiness and NUC 66's exact taken-action contexts,
++  building on the guarded assignment machinery already accepted by
++  NUCs 144 and 151. Keep each existing form and diagnostic unchanged.
++
++## Rationale
++
++To be completed by the fresh proposal agent.
++
++## Specification
++
++To be completed by the fresh proposal agent.
++
++## Reference Implementation
++
++To be completed in the isolated candidate after immutable baseline capture.
++
++## Backward Compatibility
++
++Preserve all accepted parser inputs and behavior, existing assertions,
++expected results, diagnostics, case identities and executed coverage.
++
++## Evaluation
++
++- Allocation only; no implementation, token result or acceptance outcome.
++- Mode: `continuous`; Category: `Runtime features`; runtime applicability:
++  `existing_comparable`. Token comparison is required, not skipped.
++- The accepted whole-source native probe rejects `slot ||:= 7` with
++  `SyntaxError: Unexpected ':=' (line 2, column 11)`.
++- Fresh proposal, caller-owned Rust improvement and independent evaluation
++  follow this pushed allocation and its immutable accepted-corpus baseline.
++- No hint, usefulness rubric or strategy-learning configuration was supplied.
++  Learning is `not_configured`; usefulness remains unscored.
++
++## Copyright
++
++Copyright 2026 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `7c68ca1c` (2026-11-26)
+**Commit Message**: NUC 151 Truthy Value Assignment
 
 Accepted.
 
-Continuous Runtime features / existing_comparable: the independent evaluator
-accepted the frozen candidate and every hard criterion passed. The caller
-rechecked the unchanged implementation on the integrated tree before recording
-this outcome.
+Continuous Runtime features, existing_comparable. The fresh independent
+evaluator and actual core report both Accepted the unchanged frozen
+candidate. Caller integration rechecks every hard criterion.
 
-All-target build, warning-denied Clippy, formatting and private rustdoc passed.
-Full tests: 4155 passed, 0 failed, 25 retained intentional ignores. All 4155
-accepted native identities and 11 panic labels were preserved; all 25 additions
-passed. Replayed all 1322 original programs and 6575 canonical assertions.
+All-target build, warning-denied Clippy, formatting and full native tests
+pass: 4,198 passed, zero failed, 25 ignored. Preserve all 4,196 accepted
+identities/dispositions, 11 expected-panic labels and 1,326 protected
+programs with 6,599 canonical assertions; 27 new tests pass.
 
-The required token comparison ran once: 135 -> 121 and 157 -> 129 for the two
-new paired controls; 1320 cases unchanged, none increased or missing.
-Independent overall report: 1ca0bc79946e88eb353cc2db8a03dc4e18bb0343.
-Core report: ba37ec2e52fca7d5fa3bd231f259f6489ad0ab6d.
-Integrated hard-criteria report: eb100222aed0cf16a5bb79235e948466bf6fdc05.
+Required per-case lexer-token comparison ran and passed: 1,324 unchanged,
+two reductions (105 to 89 and 148 to 127), no increases or missing pairs.
+Eight retained external-checker numeric-text oracle errors were resolved
+from unchanged accepted/candidate evidence, not candidate repairs.
 
-Preserve the concurrent policy publication and NUC148 Draft allocation.
-Usefulness remains unscored (missing_rubric); learning is not_configured.
-Human SemVer review is flagged for public Stmt::Defer; versions are unchanged.
+Frozen proposal: c54ddfba2603a6c3907ab34eb0f8f15b7625139f.
+Independent summary: 6f34b355bc0516f0132fcba38cd50a395ec33961.
+Core report: f77230cd8839047ac29cce43a640002f9ae69b57.
+Advisory usefulness is unscored/missing_rubric; learning not_configured.
+The public Stmt variant needs human API/SemVer review; versions unchanged.
 
-Co-authored-by: Copilot <[REDAC
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +6/-0)
+```diff
+@@ -1502,6 +1502,12 @@ assert: (why paid)[0].rule, "paid = 12"
+   RHS and preserves the target's standing law, identity and history. Guard
+   and action reads stay isolated from enclosing rules; see
+   [Nullish value assignment](nucleoid.spec.md#nullish-value-assignment).
++- [NUC 151](docs/nuc-0151.md) adds `TARGET &&:= EXPR` for a one-shot action
++  only when the current target is truthy. Falsy skips evaluate no RHS and
++  preserve the target's law, identity and history. Guard and action reads
++  are isolated; a taken action retains `:=`'s top-level filing versus
++  imperative-body carry-out distinction. See
++  [Truthy value assignment](nucleoid.spec.md#truthy-value-assignment).
+ 
+ ## List and population sums
+ 
+```
 
 **File**: `dataset/nucleoid.spec.jsonl` (modified, +1/-0)
 ```diff
-@@ -881,3 +881,4 @@
- {"id":"spec-0881","description":"Nucleoid fills nullish values with one-shot assignments","code":"source = 5\nchosen = null\nchosen ??:= source\nassert(chosen, 5)\nsource = 9\nassert(chosen, 5)\nchosen = 0\nchosen ??:= missing\nassert(chosen, 0)\nchosen = false\nchosen ??:= missing\nassert(chosen, false)\nchosen = \"\"\nchosen ??:= missing\nassert(chosen, \"\")\nchosen = null\nchosen ??:= 99\nassert(chosen, 99)\n1","return":"1"}
- {"id":"spec-0882","description":"Nucleoid counts direct inputs in reasoning selections","code":"price = 3\nquantity = 4\nsubtotal = price * quantity\ntax = subtotal / 10\ntotal = subtotal + tax\ncounts = total |> why |> indegrees\nassert(counts, [2, 2, 1, 0, 0])\nprice = 5\nassert(counts, [2, 2, 1, 0, 0])\ntax = price * quantity\nassert(counts, [2, 2, 2, 0, 0])\ntax = 0\nassert(counts, [2, 2, 0, 0, 0])\ntotal = subtotal\nassert(counts, [1, 2, 0, 0])\nsubtotal = price\nassert(counts, [1, 1, 0])\n1","return":"1"}
+@@ -883,3 +883,4 @@
  {"id":"spec-0883","description":"Nucleoid keeps cubes reactive","code":"sample = {amplitude: 3}\noffset = 2\ncubed = Math.cube(sample.amplitude + offset)\nassert(cubed, 125)\nsample.amplitude = -4\nassert(cubed, -8)\noffset = 1\nassert(cubed, -27)\nsample.amplitude = 0\nassert(cubed, 1)\noffset = -1\nassert(cubed, -1)\nsample.amplitude = 3\nassert(cubed, 8)\n1","return":"1"}
-+{"id":"spec-0884","description":"Nucleoid runs deferred suites on block exit","code":"audit = []\ndef complete(value):\n    defer:\n        audit.push(value)\n    if value > 0:\n        return value * 2\n    if value < 0:\n        return -value\n    return 0\nassert(complete(3), 6)\nassert(audit, [3])\nassert(complete(-4), 4)\nassert(audit, [3, -4])\nassert(complete(0), 0)\nassert(audit, [3, -4, 0])\n1","return":"1"}
+ {"id":"spec-0884","description":"Nucleoid runs deferred suites on block exit","code":"audit = []\ndef complete(value):\n    defer:\n        audit.push(value)\n    if value > 0:\n        return value * 2\n    if value < 0:\n        return -value\n    return 0\nassert(complete(3), 6)\nassert(audit, [3])\nassert(complete(-4), 4)\nassert(audit, [3, -4])\nassert(complete(0), 0)\nassert(audit, [3, -4, 0])\n1","return":"1"}
+ {"id":"spec-0885","description":"Nucleoid separates list elements on new lines","code":"seed = 2\nreadings = [\n    seed\n    seed + 1\n    seed * 2\n]\nassert(readings, [2, 3, 4])\nassert(readings.length, 3)\nassert(readings[0], 2)\nseed = 5\nassert(readings, [5, 6, 10])\nassert(readings.length, 3)\nassert(readings[2], 10)\n1","return":"1"}
++{"id":"spec-0886","description":"Nucleoid writes truthy values with one-shot assignments","code":"input = 3\nslot = input + 1\nslot &&:= 9\nassert(slot, 9)\ninput = 7\nassert(slot, 9)\nempty = 0\nempty &&:= missing\nassert(empty, 0)\nactive = true\nactive &&:= 5\nassert(active, 5)\ntext = \"\"\ntext &&:= missing\nassert(text, \"\")\nassert(input, 7)\n1","return":"1"}
 ```
 
-**File**: `dataset/nucleoid.synth.147.jsonl` (added, +3/-0)
+**File**: `dataset/nucleoid.synth.151.jsonl` (added, +2/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+{"id":"synth-147-0001","description":"Nucleoid records an inspection after every early return","code":"audit = []\ndef inspect(reading):\n    defer:\n        audit.push(reading)\n    if reading < 0:\n        return -reading\n    return reading * 2\nassert(inspect(-3), 3)\nassert(inspect(4), 8)\nassert(audit, [-3, 4])\naudit.length","return":"2"}
-+{"id":"synth-147-0002","description":"Nucleoid unwinds nested registrations in reverse order","code":"events = []\ndef finish(code):\n    defer:\n        events.push(code + 1)\n    defer:\n        events.push(code + 2)\n    return code\nassert(finish(10), 10)\nassert(events, [12, 11])\nevents.length","return":"2"}
-+{"id":"synth-147-0003","description":"Nucleoid reads deferred work in the active exit scope while preserving a returned list","code":"observed = []\ndef capture(amount):\n    defer:\n        observed.push(amount)\n        amount = 9\n    amount = 4\n    return [amount]\nassert(capture(2), [4])\nassert(observed, [4])\nobserved[0]","return":"4"}
+@@ -0,0 +1,2 @@
++{"id":"synth-151-0001","description":"Nucleoid takes truthy assignments once while falsy values skip without evaluating missing names","code":"input = 3\nslot = input + 1\nslot &&:= 9\nassert(slot, 9)\ninput = 7\nassert(slot, 9)\nempty = 0\nempty &&:= missing\nassert(empty, 0)\nactive = true\nactive &&:= 5\nassert(active, 5)\ntext = \"\"\ntext &&:= missing\nassert(text, \"\")\nassert(input, 7)\n1","return":"1"}
++{"id":"synth-151-0002","description":"Nucleoid isolates truthy actions in standing branches without replacing the target law","code":"class Gate\ngate = Gate()\ngate.source = 2\ngate.target = gate.source + 1\nenabled = false\nif enabled:\n    gate.target &&:= 12\nassert(gate.target, 3)\ngate.source = 4\nassert(gate.target, 5)\nenabled = true\nassert(gate.target, 12)\ngate.source = 8\nassert(gate.target, 9)\ngate.target &&:= 0\nassert(gate.target, 0)\ngate.target &&:= missing\nassert(gate.target, 0)\n1","return":"1"}
 ```
 
-**File**: `docs/README.md` (modified, +48/-1)
+**File**: `docs/README.md` (modified, +52/-1)
 ```diff
-@@ -2734,6 +2734,51 @@ visits.length
-   before a `catch`. See the
-   [root contract](../nucleoid.spec.md#finally-clauses).
+@@ -431,6 +431,55 @@ qty = 5
+   `Nucleoid keeps nullish assignment guards isolated`; see the
+   [root contract](../nucleoid.spec.md#nullish-value-assignment).
  
-+### Deferred suites
++### Truthy value assignment
++
++- [NUC 151](nuc-0151.md) adds only `target &&:= expression`: take one
++  ordinary `:=` action when the target's current value is truthy. Null,
++  Undefined, false, both zero signs, NaN and empty text skip; empty
++  containers and every other truthy value take.
++- A skip evaluates no RHS and changes no assignment, declaration, identity,
++  history or dependency. A take retains `:=`'s effects, RHS null settlement,
++  receiver, target timing, constructor naming, scopes and transactions.
++- A top-level take files a literal and replaces the target law. In a
++  standing `if` or other imperative body it is carried out without replacing
++  that law. In this example `gate.source = 8` recomputes the original law,
++  giving `9`, not `12`.
++- Isolate target lookup, guard, RHS and called code from dependency tracking;
++  restore guard null/undefined-read flags even on errors. Target validation,
++  read-only versions, forbidden properties, class boundaries and resource
++  limits still apply even when a value would skip.
++- Use existing `&&` then `:=` tokens only at an expression-statement head's
++  own level. Grouping, ordinary spacing and comments are permitted; nested
++  expressions, public expression parsing and ignored interpolation suffixes
++  retain their readings. `&&=`, `||=`, `:=`, `??:=` and `??=` errors do not
++  change; no `||:=` is introduced.
 +
 +```
-+history = []
-+def unwind(value):
-+    defer:
-+        history.push(value * 10 + 1)
-+    defer:
-+        history.push(value * 10 + 2)
-+    return value
-+assert(unwind(0), 0)
-+assert(history, [2, 1])
-+assert(unwind(2), 2)
-+assert(history, [2, 1, 22, 21])
-+assert(unwind(-2), -2)
-+assert(history, [2, 1, 22, 21, -18, -19])
++class Gate
++gate = Gate()
++gate.source = 2
++gate.target = gate.source + 1
++enabled = false
++if enabled:
++    gate.target &&:= 12
++assert(gate.target, 3)
++gate.source = 4
++assert(gate.target, 5)
++enabled = true
++assert(gate.target, 12)
++gate.source = 8
++assert(gate.target, 9)
++gate.target &&:= 0
++assert(gate.target, 0)
++gate.target &&:= missing
++assert(gate.target, 0)
 +1
 +```
 +
-+- This is the complete `Nucleoid unwinds deferred suites in reverse order`
-+  case in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `1`. The specification's
-+  [deferred-suite contract](../nucleoid.spec.md#deferred-suites) is authoritative.
-+- [NUC 147](nuc-0147.md) adds contextual `defer:` with a real indented
-+  suite. Reaching it registers work for exit of the current executable
-+  statement list, not necessarily the whole function. The program,
-+  branches, loop iterations, try/catch/finally and deferred bodies are
-+  separate lists; nested lists finish their cleanup before returning.
-+- Remaining work completes, returns or fails first. Registrations then run
-+  LIFO in the still-active parameter, loop, catch or receiver scope,
-+  reading exit-time values rather than capturing arguments or closures.
-+  A pending return keeps its computed value. A deferred return or failure
-+  replaces the pending outcome, but older registrations still run.
-+- A failed body rolls its state and queued work back before cleanup; a
-+  failed deferred suite rolls back before the next older one. These are
-+  NUC 119 savepoints, not snapshots of local bindings. Successful cleanup
-+  remains part of the enclosing transaction and rolls back if an error escapes.
-+- `defer` remains an ordinary name everywhere else. Typed `defer: NAME`,
-+  bare-name lines followed by blocks, calls, properties, keys and operator
-+  sections keep their old meaning. Inline/braced or layout-suppressed
-+  forms are not deferred suites. Ordinary `try` still requires a catch.
-+- The REPL's existing colon buffering holds a deferred suite until a blank
-+  line; cleanup belongs to that submitted program, not to the REPL session.
-+  No resource protocol, async operation or new loop-exit behavior is added.
++- The complete executable reference case is
++  `Nucleoid keeps truthy assignment guards isolated`; see the
++  [root contract](../nucleoid.spec.md#truthy-value-assignment).
 +
- ### Python-style except clauses
+ ### Is assignments
  
- ```
-@@ -2782,7 +2827,7 @@ share
-   unbinds it. See the
-   [root contract](../nucleoid.spec.md#python-style-except-clauses).
+ - `target is value` is a spelling of `target = value` for variables and
+@@ -1553,7 +1602,7 @@ order.label
  
--Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md), [NUC 122](nuc-0122.md).
-+Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md), [NUC 122](nuc-0122.md), [NUC 147](nuc-0147.md).
- 
- ---
- 
-@@ -6148,6 +6193,8 @@ except:                                Python's spelling of catch:, binding erro
-     statement
- finally:                               runs however the statement ends (NUC 119)
-     statement
-+defer:                                 registers an indented suite for this block's exit (NUC 147)
-+    statement
- return expression                      yield from a block or function
- assert(actual, expected)                existing equality-check helper
- assert: actual, expected                optional statement spelling (Accepted NUC 45)
+ - This is the complete `Nucleoid reads properties of the assigned object with a leading dot` program in `tests/reference.md`, without its title and expected-return metadata; it returns `"6 for 30"`.
+ - [NUC 102](nuc-0102.md) reads a `.` that begins an operand, directly followed by a name, in the value of an assignment to a property path as that property of the path's object, the receiver. `$Order.total = .price * .qty` is `$Order.total = $Order.price * $Order.qty`, `order.customer.label = .first` reads `order.customer.first`, and `this.area = .w * .h` reads `this.w` and `this.h`.
+-- The forms are `=`, `:=`, `??:=` and every compound assignment. The target is a plain path whose last link is a property, rooted in a name, `$Class`, `every Class`, `all Class` or `any Class`, `this` or `self`; a variable, a destructuring pattern or a computed target such as `xs[0].p` has no receiver.
++- The forms are `=`, `:=`, `??:=`, `&&:=` and every compound assignment. The target is a plain path whose last link is a property, rooted in a name, `$Class`, `every Class`, `all Class` or `any Class`, `this` or `self`; a variable, a destructuring pattern or a computed target such as `xs[0].p` has no receiver.
+ - The read continues as member access does, so `.a.b`, `.a[0]`, `.a()` and `.a@first` work, in every operand of the value: operators, `?:` and Python-style conditionals with their conditions, lists, objects, subscripts, lambda and function bodies and template interpolations. The innermost assignment decides, so in `o.p = (q.r = .a)` the dot reads `q.a`.
+ - The parser builds the written-out member path, so evaluation, dependencies, `why`, `affects`, graph keys, rendering and rollback are those of that path, and `why` reports `$Order.total = $Order.price*$Order.qty`.
+ - These keep their accepted readings and errors: a call argument that starts with `.`, which is a selector or its error; `is` assignments; a statement or target that starts with `.`; a dot after a name, such as `x .a`; the values of variables and destructuring declarations; and every position without a property target.
+@@ -6025,6 +6074,8 @@ name := expression                     value assignment: once, no dependency (NU
+ name.property := expression            value assignment to a property (NUC 66)
+ name ??:= expression                   one-shot value assignment only for Null/Undefined (NUC 144)
+ name.property ??:= expression          nullish value assignment to a property (NUC 144)
++name &&:= expression                   one-shot value assignment only for truthy values (NUC 151)
++name.property &&:= expression          truthy value assignment to a property (NUC 151)
+ name is expression                     is assignment: name = expression (NUC 93)
+ name.
 ```
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -105,7 +105,7 @@ Created: 31-Jul-2026
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
+@@ -107,7 +107,7 @@ Created: 31-Jul-2026
  | [140](nuc-0140.md) | Match Statements | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
  | [144](nuc-0144.md) | Nullish Value Assignment | Accepted |
--| [147](nuc-0147.md) | Deferred Suites | Draft |
-+| [147](nuc-0147.md) | Deferred Suites | Accepted |
+ | [147](nuc-0147.md) | Deferred Suites | Accepted |
+-| [151](nuc-0151.md) | Truthy Value Assignment | Draft |
++| [151](nuc-0151.md) | Truthy Value Assignment | Accepted |
  
  ### Utility enhancement
  
-@@ -349,7 +349,7 @@ Created: 31-Jul-2026
- | [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Accepted |
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Accepted |
--| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
-+| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Accepted |
+@@ -356,7 +356,7 @@ Created: 31-Jul-2026
  | [148](nuc-0148.md) | Integer Range Literals | Standards Track | Syntax enhancement | Draft |
+ | [149](nuc-0149.md) | Newline-Separated List Elements | Standards Track | Syntax enhancement | Accepted |
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Standards Track | Language compatibility | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+-| [151](nuc-0151.md) | Truthy Value Assignment | Standards Track | Runtime features | Draft |
++| [151](nuc-0151.md) | Truthy Value Assignment | Standards Track | Runtime features | Accepted |
  
  ## Copyright
+ 
 ```
 
-**File**: `docs/nuc-0147.md` (modified, +226/-12)
+**File**: `docs/nuc-0151.md` (modified, +231/-18)
 ```diff
 @@ -4,7 +4,7 @@
- NUC: 147
- Title: Deferred Suites
+ NUC: 151
+ Title: Truthy Value Assignment
  Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
  Category: Runtime features
  Created: 25-Nov-2026
-@@ -33,6 +33,9 @@ Requires: 119
- - Keep control flow and registration/unwinding bounded under the crate's
-   existing limits. Add no asynchronous cleanup, new loop-exit behavior,
-   implicit resource protocol, project version or dependency change.
-+- **Accepted:** revision 1 passed the independent behavior, compatibility,
-+  development and required lexer-token checks, followed by the caller's
-+  hard-criteria recheck of the unchanged integrated implementation.
+@@ -26,10 +26,10 @@ Requires: 66, 144
+   This is a core conditional action, not an alias for a standing law.
+ - The caller's one uniform eligible-category draw selected Runtime
+   features. This continuous revision uses `existing_comparable` runtime
+-  applicability: accepted snapshot-guarded `if` statements followed by
+-  `:=` supply the selected programs' immutable counterparts, so lexer-token
+-  comparison and every behavior, integrity and development check remain
+-  mandatory.
++  applicability: concrete accepted `:= target && value` top-level takes
++  and snapshot-guarded `if`/`:=` skips and branches supply the selected
++  programs' immutable counterparts. Lexer-token comparison and every
++  behavior, integrity and development check remain mandatory.
  
  ## Motivation
  
-@@ -61,29 +64,240 @@ Requires: 119
-   neither a missing counterpart nor a new spelling permits a skip.
- - No hint, scoring rubric or strategy-learning configuration was supplied.
-   This revision is unattributed and learning is `not_configured`.
-+- A block owns a finite, borrowed list of reached registrations rather
-+  than a runtime-global callback queue. Deferred bodies receive fresh
-+  lists, so registering work during cleanup cannot extend the parent
-+  unwind. Existing parse and runtime depth guards bound nested bodies.
-+- NUC 119's real savepoints restore state, graph work and deletion
-+  tracking, not local binding snapshots. Retaining that distinction keeps
-+  active parameter, loop and catch scopes and avoids inventing closure or
-+  foreign transaction semantics.
-+- Rejected alternatives are globally reserving `defer`, an inline or
-+  braced shorthand, lowering to catch/rethrow with a hidden binder, eager
-+  argument capture, and importing any rejected loop-exit or match proposal.
+@@ -47,34 +47,247 @@ Requires: 66, 144
+ 
+ ## Rationale
+ 
+-Pending independent preparation against the pushed allocation.
++- A truthiness-guarded action belongs to Runtime features: its purpose is
++  conditional execution, not another spelling for a standing law or a
++  foreign-language compatibility alias. Keep the caller's confirmed category.
++- Reuse NUC 144's isolated guard and NUC 66's taken action. A private typed
++  guard dispatch selects existing nullishness or existing truthiness without
++  changing either value model or the old public syntax-tree variants.
++- Reject unconditional `target := target && value` as a general lowering:
++  it still files a falsy value, replacing the declaration and dependencies.
++  Reject ordinary standing `if target` as a general lowering because its
++  guard can subscribe to inputs and its body does not file a top-level fact.
++- The two selected concrete programs have executed accepted counterparts.
++  Known-truthy top-level takes use `slot := slot && 9`,
++  `active := active && 5` and `gate.target := gate.target && 0`; falsy
++  skips and the standing branch use snapshot guards. This is equivalence
++  for those programs, not a universal lowering of arbitrary falsy inputs.
++- Preserve NUC 66's actual context boundary. An action inside `if enabled`
++  can set a target now but cannot replace its existing law: after
++  `gate.source = 8`, that law gives `gate.target = 9`, not `12`.
++- Introduce no sibling `||:=`, keyword, token kind, option, dependency,
++  numerical helper or unrelated pending proposal.
  
  ## Specification
  
--- To be completed by the fresh preparation agent after allocation and
--  immutable accepted-baseline capture, within the requested contract above.
-+- The normative contract is
-+  [Deferred suites](../nucleoid.spec.md#deferred-suites).
-+- Syntax is contextual `defer` followed by `:` and a real indented block.
-+  Qualify the entire layout prefix before consuming the identifier. A
-+  genuine statement start is input start, or immediately after a logical
-+  newline, semicolon, indent, dedent, opening block brace or suite colon.
-+  Adjacency after another expression is not a qualifying boundary.
-+- `defer` remains an ordinary lexer identifier. The parser adds only
-+  `Stmt::Defer(Vec<Stmt>)`, with the existing statement nesting guard and
-+  suite parser. The [W3C EBNF](nucleoid.ebnf) records its contextual
-+  lookahead, tree, layout, rendering and execution contract; its lexical
-+  `DEFER` grouping remains available in `name` and `enumName`.
-+- Reaching the statement registers its unevaluated statements. It
-+  contributes no value and makes no closure or eager snapshot. Each
-+  executable statement list owns its registrations: a submitted program,
-+  function, method or constructor, branch, explicit block, loop iteration,
-+  try/catch/finally, hypothetical or deferred body.
-+- When remaining work completes, returns or errors, execute the reached
-+  suites once each in reverse registration order before the list's active
-+  scope is removed. Nested lists unwind before returning to their caller;
-+  registrations never migrate to a parent list or the REPL session.
-+  Existing loop outcomes pass through unchanged.
-+- Normal cleanup discards its own value and retains the pending outcome.
-+  A pending return keeps the value already computed, including a returned
-+  list's elements. Cleanup reads and may modify the still-active
-+  parameters, loop/catch bindings and receiver.
-+- A deferred return or error replaces the pending outcome, but does not
-+  skip older registrations. Older suites still run and may replace it
-+  again. Do not stringify/rethrow an original runtime error: retain its
-+  kind, message and position unless a cleanup outcome replaces it.
-+- A block with a direct registration opens a savepoint at entry. If its
-+  remaining body fails after registering work, rollback restores failed
-+  state, graph work and deletion tracking before cleanup. Each deferred
-+  body has its own savepoint, rolled back before older cleanup on failure.
-+  As in NUC 119, these are not scope snapshots. Successful cleanup writes
-+  remain inside the enclosing transaction and are undone if an error escapes.
-+- Top-level errors keep the running statement's normal position fallback.
-+  An unpositioned error escaping a top-level deferred body is placed at
-+  its registration; existing positioned errors retain their own location.
-+- Registration scans a finite source list once; each reached statement
-+  adds at most one borrowed suite. Unwinding traverses that finite vector
-+  in reverse. Each nested deferred execution passes the existing
-+  192-level runtime statement guard, and parsing keeps its 64-level
-+  shared statement/expression guard.
-+- The native REPL already buffers colon-led suites. A blank line submits
-+  the program 
+-Pending independent preparation.
++- The sole new form is the statement `TARGET &&:= EXPR`. Tokenization is
++  the existing `&&` followed by existing `:=`. Ordinary inter-token spacing
++  and comments are permitted; a logical newline still separates statements.
++- Only an expression-statement head's own expression nesting level stops
++  ordinary logical conjunction before the exact `&&`/`:=` pair. Validate
++  the same grouped, bounded path as `:=` and parse its ordinary receiving
++  expression. No assignment expression is enabled inside calls, lists,
++  returns, defaults, headers, arrows or other nested expressions.
++- Resolve, validate and read the target normally in the current scope.
++  An unbound root is an error; an ordinary absent object property may yield
++  Undefined. Read-only versions, forbidden properties, invalid owners and
++  class boundaries are checked even on otherwise skipped targets.
++- Use `Value::truthy` unchanged. Null, Undefined, false, positive zero,
++  negative zero, NaN and empty Strings skip. Nonzero numbers, nonempty
++  Strings, Lists including empty Lists, objects, classes, functions, Dates
++  and regular expressions take the action.
++- A skip returns the ordinary `pass` result without evaluating the RHS.
++  It files no assignment, records no scope-assignment bookkeeping, changes
++  no target identity or declaration, appends no history and replaces no
++  dependency or structural subscription. Existing target laws remain live.
++- A take performs exactly one ordinary `:=` action, evaluating the RHS
++  once and preserving its effects, extra-argument evaluation, lexical
++  property receiver, named-constructor binding, local scopes, instance
++  rules, target-resolution timing and storage/null-read settlement.
++- At top level a take files a literal/fact and replaces the target law.
++  Standing-if and other imperative bodies instead carry it out without
++  filing, as they do `:=`; later source changes may recompute that law.
++  Every subsequent entry checks the current target again.
++- Isolate target resolution and guard reads as well as a taken RHS and
++  called functions, methods, callbacks and structural queries from all
++  enclosing dependency-tracking frames. Do not install a standing guard.
++  An enclosing `if enabled` depends on `enabled`, not the action's inputs.
++- Restore the enclosing null/undefined-read flags after guard pre
 ```
 
-**File**: `docs/nucleoid.ebnf` (modified, +21/-1)
+**File**: `docs/nucleoid.ebnf` (modified, +12/-3)
 ```diff
-@@ -136,6 +136,7 @@ statement
-       | classStmt
-       | functionDecl
-       | tryStmt
-+      | deferStmt
-       | PASS                              /* Stmt::Pass */
-       | returnStmt
-       | THROW expression                  /* Stmt::Throw */
-@@ -391,6 +392,23 @@ exceptClause
- finallyClause
-     ::= NEWLINE* FINALLY suite
+@@ -27,6 +27,9 @@
+  *   token. Ordinary inter-token whitespace/comments are permitted; logical
+  *   layout still applies. '??=' remains COALESCE then ASSIGN and keeps its
+  *   accepted error, never a nullish assignment.
++ * - '&&:=' is the existing AND_AND then VALUE_ASSIGN tokens, not a new
++ *   token. Ordinary inter-token whitespace/comments are permitted, but a
++ *   logical NEWLINE still separates statements. '&&=' keeps AND_ASSIGN.
+  * - Where ordinary tokenization would read '/' or '/=', first read a
+  *   C_COMMENT, then, in operand position, a REGEX. Strings, templates and
+  *   '#' comments are read whole before that, so neither starts inside
+@@ -78,7 +81,8 @@ program
  
-+/* DEFER is still an Identifier in the Rust token source. Only at a genuine
-+   statement start (input start or after NEWLINE, SEMI, INDENT, DEDENT,
-+   LBRACE or COLON) does DEFER COLON followed immediately by the real layout
-+   prefix of indentedBlock register a suite. No expression/header tokens or
-+   same-line body intervene. Typed 'defer: name', bare-name lines before
-+   blocks, properties, keys, calls and operator sections keep their existing
-+   paths. Parentheses/brackets suppress layout, so they cannot qualify.
-+   The existing suite parser and statement depth guard parse the body.
-+   Each executable statement list owns its reached registrations; it runs
-+   them LIFO at exit in the active scope, before that scope is removed.
-+   Deferred suites use new bounded child lists, never append to an unwinding
-+   parent, and enter the existing runtime statement-depth guard.
-+   Graph labels use defer{...}; suite-aware declaration source uses defer:
-+   and real indentation. Every old tree/Debug/source path is unchanged. */
-+deferStmt
-+    ::= DEFER COLON indentedBlock          /* Stmt::Defer */
+ /* parse_expression skips leading separators and ignores trailing tokens.
+    Its top level forms no membership test, as an interpolation's does not.
+-   Neither enables the nullishValueAssignment statement-head boundary. */
++   Neither enables a nullishValueAssignment or truthyValueAssignment
++   statement-head boundary. */
+ expressionInput
+     ::= separator* expression remainingTokens EOF
+ 
+@@ -151,6 +155,7 @@ statement
+       | assertStmt
+       | supposeStmt
+       | nullishValueAssignment
++      | truthyValueAssignment
+       | valueAssignment
+       | isAssignment
+       | predicateSentence
+@@ -198,7 +203,8 @@ valueAssignment
+     ::= path VALUE_ASSIGN expression      /* Stmt::ValueAssign */
+ 
+ /* Only at the expression-statement head's own expression nesting level,
+-   stop ordinary coalescing before the exact COALESCE VALUE_ASSIGN pair.
++   stop ordinary coalescing before the exact COALESCE VALUE_ASSIGN pair
++   and ordinary logicalAnd before the exact AND_AND VALUE_ASSIGN pair.
+    Validate the same bounded path as valueAssignment, with grouping erased.
+    The RHS is the ordinary value expression with its lexical receiver.
+    Nested expressions, return/header/default/argument positions, public
+@@ -207,6 +213,9 @@ valueAssignment
+ nullishValueAssignment
+     ::= path COALESCE VALUE_ASSIGN expression  /* Stmt::NullishValueAssign */
+ 
++truthyValueAssignment
++    ::= path AND_AND VALUE_ASSIGN expression   /* Stmt::TruthyValueAssign */
 +
- functionDecl
-     ::= FUNCTION name parameters block    /* Stmt::Function */
-       | DEF name defParameters defBody
-@@ -985,6 +1003,7 @@ enumName
-       | REPEAT
-       | UNTIL
-       | FINALLY
-+      | DEFER
-       | ENUM
-       | EXTENDS
-       | IS
-@@ -1078,6 +1097,7 @@ WHILE            ::= 'while'
- REPEAT           ::= 'repeat'
- UNTIL            ::= 'until'
- FINALLY          ::= 'finally'
-+DEFER            ::= 'defer'
- ENUM             ::= 'enum'
- EXTENDS          ::= 'extends'
- ASSERT           ::= 'assert'
-@@ -1185,7 +1205,7 @@ NAME
- WORD_TOKEN
-     ::= AND | CATCH | CLASS | DEF | DELETE | ELSE | FALSE | FOR | FUNCTION | IF
-       | IN | NEW | NOT | NULL | OF | OR | PASS | RETURN | SUPER | THIS | THROW
--      | TRUE | TRY | TYPEOF | WHILE | REPEAT | UNTIL | FINALLY | ENUM | EXTENDS
-+      | TRUE | TRY | TYPEOF | WHILE | REPEAT | UNTIL | FINALLY | DEFER | ENUM | EXTENDS
-       | ASSERT | SUPPOSE | LAMBDA | IS | ALL | EVERY | ANY | SUM | MAX | MIN
-       | MODE | WHY | AFFECTS | STATED | DERIVED | DIFF | DEPTH | PATH
-       | INTERSECT | EXCEPT | EXCEPTION | AS | UNION | XOR | NODES | HOLDS
+ /*
+  * Is-assignment contract (NUC 93, NUC 94, NUC 95, NUC 96):
+  * - No NEWLINE separates the path from 'is', and the token after 'is' must
+@@ -568,7 +577,7 @@ assignmentOperator
+       | AND_ASSIGN
+       | OR_ASSIGN
+ 
+-/* Compound assignments, ':=', '??:=' and isAssignment require a path, not an
++/* Compound assignments, ':=', '??:=', '&&:=' and isAssignment require a path, not an
+    arbitrary expression. The parser checks the tree, where grouping leaves
+    no trace, so parentheses may enclose the path or any part of it that
+    starts at its root. A class root needs at least one link, and a path has
 ```
 
-**File**: `nucleoid.spec.md` (modified, +92/-0)
+**File**: `nucleoid.spec.md` (modified, +74/-1)
 ```diff
-@@ -29646,6 +29646,26 @@ sample.amplitude = 3
- assert(cubed, 8)
+@@ -4859,7 +4859,7 @@ statement positions; caught values and transaction recovery are unchanged.
+   `$Order.total = .price * .qty` is
+   `$Order.total = $Order.price * $Order.qty`. No token, keyword, syntax tree
+   node, error type or message is added.
+-- **Receivers.** The assignment forms are `=`, `:=`, `??:=`, `+=`, `-=`, `*=`,
++- **Receivers.** The assignment forms are `=`, `:=`, `??:=`, `&&:=`, `+=`, `-=`, `*=`,
+   `**=`, `/=`, `%=`, `&&=` and `||=`. A target that is a plain path whose
+   last link is a property, `RECEIVER.NAME`, rooted in a name, a class
+   reference `$Class`, `every Class`, `all Class` or `any Class`, `this` or
+@@ -6870,6 +6870,58 @@ t.promote(bob)
+   and `Nucleoid keeps nullish assignment guards isolated` in the executable
+   reference each execute six assertions and explicitly return `1`.
+ 
++## Truthy value assignment
++
++- [NUC 151](docs/nuc-0151.md) adds only `TARGET &&:= EXPR`, a statement
++  that reads the target normally and takes one existing `:=` action only
++  when its current value is truthy. Existing truthiness applies: Null,
++  Undefined, false, both zero signs, NaN and empty text skip; all other
++  values, including empty containers, objects and callable values, take.
++- A falsy skip has the ordinary `pass` result and evaluates no RHS, effects
++  or errors. It files no assignment, changes no identity, declaration,
++  dependencies or history, and leaves an existing target law live. This is
++  not unconditional `TARGET := TARGET && EXPR`, which still files on a skip,
++  nor the standing logical declaration `TARGET &&= EXPR`.
++- A take performs exactly the ordinary value assignment: evaluate the RHS
++  once, with its normal effects, extra arguments, lexical property receiver,
++  constructor naming, local and instance scopes, storage and null-read
++  settlement. At top level it files a literal/fact and replaces the old
++  target law. In a standing `if` branch or another imperative body it is
++  merely carried out and does not replace that law; a later source update
++  can therefore recompute the target. Reentering a branch checks again.
++- Target resolution, the guard, the RHS and called functions, methods,
++  callbacks and structural reads are isolated from dependency tracking,
++  including all enclosing frames. No standing guard is installed. Restore
++  the enclosing null/undefined-read flags after the guard, even on errors;
++  guard reads must not defer a later action, and ordinary RHS settlement
++  must not be disabled.
++- Resolve and validate the same grouped, bounded path as `:=` before any
++  skip. Unbound roots, invalid owners, read-only versions and forbidden
++  `value` properties keep their errors. Missing ordinary object properties
++  read as Undefined and skip without creating a property. Class-level
++  storage outside instance rules retains
++  `TypeError("Cannot use ':=' on a class-level property")`.
++- The lexer emits existing `&&` then `:=` tokens, allowing ordinary
++  inter-token spacing/comments but not a logical newline between them.
++  Only the expression-statement head's own expression level stops before
++  that exact pair. Grouping a target is allowed, but calls, lists, returns,
++  defaults, headers and nested expressions gain no assignment expression.
++  Public expression parsing and ignored interpolation suffixes stay intact.
++- Canonical rendering is `target&&:=value`; a take returns the ordinary
++  action's value. Preserve `&&`, `and`, `&&=`, `||=`, `:=`, `??:=`, pinned
++  `??=` errors and every accepted parser input, including runtime failures.
++  No `||:=`, keyword, token kind, option or alternate truth model is added.
++- Use the existing propagation, transaction and parser/runtime bounds,
++  including their inherited limitations; this adds no general rollback-order
++  or runtime-value-depth guarantee.
++- The appended spec case
++  `Nucleoid writes truthy values with one-shot assignments` and reference
++  case `Nucleoid keeps truthy assignment guards isolated` each retain six
++  ordered canonical assertions and explicit expected return `1`. Their
++  concrete accepted counterparts use `:= target && value` for known-truthy
++  top-level takes and snapshot-guarded `if`/`:=` for skips and the standing
++  branch; those counterparts do not implement arbitrary falsy skips.
++
+ ## List and population sums
+ 
+ - [NUC 68](docs/nuc-0068.md) adds the read-only list query `sum` to lists and
+@@ -29684,6 +29736,27 @@ assert(readings.length, 3)
+ assert(readings[2], 10)
  1
  # return: 1
 +---
-+# Nucleoid runs deferred suites on block exit
++# Nucleoid writes truthy values with one-shot assignments
 +
-+audit = []
-+def complete(value):
-+    defer:
-+        audit.push(value)
-+    if value > 0:
-+        return value * 2
-+    if value < 0:
-+        return -value
-+    return 0
-+assert(complete(3), 6)
-+assert(audit, [3])
-+assert(complete(-4), 4)
-+assert(audit, [3, -4])
-+assert(complete(0), 0)
-+assert(audit, [3, -4, 0])
++input = 3
++slot = input + 1
++slot &&:= 9
++assert(slot, 9)
++input = 7
++assert(slot, 9)
++empty = 0
++empty &&:= missing
++assert(empty, 0)
++active = true
++active &&:= 5
++assert(active, 5)
++text = ""
++text &&:= missing
++assert(text, "")
++assert(input, 7)
 +1
 +# return: 1
  ```
  
  ## Floating-point absolute value alias
-@@ -29949,3 +29969,75 @@ assert(cubed, 8)
-   Their accepted square-call-times-repeated-pure-expression spelling is a
-   fair ordered-arithmetic counterpart, not a promise to duplicate a future
-   call argument's effects. Every historical executable case is unchanged.
-+
-+## Deferred suites
-+
-+- NUC 147 adds `defer:` followed by a genuinely indented suite. The name
-+  must begin an executable statement: at input start, or after a logical
-+  newline, semicolon, indent, dedent, opening block brace or suite colon.
-+  The colon must be followed by the real layout prefix of an indented
-+  block; whitespace and comments do not replace that prefix.
-+- Only reaching the registration has an effect. It saves the suite's
-+  statements, without evaluating them, taking argument/value snapshots or
-+  capturing a closure. Each executable statement list owns its registrations:
-+  the program passed to `Runtime::run`, a function/method/constructor body,
-+  a branch, explicit block, loop iteration, try/catch/finally or deferred
-+  suite, and a hypothetical body. A nested list unwinds before its caller
-+  continues; a loop iteration unwinds before its loop scope is removed.
-+- Remaining statements run normally, until completion, a return or an
-+  error. Existing loop outcomes pass through unchanged; no new loop-exit
-+  syntax or behavior is added. Reached suites then run once in reverse
-+  registration order, before parameter, loop, catch or receiver context
-+  is removed. An unreached registration does nothing.
-+- A registration contributes no value. Normal deferred completion ignores
-+  its own value and keeps the pending outcome, including the last
-+  non-assertion, non-registration value of a normally completed block.
-+  A pending return keeps its already-computed value, including copied
-+  list elements; deferred statements read the active exit-time bindings.
-+  Deferred `return` or failure replaces the pending outcome, but every
-+  older registration still runs and may replace it again.
-+- Use NUC 119's savepoints, not foreign-language transaction rules. A
-+  block containing registrations opens a savepoint at entry. If its body
-+  fails after reaching a registration, restore the body's state, graph,
-+  pending propagation and deletion tracking before cleanup. Each deferred
-+  suite has its own savepoint; if it fails, restore its partial changes
-+  before running an older suite. Local bindings are not transaction
-+  snapshots, just as in accepted finalization: the same active scope
-+  remains. Successful cleanup writes belong to the enclosing transaction;
-+  an escaping error lets enclosing rollback undo them.
-+- An unreplaced error keeps its kind, message and existing position; it
-+  is not converted into a thrown string. The normal top-level statement
-+  position still fills an unpositioned error. An otherwise unpositioned
-+  error escaping a top-level deferred suite is placed at its registration.
-+- `defer` remains an ordinary identifier in declarations, functions,
-+  parameters, calls, properties, object keys, enum names, expressions,
-+  operator sections and bare-name lines before indented blocks.
-+  `defer: NAME` stays a typed declaration, including runtime-failing ones.
-+  Inline, braced, colon-free and layout-suppressed `defer` forms keep
-+  their accepted reading or diagnostic; adjacency alone is not a new
-+  statement boundary. No keyword or lexer token is added.
-+- `try` still requires `catch` or its accepted `except` spelling. In
-+  particular, `try`/`finally` without a catch keeps
-+  `SyntaxError("Expected 'catch' after 'try'")`. No async cleanup, implicit
-+  resource protocol, callback, closure, dependency or option is added.
-+- Parsing uses the existing 64-level statement/expression guard. A
-+  frame's finite source list permits at most one registration per reached
-+  statement; nested deferred execution has a fresh list and passes the
-+  existing 192-level runtime guard. It cannot append to the unwinding
-+  parent's queue. Limit diagnostics remain
-+  `SyntaxError("Statements are nested too deeply")` and
-+  `TypeError("Maximum statement depth exceeded")`.
-+- The public syntax tree adds `Stmt::Defer(Vec<Stmt>)`; all old trees and
-+  existing item signatures/variants remain unchanged. Graph-label
-+  generation uses `defer{...}`, while suite-aware rendering of
-+  default/rest-bearing declarations uses real indented `defer:` syntax.
-+  Registration belongs to execution of a statement list, not a standalone
-```
-
-**File**: `src/lang/ast/analysis.rs` (modified, +3/-3)
-```diff
-@@ -166,7 +166,7 @@ pub(crate) fn collect_assigned_names(statement: &Stmt, names: &mut Vec<String>)
-             target: Expr::Identifier(name),
-             ..
-         } => names.push(name.clone()),
--        Stmt::Block(nested) => {
-+        Stmt::Block(nested) | Stmt::Defer(nested) => {
-             for child in nested {
-                 collect_assigned_names(child, names);
-             }
-@@ -213,7 +213,7 @@ pub(crate) fn collect_read_roots(
-         | Stmt::Return(Some(expression)) => {
-             roots.extend(runtime.expression_roots(expression, scope, false));
-         }
--        Stmt::Block(nested) => {
-+        Stmt::Block(nested) | Stmt::Defer(nested) => {
-             for child in nested {
-                 collect_read_roots(child, roots, runtime, scope);
-             }
-@@ -265,7 +265,7 @@ pub(crate) fn find_class_reference_statement(statement: &Stmt, found: &mut Optio
-                 find_class_reference_statement(alternate, found);
-             }
-         }
--        Stmt::Block(statements) => {
-+        Stmt::Block(statements) | Stmt::Defer(statements) => {
-             for child in statements {
-                 find_class_reference_statement(child, found);
-             }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2015,21 +2124,22 @@ Co-authored-by: Copilot <[REDAC
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 147 Deferred Suites
+## X. Draft NUC 152 Falsy Value Assignment
 
 **RULE**:
-When implementing operations in `dataset/nucleoid.spec.jsonl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `715c2a03`: NUC 147 Deferred Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac6641e3`: Draft NUC 152 Falsy Value Assignment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dataset/nucleoid.spec.jsonl`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-{"id":"spec-0884","description":"Nucleoid runs deferred suites on block exit","code":"audit = []\ndef complete(value):\n    defer:\n        audit.push(value)\n    if value > 0:\n        return value * 2\n    if value < 0:\n        return -value\n    return 0\nassert(complete(3), 6)\nassert(audit, [3])\nassert(complete(-4), 4)\nassert(audit, [3, -4])\nassert(complete(0), 0)\nassert(audit, [3, -4, 0])\n1","return":"1"}
+| [152](nuc-0152.md) | Falsy Value Assignment | Draft |
+| [152](nuc-0152.md) | Falsy Value Assignment | Standards Track | Runtime features | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2039,7 +2149,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `715c2a03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac6641e3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

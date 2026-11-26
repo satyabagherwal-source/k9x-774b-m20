@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T00:35:03.463Z",
+  "last_updated": "2026-11-26T00:46:47.811Z",
   "total_records": 2693,
   "domains": {
     "A": {
@@ -8580,8 +8580,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "dcfad4ffbfb60ed0ea2ff80a27129174c1cf2fe3ca31422e0646c7f84a89fc69",
-      "created_at": "2026-11-25T08:44:09.388Z"
+      "content_hash": "72833e4380de9dd749bf95c7c812498b4a7677038e3ace6cd13b4b04420c0c2f",
+      "created_at": "2026-11-26T00:46:37.241Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -13607,8 +13607,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "2445fbeb56e392e53034a8e08be664208d0c04d0dd140f8aed24ed153a2951d6",
-      "created_at": "2026-11-25T08:44:16.072Z"
+      "content_hash": "c64aa1f4ae4008e3dd622224cbc26fdcfdd1e253a447e250f989cdf2b1d11eba",
+      "created_at": "2026-11-26T00:46:47.811Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -15772,8 +15772,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "9e1fb54539ebca9fdccfb9f6f0d7be2bffad8131ec162d1137122649c65a31e0",
-      "created_at": "2026-11-25T23:32:41.104Z"
+      "content_hash": "f0c51fe4f81ab849661e14b16da41e0d4cca416fcb6eab079d6ee0af74a4df7e",
+      "created_at": "2026-11-26T00:46:42.516Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -17968,8 +17968,8 @@
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "repository": "hashicorp/terraform",
-      "content_hash": "d1450073a463779f6060934b50784d015c9b681ba639e670c9b5c9a2a74dacc5",
-      "created_at": "2026-11-25T00:26:48.382Z"
+      "content_hash": "b69106985b06115b8e929faa167faf34a5ab076a9eac7fff597a48d760c4f4f5",
+      "created_at": "2026-11-26T00:46:34.612Z"
     },
     "DOM-D-666917A5": {
       "record_id": "DOM-D-666917A5",
@@ -18028,8 +18028,8 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-learnings-architecture-intelligence-hashicorp-terraform-lear.md",
       "repository": "hashicorp-terraform-learnings",
-      "content_hash": "306773ecab8c63ae0af9e548442443b62dea9adce7349a11cb97972310bbbab6",
-      "created_at": "2026-11-25T00:26:59.792Z"
+      "content_hash": "bb338da61c8ae9aecd35ca534f6cd311dd6f0ae387e95d5533da34c1bcf73f6d",
+      "created_at": "2026-11-26T00:46:46.737Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-qwen3-8-flash-next-uncensored-gguf-co",
@@ -23318,8 +23318,8 @@
       "title": "Research & Knowledge Intelligence: webAI-Official/TwIL-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-webai-official-twil-8b-research-knowledge-intelligence-webai-official-twil-8b.md",
       "repository": "webAI-Official/TwIL-8B",
-      "content_hash": "4ecab63867c6bf56d539ec8dceab287161a646521b93c495a4fe6ab32cde550f",
-      "created_at": "2026-11-22T03:37:44.252Z"
+      "content_hash": "3b46556a1f36bfe2b9aee91b18ac2e9e1b6103751087b8c4771f898b80303a34",
+      "created_at": "2026-11-26T00:46:23.855Z"
     },
     "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-etcd-io-etcd-core-invariants",
@@ -23378,8 +23378,8 @@
       "title": "Research & Knowledge Intelligence: hf-webai-official-twil-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-webai-official-twil-8b-learnings-research-knowledge-intelligence-hf-webai-off.md",
       "repository": "hf-webai-official-twil-8b-learnings",
-      "content_hash": "b8778d6d9747a1cb18fde1a2656547e0712d59193b6f346ae902367af8812aed",
-      "created_at": "2026-11-22T03:37:56.275Z"
+      "content_hash": "4cd5c3dd971f135f10974b01609275371792fffdffc9b668cb896d7f638e7541",
+      "created_at": "2026-11-26T00:46:45.860Z"
     },
     "DOM-H-20A56733": {
       "record_id": "DOM-H-20A56733",

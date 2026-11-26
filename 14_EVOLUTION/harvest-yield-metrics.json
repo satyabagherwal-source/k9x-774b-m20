@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:34:58.217Z",
-  "total_cycles_completed": 12505,
-  "total_learnings_persisted": 12505,
-  "total_rules_promoted": 11459,
+  "last_updated": "2026-11-26T00:46:42.038Z",
+  "total_cycles_completed": 12509,
+  "total_learnings_persisted": 12509,
+  "total_rules_promoted": 11462,
   "history": [
-    {
-      "timestamp": "2026-11-25T05:54:42.831Z",
-      "repository": "k3s-io/k3s",
-      "learningId": "learn-github-k3s-io-k3s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:02:58.089Z",
-      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:02:59.842Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T06:03:04.757Z",
-      "repository": "momenbasel/PureMac",
-      "learningId": "learn-github-momenbasel-puremac",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T06:12:45.461Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-26T00:34:58.217Z",
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:46:23.595Z",
+      "repository": "webAI-Official/TwIL-8B",
+      "learningId": "learn-huggingface-webai-official-twil-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:46:34.119Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:46:36.768Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T00:46:42.038Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

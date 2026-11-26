@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T00:35:01.465Z",
-    "lastVerified": "2026-11-26T00:35:01.465Z",
+    "lastChecked": "2026-11-26T00:46:45.430Z",
+    "lastVerified": "2026-11-26T00:46:45.430Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -387,22 +387,21 @@
     "lastVerified": "2026-11-25T14:50:21.572Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T00:09:29.952Z",
-    "lastVerified": "2026-11-26T00:09:29.952Z",
+    "lastChecked": "2026-11-26T00:46:40.784Z",
+    "lastVerified": "2026-11-26T00:46:40.784Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "2a8628e9b0716311eaf6a690a88bc97e4e09824ff1eb9914f31d093cef09842f",
+    "contentHash": "2f3def1226a529990dec69be1d6d554089d2dc7a81622536631885b027185976",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d97fb2a0"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -2163,9 +2162,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-24T23:24:51.557Z",
+    "lastChecked": "2026-11-26T00:46:32.798Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-24T23:24:51.557Z"
+    "lastVerified": "2026-11-26T00:46:32.798Z"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -2227,22 +2226,21 @@
     "lastVerified": "2026-11-25T11:11:18.972Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T13:49:25.600Z",
-    "lastVerified": "2026-11-25T13:49:25.600Z",
+    "lastChecked": "2026-11-26T00:46:35.586Z",
+    "lastVerified": "2026-11-26T00:46:35.586Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "d8c457a52df69568a53a82bdf511ba6c0e0ac2ed2883a7cd352a6f3b4c6efe4f",
+    "contentHash": "d85656c4d64ac5fdeae788064cc5d6d8a1ca2564783a1a800ff51dd0654849e4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "445df50d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -4957,14 +4955,14 @@
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-25T00:26:46.268Z",
-    "lastVerified": "2026-11-25T00:26:46.268Z",
+    "lastChecked": "2026-11-26T00:46:32.934Z",
+    "lastVerified": "2026-11-26T00:46:32.934Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "eed36a1c77c10efa86a03e9b70ef8410445a1921a4812f253ceaa479843b9eed",
+    "contentHash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5632,9 +5630,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-24T17:02:59.376Z",
+    "lastChecked": "2026-11-26T00:46:20.178Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-24T17:02:59.376Z"
+    "lastVerified": "2026-11-26T00:46:20.178Z"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
     "name": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -10657,9 +10655,9 @@
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",
     "officialUrl": "https://github.com/DamascenoRafael/reminders-menubar",
-    "lastChecked": "2026-11-23T15:12:35.681Z",
+    "lastChecked": "2026-11-26T00:46:25.341Z",
     "revisionIdentifier": "f5330cb5",
-    "lastVerified": "2026-11-23T15:12:35.681Z"
+    "lastVerified": "2026-11-26T00:46:25.341Z"
   },
   "scrapy-scrapy": {
     "name": "scrapy/scrapy",
@@ -14031,12 +14029,12 @@
     "officialUrl": "https://huggingface.co/webAI-Official/TwIL-8B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T03:37:43.447Z",
-    "lastVerified": "2026-11-22T03:37:43.447Z",
+    "lastChecked": "2026-11-26T00:46:22.894Z",
+    "lastVerified": "2026-11-26T00:46:22.894Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-webai-official-twil-8b",
-    "contentHash": "79dc532c3182f3f55b44076b734484e5babf402361f6b847bf57ed5f7fefc01d",
+    "contentHash": "78caf6c38f960aed2d717f64bf3591bce15b21b54bf3920a374a72515edbfcf6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

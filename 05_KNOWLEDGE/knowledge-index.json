@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T00:35:03.653Z",
+  "last_updated": "2026-11-26T00:46:48.005Z",
   "total_verified_learnings": 9121,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25572,
+  "total_items": 25579,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112413,10 +112413,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "445df50d",
-      "content_hash": "dcfad4ffbfb60ed0ea2ff80a27129174c1cf2fe3ca31422e0646c7f84a89fc69",
+      "source_version": "f2c476cf",
+      "content_hash": "72833e4380de9dd749bf95c7c812498b4a7677038e3ace6cd13b4b04420c0c2f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T08:44:09.388Z"
+      "persisted_at": "2026-11-26T00:46:37.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112425,10 +112425,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "445df50d",
-      "content_hash": "f702f16c2214a16854de282e4178c28bdbf7225f51bf05cdd83b9d02d07e5a36",
+      "source_version": "f2c476cf",
+      "content_hash": "99d3cc63574a09257a2f31091e7818be6fa6fe796806d4d3de938de07771ca51",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:44:09.593Z"
+      "persisted_at": "2026-11-26T00:46:37.538Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -224155,8 +224155,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "445df50d",
-      "content_hash": "d8c457a52df69568a53a82bdf511ba6c0e0ac2ed2883a7cd352a6f3b4c6efe4f",
+      "source_version": "f2c476cf",
+      "content_hash": "d85656c4d64ac5fdeae788064cc5d6d8a1ca2564783a1a800ff51dd0654849e4",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -224314,6 +224314,11 @@
           "number": 10491,
           "title": "wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10572,
+          "title": "misc/git_hook/githook: don't rebuild hooks after every OSS bump",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224321,7 +224326,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T08:44:08.730Z",
+      "verified_at": "2026-11-26T00:46:36.524Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224412,9 +224417,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "2445fbeb56e392e53034a8e08be664208d0c04d0dd140f8aed24ed153a2951d6",
+      "content_hash": "c64aa1f4ae4008e3dd622224cbc26fdcfdd1e253a447e250f989cdf2b1d11eba",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T08:44:16.072Z"
+      "persisted_at": "2026-11-26T00:46:47.811Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -224424,9 +224429,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "6478a7a0f2338a1964c37ac22a4858b919c897b514fa3b84205530c7bd8cfad0",
+      "content_hash": "20927b8b27c4009a71ca375235d9f3f54ed71f1932eda6db32a48cfec4ae55d2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:44:16.272Z"
+      "persisted_at": "2026-11-26T00:46:48.005Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -230745,8 +230750,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "d97fb2a0",
-      "content_hash": "2a8628e9b0716311eaf6a690a88bc97e4e09824ff1eb9914f31d093cef09842f",
+      "source_version": "ac6641e3",
+      "content_hash": "2f3def1226a529990dec69be1d6d554089d2dc7a81622536631885b027185976",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231044,6 +231049,11 @@
           "number": 10550,
           "title": "Draft NUC 147 Deferred Suites",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10573,
+          "title": "Draft NUC 152 Falsy Value Assignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231051,7 +231061,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:32:40.468Z",
+      "verified_at": "2026-11-26T00:46:41.751Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231093,10 +231103,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "d97fb2a0",
-      "content_hash": "9e1fb54539ebca9fdccfb9f6f0d7be2bffad8131ec162d1137122649c65a31e0",
+      "source_version": "ac6641e3",
+      "content_hash": "f0c51fe4f81ab849661e14b16da41e0d4cca416fcb6eab079d6ee0af74a4df7e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T23:32:41.104Z"
+      "persisted_at": "2026-11-26T00:46:42.516Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231105,10 +231115,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "d97fb2a0",
-      "content_hash": "219aa89587784939fb294ff620219e0b7ba176936c4f84a87ca8d8c19d259c38",
+      "source_version": "ac6641e3",
+      "content_hash": "a4aa6c07b9630af30f5e762e85e854d32a6520ba252a554032a56f4b3cd976cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:32:41.281Z"
+      "persisted_at": "2026-11-26T00:46:42.736Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -237709,8 +237719,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "56460311",
-      "content_hash": "eed36a1c77c10efa86a03e9b70ef8410445a1921a4812f253ceaa479843b9eed",
+      "source_version": "279a0c24",
+      "content_hash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -237758,6 +237768,11 @@
           "number": 10400,
           "title": "Remove ability to define mocked inputs via a slice argument",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10571,
+          "title": "Reduce number of ways mocked ui input can be configured, add helper for ca",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237765,7 +237780,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T00:26:47.446Z",
+      "verified_at": "2026-11-26T00:46:33.880Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237807,10 +237822,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "repository": "hashicorp/terraform",
-      "source_version": "56460311",
-      "content_hash": "d1450073a463779f6060934b50784d015c9b681ba639e670c9b5c9a2a74dacc5",
+      "source_version": "279a0c24",
+      "content_hash": "b69106985b06115b8e929faa167faf34a5ab076a9eac7fff597a48d760c4f4f5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:26:48.382Z"
+      "persisted_at": "2026-11-26T00:46:34.612Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform",
@@ -237819,10 +237834,10 @@
       "relative_path": "08_VERIFICATION/hashicorp-terraform-verification-protocol-empirical-defect-shield-for-hashicorp-.md",
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp/terraform",
       "repository": "hashicorp/terraform",
-      "source_version": "56460311",
-      "content_hash": "d6c492e12a69b06954e28e1a1e3df66db09c5325677d354db56c3bbb900a4c5c",
+      "source_version": "279a0c24",
+      "content_hash": "e14642444ef902b66d33907f5a65d7bec0d24d641f892f3a9a7a70c731a34759",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:26:48.639Z"
+      "persisted_at": "2026-11-26T00:46:34.851Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
@@ -237844,9 +237859,9 @@
       "title": "Architecture Intelligence: hashicorp-terraform-learnings Core Invariants",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "306773ecab8c63ae0af9e548442443b62dea9adce7349a11cb97972310bbbab6",
+      "content_hash": "bb338da61c8ae9aecd35ca534f6cd311dd6f0ae387e95d5533da34c1bcf73f6d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T00:26:59.792Z"
+      "persisted_at": "2026-11-26T00:46:46.737Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform-learnings",
@@ -237856,9 +237871,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp-terraform-learnings",
       "repository": "hashicorp-terraform-learnings",
       "source_version": "HEAD",
-      "content_hash": "464efbfb40c3197ba7204598962f61d901e89e7f07044d7e124cadd81c10b6e2",
+      "content_hash": "9c6ccccd6516559309d33fc698f0ec9659bed5b161dde957996229762a0784d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T00:27:00.064Z"
+      "persisted_at": "2026-11-26T00:46:46.932Z"
     },
     "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -254794,7 +254809,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/webAI-Official/TwIL-8B",
       "source_version": "hf-webai-official-twil-8b",
-      "content_hash": "79dc532c3182f3f55b44076b734484e5babf402361f6b847bf57ed5f7fefc01d",
+      "content_hash": "78caf6c38f960aed2d717f64bf3591bce15b21b54bf3920a374a72515edbfcf6",
       "dossier_path": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md",
       "promoted_rules": [],
@@ -254803,7 +254818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T03:37:43.820Z",
+      "verified_at": "2026-11-26T00:46:23.337Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254820,9 +254835,9 @@
       "title": "Research & Knowledge Intelligence: webAI-Official/TwIL-8B Core Invariants",
       "repository": "webAI-Official/TwIL-8B",
       "source_version": "hf-webai-official-twil-8b",
-      "content_hash": "4ecab63867c6bf56d539ec8dceab287161a646521b93c495a4fe6ab32cde550f",
+      "content_hash": "3b46556a1f36bfe2b9aee91b18ac2e9e1b6103751087b8c4771f898b80303a34",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T03:37:44.252Z"
+      "persisted_at": "2026-11-26T00:46:23.855Z"
     },
     "rule-8669": {
       "learning_id": "rule-8669",
@@ -254957,9 +254972,9 @@
       "title": "Research & Knowledge Intelligence: hf-webai-official-twil-8b-learnings Core Invariants",
       "repository": "hf-webai-official-twil-8b-learnings",
       "source_version": "HEAD",
-      "content_hash": "b8778d6d9747a1cb18fde1a2656547e0712d59193b6f346ae902367af8812aed",
+      "content_hash": "4cd5c3dd971f135f10974b01609275371792fffdffc9b668cb896d7f638e7541",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T03:37:56.275Z"
+      "persisted_at": "2026-11-26T00:46:45.860Z"
     },
     "candidate_directive-python-preserve-stored-memory-json-value-types": {
       "item_id": "candidate_directive-python-preserve-stored-memory-json-value-types",
@@ -350067,6 +350082,96 @@
       "content_hash": "388ed3ab793e6b428f938eb0fa3e3c78bc1043a7cba20762f2d89f16c38535c5",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T00:35:03.280Z"
+    },
+    "rule-10571": {
+      "learning_id": "rule-10571",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10571,
+      "title": "Reduce number of ways mocked ui input can be configured, add helper for ca",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "279a0c24",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:46:33.880Z"
+    },
+    "candidate_directive-reduce-number-of-ways-mocked-ui-input-can-be-configured-add-helper-for-ca": {
+      "item_id": "candidate_directive-reduce-number-of-ways-mocked-ui-input-can-be-configured-add-helper-for-ca",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0XI8-reduce-number-of-ways-mocked-ui-input-can-be-configured-add-helper-for-ca.md",
+      "title": "Reduce number of ways mocked ui input can be configured, add helper for ca",
+      "repository": "hashicorp/terraform",
+      "source_version": "279a0c24",
+      "content_hash": "188c456d9e53bfd13336e46b48184242702ed5dd9111281ee7c5088256936b1f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T00:46:34.405Z"
+    },
+    "rule-10572": {
+      "learning_id": "rule-10572",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10572,
+      "title": "misc/git_hook/githook: don't rebuild hooks after every OSS bump",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "f2c476cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:46:36.524Z"
+    },
+    "candidate_directive-misc-git_hook-githook-don-t-rebuild-hooks-after-every-oss-bump": {
+      "item_id": "candidate_directive-misc-git_hook-githook-don-t-rebuild-hooks-after-every-oss-bump",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-17OF-misc-git_hook-githook-don-t-rebuild-hooks-after-every-oss-bump.md",
+      "title": "misc/git_hook/githook: don't rebuild hooks after every OSS bump",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a05d97d4b927c0f078eaf883d6e51dab8b788d45ac702be7914345f870037db",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T00:46:47.583Z"
+    },
+    "rule-10573": {
+      "learning_id": "rule-10573",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10573,
+      "title": "Draft NUC 152 Falsy Value Assignment",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "ac6641e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T00:46:41.751Z"
+    },
+    "candidate_directive-draft-nuc-152-falsy-value-assignment": {
+      "item_id": "candidate_directive-draft-nuc-152-falsy-value-assignment",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-13M4-draft-nuc-152-falsy-value-assignment.md",
+      "title": "Draft NUC 152 Falsy Value Assignment",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "ac6641e3",
+      "content_hash": "04c7a845fa02665a5c054a585d5ca37b6db733d930e0ca27fed83edd0a6826e4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T00:46:42.321Z"
+    },
+    "candidate_directive-test-reduce-number-of-ways-mocked-ui-input-can-be-configured-add-helper-for-ca": {
+      "item_id": "candidate_directive-test-reduce-number-of-ways-mocked-ui-input-can-be-configured-add-helper-for-ca",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-16VG-test-reduce-number-of-ways-mocked-ui-input-can-be-configured-add-helper-for-ca.md",
+      "title": "test: Reduce number of ways mocked ui input can be configured, add helper for ca",
+      "repository": "hashicorp-terraform-learnings",
+      "source_version": "HEAD",
+      "content_hash": "155fc48bbd37ed929161767fb1bfbecca227bd5bc1dbe4c0fce28835961403de",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-26T00:46:46.545Z"
     }
   },
   "ai-builder-brain": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T00:35:03.280Z",
+  "last_updated": "2026-11-26T00:46:47.583Z",
   "directives": [
     {
       "id": "CD-001",
@@ -62355,6 +62355,59 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-26",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-0XI8",
+      "directive_title": "Reduce number of ways mocked ui input can be configured, add helper for ca",
+      "source_repo": "hashicorp/terraform",
+      "source_commit": "279a0c24",
+      "staged_file": "11_INBOX/candidate-directives/CD-0XI8-reduce-number-of-ways-mocked-ui-input-can-be-configured-add-helper-for-ca.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-17OF",
+      "directive_title": "misc/git_hook/githook: don't rebuild hooks after every OSS bump",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-17OF-misc-git_hook-githook-don-t-rebuild-hooks-after-every-oss-bump.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-13M4",
+      "directive_title": "Draft NUC 152 Falsy Value Assignment",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "ac6641e3",
+      "staged_file": "11_INBOX/candidate-directives/CD-13M4-draft-nuc-152-falsy-value-assignment.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-26",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-16VG",
+      "directive_title": "test: Reduce number of ways mocked ui input can be configured, add helper for ca",
+      "source_repo": "hashicorp-terraform-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-16VG-test-reduce-number-of-ways-mocked-ui-input-can-be-configured-add-helper-for-ca.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-26",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-F14618",
+      "directive_title": "misc/git_hook/githook: don't rebuild hooks after every OSS bump",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F14618-misc-git-hook-githook-don-t-rebuild-hook.md",
+      "staged_date": "2026-11-26"
     }
   ]
 }

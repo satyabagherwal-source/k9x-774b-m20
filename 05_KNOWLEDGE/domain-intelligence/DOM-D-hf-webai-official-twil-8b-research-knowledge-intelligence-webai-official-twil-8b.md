@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/webAI-Official/TwIL-8B",
   "source_version": "hf-webai-official-twil-8b",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T03:37:44.251Z",
+  "timestamp": "2026-11-26T00:46:23.854Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-webai-official-twil-8b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [webAI-Official/TwIL-8B](https://huggingface.co/webAI-Official/TwIL-8B) (Revision: `hf-webai-o`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T03:37:44.251Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T00:46:23.854Z`  
 > **Learning ID**: `learn-huggingface-webai-official-twil-8b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-webai-official-twil-8b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/webAI-Official/TwIL-8B](https://huggingface.co/webAI-Official/TwIL-8B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T03:37:43.447Z  
+> **Harvest Timestamp**: 2026-11-26T00:46:22.894Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 77774 downloads | 399 likes
+- **Stars / Engagement**: 82541 downloads | 416 likes
 
 ---
 

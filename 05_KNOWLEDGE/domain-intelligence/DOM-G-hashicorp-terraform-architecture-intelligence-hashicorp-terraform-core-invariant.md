@@ -4,24 +4,24 @@
 {
   "source_repository": "hashicorp/terraform",
   "source_url": "https://github.com/hashicorp/terraform",
-  "source_version": "56460311",
+  "source_version": "279a0c24",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T00:26:48.115Z",
+  "timestamp": "2026-11-26T00:46:34.400Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-hashicorp-terraform",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `56460311`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T00:26:48.115Z`  
+> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `279a0c24`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T00:46:34.400Z`  
 > **Learning ID**: `learn-github-hashicorp-terraform`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 88%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 86%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from hashicorp/terraform:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T00:26:46.268Z  
+> **Harvest Timestamp**: 2026-11-26T00:46:32.934Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50322 stars
+- **Stars / Engagement**: 50336 stars
 
 ---
 
@@ -2295,314 +2295,272 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `56460311` (2026-11-24)
-**Commit Message**: tests: Remove ability to define mocked inputs via a slice argument (#39566)
+### Incident Patch 1: `279a0c24` (2026-11-25)
+**Commit Message**: test: Reduce number of ways mocked ui input can be configured, add helper for capturing prompt text in stdout (#39567)
 
-Currently developers can mock test input by supplying:
+This change:
+* Updates any direct use of `tfui.NewUIInputForTests` to use map-defined inputs instead of the Reader.
+* Adds new method `NewUIInputForTestsWithWriter` for tests that want the prompt test to be printed to a writer under test control
+* Updates `NewUIInput` so that it only uses stdout and stdin as Reader and Writer, stop allowing `UIInputOptions` to supply alternative reader/writer
 
-1. A map of query ids to inputs
-2. A slice of inputs, in order they should be used
-3. An io.Reader that's a buffer of a string with "\n"-separated inputs
+This is the final change that standardise how tests mock inputs to interactive prompts, reducing 3 different approaches down to one approach, and making capturing of prompt text more formalised via the new `NewUIInputForTestsWithWriter` constructor.
 
-This change removes option 2.
-
-Also, updated `NewUIInputForTests` to require a *testing.T argument so it's obviously scoped to use in tests only.
-
-**File**: `internal/command/command_test.go` (modified, +6/-5)
+**File**: `internal/command/command_test.go` (modified, +5/-7)
 ```diff
-@@ -712,13 +712,14 @@ func testInputMap(t *testing.T, answers map[string]string) (ui.InputRequesterFor
+@@ -707,19 +707,17 @@ func testStdinPipe(t *testing.T, src io.Reader) func() {
+ func testInputMap(t *testing.T, answers map[string]string) (ui.InputRequesterForTest, *bytes.Buffer) {
+ 	t.Helper()
+ 
+-	// Set up reader/writers
+-	inputReader := bytes.NewBufferString("")
++	// Enable calling code to capture the prompts shown to the user
  	inputWriter := new(bytes.Buffer)
  
  	// Setup answers
--	var testInputResponse []string
  	var testInputResponseMap map[string]string = answers
  
--	ret := ui.NewUIInputForTests(ui.UIInputOptions{
--		Reader: inputReader,
--		Writer: inputWriter,
--	}, testInputResponse, testInputResponseMap)
-+	ret := ui.NewUIInputForTests(
-+		t,
-+		ui.UIInputOptions{
-+			Reader: inputReader,
-+			Writer: inputWriter,
-+		}, testInputResponseMap)
+-	ret := ui.NewUIInputForTests(
++	ret := ui.NewUIInputForTestsWithWriter(
+ 		t,
+-		ui.UIInputOptions{
+-			Reader: inputReader,
+-			Writer: inputWriter,
+-		}, testInputResponseMap)
++		ui.UIInputOptions{},
++		testInputResponseMap,
++		inputWriter)
  
  	// Queue the cleanup for the end of the test
  	t.Cleanup(func() {
 ```
 
-**File**: `internal/command/meta_new_test.go` (modified, +1/-1)
+**File**: `internal/command/state_replace_provider_test.go` (modified, +26/-23)
 ```diff
-@@ -67,7 +67,7 @@ func TestMeta_Input(t *testing.T) {
- 			meta: &Meta{
- 				input: true, // default
- 				testingOverrides: &testingOverrides{
--					UIInput: ui.NewUIInputForTests(ui.UIInputOptions{}, nil, nil),
-+					UIInput: ui.NewUIInputForTests(t, ui.UIInputOptions{}, nil),
- 				},
- 			},
- 			expected: true,
-```
-
-**File**: `internal/command/meta_test.go` (modified, +10/-6)
-```diff
-@@ -80,8 +80,9 @@ func TestMetaColorize(t *testing.T) {
- 
- func TestMetaInputMode(t *testing.T) {
- 	uiInput := ui.NewUIInputForTests(
-+		t,
- 		ui.UIInputOptions{},
--		nil, nil,
-+		nil,
- 	)
- 
- 	m := new(Meta)
-@@ -103,8 +104,9 @@ func TestMetaInputMode_envVar(t *testing.T) {
- 	t.Run("env var overrides input mode, if input is otherwise considered enabled", func(t *testing.T) {
- 		// Ask for input
- 		uiInput := ui.NewUIInputForTests(
-+			t,
- 			ui.UIInputOptions{},
--			nil, nil,
-+			nil,
- 		)
- 
- 		m := new(Meta)
-@@ -139,8 +141,9 @@ func TestMetaInputMode_envVar(t *testing.T) {
- 	t.Run("env var cannot enable input mode if it is disabled by -input=false", func(t *testing.T) {
- 		// Ask for input
- 		uiInput := ui.NewUIInputForTests(
-+			t,
- 			ui.UIInputOptions{},
--			nil, nil,
-+			nil,
- 		)
- 
- 		m := new(Meta)
-@@ -173,8 +176,9 @@ func TestMetaInputMode_envVar(t *testing.T) {
- func TestMetaInputMode_disable(t *testing.T) {
- 	// Ask for input
- 	uiInput := ui.NewUIInputForTests(
-+		t,
- 		ui.UIInputOptions{},
--		nil, nil,
-+		nil,
- 	)
- 
- 	m := new(Meta)
-@@ -430,9 +434,9 @@ func TestMeta_process(t *testing.T) {
- 	for _, test := range tests {
- 		t.Run(fmt.Sprintf("%s", test.GivenArgs), func(t *testing.T) {
- 			uiInput := ui.NewUIInputForTests(
-+				t,
- 				ui.UIInputOptions{},
- 				nil,
--				nil,
- 			)
- 
- 			m := new(Meta)
-@@ -496,7 +500,7 @@ func TestTestingOverrides_Input(t *testing.T) {
- 		{
- 			name: "UIInput set",
- 			testingOverrides: &testingOverrides{
--				UIInput: ui.NewUIInputForTests(ui.UIInputOptions{}, nil, nil),
-+				UIInput: ui.NewUIInputForTests(t, ui.UIInputOptions{}, nil),
- 			},
- 			expected: true,
- 		},
-```
-
-**File**: `internal/command/state_replace_provider_test.go` (modified, +35/-28)
-```diff
-@@ -83,12 +83,13 @@ func TestStateReplaceProvider(t *testing.T) {
+@@ -83,13 +83,14 @@ func TestStateReplaceProvider(t *testing.T) {
  					View: view,
  					testingOverrides: &testingOverrides{
  						// Respond to the interactive approval prompt
--						UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--							Reader: nil,
--							Writer: streams.Stdout.File,
--						}, nil, map[string]string{
--							"replace-provider": "yes",
--						}),
-+						UIInput: tfui.NewUIInputForTests(
-+							t,
-+							tfui.UIInputOptions{
-+								Writer: streams.Stdout.File,
-+							}, map[string]string{
-+								"replace-provider": "yes",
-+							}),
+-						UIInput: tfui.NewUIInputForTests(
++						UIInput: tfui.NewUIInputForTestsWithWriter(
+ 							t,
+-							tfui.UIInputOptions{
+-								Writer: streams.Stdout.File,
+-							}, map[string]string{
++							tfui.UIInputOptions{},
++							map[string]string{
+ 								"replace-provider": "yes",
+-							}),
++							},
++							streams.Stdout.File,
++						),
  					},
  				},
  			},
-@@ -199,12 +200,13 @@ Successfully replaced provider for 2 resources.
+@@ -200,13 +201,14 @@ Successfully replaced provider for 2 resources.
  					View: view,
  					testingOverrides: &testingOverrides{
  						// Respond to the interactive approval prompt
--						UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--							Reader: nil,
--							Writer: streams.Stdout.File,
--						}, nil, map[string]string{
--							"replace-provider": "no",
--						}),
-+						UIInput: tfui.NewUIInputForTests(
-+							t,
-+							tfui.UIInputOptions{
-+								Writer: streams.Stdout.File,
-+							}, map[string]string{
-+								"replace-provider": "no",
-+							}),
+-						UIInput: tfui.NewUIInputForTests(
++						UIInput: tfui.NewUIInputForTestsWithWriter(
+ 							t,
+-							tfui.UIInputOptions{
+-								Writer: streams.Stdout.File,
+-							}, map[string]string{
++							tfui.UIInputOptions{},
++							map[string]string{
+ 								"replace-provider": "no",
+-							}),
++							},
++							streams.Stdout.File,
++						),
  					},
  				},
  			},
-@@ -262,10 +264,13 @@ Cancelled replacing providers.
- 					View: view,
- 					testingOverrides: &testingOverrides{
+@@ -266,9 +268,8 @@ Cancelled replacing providers.
  						// Respond to the interactive approval prompt
--						UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--							Reader: bytes.NewBufferString("no\n"),
--							Writer: streams.Stdout.File,
--						}, nil, nil),
-+						UIInput: tfui.NewUIInputForTests(
-+							t,
-+							tfui.UIInputOptions{
-+								Writer: streams.Stdout.File,
-+							}, map[string]string{
-+								"replace-provider": "no",
-+							}),
+ 						UIInput: tfui.NewUIInputForTests(
+ 							t,
+-							tfui.UIInputOptions{
+-								Writer: streams.Stdout.File,
+-							}, map[string]string{
++							tfui.UIInputOptions{},
++							map[string]string{
+ 								"replace-provider": "no",
+ 							}),
  					},
- 				},
- 			},
-@@ -437,12 +442,13 @@ func TestStateReplaceProvider_stateStore(t *testing.T) {
+@@ -442,13 +443,14 @@ func TestStateReplaceProvider_stateStore(t *testing.T) {
  					},
  
  					// Respond to the interactive approval prompt
--					UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--						Reader: nil,
--						Writer: streams.Stdout.File,
--					}, nil, map[string]string{
--						"replace-provider": "yes",
--					}),
-+					UIInput: tfui.NewUIInputForTests(
-+						t,
-+						tfui.UIInputOptions{
-+							Writer: streams.Stdout.File,
-+						}, map[string]string{
-+							"replace-provider": "yes",
-+						}),
+-					UIInput: tfui.NewUIInputForTests(
++					UIInput: tfui.NewUIInputForTestsWithWriter(
+ 						t,
+-						tfui.UIInputOptions{
+-							Writer: streams.Stdout.File,
+-						}, map[string]string{
++						tfui.UIInputOptions{},
++						map[string]string{
+ 							"replace-provider": "yes",
+-						}),
++						},
++						streams.Stdout.File,
++					),
  				},
  				View: view,
  			},
-@@ -661,12 +667,13 @@ func TestStateReplaceProvider_checkRequiredVersion(t *testing.T) {
+@@ -667,13 +669,14 @@ func TestStateReplaceProvider_checkRequiredVersion(t *testing.T) {
  				View: view,
  				testingOverrides: &testingOverrides{
  					// Respond to the interactive approval prompt
--					UIInput: tfui.NewUIInputForTests(tfui.UIInputOptions{
--						Reader: nil,
--						Writer: streams.Stdout.File,
--					}, nil, map[string]string{
--						"replace-provider": "yes",
--					}),
-+					UIInput: tfui.NewUIInputForTests(
-+						t,
-+						tfui.UIInputOptions{
-+							Writer: streams.Stdout.File,
-+						}, map[string]string{
-+							"replace-provider": "yes",
-+						}),
+-					UIInput: tfui.NewUIInputForTests(
++					UIInput: tfui.NewUIInputForTestsWithWriter(
+ 						t,
+-						tfui.UIInputOptions{
+-							Writer: streams.Stdout.File,
+-						}, map[string]string{
++						tfui.UIInputOptions{},
++						map[string]string{
+ 							"replace-provider": "yes",
+-						}),
++						},
++						streams.Stdout.File,
++					),
  				},
  			},
  		},
 ```
 
-**File**: `internal/command/ui/ui_input.go` (modified, +7/-18)
+**File**: `internal/command/ui/ui_input.go` (modified, +19/-24)
 ```diff
-@@ -16,6 +16,7 @@ import (
- 	"strings"
- 	"sync"
- 	"sync/atomic"
-+	"testing"
- 	"unicode"
+@@ -62,38 +62,23 @@ type InputRequesterForTest interface {
  
- 	"github.com/bgentry/speakeasy"
-@@ -36,7 +37,6 @@ type uIInput struct {
- 	Writer io.Writer
- 
- 	// Test input responses for automated testing.
--	testInputResponse    []string
- 	testInputResponseMap map[string]string
- 
- 	listening int32
-@@ -98,9 +98,11 @@ func NewUIInput(opts UIInputOptions) InputRequester {
- 	return i
+ 	// Used for integration testing external to the ui package.
+ 	RemainingTestInputResponses() map[string]string
+-
+-	// Used for testing internal to the ui package.
+-	getListening() int32
  }
  
--func NewUIInputForTests(opts UIInputOptions, testInputResponse []string, testInputResponseMap map[string]string) InputRequesterForTest {
-+// NewUIInputForTests creates a new UI input instance for testing purposes, using the provided test input responses.
-+func NewUIInputForTests(t *testing.T, opts UIInputOptions, testInputResponseMap map[string]string) InputRequesterForTest {
+ type UIInputOptions struct {
+ 	Colorize *colorstring.Colorize
+-	Reader   io.Reader
+-	Writer   io.Writer
+ }
+ 
+ func NewUIInput(opts UIInputOptions) InputRequester {
+ 	i := &uIInput{
+ 		Colorize: opts.Colorize,
+-		Reader:   opts.Reader,
+-		Writer:   opts.Writer,
+ 	}
+ 
+ 	i.once.Do(i.init)
+ 
+-	// If a Reader or Writer wasn't provided, fall back to the OS standard streams.
+-	r := i.Reader
+-	w := i.Writer
+-	if r == nil {
+-		r = os.Stdin
+-	}
+-	if w == nil {
+-		w = os.Stdout
+-	}
+-
+-	i.Reader = r
+-	i.Writer = w
++	// Always use stdin/stdout for input and output when
++	// the CLI is used in non-test scenarios.
++	i.Reader = os.Stdin
++	i.Writer = os.Stdout
+ 
+ 	return i
+ }
+@@ -102,23 +87,33 @@ func NewUIInput(opts UIInputOptions) InputRequester {
+ func NewUIInputForTests(t *testing.T, opts UIInputOptions, testInputResponseMap map[string]string) InputRequesterForTest {
  	i := NewUIInput(opts).(*uIInput)
--	i.testInputResponse = testInputResponse
+ 
++	// Leave i.Reader set as stdin; tests will fail due to receiving only EOF input.
 +
-+	// Input will be read from this map, instead of from stdin
++	i.Writer = io.Discard // Use NewUIInputForTestsWithWriter if output shouldn't be discarded
++
+ 	// Input will be read from this map, instead of from stdin
  	i.testInputResponseMap = testInputResponseMap
  
  	return i
-@@ -159,21 +161,8 @@ func (i *uIInput) Input(ctx context.Context, opts *terraform.InputOpts) (string,
- 		return "", err
- 	}
+ }
  
--	// If we have test results, return those. testInputResponse is the
--	// "old" way of doing it and we should remove that.
--	if len(i.testInputResponse) != 0 {
--		v := i.testInputResponse[0]
--		i.testInputResponse = i.testInputResponse[1:]
++// NewUIInputForTests creates a new UI input instance for testing purposes, using the provided test input responses.
++// Also, prompts shown to the user will be printed to the provided writer.
++func NewUIInputForTestsWithWriter(t *testing.T, opts UIInputOptions, testInputResponseMap map[string]string, w io.Writer) InputRequesterForTest {
++	i := NewUIInputForTests(t, opts, testInputResponseMap).(*uIInput)
++
++	// Output usually written to stdout will go to this test-provided writer.
++	i.Writer = w
++
++	return i
++}
++
+ // Implements InputRequesterForTest.
+ func (i *uIInput) RemainingTestInputResponses() map[string]string {
+ 	// Entries are deleted as they are consumed.
+ 	return i.testInputResponseMap
+ }
+ 
+-// Implements InputRequesterForTest.
+-func (i *uIInput) getListening() int32 {
+-	return atomic.LoadInt32(&i.listening)
+-}
 -
--		// Print a newline so that any further output starts properly
--		// on a new line.
--		fmt.Fprintln(i.Writer)
--
--		return v, nil
--	}
--
--	// testInputResponseMap is the new way for test responses, based on
--	// the query ID.
-+	// testInputResponseMap is used for tests' mocked responses to prompts.
-+	// These are based on the query ID.
- 	if len(i.testInputResponseMap) != 0 {
- 		v, ok := i.testInputResponseMap[opts.Id]
- 		if !ok {
+ // Implements terraform.UIInput.
+ func (i *uIInput) Input(ctx context.Context, opts *terraform.InputOpts) (string, error) {
+ 	// Make sure we only ask for input once at a time. Terraform
 ```
 
-**File**: `internal/command/ui/ui_input_test.go` (modified, +3/-35)
+**File**: `internal/command/ui/ui_input_test.go` (modified, +42/-69)
 ```diff
-@@ -49,12 +49,12 @@ func TestNewUIInputForTest_Input(t *testing.T) {
- 	t.Run("input via supplied reader", func(t *testing.T) {
- 		t.Parallel()
- 		i := NewUIInputForTests(
-+			t,
- 			UIInputOptions{
- 				Reader: bytes.NewBufferString("foo\n"),
- 				Writer: bytes.NewBuffer(nil),
- 			},
- 			nil,
--			nil,
- 		)
+@@ -8,6 +8,7 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"io"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
  
- 		v, err := i.Input(context.Background(), &terraform.InputOpts{})
-@@ -67,48 +67,16 @@ func TestNewUIInputForTest_Input(t *testing.T) {
- 		}
- 	})
+@@ -24,11 +25,13 @@ func TestUIInput_impl(t *testing.T) {
+ func TestNewUIInput_Input(t *testing.T) {
+ 	t.Parallel()
+ 	i := NewUIInput(
+-		UIInputOptions{
+-			Reader: bytes.NewBufferString("foo\n"),
+-			Writer: bytes.NewBuffer(nil),
+-		},
++		UIInputOptions{},
+ 	)
++	j, ok := i.(*uIInput)
++	if !ok {
++		t.Fatalf("test should be testing a *uIInput")
++	}
++	j.Reader = bytes.NewBufferString("foo\n")
  
--	t.Run("input via supplied testInputResponse slice", func(t *testing.T) {
+ 	v, err := i.Input(context.Background(), &terraform.InputOpts{})
+ 	if err != nil {
+@@ -41,69 +44,40 @@ func TestNewUIInput_Input(t *testing.T) {
+ }
+ 
+ // When writing an integration test, the test can define data supplied in response
+-// to input prompts as either:
+-// 1. A supplied reader that provides the input.
+-// 2. A supplied testInputResponse slice that's read in order
+-// 3. A supplied testInputResponseMap map that's keyed by prompt ID.
+-func TestNewUIInputForTest_Input(t *testing.T) {
+-	t.Run("input via supplied reader", func(t *testing.T) {
 -		t.Parallel()
--
--		testInputResponse := []string{"foo1", "foo2"}
 -		i := NewUIInputForTests(
+-			t,
 -			UIInputOptions{
--				Reader: bytes.NewBuffer(nil),
+-				Reader: bytes.NewBufferString("foo\n"),
 -				Writer: bytes.NewBuffer(nil),
 -			},
--			testInputResponse,
 -			nil,
 -		)
 -
@@ -2611,57 +2569,127 @@ Also, updated `NewUIInputForTests` to require a *testing.T argument so it's obvi
 -			t.Fatalf("unexpected error: %v", err)
 -		}
 -
--		if v != "foo1" {
+-		if v != "foo" {
 -			t.Fatalf("unexpected input: %s", v)
 -		}
+-	})
++// to input prompts as a map of query id's to answers.
++func TestNewUIInputForTest_testInputResponseMap(t *testing.T) {
++	t.Parallel()
+ 
+-	t.Run("input via supplied testInputResponseMap map", func(t *testing.T) {
+-		t.Parallel()
 -
--		v, err = i.Input(context.Background(), &terraform.InputOpts{})
+-		testInputResponseMap := map[string]string{"prompt-number-1": "foo"}
+-		i := NewUIInputForTests(
+-			t,
+-			UIInputOptions{
+-				Reader: bytes.NewBuffer(nil),
+-				Writer: bytes.NewBuffer(nil),
+-			},
+-			testInputResponseMap,
+-		)
+-
+-		v, err := i.Input(context.Background(), &terraform.InputOpts{
+-			Id: "prompt-number-1",
+-		})
 -		if err != nil {
 -			t.Fatalf("unexpected error: %v", err)
 -		}
 -
--		if v != "foo2" {
+-		if v != "foo" {
 -			t.Fatalf("unexpected input: %s", v)
 -		}
--	})
--
- 	t.Run("input via supplied testInputResponseMap map", func(t *testing.T) {
- 		t.Parallel()
++	testInputResponseMap := map[string]string{"prompt-number-1": "foo"}
++	i := NewUIInputForTests(
++		t,
++		UIInputOptions{},
++		testInputResponseMap,
++	)
++
++	v, err := i.Input(context.Background(), &terraform.InputOpts{
++		Id: "prompt-number-1",
+ 	})
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	if v != "foo" {
++		t.Fatalf("unexpected input: %s", v)
++	}
+ }
  
- 		testInputResponseMap := map[string]string{"prompt-number-1": "foo"}
- 		i := NewUIInputForTests(
-+			t,
- 			UIInputOptions{
- 				Reader: bytes.NewBuffer(nil),
- 				Writer: bytes.NewBuffer(nil),
- 			},
--			nil,
- 			testInputResponseMap,
- 		)
- 
-@@ -129,12 +97,12 @@ func TestUIInputInput_canceled(t *testing.T) {
+ func TestUIInputInput_canceled(t *testing.T) {
  	t.Parallel()
  	r, w := io.Pipe()
- 	i := NewUIInputForTests(
-+		t,
- 		UIInputOptions{
- 			Reader: r,
- 			Writer: bytes.NewBuffer(nil),
- 		},
- 		nil,
+-	i := NewUIInputForTests(
+-		t,
+-		UIInputOptions{
+-			Reader: r,
+-			Writer: bytes.NewBuffer(nil),
+-		},
 -		nil,
++	i := NewUIInput(
++		UIInputOptions{},
  	)
++	j, ok := i.(*uIInput)
++	if !ok {
++		t.Fatalf("test should be testing a *uIInput")
++	}
++	j.Reader = r
  
  	// Make a context that can be canceled.
+ 	ctx, cancel := context.WithCancel(context.Background())
+@@ -126,7 +100,7 @@ func TestUIInputInput_canceled(t *testing.T) {
+ 	}
+ 
+ 	// As the context was canceled we should still be listening.
+-	listening := i.getListening()
++	listening := atomic.LoadInt32(&j.listening)
+ 	if listening != 1 {
+ 		t.Fatalf("expected listening to be 1, got: %d", listening)
+ 	}
+@@ -150,12 +124,14 @@ func TestUIInputInput_canceled(t *testing.T) {
+ 
+ func TestUIInputInput_spaces(t *testing.T) {
+ 	t.Parallel()
+-	i := NewUIInput(UIInputOptions{
+-		Reader: bytes.NewBufferString("foo bar\n"),
+-		Writer: bytes.NewBuffer(nil),
+-	})
++	i := NewUIInput(UIInputOptions{})
++	j, ok := i.(*uIInput)
++	if !ok {
++		t.Fatalf("test should be testing a *uIInput")
++	}
++	j.Reader = bytes.NewBufferString("foo bar\n")
+ 
+-	v, err := i.Input(context.Background(), &terraform.InputOpts{})
++	v, err := j.Input(context.Background(), &terraform.InputOpts{})
+ 	if err != nil {
+ 		t.Fatalf("unexpected error: %v", err)
+ 	}
+@@ -168,10 +144,7 @@ func TestUIInputInput_spaces(t *testing.T) {
+ func TestUIInputInput_Error(t *testing.T) {
+ 	t.Parallel()
+ 
+-	i := NewUIInput(UIInputOptions{
+-		Reader: bytes.NewBuffer(nil),
+-		Writer: bytes.NewBuffer(nil),
+-	})
++	i := NewUIInput(UIInputOptions{})
+ 
+ 	v, err := i.Input(context.Background(), &terraform.InputOpts{})
+ 	if err == nil {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #39571** (closed): [DO NOT MERGE] proposal: How to consistently render help text in commands (@SarahFrench)
 - **PR #39570** (2026-11-19): terraform fmt: add outer parentheses when the opening paren closes before the expression ends (@mildwonkey)
+- **PR #39567** (2026-11-25): test: Reduce number of ways mocked ui input can be configured, add helper for capturing prompt text in stdout (@SarahFrench)
 - **PR #39566** (2026-11-24): tests: Remove ability to define mocked inputs via a slice argument (@SarahFrench)
 - **PR #39565** (2026-11-20): tests: Refactor how mock user input is defined in tests, fix minor difference in output when prompting for input in tests (@SarahFrench)
 - **PR #39564** (2026-11-17): Backport of dependencies: otel bump into v1.17 (@github-actions[bot])
-- **PR #39563** (2026-11-17): tests: Replace and remove `testInteractiveInput` test helper from the `command` package. (@SarahFrench)
 
 ---
 
@@ -2681,13 +2709,13 @@ Also, updated `NewUIInputForTests` to require a *testing.T argument so it's obvi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests: Remove ability to define mocked inputs via a slice argument
+## X. test: Reduce number of ways mocked ui input can be configured, add helper for ca
 
 **RULE**:
 When implementing operations in `internal/command/command_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `56460311`: tests: Remove ability to define mocked inputs via a slice argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `279a0c24`: test: Reduce number of ways mocked ui input can be configured, add helper for capturing prompt text in stdout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/command_test.go`.
@@ -2695,26 +2723,27 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+	// Enable calling code to capture the prompts shown to the user
+	ret := ui.NewUIInputForTestsWithWriter(
+		ui.UIInputOptions{},
+		testInputResponseMap,
+		inputWriter)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	// Set up reader/writers
+	inputReader := bytes.NewBufferString("")
 	ret := ui.NewUIInputForTests(
-		t,
 		ui.UIInputOptions{
 			Reader: inputReader,
 			Writer: inputWriter,
 		}, testInputResponseMap)
 ```
 
-**NEGATIVE CONSTRAINT**:
-```go
-// Induced defect failure mode:
-	var testInputResponse []string
-	ret := ui.NewUIInputForTests(ui.UIInputOptions{
-		Reader: inputReader,
-		Writer: inputWriter,
-	}, testInputResponse, testInputResponseMap)
-```
-
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `56460311` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `279a0c24` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

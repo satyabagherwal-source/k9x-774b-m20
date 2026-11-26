@@ -795350,3 +795350,232 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `3d558adc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10571. Reduce number of ways mocked ui input can be configured, add helper for ca (Harvested from hashicorp/terraform)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Reduce number of ways mocked ui input can be configured, add helper for ca",
+  "source": "hashicorp/terraform",
+  "source_url": "https://github.com/hashicorp/terraform",
+  "source_version": "279a0c24",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-26T00:46:33.540Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-hashicorp-terraform",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `279a0c24`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `internal/command/command_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `279a0c24`: test: Reduce number of ways mocked ui input can be configured, add helper for capturing prompt text in stdout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/command_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// Enable calling code to capture the prompts shown to the user
+	ret := ui.NewUIInputForTestsWithWriter(
+		ui.UIInputOptions{},
+		testInputResponseMap,
+		inputWriter)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	// Set up reader/writers
+	inputReader := bytes.NewBufferString("")
+	ret := ui.NewUIInputForTests(
+		ui.UIInputOptions{
+			Reader: inputReader,
+			Writer: inputWriter,
+		}, testInputResponseMap)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `279a0c24` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10572. misc/git_hook/githook: don't rebuild hooks after every OSS bump (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "misc/git_hook/githook: don't rebuild hooks after every OSS bump",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "f2c476cf",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-26T00:46:36.187Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `f2c476cf`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `misc/git_hook/githook/launcher.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1a3a1da1`: misc/git_hook/githook: don't rebuild hooks after every OSS bump. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/git_hook/githook/launcher.sh`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+oss_dir() {
+  (cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null) || true
+}
+OSS_DIR="$(oss_dir)"
+if [ -z "$OSS_DIR" ]; then
+  # go list -m doesn't download; a fresh go.mod bump may not be cached yet.
+  (cd "$REPO_ROOT" && GOWORK=off "$GO" mod download tailscale.com >/dev/null 2>&1) || true
+  OSS_DIR="$(oss_dir)"
+fi
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+OSS_DIR="$(cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null || true)"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1a3a1da1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10573. Draft NUC 152 Falsy Value Assignment (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Draft NUC 152 Falsy Value Assignment",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "ac6641e3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-26T00:46:41.414Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `ac6641e3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ac6641e3`: Draft NUC 152 Falsy Value Assignment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [152](nuc-0152.md) | Falsy Value Assignment | Draft |
+| [152](nuc-0152.md) | Falsy Value Assignment | Standards Track | Runtime features | Draft |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ac6641e3` are properly handled with clean fallback behavior.

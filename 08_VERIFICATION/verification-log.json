@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-6AL3",
-    "timestamp": "2026-11-24T07:47:18.423Z",
-    "repository": "SeekStorm/SeekStorm",
-    "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "e3908cae3eb233c237782d5f9e73a5db608f2b8b1df77573f3f9d1f5eb2ae9c4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-GZMT",
-    "timestamp": "2026-11-24T07:55:37.445Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "0096ff04fa672ceb8d99461326bcbd34f31dcc8321554a189b139cf38b397fa5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-H2M5",
-    "timestamp": "2026-11-24T07:55:41.309Z",
-    "repository": "karakeep-app/karakeep",
-    "learningId": "learn-github-karakeep-app-karakeep",
-    "contentHash": "9e81e0ff3ca243fa3b32e6e33e32003835abaaf1580c04d6249f24d76a1eafc8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-H7ES",
-    "timestamp": "2026-11-24T07:55:47.524Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "72ada69e6d1787e2641acd4c199a9240a381640dbab08904bb125e95d5df753a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-I6SS",
     "timestamp": "2026-11-24T08:24:33.004Z",
     "repository": "ratatui/ratatui",
@@ -7490,6 +7430,66 @@
     "repository": "lancedb/lancedb",
     "learningId": "learn-github-lancedb-lancedb",
     "contentHash": "754141eb2afd72133b3bd01835d8698b8dee828aad27a2365c6939a3bfeda731",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-0P5T",
+    "timestamp": "2026-11-26T00:46:23.585Z",
+    "repository": "webAI-Official/TwIL-8B",
+    "learningId": "learn-huggingface-webai-official-twil-8b",
+    "contentHash": "78caf6c38f960aed2d717f64bf3591bce15b21b54bf3920a374a72515edbfcf6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-0XA5",
+    "timestamp": "2026-11-26T00:46:34.109Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-0ZBP",
+    "timestamp": "2026-11-26T00:46:36.757Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "d85656c4d64ac5fdeae788064cc5d6d8a1ca2564783a1a800ff51dd0654849e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-13E4",
+    "timestamp": "2026-11-26T00:46:42.028Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "2f3def1226a529990dec69be1d6d554089d2dc7a81622536631885b027185976",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

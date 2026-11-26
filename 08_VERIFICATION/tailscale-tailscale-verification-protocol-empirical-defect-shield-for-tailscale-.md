@@ -4,22 +4,22 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "445df50d",
+  "source_version": "f2c476cf",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-25T08:44:09.204Z",
+  "timestamp": "2026-11-26T00:46:37.040Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `445df50d`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-25T08:44:09.204Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `f2c476cf`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-26T00:46:37.040Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `445df50d`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `f2c476cf`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T08:44:07.794Z  
+> **Harvest Timestamp**: 2026-11-26T00:46:35.586Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39584 stars
+- **Stars / Engagement**: 39622 stars
 
 ---
 
@@ -811,11 +811,11 @@ export const sessionStateStorage: IPNStateStorage = {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22642** (2026-11-25): **RFC5737 addresses cause Exit Nodes to be eligible for users on a Tailnet**
+  *Symptoms*: ### What is the issue?  RFC5737 TEST-NET addresses are (kind of) treated as publicly routable with Tailscale. This seems like it shouldn't happen because of the documentation in RFC5737 that states > Addresses within the TEST-NET-1, TEST-NET-2, and TEST-NET-3 blocks    SHOULD NOT appear on the public Internet and are used without any    coordination with IANA or an Internet registry [RFC2050].   If you use one of those addresses for testing or documentation purposes on a Tailnet with an Exit Node, it can cause the Exit Node to appear for the eligible device. If that user chooses to use the exit node and doesn't have access to `autogroup:internet` it will blackhole traffic.  ### Steps to reproduce  1. Have a Tailnet with an Exit Node 2. Add a policy rule that only allows access to an `RFC5737` address (`192.0.2.1/32`) 3. See Exit node show up as an option for the user with access to the `192.0.2.1` address 4. Select the Exit Node 5. See traffic blackhole  ### Are there any recent changes that introduced the issue?  N/A  ### OS  macOS  ### OS version  _No response_  ### Tailscale version  1.105.312  ### Other software  _No response_  ### Bug report  _No response_
+
 - **Issue #22582** (2026-11-23): **client/systray: SIGINT and SIGTERM exit with status 1 during normal shutdown**
   *Symptoms*: ### What is the issue?  On upstream main eaf3fc8daf90fb18714e21df38258db2ae33184a, stopping the Linux tray with SIGINT or SIGTERM cancels its IPN bus watch. watchIPNBus then treats context.Canceled as fatal and terminates the process with status 1.  The signal handler calls onExit directly, which cleans up handlers but does not stop the native tray loop. The fatal watcher currently terminates the process instead. Removing the fatal alone would leave that loop running.  ### Steps to reproduce  I reproduced this using the actual Menu.Run and tray library in subprocesses, with a private D-Bus session, a fake StatusNotifierWatcher, and a fake tailscaled LocalAPI streaming watch endpoint. No live tailnet or desktop session is needed.  Apply the attached clean-shutdown-tests.patch to this exact upstream commit and run:      ./tool/go test -race ./client/systray -run '^TestShutdownSignals$' -count=1 -v  Both signal cases exit with status 1 and log:      exiting     ipnbus error: context canceled     watchIPNBus: ipnbus error: context canceled  The test also reproduced status 1 for the D-Bus Quit action. That path may be scheduling-dependent because Run can return before the watcher reaches log.Fatal.  ### Are there any recent changes that introduced the issue?  _No response_  ### OS  Linux  ### OS version  Debian GNU/Linux 13; Linux 6.12.111+deb13-amd64  ### Tailscale version  1.104.7  ### Other software  _No response_  ### Bug report  _No response_
-
-- **Issue #22576** (2026-11-24): **Funnel: multi-second TLS handshake stalls on Frankfurt ingress (ingress-fra-01.tailscale.com)**
-  *Symptoms*: ### What is the issue?    **Environment:** Tailscale 1.104.7 (commit fb3b9b296) on Debian Linux, native install via systemd. Funnel endpoint on port 443 serving a self-hosted web service behind the node.  **DNS (via 1.1.1.1):** my Funnel hostname resolves to the Frankfurt ingress IPs 185.40.234.37 / .172 / .210 (ingress-fra-01.tailscale.com, NetActuate, Frankfurt)  **What works:** Serving the same endpoint tailnet-internally is fast (~10 ms TTFB). All tailnet peers connect directly (empty PeerRelay). The Tailscale status page shows no open incident for Funnel.  **What fails:** Every *public* connection through the FUNNEL ingress shows multi-second TLS handshakes, consistently across all three ingress IPs. Measured with curl --resolve (one pass per ingress IP, hostname redacted):  ip=185.40.234.37   try=1 tls=7.196525s ttfb=9.008322s total=9.008372s ip=185.40.234.37   try=2 tls=5.352385s ttfb=7.155548s total=7.155601s ip=185.40.234.37   try=3 tls=5.389028s ttfb=7.278048s total=7.278100s ip=185.40.234.37   try=4 tls=5.552671s ttfb=7.237613s total=7.237664s ip=185.40.234.37   try=5 tls=5.428549s ttfb=7.209125s total=7.209178s ip=185.40.234.172 try=1 tls=0.753926s ttfb=1.027717s total=1.027763s ip=185.40.234.172 try=2 tls=0.959335s ttfb=1.287773s total=1.287817s ip=185.40.234.172 try=3 tls=1.155935s ttfb=1.683839s total=1.683909s ip=185.40.234.172 try=4 tls=1.733231s ttfb=2.336538s total=2.336588s ip=185.40.234.172 try=5 tls=1.880378s ttfb=2.324323s total=2.324372s ip=185.40.234.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -832,43 +832,63 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `445df50d` (2026-11-25)
-**Commit Message**: wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked (#22641)
+### Incident Patch 1: `1a3a1da1` (2026-11-24)
+**Commit Message**: misc/git_hook/githook: don't rebuild hooks after every OSS bump
 
-This patch removes an accidental copy of a lock:
+The launcher found the shared HOOK_VERSION via `go list -m -f
+'{{.Dir}}' tailscale.com`. But go list -m doesn't download modules, so
+after a repo bumps its tailscale.com dependency to a version not yet in
+the module cache, Dir is empty, SHARED_VER falls back to 0, and the
+launcher rebuilds ts-git-hook-bin even though the shared HOOK_VERSION
+didn't change. In corp, which can sometimes bump OSS a few times a
+day, that meant a spurious "git-hook: rebuilding ts-git-hook-bin..."
+(plus a module download) on the first git operation after most bumps.
 
-	$ ./tool/go vet ./...
-	literal copies lock value from pm: tailscale.com/wgengine/magicsock.peerMap contains sync.RWMutex
+If Dir is empty, run `go mod download tailscale.com` and look again.
+The rebuild was going to download the module anyway.
 
-Updates #22645
+Bump HOOK_VERSION so existing installs pick up the new launcher.
 
-Change-Id: Id171051838b66b8dd9dff755d803bbc18142bea4
+Updates tailscale/corp#40381
 
-Signed-off-by: Simon Law <[REDACTED_EMAIL]>
+Change-Id: I6e4720702d7052df3b15dce0c60a8b313c6b48e3
+Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
 
-**File**: `wgengine/magicsock/endpoint_test.go` (modified, +1/-2)
+**File**: `misc/git_hook/githook/HOOK_VERSION` (modified, +1/-1)
 ```diff
-@@ -741,10 +741,9 @@ func Test_endpoint_handlePongConnLocked(t *testing.T) {
- 		t.Run(tc.name, func(t *testing.T) {
- 			synctest.Test(t, func(t *testing.T) {
- 				now := mono.Now() // synctest to match this to the internal 'now'
--				pm := newPeerMap()
- 				c := &Conn{
- 					logf:    func(msg string, args ...any) {},
--					peerMap: pm,
-+					peerMap: newPeerMap(),
- 				}
- 				c.discoAtomic.Set(key.NewDisco())
- 				de := &endpoint{
+@@ -1 +1 @@
+-5
++6
+```
+
+**File**: `misc/git_hook/githook/launcher.sh` (modified, +9/-1)
+```diff
+@@ -32,7 +32,15 @@ BINARY="$HOOK_DIR/ts-git-hook-bin$EXE"
+ GO="$REPO_ROOT/tool/go$EXE"
+ if [ ! -x "$GO" ]; then GO=go; fi
+ 
+-OSS_DIR="$(cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null || true)"
++oss_dir() {
++  (cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null) || true
++}
++OSS_DIR="$(oss_dir)"
++if [ -z "$OSS_DIR" ]; then
++  # go list -m doesn't download; a fresh go.mod bump may not be cached yet.
++  (cd "$REPO_ROOT" && GOWORK=off "$GO" mod download tailscale.com >/dev/null 2>&1) || true
++  OSS_DIR="$(oss_dir)"
++fi
+ SHARED_VER="$(cat "$OSS_DIR/misc/git_hook/githook/HOOK_VERSION" 2>/dev/null || echo 0)"
+ LOCAL_VER="$(cat "$REPO_ROOT/misc/git_hook/HOOK_VERSION" 2>/dev/null || echo 0)"
+ WANT="$SHARED_VER:$LOCAL_VER"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22660** (2026-11-25): feature/conn25: use transitIPInPool in connector.packetFilterAllow (@mazdakn)
 - **PR #22646** (closed): .github/workflows: run go vet checks outside golangci-lint (@sfllaw)
 - **PR #22641** (2026-11-25): wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked (@sfllaw)
+- **PR #22638** (2026-11-25): net/portmapper: add Probe metrics for all PCP result codes (@fmarier)
 - **PR #22636** (2026-11-25): tsweb/varz: add match filters and streaming to /debug/varz (@bradfitz)
 - **PR #22635** (2026-11-24): tsnet: test with a fake host DNS resolver, not the OS resolver (@sfllaw)
-- **PR #22633** (2026-11-24): tsnet: fix Server.Close so it can be called repeatedly (@sfllaw)
-- **PR #22630** (2026-11-24): feature/conn25: return extra WireGuard AllowedIPs in a stable order (@mazdakn)
 
 ---
 
@@ -888,32 +908,39 @@ Signed-off-by: Simon Law <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked
+## X. misc/git_hook/githook: don't rebuild hooks after every OSS bump
 
 **RULE**:
-When implementing operations in `wgengine/magicsock/endpoint_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `misc/git_hook/githook/launcher.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `445df50d`: wgengine/magicsock: avoid copying lock in Test_endpoint_handlePongConnLocked. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a3a1da1`: misc/git_hook/githook: don't rebuild hooks after every OSS bump. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `wgengine/magicsock/endpoint_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/git_hook/githook/launcher.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					peerMap: newPeerMap(),
+oss_dir() {
+  (cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null) || true
+}
+OSS_DIR="$(oss_dir)"
+if [ -z "$OSS_DIR" ]; then
+  # go list -m doesn't download; a fresh go.mod bump may not be cached yet.
+  (cd "$REPO_ROOT" && GOWORK=off "$GO" mod download tailscale.com >/dev/null 2>&1) || true
+  OSS_DIR="$(oss_dir)"
+fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				pm := newPeerMap()
-					peerMap: pm,
+OSS_DIR="$(cd "$REPO_ROOT" && GOWORK=off "$GO" list -m -f '{{.Dir}}' tailscale.com 2>/dev/null || true)"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `445df50d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a3a1da1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

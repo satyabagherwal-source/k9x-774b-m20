@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T00:18:10.374Z",
+  "updated_at": "2026-11-26T00:46:47.319Z",
   "stats": {
-    "total_discovered": 9544,
-    "approved_pending_harvest": 9047,
+    "total_discovered": 9546,
+    "approved_pending_harvest": 9049,
     "harvested_count": 0,
     "rejected_count": 497,
     "category_distribution": {
       "COMMUNITY_AND_EXPERT": 9040,
       "OFFICIAL_DOCUMENTATION": 281,
-      "STANDARDS_AND_SPECIFICATIONS": 151,
+      "STANDARDS_AND_SPECIFICATIONS": 153,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 54,
       "LEGAL_AND_REGULATORY": 2,
@@ -206516,6 +206516,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-42E2F8093CDC": {
+      "id": "SRC-42E2F8093CDC",
+      "url": "https://www.rfc-editor.org/rfc/rfc5737",
+      "title": "IETF RFC 5737",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:46:47.250Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-0F715860CD69": {
+      "id": "SRC-0F715860CD69",
+      "url": "https://www.rfc-editor.org/rfc/rfc2050",
+      "title": "IETF RFC 2050",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T00:46:47.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
       }
     }
   }
