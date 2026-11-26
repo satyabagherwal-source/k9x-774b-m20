@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T02:46:38.808Z",
-  "total_cycles_completed": 12540,
-  "total_learnings_persisted": 12540,
-  "total_rules_promoted": 11479,
+  "last_updated": "2026-11-26T02:55:20.029Z",
+  "total_cycles_completed": 12542,
+  "total_learnings_persisted": 12542,
+  "total_rules_promoted": 11480,
   "history": [
-    {
-      "timestamp": "2026-11-25T07:48:44.209Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T07:48:45.776Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T07:48:48.264Z",
       "repository": "rqlite/rqlite",
@@ -1403,6 +1389,20 @@
       "repository": "MiniMaxAI/MiniMax-H3-Image",
       "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:55:04.748Z",
+      "repository": "Comfy-Org/MiniMax-H3-Image",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T02:55:20.029Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T02:46:53.087Z",
-  "total_records": 2700,
+  "last_updated": "2026-11-26T02:55:25.679Z",
+  "total_records": 2701,
   "domains": {
     "A": {
       "total": 22,
@@ -2503,7 +2503,7 @@
       ]
     },
     "J": {
-      "total": 53,
+      "total": 54,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2557,7 +2557,8 @@
         "domain_intelligence-search-distribution-intelligence-msasikanth-twine-core-invariants",
         "domain_intelligence-search-distribution-intelligence-msasikanth-twine-learnings-core-invariants",
         "domain_intelligence-search-distribution-intelligence-startrail-org-leann-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-startrail-org-leann-learnings-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-learnings-core-invariants"
       ]
     },
     "K": {
@@ -9433,8 +9434,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "864741c922c34fadaf5fbde89c10fb5b2e20b63a87a7b0dbeab98cf808df65a2",
-      "created_at": "2026-11-26T02:27:11.804Z"
+      "content_hash": "cb2e7b6f3412b0f60bf88cb55fdc0905af7d03e1aa85f13c2699b996dd367522",
+      "created_at": "2026-11-26T02:55:25.679Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -22897,8 +22898,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/MiniMax-H3-Image Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-image-research-knowledge-intelligence-comfy-org-minimax-.md",
       "repository": "Comfy-Org/MiniMax-H3-Image",
-      "content_hash": "21787ee5396dcabb58609b38976792ebf5ce6c4d5ad36de2287a9d6af009a64d",
-      "created_at": "2026-11-22T06:11:15.518Z"
+      "content_hash": "f0a4f3a39a49addce340318299f6e2fa808d0a99c8bfdd4b3d6992de996f3fd0",
+      "created_at": "2026-11-26T02:55:04.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-image-learnings-core-inv",
@@ -22906,8 +22907,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-minimax-h3-image-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-minimax-h3-image-learnings-research-knowledge-intelligence-hf-comfy.md",
       "repository": "hf-comfy-org-minimax-h3-image-learnings",
-      "content_hash": "6ac2fb51c6316a86cecbdd75cb4504c74e7edd9501c66b7e4113f96ae26c3c12",
-      "created_at": "2026-11-22T06:11:35.794Z"
+      "content_hash": "1336ae60575019858e906f46f5bb2aa05c72da935a50969eec8e2dc085d61d86",
+      "created_at": "2026-11-26T02:55:23.867Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mradermacher-gemma-4-31b-it-ara-heretic-gguf-cor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-gemma-4-31b-it-ara-heretic-gguf-cor",
@@ -42052,8 +42053,8 @@
       "title": "Search & Distribution Intelligence: xerj-org/xerj Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-xerj-org-xerj-search-distribution-intelligence-xerj-org-xerj-core-invariants.md",
       "repository": "xerj-org/xerj",
-      "content_hash": "a933866319165820d17e58a5c1cdeb44c1f8b9bce7dea87bf8ef9c5220493013",
-      "created_at": "2026-11-24T05:28:27.361Z"
+      "content_hash": "97c51693420bdeb7ebed988d970f1c4ab24f3238e3b2c9740a1b85c4cbf47a95",
+      "created_at": "2026-11-26T02:55:20.458Z"
     },
     "DOM-D-3B23634E": {
       "record_id": "DOM-D-3B23634E",
@@ -45551,6 +45552,15 @@
       "confidence": 0.79,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-26T02:10:14.230Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-learnings-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-learnings-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: xerj-org-xerj-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-xerj-org-xerj-learnings-search-distribution-intelligence-xerj-org-xerj-learnings.md",
+      "repository": "xerj-org-xerj-learnings",
+      "content_hash": "b26a667ea8a131a848beccc1555be02dfe6300b1ec41ad811798a9d44c02051f",
+      "created_at": "2026-11-26T02:55:24.678Z"
     }
   }
 }

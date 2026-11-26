@@ -13212,3 +13212,5 @@
 | `CYCLE-20261126-0GJ3` | `2026-11-26T02:38:10.863Z` | `VideoRebirthAI/hyperflow-h3-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-videorebirthai-hyperflow-h3-flash-learnings.md` | Yes (`ed205455...`) |
 | `CYCLE-20261126-0LM9` | `2026-11-26T02:38:17.457Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10588` | Yes (`da2d43a6...`) |
 | `CYCLE-20261126-BCG6` | `2026-11-26T02:46:38.790Z` | `MiniMaxAI/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | Yes (`6fcd38a8...`) |
+| `CYCLE-20261126-M6U2` | `2026-11-26T02:55:04.730Z` | `Comfy-Org/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | Yes (`480b71ed...`) |
+| `CYCLE-20261126-MIMS` | `2026-11-26T02:55:20.020Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10589` | Yes (`a3712fa6...`) |

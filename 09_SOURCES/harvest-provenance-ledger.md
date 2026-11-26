@@ -13245,3 +13245,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-videorebirthai-hyperflow-h3-flash` | `https://huggingface.co/VideoRebirthAI/hyperflow-h3-flash` | `hf-videore` | Multi-dimensional audit evidence | 2026-11-26T02:38:10.868Z |
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `8c1ff472` | Multi-dimensional audit evidence | 2026-11-26T02:38:17.461Z |
 | `learn-huggingface-minimaxai-minimax-h3-image` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-26T02:46:38.795Z |
+| `learn-huggingface-comfy-org-minimax-h3-image` | `https://huggingface.co/Comfy-Org/MiniMax-H3-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-26T02:55:04.735Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `35ccd192` | Multi-dimensional audit evidence | 2026-11-26T02:55:20.024Z |

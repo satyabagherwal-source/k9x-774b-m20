@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T02:46:53.299Z",
+  "last_updated": "2026-11-26T02:55:25.862Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25625,
+  "total_items": 25629,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "864741c922c34fadaf5fbde89c10fb5b2e20b63a87a7b0dbeab98cf808df65a2",
+      "content_hash": "cb2e7b6f3412b0f60bf88cb55fdc0905af7d03e1aa85f13c2699b996dd367522",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T02:27:11.804Z"
+      "persisted_at": "2026-11-26T02:55:25.679Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d201d47f932b028a2c603d6043bbfffced0ce896f951f15d7d1a296dca2995d",
+      "content_hash": "c360d0dfae03499ae6176ffc690eaff8dc78724f861427cbcbe2dd2ba725394d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T02:27:11.999Z"
+      "persisted_at": "2026-11-26T02:55:25.862Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -253529,7 +253529,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
       "source_version": "hf-comfy-org-minimax-h3-image",
-      "content_hash": "caa0bf8ceffdcd350abc3c20bf3b96fe46553e630c1f640480c8f1dbe82a80ea",
+      "content_hash": "480b71ed35bddc7edf04e8f3f972a99b1d040c7bf54f765380505ca97c366cc7",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md",
       "promoted_rules": [],
@@ -253538,7 +253538,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T06:11:15.102Z",
+      "verified_at": "2026-11-26T02:55:04.487Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253555,9 +253555,9 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/MiniMax-H3-Image Core Invariants",
       "repository": "Comfy-Org/MiniMax-H3-Image",
       "source_version": "hf-comfy-org-minimax-h3-image",
-      "content_hash": "21787ee5396dcabb58609b38976792ebf5ce6c4d5ad36de2287a9d6af009a64d",
+      "content_hash": "f0a4f3a39a49addce340318299f6e2fa808d0a99c8bfdd4b3d6992de996f3fd0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T06:11:15.518Z"
+      "persisted_at": "2026-11-26T02:55:04.966Z"
     },
     "rule-8655": {
       "learning_id": "rule-8655",
@@ -253593,9 +253593,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-minimax-h3-image-learnings Core Invariants",
       "repository": "hf-comfy-org-minimax-h3-image-learnings",
       "source_version": "HEAD",
-      "content_hash": "6ac2fb51c6316a86cecbdd75cb4504c74e7edd9501c66b7e4113f96ae26c3c12",
+      "content_hash": "1336ae60575019858e906f46f5bb2aa05c72da935a50969eec8e2dc085d61d86",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T06:11:35.794Z"
+      "persisted_at": "2026-11-26T02:55:23.867Z"
     },
     "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf": {
       "learning_id": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
@@ -284737,8 +284737,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "7ba0069e",
-      "content_hash": "8fffd0ebcc620a66ff16e553bcae025218594fdb8122c67df5f2a477f17d67b1",
+      "source_version": "35ccd192",
+      "content_hash": "a3712fa62289633276eb9cdce4fdb0ecdefa7418011dede608409ef9260fd1a1",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -284771,6 +284771,11 @@
           "number": 10211,
           "title": "hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comm",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10589,
+          "title": "validate pack source slugs on consume to block path traversal",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -284778,7 +284783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T05:28:26.537Z",
+      "verified_at": "2026-11-26T02:55:19.795Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284806,10 +284811,10 @@
       "relative_path": "03_SKILLS/xerj-org-xerj-skill-operational-integration-playbook-for-xerj-org-xerj.md",
       "title": "Skill: Operational & Integration Playbook for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "7ba0069e",
-      "content_hash": "755265cf6540ec247d158ab8714204b6c6119de045708dfabe5af292905f427f",
+      "source_version": "35ccd192",
+      "content_hash": "adc6f69e1178fab4d6a83d310ae5c6d6f3e1e460f607bbfc236ea37fff804017",
       "domain_letter": "J",
-      "persisted_at": "2026-11-24T05:28:27.588Z"
+      "persisted_at": "2026-11-26T02:55:20.658Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj",
@@ -284818,10 +284823,10 @@
       "relative_path": "08_VERIFICATION/xerj-org-xerj-verification-protocol-empirical-defect-shield-for-xerj-org-xerj.md",
       "title": "Verification Protocol: Empirical Defect Shield for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "7ba0069e",
-      "content_hash": "2e96b00bdb23cc07257c82b46e3d5b94d1b88dfb30911bbbe0a4c7588a89661e",
+      "source_version": "35ccd192",
+      "content_hash": "104256dda5bfb4328cd7739207aa06c02f9f67fd295f8b45a5bbb579a36c18b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T05:28:27.788Z"
+      "persisted_at": "2026-11-26T02:55:20.804Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
@@ -302542,9 +302547,9 @@
       "title": "Skill: Operational & Integration Playbook for xerj-org-xerj-learnings",
       "repository": "xerj-org-xerj-learnings",
       "source_version": "HEAD",
-      "content_hash": "27c645737dde2e86ad841ecc1d5a8fa35be1841391ea075618f8174e526a253a",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-23T06:22:34.973Z"
+      "content_hash": "7d2e81d2e91fee3809b89822722faf25c3337dec09acf413deaeeaf53c452355",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T02:55:24.861Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj-learnings",
@@ -302554,9 +302559,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for xerj-org-xerj-learnings",
       "repository": "xerj-org-xerj-learnings",
       "source_version": "HEAD",
-      "content_hash": "97bd48e75e982db41431e2c11282956dc7d32d934e090d48fea2fa1370bce007",
+      "content_hash": "0ef4c4e784d5489a5812ebe0aaec1524a9fa1f75f0bbd2382f45a4db5f0f89c5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-23T06:22:35.101Z"
+      "persisted_at": "2026-11-26T02:55:25.016Z"
     },
     "learn-github-herdrdev-herdr": {
       "learning_id": "learn-github-herdrdev-herdr",
@@ -335627,10 +335632,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-xerj-org-xerj-search-distribution-intelligence-xerj-org-xerj-core-invariants.md",
       "title": "Search & Distribution Intelligence: xerj-org/xerj Core Invariants",
       "repository": "xerj-org/xerj",
-      "source_version": "7ba0069e",
-      "content_hash": "a933866319165820d17e58a5c1cdeb44c1f8b9bce7dea87bf8ef9c5220493013",
+      "source_version": "35ccd192",
+      "content_hash": "97c51693420bdeb7ebed988d970f1c4ab24f3238e3b2c9740a1b85c4cbf47a95",
       "domain_letter": "J",
-      "persisted_at": "2026-11-24T05:28:27.361Z"
+      "persisted_at": "2026-11-26T02:55:20.458Z"
     },
     "candidate_directive-machines-accept-existing-configurations": {
       "item_id": "candidate_directive-machines-accept-existing-configurations",
@@ -339819,13 +339824,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MBUH-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MMUZ-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a8b29bd02d3d006a072533f75807587c657e16a24ef58b0148062a2f8c47386",
+      "content_hash": "31cbda56229097e975a086247a9fdb1c3b261fc2ea2a0208949ef938d1649322",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T02:27:11.612Z"
+      "persisted_at": "2026-11-26T02:55:25.502Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -350850,6 +350855,56 @@
       "content_hash": "fa6ad0b89dd94cc5d23ab6bc9280853831f9821407298abfef35c2f9b5369cb0",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T02:38:23.493Z"
+    },
+    "rule-10589": {
+      "learning_id": "rule-10589",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10589,
+      "title": "validate pack source slugs on consume to block path traversal",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "35ccd192",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T02:55:19.795Z"
+    },
+    "candidate_directive-validate-pack-source-slugs-on-consume-to-block-path-traversal": {
+      "item_id": "candidate_directive-validate-pack-source-slugs-on-consume-to-block-path-traversal",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MITU-validate-pack-source-slugs-on-consume-to-block-path-traversal.md",
+      "title": "validate pack source slugs on consume to block path traversal",
+      "repository": "xerj-org/xerj",
+      "source_version": "35ccd192",
+      "content_hash": "6cceb18ce3120e058f113e1db0e50dfe6adf14b8152bb373658c3eb916705bf8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T02:55:20.278Z"
+    },
+    "candidate_directive-autoindex-validate-pack-source-slugs-on-consume-to-block-path-traversal": {
+      "item_id": "candidate_directive-autoindex-validate-pack-source-slugs-on-consume-to-block-path-traversal",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MM37-autoindex-validate-pack-source-slugs-on-consume-to-block-path-traversal.md",
+      "title": "autoindex): validate pack source slugs on consume to block path traversal",
+      "repository": "xerj-org-xerj-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fd21eed93d715c03cac17713ab900f6428491401edf34948dbc2df22478c1bf6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-26T02:55:24.502Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-learnings-core-invariants": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-xerj-org-xerj-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-xerj-org-xerj-learnings-search-distribution-intelligence-xerj-org-xerj-learnings.md",
+      "title": "Search & Distribution Intelligence: xerj-org-xerj-learnings Core Invariants",
+      "repository": "xerj-org-xerj-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b26a667ea8a131a848beccc1555be02dfe6300b1ec41ad811798a9d44c02051f",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T02:55:24.678Z"
     }
   },
   "ai-builder-brain": {

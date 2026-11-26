@@ -4,24 +4,24 @@
 {
   "source_repository": "xerj-org/xerj",
   "source_url": "https://github.com/xerj-org/xerj",
-  "source_version": "7ba0069e",
+  "source_version": "35ccd192",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-24T05:28:27.130Z",
+  "timestamp": "2026-11-26T02:55:20.274Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-xerj-org-xerj",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `7ba0069e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-24T05:28:27.130Z`  
+> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `35ccd192`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T02:55:20.274Z`  
 > **Learning ID**: `learn-github-xerj-org-xerj`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain J (Search & Distribution Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from xerj-org/xerj:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T05:28:25.422Z  
+> **Harvest Timestamp**: 2026-11-26T02:55:18.878Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20270 stars
+- **Stars / Engagement**: 21526 stars
 
 ---
 
@@ -1506,1113 +1506,1236 @@ impl DecideModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7b82e8b` (2026-11-23)
-**Commit Message**: test: hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comments on the right fns
+### Incident Patch 1: `e774cf7c` (2026-11-25)
+**Commit Message**: fix(autoindex): validate pack source slugs on consume to block path traversal (#3167)
 
-Three cleanups left over from #3516, #3522 and #3498.
-
-1. a_cold_get_reads_one_row_and_matches_the_full_decode flaked under load (#3530)
-
-   Root cause: `built()` in get_row_decode_tests.rs lays out its
-   segments with flush + force_merge(round + 1), and the asserts depend
-   on that layout, but the index kept its background merge loop. At load
-   150-300 a merge tick (5 s) landed between a flush and its force_merge.
-   It merged everything into ONE segment (the `>= 2` assert), or left a
-   124-doc legacy-LZ4 shard segment (the `ZBS` magic assert), once
-   force_merge saw few enough segments to do nothing. Fix:
-   `idx.abort_background_tasks()` after get_index, the same thing
-   `hand_driven_index` does. No timeout changed.
-
-   Before (main 53e4db0c1, ci-test, 96 CPU burners):
-     alone, 60 runs x16 parallel, load 154-308: 36/60 failed
-       (30 x `1 segments`, 6 x `124 docs, magic LZ4`)
-     full --lib, 4 copies, --test-threads=16, load 213-225: 4/4 failed
-   After:
-     alone, 60 runs x16 parallel, load 217-350: 0/60 failed
-     full --lib, 8 runs, 4 copies, load 206-366: 0/8
-
-**File**: `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs` (modified, +23/-12)
+**File**: `engine/crates/xerj-autoindex/src/harvest/pack.rs` (modified, +73/-2)
 ```diff
-@@ -1333,6 +1333,27 @@ async fn a_document_is_stored_on_its_shard_owner_and_search_sees_it_from_any_mem
+@@ -468,8 +468,16 @@ pub fn read_manifest(pack_dir: &Path) -> Result<PackMeta> {
+     if sources.is_empty() {
+         bail!(at("manifest declares no sources"));
      }
+-    if sources.iter().any(|s| s.slug.is_empty()) {
+-        bail!(at("a manifest source has no slug"));
++    // #3166: the slug becomes a directory under the corpus on consume
++    // (`corpora/<name>/<slug>`), so it is gated here, before any path is
++    // built from it, using the same gate the recipe build path applies. A
++    // checksum cannot stand in for this: SHA256SUMS is authored by the
++    // same party as the manifest, so a self-consistent malicious pack
++    // verifies clean.
++    for s in &sources {
++        if let Err(e) = xerj_common::xccode::pathgate::valid_slug(&s.slug) {
++            bail!(at(&format!("source slug: {e}")));
++        }
+     }
+ 
+     Ok(PackMeta {
+@@ -746,6 +754,69 @@ mod tests {
+         assert!(err.contains("does not cover manifest.json"), "{err}");
+     }
+ 
++    /// Rewrite SHA256SUMS from the bytes now on disk, so a test that edits
++    /// manifest.json can reach the slug check instead of dying on a
++    /// checksum first.
++    fn rehash_sums(pack_dir: &Path) {
++        let sums_raw = std::fs::read_to_string(pack_dir.join("SHA256SUMS")).unwrap();
++        let mut fresh = String::new();
++        for line in sums_raw.lines() {
++            let (_, name) = line.split_once("  ").unwrap();
++            let file_bytes = std::fs::read(pack_dir.join(name)).unwrap();
++            fresh.push_str(&format!(
++                "{}  {}\n",
++                hex(&Sha256::digest(&file_bytes)),
++                name
++            ));
++        }
++        std::fs::write(pack_dir.join("SHA256SUMS"), fresh).unwrap();
++    }
++
++    /// Rewrite one source slug in an emitted pack's manifest, keeping the
++    /// checksums valid so only the slug gate can refuse it.
++    fn set_source_slug(pack_dir: &Path, slug: &str) {
++        let mut m: Value =
++            serde_json::from_str(&std::fs::read_to_string(pack_dir.join("manifest.json")).unwrap())
++                .unwrap();
++        m["sources"][0]["slug"] = json!(slug);
++        std::fs::write(
++            pack_dir.join("manifest.json"),
++            serde_json::to_vec_pretty(&m).unwrap(),
++        )
++        .unwrap();
++        rehash_sums(pack_dir);
++    }
++
++    /// #3166: a pack manifest may name any slug, and the slug becomes a
++    /// directory under the corpus on consume, so a `../` slug writes
++    /// outside it. The consume path must refuse it, checksums or not: a
++    /// self-consistent malicious pack verifies clean.
++    #[test]
++    fn read_manifest_refuses_a_traversal_source_slug() {
++        let tmp = tempfile::tempdir().unwrap();
++        let records = vec![rec("a", &[])];
++        let r = emit(
++            tmp.path(),
++            &recipe("t", 1),
++            "# r\n",
++            records.clone(),
++            &stats_with_source(),
++            &sugg(&records),
++        )
++        .unwrap();
++        for bad in ["../../tmp/pwn", "..", "a/b", ".hidden", ""] {
++            set_source_slug(&r.dir, bad);
++            let err = read_manifest(&r.dir).unwrap_err().to_string();
++            assert!(err.contains("source slug"), "{bad}: {err}");
++            assert!(err.contains(bad) || bad.is_empty(), "{bad}: {err}");
++        }
++        // a plain slug with the same charset the recipe build path allows
++        // still consumes: the gate must not reject real packs.
++        set_source_slug(&r.dir, "a-b_c.d");
++        let meta = read_manifest(&r.dir).unwrap();
++        assert_eq!(meta.sources[0].slug, "a-b_c.d");
++    }
++
+     #[test]
+     fn read_manifest_refuses_manifest_and_sums_disagreement() {
+         // A manifest whose files[] sha disagrees with SHA256SUMS: caught
+```
+
+**File**: `engine/crates/xerj-autoindex/src/harvest/recipe.rs` (modified, +3/-11)
+```diff
+@@ -371,18 +371,10 @@ fn d_sample() -> usize {
+ 
+ /// A slug becomes a filename component in the content store
+ /// (`<slug>.<key>.json`), so it is gated to a safe charset the way corpus
+-/// and repo names are — but locally, because slugs are a builder concept.
++/// and repo names are. The gate lives in `xccode::pathgate` so the pack
++/// consume path shares it (#3166): one rule, builder and consumer.
+ fn valid_slug(slug: &str) -> Result<()> {
+-    let ok = !slug.is_empty()
+-        && slug.len() <= 64
+-        && slug
+-            .chars()
+-            .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_' || c == '.')
+-        && !slug.starts_with('.');
+-    if !ok {
+-        bail!("source slug '{slug}' must be 1-64 chars of [A-Za-z0-9._-], not starting with '.'");
+-    }
+-    Ok(())
++    xerj_common::xccode::pathgate::valid_slug(slug).map_err(anyhow::Error::msg)
  }
  
-+/// Wait for a member's runner task to exit after its shutdown watch was set.
+ /// Read, validate and compile a recipe. Every error names the file and the
+```
+
+**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +81/-4)
+```diff
+@@ -2026,7 +2026,14 @@ fn run_corpus_add_pack(
+     }
+     let mut total = 0usize;
+     for s in &meta.sources {
+-        let count = std::fs::read_to_string(dest.join(&s.slug).join("records.jsonl"))
++        let path = match pack_slug_dir(&dest, &s.slug) {
++            Ok(dir) => dir.join("records.jsonl"),
++            Err(e) => {
++                eprintln!("xerj corpus add: {e:#}");
++                return 1;
++            }
++        };
++        let count = std::fs::read_to_string(path)
+             .map(|t| t.lines().filter(|l| !l.trim().is_empty()).count())
+             .unwrap_or(0);
+         total += count;
+@@ -2058,6 +2065,24 @@ fn run_corpus_add_pack(
+     0
+ }
+ 
++/// Join a pack slug onto the corpus dir, refusing anything that would
++/// escape it. The slug is gated in `read_manifest`, but the stored
++/// corpus.json on disk predates that gate, so the join itself refuses a
++/// bad name too; resolving the parent first keeps a symlink planted
++/// inside the corpus dir from redirecting the write or the re-add delete
++/// outside it (#3166).
++fn pack_slug_dir(dest: &Path, slug: &str) -> Result<PathBuf> {
++    xccode::pathgate::valid_slug(slug).map_err(anyhow::Error::msg)?;
++    let base = dest
++        .canonicalize()
++        .with_context(|| format!("cannot resolve {}", dest.display()))?;
++    let dir = base.join(slug);
++    if !dir.starts_with(&base) {
++        anyhow::bail!("pack slug '{slug}' escapes {}", dest.display());
++    }
++    Ok(dir)
++}
++
+ /// Copy the pack's records into `corpora/<name>/<slug>/records.jsonl`
+ /// (verbatim lines — the pack line IS canonical JSON), reconcile away slug
+ /// dirs a previous add owned that this pack no longer has, and write the
+@@ -2080,7 +2105,10 @@ fn add_pack_materialize(
+     // or a re-add APPENDS to the old records.jsonl and duplicates every line
+     if let Ok(prev) = manifest::read_corpus_manifest(&dest.join("corpus.json")) {
+         for r in &prev.repos {
+-            let _ = std::fs::remove_dir_all(dest.join(&r.repo));
++            // a stored repo predates the slug gate: refuse to delete
++            // outside the corpus dir rather than trusting the name (#3166)
++            let dir = pack_slug_dir(dest, &r.repo)?;
++            let _ = std::fs::remove_dir_all(&dir);
+         }
+     }
+     std::fs::create_dir_all(dest).with_context(|| format!("cannot create {}", dest.display()))?;
+@@ -2127,7 +2155,7 @@ fn add_pack_materialize(
+     let mut counts: std::collections::HashMap<String, u64> = std::collections::HashMap::new();
+     for (slug, mut records) in by_slug {
+         records.sort_by(|a, b| a.0.cmp(&b.0));
+-        let dir = dest.join(&slug);
++        let dir = pack_slug_dir(dest, &slug)?;
+         std::fs::create_dir_all(&dir)
+             .with_context(|| format!("cannot create {}", dir.display()))?;
+         let path = dir.join("records.jsonl");
+@@ -2143,7 +2171,7 @@ fn add_pack_materialize(
+ 
+     let mut entries = Vec::new();
+     for s in &meta.sources {
+-        let path = dest.join(&s.slug).join("records.jsonl");
++        let path = pack_slug_dir(dest, &s.slug)?.join("records.jsonl");
+         let bytes = std::fs::metadata(&path).map(|m| m.len()).unwrap_or(0);
+         entries.push(manifest::ManifestRepo {
+             repo: s.slug.clone(),
+@@ -3991,6 +4019,55 @@ mod tests {
+         assert!(xccode::pathgate::valid_corpus_name("battle-terse").is_ok());
+     }
+ 
++    /// #3166: the re-add reconcile deletes every dir the previous
++    /// corpus.json owned, and the stored repo is the pack slug. A corpus
++    /// materialized before the slug gate (or a hand-edited corpus.json)
++    /// can hold `..` as its repo, which would delete the whole corpora
++    /// dir. The re-add must refuse instead, and nothing outside the
++    /// corpus dir may be touched.
++    #[test]
++    fn re_add_with_a_dotdot_repo_does_not_delete_outside_the_corpus() {
++        let tmp = tempfile::tempdir().unwrap();
++        let dest = tmp.path().join("corpora").join("evil");
++        std::fs::create_dir_all(&dest).unwrap();
++        // a sibling file outside dest that must survive the re-add
++        let keep = tmp.path().join("corpora").join("keep.txt");
++        std::fs::write(&keep, "keep\n").unwrap();
++        // a previous add's corpus.json naming `..` as its repo
++        std::fs::write(
++            dest.join("corpus.json"),
++            r#"{"corpus":"evil","kind":"harvested","repos":[{"repo":"..","url":"","licence":"CC0-1.0"}]}"#,
++        )
++        .unwrap();
++        // a pack with one good record
++        let pack_dir = tmp.path().join("pack");
++        std::fs::create_dir_all(&pack_dir).unwrap();
++        std::fs::write(
++            pack_dir.join("records-0.jsonl"),
++            "{\"id\":\"a\",\"source\":\"good\"}\n",
++        )
++        .unwrap();
++        let meta = crate::harvest::pack::PackMeta {
++            name: "evil".to_string(),
++            description: String::new(),
++            generation: 1,
++            records: 1,
++            sources: ve
+```
+
+**File**: `engine/crates/xerj-common/src/xccode/pathgate.rs` (modified, +53/-0)
+```diff
+@@ -126,6 +126,32 @@ pub fn valid_repo_name(repo: &str) -> Result<(), String> {
+     ))
+ }
+ 
++/// Validate a pack source slug from an untrusted manifest: 1-64 chars of
++/// `[A-Za-z0-9._-]`, not starting with `.`.
 +///
-+/// The runner races the shutdown watch against each step
-+/// (`ClusterRunner::run`), so the join is the event: it resolves on the
-+/// runner's next poll. It was a 5 s wall-clock join (left by #3516), which a
-+/// runner starved at load 100+ can miss while still stopping correctly.
-+/// [`RAFT_HANG_GUARD`] only catches a runner that never exits.
-+async fn join_runner(member: &mut Member) {
-+    let Some(task) = member.runner.take() else {
-+        return;
-+    };
-+    match tokio::time::timeout(RAFT_HANG_GUARD, task).await {
-+        Ok(Ok(())) => {}
-+        Ok(Err(join)) => panic!("{} runner task failed: {join}", member.handle.node_id()),
-+        Err(_) => panic!(
-+            "{} runner did not exit in {RAFT_HANG_GUARD:?} after shutdown",
-+            member.handle.node_id()
-+        ),
++/// The slug becomes a directory under the corpus
++/// (`corpora/<name>/<slug>`), so the rule is the one the recipe build path
++/// has always applied locally: a `/` or a leading `.` would let a crafted
++/// pack write or delete outside the corpus dir on consume (#3166). The
++/// build path and the consume path now share this one gate, so a pack the
++/// builder accepts is a pack the consumer accepts, and nothing else.
++pub fn valid_slug(slug: &str) -> Result<(), String> {
++    let ok = !slug.is_empty()
++        && slug.len() <= 64
++        && slug
++            .chars()
++            .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_' || c == '.')
++        && !slug.starts_with('.');
++    if ok {
++        Ok(())
++    } else {
++        Err(format!(
++            "source slug '{slug}' must be 1-64 chars of [A-Za-z0-9._-], not starting with '.'. \
++             It becomes a directory under the corpus, so a '/' or '..' would escape it."
++        ))
 +    }
 +}
 +
- /// Stop one member and release its data directory.
- ///
- /// The shard handler is cleared first, so a document write during shutdown
-@@ -1342,12 +1363,7 @@ async fn a_document_is_stored_on_its_shard_owner_and_search_sees_it_from_any_mem
- async fn shutdown_member(mut member: Member) -> tempfile::TempDir {
-     member.handle.clear_shard_handler();
-     let _ = member.shutdown.send(true);
--    if let Some(task) = member.runner.take() {
--        match tokio::time::timeout(Duration::from_secs(5), task).await {
--            Ok(Ok(())) => {}
--            other => panic!("cluster runner did not stop: {other:?}"),
--        }
--    }
-+    join_runner(&mut member).await;
-     drop(member.app);
-     drop(member.state);
-     drop(member.engine);
-@@ -1359,12 +1375,7 @@ async fn shutdown_and_keep(members: Vec<Member>) -> Vec<tempfile::TempDir> {
-     let mut dirs = Vec::with_capacity(members.len());
-     for mut member in members {
-         let _ = member.shutdown.send(true);
--        if let Some(task) = member.runner.take() {
--            match tokio::time::timeout(Duration::from_secs(5), task).await {
--                Ok(Ok(())) => {}
--                other => panic!("cluster runner did not stop: {other:?}"),
--            }
--        }
-+        join_runner(&mut member).await;
-         // ApiShardHandler holds AppState, which holds Engine, which holds
-         // this handle. The engine's data-dir node.lock stays taken until
-         // that cycle breaks, so a later Engine::new on the same directory
-```
-
-**File**: `engine/crates/xerj-engine/src/get_row_decode_tests.rs` (modified, +8/-0)
-```diff
-@@ -38,6 +38,14 @@ async fn built(name: &str) -> (tempfile::TempDir, crate::Engine, Arc<Index>, usi
-     let engine = crate::Engine::new(config).unwrap();
-     engine.create_index(name, Schema::empty()).unwrap();
-     let idx = engine.get_index(name).unwrap();
-+    // Hand-driven: the segment layout below is what the asserts rely on, so
-+    // no background merge tick may reshape it. At load 150-300 the build
-+    // runs long enough for a tick (5 s) to land between a flush and its
-+    // `force_merge`: 30 of 60 runs ended on ONE segment (the `>= 2` assert)
-+    // and 6 kept a 124-doc legacy-LZ4 shard segment the tick left behind
-+    // (the `ZBS` assert), once `force_merge(round + 1)` saw few enough
-+    // segments to do nothing.
-+    idx.abort_background_tasks();
-     // A flush splits into one small segment per memtable shard, and a stored
-     // section under 128 rows stays legacy LZ4 (the full-decode path), so each
-     // round is merged into one columnar segment before the next is written.
-```
-
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +10/-10)
-```diff
-@@ -11818,16 +11818,6 @@ mod semantic_deadline_regression_tests {
- #[path = "fast_aggs.rs"]
- mod fast_aggs;
- 
--/// Reconstruct the ES-JSON form of a query filter that the columnar fast-agg
--/// path (`fast_aggs::compile_top_pred` + `aggs::doc_matches_filter`) can
--/// evaluate over doc-values WITHOUT hydrating `_source`.  Returns `None` for
--/// any query that isn't a plain conjunctive filter over exact/numeric fields
--/// (FTS, wild/prefix, must_not/should bool, numeric term keys on a field not
--/// mapped `long`/`double`, …) — the caller then keeps the exact brute path.
--///
--/// Only the leaf/bool shapes that `doc_matches_filter` and `compile_pred`
--/// jointly support are emitted, so the memtable matcher and the columnar
--/// predicate stay byte-identical.
- /// #3510: whether `q` is a pure conjunction (`bool` with only `must` /
- /// `filter`, nested, or under `constant_score`) whose every leaf passes
- /// `leaf_ok`. A leaf on its own is just checked. Used to admit a filter-only
-@@ -11855,6 +11845,16 @@ fn filter_conjunction_leaves_all(q: &QueryNode, leaf_ok: &dyn Fn(&QueryNode) ->
-     }
- }
- 
-+/// Reconstruct the ES-JSON form of a query filter that the columnar fast-agg
-+/// path (`fast_aggs::compile_top_pred` + `aggs::doc_matches_filter`) can
-+/// evaluate over doc-values WITHOUT hydrating `_source`.  Returns `None` for
-+/// any query that isn't a plain conjunctive filter over exact/numeric fields
-+/// (FTS, wild/prefix, must_not/should bool, numeric term keys on a field not
-+/// mapped `long`/`double`, …) — the caller then keeps the exact brute path.
-+///
-+/// Only the leaf/bool shapes that `doc_matches_filter` and `compile_pred`
-+/// jointly support are emitted, so the memtable matcher and the columnar
-+/// predicate stay byte-identical.
- fn query_node_to_agg_filter(node: &QueryNode, schema: &Schema) -> Option<Value> {
-     match node {
-         QueryNode::MatchAll => Some(serde_json::json!({ "match_all": {} })),
-```
-
----
-
-### Incident Patch 2: `6308204d` (2026-11-23)
-**Commit Message**: fix(search): filter-only bool scores 0, strict typed values 400, fvf missing value 400 (Fixes #3508, #3511, #3512)
-
-Three ES-semantics gaps on the search path, each found by a live repro on
-main 35584dccc (port 28100, throwaway data dir, --insecure) and each
-pinned by a new ES-YAML file.
-
-1. #3508: a filter-only bool scored 1.0 before a flush
-
-Motivation
-- `bool { filter: [...] }` (no must, no should) runs every clause in
-  filter context; ES scores each hit 0.0. A must_not-only bool gets a
-  match-all FILTER clause (`Queries.fixNegativeQueryIfNeeded`, read for
-  semantics only) and also scores 0.0.
-
-Root cause
-- The segment executor (`scored_fast_plan` -> `ScoredPlan::Filtered`,
-  score 0.0) was right. Two memtable-side paths were not:
-  - the id-only memtable arms (`AllDocIds` / `DocValuesHits`, served
-    by the fused doc-values walk) admit hits through `admit_hit!(count)`
-    with a hard-coded 1.0;
-  - `score_query_against_doc` (the brute scorer, used for every doc,
-    segment docs included, once the memtable is non-empty) fell through
-    to its 1.0 "zero sum" fallback.
-
-Before / after (index sw: t text, n long, k keyword; 3 docs)
-                                      memtabl
-
-**File**: `CHANGELOG.md` (modified, +26/-3)
-```diff
-@@ -23,10 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   `strict_date_optional_time||epoch_millis`, four digits are a year and any
-   other integer is epoch millis. A `long` stored as `42.0` is found by `42`.
-   A date match now uses the segment's doc values, so a query that mixes words
--  and a date or number keeps BM25 for its words there too. Known limit: when
-+  and a date or number keeps BM25 for its words there too. Since #3511, when
-   `lenient` is off (a `prefix*` pattern without `lenient: true`, or
--  `lenient: false`), ES returns 400 for a value that does not parse, and XERJ
--  skips the field.
-+  `lenient: false`), a value that does not parse is a 400, as in ES.
- 
- - **Object sub-fields get their own full-text index (#3464).** Each leaf of an
-   `object` mapping (`meta.note`, `meta.tag`) is now indexed under its dotted
-@@ -120,6 +119,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- **A filter-only `bool` scores 0.0 before a flush too
-+  ([#3508](https://github.com/xerj-org/xerj/issues/3508)).** A `bool` with
-+  only `filter` and `must_not` clauses scored 1.0 while its docs sat in the
-+  memtable, 0.0 once flushed, and 1.0 for every doc once one new doc was in
-+  the memtable, so ordering changed at `_flush`. Every hit now scores 0.0, as
-+  in Elasticsearch.
-+
-+- **A strict value of the wrong type on a boolean, ip or date field is a 400
-+  ([#3511](https://github.com/xerj-org/xerj/issues/3511)).** `term`/`terms`,
-+  and `match`, `multi_match` and `query_string` unless `lenient` is on,
-+  answered 0 hits for `b: "abc"`, `ip: "abc"` or `d: "abc"`. They now answer
-+  400 with the Elasticsearch root cause (`query_shard_exception` for boolean
-+  and ip, `parse_exception` for date), as numeric fields have since #1284. A
-+  `*` field list with an explicit `lenient: false` gets the same check.
-+  `lenient: true`, and `*` or a field-less `query_string` without `lenient`,
-+  still skip the field.
-+
-+- **`field_value_factor` with no `missing` fails on a doc without the field
-+  ([#3512](https://github.com/xerj-org/xerj/issues/3512)).** Such a doc
-+  scored 0.0. The search now answers 400 `illegal_argument_exception`
-+  `Missing value for field [f]`, as Elasticsearch does, when a scored doc has
-+  no value (an unmapped field counts). Set `missing` to keep the old ranking.
-+  Counts (`size: 0`) and field-sorted pages are not scored and do not fail.
-+
- - **A flush near the memory watermark no longer waits for the allocator purge
-   ([#3493](https://github.com/xerj-org/xerj/issues/3493)).** From 70% of the
-   watermark, a finished flush build returned its freed pages to the OS
-```
-
-**File**: `engine/crates/xerj-api/src/error.rs` (modified, +6/-2)
-```diff
-@@ -208,11 +208,15 @@ impl ApiError {
-             // `failed to create query:` above — `query_shard_exception`
-             // in root_cause, outer wrapper unchanged.
-             "query_shard_exception".to_string()
--        } else if reason.starts_with("function score query returned an invalid score:") {
-+        } else if reason.starts_with("function score query returned an invalid score:")
-+            || reason.starts_with("Missing value for field [")
-+        {
-             // ES validates function_score results and raises
-             // `illegal_argument_exception` with a 400 status when a
-             // function produces a non-finite or negative score
--            // (e.g. ln1p on qty=-1 → ln(0) = -∞).
-+            // (e.g. ln1p on qty=-1 → ln(0) = -∞), and when a
-+            // `field_value_factor` with no `missing` scores a doc that has
-+            // no value for its field.
-             error_type = "illegal_argument_exception".into();
-             status_code = 400;
-             "illegal_argument_exception".to_string()
-```
-
-**File**: `engine/crates/xerj-api/tests/numeric_fields_enforce_their_type.rs` (modified, +18/-1)
-```diff
-@@ -549,12 +549,29 @@ async fn a_query_in_the_pre_coercion_spelling_still_matches_the_coerced_document
-     for query in [
-         json!({ "terms": { "b": ["false"] } }),
-         json!({ "term": { "b": false } }),
--        json!({ "terms": { "b": ["yes"] } }),
-         json!({ "terms": { "i": ["6"] } }),
-     ] {
-         let body = search(&app, "t", query.clone()).await;
-         assert_eq!(hit_count(&body), 0, "{query} must not match: {body}");
-     }
-+
-+    // #3511: a spelling a boolean field cannot read is a query ES cannot
-+    // build, not an empty result.
-+    let (status, body) = json_req(
-+        &app,
-+        "POST",
-+        "/t/_search",
-+        json!({ "query": { "terms": { "b": ["yes"] } } }),
-+    )
-+    .await;
-+    assert_eq!(status, StatusCode::BAD_REQUEST, "{body}");
-+    assert_eq!(
-+        body["error"]["root_cause"][0]["reason"],
-+        json!(
-+            "failed to create query: Can't parse boolean value [yes], expected [true] or [false]"
-+        ),
-+        "{body}"
-+    );
- }
- 
- /// An index that spans the upgrade holds BOTH representations of the same
-```
-
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +338/-24)
-```diff
-@@ -3341,7 +3341,8 @@ mod flush_publication_recovery_tests {
-                 &snap.segments,
-                 &segments_dir,
-                 10,
--                &schema
-+                &schema,
-+                &std::sync::OnceLock::new()
-             )
-             .is_some(),
-             "an unmapped field with no column scores every row as missing"
-@@ -3352,7 +3353,8 @@ mod flush_publication_recovery_tests {
-                 &snap.segments,
-                 &segments_dir,
-                 10,
--                &schema
-+                &schema,
-+                &std::sync::OnceLock::new()
-             )
-             .is_none(),
-             "a mapped field whose column was suppressed keeps the brute scan"
-@@ -3363,7 +3365,8 @@ mod flush_publication_recovery_tests {
-                 &snap.segments,
-                 &segments_dir,
-                 10,
--                &schema
-+                &schema,
-+                &std::sync::OnceLock::new()
-             )
-             .is_none(),
-             "a non-numeric column keeps the brute scan"
-@@ -3383,24 +3386,48 @@ mod flush_publication_recovery_tests {
-                 (hits, r.total.value)
-             }
-         };
--        for missing in [json!(2.5), Value::Null] {
--            let mut f = json!({ "field": "nope" });
--            if !missing.is_null() {
--                f["missing"] = missing.clone();
--            }
--            let fast = page(json!({ "size": 12, "query": { "function_score": {
--                "query": { "match_all": {} }, "field_value_factor": f } } }))
--            .await;
--            let brute = page(
--                json!({ "size": 12, "min_score": 0, "query": { "function_score": {
--                "query": { "match_all": {} }, "field_value_factor": f } } }),
-+        let f = json!({ "field": "nope", "missing": 2.5 });
-+        let fast = page(json!({ "size": 12, "query": { "function_score": {
-+            "query": { "match_all": {} }, "field_value_factor": f } } }))
-+        .await;
-+        let brute = page(
-+            json!({ "size": 12, "min_score": 0, "query": { "function_score": {
-+            "query": { "match_all": {} }, "field_value_factor": f } } }),
-+        )
-+        .await;
-+        assert_eq!(fast.0.len(), 12);
-+        assert!(fast.0.iter().all(|(_, s)| *s == 2.5), "{fast:?}");
-+        assert_eq!(fast.0, brute.0);
-+        assert_eq!(fast.0[0].0, "doc-0");
-+
-+        // With no `missing`, a doc without the field fails the request on
-+        // both paths, as ES does (`Missing value for field [nope]`).
-+        let missing = std::sync::OnceLock::new();
-+        assert!(idx
-+            .function_score_columnar(
-+                &fvf("nope", None),
-+                &snap.segments,
-+                &segments_dir,
-+                10,
-+                &schema,
-+                &missing
-             )
--            .await;
--            let want: f32 = if missing.is_null() { 0.0 } else { 2.5 };
--            assert_eq!(fast.0.len(), 12);
--            assert!(fast.0.iter().all(|(_, s)| *s == want), "{fast:?}");
--            assert_eq!(fast.0, brute.0, "missing={missing}");
--            assert_eq!(fast.0[0].0, "doc-0");
-+            .is_none());
-+        assert_eq!(missing.get().map(String::as_str), Some("nope"));
-+        for min_score in [Value::Null, json!(0)] {
-+            let mut body = json!({ "size": 12, "query": { "function_score": {
-+                "query": { "match_all": {} }, "field_value_factor": { "field": "nope" } } } });
-+            if !min_score.is_null() {
-+                body["min_score"] = min_score;
-+            }
-+            let err = idx
-+                .search(&xerj_query::parse_request(&body).unwrap())
-+                .await
-+                .expect_err("no `missing` on an absent field must fail");
-+            assert!(
-+                err.to_string().contains("Missing value for field [nope]"),
-+                "{err}"
-+            );
+ /// How many paths one repo entry may name. A harvest is a few subtrees
+ /// (`data/osv`) or files, not a file list; past this, name a parent.
+ pub const MAX_SPARSE_PATHS: usize = 32;
+@@ -315,6 +341,33 @@ mod tests {
          }
      }
  
-@@ -27613,6 +27640,20 @@ impl Index {
-             None
-         };
-         let fs_min_passed = std::sync::atomic::AtomicU64::new(0);
-+        // #3512: a `field_value_factor` with no `missing` fails the request on
-+        // the first scored doc without a value for its field, as ES does. ES
-+        // only scores when the page is ranked by score (or `min_score` needs
-+        // one), so a field sort or a count-only request does not fail. The
-+        // scorer records the field; the request fails after the scan.
-+        let fvf_needs_value: bool = matches!(
-+            peeled_fs,
-+            Some((QueryNode::FunctionScore { functions, .. }, _))
-+                if functions.iter().any(|f| {
-+                    f.field_value_factor.as_ref().is_some_and(|v| v.missing.is_none())
-+                })
-+        ) && ((size > 0 && !field_sort_active)
-+            || request.min_score.is_some());
-+        let fvf_missing_field = std::sync::OnceLock::<String>::new();
-         // Population max over every score the brute scorer computes.
-```
-
-**File**: `engine/tests/es-compat-yaml/yaml/search/799_filter_only_bool_score.yml` (added, +100/-0)
-```diff
-@@ -0,0 +1,100 @@
-+# #3508: a `bool` with no `must` and no `should` runs every clause in filter
-+# context, so ES scores each hit 0.0. XERJ scored 1.0 while the docs were in
-+# the memtable, 0.0 once flushed, and 1.0 for every doc (segment docs too)
-+# once one new doc sat in the memtable, so ordering changed at `_flush`.
-+setup:
-+  - do:
-+      indices.create:
-+        index: fob
-+        body:
-+          settings:
-+            number_of_shards: 1
-+          mappings:
-+            properties:
-+              t: { type: text }
-+              n: { type: long }
-+              k: { type: keyword }
-+  - do:
-+      bulk:
-+        refresh: true
-+        body:
-+          - '{"index": {"_index": "fob", "_id": "1"}}'
-+          - '{"t": "alpha", "n": 1, "k": "x"}'
-+          - '{"index": {"_index": "fob", "_id": "2"}}'
-+          - '{"t": "beta", "n": 2, "k": "x"}'
-+          - '{"index": {"_index": "fob", "_id": "3"}}'
-+          - '{"t": "gamma", "n": 3, "k": "y"}'
++    /// #3166: the pack source slug becomes a directory under the corpus,
++    /// so the consume path and the recipe build path share this gate. The
++    /// build path's old charset is kept exactly (uppercase and a leading
++    /// `-` included), so a pack the builder accepted still consumes.
++    #[test]
++    fn unsafe_pack_slugs_are_rejected_with_the_path_escape_reason() {
++        let too_long = "x".repeat(65);
++        for bad in [
++            "../escape",
++            "a/b",
++            ".hidden",
++            "..",
++            "",
++            "a b",
++            too_long.as_str(),
++        ] {
++            let err = valid_slug(bad).unwrap_err();
++            assert!(
++                err.contains("escapes") || err.contains("escape"),
++                "the message must say why: {err}"
++            );
++        }
++        for good in ["rustsec", "osv-crates-io", "a.b_c-1", "X9", "-lead", "a"] {
++            assert!(valid_slug(good).is_ok(), "{good:?}");
++        }
++    }
 +
-+---
-+"filter-only bool scores 0.0 in the memtable":
-+  - do:
-+      search:
-+        index: fob
-+        body:
-+          query: { bool: { filter: [ { range: { n: { gte: 1 } } } ] } }
-+  - match: { hits.total.value: 3 }
-+  - match: { hits.max_score: 0.0 }
-+  - match: { hits.hits.0._score: 0.0 }
-+  - match: { hits.hits.1._score: 0.0 }
-+  - match: { hits.hits.2._score: 0.0 }
-+
-+  - do:
-+      search:
-+        index: fob
-+        body:
-+          query: { bool: { filter: [ { range: { n: { gte: 1 } } }, { term: { k: x } } ] } }
-+  - match: { hits.total.value: 2 }
-+  - match: { hits.hits.0._score: 0.0 }
-+  - match: { hits.hits.1._score: 0.0 }
-+
-+  - do:
-+      search:
-+        index: fob
-+        body:
-+          query: { bool: { must_not: [ { term: { k: y } } ] } }
-+  - match: { hits.total.value: 2 }
-+  - match: { hits.hits.0._score: 0.0 }
-+  - match: { hits.hits.1._score: 0.0 }
-+
-+---
-+"filter-only bool scores 0.0 on segments and in mixed state":
-+  - do:
-+      indices.flush:
-+        index: fob
-+  - do:
-+      search:
-+        index: fob
-+        body:
-+          query: { bool: { filter: [ { range: { n: { gte: 1 } } } ] } }
-+  - match: { hits.total.value: 3 }
-+  - match: { hits.hits.0._score: 0.0 }
-+  - match: { hits.hits.2._score: 0.0 }
-+
-+  - do:
-+      index:
-+        index: fob
-+        id: "4"
-+        refresh: true
-+        body: { t: "delta", n: 4, k: "x" }
-+  - do:
-+      search:
-+        index: fob
-+        body:
-+          query: { bool: { filter: [ { range: { n: { gte: 1 } } } ] } }
-+  - match: { hits.total.value: 4 }
-+  - match: { hits.max_score: 0.0 }
-+  - match: { hits.hits.0._id: "1" }
-+  - match: { hits.hits.0._score: 0.0 }
-+  - match: { hits.hits.1._score: 0.0 }
-+  - match: { hits.hits.2._score: 0.0 }
-+  - match: { hits.hits.3._id: "4" }
-+  - match: { hits.hits.3._score: 0.0 }
-+
-+  - do:
-+      search:
-+        index: fob
-+        body:
-+          query: { bool: { must_not: [ { term: { k: y } } ] } }
-+  - match: { hits.total.value: 3 }
-+  - match: { hits.hits.0._score: 0.0 }
-+  - match: { hits.hits.2._score: 0.0 }
-```
-
-**File**: `engine/tests/es-compat-yaml/yaml/search/799_fvf_missing_value.yml` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+# A `field_value_factor` with no `missing` cannot score a doc that has no
-+# value for its field: ES fails the search with `Missing value for field [f]`
-+# (illegal_argument_exception, 400). XERJ scored that doc 0.0. With `missing`
-+# set, or when no scored doc lacks the field, the search succeeds.
-+setup:
-+  - do:
-+      indices.create:
-+        index: fvfm
-+        body:
-+          settings:
-+            number_of_shards: 1
-+          mappings:
-+            properties:
-+              n: { type: long }
-+              k: { type: keyword }
-+  - do:
-+      bulk:
-+        refresh: true
-+        body:
-+          - '{"index": {"_index": "fvfm", "_id": "1"}}'
-+          - '{"n": 2, "k": "x"}'
-+          - '{"index": {"_index": "fvfm", "_id": "2"}}'
-+          - '{"n": 3, "k": "x"}'
-+          - '{"index": {"_index": "fvfm", "_id": "3"}}'
-+          - '{"k": "y"}'
-+
-+---
-+"no missing and a doc without the field is a 400":
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: fvfm
-+        body:
-+          query:
-+            function_score:
-+              query: { match_all: {} }
-+              field_value_factor: { field: n }
-+  - match: { status: 400 }
-+  - match: { error.root_cause.0.type: "illegal_argument_exception" }
-+  - match: { error.root_cause.0.reason: "Missing value for field [n]" }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: fvfm
-+        body:
-+          query:
-+            function_score:
-+              query: { match_all: {} }
-+              functions: [ { field_value_factor: { field: n } } ]
-+              boost_mode: sum
-+  - match: { error.root_cause.0.reason: "Missing value for field [n]" }
-+
-+  # Flushed: the doc-values path fails the same way.
-+  - do:
-+      indices.flush:
-+        index: fvfm
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: fvfm
-+        body:
-+          query:
-+            function_score:
-+              query: { match_all: {} }
-+              field_value_factor: { field: n }
-+  - match: { error.root_cause.0.reason: "Missing value for field [n]" }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: fvfm
-+        body:
-+          query:
-+            function_score:
-+              query: { match_all: {} }
-+              field_value_factor: { field: unmapped_field }
-+  - match: { error.root_cause.0.reason: "Missing value for field [unmapped_field]" }
-+
-+---
-+"missing set, or every scored doc has the field, succeeds":
-+  - do:
-+      search:
-+        index: fvfm
-+        body:
-+          query:
-+            function_score:
-+              query: { match_all: {} }
-+              field_value_factor: { field: n, missing: 1 }
-+  - match: { hits.total.value: 3 }
-+  - match: { hits.hits.0._id: "2" }
-+  - match: { hits.hits.0._score: 3.0 }
-+  - match: { hits.hits.2._id: "3" }
-+  - match: { hits.hits.2._score: 1.0 }
-+
-+  - do:
-+      search:
-+        index: fvfm
-+        body:
-+          query:
-+            function_score:
-+              query: { term: { k: x } }
-+              field_value_factor: { field: n }
-+              boost_mode: replace
-+  - match: { hits.total.value: 2 }
-+  - match: { hits.hits.0._id: "2" }
-+  - match: { hits.hits.0._score: 3.0 }
-+
-+  # A function filter that excludes the doc without the field.
-+  - do:
-+      search:
-+        index: fvfm
-+        body:
-+          query:
-+            function_score:
-+              query: { match_all: {} }
-+              functions: [ { filter: { term: { k: x } }, field_value_factor: { field: n } } ]
-+              boost_mode: replace
-+  - match: { hits.total.value: 3 }
-+  - match: { hits.hits.0._id: "2" }
-+  - match: { hits.hits.0._score: 3.0 }
-```
-
-**File**: `engine/tests/es-compat-yaml/yaml/search/799_lenient_typed_fields.yml` (added, +214/-0)
-```diff
-@@ -0,0 +1,214 @@
-+# A value that a boolean, ip or date field cannot read is a query ES cannot
-+# build: `term`/`terms` always, and `match`/`multi_match`/`query_string` unless
-+# `lenient` is on, answer 400. With `lenient: true` the field is skipped and
-+# the request succeeds. XERJ answered a silent 0-hit 200 either way. Numeric
-+# fields got the same rule in #1284 (720_non_numeric_term_value.yml).
-+setup:
-+  - do:
-+      indices.create:
-+        index: ltf
-+        body:
-+          settings:
-+            number_of_shards: 1
-+          mappings:
-+            properties:
-+              t: { type: text }
-+              b: { type: boolean }
-+              ip: { type: ip }
-+              d: { type: date }
-+              dy: { type: date, format: "yyyy-MM-dd" }
-+  - do:
-+      bulk:
-+        refresh: true
-+        body:
-+          - '{"index": {"_index": "ltf", "_id": "1"}}'
-+          - '{"t": "hello", "b": true, "ip": "10.0.0.1", "d": "2020-01-01", "dy": "2020-01-01"}'
-+
-+---
-+"boolean field: a value that is not true/false is a 400 unless lenient":
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { match: { b: { query: "abc", lenient: false } } }
-+  - match: { status: 400 }
-+  - match: { error.root_cause.0.type: "query_shard_exception" }
-+  - match: { error.root_cause.0.reason: "failed to create query: Can't parse boolean value [abc], expected [true] or [false]" }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { term: { b: "abc" } }
-+  - match: { error.root_cause.0.type: "query_shard_exception" }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { multi_match: { query: "abc", fields: [ "b", "t" ] } }
-+  - match: { error.root_cause.0.type: "query_shard_exception" }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { query_string: { query: "b:abc", lenient: false } }
-+  - match: { error.root_cause.0.type: "query_shard_exception" }
-+
-+  - do:
-+      search:
-+        index: ltf
-+        body:
-+          query: { match: { b: { query: "abc", lenient: true } } }
-+  - match: { hits.total.value: 0 }
-+
-+  - do:
-+      search:
-+        index: ltf
-+        body:
-+          query: { multi_match: { query: "abc", fields: [ "b", "t" ], lenient: true } }
-+  - match: { hits.total.value: 0 }
-+
-+  - do:
-+      search:
-+        index: ltf
-+        body:
-+          query: { query_string: { query: "b:abc", lenient: true } }
-+  - match: { hits.total.value: 0 }
-+
-+  - do:
-+      search:
-+        index: ltf
-+        body:
-+          query: { match: { b: "true" } }
-+  - match: { hits.total.value: 1 }
-+
-+---
-+"ip field: a value that is not an address or CIDR block is a 400 unless lenient":
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { match: { ip: "abc" } }
-+  - match: { status: 400 }
-+  - match: { error.root_cause.0.type: "query_shard_exception" }
-+  - match: { error.root_cause.0.reason: "failed to create query: 'abc' is not an IP string literal." }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { term: { ip: "10.0.0.0/40" } }
-+  - match: { error.root_cause.0.reason: "failed to create query: Illegal prefix length [40] in [10.0.0.0/40]. Must be 0-32 for IPv4 ranges, 0-128 for IPv6 ranges" }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { query_string: { query: "abc", fields: [ "ip", "t" ] } }
-+  - match: { error.root_cause.0.type: "query_shard_exception" }
-+
-+  - do:
-+      search:
-+        index: ltf
-+        body:
-+          query: { match: { ip: { query: "abc", lenient: true } } }
-+  - match: { hits.total.value: 0 }
-+
-+  - do:
-+      search:
-+        index: ltf
-+        body:
-+          query: { term: { ip: "10.0.0.0/8" } }
-+  - match: { hits.total.value: 1 }
-+
-+---
-+"date field: a value the format cannot parse is a 400 unless lenient":
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { match: { d: "abc" } }
-+  - match: { status: 400 }
-+  - match: { error.root_cause.0.type: "parse_exception" }
-+  - match: { error.root_cause.0.reason: "failed to parse date field [abc] with format [strict_date_optional_time||epoch_millis]: [failed to parse date field [abc] with format [strict_date_optional_time||epoch_millis]]" }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { match: { dy: "2020/01/01" } }
-+  - match: { error.root_cause.0.type: "parse_exception" }
-+  - match: { error.root_cause.0.reason: "failed to parse date field [2020/01/01] with format [yyyy-MM-dd]: [failed to parse date field [2020/01/01] with format [yyyy-MM-dd]]" }
-+
-+  - do:
-+      catch: bad_request
-+      search:
-+        index: ltf
-+        body:
-+          query: { multi_m
+     #[test]
+     fn short_shas_are_rejected_with_regen_advice() {
+         let err = valid_sha("valkey", "e449d17").unwrap_err();
 ```
 
 ---
 
-### Incident Patch 3: `a2f18028` (2026-11-23)
-**Commit Message**: fix(search): return empty hits for full-text queries on unmapped sub-fields (#3515)
+### Incident Patch 2: `35ccd192` (2026-11-25)
+**Commit Message**: fix(autoindex): cap CSV record size so one quoted field cannot allocate the whole file (#3202)
 
-Fixes #3515.
-
-Before `_flush`, a bare `match` on an unmapped dotted sub-field such as
-`title.raw` (where `title` is a dynamic `text` field with only `.keyword`)
-missed the memtable FTS field filter and returned 0 hits. After `_flush`,
-the segment FTS reader lacked `title.raw` and fell back to the stored-doc
-scan (`doc_matches_query_typed`), whose `get_field_value` strips trailing
-`.suffix` segments whenever the parent resolves to a scalar leaf — running
-the query against the analysed parent `title` instead. `constant_score`
-(and other doc-scan shapes) hit `get_field_value` on both sides of
-`_flush`.
-
-Root cause and fix:
-- Add zero-allocation `declared_field_in` and `is_unmapped_leaf_subfield`
-  in `engine/crates/xerj-engine/src/index.rs`: a dotted non-wildcard,
-  non-metadata field is an unmapped leaf sub-field when it is not declared
-  in `schema` itself and at least one dotted ancestor is declared as a
-  non-container leaf (`FieldType` other than `Object` / `Nested`). Mapped
-  multi-fields (`title.keyword`, explicit `title.raw`), object children
-  (`obj.name`, open `object` / `flattened` leaves),
-
-**File**: `engine/crates/xerj-api/tests/match_unmapped_subfield_empty.rs` (added, +410/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,410 @@
-+//! #3515: `match` (and other full-text queries) on an unmapped dotted sub-field
-+//! (`title.raw`, where `title` is a dynamic `text` field with only `.keyword`)
-+//! must return 0 hits on every path, before and after `_flush`, on `_search`
-+//! and `_count`, as in ES.
-+//!
-+//! Before the fix, `match title.raw "fruit"` returned `[]` before `_flush` and
-+//! `[1, 2]` after `_flush` (the segment FTS reader lacked `title.raw` and fell
-+//! back to the stored-doc scan, whose `get_field_value` stripped `.raw` and ran
-+//! the query against the analysed parent `title`), while `constant_score` over
-+//! `match title.raw` hit the parent on both sides of `_flush`. Mapped
-+//! multi-fields (`title.keyword`, or an explicit `title.raw`) keep their #3495
-+//! behaviour.
+@@ -1050,6 +1050,7 @@ The model, its bundle and its serve rule are those of rc.102.
+   per-aggregation cap from `limits.max_buckets` still applies too, so a
+   setting above it does not raise that cap. `_async_search`,
+   `_search/template` and `_msearch/template` do not read the setting yet.
++- The CSV extractor now caps one record at 16 MiB of decoded bytes (issue [#3201](https://github.com/xerj-org/xerj/issues/3201)). A quoted field may span newlines, so a single record could previously be as large as the whole input stream: the parser buffered it all before returning it. An oversize record is now counted as junk and extraction stops there, with the records before it still indexed; an oversize header row junks the file instead of failing it, so one hostile file cannot abort the whole autoindex run.
+ 
+ ## [1.0.0-rc.102] - 2026-11-06
+ 
+```
+
+**File**: `engine/crates/xerj-autoindex/src/extract/csv_x.rs` (modified, +85/-4)
+```diff
+@@ -1,10 +1,14 @@
+ //! CSV with sniffed dialect (delimiter / header / decimal-comma), streaming.
+ 
+-use super::{sanitize_field_name, ExtractStats, FieldOrigin, RawRecord, Sink};
++use super::{
++    sanitize_field_name, ExtractStats, FieldOrigin, RawRecord, RecordByteCap, Sink,
++    MAX_CSV_RECORD_BYTES,
++};
+ use crate::sniff::Sniffed;
+ use anyhow::Result;
+ use serde_json::{Map, Value};
+ use std::path::Path;
++use std::sync::Arc;
+ 
+ pub fn extract(
+     path: &Path,
+@@ -17,14 +21,36 @@ pub fn extract(
+         has_header: true,
+         decimal_comma: false,
+     });
+-    let r = super::open_reader(path, sn.gzip, limit_bytes)?;
++    // #3201: one quoted field may span newlines, so a single record can be
++    // as large as the whole input stream. The Rust csv crate offers no
++    // record or field size option, so the bound lives in the reader: the
++    // parser errors once one record has consumed more than the cap, before
++    // the allocation happens. The reference is Python's csv module, which
++    // has enforced a per-field limit since 2003 (Modules/_csv.c,
++    // parse_add_char: "field larger than field limit"), because an unmatched
++    // quote could otherwise read the entire file into the field buffer.
++    let cap = Arc::new(RecordByteCap::new(MAX_CSV_RECORD_BYTES as u64));
++    let r = super::open_reader_with_cap(path, sn.gzip, limit_bytes, Some(&cap))?;
+     let mut rdr = csv::ReaderBuilder::new()
+         .delimiter(dialect.delim)
+         .has_headers(dialect.has_header)
+         .flexible(true)
+         .from_reader(r);
++    let mut stats = ExtractStats::default();
+     let headers: Vec<String> = if dialect.has_header {
+-        let h = rdr.headers()?.clone();
++        let h = match rdr.headers() {
++            Ok(h) => h.clone(),
++            Err(_) if cap.tripped() => {
++                // An oversize header must junk-file the file, never fail it:
++                // an extract error aborts the whole autoindex run unless the
++                // file changed mid-run, so one hostile file must not take
++                // the run down with it.
++                stats.junk += 1;
++                return Ok(stats);
++            }
++            Err(e) => return Err(e.into()),
++        };
++        cap.reset();
+         let mut seen = std::collections::HashSet::new();
+         h.iter()
+             .map(|f| {
+@@ -40,15 +66,23 @@ pub fn extract(
+         Vec::new()
+     };
+     let decimal_comma_re = regex::Regex::new(r"^-?\d{1,12},\d+$").unwrap();
+-    let mut stats = ExtractStats::default();
+     for (i, rec) in rdr.into_records().enumerate() {
+         let rec = match rec {
+             Ok(r) => r,
+             Err(_) => {
+                 stats.junk += 1;
++                if cap.tripped() {
++                    // The parser is mid-record inside the oversize field,
++                    // so resuming would re-read the same field past the cap.
++                    // Stop here: the loss is counted as junk, and the
++                    // records before it still extract.
++                    break;
++                }
++                cap.reset();
+                 continue;
+             }
+         };
++        cap.reset();
+         let mut fields = Map::new();
+         for (j, val) in rec.iter().enumerate() {
+             let name = if j < headers.len() {
+@@ -235,6 +269,53 @@ mod tests {
+         assert_eq!(recs[0].fields["x"], serde_json::json!("1"));
+     }
+ 
++    /// #3201: one quoted field may span newlines, so a single record can be
++    /// as large as the whole input. The per-record cap must junk-count it
++    /// and stop there; the rows after it are never reached, because the
++    /// parser is mid-record inside the oversize field and cannot resume.
++    #[test]
++    fn a_record_over_the_cap_is_counted_as_junk_and_extraction_stops_there() {
++        let mut bytes = b"a,b\n1,ok\n\"".to_vec();
++        bytes.extend_from_slice(&vec![b'x'; MAX_CSV_RECORD_BYTES + (1 << 20)]);
++        bytes.extend_from_slice(b"\",2\n3,fine\n");
++        let (stats, recs) = ok(&sniffed(b',', true, false), &bytes);
++        assert_eq!(stats.records, 1, "only the row before the oversize one");
++        assert_eq!(stats.junk, 1, "the oversize record is counted, not dropped");
++        assert_eq!(recs.len(), 1);
++        assert_eq!(recs[0].fields["b"], serde_json::json!("ok"));
++    }
 +
-+use axum::body::Body;
-+use axum::http::{Request, StatusCode};
-+use serde_json::{json, Value};
-+use tower::ServiceExt;
++    /// A field 1 MiB under the cap must still extract unchanged.
++    #[test]
++    fn a_record_just_under_the_cap_still_extracts() {
++        let mut bytes = b"a,b\n\"".to_vec();
++        bytes.extend_from_slice(&vec![b'x'; MAX_CSV_RECORD_BYTES - (1 << 20)]);
++        bytes.extend_from_slice(b"\",2\n");
++        let (stats, recs) = ok(&sniffed(b',', true, false), &bytes);
++        assert_eq!(stats.records, 1);
++        assert_eq!(stats.junk, 0);
++        assert_eq!(recs[0].fields["b"], serde_json::json!("2"));
++        assert_eq!(
++            recs[0].fields["a"].as_str().unwrap().len(),
++            MAX_CSV_RECORD_BYTES - (1 << 20)
++ 
+```
+
+**File**: `engine/crates/xerj-autoindex/src/extract/mod.rs` (modified, +116/-1)
+```diff
+@@ -38,7 +38,8 @@ use serde::{Deserialize, Serialize};
+ use serde_json::{Map, Value};
+ use std::io::{BufRead, BufReader, Read};
+ use std::path::Path;
+-use std::sync::{Condvar, Mutex};
++use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
++use std::sync::{Arc, Condvar, Mutex};
+ use std::time::{Duration, Instant};
+ 
+ /// Where a record's FIELD NAMES came from — the input to dataset clustering.
+@@ -108,6 +109,24 @@ pub type Sink<'a> = &'a mut dyn FnMut(RawRecord) -> bool;
+ 
+ pub const MAX_LINE: usize = 16 << 20; // 16MB line cap
+ pub const MAX_WHOLE_FILE: u64 = 64 << 20; // whole-file parse cap (json/html/yaml/txt)
 +
-+async fn app() -> (axum::Router, tempfile::TempDir) {
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let mut config = xerj_common::config::Config::default();
-+    config.server.data_dir = dir.path().to_string_lossy().into_owned();
-+    config.storage.wal_sync = xerj_common::config::WalSync::Async;
-+    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
-+    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
-+    let state = xerj_api::state::AppState::new(config, engine, metrics);
-+    (xerj_api::router::build_es_compat_router(state), dir)
++/// Hard cap on one CSV record, in decoded bytes (#3201).
++///
++/// The `csv` crate offers no record or field size option (`ReaderBuilder`
++/// has none), and a quoted field may span newlines, so one record can be as
++/// large as the whole input stream: the parser buffers it all before
++/// returning it, then each field is copied into a `String` and a JSON map.
++/// Same 16 MiB per-unit convention as [`MAX_LINE`] (JSONL) and the YAML
++/// whole-file cap, so a record over it is refused at read time, before the
++/// allocation happens. A record over the 8 MiB indexed-document ceiling
++/// would be refused downstream anyway; the read cap is the memory bound.
++///
++/// Enforced on decoded bytes consumed since the last completed record, so
++/// up to one buffered fill (the 256 KiB `BufReader` below, plus the `csv`
++/// crate's own read chunk) of read-ahead may be attributed to the record in
++/// flight. The enforced threshold is therefore the cap minus at most that
++/// much, and the error is always fail-closed, never late by more than it.
++pub const MAX_CSV_RECORD_BYTES: usize = 16 << 20;
+ /// Target characters per document section.
+ ///
+ /// Was 32 KB, which is a *storage* granularity, not a *retrieval* one: BM25
+@@ -145,6 +164,95 @@ const WORD_SNAP_BYTES: usize = 64;
+ /// Open a (possibly gzipped) file as a buffered reader of DECODED-transparent
+ /// bytes, optionally capped at `limit` decoded bytes (sampling).
+ pub fn open_reader(path: &Path, gzip: bool, limit: Option<u64>) -> Result<Box<dyn BufRead + Send>> {
++    open_reader_with_cap(path, gzip, limit, None)
 +}
 +
-+async fn req(app: &axum::Router, method: &str, path: &str, body: String) -> (StatusCode, Value) {
-+    let response = app
-+        .clone()
-+        .oneshot(
-+            Request::builder()
-+                .method(method)
-+                .uri(path)
-+                .header("content-type", "application/json")
-+                .body(Body::from(body))
-+                .expect("request"),
-+        )
-+        .await
-+        .expect("response");
-+    let status = response.status();
-+    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
-+        .await
-+        .expect("body");
-+    (
-+        status,
-+        serde_json::from_slice(&bytes).unwrap_or(Value::Null),
-+    )
++/// Shared per-record byte budget for the CSV extractor (#3201).
++///
++/// The `csv` crate reads records through the `Read` it is given and cannot
++/// be told to stop inside a record, so the budget lives in the reader: the
++/// extractor holds the other end of the `Arc` and calls [`reset`] after each
++/// completed record (and after the header). Bytes already pulled into the
++/// parser's buffers are counted at read time, so [`tripped`] may fire while
++/// the parser still holds up to one buffered fill past the cap; the
++/// allocation it guards stays bounded at the cap plus that fill.
++pub struct RecordByteCap {
++    cap: u64,
++    used: AtomicU64,
++    tripped: AtomicBool,
 +}
 +
-+async fn ids(app: &axum::Router, index: &str, query: &Value) -> Vec<String> {
-+    let (status, body) = req(
-+        app,
-+        "POST",
-+        &format!("/{index}/_search"),
-+        json!({"query": query, "size": 10}).to_string(),
-+    )
-+    .await;
-+    assert_eq!(status, StatusCode::OK, "{query}: {body}");
-+    let mut out: Vec<String> = body["hits"]["hits"]
-+        .as_array()
-+        .expect("hits")
-+        .iter()
-+        .map(|h| h["_id"].as_str().expect("_id").to_string())
-+        .collect();
-+    out.sort();
-+    let (status, count) = req(
-+        app,
-+        "POST",
-+        &format!("/{index}/_count"),
-+        json!({"query": query}).to_string(),
-+    )
-+    .await;
-+    assert_eq!(status, StatusCode::OK, "{query}: {count}");
-+    assert_eq!(
-+        count["count"].as_u64(),
-+        Some(out.len() as u64),
-+        "_count disagrees with _search for {query}"
-+    );
-+    out
++impl RecordByteCap {
++    pub fn new(cap: u64) -> Self {
++        Self {
++            cap,
++            used: AtomicU64::new(0),
++            tripped: AtomicBool::new(false),
++        }
++    }
++
++    /// Start the budget for the next record. Call after each record the
++    /// parser returns, including the header row.
++    pub fn reset(&self) {
++        self.used.store(0, Ordering::Relaxed);
++    }
++
++    /// True once a record has consumed more than the cap. Latched: the
++    /// parser is mid-record inside the oversize field and cannot resume, so
++    /// the caller must stop extraction, never reset and continue.
++    pub fn tripped(&self) -> bool {
++        self.tripped.load(Ordering::Relaxed)
++    }
 +}
 +
-+async fn flush(app: &axum::Router, index: &str) {
-+    let (status, body) = req(app, "POST", &format!("/{index}/_flush"), String::new()).await;
-+    assert_eq!(status, StatusCode::OK, "flush {index}: {body}");
++/// A `Read` that errors once the shared [`RecordByteCap`] is spent. The
++/// bytes that pushed it over are consumed and dropped: the caller is
++/// aborting the file anyway, and handing them to the parser would only grow
++/// the record the cap exists to bound.
++struct CappedReader<R: Read> {
++    inner: R,
++    cap: Arc<RecordByteCap>,
 +}
 +
-+#[tokio::test]
-+async fn match_on_unmapped_subfield_returns_empty_before_and_after_flush() {
-+    let (app, _dir) = app().await;
-+    let bulk = concat!(
-+        "{\"index\":{\"_id\":\"1\"}}\n",
-+        "{\"title\":\"Fruit\",\"obj\":{\"name\":\"Fruit\"}}\n",
-+        "{\"index\":{\"_id\":\"2\"}}\n",
-+        "{\"title\":\"fruit salad\",\"obj\":{\"name\":\"fruit salad\"}}\n",
-+        "{\"index\":{\"_id\":\"3\"}}\n",
-+        "{\"title\":\"FRUiT\",\"obj\":{\"name\":\"FRUiT\"}}\n",
-+    );
-+    let (status, body) = req(&app, "POST", "/nonorm/_bulk?refresh=true", bulk.to_string()).await;
-+    assert_eq!(status, StatusCode::OK, "bulk: {body}");
-+    assert_eq!(body["errors"], json!(false), "bulk: {body}");
++impl<R: Read> Read for CappedReader<R> {
++    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
++        if self.cap.tripped() {
++            return Err(std::io::Error::new(
++                std::io::ErrorKind::InvalidData,
++                format!(
++                    "CSV record exceeds the {}-byte per-record cap",
++                    self.cap.cap
++                ),
++            ));
++        }
++        let n = self.inner.read(buf)?;
++        if n > 0 {
++            let used = self.cap.used.fetch_add(n as u64, Ordering::Relaxed) + n as u64;
++            if used > self.cap.cap {
++                self.cap.tripped.store(true, Ordering::Relaxed);
++                return Err(std::io::Error::new(
++                    std::io::ErrorKind::InvalidData,
++                    format!(
++                        "CSV record exceeds the {}-byte per-record cap",
++                        self.cap.cap
++                    ),
++                ));
++            }
++        }
++        Ok(n)
++    }
++}
 +
-+    let cases: Vec<(Value, Vec<&str>)> = vec![
-+        // Issue #3515 table: unmapped `.raw` sub-field matches nothing on every path.
-+        (json!({"match": {"title.raw": "fruit"}}), vec![]),
-+        (json!({"match": {"title.raw": "Fruit Salad"}}), vec![]),
++/// [`open_
+```
+
+---
+
+### Incident Patch 3: `dc5fc1b9` (2026-11-25)
+**Commit Message**: fix(engine): term-level queries on unmapped sub-fields match nothing (#3652)
+
+Refs #3533.
+
+**File**: `engine/crates/xerj-api/tests/match_unmapped_subfield_empty.rs` (modified, +146/-0)
+```diff
+@@ -174,6 +174,40 @@ async fn match_on_unmapped_subfield_returns_empty_before_and_after_flush() {
+         (json!({"match": {"title.raw.extra": "fruit"}}), vec![]),
+         (json!({"match": {"title.keyword.raw": "Fruit"}}), vec![]),
+         (json!({"match": {"obj.name.raw": "fruit"}}), vec![]),
++        // Issue #3533: term-level leaves on the unmapped sub-field match nothing.
++        (json!({"term": {"title.raw": "Fruit"}}), vec![]),
++        (json!({"terms": {"title.raw": ["fruit", "Fruit"]}}), vec![]),
++        (json!({"range": {"title.raw": {"gte": "a"}}}), vec![]),
++        (json!({"regexp": {"title.raw": "fru.*"}}), vec![]),
++        (json!({"exists": {"field": "title.raw"}}), vec![]),
 +        (
-+            json!({"constant_score": {"filter": {"match": {"title.raw": "fRuIt"}}}}),
++            json!({"constant_score": {"filter": {"term": {"title.raw": "Fruit"}}}}),
 +            vec![],
 +        ),
 +        (
-+            json!({"bool": {"filter": [{"match": {"title.raw": "fruit"}}]}}),
++            json!({"bool": {"must": [{"term": {"title.raw": "Fruit"}}]}}),
 +            vec![],
 +        ),
 +        (
-+            json!({"bool": {"must": [{"match": {"title": "fruit"}}], "filter": [{"match": {"title.raw": "fruit"}}]}}),
-+            vec![],
-+        ),
-+        (
-+            json!({"bool": {"must": [{"match": {"title": "fruit"}}], "must_not": [{"match": {"title.raw": "fruit"}}]}}),
++            json!({"bool": {"must_not": [{"term": {"title.raw": "Fruit"}}]}}),
 +            vec!["1", "2", "3"],
 +        ),
 +        (
-+            json!({"bool": {"should": [{"match": {"title.r
++            json!({"bool": {"filter": [{"exists": {"field": "title.raw"}}]}}),
++            vec![],
++        ),
++        (json!({"term": {"title.raw.extra": "Fruit"}}), vec![]),
++        (json!({"term": {"title.keyword.raw": "Fruit"}}), vec![]),
++        (json!({"term": {"obj.name.raw": "Fruit"}}), vec![]),
++        (json!({"exists": {"field": "obj.name.raw"}}), vec![]),
++        // Mapped term-level controls keep working.
++        (json!({"term": {"title.keyword": "Fruit"}}), vec!["1"]),
++        (json!({"term": {"title.keyword": "fruit salad"}}), vec!["2"]),
++        (json!({"exists": {"field": "title"}}), vec!["1", "2", "3"]),
++        (
++            json!({"exists": {"field": "title.keyword"}}),
++            vec!["1", "2", "3"],
++        ),
+         // Mapped multi-fields keep #3495 behaviour, and mapped parents stay unchanged.
+         (json!({"match": {"title.keyword": "fruit"}}), vec![]),
+         (json!({"match": {"title.keyword": "Fruit"}}), vec!["1"]),
+@@ -201,6 +235,12 @@ async fn match_on_unmapped_subfield_returns_empty_before_and_after_flush() {
+                 "size": 0,
+                 "aggs": {
+                     "unmapped_raw": { "filter": { "match": { "title.raw": "fruit" } } },
++                    // #3533: term-level agg filters on the unmapped sub-field.
++                    "unmapped_term": { "filter": { "term": { "title.raw": "Fruit" } } },
++                    "unmapped_terms": { "filter": { "terms": { "title.raw": ["fruit", "Fruit"] } } },
++                    "unmapped_range": { "filter": { "range": { "title.raw": { "gte": "a" } } } },
++                    "unmapped_regexp": { "filter": { "regexp": { "title.raw": "fru.*" } } },
++                    "unmapped_exists": { "filter": { "exists": { "field": "title.raw" } } },
+                     "mixed_bool_must": {
+                         "filter": {
+                             "bool": {
+@@ -237,6 +277,19 @@ async fn match_on_unmapped_subfield_returns_empty_before_and_after_flush() {
+             json!(0),
+             "{phase}: agg filter on unmapped title.raw must match 0"
+         );
++        for (name, want) in [
++            ("unmapped_term", 0),
++            ("unmapped_terms", 0),
++            ("unmapped_range", 0),
++            ("unmapped_regexp", 0),
++            ("unmapped_exists", 0),
++        ] {
++            assert_eq!(
++                agg_resp["aggregations"][name]["doc_count"],
++                json!(want),
++                "{phase}: agg filter {name} on unmapped title.raw must match {want}"
++            );
++        }
+         assert_eq!(
+             agg_resp["aggregations"]["mixed_bool_must"]["doc_count"],
+             json!(0),
+@@ -354,6 +407,47 @@ async fn explicit_mapping_keeps_declared_multifield_and_rejects_undeclared_sibli
+             vec!["1"],
+             "{phase}: declared title.raw"
+         );
++        // #3533: term-level leaves on a DECLARED multi-field keep working.
++        assert_eq!(
++            ids(
++                &app,
++                "explicit_mf",
++                &json!({"term": {"title.raw": "Fruit"}})
++            )
++            .await,
++            vec!["1"],
++            "{phase}: declared title.raw term"
++        );
++        assert_eq!(
++            ids(
++                &app,
++                "explicit_mf",
++                &json!({"term": {"title.raw": "fruit"}})
++            )
++            .await,
++            Vec::<String>::new(),
++            "{phase}: declared title.raw term case-sensitive"
++        );
++        assert_eq!(
++            ids(
++                &app,
++                "explicit_mf",
++                &json!({"exists": {"field": "title.raw"}})
++            )
++            .await,
++            vec!["1", "2"],
++            "{phase}: declared title.raw exists"
++        );
++        assert_eq!(
++            ids(
++                &app,
++                "explicit_mf",
++                &json
 ```
 
-**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +17/-4)
+**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +37/-0)
 ```diff
-@@ -257,10 +257,15 @@ fn clause_targets_only_text(node: &QueryNode, schema: &Schema) -> bool {
-     match node {
-         QueryNode::Match { field, .. }
-         | QueryNode::MatchPhrase { field, .. }
--        | QueryNode::MatchPhrasePrefix { field, .. }
--        | QueryNode::Term { field, .. }
--        | QueryNode::Terms { field, .. } => crate::index::declared_field(schema, field)
--            .is_some_and(|f| matches!(f.field_type, FieldType::Text)),
-+        | QueryNode::MatchPhrasePrefix { field, .. } => {
-+            crate::index::declared_field(schema, field)
-+                .is_some_and(|f| matches!(f.field_type, FieldType::Text))
-+                || crate::index::is_unmapped_leaf_subfield(schema, field)
-+        }
-+        QueryNode::Term { field, .. } | QueryNode::Terms { field, .. } => {
-+            crate::index::declared_field(schema, field)
-+                .is_some_and(|f| matches!(f.field_type, FieldType::Text))
-+        }
-         QueryNode::Bool {
-             must,
-             should,
-@@ -7322,6 +7327,14 @@ pub(crate) fn doc_matches_filter(doc: &Value, filter: &Value) -> bool {
-             "match" | "match_phrase" => {
+@@ -7383,6 +7383,23 @@ fn run_filters(
+ /// (must/filter/must_not/should). Unknown clause types are NOT a match
+ /// (#959); clauses the query parser rejects are surfaced as an error at
+ /// run_filter/run_filters entry instead.
++/// #3533: true when `field` is an unmapped leaf sub-field under the schema
++/// the current agg filter runs against (see `FILTER_SCHEMA`). A term-level
++/// filter leaf on such a field names a field that does not exist, so it
++/// matches nothing in ES (`extract_field_values` would otherwise strip the
++/// suffix and read the parent value. A declared multi-field is not unmapped
++/// and keeps matching. With no schema in scope this is false; with a live
++/// schema it fires for dynamically mapped parents too, which is why
++/// `fast_aggs_multifield_suffix`'s brute leg moved to 0 for filter leaves
++/// on `<field>.raw` (see the #3533 note there).
++fn filter_field_is_unmapped_leaf_subfield(field: &str) -> bool {
++    FILTER_SCHEMA.with(|cell| {
++        cell.borrow()
++            .as_ref()
++            .is_some_and(|s| crate::index::is_unmapped_leaf_subfield(s, field))
++    })
++}
++
+ pub(crate) fn doc_matches_filter(doc: &Value, filter: &Value) -> bool {
+     let obj = match filter.as_object() {
+         Some(o) => o,
+@@ -7395,6 +7412,10 @@ pub(crate) fn doc_matches_filter(doc: &Value, filter: &Value) -> bool {
+             "term" => {
                  if let Some(field_map) = query_body.as_object() {
                      for (field, expected) in field_map {
-+                        let unmapped_subfield = FILTER_SCHEMA.with(|cell| {
-+                            cell.borrow()
-+                                .as_ref()
-+                                .is_some_and(|s| crate::index::is_unmapped_leaf_subfield(s, field))
-+                        });
-+                        if unmapped_subfield {
++                        // #3533: an unmapped leaf sub-field matches nothing.
++                        if filter_field_is_unmapped_leaf_subfield(field) {
 +                            return false;
 +                        }
                          let actual_values = extract_field_values(doc, field);
                          let expected_str = match expected {
-                             Value::Object(o) => {
+                             Value::Object(o) => o.get("value").map(value_to_string),
+@@ -7411,6 +7432,10 @@ pub(crate) fn doc_matches_filter(doc: &Value, filter: &Value) -> bool {
+             "terms" => {
+                 if let Some(field_map) = query_body.as_object() {
+                     for (field, expected_vals) in field_map {
++                        // #3533: an unmapped leaf sub-field matches nothing.
++                        if filter_field_is_unmapped_leaf_subfield(field) {
++                            return false;
++                        }
+                         if let Some(arr) = expected_vals.as_array() {
+                             let expected_strs: Vec<String> =
+                                 arr.iter().map(value_to_string).collect();
+@@ -7529,6 +7554,10 @@ pub(crate) fn doc_matches_filter(doc: &Value, filter: &Value) -> bool {
+             "regexp" => {
+                 if let Some(field_map) = query_body.as_object() {
+                     for (field, expected) in field_map {
++                        // #3533: an unmapped leaf sub-field matches nothing.
++                        if filter_field_is_unmapped_leaf_subfield(field) {
++                            return false;
++                        }
+                         let actual_values = extract_field_values(doc, field);
+                         let (pattern, case_insensitive) = match expected {
+                             Value::Object(o) => (
+@@ -7570,6 +7599,10 @@ pub(crate) fn doc_matches_filter(doc: &Value, filter: &Value) -> bool {
+             "exists" => {
+                 // exists: {"field": "price"} — match docs that have the field.
+                 if let Some(field) = query_body.get("field").and_then(Value::as_str) {
++                    // #3533: an unmapped leaf sub-field has no value of its own.
++                    if filter_field_is_unmapped_leaf_subfield(field) {
++                        return false;
++                    }
+                     // #1260: a field whose value is directly an OBJECT counts
+                     // as present.  `extract_field_values` flattens objects to
+                     // `[]` while the query path's `value_present`
+@@ -7588,6 +7621,10 @@ pub(crate) fn doc_matches_filter(doc: &Value, filter: &Value) -> bool {
+             "range" => {
+                 if let Some(field_map) = query_body.as_object() {
+                     for (field, bounds) in field_map {
++                        // #3533: an unmapped leaf sub-field matches nothing.
++                        if filter_field_is_unmapped_leaf_subfield(field) {
++                            return false;
++                        }
+                         let values = extract_field_values(doc, field);
+                         if values.is_empty() {
+                             return false;
 ```
 
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +444/-56)
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +158/-32)
 ```diff
-@@ -25846,10 +25846,13 @@ impl Index {
-                 &schema.schema,
-             );
-             let typeless = crate::memtable::lexically_typeless_fields(&schema.schema);
--            let lowered = if typeless.is_empty() {
-+            let lowered = if typeless.is_empty()
-+                && (schema.schema.fields.is_empty()
-+                    || !query_has_unmapped_leaf_subfield(&resolved, &schema.schema))
-+            {
-                 resolved
+@@ -53019,6 +53019,15 @@ fn query_has_unmapped_leaf_subfield(q: &QueryNode, schema: &Schema) -> bool {
+         | QueryNode::Wildcard { field, .. }
+         | QueryNode::Fuzzy { field, .. }
+         | QueryNode::Intervals { field, .. } => is_unmapped_leaf_subfield(schema, field),
++        // #3533: term-level leaves on an unmapped sub-field are lowered too,
++        // so a bare `term` / `exists` query must also trip this pre-check or
++        // the lowering below never runs for it.
++        QueryNode::Term { field, .. }
++        | QueryNode::Terms { field, .. }
++        | QueryNode::Range { field, .. }
++        | QueryNode::Regexp { field, .. }
++        | QueryNode::SpanTerm { field, .. }
++        | QueryNode::Exists { field } => is_unmapped_leaf_subfield(schema, field),
+         QueryNode::MultiMatch { fields, .. } | QueryNode::SimpleQueryString { fields, .. } => {
+             fields
+                 .iter()
+@@ -53839,7 +53848,10 @@ fn lower_lexically_typeless_clauses(
+ /// whatever the mapping says, so those clauses are lowered to `match_none`
+ /// before any path decision, with the same folds as the typeless pass below.
+ fn lower_unmapped_clauses(q: &QueryNode, hidden: &dyn Fn(&str) -> bool) -> QueryNode {
+-    lower_clauses_naming(q, hidden, hidden, true)
++    // No unmapped-leaf term lowering here: `hidden` already covers the
++    // `dynamic: false` cases, and a dotted sub-field of a declared leaf is
++    // caught by the `lower_unsatisfiable_clauses` pass instead.
++    lower_clauses_naming(q, hidden, hidden, &|_| false, true)
+ }
+ 
+ /// Whether `field` is one a root `dynamic: false` keeps out of the index: a
+@@ -53960,7 +53972,10 @@ fn hidden_by_dynamic_false(
+ /// naming an undeclared sub-field of a declared leaf field (`title.raw`, #3515)
+ /// to `MatchNone`, then fold the resulting `MatchNone` nodes through `Bool`,
+ /// `Constant`, and `Boosted` so they never fall back to a stored-doc scan that
+-/// strips unknown suffixes or walks unindexed vectors.
++/// strips unknown suffixes or walks unindexed vectors. #3533 extends the same
++/// lowering to the term-level leaves (`term`, `terms`, `range`, `regexp`,
++/// `span_term`) and `exists` on those sub-fields: the field does not exist,
++/// so ES matches nothing there either.
+ fn lower_unsatisfiable_clauses(
+     q: &QueryNode,
+     typeless: &std::collections::HashSet<String>,
+@@ -53970,20 +53985,24 @@ fn lower_unsatisfiable_clauses(
+         q,
+         &|field: &str| typeless.contains(field),
+         &|field: &str| typeless.contains(field) || is_unmapped_leaf_subfield(schema, field),
++        &|field: &str| is_unmapped_leaf_subfield(schema, field),
+         false,
+     )
+ }
+ 
+ /// The shared lowering walk. `unsatisfiable` flags a field no leaf can match
+ /// (typeless #328, unmapped under `dynamic: false` #3514); `fulltext_dead`
+ /// additionally flags fields only FULL-TEXT leaves and `fields` lists cannot
+-/// match (an unmapped sub-field of a declared leaf, #3515) — term-level
+-/// leaves on those keep today's behaviour (#3533). `exists_too` also lowers
+-/// `exists`.
++/// match (an unmapped sub-field of a declared leaf, #3515); `unmapped_leaf`
++/// flags exactly that unmapped-sub-field case for the TERM-LEVEL leaves and
++/// `exists` (#3533), kept separate from `fulltext_dead` because a typeless
++/// (vector) field is dead for full-text but alive for `exists`, which ES
++/// answers from `_source` / doc values. `exists_too` also lowers `exists`.
+ fn lower_clauses_naming(
+     q: &QueryNode,
+     unsatisfiable: &dyn Fn(&str) -> bool,
+     fulltext_dead: &dyn Fn(&str) -> bool,
++    unmapped_leaf: &dyn Fn(&str) -> bool,
+     exists_too: bool,
+ ) -> QueryNode {
+     // One entry of a `fields: [...]` list. `"emb^3"` carries a boost.
+@@ -54035,15 +54054,22 @@ fn lower_clauses_naming(
+                 .collect(),
+         )
+     };
+-    let recurse = |c: &QueryNode| lower_clauses_naming(c, unsatisfiable, fulltext_dead, exists_too);
++    let recurse = |c: &QueryNode| {
++        lower_clauses_naming(c, unsatisfiable, fulltext_dead, unmapped_leaf, exists_too)
++    };
+     match q {
+         // ── Leaves that name exactly one field ────────────────────────────
++        // #3533: term-level leaves on an unmapped leaf sub-field lower to
++        // MatchNone like the full-text ones, since the field does not exist, so
++        // ES matches nothing. A typeless (vector) field is already covered
++        // by `unsatisfiable`; a declared multi-field is not unmapped, so it
++        // keeps matching.
+         QueryNode::Term { field, .. }
+         | QueryNode::Terms { field, .. }
+         | QueryNode::Range { field, .. }
+         | QueryNode::Regexp { field, .. }
+         | QueryNode::SpanTerm { field, .. } => {
+-            if unsatisfiable(field) {
++            if unsatisfiable(field) || unmapped_leaf(field) {
+                 QueryNode::MatchNone
              } else {
--                lower_lexically_typeless_clauses(&resolved, &typeless)
-+                lower_unsatisfiable_clauses(&resolved, &typeless, &schema.schema)
-             };
-             unwrap_single_clause_bool(lowered)
-         };
-@@ -27122,10 +27125,13 @@ impl Index {
-             // the lowering the missing postings hand the clause to the
-             // stored-doc scan. See `lower_lexically_typeless_clauses`.
-             let typeless = crate::memtable::lexically_typeless_fields(&schema.schema);
--            let lowered = if typeless.is_empty() {
-+            let lowered = if typeless.is_empty()
-+                && (schema.schema.fields.is_empty()
-+                    || !query_has_unmapped_leaf_subfield(&resolved, &schema.schema))
-+            {
-                 resolved
-             } else {
--                lower_lexically_typeless_clauses(&resolved, &typeless)
-+                lower_unsatisfiable_clauses(&resolved, &typeless, &schema.schema)
-             };
-             // #399 — and it belongs HERE for exactly the reason above: every
-             // path decision below is made on the SHAPE of this tree, so a
-@@ -52594,32 +52600,162 @@ fn lookup_vector_quantization(schema: &Schema, field: &str) -> Option<String> {
- /// `FieldConfig::fields` (object sub-paths and multi-fields). Returns `None`
- /// for anything the schema does not declare — dynamic fields have no declared
- /// mapping options to honour.
--pub(crate) fn declared_field<'a>(schema: &'a Schema, field: &str) -> Option<&'a FieldConfig> {
--    fn find<'a>(fields: &'a [FieldConfig], path: &[&str]) -> Option<&'a FieldConfig> {
--        if path.is_empty() {
--            return None;
-+/// Zero-allocation dotted-path lookup through `FieldConfig::fields`, preferring
-+/// the longest literal dotted key at each level (matching `get_field_value_parts`).
-+fn declared_field_in<'a>(fields: &'a [FieldConfig], path: &str) -> Option<&'a FieldConfig> {
-+    if path.is_empty() {
-+        return None;
-+    }
-+    if let Some(fc) = fields.iter().find(|fc| fc.name == path) {
-+        return Some(fc);
-+    }
-+    let mut end = path.len();
-+    while let Some(dot) = path[..end].rfind('.') {
-+        let head = &path[..dot];
-+        let tail = &path[dot + 1..];
-+        for fc in fields {
-+            if fc.name == head {
-+                if let Some(found) = declared_field_in(&fc.fields, tail) {
-+                    return Some(found);
-+                }
-+            }
+                 q.clone()
+@@ -54064,8 +54090,11 @@ fn lower_clauses_naming(
          }
--        // Prefer the longest dotted-key match starting at this level, matching
--        // `get_field_value_parts` so literal dotted field names in `Schema::fields`
--        // (such as `files_manifest.json_recorded_at` or its `.keyword`
--        // multi-field) resolve instead of failing with `No mapping found`.
--        for take in (1..=path.len()).rev() {
--            let candidate = path[..take].join(".");
--            let tail = &path[take..];
--            for fc in fields {
--                if fc.name == candidate {
--                    if tail.is_empty() {
--                        return Some(fc);
--                    }
--                    if let Some(found) = find(&fc.fields, tail) {
--                        return Some(found);
--                    }
-+        end = dot;
-+    }
-+    None
-+}
-+
-+pub(crate) fn declared_field<'a>(schema: &'a Schema, field: &str) -> Option<&'a FieldConfig> {
-+    declared_field_in(&schema.fields, field)
-+}
-+
-+/// True when `field` names an undeclared dotted sub-field under a declared
-+/// non-container leaf field — e.g. `title.raw` when `title` is a dynamic
-+/// `text` field whose only declared multi-field is `.keyword`, or
-+/// `obj.name.raw` when `obj.name` is a leaf field without a `.raw`
-+/// multi-field (#3515).
+    
+```
+
+**File**: `engine/crates/xerj-engine/tests/fast_aggs_multifield_suffix.rs` (modified, +104/-37)
+```diff
+@@ -23,6 +23,20 @@
+ //! skipped the segment, so a panel returned a small plausible number built
+ //! from the memtable alone.
+ //!
++//! #3533 changed the first fact for QUERY and FILTER leaves: `extension` is
++//! dynamically mapped as `text` with a `.keyword` multi-field, so every
++//! other suffix on it is an unmapped leaf sub-field and a `term` / `terms`
++//! on it now matches nothing on the brute path either, as in ES. The
++//! lowering in `search_inner` and the guards in `doc_matches_query_typed`
++//! and `doc_matches_filter` run before `get_field_value`'s recursive
++//! fallback is reached. The bullets above still describe the resolvers for
++//! the names #3533 does not cover (aggregation TARGETS, and schemaless
++//! callers whose schema has no declared ancestor). The absolute assertions
++//! below were moved with that change: the query-filter and
++//! filters-predicate legs pin 0 for the unmapped suffixes and 3 200 for the
++//! bare field and the declared `.keyword` multi-field, so the agreement
++//! check still has a live non-zero leg to stand on.
++//!
+ //! The fix keeps resolution narrow — widening it would make the fast path
+ //! claim shapes it cannot prove byte-identical, and per the above there is
+ //! no single behaviour to widen TO — and instead BAILS to the brute path
+@@ -203,6 +217,12 @@ fn nested_sub_metric_on_raw() -> serde_json::Value {
+ 
+ /// `filters` sub-agg whose leaf is a `term` on `<field>.raw` — the
+ /// predicate resolver's fail-closed path.
 +///
-+/// Ancestors typed `Object` or `Nested` are skipped: a dotted path under an
-+/// object/nested mapping (such as `meta.owner` on an empty `object` mapping)
-+/// names a JSON child key rather than a multi-field suffix and resolves
-+/// directly against `_source`.
-+pub(crate) fn is_unmapped_leaf_subfield(schema: &Schema, field: &str) -> bool {
-+    if schema.fields.is_empty()
-+        || !field.contains('.')
-+        || field.contains('*')
-+        || field.starts_with('_')
-+    {
-+        return false;
-+    }
-+    if declared_field_in(&schema.fields, field).is_some() {
-+        return false;
-+    }
-+    for (idx, ch) in field.char_indices() {
-+        if ch == '.' {
-+            if let Some(ancestor) = declared_field_in(&schema.fields, &field[..idx]) {
-+        
++/// #3533: `extension` is dynamically mapped as `text` with a `.keyword`
++/// multi-field, so `extension.raw` is an unmapped leaf sub-field and a
++/// `term` on it now matches nothing on BOTH paths, as in ES. The agreement
++/// below is still the invariant (fast == brute); the absolute counts moved
++/// from 3 200 / 3 000 to 0 with the brute reference itself.
+ #[tokio::test]
+ async fn fast_and_brute_agree_on_raw_filters_agg() {
+     let brute = agree(
+@@ -212,14 +232,13 @@ async fn fast_and_brute_agree_on_raw_filters_agg() {
+          `filters` agg keyed by `<field>.raw`",
+     )
+     .await;
+-    assert_eq!(
+-        brute["aggs"]["by_ext"]["buckets"]["css"]["doc_count"],
+-        3_200
+-    );
+-    assert_eq!(brute["aggs"]["by_ext"]["buckets"]["gz"]["doc_count"], 3_000);
++    assert_eq!(brute["aggs"]["by_ext"]["buckets"]["css"]["doc_count"], 0);
++    assert_eq!(brute["aggs"]["by_ext"]["buckets"]["gz"]["doc_count"], 0);
+ }
+ 
+ /// Single `filter` agg with a `terms` leaf on `<field>.raw`.
++/// #3533: see `fast_and_brute_agree_on_raw_filters_agg`; `terms` on the
++/// unmapped `extension.raw` now matches nothing on both paths, as in ES.
+ #[tokio::test]
+ async fn fast_and_brute_agree_on_raw_filter_terms_agg() {
+     let brute = agree(
+@@ -229,11 +248,14 @@ async fn fast_and_brute_agree_on_raw_filter_terms_agg() {
+          `filter` agg with a `terms` leaf on `<field>.raw`",
+     )
+     .await;
+-    assert_eq!(brute["aggs"]["css_or_gz"]["doc_count"], 6_200);
++    assert_eq!(brute["aggs"]["css_or_gz"]["doc_count"], 0);
+ }
+ 
+ /// Top-level query `term` on `<field>.raw` — this one moves `hits.total`,
+ /// not just a bucket count.
++/// #3533: see `fast_and_brute_agree_on_raw_filters_agg`; the top-level
++/// `term` on the unmapped `extension.raw` now matches nothing on both
++/// paths, as in ES, so the `sum` over zero docs is 0.0.
+ #[tokio::test]
+ async fn fast_and_brute_agree_on_raw_query_filter() {
+     let brute = agree(
+@@ -243,8 +265,8 @@ async fn fast_and_brute_agree_on_raw_query_filter() {
+          top-level `term` query against `<field>.raw`",
+     )
+     .await;
+-    assert_eq!(brute["total"], 6_000);
+-    assert_eq!(brute["aggs"]["total_v"]["value"], 600_000.0);
++    assert_eq!(brute["total"], 0);
++    assert_eq!(brute["aggs"]["total_v"]["value"], 0.0);
+ }
+ 
+ /// Aggregation TARGET on `<field>.raw`.  Broader than the predicate case:
+@@ -365,24 +387,33 @@ async fn genuinely_absent_dotted_field_is_empty_on_both_paths() {
+ /// Every multi-field suffix SHAPE, not just the one-segment `.raw` the issue
+ /// happened to name.
+ ///
+-/// The resolver a top-level query filter is measured against is
+-/// `index.rs::get_field_value`, and its multi-field fallback RECURSES
+-/// (`get_field_value(source, &field[..idx])`), so it strips an unbounded
+-/// number of trailing segments: `extension.raw.raw` and
+-/// `extension.keyword.raw` both resolve to `extension`'s value on the brute
+-/// path.  A columnar bail keyed on the immediate parent alone therefore
+-/// still failed closed for every doubly-suffixed name.
++/// The resolver a top-level query filter used to be measured against is
++/// `index.rs::get_field_value`, whose multi-field fallback RECURSES
++/// (`get_field_value(source, &field[..idx])`) and strips an unbounded number
++/// of trailing segments: `extension.raw.raw` and `extension.keyword.raw`
++/// both resolved to `extension`'s value on the brute path. #3533 changed
++/// that for query leaves: `extension` is dynamically mapped as `text` with
+```
+
+**File**: `engine/crates/xerj-engine/tests/unmapped_subfield_flush_parity.rs` (modified, +51/-4)
+```diff
+@@ -9,9 +9,15 @@
+ //! | `match title.raw "fruit"` | 0 | 2 | 0 |
+ //! | `constant_score match title.raw "fRuIt"` | 3 | 3 | 0 |
+ //!
++//! #3533 extends the same rule to the term-level leaves: `term`, `terms`,
++//! `range`, `regexp` and `exists` on `title.raw` must also match nothing,
++//! before and after `_flush`. Pre-fix they read the parent value on both
++//! sides (`term title.raw "Fruit"` -> [1], `exists title.raw` -> [1, 2, 3]).
++//!
+ //! Every query below runs twice on the same documents, once before and once
+ //! after `flush`, and both answers must equal the ES answer. Mapped fields
+-//! (`title`, `title.keyword`, the object leaf `meta.owner`) are the controls.
++//! (`title`, `title.keyword`, the object leaf `meta.owner`, and the declared
++//! multi-field `name.raw`) are the controls.
+ 
+ use serde_json::{json, Value};
+ use tempfile::TempDir;
+@@ -51,6 +57,35 @@ fn cases() -> Vec<(Value, u64)> {
+         (json!({"prefix": {"title.raw": "fru"}}), 0),
+         (json!({"wildcard": {"title.raw": "fru*"}}), 0),
+         (json!({"match": {"meta.owner.raw": "alpha"}}), 0),
++        // #3533: term-level leaves on the unmapped sub-field match nothing.
++        (json!({"term": {"title.raw": "Fruit"}}), 0),
++        (json!({"terms": {"title.raw": ["fruit", "Fruit"]}}), 0),
++        (json!({"range": {"title.raw": {"gte": "a"}}}), 0),
++        (json!({"regexp": {"title.raw": "fru.*"}}), 0),
++        (json!({"exists": {"field": "title.raw"}}), 0),
++        (
++            json!({"constant_score": {"filter": {"term": {"title.raw": "Fruit"}}}}),
++            0,
++        ),
++        (
++            json!({"bool": {"must": [{"term": {"title.raw": "Fruit"}}]}}),
++            0,
++        ),
++        (
++            json!({"bool": {"must_not": [{"term": {"title.raw": "Fruit"}}]}}),
++            3,
++        ),
++        (
++            json!({"bool": {"filter": [{"exists": {"field": "title.raw"}}]}}),
++            0,
++        ),
++        (json!({"term": {"meta.owner.raw": "Alpha"}}), 0),
++        // Declared multi-field controls keep working.
++        (json!({"term": {"title.keyword": "Fruit"}}), 1),
++        (json!({"term": {"name.raw": "Fruit"}}), 1),
++        (json!({"exists": {"field": "name.raw"}}), 3),
++        (json!({"exists": {"field": "title"}}), 3),
++        (json!({"exists": {"field": "title.keyword"}}), 3),
+         (json!({"match": {"title": "fruit"}}), 3),
+         (json!({"match": {"title.keyword": "Fruit"}}), 1),
+         (json!({"match": {"title.keyword": "fruit"}}), 0),
+@@ -78,15 +113,27 @@ async fn unmapped_dotted_subfield_is_flush_invariant() {
+     let mut meta = FieldConfig::new("meta", FieldType::Object);
+     meta.fields.push(FieldConfig::new("owner", FieldType::Text));
+     schema.fields.push(meta);
++    // Declared multi-field control for #3533: `name.raw` IS mapped, so
++    // term-level queries on it keep matching while `title.raw` matches nothing.
++    let mut name = FieldConfig::new("name", FieldType::Text);
++    name.fields
++        .push(FieldConfig::new("raw", FieldType::Keyword));
++    schema.fields.push(name);
+     engine.create_index("docs", schema).expect("create");
+     let idx = engine.get_index("docs").expect("get");
+     for (id, doc) in [
+-        ("1", json!({"title": "Fruit", "meta": {"owner": "Alpha"}})),
++        (
++            "1",
++            json!({"title": "Fruit", "meta": {"owner": "Alpha"}, "name": "Fruit"}),
++        ),
+         (
+             "2",
+-            json!({"title": "fruit salad", "meta": {"owner": "Beta"}}),
++            json!({"title": "fruit salad", "meta": {"owner": "Beta"}, "name": "fruit salad"}),
++        ),
++        (
++            "3",
++            json!({"title": "FRUiT", "meta": {"owner": "Gamma"}, "name": "FRUiT"}),
+         ),
+-        ("3", json!({"title": "FRUiT", "meta": {"owner": "Gamma"}})),
+     ] {
+         idx.index_document(Some(id.to_string()), doc)
+             .await
+```
+
+**File**: `engine/tests/es-compat-yaml/yaml/search/801_term_unmapped_subfield.yml` (added, +182/-0)
+```diff
+@@ -0,0 +1,182 @@
++# #3533: a term-level query on a dotted sub-field that is not mapped
++# (`title.raw`, where `title` is a dynamic `text` field whose only
++# multi-field is `.keyword`) matches nothing, before and after `_flush`.
++# The field does not exist, so ES 8.x returns 0 hits. Pre-fix the
++# term-level arms resolved `title.raw` through `get_field_value`, which
++# strips the unknown suffix and compares the raw parent string
++# (`term title.raw "Fruit"` -> [1], `exists title.raw` -> [1, 2, 3]).
++# `um_mem` is never flushed (memtable), `um_seg` is flushed (segment);
++# both get the same documents, the same queries and the same answers.
++# Mapped `title` / `title.keyword` are the controls.
++setup:
++  - do:
++      bulk:
++        refresh: true
++        body:
++          - '{"index": {"_index": "um_mem", "_id": "1"}}'
++          - '{"title": "Fruit"}'
++          - '{"index": {"_index": "um_mem", "_id": "2"}}'
++          - '{"title": "fruit salad"}'
++          - '{"index": {"_index": "um_mem", "_id": "3"}}'
++          - '{"title": "FRUiT"}'
++          - '{"index": {"_index": "um_seg", "_id": "1"}}'
++          - '{"title": "Fruit"}'
++          - '{"index": {"_index": "um_seg", "_id": "2"}}'
++          - '{"title": "fruit salad"}'
++          - '{"index": {"_index": "um_seg", "_id": "3"}}'
++          - '{"title": "FRUiT"}'
++  - do:
++      indices.flush:
++        index: um_seg
++
++---
++"term and terms on an unmapped sub-field: memtable":
++  - do:
++      search:
++        index: um_mem
++        body: { query: { term: { title.raw: Fruit } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      search:
++        index: um_mem
++        body: { query: { terms: { title.raw: [ fruit, Fruit ] } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      count:
++        index: um_mem
++        body: { query: { term: { title.raw: Fruit } } }
++  - match: { count: 0 }
++
++---
++"term and terms on an unmapped sub-field: segment":
++  - do:
++      search:
++        index: um_seg
++        body: { query: { term: { title.raw: Fruit } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      search:
++        index: um_seg
++        body: { query: { terms: { title.raw: [ fruit, Fruit ] } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      count:
++        index: um_seg
++        body: { query: { term: { title.raw: Fruit } } }
++  - match: { count: 0 }
++
++---
++"range and regexp on an unmapped sub-field: memtable":
++  - do:
++      search:
++        index: um_mem
++        body: { query: { range: { title.raw: { gte: a } } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      search:
++        index: um_mem
++        body: { query: { regexp: { title.raw: "fru.*" } } }
++  - match: { hits.total.value: 0 }
++
++---
++"range and regexp on an unmapped sub-field: segment":
++  - do:
++      search:
++        index: um_seg
++        body: { query: { range: { title.raw: { gte: a } } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      search:
++        index: um_seg
++        body: { query: { regexp: { title.raw: "fru.*" } } }
++  - match: { hits.total.value: 0 }
++
++---
++"exists on an unmapped sub-field: memtable":
++  - do:
++      search:
++        index: um_mem
++        body: { query: { exists: { field: title.raw } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      search:
++        index: um_mem
++        body: { query: { bool: { must_not: [ { term: { title.raw: Fruit } } ] } } }
++  - match: { hits.total.value: 3 }
++
++---
++"exists on an unmapped sub-field: segment":
++  - do:
++      search:
++        index: um_seg
++        body: { query: { exists: { field: title.raw } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      search:
++        index: um_seg
++        body: { query: { bool: { must_not: [ { term: { title.raw: Fruit } } ] } } }
++  - match: { hits.total.value: 3 }
++
++---
++"constant_score and bool filter on an unmapped sub-field: memtable":
++  - do:
++      search:
++        index: um_mem
++        body: { query: { constant_score: { filter: { term: { title.raw: Fruit } } } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      search:
++        index: um_mem
++        body: { query: { bool: { must: [ { match: { title: fruit } } ], filter: [ { term: { title.raw: Fruit } } ] } } }
++  - match: { hits.total.value: 0 }
++
++---
++"constant_score and bool filter on an unmapped sub-field: segment":
++  - do:
++      search:
++        index: um_seg
++        body: { query: { constant_score: { filter: { term: { title.raw: Fruit } } } } }
++  - match: { hits.total.value: 0 }
++  - do:
++      search:
++        index: um_seg
++        body: { query: { bool: { must: [ { match: { title: fruit } } ], filter: [ { term: { title.raw: Fruit } } ] } } }
++  - match: { hits.total.value: 0 }
++
++---
++"mapped parent and keyword multi-field are unchanged: memtable":
++  - do:
++      search:
++        index: um_mem
++        body: { query: { term: { title.keyword: Fruit } } }
++  - match: { hits.total.value: 1 }
++  - match: { hits.hits.0._id: "1" }
++  - do:
++      search:
++        index: um_mem
++      
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3656** (2026-11-24): hub: author-approved contribution candidates (14302 repos) (@xerj-team)
-- **PR #3654** (2026-11-24): hub: author-approved contribution candidates (14300 repos) (@xerj-team)
-- **PR #3653** (2026-11-24): hub: author-approved contribution candidates (14296 repos) (@xerj-team)
-- **PR #3651** (2026-11-23): hub: author-approved contribution candidates (14291 repos) (@xerj-team)
-- **PR #3649** (2026-11-23): hub: author-approved contribution candidates (14193 repos) (@xerj-team)
-- **PR #3648** (2026-11-23): hub: author-approved contribution candidates (14288 repos) (@xerj-team)
+- **PR #3694** (2026-11-26): hub: author-approved contribution candidates (14441 repos) (@xerj-team)
+- **PR #3692** (2026-11-25): hub: author-approved contribution candidates (14442 repos) (@xerj-team)
+- **PR #3688** (2026-11-25): hub: author-approved contribution candidates (14443 repos) (@xerj-team)
+- **PR #3687** (2026-11-25): hub: author-approved contribution candidates (14439 repos) (@xerj-team)
+- **PR #3686** (2026-11-25): hub: author-approved contribution candidates (14436 repos) (@xerj-team)
+- **PR #3685** (2026-11-25): docs(readme): sync the Simplified Chinese README with the English one (@polarours)
 
 ---
 
@@ -2632,64 +2755,55 @@ Root cause and fix:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comm
+## X. autoindex): validate pack source slugs on consume to block path traversal
 
 **RULE**:
-When implementing operations in `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/crates/xerj-autoindex/src/harvest/pack.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7b82e8b`: test: hand-driven cold-GET fixture, event-joined cluster runners, #3510 doc comments on the right fns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e774cf7c`: autoindex): validate pack source slugs on consume to block path traversal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-autoindex/src/harvest/pack.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Wait for a member's runner task to exit after its shutdown watch was set.
-///
-/// The runner races the shutdown watch against each step
-/// (`ClusterRunner::run`), so the join is the event: it resolves on the
-/// runner's next poll. It was a 5 s wall-clock join (left by #3516), which a
-/// runner starved at load 100+ can miss while still stopping correctly.
-/// [`RAFT_HANG_GUARD`] only catches a runner that never exits.
-async fn join_runner(member: &mut Member) {
-    let Some(task) = member.runner.take() else {
-        return;
-    };
-    match tokio::time::timeout(RAFT_HANG_GUARD, task).await {
-        Ok(Ok(())) => {}
-        Ok(Err(join)) => panic!("{} runner task failed: {join}", member.handle.node_id()),
-        Err(_) => panic!(
-            "{} runner did not exit in {RAFT_HANG_GUARD:?} after shutdown",
-            member.handle.node_id()
-        ),
-    }
-}
-
-    join_runner(&mut member).await;
-        join_runner(&mut member).await;
+    // #3166: the slug becomes a directory under the corpus on consume
+    // (`corpora/<name>/<slug>`), so it is gated here, before any path is
+    // built from it, using the same gate the recipe build path applies. A
+    // checksum cannot stand in for this: SHA256SUMS is authored by the
+    // same party as the manifest, so a self-consistent malicious pack
+    // verifies clean.
+    for s in &sources {
+        if let Err(e) = xerj_common::xccode::pathgate::valid_slug(&s.slug) {
+            bail!(at(&format!("source slug: {e}")));
+        }
+    /// Rewrite SHA256SUMS from the bytes now on disk, so a test that edits
+    /// manifest.json can reach the slug check instead of dying on a
+    /// checksum first.
+    fn rehash_sums(pack_dir: &Path) {
+        let sums_raw = std::fs::read_to_string(pack_dir.join("SHA256SUMS")).unwrap();
+        let mut fresh = String::new();
+        for line in sums_raw.lines() {
+            let (_, name) = line.split_once("  ").unwrap();
+            let file_bytes = std::fs::read(pack_dir.join(name)).unwrap();
+            fresh.push_str(&format!(
+                "{}  {}\n",
+                hex(&Sha256::digest(&file_bytes)),
+                name
+        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    if let Some(task) = member.runner.take() {
-        match tokio::time::timeout(Duration::from_secs(5), task).await {
-            Ok(Ok(())) => {}
-            other => panic!("cluster runner did not stop: {other:?}"),
-        }
-    }
-        if let Some(task) = member.runner.take() {
-            match tokio::time::timeout(Duration::from_secs(5), task).await {
-                Ok(Ok(())) => {}
-                other => panic!("cluster runner did not stop: {other:?}"),
-            }
-        }
+    if sources.iter().any(|s| s.slug.is_empty()) {
+        bail!(at("a manifest source has no slug"));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7b82e8b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e774cf7c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T02:46:50.318Z",
-    "lastVerified": "2026-11-26T02:46:50.318Z",
+    "lastChecked": "2026-11-26T02:55:23.469Z",
+    "lastVerified": "2026-11-26T02:55:23.469Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T02:18:45.301Z",
-    "lastVerified": "2026-11-26T02:18:45.301Z",
+    "lastChecked": "2026-11-26T02:55:16.329Z",
+    "lastVerified": "2026-11-26T02:55:16.329Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1079,9 +1079,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-25T15:57:35.014Z",
+    "lastChecked": "2026-11-26T02:55:11.334Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-25T15:57:35.014Z"
+    "lastVerified": "2026-11-26T02:55:11.334Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -3143,22 +3143,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "xerj-org-xerj": {
-    "name": "xerj",
+    "name": "xerj-org/xerj",
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-25T01:26:59.384Z",
-    "lastVerified": "2026-11-25T01:26:59.384Z",
+    "lastChecked": "2026-11-26T02:55:18.878Z",
+    "lastVerified": "2026-11-26T02:55:18.878Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "8fffd0ebcc620a66ff16e553bcae025218594fdb8122c67df5f2a477f17d67b1",
+    "contentHash": "a3712fa62289633276eb9cdce4fdb0ecdefa7418011dede608409ef9260fd1a1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7ba0069e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "xampprocky-tokei": {
     "name": "tokei",
@@ -5872,9 +5871,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-25T02:28:48.463Z",
+    "lastChecked": "2026-11-26T02:55:08.800Z",
     "revisionIdentifier": "3dc1c51e",
-    "lastVerified": "2026-11-25T02:28:48.463Z"
+    "lastVerified": "2026-11-26T02:55:08.800Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -6618,12 +6617,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ataraxy-labs-sem": {
-    "name": "Ataraxy-Labs/sem",
+    "name": "sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-24T19:35:59.040Z",
-    "lastVerified": "2026-11-24T19:35:59.040Z",
+    "lastChecked": "2026-11-26T02:55:01.294Z",
+    "lastVerified": "2026-11-26T02:55:01.294Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
@@ -6632,7 +6631,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e98c27d7"
   },
   "hf-google-vit-base-patch16-224": {
     "name": "google/vit-base-patch16-224",
@@ -10988,9 +10988,9 @@
   "pointfreeco-isowords": {
     "name": "isowords",
     "officialUrl": "https://github.com/pointfreeco/isowords",
-    "lastChecked": "2026-11-23T17:11:46.605Z",
+    "lastChecked": "2026-11-26T02:55:06.439Z",
     "revisionIdentifier": "c727d3a7",
-    "lastVerified": "2026-11-23T17:11:46.605Z"
+    "lastVerified": "2026-11-26T02:55:06.439Z"
   },
   "hf-apple-depthpro2": {
     "name": "apple/DepthPro2",
@@ -14282,12 +14282,12 @@
     "officialUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3-Image",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-22T06:11:14.715Z",
-    "lastVerified": "2026-11-22T06:11:14.715Z",
+    "lastChecked": "2026-11-26T02:55:04.099Z",
+    "lastVerified": "2026-11-26T02:55:04.099Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-minimax-h3-image",
-    "contentHash": "caa0bf8ceffdcd350abc3c20bf3b96fe46553e630c1f640480c8f1dbe82a80ea",
+    "contentHash": "480b71ed35bddc7edf04e8f3f972a99b1d040c7bf54f765380505ca97c366cc7",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
