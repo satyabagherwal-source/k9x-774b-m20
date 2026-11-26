@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "b4f20cf3",
+    "sourceVersion": "99cf558e",
     "license": "Apache-2.0",
-    "contentHash": "965ecf469398c93a9f75fa4bd12b49fbdffa81a77c0d75e607fc90beb0bb7125",
-    "lastHarvestedAt": "2026-11-25T04:31:15.558Z",
+    "contentHash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
+    "lastHarvestedAt": "2026-11-26T04:39:17.772Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -12495,8 +12495,8 @@
     "sourceUrl": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
     "sourceVersion": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
     "license": "Open-Source",
-    "contentHash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
-    "lastHarvestedAt": "2026-11-22T07:56:33.471Z",
+    "contentHash": "cd22b4bde151b2bda2c311d1593193db09cfc5288892514534151a6ca0545438",
+    "lastHarvestedAt": "2026-11-26T04:39:07.767Z",
     "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized"
   },
   "hf-edge0-edge0-145b-nvfp4": {

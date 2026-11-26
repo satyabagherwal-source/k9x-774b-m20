@@ -13239,3 +13239,5 @@
 | `CYCLE-20261126-1AYX` | `2026-11-26T04:30:48.777Z` | `meituan-longcat/LongCat-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meituan-longcat-longcat-2.5-learnings.md` | Yes (`2b1e8043...`) |
 | `CYCLE-20261126-1D4N` | `2026-11-26T04:30:51.575Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10596` | Yes (`82705427...`) |
 | `CYCLE-20261126-1IE0` | `2026-11-26T04:30:58.392Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10597` | Yes (`70cc56f8...`) |
+| `CYCLE-20261126-BZZO` | `2026-11-26T04:39:07.764Z` | `chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md` | Yes (`cd22b4bd...`) |
+| `CYCLE-20261126-C7PK` | `2026-11-26T04:39:17.768Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10598` | Yes (`eadcb599...`) |

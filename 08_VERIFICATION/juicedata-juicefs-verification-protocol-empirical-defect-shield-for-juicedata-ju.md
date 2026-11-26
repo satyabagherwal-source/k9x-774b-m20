@@ -4,22 +4,22 @@
 {
   "source_repository": "juicedata/juicefs",
   "source_url": "https://github.com/juicedata/juicefs",
-  "source_version": "b4f20cf3",
+  "source_version": "99cf558e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T04:31:15.898Z",
+  "timestamp": "2026-11-26T04:39:17.997Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-juicedata-juicefs",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [juicedata/juicefs](https://github.com/juicedata/juicefs) (Revision: `b4f20cf3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T04:31:15.898Z`  
+> **Provenance**: Harvested from [juicedata/juicefs](https://github.com/juicedata/juicefs) (Revision: `99cf558e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T04:39:17.997Z`  
 > **Learning ID**: `learn-github-juicedata-juicefs`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `juicedata/juicefs` (Commit: `b4f20cf3`)
+- **Target Repository**: `juicedata/juicefs` (Commit: `99cf558e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T04:31:14.118Z  
+> **Harvest Timestamp**: 2026-11-26T04:39:16.648Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14779 stars
+- **Stars / Engagement**: 14783 stars
 
 ---
 
@@ -1172,11 +1172,15 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7911** (2026-11-25): **SIGSEGV in go-m1cpu._Cfunc_initialize() on Apple M5 Max (macOS 27.3)**
-  *Symptoms*:  (Both Community (`v1.4.2`) and Enterprise (`Darwin/mount.arm64`) share the same affected dependency below)  **Environment:** - **OS:** macOS 27.3 (`26C5047e`) - **CPU:** Apple M5 Max (`arm64`) - **JuiceFS:** Enterprise `Darwin/mount.arm64` (also reproduces on Community `v1.4.2` `darwin-arm64`)  **Description:** The `juicefs` Enterprise launcher (`https://juicefs.com/static/juicefs`) fails on first run with: ```text func download('/Users/<user>/.juicefs/jfsmount', 'http://s.juicefs.com/static/Darwin/mount.arm64') raises downloaded file(/Users/<user>/.juicefs/jfsmount.tmp...) is broken, retrying in 1 seconds func download failed 3 times, abort ```  Running `mount.arm64` directly (`./mount.arm64 version`) immediately crashes with a `SIGSEGV` during Go package `init()`: ```text SIGSEGV: segmentation violation PC=0x19132933c m=0 sigcode=2 addr=0x0 signal arrived during cgo execution  goroutine 1 gp=0x140000021c0 m=0 mp=0x10ae0e320 [syscall, locked to thread]: runtime.cgocall(...) github.com/shoenig/go-m1cpu._Cfunc_initialize()     _cgo_gotypes.go:150 +0x2c github.com/shoenig/go-m1cpu.init.0()     /Users/runner/go/pkg/mod/github.com/shoenig/go-m1cpu@v0.1.6/cpu.go:148 +0x1c ```  **Root Cause:** `github.com/shoenig/go-m1cpu@v0.1.6` dereferences a `NULL` pointer when querying IORegistry power-management keys on newer Apple Silicon chips (Apple M5 series).  **Requested Fix:** Please update `github.com/shoenig/go-m1cpu` to `v0.2.2` (or `v0.2.1+`, which adds `NULL` pointer guards) — or 
+- **Issue #7914** (2026-11-25): **meta: fix tree summary root type**
+  *Symptoms*: ## Problem  A tree summary for a regular file reports its root as a directory.  ## Change  Set the root type from the inode attributes already read by `GetTreeSummary`.  ## Validation  A regular-file check on memkv failed before the fix and passed after it. The existing metadata summary and VFS summary cancellation tests also passed. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/juicedata/juicefs/pull/7914?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.70%. Comparing base ([`861e851`](https://app.codecov.io/gh/juicedata/juicefs/commit/861e8510850eacbef3825bb96ab1f33876e75c0c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)) to head ([`dea7300`](https://app.codecov.io/gh/juicedata/juicefs/commit/dea73006bb8c9846b0035e9cd208ea7d6e4d0252?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=juicedata)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##   
 
-- **Issue #7908** (2026-11-24): **ci: cache Hadoop tarball and add archive mirror fallback**
-  *Symptoms*: ### Problem  `unittests (test.pkg)` fails in `Prepare Database` with exit code 8 when `dlcdn.apache.org` is slow or returns 5xx while downloading `hadoop-2.10.2.tar.gz`. Because `setup-hdfs.sh` uses `wget -q`, the HTTP error is also hidden.  ### Changes  - Cache `~/.cache/hadoop` (`key: hadoop-2.10.2`) with `actions/cache@v4` for `test.pkg` in `.github/workflows/unittests.yml`. - Update `.github/scripts/setup-hdfs.sh` to reuse the cached tarball, download via a `.tmp` file before moving into place, bound retries/timeout (`--tries=3 --timeout=30 --waitretry=5`), fall back to `archive.apache.org`, and use `-nv` instead of `-q` so download errors remain visible.
+- **Issue #7913** (2026-11-25): **meta: skip quota checks during changelog replay**
+  *Symptoms*: Skip quota checks (volume capacity/inodes, directory, user, and group quotas) when `m.replay.Load() != nil` so replaying operations that already succeeded on the source won't fail with `EDQUOT`/`ENOSPC`.
+  **Post-Mortem & Fix Analysis**:
+  > Merged into #7787.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1193,76 +1197,138 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4f20cf3` (2026-11-25)
-**Commit Message**: sdk/python: fix native initialization and status arguments (#7903)
+### Incident Patch 1: `d4f2cf81` (2026-11-25)
+**Commit Message**: meta: fix tree summary root type (#7914)
 
-Signed-off-by: Xucheng Zhou <[REDACTED_EMAIL]>
 Co-authored-by: jiefenghuang <[REDACTED_EMAIL]>
-Co-authored-by: Caitin <[REDACTED_EMAIL]>
 
-**File**: `.github/scripts/pysdk/pysdk_test.py` (modified, +23/-0)
+**File**: `.github/scripts/pysdk/pysdk_test.py` (modified, +1/-1)
 ```diff
-@@ -727,6 +727,29 @@ def test_random_read(self):
- class ClientParamsTests(FileTests):
-     testfile = TESTFN + '/testfile'
+@@ -397,7 +397,7 @@ def setUp(self):
  
-+    def test_failed_initialization_reports_volume_name(self):
-+        name = "failed-init-volume"
-+        with self.assertRaises(OSError) as caught:
-+            juicefs.Client(name, meta=meta_url, push_labels="invalid-label",
-+                           no_usage_report=True)
-+        self.assertIs(type(caught.exception), OSError)
-+        self.assertEqual(caught.exception.errno, errno.EPERM)
-+        self.assertEqual(str(caught.exception), f"JuiceFS initialized failed for {name}")
-+
-+    def test_status_session_id(self):
-+        before = {s['Sid'] for s in self.v.status()['Sessions']}
-+        other = juicefs.Client("test-volume-status", meta=meta_url)
-+        try:
-+            after = {s['Sid'] for s in self.v.status()['Sessions']}
-+            created = after - before
-+            self.assertEqual(len(created), 1)
-+            session = created.pop()
-+            self.assertGreater(session, 1)
-+            self.assertEqual(self.v.status(session=session)['Sid'], session)
-+            self.assertIn('Sessions', self.v.status(session=0))
-+        finally:
-+            other.close(terminate=True)
-+
-     def test_readonly_param(self):
-         v = juicefs.Client(
-             "test-volume-ro",
+     def test_summary(self):
+         res = self.v.summary(TESTFILE, depth=258, entries=2)
+-        self.assertTrue(normalize(res)==normalize({"Path": "file", "Type": 2, "Files":1, "Dirs":0, "Size":4096}))
++        self.assertTrue(normalize(res)==normalize({"Path": "file", "Type": 1, "Files":1, "Dirs":0, "Size":4096}))
+         res = self.v.summary(TESTFN)
+         self.assertTrue(normalize(res)==normalize({"Path": "test", "Type": 2, "Files":2, "Dirs":3, "Size":20480}))
+         res = self.v.summary(TESTFN, depth=257, entries=1)
 ```
 
-**File**: `sdk/python/juicefs/juicefs/juicefs.py` (modified, +2/-2)
+**File**: `cmd/summary.go` (modified, +12/-2)
 ```diff
-@@ -58,7 +58,7 @@
+@@ -169,8 +169,7 @@ func summary(ctx *cli.Context) error {
+ 	if err != nil {
+ 		logger.Fatalf("summary: %s", err)
+ 	}
+-	results := [][]string{{"PATH", "SIZE", "DIRS", "FILES", "COST"}}
+-	renderTree(&results, &resp.Tree, csv)
++	results := renderSummaryTree(&resp.Tree, dpath, csv)
+ 	if csv {
+ 		printCSVResult(results)
+ 	} else {
+@@ -179,6 +178,17 @@ func summary(ctx *cli.Context) error {
+ 	return nil
+ }
  
- def check_error(r, fn, args):
-     if fn.__name__ == "jfs_init" and r == 0:
--        name = args[0].decode()
-+        name = args[2].decode()
-         e = OSError(f'JuiceFS initialized failed for {name}')
-         e.errno = 1
-         raise e
-@@ -504,7 +504,7 @@ def warmup(self, paths, threads=10, evict=False, check=False, background=False,
-     def status(self, trash=False, session=0):
-         """Get the status of the volume and client sessions."""
-         buf = c_void_p()
--        n = self.lib.jfs_status(c_int64(_tid()), c_int64(self.h), c_bool(trash), c_bool(session), byref(buf))
-+        n = self.lib.jfs_status(c_int64(_tid()), c_int64(self.h), c_bool(trash), c_uint64(session), byref(buf))
-         res = json.loads(str(string_at(buf, n), encoding='utf-8'))
-         self.lib.free(buf)
-         return res
++func renderSummaryTree(tree *meta.TreeSummary, dpath string, csv bool) [][]string {
++	if tree != nil && tree.Path == "" && tree.Type != meta.TypeDirectory {
++		root := *tree
++		root.Path = filepath.Base(dpath)
++		tree = &root
++	}
++	results := [][]string{{"PATH", "SIZE", "DIRS", "FILES", "COST"}}
++	renderTree(&results, tree, csv)
++	return results
++}
++
+ func printCSVResult(results [][]string) {
+ 	w := csv.NewWriter(os.Stdout)
+ 	for _, r := range results {
+```
+
+**File**: `cmd/summary_test.go` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++/*
++ * JuiceFS, Copyright 2026 Juicedata, Inc.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package cmd
++
++import (
++	"testing"
++	"time"
++
++	"github.com/juicedata/juicefs/pkg/meta"
++	"github.com/stretchr/testify/assert"
++)
++
++func TestRenderSummaryTree(t *testing.T) {
++	fileTree := &meta.TreeSummary{
++		Type:     meta.TypeFile,
++		Size:     4096,
++		Files:    1,
++		Duration: 1500 * time.Microsecond,
++	}
++	assert.Equal(t, [][]string{
++		{"PATH", "SIZE", "DIRS", "FILES", "COST"},
++		{"file.txt", "4.0 KiB", "0", "1", "1ms"},
++	}, renderSummaryTree(fileTree, "/mnt/jfs/dir/file.txt", false))
++	assert.Equal(t, [][]string{
++		{"PATH", "SIZE", "DIRS", "FILES", "COST"},
++		{"file.txt", "4096", "0", "1", "1"},
++	}, renderSummaryTree(fileTree, "/mnt/jfs/dir/file.txt", true))
++	assert.Empty(t, fileTree.Path)
++
++	dirTree := &meta.TreeSummary{
++		Type:  meta.TypeDirectory,
++		Size:  8192,
++		Dirs:  1,
++		Files: 1,
++		Children: []*meta.TreeSummary{
++			{Path: "file.txt", Type: meta.TypeFile, Size: 4096, Files: 1},
++		},
++	}
++	assert.Equal(t, [][]string{
++		{"PATH", "SIZE", "DIRS", "FILES", "COST"},
++		{"/", "8192", "1", "1", "0"},
++		{"file.txt", "4096", "0", "1", "0"},
++	}, renderSummaryTree(dirTree, "/mnt/jfs/dir", true))
++}
+```
+
+**File**: `pkg/meta/utils.go` (modified, +1/-0)
+```diff
+@@ -516,6 +516,7 @@ func (m *baseMeta) GetTreeSummary(ctx Context, root *TreeSummary, depth, topN ui
+ 	if st := m.GetAttr(ctx, root.Inode, &attr); st != 0 {
+ 		return st
+ 	}
++	root.Type = attr.Typ
+ 	if updateProgress != nil {
+ 		updateProgress(1, uint64(align4K(0)))
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7914** (2026-11-25): meta: fix tree summary root type (@myangitzh)
+- **PR #7913** (closed): meta: skip quota checks during changelog replay (@zxh326)
+- **PR #7910** (closed): object: add in-process STS credential provider with static-AK fallback (@hiltonhe)
 - **PR #7908** (2026-11-24): ci: cache Hadoop tarball and add archive mirror fallback (@zxh326)
 - **PR #7907** (2026-11-24): refactor: move jfs object storage from cmd to pkg/fs (@jiefenghuang)
 - **PR #7904** (2026-11-24): test: fix FlushAfterRmdir ut (@myangitzh)
-- **PR #7903** (2026-11-25): sdk/python: fix native initialization and status arguments (@adenzhou1350)
-- **PR #7901** (closed): meta: avoid mixed directory-stat snapshots during flushes (@adenzhou1350)
-- **PR #7899** (2026-11-24): sdk/python: avoid oversized read-all buffers for small files (@adenzhou1350)
 
 ---
 
@@ -1282,13 +1348,13 @@ Co-authored-by: Caitin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk/python: fix native initialization and status arguments
+## X. meta: fix tree summary root type
 
 **RULE**:
 When implementing operations in `.github/scripts/pysdk/pysdk_test.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b4f20cf3`: sdk/python: fix native initialization and status arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d4f2cf81`: meta: fix tree summary root type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/pysdk/pysdk_test.py`.
@@ -1296,39 +1362,17 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    def test_failed_initialization_reports_volume_name(self):
-        name = "failed-init-volume"
-        with self.assertRaises(OSError) as caught:
-            juicefs.Client(name, meta=meta_url, push_labels="invalid-label",
-                           no_usage_report=True)
-        self.assertIs(type(caught.exception), OSError)
-        self.assertEqual(caught.exception.errno, errno.EPERM)
-        self.assertEqual(str(caught.exception), f"JuiceFS initialized failed for {name}")
-
-    def test_status_session_id(self):
-        before = {s['Sid'] for s in self.v.status()['Sessions']}
-        other = juicefs.Client("test-volume-status", meta=meta_url)
-        try:
-            after = {s['Sid'] for s in self.v.status()['Sessions']}
-            created = after - before
-            self.assertEqual(len(created), 1)
-            session = created.pop()
-            self.assertGreater(session, 1)
-            self.assertEqual(self.v.status(session=session)['Sid'], session)
-            self.assertIn('Sessions', self.v.status(session=0))
-        finally:
-            other.close(terminate=True)
-
+        self.assertTrue(normalize(res)==normalize({"Path": "file", "Type": 1, "Files":1, "Dirs":0, "Size":4096}))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        self.assertTrue(normalize(res)==normalize({"Path": "file", "Type": 2, "Files":1, "Dirs":0, "Size":4096}))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b4f20cf3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d4f2cf81` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

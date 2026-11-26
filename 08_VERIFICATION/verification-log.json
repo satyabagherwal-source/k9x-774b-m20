@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261124-CPSA",
-    "timestamp": "2026-11-24T14:24:12.682Z",
-    "repository": "kubernetes-sigs/aws-load-balancer-controller",
-    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "12615027c7e7f80aba5bfb5d3459eedb03cc9df6faba7a450bf964c0d7656871",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261124-CUAE",
-    "timestamp": "2026-11-24T14:24:18.518Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "f7ee3f636a6350375a5451076041161aa36add6e53d46492396889a3b6578331",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261124-CVPP",
     "timestamp": "2026-11-24T14:24:20.365Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "argoproj/argo-workflows",
     "learningId": "learn-github-argoproj-argo-workflows",
     "contentHash": "70cc56f89d96e43e9af60962300a75d012c1b3f664e04426b34d144c82adf83c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-BZZO",
+    "timestamp": "2026-11-26T04:39:07.764Z",
+    "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+    "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
+    "contentHash": "cd22b4bde151b2bda2c311d1593193db09cfc5288892514534151a6ca0545438",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261126-C7PK",
+    "timestamp": "2026-11-26T04:39:17.768Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

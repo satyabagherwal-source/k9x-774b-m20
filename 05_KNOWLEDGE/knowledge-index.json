@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T04:31:04.238Z",
+  "last_updated": "2026-11-26T04:39:23.118Z",
   "total_verified_learnings": 9122,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 25655,
+  "total_items": 25658,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a0afbb7836efc72ba2bc0bd79a43a16e00ec77fb72d7451506e4f7b2a8f872b",
+      "content_hash": "027d677a727fae32ab9a78fc60546757caa1e242faa3b5ab2674973238f73014",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:46:53.919Z"
+      "persisted_at": "2026-11-26T04:39:22.951Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4f318a219efab674e683b128ba3299adf88e0339558d409dae5ffa2f3794a97",
+      "content_hash": "ff3c45386fe9117f9169ae87a79e3000c6506fea0502166d5577f03209ccb64f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T03:46:54.116Z"
+      "persisted_at": "2026-11-26T04:39:23.118Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -212822,8 +212822,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "b4f20cf3",
-      "content_hash": "965ecf469398c93a9f75fa4bd12b49fbdffa81a77c0d75e607fc90beb0bb7125",
+      "source_version": "99cf558e",
+      "content_hash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -212871,6 +212871,11 @@
           "number": 10453,
           "title": "sdk/python: fix native initialization and status arguments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10598,
+          "title": "fix tree summary root type",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212878,7 +212883,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T04:31:15.273Z",
+      "verified_at": "2026-11-26T04:39:17.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212906,10 +212911,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "repository": "juicedata/juicefs",
-      "source_version": "b4f20cf3",
-      "content_hash": "88a9641dd091d78f6c7bd6e3c4f4484c3b253993cb9575ffd4cd9c2dd190b606",
+      "source_version": "99cf558e",
+      "content_hash": "ba6dd7abd4cae857d7606bf59d8e0b4c34cb3fedb74a4899556128d1fc499f32",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T04:31:16.157Z"
+      "persisted_at": "2026-11-26T04:39:18.170Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs",
@@ -212930,10 +212935,10 @@
       "relative_path": "08_VERIFICATION/juicedata-juicefs-verification-protocol-empirical-defect-shield-for-juicedata-ju.md",
       "title": "Verification Protocol: Empirical Defect Shield for juicedata/juicefs",
       "repository": "juicedata/juicefs",
-      "source_version": "b4f20cf3",
-      "content_hash": "c50258f327c77e61efd5a40bf3789587d49c462adbb170b821428aa8023e43e2",
+      "source_version": "99cf558e",
+      "content_hash": "dca6e451855b9b8b46ae94bbb0baae88fee2149cf71729b986267b24eb80ef56",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:31:16.408Z"
+      "persisted_at": "2026-11-26T04:39:18.335Z"
     },
     "learn-github-clockworklabs-spacetimedb": {
       "learning_id": "learn-github-clockworklabs-spacetimedb",
@@ -225030,7 +225035,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
       "source_version": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
-      "content_hash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
+      "content_hash": "cd22b4bde151b2bda2c311d1593193db09cfc5288892514534151a6ca0545438",
       "dossier_path": "07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md",
       "promoted_rules": [],
@@ -225039,7 +225044,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T07:56:33.258Z",
+      "verified_at": "2026-11-26T04:39:07.530Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225056,9 +225061,9 @@
       "title": "Research & Knowledge Intelligence: chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized Core Invariants",
       "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
       "source_version": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized",
-      "content_hash": "a0896fc54e22245d66f73bf2b5712f55fe4f05d4aefbd135b53c29e58bbd5afd",
+      "content_hash": "76f33fd31719a803fe2a406a76e9acfdd88c0ab096b7629cddd9b2024af81b79",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T07:56:33.668Z"
+      "persisted_at": "2026-11-26T04:39:07.978Z"
     },
     "learn-huggingface-meta-llama-llama-2-7b-chat-hf": {
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
@@ -225107,9 +225112,9 @@
       "title": "Research & Knowledge Intelligence: hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings Core Invariants",
       "repository": "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings",
       "source_version": "HEAD",
-      "content_hash": "30f478002ac91fb4a187a78480336390b7331e14668019e0f1165a068817c946",
+      "content_hash": "af1f49122adcb35fa0d2e0cf9f9f1d24748ce954292c17163522343b8047ef4a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T07:56:47.277Z"
+      "persisted_at": "2026-11-26T04:39:21.365Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-chat-hf-learnings-core-",
@@ -260017,9 +260022,9 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "efaa4a6dc413c48882bc2907c63205f68205732d26098adce86b421aa5489b0f",
+      "content_hash": "cc169cd12d90c7ceeaed9fbd598203558d8967842dd01f49dbe0ecbfcc9bc18a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T04:31:22.491Z"
+      "persisted_at": "2026-11-26T04:39:22.154Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-juicedata-juicefs-learnings",
@@ -260041,9 +260046,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for juicedata-juicefs-learnings",
       "repository": "juicedata-juicefs-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c6e9f173462812243b00c1049472fdaaebab51711fe9f98796d313e4dfc2d16",
+      "content_hash": "a5a5f0ea6ed9e0c1b2f0722608ca3994cc61d09e8a5f7922f2260df2825b9b02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T04:31:22.724Z"
+      "persisted_at": "2026-11-26T04:39:22.321Z"
     },
     "learn-huggingface-pika-labs-pika-h3-flex": {
       "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
@@ -339864,13 +339869,13 @@
       "item_id": "candidate_directive-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GTR5-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-CBKW-deps-bump-url-to-2-5-9-and-heapless-to-0-9-4.md",
       "title": "deps): bump url to 2.5.9 and heapless to 0.9.4",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c6c73acd06142930288931d67148c7c7e7c252bd879ce0dd52385924d1642c9",
+      "content_hash": "6eb05e5e56d24d738552e986922eaef631622a3babccc64c483f2ae54061fb35",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T03:46:53.732Z"
+      "persisted_at": "2026-11-26T04:39:22.787Z"
     },
     "rule-10315": {
       "learning_id": "rule-10315",
@@ -351273,6 +351278,44 @@
       "content_hash": "87c0af37df392d1de844fd8e055e3cef2dd30040f30b1871a8d4a804c5f5715c",
       "domain_letter": "A",
       "persisted_at": "2026-11-26T04:31:03.931Z"
+    },
+    "rule-10598": {
+      "learning_id": "rule-10598",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10598,
+      "title": "fix tree summary root type",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "99cf558e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T04:39:17.553Z"
+    },
+    "candidate_directive-fix-tree-summary-root-type": {
+      "item_id": "candidate_directive-fix-tree-summary-root-type",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C7VW-fix-tree-summary-root-type.md",
+      "title": "fix tree summary root type",
+      "repository": "juicedata/juicefs",
+      "source_version": "99cf558e",
+      "content_hash": "4e3beb9bac613b470965a25b6cc9d8eafc8dc9d9ca0b7ad4190908eb89026423",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-26T04:39:17.997Z"
+    },
+    "candidate_directive-meta-fix-tree-summary-root-type": {
+      "item_id": "candidate_directive-meta-fix-tree-summary-root-type",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CAYJ-meta-fix-tree-summary-root-type.md",
+      "title": "meta: fix tree summary root type",
+      "repository": "juicedata-juicefs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5b1f160fee8157cb594035d42ef3d461b93b9161bedfac0593b8bb0e759d7fb8",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-26T04:39:21.979Z"
     }
   },
   "ai-builder-brain": {

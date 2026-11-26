@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T04:30:58.407Z",
-  "total_cycles_completed": 12565,
-  "total_learnings_persisted": 12565,
-  "total_rules_promoted": 11490,
+  "last_updated": "2026-11-26T04:39:17.783Z",
+  "total_cycles_completed": 12567,
+  "total_learnings_persisted": 12567,
+  "total_rules_promoted": 11491,
   "history": [
-    {
-      "timestamp": "2026-11-25T09:37:30.682Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-25T09:39:48.473Z",
-      "repository": "AtomicChat/Inkling-2-Mini-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-25T09:54:15.019Z",
       "repository": "XHToken/Spark-X2.6-4B-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-26T04:30:58.407Z",
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:39:07.773Z",
+      "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
+      "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T04:39:17.783Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

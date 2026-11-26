@@ -3,7 +3,7 @@
 > **Source Version**: `hf-chatrlabs`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T07:56:33.008Z  
+> **Timestamp**: 2026-11-26T04:39:07.264Z  
 > **Learning ID**: `learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized](https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T07:56:32.833Z  
+> **Harvest Timestamp**: 2026-11-26T04:39:07.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 339903 downloads | 749 likes
+- **Stars / Engagement**: 515591 downloads | 959 likes
 
 ---
 

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-26T04:31:03.696Z",
+  "updated_at": "2026-11-26T04:39:21.750Z",
   "stats": {
-    "total_discovered": 9583,
-    "approved_pending_harvest": 9084,
+    "total_discovered": 9586,
+    "approved_pending_harvest": 9087,
     "harvested_count": 0,
     "rejected_count": 499,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9073,
+      "COMMUNITY_AND_EXPERT": 9076,
       "OFFICIAL_DOCUMENTATION": 282,
       "STANDARDS_AND_SPECIFICATIONS": 156,
       "ENGINEERING_BLOGS": 7,
@@ -207360,6 +207360,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
         "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-563DC51F6246": {
+      "id": "SRC-563DC51F6246",
+      "url": "https://app.codecov.io/gh/juicedata/juicefs/pull/7914?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/juicedata/juicefs/pull/7914?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T04:39:21.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
+      }
+    },
+    "SRC-B5BC58F089EA": {
+      "id": "SRC-B5BC58F089EA",
+      "url": "https://app.codecov.io/gh/juicedata/juicefs/commit/861e8510850eacbef3825bb96ab1f33876e75c0c?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/juicedata/juicefs/commit/861e8510850eacbef3825bb96ab1f33876e75c0c?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T04:39:21.697Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
+      }
+    },
+    "SRC-E9E5D0FA7B61": {
+      "id": "SRC-E9E5D0FA7B61",
+      "url": "https://app.codecov.io/gh/juicedata/juicefs/commit/dea73006bb8c9846b0035e9cd208ea7d6e4d0252?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/juicedata/juicefs/commit/dea73006bb8c9846b0035e9cd208ea7d6e4d0252?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-26T04:39:21.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
       }
     }
   }

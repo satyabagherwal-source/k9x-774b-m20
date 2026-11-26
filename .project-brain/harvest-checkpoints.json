@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T04:30:58.411Z",
+  "last_updated": "2026-11-26T04:39:17.786Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9141,14 +9141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juicedata-juicefs",
-      "content_hash": "965ecf469398c93a9f75fa4bd12b49fbdffa81a77c0d75e607fc90beb0bb7125",
-      "verified_at": "2026-11-25T04:31:15.582Z",
+      "content_hash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
+      "verified_at": "2026-11-26T04:39:17.785Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T04:31:15.582Z"
+      "last_updated": "2026-11-26T04:39:17.786Z"
     },
     "RediSearch/RediSearch": {
       "repository": "RediSearch/RediSearch",
@@ -18801,14 +18801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
-      "content_hash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
-      "verified_at": "2026-11-22T07:56:33.479Z",
+      "content_hash": "cd22b4bde151b2bda2c311d1593193db09cfc5288892514534151a6ca0545438",
+      "verified_at": "2026-11-26T04:39:07.775Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T07:56:33.479Z"
+      "last_updated": "2026-11-26T04:39:07.775Z"
     },
     "Edge0/Edge0-145B-NVFP4": {
       "repository": "Edge0/Edge0-145B-NVFP4",
