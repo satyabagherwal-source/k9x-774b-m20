@@ -13510,3 +13510,6 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `5441ece2` | Multi-dimensional audit evidence | 2026-11-26T16:58:18.472Z |
 | `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `fa151da3` | Multi-dimensional audit evidence | 2026-11-26T16:58:23.724Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `c78a56ff` | Multi-dimensional audit evidence | 2026-11-26T16:58:30.788Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-26T17:06:12.938Z |
+| `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `6c1bd527` | Multi-dimensional audit evidence | 2026-11-26T17:06:21.035Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `66b78886` | Multi-dimensional audit evidence | 2026-11-26T17:06:25.023Z |

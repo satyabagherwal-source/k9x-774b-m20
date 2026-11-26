@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T16:58:36.808Z",
+  "last_updated": "2026-11-26T17:06:30.633Z",
   "total_verified_learnings": 9130,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26046,
+  "total_items": 26051,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "83f2cb7e",
-      "content_hash": "a705aacf7865ba2c6724b678c0010cbd7f795d433139443915ee2d2b5badcec2",
+      "source_version": "66b78886",
+      "content_hash": "d460d79fd493ff7f8be6455c0ce20df5b8a488a2c0fd9f6666c809e041833a22",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:38:43.975Z"
+      "persisted_at": "2026-11-26T17:06:25.482Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "83f2cb7e",
-      "content_hash": "ccaf324753c602bd33877c4ddd8969a5bab9eb6f2519ae3acf169083f5e80379",
+      "source_version": "66b78886",
+      "content_hash": "6e7bd830a444e0a5405721426ae7c44d5db849d219fd263679e749e04af3d8d2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:38:44.250Z"
+      "persisted_at": "2026-11-26T17:06:25.818Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "15dd95b048a374a8b51c645fcf648ba5bab42c9d2906740533021d1de57c2421",
+      "content_hash": "6a5ea44298a473ecae74fd7831667a4a791ae6d5928ceadc371a0a400a800a6c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T12:38:48.641Z"
+      "persisted_at": "2026-11-26T17:06:30.273Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "c183b53d9536a31254b40790cd4fc716b9e08e13e5a64c06b7807d833ee4aee8",
+      "content_hash": "601d99fa69786b9f730e003f2cb19acaa86a99a3efb865c64c4975dc4e717bc7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:38:48.917Z"
+      "persisted_at": "2026-11-26T17:06:30.633Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -213338,8 +213338,8 @@
       "slug": "nervjs-taro",
       "platform": "github",
       "source_url": "https://github.com/NervJS/taro",
-      "source_version": "84cc57bc",
-      "content_hash": "f1b6ed67b2d821e2382a778f15514b79d93c7585cfc4747d10b45c5a6b6ffe9e",
+      "source_version": "6c1bd527",
+      "content_hash": "51e145933436ae95f8be2526ffa1adf0876e90fcb584da938173ca01b959fc71",
       "dossier_path": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nervjs-taro-learnings.md",
       "promoted_rules": [
@@ -213362,6 +213362,11 @@
           "number": 10228,
           "title": "升级 webpack 至 5.104.1 修复安全漏洞",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10732,
+          "title": "extract shared bundler utilities from webpack5-runner",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213369,7 +213374,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T07:33:13.179Z",
+      "verified_at": "2026-11-26T17:06:20.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213411,10 +213416,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nervjs-taro-technical-construction-intelligence-nervjs-taro-core-invariants.md",
       "title": "Technical Construction Intelligence: NervJS/taro Core Invariants",
       "repository": "NervJS/taro",
-      "source_version": "84cc57bc",
-      "content_hash": "47a45ab1443a7784f858d3df96c631978bbc3c9c8e8857f5266436f14822abdc",
+      "source_version": "6c1bd527",
+      "content_hash": "92178d79a813861784c67bac173e2f8a6588c5fd2e194f0400f4f6f83fe2feb8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:33:14.017Z"
+      "persisted_at": "2026-11-26T17:06:21.439Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro",
@@ -213423,10 +213428,10 @@
       "relative_path": "08_VERIFICATION/nervjs-taro-verification-protocol-empirical-defect-shield-for-nervjs-taro.md",
       "title": "Verification Protocol: Empirical Defect Shield for NervJS/taro",
       "repository": "NervJS/taro",
-      "source_version": "84cc57bc",
-      "content_hash": "1a9733019527bd6e4e77d60d72f4c0dcd70fe53867e363cec0b000ee17fabfee",
+      "source_version": "6c1bd527",
+      "content_hash": "b1c40a33005e06eca0f3c38f9889c89034b828a266d697d38cd3ac3abbd55f6e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:33:14.240Z"
+      "persisted_at": "2026-11-26T17:06:21.655Z"
     },
     "learn-github-rook-rook": {
       "learning_id": "learn-github-rook-rook",
@@ -213911,9 +213916,9 @@
       "title": "Technical Construction Intelligence: nervjs-taro-learnings Core Invariants",
       "repository": "nervjs-taro-learnings",
       "source_version": "HEAD",
-      "content_hash": "dfeaa8a3757bc9d36c4ee247c1b1bacd4e49d6b77423c5d34a8b21a3fe8dc1e5",
+      "content_hash": "51cc8fcc8994d9d774a03763b0f42867af0ca614f928503bd45c6079ceeca094",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T07:33:17.780Z"
+      "persisted_at": "2026-11-26T17:06:29.511Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nervjs-taro-learnings",
@@ -213923,9 +213928,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nervjs-taro-learnings",
       "repository": "nervjs-taro-learnings",
       "source_version": "HEAD",
-      "content_hash": "045fb621b2aa98ff1538034f827a8895fd9f7bffbd9d49b7e89f6659e7c7669c",
+      "content_hash": "3aeef7e58f831680769a2d827f864d60da1f4bf37e7b08f28e88ccb1e04bfe8a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T07:33:18.007Z"
+      "persisted_at": "2026-11-26T17:06:29.683Z"
     },
     "learn-github-krishhgg-insomnia": {
       "learning_id": "learn-github-krishhgg-insomnia",
@@ -214983,7 +214988,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "8b4f07cad2645d5d8a2e46b2fc0765002db63f5fcdb04f568d1c042a9c667d82",
+      "content_hash": "035da65b790b8ba555a804a670f314b7a09562653fc174ae188fd801ad9c22b5",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [],
@@ -214992,7 +214997,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:57:15.633Z",
+      "verified_at": "2026-11-26T17:06:12.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215009,9 +215014,9 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef Core Invariants",
       "repository": "Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "c7a8598a4b8eb87dd7fc411de497d00ab0921fe1a5f35fbd1ba820183f04e153",
+      "content_hash": "4343c8a7281fd408c6b0e9da70ec699a3d7623b1f2093bf251d4f57374733cfa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:57:16.143Z"
+      "persisted_at": "2026-11-26T17:06:13.154Z"
     },
     "learn-github-linkerd-linkerd2": {
       "learning_id": "learn-github-linkerd-linkerd2",
@@ -215134,9 +215139,9 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-learnings Core Invariants",
       "repository": "hf-cloudflare-clef-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fd2e3b99f5335c9b1e9cf0d9641aaa105e9309ba7b4a72058da5ac0edc36ac9",
+      "content_hash": "41892869152b158fb1571af7acb04d405f361b572d31d672d241d97be25969d5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T23:57:30.266Z"
+      "persisted_at": "2026-11-26T17:06:28.856Z"
     },
     "candidate_directive-proxy-v2-374-0": {
       "item_id": "candidate_directive-proxy-v2-374-0",
@@ -221096,8 +221101,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "83f2cb7e",
-      "content_hash": "0f52ac720e83a8b47a7143f70cb3e9afec93ac3df0cfa5a380fd8272279dbab5",
+      "source_version": "66b78886",
+      "content_hash": "9a6b42f17a8c1b842af6b30e920298534296e38b4763a8923c891b0483e8113d",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221287,7 +221292,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T12:38:42.992Z",
+      "verified_at": "2026-11-26T17:06:24.808Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -333129,10 +333134,10 @@
       "relative_path": "12_DECISIONS/ADR-freenet-freenet-core-adr-subsystem-boundary-modular-decoupling-in-freenet-freene.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "a93b0a3b",
-      "content_hash": "657d3c7372878e7ddc0c88e237a93371bc5c1046a4ace94d3717a1a1db96bf4a",
+      "source_version": "66b78886",
+      "content_hash": "67624c2753444ffdcf6f5ba96a54b5eaa4eb09086522bbb589723935719a1fe7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:21:14.018Z"
+      "persisted_at": "2026-11-26T17:06:25.657Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar",
@@ -333166,9 +333171,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "a46a16db0d36dd3275eb51405c7ec93c1453316fc918a147ef15427ce7c6a75e",
+      "content_hash": "828a675ff2583a174253d2600c1a1f128bc9c33a3df316c574c8647aec6955cf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T02:21:43.773Z"
+      "persisted_at": "2026-11-26T17:06:30.470Z"
     },
     "rule-10131": {
       "learning_id": "rule-10131",
@@ -357036,6 +357041,68 @@
       "content_hash": "7f10863c90fad12d6ca413a8231d1d562e94e1d635918ca9c4f01c2a9be1df3f",
       "domain_letter": "G",
       "persisted_at": "2026-11-26T16:58:34.803Z"
+    },
+    "rule-10732": {
+      "learning_id": "rule-10732",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10732,
+      "title": "extract shared bundler utilities from webpack5-runner",
+      "source_url": "https://github.com/NervJS/taro",
+      "source_version": "6c1bd527",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-26T17:06:20.819Z"
+    },
+    "candidate_directive-extract-shared-bundler-utilities-from-webpack5-runner": {
+      "item_id": "candidate_directive-extract-shared-bundler-utilities-from-webpack5-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0XQL-extract-shared-bundler-utilities-from-webpack5-runner.md",
+      "title": "extract shared bundler utilities from webpack5-runner",
+      "repository": "NervJS/taro",
+      "source_version": "6c1bd527",
+      "content_hash": "0b85e7e4077a238925edcd201957eedaf316d3d59d974b75019e1e0685e58300",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T17:06:21.267Z"
+    },
+    "candidate_directive-floor-release-native-connect-at-100-percent-with-gateway-admission": {
+      "item_id": "candidate_directive-floor-release-native-connect-at-100-percent-with-gateway-admission",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-10UY-floor-release-native-connect-at-100-percent-with-gateway-admission.md",
+      "title": "floor release, native connect at 100 percent with gateway admission",
+      "repository": "freenet/freenet-core",
+      "source_version": "66b78886",
+      "content_hash": "63f386e40ea8611418e34bd081b748efb65dcc455dfd5e7a40dc87ea01ebf00f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T17:06:25.312Z"
+    },
+    "candidate_directive-runner-utils-extract-shared-bundler-utilities-from-webpack5-runner": {
+      "item_id": "candidate_directive-runner-utils-extract-shared-bundler-utilities-from-webpack5-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-13YU-runner-utils-extract-shared-bundler-utilities-from-webpack5-runner.md",
+      "title": "runner-utils): extract shared bundler utilities from webpack5-runner",
+      "repository": "nervjs-taro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "03a4366937232b72971366a6f118c627c94b42ea19d39e855fd92af51fb0e04f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T17:06:29.340Z"
+    },
+    "candidate_directive-transport-floor-release-native-connect-at-100-percent-with-gateway-admission": {
+      "item_id": "candidate_directive-transport-floor-release-native-connect-at-100-percent-with-gateway-admission",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-14JY-transport-floor-release-native-connect-at-100-percent-with-gateway-admission.md",
+      "title": "transport): floor release, native connect at 100 percent with gateway admission",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "851e52657e6d10c71c4dda20759db519a8533b9ab9c6dbf6c58c12751601a497",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-26T17:06:30.100Z"
     }
   },
   "ai-builder-brain": {

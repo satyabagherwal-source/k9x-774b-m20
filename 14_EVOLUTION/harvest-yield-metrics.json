@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T16:58:30.802Z",
-  "total_cycles_completed": 12790,
-  "total_learnings_persisted": 12790,
-  "total_rules_promoted": 11636,
+  "last_updated": "2026-11-26T17:06:25.087Z",
+  "total_cycles_completed": 12793,
+  "total_learnings_persisted": 12793,
+  "total_rules_promoted": 11637,
   "history": [
-    {
-      "timestamp": "2026-11-26T06:10:38.624Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:18:14.446Z",
-      "repository": "IFM/PAN2",
-      "learningId": "learn-huggingface-ifm-pan2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T06:18:25.288Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T06:18:30.457Z",
       "repository": "trailbaseio/trailbase",
@@ -1403,6 +1382,27 @@
       "repository": "topoteretes/cognee",
       "learningId": "learn-github-topoteretes-cognee",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:06:12.950Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-cloudflare-clef",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:06:21.048Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-26T17:06:25.087Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

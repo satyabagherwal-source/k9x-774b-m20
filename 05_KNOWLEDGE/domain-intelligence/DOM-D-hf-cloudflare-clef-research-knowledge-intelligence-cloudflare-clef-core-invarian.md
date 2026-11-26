@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Cloudflare/clef",
   "source_version": "hf-cloudflare-clef",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T23:57:16.142Z",
+  "timestamp": "2026-11-26T17:06:13.153Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-cloudflare-clef",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T23:57:16.142Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-26T17:06:13.153Z`  
 > **Learning ID**: `learn-huggingface-cloudflare-clef`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Cloudflare/clef](https://huggingface.co/Cloudflare/clef))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:57:15.199Z  
+> **Harvest Timestamp**: 2026-11-26T17:06:12.314Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 79367 downloads | 2388 likes
+- **Stars / Engagement**: 79822 downloads | 2395 likes
 
 ---
 

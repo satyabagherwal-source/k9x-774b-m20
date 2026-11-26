@@ -13477,3 +13477,6 @@
 | `CYCLE-20261126-QL7N` | `2026-11-26T16:58:18.467Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10729` | Yes (`1a47cd4e...`) |
 | `CYCLE-20261126-QP9J` | `2026-11-26T16:58:23.719Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10730` | Yes (`4f91b632...`) |
 | `CYCLE-20261126-QUPS` | `2026-11-26T16:58:30.784Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10731` | Yes (`3d468df3...`) |
+| `CYCLE-20261126-0RBA` | `2026-11-26T17:06:12.934Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | Yes (`035da65b...`) |
+| `CYCLE-20261126-0XK7` | `2026-11-26T17:06:21.031Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10732` | Yes (`51e14593...`) |
+| `CYCLE-20261126-10MZ` | `2026-11-26T17:06:25.019Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | Yes (`9a6b42f1...`) |

@@ -4,24 +4,24 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "83f2cb7e",
+  "source_version": "66b78886",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-26T12:38:43.687Z",
+  "timestamp": "2026-11-26T17:06:25.306Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `83f2cb7e`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-26T12:38:43.687Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `66b78886`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-26T17:06:25.306Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from freenet/freenet-core:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T12:38:41.759Z  
+> **Harvest Timestamp**: 2026-11-26T17:06:24.539Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3135 stars
+- **Stars / Engagement**: 3136 stars
 
 ---
 
@@ -1773,246 +1773,531 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83f2cb7e` (2026-11-26)
-**Commit Message**: fix(get): a relay holding the contract serves it at HTL 0 (#6403)
+### Incident Patch 1: `66b78886` (2026-11-26)
+**Commit Message**: feat(transport): floor release, native connect at 100 percent with gateway admission on (#6398)
 
-**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +222/-85)
+**File**: `.claude/rules/transport.md` (modified, +7/-7)
 ```diff
-@@ -4255,59 +4255,6 @@ where
-     let ring_max_htl = op_manager.ring.max_hops_to_live.max(1);
-     let htl = htl.min(ring_max_htl);
+@@ -293,7 +293,7 @@ Intro packet rate limiting:
  
--    // ── Short-circuit 1: HTL = 0 ────────────────────────────────────────
--    if htl == 0 {
--        tracing::warn!(
--            tx = %incoming_tx,
--            %instance_id,
--            %upstream_addr,
--            htl = 0,
--            phase = "not_found",
--            "GET relay: HTL exhausted — sending NotFound upstream"
--        );
--        if let Some(event) = crate::tracing::NetEventLog::get_not_found(
--            &incoming_tx,
--            &op_manager.ring,
--            instance_id,
--            Some(op_manager.ring.max_hops_to_live),
--            None,
--        ) {
--            op_manager
--                .ring
--                .register_events(either::Either::Left(event))
--                .await;
--        }
--        // HTL=0 path: the original Request reached us with htl already at 0,
--        // meaning the request traversed the full max_htl forward hops to get
--        // here. hop_count = max_htl - 0 = max_htl.
--        let hop_count = op_manager.ring.max_hops_to_live;
--        // EXPERIMENT-ONLY (findability_probe): record the HTL-exhaustion GET
--        // terminus. NOT for ship.
--        #[cfg(any(test, feature = "testing"))]
--        {
--            let visited = visited.clone();
--            crate::operations::findability_probe::record_terminus(
--                &op_manager.ring,
--                crate::operations::findability_probe::ProbeOpKind::Get,
--                &incoming_tx,
--                crate::ring::Location::from(&instance_id),
--                htl,
--                hop_count,
--                crate::operations::findability_probe::ProbeStopReason::HtlZero,
--                move |addr| visited.probably_visited(addr),
--            );
--        }
--        relay_send_not_found(
--            op_manager,
--            incoming_tx,
--            instance_id,
--            upstream_addr,
--            hop_count,
--        )
--        .await;
--        return Ok(());
--    }
--
-     let own_addr = op_manager.ring.connection_manager.get_own_addr();
+ Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN using token bucket
  
-     // Hosting attribution for EVERY local store this driver makes. Computed once
-@@ -4325,7 +4272,7 @@ where
-     }
-     new_visited.mark_visited(upstream_addr);
+-### WHEN admitting native joiners at a gateway (#5940, A7b; dark behind `GATEWAY_NATIVE_ADMISSION`)
++### WHEN admitting native joiners at a gateway (#5940, A7b; on since the floor release, `GATEWAY_NATIVE_ADMISSION`)
  
--    // ── Short-circuit 2: Local cache hit with interest ───────────────────
-+    // ── Short-circuit 1: Local cache hit with interest ───────────────────
-     let (local_value, local_fallback) = match check_local_with_interest_gate(
-         op_manager,
-         &instance_id,
-@@ -4512,6 +4459,120 @@ where
-         return Ok(());
-     }
+ - A joiner is charged against the QUIC path cap from admission (`JoinerCharge`). Do not add a parallel joiner counter: paths and joiners share ONE unit total in `QuicPathPermits`.
+ - Joiners together hold at most 1/`JOINER_SHARE_DIVISOR` of the units; the join window counts from the hub queueing the join.
+@@ -302,17 +302,17 @@ Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN using t
+ - Unpromoted joiners share one slice of the ingress queue (`QUIC_INGRESS_JOINER_DATAGRAMS`), not per-source or per-IP; record the slot per datagram (`joiner_slot`).
+ - Never `std::mem::forget` a charge or a mark: a leaked charge shrinks the cap for the process life.
  
-+    // ── Short-circuit 2: HTL = 0, nothing fresh to serve ─────────────────
-+    // Runs AFTER the local-hit arm above on purpose: a peer that holds a
-+    // fresh copy answers Found whatever the HTL. HTL only bounds FORWARDING,
-+    // so HTL = 0 never forwards but must not hide a copy this node serves at
-+    // any other HTL (the sim trace in ~/code/scratch/placement-gap/TRACE.md:
-+    // a GET reached the holder exactly at HTL 0 and got NotFound). Reaching
-+    // here means the local arm found no FRESH copy. A stale-but-hosted copy
-+    // (`local_fallback`: no local interest, still in the update mesh) is served
-+    // as well, exactly as the exhaustion arm below serves it: at HTL 0 routing
-+    // is exhausted by definition (this node cannot forward), so the same rule
-+    // applies. Fresh copy first, fallback second, NotFound only with neither.
-+    if htl == 0 {
-+        if let Some((key, state, contract)) = local_fallback {
-+            tracing::info!(
-+                tx = %incoming_tx,
-+                %instance_id,
-+                contract = %key,
-+                htl = 0,
-+                "GET relay: HTL exhausted — serving local fallback"
-+            );
-+            // Forward upstream first, cache after (#4155), as at R4 and R10.
-+            let hop_count = op_manager.ring.max_hops_to_live;
-+            // EXPERIMENT-ONLY (findability_probe), as at R4: record that a GET
-+            // reached a live local copy. NOT for ship.
-+            #[cfg(any(test, feature = "testing"))]
-+            {
-+                let visited = new_visited.clone();
-+                crate::operations::findability_probe::record_terminus(
-+                    &op_manager.ring,
-+                    crate::operations::findability_probe::ProbeOpKind::Get,
-+                    &incoming_tx,
-+                    crate::ring::Location::from(&instance_id),
-+                    htl,
-+                    hop_count,
-+                    crate::operations::findability_probe::ProbeStopReason::Found,
-+                    move |addr| visited.probably_visited(addr),
-+                );
-+            }
-+            let send_result = relay_send_found(
-+                op_manager,
-+                conn_manager,
-+                incoming_tx,
-+                instance_id,
-+                upstream_addr,
-+                key,
-+            
+-Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN admitting native joiners at a gateway (#5940, A7b; dark behind `GATEWAY_NATIVE_ADMISSION`)
++Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN admitting native joiners at a gateway (#5940, A7b; on since the floor release, `GATEWAY_NATIVE_ADMISSION`)
+ 
+-### WHEN a joiner dials a gateway natively (#5940, phase B; dark behind `GATEWAY_NATIVE_JOIN_PERCENT`)
++### WHEN a joiner dials a gateway natively (#5940, phase B; on since the floor release, `GATEWAY_NATIVE_JOIN_PERCENT`)
+ 
+ - The joiner alone decides, in the handshake driver (`plan_gateway_join`); not in the connect op or event loop.
+ - Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures must never count toward the peer-to-peer demotion.
+ - `setup::join_native` is always the client and never punches; count its ends as `gateway_native_join_*`, never `connect_native_setup_*`.
+ - A gateway hands a completed native join to the node (`QuicUpgrades::hand_off_join`): a full queue or no node closes it (`quic_gateway_admission_handoff_full`), and so does a join that finished after an endpoint rebuild replaced its stack (`stack_gone`). Every stack the listener builds, the first and each rebuilt one, gets the same hand-off. The handed-over connection holds the joiner's charge until the node promotes it under the proven key (`set_peer_identity` calls `JoinerCharge::promote`) and drops it with the connection; never leak it. Do not mark a gateway in the index before it runs a release with this hand-off: an older gateway closes a completed join after the Hello, and a joiner whose setup succeeded has no fallback.
+ - The node binds a native join to its proven key WITHOUT promoting it (`connection_lifecycle::accept_native_join`): the connect op promotes it at ConnectPeer, and a ConnectRequest naming another key closes it. Never pass a native join to `handle_successful_connection` with `Some(peer)` (on a gateway that promotes it into the ring before CONNECT accepts it). A proven native join skips the UDP survivor rule (a newer native join for the same key replaces the older; one beside a UDP entry is held, `hold_native`), and one that sends no request within `NATIVE_JOIN_REQUEST_WITHIN` (5 s, a one-shot timer: the zombie sweep's 30 s tick is too coarse) is closed.
+ 
+-Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN a joiner dials a gateway natively (#5940, phase B; dark behind `GATEWAY_NATIVE_JOIN_PERCENT`)
++Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN a joiner dials a gateway natively (#5940, phase B; on since the floor release, `GATEWAY_NATIVE_JOIN_PERCENT`)
+ 
+ ## Backoff, Jitter, and Recovery Rules
+ 
+@@ -397,7 +397,7 @@ update this section.
+ - Fill the ingress queue with `try_reserve`, never a waiting send, so a slow endpoint cannot stall the listener; keep `QUIC_INGRESS_QUEUE_BYTES` in `declared_cache_ceiling`.
+ - Queue only allow-set sources (`allow_quic_source`) so probers get no QUIC reply; per-source cap and `QUIC_INGRESS_QUIET_RESERVE` keep one source from starving others; native joiners use `QUIC_INGRESS_JOINER_DATAGRAMS`, never the reserve.
+ - `QuicSourcePermit` keeps an address allowed; set capped at `QUIC_ALLOWED_SOURCES_MAX`; `allow_existing_quic_source` only for an address allowed now, so `accept` cannot resurrect a dropped one. The endpoint holds one permit per connection until quinn reports it closed (#5922).
+-- Gateway native admission (`quic/admission.rs`, #5940 A7b) is DARK: call `enable_gateway_admission` ONLY inside `admission::enabled_at` (`the_node_enables_admission_only_behind_the_switch`); off, behaviour is unchanged.
++- Gateway native admission (`quic/admission.rs`, #5940 A7b) is ON since the floor release (`GATEWAY_NATIVE_ADMISSION` true, no runtime kill switch): call `enable_gateway_admission` ONLY inside `admission::enabled_at`
 ```
 
-**File**: `crates/core/tests/simulation_integration.rs` (modified, +198/-0)
+**File**: `crates/core/src/node.rs` (modified, +4/-3)
 ```diff
-@@ -26008,3 +26008,201 @@ fn simulation_data_dirs_are_private_to_this_process() {
-         "the gateway's data dir is not under this process's root {own_root}"
-     );
- }
+@@ -542,7 +542,7 @@ pub struct NodeConfig {
+     pub(crate) quic_native_floor_override: Option<(u8, u8, u16)>,
+     /// Simulation-only: QUIC-native connects on, at this release percent, in
+     /// place of `NATIVE_DIAL_READY` and `QUIC_NATIVE_PERCENT`, in production
+-    /// they are true and 25 (A+ step 1; `SimNetwork::with_native_connect`). Read
++    /// they are true and 100 (the floor release; `SimNetwork::with_native_connect`). Read
+     /// into the node's `NativeConnectState`. `None` in production.
+     /// `#[serde(skip)]`.
+     #[serde(skip)]
+@@ -562,8 +562,9 @@ pub struct NodeConfig {
+     /// Simulation-only: native gateway joins on, at this percent, in place of
+     /// `NATIVE_DIAL_READY` and `GATEWAY_NATIVE_JOIN_PERCENT`. In production
+     /// `NATIVE_DIAL_READY` is true since A+ step 1, and only
+-    /// `GATEWAY_NATIVE_JOIN_PERCENT` (0) keeps gateway-native off until
+-    /// phase B (`SimNetwork::with_native_gateway_join`).
++    /// `GATEWAY_NATIVE_JOIN_PERCENT` (100 since the floor release) sets the
++    /// share of joins to a gateway marked native that try native first
++    /// (`SimNetwork::with_native_gateway_join`).
+     /// Read into the node's `NativeConnectState`. `None` in production.
+     /// `#[serde(skip)]`.
+     #[serde(skip)]
+```
+
+**File**: `crates/core/src/node/testing_impl.rs` (modified, +58/-21)
+```diff
+@@ -2365,7 +2365,7 @@ impl SimNetwork {
+ 
+     /// Turns QUIC-native connects on for every node, at `percent` (the share
+     /// of joins an acceptor decides native), in place of this release's
+-    /// `NATIVE_DIAL_READY` and `QUIC_NATIVE_PERCENT`, which are on (25) in
++    /// `NATIVE_DIAL_READY` and `QUIC_NATIVE_PERCENT`, which are on (100) in
+     /// production. Pair it with [`Self::with_quic_native_floor`], since without the native wire
+     /// variants no decision reaches a joiner, and with
+     /// [`Self::with_transport_quic`], since a node without a QUIC endpoint
+@@ -2380,7 +2380,7 @@ impl SimNetwork {
+ 
+     /// Turns on admission of native joins (`transport::quic::admission`) at
+     /// the gateway `label`'s QUIC listener, in place of this release's
+-    /// `GATEWAY_NATIVE_ADMISSION`, which is off. A joiner reaches it with
++    /// `GATEWAY_NATIVE_ADMISSION`, which is on in production. A joiner reaches it with
+     /// [`Self::with_native_gateway_join`] when the gateway is marked native.
+     /// Call before the simulation starts.
+     #[cfg(any(test, feature = "testing"))]
+@@ -2394,6 +2394,22 @@ impl SimNetwork {
+         self
+     }
+ 
++    /// Turns admission of native joins OFF at the gateway `label`'s QUIC
++    /// listener, standing in for a gateway on a release before admission was
++    /// switched on (it is on in production). A joiner that finds it marked
++    /// native times out and falls back to the UDP join. Call before the
++    /// simulation starts.
++    #[cfg(any(test, feature = "testing"))]
++    pub fn with_gateway_native_admission_off(&mut self, label: &NodeLabel) -> &mut Self {
++        assert!(label.is_gateway(), "only a gateway admits native joins");
++        let addr = *self
++            .node_addresses
++            .get(label)
++            .expect("the gateway must have an address in this network");
++        crate::transport::in_memory_socket::force_gateway_native_admission_off(&self.name, addr);
++        self
++    }
 +
-+/// A GET that reaches the node holding the contract with no hops left (HTL 0)
-+/// must be answered Found, not NotFound. HTL only bounds forwarding; the relay
-+/// GET driver used to test `htl == 0` before it looked at its own store, so a
-+/// holder reached at exactly HTL 0 answered NotFound.
-+///
-+/// One copy is seeded at the node closest to the key with scatter off (so it
-+/// stays the only copy), and every other node GETs it. `ring_max_htl` is swept
-+/// low so some request is spent exactly when it arrives at the holder. The GET
-+/// terminus probe records `HtlZero` for an HTL-exhausted NotFound and `Found`
-+/// for a local serve, so an `HtlZero` terminus AT the holder is the bug.
-+///
-+/// The probe record is written before the Found frame is sent, so it cannot
-+/// show that the requester received the answer. The client-visible check does:
-+/// a requester that was answered Found stores the state, and a GET attempt
-+/// logs `GetSuccess` at the requester. With `ring_max_htl = 1` the only way a
-+/// request reaches the holder is at HTL 0, so dropping the send leaves no
-+/// requester with state and no successful attempt.
-+///
-+/// Two seedings are run: `SeedHostedContract` (the holder has no local interest,
-+/// so HTL 0 serves it through the stale-but-hosted fallback) and
-+/// `SeedDemandlessCopy` (the holder has local interest, which is what every
-+/// hosted copy registers in production, so HTL 0 serves it through the fresh
-+/// path).
-+#[test_log::test]
-+fn test_get_reaching_holder_at_htl_zero_is_answered_found() {
-+    let mut served_at_htl_zero_total = 0usize;
-+    for demandless in [false, true] {
-+        for ring_max_htl in 1..=4usize {
-+            let run = run_get_at_htl_zero_sim(ring_max_htl, demandless);
-+            eprintln!(
-+                "demandless={demandless} ring_max_htl={ring_max_htl}: holder \
-+                 NotFound-at-HTL0={} Found-at-HTL0={} requesters_with_state={} \
-+                 successful_attempts={}",
-+                run.not_found_at_htl_zero,
-+                run.found_at_htl_zero,
-+                run.requesters_with_state,
-+                run.successful_attempts,
-+            );
-+            assert_eq!(
-+                run.not_found_at_htl_zero, 0,
-+                "demandless={demandless} ring_max_htl={ring_max_htl}: a GET reached the \
-+                 holder with HTL 0 and was answered NotFound although the holder hosts \
-+                 the contract"
-+            );
-+            if run.found_at_htl_zero > 0 {
-+                assert!(
-+                    run.requesters_with_state >= 1 && run.successful_attempts >= 1,
-+                    "demandless={demandless} ring_max_htl={ring_max_htl}: the holder served \
-+                     {} GETs at HTL 0 but no requester received the contract \
-+                     (requesters_with_state={}, successful_attempts={}): the Found frame \
-+                     was not sent",
-+                    run.found_at_htl_zero,
-+                    run.requesters_with_state,
-+                    run.successful_attempts,
-+                );
-+            }
-+            if ring_max_htl == 1 {
-+                // Every request that reaches the holder does so at HTL 0, so a
-+                // holder with a servable copy next to any requester must have
-+                // answered at least one.
-+                assert!(
-+                    run.found_at_htl_zero > 0 && run.requesters_with_state >= 1,
-+                    "demandless={demandless}: with ring_max_htl=1 no GET was served by the \
-+                     holder at HTL 0; the scenario no longer exercises the HTL-0 boundary"
-+                );
-+            }
-+            served_at_htl_zero_total += run.found_at_htl_zero;
+     /// Makes the gateway `label` close every native join it completes, right
+     /// after the Hello, as a release before the hand-off to the node did.
+     /// Pair it with [`Self::with_gateway_native_admission`]. Call before the
+@@ -2411,8 +2427,8 @@ impl SimNetwork {
+ 
+     /// Turns native gateway joins (phase B) on for every node, at `percent`
+     /// (the share of joiner-gateway pairs that dial native first), in place of
+-    /// `NATIVE_DIAL_READY` and `GATEWAY_NATIVE_JOIN_PERCENT`, which are off,
+-    /// and marks every gateway each node knows native, as the published index
++    /// `NATIVE_DIAL_READY` and `GATEWAY_NATIVE_JOIN_PERCENT`, which are on (100)
++    /// in production, and marks every gateway each node knows native, as the published index
+     /// does for a gateway that admits native joins. A joiner with a QUIC
+     /// endpoint (see [`Self::with_transport_quic`]) then tries a native join
+     /// first, and falls back to the UDP join when it fails. Call before the
+@@ -2882,16 +2898,6 @@ impl QuicEndpointProbe {
+             })
+             .collect()
+     }
+-
+-    /// Whether the probe covered at least one node and every node refused
+-    /// it as `not_allowed`, i.e. had a live QUIC endpoint.
+-    pub fn every_node_has_a_live_endpoint(&self) -> bool {
+-        let outcomes = self.outcomes();
+-        !outcomes.is_empty()
+-            && outcomes
+-                .iter()
+-                .all(|(_, labels)| labels.as_slice() == ["not_allowed"])
+-    }
+ }
+ 
+ #[cfg(any(test, feature = "testing"))]
+@@ -9024,28 +9030,59 @@ mod tests {
+ 
+     /// In a running simulation a node with `transport-quic = "shadow"`
+     /// has a QUIC ingress on its socket (a QUIC-class datagram from a
+-    /// stranger is refused as not allowed), and a node left off has none.
++    /// stranger is refused as not allowed, or on a gateway, which admits
++    /// native joins from unknown sources, queued as forwarded), and a node
++    /// left off has none.
+     #[tokio::test(flavor = "current_thread")]
+     async fn transport_quic_builds_the_endpoint_of_a_running_simulated_node() {
++        quic_endpoint_of_a_running_simulated_node(
++            "shadow",
++            "quic-running-endpoint-e5a1",
++            crate::transport::metrics::QuicIngressOutcome::NotAllowed,
++        )
++        .await;
++    }
++
++    /// A `prefer` gateway admits native joins from unknown sources, so it
++    /// queues a stranger's datagram (`Forwarded`); the `shadow` gateway of the
++    /// test above, which keeps application data on UDP, does not.
++    #[tokio::test(flavor = "current_thread")]
++    async fn a_prefer_gateway_queues_a_strangers_datagram_for_admission() {
++        quic_endpoint_of_a_running_simulated_node(
++            "prefer",
++            "quic-running-endpoint-prefer-e5a2",
++            crate::transport::metrics::QuicIngressOutcome::Forwarded,
++        )
++        .await;
++    }
++
++    async fn quic_endpoint_of_a_running_simulated_node(
++        mode: &'static str,
++ 
+```
+
+**File**: `crates/core/src/operations/connect.rs` (modified, +14/-0)
+```diff
+@@ -675,6 +675,9 @@ impl RelayState {
+         let holds = ctx.holds_transport_to(&self.request.joiner);
+         let mut decision = native::decide_native(Some(offer), readiness, bucket, holds);
+         let mut arm = native::acceptor_arm(Some(offer), readiness, bucket, holds);
++        #[cfg(any(test, feature = "testing"))]
++        let arm_cause = native::acceptor_verdict(Some(offer), readiness, bucket, holds)
++            .map_or("no_offer", |(_, cause)| cause.label());
+         // A `Native` decision holds a native setup slot and an allow-set slot
+         // here for up to the server's window. Admit it first; with no room
+         // (or too many pending from the joiner's source) decide `Udp`, so the
+@@ -683,10 +686,16 @@ impl RelayState {
+         // other than the slice, and a control pair at an acceptor with no room
+         // leaves the control arm the same way.
+         let mut admission = None;
++        #[cfg(any(test, feature = "testing"))]
++        let mut setup_refused = false;
+         if decision == native::NativeDecision::Native {
+             match ctx.admit_native_setup(&self.request.joiner) {
+                 Ok(ticket) => admission = Some(ticket),
+                 Err(_) => {
++                    #[cfg(any(test, feature = "testing"))]
++                    {
++                        setup_refused = true;
++                    }
+                     decision = native::NativeDecision::Udp;
+                     arm = None;
+                 }
+@@ -706,6 +715,11 @@ impl RelayState {
+                     own,
+                     native: decision == native::NativeDecision::Native,
+                     in_slice: !holds && bucket < offer.effective_percent(),
++                    cause: if setup_refused {
++                        "setup_refused"
++                    } else {
++                        arm_cause
++                    },
+                 },
+             );
+         }
+```
+
+**File**: `crates/core/src/operations/connect/native.rs` (modified, +91/-23)
+```diff
+@@ -10,8 +10,8 @@
+ //! On `Native` the joiner and the acceptor each dial a native connection
+ //! ([`DialTransport::Native`]), and a failed setup falls back to today's UDP
+ //! dial. In production [`NATIVE_DIAL_READY`] is true and
+-//! [`QUIC_NATIVE_PERCENT`] is 25 (A+ step 1), so a ready pair whose bucket is
+-//! below 25 decides `Native`; a simulation sets both per node
++//! [`QUIC_NATIVE_PERCENT`] is 100 (the floor release), so a ready pair
++//! decides `Native`; a simulation sets both per node
+ //! ([`NativeConnectState`]). A `Native` the joiner cannot honour fails that
+ //! attempt ([`joiner_response_action`]).
+ //!
+@@ -46,17 +46,19 @@ pub(crate) const NATIVE_DIAL_READY: bool = true;
+ /// decides, and it decides on `min(offered, own)`, so a pair goes native only
+ /// if both releases allow it: a reversal takes effect for any pair where either
+ /// the acceptor or the joiner has updated, as nodes update. There is no runtime
+-/// kill switch. 25 is A+ step 1.
+-pub(crate) const QUIC_NATIVE_PERCENT: u8 = 25;
++/// kill switch. 25 was A+ step 1; 100 is the floor release.
++pub(crate) const QUIC_NATIVE_PERCENT: u8 = 100;
+ 
+ /// This release's share, 0 to 100, of (joiner, gateway) pairs whose join
+ /// tries a native connection to the gateway first (#5940, phase B), when the
+ /// gateway is marked native in the gateway index and this node can dial
+ /// native. Any failure falls back at once to today's join. The joiner alone
+ /// decides (there is no connection to the gateway yet to ask it), so the
+-/// joiner's release governs. At 0 no join tries native. `NATIVE_DIAL_READY`
+-/// is true since A+ step 1, so this 0 alone keeps gateway-native off.
+-pub(crate) const GATEWAY_NATIVE_JOIN_PERCENT: u8 = 0;
++/// joiner's release governs. At 0 no join tries native. 100 is the floor
++/// release: every join to a gateway marked native tries native first. There is
++/// no runtime kill switch; a reversal takes effect as joiners update, and the
++/// gateway index mark is what a gateway operator controls.
++pub(crate) const GATEWAY_NATIVE_JOIN_PERCENT: u8 = 100;
+ 
+ /// After a native join with a gateway fails, joins to that gateway go
+ /// straight to today's join for this long (provisional). The gateway index
+@@ -117,8 +119,9 @@ pub(crate) const ACCEPTOR_DEMOTION_FAILURES: usize = 3;
+ /// strikes spread thinly over days (a node that rarely uses native) do not
+ /// add up to a demotion. Equal to [`DEMOTION_COOLDOWN`]: a node whose native
+ /// path is broken collects its strikes at its rate of UDP-rescued native
+-/// setups, which at 25% is several an hour for a node that accepts or joins
+-/// at all, so three fall well inside 6 h; and a fault that does not recur
++/// setups, which at 25% was several an hour for a node that accepts or joins
++/// at all (and is about four times that at 100%), so three fall well inside
++/// 6 h; and a fault that does not recur
+ /// within one cooldown would not have kept native off for long either.
+ pub(crate) const STRIKE_WINDOW: Duration = DEMOTION_COOLDOWN;
+ 
+@@ -456,14 +459,69 @@ pub(crate) fn acceptor_arm(
+     bucket: u8,
+     holds_transport: bool,
+ ) -> Option<ConnectArm> {
++    acceptor_verdict(offer, own, bucket, holds_transport).and_then(|(arm, _)| arm)
++}
++
++/// Why an acceptor's arm is what it is, produced by the same branch that picks
++/// the arm so the label cannot disagree with it. Read only by the simulation
++/// trace (`decision_causes`).
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) enum ArmCause {
++    /// In the slice, ready: decides `Native`.
++    Native,
++    /// This node already held a transport to the joiner.
++    Held,
++    /// Either demotion streak holds native off.
++    Demoted,
++    /// In the slice but the build or endpoint is not ready.
++    NotReady,
++    /// The joiner offered percent 0 (it is not ready, demoted or below the
++    /// floor), so no bucket is in the slice.
++    OfferedZero,
++    /// The bucket is at or above the lower of the two percents.
++    OutsideSlice,
++}
++
++impl ArmCause {
++    /// The label the simulation trace counts this cause under.
++    #[cfg(any(test, feature = "testing"))]
++    pub(crate) fn label(self) -> &'static str {
++        match self {
++            Self::Native => "native",
++            Self::Held => "held",
++            Self::Demoted => "demoted",
++            Self::NotReady => "not_ready",
++            Self::OfferedZero => "offered_zero",
++            Self::OutsideSlice => "outside_slice",
 +        }
 +    }
-+    assert!(served_at_htl_zero_total > 0);
 +}
 +
-+struct GetAtHtlZeroRun {
-+    not_found_at_htl_zero: usize,
-+    found_at_htl_zero: usize,
-+    requesters_with_state: usize,
-+    successful_attempts: usize,
++/// [`acceptor_arm`] with the cause of the answer: `None` when the request
++/// carried no offer.
++pub(crate) fn acceptor_verdict(
++    offer: Option<NativeOffer>,
++    own: NativeReadiness,
++    bucket: u8,
++    holds_transport: bool,
++) -> Option<(Option<ConnectArm>, ArmCause)> {
+     let offered = offer?.effective_percent();
+-    if holds_transport || own.demoted {
+-        return None;
++    if holds_transport {
++        return Some((None, ArmCause::Held));
++    }
++    if own.demoted {
++        return 
+```
+
+**File**: `crates/core/src/operations/connect/wire.rs` (modified, +12/-0)
+```diff
+@@ -291,6 +291,7 @@ pub mod sim_trace {
+         /// Decisions on an offered request, as (acceptor, `seq` when it
+         /// decided, native, in the slice).
+         decisions: parking_lot::Mutex<Vec<(SocketAddr, u64, bool, bool)>>,
++        decision_causes: parking_lot::Mutex<std::collections::BTreeMap<&'static str, u64>>,
+         /// Acceptor-role demotions, as (node, `seq`).
+         acceptor_demotions: parking_lot::Mutex<Vec<(SocketAddr, u64)>>,
+         /// The longest acceptor failure streak each node reached.
+@@ -406,6 +407,10 @@ pub mod sim_trace {
+             own: SocketAddr,
+             native: bool,
+             in_slice: bool,
++            /// Why the decision was what it was (`native`, or the cause of a
++            /// UDP decision: `held`, `demoted`, `not_ready`, `setup_refused`,
++            /// `offered_zero`, `outside_slice`), as `native::ArmCause` labels them.
++            cause: &'static str,
+         },
+         /// The node `own` stopped deciding `Native` as acceptor after native
+         /// failures with distinct joiners.
+@@ -557,7 +562,9 @@ pub mod sim_trace {
+                 own,
+                 native,
+                 in_slice,
++                cause,
+             } => {
++                *c.decision_causes.lock().entry(cause).or_insert(0) += 1;
+                 let seq = c.seq.fetch_add(1, Ordering::Relaxed);
+                 c.decisions.lock().push((own, seq, native, in_slice));
+                 return;
+@@ -818,6 +825,11 @@ pub mod sim_trace {
+         pub fn decisions(&self) -> Vec<(SocketAddr, u64, bool, bool)> {
+             self.0.decisions.lock().clone()
+         }
++        /// Acceptors' decisions counted by cause: `native`, or why a decision
++        /// was UDP (see [`NativeWireEvent::Decided`]). The labels come from `native::acceptor_verdict`.
++        pub fn decision_causes(&self) -> std::collections::BTreeMap<&'static str, u64> {
++            self.0.decision_causes.lock().clone()
++        }
+         /// Acceptor-role demotions, as (node, order), on the same order as
+         /// [`Self::decisions`].
+         pub fn acceptor_demotions(&self) -> Vec<(SocketAddr, u64)> {
+```
+
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +21/-7)
+```diff
+@@ -484,15 +484,23 @@ pub(super) async fn bind_udp_listener<S: Socket>(
+         crate::node::exit_for_quic_bind_failure().await;
+     }
+ 
++    // Native joins carry application data at once, which `shadow` promises to
++    // keep on UDP, so only a node whose configured mode is `prefer` admits
++    // them (a shadow or off node is never native-ready, gateway joins included).
++    let admits_native = config
++        .quic_policy
++        .as_ref()
++        .is_some_and(|policy| policy.mode() == super::quic::QuicMode::Prefer);
+     // Gateway admission of native joins from sources nobody named (#5940
+-    // A7b), on the endpoint's clock. Dark: `admission::enabled_at` is false on
+-    // every node until phase B (a test can turn it on for one listener), and
+-    // with it off the only additions are an idle queue and its poll, one
+-    // atomic load per datagram from a source not on the allow-set, and
+-    // counters that stay 0.
++    // A7b), on the endpoint's clock. On for every gateway since the floor
++    // release (`admission::enabled_at`; a test can turn it off or on for one
++    // listener). On a non-gateway, or with admission off, the only additions
++    // are an idle queue and its poll, one atomic load per datagram from a
++    // source not on the allow-set, and counters that stay 0.
+     admit_native_joins_if_on(
+         quic_endpoint.as_ref(),
+         is_gateway,
++        admits_native,
+         bind_addr,
+         quic_virtual_time.clone(),
+     );
+@@ -507,6 +515,7 @@ pub(super) async fn bind_udp_listener<S: Socket>(
+                 bind_addr,
+                 keypair.clone(),
+                 is_gateway,
++                admits_native,
+                 settings,
+                 quic_virtual_time.clone(),
+             )
+@@ -548,14 +557,17 @@ pub(super) async fn bind_udp_listener<S: Socket>(
+ }
+ 
+ /// Admit native joins from sources nobody named on `endpoint`, on the
+-/// endpoint's clock, when this gateway does (`quic::admission`).
++/// endpoint's clock, when this gateway does (`quic::admission`) and its mode is
++/// `prefer` (`prefer`): native joins carry application data, which `shadow`
++/// keeps on UDP.
+ fn admit_native_joins_if_on(
+     endpoint: Option<&super::quic::QuicEndpoint>,
+     is_gateway: bool,
++    prefer: bool,
+     bind_addr: SocketAddr,
+     quic_virtual_time: Option<VirtualTime>,
+ ) {
+-    if let Some(endpoint) = endpoint {
++    if let Some(endpoint) = endpoint.filter(|_| prefer) {
+         if super::quic::admission::enabled_at(is_gateway, bind_addr) {
+             let enabled = match quic_virtual_time {
+                 Some(time) => endpoint.enable_gateway_admission(time),
+@@ -577,6 +589,7 @@ fn endpoint_rebuilder<S: Socket>(
+     bind_addr: SocketAddr,
+     keypair: TransportKeypair,
+     is_gateway: bool,
++    prefer: bool,
+     settings: super::quic::QuicSettings,
+     quic_virtual_time: Option<VirtualTime>,
+ ) -> super::quic::rebuild::EndpointFactory {
+@@ -604,6 +617,7 @@ fn endpoint_rebuilder<S: Socket>(
+         admit_native_joins_if_on(
+             Some(&endpoint),
+             is_gateway,
++            prefer,
+             bind_addr,
+             quic_virtual_time.clone(),
+         );
+```
+
+**File**: `crates/core/src/transport/in_memory_socket.rs` (modified, +43/-0)
+```diff
+@@ -275,6 +275,28 @@ pub(crate) fn gateway_native_admission_forced(addr: SocketAddr) -> bool {
+         .is_ok_and(|network| GATEWAY_NATIVE_ADMISSION.contains(&(network, addr)))
+ }
+ 
++/// Gateways whose QUIC listener does NOT admit native joins in a simulation
++/// (`SimNetwork::with_gateway_native_admission_off`), as a gateway on a
++/// release before admission was switched on. Keyed like
++/// [`GATEWAY_NATIVE_ADMISSION`].
++#[cfg(any(test, feature = "testing"))]
++static GATEWAY_NATIVE_ADMISSION_OFF: LazyLock<dashmap::DashSet<(String, SocketAddr)>> =
++    LazyLock::new(dashmap::DashSet::new);
++
++/// Turns native-join admission off for the gateway at `addr` in `network`.
++#[cfg(any(test, feature = "testing"))]
++pub(crate) fn force_gateway_native_admission_off(network: &str, addr: SocketAddr) {
++    GATEWAY_NATIVE_ADMISSION_OFF.insert((network.to_string(), addr));
 +}
 +
-+/// One sweep point of `test_get_reaching_holder_at_htl_zero_is_answered_found`.
-+fn run_get_at_htl_zero_sim(ring_max_htl: usize, demandless: bool) -> GetAtHtlZeroRun {
-+    use freenet::dev_tool::{
-+        Location, NodeLabel, ProbeOpKind, ProbeStopReason, ScheduledOperation, SimNetwork,
-+        SimOperation,
-+    };
++/// Whether a simulation turned native-join admission off for the listener
++/// bound at `addr` (resolved as [`gateway_native_admission_forced`] does).
++#[cfg(any(test, feature = "testing"))]
++pub(crate) fn gateway_native_admission_forced_off(addr: SocketAddr) -> bool {
++    resolve_address_network(&addr)
++        .is_ok_and(|network| GATEWAY_NATIVE_ADMISSION_OFF.contains(&(network, addr)))
++}
 +
-+    const NUM_NODES: usize = 12;
-+    let seed = 0x4854_4C30_0000_u64 + ring_max_htl as u64 + if demandless { 0x100 } else { 0 };
-+    setup_deterministic_state(seed);
-+    freenet::dev_tool::set_scatter_disabled(true);
-+    freenet::dev_tool::clear_op_traces();
-+    let _guard = NnLatticeTestGuard;
+ /// Gateways that close every completed native join after its Hello in a
+ /// simulation, as a release before the hand-off to the node did
+ /// (`SimNetwork::with_gateway_closing_native_joins`), keyed by `(network,
+@@ -471,6 +493,7 @@ pub(crate) fn clear_quic_endpoint_clocks(network: &str) {
+     QUIC_ACCEPT_LOOPS.retain(|(owner, _)| owner != network);
+     QUIC_ENDPOINT_CLOCKS.retain(|(owner, _), _| owner != network);
+     GATEWAY_NATIVE_ADMISSION.retain(|(owner, _)| owner != network);
++    GATEWAY_NATIVE_ADMISSION_OFF.retain(|(owner, _)| owner != network);
+     GATEWAY_CLOSES_NATIVE_JOINS.retain(|(owner, _)| owner != network);
+     #[cfg(test)]
+     EGRESS_CAP_PROBES.retain(|(owner, _), _| owner != network);
+@@ -1311,6 +1334,26 @@ mod tests {
+     use super::*;
+     use crate::simulation::VirtualTime;
+ 
++    /// A simulation's forced-admission marks (on and off) are forgotten when
++    /// its network is torn down, so a later simulation of the same name and
++    /// address does not inherit them.
++    #[test]
++    fn admission_marks_do_not_outlive_their_network() {
++        let network = "admission-marks-teardown";
++        let addr: SocketAddr = "127.0.0.1:10201".parse().unwrap();
++        force_gateway_native_admission(network, addr);
++        force_gateway_native_admission_off(network, addr);
++        let key = (network.to_string(), addr);
++        assert!(GATEWAY_NATIVE_ADMISSION.contains(&key), "premise");
++        assert!(GATEWAY_NATIVE_ADMISSION_OFF.contains(&key), "premise");
++        clear_quic_endpoint_clocks(network);
++        assert!(!GATEWAY_NATIVE_ADMISSION.contains(&key));
++        assert!(
++            !GATEWAY_NATIVE_ADMISSION_OFF.contains(&key),
++            "a recreated simulation of the same name inherited the off mark"
++        );
++    }
 +
-+    let network = format!("get-htl0-holder-{ring_max_htl}-{demandless}");
-+    let contract = SimOperation::create_test_contract(0xA5);
-+    let contract_id = *contract.key().id();
-+    let contract_key = contract.key();
-+    l
+     /// Delivery callbacks are scoped per network (#5673): installing one
+     /// network's callback does not replace another's, and removing one (as
+     /// `SimNetwork::Drop` does) leaves every other network's in force.
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #6403** (2026-11-26): fix(get): a relay holding the contract serves it at HTL 0 (@sanity)
 - **PR #6401** (2026-11-26): test: default simulations to QUIC data (prefer, 100%) (@sanity)
 - **PR #6400** (2026-11-26): ci: bump freenet-git mirror-repo.yml pin 61d5fea -> 7a85b99 (@sanity)
+- **PR #6398** (2026-11-26): feat(transport): floor release, native connect at 100 percent with gateway admission on (@sanity)
 - **PR #6397** (2026-11-26): chore: add GET hop diagnostics to existing telemetry events (@sanity)
 - **PR #6396** (2026-11-26): feat(transport): one build constant makes every QUIC path act as udp_fallback = false (dark) (@sanity)
-- **PR #6395** (2026-11-25): fix: keep the node running when a helper process is OOM-killed (@sanity)
 
 ---
 
@@ -2032,81 +2317,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. get): a relay holding the contract serves it at HTL 0
+## X. transport): floor release, native connect at 100 percent with gateway admission 
 
 **RULE**:
-When implementing operations in `crates/core/src/operations/get/op_ctx_task.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83f2cb7e`: get): a relay holding the contract serves it at HTL 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66b78886`: transport): floor release, native connect at 100 percent with gateway admission on. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/operations/get/op_ctx_task.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // ── Short-circuit 1: Local cache hit with interest ───────────────────
-    // ── Short-circuit 2: HTL = 0, nothing fresh to serve ─────────────────
-    // Runs AFTER the local-hit arm above on purpose: a peer that holds a
-    // fresh copy answers Found whatever the HTL. HTL only bounds FORWARDING,
-    // so HTL = 0 never forwards but must not hide a copy this node serves at
-    // any other HTL (the sim trace in ~/code/scratch/placement-gap/TRACE.md:
-    // a GET reached the holder exactly at HTL 0 and got NotFound). Reaching
-    // here means the local arm found no FRESH copy. A stale-but-hosted copy
-    // (`local_fallback`: no local interest, still in the update mesh) is served
-    // as well, exactly as the exhaustion arm below serves it: at HTL 0 routing
-    // is exhausted by definition (this node cannot forward), so the same rule
-    // applies. Fresh copy first, fallback second, NotFound only with neither.
-    if htl == 0 {
-        if let Some((key, state, contract)) = local_fallback {
-            tracing::info!(
-                tx = %incoming_tx,
-                %instance_id,
-                contract = %key,
-                htl = 0,
-                "GET relay: HTL e
+### WHEN admitting native joiners at a gateway (#5940, A7b; on since the floor release, `GATEWAY_NATIVE_ADMISSION`)
+Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN admitting native joiners at a gateway (#5940, A7b; on since the floor release, `GATEWAY_NATIVE_ADMISSION`)
+### WHEN a joiner dials a gateway natively (#5940, phase B; on since the floor release, `GATEWAY_NATIVE_JOIN_PERCENT`)
+Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN a joiner dials a gateway natively (#5940, phase B; on since the floor release, `GATEWAY_NATIVE_JOIN_PERCENT`)
+- Gateway native admission (`quic/admission.rs`, #5940 A7b) is ON since the floor release (`GATEWAY_NATIVE_ADMISSION` true, no runtime kill switch): call `enable_gateway_admission` ONLY inside `admission::enabled_at`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    // ── Short-circuit 1: HTL = 0 ────────────────────────────────────────
-    if htl == 0 {
-        tracing::warn!(
-            tx = %incoming_tx,
-            %instance_id,
-            %upstream_addr,
-            htl = 0,
-            phase = "not_found",
-            "GET relay: HTL exhausted — sending NotFound upstream"
-        );
-        if let Some(event) = crate::tracing::NetEventLog::get_not_found(
-            &incoming_tx,
-            &op_manager.ring,
-            instance_id,
-            Some(op_manager.ring.max_hops_to_live),
-            None,
-        ) {
-            op_manager
-                .ring
-                .register_events(either::Either::Left(event))
-                .await;
-        }
-        // HTL=0 path: the original Request reached us with htl already at 0,
-        // meaning the request traversed the full max_htl forward hops to get
-        // here. hop_count = max_htl - 0 = max_htl.
-        let hop_count = op_manager.ring.max_hops_to_live;
-        // EXPERIMENT-ONLY (findability_probe): record the HTL-exhaustion GET
-        // terminus. NOT for ship.
-        #[cfg(any(test, feature = "testing"))]
-        {
-            let visited = visited.clone();
-         
+### WHEN admitting native joiners at a gateway (#5940, A7b; dark behind `GATEWAY_NATIVE_ADMISSION`)
+Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN admitting native joiners at a gateway (#5940, A7b; dark behind `GATEWAY_NATIVE_ADMISSION`)
+### WHEN a joiner dials a gateway natively (#5940, phase B; dark behind `GATEWAY_NATIVE_JOIN_PERCENT`)
+Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN a joiner dials a gateway natively (#5940, phase B; dark behind `GATEWAY_NATIVE_JOIN_PERCENT`)
+- Gateway native admission (`quic/admission.rs`, #5940 A7b) is DARK: call `enable_gateway_admission` ONLY inside `admission::enabled_at` (`the_node_enables_admission_only_behind_the_switch`); off, behaviour is unchanged.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83f2cb7e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66b78886` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source**: github ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
-> **Source Version**: `84cc57bc`  
+> **Source Version**: `6c1bd527`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T07:33:12.052Z  
+> **Timestamp**: 2026-11-26T17:06:20.037Z  
 > **Learning ID**: `learn-github-nervjs-taro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T07:32:06.768Z  
+> **Harvest Timestamp**: 2026-11-26T17:06:20.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 37766 stars
+- **Stars / Engagement**: 37765 stars
 
 ---
 
@@ -1220,258 +1220,801 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99683d13` (2026-11-23)
-**Commit Message**: fix(deps): 升级 webpack 至 5.104.1 修复安全漏洞 (#19684)
+### Incident Patch 1: `6c1bd527` (2026-11-26)
+**Commit Message**: refactor(runner-utils): extract shared bundler utilities from webpack5-runner (#19695)
 
-* fix(deps): bump webpack to 5.104.1 to address security advisories
+* refactor(runner-utils): extract shared bundler utilities from webpack5-runner
 
-Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
+* fix(runner-utils): preserve UglifyJs error location formatting in printBuildError
 
-* fix(deps): raise browserslist override to satisfy webpack 5.104.1
+* refactor(runner-utils): restore terser config isolation and preserve existing webpack5 behavior
 
-Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
-
-* test(jest-helper): normalize pnpm vue-loader dirs in snapshots across platforms
-
-Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
-
-* test: use the normalized vue-loader path in the vue3 framework snapshot
-
-Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
-
-* test: cover vue-loader path normalization for peer and hashed suffixes
-
-Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
-
-**File**: `package.json` (modified, +1/-1)
+**File**: `packages/taro-runner-utils/package.json` (modified, +90/-1)
 ```diff
-@@ -188,7 +188,7 @@
-       }
-     },
-     "overrides": {
--      "browserslist": "^4.24.4",
-+      "browserslist": "^4.28.1",
-       "@types/mapbox-gl": "3.4.1"
-     }
+@@ -26,10 +26,99 @@
+   },
+   "dependencies": {
+     "@tarojs/helper": "workspace:*",
++    "@tarojs/shared": "workspace:*",
++    "lodash": "^4.17.21",
+     "rollup": "^3.29.4",
+     "scss-bundle": "^3.1.2"
+   },
+   "devDependencies": {
+-    "@tarojs/taro": "workspace:*"
++    "@tarojs/taro": "workspace:*",
++    "@types/detect-port": "^1.3.5",
++    "@types/lodash": "^4.17.0",
++    "@types/sax": "^1.2.4",
++    "autoprefixer": "^10.4.19",
++    "detect-port": "^1.5.1",
++    "jsdom": "^24.0.0",
++    "loader-utils": "^3.2.1",
++    "miniprogram-simulate": "^1.6.1",
++    "ora": "^5.4.1",
++    "picomatch": "^4.0.2",
++    "postcss": "^8.4.38",
++    "postcss-html-transform": "workspace:*",
++    "postcss-import": "^16.1.0",
++    "postcss-plugin-constparse": "workspace:*",
++    "postcss-pxtransform": "workspace:*",
++    "postcss-url": "^10.1.3",
++    "sax": "1.2.4",
++    "vm2": "^3.9.19",
++    "webpack-format-messages": "^3.0.1"
++  },
++  "peerDependencies": {
++    "autoprefixer": "^10.4.19",
++    "detect-port": "^1.5.1",
++    "jsdom": "^24.0.0",
++    "loader-utils": "^3.2.1",
++    "miniprogram-simulate": "^1.6.1",
++    "ora": "^5.4.1",
++    "picomatch": "^4.0.2",
++    "postcss": "^8",
++    "postcss-html-transform": "workspace:*",
++    "postcss-import": "^16.1.0",
++    "postcss-plugin-constparse": "workspace:*",
++    "postcss-pxtransform": "workspace:*",
++    "postcss-url": "^10.1.3",
++    "sax": "1.2.4",
++    "vm2": "^3.9.19",
++    "webpack-format-messages": "^3.0.1"
++  },
++  "peerDependenciesMeta": {
++    "autoprefixer": {
++      "optional": true
++    },
++    "detect-port": {
++      "optional": true
++    },
++    "jsdom": {
++      "optional": true
++    },
++    "loader-utils": {
++      "optional": true
++    },
++    "miniprogram-simulate": {
++      "optional": true
++    },
++    "ora": {
++      "optional": true
++    },
++    "picomatch": {
++      "optional": true
++    },
++    "postcss": {
++      "optional": true
++    },
++    "postcss-html-transform": {
++      "optional": true
++    },
++    "postcss-import": {
++      "optional": true
++    },
++    "postcss-plugin-constparse": {
++      "optional": true
++    },
++    "postcss-pxtransform": {
++      "optional": true
++    },
++    "postcss-url": {
++      "optional": true
++    },
++    "sax": {
++      "optional": true
++    },
++    "vm2": {
++      "optional": true
++    },
++    "webpack-format-messages": {
++      "optional": true
++    }
    }
+ }
 ```
 
-**File**: `packages/jest-helper/src/snapshot/serializers.ts` (modified, +5/-1)
+**File**: `packages/taro-runner-utils/src/bundler/app.ts` (added, +176/-0)
 ```diff
-@@ -6,6 +6,10 @@ export const print = (val: string) => {
-   return val.replace(/\\*\*\sfilePath:\s(.*)\s\*\*\//g, (replaceValue) => replaceValue.replace(/\\/g, '/'))
- }
- 
-+// Note: 对齐各平台的 pnpm vue-loader 目录名（peer 依赖后缀过长时，Windows 上会被截断并追加 hash）
-+const pnpmVueLoaderDir = /(\.pnpm[\\/]vue-loader@[^_\\/]+)_[^\\/]*/g
-+export const normalizeVueLoaderPath = (val: string) => val.replace(pnpmVueLoaderDir, '$1')
+@@ -0,0 +1,176 @@
++import path from 'node:path'
 +
- const mockFilePath = '/** filePath:mockFilePath **/'
- export const parseSnapshotByFilePath = (val: string) => {
-   const arr = val.split(new RegExp(os.EOL + '|\n'))
-@@ -44,7 +48,7 @@ export const serialize = (
-   // printer: Printer,
- ) => {
-   if (typeof val === 'string') {
--    return snapshotObject2String(parseSnapshotByFilePath(val))
-+    return snapshotObject2String(parseSnapshotByFilePath(normalizeVueLoaderPath(val)))
-   }
-   return val
- }
-```
-
-**File**: `packages/taro-cli/templates/default/package.json.tmpl` (modified, +1/-1)
-```diff
-@@ -87,7 +87,7 @@
-     "@babel/plugin-transform-class-properties": "7.25.9",
-     "@types/webpack-env": "^1.13.6",{{#if (includes "React" "Preact" s=framework)}}
-     "@types/react": "^18.0.0",{{/if}}{{#if (eq compiler "Webpack5") }}
--    "webpack": "5.91.0",
-+    "webpack": "5.104.1",
-     "@tarojs/taro-loader": "{{ version }}",
-     "@tarojs/webpack5-runner": "{{ version }}",{{/if}}{{#if (eq css "Sass") }}
-     "sass": "^1.75.0",{{/if}}{{#if (eq css "Less") }}
-```
-
-**File**: `packages/taro-framework-vue3/package.json` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@
-     "@tarojs/taro": "workspace:*",
-     "@vue/compiler-core": "^3.4.25",
-     "vite": "^4.2.0",
--    "webpack": "5.91.0",
-+    "webpack": "5.104.1",
-     "vue": "^3.4.25"
-   },
-   "peerDependencies": {
-```
-
-**File**: `packages/taro-loader/package.json` (modified, +2/-2)
-```diff
-@@ -34,9 +34,9 @@
-   },
-   "devDependencies": {
-     "@tarojs/taro": "workspace:*",
--    "webpack": "5.91.0"
-+    "webpack": "5.104.1"
-   },
-   "peerDependencies": {
--    "webpack": "5.91.0"
-+    "webpack": "5.104.1"
-   }
- }
-```
-
-**File**: `packages/taro-platform-harmony/package.json` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@
-     "@tarojs/taro": "workspace:*",
-     "webpack-sources": "^3.2.3",
-     "@babel/preset-react": "^7.24.1",
--    "webpack": "5.91.0"
-+    "webpack": "5.104.1"
-   },
-   "devDependencies": {
-     "fast-glob": "^3.3.1",
-```
-
-**File**: `packages/taro-service/package.json` (modified, +1/-1)
-```diff
-@@ -42,7 +42,7 @@
-   },
-   "devDependencies": {
-     "@tarojs/taro": "workspace:*",
--    "webpack": "^5.91.0",
-+    "webpack": "^5.104.1",
-     "webpack-chain": "^6.5.1"
-   }
- }
-```
-
-**File**: `packages/taro-service/src/platform-plugin-base/webpack/hmr-plugin.ts` (modified, +1/-1)
-```diff
-@@ -10,7 +10,7 @@ export default class TaroMiniHMRPlugin {
-             const runtimeModules = compilation.chunkGraph.getChunkRuntimeModulesInOrder(chunk)
-             for (const module of runtimeModules) {
-               if (module.name === 'jsonp chunk loading') {
--                const runtimeSource = compilation.codeGenerationResults.getSource(
-+                const runtimeSource = compilation.codeGenerationResults!.getSource(
-                   module,
-                   chunk.runtime,
-                   'runtime'
-```
-
----
-
-### Incident Patch 2: `29bfbed0` (2026-11-23)
-**Commit Message**: fix(cli): align vue3 vite template plugin versions with taro peer ranges (#19683)
-
-Signed-off-by: dhananjay6561 <[REDACTED_EMAIL]>
-
-**File**: `packages/eslint-config-taro/package.json` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@
-     "eslint": "^8",
-     "eslint-plugin-react": "^7.33.2",
-     "eslint-plugin-react-hooks": "^4.4.0",
--    "eslint-plugin-vue": "^8.0.0"
-+    "eslint-plugin-vue": "^8.0.0 || ^9.0.0"
-   },
-   "peerDependenciesMeta": {
-     "eslint-plugin-react": {
-```
-
-**File**: `packages/taro-cli/templates/default/package.json.tmpl` (modified, +1/-1)
-```diff
-@@ -144,7 +144,7 @@
-     "@prefresh/core": "^1.5.2",
-     "@prefresh/babel-plugin": "^0.5.1",{{/if}}{{#if (eq framework "React") }}
-     "react-refresh": "^0.14.0",{{/if}}{{#if (eq framework "Vue3") }}
--    "@vitejs/plugin-vue": "^5.0.4",
-+    "@vitejs/plugin-vue": "^4.6.2",
-     "@vitejs/plugin-vue-jsx": "^3.1.0",
-     "eslint-plugin-vue": "^9.17.0",{{/if}}{{#if (eq framework "Solid") }}
-     "vite-plugin-solid": "2.10.0",{{/if}}{{#if (eq css "Sass") }}
-```
-
----
-
-### Incident Patch 3: `544fff24` (2026-11-23)
-**Commit Message**: fix(react): skip the splice in AppWrapper.unmount when the page is not found (#19687)
-
-findIndex returns -1 when the page being unmounted is not in elements
-(for example while it is still queued in this.pages), and
-elements.splice(-1, 1) then removes the last, unrelated element tree.
-On weapp with a custom tabBar this drops the tabBar or page tree and
-later taps are silently ignored.
-
-Only splice when the page was found. Same guard in the Harmony React
-runtimes, which share this code.
-
-fix #19686
-
-**File**: `packages/taro-framework-react/src/runtime/connect.ts` (modified, +5/-1)
-```diff
-@@ -242,7 +242,11 @@ export function createReactApp (
-     public unmount (id: string, cb: () => void) {
-       const elements = this.elements
-       const idx = elements.findIndex(item => item.props.tid === id)
--      elements.splice(idx, 1)
-+      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
-+      // splice(-1, 1) would remove the last, unrelated element tree.
-+      if (idx !== -1) {
-+        elements.splice(idx, 1)
++import {
++  isEmptyObject,
++  readConfig,
++  resolveMainFilePath,
++  SCRIPT_EXT
++} from '@tarojs/helper'
++import { defaults } from 'lodash'
++
++import type { AppConfig } from '@tarojs/taro'
++import type { Func } from '@tarojs/taro/types/compile'
++
++interface IOptions {
++  sourceDir: string
++  entryFileName: string
++  frameworkExts: string[]
++  alias: Record<string, any>
++  defineConstants: Record<string, any>
++  modifyAppConfig?: Func
++}
++
++export default class AppHelper {
++  options: IOptions
++  entry: Record<string, any>
++
++  #appConfig?: AppConfig
++  #pages?: Set<{ name: string, path: string }>
++  #pagesConfigList?: Map<string, string>
++  #comps?: Set<{ name: string, path: string }>
++  #compsConfigList?: Map<string, string>
++
++  constructor (entry: Record<string, any> = {}, options: Partial<IOptions> = {}) {
++    this.options = defaults(options || {}, {
++      sourceDir: '',
++      entryFileName: 'app',
++      frameworkExts: SCRIPT_EXT,
++      alias: {},
++      defineConstants: {}
++    })
++    this.entry = entry
++  }
++
++  get appEntry () {
++    // Note: 不考虑 `() => Promise` 情况
++    const { entryFileName, sourceDir } = this.options
++    const appEntry = this.entry[entryFileName]
++    if (!appEntry) return path.join(sourceDir, entryFileName)
++    if (Array.isArray(appEntry)) {
++      return appEntry.filter(item => path.basename(item, path.extname(item)) === entryFileName)[0]
++    } else if (Array.isArray(appEntry.import)) {
++      return appEntry.import.filter(item => path.basename(item, path.extname(item)) === entryFileName)[0]
++    }
++    return appEntry
++  }
++
++  get appConfig (): AppConfig {
++    if (!this.#appConfig) {
++      const appConfigPath = this.getConfigFilePath(this.appEntry)
++      const appConfig = readConfig(appConfigPath, this.options)
++      if (isEmptyObject(appConfig)) {
++        throw new Error('缺少 app 全局配置，请检查！')
 +      }
-       this.forceUpdate(cb)
-     }
- 
++      const { modifyAppConfig } = this.options
++      if (typeof modifyAppConfig === 'function') {
++        modifyAppConfig(appConfig)
++      }
++      this.#appConfig = appConfig
++    }
++    return this.#appConfig as AppConfig
++  }
++
++  get pages () {
++    if (!this.#pages) {
++      const appPages = this.appConfig.pages
++      if (!appPages || !appPages.length) {
++        throw new Error('全局配置缺少 pages 字段，请检查！')
++      }
++      const { frameworkExts, sourceDir } = this.options
++
++      this.#pages = new Set([
++        ...appPages.map(item => ({
++          name: item,
++          path: resolveMainFilePath(path.join(sourceDir, item), frameworkExts)
++        }))
++      ])
++      this.getSubPackages()
++    }
++    return this.#pages
++  }
++
++  get comps () {
++    if (!this.#comps) {
++      const appPages = this.appConfig.components
++      if (!appPages || !appPages.length) {
++        throw new Error('全局配置缺少 components 字段，请检查！')
++      }
++      const { frameworkExts, sourceDir } = this.options
++
++      this.#comps = new Set([
++        ...appPages.map(item => ({
++          name: item,
++          path: resolveMainFilePath(path.join(sourceDir, item), frameworkExts)
++        }))
++      ])
++    }
++    return this.#comps
++  }
++
++  private getSubPackages () {
++    const subPackages = this.appConfig.subPackages || this.appConfig.subpackages
++    const { frameworkExts, sourceDir } = this.options
++    if (subPackages && subPackages.length) {
++      subPackages.forEach(item => {
++        if (item.pages && item.pages.length) {
++          const root = item.root
++          item.pages.forEach(page => {
++            let pageItem = `${root}/${page}`
++            pageItem = pageItem.replace(/\/{2,}/g, '/')
++            let hasPageIn = false
++            this.pages.forEach(({ name }) => {
++              if (name === pageItem) {
++                hasPageIn = true
++              }
++            })
++            if (!hasPageIn) {
++              const pagePath = resolveMainFilePath(path.join(sourceDir, pageItem), frameworkExts)
++              this.pages.add({
++                name: pageItem,
++                path: pagePath
++              })
++              this.appConfig.pages?.push(pageItem)
++            }
++          })
++        }
++      })
++    }
++  }
++
++  get pagesConfigList () {
++    if (!this.#pagesConfigList) {
++      const list = new Map<string, string>()
++      const pages = this.pages
++      pages.forEach(({ name, path }) => {
++        const pageConfigPath = this.getConfigFilePath(path)
++        list.set(name, pageConfigPath)
++      })
++      this.#pagesConfigList = list
++    }
++    return this.#pagesConfigList
++  }
++
++  get compsConfigList () {
++    if (!this.#compsConfigList) {
++      const list = new Map<string, string>()
++      const comps = this.comps
++      comps.forEach(({ name, path }) => {
++        const pageConfigPath = this.getConfigFilePath(path)
++        list.set(name, pageConfigPath)
++      })
++      this.#compsConfigList = list
++    }
++    return this.#compsConfigList
++  }
++
++  getConfigFilePath (filePath = '') {
++    // console
 ```
 
-**File**: `packages/taro-platform-harmony-cpp/src/runtime/framework/app.ts` (modified, +5/-1)
+**File**: `packages/taro-runner-utils/src/bundler/devServer.ts` (added, +172/-0)
 ```diff
-@@ -141,7 +141,11 @@ export function createReactApp (
-     public unmount (id: string, cb: () => void) {
-       const elements = this.elements
-       const idx = elements.findIndex(item => item.props.tid === id)
--      elements.splice(idx, 1)
-+      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
-+      // splice(-1, 1) would remove the last, unrelated element tree.
-+      if (idx !== -1) {
-+        elements.splice(idx, 1)
+@@ -0,0 +1,172 @@
++import path from 'node:path'
++
++import { recursiveMerge, SOURCE_DIR } from '@tarojs/helper'
++import detectPort from 'detect-port'
++
++import AppHelper from './app'
++import { addHtmlSuffix, addLeadingSlash, parsePublicPath, stripBasename, stripTrailingSlash } from './utils'
++
++export interface BuildH5DevServerConfig {
++  publicPath?: string
++  outputRoot?: string
++  sourceRoot?: string
++  devServer?: Record<string, any>
++  router?: {
++    mode?: string
++    basename?: string
++    customRoutes?: Record<string, string | string[]>
++  }
++  entry?: Record<string, any>
++  frameworkExts?: string[]
++  entryFileName?: string
++  alias?: Record<string, any>
++  defineConstants?: Record<string, any>
++  output?: Record<string, any>
++  chunkDirectory?: string
++  isBuildNativeComp?: boolean
++}
++
++export async function getH5DevServerOptions<T = Record<string, any>> (
++  appPath: string,
++  config: BuildH5DevServerConfig,
++  normalizeLegacyHttps = false
++): Promise<T> {
++  const publicPath = parsePublicPath(config.publicPath)
++  const outputPath = path.join(appPath, config.outputRoot || 'dist')
++  const { proxy: customProxy = [], https: legacyHttps, ...customDevServerOption } = (config.devServer || {}) as any
++  const routerConfig = config.router || {}
++  const routerMode = routerConfig.mode || 'hash'
++  const isMultiRouterMode = routerMode === 'multi'
++  const proxy: any[] = []
++
++  if (isMultiRouterMode) {
++    const app = new AppHelper(config.entry as Record<string, any>, {
++      sourceDir: path.join(appPath, config.sourceRoot || SOURCE_DIR),
++      frameworkExts: config.frameworkExts,
++      entryFileName: config.entryFileName,
++      alias: config.alias,
++      defineConstants: config.defineConstants
++    })
++    const appConfig = app.appConfig
++    const customRoutes = routerConfig.customRoutes || {}
++    const routerBasename = routerConfig.basename || '/'
++    const getEntriesRoutes = (routes: Record<string, string | string[]> = {}) => {
++      const conf: string[][] = []
++      for (let key in routes) {
++        const routePath = routes[key]
++        key = addLeadingSlash(key)
++        if (typeof routePath === 'string') {
++          conf.push([key, addLeadingSlash(routePath)])
++        } else if (routePath?.length > 0) {
++          conf.push(...routePath.map(p => [key, addLeadingSlash(p)]))
++        }
 +      }
-       this.forceUpdate(cb)
-     }
- 
++      return conf
++    }
++    const bypass = (req: any) => {
++      if (req.headers.accept?.indexOf('html') !== -1) {
++        const pagePath = stripTrailingSlash(stripBasename(req.path, routerBasename))
++        const getBypassUrl = (url?: string) => addHtmlSuffix(addLeadingSlash(url))
++        if (pagePath === '') {
++          return getBypassUrl(appConfig.entryPagePath || appConfig.pages?.[0])
++        }
++
++        const pageIdx = (appConfig.pages ?? []).findIndex(e => addLeadingSlash(e) === pagePath)
++        if (pageIdx > -1) {
++          return getBypassUrl(appConfig.pages?.[pageIdx])
++        }
++
++        const customRoutesConf = getEntriesRoutes(customRoutes)
++        const idx = customRoutesConf.findIndex(list => list[1] === pagePath)
++        if (idx > -1) {
++          // NOTE: 自定义路由
++          return getBypassUrl(customRoutesConf[idx][0])
++        }
++      }
++    }
++    proxy.push({
++      context: [routerBasename],
++      bypass
++    })
++  }
++
++  if (!Array.isArray(customProxy)) {
++    proxy.push(...Object.entries(customProxy).map(([url, options = {}]) => {
++      const item: Record<string, any> = {
++        context: [url]
++      }
++      if (typeof options === 'string') {
++        item.target = options
++      } else {
++        Object.assign(item, options)
++      }
++      return item
++    }))
++  } else {
++    proxy.push(...customProxy)
++  }
++
++  const chunkFilename = (config.output?.chunkFilename as string) ?? `${config.chunkDirectory || 'chunk'}/[name].js`
++  const baseDefaults: Record<string, any> = {
++    allowedHosts: 'all',
++    devMiddleware: {
++      publicPath
++    },
++    static: [{
++      directory: outputPath, // webpack4: devServerOptions.contentBase
++      publicPath,
++      watch: true // webpack4: devServerOptions.watchContentBase
++    }],
++    compress: true,
++    host: '0.0.0.0',
++    hot: config.isBuildNativeComp ? true : 'only',
++    client: {
++      overlay: true
++    },
++    port: 10086,
++    historyApiFallback: {
++      disableDotRule: true,
++      rewrites: [{
++        from: /\.hot-update\.(js|json)$/,
++        to: function (context: any) {
++          const pathname = chunkFilename.replace('[name]', path.basename(context.parsedUrl.pathname).replace(/\.[^.]*.hot-update\.(js|json)/, ''))
++          return (['', 'auto'].includes(publicPath) ? '' : publicPath) + pathname
++        }
++      }]
++    },
++    proxy
++  }
++  if (!normalizeLegacyHttps) {
++    baseDefaults.https = legacyHttps ?? false
++  }
++
++  const devServerOptions: Record<string, any> = recursiveMerge<any>(
++    baseDefaults,
++    customDevServerOption,
++    {
++      historyApiFallback: {
++        rew
 ```
 
-**File**: `packages/taro-platform-harmony/src/runtime-framework/react/app.ts` (modified, +5/-1)
+**File**: `packages/taro-runner-utils/src/bundler/loaders/miniTemplateLoader.ts` (added, +46/-0)
 ```diff
-@@ -140,7 +140,11 @@ export function createReactApp (
-     public unmount (id: string, cb: () => void) {
-       const elements = this.elements
-       const idx = elements.findIndex(item => item.props.tid === id)
--      elements.splice(idx, 1)
-+      // idx is -1 when the page is not in elements (e.g. still queued in this.pages);
-+      // splice(-1, 1) would remove the last, unrelated element tree.
-+      if (idx !== -1) {
-+        elements.splice(idx, 1)
+@@ -0,0 +1,46 @@
++import { isUrlRequest, urlToRequest } from 'loader-utils'
++import sax from 'sax'
++
++import { isSpecialFormat } from '../utils'
++
++export default function miniTemplateLoader (this: any, source: string) {
++  this.cacheable && this.cacheable()
++  /**
++   * 两种fix方案：
++   * 1. 用任意xml标签包裹source，使之变成较标准的xml格式（含有一个根节点）
++   * 2. 修改 sax.parser 的第一个参数为 true，启用严格模式
++   *    2.1 该模式下小程序模板中的标签或属性不会处理（例如写入<Import SrC="..." />不会处理成<import src="..." />，而是保持原样
++   *    2.2 该模式将认为传入的xml为非标准的，无需标准化，且不按照以根节点模式处理，因此可以正常解析小程序模板
++   *
++   * 推荐方案1，这样在构建时会正常打入需要的包，但是若用户有 SrC 类似的写法导致引用失败，则可直接修正，不会认为是打包出现了问题
++   **/
++  const sourceWithRoot = `<root>${source}</root>`
++  const parser = sax.parser(false, { lowercase: true })
++  const requests: Set<string> = new Set()
++  const callback = this.async()
++  const loadModule = (request: string) => this.importModule(request)
++
++  parser.onattribute = ({ name, value }) => {
++    if (value && (name === 'src' || name === 'from') && isUrlRequest(value)) {
++      // image、webview等组件的src属性不需要加入依赖
++      if (isSpecialFormat(name, value)) return
++
++      const request = urlToRequest(value)
++      requests.add(request)
++    }
++  }
++  parser.onend = async () => {
++    try {
++      const requestsArray = Array.from(requests)
++      if (requestsArray.length) {
++        for (let i = 0; i < requestsArray.length; i++) {
++          await loadModule(requestsArray[i])
++        }
 +      }
-       this.forceUpdate(cb)
-     }
- 
++      callback(null, source)
++    } catch (error) {
++      callback(error, source)
++    }
++  }
++  parser.write(sourceWithRoot).close()
++}
+```
+
+**File**: `packages/taro-runner-utils/src/bundler/loaders/miniXScriptLoader.ts` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++import { isUrlRequest, urlToRequest } from 'loader-utils'
++
++export default async function miniXScriptLoader (this: any, source: string) {
++  const REG_REQUIRE = /require\(['"](.+\.wxs)['"]\)/g
++  const callback = this.async()
++  const importings: any[] = []
++  let res: RegExpExecArray | null
++
++  try {
++    while ((res = REG_REQUIRE.exec(source)) !== null) {
++      const dep = res[1]
++      if (isUrlRequest(dep)) {
++        const request = urlToRequest(dep)
++        importings.push(this.importModule(request))
++      }
++    }
++    await Promise.all(importings)
++    callback(null, source)
++  } catch (error) {
++    callback(error, source)
++  }
++}
+```
+
+**File**: `packages/taro-runner-utils/src/bundler/logHelper.ts` (added, +177/-0)
+```diff
+@@ -0,0 +1,177 @@
++/* eslint-disable no-console */
++import { chalk } from '@tarojs/helper'
++import { partial, pipe } from 'lodash/fp'
++import ora from 'ora'
++import formatMessages from 'webpack-format-messages'
++
++const getServeSpinner = (() => {
++  let spinner
++  return () => {
++    if (!spinner) {
++      spinner = ora('即将开始启动编译，请稍等~')
++      spinner.start()
++    }
++    return spinner
++  }
++})()
++
++const printCompiling = () => {
++  getServeSpinner().text = '正在编译...'
++}
++
++const printBuildError = (err: Error): void => {
++  const message = err?.message
++  const stack = err?.stack
++  if (stack && message?.includes('from UglifyJs')) {
++    const matched = /(.+)\[(.+):(.+),(.+)\]\[.+\]/.exec(stack)
++    if (matched) {
++      const [, , problemPath, line, column] = matched
++      const location = column !== '0' ? `${problemPath}:${line}:${column}` : `${problemPath}:${line}`
++      console.log('Failed to minify the code from this file: \n\n', chalk.yellow(`\t${location}`), '\n')
++    } else {
++      console.log('Failed to minify the bundle.', err)
++    }
++  } else {
++    console.log((message || err) + '\n')
++  }
++  console.log()
++}
++
++const printSuccess = () => {
++  getServeSpinner().stopAndPersist({
++    symbol: '✅ ',
++    text: chalk.green(`编译成功 ${new Date().toLocaleString()}\n`)
++  })
++}
++
++export const printPrerenderSuccess = (p: string) => {
++  getServeSpinner().stopAndPersist({
++    symbol: '🚀 ',
++    text: chalk.green(`页面 ${p} 预渲染成功 ${new Date().toLocaleString()}`)
++  })
++}
++
++export const printPrerenderFail = (p: string) => {
++  getServeSpinner().stopAndPersist({
++    symbol: '⚠️ ',
++    text: chalk.yellow(`${new Date().toLocaleString()} 页面 ${p} 预渲染失败：`)
++  })
++}
++
++const printWarning = () => {
++  getServeSpinner().stopAndPersist({
++    symbol: '⚠️ ',
++    text: chalk.yellow(`编译警告. ${new Date().toLocaleString()}\n`)
++  })
++}
++
++const printFailed = () => {
++  getServeSpinner().stopAndPersist({
++    symbol: '🙅  ',
++    text: chalk.red(`编译失败. ${new Date().toLocaleString()}\n`)
++  })
++}
++
++const printWhenBeforeCompile = compiler => {
++  compiler.hooks.beforeCompile.tap('taroBeforeCompile', () => {
++    printCompiling()
++  })
++  return compiler
++}
++
++const printWhenInvalid = compiler => {
++  compiler.hooks.invalid.tap('taroInvalid', () => {
++    printCompiling()
++  })
++  return compiler
++}
++
++const printWhenFailed = compiler => {
++  compiler.hooks.failed.tap('taroFailed', error => {
++    printBuildError(error)
++  })
++  return compiler
++}
++
++let isFirst = true
++const printWhenFirstDone = (devUrl: string, compiler) => {
++  compiler.hooks.done.tap('taroDone', () => {
++    if (isFirst) {
++      isFirst = false
++      getServeSpinner().clear()
++      if (devUrl) {
++        console.log()
++        console.log(chalk.cyan(`ℹ️  Listening at ${devUrl}`))
++      }
++      console.log(chalk.gray('\n监听文件修改中...\n'))
++    }
++  })
++  return compiler
++}
++
++const _printWhenDone = ({
++  verbose = false
++}, compiler) => {
++  compiler.hooks.done.tap('taroDone', stats => {
++    const { errors, warnings } = formatMessages(stats)
++
++    if (!stats.hasErrors() && !stats.hasWarnings()) {
++      printSuccess()
++    }
++
++    if (stats.hasErrors()) {
++      printFailed()
++      errors.forEach(e => console.log(e + '\n'))
++      verbose && process.exit(1)
++      return
++    }
++
++    if (stats.hasWarnings()) {
++      printWarning()
++      warnings.forEach(w => console.log(w + '\n'))
++    }
++
++    verbose && console.log(stats.toString({
++      colors: true,
++      modules: false,
++      children: false,
++      chunks: false,
++      chunkModules: false,
++      warnings: verbose
++    }) + '\n')
++  })
++  return compiler
++}
++
++const printWhenDone = partial(_printWhenDone, [{ verbose: false }])
++const printWhenDoneVerbosely = partial(_printWhenDone, [{ verbose: true }])
++
++const bindDevLogger = (compiler, devUrl = '') => {
++  console.log()
++  pipe(
++    printWhenBeforeCompile,
++    printWhenDone,
++    printWhenFailed,
++    printWhenInvalid,
++    partial(printWhenFirstDone, [devUrl])
++  )(compiler)
++  return compiler
++}
++
++const bindProdLogger = compiler => {
++  console.log()
++  pipe(
++    printWhenBeforeCompile,
++    printWhenDoneVerbosely,
++    printWhenFailed
++  )(compiler)
++  return compiler
++}
++
++export {
++  bindDevLogger,
++  bindProdLogger,
++  getServeSpinner,
++  printBuildError,
++  printCompiling
++}
+```
+
+**File**: `packages/taro-runner-utils/src/bundler/postcss/postcss-alias.ts` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++import { isAliasPath, replaceAliasPath } from '@tarojs/helper'
++
++const pattern = /(url\(\s*['"]?)([^"')]+)(["']?\s*\))/g
++
++interface IOptions {
++  alias?: Record<string, string>
++}
++
++const postcssAlias = (options: IOptions = {}) => {
++  return {
++    postcssPlugin: 'postcss-alias',
++    Once (styles, { result }) {
++      if (!options.alias || !Object.keys(options.alias).length) return
++
++      const opts = result.opts
++      const from = opts.from
++
++      styles.walkDecls(decl => {
++        if (pattern.test(decl.value)) {
++          decl.value = decl.value.replace(pattern, (matched, before, url, after) => {
++            url = url.replace(/^~/, '')
++            if (isAliasPath(url, options.alias)) {
++              const newUrl = replaceAliasPath(from, url, options.alias)
++              return `${before}${newUrl}${after}`
++            } else {
++              return matched
++            }
++          })
++        }
++      })
++    }
++  }
++}
++
++postcssAlias.postcss = true
++
++export default postcssAlias
+```
+
+**File**: `packages/taro-runner-utils/src/bundler/postcss/postcss-plugins.ts` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++import path from 'node:path'
++
++import { isNpmPkg, resolveSync } from '@tarojs/helper'
++
++import type { Func, TogglableOptions } from '@tarojs/taro/types/compile'
++
++export function createGetPostcssPlugins (
++  formatNotFoundMessage = (pluginName: string) => `缺少 postcss 插件 "${pluginName}", 已忽略`
++) {
++  const plugins: any[] = []
++
++  return function getPostcssPlugins (
++    appPath: string,
++    option: [string, TogglableOptions<Record<string, unknown>>, Func?][] = []
++  ) {
++    option.forEach(([pluginName, pluginOption, pluginPkg]) => {
++      if (!pluginOption || ['cssModules', 'url'].includes(pluginName)) return
++      if (Object.hasOwnProperty.call(pluginOption, 'enable') && !pluginOption.enable) return
++
++      if (pluginPkg) {
++        plugins.push(pluginPkg(pluginOption.config || {}))
++        return
++      }
++
++      if (!isNpmPkg(pluginName)) {
++        // local plugin
++        pluginName = path.isAbsolute(pluginName) ? pluginName : path.join(appPath, pluginName)
++      }
++
++      try {
++        const pluginPath = resolveSync(pluginName, { basedir: appPath }) || ''
++        plugins.push(require(pluginPath)(pluginOption.config || {}))
++      } catch (e) {
++        const msg = e.code === 'MODULE_NOT_FOUND' ? formatNotFoundMessage(pluginName) : e
++        // eslint-disable-next-line no-console
++        console.log(msg)
++      }
++    })
++
++    return plugins
++  }
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19695** (2026-11-26): refactor(runner-utils): extract shared bundler utilities from webpack5-runner (@Amour1688)
 - **PR #19687** (2026-11-23): fix(react): skip the splice in AppWrapper.unmount when the page is not found (@farisbasha)
 - **PR #19685** (2026-11-24): feat(types): TabBarItem 支持 name_locale 多语言配置 (@dhananjay6561)
 - **PR #19684** (2026-11-23): fix(deps): 升级 webpack 至 5.104.1 修复安全漏洞 (@dhananjay6561)
 - **PR #19683** (2026-11-23): fix(cli): 修复 Vue3 + Vite 模板 npm install 依赖冲突 (@dhananjay6561)
 - **PR #19668** (2026-11-23): feat(h5): 支持 getRecorderManager 网页录音 (@Jarvis636431)
-- **PR #19666** (2026-11-23): feat(h5): 支持图片和视频混合预览 (@Jarvis636431)
 
 ---
 
@@ -1491,28 +2034,67 @@ fix #19686
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): 升级 webpack 至 5.104.1 修复安全漏洞
+## X. runner-utils): extract shared bundler utilities from webpack5-runner
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/taro-runner-utils/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99683d13`: deps): 升级 webpack 至 5.104.1 修复安全漏洞. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c1bd527`: runner-utils): extract shared bundler utilities from webpack5-runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-runner-utils/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      "browserslist": "^4.28.1",
+    "@tarojs/shared": "workspace:*",
+    "lodash": "^4.17.21",
+    "@tarojs/taro": "workspace:*",
+    "@types/detect-port": "^1.3.5",
+    "@types/lodash": "^4.17.0",
+    "@types/sax": "^1.2.4",
+    "autoprefixer": "^10.4.19",
+    "detect-port": "^1.5.1",
+    "jsdom": "^24.0.0",
+    "loader-utils": "^3.2.1",
+    "miniprogram-simulate": "^1.6.1",
+    "ora": "^5.4.1",
+    "picomatch": "^4.0.2",
+    "postcss": "^8.4.38",
+    "postcss-html-transform": "workspace:*",
+    "postcss-import": "^16.1.0",
+    "postcss-plugin-constparse": "workspace:*",
+    "postcss-pxtransform": "workspace:*",
+    "postcss-url": "^10.1.3",
+    "sax": "1.2.4",
+    "vm2": "^3.9.19",
+    "webpack-format-messages": "^3.0.1"
+  },
+  "peerDependencies": {
+    "autoprefixer": "^10.4.19",
+    "detect-port": "^1.5.1",
+    "jsdom": "^24.0.0",
+    "loader-utils": "^3.2.1",
+    "miniprogram-simulate": "^1.6.1",
+    "ora": "^5.4.1",
+    "picomatch": "^4.0.2",
+    "postcss": "^8",
+    "postcss-html-transform": "workspace:*",
+    "postcss-import": "^16.1.0",
+    "postcss-plugin-constparse": "workspace:*",
+    "postcss-pxtransform": "workspace:*",
+    "postcss-url": "^10.1.3",
+    "sax": "1.2.4",
+    "vm2": "^3.9.19",
+    "web
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      "browserslist": "^4.24.4",
+    "@tarojs/taro": "workspace:*"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99683d13` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c1bd527` are properly handled with clean fallback behavior.

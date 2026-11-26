@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T16:58:30.810Z",
+  "last_updated": "2026-11-26T17:06:25.091Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -860,14 +860,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef",
-      "content_hash": "8b4f07cad2645d5d8a2e46b2fc0765002db63f5fcdb04f568d1c042a9c667d82",
-      "verified_at": "2026-11-22T23:57:15.916Z",
+      "content_hash": "035da65b790b8ba555a804a670f314b7a09562653fc174ae188fd801ad9c22b5",
+      "verified_at": "2026-11-26T17:06:12.952Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T23:57:15.916Z"
+      "last_updated": "2026-11-26T17:06:12.952Z"
     },
     "Cloudflare/clef-flash": {
       "repository": "Cloudflare/clef-flash",
@@ -3726,14 +3726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nervjs-taro",
-      "content_hash": "f1b6ed67b2d821e2382a778f15514b79d93c7585cfc4747d10b45c5a6b6ffe9e",
-      "verified_at": "2026-11-24T07:33:13.464Z",
+      "content_hash": "51e145933436ae95f8be2526ffa1adf0876e90fcb584da938173ca01b959fc71",
+      "verified_at": "2026-11-26T17:06:21.054Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T07:33:13.464Z"
+      "last_updated": "2026-11-26T17:06:21.054Z"
     },
     "kubeedge/kubeedge": {
       "repository": "kubeedge/kubeedge",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "0f52ac720e83a8b47a7143f70cb3e9afec93ac3df0cfa5a380fd8272279dbab5",
-      "verified_at": "2026-11-26T12:38:43.360Z",
+      "content_hash": "9a6b42f17a8c1b842af6b30e920298534296e38b4763a8923c891b0483e8113d",
+      "verified_at": "2026-11-26T17:06:25.090Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T12:38:43.360Z"
+      "last_updated": "2026-11-26T17:06:25.090Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",

@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "8b4f07cad2645d5d8a2e46b2fc0765002db63f5fcdb04f568d1c042a9c667d82",
-    "lastHarvestedAt": "2026-11-22T23:57:15.907Z",
+    "contentHash": "035da65b790b8ba555a804a670f314b7a09562653fc174ae188fd801ad9c22b5",
+    "lastHarvestedAt": "2026-11-26T17:06:12.938Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "84cc57bc",
+    "sourceVersion": "6c1bd527",
     "license": "NOASSERTION",
-    "contentHash": "f1b6ed67b2d821e2382a778f15514b79d93c7585cfc4747d10b45c5a6b6ffe9e",
-    "lastHarvestedAt": "2026-11-24T07:33:13.445Z",
+    "contentHash": "51e145933436ae95f8be2526ffa1adf0876e90fcb584da938173ca01b959fc71",
+    "lastHarvestedAt": "2026-11-26T17:06:21.035Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "83f2cb7e",
+    "sourceVersion": "66b78886",
     "license": "NOASSERTION",
-    "contentHash": "0f52ac720e83a8b47a7143f70cb3e9afec93ac3df0cfa5a380fd8272279dbab5",
-    "lastHarvestedAt": "2026-11-26T12:38:43.331Z",
+    "contentHash": "9a6b42f17a8c1b842af6b30e920298534296e38b4763a8923c891b0483e8113d",
+    "lastHarvestedAt": "2026-11-26T17:06:25.023Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
