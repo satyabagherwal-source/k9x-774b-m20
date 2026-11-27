@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:49:08.624Z",
+  "last_updated": "2026-11-27T07:59:18.865Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T06:55:11.382Z",
@@ -308,9 +308,9 @@
       "staged_for_review": 1
     },
     "necolas-react-native-web-learnings.md": {
-      "processed_at": "2026-11-24T23:59:46.195Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-27T07:59:17.499Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "burntsushi-ripgrep-learnings.md": {
       "processed_at": "2026-11-25T06:21:22.774Z",
@@ -1378,7 +1378,7 @@
       "staged_for_review": 1
     },
     "agent-of-empires-agent-of-empires-learnings.md": {
-      "processed_at": "2026-11-26T07:10:32.042Z",
+      "processed_at": "2026-11-27T07:58:38.892Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2843,7 +2843,7 @@
       "staged_for_review": 0
     },
     "hf-vllm-sr-d3-learnings.md": {
-      "processed_at": "2026-11-23T22:33:11.418Z",
+      "processed_at": "2026-11-27T07:58:40.335Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4033,7 +4033,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4875,
-  "total_canonical_promoted": 574,
-  "total_staged_for_review": 3649
+  "total_dossiers_evaluated": 4878,
+  "total_canonical_promoted": 575,
+  "total_staged_for_review": 3650
 }

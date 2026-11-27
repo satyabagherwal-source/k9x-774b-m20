@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T23:59:46.375Z",
+  "timestamp": "2026-11-27T07:59:17.879Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-necolas-react-native-web-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [necolas-react-native-web-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T23:59:46.375Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:59:17.879Z`  
 > **Learning ID**: `LEARN-EVO-necolas-react-native-web-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from necolas-react-native-web-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `9fa18288`  
+> **Source Version**: `95edda41`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T23:58:41.078Z  
+> **Timestamp**: 2026-11-27T07:58:22.363Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T23:58:41.074Z  
+> **Harvest Timestamp**: 2026-11-27T07:58:22.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22162 stars
+- **Stars / Engagement**: 22161 stars
 
 ---
 
@@ -67,20 +67,20 @@ The following architectural invariants have been empirically discovered and reco
 
 ### Core Architecture Module: `packages/react-native-web-examples/pages/app-state/index.js`
 ```
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AppState, Text } from 'react-native';
 
 import Example from '../../shared/example';
 
 export default function AppStatePage() {
-  const appState = React.useRef(AppState.currentState);
-  const [state, setState] = React.useState({
+  const appState = useRef(AppState.currentState);
+  const [state, setState] = useState({
     active: 0,
     background: 0,
     currentState: appState.current
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleChange = (nextState) => {
       setState((previousState) => ({
         ...previousState,
@@ -125,7 +125,6 @@ import type {
   ReactElement,
   ReactNode
 } from 'react';
-import React from 'react';
 
 import type { Nullable } from '../../types';
 import render, { hydrate } from '../render';
@@ -215,8 +214,9 @@ import invariant from 'invariant';
 
 import canUseDOM from '../../modules/canUseDom';
 import type { Nullable } from '../../types';
-import type { EventSubscription } from '../../vendor/react-native/vendor/emitter/EventEmitter';
-import EventEmitter from '../../vendor/react-native/vendor/emitter/EventEmitter';
+import EventEmitter, {
+  type EventSubscription
+} from '../../vendor/react-native/vendor/emitter/EventEmitter';
 
 const EVENT_TYPES = ['change', 'memoryWarning'];
 
@@ -786,385 +786,288 @@ export function isPrimaryPointerDown(event: TouchEvent | MouseEvent): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea9eb896` (2026-11-23)
-**Commit Message**: Enable more oxlint rules and fix their errors
+### Incident Patch 1: `95edda41` (2026-11-25)
+**Commit Message**: Use named imports from react (#2981)
 
-**File**: `oxlint.config.ts` (modified, +3/-16)
+**File**: `oxlint.config.ts` (modified, +5/-1)
 ```diff
-@@ -84,32 +84,19 @@ export default defineConfig({
-     'react/rules-of-hooks': 'error',
+@@ -1,7 +1,7 @@
+ import { defineConfig } from 'oxlint';
+ 
+ export default defineConfig({
+-  plugins: ['node', 'promise', 'react', 'typescript'],
++  plugins: ['import', 'node', 'promise', 'react', 'typescript'],
+   ignorePatterns: ['packages/**/vendor/*', 'packages/**/types/*'],
+   env: {
+     browser: true,
+@@ -58,6 +58,9 @@ export default defineConfig({
+     //   { argsIgnorePattern: '^_', ignoreRestSiblings: true }
+     // ]
+ 
++    // import
++    'import/no-duplicates': ['error', { preferInline: true }],
++
+     // node
+     'node/handle-callback-err': ['error', '^(err|error)$'],
+     'node/no-path-concat': 'error',
+@@ -85,6 +88,7 @@ export default defineConfig({
      'react/exhaustive-deps': 'warn',
  
-+    // typescript
-+    'typescript/no-empty-object-type': 'error',
+     // typescript
++    'typescript/consistent-type-imports': 'error',
+     'typescript/no-empty-object-type': 'error',
      'typescript/no-explicit-any': 'error',
      'typescript/no-import-type-side-effects': 'error',
-+    'typescript/no-invalid-void-type': 'error',
-     'typescript/no-wrapper-object-types': 'error',
- 
-     // temporarily disabled
--    'capitalized-calls': 'off',
--    'no-await-in-loop': 'off',
--
--    'react/jsx-no-constructed-context-values': 'off',
--    'react/no-array-index-key': 'off',
--    'react/purity': 'off',
--
--    'typescript/await-thenable': 'off',
-     'typescript/consistent-return': 'off',
-     'typescript/no-base-to-string': 'off',
--    'typescript/no-empty-object-type': 'off',
-     'typescript/no-extraneous-class': 'off',
--    'typescript/no-floating-promises': 'off',
--    'typescript/no-invalid-void-type': 'off',
--    'typescript/no-misused-spread': 'off',
-     'typescript/no-non-null-assertion': 'off',
--    'typescript/no-redundant-type-constituents': 'off',
-     'typescript/no-unnecessary-boolean-literal-compare': 'off',
--    'typescript/no-unnecessary-template-expression': 'off',
--    'typescript/no-unnecessary-type-arguments': 'off',
--    'typescript/no-unnecessary-type-conversion': 'off',
-     'typescript/no-unsafe-type-assertion': 'off',
-     'typescript/unbound-method': 'off',
- 
 ```
 
-**File**: `packages/benchmarks/src/app/Benchmark/index.js` (modified, +5/-3)
+**File**: `packages/benchmarks/src/app/App.js` (modified, +5/-5)
 ```diff
-@@ -51,11 +51,13 @@ export const BenchmarkType = {
+@@ -1,8 +1,8 @@
+-import React, { Component } from 'react';
++import { Component, Fragment } from 'react';
+ import {
+-  StyleSheet,
+-  ScrollView,
+   Pressable,
++  ScrollView,
++  StyleSheet,
+   View,
+   unstable_createElement as createElement
+ } from 'react-native';
+@@ -141,7 +141,7 @@ export default class App extends Component {
  
- /** @typedef {typeof BenchmarkType[keyof typeof BenchmarkType]} BenchmarkTypeValue */
+             <Provider>
+               {status === 'running' ? (
+-                <React.Fragment>
++                <Fragment>
+                   <View ref={this._setBenchWrapperRef}>
+                     <Benchmark
+                       component={Component}
+@@ -158,7 +158,7 @@ export default class App extends Component {
+                       type={Component.benchmarkType}
+                     />
+                   </View>
+-                </React.Fragment>
++                </Fragment>
+               ) : (
+                 <Component {...getComponentProps({ cycle: 10 })} />
+               )}
+```
+
+**File**: `packages/benchmarks/src/app/Benchmark/index.js` (modified, +3/-3)
+```diff
+@@ -4,7 +4,7 @@
+  * https://github.com/paularmstrong/react-component-benchmark
+  */
  
-+/** @typedef {Record<string, unknown>} ComponentPropsType */
-+
+-import React, { Component } from 'react';
++import { Component } from 'react';
+ 
+ import { getMean, getMedian, getStdDev } from './math';
+ import * as Timing from './timing';
+@@ -55,7 +55,7 @@ export const BenchmarkType = {
+ 
  /**
   * @typedef {Object} BenchmarkPropsType
-- * @property {React.ComponentType<any>} component
-+ * @property {React.ComponentType<ComponentPropsType>} component
+- * @property {React.ComponentType<ComponentPropsType>} component
++ * @property {import('react').ComponentType<ComponentPropsType>} component
   * @property {boolean} [forceLayout]
-- * @property {(x: { cycle: number }) => Object} getComponentProps
-+ * @property {(x: { cycle: number }) => ComponentPropsType} getComponentProps
+  * @property {(x: { cycle: number }) => ComponentPropsType} getComponentProps
   * @property {(x: BenchResultsType) => void} onComplete
-  * @property {number} sampleCount
-  * @property {number} timeout
-@@ -64,7 +66,7 @@ export const BenchmarkType = {
- 
- /**
-  * @typedef {Object} BenchmarkStateType
-- * @property {Object} componentProps
-+ * @property {ComponentPropsType} componentProps
-  * @property {number} cycle
-  * @property {boolean} running
-  */
-```
-
-**File**: `packages/benchmarks/src/cases/Tree.js` (modified, +1/-1)
-```diff
-@@ -21,7 +21,7 @@ class Tree extends Component {
-               components={components}
-               depth={depth - 1}
-               id={i}
--              key={i}
-+              key={i} // oxlint-disable-line react/no-array-index-key
-               wrap={wrap}
-             />
-           ))}
-```
-
-**File**: `packages/benchmarks/src/implementations/stylesheet/Dot.js` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ import React from 'react';
- import { StyleSheet } from 'react-native-web';
- 
- const Dot = ({ size, x, y, children, color }) => {
--  const [className, inlineStyle] = StyleSheet([
-+  const [className, inlineStyle] = StyleSheet.resolve([
-     styles.root$raw,
-     {
-       borderBottomColor: color,
-```
-
-**File**: `packages/benchmarks/src/implementations/stylesheet/View.js` (modified, +5/-1)
-```diff
-@@ -2,7 +2,11 @@ import React from 'react';
- import { StyleSheet } from 'react-native-web';
- 
- function View(props) {
--  const [className, inlineStyle] = StyleSheet([styles.root$raw, props.style]);
-+  const [className, inlineStyle] = StyleSheet.resolve([
-+    styles.root$raw,
-+    props.style
-+  ]);
-+
-   return <div {...props} className={className} style={inlineStyle} />;
- }
- 
-```
-
-**File**: `packages/react-native-web-examples/pages/lists/index.js` (modified, +1/-1)
-```diff
-@@ -262,7 +262,7 @@ class SingleColumnExample extends React.PureComponent {
+@@ -230,7 +230,7 @@ export default class Benchmark extends Component {
+     }
    }
  
+-  /** @returns {React.ReactNode} */
++  /** @returns {import('react').ReactNode} */
    render() {
--    const filterRegex = new RegExp(String(this.state.filterText), 'i');
-+    const filterRegex = new RegExp(this.state.filterText, 'i');
-     const filter = (item) =>
-       filterRegex.test(item.text) || filterRegex.test(item.title);
-     const filteredData = this.state.data.filter(filter);
+     const { component: Component, type } = this.props;
+     const { componentProps, cycle, running } = this.state;
 ```
 
-**File**: `packages/react-native-web-examples/pages/modal/index.js` (modified, +6/-7)
+**File**: `packages/benchmarks/src/app/Button.js` (modified, +2/-2)
 ```diff
-@@ -46,15 +46,14 @@ function AnimatedModalStack() {
+@@ -1,5 +1,5 @@
+-import React, { Component } from 'react';
+-import { StyleSheet, TouchableHighlight, Text } from 'react-native';
++import { Component } from 'react';
++import { StyleSheet, Text, TouchableHighlight } from 'react-native';
  
- const WIGGLE_ROOM = 128;
- 
-+const getRandomOffset = () => ({
-+  top: Math.random() * WIGGLE_ROOM - WIGGLE_ROOM / 2,
-+  left: Math.random() * WIGGLE_ROOM - WIGGLE_ROOM / 2
-+});
-+
- function Modalception({ depth = 1 }) {
-   const [isVisible, setIsVisible] = useState(false);
--
--  const offset = useMemo(() => {
--    return {
--      top: Math.random() * WIGGLE_ROOM - WIGGLE_ROOM / 2,
--      left: Math.random() * WIGGLE_ROOM - WIGGLE_ROOM / 2
--    };
--  }, []);
-+  const offset = useMemo(() => getRandomOffset(), []);
- 
-   return (
-     <>
+ export default class Button extends Component {
+   static displayName = '@app/Button';
 ```
 
-**File**: `packages/react-native-web-examples/pages/pressable/index.js` (modified, +6/-4)
+**File**: `packages/benchmarks/src/app/Icons.js` (modified, +1/-1)
 ```diff
-@@ -8,13 +8,15 @@ export default function PressablePage() {
-   const [eventLog, updateEventLog] = React.useState([]);
-   const [disabled, setDisabled] = React.useState(false);
-   const [delay, setDelay] = React.useState(0);
-+  const nextEventId = React.useRef(0);
+@@ -1,4 +1,4 @@
+-import React, { Fragment } from 'react';
++import { Fragment } from 'react';
+ import {
+   unstable_createElement as createElement,
+   StyleSheet
+```
+
+**File**: `packages/benchmarks/src/app/Layout.js` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import React, { Component } from 'react';
++import { Component } from 'react';
+ import { StyleSheet, View } from 'react-native';
  
--  const handleEvent = (eventName) => {
-+  const handleEvent = (name) => {
-     return () => {
-       const limit = 10;
-+      const id = nextEventId.current++;
-       updateEventLog((state) => {
-         const nextState = state.slice(0, limit - 1);
--        nextState.unshift(eventName);
-+        nextState.unshift({ id, name });
-         return nextState;
-       });
-     };
-@@ -64,8 +66,8 @@ export default function PressablePage() {
-         </View>
+ import { colors } from './theme';
+```
+
+**File**: `packages/benchmarks/src/app/ReportCard.js` (modified, +2/-2)
+```diff
+@@ -1,4 +1,4 @@
+-import React, { Fragment } from 'react';
++import { Fragment, PureComponent } from 'react';
+ import { StyleSheet, View } from 'react-native';
  
-         <ScrollView style={styles.eventLogBox}>
--          {eventLog.map((e, i) => (
--            <Text key={i}>{e}</Text>
-+          {eventLog.map((e) => (
-+            <Text key={e.id}>{e.name}</Text>
-           ))}
-         </ScrollView>
-       </View>
+ import Text from './Text';
+@@ -9,7 +9,7 @@ const fmt = (time) => {
+   return 10 / i > 1 ? `0${i}` : i;
+ };
+ 
+-class ReportCard extends React.PureComponent {
++class ReportCard extends PureComponent {
+   render() {
+     const {
+       benchmarkName,
+```
+
+**File**: `packages/benchmarks/src/app/Text.js` (modified, +2/-2)
+```diff
+@@ -1,9 +1,9 @@
+-import React from 'react';
++import { Component } from 'react';
+ import { StyleSheet, Text } from 'react-native';
+ 
+ import { colors } from './theme';
+ 
+-class AppText extends React.Component {
++class AppText extends Component {
+   static displayName = '@app/Text';
+ 
+   render() {
 ```
 
 ---
 
-### Incident Patch 2: `2ba89609` (2026-11-23)
-**Commit Message**: Remove Flow workarounds that TypeScript does not need
+### Incident Patch 2: `fc5bced2` (2026-11-25)
+**Commit Message**: Remove "use strict"
 
-**File**: `packages/react-native-web/src/exports/Modal/ModalFocusTrap.tsx` (modified, +1/-2)
+**File**: `packages/dom-event-testing-library/src/__tests__/index-test.ts` (modified, +0/-2)
 ```diff
-@@ -82,8 +82,7 @@ const ModalFocusTrap = ({
-   active,
-   children
- }: ModalFocusTrapProps): React.ReactNode => {
--  // @ts-expect-error
--  const trapElementRef = React.useRef<HostNode | null>();
-+  const trapElementRef = React.useRef<HostNode>(null);
-   const focusRef = React.useRef<{
-     trapFocusInProgress: boolean;
-     lastFocusedElement: Nullable<Element>;
-```
-
-**File**: `packages/react-native-web/src/modules/useResponderEvents/ResponderSystem.ts` (modified, +1/-1)
-```diff
-@@ -514,7 +514,7 @@ function findWantsResponder(
-   domEvent: ResponderDOMEvent,
-   responderEvent: ResponderEvent
- ) {
--  const shouldSetCallbacks = shouldSetResponderEvents[domEvent.type]; // for Flow
-+  const shouldSetCallbacks = shouldSetResponderEvents[domEvent.type];
+@@ -5,8 +5,6 @@
+  * LICENSE file in the root directory of this source tree.
+  */
  
-   if (shouldSetCallbacks != null) {
-     const { idPath, nodePath } = eventPaths;
-```
-
-**File**: `packages/react-native-web/src/vendor/react-native/Animated/nodes/AnimatedColor.ts` (modified, +33/-11)
-```diff
-@@ -15,7 +15,7 @@ import normalizeColor from '@react-native/normalize-colors';
- import NativeAnimatedHelper from '../NativeAnimatedHelper';
- 
- import type {PlatformConfig} from '../AnimatedPlatformConfig';
--import type { Nullable } from '../../../../types';
-+import type {Nullable} from '../../../../types';
- 
- type ColorValue = string | number;
- type NativeColorValue = ColorValue;
-@@ -89,20 +89,42 @@ function processColor(
-   return null;
- }
- 
-+type RgbaLike = {
-+  r: unknown,
-+  g: unknown,
-+  b: unknown,
-+  a: unknown,
-+};
-+
-+function isRgbaLike(value: unknown): value is RgbaLike {
-+  return (
-+    typeof value === 'object' &&
-+    value !== null &&
-+    'r' in value &&
-+    'g' in value &&
-+    'b' in value &&
-+    'a' in value
-+  );
-+}
-+
- function isRgbaValue(value: unknown): value is RgbaValue {
--  return (value &&
--    typeof (value as RgbaValue).r === 'number' &&
--    typeof (value as RgbaValue).g === 'number' &&
--    typeof (value as RgbaValue).b === 'number' &&
--    typeof (value as RgbaValue).a === 'number') as boolean;
-+  return (
-+    isRgbaLike(value) &&
-+    typeof value.r === 'number' &&
-+    typeof value.g === 'number' &&
-+    typeof value.b === 'number' &&
-+    typeof value.a === 'number'
-+  );
- }
- 
- function isRgbaAnimatedValue(value: unknown): value is RgbaAnimatedValue {
--  return (value &&
--    (value as RgbaAnimatedValue).r instanceof AnimatedValue &&
--    (value as RgbaAnimatedValue).g instanceof AnimatedValue &&
--    (value as RgbaAnimatedValue).b instanceof AnimatedValue &&
--    (value as RgbaAnimatedValue).a instanceof AnimatedValue) as boolean;
-+  return (
-+    isRgbaLike(value) &&
-+    value.r instanceof AnimatedValue &&
-+    value.g instanceof AnimatedValue &&
-+    value.b instanceof AnimatedValue &&
-+    value.a instanceof AnimatedValue
-+  );
- }
- 
- export default class AnimatedColor extends AnimatedWithChildren {
-```
-
-**File**: `packages/react-native-web/src/vendor/react-native/Animated/nodes/AnimatedNode.ts` (modified, +3/-4)
-```diff
-@@ -34,8 +34,6 @@ type ListenerCallback<T> = T extends AnimatedColor
- 
- let _uniqueId = 1;
- 
--// Note(vjeux): this would be better as an interface but flow doesn't
--// support them yet
- class AnimatedNode {
-   _listeners: Record<string, unknown>;
-   _platformConfig: Nullable<PlatformConfig>;
-@@ -47,8 +45,9 @@ class AnimatedNode {
-       this.__nativeTag = undefined;
-     }
-   }
--  __getValue(): unknown;
--  __getValue(): void {}
-+  __getValue(): unknown {
-+    return undefined;
-+  }
-   __getAnimatedValue(): unknown {
-     return this.__getValue();
-   }
-```
-
-**File**: `packages/react-native-web/src/vendor/react-native/Animated/useAnimatedProps.ts` (modified, +4/-5)
-```diff
-@@ -149,13 +149,12 @@ function useAnimatedPropsLifecycle(node: AnimatedProps): void {
-   }, [node]);
- }
- 
--type ScrollableInstance = {getScrollableNode: () => unknown};
+-'use strict';
 -
- function getEventTarget(instance: unknown): unknown {
-   return typeof instance === 'object' &&
--    typeof (instance as Partial<ScrollableInstance> | null)?.getScrollableNode ===
--      'function'
--    ? (instance as ScrollableInstance).getScrollableNode()
-+    instance !== null &&
-+    'getScrollableNode' in instance &&
-+    typeof instance.getScrollableNode === 'function'
-+    ? instance.getScrollableNode()
-     : instance;
- }
+ import { defaultBrowserChromeSize } from '../constants';
+ import {
+   clearPointers,
+```
+
+**File**: `packages/dom-event-testing-library/src/constants.ts` (modified, +0/-2)
+```diff
+@@ -5,8 +5,6 @@
+  * LICENSE file in the root directory of this source tree.
+  */
  
+-'use strict';
+-
+ export const defaultPointerId = 1;
+ export const defaultPointerSize = 23;
+ export const defaultBrowserChromeSize = 50;
 ```
 
-**File**: `packages/react-native-web/src/vendor/react-native/FillRateHelper/index.ts` (modified, +2/-3)
+**File**: `packages/dom-event-testing-library/src/createEvent.ts` (modified, +0/-2)
 ```diff
-@@ -107,8 +107,7 @@ class FillRateHelper {
-     if (!this._enabled) {
-       return;
-     }
--    const start = this._samplesStartTime; // const for flow
--    if (start == null) {
-+    if (this._samplesStartTime == null) {
-       DEBUG &&
-         console.debug('FillRateHelper: bail on deactivate with no start time');
-       return;
-@@ -118,7 +117,7 @@ class FillRateHelper {
-       this._resetData();
-       return;
-     }
--    const total_time_spent = global.performance.now() - start;
-+    const total_time_spent = global.performance.now() - this._samplesStartTime;
-     const info = {
-       ...this._info,
-       total_time_spent,
+@@ -5,8 +5,6 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-'use strict';
+-
+ export type EventPayload = {
+   bubbles?: boolean;
+   cancelable?: boolean;
 ```
 
-**File**: `packages/react-native-web/src/vendor/react-native/VirtualizedSectionList/index.tsx` (modified, +2/-2)
+**File**: `packages/dom-event-testing-library/src/domEventSequences.ts` (modified, +0/-2)
 ```diff
-@@ -320,10 +320,10 @@ class VirtualizedSectionList<
-       onViewableItemsChanged({
-         viewableItems: viewableItems
-           .map(this._convertViewable, this)
--          .filter(Boolean) as Array<ViewToken>,
-+          .filter(viewable => viewable != null),
-         changed: changed
-           .map(this._convertViewable, this)
--          .filter(Boolean) as Array<ViewToken>,
-+          .filter(viewable => viewable != null),
-       });
-     }
-   };
+@@ -5,8 +5,6 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-'use strict';
+-
+ import {
+   buttonType,
+   buttonsType,
+```
+
+**File**: `packages/dom-event-testing-library/src/domEvents.ts` (modified, +0/-2)
+```diff
+@@ -5,8 +5,6 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-'use strict';
+-
+ import {
+   buttonType,
+   buttonsType,
+```
+
+**File**: `packages/dom-event-testing-library/src/index.ts` (modified, +0/-2)
+```diff
+@@ -5,8 +5,6 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-'use strict';
+-
+ import { buttonType, buttonsType } from './constants';
+ import type { EventPayload } from './createEvent';
+ import { platform } from './domEnvironment';
+```
+
+**File**: `packages/dom-event-testing-library/src/testHelpers.ts` (modified, +0/-2)
+```diff
+@@ -5,8 +5,6 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-'use strict';
+-
+ import { test } from 'vitest';
+ 
+ import type { PointerType } from './domEvents';
+```
+
+**File**: `packages/dom-event-testing-library/src/touchStore.ts` (modified, +0/-2)
+```diff
+@@ -5,8 +5,6 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-'use strict';
+-
+ /**
+  * Touch events state machine.
+  *
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2981** (2026-11-25): Use named imports from react (@zoontek)
+- **PR #2979** (2026-11-25): Support arrays in transitionProperty (@zoontek)
 - **PR #2978** (2026-11-24): Upgrade to TypeScript 7 (@zoontek)
 - **PR #2977** (2026-11-24): Migrate to Vitest (@zoontek)
 - **PR #2976** (2026-11-23): Replace ESLint and Prettier with oxlint and oxfmt (@zoontek)
 - **PR #2975** (2026-11-20): [change] View, Text: rename "type" prop to "unstable_type" (@zoontek)
-- **PR #2974** (2026-11-20): [change] Migrate from Flow to TypeScript (@zoontek)
-- **PR #2972** (2026-11-19): [fix] StyleSheet: output valid CSS for logical transitionProperty values (@zoontek)
 
 ---
 
@@ -1184,13 +1087,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Enable more oxlint rules and fix their errors
+## X. Use named imports from react
 
 **RULE**:
 When implementing operations in `oxlint.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea9eb896`: Enable more oxlint rules and fix their errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95edda41`: Use named imports from react. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `oxlint.config.ts`.
@@ -1198,34 +1101,21 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // typescript
-    'typescript/no-empty-object-type': 'error',
-    'typescript/no-invalid-void-type': 'error',
+  plugins: ['import', 'node', 'promise', 'react', 'typescript'],
+    // import
+    'import/no-duplicates': ['error', { preferInline: true }],
+
+    'typescript/consistent-type-imports': 'error',
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    'capitalized-calls': 'off',
-    'no-await-in-loop': 'off',
-
-    'react/jsx-no-constructed-context-values': 'off',
-    'react/no-array-index-key': 'off',
-    'react/purity': 'off',
-
-    'typescript/await-thenable': 'off',
-    'typescript/no-empty-object-type': 'off',
-    'typescript/no-floating-promises': 'off',
-    'typescript/no-invalid-void-type': 'off',
-    'typescript/no-misused-spread': 'off',
-    'typescript/no-redundant-type-constituents': 'off',
-    'typescript/no-unnecessary-template-expression': 'off',
-    'typescript/no-unnecessary-type-arguments': 'off',
-    'typescript/no-unnecessary-type-conversion': 'off',
+  plugins: ['node', 'promise', 'react', 'typescript'],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea9eb896` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95edda41` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1485,8 +1485,8 @@
     "sourceUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceVersion": "hf-vllm-sr-d3",
     "license": "Open-Source",
-    "contentHash": "159dfef3c93ed10259bc2fb64816260bc5dc3dbecdbdab681cf38feba81c0fc2",
-    "lastHarvestedAt": "2026-11-23T22:33:06.214Z",
+    "contentHash": "a2a18e4d83f06c4b2e65940fcb23b5561e53cd2d424c431e7bc9b2994533fae8",
+    "lastHarvestedAt": "2026-11-27T07:58:17.286Z",
     "learningId": "learn-huggingface-vllm-sr-d3"
   },
   "nguyenphutrong-quotio": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "e8abd7c6",
+    "sourceVersion": "c28f8fb6",
     "license": "NOASSERTION",
-    "contentHash": "f9e2b58e34ebcf958c7d97e4ed8d9efeaa33affbbcf0bb7d40749d7bf1354dc0",
-    "lastHarvestedAt": "2026-11-25T15:00:34.195Z",
+    "contentHash": "fb8e8b5115f523351968edbc7e9140f3872b3e76bd8c81d5b1c97b98f46e22d4",
+    "lastHarvestedAt": "2026-11-27T07:58:26.807Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "327564b0",
+    "sourceVersion": "78fb5256",
     "license": "Apache-2.0",
-    "contentHash": "c6802b61cc1f4bbdb6cd721657d69f634644edb3ff857edbec209f521fd0067c",
-    "lastHarvestedAt": "2026-11-26T14:04:17.151Z",
+    "contentHash": "83b85f00dda3223c03c4262884b143487f6abb69590754bc853713ac8f26bee4",
+    "lastHarvestedAt": "2026-11-27T07:58:35.016Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "9fa18288",
+    "sourceVersion": "95edda41",
     "license": "MIT",
-    "contentHash": "2c1711a315d21b9849c27a268d1cff25ed52a84edb8d97deb34702da4fb2dfab",
-    "lastHarvestedAt": "2026-11-24T23:58:42.003Z",
+    "contentHash": "2d45ac150f0fed74306bfc17b6ee639845bb06dc5b90c139437abaadd30bcbb7",
+    "lastHarvestedAt": "2026-11-27T07:58:23.954Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "956d1300",
+    "sourceVersion": "0186ba2d",
     "license": "MIT",
-    "contentHash": "fb9168feccce442476d2669dc5f76f0c865a2ba2ba1da995b8f2389f54ec6a00",
-    "lastHarvestedAt": "2026-11-26T07:10:17.615Z",
+    "contentHash": "e5a899658fe5b9d365a06d0aa5d36533110c860f22fc08095e0d5553283e7232",
+    "lastHarvestedAt": "2026-11-27T07:58:19.224Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

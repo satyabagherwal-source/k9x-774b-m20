@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/vllm-sr/d3",
   "source_version": "hf-vllm-sr-d3",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T22:33:06.492Z",
+  "timestamp": "2026-11-27T07:58:17.616Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-vllm-sr-d3",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [vllm-sr/d3](https://huggingface.co/vllm-sr/d3) (Revision: `hf-vllm-sr`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T22:33:06.492Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:58:17.616Z`  
 > **Learning ID**: `learn-huggingface-vllm-sr-d3`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/vllm-sr/d3](https://huggingface.co/vllm-sr/d3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T22:32:58.819Z  
+> **Harvest Timestamp**: 2026-11-27T07:58:16.396Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: zero-shot-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6276 downloads | 299 likes
+- **Stars / Engagement**: 6216 downloads | 302 likes
 
 ---
 

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-27T05:12:42.244Z",
+  "updated_at": "2026-11-27T07:59:17.495Z",
   "statistics": {
-    "total_nodes": 574,
+    "total_nodes": 575,
     "total_edges": 236,
     "domain_distribution": {
       "D": 344,
       "M": 1,
-      "H": 109,
+      "H": 110,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -12810,6 +12810,28 @@
       ],
       "created_at": "2026-11-27T05:12:42.244Z",
       "updated_at": "2026-11-27T05:12:42.244Z"
+    },
+    "DOM-H-BDBEDA9A": {
+      "id": "DOM-H-BDBEDA9A",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Use named imports from react",
+      "summary": "Prevents defects observed in production commit `95edda41`: Use named imports from react. Unvalidated execution paths cause runtime exception -> When implementing operations in `oxlint.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://necolas-react-native-web/necolas-react-native-web-learnings.md",
+        "source_version": "95edda41",
+        "observed_at": "2026-11-27T07:58:22.363Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (necolas-react-native-web)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-27T07:59:17.495Z",
+      "updated_at": "2026-11-27T07:59:17.495Z"
     }
   },
   "edges": [

@@ -4,22 +4,22 @@
 {
   "source_repository": "koderover/zadig",
   "source_url": "https://github.com/koderover/zadig",
-  "source_version": "e8abd7c6",
+  "source_version": "c28f8fb6",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T15:00:34.529Z",
+  "timestamp": "2026-11-27T07:58:27.158Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-koderover-zadig",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `e8abd7c6`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T15:00:34.529Z`  
+> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `c28f8fb6`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T07:58:27.158Z`  
 > **Learning ID**: `learn-github-koderover-zadig`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `koderover/zadig` (Commit: `e8abd7c6`)
+- **Target Repository**: `koderover/zadig` (Commit: `c28f8fb6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:00:32.645Z  
+> **Harvest Timestamp**: 2026-11-27T07:58:25.242Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1213,165 +1213,171 @@ func isSubdirectory(rootDir, subDir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e8abd7c6` (2026-11-25)
-**Commit Message**: fix(workflow): preserve trigger operation log request bodies (#5119)
+### Incident Patch 1: `c28f8fb6` (2026-11-27)
+**Commit Message**: fix: exclude automated host status updates from operation logs (#5121)
 
-* fix(workflow): preserve trigger operation log request bodies
-
-Signed-off-by: Cynthia <[REDACTED_EMAIL]>
-
-* fix(workflow): unify trigger operation log details
-
-Signed-off-by: Cynthia <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Cynthia <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/aslan/core/workflow/handler/workflow_task_v4.go` (modified, +6/-1)
+**File**: `pkg/microservice/aslan/core/project/handler/host.go` (modified, +3/-1)
 ```diff
-@@ -110,6 +110,11 @@ func CreateWorkflowTaskV4ByBuildInTrigger(c *gin.Context) {
- 	ctx := internalhandler.NewContext(c)
- 	defer func() { internalhandler.JSONResponse(c, ctx) }()
- 
-+	data, err := internalhandler.GetRawData(c)
-+	if err != nil {
-+		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-+		return
-+	}
- 	args := new(commonmodels.WorkflowV4)
- 	if err := c.ShouldBindJSON(&args); err != nil {
- 		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-@@ -119,7 +124,7 @@ func CreateWorkflowTaskV4ByBuildInTrigger(c *gin.Context) {
- 	if triggerName == "" {
- 		triggerName = setting.DefaultTaskRevoker
+@@ -180,7 +180,9 @@ func UpdatePMHost(c *gin.Context) {
  	}
--	internalhandler.InsertOperationLog(c, ctx.UserName, args.Project, "新建", "工作流任务", args.Name, args.Name, getBody(c), types.RequestBodyTypeJSON, ctx.Logger)
-+	internalhandler.InsertOperationLog(c, ctx.UserName, args.Project, "新建", "工作流任务", args.Name, args.Name, string(data), types.RequestBodyTypeJSON, ctx.Logger)
- 	ctx.Resp, ctx.RespErr = workflow.CreateWorkflowTaskV4ByBuildInTrigger(triggerName, args, ctx.Logger)
- }
+ 
+ 	detail := fmt.Sprintf("hostName:%s ip:%s", args.Name, args.IP)
+-	internalhandler.InsertOperationLog(c, ctx.UserName, "", "更新", "项目资源-主机管理", detail, detail, string(data), types.RequestBodyTypeJSON, ctx.Logger)
++	if !args.UpdateStatus {
++		internalhandler.InsertOperationLog(c, ctx.UserName, "", "更新", "项目资源-主机管理", detail, detail, string(data), types.RequestBodyTypeJSON, ctx.Logger)
++	}
+ 
+ 	c.Request.Body = io.NopCloser(bytes.NewBuffer(data))
  
 ```
 
-**File**: `pkg/microservice/aslan/core/workflow/handler/workflow_v4.go` (modified, +88/-14)
+**File**: `pkg/microservice/aslan/core/system/handler/private_key.go` (modified, +3/-1)
 ```diff
-@@ -671,6 +671,11 @@ func CreateGithookForWorkflowV4(c *gin.Context) {
- 		return
- 	}
+@@ -160,7 +160,9 @@ func UpdatePrivateKey(c *gin.Context) {
  
-+	data, err := internalhandler.GetRawData(c)
-+	if err != nil {
-+		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-+		return
+ 	detail := fmt.Sprintf("hostName:%s ip:%s", args.Name, args.IP)
+ 	detailEn := fmt.Sprintf("Host Name: %s, IP: %s", args.Name, args.IP)
+-	internalhandler.InsertOperationLog(c, ctx.UserName, "", "更新", "资源配置-主机管理", detail, detailEn, string(data), types.RequestBodyTypeJSON, ctx.Logger)
++	if !args.UpdateStatus {
++		internalhandler.InsertOperationLog(c, ctx.UserName, "", "更新", "资源配置-主机管理", detail, detailEn, string(data), types.RequestBodyTypeJSON, ctx.Logger)
 +	}
- 	req := new(commonmodels.WorkflowV4GitHook)
- 	if err := c.ShouldBindJSON(req); err != nil {
- 		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-@@ -682,7 +687,9 @@ func CreateGithookForWorkflowV4(c *gin.Context) {
- 		ctx.RespErr = e.ErrCreateWebhook.AddErr(err)
- 		return
- 	}
--	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "新建", "工作流-webhook", w.Name, w.Name, getBody(c), types.RequestBodyTypeJSON, ctx.Logger)
-+	detail := fmt.Sprintf("工作流名称:%s,触发器名称:%s", w.Name, req.Name)
-+	detailEn := fmt.Sprintf("Workflow Name: %s, Trigger Name: %s", w.Name, req.Name)
-+	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "新建", "工作流-webhook", detail, detailEn, string(data), types.RequestBodyTypeJSON, ctx.Logger)
+ 	c.Request.Body = io.NopCloser(bytes.NewBuffer(data))
  
- 	// authorization check
- 	if !ctx.Resources.IsSystemAdmin {
-@@ -715,6 +722,11 @@ func UpdateGithookForWorkflowV4(c *gin.Context) {
- 		return
+ 	// authorization checks
+```
+
+---
+
+### Incident Patch 2: `f9180f6e` (2026-11-27)
+**Commit Message**: fix(testing): create data root before opening html reports (#5124)
+
+**File**: `pkg/microservice/aslan/core/workflow/testing/service/testing.go` (modified, +4/-0)
+```diff
+@@ -499,6 +499,10 @@ func downloadHtmlReportFromJobTask(jobTask *commonmodels.JobTask, projectName, w
+ 		}
  	}
- 
-+	data, err := internalhandler.GetRawData(c)
-+	if err != nil {
-+		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-+		return
+ 	htmlReportPath := pkgconfig.LocalHtmlReportPath(projectName, workflowName, jobTask.Name, taskID)
++	// The data directory is not mounted or baked into the image by default.
++	if err := os.MkdirAll(pkgconfig.DataPath(), os.ModePerm); err != nil {
++		return "", fmt.Errorf("failed to create data root, path: %s, err: %w", pkgconfig.DataPath(), err)
 +	}
- 	req := new(commonmodels.WorkflowV4GitHook)
- 	if err := c.ShouldBindJSON(req); err != nil {
- 		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-@@ -726,7 +738,9 @@ func UpdateGithookForWorkflowV4(c *gin.Context) {
- 		ctx.RespErr = e.ErrUpdateWebhook.AddErr(err)
- 		return
- 	}
--	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "更新", "工作流-webhook", w.Name, w.Name, getBody(c), types.RequestBodyTypeJSON, ctx.Logger)
-+	detail := fmt.Sprintf("工作流名称:%s,触发器名称:%s", w.Name, req.Name)
-+	detailEn := fmt.Sprintf("Workflow Name: %s, Trigger Name: %s", w.Name, req.Name)
-+	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "更新", "工作流-webhook", detail, detailEn, string(data), types.RequestBodyTypeJSON, ctx.Logger)
+ 	dataRoot, err := os.OpenRoot(pkgconfig.DataPath())
+ 	if err != nil {
+ 		return "", fmt.Errorf("failed to open data root, path: %s, err: %w", pkgconfig.DataPath(), err)
+```
+
+---
+
+### Incident Patch 3: `86650dc7` (2026-11-27)
+**Commit Message**: build: upgrade OS packages in runtime images (#5126)
+
+**File**: `docker/aslan.Dockerfile` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+     apk del tzdata
  
- 	// authorization check
- 	if !ctx.Resources.IsSystemAdmin {
-@@ -765,7 +779,9 @@ func DeleteGithookForWorkflowV4(c *gin.Context) {
- 		ctx.RespErr = e.ErrDeleteWebhook.AddErr(err)
- 		return
- 	}
--	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "删除", "工作流-webhook", w.Name, w.Name, "", types.RequestBodyTypeJSON, ctx.Logger)
-+	detail := fmt.Sprintf("工作流名称:%s,触发器名称:%s", w.Name, c.Param("triggerName"))
-+	detailEn := fmt.Sprintf("Workflow Name: %s, Trigger Name: %s", w.Name, c.Param("triggerName"))
-+	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "删除", "工作流-webhook", detail, detailEn, "", types.RequestBodyTypeJSON, ctx.Logger)
+ RUN apk update
+-RUN apk --no-cache add curl curl-dev
++RUN apk --no-cache upgrade && apk --no-cache add curl curl-dev
  
- 	// authorization check
- 	if !ctx.Resources.IsSystemAdmin {
-@@ -798,6 +814,11 @@ func CreateJiraHookForWorkflowV4(c *gin.Context) {
- 		return
- 	}
+ # install ali-acr plugin
+ RUN curl -fsSL "https://resources.koderover.com/helm-acr_0.8.2_linux_amd64.tar.gz" -o helm-acr.tar.gz &&\
+```
+
+**File**: `docker/cron.Dockerfile` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+     apk del tzdata
  
-+	data, err := internalhandler.GetRawData(c)
-+	if err != nil {
-+		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-+		return
-+	}
- 	jira := new(commonmodels.WorkflowV4JiraHook)
- 	if err := c.ShouldBindJSON(jira); err != nil {
- 		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-@@ -809,7 +830,9 @@ func CreateJiraHookForWorkflowV4(c *gin.Context) {
- 		ctx.RespErr = e.ErrCreateJiraHook.AddErr(err)
- 		return
- 	}
--	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "新建", "工作流-jirahook", w.Name, w.Name, getBody(c), types.RequestBodyTypeJSON, ctx.Logger)
-+	detail := fmt.Sprintf("工作流名称:%s,触发器名称:%s", w.Name, jira.Name)
-+	detailEn := fmt.Sprintf("Workflow Name: %s, Trigger Name: %s", w.Name, jira.Name)
-+	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "新建", "工作流-jirahook", detail, detailEn, string(data), types.RequestBodyTypeJSON, ctx.Logger)
+ RUN apk update
+-RUN apk --no-cache add curl curl-dev
++RUN apk --no-cache upgrade && apk --no-cache add curl curl-dev
  
- 	// authorization check
- 	if !ctx.Resources.IsSystemAdmin {
-@@ -862,6 +885,11 @@ func UpdateJiraHookForWorkflowV4(c *gin.Context) {
- 		return
- 	}
+ WORKDIR /app
  
-+	data, err := internalhandler.GetRawData(c)
-+	if err != nil {
-+		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-+		return
-+	}
- 	jira := new(commonmodels.WorkflowV4JiraHook)
- 	if err := c.ShouldBindJSON(jira); err != nil {
- 		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-@@ -873,7 +901,9 @@ func UpdateJiraHookForWorkflowV4(c *gin.Context) {
- 		ctx.RespErr = e.ErrUpdateJiraHook.AddErr(err)
- 		return
- 	}
--	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "更新", "工作流-jirahook", w.Name, w.Name, getBody(c), types.RequestBodyTypeJSON, ctx.Logger)
-+	detail := fmt.Sprintf("工作流名称:%s,触发器名称:%s", w.Name, jira.Name)
-+	detailEn := fmt.Sprintf("Workflow Name: %s, Trigger Name: %s", w.Name, jira.Name)
-+	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "更新", "工作流-jirahook", detail, detailEn, string(data), types.RequestBodyTypeJSON, ctx.Logger)
+```
+
+**File**: `docker/executor.Dockerfile` (modified, +1/-0)
+```diff
+@@ -25,6 +25,7 @@ WORKDIR /app
  
- 	// authorization check
- 	if !ctx.Resources.IsSystemAdmin {
-@@ -919,7 +949,9 @@ func DeleteJiraHookForWorkflowV4(c *gin.Context) {
- 		ctx.RespErr = e.ErrDeleteJiraHook.AddErr(err)
- 		return
- 	}
--	internalhandler.InsertOperationLog(c, ctx.UserName, w.Project, "删除", "工作流-jirahook", w.Name, w.Name, ""
+ # https://wiki.alpinelinux.org/wiki/Setting_the_timezone
+ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
++    apk --no-cache upgrade && \
+     apk add tzdata && \
+     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+     echo Asia/Shanghai  > /etc/timezone && \
+```
+
+**File**: `docker/hub-agent.Dockerfile` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+     apk del tzdata
+ 
+ RUN apk update
+-RUN apk --no-cache add curl curl-dev    
++RUN apk --no-cache upgrade && apk --no-cache add curl curl-dev
+ 
+ WORKDIR /app
+ 
+```
+
+**File**: `docker/hub-server.Dockerfile` (modified, +1/-0)
+```diff
+@@ -21,6 +21,7 @@ FROM alpine:3.20
+ 
+ # https://wiki.alpinelinux.org/wiki/Setting_the_timezone
+ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
++    apk --no-cache upgrade && \
+     apk add tzdata && \
+     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+     echo Asia/Shanghai  > /etc/timezone && \
+```
+
+**File**: `docker/init.Dockerfile` (modified, +1/-0)
+```diff
+@@ -21,6 +21,7 @@ FROM alpine:3.20
+ 
+ # https://wiki.alpinelinux.org/wiki/Setting_the_timezone
+ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
++    apk --no-cache upgrade && \
+     apk add tzdata && \
+     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+     echo Asia/Shanghai  > /etc/timezone && \
+```
+
+**File**: `docker/ua.Dockerfile` (modified, +1/-0)
+```diff
+@@ -21,6 +21,7 @@ FROM alpine:3.20
+ 
+ # https://wiki.alpinelinux.org/wiki/Setting_the_timezone
+ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
++    apk --no-cache upgrade && \
+     apk add tzdata ca-certificates && \
+     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+     echo Asia/Shanghai  > /etc/timezone && \
+```
+
+**File**: `docker/user.Dockerfile` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+     apk del tzdata
+ 
+ RUN apk update
+-RUN apk --no-cache add curl curl-dev    
++RUN apk --no-cache upgrade && apk --no-cache add curl curl-dev
+ 
+ WORKDIR /app
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5126** (2026-11-27): build: upgrade OS packages in runtime images (@huanghongbo-hhb)
+- **PR #5124** (2026-11-27): fix(testing): create data root before opening html reports (@huanghongbo-hhb)
+- **PR #5121** (2026-11-27): fix: exclude automated host status updates from operation logs (@Cynthia-0203)
 - **PR #5119** (2026-11-25): fix(workflow): preserve trigger operation log request bodies (@Cynthia-0203)
 - **PR #5118** (2026-11-20): fix: correct zadig sub components. (@leozhang2018)
 - **PR #5117** (2026-11-20): fix: correct zadig sub components. (@leozhang2018)
-- **PR #5116** (2026-11-20): fix(workflow): skip missing builds when listing referable variables (@huanghongbo-hhb)
-- **PR #5115** (2026-11-20): fix(hubserver): prevent concurrent WebSocket writes (@PetrusZ)
-- **PR #5114** (2026-11-20): fix: avoid panic on GitHub push events from GitHub Apps (@huanghongbo-hhb)
 
 ---
 
@@ -1391,36 +1397,33 @@ Signed-off-by: Cynthia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. workflow): preserve trigger operation log request bodies
+## X. exclude automated host status updates from operation logs
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/workflow/handler/workflow_task_v4.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/project/handler/host.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e8abd7c6`: workflow): preserve trigger operation log request bodies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c28f8fb6`: exclude automated host status updates from operation logs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/workflow/handler/workflow_task_v4.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/project/handler/host.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	data, err := internalhandler.GetRawData(c)
-	if err != nil {
-		ctx.RespErr = e.ErrInvalidParam.AddDesc(err.Error())
-		return
+	if !args.UpdateStatus {
+		internalhandler.InsertOperationLog(c, ctx.UserName, "", "更新", "项目资源-主机管理", detail, detail, string(data), types.RequestBodyTypeJSON, ctx.Logger)
 	}
-	internalhandler.InsertOperationLog(c, ctx.UserName, args.Project, "新建", "工作流任务", args.Name, args.Name, string(data), types.RequestBodyTypeJSON, ctx.Logger)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	internalhandler.InsertOperationLog(c, ctx.UserName, args.Project, "新建", "工作流任务", args.Name, args.Name, getBody(c), types.RequestBodyTypeJSON, ctx.Logger)
+	internalhandler.InsertOperationLog(c, ctx.UserName, "", "更新", "项目资源-主机管理", detail, detail, string(data), types.RequestBodyTypeJSON, ctx.Logger)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e8abd7c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c28f8fb6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

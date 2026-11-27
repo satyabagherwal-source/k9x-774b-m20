@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T07:49:07.492Z",
+  "updated_at": "2026-11-27T07:59:17.643Z",
   "stats": {
-    "total_discovered": 10267,
-    "approved_pending_harvest": 9738,
+    "total_discovered": 10270,
+    "approved_pending_harvest": 9741,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9742,
+      "COMMUNITY_AND_EXPERT": 9745,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222198,6 +222198,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
         "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-3DEED1217870": {
+      "id": "SRC-3DEED1217870",
+      "url": "https://opengameart.org/content/80-cc0-rpg-sfx",
+      "title": "https://opengameart.org/content/80-cc0-rpg-sfx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T07:58:39.051Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-BBF275873F68": {
+      "id": "SRC-BBF275873F68",
+      "url": "https://github.com/agent-of-empires/agent-of-empires/tree/main/bundled_sounds",
+      "title": "https://github.com/agent-of-empires/agent-of-empires/tree/main/bundled_sounds",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T07:58:39.135Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
+      }
+    },
+    "SRC-C079A17C29F3": {
+      "id": "SRC-C079A17C29F3",
+      "url": "https://github.com/paularmstrong/react-component-benchmark",
+      "title": "https://github.com/paularmstrong/react-component-benchmark",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T07:59:17.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
+        "fileName": "necolas-react-native-web-learnings.md"
       }
     }
   }

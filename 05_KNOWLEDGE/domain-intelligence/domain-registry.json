@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T07:49:08.104Z",
-  "total_records": 2815,
+  "last_updated": "2026-11-27T07:59:18.328Z",
+  "total_records": 2816,
   "domains": {
     "A": {
       "total": 23,
@@ -1734,7 +1734,7 @@
       ]
     },
     "H": {
-      "total": 685,
+      "total": 686,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2420,7 +2420,8 @@
         "DOM-H-A566253F",
         "DOM-H-B8E42626",
         "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-core-i",
-        "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-learni"
+        "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-learni",
+        "DOM-H-BDBEDA9A"
       ]
     },
     "I": {
@@ -8816,8 +8817,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "3d4ccd6c8d941e60f6fb889d7b35569f7b5c09fdd5461fa2f24eacfc7855a6e9",
-      "created_at": "2026-11-26T14:04:17.599Z"
+      "content_hash": "ef9bd0ee968d6907befd6188244a4c33da4d782b0d9c15236b2738835500c54a",
+      "created_at": "2026-11-27T07:58:35.612Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -16146,8 +16147,8 @@
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "repository": "agent-of-empires/agent-of-empires",
-      "content_hash": "91757c64b011531a0f4dbadc1b5140a4a3344045e9a29dcc511a952290249ea7",
-      "created_at": "2026-11-26T07:10:18.282Z"
+      "content_hash": "a4347b1349d468abf7f7f03b2407d8bbf4dda804febe187590d4d64a845f7fcf",
+      "created_at": "2026-11-27T07:58:19.862Z"
     },
     "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-core-invariants",
@@ -16173,8 +16174,8 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-learnings-architecture-intelligence-agent-of-e.md",
       "repository": "agent-of-empires-agent-of-empires-learnings",
-      "content_hash": "7bba535543dbe457a72389cc0b25f6462facd52ec04c70f643901694d4b81284",
-      "created_at": "2026-11-26T07:10:32.938Z"
+      "content_hash": "76a90204b4b260bb656c5ec835703ce88c591fb2d2ec94bf1a965b5c279f635e",
+      "created_at": "2026-11-27T07:58:39.807Z"
     },
     "DOM-D-C580DAE3": {
       "record_id": "DOM-D-C580DAE3",
@@ -19474,8 +19475,8 @@
       "title": "Technical Construction Intelligence: necolas/react-native-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-technical-construction-intelligence-necolas-react-nativ.md",
       "repository": "necolas/react-native-web",
-      "content_hash": "a60abd6e7eef63b5cc765219e391fd2b0948f47a5e157cb35162515ba972b31e",
-      "created_at": "2026-11-24T23:58:42.376Z"
+      "content_hash": "8f4973d5c43f8a2c4d98def720f655176ef5efc1ef7dc7cb9549ba64ef976283",
+      "created_at": "2026-11-27T07:58:24.564Z"
     },
     "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants",
@@ -19543,8 +19544,8 @@
       "title": "Technical Construction Intelligence: necolas-react-native-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-learnings-technical-construction-intelligence-necolas-r.md",
       "repository": "necolas-react-native-web-learnings",
-      "content_hash": "cb40c4d4b073e84524d160d257ec5dfb53585f467c1565b56de7f510878c6ce9",
-      "created_at": "2026-11-24T23:59:46.669Z"
+      "content_hash": "ab3294faf26eee05931a3e716d21d3a29323c9d9ea56f72a33f5ca334fe6c107",
+      "created_at": "2026-11-27T07:59:18.328Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i",
@@ -19891,8 +19892,8 @@
       "title": "Research & Knowledge Intelligence: vllm-sr/d3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-vllm-sr-d3-research-knowledge-intelligence-vllm-sr-d3-core-invariants.md",
       "repository": "vllm-sr/d3",
-      "content_hash": "eef53560a4743226f0e5beed58c6abdfd3affb7b6d43a31bbf0903c6fd658794",
-      "created_at": "2026-11-23T22:33:06.493Z"
+      "content_hash": "5bf97f79a5cff6b9795763211fe71c8abe4230033a9c542e08a176ada50ee096",
+      "created_at": "2026-11-27T07:58:17.617Z"
     },
     "DOM-D-608927A6": {
       "record_id": "DOM-D-608927A6",
@@ -19942,8 +19943,8 @@
       "title": "Research & Knowledge Intelligence: hf-vllm-sr-d3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-vllm-sr-d3-learnings-research-knowledge-intelligence-hf-vllm-sr-d3-learnings-.md",
       "repository": "hf-vllm-sr-d3-learnings",
-      "content_hash": "3a947ae0ab6aaab65214e97c2b570595459d5595dcdbdda0badc0af0451a91fe",
-      "created_at": "2026-11-23T22:33:11.709Z"
+      "content_hash": "8d37689cd5a014d7340d14e90af5dfaaaf729ff9d71f7bfb2e0023d8256594f9",
+      "created_at": "2026-11-27T07:58:40.656Z"
     },
     "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fallow-rs-fallow-core-invariants",
@@ -26449,8 +26450,8 @@
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "repository": "koderover/zadig",
-      "content_hash": "6d9cb3b8916740cc499072e9d77adea24895066ac38be4272c29c5dc7f32fc4c",
-      "created_at": "2026-11-25T15:00:34.773Z"
+      "content_hash": "a7722744715a0178abde8aa84f4de10922c84ed59c055bcf49f3651eb2f65f57",
+      "created_at": "2026-11-27T07:58:27.432Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -47493,6 +47494,48 @@
       "repository": "oracle-devrel-oracle-ai-developer-hub-learnings",
       "content_hash": "bd6527427ddd0f7448ec8bc41a3efadfa367e50d9b6c5559a2bfb4d2433da3c7",
       "created_at": "2026-11-27T06:15:00.227Z"
+    },
+    "DOM-H-BDBEDA9A": {
+      "record_id": "DOM-H-BDBEDA9A",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Use named imports from react",
+      "content": "When implementing operations in `oxlint.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "2e3d9d9dcc438a5e2bab7da02931938a34049c79c493ca90e37039f47e9ebc0c",
+      "summary": "Prevents defects observed in production commit `95edda41`: Use named imports from react. Unvalidated execution paths cause runtime exception -> When implementing operations in `oxlint.config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/",
+      "provenance": {
+        "source_uri": "project://necolas-react-native-web/necolas-react-native-web-learnings.md",
+        "source_version": "95edda41",
+        "observed_at": "2026-11-27T07:58:22.363Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (necolas-react-native-web)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of necolas-react-native-web"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T07:59:17.448Z"
     }
   }
 }

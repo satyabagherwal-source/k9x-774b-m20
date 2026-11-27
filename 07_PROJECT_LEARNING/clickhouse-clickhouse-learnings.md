@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `327564b0`  
+> **Source Version**: `78fb5256`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T14:04:15.971Z  
+> **Timestamp**: 2026-11-27T07:58:33.533Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T14:04:15.965Z  
+> **Harvest Timestamp**: 2026-11-27T07:58:33.527Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51162 stars
+- **Stars / Engagement**: 51182 stars
 
 ---
 
@@ -1317,11 +1317,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #134206** (2026-11-26): **Column expired by TTL in a mutation leaves its files in the new part on object storage**
-  *Symptoms*: ### Company or project name  ClickHouse  ### Describe what's wrong  When a mutation (for example `ALTER TABLE ... MATERIALIZE TTL`) fully expires a column through its column TTL, the new part no longer has the column in its column list and its files are removed from `checksums.txt`, but on a disk with object storage the files themselves stay in the part directory. They remain orphaned there until the part is removed, and the removal then fails to remove the part directory by deleting the files listed in its checksums: it logs an error with `CANNOT_RMDIR` (`Directory not empty`) and falls back to a recursive removal. No data is lost, but the orphaned files take space for the part's lifetime and every such removal logs an error.  On a local disk the same mutation does not leave the files behind.  ### Does it reproduce on the most recent release?  Reproduces on current master (26.12.1.1). I did not check a release build.  ### How to reproduce  The script uses a `local_blob_storage` object storage disk, so it runs with `clickhouse local` without S3:  ```bash #!/usr/bin/env bash CH=${1:-clickhouse} DIR=$(mktemp -d) cat > "$DIR/config.xml" <<'XML' <clickhouse>     <storage_configuration>         <disks>             <blob>                 <type>object_storage</type>                 <object_storage_type>local_blob_storage</object_storage_type>                 <metadata_type>local</metadata_type>                 <path>blob/</path>             </blob>         </disks>         <policies
+- **Issue #134739** (2026-11-26): **Unity `DataLakeCatalog`: a schema with an unexpected `catalog_name` aborts the server (`chassert` on catalog data)**
+  *Symptoms*: 🕵️`UnityV2Catalog::getSchemas` (`src/Databases/DataLake/UnityV2Catalog.cpp:1014`) and `UnityCatalog::getSchemas` (`src/Databases/DataLake/UnityCatalog.cpp:516`) assert on the response of `GET /schemas`:  ```cpp chassert(schema_info->get("catalog_name").extract<String>() == warehouse); ```  This checks data from the remote catalog, not an internal invariant. If a schema's `catalog_name` differs from the `warehouse` setting, `SHOW TABLES` aborts debug and sanitizer builds. Case alone is enough, e.g. `Unity` vs `unity`. A schema without `catalog_name` throws a raw Poco "Can not extract empty value" instead.  In release builds the check is compiled out, and such a schema is listed as if it belonged to `warehouse`.  Both v1 (`use_unity_catalog_v2 = 0`, still used by existing databases) and v2 are affected. Present on master 3f51901d00b3.  **How to reproduce**  Mock Unity server, every route under `/api/2.1/unity-catalog`:  - `GET /schemas?catalog_name=unity` returns `{"schemas": [{"name": "s1", "catalog_name": "OTHER", "full_name": "unity.s1"}]}`. - `GET /tables?...` returns `{"tables": []}`.  ```sql SET allow_database_unity_catalog = 1; CREATE DATABASE uc ENGINE = DataLakeCatalog('http://127.0.0.1:18400/api/2.1/unity-catalog') SETTINGS warehouse = 'unity', catalog_type = 'unity', use_unity_catalog_v2 = 1, vended_credentials = false, catalog_credential = 'x'; SHOW TABLES FROM uc; -- abort ```  ``` <Fatal> : Logical error: 'schema_info->get("catalog_name").extract<String>() == war
 
-- **Issue #134120** (2026-11-25): **Keeper: `std::condition_variable` lost-wakeup deadlock in `KeeperReadThreadPool::execute` / `threadFunction`**
-  *Symptoms*: ### Summary  `KeeperReadThreadPool::threadFunction` decrements `busy_threads` and calls `done_cv.notify_all` **before** acquiring `mutex`, while `KeeperReadThreadPool::execute` waits on `done_cv` under `mutex` for `busy_threads.load() == 0`. This creates a classic C++ `std::condition_variable` lost-wakeup race that can permanently deadlock Keeper's read pipeline whenever `parallel_read_threads > 0` (the default is `8`).  ### Root Cause  In `src/Coordination/KeeperReadThreadPool.cpp`:  1. **`KeeperReadThreadPool::execute` (lines 45–107)** holds `std::unique_lock lock(mutex)` and waits for workers to finish:    ```cpp    done_cv.wait(lock, [&] { return busy_threads.load() == 0; });    ``` 2. **`KeeperReadThreadPool::threadFunction` (lines 159–164)** modifies `busy_threads` and notifies `done_cv` **outside** `lock`, right before calling `lock.lock()` on the very next line:    ```cpp    size_t prev_busy_threads = busy_threads.fetch_sub(1, std::memory_order_release);    chassert(prev_busy_threads > 0);    if (prev_busy_threads == 1)        done_cv.notify_all();     lock.lock();    ``` 3. **Lost-wakeup interleaving**:    - Thread A (`execute`, holding `mutex`): evaluates predicate `busy_threads.load() == 0` -> observes `1` -> returns `false`, and prepares to unlock `mutex` and sleep in `done_cv.wait`.    - Thread B (last worker in `threadFunction`, NOT holding `mutex`): executes `busy_threads.fetch_sub(1)` (`1 -> 0`) and calls `done_cv.notify_all()` — nobody is sleeping on `done_cv
+- **Issue #134593** (2026-11-26): **accurateCastOrNull on Variant records a caught speculative conversion error in system.errors**
+  *Symptoms*: ### Describe what's wrong  On ClickHouse 26.11.1.2508, a successful `accurateCastOrNull` from `Variant(Array(UInt8), UInt64)` to `UInt64` increments the `ILLEGAL_TYPE_OF_ARGUMENT` counter in `system.errors`. The Variant contains only a `UInt64`; the error comes from probing the unused `Array(UInt8)` alternative and does not escape or fail the query.  ### Does it reproduce on the most recent release?  No  ### How to reproduce  Save the following as `case.sql` and run it while no other queries are producing `ILLEGAL_TYPE_OF_ARGUMENT` errors:  ```sql DROP TABLE IF EXISTS error_baseline;  CREATE TABLE error_baseline (     value UInt64 ) ENGINE = Memory;  INSERT INTO error_baseline SELECT sum(value) FROM system.errors WHERE name = 'ILLEGAL_TYPE_OF_ARGUMENT';  -- This query succeeds and converts the UInt64 value. SELECT accurateCastOrNull(     CAST(toUInt64(1), 'Variant(Array(UInt8), UInt64)'),     'UInt64') FORMAT Null;  -- Returns 1: the successful query recorded exactly one error. SELECT toUInt8(     (SELECT sum(value) FROM system.errors WHERE name = 'ILLEGAL_TYPE_OF_ARGUMENT')     - (SELECT any(value) FROM error_baseline)     = 1);  DROP TABLE error_baseline; ```  ```bash clickhouse-client --multiquery --queries-file case.sql ```  Observed output:  ```text 1 ```  ### Expected behavior  The counter delta should be zero. `system.errors.value` is described in `src/Storages/System/StorageSystemErrors.cpp` as “The number of times this error happened.” `src/Common/Exception.h` also d
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1338,516 +1338,181 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `072088d7` (2026-11-26)
-**Commit Message**: Merge pull request #134603 from groeneai/fix-05507-darwin-read-timeout
+### Incident Patch 1: `0122c5f7` (2026-11-27)
+**Commit Message**: Enforce the query memory limit on the glob walk's traversal state
 
-Raise the script read timeout in `05507_mv_source_merge_loop_executable_crash`, flaky on the macOS Fast test
+`visited_frames` keeps about 1 KB per directory a `**` walk enters until
+the expansion ends, and the standard containers track those allocations
+without ever refusing one. On 20,000 empty directories,
+`file('tree/**/*.txt')` with `max_memory_usage = 10000000` and
+`max_untracked_memory = 1` peaked at 24.4 MB and returned without an
+exception; with 200,000 directories and a 50 MB limit it peaked at 235 MB
+under default settings.
 
-**File**: `tests/queries/0_stateless/05507_mv_source_merge_loop_executable_crash.sh` (modified, +2/-2)
+Use the `*WithMemoryTracking` containers for the traversal state, so both
+walks now fail with MEMORY_LIMIT_EXCEEDED (at 9.5 MiB and 84 MiB). Listing
+time over 20,000 directories is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/Storages/StorageFile.cpp` (modified, +17/-12)
 ```diff
-@@ -120,7 +120,7 @@ CREATE TABLE db_05507.dst (name String, block_rows UInt64, value UInt64) ENGINE
+@@ -81,6 +81,8 @@
+ #include <Common/re2.h>
+ #include <Common/ErrnoException.h>
+ #include <Common/saturatedDuration.h>
++#include <Common/UnorderedMapWithMemoryTracking.h>
++#include <Common/UnorderedSetWithMemoryTracking.h>
+ #include <Common/VectorWithMemoryTracking.h>
+ #include <Formats/SchemaInferenceUtils.h>
+ #include <base/defines.h>
+@@ -295,23 +297,23 @@ struct VisitedFrame
+     size_t skipped_begin = 0;
+     size_t skipped_end = 0;
+     /// `matches` at the start of each retry, in order.
+-    std::vector<size_t> matches_before_retries;
++    VectorWithMemoryTracking<size_t> matches_before_retries;
+     /// The fewest levels above `prefix` that the `..` of a match of the current walk reach. Another spelling
+     /// of the directory returns the same path for such a match only if both spellings are equal that far up.
+     size_t min_match_climb = std::numeric_limits<size_t>::max();
+     /// `lexical_dir` and `min_match_climb` of each walk before the current one, in order.
+-    std::vector<std::pair<std::string, size_t>> earlier_walks;
++    VectorWithMemoryTracking<std::pair<std::string, size_t>> earlier_walks;
+ };
  
- CREATE MATERIALIZED VIEW db_05507.mv_executable TO db_05507.dst AS
-     SELECT 'executable' AS name, count() AS block_rows,
--        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0))) AS value
-+        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0), SETTINGS command_read_timeout = 30000)) AS value
-     FROM db_05507.src;
+ /// State the traversal pruning carries across one expanded pattern.
+ struct PruningState
+ {
+     /// Frames the walk has entered, keyed by (canonical directory, remaining pattern).
+-    std::unordered_map<std::string, VisitedFrame> visited_frames;
++    UnorderedMapWithMemoryTracking<std::string, VisitedFrame> visited_frames;
+     /// The frames currently on the walk's stack. A match belongs to all of them, because a frame
+     /// pruned against any one of them would have re-walked that whole subtree. Pointers into
+     /// `visited_frames` stay valid across its rehashing, which is what makes them safe to hold.
+-    std::vector<VisitedFrame *> active_frames;
++    VectorWithMemoryTracking<VisitedFrame *> active_frames;
+     /// Frames pruned because another frame reached the same place under a different lexical path.
+     /// Whether that hid a real second name depends on how many matches the claiming frame ends up
+     /// with, so the answer is deferred until the walk is over and every count is final. Deciding
+@@ -328,7 +330,7 @@ struct PruningState
+         /// The pruned spelling's `lexical_dir` when `..` are folded, else empty: every match is then another path.
+         std::string pruned_dir;
+     };
+-    std::vector<Collision> pending_collisions;
++    VectorWithMemoryTracking<Collision> pending_collisions;
  
- INSERT INTO db_05507.src VALUES (1), (2), (3);
-@@ -137,7 +137,7 @@ SELECT 'append_refresh', * FROM db_05507.dst ORDER BY name;
- TRUNCATE TABLE db_05507.dst;
- CREATE MATERIALIZED VIEW db_05507.rmv_read REFRESH EVERY 1 YEAR APPEND TO db_05507.dst EMPTY AS
-     SELECT 'executable' AS name, count() AS block_rows,
--        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0))) AS value
-+        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0), SETTINGS command_read_timeout = 30000)) AS value
-     FROM db_05507.src;
- SYSTEM REFRESH VIEW db_05507.rmv_read;
- SYSTEM WAIT VIEW db_05507.rmv_read;
+     /// What a path skipped on `ELOOP` or `ENAMETOOLONG` would have added to the result. The walk fails at the end
+     /// unless another name found it, or a later walk of `frame` superseded the skip.
+@@ -345,9 +347,9 @@ struct PruningState
+         bool found = false;
+         bool is_tail = false;
+     };
+-    std::vector<SkippedPath> skipped_paths;
++    VectorWithMemoryTracking<SkippedPath> skipped_paths;
+     /// (canonical directory, remaining pattern) of every directory a bounded tail below a `**` has listed.
+-    std::unordered_set<std::string> listed_tails;
++    UnorderedSetWithMemoryTracking<std::string> listed_tails;
+     /// The pattern has a `..` segment and ends in a name without globs, which the exact-match branch returns with
+     /// the `..` folded lexically.
+     bool folds_dot_dot = false;
+@@ -464,7 +466,9 @@ void notePathLimitSkip(
+ }
+ 
+ /// Whether a skip still counts and no other name has returned what it would have.
+-bool isMissing(PruningState::SkippedPath & skipped, const PruningState & pruning, const std::unordered_map<std::string, size_t> & matched_paths)
++bool isMissing(
++    PruningState::SkippedPath & skipped, const PruningState & pruning,
++    const UnorderedMapWithMemoryTracking<std::string, size_t> & matched_paths)
+ {
+     if (skipped.walk != skipped.frame->matches_before_retries.size())
+         return false;
+@@ -481,7 +485,8 @@ bool isMissing(PruningState::SkippedPath & skipped, const PruningState & pruning
+ /// Whether `prefix`, another name for the frame's directory, resolves what its last walk could not: the
+ /// first path it left unresolved, or any skip below it that is still missing or leads into an incomplete frame.
+ bool resolvesUnresolved(
+-    const VisitedFrame & frame, const std::string & prefix, PruningState & pruning, const std::unordered_map<std::string, size_t> & matched_paths)
++    const VisitedFrame & frame, const std::string & prefix, PruningState & pruning,
++    const UnorderedMapWithMemoryTracking<std::string, size_t> & matched_paths)
+ {
+     if (!frame.unresolved)
+         return false;
+@@ -519,7 +524,7 @@ void listFilesWithRegexpMatchingImpl(
+     const std::string & for_match,
+     size_t & total_bytes_to_read,
+     std::vector<std::string> & result,
+-    std::unordered_map<std::string, size_t> & matched_paths,
++    UnorderedMapWithMemoryTracking<std::string, size_t> & matched_paths,
+     bool recursive,
+     size_t depth,
+     PruningState & pruning,
+@@ -826,7 +831,7 @@ void listFilesWithRegexpMatchingImpl(
+     /// level
 ```
 
 ---
 
-### Incident Patch 2: `70dc3b53` (2026-11-26)
-**Commit Message**: Merge pull request #127586 from ClickHouse/fix-stats-for-string-filters
+### Incident Patch 2: `78fb5256` (2026-11-27)
+**Commit Message**: Merge pull request #134911 from ClickHouse/fix-multiway-merge-join-ubsan
 
-Measure compressed blocks read for AutoPR input bytes instead of sampling
+Fix unsigned overflow in `MultiwayMergeJoinAlgorithm::RangeState::advance`
 
-**File**: `src/Compression/CachedCompressedReadBuffer.cpp` (modified, +2/-0)
+**File**: `src/Processors/Transforms/MergeJoinTransform.cpp` (modified, +3/-3)
 ```diff
-@@ -89,6 +89,8 @@ bool CachedCompressedReadBuffer::nextImpl()
-         throw Exception(ErrorCodes::SEEK_POSITION_OUT_OF_BOUND, "Seek position is beyond the decompressed block (pos: "
-         "{}, block size: {})", nextimpl_working_buffer_offset, toString(working_buffer.size()));
- 
-+    if (ranges_read)
-+        ranges_read->emplace_back(file_pos, file_pos + owned_cell->compressed_size);
-     file_pos += owned_cell->compressed_size;
- 
-     return true;
-```
-
-**File**: `src/Compression/CompressedReadBufferBase.h` (modified, +11/-0)
-```diff
-@@ -4,6 +4,7 @@
- #include <Compression/ICompressionCodec.h>
- #include <IO/BufferBase.h>
- 
-+#include <Common/VectorWithMemoryTracking.h>
- #include <city.h>
- 
- 
-@@ -13,6 +14,9 @@ namespace DB
- class Exception;
- class ReadBuffer;
- 
-+/// Ranges in a file, [begin, end), of compressed blocks.
-+using CompressedBlockRanges = VectorWithMemoryTracking<std::pair<size_t, size_t>>;
-+
- /** Basic functionality for implementation of
-   *  CompressedReadBuffer, CompressedReadBufferFromFile and CachedCompressedReadBuffer.
-   */
-@@ -61,6 +65,9 @@ class CompressedReadBufferBase
-     /// Adds diagnostics to the error message.
-     void addDiagnostics(Exception & e) const;
- 
-+    /// See `setRangesReadSink`. Maintained by the buffers that read from a file.
-+    CompressedBlockRanges * ranges_read = nullptr;
-+
- public:
-     /// 'compressed_in' could be initialized lazily, but before first call of 'readCompressedData'.
-     explicit CompressedReadBufferBase(ReadBuffer * in = nullptr, bool allow_different_codecs_ = false, bool external_data_ = false);
-@@ -75,6 +82,10 @@ class CompressedReadBufferBase
-         disable_checksum = true;
-     }
- 
-+    /// Makes the buffer append the range in the file, [offset, offset + compressed size with the header and the checksum),
-+    /// of every block it decompresses or takes decompressed from a cache, every time it loads it.
-+    void setRangesReadSink(CompressedBlockRanges * ranges_read_) { ranges_read = ranges_read_; }
-+
-     /// Identifies the column this buffer reads, see LZ4StatisticsHint.h.
-     void setStatisticsHint(UInt64 hint) { statistics_hint = hint; }
- 
-```
-
-**File**: `src/Compression/CompressedReadBufferFromFile.cpp` (modified, +6/-0)
-```diff
-@@ -27,9 +27,12 @@ bool CompressedReadBufferFromFile::nextImpl()
+@@ -1592,10 +1592,10 @@ struct MultiwayMergeJoinAlgorithm::RangeState
+     /// last input is advanced by the caller. Returns false after the last row.
+     bool advance()
      {
-         size_t size_decompressed = 0;
-         size_t size_compressed_without_checksum = 0;
-+        const size_t block_offset = ranges_read ? file_in.getPosition() : 0;
-         size_compressed = readCompressedData(size_decompressed, size_compressed_without_checksum, false);
-         if (!size_compressed)
-             return false;
-+        if (ranges_read)
-+            ranges_read->emplace_back(block_offset, block_offset + size_compressed);
- 
-         auto additional_size_at_the_end_of_buffer = codec->getAdditionalSizeAtTheEndOfBuffer();
- 
-@@ -135,10 +138,13 @@ size_t CompressedReadBufferFromFile::readBig(char * to, size_t n)
-             bytes += offset();
-             resetWorkingBuffer();
-             size_compressed = 0;
-+            const size_t block_offset = ranges_read ? file_in.getPosition() : 0;
-             size_t new_size_compressed = readCompressedData(size_decompressed, size_compressed_without_checksum, false);
- 
-             if (!new_size_compressed)
-                 return bytes_read;
-+            if (ranges_read)
-+                ranges_read->emplace_back(block_offset, block_offset + new_size_compressed);
- 
-             auto additional_size_at_the_end_of_buffer = codec->getAdditionalSizeAtTheEndOfBuffer();
- 
-```
-
-**File**: `src/Core/Settings.cpp` (modified, +0/-4)
-```diff
-@@ -1285,10 +1285,6 @@ Equality with a constant string is not moved for this reason: it is still applie
- Supported for reading from `MergeTree` tables and from the `Parquet` format. In `Parquet`, the filter is applied to pages with
- the `PLAIN`, `DELTA_LENGTH_BYTE_ARRAY`, `DELTA_BYTE_ARRAY`, and dictionary encodings.
- 
--Note that the estimation of the input bytes collected for the automatic decision about parallel replicas
--(`RuntimeDataflowStatisticsInputBytes`) is based on the in-memory size of the read blocks, so it underestimates
--the amount of data read from disk when the values are replaced by empty strings.
--
- Possible values:
- 
- - 0 — Disabled.
-```
-
-**File**: `src/Processors/QueryPlan/Optimizations/RuntimeDataflowStatistics.cpp` (modified, +15/-141)
-```diff
-@@ -11,6 +11,7 @@
- #include <IO/WriteBufferFromString.h>
- #include <Interpreters/Aggregator.h>
- #include <Interpreters/sortBlock.h>
-+#include <Storages/MergeTree/MergeTreeReaderStream.h>
- 
- #include <Poco/Logger.h>
- #include <Common/logger_useful.h>
-@@ -24,7 +25,6 @@ namespace ProfileEvents
- extern const Event AutoParallelReplicasNoStatistics;
- extern const Event RuntimeDataflowStatisticsInputBytes;
- extern const Event RuntimeDataflowStatisticsOutputBytes;
--extern const Event RuntimeDataflowStatisticsInputNanoseconds;
- extern const Event RuntimeDataflowStatisticsOutputNanoseconds;
- }
- 
-@@ -101,27 +101,10 @@ RuntimeDataflowStatisticsBlock::~RuntimeDataflowStatisticsBlock()
-             stats.elapsed_microseconds);
-     };
- 
--    RuntimeDataflowStatistics res{.total_rows_to_read = total_rows_to_read};
--    for (size_t i = 0; i < InputStatisticsType::MaxInputType; ++i)
--    {
--        const auto & stats = input_bytes_statistics[i];
--        if (stats.compressed_bytes)
--        {
--            log_stats(stats, toString(static_cast<InputStatisticsType>(i)));
--            const auto compression_ratio = static_cast<double>(stats.sample_bytes) / static_cast<double>(stats.compressed_bytes);
--            res.input_bytes += static_cast<size_t>(static_cast<double>(stats.bytes) / compression_ratio);
--        }
--    }
--    for (size_t i = 0; i < InputStatisticsType::MaxInputType; ++i)
--    {
--        const auto & stats = duplicated_bytes_statistics[i];
--        if (stats.compressed_bytes)
--        {
--            log_stats(stats, fmt::format("Duplicated{}", toString(static_cast<InputStatisticsType>(i))));
--            const auto compression_ratio = static_cast<double>(stats.sample_bytes) / static_cast<double>(stats.compressed_bytes);
--            res.duplicated_bytes += static_cast<size_t>(static_cast<double>(stats.bytes) / compression_ratio);
--        }
--    }
-+    RuntimeDataflowStatistics res{
-+        .input_bytes = input_bytes_read.load(std::memory_order_relaxed),
-+        .duplicated_bytes = duplicated_bytes_read.load(std::memory_order_relaxed),
-+        .total_rows_to_read = total_rows_to_read};
-     for (size_t i = 0; i < OutputStatisticsType::MaxOutputType; ++i)
-     {
-         const auto & stats = output_bytes_statistics[i];
-@@ -156,35 +139,10 @@ RuntimeDataflowStatisticsBlock::~RuntimeDataflowStatisticsBlock()
-         dataflow_cache.forgetUndecided(undecided_query_key);
- }
- 
--bool isSerializedAsSingleStreamOfColumnType(const ISerialization & serialization, const DataTypePtr & type)
--{
--    size_t num_streams = 0;
--    bool stream_is_column_itself = false;
--    serialization.enumerateStreams(
--        [&](const auto & substream_path)
--        {
--            ++num_streams;
--            const auto & substream_type = substream_path.back().data.type;
--            stream_is_column_itself
--                = ISerialization::isSpecialCompressionAllowed(substream_path) && substream_type && substream_type->equals(*type);
--        },
--        type);
--    return num_streams == 1 && stream_is_column_itself;
--}
--
- /// Tries to estimate compressed size of a column by serializing a sample of it.
--static std::pair<size_t, size_t> estimateCompressedColumnSize(const ColumnWithTypeAndName & column, const ColumnCodecs & codecs)
-+static std::pair<size_t, size_t> estimateCompressedColumnSize(const ColumnWithTypeAndName & column, const CompressionCodecPtr & codec)
- {
-     auto [serialization, _, column_to_write] = NativeWriter::getSerializationAndColumn(DBMS_TCP_PROTOCOL_VERSION, column);
--    /// What the sample buffer holds is only known here: the serialization is picked from the column at
--    /// hand, so a column stored `Sparse` (or `Replicated`) arrives as several substreams funnelled into
--    /// the one buffer below, and the column read from the part keeps the pre-`ALTER` type until the
--    /// mutation that rewrites it has run. A type-specific codec then measures a stream it was never
--    /// resolved for. Some codecs merely mismeasure it, but one that validates its input rejects it
--    /// outright - `ALP` throws `CANNOT_COMPRESS` on a byte count that is not a whole number of floats.
--    const bool sample_matches_type_specific_codec = codecs.type_specific && codecs.type_specific_for->equals(*column.type)
--        && isSerializedAsSingleStreamOfColumnType(*serialization, column.type);
--    const auto & codec = sample_matches_type_specific_codec ? codecs.type_specific : codecs.generic;
-     NullWriteBuffer null_buf;
-     CompressedWriteBuffer compressed_buf(null_buf, codec);
-     // To avoid spending too much time on serialization, we limit the number of rows to serialize.
-@@ -256,11 +214,9 @@ void RuntimeDataflowStatisticsCacheUpdater::recordColumns(
-     size_t compressed_bytes = 0;
-     if (shouldSampleBlock(statistics, num_rows))
-     {
--        /// Only output columns get here, and they model what a replica sends to the initiator rather than
--        /// anything stored in a part, so there is no column `CODEC` to reso
-```
-
-**File**: `src/Processors/QueryPlan/Optimizations/RuntimeDataflowStatistics.h` (modified, +9/-56)
-```diff
-@@ -9,11 +9,8 @@
- #include <Core/NamesAndTypes.h>
- #include <Processors/Chunk.h>
- #include <Processors/ISimpleTransform.h>
--#include <Compression/ICompressionCodec.h>
--#include <Storages/ColumnSize.h>
- #include <Common/CacheBase.h>
- #include <Common/ProfileEvents.h>
--#include <Common/UnorderedMapWithMemoryTracking.h>
- 
- #include <atomic>
- #include <cstddef>
-@@ -32,6 +29,8 @@ extern const int BAD_ARGUMENTS;
- 
- class Aggregator;
- struct AggregatedDataVariants;
-+class ReadRangesRegistry;
-+using ReadRangesRegistryPtr = std::shared_ptr<ReadRangesRegistry>;
- 
- struct RuntimeDataflowStatistics
- {
-@@ -128,30 +127,6 @@ class RuntimeDataflowStatisticsCache
- 
- RuntimeDataflowStatisticsCache & getRuntimeDataflowStatisticsCache();
- 
--/// The codecs a column's `CODEC` resolves to, for the two shapes its serialized sample can have.
--///
--/// The writer resolves a `CODEC` per substream: a type-specific codec (`ALP`, `T64`, `Delta`, ...) is
--/// applied only to a substream that carries the column type itself, and structural substreams (`Array`
--/// offsets, null map, sparse offsets, ...) keep only the generic codecs. The estimate serializes a whole
--/// column into a single buffer, so `type_specific` describes that buffer only when it holds exactly one
--/// stream of `type_specific_for`. Neither is a property of the table metadata alone: the serialization is
--/// chosen per block from the column at hand, and an unfinished `ALTER MODIFY COLUMN` leaves the part
--/// holding the old type while the metadata already reports the new one.
--struct ColumnCodecs
--{
--    /// Null when the column's `CODEC` has no resolution against a type - then only `generic` applies.
--    CompressionCodecPtr type_specific = nullptr;
--    DataTypePtr type_specific_for = nullptr;
--    CompressionCodecPtr generic = nullptr;
--};
--
--/// Only columns whose `CODEC` overrides the part's default; resolved once per read task.
--using ColumnCodecByName = UnorderedMapWithMemoryTracking<String, ColumnCodecs>;
--
--/// Whether `serialization` writes the column as a single stream carrying `type` itself, the only layout
--/// a type-specific codec may be applied to.
--bool isSerializedAsSingleStreamOfColumnType(const ISerialization & serialization, const DataTypePtr & type);
--
- /// One execution's dataflow statistics, the single cache entry its updaters fill. Every updater of the
- /// execution shares it, and it writes the entry when the last of them is gone.
- struct RuntimeDataflowStatisticsBlock
-@@ -167,13 +142,6 @@ struct RuntimeDataflowStatisticsBlock
-         size_t elapsed_microseconds TSA_GUARDED_BY(mutex) = 0;
-     };
- 
--    enum InputStatisticsType
--    {
--        WithByteHint = 0,
--        WithoutByteHint = 1,
--        MaxInputType = 2,
--    };
--
-     enum OutputStatisticsType
-     {
-         AggregationState = 0,
-@@ -204,26 +172,21 @@ struct RuntimeDataflowStatisticsBlock
- 
-     std::atomic_bool unsupported_case{false};
- 
--    std::array<Statistics, MaxInputType> input_bytes_statistics;
--    std::array<Statistics, MaxInputType> duplicated_bytes_statistics;
-+    /// The compressed bytes the readers loaded, see `ReadRangesRegistry`.
-+    std::atomic_size_t input_bytes_read{0};
-+    std::atomic_size_t duplicated_bytes_read{0};
-     std::array<Statistics, MaxOutputType> output_bytes_statistics;
- };
- 
- class RuntimeDataflowStatisticsCacheUpdater
- {
--    using ColumnSizeByName = std::unordered_map<std::string, ColumnSize>; // STYLE_CHECK_ALLOW_STD_CONTAINERS -- mirrors `IMergeTreeDataPart::ColumnSizeByName`, which the callers pass directly
-     using Statistics = RuntimeDataflowStatisticsBlock::Statistics;
--    using InputStatisticsType = RuntimeDataflowStatisticsBlock::InputStatisticsType;
-     using OutputStatisticsType = RuntimeDataflowStatisticsBlock::OutputStatisticsType;
- 
- public:
-     /// `duplicated` is set on the updater given to the reads parallel replicas would not split: each replica
-     /// performs them in full, so their bytes go to `duplicated_bytes` rather than to `input_bytes`.
--    explicit RuntimeDataflowStatisticsCacheUpdater(std::shared_ptr<RuntimeDataflowStatisticsBlock> block_, bool duplicated_ = false)
--        : block(std::move(block_))
--        , duplicated(duplicated_)
--    {
--    }
-+    explicit RuntimeDataflowStatisticsCacheUpdater(std::shared_ptr<RuntimeDataflowStatisticsBlock> block_, bool duplicated_ = false);
- 
-     /// A permutation putting the sample into the order the replicas send it in. Evaluated only for a
-     /// block that is actually sampled, since building it costs a sort of the block's key columns.
-@@ -262,19 +225,8 @@ class RuntimeDataflowStatisticsCacheUpdater
-     /// rather than a hash table. Used by in-order aggregation where states are already materialized into columns (single-stream case).
-     void recordAggregationStateColumnSizes(const Chunk & chunk, const ColumnNumbers & keys_positions, const Block & header);
- 
--    /// Updates should_continue_sampling to true if the current read block is chosen for sampling.
-```
-
-**File**: `src/Processors/QueryPlan/Optimizations/considerEnablingParallelReplicas.cpp` (modified, +16/-2)
-```diff
-@@ -1648,7 +1648,9 @@ static bool decideAtBoundary(
-         if (reads->lazy_to_instrument)
-             reads->lazy_to_instrument->setRuntimeDataflowStatisticsCacheUpdater(updater);
- 
--        auto duplicated_reads_updater = std::make_shared<RuntimeDataflowStatisticsCacheUpdater>(statistics_block, /*duplicated=*/ true);
-+        /// An updater for each read: the blocks are counted once by the updater, and two reads of a table load them twice.
-+        /// The two halves of a lazily materialized read are one read, found by the rows they share, like the coordinated one.
-+        UnorderedMapWithMemoryTracking<const LazyMaterializingRows *, RuntimeDataflowStatisticsCacheUpdaterPtr> lazy_read_updaters;
-         for (auto * read_step : collectReadSteps(*single_replica_plan_boundary))
+-        for (size_t i = inputs.size(); i-- > 0;)
++        for (size_t i = inputs.size(); i > 0; --i)
          {
-             /// The coordinated read and its own lazy half are set up above, and their bytes are `input_bytes`.
-@@ -1657,7 +1659,19 @@ static bool decideAtBoundary(
-                 continue;
-             if (!read_step->supportsDataflowStatisticsCollection())
-                 continue;
--            read_step->setRuntimeDataflowStatisticsCacheUpdater(duplicated_reads_updater);
-+            const LazyMaterializingRows * lazy_rows = nullptr;
-+            if (const auto * read = typeid_cast<const ReadFromMergeTree *>(read_step))
-+                lazy_rows = read->getLazyReadRows().get();
-+            else if (const auto * lazy_read = typeid_cast<const LazilyReadFromMergeTree *>(read_step))
-+                lazy_rows = lazy_read->getLazyMaterializingRows().get();
-+            RuntimeDataflowStatisticsCacheUpdaterPtr updater_of_read = lazy_rows ? lazy_read_updaters[lazy_rows] : nullptr;
-+            if (!updater_of_read)
-+            {
-+                updater_of_read = std::make_shared<RuntimeDataflowStatisticsCacheUpdater>(statistics_block, /*duplicated=*/ true);
-+                if (lazy_rows)
-+                    lazy_read_updaters[lazy_rows] = updater_of_read;
-+            }
-+            read_step->setRuntimeDataflowStatisticsCacheUpdater(updater_of_read);
-         }
-     }
-     return false;
-```
-
-**File**: `src/Storages/MergeTree/IMergeTreeReader.h` (modified, +18/-0)
-```diff
-@@ -105,6 +105,21 @@ class IMergeTreeReader : private boost::noncopyable
-     /// `fillMissingColumns` runs and must not be consumed as regular columns before that.
-     [[nodiscard]] const NameSet & getPartiallyReadColumns() const { return partially_read_columns; }
- 
-+    /// Registers the ranges of the compressed blocks loaded since the previous call (from the uncompressed cache too) in the
-+    /// `ReadRangesRegistry` of `setReadRangesRegistry`.
-+    virtual void registerReadRanges() = 0;
-+
-+    /// Enables `registerReadRanges`. The readers of a read share `registry`, so a block several of them load is counted
-+    /// once. A reader is reused only for the tasks of its read, so `registry` doesn't change.
-+    /// A granule served from the columns cache loads nothing from the part and could not be measured, so the reader stops
-+    /// reading from the cache; it still writes to it.
-+    virtual void setReadRangesRegistry(ReadRangesRegistryPtr registry)
-+    {
-+        chassert(!read_ranges_registry || read_ranges_registry == registry);
-+        read_ranges_registry = std::move(registry);
-+        columns_cache_reads_possible = false;
-+    }
-+
-     [[nodiscard]] size_t getFirstMarkToRead() const { return all_mark_ranges.front().begin; }
- 
-     MergeTreeDataPartInfoForReaderPtr data_part_info_for_read;
-@@ -166,6 +181,9 @@ class IMergeTreeReader : private boost::noncopyable
- 
-     void checkNumberOfColumns(size_t num_columns_to_read) const;
- 
-+    /// See `setReadRangesRegistry`.
-+    ReadRangesRegistryPtr read_ranges_registry;
-+
-     [[nodiscard]] String getMessageForDiagnosticOfBrokenPart(size_t from_mark, size_t max_rows_to_read) const;
- 
-     /// avg_value_size_hints are used to reduce the number of reallocations when creating columns of variable size.
+-            auto & input = inputs[i];
+-            if (i + 1 != inputs.size())
++            auto & input = inputs[i - 1];
++            if (i != inputs.size())
+                 ++input.row;
+             if (input.row < input.ranges[input.range].length)
+                 return true;
 ```
 
 ---
 
-### Incident Patch 3: `79366b76` (2026-11-26)
-**Commit Message**: Merge pull request #134298 from groeneai/fix-column-ttl-expired-files-object-storage
+### Incident Patch 3: `62d2e973` (2026-11-27)
+**Commit Message**: Fix unsigned overflow in `MultiwayMergeJoinAlgorithm::RangeState::advance`
 
-Fix leftover files of a column expired by TTL in a mutation on object storage
+The reverse loop `for (size_t i = n; i-- > 0;)` decrements `i` past zero on
+its final check, which UBSan's `unsigned-integer-overflow` check reports and
+which kills the server in sanitizer builds when the product of a key range
+is exhausted.
 
-**File**: `src/Storages/MergeTree/MergedColumnOnlyOutputStream.cpp` (modified, +5/-1)
+https://s3.amazonaws.com/clickhouse-test-reports/praktika.html?REF=master&sha=86c2d2e055652271f79b1eb5779f965cc971121e&name_0=MasterCI&name_1=Stateless%20tests%20%28amd_asan_ubsan%2C%20distributed%20plan%2C%20parallel%29
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/Processors/Transforms/MergeJoinTransform.cpp` (modified, +3/-3)
 ```diff
-@@ -104,7 +104,7 @@ MergeTreeData::DataPart::Checksums MergedColumnOnlyOutputStream::fillChecksums(M
- 
-     for (const String & removed_file : removed_files)
+@@ -1592,10 +1592,10 @@ struct MultiwayMergeJoinAlgorithm::RangeState
+     /// last input is advanced by the caller. Returns false after the last row.
+     bool advance()
      {
--        new_part->getDataPartStorage().removeFileIfExists(removed_file);
-+        files_to_remove_after_finish.insert(removed_file);
-         all_checksums.files.erase(removed_file);
-     }
- 
-@@ -115,6 +115,10 @@ MergeTreeData::DataPart::Checksums MergedColumnOnlyOutputStream::fillChecksums(M
- void MergedColumnOnlyOutputStream::finish(bool sync)
- {
-     writer->finish(sync);
-+
-+    /// Only after the writer finishes: a disk transaction registers a written file when its buffer is finalized.
-+    for (const auto & file : files_to_remove_after_finish)
-+        data_part_storage->removeFileIfExists(file);
- }
- 
- void MergedColumnOnlyOutputStream::cancel() noexcept
-```
-
-**File**: `src/Storages/MergeTree/MergedColumnOnlyOutputStream.h` (modified, +3/-0)
-```diff
-@@ -43,6 +43,9 @@ class MergedColumnOnlyOutputStream final : public IMergedBlockOutputStream
-     [[nodiscard]] const ColumnsSubstreams & getColumnsSubstreams() const { return writer->getColumnsSubstreams(); }
-     void finish(bool sync);
-     void cancel() noexcept override;
-+
-+private:
-+    NameSet files_to_remove_after_finish;
- };
- 
- using MergedColumnOnlyOutputStreamPtr = std::shared_ptr<MergedColumnOnlyOutputStream>;
-```
-
-**File**: `tests/queries/0_stateless/05874_column_ttl_expired_column_files_on_object_storage.reference` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+0
-+1
-+1
-+1		(0)	x
-```
-
-**File**: `tests/queries/0_stateless/05874_column_ttl_expired_column_files_on_object_storage.sql` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+-- A column expired by its TTL in a mutation must not leave its files in the new part on an object storage disk.
-+-- https://github.com/ClickHouse/ClickHouse/issues/134206
-+
-+DROP TABLE IF EXISTS t_ttl_expired_obj;
-+
-+-- Wide parts in full storage: otherwise MATERIALIZE TTL rewrites every column.
-+CREATE TABLE t_ttl_expired_obj
-+(
-+    id UInt64,
-+    d DateTime,
-+    c String TTL d + INTERVAL 1 SECOND,
-+    t Tuple(a Int32) TTL d + INTERVAL 1 SECOND,
-+    payload String
-+)
-+ENGINE = MergeTree ORDER BY id
-+SETTINGS disk = 'local_disk', min_bytes_for_wide_part = 0, min_rows_for_wide_part = 0, min_bytes_for_full_part_storage = 0;
-+
-+-- Keep the expiration in the mutation.
-+SYSTEM STOP TTL MERGES t_ttl_expired_obj;
-+
-+INSERT INTO t_ttl_expired_obj VALUES (1, '2000-01-01 00:00:00', 'abc', tuple(5), 'payload');
-+ALTER TABLE t_ttl_expired_obj MATERIALIZE TTL SETTINGS mutations_sync = 2;
-+
-+SELECT countIf(column IN ('c', 't')) FROM system.parts_columns
-+WHERE database = currentDatabase() AND table = 't_ttl_expired_obj' AND active;
-+
-+CHECK TABLE t_ttl_expired_obj SETTINGS check_query_single_value_result = 1;
-+
-+ALTER TABLE t_ttl_expired_obj UPDATE payload = 'x' WHERE 1 SETTINGS mutations_sync = 2;
-+
-+CHECK TABLE t_ttl_expired_obj SETTINGS check_query_single_value_result = 1;
-+
-+SELECT id, c, t, payload FROM t_ttl_expired_obj;
-+
-+DROP TABLE t_ttl_expired_obj;
+-        for (size_t i = inputs.size(); i-- > 0;)
++        for (size_t i = inputs.size(); i > 0; --i)
+         {
+-            auto & input = inputs[i];
+-            if (i + 1 != inputs.size())
++            auto & input = inputs[i - 1];
++            if (i != inputs.size())
+                 ++input.row;
+             if (input.row < input.ranges[input.range].length)
+                 return true;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #134710** (2026-11-26): 26.3: Do not reuse `MacroExpansionInfo` for consecutive `expand` calls in queue storages (@PedroTadim)
-- **PR #134694** (2026-11-26): Backport #123268 to 26.9: Fix `if` over tuples when an element is `NULL` in both branches (@robot-clickhouse)
-- **PR #134693** (2026-11-26): Backport #123268 to 26.8: Fix `if` over tuples when an element is `NULL` in both branches (@robot-clickhouse)
-- **PR #134688** (closed): Fix per-statement column ordering in `MySQLDump` (@EscaperLL)
-- **PR #134687** (2026-11-26): Backport #132931 to 26.11: Validate the leaf types of Parquet variant columns (@robot-ch-test-poll4)
-- **PR #134675** (closed): Fix std::condition_variable lost-wakeup deadlock in KeeperReadThreadPool (@hemal9102)
+- **PR #134913** (closed): Add experimental `llmQuery` with Keeper-backed model routing (@0xfei)
+- **PR #134911** (2026-11-27): Fix unsigned overflow in `MultiwayMergeJoinAlgorithm::RangeState::advance` (@alexey-milovidov)
+- **PR #134908** (2026-11-27): Backport #128012 to 26.10: Turn off the Robin Hood mode of the JOIN hash tables by default, add `enable_robin_hood_hash_for_joins` (@robot-clickhouse)
+- **PR #134890** (2026-11-27): Backport #134226 to 26.10: Fix heap-use-after-free in the text index reader when its granule changes (@robot-clickhouse-ci-1)
+- **PR #134889** (2026-11-27): Backport #134226 to 26.9: Fix heap-use-after-free in the text index reader when its granule changes (@robot-clickhouse-ci-1)
+- **PR #134888** (2026-11-27): Backport #134226 to 26.8: Fix heap-use-after-free in the text index reader when its granule changes (@robot-clickhouse-ci-1)
 
 ---
 
@@ -1867,30 +1532,51 @@ Fix leftover files of a column expired by TTL in a mutation on object storage
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in 05507_mv_source_merge_loop_executable_crash.sh
+## X. Enforce the query memory limit on the glob walk's traversal state
 
 **RULE**:
-When implementing operations in `tests/queries/0_stateless/05507_mv_source_merge_loop_executable_crash.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Storages/StorageFile.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `072088d7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0122c5f7`: Enforce the query memory limit on the glob walk's traversal state. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/queries/0_stateless/05507_mv_source_merge_loop_executable_crash.sh`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/StorageFile.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0), SETTINGS command_read_timeout = 30000)) AS value
-        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0), SETTINGS command_read_timeout = 30000)) AS value
+#include <Common/UnorderedMapWithMemoryTracking.h>
+#include <Common/UnorderedSetWithMemoryTracking.h>
+    VectorWithMemoryTracking<size_t> matches_before_retries;
+    VectorWithMemoryTracking<std::pair<std::string, size_t>> earlier_walks;
+    UnorderedMapWithMemoryTracking<std::string, VisitedFrame> visited_frames;
+    VectorWithMemoryTracking<VisitedFrame *> active_frames;
+    VectorWithMemoryTracking<Collision> pending_collisions;
+    VectorWithMemoryTracking<SkippedPath> skipped_paths;
+    UnorderedSetWithMemoryTracking<std::string> listed_tails;
+bool isMissing(
+    PruningState::SkippedPath & skipped, const PruningState & pruning,
+    const UnorderedMapWithMemoryTracking<std::string, size_t> & matched_paths)
+    const VisitedFrame & frame, const std::string & prefix, PruningState & pruning,
+    const UnorderedMapWithMemoryTracking<std::string, size_t> & matched_paths)
+    UnorderedMapWithMemoryTracking<std::string, size_t> & matched_paths,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0))) AS value
-        (SELECT sum(x) FROM executable('echo_rows.sh', 'TSV', 'x UInt64', (SELECT x FROM db_05507.src WHERE x > 0))) AS value
+    std::vector<size_t> matches_before_retries;
+    std::vector<std::pair<std::string, size_t>> earlier_walks;
+    std::unordered_map<std::string, VisitedFrame> visited_frames;
+    std::vector<VisitedFrame *> active_frames;
+    std::vector<Collision> pending_collisions;
+    std::vector<SkippedPath> skipped_paths;
+    std::unordered_set<std::string> listed_tails;
+bool isMissing(PruningState::SkippedPath & skipped, const PruningState & pruning, const std::unordered_map<std::string, size_t> & matched_paths)
+    const VisitedFrame & frame, const std::string & prefix, PruningState & pruning, const std::unordered_map<std::string, size_t> & matched_paths)
+    std::unordered_map<std::string, size_t> & matched_paths,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `072088d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0122c5f7` are properly handled with clean fallback behavior.

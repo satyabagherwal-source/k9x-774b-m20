@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T07:49:01.125Z",
+  "last_updated": "2026-11-27T07:58:35.035Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2301,14 +2301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-vllm-sr-d3",
-      "content_hash": "159dfef3c93ed10259bc2fb64816260bc5dc3dbecdbdab681cf38feba81c0fc2",
-      "verified_at": "2026-11-23T22:33:06.224Z",
+      "content_hash": "a2a18e4d83f06c4b2e65940fcb23b5561e53cd2d424c431e7bc9b2994533fae8",
+      "verified_at": "2026-11-27T07:58:17.305Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:33:06.224Z"
+      "last_updated": "2026-11-27T07:58:17.305Z"
     },
     "nguyenphutrong/quotio": {
       "repository": "nguyenphutrong/quotio",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "f9e2b58e34ebcf958c7d97e4ed8d9efeaa33affbbcf0bb7d40749d7bf1354dc0",
-      "verified_at": "2026-11-25T15:00:34.216Z",
+      "content_hash": "fb8e8b5115f523351968edbc7e9140f3872b3e76bd8c81d5b1c97b98f46e22d4",
+      "verified_at": "2026-11-27T07:58:26.826Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T15:00:34.216Z"
+      "last_updated": "2026-11-27T07:58:26.826Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "c6802b61cc1f4bbdb6cd721657d69f634644edb3ff857edbec209f521fd0067c",
-      "verified_at": "2026-11-26T14:04:17.172Z",
+      "content_hash": "83b85f00dda3223c03c4262884b143487f6abb69590754bc853713ac8f26bee4",
+      "verified_at": "2026-11-27T07:58:35.034Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T14:04:17.172Z"
+      "last_updated": "2026-11-27T07:58:35.034Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "2c1711a315d21b9849c27a268d1cff25ed52a84edb8d97deb34702da4fb2dfab",
-      "verified_at": "2026-11-24T23:58:42.017Z",
+      "content_hash": "2d45ac150f0fed74306bfc17b6ee639845bb06dc5b90c139437abaadd30bcbb7",
+      "verified_at": "2026-11-27T07:58:23.974Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T23:58:42.017Z"
+      "last_updated": "2026-11-27T07:58:23.974Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "fb9168feccce442476d2669dc5f76f0c865a2ba2ba1da995b8f2389f54ec6a00",
-      "verified_at": "2026-11-26T07:10:17.681Z",
+      "content_hash": "e5a899658fe5b9d365a06d0aa5d36533110c860f22fc08095e0d5553283e7232",
+      "verified_at": "2026-11-27T07:58:19.242Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T07:10:17.681Z"
+      "last_updated": "2026-11-27T07:58:19.242Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",

@@ -13756,3 +13756,9 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `1a577e50` | Multi-dimensional audit evidence | 2026-11-27T07:48:54.665Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `aa0282b2` | Multi-dimensional audit evidence | 2026-11-27T07:48:56.374Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `b1ae457e` | Multi-dimensional audit evidence | 2026-11-27T07:49:01.107Z |
+| `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-11-27T07:58:17.286Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `0186ba2d` | Multi-dimensional audit evidence | 2026-11-27T07:58:19.224Z |
+| `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `95edda41` | Multi-dimensional audit evidence | 2026-11-27T07:58:23.954Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `c28f8fb6` | Multi-dimensional audit evidence | 2026-11-27T07:58:26.807Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `78fb5256` | Multi-dimensional audit evidence | 2026-11-27T07:58:35.016Z |
+| `learn-dom-h-bdbeda9a` | `project://necolas-react-native-web` | `95edda41` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md` | 2026-11-27T07:59:17.499Z |

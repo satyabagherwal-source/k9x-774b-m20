@@ -13723,3 +13723,9 @@
 | `CYCLE-20261127-JWTW` | `2026-11-27T07:48:54.644Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10854` | Yes (`8d12bc4e...`) |
 | `CYCLE-20261127-JY5G` | `2026-11-27T07:48:56.356Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10837` | Yes (`fed1ee76...`) |
 | `CYCLE-20261127-K1SX` | `2026-11-27T07:49:01.089Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10855` | Yes (`6365bb38...`) |
+| `CYCLE-20261127-VYYO` | `2026-11-27T07:58:17.280Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`a2a18e4d...`) |
+| `CYCLE-20261127-W0G6` | `2026-11-27T07:58:19.206Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10856` | Yes (`e5a89965...`) |
+| `CYCLE-20261127-W43J` | `2026-11-27T07:58:23.935Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10857` | Yes (`2d45ac15...`) |
+| `CYCLE-20261127-W6AS` | `2026-11-27T07:58:26.788Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10858` | Yes (`fb8e8b51...`) |
+| `CYCLE-20261127-WCMT` | `2026-11-27T07:58:34.997Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10859` | Yes (`83b85f00...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T07:59:17.499Z` | `necolas-react-native-web` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BDBEDA9A` [Domain H] | Yes (`2e3d9d9d...`) |
