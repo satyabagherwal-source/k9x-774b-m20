@@ -13666,3 +13666,6 @@
 | `CYCLE-20261127-16UC` | `2026-11-27T04:18:23.844Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10823` | Yes (`8e4886c8...`) |
 | `CYCLE-20261127-1CZ0` | `2026-11-27T04:18:31.788Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10824` | Yes (`8f11f089...`) |
 | `CYCLE-20261127-1DXI` | `2026-11-27T04:18:33.030Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10825` | Yes (`fc082597...`) |
+| `CYCLE-20261127-CGZI` | `2026-11-27T04:27:10.206Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`7a0933f5...`) |
+| `CYCLE-20261127-CIQU` | `2026-11-27T04:27:12.486Z` | `dalance/procs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10826` | Yes (`5f4bbc3b...`) |
+| `CYCLE-20261127-CSAN` | `2026-11-27T04:27:24.863Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10827` | Yes (`160b41f5...`) |

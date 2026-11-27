@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T04:18:39.705Z",
+  "last_updated": "2026-11-27T04:27:33.020Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26349,
+  "total_items": 26353,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -235037,8 +235037,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "c4f407dc",
-      "content_hash": "8c5e26a4fb7dffaa521a4758bd8a3fa0707837265914bea292b6bb89109e285b",
+      "source_version": "039ba60f",
+      "content_hash": "160b41f568d6c8169bd7bb31f7b5f04fe5c2ee4eb28dfc26aeccadb583b5f9ae",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -235111,6 +235111,11 @@
           "number": 10648,
           "title": "race in BaseConnectorTest mock table listing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10827,
+          "title": "flaky join operator yield tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235118,7 +235123,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T10:19:29.581Z",
+      "verified_at": "2026-11-27T04:27:24.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235160,10 +235165,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "repository": "trinodb/trino",
-      "source_version": "c4f407dc",
-      "content_hash": "502e6be93e0c72bd102437967d9862de706cadc9e77be906aebbebed363afa40",
+      "source_version": "039ba60f",
+      "content_hash": "9d99a817944ea97256672a028dd90f9a007a991663beff8fddd32832674940d5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T10:19:30.276Z"
+      "persisted_at": "2026-11-27T04:27:25.464Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino",
@@ -235172,10 +235177,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "c4f407dc",
-      "content_hash": "17c49777da73d2ba2a174c85a4c4575e224d77db339da58aeb43c8f02a8e0acd",
+      "source_version": "039ba60f",
+      "content_hash": "673191e5919d56c33c7eebce5f49900a6976271ccffa62cba482de7607857208",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T10:19:30.475Z"
+      "persisted_at": "2026-11-27T04:27:25.687Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -238550,7 +238555,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "82253d742d9e858bdb0fb116a0e3b58fc4da9bcc1e900cd174922caded2889e8",
+      "content_hash": "7a0933f5880484c96cf8e685e42dd94c0de163847d93474fbf17c20070cb8cd7",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -238559,7 +238564,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:09:13.416Z",
+      "verified_at": "2026-11-27T04:27:09.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238576,9 +238581,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF Core Invariants",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "a3bb927a7a24c44253f96f3e6e64dda414cfdf18193c740890cad8304f333451",
+      "content_hash": "a41cbe9669ed52090df647451be430ea13636caabd6af9f5fed16d2b86edbbf2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:09:13.801Z"
+      "persisted_at": "2026-11-27T04:27:10.488Z"
     },
     "learn-github-tw93-pake": {
       "learning_id": "learn-github-tw93-pake",
@@ -238901,9 +238906,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "3889effa65cdc187b232c05074ad753d4ebdb58650c447d70ab79764a21614fa",
+      "content_hash": "d5f4cdd104cb997aefa751ee96b5143a28a9e6a021802d8f2596f0ebb2632e8a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:09:25.553Z"
+      "persisted_at": "2026-11-27T04:27:31.771Z"
     },
     "candidate_directive-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name": {
       "item_id": "candidate_directive-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name",
@@ -256926,9 +256931,9 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc6b0a2e10a44ffa2b971381c17922c45eb73b9e99ff5527ee3612ee28f4c910",
+      "content_hash": "9f7d7bcbda4c8a8765c665b9502273c4abcd5998bceef1d267b387599a288aed",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T08:29:34.665Z"
+      "persisted_at": "2026-11-27T04:27:32.795Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings",
@@ -256938,9 +256943,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trinodb-trino-learnings",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "29311099281ffe194c259643863403ef2ba621ef245f06bd57b74fa88a3703ed",
+      "content_hash": "e2a955f3998197a0865d16053de2176aa32b7152da7af1255efcec07884992ae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:29:34.863Z"
+      "persisted_at": "2026-11-27T04:27:33.020Z"
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -279969,8 +279974,8 @@
       "slug": "dalance-procs",
       "platform": "github",
       "source_url": "https://github.com/dalance/procs",
-      "source_version": "9422dd6b",
-      "content_hash": "2d09c4118cb7689c5f291dd2acb765952dd1069e3345b5d96617f3fe87ab157c",
+      "source_version": "8741327f",
+      "content_hash": "5f4bbc3b9bd3da718fc62ea523aa4443144d2e694795d26850a07b7551064250",
       "dossier_path": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dalance-procs-learnings.md",
       "promoted_rules": [
@@ -279988,6 +279993,11 @@
           "number": 10359,
           "title": "build(deps): bump regex from 1.13.1 to 1.13.2",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10826,
+          "title": "build(deps): bump fancy-regex from 0.19.2 to 0.20.2",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -279995,7 +280005,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T21:01:22.434Z",
+      "verified_at": "2026-11-27T04:27:12.147Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280037,10 +280047,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-architecture-intelligence-dalance-procs-core-invariants.md",
       "title": "Architecture Intelligence: dalance/procs Core Invariants",
       "repository": "dalance/procs",
-      "source_version": "9422dd6b",
-      "content_hash": "e78d48271c90cdfb006fb664ec0aa2193d0bb85897a131eb7ca9fd389568e58c",
+      "source_version": "8741327f",
+      "content_hash": "932ba415390c3471d982baa85372d55152bd9836284390cf51a5b94fa05b4459",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:01:23.107Z"
+      "persisted_at": "2026-11-27T04:27:13.012Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs",
@@ -280049,10 +280059,10 @@
       "relative_path": "08_VERIFICATION/dalance-procs-verification-protocol-empirical-defect-shield-for-dalance-procs.md",
       "title": "Verification Protocol: Empirical Defect Shield for dalance/procs",
       "repository": "dalance/procs",
-      "source_version": "9422dd6b",
-      "content_hash": "44b32c581ba267f97531c118587a81830c283517fbdfec691057711eee1d97f2",
+      "source_version": "8741327f",
+      "content_hash": "db37b8d852912a79e6070f19dc077f1e92dce450a627ef8b736012a26bcee463",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:01:23.304Z"
+      "persisted_at": "2026-11-27T04:27:13.233Z"
     },
     "rule-8989": {
       "learning_id": "rule-8989",
@@ -280126,9 +280136,9 @@
       "title": "Architecture Intelligence: dalance-procs-learnings Core Invariants",
       "repository": "dalance-procs-learnings",
       "source_version": "HEAD",
-      "content_hash": "4dad69c783796793da18454fc83e84e864e6b6255b58371a162de6bc343003c3",
+      "content_hash": "686d6a2945d1e3f89e15b99bfea3a9ffd83a529b323888ccc8990e505386d41e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-24T21:01:35.443Z"
+      "persisted_at": "2026-11-27T04:27:31.035Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dalance-procs-learnings",
@@ -280138,9 +280148,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dalance-procs-learnings",
       "repository": "dalance-procs-learnings",
       "source_version": "HEAD",
-      "content_hash": "123b7bf7b76c03363c0a3b44c3637026c2b7216c305444fe3f5766fd123f63ae",
+      "content_hash": "9b833c8518a6cdbe10f36e3cca89c0a31b7256d31400f6fd41beba3513dab7f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T21:01:35.629Z"
+      "persisted_at": "2026-11-27T04:27:31.259Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",
@@ -361485,6 +361495,58 @@
       "content_hash": "8014fac58c243c3cabe232b24a6f205823f5aea8b2402ebbcece25cdd6fdc03f",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T04:18:38.089Z"
+    },
+    "rule-10826": {
+      "learning_id": "rule-10826",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10826,
+      "title": "build(deps): bump fancy-regex from 0.19.2 to 0.20.2",
+      "source_url": "https://github.com/dalance/procs",
+      "source_version": "8741327f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T04:27:12.147Z"
+    },
+    "candidate_directive-build-deps-bump-fancy-regex-from-0-19-2-to-0-20-2": {
+      "item_id": "candidate_directive-build-deps-bump-fancy-regex-from-0-19-2-to-0-20-2",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CWV6-build-deps-bump-fancy-regex-from-0-19-2-to-0-20-2.md",
+      "title": "build(deps): bump fancy-regex from 0.19.2 to 0.20.2",
+      "repository": "dalance-procs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c8c0d1562cfdb35378b70393e8c779d6c02cb5a99401f6eec277f8ec033133b6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T04:27:30.787Z"
+    },
+    "rule-10827": {
+      "learning_id": "rule-10827",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10827,
+      "title": "flaky join operator yield tests",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "039ba60f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T04:27:24.572Z"
+    },
+    "candidate_directive-flaky-join-operator-yield-tests": {
+      "item_id": "candidate_directive-flaky-join-operator-yield-tests",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CY81-flaky-join-operator-yield-tests.md",
+      "title": "flaky join operator yield tests",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e52fd1afe3d9a92174b29bcbd999f4bda6f9ae2d49c7b7c16838a5401b116bd7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T04:27:32.550Z"
     }
   },
   "ai-builder-brain": {

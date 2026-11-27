@@ -13699,3 +13699,6 @@ Every entry in this ledger must capture:
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `3e0814c5` | Multi-dimensional audit evidence | 2026-11-27T04:18:23.859Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `6c6dd593` | Multi-dimensional audit evidence | 2026-11-27T04:18:31.804Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2889b681` | Multi-dimensional audit evidence | 2026-11-27T04:18:33.044Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-27T04:27:10.210Z |
+| `learn-github-dalance-procs` | `https://github.com/dalance/procs` | `8741327f` | Multi-dimensional audit evidence | 2026-11-27T04:27:12.501Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `039ba60f` | Multi-dimensional audit evidence | 2026-11-27T04:27:24.879Z |

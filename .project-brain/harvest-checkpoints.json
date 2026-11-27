@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T04:18:33.058Z",
+  "last_updated": "2026-11-27T04:27:24.923Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -245,14 +245,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "82253d742d9e858bdb0fb116a0e3b58fc4da9bcc1e900cd174922caded2889e8",
-      "verified_at": "2026-11-23T19:09:13.602Z",
+      "content_hash": "7a0933f5880484c96cf8e685e42dd94c0de163847d93474fbf17c20070cb8cd7",
+      "verified_at": "2026-11-27T04:27:10.227Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T19:09:13.602Z"
+      "last_updated": "2026-11-27T04:27:10.227Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "8c5e26a4fb7dffaa521a4758bd8a3fa0707837265914bea292b6bb89109e285b",
-      "verified_at": "2026-11-26T10:19:29.854Z",
+      "content_hash": "160b41f568d6c8169bd7bb31f7b5f04fe5c2ee4eb28dfc26aeccadb583b5f9ae",
+      "verified_at": "2026-11-27T04:27:24.923Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T10:19:29.854Z"
+      "last_updated": "2026-11-27T04:27:24.923Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -10011,14 +10011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dalance-procs",
-      "content_hash": "2d09c4118cb7689c5f291dd2acb765952dd1069e3345b5d96617f3fe87ab157c",
-      "verified_at": "2026-11-24T21:01:22.689Z",
+      "content_hash": "5f4bbc3b9bd3da718fc62ea523aa4443144d2e694795d26850a07b7551064250",
+      "verified_at": "2026-11-27T04:27:12.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T21:01:22.689Z"
+      "last_updated": "2026-11-27T04:27:12.517Z"
     },
     "ionic-team/ionic-framework": {
       "repository": "ionic-team/ionic-framework",

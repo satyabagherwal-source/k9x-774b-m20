@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T04:18:39.494Z",
+  "last_updated": "2026-11-27T04:27:32.795Z",
   "total_records": 2802,
   "domains": {
     "A": {
@@ -17060,8 +17060,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "502e6be93e0c72bd102437967d9862de706cadc9e77be906aebbebed363afa40",
-      "created_at": "2026-11-26T10:19:30.276Z"
+      "content_hash": "9d99a817944ea97256672a028dd90f9a007a991663beff8fddd32832674940d5",
+      "created_at": "2026-11-27T04:27:25.464Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -18146,8 +18146,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-research-knowledge-intelligence.md",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "content_hash": "a3bb927a7a24c44253f96f3e6e64dda414cfdf18193c740890cad8304f333451",
-      "created_at": "2026-11-23T19:09:13.801Z"
+      "content_hash": "a41cbe9669ed52090df647451be430ea13636caabd6af9f5fed16d2b86edbbf2",
+      "created_at": "2026-11-27T04:27:10.488Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants",
@@ -18182,8 +18182,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-learnings-research-knowledge-in.md",
       "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings",
-      "content_hash": "3889effa65cdc187b232c05074ad753d4ebdb58650c447d70ab79764a21614fa",
-      "created_at": "2026-11-23T19:09:25.553Z"
+      "content_hash": "d5f4cdd104cb997aefa751ee96b5143a28a9e6a021802d8f2596f0ebb2632e8a",
+      "created_at": "2026-11-27T04:27:31.771Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants",
@@ -23742,8 +23742,8 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
       "repository": "trinodb-trino-learnings",
-      "content_hash": "bc6b0a2e10a44ffa2b971381c17922c45eb73b9e99ff5527ee3612ee28f4c910",
-      "created_at": "2026-11-25T08:29:34.665Z"
+      "content_hash": "9f7d7bcbda4c8a8765c665b9502273c4abcd5998bceef1d267b387599a288aed",
+      "created_at": "2026-11-27T04:27:32.795Z"
     },
     "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
@@ -28611,8 +28611,8 @@
       "title": "Architecture Intelligence: dalance/procs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-architecture-intelligence-dalance-procs-core-invariants.md",
       "repository": "dalance/procs",
-      "content_hash": "e78d48271c90cdfb006fb664ec0aa2193d0bb85897a131eb7ca9fd389568e58c",
-      "created_at": "2026-11-24T21:01:23.107Z"
+      "content_hash": "932ba415390c3471d982baa85372d55152bd9836284390cf51a5b94fa05b4459",
+      "created_at": "2026-11-27T04:27:13.012Z"
     },
     "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor": {
       "record_id": "domain_intelligence-technical-construction-intelligence-software-mansion-react-native-reanimated-cor",
@@ -28629,8 +28629,8 @@
       "title": "Architecture Intelligence: dalance-procs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dalance-procs-learnings-architecture-intelligence-dalance-procs-learnings-core-i.md",
       "repository": "dalance-procs-learnings",
-      "content_hash": "4dad69c783796793da18454fc83e84e864e6b6255b58371a162de6bc343003c3",
-      "created_at": "2026-11-24T21:01:35.443Z"
+      "content_hash": "686d6a2945d1e3f89e15b99bfea3a9ffd83a529b323888ccc8990e505386d41e",
+      "created_at": "2026-11-27T04:27:31.035Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-reflection-beam-1-0-501b-a23b-learnings-core-",

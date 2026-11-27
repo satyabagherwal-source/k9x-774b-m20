@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-A5EU",
-    "timestamp": "2026-11-25T23:01:46.086Z",
-    "repository": "KRAFTON/Raon-1-mini",
-    "learningId": "learn-huggingface-krafton-raon-1-mini",
-    "contentHash": "3f588f6772aa020f51caadf6f19f8497a72cc0fd87252068d833fb0b77d4bec4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-AF8F",
-    "timestamp": "2026-11-25T23:01:58.815Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "307d868b14fe68ce0e32db197ce010542c6e539978d053eaa62204ea98478cc9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-AH2H",
-    "timestamp": "2026-11-25T23:02:01.193Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "8753257e37c870e1b4024aced20ca25afa9a70303b6a739714fdc01bd1e89d06",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-AJ22",
     "timestamp": "2026-11-25T23:02:03.770Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "fc082597ed9be46fd08d2a02a224ac333d5d8757f77f008e66a08d9d9ca35e83",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-CGZI",
+    "timestamp": "2026-11-27T04:27:10.206Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "7a0933f5880484c96cf8e685e42dd94c0de163847d93474fbf17c20070cb8cd7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-CIQU",
+    "timestamp": "2026-11-27T04:27:12.486Z",
+    "repository": "dalance/procs",
+    "learningId": "learn-github-dalance-procs",
+    "contentHash": "5f4bbc3b9bd3da718fc62ea523aa4443144d2e694795d26850a07b7551064250",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-CSAN",
+    "timestamp": "2026-11-27T04:27:24.863Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "160b41f568d6c8169bd7bb31f7b5f04fe5c2ee4eb28dfc26aeccadb583b5f9ae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

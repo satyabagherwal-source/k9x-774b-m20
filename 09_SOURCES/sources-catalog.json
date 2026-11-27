@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "82253d742d9e858bdb0fb116a0e3b58fc4da9bcc1e900cd174922caded2889e8",
-    "lastHarvestedAt": "2026-11-23T19:09:13.593Z",
+    "contentHash": "7a0933f5880484c96cf8e685e42dd94c0de163847d93474fbf17c20070cb8cd7",
+    "lastHarvestedAt": "2026-11-27T04:27:10.210Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "c4f407dc",
+    "sourceVersion": "039ba60f",
     "license": "Apache-2.0",
-    "contentHash": "8c5e26a4fb7dffaa521a4758bd8a3fa0707837265914bea292b6bb89109e285b",
-    "lastHarvestedAt": "2026-11-26T10:19:29.834Z",
+    "contentHash": "160b41f568d6c8169bd7bb31f7b5f04fe5c2ee4eb28dfc26aeccadb583b5f9ae",
+    "lastHarvestedAt": "2026-11-27T04:27:24.879Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -6633,10 +6633,10 @@
     "repository": "dalance/procs",
     "platform": "github",
     "sourceUrl": "https://github.com/dalance/procs",
-    "sourceVersion": "9422dd6b",
+    "sourceVersion": "8741327f",
     "license": "MIT",
-    "contentHash": "2d09c4118cb7689c5f291dd2acb765952dd1069e3345b5d96617f3fe87ab157c",
-    "lastHarvestedAt": "2026-11-24T21:01:22.671Z",
+    "contentHash": "5f4bbc3b9bd3da718fc62ea523aa4443144d2e694795d26850a07b7551064250",
+    "lastHarvestedAt": "2026-11-27T04:27:12.501Z",
     "learningId": "learn-github-dalance-procs"
   },
   "ionic-team-ionic-framework": {

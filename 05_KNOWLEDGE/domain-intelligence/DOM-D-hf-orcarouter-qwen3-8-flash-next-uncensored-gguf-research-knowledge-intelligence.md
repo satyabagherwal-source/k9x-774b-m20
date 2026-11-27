@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
   "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T19:09:13.800Z",
+  "timestamp": "2026-11-27T04:27:10.487Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF](https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF) (Revision: `hf-orcarou`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T19:09:13.800Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T04:27:10.487Z`  
 > **Learning ID**: `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF](https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T19:09:10.855Z  
+> **Harvest Timestamp**: 2026-11-27T04:27:09.423Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 584490 downloads | 1577 likes
+- **Stars / Engagement**: 549816 downloads | 1609 likes
 
 ---
 

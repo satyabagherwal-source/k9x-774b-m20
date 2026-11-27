@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T21:01:35.112Z",
+  "timestamp": "2026-11-27T04:27:30.655Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dalance-procs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dalance-procs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T21:01:35.112Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T04:27:30.655Z`  
 > **Learning ID**: `LEARN-EVO-dalance-procs-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source**: github ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
-> **Source Version**: `9422dd6b`  
+> **Source Version**: `8741327f`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T21:01:21.499Z  
+> **Timestamp**: 2026-11-27T04:27:11.122Z  
 > **Learning ID**: `learn-github-dalance-procs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T21:01:21.304Z  
+> **Harvest Timestamp**: 2026-11-27T04:27:11.116Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A modern replacement for ps written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6256 stars
+- **Stars / Engagement**: 6267 stars
 
 ---
 
@@ -1609,11 +1609,11 @@ impl Column for CpuTime {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1005** (2026-11-26): **build(deps): bump anyhow from 1.0.104 to 1.0.105**
+  *Symptoms*: Bumps [anyhow](https://github.com/dtolnay/anyhow) from 1.0.104 to 1.0.105. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/dtolnay/anyhow/releases">anyhow's releases</a>.</em></p> <blockquote> <h2>1.0.105</h2> <ul> <li>Refer to Err by absolute path in ensure! (<a href="https://redirect.github.com/dtolnay/anyhow/issues/467">#467</a>, thanks <a href="https://github.com/patrick-immometrica"><code>@​patrick-immometrica</code></a>)</li> <li>Make reallocated boxed errors downcastable (<a href="https://redirect.github.com/dtolnay/anyhow/issues/468">#468</a>, thanks <a href="https://github.com/patrick-immometrica"><code>@​patrick-immometrica</code></a>)</li> </ul> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/dtolnay/anyhow/commit/c89c9b82b155f701a20eb4a9d3609ad09df5a62f"><code>c89c9b8</code></a> Release 1.0.105</li> <li><a href="https://github.com/dtolnay/anyhow/commit/48504309abf93bc8b7357bd07d630f6f6f56c9f2"><code>4850430</code></a> Merge pull request <a href="https://redirect.github.com/dtolnay/anyhow/issues/467">#467</a> from patrick-immometrica/ensure-err-path</li> <li><a href="https://github.com/dtolnay/anyhow/commit/3503a2c85e6370a66e96ee47d2c471c2c447adb3"><code>3503a2c</code></a> Touch up PR 468</li> <li><a href="https://github.com/dtolnay/anyhow/commit/90d3b9c7aa16d7550136b0cca763c70cd76fd19d"><code>90d3b9c</code></a> Format PR 468 with rustfmt</li> <li><a href="https://github.c
+
 - **Issue #1004** (2026-11-24): **build(deps): bump toml from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0**
   *Symptoms*: Bumps [toml](https://github.com/toml-rs/toml) from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/toml-rs/toml/commit/9270d2e74b9530b039977d292aecec77dc81e3c9"><code>9270d2e</code></a> chore: Release</li> <li><a href="https://github.com/toml-rs/toml/commit/5d27901f021ba97ac69ebe94f12bfa8e65e89a87"><code>5d27901</code></a> docs: Update changelog</li> <li><a href="https://github.com/toml-rs/toml/commit/20b0c03bc1f3544ed42590b70e3192d4f746d890"><code>20b0c03</code></a> fix(parser): Handle a stack overflow on invalid TOML files (<a href="https://redirect.github.com/toml-rs/toml/issues/1265">#1265</a>)</li> <li><a href="https://github.com/toml-rs/toml/commit/d0f72c331ffba3d76845d94ec4ae614a063f7ded"><code>d0f72c3</code></a> fix(parser): Emit errors for closing delimiters of unexpected containers</li> <li><a href="https://github.com/toml-rs/toml/commit/afac8e5a4821c60719a5e8d9279a975fc4c0b8d7"><code>afac8e5</code></a> refactor(parser): Move close events to recovery callers</li> <li><a href="https://github.com/toml-rs/toml/commit/be5f194782c9c011c136a75d74542e13cf7bef06"><code>be5f194</code></a> test(parser): Cover RecursionGuard</li> <li><a href="https://github.com/toml-rs/toml/commit/02d4d8d00d8786aedb019f9ed71e855e262b0536"><code>02d4d8d</code></a> chore(deps): Update Rust Stable to v1.100 (<a href="https://redirect.github.com/toml-rs/toml/issues/1263">#1263</a>)</li> <li>See full diff in <a href="https://github.com
-
-- **Issue #1003** (2026-11-23): **build(deps): bump regex from 1.13.1 to 1.13.2**
-  *Symptoms*: Bumps [regex](https://github.com/rust-lang/regex) from 1.13.1 to 1.13.2. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/rust-lang/regex/blob/master/CHANGELOG.md">regex's changelog</a>.</em></p> <blockquote> <h1>1.13.2 (2026-11-17)</h1> <p>Bug fixes:</p> <ul> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1333">#1333</a>: Fix a glob syntax error in <code>package.include</code>.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1388">#1388</a>, <a href="https://redirect.github.com/rust-lang/regex/issues/1344">#1344</a>: Panic in <code>BoundedBacktracker</code> when haystack length exceeds capacity.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1389">#1389</a>: Revert default pool capacity change.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1394">#1394</a>, <a href="https://redirect.github.com/rust-lang/regex/issues/1392">#1392</a>: Allow Parser to be reused in <code>regex-syntax</code>.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1395">#1395</a>, <a href="https://redirect.github.com/rust-lang/regex/issues/1393">#1393</a>: Make Position's Ord match Eq in <code>regex-syntax</code>.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1400">#1400</a>: Fix incorrect match offsets for alternations whose branches start with the same repetition.</li> <li><a href="https://redirect.github.com/rust-lang/regex/issues/1415">#14
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1630,117 +1630,187 @@ impl Column for CpuTime {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf04b3b8` (2026-11-23)
-**Commit Message**: build(deps): bump regex from 1.13.1 to 1.13.2
+### Incident Patch 1: `f4bdff40` (2026-11-24)
+**Commit Message**: build(deps): bump fancy-regex from 0.19.2 to 0.20.2
 
-Bumps [regex](https://github.com/rust-lang/regex) from 1.13.1 to 1.13.2.
-- [Release notes](https://github.com/rust-lang/regex/releases)
-- [Changelog](https://github.com/rust-lang/regex/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/regex/compare/1.13.1...1.13.2)
+Bumps [fancy-regex](https://github.com/fancy-regex/fancy-regex) from 0.19.2 to 0.20.2.
+- [Release notes](https://github.com/fancy-regex/fancy-regex/releases)
+- [Changelog](https://github.com/fancy-regex/fancy-regex/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/fancy-regex/fancy-regex/compare/0.19.2...0.20.2)
 
 ---
 updated-dependencies:
-- dependency-name: regex
-  dependency-version: 1.13.2
+- dependency-name: fancy-regex
+  dependency-version: 0.20.2
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +6/-6)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1704,9 +1704,9 @@ dependencies = [
+@@ -703,9 +703,9 @@ dependencies = [
  
  [[package]]
- name = "regex"
--version = "1.13.1"
-+version = "1.13.2"
+ name = "fancy-regex"
+-version = "0.19.2"
++version = "0.20.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
-+checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
+-checksum = "d301f5bf187b3c295fce6468d3875037a0bccc5f6b151c63cac2f85babf21912"
++checksum = "0a2e16b9a584b602f1e0e5e22c30ca0906786088c27500653e432d086def8b53"
  dependencies = [
-  "aho-corasick",
-  "memchr",
-@@ -1716,9 +1716,9 @@ dependencies = [
+  "bit-set",
+  "regex-automata",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@ tokio         = { version = "1.52", optional = true, features = ["rt"] }
+ toml          = "1.1"
+ unicode-width = "0.2"
+ regex         = "1.12"
+-fancy-regex   = "0.19"
++fancy-regex   = "0.20"
  
- [[package]]
- name = "regex-automata"
--version = "0.4.16"
-+version = "0.4.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fcfdb36bda0c880c5931cdc7a2bcdc8ba4556847b9d912bca70bc94708711ad"
-+checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
- dependencies = [
-  "aho-corasick",
-  "memchr",
-@@ -1727,9 +1727,9 @@ dependencies = [
- 
- [[package]]
- name = "regex-syntax"
--version = "0.8.11"
-+version = "0.8.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
-+checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
- 
- [[package]]
- name = "rend"
+ [build-dependencies]
+ anyhow        = "1.0"
 ```
 
 ---
 
-### Incident Patch 2: `22e0b631` (2026-11-24)
-**Commit Message**: build(deps): bump toml from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0
+### Incident Patch 2: `9e046a20` (2026-11-26)
+**Commit Message**: build(deps): bump anyhow from 1.0.104 to 1.0.105
 
-Bumps [toml](https://github.com/toml-rs/toml) from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0.
-- [Commits](https://github.com/toml-rs/toml/compare/toml-v1.2.1...toml-v1.2.2)
+Bumps [anyhow](https://github.com/dtolnay/anyhow) from 1.0.104 to 1.0.105.
+- [Release notes](https://github.com/dtolnay/anyhow/releases)
+- [Commits](https://github.com/dtolnay/anyhow/compare/1.0.104...1.0.105)
 
 ---
 updated-dependencies:
-- dependency-name: toml
-  dependency-version: 1.2.2+spec-1.1.0
+- dependency-name: anyhow
+  dependency-version: 1.0.105
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2295,9 +2295,9 @@ dependencies = [
+@@ -89,9 +89,9 @@ dependencies = [
  
  [[package]]
- name = "toml"
--version = "1.2.1+spec-1.1.0"
-+version = "1.2.2+spec-1.1.0"
+ name = "anyhow"
+-version = "1.0.104"
++version = "1.0.105"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d5755c51863cdac711f1956baf8eb9588e060755f7d3c4c979e70ea1e1f32cd7"
-+checksum = "5426cb1b964690d913f6c5c1a1ae0b42f428ec506bb4d452876d7a209c9bca3b"
- dependencies = [
-  "indexmap",
-  "serde_core",
-@@ -2331,9 +2331,9 @@ dependencies = [
+-checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
++checksum = "2cb931c189b85683d69a5cfad41d4d418671e1ac413dd209f3f2fc31e3cfd902"
  
  [[package]]
- name = "toml_parser"
--version = "1.1.5+spec-1.1.0"
-+version = "1.1.6+spec-1.1.0"
+ name = "arrayvec"
+```
+
+---
+
+### Incident Patch 3: `58224fdd` (2026-11-26)
+**Commit Message**: build(deps): bump libproc from 0.14.11 to 0.15.0
+
+Bumps [libproc](https://github.com/andrewdavidmackenzie/libproc-rs) from 0.14.11 to 0.15.0.
+- [Release notes](https://github.com/andrewdavidmackenzie/libproc-rs/releases)
+- [Commits](https://github.com/andrewdavidmackenzie/libproc-rs/commits/v0.15.0)
+
+---
+updated-dependencies:
+- dependency-name: libproc
+  dependency-version: 0.15.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +7/-17)
+```diff
+@@ -169,20 +169,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "bindgen"
+-version = "0.72.1"
++version = "0.73.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "baa693a8032d7e1cada7d0041e96126df243179ff061456783ac7f12bda4744c"
-+checksum = "e6769c452d71ba30696c6b37770c439a9cc9110f47f7d5cdbeda79840ef5ea31"
+-checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
++checksum = "787ef8ef523575546b106a58213d6e6b06198a05c2f757258c68a74273670cfa"
  dependencies = [
-  "winnow",
+  "bitflags 2.13.0",
+  "cexpr",
+  "clang-sys",
+- "itertools",
+  "proc-macro2",
+  "quote",
+  "regex",
+  "rustc-hash 2.1.2",
+- "shlex 1.3.0",
+- "syn 2.0.118",
++ "shlex 2.0.1",
++ "syn 3.0.2",
+ ]
+ 
+ [[package]]
+@@ -1120,15 +1119,6 @@ version = "1.70.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
+ 
+-[[package]]
+-name = "itertools"
+-version = "0.13.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
+-dependencies = [
+- "either",
+-]
+-
+ [[package]]
+ name = "itoa"
+ version = "1.0.18"
+@@ -1176,11 +1166,11 @@ dependencies = [
+ 
+ [[package]]
+ name = "libproc"
+-version = "0.14.11"
++version = "0.15.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a54ad7278b8bc5301d5ffd2a94251c004feb971feba96c971ea4063645990757"
++checksum = "564c269d134dc8276288e18bf00b30e7fe2136ff8f0974f9bf65477cd5ad82fe"
+ dependencies = [
+- "bindgen 0.72.1",
++ "bindgen 0.73.2",
+  "errno 0.3.15",
+  "libc",
  ]
 ```
 
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -69,7 +69,7 @@ uzers         = "0.12"
+ which         = "8"
+ 
+ [target.'cfg(target_os = "macos")'.dependencies]
+-libproc       = "0.14"
++libproc       = "0.15"
+ nix           = {version = "0.31.3", features = ["process"]}
+ errno         = "0.3"
+ pager         = "0.16"
+```
+
 #### Recent Merged Pull Requests:
+- **PR #1005** (2026-11-26): build(deps): bump anyhow from 1.0.104 to 1.0.105 (@dependabot[bot])
 - **PR #1004** (2026-11-24): build(deps): bump toml from 1.2.1+spec-1.1.0 to 1.2.2+spec-1.1.0 (@dependabot[bot])
 - **PR #1003** (2026-11-23): build(deps): bump regex from 1.13.1 to 1.13.2 (@dependabot[bot])
 - **PR #1001** (2026-11-20): build(deps): bump clap_mangen from 0.3.3 to 0.3.4 (@dependabot[bot])
 - **PR #1000** (2026-11-16): build(deps): bump errno from 0.3.14 to 0.3.15 (@dependabot[bot])
-- **PR #998** (closed): build(deps): bump fancy-regex from 0.19.2 to 0.20.1 (@dependabot[bot])
-- **PR #997** (2026-11-09): build(deps): bump toml from 1.1.8+spec-1.1.0 to 1.2.1+spec-1.1.0 (@dependabot[bot])
+- **PR #999** (2026-11-26): build(deps): bump fancy-regex from 0.19.2 to 0.20.2 (@dependabot[bot])
 
 ---
 
@@ -1760,13 +1830,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump regex from 1.13.1 to 1.13.2
+## X. build(deps): bump fancy-regex from 0.19.2 to 0.20.2
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dalance/procs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf04b3b8`: build(deps): bump regex from 1.13.1 to 1.13.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f4bdff40`: build(deps): bump fancy-regex from 0.19.2 to 0.20.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1774,27 +1844,19 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.13.2"
-checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
-version = "0.4.19"
-checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
-version = "0.8.12"
-checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
+version = "0.20.2"
+checksum = "0a2e16b9a584b602f1e0e5e22c30ca0906786088c27500653e432d086def8b53"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.13.1"
-checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
-version = "0.4.16"
-checksum = "8fcfdb36bda0c880c5931cdc7a2bcdc8ba4556847b9d912bca70bc94708711ad"
-version = "0.8.11"
-checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+version = "0.19.2"
+checksum = "d301f5bf187b3c295fce6468d3875037a0bccc5f6b151c63cac2f85babf21912"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf04b3b8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f4bdff40` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

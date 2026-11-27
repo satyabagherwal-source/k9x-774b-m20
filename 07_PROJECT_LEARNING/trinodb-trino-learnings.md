@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `c4f407dc`  
+> **Source Version**: `039ba60f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T10:19:28.636Z  
+> **Timestamp**: 2026-11-27T04:27:23.580Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:19:28.631Z  
+> **Harvest Timestamp**: 2026-11-27T04:27:23.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13545 stars
+- **Stars / Engagement**: 13549 stars
 
 ---
 
@@ -1854,87 +1854,223 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `02562568` (2026-11-25)
-**Commit Message**: Fix race in BaseConnectorTest mock table listing
+### Incident Patch 1: `9ba58584` (2026-11-23)
+**Commit Message**: Fix flaky join operator yield tests
 
-Test methods run concurrently and share the mock_dynamic_listing
-catalog. When a test removed its mock schema between listSchemaNames
-and listTables of a query listing all catalogs, such as the
-system.jdbc.columns query in testView, the listing failed with
-"No listing function registered". Change the mock listings under the
-query runner's exclusive lock, so no query observes a change mid-way.
+The yield tests armed a real 5 second yield timer before each call to
+getOutput, only so that the forced yield could be cleared with reset
+afterwards. When the test thread stalled for longer than that, the
+timer fired before the join reached the filter function, so the join
+yielded without calling it and the test failed. Clear the forced yield
+directly instead, so that only the filter function triggers a yield.
 
-**File**: `testing/trino-testing/src/main/java/io/trino/testing/BaseConnectorTest.java` (modified, +3/-2)
+**File**: `core/trino-main/src/test/java/io/trino/operator/join/TestHashJoinOperator.java` (modified, +1/-6)
 ```diff
-@@ -8133,12 +8133,13 @@ protected void withMockTableListing(String forSchema, Function<ConnectorSession,
-         requireNonNull(forSchema, "forSchema is null");
-         requireNonNull(listing, "listing is null");
+@@ -110,7 +110,6 @@
+ import static java.util.concurrent.Executors.newCachedThreadPool;
+ import static java.util.concurrent.Executors.newScheduledThreadPool;
+ import static java.util.concurrent.TimeUnit.NANOSECONDS;
+-import static java.util.concurrent.TimeUnit.SECONDS;
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+@@ -287,23 +286,19 @@ public void testYield()
  
--        checkState(mockTableListings.putIfAbsent(forSchema, listing) == null, "Listing function already registered for [%s]", forSchema);
-+        // Change the mock catalog only while no query runs, so that queries listing all catalogs see consistent state
-+        executeExclusively(() -> checkState(mockTableListings.putIfAbsent(forSchema, listing) == null, "Listing function already registered for [%s]", forSchema));
-         try {
-             closure.run();
+             // we will yield 40 times due to filterFunction
+             for (int i = 0; i < entries; i++) {
+-                driverContext.getYieldSignal().setWithDelay(5 * SECONDS.toNanos(1), driverContext.getYieldExecutor());
+                 filterFunctionCalls.set(0);
+                 assertThat(operator.getOutput()).isNull();
+                 assertThat(filterFunctionCalls.get())
+                         .describedAs("Expected join to stop processing (yield) after calling filter function once")
+                         .isEqualTo(1);
+-                driverContext.getYieldSignal().reset();
++                driverContext.getYieldSignal().resetYieldForTesting();
+             }
+-            // delayed yield is not going to prevent operator from producing a page now (yield won't be forced because filter function won't be called anymore)
+-            driverContext.getYieldSignal().setWithDelay(5 * SECONDS.toNanos(1), driverContext.getYieldExecutor());
+             // expect output page to be produced within few calls to getOutput(), e.g. to facilitate spill
+             Page output = null;
+             for (int i = 0; output == null && i < 5; i++) {
+                 output = operator.getOutput();
+             }
+             assertThat(output).isNotNull();
+-            driverContext.getYieldSignal().reset();
+ 
+             // make sure we have all 4 entries
+             assertThat(output.getPositionCount()).isEqualTo(entries);
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/operator/join/nonspilling/TestHashJoinOperator.java` (modified, +1/-6)
+```diff
+@@ -76,7 +76,6 @@
+ import static io.trino.spi.type.VarcharType.VARCHAR;
+ import static java.util.concurrent.Executors.newCachedThreadPool;
+ import static java.util.concurrent.Executors.newScheduledThreadPool;
+-import static java.util.concurrent.TimeUnit.SECONDS;
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+@@ -322,23 +321,19 @@ private void testYield(boolean singleBigintLookupSource)
+ 
+             // we will yield 40 times due to filterFunction
+             for (int i = 0; i < entries; i++) {
+-                driverContext.getYieldSignal().setWithDelay(5 * SECONDS.toNanos(1), driverContext.getYieldExecutor());
+                 filterFunctionCalls.set(0);
+                 assertThat(operator.getOutput()).isNull();
+                 assertThat(filterFunctionCalls.get())
+                         .describedAs("Expected join to stop processing (yield) after calling filter function once")
+                         .isEqualTo(1);
+-                driverContext.getYieldSignal().reset();
++                driverContext.getYieldSignal().resetYieldForTesting();
+             }
+-            // delayed yield is not going to prevent operator from producing a page now (yield won't be forced because filter function won't be called anymore)
+-            driverContext.getYieldSignal().setWithDelay(5 * SECONDS.toNanos(1), driverContext.getYieldExecutor());
+             // expect output page to be produced within few calls to getOutput(), e.g. to facilitate spill
+             Page output = null;
+             for (int i = 0; output == null && i < 5; i++) {
+                 output = operator.getOutput();
+             }
+             assertThat(output).isNotNull();
+-            driverContext.getYieldSignal().reset();
+ 
+             // make sure we have all 4 entries
+             assertThat(output.getPositionCount()).isEqualTo(entries);
+```
+
+**File**: `plugin/trino-geospatial/src/test/java/io/trino/plugin/geospatial/TestSpatialJoinOperator.java` (modified, +1/-4)
+```diff
+@@ -413,15 +413,12 @@ public void testYield()
+ 
+         // we will yield 40 times due to filterFunction
+         for (int i = 0; i < 40; i++) {
+-            driverContext.getYieldSignal().setWithDelay(5 * SECONDS.toNanos(1), driverContext.getYieldExecutor());
+             assertThat(operator.getOutput()).isNull();
+             assertThat(filterFunctionCalls.get())
+                     .describedAs("Expected join to stop processing (yield) after calling filter function once")
+                     .isEqualTo(i + 1);
+-            driverContext.getYieldSignal().reset();
++            driverContext.getYieldSignal().resetYieldForTesting();
          }
-         finally {
--            mockTableListings.remove(forSchema, listing);
-+            executeExclusively(() -> mockTableListings.remove(forSchema, listing));
-         }
-     }
+-        // delayed yield is not going to prevent operator from producing a page now (yield won't be forced because filter function won't be called anymore)
+-        driverContext.getYieldSignal().setWithDelay(5 * SECONDS.toNanos(1), driverContext.getYieldExecutor());
+         Page output = operator.getOutput();
+         assertThat(output).isNotNull();
  
 ```
 
 ---
 
-### Incident Patch 2: `4e369174` (2026-10-28)
-**Commit Message**: Reconfigure groups on soft memory limit fraction change
+### Incident Patch 2: `269016a8` (2026-11-26)
+**Commit Message**: Fix TLS in Cassandra connector
 
-ResourceGroupSpec.sameConfig(), used by
-DbResourceGroupConfigurationManager to decide whether a running group
-must be reconfigured, compared only the absolute softMemoryLimit and
-omitted softMemoryLimitFraction.
+With cassandra.tls.enabled=true and neither a key store nor a trust
+store configured, the connector applied no TLS settings to the driver
+and connected in plaintext without any warning. Credentials for
+cassandra.security=PASSWORD were then sent unencrypted. With a store
+configured, CqlSessionBuilder.withSslContext never verified that the
+certificate presented by a Cassandra node was issued for that node,
+so a certificate chaining to the trust store was accepted for any
+host.
 
-A percentage soft memory limit is stored as a fraction, with the
-absolute softMemoryLimit left empty. Changing e.g. 50% to 30%
-therefore left both specs with an empty softMemoryLimit, so
-sameConfig() reported them as equal and findChangedGroups() skipped
-the group. As a result the periodic configuration refresh never
-re-applied a percentage soft memory limit change to an
-already-running group; the change only took effect after the group
-was recreated (coordinator restart or the group being emptied and
-reselected). Absolute soft memory limits and concurrency/queue limits
-were unaffected.
+Always create the SSL context when TLS is enabled, and verify host
+names by default. Add cassandra.tls.verify-hostnames to disable the
+check for clusters whose node certificates do not match the addresses
+the driver connects to.
 
-equals() already compares softMemoryLimitFraction; add the same
-comparison to sameConfig(). Also add softMemoryLimitFraction to
-toString() so the refresh log shows a changed percentage limit
-instead of an empty softMemoryLimit.
+Host names from cassandra.contact-points are verified by name. All
+other addresses, such as nodes discovered by the driver, are verified
+by IP address. The driver's factory would verify them against the
+result of a reverse DNS lookup instead, which the owner of the
+certificate does not control. Add cassandra.tls.use-reverse-dns to
+restore that behavior.
 
-Signed-off-by: 이경율 <[REDACTED_EMAIL]>
+Without a key store and a trust store, the default trust anchors of
+the JVM are used. As these conta
 
-**File**: `plugin/trino-resource-group-managers/src/main/java/io/trino/plugin/resourcegroups/ResourceGroupSpec.java` (modified, +2/-0)
+**File**: `docs/src/main/sphinx/connector/cassandra.md` (modified, +3/-1)
 ```diff
-@@ -209,6 +209,7 @@ public boolean sameConfig(ResourceGroupSpec other)
-         }
-         return (name.equals(other.name) &&
-                 softMemoryLimit.equals(other.softMemoryLimit) &&
-+                softMemoryLimitFraction.equals(other.softMemoryLimitFraction) &&
-                 maxQueued == other.maxQueued &&
-                 softConcurrencyLimit.equals(other.softConcurrencyLimit) &&
-                 hardConcurrencyLimit == other.hardConcurrencyLimit &&
-@@ -244,6 +245,7 @@ public String toString()
-         return toStringHelper(this)
-                 .add("name", name)
-                 .add("softMemoryLimit", softMemoryLimit)
-+                .add("softMemoryLimitFraction", softMemoryLimitFraction)
-                 .add("maxQueued", maxQueued)
-                 .add("softConcurrencyLimit", softConcurrencyLimit)
-                 .add("hardConcurrencyLimit", hardConcurrencyLimit)
+@@ -81,9 +81,11 @@ The following advanced configuration properties are available:
+ | `cassandra.speculative-execution.delay`                    | The delay between each speculative execution, defaults to `500ms`.                                                                                                                                                                                                                                                                                                                             |
+ | `cassandra.tls.enabled`                                    | Whether TLS security is enabled, defaults to `false`.                                                                                                                                                                                                                                                                                                                                          |
+ | `cassandra.tls.keystore-path`                              | Path to the {doc}`PEM </security/inspect-pem>` or {doc}`JKS </security/inspect-jks>` key store file.                                                                                                                                                                                                                                                                                           |
+-| `cassandra.tls.truststore-path`                            | Path to the {doc}`PEM </security/inspect-pem>` or {doc}`JKS </security/inspect-jks>` trust store file.                                                                                                                                                                                                                                                                                         |
++| `cassandra.tls.truststore-path`                            | Path to the {doc}`PEM </security/inspect-pem>` or {doc}`JKS </security/inspect-jks>` trust store file. The default trust store of the JVM is used when neither a key store nor a trust store is set.                                                                                                                                                                                           |
+ | `cassandra.tls.keystore-password`                          | Password for the key store.                                                                                                                                                                                                                                                                                                                                                                    |
+ | `cassandra.tls.truststore-password`                        | Password for the trust store.                                                                                                                                                                                                                                                                                                                                                                  |
++| `cassandra.tls.verify-hostnames`                           | Verify that the certificate of a Cassandra node matches the address of the node, defaults to `true`. A host name from `cassandra.contact-points` is verified by name, any other node by its IP address. A key store or trust store is required when set to `false`.                                                                                                                            |
++| `cassandra.tls.use-reverse-dns`                            | Verify the certificate of a node addressed by IP address against the reverse DNS name of the address instead of the IP address, defaults to `false`. Less secure. A key store or trust store is required when set to `true`.                                                                                                                                                                   |
+ 
+ ## Querying Cassandra tables
+ 
 ```
 
-**File**: `plugin/trino-resource-group-managers/src/test/java/io/trino/plugin/resourcegroups/TestResourceGroupSpec.java` (added, +66/-0)
+**File**: `plugin/trino-cassandra/src/main/java/io/trino/plugin/cassandra/tls/CassandraTlsConfig.java` (modified, +38/-0)
 ```diff
-@@ -0,0 +1,66 @@
+@@ -14,8 +14,10 @@
+ package io.trino.plugin.cassandra.tls;
+ 
+ import io.airlift.configuration.Config;
++import io.airlift.configuration.ConfigDescription;
+ import io.airlift.configuration.ConfigSecuritySensitive;
+ import io.airlift.configuration.validation.FileExists;
++import jakarta.validation.constraints.AssertTrue;
+ 
+ import java.io.File;
+ import java.util.Optional;
+@@ -26,6 +28,8 @@ public class CassandraTlsConfig
+     private String keystorePassword;
+     private File truststorePath;
+     private String truststorePassword;
++    private boolean verifyHostnames = true;
++    private boolean useReverseDns;
+ 
+     public Optional<@FileExists File> getKeystorePath()
+     {
+@@ -76,4 +80,38 @@ public CassandraTlsConfig setTruststorePassword(String truststorePassword)
+         this.truststorePassword = truststorePassword;
+         return this;
+     }
++
++    public boolean isVerifyHostnames()
++    {
++        return verifyHostnames;
++    }
++
++    @Config("cassandra.tls.verify-hostnames")
++    @ConfigDescription("Verify that the certificate presented by a Cassandra node matches the host name or IP address of that node")
++    public CassandraTlsConfig setVerifyHostnames(boolean verifyHostnames)
++    {
++        this.verifyHostnames = verifyHostnames;
++        return this;
++    }
++
++    public boolean isUseReverseDns()
++    {
++        return useReverseDns;
++    }
++
++    @Config("cassandra.tls.use-reverse-dns")
++    @ConfigDescription("Verify the certificate of a node addressed by IP against its reverse DNS name instead of the IP address, as the Cassandra driver does by default. Less secure")
++    public CassandraTlsConfig setUseReverseDns(boolean useReverseDns)
++    {
++        this.useReverseDns = useReverseDns;
++        return this;
++    }
++
++    // The default trust anchors of the JVM contain public certificate authorities, which issue a certificate to the owner of any domain.
++    // Such a certificate says nothing unless it is verified against the address used to connect.
++    @AssertTrue(message = "cassandra.tls.keystore-path or cassandra.tls.truststore-path must be set when cassandra.tls.verify-hostnames is false or cassandra.tls.use-reverse-dns is true")
++    public boolean isKeystoreOrTruststoreConfigured()
++    {
++        return keystorePath != null || truststorePath != null || (verifyHostnames && !useReverseDns);
++    }
+ }
+```
+
+**File**: `plugin/trino-cassandra/src/main/java/io/trino/plugin/cassandra/tls/CassandraTlsEngineFactory.java` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
 +/*
 + * Licensed under the Apache License, Version 2.0 (the "License");
 + * you may not use this file except in compliance with the License.
@@ -1948,120 +2084,454 @@ Signed-off-by: 이경율 <[REDACTED_EMAIL]>
 + * See the License for the specific language governing permissions and
 + * limitations under the License.
 + */
-+package io.trino.plugin.resourcegroups;
++package io.trino.plugin.cassandra.tls;
 +
-+import org.junit.jupiter.api.Test;
++import com.datastax.oss.driver.api.core.metadata.EndPoint;
++import com.datastax.oss.driver.api.core.ssl.ProgrammaticSslEngineFactory;
++import com.datastax.oss.driver.api.core.ssl.SslEngineFactory;
++import com.google.common.net.InetAddresses;
++import io.trino.spi.TrinoException;
 +
++import javax.net.ssl.SSLContext;
++import javax.net.ssl.SSLEngine;
++
++import java.io.File;
++import java.io.IOException;
++import java.net.InetSocketAddress;
++import java.net.SocketAddress;
++import java.security.GeneralSecurityException;
++import java.util.List;
 +import java.util.Optional;
++import java.util.Set;
 +
-+import static org.assertj.core.api.Assertions.assertThat;
++import static com.google.common.collect.ImmutableSet.toImmutableSet;
++import static io.trino.plugin.base.ssl.SslUtils.createSSLContext;
++import static io.trino.plugin.cassandra.CassandraErrorCode.CASSANDRA_SSL_INITIALIZATION_FAILURE;
++import static java.util.Locale.ENGLISH;
 +
-+public class TestResourceGroupSpec
++final class CassandraTlsEngineFactory
 +{
-+    @Test
-+    public void testSameConfigDetectsSoftMemoryFractionChange()
-+    {
-+        // A percentage soft memory limit is stored as a fraction (softMemoryLimitFraction), with the
-+        // absolute softMemoryLimit left empty. sameConfig must treat a fraction change as a config change,
-+        // otherwise DbResourceGroupConfigurationManager never reconfigures the running group.
-+        ResourceGroupSpec fifty = spec(Optional.of("50%"));
-+        ResourceGroupSpec thirty = spec(Optional.of("30%"));
++    private CassandraTlsEngineFactory() {}
 +
-+        assertThat(fifty.sameConfig(fifty)).isTrue();
-+        assertThat(fifty.sameConfig(thirty)).isFalse();
++    static SslEngineFactory createSslEngineFactory(CassandraTlsConfig config, List<String> contactPoints)
++    {
++        // The context is always created, so that enabling TLS never results in a plaintext connection.
++        // Without a key store and a trust store it uses the default trust anchors of the JVM.
++        SSLContext sslContext = buildSslContext(config.getKeystorePath(), config.getKeystorePassword(), config.getTruststorePath(), config.getTruststorePassword());
++        // CqlSessionBuilder.withSslContext cannot enable host name verification, so the factory is created explicitly
++        if (config.isUseReverseDns()) {
++            return new ProgrammaticSslEngineFactory(sslContext, null, config.isVerifyHostnames());
++        }
++        return new NoReverseDnsSslEngineFactory(sslContext, config.isVerifyHostnames(), contactPoints);
 +    }
 +
-+    @Test
-+    public void testSameConfigDetectsAbsoluteSoftMemoryChange()
++    private static SSLContext buildSslContext(
++            Optional<File> keystorePath,
++            Optional<String> keystorePassword,
++            Optional<File> truststorePath,
++            Optional<String> truststorePassword)
 +    {
-+        assertThat(spec(Optional.of("1GB")).sameConfig(spec(Optional.of("2GB")))).isFalse();
++        try {
++            return createSSLContext(keystorePath, keystorePassword, truststorePath, truststorePassword);
++        }
++        catch (GeneralSecurityException | IOException e) {
++            throw new TrinoException(CASSANDRA_SSL_INITIALIZATION_FAILURE, e);
++        }
 +    }
 +
-+    @Test
-+    public void testSameConfigEqualForIdenticalFractions()
++    /// Verify against the contact point host name or the IP address, never a reverse DNS lookup.
++    /// Contact points are matched by configured name, as the JDK also stores reverse lookup results in an address.
++    private static class NoReverseDnsSslEngineFactory
++            implements SslEngineFactory
 +    {
-+        assertThat(spec(Optional.of("40%")).sameConfig(spec(Optional.of("40%")))).isTrue();
-+    }
++        private final ProgrammaticSslEngineFactory delegate;
++        private final Set<String> contactPointHostNames;
 +
-+    private static ResourceGroupSpec spec(Optional<String> softMemoryLimit)
-+    {
-+        return new ResourceGroupSpec(
-+                new ResourceGroupNameTemplate("global"),
-+                softMemoryLimit,
-+                100,
-+                Optional.empty(),
-+                Optional.of(100),
-+                Optional.empty(),
-+                Optional.empty(),
-+                Optional.empty(),
-+                Optional.empty(),
-+                Optional.empty(),
-+                Optional.empty(),
-+                Optional.empty(),
-+                Optional.empty());
-+    }
-+}
++        private NoReverseDnsSslEngineFactory(SSLContext sslContext, boolean requireHostnameValidation, List<String> contactPoints)
++        {
++            this.delegate = new ProgrammaticSslEngineFactory(sslContext, null, requireHostnameValidation);
++            this.contactPointHostNames = contactPoints.stream()
++                    .filter(contactPoint -> !InetAddresses.isInetAddress(contactPoint))
++                    .map(contactPoint -> contactPoint.toLowerCase(ENGLISH))
++                    .collect(toImmutableSet());
++        }
++
++        @Override
++        public SSLEngine newSslEngine(EndPoint remoteEndpoint)
++        {
++            if (remoteEndpoint.resolve() instanceof InetSocketAddress address && address.getAddress() != null && !isContactPointHostName(address)) {
++                // An unresolved address returns its host string from getHostName(), without a lookup
++                InetSocketAddress peer = InetSocketAddress.createUnresolved(address.getAddress().getHostAddress(), address.getPort());
++                return delegate.newSslEngine(new EndPoint()
++                {
++                    @Override
++                    public SocketAddress resolve()
++                    {
++                        return peer;
++                    }
++
++                    @Override
++                    public String asMetricPrefix()
++                    {
++                        return remoteEndpoint.asMetricPrefix();
++                    }
++                });
++            }
++            return delegate.newSslEngine(remoteEndpoint);
+
 ```
 
----
-
-### Incident Patch 3: `8cc8f228` (2026-11-10)
-**Commit Message**: Fix integer overflow in binary substr
-
-**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/VarbinaryFunctions.java` (modified, +2/-8)
+**File**: `plugin/trino-cassandra/src/main/java/io/trino/plugin/cassandra/tls/CassandraTlsModule.java` (modified, +6/-31)
 ```diff
-@@ -404,10 +404,7 @@ public static Slice substr(@SqlType(StandardTypes.VARBINARY) Slice slice, @SqlTy
-             if (indexStart >= slice.length()) {
-                 return EMPTY_SLICE;
-             }
--            int indexEnd = indexStart + byteLength;
--            if (indexEnd > slice.length()) {
--                indexEnd = slice.length();
--            }
-+            int indexEnd = (int) Math.min((long) indexStart + byteLength, slice.length());
-             return slice.slice(indexStart, indexEnd - indexStart);
-         }
+@@ -13,23 +13,16 @@
+  */
+ package io.trino.plugin.cassandra.tls;
  
-@@ -420,10 +417,7 @@ public static Slice substr(@SqlType(StandardTypes.VARBINARY) Slice slice, @SqlTy
-         }
++import com.datastax.oss.driver.api.core.ssl.SslEngineFactory;
+ import com.google.inject.Binder;
+ import com.google.inject.Module;
+ import com.google.inject.Singleton;
+ import com.google.inject.multibindings.ProvidesIntoSet;
++import io.trino.plugin.cassandra.CassandraClientConfig;
+ import io.trino.plugin.cassandra.CassandraSessionConfigurator;
+-import io.trino.spi.TrinoException;
+-
+-import javax.net.ssl.SSLContext;
+-
+-import java.io.File;
+-import java.io.IOException;
+-import java.security.GeneralSecurityException;
+-import java.util.Optional;
  
-         int indexStart = startByte;
--        int indexEnd = indexStart + byteLength;
--        if (indexEnd > slice.length()) {
--            indexEnd = slice.length();
+ import static io.airlift.configuration.ConfigBinder.configBinder;
+-import static io.trino.plugin.base.ssl.SslUtils.createSSLContext;
+-import static io.trino.plugin.cassandra.CassandraErrorCode.CASSANDRA_SSL_INITIALIZATION_FAILURE;
++import static io.trino.plugin.cassandra.tls.CassandraTlsEngineFactory.createSslEngineFactory;
+ 
+ public class CassandraTlsModule
+         implements Module
+@@ -42,27 +35,9 @@ public void configure(Binder binder)
+ 
+     @ProvidesIntoSet
+     @Singleton
+-    public CassandraSessionConfigurator tlsConfigurator(CassandraTlsConfig config)
+-    {
+-        return builder -> buildSslContext(config.getKeystorePath(), config.getKeystorePassword(), config.getTruststorePath(), config.getTruststorePassword())
+-                .ifPresent(builder::withSslContext);
+-    }
+-
+-    private static Optional<SSLContext> buildSslContext(
+-            Optional<File> keystorePath,
+-            Optional<String> keystorePassword,
+-            Optional<File> truststorePath,
+-            Optional<String> truststorePassword)
++    public CassandraSessionConfigurator tlsConfigurator(CassandraTlsConfig config, CassandraClientConfig clientConfig)
+     {
+-        if (keystorePath.isEmpty() && truststorePath.isEmpty()) {
+-            return Optional.empty();
 -        }
-+        int indexEnd = (int) Math.min((long) indexStart + byteLength, slice.length());
- 
-         return slice.slice(indexStart, indexEnd - indexStart);
+-
+-        try {
+-            return Optional.of(createSSLContext(keystorePath, keystorePassword, truststorePath, truststorePassword));
+-        }
+-        catch (GeneralSecurityException | IOException e) {
+-            throw new TrinoException(CASSANDRA_SSL_INITIALIZATION_FAILURE, e);
+-        }
++        SslEngineFactory sslEngineFactory = createSslEngineFactory(config, clientConfig.getContactPoints());
++        return builder -> builder.withSslEngineFactory(sslEngineFactory);
      }
+ }
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/TestVarbinaryFunctions.java` (modified, +8/-0)
+**File**: `plugin/trino-cassandra/src/test/java/io/trino/plugin/cassandra/TestCassandraPlugin.java` (modified, +28/-0)
 ```diff
-@@ -920,6 +920,14 @@ public void testVarbinarySubstring()
-                 .binding("value", "X'4FE15FF5'")
-                 .binding("start", "-2"))
-                 .isEqualTo(sqlVarbinary(0x5F, 0xF5));
+@@ -14,6 +14,7 @@
+ package io.trino.plugin.cassandra;
+ 
+ import com.google.common.collect.ImmutableMap;
++import io.airlift.bootstrap.ApplicationConfigurationException;
+ import io.trino.spi.Plugin;
+ import io.trino.spi.connector.ConnectorFactory;
+ import io.trino.testing.TestingConnectorContext;
+@@ -24,6 +25,7 @@
+ 
+ import static com.google.common.collect.Iterables.getOnlyElement;
+ import static com.google.common.io.Resources.getResource;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+ public class TestCassandraPlugin
+ {
+@@ -61,4 +63,30 @@ public void testTls()
+                         "cassandra.tls.truststore-password", "changeit"),
+                 new TestingConnectorContext()).shutdown();
+     }
 +
-+        // Integer overflow: large length with positive start
-+        assertThat(assertions.function("SUBSTR", "X'010203'", "2", "2147483647"))
-+                .isEqualTo(sqlVarbinary(0x02, 0x03));
++    @Test
++    void testTlsWithoutKeystoreAndTruststore()
++    {
++        Plugin plugin = new CassandraPlugin();
++        ConnectorFactory factory = getOnlyElement(plugin.getConnectorFactories());
++        // the default trust anchors of the JVM are used
++        factory.create(
++                "test",
++                ImmutableMap.of(
++                        "cassandra.contact-points", "host1",
++                        "cassandra.load-policy.dc-aware.local-dc", "datacenter1",
++                        "cassandra.tls.enabled", "true"),
++                new TestingConnectorContext()).shutdown();
 +
-+        // Integer overflow: large length with negative start
-+        assertThat(assertions.function("SUBSTR", "X'010203'", "-1", "2147483647"))
-+                .isEqualTo(sqlVarbinary(0x03));
++        assertThatThrownBy(() -> factory.create(
++                "test",
++                ImmutableMap.of(
++                        "cassandra.contact-points", "host1",
++                        "cassandra.load-policy.dc-aware.local-dc", "datacenter1",
++                        "cassandra.tls.enabled", "true",
++                        "cassandra.tls.verify-hostnames", "false"),
++                new TestingConnectorContext()))
++                .isInstanceOf(ApplicationConfigurationException.class)
++                .hasMessageContaining("Invalid configuration property with prefix '': cassandra.tls.keystore-path or cassandra.tls.truststore-path must be set when cassandra.tls.verify-hostnames is false or cassandra.tls.use-reverse-dns is true");
++    }
+ }
+```
+
+**File**: `plugin/trino-cassandra/src/test/java/io/trino/plugin/cassandra/tls/TestCassandraTlsConfig.java` (modified, +33/-2)
+```diff
+@@ -14,7 +14,9 @@
+ package io.trino.plugin.cassandra.tls;
+ 
+ import com.google.common.collect.ImmutableMap;
++import jakarta.validation.constraints.AssertTrue;
+ import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.io.TempDir;
+ 
+ import java.io.IOException;
+ import java.nio.file.Files;
+@@ -24,6 +26,8 @@
+ import static io.airlift.configuration.testing.ConfigAssertions.assertFullMapping;
+ import static io.airlift.configuration.testing.ConfigAssertions.assertRecordedDefaults;
+ import static io.airlift.configuration.testing.ConfigAssertions.recordDefaults;
++import static io.airlift.testing.ValidationAssertions.assertFailsValidation;
++import static io.airlift.testing.ValidationAssertions.assertValidates;
+ 
+ final class TestCassandraTlsConfig
+ {
+@@ -34,7 +38,9 @@ void testDefaults()
+                 .setKeystorePath(null)
+                 .setKeystorePassword(null)
+                 .setTruststorePath(null)
+-                .setTruststorePassword(null));
++                .setTruststorePassword(null)
++                .setVerifyHostnames(true)
++                .setUseReverseDns(false));
      }
  
      @Test
+@@ -49,14 +55,39 @@ void testExplicitPropertyMappings()
+                 .put("cassandra.tls.keystore-password", "keystore-password")
+                 .put("cassandra.tls.truststore-path", truststoreFile.toString())
+                 .put("cassandra.tls.truststore-password", "truststore-password")
++                .put("cassandra.tls.verify-hostnames", "false")
++                .put("cassandra.tls.use-reverse-dns", "true")
+                 .buildOrThrow();
+ 
+         CassandraTlsConfig expected = new CassandraTlsConfig()
+                 .setKeystorePath(keystoreFile.toFile())
+                 .setKeystorePassword("keystore-password")
+                 .setTruststorePath(truststoreFile.toFile())
+-                .setTruststorePassword("truststore-password");
++                .setTruststorePassword("truststore-password")
++                .setVerifyHostnames(false)
++                .setUseReverseDns(true);
+ 
+         assertFullMapping(properties, expected);
+     }
++
++    @Test
++    void testKeystoreOrTruststoreRequired(@TempDir Path storeFile)
++    {
++        // the default trust anchors of the JVM are used only when certificates are verified against the address used to connect
++        assertValidates(new CassandraTlsConfig());
++        assertFailsValidation(
++                new CassandraTlsConfig().setVerifyHostnames(false),
++                "keystoreOrTruststoreConfigured",
++                "cassandra.tls.keystore-path or cassandra.tls.truststore-path must be set when cassandra.tls.verify-hostnames is false or cassandra.tls.use-reverse-dns is true",
++                AssertTrue.class);
++        assertFailsValidation(
++                new CassandraTlsConfig().setUseReverseDns(true),
++                "keystoreOrTruststoreConfigured",
++                "cassandra.tls.keystore-path or cassandra.tls.truststore-path must be set when cassandra.tls.verify-hostnames is false or cassandra.tls.use-reverse-dns is true",
++                AssertTrue.class);
++
++        assertValidates(new CassandraTlsConfig().setVerifyHostnames(false).setKeystorePath(storeFile.toFile()));
++        assertValidates(new CassandraTlsConfig().setVerifyHostnames(false).setTruststorePath(storeFile.toFile()));
++        assertValidates(new CassandraTlsConfig().setUseReverseDns(true).setTruststorePath(storeFile.toFile()));
++    }
+ }
+```
+
+**File**: `plugin/trino-cassandra/src/test/java/io/trino/plugin/cassandra/tls/TestCassandraTlsEngineFactory.java` (added, +264/-0)
+```diff
+@@ -0,0 +1,264 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.plugin.cassandra.tls;
++
++import com.datastax.oss.driver.api.core.AllNodesFailedException;
++import com.datastax.oss.driver.api.core.CqlSession;
++import com.datastax.oss.driver.api.core.ssl.SslEngineFactory;
++import com.datastax.oss.driver.internal.core.metadata.DefaultEndPoint;
++import org.junit.jupiter.api.AfterAll;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.TestInstance;
++
++import javax.net.ssl.SSLContext;
++import javax.net.ssl.SSLEngine;
++import javax.net.ssl.SSLServerSocket;
++import javax.net.ssl.SSLSocket;
++
++import java.io.File;
++import java.net.InetAddress;
++import java.net.InetSocketAddress;
++import java.net.Socket;
++import java.net.URISyntaxException;
++import java.security.cert.CertificateException;
++import java.util.Collection;
++import java.util.List;
++import java.util.Optional;
++import java.util.concurrent.ExecutionException;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Future;
++
++import static com.google.common.collect.MoreCollectors.onlyElement;
++import static com.google.common.io.Resources.getResource;
++import static io.airlift.concurrent.Threads.daemonThreadsNamed;
++import static io.trino.plugin.base.ssl.SslUtils.createSSLContext;
++import static java.util.concurrent.Executors.newCachedThreadPool;
++import static java.util.concurrent.TimeUnit.SECONDS;
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++import static org.assertj.core.api.Assumptions.assumeThat;
++import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
++
++@TestInstance(PER_CLASS)
++final class TestCassandraTlsEngineFactory
++{
++    private final ExecutorService executor = newCachedThreadPool(daemonThreadsNamed("test-cassandra-tls-%s"));
++
++    @AfterAll
++    void tearDown()
++    {
++        executor.shutdownNow();
++    }
++
++    @Test
++    void testHostnameVerificationEnabledByDefault()
++            throws Exception
++    {
++        SSLEngine sslEngine = createSslEngine(tlsConfig());
++
++        assertThat(sslEngine.getUseClientMode()).isTrue();
++        assertThat(sslEngine.getPeerHost()).isEqualTo("cassandra.example.com");
++        assertThat(sslEngine.getSSLParameters().getEndpointIdentificationAlgorithm()).isEqualTo("HTTPS");
++    }
++
++    @Test
++    void testHostnameVerificationDisabled()
++            throws Exception
++    {
++        SSLEngine sslEngine = createSslEngine(tlsConfig().setVerifyHostnames(false));
++
++        assertThat(sslEngine.getUseClientMode()).isTrue();
++        assertThat(sslEngine.getSSLParameters().getEndpointIdentificationAlgorithm()).isNull();
++    }
++
++    @Test
++    void testCertificateMatchingHost()
++            throws Exception
++    {
++        try (SSLServerSocket serverSocket = createServerSocket("localhost.pem")) {
++            Future<?> serverHandshake = acceptHandshake(serverSocket);
++            connect(serverSocket.getLocalPort(), tlsConfig());
++            serverHandshake.get(10, SECONDS);
++        }
++    }
++
++    @Test
++    void testCertificateForDifferentHost()
++            throws Exception
++    {
++        try (SSLServerSocket serverSocket = createServerSocket("differenthost.pem")) {
++            Future<?> serverHandshake = acceptHandshake(serverSocket);
++            assertThat(connect(serverSocket.getLocalPort(), tlsConfig()))
++                    .rootCause()
++                    .isInstanceOf(CertificateException.class)
++                    .hasMessage("No subject alternative DNS name matching localhost found.");
++            // The server sees either the alert sent by the client or the closed connection
++            assertThatThrownBy(() -> serverHandshake.get(10, SECONDS))
++                    .isInstanceOf(ExecutionException.class);
++        }
++    }
++
++    @Test
++    void testCertificateForDifferentHostWithoutHostnameVerification()
++            throws Exception
++    {
++        try (SSLServerSocket serverSocket = createServerSocket("differenthost.pem")) {
++            Future<?> serverHandshake = acceptHandshake(serverSocket);
++            connect(serverSocket.getLocalPort(), tlsConfig().setVerifyHostnames(false));
++            serverHandshake.get(10, SECONDS);
++        }
++    }
++
++    @Test
++    void testDefaultTrustAnchors()
++            throws Exception
++    {
++        // Without a key store and a trust store the connection still uses TLS, and the cer
+```
+
+**File**: `plugin/trino-cassandra/src/test/resources/cassandra-tls/ca.crt` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++-----BEGIN CERTIFICATE-----
++MIIDJzCCAg+gAwIBAgIUC2P725t9o7OzkFTDT5zgHWwJeIYwDQYJKoZIhvcNAQEL
++BQAwIjEgMB4GA1UEAwwXVHJpbm8gQ2Fzc2FuZHJhIFRlc3QgQ0EwIBcNMjYxMTI1
++MTE1NzExWhgPMjEyNjExMDExMTU3MTFaMCIxIDAeBgNVBAMMF1RyaW5vIENhc3Nh
++bmRyYSBUZXN0IENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvmnc
++qc3nJhUpadJddf/E7RmYsZbjyr66/Ns75tVEvKtw8XtnTuTNuSoTtCNDmw8kupKQ
++D0wxWuc6EU3RI1IDdwypjB7WjIIP62n+MWMmiwPeMeu7UzDHxQV3JWDT0eJUZt6E
++u4XgkGMFoK/IR7yN8jxbaf59rtTBJYk2JlNH7AKIJZFvn1K9Wk+jd/Y/9dYyMd20
++bZmPDxU6D0eFg5lAzAWA/hwOyuNVBAwNJaXsj38QSMFc5Oovnf7IlX7qLh+7WV3z
++0Tg8RZnR1QxlVtjwf7KDvH47C7tGM+LTKikBXOwP8iBxVTZUPaLRhWmMPkYFN2nj
++VUqN+UNL5lXARkFLfwIDAQABo1MwUTAdBgNVHQ4EFgQUql7Lu1f/z0Yrc9kfJjer
++yYSFhC8wHwYDVR0jBBgwFoAUql7Lu1f/z0Yrc9kfJjeryYSFhC8wDwYDVR0TAQH/
++BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAig0OnbarT1OCsIUrVu19ZZqvxo+x
++59M2wCTjwiJ6WRahPXLmedIlzTBNNadV2lOSApt1IBEj25TYZxqcMj4lripY4Hcd
++oaAsZXqu+5UZOqcDGgXb1ZXD8R39gavParMJke71B0TFO4da5z6V3C1+IXHDHDPU
++y6QApQnbW4E2Thppcl8SgokWC0McgXbrUP8DWQQYZ7xcB/aEDbIrf4ntyyunf9Fy
++NdR/4ZHa+SwLLNxsCAUIkVJU49GOEy7VSxPwQ65XolhE/O+n7mIrsp8jqsb1VHHb
++eHYHApFf9Op6N4vHJdQ4cRw9E2H7Zk3CTNLoJSS0JRlc9Hsfqybd+7Xgxg==
++-----END CERTIFICATE-----
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #32421** (2026-11-27): Respect session time zone in Delta time travel (@chenjian2664)
+- **PR #32418** (2026-11-27): Fix TLS in Cassandra connector (@vlad-lyutenko)
+- **PR #32415** (closed): Use OPA 1.x in tests and migrate Rego policies to v1 syntax (@sudohainguyen)
 - **PR #32402** (2026-11-26): Bump com.carrotsearch:hppc from 0.12.0 to 0.13.0 (@dependabot[bot])
 - **PR #32401** (2026-11-26): Bump org.apache.maven:maven-model-builder from 3.10.1 to 3.10.2 in the maven-model group (@dependabot[bot])
-- **PR #32393** (closed): Add HTTP proxy authentication for the JDBC client and CLI (@vishva-nazar-15082)
-- **PR #32392** (2026-11-25): Narrow visibility of non-test methods in tests (@findepi)
-- **PR #32391** (2026-11-25): Remove unused StageManager constructor parameter (@findepi)
-- **PR #32390** (2026-11-25): Fix race in BaseConnectorTest mock table listing (@findepi)
+- **PR #32396** (closed): Use Iceberg projections for partition pushdown (@wendigo)
 
 ---
 
@@ -2081,31 +2551,33 @@ Signed-off-by: 이경율 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. race in BaseConnectorTest mock table listing
+## X. flaky join operator yield tests
 
 **RULE**:
-When implementing operations in `testing/trino-testing/src/main/java/io/trino/testing/BaseConnectorTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-main/src/test/java/io/trino/operator/join/TestHashJoinOperator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `02562568`: race in BaseConnectorTest mock table listing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ba58584`: flaky join operator yield tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `testing/trino-testing/src/main/java/io/trino/testing/BaseConnectorTest.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/operator/join/TestHashJoinOperator.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        // Change the mock catalog only while no query runs, so that queries listing all catalogs see consistent state
-        executeExclusively(() -> checkState(mockTableListings.putIfAbsent(forSchema, listing) == null, "Listing function already registered for [%s]", forSchema));
-            executeExclusively(() -> mockTableListings.remove(forSchema, listing));
+                driverContext.getYieldSignal().resetYieldForTesting();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        checkState(mockTableListings.putIfAbsent(forSchema, listing) == null, "Listing function already registered for [%s]", forSchema);
-            mockTableListings.remove(forSchema, listing);
+import static java.util.concurrent.TimeUnit.SECONDS;
+                driverContext.getYieldSignal().setWithDelay(5 * SECONDS.toNanos(1), driverContext.getYieldExecutor());
+                driverContext.getYieldSignal().reset();
+            // delayed yield is not going to prevent operator from producing a page now (yield won't be forced because filter function won't be called anymore)
+            driverContext.getYieldSignal().setWithDelay(5 * SECONDS.toNanos(1), driverContext.getYieldExecutor());
+            driverContext.getYieldSignal().reset();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `02562568` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ba58584` are properly handled with clean fallback behavior.

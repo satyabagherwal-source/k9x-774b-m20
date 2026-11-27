@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:18:33.055Z",
-  "total_cycles_completed": 12972,
-  "total_learnings_persisted": 12972,
-  "total_rules_promoted": 11735,
+  "last_updated": "2026-11-27T04:27:24.919Z",
+  "total_cycles_completed": 12975,
+  "total_learnings_persisted": 12975,
+  "total_rules_promoted": 11737,
   "history": [
-    {
-      "timestamp": "2026-11-26T16:21:09.888Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:21:13.695Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:21:19.479Z",
-      "repository": "expo/expo",
-      "learningId": "learn-github-expo-expo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T16:21:27.204Z",
       "repository": "milvus-io/milvus",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T04:18:33.055Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:27:10.224Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:27:12.514Z",
+      "repository": "dalance/procs",
+      "learningId": "learn-github-dalance-procs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:27:24.919Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
