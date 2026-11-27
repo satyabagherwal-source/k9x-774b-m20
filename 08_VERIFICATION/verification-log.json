@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-PZWU",
-    "timestamp": "2026-11-25T14:50:12.366Z",
-    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
-    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
-    "contentHash": "9395c686bfb44488c130f4e6f7fa4f3fbe2f5fa73f176b5e6664e8f3426d4a2f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-Q804",
-    "timestamp": "2026-11-25T14:50:22.852Z",
-    "repository": "PeerDB-io/peerdb",
-    "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "c83614ecbe8985bc54f641e2638298296a902469c97ede71a829b9e56b0fdbd2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-31EO",
     "timestamp": "2026-11-25T15:00:20.832Z",
     "repository": "LiquidAI/d1-2B",
@@ -7492,6 +7462,36 @@
     "contentHash": "0cfd6450a865607bc463c0850532545bf7b725c7fc32cc83a08814503154baa6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-JLFI",
+    "timestamp": "2026-11-27T02:40:44.094Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+    "contentHash": "af6b8df8cecf38b4845d73442628efbe9a73e1e71d27f45333d91ae263dea467",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-JXQ1",
+    "timestamp": "2026-11-27T02:41:00.025Z",
+    "repository": "gluesql/gluesql",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "4f62953755492b803bc452d092427ccb3e66036aece2d48888b5243b9deb9122",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

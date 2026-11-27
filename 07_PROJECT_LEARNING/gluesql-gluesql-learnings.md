@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `a5225084`  
+> **Source Version**: `bace1272`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T07:48:42.729Z  
+> **Timestamp**: 2026-11-27T02:40:58.716Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T07:48:42.724Z  
+> **Harvest Timestamp**: 2026-11-27T02:40:58.711Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2058,136 +2058,341 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75a4e06b` (2026-11-26)
-**Commit Message**: Fix JsonStorage::fetch_schema dropping Schema::engine (#2099)
+### Incident Patch 1: `bace1272` (2026-11-26)
+**Commit Message**: Allow UPDATE to keep a row's own UNIQUE value (#2106)
 
-fetch_schema parses the table .sql file through Schema::from_ddl
-but discards the engine field, rebuilding the Schema with
-engine: None. CompositeStorage routes statements by
-Schema::engine, so a JSON table registered under a non-default
-engine name received no writes: INSERT reported success while
-SELECT returned no rows.
+Match each stored row to its proposed update by row key. Skip the
+duplicate check for a column when that row keeps its existing value.
+INSERT and UPDATE share the per-column key sets and apply their own
+rules when comparing candidates with stored rows.
 
-Carry the parsed engine through, matching storages that serialize
-the whole Schema and already round-trip it.
-
-Adds a composite-storage regression test wiring a JsonStorage
-behind a non-default engine name, the same shape as
-memory_and_redb.
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `core/src/executor/insert/schemaful.rs` (modified, +16/-8)
 ```diff
-@@ -1497,6 +1497,7 @@ name = "gluesql-composite-storage"
- version = "0.21.0"
- dependencies = [
-  "gluesql-core",
-+ "gluesql-json-storage",
-  "gluesql-redb-storage",
-  "gluesql-test-suite",
-  "gluesql_memory_storage",
-```
-
-**File**: `storages/composite-storage/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@ serde = { version = "1", features = ["derive"] }
- test-suite.workspace = true
- gluesql_memory_storage.workspace = true
- gluesql-redb-storage.workspace = true
-+gluesql-json-storage.workspace = true
+@@ -7,11 +7,11 @@ use {
+             context::StatementContext,
+             evaluate::{evaluate, evaluate_stateless},
+             query,
+-            unique::validate_unique_columns,
++            unique::create_unique_constraints,
+         },
+         plan::{ColumnDefPlan, ExprPlan, QueryPlan, ValuesPlan},
+         result::Result,
+-        store::GStore,
++        store::{GStore, ScanColumns},
+     },
+     std::{collections::HashSet, rc::Rc},
+ };
+@@ -132,12 +132,20 @@ fn validate_unique<T: GStore>(
+         .filter_map(|(index, column)| column.unique.map(|_| (index, column.name.clone())))
+         .collect();
  
- [lints]
- workspace = true
+-    validate_unique_columns(
+-        storage,
+-        table_name,
+-        unique_columns,
+-        &rows.iter().map(Vec::as_slice),
+-    )
++    let constraints = create_unique_constraints(unique_columns, &rows.iter().map(Vec::as_slice))?;
++    if constraints.is_empty() {
++        return Ok(());
++    }
++
++    for row in storage.scan_data(table_name, ScanColumns::All)? {
++        let (_, values) = row?;
++        for constraint in &constraints {
++            let key = constraint.key_from_row(&values)?;
++            constraint.check_duplicate(&key)?;
++        }
++    }
++
++    Ok(())
+ }
+ 
+ fn values_rows<'a, T: GStore>(
 ```
 
-**File**: `storages/composite-storage/tests/memory_and_json.rs` (added, +39/-0)
+**File**: `core/src/executor/unique.rs` (modified, +22/-45)
 ```diff
-@@ -0,0 +1,39 @@
-+use {
-+    gluesql_composite_storage::CompositeStorage,
-+    gluesql_core::prelude::{Glue, Value::I64},
-+    gluesql_json_storage::JsonStorage,
-+    gluesql_memory_storage::MemoryStorage,
-+    std::fs::{create_dir_all, remove_dir_all},
-+    test_suite::*,
-+};
-+
-+#[test]
-+fn memory_and_json() {
-+    let json_storage = {
-+        let _ = create_dir_all("data");
-+        let path = "data/memory_and_json";
-+        let _ = remove_dir_all(path);
-+
-+        JsonStorage::new(path).unwrap()
-+    };
-+
-+    let mut storage = CompositeStorage::new();
-+    storage.push("MEMORY", MemoryStorage::default());
-+    storage.push("JSON", json_storage);
-+    storage.set_default("MEMORY");
-+
-+    let mut glue = Glue::new(storage);
-+
-+    glue.execute("CREATE TABLE Bar (id INTEGER) ENGINE = JSON;")
-+        .unwrap();
-+    glue.execute("INSERT INTO Bar VALUES (1);").unwrap();
-+
-+    assert_eq!(
-+        glue.execute("SELECT * FROM Bar;")
-+            .unwrap()
-+            .into_iter()
-+            .next()
-+            .unwrap(),
-+        select!(id I64; 1)
-+    );
-+}
-```
-
-**File**: `storages/json-storage/src/store.rs` (modified, +9/-4)
-```diff
-@@ -31,7 +31,7 @@ impl Store for JsonStorage {
+@@ -2,7 +2,6 @@ use {
+     crate::{
+         data::{Key, Value},
+         result::Result,
+-        store::{ScanColumns, Store},
+     },
+     im::HashSet,
+     serde::Serialize,
+@@ -20,7 +19,7 @@ pub enum UniqueError {
+ }
+ 
+ #[derive(Debug)]
+-struct UniqueConstraint {
++pub(super) struct UniqueConstraint {
+     column_index: usize,
+     column_name: String,
+     keys: HashSet<Key>,
+@@ -35,14 +34,14 @@ impl UniqueConstraint {
+         }
+     }
+ 
+-    fn add(self, value: &Value) -> Result<Self> {
+-        let new_key = self.check(value)?;
++    fn add(self, key: Key) -> Result<Self> {
++        self.check_duplicate(&key)?;
+ 
+-        if matches!(new_key, Key::None) {
++        if matches!(key, Key::None) {
+             return Ok(self);
          }
  
-         let schema_path = self.schema_path(table_name);
--        let (column_defs, foreign_keys, comment) = if schema_path.exists() {
-+        let (column_defs, foreign_keys, engine, comment) = if schema_path.exists() {
-             let mut file = File::open(&schema_path).map_storage_err()?;
-             let mut ddl = String::new();
-             file.read_to_string(&mut ddl).map_storage_err()?;
-@@ -43,16 +43,21 @@ impl Store for JsonStorage {
-                 ));
-             }
+-        let keys = self.keys.update(new_key);
++        let keys = self.keys.update(key);
  
--            (schema.column_defs, schema.foreign_keys, schema.comment)
-+            (
-+                schema.column_defs,
-+                schema.foreign_keys,
-+                schema.engine,
-+                schema.comment,
+         Ok(Self {
+             column_index: self.column_index,
+@@ -51,47 +50,28 @@ impl UniqueConstraint {
+         })
+     }
+ 
+-    fn check(&self, value: &Value) -> Result<Key> {
+-        let key = Key::try_from(value)?;
++    pub(super) fn key_from_row(&self, row: &[Value]) -> Result<Key> {
++        let value = row
++            .get(self.column_index)
++            .ok_or(UniqueError::ConflictOnStorageColumnIndex(self.column_index))?;
+ 
+-        if self.keys.contains(&key) {
+-            Err(
+-                UniqueError::DuplicateEntryOnUniqueField(value.clone(), self.column_name.clone())
+-                    .into(),
+-            )
+-        } else {
+-            Ok(key)
+-        }
+-    }
+-}
+-
+-pub(super) fn validate_unique_columns<'a, T: Store>(
+-    storage: &T,
+-    table_name: &str,
+-    columns: Vec<(usize, String)>,
+-    row_iter: &(impl Iterator<Item = &'a [Value]> + Clone),
+-) -> Result<()> {
+-    let unique_constraints = create_unique_constraints(columns, row_iter)?;
+-    if unique_constraints.is_empty() {
+-        return Ok(());
++        Key::try_from(value)
+     }
+ 
+-    for row in storage.scan_data(table_name, ScanColumns::All)? {
+-        let (_, values) = row?;
+-        for constraint in &unique_constraints {
+-            let col_idx = constraint.column_index;
+-            let val = values
+-                .get(col_idx)
+-                .ok_or(UniqueError::ConflictOnStorageColumnIndex(col_idx))?;
+-
+-            constraint.check(val)?;
++    pub(super) fn check_duplicate(&self, key: &Key) -> Result<()> {
++        if self.keys.contains(key) {
++            Err(UniqueError::DuplicateEntryOnUniqueField(
++                key.clone().into(),
++                self.column_name.clone(),
 +            )
-         } else {
--            (None, Vec::new(), None)
-+            (None, Vec::new(), None, None)
-         };
++            .into())
++        } else {
++            Ok(())
+         }
+     }
+-
+-    Ok(())
+ }
  
-         Ok(Some(Schema {
-             table_name: table_name.to_owned(),
-             column_defs,
-             indexes: vec![],
--            engine: None,
-+            engine,
-             foreign_keys,
-             comment,
-         }))
+-fn create_unique_constraints<'a>(
++pub(super) fn create_unique_constraints<'a>(
+     unique_columns: Vec<(usize, String)>,
+     row_iter: &(impl Iterator<Item = &'a [Value]> + Clone),
+ ) -> Result<Vec<UniqueConstraint>> {
+@@ -102,11 +82,8 @@ fn create_unique_constraints<'a>(
+         let new_constraint = row_iter
+             .clone()
+             .try_fold(new_constraint, |constraint, row| {
+-                let val = row
+-                    .get(col_idx)
+-                    .ok_or(UniqueError::ConflictOnStorageColumnIndex(col_idx))?;
+-
+-                constraint.add(val)
++                let key = constraint.key_from_row(row)?;
++                constraint.add(key)
+             })?;
+ 
+         constraints.push(new_constraint);
+```
+
+**File**: `core/src/executor/update.rs` (modified, +25/-4)
+```diff
+@@ -2,17 +2,17 @@ use {
+     super::{
+         context::{RowContext, StatementContext},
+         evaluate::evaluate,
+-        unique::validate_unique_columns,
++        unique::create_unique_constraints,
+     },
+     crate::{
+         ast::{ColumnUniqueOption, ForeignKey},
+         data::{Key, Row, Value},
+         plan::{AssignmentPlan, ColumnDefPlan},
+         result::Result,
+-        store::GStore,
++        store::{GStore, ScanColumns},
+     },
+     serde::Serialize,
+-    std::{borrow::Cow, fmt::Debug, rc::Rc},
++    std::{borrow::Cow, collections::HashMap, fmt::Debug, rc::Rc},
+     thiserror::Error,
+ };
+ 
+@@ -192,7 +192,28 @@ impl<'a, T: GStore> Update<'a, T> {
+             .collect();
+ 
+         let values = rows.iter().map(|(_, row)| row.values.as_slice());
++        let constraints = create_unique_constraints(unique_columns, &values)?;
++        if constraints.is_empty() {
++            return Ok(());
++        }
++
++        let updated_rows: HashMap<_, _> = rows.iter().map(|(key, row)| (key, row)).collect();
++        for stored in self.storage.scan_data(self.table_name, ScanColumns::All)? {
++            let (row_key, stored_values) = stored?;
++            let updated_row = updated_rows.get(&row_key);
++
++            for constraint in &constraints {
++                let stored_value = constraint.key_from_row(&stored_values)?;
++                if let Some(row) = updated_row
++                    && constraint.key_from_row(&row.values)? == stored_value
++                {
++                    continue;
++                }
++
++                constraint.check_duplicate(&stored_value)?;
++            }
++        }
+ 
+-        validate_unique_columns(self.storage, self.table_name, unique_columns, &values)
++        Ok(())
+     }
+ }
+```
+
+**File**: `test-suite/fixtures/validate/unique.sql` (modified, +19/-1)
+```diff
+@@ -100,7 +100,8 @@ INSERT INTO TestB VALUES (5, 5), (6, 5)
+ --   "num"
+ -- ]
+ 
+-UPDATE TestB SET num = 2 WHERE id = 1
++-- @name: keeping one UNIQUE value still checks changes to another UNIQUE column
++UPDATE TestB SET id = 1, num = 2 WHERE id = 1
+ -- @expect: error Unique.DuplicateEntryOnUniqueField
+ -- @json:
+ -- [
+@@ -110,6 +111,12 @@ UPDATE TestB SET num = 2 WHERE id = 1
+ --   "num"
+ -- ]
+ 
++SELECT id, num FROM TestB WHERE id = 1;
++-- @expect:
++-- | id: I64 | num: I64 |
++-- | ------- | -------- |
++-- | 1       | 1        |
++
+ INSERT INTO TestC VALUES (2, 4)
+ -- @expect: error Unique.DuplicateEntryOnUniqueField
+ -- @json:
+@@ -151,6 +158,17 @@ SELECT id, num FROM TestA WHERE id = 2;
+ -- | ------- | -------- |
+ -- | 2       | 9        |
+ 
++-- @name: UPDATE can keep a row's own UNIQUE value while changing another column
++UPDATE TestA SET id = 2, num = 10 WHERE id = 2;
++-- @expect: payload Update
++-- @json: 1
++
++SELECT id, num FROM TestA WHERE id = 2;
++-- @expect:
++-- | id: I64 | num: I64 |
++-- | ------- | -------- |
++-- | 2       | 10       |
++
+ CREATE TABLE WithPrimaryKey (id INTEGER PRIMARY KEY, email TEXT UNIQUE);
+ -- @expect: ok
+ 
+```
+
+---
+
+### Incident Patch 2: `224f3928` (2026-11-26)
+**Commit Message**: Reject duplicate primary keys within a multi-row INSERT (#2105)
+
+Track primary keys seen in the current INSERT before writing any rows.
+Looking up each key in storage alone lets repeated new keys pass and
+can cause a later row to overwrite an earlier one.
+
+**File**: `core/src/executor/insert/schemaful.rs` (modified, +3/-2)
+```diff
+@@ -13,7 +13,7 @@ use {
+         result::Result,
+         store::GStore,
+     },
+-    std::rc::Rc,
++    std::{collections::HashSet, rc::Rc},
+ };
+ 
+ pub(super) fn fetch_rows<T: GStore>(
+@@ -112,12 +112,13 @@ fn validate_unique<T: GStore>(
+             .iter()
+             .any(|column_def| column_def.unique == Some(ColumnUniqueOption { is_primary: false }))
+     {
++        let mut seen_keys = HashSet::new();
+         for key in rows
+             .iter()
+             .filter_map(|row| row.get(index).map(Key::try_from))
+         {
+             let key = key?;
+-            if storage.fetch_data(table_name, &key)?.is_some() {
++            if !seen_keys.insert(key.clone()) || storage.fetch_data(table_name, &key)?.is_some() {
+                 return Err(InsertError::DuplicateEntryOnPrimaryKeyField(key).into());
+             }
+         }
+```
+
+**File**: `test-suite/fixtures/primary_key.sql` (modified, +10/-0)
+```diff
+@@ -4,6 +4,16 @@ CREATE TABLE Allegro (
+ );
+ -- @expect: ok
+ 
++-- @name: A repeated primary key rejects the entire multi-row INSERT
++INSERT INTO Allegro VALUES (1, 'first'), (2, 'middle'), (1, 'last');
++-- @expect: error Insert.DuplicateEntryOnPrimaryKeyField
++-- @json: {"I64": 1}
++
++SELECT id, name FROM Allegro;
++-- @expect:
++-- | id  | name |
++-- | --- | ---- |
++
+ INSERT INTO Allegro VALUES (1, 'hello'), (3, 'world');
+ -- @expect: payload Insert
+ -- @json: 2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2106** (2026-11-26): Allow UPDATE to keep a row's own UNIQUE value (@panarch)
+- **PR #2105** (2026-11-26): Reject duplicate primary keys within a multi-row INSERT (@panarch)
+- **PR #2102** (2026-11-26): Separate uniqueness checks for INSERT and UPDATE (@panarch)
 - **PR #2099** (2026-11-26): Fix JsonStorage::fetch_schema dropping Schema::engine (@draarivpatel-ui)
 - **PR #2098** (2026-11-24): Prepare release v0.21.0 (@github-actions[bot])
 - **PR #2097** (2026-11-24): Push down IFNULL, COALESCE, and NULLIF in SQLite filters (@panarch)
-- **PR #2095** (2026-11-26): Restrict CTAS schema copying to a single wildcard projection (@ChobobDev)
-- **PR #2094** (2026-11-22): Reject multiple DELETE targets before FROM (@ChobobDev)
-- **PR #2092** (2026-11-20): Align the docs introduction with the README (@panarch)
 
 ---
 
@@ -2207,28 +2412,50 @@ memory_and_redb.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. JsonStorage::fetch_schema dropping Schema::engine
+## X. Allow UPDATE to keep a row's own UNIQUE value
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/src/executor/insert/schemaful.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75a4e06b`: JsonStorage::fetch_schema dropping Schema::engine. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bace1272`: Allow UPDATE to keep a row's own UNIQUE value. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/executor/insert/schemaful.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "gluesql-json-storage",
+            unique::create_unique_constraints,
+        store::{GStore, ScanColumns},
+    let constraints = create_unique_constraints(unique_columns, &rows.iter().map(Vec::as_slice))?;
+    if constraints.is_empty() {
+        return Ok(());
+    }
+
+    for row in storage.scan_data(table_name, ScanColumns::All)? {
+        let (_, values) = row?;
+        for constraint in &constraints {
+            let key = constraint.key_from_row(&values)?;
+            constraint.check_duplicate(&key)?;
+        }
+    }
+
+    Ok(())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            unique::validate_unique_columns,
+        store::GStore,
+    validate_unique_columns(
+        storage,
+        table_name,
+        unique_columns,
+        &rows.iter().map(Vec::as_slice),
+    )
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75a4e06b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bace1272` are properly handled with clean fallback behavior.

@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "b6c95fe289aae987a1e15c7f2a1af3b88c0393dc237702c202a452fb960f406b",
-    "lastHarvestedAt": "2026-11-23T17:29:31.545Z",
+    "contentHash": "af6b8df8cecf38b4845d73442628efbe9a73e1e71d27f45333d91ae263dea467",
+    "lastHarvestedAt": "2026-11-27T02:40:44.098Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "a5225084",
+    "sourceVersion": "bace1272",
     "license": "Apache-2.0",
-    "contentHash": "08135c98fe82274f52598a859b897a511754d83e924b09b93fbc1761d57a048b",
-    "lastHarvestedAt": "2026-11-26T07:48:43.872Z",
+    "contentHash": "4f62953755492b803bc452d092427ccb3e66036aece2d48888b5243b9deb9122",
+    "lastHarvestedAt": "2026-11-27T02:41:00.041Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {

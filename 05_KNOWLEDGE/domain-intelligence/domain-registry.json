@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T02:27:10.915Z",
+  "last_updated": "2026-11-27T02:41:05.916Z",
   "total_records": 2795,
   "domains": {
     "A": {
@@ -9528,8 +9528,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "5575095e33eeff205ce2e8325300c8fc925960d1b1ccc4993652d526342a107e",
-      "created_at": "2026-11-27T02:18:25.491Z"
+      "content_hash": "2f986df9f63c11829658ed954f4a111a21c7d0e92e5281ddbee6edfa91ed052f",
+      "created_at": "2026-11-27T02:41:05.916Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -17131,8 +17131,8 @@
       "title": "Research & Knowledge Intelligence: mudler/locate-anything.cpp-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mudler-locate-anything-cpp-gguf-research-knowledge-intelligence-mudler-locate.md",
       "repository": "mudler/locate-anything.cpp-gguf",
-      "content_hash": "32e22144e6002de334c8981c53ea6dc74d0ee4cfb70606df57d5fc614041575e",
-      "created_at": "2026-11-23T17:29:31.838Z"
+      "content_hash": "8dc8db6ee1746266e873e2b86a87a563c754f42bc24df23f0fbb3a46fc3c8ae0",
+      "created_at": "2026-11-27T02:40:44.377Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants",
@@ -17200,8 +17200,8 @@
       "title": "Research & Knowledge Intelligence: hf-mudler-locate-anything.cpp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mudler-locate-anything-cpp-gguf-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-mudler-locate-anything.cpp-gguf-learnings",
-      "content_hash": "9197d4e029589569aa1a39d0062cc471a04651a5934eac8bc1515e9be54e5ed8",
-      "created_at": "2026-11-23T17:29:46.101Z"
+      "content_hash": "2b28244dbd8d81eb1b8e4966876e047cd3763ccde70ee166b9ea7efe1fdc08fd",
+      "created_at": "2026-11-27T02:41:04.037Z"
     },
     "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants",
@@ -26766,8 +26766,8 @@
       "title": "Architecture Intelligence: gluesql/gluesql Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-architecture-intelligence-gluesql-gluesql-core-invariants.md",
       "repository": "gluesql/gluesql",
-      "content_hash": "68e0dd42bc633ac27ac225aeed5071567a92a26c0b4500302d23d11419c0a297",
-      "created_at": "2026-11-22T10:29:59.494Z"
+      "content_hash": "05a0e99c94c2766b92fd331ef4e7d80c86161b7a29d6cfb1fc6b2cc7acfd51c0",
+      "created_at": "2026-11-27T02:41:00.582Z"
     },
     "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants",
@@ -26784,8 +26784,8 @@
       "title": "Architecture Intelligence: gluesql-gluesql-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-learnings-architecture-intelligence-gluesql-gluesql-learnings-co.md",
       "repository": "gluesql-gluesql-learnings",
-      "content_hash": "735bb9891b49e85a5998d83a9d47e02aba8f29a9316eaad157377548184ac650",
-      "created_at": "2026-11-22T10:30:04.030Z"
+      "content_hash": "ca63c90352eafc256667f264ae9f0b1012ae5021ba050778ce68ec03ea64c265",
+      "created_at": "2026-11-27T02:41:04.890Z"
     },
     "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T02:26:56.548Z",
+  "last_updated": "2026-11-27T02:41:00.058Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1745,14 +1745,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "content_hash": "b6c95fe289aae987a1e15c7f2a1af3b88c0393dc237702c202a452fb960f406b",
-      "verified_at": "2026-11-23T17:29:31.557Z",
+      "content_hash": "af6b8df8cecf38b4845d73442628efbe9a73e1e71d27f45333d91ae263dea467",
+      "verified_at": "2026-11-27T02:40:44.114Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:29:31.557Z"
+      "last_updated": "2026-11-27T02:40:44.114Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "08135c98fe82274f52598a859b897a511754d83e924b09b93fbc1761d57a048b",
-      "verified_at": "2026-11-26T07:48:43.888Z",
+      "content_hash": "4f62953755492b803bc452d092427ccb3e66036aece2d48888b5243b9deb9122",
+      "verified_at": "2026-11-27T02:41:00.057Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T07:48:43.888Z"
+      "last_updated": "2026-11-27T02:41:00.057Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",

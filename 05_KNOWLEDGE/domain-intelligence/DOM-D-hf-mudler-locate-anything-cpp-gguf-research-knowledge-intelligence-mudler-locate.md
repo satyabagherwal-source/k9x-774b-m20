@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
   "source_version": "hf-mudler-locate-anything.cpp-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T17:29:31.837Z",
+  "timestamp": "2026-11-27T02:40:44.376Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf) (Revision: `hf-mudler-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T17:29:31.837Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T02:40:44.376Z`  
 > **Learning ID**: `learn-huggingface-mudler-locate-anything-cpp-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:29:30.759Z  
+> **Harvest Timestamp**: 2026-11-27T02:40:43.269Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: object-detection
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 18289 downloads | 75 likes
+- **Stars / Engagement**: 14523 downloads | 75 likes
 
 ---
 
