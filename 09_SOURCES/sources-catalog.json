@@ -1545,8 +1545,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein",
     "license": "Open-Source",
-    "contentHash": "0c7e505cf85cc1a27f37bc3d303d55f7a7f8cc74387cc8125a740053eb999f3e",
-    "lastHarvestedAt": "2026-11-23T22:56:12.354Z",
+    "contentHash": "e1eef5a45d80afe89fc78760a1e277ef2c2402863109e47088976f6194a239ed",
+    "lastHarvestedAt": "2026-11-27T08:31:51.266Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein"
   },
   "hf-pyannote-speaker-diarization-community-1": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "519c09cd",
+    "sourceVersion": "204997d8",
     "license": "MIT",
-    "contentHash": "45be5df87da36fb967cf80e5207389fe86692ed66aa89abd7d5837d1d5fb3a19",
-    "lastHarvestedAt": "2026-11-26T14:22:22.442Z",
+    "contentHash": "afe26651206de310ee177e2d4b993f4da8b0f611a2ab09e97006c5edc2bc53a4",
+    "lastHarvestedAt": "2026-11-27T08:32:39.476Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {

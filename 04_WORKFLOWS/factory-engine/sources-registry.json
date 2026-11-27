@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T08:14:48.653Z",
-    "lastVerified": "2026-11-27T08:14:48.653Z",
+    "lastChecked": "2026-11-27T08:32:42.851Z",
+    "lastVerified": "2026-11-27T08:32:42.851Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -199,8 +199,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T07:39:27.982Z",
-    "lastVerified": "2026-11-27T07:39:27.982Z",
+    "lastChecked": "2026-11-27T08:31:57.276Z",
+    "lastVerified": "2026-11-27T08:31:57.276Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -266,8 +266,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T04:09:53.022Z",
-    "lastVerified": "2026-11-27T04:09:53.022Z",
+    "lastChecked": "2026-11-27T08:31:52.529Z",
+    "lastVerified": "2026-11-27T08:31:52.529Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -3983,9 +3983,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-11-26T15:38:04.149Z",
+    "lastChecked": "2026-11-27T08:31:49.719Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-11-26T15:38:04.149Z"
+    "lastVerified": "2026-11-27T08:31:49.719Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -7652,14 +7652,14 @@
     "officialUrl": "https://github.com/tursodatabase/limbo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T14:22:21.838Z",
-    "lastVerified": "2026-11-26T14:22:21.838Z",
+    "lastChecked": "2026-11-27T08:32:04.420Z",
+    "lastVerified": "2026-11-27T08:32:04.420Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "45be5df87da36fb967cf80e5207389fe86692ed66aa89abd7d5837d1d5fb3a19",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 5,
+    "contentHash": "afe26651206de310ee177e2d4b993f4da8b0f611a2ab09e97006c5edc2bc53a4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7828,12 +7828,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tencent-tds-kuiklyui": {
-    "name": "Tencent-TDS/KuiklyUI",
+    "name": "KuiklyUI",
     "officialUrl": "https://github.com/Tencent-TDS/KuiklyUI",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-25T00:16:49.396Z",
-    "lastVerified": "2026-11-25T00:16:49.396Z",
+    "lastChecked": "2026-11-27T08:31:47.269Z",
+    "lastVerified": "2026-11-27T08:31:47.269Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tencent-tds-kuiklyui",
@@ -7842,7 +7842,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ad420ccc"
   },
   "pathwaycom-serviette": {
     "name": "serviette",
@@ -8550,9 +8551,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-11-26T07:28:32.285Z",
+    "lastChecked": "2026-11-27T08:31:42.247Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-11-26T07:28:32.285Z"
+    "lastVerified": "2026-11-27T08:31:42.247Z"
   },
   "hf-autotrust-jev-35b": {
     "name": "autotrust/AutoTrust-Decider-Pro-35B",
@@ -8949,12 +8950,12 @@
     "officialUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T22:56:11.629Z",
-    "lastVerified": "2026-11-23T22:56:11.629Z",
+    "lastChecked": "2026-11-27T08:31:45.016Z",
+    "lastVerified": "2026-11-27T08:31:45.016Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "0c7e505cf85cc1a27f37bc3d303d55f7a7f8cc74387cc8125a740053eb999f3e",
+    "contentHash": "e1eef5a45d80afe89fc78760a1e277ef2c2402863109e47088976f6194a239ed",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T08:14:51.966Z",
+  "last_updated": "2026-11-27T08:32:45.742Z",
   "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26454,
+  "total_items": 26456,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f83b064522e88d81872e646582386342946014af6e153e64ff0f896691114f8",
+      "content_hash": "2c657d0dc4aa9c39b903639d101e6d2637863fa761cae10278ab17e2be06c6ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T08:14:51.966Z"
+      "persisted_at": "2026-11-27T08:32:45.742Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113010,25 +113010,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "d414fa94",
-      "content_hash": "0ec4dd6f457c8927b1eceef7d81a23d4f0a1fedd5fe705260f5e2c77ec728207",
+      "source_version": "204997d8",
+      "content_hash": "d3467dc1541d424af87dc75fea79058b89ed2ea8a7ec6f1775ad71b705778cde",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T17:48:22.306Z"
+      "persisted_at": "2026-11-27T08:32:39.937Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "d414fa94",
-      "content_hash": "b7dc8353b1696aedde97750ddf3564f67f004572f71c155d3c7b1f3dc2de9d27",
+      "source_version": "204997d8",
+      "content_hash": "75ba9c2e75f0d4ea1b9c816c6aed2177f75afc71656fd238cfff73d1ace55f89",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T17:48:22.491Z"
+      "persisted_at": "2026-11-27T08:32:40.143Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213761,13 +213761,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "d414fa94",
-      "content_hash": "4d8a526d22871d0963425bb7ce5f9d57ca3a0272923da979f7353b656af1cdc4",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "204997d8",
+      "content_hash": "afe26651206de310ee177e2d4b993f4da8b0f611a2ab09e97006c5edc2bc53a4",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213848,6 +213848,11 @@
           "number": 10742,
           "title": "Merge 'postgres: refuse unsupported statements with 0A000 and suggest workaround",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10861,
+          "title": "Merge 'core/translate: fix stack overflow on compounds nested in first terms' fr",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213855,7 +213860,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T17:48:21.635Z",
+      "verified_at": "2026-11-27T08:32:39.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245305,7 +245310,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "0c7e505cf85cc1a27f37bc3d303d55f7a7f8cc74387cc8125a740053eb999f3e",
+      "content_hash": "e1eef5a45d80afe89fc78760a1e277ef2c2402863109e47088976f6194a239ed",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [],
@@ -245314,7 +245319,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T22:56:12.117Z",
+      "verified_at": "2026-11-27T08:31:51.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245331,9 +245336,9 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein Core Invariants",
       "repository": "black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "388b8b5d3b5152b38c61da27eadd49ac8249993cf20112b5b5a001f92aa77bdc",
+      "content_hash": "b5955431b96ed5368b0d4afdc71d05c11c079acdcd49177375b1208b4b207056",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:56:12.590Z"
+      "persisted_at": "2026-11-27T08:31:51.518Z"
     },
     "learn-github-tw93-mole": {
       "learning_id": "learn-github-tw93-mole",
@@ -245602,9 +245607,9 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-learnings Core Invariants",
       "repository": "hf-black-forest-labs-flux-3-image-klein-learnings",
       "source_version": "HEAD",
-      "content_hash": "41aeb771f1a2f66f7bb0aea299227ea2dcc8323dacdee10d0c44a5b15b747a06",
+      "content_hash": "aa806625ee1cb3b1b2036cb0cfe92433d263ef82bb2283f863e394dfe79d072e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T22:56:25.994Z"
+      "persisted_at": "2026-11-27T08:32:43.298Z"
     },
     "candidate_directive-clean-bound-container-cache-enumeration": {
       "item_id": "candidate_directive-clean-bound-container-cache-enumeration",
@@ -260554,9 +260559,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "15f7aa0406c820c346fc9111c7c3ff2e38edacd2dad05743a9d2c5e3c2e1be75",
+      "content_hash": "b9616fb3898173bf563e8a899751bb337722d2284ad062d7b5e79a28f897f4b4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T14:22:57.482Z"
+      "persisted_at": "2026-11-27T08:32:44.459Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings",
@@ -260566,9 +260571,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-limbo-learnings",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "21aba86491d5534cae0911dd5038d0ed2c42d8843f3a8ed9d4b3c723860819b6",
+      "content_hash": "c6fedecaf33601afc133e996d15fb0dce2cbd71da0745aaf915821d757829328",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:06:51.504Z"
+      "persisted_at": "2026-11-27T08:32:44.667Z"
     },
     "rule-8724": {
       "learning_id": "rule-8724",
@@ -358065,13 +358070,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HA1X-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4AOA-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3aab8df27d3b95a827d479a6775aca2d65faeee30224416879a6dfab443422e",
+      "content_hash": "5e270635c7875fb614f01239a6e3ec8f4e277e3bf1bf4edc43b6550e6a9aac57",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T08:14:51.433Z"
+      "persisted_at": "2026-11-27T08:32:45.325Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358081,9 +358086,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "45cb771a79c7d315456aa2b5acdeb424cb5da396d9b8e5a98f4492302016a993",
+      "content_hash": "0b18d4ec84bd4c3c329516b8d81cee326d8bdf68ac8f1df1497099e9d7e3c3da",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T08:14:51.706Z"
+      "persisted_at": "2026-11-27T08:32:45.531Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -363022,6 +363027,32 @@
       "content_hash": "931d709d2e7b63e6e2bb5685dc0dd2d06ab4491f5c90c568af3c0038f092fd00",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T08:14:49.956Z"
+    },
+    "rule-10861": {
+      "learning_id": "rule-10861",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10861,
+      "title": "Merge 'core/translate: fix stack overflow on compounds nested in first terms' fr",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "204997d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T08:32:39.203Z"
+    },
+    "candidate_directive-merge-core-translate-fix-stack-overflow-on-compounds-nested-in-first-terms-fr": {
+      "item_id": "candidate_directive-merge-core-translate-fix-stack-overflow-on-compounds-nested-in-first-terms-fr",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-49UK-merge-core-translate-fix-stack-overflow-on-compounds-nested-in-first-terms-fr.md",
+      "title": "Merge 'core/translate: fix stack overflow on compounds nested in first terms' fr",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "10e2695b24df11c06d1fa4e4be0b77ccbba7f9672648133c89f6798dbb4a353d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T08:32:44.255Z"
     }
   },
   "ai-builder-brain": {

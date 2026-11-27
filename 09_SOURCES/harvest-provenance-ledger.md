@@ -13764,3 +13764,5 @@ Every entry in this ledger must capture:
 | `learn-dom-h-bdbeda9a` | `project://necolas-react-native-web` | `95edda41` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md` | 2026-11-27T07:59:17.499Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-27T08:14:31.830Z |
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `91c1df80` | Multi-dimensional audit evidence | 2026-11-27T08:14:44.981Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-27T08:31:51.266Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `204997d8` | Multi-dimensional audit evidence | 2026-11-27T08:32:39.476Z |

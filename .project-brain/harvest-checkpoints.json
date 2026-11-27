@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T08:14:45.000Z",
+  "last_updated": "2026-11-27T08:32:39.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2391,14 +2391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "content_hash": "0c7e505cf85cc1a27f37bc3d303d55f7a7f8cc74387cc8125a740053eb999f3e",
-      "verified_at": "2026-11-23T22:56:12.364Z",
+      "content_hash": "e1eef5a45d80afe89fc78760a1e277ef2c2402863109e47088976f6194a239ed",
+      "verified_at": "2026-11-27T08:31:51.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T22:56:12.364Z"
+      "last_updated": "2026-11-27T08:31:51.282Z"
     },
     "pyannote/speaker-diarization-community-1": {
       "repository": "pyannote/speaker-diarization-community-1",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "4d8a526d22871d0963425bb7ce5f9d57ca3a0272923da979f7353b656af1cdc4",
-      "verified_at": "2026-11-26T17:48:21.900Z",
+      "content_hash": "afe26651206de310ee177e2d4b993f4da8b0f611a2ab09e97006c5edc2bc53a4",
+      "verified_at": "2026-11-27T08:32:39.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T17:48:21.900Z"
+      "last_updated": "2026-11-27T08:32:39.489Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T08:14:44.996Z",
-  "total_cycles_completed": 13034,
-  "total_learnings_persisted": 13034,
-  "total_rules_promoted": 11771,
+  "last_updated": "2026-11-27T08:32:39.487Z",
+  "total_cycles_completed": 13036,
+  "total_learnings_persisted": 13036,
+  "total_rules_promoted": 11772,
   "history": [
-    {
-      "timestamp": "2026-11-26T18:58:56.996Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T18:59:02.921Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T19:07:35.114Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T08:14:44.996Z",
       "repository": "dosco/deeporg",
       "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T08:31:51.280Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T08:32:39.487Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

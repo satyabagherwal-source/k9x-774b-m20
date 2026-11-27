@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-B80R",
-    "timestamp": "2026-11-26T02:18:33.435Z",
-    "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
-    "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
-    "contentHash": "10dbb74fd38de60255847b4d161b43ea025c6d53bf8711ad4233e3aa37796c23",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-B986",
-    "timestamp": "2026-11-26T02:18:34.998Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "ef0784269b4bc41e9bb8008b464da90ec7536176dd31a3a8256b0f86ee972972",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-M29O",
     "timestamp": "2026-11-26T02:26:59.196Z",
     "repository": "tencent/Qwen3.8-27B-DSpine-b16",
@@ -7490,6 +7460,36 @@
     "repository": "dosco/deeporg",
     "learningId": "learn-github-dosco-deeporg",
     "contentHash": "880fcba378632c7de7e2d428511e24e5ecd5470a6e9f4510e51fa96ccd44cbbc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-34YL",
+    "timestamp": "2026-11-27T08:31:51.261Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "e1eef5a45d80afe89fc78760a1e277ef2c2402863109e47088976f6194a239ed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-465I",
+    "timestamp": "2026-11-27T08:32:39.462Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "afe26651206de310ee177e2d4b993f4da8b0f611a2ab09e97006c5edc2bc53a4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

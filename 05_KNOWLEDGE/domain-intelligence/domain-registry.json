@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T08:14:51.706Z",
+  "last_updated": "2026-11-27T08:32:45.531Z",
   "total_records": 2816,
   "domains": {
     "A": {
@@ -9025,10 +9025,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "0ec4dd6f457c8927b1eceef7d81a23d4f0a1fedd5fe705260f5e2c77ec728207",
-      "created_at": "2026-11-26T17:48:22.306Z"
+      "content_hash": "d3467dc1541d424af87dc75fea79058b89ed2ea8a7ec6f1775ad71b705778cde",
+      "created_at": "2026-11-27T08:32:39.937Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -19988,8 +19988,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-research-knowledge-intelligence-black-fo.md",
       "repository": "black-forest-labs/flux-3-image-klein",
-      "content_hash": "388b8b5d3b5152b38c61da27eadd49ac8249993cf20112b5b5a001f92aa77bdc",
-      "created_at": "2026-11-23T22:56:12.590Z"
+      "content_hash": "b5955431b96ed5368b0d4afdc71d05c11c079acdcd49177375b1208b4b207056",
+      "created_at": "2026-11-27T08:31:51.518Z"
     },
     "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tw93-mole-core-invariants",
@@ -20057,8 +20057,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-black-forest-labs-flux-3-image-klein-learnings",
-      "content_hash": "41aeb771f1a2f66f7bb0aea299227ea2dcc8323dacdee10d0c44a5b15b747a06",
-      "created_at": "2026-11-23T22:56:25.994Z"
+      "content_hash": "aa806625ee1cb3b1b2036cb0cfe92433d263ef82bb2283f863e394dfe79d072e",
+      "created_at": "2026-11-27T08:32:43.298Z"
     },
     "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tw93-mole-learnings-core-invariants",
@@ -24488,8 +24488,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-limbo-learnings",
-      "content_hash": "15f7aa0406c820c346fc9111c7c3ff2e38edacd2dad05743a9d2c5e3c2e1be75",
-      "created_at": "2026-11-26T14:22:57.482Z"
+      "content_hash": "b9616fb3898173bf563e8a899751bb337722d2284ad062d7b5e79a28f897f4b4",
+      "created_at": "2026-11-27T08:32:44.459Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants",
@@ -46763,8 +46763,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "45cb771a79c7d315456aa2b5acdeb424cb5da396d9b8e5a98f4492302016a993",
-      "created_at": "2026-11-27T08:14:51.706Z"
+      "content_hash": "0b18d4ec84bd4c3c329516b8d81cee326d8bdf68ac8f1df1497099e9d7e3c3da",
+      "created_at": "2026-11-27T08:32:45.531Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

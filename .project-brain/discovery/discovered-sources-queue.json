@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T07:59:17.643Z",
+  "updated_at": "2026-11-27T08:32:43.994Z",
   "stats": {
-    "total_discovered": 10270,
-    "approved_pending_harvest": 9741,
+    "total_discovered": 10276,
+    "approved_pending_harvest": 9747,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9745,
+      "COMMUNITY_AND_EXPERT": 9751,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222264,6 +222264,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/necolas-react-native-web-learnings.md",
         "fileName": "necolas-react-native-web-learnings.md"
+      }
+    },
+    "SRC-79ED572C69E5": {
+      "id": "SRC-79ED572C69E5",
+      "url": "https://app.blacksmith.sh/tursodatabase/runs/45920458736/jobs/140249682634?attempt=1&autoLogin=true&tab=tests&status=failed",
+      "title": "https://app.blacksmith.sh/tursodatabase/runs/45920458736/jobs/140249682634?attempt=1&autoLogin=true&tab=tests&status=failed",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T08:32:43.626Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-F8C4200A61BE": {
+      "id": "SRC-F8C4200A61BE",
+      "url": "https://app.blacksmith.sh/tursodatabase/codesmith/turso/pr/12591?prompt=Repository%3A+tursodatabase%2Fturso%0ABranch%3A+sqlite-float-core%0APR%3A+%2312591%0A%0AFix+these+failing+tests%3A%0A%0A1.+turso-dbhash%2Fencoder%3A%3Atests%3A%3Atest_float_nan%0A&amp%3Bentry=pr_comment&amp%3Bref=gh_comment&amp%3BautoLogin=true&amp%3BautoSend=true",
+      "title": "https://app.blacksmith.sh/tursodatabase/codesmith/turso/pr/12591?prompt=Repository%3A+tursodatabase%2Fturso%0ABranch%3A+sqlite-float-core%0APR%3A+%2312591%0A%0AFix+these+failing+tests%3A%0A%0A1.+turso-dbhash%2Fencoder%3A%3Atests%3A%3Atest_float_nan%0A&amp%3Bentry=pr_comment&amp%3Bref=gh_comment&amp%3BautoLogin=true&amp%3BautoSend=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T08:32:43.710Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-FE96F2C5219A": {
+      "id": "SRC-FE96F2C5219A",
+      "url": "https://pr-comments-assets.blacksmith.sh/codesmith/fix-with-codesmith-dark-v2.svg",
+      "title": "https://pr-comments-assets.blacksmith.sh/codesmith/fix-with-codesmith-dark-v2.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T08:32:43.784Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-A736E30EA433": {
+      "id": "SRC-A736E30EA433",
+      "url": "https://pr-comments-assets.blacksmith.sh/codesmith/fix-with-codesmith-light-v2.sv",
+      "title": "https://pr-comments-assets.blacksmith.sh/codesmith/fix-with-codesmith-light-v2.sv",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T08:32:43.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-F4DA3D3A4789": {
+      "id": "SRC-F4DA3D3A4789",
+      "url": "https://github.com/tursodatabase/turso/issues/8104",
+      "title": "https://github.com/tursodatabase/turso/issues/8104",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T08:32:43.926Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
+      }
+    },
+    "SRC-556CF2677356": {
+      "id": "SRC-556CF2677356",
+      "url": "https://github.com/tursodatabase/turso/issues/12128",
+      "title": "https://github.com/tursodatabase/turso/issues/12128",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T08:32:43.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+        "fileName": "tursodatabase-limbo-learnings.md"
       }
     }
   }

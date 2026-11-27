@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T13:06:50.796Z",
+  "timestamp": "2026-11-27T08:32:44.110Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tursodatabase-limbo-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-limbo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T13:06:50.796Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T08:32:44.110Z`  
 > **Learning ID**: `LEARN-EVO-tursodatabase-limbo-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `13b96ffe`  
+> **Source Version**: `204997d8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T13:06:04.110Z  
+> **Timestamp**: 2026-11-27T08:32:38.218Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T13:06:04.102Z  
+> **Harvest Timestamp**: 2026-11-27T08:32:04.420Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25355 stars
+- **Stars / Engagement**: 25380 stars
 
 ---
 
@@ -1457,11 +1457,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12472** (2026-11-25): **core/mvcc: bind the frame position in encrypted log chunks**
-  *Symptoms*: ## Description  Each transaction frame of the MVCC logical log (`-log` file) ends with a running CRC-32C. The CRC is chained over the frames and starts from the salt in the log header. It does not use a key and it is stored in plaintext. In an encrypted log, the AEAD associated data of each chunk bound only the salt, the payload size, `op_count`, `commit_ts` and the chunk index. Nothing bound a frame to its place in the log.  A person who could write the log file, but who did not have the key, could remove, replay or reorder complete frames and then calculate the CRCs again. Recovery accepted the changed log without an error. When the frame of a `DELETE` was removed, the deleted row came back, and the later transactions stayed. The next commit continued the CRC chain, so the change stayed after the next reopen.  This bug was found in an audit of Turso's at-rest encryption (finding 20).  ## Fix  New encrypted logs use log version 4. The frame layout is the same as in version 3. The associated data of each encrypted chunk also holds the position of its frame:  ``` salt(8) | plaintext_size_or_0(8) | op_count(4) | commit_ts(8) | chunk_index(4)    (versions 2 and 3)   + frame_offset(8) | frame_start_crc(4)                                          (version 4) ```  `frame_offset` is the file offset of the frame header. `frame_start_crc` is the running CRC before the frame: the trailer CRC of the previous frame, or the CRC of the salt for the first frame.  - A frame authenticates onl
+- **Issue #12593** (2026-11-27): **core: stop PRAGMA auto_vacuum on a new database from breaking checkpoints**
+  *Symptoms*: ## Problem  ``` fresh file, experimental autovacuum on  PRAGMA auto_vacuum=FULL          -> header written, dirty pages cleared,                                     then SetCookie marks page 1 dirty again (no transaction) PRAGMA page_count, step one row, drop the statement               -> read rollback panics:                                     "dirty pages should be empty for read txn" PRAGMA wal_checkpoint(TRUNCATE)  -> Busy: "cannot checkpoint while another statement is active" ```  `INCREMENTAL` failed the same way. `NONE` did not.  The auto_vacuum setter in `core/translate/pragma.rs` calls `Pager::persist_auto_vacuum_mode`. That function writes both auto-vacuum header fields of the new database and clears the dirty pages, because no transaction is open. The setter then also emitted `ReadCookie`, `If` and `SetCookie IncrementalVacuum` with `TransactionMode::None`. That `SetCookie` wrote the same value again and marked page 1 dirty, and no transaction committed or rolled back that change.  ## Fix  - Remove the `ReadCookie`/`If`/`Halt`/`SetCookie` block from the auto_vacuum setter. The setter returns early when page 1 exists, so the block only ran on new databases, where `persist_auto_vacuum_mode` has already written the value. - `op_set_cookie` now asserts that the pager holds the WAL write lock when MVCC (multi-version concurrency control) is off. In MVCC mode it already returned an error without a transaction. A program that emits `SetCookie` without a write transactio
 
-- **Issue #12471** (2026-11-25): **core/storage: bind encrypted pages to their page numbers**
-  *Symptoms*: ## Description  Built-in encryption encrypted pages 2..N with empty AEAD associated data. Only page 1 used its header as associated data. So the ciphertext of page N also decrypted at any other page number.  A person who could write the database files, but who did not have the key, could swap the root pages of two tables in the database file. They could also swap the page numbers of two WAL frames and write the WAL checksums again, because the WAL checksums do not use a key. In both cases, each table returned the rows of the other table, and `PRAGMA integrity_check` reported `ok`.  This bug was found in an audit of Turso's at-rest encryption (finding 3).  ## Fix  This PR adds an encryption format. The version byte of the Turso header on page 1 stores its version.  - In encryption format version 1, the associated data of each page 2..N is its page number as 4 big-endian bytes. A page decrypts only at its own page number. A page that moves in the database file or in the WAL fails with a decryption error. - Version 0 is the format of all existing encrypted databases. Its pages 2..N have no associated data. - The version byte is already part of the associated data of page 1. A changed version byte makes page 1 fail to decrypt, so Turso never reads a database in the wrong format. - An encrypted open reads the version byte from page 1 on disk and makes its `EncryptionContext` in that format. Decrypting page 1 then authenticates the byte. The pager records the format in the shared p
+- **Issue #12591** (2026-11-27): **core: normalize sqlite nan values and generalize type ordering**
+  *Symptoms*: SQLite table reads treated NaN bits in a REAL field as NULL, but index comparisons could still read NaN. This made a valid SQLite file fail `integrity_check` and made a DELETE report a corrupt database. NaN handling in individual numeric constructors also mixed SQL policy with arithmetic.  The core now preserves NaN during arithmetic and applies the dialect's policy when decoding records and publishing register values. SQLite turns NaN into NULL at both boundaries, so table reads, index lookups, function results, and writes agree. Aggregate scratch values retain NaN until the result is published.  This PR extracts the core and SQLite work from #12516 into eight commits. It also:  - Makes type ordering a handle supplied by a type, including ordering of stored column values. - Carries ordered-set aggregate collation in the instruction. - Supports operator arguments from another registered type and declared parameter types for native scalar functions. SQLite uses its ordinary casts for those parameters. - Adds regression tests for indexed NaN files, native function results, infinities, negative zero, and custom type ordering, and documents SQLite's NaN behavior.  There are no changes under `postgres/`. The PostgreSQL float implementation remains in #12516.  Validation on this branch:  - SQLite, Turso, and shared SQL suites: 23,321 passed, 873 skipped. - Native extension, dialect, and integrity-check integration tests: 124 passed. - Numeric, register, and value unit tests: 65 pas
+  **Post-Mortem & Fix Analysis**:
+  > <!-- Blacksmith CI Status --> Found 1 test failure on Blacksmith runners:  ### Failure  | Test | View Logs | | --- | --- | | <code>turso-dbhash/encoder::tests::test_float_nan</code> | [View Logs](https://app.blacksmith.sh/tursodatabase/runs/45920458736/jobs/140249682634?attempt=1&ref=gh_comment&autoLogin=true&tab=tests&status=failed#test=b3962372-cc94-4d9a-9ba6-8e52042862cb) |  <a href="https://app.blacksmith.sh/tursodatabase/codesmith/turso/pr/12591?prompt=Repository%3A+tursodatabase%2Fturso%0ABranch%3A+sqlite-float-core%0APR%3A+%2312591%0A%0AFix+these+failing+tests%3A%0A%0A1.+turso-dbhash%2Fencoder%3A%3Atests%3A%3Atest_float_nan%0A&amp;entry=pr_comment&amp;ref=gh_comment&amp;autoLogin=true&amp;autoSend=true"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/fix-with-codesmith-dark-v2.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/fix-with-codesmith-light-v2.sv
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1478,724 +1480,1124 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bdc0c062` (2026-11-25)
-**Commit Message**: Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native' from app/dependabot
+### Incident Patch 1: `5fe9cba1` (2026-11-26)
+**Commit Message**: Merge 'core/translate: fix stack overflow on compounds nested in first terms' from app/turso-github-handyman
 
-Bumps [fast-xml-parser](https://github.com/NaturalIntelligence/fast-xml-
-parser) from 5.11.1 to 5.12.1. <details> <summary>Release
-notes</summary> <p><em>Sourced from <a
-href="https://github.com/NaturalIntelligence/fast-xml-
-parser/releases">fast-xml-parser's releases</a>.</em></p> <blockquote>
-<h2>v5.12.1</h2> <h2>What's Changed</h2> <ul> <li>fix: correct demo
-parser and builder options by <a href="https://github.com/arba-
-octo"><code>@​arba-octo</code></a> in <a
-href="https://redirect.github.com/NaturalIntelligence/fast-xml-
-parser/pull/897">NaturalIntelligence/fast-xml-parser#897</a></li>
-<li>Bump github/codeql-action/init from 4.36.2 to 4.39.1 by <a
-href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
-in <a href="https://redirect.github.com/NaturalIntelligence/fast-xml-
-parser/pull/907">NaturalIntelligence/fast-xml-parser#907</a></li>
-<li>Bump github/codeql-action/analyze from 4.36.2 to 4.39.1 by <a
-href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
-in <a href="https://redirect.github.com/NaturalIntelligence/fast-xml-
-parser/pull
+## Problem
 
-**File**: `examples/react-native/package-lock.json` (modified, +24/-23)
-```diff
-@@ -42,7 +42,7 @@
-     },
-     "../../bindings/react-native": {
-       "name": "@tursodatabase/sync-react-native",
--      "version": "0.9.0-pre.2",
-+      "version": "0.9.0-pre.6",
-       "license": "MIT",
-       "dependencies": {
-         "@babel/runtime": "^7.25.0"
-@@ -53,8 +53,9 @@
-         "eslint": "^10.2.0",
-         "react": "^18.2.0",
-         "react-native": "^0.76.0",
--        "react-native-builder-bob": "^0.30.0",
--        "typescript": "^5.3.0"
-+        "react-native-builder-bob": "^0.44.1",
-+        "typescript": "^5.3.0",
-+        "vitest": "^4.1.11"
-       },
-       "engines": {
-         "node": ">=18"
-@@ -2789,9 +2790,9 @@
-       }
-     },
-     "node_modules/@nodable/entities": {
--      "version": "3.0.0",
--      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
--      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
-+      "version": "3.1.0",
-+      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
-+      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -6335,9 +6336,9 @@
-       "license": "MIT"
-     },
-     "node_modules/fast-xml-builder": {
--      "version": "1.3.1",
--      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
--      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
-+      "version": "1.3.2",
-+      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
-+      "integrity": "sha512-OX91VSlShLPDgRZV7tk/YQ4l8tT75QziF5Ixg8g4PFbCVPjuTWwN+yQfAxLJ0dufJpprdOd6HlM74Jhd39TcBQ==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -6352,9 +6353,9 @@
-       }
-     },
-     "node_modules/fast-xml-parser": {
--      "version": "5.11.1",
--      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.1.tgz",
--      "integrity": "sha512-TBw6K/fxoQGGjCmZDw9w/ZwP3uDcnTM4YH/g+PFRWr8sbe5idXtxNN6vITh4+1ruCZaho6uBFurElsA7F0zzgw==",
-+      "version": "5.12.1",
-+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
-+      "integrity": "sha512-wR8dO/fx+z8C5exuem1e7BKOWvjsuzvjS/tvA/Xu3Z1zQqJGcXrPzXbcAiaMgp2KjreEROcTkmnnisrcmJ2hYQ==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -6364,11 +6365,11 @@
-       ],
-       "license": "MIT",
-       "dependencies": {
--        "@nodable/entities": "^3.0.0",
--        "fast-xml-builder": "^1.2.0",
--        "is-unsafe": "^2.0.0",
-+        "@nodable/entities": "^3.1.0",
-+        "fast-xml-builder": "^1.3.2",
-+        "is-unsafe": "^2.0.3",
-         "path-expression-matcher": "^1.6.2",
--        "strnum": "^2.4.2",
-+        "strnum": "^2.5.1",
-         "xml-naming": "^0.3.0"
-       },
-       "bin": {
-@@ -7571,9 +7572,9 @@
-       }
-     },
-     "node_modules/is-unsafe": {
--      "version": "2.0.2",
--      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
--      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
-+      "version": "2.0.3",
-+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
-+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -11314,9 +11315,9 @@
-       }
-     },
-     "node_modules/strnum": {
--      "version": "2.4.2",
--      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.4.2.tgz",
--      "integrity": "sha512-rDG3Ah4TV0k1hWvLSzkZtMmLN9+eS+h3knq4MP6A42Y3Yh5qGNnOUs1jJkoSr8FG5dsL28c7KgkIBzSEykqtuw==",
-+      "version": "2.5.1",
-+      "resolved": "https://registry.npmjs.org/strnum/-/strnum-2.5.1.tgz",
-+      "integrity": "sha512-UM4nTLWzQiDBseVxUGxN0wJzIk0UU89Qi7pKXz9qISo+lhviJikTuikBsK/oFRlpvYHvSdz0TVoLyQ+sEpYwxA==",
-       "devOptional": true,
-       "funding": [
-         {
-@@ -11677,7 +11678,7 @@
-       "version": "5.9.3",
-       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
-       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
--      "dev": true,
-+      "devOptional": true,
-       "license": "Apache-2.0",
-       "bin": {
-         "tsc": "bin/tsc",
+A compound SELECT whose first term reads another compound crashes the
+process once the nested term counts add up:
+
+```sql
+-- 10 levels, each: SELECT * FROM (<previous>) UNION ALL SELECT 1 ... (449 times)
+SELECT count(*) FROM (SELECT * FROM (... (SELECT 1) UNION ALL SELECT 1 ...) UNION ALL SELECT 1 ...);
+-- Turso:  thread 'main' has overflowed its stack
+-- SQLite: 4491
 ```
 
----
+`emit_compound_select` in `core/translate/compound_select.rs` writes the
+bytecode for a compound SELECT. It called itself once per term and
+emitted the first term in the deepest call. A compound nested in the
+first term was therefore emitted under one stack frame per term of every
+enclosing compound: here 10 × 450 frames. The limits on terms per
+compound and on nesting depth do not bound that sum.
 
-### Incident Patch 2: `4f61bc74` (2026-11-25)
-**Commit Message**: Merge 'build(deps): bump addressable from 2.9.0 to 2.9.1 in /examples/react-native' from app/dependabot
+While testing, a second bug turned up in the same function. It is on
+main too:
 
-Bumps [addressable](https://github.com/sporkmonger/addressable) from
-2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced
-from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANG
-ELOG.md">addressable's changelog</a>.</em></p> <blockquote>
-<h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2>
-<h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service
-in <code>Addressable::URI.normalize_path</code>, which took quadratic
-time on paths with many dot segments; <code>URI#normalize</code>,
-<code>#join</code>, <code>#==</code> and <code>#===</code> were affected
-([GHSA-qq38-m9mg-xjj5])</li> <li>fixes
-<code>Addressable::URI.normalize_path</code> keeping segments that a
-<code>..</code> should have removed after a <code>..</code> above the
-root, e.g. <code>/../../public/x/../../secret</code> normalized to
-<code>/public/x/secret</code> instead of <code>/secret</code>
-([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes
-<code>Addressable::URI.normalize_path</code> treating a raw line feed as
-a segment boundary, e.g. joining <code>..\n/secret</code> onto
-<code>/
-
-**File**: `examples/react-native/Gemfile.lock` (modified, +2/-2)
-```diff
-@@ -14,7 +14,7 @@ GEM
-       minitest (>= 5.1, < 6)
-       securerandom (>= 0.3)
-       tzinfo (~> 2.0, >= 2.0.5)
--    addressable (2.9.0)
-+    addressable (2.9.1)
-       public_suffix (>= 2.0.2, < 8.0)
-     algoliasearch (1.27.5)
-       httpclient (~> 2.8, >= 2.8.3)
-@@ -118,7 +118,7 @@ DEPENDENCIES
- CHECKSUMS
-   CFPropertyList (3.0.8) sha256=2c99d0d980536d3d7ab252f7bd59ac8be50fbdd1ff487c98c949bb66bb114261
-   activesupport (7.2.3.1) sha256=11ebed516a43a0bb47346227a35ebae4d9427465a7c9eb197a03d5c8d283cb34
--  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
-+  addressable (2.9.1) sha256=f1212365945455c84e8d031eea40fc6bedf0c663a78d95b3ab93591040bc5c35
-   algoliasearch (1.27.5) sha256=26c1cddf3c2ec4bd60c148389e42702c98fdac862881dc6b07a4c0b89ffec853
-   atomos (0.1.3) sha256=7d43b22f2454a36bace5532d30785b06de3711399cb1c6bf932573eda536789f
-   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
+```sql
+SELECT 2 IN (SELECT 1 UNION SELECT 2 LIMIT 1);
+-- Turso:  1
+-- SQLite: 0
 ```
 
----
+When a UNION or EXCEPT is the subquery of an IN,
+`destination_index_for_dedupe` makes it remove duplicates directly in
+the ephemeral in
 
-### Incident Patch 3: `03dccb7c` (2026-11-25)
-**Commit Message**: Merge 'core/insert: build the NEW row of BEFORE triggers the way SQLite does' from Glauber Costa
-
-This PR started as a one-line change: do not apply affinity to the
-temporary table of `INSERT ... SELECT`. Three review rounds then each
-found one more place where Turso converts the values of an INSERT in a
-different order than SQLite, relative to the BEFORE INSERT triggers.
-This version stops fixing them one by one. It makes `translate_insert`
-follow the order and the register layout of `sqlite3Insert`.
-
-## What SQLite does
-
-Read from `src/insert.c` of 3.51.0 (`sqlite3Insert`), and checked with
-`EXPLAIN`.
-
-SQLite keeps the row in one block of registers (`regRowid`,
-`regData...`) and does not convert it until the BEFORE triggers are
-done. For the triggers it makes a copy (`regCols`) and converts the
-copy:
-
-1. rowid of the copy: NULL becomes -1, then `MustBeInt`
-2. `Copy` the columns
-3. `Affinity`, or `TypeCheck` for a STRICT table
-(`sqlite3TableAffinity`)
-4. generated columns, computed from the copy
-(`sqlite3ComputeGeneratedColumns`)
-5. `Program`: the triggers read NEW from the copy
-
-Then it continues with the row itself: rowid (`NewRowid` or
-`MustBeInt`), NOT NULL, conversion to the 
-
-**File**: `core/translate/insert.rs` (modified, +173/-149)
+**File**: `core/translate/compound_select.rs` (modified, +272/-209)
 ```diff
-@@ -608,32 +608,13 @@ pub fn translate_insert(
+@@ -17,7 +17,7 @@ use crate::translate::result_row::emit_columns_to_destination;
+ use crate::translate::subquery::emit_non_from_clause_subqueries_for_eval_at;
+ use crate::vdbe::builder::{CursorType, ProgramBuilder};
+ use crate::vdbe::insn::{Insn, SorterOpenData};
+-use crate::vdbe::CursorID;
++use crate::vdbe::{BranchOffset, CursorID};
+ use crate::{emit_explain, LimboError};
+ use tracing::instrument;
  
-     let has_user_provided_rowid = ctx.table.has_rowid && insertion.key.is_provided_by_user();
+@@ -349,8 +349,45 @@ fn finish_compound_select(
+     Ok(program.reg_result_cols_start)
+ }
  
--    // For non-STRICT tables, apply column affinity to the values early.
--    // This must happen before BEFORE triggers (matching SQLite's order) so that
--    // trigger bodies see affinity-applied values. Affinity is idempotent, so
--    // applying it here means we can skip the per-trigger Copy+Affinity in fire_trigger.
--    if !ctx.table.is_strict {
--        let affinity = insertion
--            .col_mappings
--            .iter()
--            .filter(|cm| !cm.column.is_virtual_generated())
--            .map(|col_mapping| col_mapping.column.affinity());
--
--        // Only emit Affinity if there's meaningful affinity to apply
--        // (i.e., not all BLOB/NONE affinity)
--        if affinity.clone().any(|a| a != Affinity::Blob) {
--            if let Ok(count) = NonZeroUsize::try_from(insertion.num_non_virtual_cols) {
--                program.emit_insn(Insn::Affinity {
--                    start_reg: insertion.first_col_register(),
--                    count,
--                    affinities: affinity.map(|a| a.aff_mask()).collect(),
--                });
--            }
--        }
--    }
--
--    // Fire BEFORE INSERT triggers
--
-+    // The row is now in the registers of `insertion`, as the source gave it. The rest follows
-+    // the order of sqlite3Insert:
-+    //   1. BEFORE triggers, which see a converted copy of the row
-+    //   2. rowid: NewRowid or MustBeInt
-+    //   3. NOT NULL, conversion to the column types, generated columns
-+    //   4. CHECK, uniqueness, foreign keys
-+    //   5. MakeRecord, Insert, AFTER triggers
-     let relevant_before_triggers = get_triggers_including_temp(
-         resolver,
-         namespace,
-@@ -643,75 +624,15 @@ pub fn translate_insert(
-         &btree_table,
-         connection,
-     );
--
--    // The inserted values are the user's values until ENCODE runs below.
--    let dml_ctx = DmlColumnContext::from_column_reg_mapping(
--        insertion.col_mappings.iter().map(|cm| {
--            (
--                cm.column,
--                if cm.column.is_rowid_alias() {
--                    insertion.key_register()
--                } else {
--                    cm.register
--                },
--            )
--        }),
--        DmlRowForm::UserFacing,
--    );
--
-     let has_before_triggers = !relevant_before_triggers.is_empty();
-     if has_before_triggers {
--        compute_generated_columns(
-+        let new_registers = emit_new_row_for_before_triggers(
-             program,
--            &ctx.table.columns_topo_sort()?,
--            &dml_ctx,
-             resolver,
-+            &insertion,
-             &btree_table,
-+            has_user_provided_rowid,
-         )?;
--
--        // In SQLite, NEW.<rowid_alias> returns -1 in BEFORE INSERT triggers when the rowid
--        // hasn't been assigned yet (i.e., it's NULL). We need to temporarily set the key
--        // register to -1 so the trigger sees the correct value.
--        let saved_key_reg = if has_user_provided_rowid {
--            // User provided a value that might be NULL. Save original value, replace NULL with -1.
--            let save_reg = program.alloc_register();
--            program.emit_insn(Insn::Copy {
--                src_reg: insertion.key_register(),
--                dst_reg: save_reg,
--                extra_amount: 0,
--            });
--            let skip_label = program.allocate_label();
--            program.emit_insn(Insn::NotNull {
--                reg: insertion.key_register(),
--                target_pc: skip_label,
--            });
--            program.emit_insn(Insn::Integer {
--                value: -1,
--                dest: insertion.key_register(),
--            });
--            program.preassign_label_to_next_insn(skip_label);
--            Some(save_reg)
--        } else {
--            // Key is auto-generated, register is uninitialized. Set to -1.
--            program.emit_insn(Insn::Integer {
--                value: -1,
--                dest: insertion.key_register(),
--            });
--            None
--        };
--        // Build NEW registers: for rowid alias columns, use the rowid register; otherwise use column register
--        let new_registers: Vec<usize> = insertion
--            .col_mappings
--            .iter()
--            .map(|col_mapping| {
--                if col_mapping.column.is_rowid_alias() {
--                    insertion.key_register()
--                } else {
--                    col_mapping.register
--                }
--            })
--            .chain(std::iter::once(insertion.key_register()))
--            .collect();
-         // Determine the conflict resolution to propagate to triggers:
-         // 1. If there's already an override from UPSERT DO UPDATE context, use it (forces ABORT)
-         // 2. If the INSERT uses an explicit ON CONFLICT clause, propagate it to
-@@ -742,17 +663,23 @@ pub fn translate_insert(
-            
-```
-
-**File**: `core/translate/upsert.rs` (modified, +13/-37)
-```diff
-@@ -24,8 +24,8 @@ use crate::translate::fkeys::{
-     fire_fk_update_actions, ParentKeyNewProbeMode,
- };
- use crate::translate::insert::{
--    emit_remember_written_rowid, emit_returning_subqueries, expr_contains_subquery,
--    format_unique_violation_desc, InsertEmitCtx,
-+    emit_column_type_conversion, emit_remember_written_rowid, emit_returning_subqueries,
-+    expr_contains_subquery, format_unique_violation_desc, InsertEmitCtx,
- };
- use crate::translate::plan::ColumnMask;
- use crate::translate::planner::ROWID_STRS;
-@@ -61,7 +61,6 @@ use crate::{
-     },
-     util::{exprs_are_equivalent, normalize_ident},
-     vdbe::{
--        affinity::Affinity,
-         builder::{DmlColumnContext, DmlRowForm, ProgramBuilder},
-         insn::{IdxInsertFlags, InsertFlags, Insn},
-     },
-@@ -826,40 +825,13 @@ pub fn emit_upsert(
-     }
- 
-     if let Some(bt) = table.btree() {
--        if bt.is_strict {
--            // Pre-encode TypeCheck: all columns are decoded (user-facing) at this point.
--            // We need to do this before regenerating virtual columns, because TypeCheck applies
--            // affinity in-place to its registers, which could affect virtual columns.
--            program.emit_insn(Insn::TypeCheck {
--                start_reg: new_start,
--                count: layout.num_non_virtual_cols(),
--                check_generated: false,
--                table_reference: BTreeTable::input_type_check_table_ref(
--                    &bt,
--                    resolver.schema(),
--                    None,
--                )?,
--            });
--        } else {
--            // For non-STRICT tables, apply column affinity to the values.
--            // This must happen early so that both index records and the table record
--            // use the converted values.
--            let affinity = bt
--                .columns()
--                .iter()
--                .filter(|c| !c.is_virtual_generated())
--                .map(|c| c.affinity());
--
--            if affinity.clone().any(|a| a != Affinity::Blob) {
--                if let Ok(count) = NonZeroUsize::try_from(layout.num_non_virtual_cols()) {
--                    program.emit_insn(Insn::Affinity {
--                        start_reg: new_start,
--                        count,
--                        affinities: affinity.map(|a| a.aff_mask()).collect(),
--                    });
--                }
--            }
--        }
-+        emit_column_type_conversion(
-+            program,
-+            resolver,
-+            &bt,
-+            new_start,
-+            layout.num_non_virtual_cols(),
-+        )?;
-     }
- 
-     // Recompute generated columns for the new row after SET clauses have modified base columns.
-@@ -2197,6 +2169,10 @@ fn rewrite_expr_to_registers(
-                             if ROWID_STRS.iter().any(|s| s.eq_ignore_ascii_case(&c)) {
-                                 *expr = Expr::register(ins.key_register());
-                             } else if let Some(cm) = ins.get_col_mapping_by_name(&c) {
-+                                if cm.column.is_rowid_alias() {
-+                                    *expr = Expr::register(ins.key_register());
-+                                    return Ok(WalkControl::Continue);
-+                                }
-                                 // Use decoded excluded registers when available
-                                 // to prevent double-encoding of custom type values
-                                 if let Some(decoded_start) = excluded_decoded_start {
-```
-
-**File**: `sqlite/conformance/sqlite-sqltests/insert-select-temp-table-affinity.sqltest` (added, +297/-0)
-```diff
-@@ -0,0 +1,297 @@
-+# INSERT ... SELECT from the table it writes to, or into a table with an insert trigger, goes through a temporary table. The target column affinity applies when the row is read back from it, before triggers see the row.
+-// Emits bytecode for a compound SELECT statement. This function processes the rightmost part of
+-// the compound SELECT and handles the left parts recursively based on the compound operator type.
++/// What a compound operator emits after the term on its right.
++enum CompoundArmRows {
++    /// UNION ALL: the right term writes its rows to the destination of the operator.
++    UnionAll,
++    /// UNION or EXCEPT: both terms write to the index of `cursor_id`. `destination` is
++    /// where the rows of the index go afterwards, or None when the index is the
++    /// destination of the operator itself.
++    Dedupe {
++        cursor_id: usize,
++        index: Arc<Index>,
++        destination: Option<QueryDestination>,
++    },
++    /// INTERSECT: the left terms write to the index of `left_cursor_id`, the right term
++    /// to the index of `right_cursor_id`, and the rows found in both go to `destination`.
++    Intersect {
++        left_cursor_id: usize,
++        left_index: Arc<Index>,
++        right_cursor_id: usize,
++        destination: QueryDestination,
++    },
++}
 +
++/// A compound operator whose right term is emitted after all the terms on its left.
++struct CompoundArm {
++    op: EqpCompoundOp,
++    /// The label after the bytecode of the operator.
++    end_label: BranchOffset,
++    /// The LIMIT and OFFSET that apply to the rows of the operator.
++    limit_ctx: Option<LimitCtx>,
++    offset_reg: Option<usize>,
++    rows: CompoundArmRows,
++}
++
++// Emits bytecode for a compound SELECT statement. The first term is emitted first, and it can
++// read a subquery that is itself a compound SELECT. A recursion with one call per term would emit
++// that subquery below one stack frame per term of this compound, so the depth of the stack would
++// be the sum of the term counts of the nested compounds. Thus a first loop sets the destinations
++// of the operators from the last to the first, the first term is emitted, and a second loop emits
++// the right term of each operator from the first to the last.
+ #[allow(clippy::too_many_arguments)]
+ fn emit_compound_select(
+     program: &mut ProgramBuilder,
+@@ -360,150 +397,77 @@ fn emit_compound_select(
+     offset: &Option<Box<Expr>>,
+     resolver: &Resolver,
+     collations: &[CollationSeq],
+-    limit_ctx: Option<LimitCtx>,
+-    offset_reg: Option<usize>,
++    mut limit_ctx: Option<LimitCtx>,
++    mut offset_reg: Option<usize>,
+     reg_result_cols_start: Option<usize>,
+ ) -> crate::Result<()> {
+-    let compound_select_end = program.allocate_label();
+-    if let Some(limit_ctx) = &limit_ctx {
+-        program.emit_insn(Insn::IfNot {
+-            reg: limit_ctx.reg_limit,
+-            target_pc: compound_select_end,
+-            jump_if_null: false,
+-        });
+-    }
+-    let mut right_most_ctx = TranslateCtx::new_boxed(
+-        program,
+-        resolver.fork_with_expr_cache(),
+-        right_most.table_references.joined_tables().len(),
+-        false,
+-    );
+-    right_most_ctx.reg_result_cols_start = reg_result_cols_start;
+-    match left.split_last_mut() {
+-        Some(((plan, operator), left)) => match operator {
++    let mut arms = crate::alloc::Vec::try_with_capacity_ext(left.len())?;
++    for term_idx in (1..=left.len()).rev() {
++        let end_label = program.allocate_label();
++        if let Some(limit_ctx) = &limit_ctx {
++            program.emit_insn(Insn::IfNot {
++                reg: limit_ctx.reg_limit,
++                target_pc: end_label,
++                jump_if_null: false,
++            });
++        }
++        let (terms_before, terms_after) = left.split_at_mut(term_idx);
++        let (plan, operator) = &mut terms_before[term_idx - 1];
++        let right = match terms_after.first_mut() {
++            Some((right, _)) => right,
++            None => &mut *right_most,
++        };
++        let (op, rows) = match operator {
+             CompoundOperator::UnionAll => {
+                 if matches!(
+-                    right_most.query_destination,
++                    right.query_destination,
+                     QueryDestination::EphemeralIndex { .. }
+                         | QueryDestination::CoroutineYield { .. }
+                         | QueryDestination::EphemeralTable { .. }
+                         | QueryDestination::RecursiveCteQueue { .. }
+                 ) {
+-                    plan.query_destination = right_most.query_destination.clone();
++                    plan.query_destination = right.query_destination.clone();
+                 }
+-              
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/compound-select-term-limit.sqltest` (modified, +35/-5)
+```diff
+@@ -2,14 +2,10 @@
+ 
+ # Regression test for https://github.com/tursodatabase/turso/issues/8104
+ #
+-# The code generator recurses one time for each term of a compound SELECT, so
+-# a compound with many terms overflowed the stack. SQLite stops at 500 terms
++# A compound with many terms overflowed the stack. SQLite stops at 500 terms
+ # (SQLITE_MAX_COMPOUND_SELECT) with "too many terms in compound SELECT", and
+ # Turso uses the same limit and the same message.
+ 
+-# CLI backend only: the rust backend executes queries on tokio worker threads,
+-# and 500 terms do not fit in their stacks in a debug build.
+-@backend cli
+ test compound-select-with-500-terms {
+     SELECT count(*) FROM (SELECT 1{{repeat:499: UNION ALL SELECT 1}});
+ }
+@@ -38,3 +34,37 @@ test values-with-600-rows-is-not-a-compound {
+ expect {
+     600
+ }
++
++# Regression tests for https://github.com/tursodatabase/turso/issues/12128
++#
++# Each compound has 450 terms, and each one is the first term of the next, 10
++# levels deep. The code generator emits the first term of a compound before
++# the other terms, so it emitted the nested compound inside the stack frames of
++# the terms of the outer one: the 10 levels needed 4500 frames.
++test union-all-compounds-nested-in-first-terms {
++    SELECT count(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT 1){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}}){{repeat:449: UNION ALL SELECT 1}});
++}
++expect {
++    4491
++}
++
++test union-compounds-nested-in-first-terms {
++    SELECT count(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT 1){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}}){{repeat:449: UNION SELECT 2}});
++}
++expect {
++    2
++}
++
++test intersect-compounds-nested-in-first-terms {
++    SELECT count(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT 1){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}}){{repeat:449: INTERSECT SELECT 1}});
++}
++expect {
++    1
++}
++
++test except-compounds-nested-in-first-terms {
++    SELECT count(*) FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT 1){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}}){{repeat:449: EXCEPT SELECT 2}});
++}
++expect {
++    1
++}
+```
+
+**File**: `sqlite/conformance/sqlite-sqltests/in-subquery-compound-limit.sqltest` (added, +56/-0)
+```diff
+@@ -0,0 +1,56 @@
 +@database :memory:
 +
-+test issue-2040-integer-column-direct {
-+    CREATE TABLE t(x INTEGER);
-+    INSERT INTO t VALUES (9.00), ('xthjqehemf'), (NULL);
-+    SELECT min(x), typeof(min(x)) FROM t;
++# A UNION or EXCEPT that is the subquery of an IN applies its LIMIT and OFFSET
++# while it reads its rows from its own index. It must not write its rows
++# directly into the index of the IN, or the IN tests all rows of the compound.
++test in-union-limit {
++    SELECT 2 IN (SELECT 1 UNION SELECT 2 LIMIT 1);
 +}
 +expect {
-+    9|integer
++    0
 +}
 +
-+test issue-2040-integer-column-through-temp-table {
-+    CREATE TABLE t(x INTEGER);
-+    INSERT INTO t VALUES (9.00), ('xthjqehemf'), (NULL);
-+    INSERT INTO t SELECT x FROM t;
-+    SELECT min(x), typeof(min(x)), count(*) FROM t;
++test not-in-union-limit {
++    SELECT 2 NOT IN (SELECT 1 UNION SELECT 2 LIMIT 1);
 +}
 +expect {
-+    9|integer|6
++    1
 +}
 +
-+test issue-2041-text-column-direct {
-+    CREATE TABLE t(x TEXT);
-+    INSERT INTO t VALUES (-3.90), (-611), (199);
-+    SELECT min(x), typeof(min(x)) FROM t;
++test in-union-offset {
++    SELECT 1 IN (SELECT 1 UNION SELECT 2 LIMIT 1 OFFSET 1), 2 IN (SELECT 1 UNION SELECT 2 LIMIT 1 OFFSET 1);
 +}
 +expect {
-+    -3.9|text
++    0|1
 +}
 +
-+test issue-2041-text-column-through-temp-table {
-+    CREATE TABLE s(a);
-+    INSERT INTO s VALUES (-3.90), (-611), (199);
-+    CREATE TABLE t(x TEXT);
-+    INSERT INTO t SELECT a FROM s;
-+    INSERT INTO t SELECT x FROM t;
-+    SELECT min(x), typeof(min(x)), count(*) FROM t;
++test in-except-limit {
++    SELECT 3 IN (SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 EXCEPT SELECT 4 LIMIT 2);
 +}
 +expect {
-+    -3.9|text|6
++    0
 +}
 +
-+test temp-table-with-column-list-and-different-affinity {
-+    CREATE TABLE t(a INTEGER, b TEXT, c REAL);
-+    INSERT INTO t(a, b, c) VALUES ('5', 6, '7');
-+    INSERT INTO t(c, a, b) SELECT a, b, c FROM t;
-+    SELECT a, typeof(a), b, typeof(b), CAST(c AS TEXT), typeof(c) FROM t ORDER BY rowid;
++test in-except-offset {
++    SELECT 1 IN (SELECT 1 UNION ALL SELECT 2 EXCEPT SELECT 4 LIMIT -1 OFFSET 1), 2 IN (SELECT 1 UNION ALL SELECT 2 EXCEPT SELECT 4 LIMIT -1 OFFSET 1);
 +}
 +expect {
-+    5|integer|6|text|7.0|real
-+    6|integer|7.0|text|5.0|real
++    0|1
 +}
 +
-+test temp-table-with-after-insert-trigger {
-+    CREATE TABLE s(a);
-+    INSERT INTO s VALUES ('12'), (3.5), ('abc');
-+    CREATE TABLE t(x INTEGER);
-+    CREATE TABLE log(v);
-+    CREATE TRIGGER tr AFTER INSERT ON t BEGIN INSERT INTO log VALUES (typeof(new.x)); END;
-+    INSERT INTO t SELECT a FROM s;
-+    SELECT x, typeof(x) FROM t ORDER BY rowid;
-+    SELECT v FROM log ORDER BY rowid;
++test in-union-then-union-all-limit {
++    SELECT 2 IN (SELECT 1 UNION SELECT 2 UNION ALL SELECT 3 LIMIT 1), 3 IN (SELECT 1 UNION SELECT 2 UNION ALL SELECT 3 LIMIT 3);
 +}
 +expect {
-+    12|integer
-+    3.5|real
-+    abc|text
-+    integer
-+    real
-+    text
++    0|1
 +}
 +
-+@requires strict "uses STRICT tables"
-+test strict-before-trigger-sees-converted-values-from-insert-select {
-+    CREATE TABLE st(a INTEGER, b REAL) STRICT;
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
-+    CREATE TRIGGER tr2 BEFORE INSERT ON st WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
-+    INSERT INTO st SELECT '3', 4;
-+    SELECT v FROM lg ORDER BY rowid;
++test where-in-union-limit {
++    CREATE TABLE t(x);
++    INSERT INTO t VALUES (1), (2), (3);
++    SELECT x FROM t WHERE x IN (SELECT 3 UNION SELECT 1 UNION SELECT 2 LIMIT 2) ORDER BY x;
 +}
 +expect {
-+    when
-+    integerreal
++    1
++    2
 +}
-+
-+@requires strict "uses STRICT tables"
-+test strict-before-trigger-sees-converted-values-from-values {
-+    CREATE TABLE st(a INTEGER, b REAL) STRICT;
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
-+    CREATE TRIGGER tr2 BEFORE INSERT ON st WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
-+    INSERT INTO st VALUES ('3', 4);
-+    SELECT v FROM lg ORDER BY rowid;
-+}
-+expect {
-+    when
-+    integerreal
-+}
-+
-+@requires strict "uses STRICT tables"
-+test strict-before-trigger-sees-converted-values-when-reading-the-target {
-+    CREATE TABLE st(a INTEGER, b REAL) STRICT;
-+    CREATE TABLE lg(v);
-+    INSERT INTO st VALUES (1, 1.5);
-+    CREATE TRIGGER tr BEFORE INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
-+    INSERT INTO st SELECT '3', 4 FROM st;
-+    SELECT v FROM lg ORDER BY rowid;
-+}
-+expect {
-+    integerreal
-+}
-+
-+@requires strict "uses STRICT tables"
-+test strict-after-trigger-sees-converted-values-from-insert-select {
-+    CREATE TABLE st(a INTEGER, b REAL) STRICT;
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER tr AFTER INSERT ON st BEGIN INSERT INTO lg VALUES (typeof(new.a)||typeof(new.b)); END;
-+    INSERT INTO st SELECT '3', 4;
-+    SELECT v FROM lg ORDER BY rowid;
-+}
-+expect {
-+    integerreal
-+}
-+
-+test non-strict-before-and-after-triggers-see-converted-values-from-insert-select {
-+    CREATE TABLE nt(a INTEGER, b REAL, c TEXT);
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER trb BEFORE INSERT ON nt BEGIN INSERT INTO lg VALUES ('before ' || typeof(new.a) || typeof(new.b) || typeof(new.c)); END;
-+    CREATE TRIGGER trw BEFORE INSERT ON nt WHEN new.a = 3 BEGIN INSERT INTO lg VALUES ('when'); END;
-+    CREATE TRIGGER tra AFTER INSERT ON nt BEGIN INSERT INTO lg VALUES ('after ' || typeof(new.a) || typeof(new.b) || typeof(new.c)); END;
-+    INSERT INTO nt SELECT '3', 4, 5;
-+    SELECT v FROM lg ORDER BY rowid;
-+}
-+expect {
-+    when
-+    before integerrealtext
-+    after integerrealtext
-+}
-+
-+test before-trigger-sees-integer-rowid-alias-from-values {
-+    CREATE TABLE t(id INTEGER PRIMARY KEY);
-+    CREATE TABLE lg(v);
-+    CREATE TRIGGER tr BEFORE INSERT ON t BEGIN INSERT INTO lg VALUES (new.id); END;
-+    INSERT INTO t VALUES ('10'), ('3.0'), (' 7 '), (12.0), (NULL);
-+    SELECT v, typeof(v) FROM lg ORDER BY ro
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-multiple-rows.snap` (modified, +8/-8)
+---
+
+### Incident Patch 2: `71ae9708` (2026-11-27)
+**Commit Message**: Merge 'core/storage: fail WAL recovery on a short read' from Perfloop Agent
+
+Hey folks, a first-time contributor here. Perfloop has found an issue,
+but I have looked at it. Since I am not familiar with codebase, I can
+largely validate just symptoms; patch itself seems to make sense, but I
+defer to your thinking here.
+
+A database whose write-ahead log (WAL) still holds committed
+transactions loses them without any error. This gets triggered if a read
+of the 32-byte WAL header or a WAL frame returns fewer bytes than
+requested while more bytes are available. I was able to reproduce this
+locally (also in the patch attached).
+
+Write/prep files with SQLite, through the rusqlite crate, and then open
+them with Turso:
+
+  - set a 512-byte page size, switch to WAL mode, and run CREATE TABLE
+t(x). SQLite records the new table in the WAL file source.db-wal.
+  - run `PRAGMA wal_checkpoint(TRUNCATE)`, which copies every WAL frame
+into the main database file `source.db`, then shrinks `source.db-wal` to
+0 bytes.
+  - `INSERT INTO t VALUES (1)` and `INSERT INTO t VALUES (2)`. db-wal
+grows to 1,104 bytes. Rows 1 and 2 now exist only in source.db-wal, and
+source.db still holds an empty table.
+  - open 
+
+**File**: `core/storage/sqlite3_ondisk.rs` (modified, +41/-12)
 ```diff
-@@ -49,14 +49,14 @@ addr  opcode           p1  p2  p3  p4              p5  comment
-   27    Copy            6  12   0                   0  r[12]=r[6]
-   28    Copy            7  13   0                   0  r[13]=r[7]
-   29    OpenWrite       0  11   0                   0  root=11; iDb=0
--  30    Affinity        9   5   0                   0  r[9..14] = D, B, E, D, B
--  31    NotNull         8  33   0                   0  r[8]!=NULL -> goto 33
--  32    Goto            0  35   0                   0
--  33    MustBeInt       8   0   0                   0
--  34    Goto            0  36   0                   0
--  35    NewRowid        1   8   0                   0  r[8]=rowid
--  36    HaltIfNull   1299   0  10  products.name    0
--  37    HaltIfNull   1299   0  11  products.price   0
-+  30    NotNull         8  32   0                   0  r[8]!=NULL -> goto 32
-+  31    Goto            0  34   0                   0
-+  32    MustBeInt       8   0   0                   0
-+  33    Goto            0  35   0                   0
-+  34    NewRowid        1   8   0                   0  r[8]=rowid
-+  35    HaltIfNull   1299   0  10  products.name    0
-+  36    HaltIfNull   1299   0  11  products.price   0
-+  37    Affinity        9   5   0                   0  r[9..14] = D, B, E, D, B
-   38    NotExists       1  40   8                   0
-   39    Halt         1555   0   0  products.id      0
-   40    MakeRecord      9   5  14                   0  r[14]=mkrec(r[9..13])
+@@ -1624,6 +1624,9 @@ impl BuildSharedWal {
+                     self.phase = BuildSharedWalPhase::AwaitHeader(c);
+                 }
+                 BuildSharedWalPhase::AwaitHeader(c) => {
++                    if let Some(err) = c.get_error() {
++                        return Err(err.into());
++                    }
+                     if !c.succeeded() {
+                         io_yield_one!(c);
+                     }
+@@ -1651,6 +1654,9 @@ impl BuildSharedWal {
+                     };
+                 }
+                 BuildSharedWalPhase::AwaitChunk { completion, offset } => {
++                    if let Some(err) = completion.get_error() {
++                        return Err(err.into());
++                    }
+                     if !completion.succeeded() {
+                         io_yield_one!(completion);
+                     }
+@@ -1742,8 +1748,7 @@ impl StreamingWalReader {
+         let reader = self.clone();
+         let completion: Box<ReadComplete> = Box::new(move |res| {
+             let _reader = reader.clone();
+-            _reader.handle_header_read(res);
+-            None
++            _reader.handle_header_read(res)
+         });
+         let c = Completion::new_read(header_buf, completion);
+         self.file.pread(0, c)
+@@ -1777,22 +1782,31 @@ impl StreamingWalReader {
+         let completion: Box<ReadComplete> = Box::new(move |res| {
+             tracing::debug!("WAL chunk read complete");
+             let reader = me.clone();
+-            reader.handle_chunk_read(res);
+-            None
++            reader.handle_chunk_read(offset, res)
+         });
+         let c = Completion::new_read(buf, completion);
+         let guard = self.file.pread(offset, c)?;
+         Ok((read_size, guard))
+     }
+ 
+-    fn handle_header_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
++    fn handle_header_read(
++        self: Arc<Self>,
++        res: Result<(Arc<Buffer>, i32), CompletionError>,
++    ) -> Option<CompletionError> {
+         let Ok((buf, bytes_read)) = res else {
+             self.finalize_loading();
+-            return;
++            return None;
+         };
++        // The file is at least as long as the header, so a read that returns
++        // fewer bytes does not mean that the WAL has no header. If recovery
++        // treated it that way, the committed frames would not be visible and
++        // the next write would overwrite them.
+         if bytes_read != WAL_HEADER_SIZE as i32 {
+-            self.finalize_loading();
+-            return;
++            return Some(CompletionError::ShortReadWalFrame {
++                offset: 0,
++                expected: WAL_HEADER_SIZE,
++                actual: bytes_read as usize,
++            });
+         }
+ 
+         let (page_sz, c1, c2, use_native, ok) = {
+@@ -1836,7 +1850,7 @@ impl StreamingWalReader {
+         if PageSize::new(page_sz).is_none() || !ok {
+             *self.header.lock() = WalHeader::default();
+             self.finalize_loading();
+-            return;
++            return None;
+         }
+         {
+             let mut st = self.state.write();
+@@ -1849,14 +1863,28 @@ impl StreamingWalReader {
+         self.off_atomic
+             .store(WAL_HEADER_SIZE as u64, Ordering::Release);
+         self.page_atomic.store(page_sz as u64, Ordering::Release);
++        None
+     }
+ 
+-    fn handle_chunk_read(self: Arc<Self>, res: Result<(Arc<Buffer>, i32), CompletionError>) {
++    fn handle_chunk_read(
++        self: Arc<Self>,
++        offset: u64,
++        res: Result<(Arc<Buffer>, i32), CompletionError>,
++    ) -> Option<CompletionError> {
+         let Ok((buf, bytes_read)) = res else {
+             self.finalize_loading();
+-            return;
++            return None;
+         };
+-        let buf_slice = &buf.as_slice()[..bytes_read as usize];
++        // The requested bytes are all inside the file, so a read that returns
++        // fewer bytes does not show where the valid frames end.
++        if bytes_read as usize != buf.len() {
++            return Some(CompletionError::ShortReadWalFrame {
++                offset,
++                expected: buf.len(),
++                actual: bytes_read as usize,
++            });
++        }
++        let buf_slice = buf.as_slice();
+         // Snapshot salts/endianness once to avoid per-frame header locks
+         let (header_copy, use_native) = {
+             let st = self.state.read();
+@@ -1870,6 +1898,7 @@ impl StreamingWalReader {
+         if consumed < buf_slice.len() || self.off_atomic.load(Ordering::Acquire) >= self.file_size {
+             self.finalize_loading();
+         }
++        None
+     }
+ 
+     // Processes frames from a buffer, returns bytes processed
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-abort-multi-unique.snap` (modified, +8/-8)
+**File**: `tests/integration/queued_io.rs` (modified, +31/-1)
 ```diff
-@@ -23,14 +23,14 @@ addr  opcode         p1  p2  p3  p4             p5  comment
-    6  String8         0   6   0  Widget          0  r[6]='Widget'
-    7  OpenWrite       0  10   0                  0  root=10; iDb=0
-    8  OpenWrite       1   9   0                  0  root=9; iDb=0
--   9  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
--  10  NotNull         2  12   0                  0  r[2]!=NULL -> goto 12
--  11  Goto            0  14   0                  0
--  12  MustBeInt       2   0   0                  0
--  13  Goto            0  15   0                  0
--  14  NewRowid        2   2   0                  0  r[2]=rowid
--  15  HaltIfNull   1299   0   4  items.sku       0
--  16  HaltIfNull   1299   0   5  items.barcode   0
-+   9  NotNull         2  11   0                  0  r[2]!=NULL -> goto 11
-+  10  Goto            0  13   0                  0
-+  11  MustBeInt       2   0   0                  0
-+  12  Goto            0  14   0                  0
-+  13  NewRowid        2   2   0                  0  r[2]=rowid
-+  14  HaltIfNull   1299   0   4  items.sku       0
-+  15  HaltIfNull   1299   0   5  items.barcode   0
-+  16  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
-   17  NotExists       2  19   2                  0
-   18  Halt         1555   0   0  items.id        0
-   19  Copy            5   8   0                  0  r[8]=r[5]
+@@ -87,6 +87,7 @@ struct QueuedIoState {
+     owner: Mutex<String>,
+     ordinals: Mutex<HashMap<String, u32>>,
+     fail_next: Mutex<Option<QueuedIoOpKind>>,
++    wal_read_limit: Mutex<Option<usize>>,
+ }
+ 
+ impl QueuedIoState {
+@@ -99,6 +100,7 @@ impl QueuedIoState {
+             owner: Mutex::new("unowned".to_string()),
+             ordinals: Mutex::new(HashMap::new()),
+             fail_next: Mutex::new(None),
++            wal_read_limit: Mutex::new(None),
+         }
+     }
+ }
+@@ -120,6 +122,12 @@ impl QueuedIo {
+         }
+     }
+ 
++    #[cfg(not(feature = "checksum"))]
++    pub(crate) fn limit_wal_reads(&self, bytes: usize) {
++        assert!(bytes > 0);
++        *self.state.wal_read_limit.lock().unwrap() = Some(bytes);
++    }
++
+     pub(crate) fn step_one(&self) -> turso_core::Result<Option<QueuedIoEvent>> {
+         self.step_at(0, false)
+     }
+@@ -429,9 +437,31 @@ impl File for QueuedFile {
+     fn pread(&self, pos: u64, completion: Completion) -> turso_core::Result<Completion> {
+         let inner = self.inner.clone();
+         let c = completion.clone();
++        let limit = if self.path.ends_with("-wal") {
++            *self.state.wal_read_limit.lock().unwrap()
++        } else {
++            None
++        };
+         let len = completion.as_read().buf().len();
+         self.enqueue(QueuedIoOpKind::Pread, pos, len, completion, move || {
+-            drop(inner.pread(pos, c)?);
++            if let Some(limit) = limit {
++                let len = c.as_read().buf().len().min(limit);
++                let buf = Arc::new(Buffer::new_temporary(len));
++                let read = Completion::new_read(buf, move |res| {
++                    match res {
++                        Ok((buf, n)) => {
++                            c.as_read().buf().as_mut_slice()[..n as usize]
++                                .copy_from_slice(&buf.as_slice()[..n as usize]);
++                            c.complete(n);
++                        }
++                        Err(err) => c.error(err),
++                    }
++                    None
++                });
++                drop(inner.pread(pos, read)?);
++            } else {
++                drop(inner.pread(pos, c)?);
++            }
+             Ok(())
+         })
+     }
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-fail-multi-unique.snap` (modified, +8/-8)
+**File**: `tests/integration/storage/short_read.rs` (modified, +114/-0)
 ```diff
-@@ -23,14 +23,14 @@ addr  opcode         p1  p2  p3  p4             p5  comment
-    6  String8         0   6   0  Widget          0  r[6]='Widget'
-    7  OpenWrite       0  10   0                  0  root=10; iDb=0
-    8  OpenWrite       1   9   0                  0  root=9; iDb=0
--   9  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
--  10  NotNull         2  12   0                  0  r[2]!=NULL -> goto 12
--  11  Goto            0  14   0                  0
--  12  MustBeInt       2   0   0                  0
--  13  Goto            0  15   0                  0
--  14  NewRowid        2   2   0                  0  r[2]=rowid
--  15  HaltIfNull   1299   0   4  items.sku       0
--  16  HaltIfNull   1299   0   5  items.barcode   0
-+   9  NotNull         2  11   0                  0  r[2]!=NULL -> goto 11
-+  10  Goto            0  13   0                  0
-+  11  MustBeInt       2   0   0                  0
-+  12  Goto            0  14   0                  0
-+  13  NewRowid        2   2   0                  0  r[2]=rowid
-+  14  HaltIfNull   1299   0   4  items.sku       0
-+  15  HaltIfNull   1299   0   5  items.barcode   0
-+  16  Affinity        3   4   0                  0  r[3..7] = D, B, B, B
-   17  NotExists       2  19   2                  0
-   18  Halt         1555   0   0  items.id        0
-   19  Copy            5   8   0                  0  r[8]=r[5]
+@@ -234,3 +234,117 @@ fn test_zeroed_page_returns_corrupt_error() {
+             .contains("Invalid page type: 0");
+     }
+ }
++
++#[test]
++fn test_wal_short_reads_fail_open_without_losing_rows() {
++    use crate::common::ExecRows;
++    use crate::queued_io::QueuedIo;
++    use std::sync::Arc;
++    use turso_core::{
++        Buffer, Completion, CompletionError, Database, IOResult, LimboError, OpenFlags,
++        OpenOptions, WalFileShared, IO,
++    };
++    use turso_sqlite::SqliteDialect;
++
++    let dir = tempfile::tempdir().unwrap();
++    let source_path = dir.path().join("source.db");
++    let source = rusqlite::Connection::open(&source_path).unwrap();
++    source
++        .execute_batch(
++            "PRAGMA page_size=512;
++             PRAGMA journal_mode=WAL;
++             CREATE TABLE t(x);
++             PRAGMA wal_checkpoint(TRUNCATE);
++             INSERT INTO t VALUES (1);
++             INSERT INTO t VALUES (2);
++             INSERT INTO t VALUES (3);
++             INSERT INTO t VALUES (4);",
++        )
++        .unwrap();
++    let db_bytes = std::fs::read(&source_path).unwrap();
++    let wal_bytes = std::fs::read(dir.path().join("source.db-wal")).unwrap();
++
++    for limit in (1..=32).chain([33, 100, 535, 536, 600, 1100, 2143]) {
++        let io = Arc::new(QueuedIo::new());
++        let path = dir.path().join(format!("short-{limit}.db"));
++        let path = path.to_str().unwrap();
++        for (name, bytes) in [
++            (path.to_owned(), &db_bytes),
++            (format!("{path}-wal"), &wal_bytes),
++        ] {
++            let file = io.open_file(&name, OpenFlags::Create, false).unwrap();
++            let c = file
++                .pwrite(
++                    0,
++                    Arc::new(Buffer::new(bytes.clone())),
++                    Completion::new_write(|_| {}),
++                )
++                .unwrap();
++            io.wait_for_completion(c).unwrap();
++        }
++        io.limit_wal_reads(limit);
++        let recovery_io: Arc<dyn IO> = io.clone();
++        let mut recovery = WalFileShared::open_shared_if_exists_begin(
++            &recovery_io,
++            &format!("{path}-wal"),
++            OpenFlags::Create,
++        )
++        .unwrap();
++        let err = 'recovery: {
++            for _ in 0..100 {
++                match recovery.poll() {
++                    Err(err) => break 'recovery err,
++                    Ok(IOResult::Done(_)) => panic!("WAL read limit {limit}: recovery succeeded"),
++                    Ok(IOResult::IO(c)) => {
++                        while !c.finished() {
++                            io.step().unwrap();
++                        }
++                    }
++                }
++            }
++            panic!("WAL read limit {limit}: recovery did not finish");
++        };
++        assert!(
++            matches!(
++                *err,
++                LimboError::CompletionError(CompletionError::ShortReadWalFrame { .. })
++            ),
++            "WAL read limit {limit}: unexpected recovery error {err:?}"
++        );
++        match Database::open(io.clone(), path, OpenOptions::new(Arc::new(SqliteDialect))) {
++            Err(LimboError::CompletionError(CompletionError::ShortReadWalFrame { .. })) => {}
++            Err(err) => panic!("WAL read limit {limit}: unexpected open error {err:?}"),
++            Ok(db) => {
++                io.limit_wal_reads(usize::MAX);
++                let conn = db
++                    .connect(ConnectOpts::new(SessionRole::Superuser))
++                    .unwrap();
++                let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
++                panic!("WAL read limit {limit}: open succeeded with rows {rows:?}");
++            }
++        }
++        io.limit_wal_reads(usize::MAX);
++        let db =
++            Database::open(io.clone(), path, OpenOptions::new(Arc::new(SqliteDialect))).unwrap();
++        let conn = db
++            .connect(ConnectOpts::new(SessionRole::Superuser))
++            .unwrap();
++        let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
++        assert_eq!(rows, vec![(1,), (2,), (3,), (4,)], "WAL read limit {limit}");
++        if limit == 600 {
++            conn.execute("INSERT INTO t VALUES (5)").unwrap();
++            drop(conn);
++            drop(db);
++            let db = Database::open(io, path, OpenOptions::new(Arc::new(SqliteDialect))).unwrap();
++            let conn = db
++                .connect(ConnectOpts::new(SessionRole::Superuser))
++                .unwrap();
++            let rows: Vec<(i64,)> = conn.exec_rows("SELECT x FROM t ORDER BY x");
++            assert_eq!(
++                rows,
++                vec![(1,), (2,), (3,), (4,), (5,)],
++                "rows after writing and reopening"
++            );
++        }
++    }
++}
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-ignore-multi-unique.snap` (modified, +8/-8)
+---
+
+### Incident Patch 3: `aea36732` (2026-11-26)
+**Commit Message**: Merge 'postgres: make pg_type one table of the built-in types' from Glauber Costa
+
+`pg_type` was served from a hand-written list of 21 built-in types in
+`catalog.rs` and a second hand-written list of their arrays. Some
+columns were the same for every row (`typispreferred` false, `typdelim`
+a comma). The types the frontend registers were in a third list that
+knew nothing of the rows.
+
+## What this does
+
+`BUILT_IN_TYPES` in `postgres/frontend/pg_type.rs` is now the one table,
+built like `pg_operator` and `pg_cast`.
+
+Each row has the values of PostgreSQL 18 (taken from a real server):
+`oid`, `typname`, `typcategory`, `typispreferred`, `typlen`, `typbyval`,
+`typalign`, `typstorage`, `typarray`, `typdelim`.
+
+Each row also says how tursopg has the type:
+
+| | Types |
+| --- | --- |
+| Registered by the frontend | bool, int2, int4, int8 |
+| Not registered yet | bytea, text, oid, json, jsonb, float4, float8,
+varchar, numeric, date, timestamp, timestamptz, uuid, inet, cidr,
+macaddr |
+
+Every row of the second kind has its own `FIXME(registered-types)` that
+says how tursopg has the type today. The list of these FIXMEs is the
+list of types still to be registered.
+
+The `pg_type` table lists the ro
+
+**File**: `postgres/COMPAT.md` (modified, +1/-1)
 ```diff
-@@ -23,14 +23,14 @@ addr  opcode       p1  p2  p3  p4       p5  comment
-    6  String8       0   6   0  Widget    0  r[6]='Widget'
-    7  OpenWrite     0  10   0            0  root=10; iDb=0
-    8  OpenWrite     1   9   0            0  root=9; iDb=0
--   9  Affinity      3   4   0            0  r[3..7] = D, B, B, B
--  10  NotNull       2  12   0            0  r[2]!=NULL -> goto 12
--  11  Goto          0  14   0            0
--  12  MustBeInt     2   0   0            0
--  13  Goto          0  15   0            0
--  14  NewRowid      2   2   0            0  r[2]=rowid
--  15  IsNull        4  40   0            0  if (r[4]==NULL) goto 40
--  16  IsNull        5  40   0            0  if (r[5]==NULL) goto 40
-+   9  NotNull       2  11   0            0  r[2]!=NULL -> goto 11
-+  10  Goto          0  13   0            0
-+  11  MustBeInt     2   0   0            0
-+  12  Goto          0  14   0            0
-+  13  NewRowid      2   2   0            0  r[2]=rowid
-+  14  IsNull        4  40   0            0  if (r[4]==NULL) goto 40
-+  15  IsNull        5  40   0            0  if (r[5]==NULL) goto 40
-+  16  Affinity      3   4   0            0  r[3..7] = D, B, B, B
-   17  NotExists     2  19   2            0
-   18  Goto          0  40   0            0
-   19  Copy          5   8   0            0  r[8]=r[5]
+@@ -84,7 +84,7 @@ Basics not enumerated by the official feature matrix.
+ ## Backend
+ 
+ The pg_catalog tables emulated (live, reflecting real schema): `pg_class`,
+-`pg_namespace`, `pg_attribute`, `pg_type` (builtin + array + enum types),
++`pg_namespace`, `pg_attribute`, `pg_type` (the built-in types that tursopg supports, with the values of PostgreSQL 18, the array of each, and the enum and domain types of the schema; a type without a row is not supported),
+ `pg_index`, `pg_constraint`, `pg_attrdef`, `pg_tables`, `pg_sequence`, `pg_sequences`,
+ `pg_database`, `pg_roles` (built-in `postgres` superuser and `pg_database_owner`, and roles from `CREATE ROLE`), `pg_auth_members` (memberships from `GRANT role TO role`), `pg_proc`, `pg_am`,
+ `pg_policy` (row-level security policies, with `polqual` and `polwithcheck`
 ```
 
-**File**: `sqlite/conformance/sqlite-sqltests/snapshot_tests/modifications/snapshots/modifications__insert-or-ignore.snap` (modified, +8/-8)
+**File**: `postgres/conformance/pg-sqltests/catalog.sqltest` (modified, +88/-0)
 ```diff
-@@ -22,14 +22,14 @@ addr  opcode       p1  p2  p3  p4                p5  comment
-    5  String8       0   5   0  Jane Doe           0  r[5]='Jane Doe'
-    6  String8       0   6   0  active             0  r[6]='active'
-    7  OpenWrite     0   4   0                     0  root=4; iDb=0
--   8  Affinity      3   4   0                     0  r[3..7] = D, B, B, B
--   9  NotNull       2  11   0                     0  r[2]!=NULL -> goto 11
--  10  Goto          0  13   0                     0
--  11  MustBeInt     2   0   0                     0
--  12  Goto          0  14   0                     0
--  13  NewRowid      1   2   0                     0  r[2]=rowid
--  14  IsNull        4  30   0                     0  if (r[4]==NULL) goto 30
--  15  IsNull        5  30   0                     0  if (r[5]==NULL) goto 30
-+   8  NotNull       2  10   0                     0  r[2]!=NULL -> goto 10
-+   9  Goto          0  12   0                     0
-+  10  MustBeInt     2   0   0                     0
-+  11  Goto          0  13   0                     0
-+  12  NewRowid      1   2   0                     0  r[2]=rowid
-+  13  IsNull        4  30   0                     0  if (r[4]==NULL) goto 30
-+  14  IsNull        5  30   0                     0  if (r[5]==NULL) goto 30
-+  15  Affinity      3   4   0                     0  r[3..7] = D, B, B, B
-   16  NotExists     1  18   2                     0
-   17  Goto          0  30   0                     0
-   18  Copy          4   8   0                     0  r[8]=r[4]
+@@ -1216,6 +1216,94 @@ expect {
+     _text|1009|25
+ }
+ 
++# The pg_type rows of the built-in types of tursopg and of their arrays have
++# the values of PostgreSQL 18.
++test pg-type-rows-of-built-in-types {
++    SELECT oid, typname, typtype, typcategory, typispreferred, typlen, typbyval, typalign, typstorage,
++        typarray, typdelim, typelem
++    FROM pg_type
++    WHERE typnamespace = 11 AND ltrim(typname, '_') IN (
++        'bool', 'bytea', 'int8', 'int2', 'int4', 'text', 'oid', 'json', 'cidr', 'float4',
++        'float8', 'macaddr', 'inet', 'varchar', 'numeric', 'uuid', 'jsonb'
++    )
++    ORDER BY oid;
++}
++expect {
++    16|bool|b|B|t|1|t|c|p|1000|,|0
++    17|bytea|b|U|f|-1|f|i|x|1001|,|0
++    20|int8|b|N|f|8|t|d|p|1016|,|0
++    21|int2|b|N|f|2|t|s|p|1005|,|0
++    23|int4|b|N|f|4|t|i|p|1007|,|0
++    25|text|b|S|t|-1|f|i|x|1009|,|0
++    26|oid|b|N|t|4|t|i|p|1028|,|0
++    114|json|b|U|f|-1|f|i|x|199|,|0
++    199|_json|b|A|f|-1|f|i|x|0|,|114
++    650|cidr|b|I|f|-1|f|i|m|651|,|0
++    651|_cidr|b|A|f|-1|f|i|x|0|,|650
++    700|float4|b|N|f|4|t|i|p|1021|,|0
++    701|float8|b|N|t|8|t|d|p|1022|,|0
++    829|macaddr|b|U|f|6|f|i|p|1040|,|0
++    869|inet|b|I|t|-1|f|i|m|1041|,|0
++    1000|_bool|b|A|f|-1|f|i|x|0|,|16
++    1001|_bytea|b|A|f|-1|f|i|x|0|,|17
++    1005|_int2|b|A|f|-1|f|i|x|0|,|21
++    1007|_int4|b|A|f|-1|f|i|x|0|,|23
++    1009|_text|b|A|f|-1|f|i|x|0|,|25
++    1015|_varchar|b|A|f|-1|f|i|x|0|,|1043
++    1016|_int8|b|A|f|-1|f|d|x|0|,|20
++    1021|_float4|b|A|f|-1|f|i|x|0|,|700
++    1022|_float8|b|A|f|-1|f|d|x|0|,|701
++    1028|_oid|b|A|f|-1|f|i|x|0|,|26
++    1040|_macaddr|b|A|f|-1|f|i|x|0|,|829
++    1041|_inet|b|A|f|-1|f|i|x|0|,|869
++    1043|varchar|b|S|f|-1|f|i|x|1015|,|0
++    1231|_numeric|b|A|f|-1|f|i|x|0|,|1700
++    1700|numeric|b|N|f|-1|f|i|m|1231|,|0
++    2950|uuid|b|U|f|16|f|c|p|2951|,|0
++    2951|_uuid|b|A|f|-1|f|i|x|0|,|2950
++    3802|jsonb|b|U|f|-1|f|i|x|3807|,|0
++    3807|_jsonb|b|A|f|-1|f|i|x|0|,|3802
++}
++
++# tursopg has date, timestamp and timestamptz but not their arrays, so the
++# three types have no array row and their typarray is 0.
++@compat-gap "type:arrays of date, timestamp and timestamptz"
++test pg-type-rows-of-date-and-timestamp-types {
++    SELECT oid, typname, typtype, typcategory, typispreferred, typlen, typbyval, typalign, typstorage,
++        typarray, typdelim, typelem
++    FROM pg_type
++    WHERE typnamespace = 11 AND ltrim(typname, '_') IN ('date', 'timestamp', 'timestamptz')
++    ORDER BY oid;
++}
++expect {
++    1082|date|b|D|f|4|t|i|p|1182|,|0
++    1114|timestamp|b|D|f|8|t|d|p|1115|,|0
++    1115|_timestamp|b|A|f|-1|f|d|x|0|,|1114
++    1182|_date|b|A|f|-1|f|i|x|0|,|1082
++    1184|timestamptz|b|D|t|8|t|d|p|1185|,|0
++    1185|_timestamptz|b|A|f|-1|f|d|x|0|,|1184
++}
++expect @tursopg {
++    1082|date|b|D|f|4|t|i|p|0|,|0
++    1114|timestamp|b|D|f|8|t|d|p|0|,|0
++    1184|timestamptz|b|D|t|8|t|d|p|0|,|0
++}
++
++# A type that tursopg does not support has no row, so pg_type says which
++# types tursopg has.
++@compat-gap "type:pg_type rows of types tursopg does not support"
++test pg-type-has-no-row-for-a-type-tursopg-does-not-support {
++    SELECT count(*) FROM pg_type
++    WHERE typname IN ('time', '_time', 'interval', 'timetz', 'point', 'box', 'xml', 'money', 'tsvector', 'jsonpath');
++}
++expect {
++    10
++}
++expect @tursopg {
++    0
++}
++
++
+ test pg-indexes-lists-index-definitions {
+     CREATE TABLE items (id INT, name TEXT, price INT);
+     CREATE INDEX items_name_idx ON items (name);
+```
+
+**File**: `postgres/frontend/catalog.rs` (modified, +82/-347)
+```diff
+@@ -1,4 +1,5 @@
+ use crate::functions::validate_pg_input;
++use crate::pg_type::{built_in_type, BuiltInType, BUILT_IN_TYPES};
+ use crate::roles::{connection_roles, schema_roles, Role, RoleCatalog};
+ use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
+ use std::borrow::Cow;
+@@ -1861,314 +1862,67 @@ impl SnapshotRows for PgIndexesTable {
+ // pg_type
+ // ──────────────────────────────────────────────────────────────────────
+ 
++/// A pg_type row of a built-in type or of the array of one.
+ struct PgTypeInfo {
+     oid: i64,
+-    name: &'static str,
+-    typtype: &'static str,
++    name: String,
+     typcategory: &'static str,
++    typispreferred: bool,
+     typlen: i64,
+     typarray: i64,
+     typelem: i64,
+     typbyval: bool,
+     typalign: &'static str,
+     typstorage: &'static str,
++    typdelim: &'static str,
+ }
+ 
+-const PG_BASE_TYPES: &[PgTypeInfo] = &[
+-    PgTypeInfo {
+-        oid: 16,
+-        name: "bool",
+-        typtype: "b",
+-        typcategory: "B",
+-        typlen: 1,
+-        typarray: 1000,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: "c",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 17,
+-        name: "bytea",
+-        typtype: "b",
+-        typcategory: "U",
+-        typlen: -1,
+-        typarray: 1001,
+-        typelem: 0,
+-        typbyval: false,
+-        typalign: "i",
+-        typstorage: "x",
+-    },
+-    PgTypeInfo {
+-        oid: 20,
+-        name: "int8",
+-        typtype: "b",
+-        typcategory: "N",
+-        typlen: 8,
+-        typarray: 1016,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: "d",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 21,
+-        name: "int2",
+-        typtype: "b",
+-        typcategory: "N",
+-        typlen: 2,
+-        typarray: 1005,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: "s",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 23,
+-        name: "int4",
+-        typtype: "b",
+-        typcategory: "N",
+-        typlen: 4,
+-        typarray: 1007,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: "i",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 25,
+-        name: "text",
+-        typtype: "b",
+-        typcategory: "S",
+-        typlen: -1,
+-        typarray: 1009,
+-        typelem: 0,
+-        typbyval: false,
+-        typalign: "i",
+-        typstorage: "x",
+-    },
+-    PgTypeInfo {
+-        oid: 26,
+-        name: "oid",
+-        typtype: "b",
+-        typcategory: "N",
+-        typlen: 4,
+-        typarray: 1028,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: "i",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 114,
+-        name: "json",
+-        typtype: "b",
+-        typcategory: "U",
+-        typlen: -1,
+-        typarray: 199,
+-        typelem: 0,
+-        typbyval: false,
+-        typalign: "i",
+-        typstorage: "x",
+-    },
+-    PgTypeInfo {
+-        oid: 650,
+-        name: "cidr",
+-        typtype: "b",
+-        typcategory: "I",
+-        typlen: -1,
+-        typarray: 651,
+-        typelem: 0,
+-        typbyval: false,
+-        typalign: "i",
+-        typstorage: "m",
+-    },
+-    PgTypeInfo {
+-        oid: 700,
+-        name: "float4",
+-        typtype: "b",
+-        typcategory: "N",
+-        typlen: 4,
+-        typarray: 1021,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: "i",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 701,
+-        name: "float8",
+-        typtype: "b",
+-        typcategory: "N",
+-        typlen: 8,
+-        typarray: 1022,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: "d",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 829,
+-        name: "macaddr",
+-        typtype: "b",
+-        typcategory: "U",
+-        typlen: 6,
+-        typarray: 1040,
+-        typelem: 0,
+-        typbyval: false,
+-        typalign: "i",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 869,
+-        name: "inet",
+-        typtype: "b",
+-        typcategory: "I",
+-        typlen: -1,
+-        typarray: 1041,
+-        typelem: 0,
+-        typbyval: false,
+-        typalign: "i",
+-        typstorage: "m",
+-    },
+-    PgTypeInfo {
+-        oid: 1043,
+-        name: "varchar",
+-        typtype: "b",
+-        typcategory: "S",
+-        typlen: -1,
+-        typarray: 1015,
+-        typelem: 0,
+-        typbyval: false,
+-        typalign: "i",
+-        typstorage: "x",
+-    },
+-    PgTypeInfo {
+-        oid: 1082,
+-        name: "date",
+-        typtype: "b",
+-        typcategory: "D",
+-        typlen: 4,
+-        typarray: 1182,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: "i",
+-        typstorage: "p",
+-    },
+-    PgTypeInfo {
+-        oid: 1083,
+-        name: "time",
+-        typtype: "b",
+-        typcategory: "D",
+-        typlen: 8,
+-        typarray: 1183,
+-        typelem: 0,
+-        typbyval: true,
+-        typalign: 
+```
+
+**File**: `postgres/frontend/operators.rs` (modified, +3/-5)
+```diff
+@@ -5,7 +5,7 @@ use crate::casts::{resolve, wraps_negative_integers, CastType};
+ use crate::catalog::{pg_type_category, pg_type_name, pg_type_oid};
+ use crate::error::sqlstate_error;
+ use crate::functions::{format_type, undefined_operator_of, validate_pg_input};
+-use crate::pg_type::{IntegerOperator, IntegerType};
++use crate::pg_type::{built_in_type, IntegerOperator, IntegerType};
+ use turso_core::ast;
+ use turso_core::dialect::{
+     CastContext, ChosenOperator, EngineType, OperandType, OperatorChoice, OperatorFunction,
+@@ -281,7 +281,7 @@ fn common_type(types: &[Option<i64>]) -> Option<i64> {
+         if pg_type_category(ty) != pg_type_category(current) {
+             return None;
+         }
+-        if !PREFERRED_TYPES.contains(&current)
++        if !built_in_type(current).is_some_and(|ty| ty.is_preferred)
+             && casts_implicitly(current, ty)
+             && !casts_implicitly(ty, current)
+         {
+@@ -300,7 +300,7 @@ fn casts_implicitly(from: i64, to: i64) -> bool {
+     IMPLICIT_CASTS.contains(&(from, to))
+ }
+ 
+-/// FIXME(pg-catalog): This hand-codes the rows of pg_cast with castcontext 'i' between the types of `CHECKED_TYPES`, and `PREFERRED_TYPES` the pg_type rows with typispreferred. A lookup in pg_cast and pg_type replaces both, and `fits`, which takes the implicit casts to be every cast within a typcategory, uses the same lookup.
++/// FIXME(pg-catalog): This hand-codes the rows of pg_cast with castcontext 'i' between the types of `CHECKED_TYPES`. A lookup in pg_cast replaces it, and `fits`, which takes the implicit casts to be every cast within a typcategory, uses the same lookup.
+ const IMPLICIT_CASTS: [(i64, i64); 20] = [
+     (DATE, TIMESTAMP),
+     (DATE, TIMESTAMPTZ),
+@@ -324,8 +324,6 @@ const IMPLICIT_CASTS: [(i64, i64); 20] = [
+     (VARCHAR, TEXT),
+ ];
+ 
+-const PREFERRED_TYPES: [i64; 4] = [BOOL, TEXT, FLOAT8, TIMESTAMPTZ];
+-
+ /// The operand types whose operators are decided by core's operator signatures
+ /// for the arithmetic and bit operators, and the prefix `-` and `~`. Core has
+ /// no signature for a comparison, so `OPERATORS` decides every comparison.
+```
+
+**File**: `postgres/frontend/pg_type.rs` (modified, +113/-9)
+```diff
+@@ -16,18 +16,122 @@ pub(crate) use oid::parse_oid;
+ use crate::session::relation_lookup_namespaces;
+ use std::sync::Arc;
+ use turso_core::schema::{RelationKind, SchemaBuilder};
++use turso_core::types::Type;
+ use turso_core::{Connection, Result};
+ 
+-/// Adds the built-in types that PostgreSQL defines differently from core to
+-/// `builder`. Each one replaces the type that core registered under the same
+-/// name.
++/// A row of `pg_type` for a built-in type that is not an array, and how
++/// tursopg has the type.
++pub(crate) struct BuiltInType {
++    pub(crate) oid: i64,
++    pub(crate) name: &'static str,
++    pub(crate) category: &'static str,
++    pub(crate) is_preferred: bool,
++    pub(crate) len: i64,
++    pub(crate) by_value: bool,
++    pub(crate) align: &'static str,
++    pub(crate) storage: &'static str,
++    /// The oid of the pg_type row of the array of the type, which is named
++    /// `_` and the name of the type. 0 when tursopg has no array of the type.
++    pub(crate) array_oid: i64,
++    pub(crate) delimiter: &'static str,
++    pub(crate) support: Support,
++}
++
++/// How tursopg has a built-in type.
++pub(crate) enum Support {
++    /// The frontend registers the type in the schema, in place of the type
++    /// that core registers under the same name.
++    Registered(&'static dyn Type),
++    /// tursopg takes the type, but the frontend does not register it: it is
++    /// a type that core registers, or the translator stores it as a type of
++    /// the engine. The FIXME on the row says which.
++    NotRegistered,
++}
++
++macro_rules! built_in_types {
++    ($((
++        $oid:literal, $name:literal, $category:literal, $is_preferred:literal, $len:literal,
++        $by_value:literal, $align:literal, $storage:literal, $array_oid:literal,
++        $delimiter:literal, $support:expr
++    ),)*) => {
++        [$(BuiltInType {
++            oid: $oid,
++            name: $name,
++            category: $category,
++            is_preferred: $is_preferred,
++            len: $len,
++            by_value: $by_value,
++            align: $align,
++            storage: $storage,
++            array_oid: $array_oid,
++            delimiter: $delimiter,
++            support: $support,
++        },)*]
++    };
++}
++
++/// The built-in types that tursopg supports, with the values of their pg_type
++/// rows in PostgreSQL 18: oid, typname, typcategory, typispreferred, typlen,
++/// typbyval, typalign, typstorage, typarray and typdelim. The pg_type table
++/// lists these rows and the row of the array of each type that has one.
++///
++/// A type has a row here only when tursopg supports it, so that pg_type says
++/// which types tursopg has. A type that the translator only stores as
++/// another type without reading its text, such as point, xml or money, and a
++/// type that it refuses as the type of a column, such as interval or time,
++/// has no row.
++pub(crate) static BUILT_IN_TYPES: [BuiltInType; 20] = built_in_types! {
++    (16, "bool", "B", true, 1, true, "c", "p", 1000, ",", Support::Registered(&boolean::Boolean)),
++    // FIXME(registered-types): bytea: the frontend uses the type that core registers, which stores text as its bytes and does not read the hex and escape formats. A bytea type registered in the frontend, with its INPUT, replaces this.
++    (17, "bytea", "U", false, -1, false, "i", "x", 1001, ",", Support::NotRegistered),
++    (20, "int8", "N", false, 8, true, "d", "p", 1016, ",", Support::Registered(&IntegerType::Int8)),
++    (21, "int2", "N", false, 2, true, "s", "p", 1005, ",", Support::Registered(&IntegerType::Int2)),
++    (23, "int4", "N", false, 4, true, "i", "p", 1007, ",", Support::Registered(&IntegerType::Int4)),
++    // FIXME(registered-types): text is the TEXT of the engine and has no registered type, so core cannot name the type of a text value to the dialect. A text type registered in the frontend, with its INPUT, replaces this.
++    (25, "text", "S", true, -1, false, "i", "x", 1009, ",", Support::NotRegistered),
++    (26, "oid", "N", true, 4, true, "i", "p", 1028, ",", Support::Registered(&oid::Oid)),
++    // FIXME(registered-types): json: the frontend uses the type that core registers, which reads text in its ENCODE and has no INPUT. A json type registered in the frontend, with its INPUT, replaces this.
++    (114, "json", "U", false, -1, false, "i", "x", 199, ",", Support::NotRegistered),
++    // FIXME(registered-types): cidr: the frontend uses the type that core registers, which does not check its text. A cidr type registered in the frontend, with its INPUT, replaces this.
++    (650, "cidr", "I", false, -1, false, "i", "m", 651, ",", Support::NotRegistered),
++    // FIXME(registered-types): float4 is stored as the REAL of the engine, so it keeps the digits of a float8. A float4 type registered in the frontend, with its INPUT, replaces this.
++    (700, "float4", "N", false, 4, true, "i", "p", 1021, ",", Support::NotRegistered),
++    // FIXME(registered-types): float8 is the REAL of the engine and has no r
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12472** (closed): core/mvcc: bind the frame position in encrypted log chunks (@avinassh)
-- **PR #12471** (closed): core/storage: bind encrypted pages to their page numbers (@avinassh)
-- **PR #12468** (2026-11-25): bindings/javascript: bump vitest to 4.1.12 (@penberg)
-- **PR #12464** (2026-11-25): build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native (@dependabot[bot])
-- **PR #12459** (2026-11-25): build(deps): bump addressable from 2.9.0 to 2.9.1 in /examples/react-native (@dependabot[bot])
-- **PR #12454** (2026-11-25): core/translate/optimizer: read the value of a string literal in constant conditions (@Waterpine)
+- **PR #12593** (2026-11-27): core: stop PRAGMA auto_vacuum on a new database from breaking checkpoints (@turso-github-handyman[bot])
+- **PR #12591** (closed): core: normalize sqlite nan values and generalize type ordering (@glommer)
+- **PR #12580** (2026-11-26): postgres/catalog: describe each catalog with a CatalogTable impl (@pedrocarlo)
+- **PR #12573** (2026-11-27): core/mvcc: return busy from a contended explicit checkpoint (@sAchin-680)
+- **PR #12569** (2026-11-26): postgres: make pg_type one table of the built-in types (@glommer)
+- **PR #12568** (2026-11-26): benches: add point and range seek benchmarks (@RandoomWalks)
 
 ---
 
@@ -2215,69 +2617,84 @@ Then it continues with the row itself: rowid (`NewRowid` or
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/reac
+## X. Merge 'core/translate: fix stack overflow on compounds nested in first terms' fr
 
 **RULE**:
-When implementing operations in `examples/react-native/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/translate/compound_select.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bdc0c062`: Merge 'build(deps): bump fast-xml-parser from 5.11.1 to 5.12.1 in /examples/react-native' from app/dependabot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fe9cba1`: Merge 'core/translate: fix stack overflow on compounds nested in first terms' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/react-native/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/compound_select.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "version": "0.9.0-pre.6",
-        "react-native-builder-bob": "^0.44.1",
-        "typescript": "^5.3.0",
-        "vitest": "^4.1.11"
-      "version": "3.1.0",
-      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.1.0.tgz",
-      "integrity": "sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==",
-      "version": "1.3.2",
-      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.2.tgz",
-      "integrity": "sha512-OX91VSlShLPDgRZV7tk/YQ4l8tT75QziF5Ixg8g4PFbCVPjuTWwN+yQfAxLJ0dufJpprdOd6HlM74Jhd39TcBQ==",
-      "version": "5.12.1",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.1.tgz",
-      "integrity": "sha512-wR8dO/fx+z8C5exuem1e7BKOWvjsuzvjS/tvA/Xu3Z1zQqJGcXrPzXbcAiaMgp2KjreEROcTkmnnisrcmJ2hYQ==",
-        "@nodable/entities": "^3.1.0",
-        "fast-xml-builder": "^1.3.2",
-        "is-unsafe": "^2.0.3",
-        "strnum": "^2.5.1",
-      "version": "2.0.3",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
-      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeF
+use crate::vdbe::{BranchOffset, CursorID};
+/// What a compound operator emits after the term on its right.
+enum CompoundArmRows {
+    /// UNION ALL: the right term writes its rows to the destination of the operator.
+    UnionAll,
+    /// UNION or EXCEPT: both terms write to the index of `cursor_id`. `destination` is
+    /// where the rows of the index go afterwards, or None when the index is the
+    /// destination of the operator itself.
+    Dedupe {
+        cursor_id: usize,
+        index: Arc<Index>,
+        destination: Option<QueryDestination>,
+    },
+    /// INTERSECT: the left terms write to the index of `left_cursor_id`, the right term
+    /// to the index of `right_cursor_id`, and the rows found in both go to `destination`.
+    Intersect {
+        left_cursor_id: usize,
+        left_index: Arc<Index>,
+        right_cursor_id: usize,
+        destination: QueryDestination,
+    },
+}
+
+/// A compound operator whose right term is emitted after all the terms on its left.
+struct CompoundArm {
+    op: EqpCompoundOp,
+    /// The label after the bytecode of the operator.
+    end_label: BranchOffset,
+    /// The LIMIT and OFFSET that apply to the rows of the operator.
+    limit_ctx: O
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      "version": "0.9.0-pre.2",
-        "react-native-builder-bob": "^0.30.0",
-        "typescript": "^5.3.0"
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/@nodable/entities/-/entities-3.0.0.tgz",
-      "integrity": "sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==",
-      "version": "1.3.1",
-      "resolved": "https://registry.npmjs.org/fast-xml-builder/-/fast-xml-builder-1.3.1.tgz",
-      "integrity": "sha512-pIM/1n3ntFXKYrUZwW7QCK0gAW7XY+wzj1YMIV3tLDvPj/V+zTGJK5e3/4WJfwj0qWw2ElNXiTixda/R+3YSug==",
-      "version": "5.11.1",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.1.tgz",
-      "integrity": "sha512-TBw6K/fxoQGGjCmZDw9w/ZwP3uDcnTM4YH/g+PFRWr8sbe5idXtxNN6vITh4+1ruCZaho6uBFurElsA7F0zzgw==",
-        "@nodable/entities": "^3.0.0",
-        "fast-xml-builder": "^1.2.0",
-        "is-unsafe": "^2.0.0",
-        "strnum": "^2.4.2",
-      "version": "2.0.2",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
-      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
-      "version": "2.4.2
+use crate::vdbe::CursorID;
+// Emits bytecode for a compound SELECT statement. This function processes the rightmost part of
+// the compound SELECT and handles the left parts recursively based on the compound operator type.
+    limit_ctx: Option<LimitCtx>,
+    offset_reg: Option<usize>,
+    let compound_select_end = program.allocate_label();
+    if let Some(limit_ctx) = &limit_ctx {
+        program.emit_insn(Insn::IfNot {
+            reg: limit_ctx.reg_limit,
+            target_pc: compound_select_end,
+            jump_if_null: false,
+        });
+    }
+    let mut right_most_ctx = TranslateCtx::new_boxed(
+        program,
+        resolver.fork_with_expr_cache(),
+        right_most.table_references.joined_tables().len(),
+        false,
+    );
+    right_most_ctx.reg_result_cols_start = reg_result_cols_start;
+    match left.split_last_mut() {
+        Some(((plan, operator), left)) => match operator {
+                    right_most.query_destination,
+                    plan.query_destination = right_most.query_destination.clone();
+              
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bdc0c062` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fe9cba1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
