@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-35VK",
-    "timestamp": "2026-11-25T14:32:27.008Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "6afae6b4961df3890fdbf687e462e77366de967ef155f5ca144726688490a235",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-F1AB",
-    "timestamp": "2026-11-25T14:41:40.931Z",
-    "repository": "Edge0/Audio8-TTS-Realistic-Air",
-    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-    "contentHash": "ea27053e2a47b6b2465f5b1ca32b30bc830e36092796507651d17ee3116f13f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-F3DX",
     "timestamp": "2026-11-25T14:41:43.653Z",
     "repository": "pimalaya/himalaya",
@@ -7492,6 +7462,36 @@
     "contentHash": "bc042f6e2d8a34df8d159f47d8854d58d1cc019f1e2bbdc6d35be3ad1f8f8b65",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-QLQ8",
+    "timestamp": "2026-11-27T02:18:11.456Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "f75797e7fa56a402608054749c081a378baf1a5656952df76ccf21ed93bb7a08",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-QQZ5",
+    "timestamp": "2026-11-27T02:18:18.257Z",
+    "repository": "react/metro",
+    "learningId": "learn-github-react-metro",
+    "contentHash": "36fe242bd778f2e3e518ceb7bea6fec4ee7baf9e3585e6701608d6dd6e0dc189",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

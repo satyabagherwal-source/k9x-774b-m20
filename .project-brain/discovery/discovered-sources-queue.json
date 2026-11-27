@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T01:55:38.923Z",
+  "updated_at": "2026-11-27T02:18:23.538Z",
   "stats": {
-    "total_discovered": 10115,
-    "approved_pending_harvest": 9591,
+    "total_discovered": 10118,
+    "approved_pending_harvest": 9594,
     "harvested_count": 0,
     "rejected_count": 524,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9595,
+      "COMMUNITY_AND_EXPERT": 9598,
       "OFFICIAL_DOCUMENTATION": 287,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -218889,6 +218889,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
         "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-C2F0004B3087": {
+      "id": "SRC-C2F0004B3087",
+      "url": "https://github.com/react/metro/blob/e4b598a0103cb8a9600d7a0008db451d4b673338/packages/metro-file-map/src/Watcher.js",
+      "title": "https://github.com/react/metro/blob/e4b598a0103cb8a9600d7a0008db451d4b673338/packages/metro-file-map/src/Watcher.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T02:18:23.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-metro-learnings.md",
+        "fileName": "react-metro-learnings.md"
+      }
+    },
+    "SRC-727D0D9A224A": {
+      "id": "SRC-727D0D9A224A",
+      "url": "https://github.com/expo/expo/pull/54143",
+      "title": "https://github.com/expo/expo/pull/54143",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T02:18:23.439Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-metro-learnings.md",
+        "fileName": "react-metro-learnings.md"
+      }
+    },
+    "SRC-8D39F8565016": {
+      "id": "SRC-8D39F8565016",
+      "url": "https://github.com/react/metro/pull/2286",
+      "title": "https://github.com/react/metro/pull/2286",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T02:18:23.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-metro-learnings.md",
+        "fileName": "react-metro-learnings.md"
       }
     }
   }

@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "f914c43fb761e2339add29c51d3627f5969d3c18f8a7d1d14ebc9ae579dbe0a8",
-    "lastHarvestedAt": "2026-11-23T17:11:45.047Z",
+    "contentHash": "f75797e7fa56a402608054749c081a378baf1a5656952df76ccf21ed93bb7a08",
+    "lastHarvestedAt": "2026-11-27T02:18:11.462Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -5493,10 +5493,10 @@
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "2ceb7043",
+    "sourceVersion": "337d3aa2",
     "license": "MIT",
-    "contentHash": "8ca88d575a265575d5d5b5d6026dc27d8fd7c0338083d3cc5eaaa15a24725312",
-    "lastHarvestedAt": "2026-11-24T18:00:27.706Z",
+    "contentHash": "36fe242bd778f2e3e518ceb7bea6fec4ee7baf9e3585e6701608d6dd6e0dc189",
+    "lastHarvestedAt": "2026-11-27T02:18:18.274Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {

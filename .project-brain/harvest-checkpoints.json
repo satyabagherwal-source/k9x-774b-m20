@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T02:07:53.863Z",
+  "last_updated": "2026-11-27T02:18:18.294Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1715,14 +1715,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "f914c43fb761e2339add29c51d3627f5969d3c18f8a7d1d14ebc9ae579dbe0a8",
-      "verified_at": "2026-11-23T17:11:45.056Z",
+      "content_hash": "f75797e7fa56a402608054749c081a378baf1a5656952df76ccf21ed93bb7a08",
+      "verified_at": "2026-11-27T02:18:11.484Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T17:11:45.056Z"
+      "last_updated": "2026-11-27T02:18:11.484Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
@@ -8361,14 +8361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-metro",
-      "content_hash": "8ca88d575a265575d5d5b5d6026dc27d8fd7c0338083d3cc5eaaa15a24725312",
-      "verified_at": "2026-11-24T18:00:27.723Z",
+      "content_hash": "36fe242bd778f2e3e518ceb7bea6fec4ee7baf9e3585e6701608d6dd6e0dc189",
+      "verified_at": "2026-11-27T02:18:18.293Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T18:00:27.723Z"
+      "last_updated": "2026-11-27T02:18:18.293Z"
     },
     "Checkmarx/kics": {
       "repository": "Checkmarx/kics",

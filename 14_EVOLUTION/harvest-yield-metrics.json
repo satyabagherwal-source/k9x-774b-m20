@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T02:07:53.859Z",
-  "total_cycles_completed": 12943,
-  "total_learnings_persisted": 12943,
-  "total_rules_promoted": 11720,
+  "last_updated": "2026-11-27T02:18:18.289Z",
+  "total_cycles_completed": 12945,
+  "total_learnings_persisted": 12945,
+  "total_rules_promoted": 11721,
   "history": [
-    {
-      "timestamp": "2026-11-26T14:44:28.846Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T14:44:39.131Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T14:44:42.009Z",
       "repository": "aleo-labs-protocol/snarkOS",
@@ -1403,6 +1389,20 @@
       "repository": "lilylilith/QI_2.1_AnyAngle",
       "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T02:18:11.480Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T02:18:18.289Z",
+      "repository": "react/metro",
+      "learningId": "learn-github-react-metro",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

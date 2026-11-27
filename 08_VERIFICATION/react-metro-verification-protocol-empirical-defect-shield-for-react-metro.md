@@ -4,22 +4,22 @@
 {
   "source_repository": "react/metro",
   "source_url": "https://github.com/react/metro",
-  "source_version": "2ceb7043",
+  "source_version": "337d3aa2",
   "license": "MIT",
-  "timestamp": "2026-11-24T18:00:27.978Z",
+  "timestamp": "2026-11-27T02:18:18.613Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-react-metro",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react/metro](https://github.com/react/metro) (Revision: `2ceb7043`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T18:00:27.978Z`  
+> **Provenance**: Harvested from [react/metro](https://github.com/react/metro) (Revision: `337d3aa2`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T02:18:18.613Z`  
 > **Learning ID**: `learn-github-react-metro`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `react/metro` (Commit: `2ceb7043`)
+- **Target Repository**: `react/metro` (Commit: `337d3aa2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T18:00:26.522Z  
+> **Harvest Timestamp**: 2026-11-27T02:18:16.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🚇 The JavaScript bundler for React Native
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5662 stars
+- **Stars / Engagement**: 5663 stars
 
 ---
 
@@ -1092,8 +1092,6 @@ export default function getMaxWorkers(workers: ?number): number {
  * @oncall react_native
  */
 
-import type {BundleOptions} from 'metro/private/shared/types';
-
 import EventEmitter from 'node:events';
 import os from 'node:os';
 
@@ -1127,7 +1125,6 @@ export type LogEntry = {
   start_timestamp?: [number, number],
   outdated_modules?: number,
   bundle_size?: number,
-  bundle_options?: BundleOptions,
   bundle_hash?: string,
   build_id?: string,
   error_message?: string,
@@ -1138,7 +1135,10 @@ export type LogEntry = {
 const log_session = `${os.hostname()}-${Date.now()}`;
 const eventEmitter = new EventEmitter();
 
-function on(event: string, handler: (logEntry: LogEntry) => void): void {
+function on<T extends LogEntry = LogEntry>(
+  event: string,
+  handler: (logEntry: T) => void,
+): void {
   eventEmitter.on(event, handler);
 }
 
@@ -1535,364 +1535,312 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `147374bb` (2026-11-23)
-**Commit Message**: Fix lookups through a directory whose name ends in a dot (#2237)
+### Incident Patch 1: `7c4ea925` (2026-11-26)
+**Commit Message**: metro-file-map: Use the default health check prefix when given an empty one (#2294)
 
-* Fix lookups through a directory whose name ends in a dot
+`FileMap` treats every file whose name starts with `watcher.healthCheck.filePrefix` as a health check file. It's left out of the crawl, and a watcher event for one is taken as a health check rather than a change:
 
-Currently, `RootPathUtils` finds `.` and `..` segments by searching for `./`, so a directory name ending in a dot (eg `foo.`, which Linux and macOS allow) reads as one. `absoluteToNormal` and `relativeToNormal` fall back to `path.relative` on an indirection they can't collapse, but `joinNormalToRelative` throws `Failed to collapse`. That's reached whenever a lookup follows a symlink to an ancestor of the project root into such a directory, eg `lookup('/project/root/project/foo./x.js')` with `root -> ..`, or `matchFiles` on a symlink whose target goes the same way.
+https://github.com/react/metro/blob/e4b598a0103cb8a9600d7a0008db451d4b673338/packages/metro-file-map/src/Watcher.js#L217-L219
 
-This only counts a `./` that ends a `.` or `..` segment. `absoluteToNormal` and `relativeToNormal` give the same results as before on these paths, but no longer need the fallback.
+Every name starts with `''`, so `filePrefix: ''` drops every file from the crawl and every change in watch mode, and Metro can't resolve anything. That's been the case since at least 0.80, whether or not health checks are enabled.
 
-Found by Vitali in review of https://github.com/react/metro/pull/2229.
+An empty prefix can't work as a prefix, and `FileMap` needs one anyway, because it writes health check files at startup to confirm that a watcher backend such as `NativeWatcher` is live, even with health checks disabled. This uses the default, `.metro-health-check`, in its place. Rejecting `''` would also be safe, since no working config can use it, but I think a config that sets it to "turn off" health checks should just work.
+
+Expo's fork of `metro-file-map` takes the same fix in https://github.com/expo/expo/pull/54143.
 
 Changelog:
-```
- - **[Fix]**: Fix `Failed to collapse` on a path through a symlink to an ancestor of the project root, into a directory whose name ends in `.`
-```
+``
 
-Test plan:
-New unit tests on posix and win32. Those for `joinNormalToRelative`, `TreeF
-
-**File**: `packages/metro-file-map/src/lib/RootPathUtils.js` (modified, +29/-10)
+**File**: `docs/Configuration.md` (modified, +1/-1)
 ```diff
-@@ -49,6 +49,26 @@ const CURRENT_FRAGMENT = '.' + path.sep;
- const IS_WIN32 = path.sep === '\\';
- const ROOT_BASE_IDX = IS_WIN32 ? 0 : 1;
+@@ -1013,7 +1013,7 @@ Whether to periodically check the [filesystem watcher](./Concepts.md#file-watchi
  
-+// The index of the first "./" at or after `fromIdx` that ends a "." or ".."
-+// segment, rather than a name such as "foo.", or -1 if there is none.
-+function indexOfIndirectionSegment(fullPath: string, fromIdx: number): number {
-+  for (
-+    let idx = fullPath.indexOf(CURRENT_FRAGMENT, fromIdx);
-+    idx !== -1;
-+    idx = fullPath.indexOf(CURRENT_FRAGMENT, idx + CURRENT_FRAGMENT.length)
-+  ) {
-+    if (
-+      idx === 0 ||
-+      fullPath[idx - 1] === path.sep ||
-+      (fullPath[idx - 1] === '.' &&
-+        (idx === 1 || fullPath[idx - 2] === path.sep))
-+    ) {
-+      return idx;
-+    }
-+  }
-+  return -1;
-+}
-+
- export class RootPathUtils {
-   #rootDir: string;
-   #rootDirnames: ReadonlyArray<string>;
-@@ -252,11 +272,17 @@ export class RootPathUtils {
-     let collapsedSegments = 0;
-     // Allow any sequence of indirection fragments at the start of the
-     // unmatched suffix e.g /project/[../../foo], but bail out to Node's
--    // path.relative if we find a possible indirection after any later segment,
--    // or on any "./" that isn't a "../".
-+    // path.relative on any later "." or ".." segment. A "./" that ends a name,
-+    // e.g. in "foo./", is not an indirection.
-     for (let pos = startOfRelativePart; ; pos += UP_FRAGMENT_SEP_LENGTH) {
-       const nextIndirection = fullPath.indexOf(CURRENT_FRAGMENT, pos);
--      if (nextIndirection === -1) {
-+      if (nextIndirection !== pos + 1 || fullPath[pos] !== '.') {
-+        if (
-+          nextIndirection !== -1 &&
-+          indexOfIndirectionSegment(fullPath, nextIndirection) !== -1
-+        ) {
-+          return null;
-+        }
-         // The search above doesn't find a final '.' or '..' segment, as no
-         // separator follows it. Fall back for those too, unless the '..' is
-         // one of the leading indirections, e.g. for /project/root/foo/. or
-@@ -344,13 +370,6 @@ export class RootPathUtils {
-       if (totalUpIndirections < this.#rootParts.length - ROOT_BASE_IDX) {
-         totalUpIndirections++;
-       }
--
--      if (
--        nextIndirection !== pos + 1 || // Fallback when ./ later in the path, or leading
--        fullPath[pos] !== '.' // and for anything other than a leading ../
--      ) {
--        return null;
--      }
-     }
-   }
- }
+ Type: `string`
+ 
+-The name of the temporary file that health checks write into the project. Defaults to `'.metro-health-check'`.
++The name of the temporary file that health checks write into the project. Metro ignores files whose names start with this prefix. Defaults to `'.metro-health-check'`, which is also used if this is an empty string.
+ 
+ :::note
+ 
 ```
 
-**File**: `packages/metro-file-map/src/lib/__tests__/RootPathUtils-test.js` (modified, +16/-6)
+**File**: `packages/metro-file-map/src/__tests__/index-test.js` (modified, +12/-0)
 ```diff
-@@ -59,6 +59,11 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
-     p('/project/root/a.'),
-     p('/project/root/foo..'),
-     p('/project/root/...'),
-+    p('/project/root/a./foo'),
-+    p('/project/root/foo../bar'),
-+    p('/project/root/.../bar'),
-+    p('/project/root/../a./foo'),
-+    p('/project/root/../../project/root/a./foo.js'),
-   ])(`absoluteToNormal('%s') is correct and optimised`, absolutePath => {
-     const rootDir = p('/project/root');
-     pathUtils = new RootPathUtils(rootDir);
-@@ -82,7 +87,7 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
-       p('/project/root/../root2/../root3/foo'),
-       p('/project/root/./baz/foo/bar'),
-       p('/project/root/a./../foo'),
--      p('/project/root/../a./foo'),
-+      p('/project/root/a./.'),
-       p('/project/root/.././foo'),
-       p('/project/root/.././foo/'),
-       p('/project/root/.'),
-@@ -180,14 +185,19 @@ describe.each([['win32'], ['posix']])('RootPathUtils on %s', platform => {
+@@ -540,6 +540,18 @@ describe('FileMap', () => {
+     expect([...fileSystem.matchFiles({filter: /Kiwi/})]).toEqual([]);
    });
  
-   test.each([
--    [p('..'), p('foo/.'), p('../foo/.')],
--    [p('..'), p('foo/..'), p('../foo/..')],
-+    // A final indirection is kept
-+    [p('..'), p('foo/.'), p('../foo/.'), 0],
-+    [p('..'), p('foo/..'), p('../foo/..'), 0],
-+    // A name ending in a dot is not an indirection
-+    [p('..'), p('root/a./foo'), p('a./foo'), 1],
-+    [p('../..'), p('project/root/foo../bar'), p('foo../bar'), 2],
-+    [p('..'), p('sibling./foo'), p('../sibling./foo'), 0],
-   ])(
--    'joinNormalToRelative(%s, %s) keeps a final indirection, as %s',
--    (normalPath, relativePath, expected) => {
-+    'joinNormalToRelative(%s, %s) is %s, collapsing %s segments',
-+    (normalPath, relativePath, expected, collapsedSegments) => {
-       pathUtils = new RootPathUtils(p('/project/root'));
-       expect(pathUtils.joinNormalToRelative(normalPath, relativePath)).toEqual({
--        collapsedSegments: 0,
-+        collapsedSegments,
-         normalPath: expected,
-       });
-     },
++  test('an empty health check file prefix does not exclude any files', async () => {
++    mockFs[p('/project/fruits/Kiwi.js')] = `
++      // Kiwi!
++    `;
++    const {fileSystem} = await buildNewFileMap({
++      healthCheck: {...defaultConfig.healthCheck, filePrefix: ''},
++    });
++    expect([...fileSystem.matchFiles({filter: /Kiwi/})]).toEqual([
++      p('/project/fruits/Kiwi.js'),
++    ]);
++  });
++
+   test('ignores vcs directories without ignore pattern', async () => {
+     mockFs[p('/project/fruits/.git/fruit-history.js')] = `
+       // test
 ```
 
-**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +36/-0)
+**File**: `packages/metro-file-map/src/index.js` (modified, +5/-1)
 ```diff
-@@ -379,6 +379,42 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-       },
+@@ -760,7 +760,11 @@ export default class FileMap extends EventEmitter {
+       crawl: this.#crawler,
+       enableSymlinks,
+       extensions,
+-      healthCheckFilePrefix: this.#options.healthCheck.filePrefix,
++      // Files whose names start with this prefix are health check files, which
++      // are left out of the crawl and the watcher's changes. Every name starts
++      // with an empty prefix, so the default is used instead.
++      healthCheckFilePrefix:
++        this.#options.healthCheck.filePrefix || '.metro-health-check',
+       // TODO: Refactor out the two different ignore strategies here.
+       ignoreForCrawl: filePath => {
+         const ignoreMatched = ignorePattern.test(filePath);
+```
+
+---
+
+### Incident Patch 2: `e4b598a0` (2026-11-25)
+**Commit Message**: End the DeltaCalculator when a graph's first build fails (#2283)
+
+DeltaBundler.buildGraph only registers a calculator once its first build
+succeeds, and only registered calculators are ever ended. A failed first
+build left its calculator subscribed to the change event source, holding
+its partial graph, once per failed build, for the life of the server.
+getDependencies leaked the same way on failure.
+
+**File**: `packages/metro/src/DeltaBundler.js` (modified, +16/-6)
+```diff
+@@ -87,11 +87,12 @@ export default class DeltaBundler<T = MixedOutput> {
+       options,
      );
  
-+    test('lookup can find a file in a directory ending in a dot', () => {
-+      tfs.addOrModify(p('foo./x.js'), [0, 0, 0, null, 0, null]);
-+      expect(tfs.lookup(p('/project/root/project/foo./x.js'))).toMatchObject({
-+        exists: true,
-+        realPath: p('/project/foo./x.js'),
-+      });
-+    });
+-    await deltaCalculator.getDelta({reset: true, shallow: options.shallow});
+-    const graph = deltaCalculator.getGraph();
+-
+-    deltaCalculator.end();
+-    return graph.dependencies;
++    try {
++      await deltaCalculator.getDelta({reset: true, shallow: options.shallow});
++      return deltaCalculator.getGraph().dependencies;
++    } finally {
++      deltaCalculator.end();
++    }
+   }
+ 
+   // Note: the graph returned by this function needs to be ended when finished
+@@ -119,7 +120,16 @@ export default class DeltaBundler<T = MixedOutput> {
+         : {...options, transform: recordingTransform},
+     );
+ 
+-    await deltaCalculator.getDelta({reset: true, shallow: options.shallow});
++    try {
++      await deltaCalculator.getDelta({reset: true, shallow: options.shallow});
++    } catch (error) {
++      // A graph whose first build fails is never returned, so nothing else
++      // can end it: its calculator would keep listening for file changes and
++      // hold its partial graph for the life of the server, once per failed
++      // build. What the build transformed stays shared for its retries.
++      deltaCalculator.end();
++      throw error;
++    }
+     const graph = deltaCalculator.getGraph();
+ 
+     this._deltaCalculators.set(graph, deltaCalculator);
+```
+
+**File**: `packages/metro/src/DeltaBundler/__tests__/DeltaBundler-test.js` (modified, +26/-0)
+```diff
+@@ -117,6 +117,32 @@ describe('DeltaBundler', () => {
+     ).rejects.toBeInstanceOf(Error);
+   });
+ 
++  test('should end the calculator when the first build of a graph fails', async () => {
++    DeltaCalculator.prototype.end.mockClear();
++    DeltaCalculator.prototype.getDelta.mockRejectedValueOnce(
++      new Error('Build failed'),
++    );
 +
-+    test('matchFiles follows a link whose target leads into a directory ending in a dot', () => {
-+      const dotTfs = new TreeFS({
-+        rootDir: p('/project'),
-+        files: new Map<CanonicalPath, FileMetadata>([
-+          [p('foo./sub/x.js'), [0, 0, 0, null, 0, null]],
-+          [p('root'), [0, 0, 0, null, '..', null]],
-+          [p('link-to-sub'), [0, 0, 0, null, 'root/project/foo./sub', null]],
-+        ]),
-+        processFile: () => {
-+          throw new Error('Not implemented');
-+        },
-+      });
-+      expect(
-+        Array.from(
-+          dotTfs.matchFiles({
-+            follow: true,
-+            recursive: true,
-+            rootDir: p('/project'),
-+          }),
-+        ),
-+      ).toEqual([
-+        p('/project/foo./sub/x.js'),
-+        p('/project/root/project/foo./sub/x.js'),
-+        p('/project/root/project/link-to-sub/x.js'),
-+        p('/project/link-to-sub/x.js'),
-+      ]);
-+    });
++    await expect(
++      deltaBundler.buildGraph(mockGraph.entryPoints, options),
++    ).rejects.toThrow('Build failed');
 +
-     test('matchFiles follows links up', () => {
-       const matches = [
-         ...tfs.matchFiles({
++    expect(DeltaCalculator.prototype.end).toHaveBeenCalledTimes(1);
++  });
++
++  test('should end the calculator when getDependencies fails', async () => {
++    DeltaCalculator.prototype.end.mockClear();
++    DeltaCalculator.prototype.getDelta.mockRejectedValueOnce(
++      new Error('Build failed'),
++    );
++
++    await expect(
++      deltaBundler.getDependencies(mockGraph.entryPoints, options),
++    ).rejects.toThrow('Build failed');
++
++    expect(DeltaCalculator.prototype.end).toHaveBeenCalledTimes(1);
++  });
++
+   test('should throw an error when trying to end a graph twice', async () => {
+     const graph = await deltaBundler.buildGraph(mockGraph.entryPoints, options);
+ 
 ```
 
 ---
 
-### Incident Patch 2: `579e62e2` (2026-11-22)
-**Commit Message**: Fix Flow types that use `void` for a missing value (#2263)
+### Incident Patch 3: `f4a8fee3` (2026-11-25)
+**Commit Message**: Fix normalize_intersections errors ahead of time (X2, round 2)
 
 Summary:
+Type-only fixes for errors Flow reports in xplat/js with `experimental.normalize_intersections` on: object spreads instead of intersections with exact objects, inexact members next to an interface or class, and one Relay key type for each pair of spread fragments. Fixed 27, left 43; `metro-config`'s API snapshot is regenerated.
 
-Under Flow's `experimental.ts_void`, `void` is TypeScript's `void`, which flows only into `void`, `any` and `unknown`, so a value typed `void` can't be passed where an optional value is expected. This updates Metro's Flow types for projects that check Metro's sources with that option: RAM bundle `encoding` parameters become optional parameters, the bundle output's `save()` returns `Promise<void>`, two test helpers admit `void`, and the two errors whose only fix needs the `undefined` type, which this repository's Flow config doesn't enable, are suppressed.
+Changelog: [internal]
 
-Without that option, `void` and `undefined` are the same type, so nothing changes.
+Differential Revision: D134279260
 
-Changelog: [Internal]
+Pull Request resolved: https://github.com/react/metro/pull/2286
 
-Differential Revision: D133660832
-
-Pull Request resolved: https://github.com/react/metro/pull/2263
-
-**File**: `packages/metro-file-map/src/watchers/__tests__/helpers.js` (modified, +2/-2)
+**File**: `packages/metro-config/API.md` (modified, +2/-2)
 ```diff
-@@ -59,7 +59,7 @@ export type EventHelpers = {
-   nextEvent: (afterFn: () => Promise<void>) => Promise<{
-     eventType: string,
-     path: string,
--    metadata?: ChangeEventMetadata,
-+    metadata?: ChangeEventMetadata | void,
-   }>,
-   untilEvent: (
-     afterFn: () => Promise<void>,
-@@ -150,7 +150,7 @@ export const startWatching = async (
-       Promise.all([
-         new Promise<{
-           eventType: string,
--          metadata?: ChangeEventMetadata,
-+          metadata?: ChangeEventMetadata | void,
-           path: string,
-         }>((resolve, reject) => {
-           const unsubscribe: () => void = watcherInstance.onFileEvent(
-```
-
-**File**: `packages/metro/src/DeltaBundler/Transformer.js` (modified, +1/-0)
-```diff
-@@ -274,6 +274,7 @@ export default class Transformer {
-       this._workerFarm.transform(
-         projectRelativePath,
-         transformerOptions,
-+        // $FlowFixMe[incompatible-type] `void` is not `undefined` under experimental.ts_void
-         content,
-         assetUrlPath ?? undefined,
-       );
-```
-
-**File**: `packages/metro/src/DeltaBundler/__tests__/resolver-test.js` (modified, +1/-1)
-```diff
-@@ -125,7 +125,7 @@ function dep(name: string): TransformResultDependency {
-         from: string,
-         dependency: TransformResultDependency,
-         resolverOptions?: ResolverInputOptions = {dev: true},
--        options: void | {assumeFlatNodeModules: boolean},
-+        options?: {assumeFlatNodeModules: boolean},
-       ) =>
-         dependencyGraph.resolveDependency(
-           from,
-```
-
-**File**: `packages/metro/src/index.flow.js` (modified, +1/-0)
-```diff
-@@ -593,6 +593,7 @@ async function earlyPortCheck(host: void | string, port: number) {
-       server.on('error', err => {
-         reject(err);
-       });
-+      // $FlowFixMe[incompatible-type] `void` is not `undefined` under experimental.ts_void
-       server.listen(port, host, undefined, () => resolve());
-     });
-   } finally {
-```
-
-**File**: `packages/metro/src/shared/output/RamBundle/as-assets.js` (modified, +2/-2)
-```diff
-@@ -93,7 +93,7 @@ function createDir(dirName: string): Promise<void> {
- function writeModuleFile(
-   module: ModuleTransportLike,
-   modulesDir: string,
--  encoding: void | 'ascii' | 'utf16le' | 'utf8',
-+  encoding?: 'ascii' | 'utf16le' | 'utf8',
- ): Promise<unknown> {
-   const {code, id} = module;
-   return writeFile(path.join(modulesDir, id + '.js'), code, encoding);
-@@ -102,7 +102,7 @@ function writeModuleFile(
- function writeModules(
-   modules: ReadonlyArray<ModuleTransportLike>,
-   modulesDir: string,
--  encoding: void | 'ascii' | 'utf16le' | 'utf8',
-+  encoding?: 'ascii' | 'utf16le' | 'utf8',
- ): Promise<Array<unknown>> {
-   const writeFiles = modules.map(
-     (module: ModuleTransportLike): Promise<unknown> =>
-```
-
-**File**: `packages/metro/src/shared/output/RamBundle/as-indexed-file.js` (modified, +3/-3)
-```diff
-@@ -101,15 +101,15 @@ function writeBuffers(
+@@ -13,7 +13,7 @@ import type {ServerResponse} from 'node:http';
+ export type CacheStoresConfigT = ReadonlyArray<CacheStore<TransformResult>>;
  
- function nullTerminatedBuffer(
-   contents: string,
--  encoding: void | 'ascii' | 'utf16le' | 'utf8',
-+  encoding?: 'ascii' | 'utf16le' | 'utf8',
- ): Buffer {
-   return Buffer.concat([Buffer.from(contents, encoding), nullByteBuffer]);
- }
+ export type ConfigT = Readonly<
+-  MetalConfigT & {
++  Omit<MetalConfigT, 'cacheStores' | 'resolver' | 'server' | 'serializer' | 'symbolicator' | 'transformer' | 'watcher'> & {
+     cacheStores: CacheStoresConfigT;
+     resolver: Readonly<ResolverConfigT>;
+     server: Readonly<ServerConfigT>;
+@@ -63,7 +63,7 @@ export type GetTransformOptionsOpts = {
  
- function moduleToBuffer(
-   id: number,
-   code: string,
--  encoding: void | 'ascii' | 'utf16le' | 'utf8',
-+  encoding?: 'ascii' | 'utf16le' | 'utf8',
- ): {buffer: Buffer, id: number} {
-   return {
-     id,
-@@ -194,7 +194,7 @@ function groupCode(
- function buildModuleBuffers(
-   modules: ReadonlyArray<ModuleTransportLike>,
-   moduleGroups: ModuleGroups,
--  encoding: void | 'ascii' | 'utf16le' | 'utf8',
-+  encoding?: 'ascii' | 'utf16le' | 'utf8',
- ): Array<{
-   buffer: Buffer,
-   id: number,
+ export type InputConfigT = Partial<
+   Readonly<
+-    MetalConfigT & {
++    Omit<MetalConfigT, 'cacheStores' | 'resolver' | 'server' | 'serializer' | 'symbolicator' | 'transformer' | 'watcher'> & {
+       cacheStores: CacheStoresConfigT | ((metroCache: MetroCache) => CacheStoresConfigT);
+       resolver: Readonly<Partial<ResolverConfigT>>;
+       server: Readonly<Partial<ServerConfigT>>;
 ```
 
-**File**: `packages/metro/src/shared/output/bundle.flow.js` (modified, +1/-1)
+**File**: `packages/metro-config/src/types.js` (modified, +29/-35)
 ```diff
-@@ -69,7 +69,7 @@ export async function save(
-   },
-   options: OutputOptions,
-   log: (message: string) => void,
--): Promise<unknown> {
-+): Promise<void> {
-   const {
-     bundleOutput,
-     bundleEncoding: encoding,
+@@ -258,46 +258,40 @@ type WatcherConfigT = {
+ };
+ 
+ export type InputConfigT = Partial<
+-  Readonly<
+-    MetalConfigT & {
+-      cacheStores:
+-        CacheStoresConfigT | ((metroCache: MetroCache) => CacheStoresConfigT),
+-      resolver: Readonly<Partial<ResolverConfigT>>,
+-      server: Readonly<Partial<ServerConfigT>>,
+-      serializer: Readonly<Partial<SerializerConfigT>>,
+-      symbolicator: Readonly<Partial<SymbolicatorConfigT>>,
+-      transformer: Readonly<Partial<TransformerConfigT>>,
+-      watcher: Partial<
+-        Readonly<
+-          Omit<
+-            WatcherConfigT,
+-            'healthCheck' | 'unstable_autoSaveCache' | 'watchman',
+-          > & {
+-            healthCheck: Partial<Readonly<WatcherConfigT['healthCheck']>>,
+-            unstable_autoSaveCache: Partial<
+-              Readonly<WatcherConfigT['unstable_autoSaveCache']>,
+-            >,
+-            watchman: Partial<Readonly<WatcherConfigT['watchman']>>,
+-          },
++  Readonly<{
++    ...MetalConfigT,
++    cacheStores:
++      CacheStoresConfigT | ((metroCache: MetroCache) => CacheStoresConfigT),
++    resolver: Readonly<Partial<ResolverConfigT>>,
++    server: Readonly<Partial<ServerConfigT>>,
++    serializer: Readonly<Partial<SerializerConfigT>>,
++    symbolicator: Readonly<Partial<SymbolicatorConfigT>>,
++    transformer: Readonly<Partial<TransformerConfigT>>,
++    watcher: Partial<
++      Readonly<{
++        ...WatcherConfigT,
++        healthCheck: Partial<Readonly<WatcherConfigT['healthCheck']>>,
++        unstable_autoSaveCache: Partial<
++          Readonly<WatcherConfigT['unstable_autoSaveCache']>,
+         >,
+-      >,
+-    },
+-  >,
++        watchman: Partial<Readonly<WatcherConfigT['watchman']>>,
++      }>,
++    >,
++  }>,
+ >;
+ 
+ export type MetroConfig = InputConfigT;
+ 
+-export type ConfigT = Readonly<
+-  MetalConfigT & {
+-    cacheStores: CacheStoresConfigT,
+-    resolver: Readonly<ResolverConfigT>,
+-    server: Readonly<ServerConfigT>,
+-    serializer: Readonly<SerializerConfigT>,
+-    symbolicator: Readonly<SymbolicatorConfigT>,
+-    transformer: Readonly<TransformerConfigT>,
+-    watcher: Readonly<WatcherConfigT>,
+-  },
+->;
++export type ConfigT = Readonly<{
++  ...MetalConfigT,
++  cacheStores: CacheStoresConfigT,
++  resolver: Readonly<ResolverConfigT>,
++  server: Readonly<ServerConfigT>,
++  serializer: Readonly<SerializerConfigT>,
++  symbolicator: Readonly<SymbolicatorConfigT>,
++  transformer: Readonly<TransformerConfigT>,
++  watcher: Readonly<WatcherConfigT>,
++}>;
+ 
+ export type YargArguments = Readonly<{
+   config?: string,
 ```
-
----
-
-### Incident Patch 3: `6a5144a8` (2026-11-22)
-**Commit Message**: Type-only fixes for Flow's TypeScript iterator defaults
-
-Summary:
-A future Flow lib change gives the iterator types TypeScript's defaults: `IteratorObject<T>` becomes `IteratorObject<T, unknown, unknown>` (was `void, void`).
-
-metro's `mapIterable` spells out the old defaults (`IteratorObject<S, void, void>`) instead, since `S` is not in scope inside it. This diff adjusts it ahead of time.
-
-Differential Revision: D133808530
-
-Pull Request resolved: https://github.com/react/metro/pull/2276
 
 **File**: `packages/metro-file-map/src/index.js` (modified, +1/-1)
 ```diff
-@@ -1328,7 +1328,7 @@ const toPublicMetadata = (
- const mapIterable: <T, S>(
-   it: Iterable<T>,
-   fn: (item: T) => S,
--) => IteratorObject<S> = (it, fn) =>
-+) => IteratorObject<S, void, void> = (it, fn) =>
-   (function* mapped() {
-     for (const item of it) {
-       yield fn(item);
+@@ -850,7 +850,7 @@ export default class FileMap extends EventEmitter {
+     const readLinkPromises: Array<Promise<void>> = [];
+     const readLinkErrors: Array<{
+       normalFilePath: string,
+-      error: Error & {code?: string},
++      error: Error & {code?: string, ...},
+     }> = [];
+     const filesToProcess: Array<[string, FileMetadata]> = [];
+ 
+```
+
+**File**: `packages/metro/src/index.flow.js` (modified, +1/-1)
+```diff
+@@ -74,7 +74,7 @@ export type RunMetroOptions = {
+ export type RunServerOptions = Readonly<{
+   hasReducedPerformance?: boolean,
+   host?: string,
+-  onError?: (err: Error & {code?: string}) => void,
++  onError?: (err: Error & {code?: string, ...}) => void,
+   onReady?: (server: HttpServer | HttpsServer) => void,
+   onClose?: () => void,
+   secureServerOptions?: HttpsServerOptions,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2284** (2026-11-24): Test only: Fix macOS flakes in FallbackWatcher-test (@robhogan)
-- **PR #2282** (2026-11-24): Log the worker CPU time of each transform (#2282) (@vzaidman)
-- **PR #2278** (2026-11-22): Keep side effects in sequence operands when folding constants (@burrows99)
-- **PR #2276** (2026-11-22): Type-only fixes for Flow's TypeScript iterator defaults (@SamChou19815)
-- **PR #2274** (2026-11-22): Deploy 0.342.0 to xplat (@SamChou19815)
-- **PR #2272** (2026-11-23): Fix lint missing devDependency and private imports in published sources (@robhogan)
+- **PR #2305** (2026-11-26): Allow optional properties in plugin data (#2305) (@motiz88)
+- **PR #2302** (2026-11-26): Publish 0.88.1 (@robhogan)
+- **PR #2297** (closed): Resolver: Return optional dependencies that don't resolve instead of throwing and catching (@robhogan)
+- **PR #2295** (2026-11-26): Resolver: Keep Haste names observed while resolving the empty module (@robhogan)
+- **PR #2294** (2026-11-26): metro-file-map: Use the default health check prefix when given an empty one (@robhogan)
+- **PR #2292** (closed): metro-file-map: Fix hierarchicalLookup observations under breakOnSegment (@robhogan)
 
 ---
 
@@ -1912,68 +1860,31 @@ Pull Request resolved: https://github.com/react/metro/pull/2276
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lookups through a directory whose name ends in a dot
+## X. metro-file-map: Use the default health check prefix when given an empty one
 
 **RULE**:
-When implementing operations in `packages/metro-file-map/src/lib/RootPathUtils.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/Configuration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `147374bb`: lookups through a directory whose name ends in a dot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c4ea925`: metro-file-map: Use the default health check prefix when given an empty one. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-file-map/src/lib/RootPathUtils.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Configuration.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// The index of the first "./" at or after `fromIdx` that ends a "." or ".."
-// segment, rather than a name such as "foo.", or -1 if there is none.
-function indexOfIndirectionSegment(fullPath: string, fromIdx: number): number {
-  for (
-    let idx = fullPath.indexOf(CURRENT_FRAGMENT, fromIdx);
-    idx !== -1;
-    idx = fullPath.indexOf(CURRENT_FRAGMENT, idx + CURRENT_FRAGMENT.length)
-  ) {
-    if (
-      idx === 0 ||
-      fullPath[idx - 1] === path.sep ||
-      (fullPath[idx - 1] === '.' &&
-        (idx === 1 || fullPath[idx - 2] === path.sep))
-    ) {
-      return idx;
-    }
-  }
-  return -1;
-}
-
-    // path.relative on any later "." or ".." segment. A "./" that ends a name,
-    // e.g. in "foo./", is not an indirection.
-      if (nextIndirection !== pos + 1 || fullPath[pos] !== '.') {
-        if (
-          nextIndirection !== -1 &&
-          indexOfIndirectionSegment(fullPath, nextIndirection) !== -1
-        ) {
-          return null;
-        }
+The name of the temporary file that health checks write into the project. Metro ignores files whose names start with this prefix. Defaults to `'.metro-health-check'`, which is also used if this is an empty string.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-    // path.relative if we find a possible indirection after any later segment,
-    // or on any "./" that isn't a "../".
-      if (nextIndirection === -1) {
-
-      if (
-        nextIndirection !== pos + 1 || // Fallback when ./ later in the path, or leading
-        fullPath[pos] !== '.' // and for anything other than a leading ../
-      ) {
-        return null;
-      }
+The name of the temporary file that health checks write into the project. Defaults to `'.metro-health-check'`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `147374bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c4ea925` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
