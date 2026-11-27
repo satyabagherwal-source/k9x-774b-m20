@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T14:17:02.970Z",
-    "lastVerified": "2026-11-27T14:17:02.970Z",
+    "lastChecked": "2026-11-27T14:25:47.790Z",
+    "lastVerified": "2026-11-27T14:25:47.790Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -198,8 +198,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T13:46:36.238Z",
-    "lastVerified": "2026-11-27T13:46:36.238Z",
+    "lastChecked": "2026-11-27T14:25:47.780Z",
+    "lastVerified": "2026-11-27T14:25:47.780Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -752,8 +752,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T09:32:51.284Z",
-    "lastVerified": "2026-11-27T09:32:51.284Z",
+    "lastChecked": "2026-11-27T14:25:42.770Z",
+    "lastVerified": "2026-11-27T14:25:42.770Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -960,9 +960,9 @@
   "ducaale-xh": {
     "name": "xh",
     "officialUrl": "https://github.com/ducaale/xh",
-    "lastChecked": "2026-11-26T14:13:25.709Z",
+    "lastChecked": "2026-11-27T14:25:32.768Z",
     "revisionIdentifier": "8b21cc07",
-    "lastVerified": "2026-11-26T14:13:25.709Z"
+    "lastVerified": "2026-11-27T14:25:32.768Z"
   },
   "hf-moonshotai-kimi-k3": {
     "name": "moonshotai/Kimi-K3",
@@ -2286,9 +2286,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-11-26T19:25:27.492Z",
+    "lastChecked": "2026-11-27T14:25:45.284Z",
     "revisionIdentifier": "d375c6d7",
-    "lastVerified": "2026-11-26T19:25:27.492Z"
+    "lastVerified": "2026-11-27T14:25:45.284Z"
   },
   "unhappychoice-gitlogue": {
     "name": "unhappychoice/gitlogue",
@@ -6022,9 +6022,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-11-26T20:31:43.195Z",
+    "lastChecked": "2026-11-27T14:25:40.312Z",
     "revisionIdentifier": "3dc1c51e",
-    "lastVerified": "2026-11-26T20:31:43.195Z"
+    "lastVerified": "2026-11-27T14:25:40.312Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -9207,9 +9207,9 @@
   "swiftkickmobile-swiftmessages": {
     "name": "SwiftMessages",
     "officialUrl": "https://github.com/SwiftKickMobile/SwiftMessages",
-    "lastChecked": "2026-11-25T05:19:44.459Z",
+    "lastChecked": "2026-11-27T14:25:37.781Z",
     "revisionIdentifier": "c0ff6c65",
-    "lastVerified": "2026-11-25T05:19:44.459Z"
+    "lastVerified": "2026-11-27T14:25:37.781Z"
   },
   "nguyenphutrong-quotio": {
     "name": "nguyenphutrong/quotio",
@@ -9869,9 +9869,9 @@
   "iaincollins-structured-data-testing-tool": {
     "name": "structured-data-testing-tool",
     "officialUrl": "https://github.com/iaincollins/structured-data-testing-tool",
-    "lastChecked": "2026-11-24T04:28:44.262Z",
+    "lastChecked": "2026-11-27T14:25:35.310Z",
     "revisionIdentifier": "8300079044",
-    "lastVerified": "2026-11-24T04:28:44.262Z"
+    "lastVerified": "2026-11-27T14:25:35.310Z"
   },
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",
