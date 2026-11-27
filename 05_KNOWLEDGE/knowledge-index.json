@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T15:00:15.331Z",
+  "last_updated": "2026-11-27T15:09:23.684Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ab05a8c637aeb6915cd33231a39ad2354b92812f9e8a296a351b92bfbda2b55",
+      "content_hash": "9b5d38ab1ad992276d241ee4d1cae212af0d46f36d5d86f776ecc8037846f784",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:00:13.536Z"
+      "persisted_at": "2026-11-27T15:09:23.479Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1fb333ce6701c13075ac07fc3559c8bc7e9be6db6451918e58587832249bf055",
+      "content_hash": "a82475b89ea52df995625e327f10bf3603a1cdeea0de78e5c4e72d43f01e9a97",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:00:13.823Z"
+      "persisted_at": "2026-11-27T15:09:23.684Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219737,9 +219737,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ac7d1be72a6c8189a37a37a86ea4af6b922b644220203a484051e1692751368",
+      "content_hash": "ce90a24acb382c0df71b42c0e8178af1a70d793a9976ae5e9735901043f266cd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T13:23:16.104Z"
+      "persisted_at": "2026-11-27T15:09:22.546Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219749,9 +219749,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d5d213ca77331d668ba45731819c6f358b509ce3ae1692d29aa303f019fcc3c8",
+      "content_hash": "71cab29a02afeb0f8daf5fe469b2d79f30fd21586a035dcb5be0065e1e01895e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:23:16.318Z"
+      "persisted_at": "2026-11-27T15:09:22.750Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -230316,9 +230316,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "225b64432279223f2261b3ffb92a834059db7286e6e9e37251387e858e4b1829",
+      "content_hash": "30ec6400ab48dbe6e3e01b4087dc09ca0ca2ea9c61dce478b80c08567dd1a672",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:43:22.510Z"
+      "persisted_at": "2026-11-27T15:09:21.565Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230328,9 +230328,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "e8518b40bd07cb833adbb99d5157ce01f01ea34d8db3300c73ae6fdf3b1c9f7d",
+      "content_hash": "009977129d0269cd9bd4e5b5477a947df77d7404cf1828c684d75e38ec0500a8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:43:22.715Z"
+      "persisted_at": "2026-11-27T15:09:21.776Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -350330,13 +350330,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HW6S-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ACKA-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "37367eac2efbee8d16f21e96f5372e2edf0ce8463820962dae4869a928f1a256",
+      "content_hash": "05eb39bd01456ec03e963842f64b6a86a3d40325fccfe38280514594e5da7d24",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T13:23:15.892Z"
+      "persisted_at": "2026-11-27T15:09:22.330Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361243,13 +361243,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YKWD-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ADAC-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "91d00c5036170ae4402afc583c86d7de3f403efcb09f3395c1fb4570979ae369",
+      "content_hash": "6a1ce992c45e78c7b77c48af4265b4531328a649fc6990f398940a91a9f12c16",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:00:13.265Z"
+      "persisted_at": "2026-11-27T15:09:23.271Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T15:00:14.785Z",
+  "last_updated": "2026-11-27T15:09:23.271Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61418,11 +61418,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-HW6S",
+      "id": "CD-ACKA",
       "directive_title": "Bump version number",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HW6S-bump-version-number.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ACKA-bump-version-number.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -68059,11 +68059,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-YKWD",
+      "id": "CD-ADAC",
       "directive_title": "renderer): refuse last-error reads off the engine owner thread",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-YKWD-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ADAC-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -70989,6 +70989,33 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6573F3-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-DD9A66",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DD9A66-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-60EC43",
+      "directive_title": "Bump version number",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-60EC43-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-ECD0E0",
+      "directive_title": "renderer): refuse last-error reads off the engine owner thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ECD0E0-renderer-refuse-last-error-reads-off-the.md",
       "staged_date": "2026-11-27"
     }
   ]
