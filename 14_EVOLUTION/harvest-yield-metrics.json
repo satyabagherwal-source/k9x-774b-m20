@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:14:51.257Z",
-  "total_cycles_completed": 13003,
-  "total_learnings_persisted": 13003,
-  "total_rules_promoted": 11752,
+  "last_updated": "2026-11-27T06:29:17.828Z",
+  "total_cycles_completed": 13005,
+  "total_learnings_persisted": 13005,
+  "total_rules_promoted": 11753,
   "history": [
-    {
-      "timestamp": "2026-11-26T17:39:22.084Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T17:39:28.700Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T17:39:31.066Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T06:14:51.257Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T06:29:06.792Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T06:29:17.828Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

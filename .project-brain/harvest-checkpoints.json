@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T06:14:51.260Z",
+  "last_updated": "2026-11-27T06:29:17.832Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1967,14 +1967,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
-      "content_hash": "9574cb32a91402b49f026bfea7ce890fe22f9e70e6f1cc74aeca3fcf2985a2f7",
-      "verified_at": "2026-11-23T21:14:41.237Z",
+      "content_hash": "27f7f943b252b4b34bb9f08bc09905077832f68f98e774c1b64983cf0d1c242a",
+      "verified_at": "2026-11-27T06:29:06.796Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:14:41.237Z"
+      "last_updated": "2026-11-27T06:29:06.796Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "b2a8de1309423d139f69614fa7a585280d2665d59ea3b8d5e3cf3e5013bd3ad3",
-      "verified_at": "2026-11-26T13:36:01.488Z",
+      "content_hash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
+      "verified_at": "2026-11-27T06:29:17.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:36:01.488Z"
+      "last_updated": "2026-11-27T06:29:17.831Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",

@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T06:14:54.551Z",
-    "lastVerified": "2026-11-27T06:14:54.551Z",
+    "lastChecked": "2026-11-27T06:29:21.527Z",
+    "lastVerified": "2026-11-27T06:29:21.527Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -199,8 +199,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T05:48:25.636Z",
-    "lastVerified": "2026-11-27T05:48:25.636Z",
+    "lastChecked": "2026-11-27T06:29:18.008Z",
+    "lastVerified": "2026-11-27T06:29:18.008Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1603,9 +1603,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-27T02:08:00.537Z",
+    "lastChecked": "2026-11-27T06:29:13.029Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-27T02:08:00.537Z"
+    "lastVerified": "2026-11-27T06:29:13.029Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -3180,14 +3180,14 @@
     "officialUrl": "https://github.com/beclab/Olares",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T13:36:00.264Z",
-    "lastVerified": "2026-11-26T13:36:00.264Z",
+    "lastChecked": "2026-11-27T06:29:16.274Z",
+    "lastVerified": "2026-11-27T06:29:16.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-beclab-olares",
-    "contentHash": "b2a8de1309423d139f69614fa7a585280d2665d59ea3b8d5e3cf3e5013bd3ad3",
+    "contentHash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 2,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6823,8 +6823,8 @@
     "officialUrl": "https://github.com/apache/incubator-pegasus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-26T12:29:04.317Z",
-    "lastVerified": "2026-11-26T12:29:04.317Z",
+    "lastChecked": "2026-11-27T06:29:15.520Z",
+    "lastVerified": "2026-11-27T06:29:15.520Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-incubator-pegasus",
@@ -6996,9 +6996,9 @@
   "kizitonwose-calendar": {
     "name": "Calendar",
     "officialUrl": "https://github.com/kizitonwose/Calendar",
-    "lastChecked": "2026-11-24T22:15:49.054Z",
+    "lastChecked": "2026-11-27T06:29:08.118Z",
     "revisionIdentifier": "c2711b3c",
-    "lastVerified": "2026-11-24T22:15:49.054Z"
+    "lastVerified": "2026-11-27T06:29:08.118Z"
   },
   "open-policy-agent-opa": {
     "name": "open-policy-agent/opa",
@@ -7971,9 +7971,9 @@
   "arxanas-git-branchless": {
     "name": "git-branchless",
     "officialUrl": "https://github.com/arxanas/git-branchless",
-    "lastChecked": "2026-11-26T05:29:00.997Z",
+    "lastChecked": "2026-11-27T06:29:02.971Z",
     "revisionIdentifier": "d0eceb7e",
-    "lastVerified": "2026-11-26T05:29:00.997Z"
+    "lastVerified": "2026-11-27T06:29:02.971Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -8495,12 +8495,12 @@
     "officialUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T21:14:29.419Z",
-    "lastVerified": "2026-11-23T21:14:29.419Z",
+    "lastChecked": "2026-11-27T06:29:05.875Z",
+    "lastVerified": "2026-11-27T06:29:05.875Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "9574cb32a91402b49f026bfea7ce890fe22f9e70e6f1cc74aeca3fcf2985a2f7",
+    "contentHash": "27f7f943b252b4b34bb9f08bc09905077832f68f98e774c1b64983cf0d1c242a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

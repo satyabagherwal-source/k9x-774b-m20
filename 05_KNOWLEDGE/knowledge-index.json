@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T06:15:02.074Z",
+  "last_updated": "2026-11-27T06:29:24.826Z",
   "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26412,
+  "total_items": 26415,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b6c180b9dd360125aeab4b88b9868d5d8b883621896c66935bc5b85d1b200ff",
+      "content_hash": "1cc0c9f7f70294a5c1752c90d2752d9354e7a9a9b9a0423494d7711c78ad6e85",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T06:06:15.484Z"
+      "persisted_at": "2026-11-27T06:29:24.826Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -229270,8 +229270,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "18aa13cc",
-      "content_hash": "b2a8de1309423d139f69614fa7a585280d2665d59ea3b8d5e3cf3e5013bd3ad3",
+      "source_version": "640a0d4b",
+      "content_hash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -229324,6 +229324,11 @@
           "number": 10689,
           "title": "unblock fixed-MAC Overlay Pod recovery",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10843,
+          "title": "bump oac version v0.0.4",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229331,7 +229336,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T13:36:01.229Z",
+      "verified_at": "2026-11-27T06:29:17.460Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229359,10 +229364,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "18aa13cc",
-      "content_hash": "138f224e0bf4d045e98f9bd26ee06331e5a98629e5e88d80daa085a7beed7507",
+      "source_version": "640a0d4b",
+      "content_hash": "084d944c630f18a9eb3ff7dac90fb84d999e77ef7604f11dc086d663a0bfb2c3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T13:36:01.894Z"
+      "persisted_at": "2026-11-27T06:29:18.440Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -229371,10 +229376,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "7a416142",
-      "content_hash": "244e718cc3c8b09a6baa2e1da34b63a051dda6ce91319e7c6035a726839d1d20",
+      "source_version": "640a0d4b",
+      "content_hash": "88bf42b254906ae970e6d392a02734a612170dc87cffbef5a59ccb5338a3e257",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T13:20:36.336Z"
+      "persisted_at": "2026-11-27T06:29:18.717Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -229408,9 +229413,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b46e9c2d8674204881bb691ef860d8a21b9f339e269d0c557df158326c77cf2",
+      "content_hash": "896f814397d03e5ddf86af3974b576f1eb2835c3e8beeeadd9e54e1872b292d1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T13:36:13.896Z"
+      "persisted_at": "2026-11-27T06:29:23.093Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -229420,9 +229425,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "3db6fb90315ddedfbcdd5909444ceff7e1aa595f9cc8d1edd20966c19b4adba8",
+      "content_hash": "0f85be8f6b18fdcf6c1c58c3a43cd1dc2dca65f338f2c6ffd1de5014e664222e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:36:14.077Z"
+      "persisted_at": "2026-11-27T06:29:23.366Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -242391,7 +242396,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "1551b10ad9c9e32455c6cf700007e307be8427224c0d3fa89cd5ec44079925d1",
+      "content_hash": "27f7f943b252b4b34bb9f08bc09905077832f68f98e774c1b64983cf0d1c242a",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [],
@@ -242400,7 +242405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T14:20:16.843Z",
+      "verified_at": "2026-11-27T06:29:06.430Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242417,9 +242422,9 @@
       "title": "Research & Knowledge Intelligence: speridlabs/iris-3b Core Invariants",
       "repository": "speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "44b97a2955d07de2ecff49dd96df3cbf7352b023de54f3dbc71d826f1b6753a0",
+      "content_hash": "cff2858b5fd1b0b72b94e2f6f046df316c2f9482b379ca09a6cb957fc9b38eb3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T14:20:17.236Z"
+      "persisted_at": "2026-11-27T06:29:07.108Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale",
@@ -242629,9 +242634,9 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-iris-3b-learnings Core Invariants",
       "repository": "hf-speridlabs-iris-3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "75e31634d6cc5f88da223bf1fa41bfbdb883cb2bd0c00b7b712e6a0d3a34f7e1",
+      "content_hash": "8f232d830a6608167f3221a093f886d60d41d71dd1e9cea8cb584be3272fcd66",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:14:52.628Z"
+      "persisted_at": "2026-11-27T06:29:22.065Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i": {
       "item_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
@@ -357975,13 +357980,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VW3V-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PNZJ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e69485a42ac275414081db9c50dceab6a4fa2cf82695e4599463ae2bfbd3fa8f",
+      "content_hash": "da997a47e943dd5f6f44c8c016373e72afc20919f4dc40c36b5bf0b887a39cb0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T06:06:15.117Z"
+      "persisted_at": "2026-11-27T06:29:24.277Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357991,9 +357996,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7895e2303115a1ff41b9f6dd17203bfddf99d44455bfd53aa3ec437729906b11",
+      "content_hash": "72eda21f34fecf11cb233c060e876d5ddc9cc2025c463499089fe7109277908f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T06:06:15.304Z"
+      "persisted_at": "2026-11-27T06:29:24.545Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362392,6 +362397,44 @@
       "content_hash": "4e2d5d512bb89bcec2293822aefe252cfbabbadd3351873ac1f9bd0eb0e96b8d",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T06:15:01.690Z"
+    },
+    "rule-10843": {
+      "learning_id": "rule-10843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10843,
+      "title": "bump oac version v0.0.4",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "640a0d4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T06:29:17.460Z"
+    },
+    "candidate_directive-bump-oac-version-v0-0-4": {
+      "item_id": "candidate_directive-bump-oac-version-v0-0-4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PJ9J-bump-oac-version-v0-0-4.md",
+      "title": "bump oac version v0.0.4",
+      "repository": "beclab/Olares",
+      "source_version": "640a0d4b",
+      "content_hash": "aae6764757d26933a23d04c951cdb14e3d4c02d53459910bbf57f8709bbbd6f0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T06:29:18.152Z"
+    },
+    "candidate_directive-appservice-bump-oac-version-v0-0-4": {
+      "item_id": "candidate_directive-appservice-bump-oac-version-v0-0-4",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PMUX-appservice-bump-oac-version-v0-0-4.md",
+      "title": "appservice): bump oac version v0.0.4",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ff504738f094fcfe8e8e4b29167c6132f1cd9693d0a97c17b1cfedc8110af10a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T06:29:22.810Z"
     }
   },
   "ai-builder-brain": {

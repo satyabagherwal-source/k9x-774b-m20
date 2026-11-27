@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T06:15:01.887Z",
+  "last_updated": "2026-11-27T06:29:24.545Z",
   "total_records": 2815,
   "domains": {
     "A": {
@@ -15199,8 +15199,8 @@
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "repository": "beclab/Olares",
-      "content_hash": "138f224e0bf4d045e98f9bd26ee06331e5a98629e5e88d80daa085a7beed7507",
-      "created_at": "2026-11-26T13:36:01.894Z"
+      "content_hash": "084d944c630f18a9eb3ff7dac90fb84d999e77ef7604f11dc086d663a0bfb2c3",
+      "created_at": "2026-11-27T06:29:18.440Z"
     },
     "DOM-D-01385688": {
       "record_id": "DOM-D-01385688",
@@ -15259,8 +15259,8 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-learnings-technical-construction-intelligence-beclab-olares-learni.md",
       "repository": "beclab-olares-learnings",
-      "content_hash": "9b46e9c2d8674204881bb691ef860d8a21b9f339e269d0c557df158326c77cf2",
-      "created_at": "2026-11-26T13:36:13.896Z"
+      "content_hash": "896f814397d03e5ddf86af3974b576f1eb2835c3e8beeeadd9e54e1872b292d1",
+      "created_at": "2026-11-27T06:29:23.093Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
@@ -19129,8 +19129,8 @@
       "title": "Research & Knowledge Intelligence: speridlabs/iris-3b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-research-knowledge-intelligence-speridlabs-iris-3b-core-in.md",
       "repository": "speridlabs/iris-3b",
-      "content_hash": "2e016ef3359793cc78a4850a188e0f30b7d97e04d2ed9e7dbac48b3045dd7c48",
-      "created_at": "2026-11-23T21:14:41.652Z"
+      "content_hash": "cff2858b5fd1b0b72b94e2f6f046df316c2f9482b379ca09a6cb957fc9b38eb3",
+      "created_at": "2026-11-27T06:29:07.108Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants",
@@ -19198,8 +19198,8 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-iris-3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-learnings-research-knowledge-intelligence-hf-speridlabs-ir.md",
       "repository": "hf-speridlabs-iris-3b-learnings",
-      "content_hash": "75e31634d6cc5f88da223bf1fa41bfbdb883cb2bd0c00b7b712e6a0d3a34f7e1",
-      "created_at": "2026-11-23T21:14:52.628Z"
+      "content_hash": "8f232d830a6608167f3221a093f886d60d41d71dd1e9cea8cb584be3272fcd66",
+      "created_at": "2026-11-27T06:29:22.065Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
@@ -46762,8 +46762,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "7895e2303115a1ff41b9f6dd17203bfddf99d44455bfd53aa3ec437729906b11",
-      "created_at": "2026-11-27T06:06:15.304Z"
+      "content_hash": "72eda21f34fecf11cb233c060e876d5ddc9cc2025c463499089fe7109277908f",
+      "created_at": "2026-11-27T06:29:24.545Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

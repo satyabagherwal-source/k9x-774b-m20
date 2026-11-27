@@ -13699,3 +13699,5 @@
 | `CYCLE-20261127-6KLX` | `2026-11-27T06:14:33.429Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`84ed3098...`) |
 | `CYCLE-20261127-6M1L` | `2026-11-27T06:14:35.289Z` | `oracle-devrel/oracle-ai-developer-hub` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10841` | Yes (`dca85962...`) |
 | `CYCLE-20261127-6YCJ` | `2026-11-27T06:14:51.235Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10842` | Yes (`1f343814...`) |
+| `CYCLE-20261127-PAHG` | `2026-11-27T06:29:06.772Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`27f7f943...`) |
+| `CYCLE-20261127-PIZL` | `2026-11-27T06:29:17.793Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10843` | Yes (`8e2e61f5...`) |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-LRFE",
-    "timestamp": "2026-11-26T00:34:46.682Z",
-    "repository": "indexable-inc/blaze",
-    "learningId": "learn-github-indexable-inc-blaze",
-    "contentHash": "fbb740c28cf7b7aad0ac2e9d9e3752586a36904e7381f6b427da59e174ca01b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-M0BK",
-    "timestamp": "2026-11-26T00:34:58.208Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "754141eb2afd72133b3bd01835d8698b8dee828aad27a2365c6939a3bfeda731",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-0P5T",
     "timestamp": "2026-11-26T00:46:23.585Z",
     "repository": "webAI-Official/TwIL-8B",
@@ -7490,6 +7460,36 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "1f343814857db2dfa3de55027c4d34bb92bc18ec9bc3d2a7a7aa26c4125cad48",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-PAHG",
+    "timestamp": "2026-11-27T06:29:06.772Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "27f7f943b252b4b34bb9f08bc09905077832f68f98e774c1b64983cf0d1c242a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-PIZL",
+    "timestamp": "2026-11-27T06:29:17.793Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

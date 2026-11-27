@@ -1025,8 +1025,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "9574cb32a91402b49f026bfea7ce890fe22f9e70e6f1cc74aeca3fcf2985a2f7",
-    "lastHarvestedAt": "2026-11-23T21:14:41.221Z",
+    "contentHash": "27f7f943b252b4b34bb9f08bc09905077832f68f98e774c1b64983cf0d1c242a",
+    "lastHarvestedAt": "2026-11-27T06:29:06.777Z",
     "learningId": "learn-huggingface-speridlabs-iris-3b"
   },
   "hf-qwen-qwen3-4b": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "18aa13cc",
+    "sourceVersion": "640a0d4b",
     "license": "AGPL-3.0",
-    "contentHash": "b2a8de1309423d139f69614fa7a585280d2665d59ea3b8d5e3cf3e5013bd3ad3",
-    "lastHarvestedAt": "2026-11-26T13:36:01.469Z",
+    "contentHash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
+    "lastHarvestedAt": "2026-11-27T06:29:17.813Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {

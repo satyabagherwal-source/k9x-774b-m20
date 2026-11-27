@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:15:02.254Z",
+  "last_updated": "2026-11-27T06:29:25.060Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T06:06:14.667Z",
+      "processed_at": "2026-11-27T06:29:23.628Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -658,7 +658,7 @@
       "staged_for_review": 1
     },
     "beclab-olares-learnings.md": {
-      "processed_at": "2026-11-26T13:36:13.430Z",
+      "processed_at": "2026-11-27T06:29:22.383Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2788,7 +2788,7 @@
       "staged_for_review": 1
     },
     "hf-speridlabs-iris-3b-learnings.md": {
-      "processed_at": "2026-11-23T21:14:52.366Z",
+      "processed_at": "2026-11-27T06:29:21.720Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4033,7 +4033,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4845,
+  "total_dossiers_evaluated": 4848,
   "total_canonical_promoted": 574,
-  "total_staged_for_review": 3628
+  "total_staged_for_review": 3630
 }

@@ -13732,3 +13732,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-27T06:14:33.433Z |
 | `learn-github-oracle-devrel-oracle-ai-developer-hub` | `https://github.com/oracle-devrel/oracle-ai-developer-hub` | `d9ffc5eb` | Multi-dimensional audit evidence | 2026-11-27T06:14:35.301Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `ee4f1331` | Multi-dimensional audit evidence | 2026-11-27T06:14:51.247Z |
+| `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-27T06:29:06.777Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `640a0d4b` | Multi-dimensional audit evidence | 2026-11-27T06:29:17.813Z |
