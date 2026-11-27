@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T22:14:16.499Z",
-    "lastVerified": "2026-11-27T22:14:16.500Z",
+    "lastChecked": "2026-11-27T22:23:03.335Z",
+    "lastVerified": "2026-11-27T22:23:03.335Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -265,8 +265,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-27T18:08:21.291Z",
-    "lastVerified": "2026-11-27T18:08:21.291Z",
+    "lastChecked": "2026-11-27T22:22:51.986Z",
+    "lastVerified": "2026-11-27T22:22:51.986Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -288,9 +288,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T21:47:54.682Z",
+    "lastChecked": "2026-11-27T22:22:56.841Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T21:47:54.682Z"
+    "lastVerified": "2026-11-27T22:22:56.841Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2261,9 +2261,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-27T04:27:14.076Z",
+    "lastChecked": "2026-11-27T22:22:49.334Z",
     "revisionIdentifier": "8152c961",
-    "lastVerified": "2026-11-27T04:27:14.076Z"
+    "lastVerified": "2026-11-27T22:22:49.334Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale",
@@ -4789,9 +4789,9 @@
   "sharkdp-pastel": {
     "name": "pastel",
     "officialUrl": "https://github.com/sharkdp/pastel",
-    "lastChecked": "2026-11-26T22:21:35.604Z",
+    "lastChecked": "2026-11-27T22:22:41.899Z",
     "revisionIdentifier": "01d4252a",
-    "lastVerified": "2026-11-26T22:21:35.604Z"
+    "lastVerified": "2026-11-27T22:22:41.899Z"
   },
   "hf-tongyi-mai-z-image-turbo": {
     "name": "Tongyi-MAI/Z-Image-Turbo",
@@ -5573,22 +5573,21 @@
     "revisionIdentifier": "af8beda6"
   },
   "sqlpage-sqlpage": {
-    "name": "SQLPage",
+    "name": "sqlpage/SQLPage",
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T03:16:24.454Z",
-    "lastVerified": "2026-11-27T03:16:24.454Z",
+    "lastChecked": "2026-11-27T22:22:58.581Z",
+    "lastVerified": "2026-11-27T22:22:58.581Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "aa3080d116bd5427ce36df32d4fce3b3ad0e7adb6d4c56f41515a834ed254d23",
+    "contentHash": "dfa11d5d0c737626eb022279e8866369c9195519b648b63d6cce6c98034a3941",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "75fe8688"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -10274,12 +10273,12 @@
     "revisionIdentifier": "e5c444d2"
   },
   "zoontek-react-native-permissions": {
-    "name": "zoontek/react-native-permissions",
+    "name": "react-native-permissions",
     "officialUrl": "https://github.com/zoontek/react-native-permissions",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T13:49:25.017Z",
-    "lastVerified": "2026-11-25T13:49:25.017Z",
+    "lastChecked": "2026-11-27T22:22:46.808Z",
+    "lastVerified": "2026-11-27T22:22:46.808Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zoontek-react-native-permissions",
@@ -10288,7 +10287,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2dad426e"
   },
   "mitrovicsinisaa-schemaorg-rs": {
     "name": "schemaorg-rs",
@@ -10836,9 +10836,9 @@
   "lucky-media-astro-seo": {
     "name": "astro-seo",
     "officialUrl": "https://github.com/lucky-media/astro-seo",
-    "lastChecked": "2026-11-24T14:14:56.556Z",
+    "lastChecked": "2026-11-27T22:22:44.364Z",
     "revisionIdentifier": "3d6ff7b4",
-    "lastVerified": "2026-11-24T14:14:56.556Z"
+    "lastVerified": "2026-11-27T22:22:44.364Z"
   },
   "kevinnzou-compose-webview-multiplatform": {
     "name": "compose-webview-multiplatform",

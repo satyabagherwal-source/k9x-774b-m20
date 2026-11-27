@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-CXZU",
-    "timestamp": "2026-11-26T11:39:46.074Z",
-    "repository": "tauri-apps/tauri",
-    "learningId": "learn-github-tauri-apps-tauri",
-    "contentHash": "d8372a2e17d3554cfb6b07ace1715c49169f3d5a751f16fb2530b3edff2e107e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-D17T",
     "timestamp": "2026-11-26T11:39:50.249Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7490,6 +7475,21 @@
     "repository": "higress-group/higress",
     "learningId": "learn-github-higress-group-higress",
     "contentHash": "dd10e7a124b74bb6c0f14b2c5c12ca9f055f706b055c8be02c702d857f72abdd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-RZVM",
+    "timestamp": "2026-11-27T22:22:59.938Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "dfa11d5d0c737626eb022279e8866369c9195519b648b63d6cce6c98034a3941",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

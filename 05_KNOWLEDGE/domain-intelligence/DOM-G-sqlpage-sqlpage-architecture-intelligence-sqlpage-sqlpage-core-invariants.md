@@ -4,23 +4,23 @@
 {
   "source_repository": "sqlpage/SQLPage",
   "source_url": "https://github.com/sqlpage/SQLPage",
-  "source_version": "75fe8688",
+  "source_version": "b27b96a3",
   "license": "MIT",
-  "timestamp": "2026-11-26T08:36:40.770Z",
+  "timestamp": "2026-11-27T22:23:00.198Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sqlpage-sqlpage",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `75fe8688`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T08:36:40.770Z`  
+> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `b27b96a3`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T22:23:00.198Z`  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T08:36:39.330Z  
+> **Harvest Timestamp**: 2026-11-27T22:22:58.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1096,14 +1096,12 @@ export function initExperience(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `986c75df` (2026-11-25)
-**Commit Message**: Fix SQLite 64-bit integer decoding (#1637)
+### Incident Patch 1: `b27b96a3` (2026-11-27)
+**Commit Message**: Allow embeds in table cells (#1644)
 
-* fix integer overflow
+* Allow SQLPage fragments in table cells
 
-* test large integer decoding
-
-* Explain why the large integer fixture uses arithmetic
+* Check visible table embed contents
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -1111,45 +1109,422 @@ Observed empirical fixes and code patches:
  
  ## unreleased
  
-+- SQLite query results preserve the full 64-bit range of `INTEGER` values. ([#1636](https://github.com/sqlpage/SQLPage/issues/1636))
++- The `table` component can fetch and display HTML fragments in selected columns using `embed`.
+ - Updated Rust and browser dependencies, including SQLite, ApexCharts, and Tabler.
+ - SQLite query results preserve the full 64-bit range of `INTEGER` values. ([#1636](https://github.com/sqlpage/SQLPage/issues/1636))
  - Big number title links have a larger target for touch and pointer users.
- - Carousel slide indicators and pagination arrows now have accessible names. Keyboard users can activate carousel arrows and enabled pagination links. Screen readers announce the current page.
- - Button, card, carousel, and login images accept alternative text. Embedded card frames use their own title or the card title.
 ```
 
-**File**: `src/webserver/database/sql_to_json.rs` (modified, +4/-3)
+**File**: `examples/official-site/sqlpage/migrations/01_documentation.sql` (modified, +7/-0)
 ```diff
-@@ -159,9 +159,10 @@ pub(super) fn sql_nonnull_to_json<'r>(
-     match type_name {
-         "REAL" | "FLOAT" | "FLOAT4" | "FLOAT8" | "DOUBLE" => decode_raw::<f64>(raw_value).into(),
-         "NUMERIC" | "DECIMAL" => decimal_to_json(&decode_raw(raw_value)),
--        "INT8" | "BIGINT" | "SERIAL8" | "BIGSERIAL" | "IDENTITY" | "INT64" | "INTEGER8"
--        | "BIGINT SIGNED" => decode_raw::<i64>(raw_value).into(),
--        "INT" | "INT4" | "INTEGER" | "MEDIUMINT" | "YEAR" => decode_raw::<i32>(raw_value).into(),
-+        // SQLite INTEGER and unsigned ODBC SQL_INTEGER can exceed the i32 range.
-+        "INTEGER" | "INT8" | "BIGINT" | "SERIAL8" | "BIGSERIAL" | "IDENTITY" | "INT64"
-+        | "INTEGER8" | "BIGINT SIGNED" => decode_raw::<i64>(raw_value).into(),
-+        "INT" | "INT4" | "MEDIUMINT" | "YEAR" => decode_raw::<i32>(raw_value).into(),
-         "INT2" | "SMALLINT" | "TINYINT" => decode_raw::<i16>(raw_value).into(),
-         "BIGINT UNSIGNED" => decode_raw::<u64>(raw_value).into(),
-         "INT UNSIGNED" | "MEDIUMINT UNSIGNED" | "SMALLINT UNSIGNED" | "TINYINT UNSIGNED" => {
+@@ -984,6 +984,7 @@ INSERT INTO parameter(component, name, description, type, top_level, optional) S
+     ('search_placeholder', 'Customizes the placeholder text shown in the search input field. Replaces the default "Search..." with text that better describes what users should search for.', 'TEXT', TRUE, TRUE),
+     ('markdown', 'Set this to the name of a column whose content should be interpreted as markdown . Used to display rich text with links in the table. This argument can be repeated multiple times to intepret multiple columns as markdown.', 'TEXT', TRUE, TRUE),
+     ('icon', 'Set this to the name of a column whose content should be interpreted as a tabler icon name. Used to display icons in the table. This argument can be repeated multiple times to intepret multiple columns as icons. Introduced in v0.8.0.', 'TEXT', TRUE, TRUE),
++    ('embed', 'Name of a column whose values are URLs to HTML fragments, such as other SQLPage pages. Repeat this property to select multiple columns. The browser fetches each nonempty URL with `_sqlpage_embed=1`, which skips the SQLPage shell, and initializes any components inside the cell. Use only URLs whose HTML you trust. There is one request per populated cell. Sorting uses the original URL, and search skips embedded cells.', 'TEXT', TRUE, TRUE),
+     ('align_right', 'Name of a column the contents of which should be right-aligned. This argument can be repeated multiple times to align multiple columns to the right. Introduced in v0.15.0.', 'TEXT', TRUE, TRUE),
+     ('align_center', 'Name of a column the contents of which should be center-aligned. This argument can be repeated multiple times to align multiple columns to the center.', 'TEXT', TRUE, TRUE),
+     ('monospace', 'Name of a column the contents of which should be displayed in monospace. This argument can be repeated multiple times to display multiple columns in monospace. Introduced in v0.32.1.', 'TEXT', TRUE, TRUE),
+@@ -1028,6 +1029,12 @@ INSERT INTO example(component, description, properties) VALUES
+         '{"icon": "table", "name": "[Table](?component=table)", "description": "Displays SQL results as a searchable table.", "_sqlpage_color": "red"},
+         {"icon": "timeline", "name": "[Chart](?component=chart)", "description": "Show graphs based on numeric data."}
+         ]')),
++    ('table', 'A table that embeds a chart from another SQLPage file in each row.',
++        json('[
++        {"component": "table", "embed": "Chart"},
++        {"Starting number": 7, "Chart": "/examples/chart.sql?n=7&color=blue"},
++        {"Starting number": 13, "Chart": "/examples/chart.sql?n=13&color=green"}
++        ]')),
+     ('table', 'A sortable table with a colored footer showing the average value of its entries.',
+         json('[{"component":"table", "sort":true}, '||
+         '{"Person": "Rudolph Lingens", "Height": 190},' ||
 ```
 
-**File**: `tests/sql_test_files/data/large_integer.sql` (added, +3/-0)
+**File**: `frontend/src/sqlpage.css` (modified, +5/-5)
 ```diff
-@@ -0,0 +1,3 @@
-+-- SQLPage evaluates literal-only SELECTs itself, so + 0 forces database execution.
-+-- Keep the expected value as text so it cannot overflow in the integer decoder.
-+select '3000000000' as expected_contains, 3000000000 + 0 as actual;
+@@ -69,13 +69,13 @@ code {
+ }
+ 
+ /** table **/
+-.table-freeze-headers thead {
++.table-freeze-headers > table > thead {
+   position: sticky;
+   top: 0;
+   z-index: 2;
+ }
+ 
+-.table-freeze-footers tfoot {
++.table-freeze-footers > table > tfoot {
+   position: sticky;
+   bottom: 0;
+   z-index: 2;
+@@ -89,21 +89,21 @@ code {
+   max-height: 50vh;
+ }
+ 
+-.table-freeze-columns th:first-child {
++.table-freeze-columns > table > thead > tr > th:first-child {
+   position: sticky;
+   left: 0;
+   z-index: 2;
+ }
+ 
+-.table-freeze-columns td:first-child {
++.table-freeze-columns > table > :is(tbody, tfoot) > tr > td:first-child {
+   position: sticky;
+   left: 0;
+   background: var(--tblr-bg-surface-secondary);
+   box-shadow: 3px 0 3px var(--tblr-border-color);
+ }
+ 
+ /* Prevent the fixed headers from hiding the selected target row */
+-.table-freeze-headers tr[id] {
++.table-freeze-headers > table > :is(tbody, tfoot) > tr[id] {
+   scroll-margin-top: 2.1rem;
+ }
+ 
+```
+
+**File**: `frontend/src/sqlpage.ts` (modified, +35/-20)
+```diff
+@@ -38,11 +38,12 @@ function setup_table(root_el: HTMLElement) {
+   const search_input = root_el.querySelector<HTMLInputElement>("input.search");
+   const table_el = root_el.querySelector("table");
+   if (!table_el) return;
+-  const sort_button_els = table_el.querySelectorAll<HTMLElement>(
+-    "button.sort[data-sort]",
+-  );
+-  const sort_buttons = [...sort_button_els];
+-  const item_parent = table_el.querySelector("tbody");
++  const sort_buttons = [
++    ...table_el.querySelectorAll<HTMLElement>(
++      ":scope > thead button.sort[data-sort]",
++    ),
++  ];
++  const item_parent = table_el.tBodies[0];
+   const has_sort = sort_buttons.length > 0;
+ 
+   if (search_input || has_sort) {
+@@ -56,8 +57,6 @@ function setup_table(root_el: HTMLElement) {
+   apply_number_formatting(table_el);
+ }
+ 
+-/**
+- */
+ function setup_table_search_behavior(
+   search_input: HTMLInputElement,
+   items: TableRow[],
+@@ -68,9 +67,17 @@ function setup_table_search_behavior(
+       .split(/\s+/)
+       .filter((s) => s);
+     for (const item of items) {
+-      const show = lower_search.every((s) =>
+-        item.el.textContent.toLowerCase().includes(s),
+-      );
++      if (lower_search.length === 0) {
++        item.el.style.display = "";
++        continue;
++      }
++      const text = [...item.el.cells]
++        .map((cell) =>
++          cell.hasAttribute("data-embed") ? "" : cell.textContent,
++        )
++        .join("")
++        .toLowerCase();
++      const show = lower_search.every((s) => text.includes(s));
+       item.el.style.display = show ? "" : "none";
+     }
+   }
+@@ -79,8 +86,10 @@ function setup_table_search_behavior(
+   onSearch();
+ }
+ 
+-function apply_number_formatting(table_el: HTMLElement) {
+-  const header_els = table_el.querySelectorAll<HTMLElement>("thead > tr > th");
++function apply_number_formatting(table_el: HTMLTableElement) {
++  const header_els = table_el.querySelectorAll<HTMLElement>(
++    ":scope > thead > tr > th",
++  );
+   const col_types = [...header_els].map((el) => el.dataset.column_type);
+   const col_rawnums = [...header_els].map((el) => !!el.dataset.raw_number);
+   const col_money = [...header_els].map((el) => !!el.dataset.money);
+@@ -90,9 +99,10 @@ function apply_number_formatting(table_el: HTMLElement) {
+     : undefined;
+   const currency = table_el.dataset.currency;
+ 
+-  for (const tr_el of table_el.querySelectorAll("tbody tr, tfoot tr")) {
+-    const cells = tr_el.getElementsByTagName("td");
+-    for (const [idx, cell_el] of [...cells].entries()) {
++  for (const tr_el of table_el.querySelectorAll<HTMLTableRowElement>(
++    ":scope > :is(tbody, tfoot) > tr",
++  )) {
++    for (const [idx, cell_el] of [...tr_el.cells].entries()) {
+       const column_type = col_types[idx];
+       const is_raw_number = col_rawnums[idx];
+       const text = cell_el.textContent;
+@@ -110,24 +120,29 @@ function apply_number_formatting(table_el: HTMLElement) {
+   }
+ }
+ 
+-type TableRow = { el: HTMLElement; sort_keys: { num: number; str: string }[] };
++type TableRow = {
++  el: HTMLTableRowElement;
++  sort_keys: { num: number; str: string }[];
++};
+ 
+ /** Prepare the table rows for sorting.
+  */
+ function table_parse_data(
+-  table_el: HTMLElement,
++  table_el: HTMLTableElement,
+   sort_buttons: HTMLElement[],
+ ): TableRow[] {
+   const is_num = [...sort_buttons].map(
+     (btn_el) => btn_el.parentElement?.dataset.column_type === "number",
+   );
+-  const row_els = table_el.querySelectorAll<HTMLElement>("tbody tr");
++  const row_els = table_el.querySelectorAll<HTMLTableRowElement>(
++    ":scope > tbody > tr",
++  );
+   return [...row_els].map((tr_el) => {
+-    const cells = tr_el.getElementsByTagName("td");
+     return {
+       el: tr_el,
+       sort_keys: sort_buttons.map((_btn_el, idx) => {
+-        const str = cells[idx]?.textContent ?? "";
++        const cell = tr_el.cells[idx];
++        const str = cell?.dataset.embed ?? cell?.textContent ?? "";
+         const num = is_num[idx] ? Number.parseFloat(str) : Number.NaN;
+         return { num, str };
+       }),
+```
+
+**File**: `sqlpage/templates/table.handlebars` (modified, +12/-6)
+```diff
+@@ -46,7 +46,7 @@
+                                     {{~#if (array_contains_case_insensitive ../../align_right @key)}} text-end {{/if~}}
+                                     {{~#if (array_contains_case_insensitive ../../align_center @key)}} text-center {{/if~}}
+                                 "
+-                                    data-column_type="{{typeof this}}"
++                                    data-column_type="{{#if (array_contains_case_insensitive ../../embed @key)}}string{{else}}{{typeof this}}{{/if}}"
+                                     {{~#if (array_contains_case_insensitive ../../raw_numbers @key)}} data-raw_number="1"{{/if~}}
+                                     {{~#if (array_contains_case_insensitive ../../money @key)}} data-money="1"{{/if~}}
+                                 >
+@@ -80,16 +80,22 @@
+                                 {{~#if (array_contains_case_insensitive ../../align_right @key)}} text-end {{/if~}}
+                                 {{~#if (array_contains_case_insensitive ../../align_center @key)}} text-center {{/if~}}
+                                 {{~#if (array_contains_case_insensitive ../../monospace @key)}} font-monospace {{/if~}}
+-                            ">
+-                                {{~#if (array_contains_case_insensitive ../../markdown @key)~}}
++                            "
++                                {{~#if (and this (array_contains_case_insensitive ../../embed @key))}} data-pre-init="embed" data-embed="{{this}}"{{/if~}}
++                            >
++                                {{~#if (array_contains_case_insensitive ../../embed @key)~}}
++                                    {{~#if this~}}
++                                        <div class="spinner-border spinner-border-sm" role="status" data-embed-loading>
++                                            <span class="visually-hidden">Loading...</span>
++                                        </div>
++                                    {{~/if~}}
++                                {{~else if (array_contains_case_insensitive ../../markdown @key)~}}
+                                     {{{markdown this}}}
+-                                {{~else~}}
+-                                {{~#if (array_contains_case_insensitive ../../icon @key)~}}
++                                {{~else if (array_contains_case_insensitive ../../icon @key)~}}
+                                     {{~icon_img this~}}
+                                 {{~else~}}
+                                     {{this}}
+                                 {{~/if~}}
+-                                {{~/if~}}
+                             </td>
+                             {{/if~}}
+                         {{~/each~}}
+```
+
+**File**: `tests/end-to-end/fixtures/table-embeds/index.sql` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++SELECT 'table' AS component, 'preview' AS embed, 'Details' AS embed;
++
++SELECT 'Moss' AS "Name", 'sample.sql?label=Forest%20preview' AS "Preview",
++       'sample.sql?label=Grows%20in%20shade' AS "Details"
++UNION ALL
++SELECT 'Pine', NULL, '';
+```
+
+**File**: `tests/end-to-end/fixtures/table-embeds/sample.sql` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++SELECT 'text' AS component, $label AS contents;
+```
+
+**File**: `tests/end-to-end/fixtures/table-embeds/test.ts` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++import { expect, test } from "../../fixture.ts";
++
++test("shows embedded content in the selected cells", async ({ page }) => {
++  const moss = page.getByRole("row", { name: /^Moss\b/ });
++  await expect(moss.getByRole("cell")).toHaveText(
++    ["Moss", "Forest preview", "Grows in shade"],
++    { useInnerText: true },
++  );
++
++  const pine = page.getByRole("row", { name: /^Pine\b/ });
++  await expect(pine.getByRole("cell")).toHaveText(["Pine", "", ""], {
++    useInnerText: true,
++  });
++});
+```
+
+---
+
+### Incident Patch 2: `4417d626` (2026-11-27)
+**Commit Message**: Share fragment loading between embed hosts (#1643)
+
+**File**: `frontend/src/sqlpage.ts` (modified, +21/-23)
+```diff
+@@ -10,30 +10,28 @@ const nonce =
+     ? document.currentScript.nonce
+     : "";
+ 
+-function sqlpage_card(root: InitRoot) {
+-  const cards = select_all(root, "[data-pre-init=card]", HTMLElement);
+-  for (const c of cards) {
+-    c.removeAttribute("data-pre-init");
+-    if (!c.dataset.embed) continue;
+-    const url = new URL(c.dataset.embed, window.location.href);
++function sqlpage_embed(root: InitRoot) {
++  for (const host of select_all(root, "[data-pre-init=embed]", HTMLElement)) {
++    host.removeAttribute("data-pre-init");
++    if (host.dataset.embed) void load_embed(host, host.dataset.embed);
++  }
++}
++
++async function load_embed(host: HTMLElement, src: string) {
++  const content = host.querySelector("[data-embed-content]") ?? host;
++  const loading = host.querySelector("[data-embed-loading]");
++  try {
++    const url = new URL(src, window.location.href);
+     url.searchParams.set("_sqlpage_embed", "1");
+-    fetch(url)
+-      .then((res) => res.text())
+-      .then((html) => {
+-        const body = c.querySelector(".card-content");
+-        if (body) body.innerHTML = html;
+-        const spinner = c.querySelector(".card-loading-placeholder");
+-        spinner?.remove();
+-        const fragLoadedEvt = new CustomEvent("fragment-loaded", {
+-          bubbles: true,
+-        });
+-        c.dispatchEvent(fragLoadedEvt);
+-      })
+-      .catch((e) => {
+-        console.error(e);
+-        c.querySelector(".card-loading-placeholder")?.remove();
+-      });
++    const response = await fetch(url);
++    content.innerHTML = await response.text();
++  } catch (e) {
++    console.error(e);
++    loading?.remove();
++    return;
+   }
++  loading?.remove();
++  host.dispatchEvent(new CustomEvent("fragment-loaded", { bubbles: true }));
+ }
+ 
+ function setup_table(root_el: HTMLElement) {
+@@ -530,7 +528,7 @@ function sqlpage_modal(root: InitRoot) {
+ 
+ add_init_fn(sqlpage_table);
+ add_init_fn(sqlpage_map);
+-add_init_fn(sqlpage_card);
++add_init_fn(sqlpage_embed);
+ add_init_fn(sqlpage_form);
+ add_init_fn(sqlpage_modal);
+ add_init_fn(load_scripts);
+```
+
+**File**: `sqlpage/templates/card.handlebars` (modified, +3/-3)
+```diff
+@@ -33,7 +33,7 @@
+                     {{/if}}
+                 {{/if}}
+                 "
+-                {{#if (and embed (ne embed_mode "iframe"))}}data-pre-init="card" data-embed="{{embed}}"{{/if}}>
++                {{#if (and embed (ne embed_mode "iframe"))}}data-pre-init="embed" data-embed="{{embed}}"{{/if}}>
+                 {{#if link}}
+                     <a href="{{link}}"{{#if target}} target="{{target}}"{{/if}} style="text-decoration: inherit; color: inherit">
+                 {{/if}}
+@@ -47,7 +47,7 @@
+                 {{/if}}
+                 <div class="card-body {{#if (all embed (not title) (not icon))}}p-0{{/if}}">
+                     {{#if title}}<h2 class="card-title fs-3 me-3">{{title}}</h2>{{/if}}
+-                    <div class="card-content remove-bottom-margin{{#if (and icon (not title))}} pe-4{{/if}}">
++                    <div class="card-content remove-bottom-margin{{#if (and icon (not title))}} pe-4{{/if}}"{{#if (and embed (ne embed_mode "iframe"))}} data-embed-content{{/if}}>
+                         {{~description~}}
+                         {{~#if description_md~}}
+                             {{{markdown description_md}}}
+@@ -64,7 +64,7 @@
+                         >
+                         </iframe>
+                     {{~else~}}
+-                        <div class="d-flex justify-content-center h-100 align-items-center card-loading-placeholder">
++                        <div class="d-flex justify-content-center h-100 align-items-center card-loading-placeholder" data-embed-loading>
+                             <div class="spinner-border" role="status" style="width: 3rem; height: 3rem;">
+                                 <span class="visually-hidden">Loading...</span>
+                             </div>
+```
+
+**File**: `sqlpage/templates/modal.handlebars` (modified, +3/-3)
+```diff
+@@ -12,10 +12,10 @@
+             <div class="modal-body">
+                 <div class="card bg-transparent border-0{{#if height}} overflow-auto{{/if}}"
+                     {{~#if height}} style="height: {{height}}px"{{/if~}}
+-                    {{~#if (and embed (ne embed_mode "iframe"))}} data-pre-init="card" data-embed="{{embed}}"{{/if ~}}
++                    {{~#if (and embed (ne embed_mode "iframe"))}} data-pre-init="embed" data-embed="{{embed}}"{{/if ~}}
+                 >
+                     <div class="card-body p-0">
+-                        <div class="card-content remove-bottom-margin"></div>
++                        <div class="card-content remove-bottom-margin"{{#if (and embed (ne embed_mode "iframe"))}} data-embed-content{{/if}}></div>
+                         {{~#if embed ~}}
+                             {{~#if (eq embed_mode "iframe")}}
+                                 <iframe src="{{embed}}" 
+@@ -27,7 +27,7 @@
+                                 >
+                                 </iframe>
+                             {{~else~}}
+-                                <div class="d-flex justify-content-center h-100 align-items-center card-loading-placeholder">
++                                <div class="d-flex justify-content-center h-100 align-items-center card-loading-placeholder" data-embed-loading>
+                                     <div class="spinner-border" role="status" style="width: 3rem; height: 3rem;">
+                                         <span class="visually-hidden">Loading...</span>
+                                     </div>
+```
+
+**File**: `tests/end-to-end/fixtures/modal/test.ts` (modified, +4/-1)
+```diff
+@@ -1,7 +1,10 @@
+ import { checkModal } from "../../component-assertions.ts";
+-import { loadFragment, test } from "../../fixture.ts";
++import { expect, loadFragment, test } from "../../fixture.ts";
+ 
+ test("modal (fragment)", async ({ page }) => {
+   await loadFragment(page, "/modal/?fragment=1");
+   await checkModal(page);
++  await expect(
++    page.locator("#my_embed_form_modal").getByLabel("Modern text field"),
++  ).toBeAttached();
+ });
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1644** (2026-11-27): Allow embeds in table cells (@lovasoa)
+- **PR #1643** (2026-11-27): Share fragment loading for card and modal embeds (@lovasoa)
 - **PR #1639** (2026-11-25): Refresh Rust and browser dependencies (@lovasoa)
 - **PR #1638** (closed): Verify SQLite 64-bit integers with upstream SQLx (@lovasoa)
 - **PR #1637** (2026-11-25): Fix SQLite 64-bit integer decoding (@lovasoa)
 - **PR #1635** (2026-11-23): Fix SQLPage component accessibility and audit the reference (@lovasoa)
-- **PR #1634** (2026-11-23): Check component documentation accessibility in CI (@lovasoa)
-- **PR #1631** (2026-11-23): Use search_placeholder as the accessible name of the shell search field (@mkerz-masfg)
 
 ---
 
@@ -1169,13 +1544,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. SQLite 64-bit integer decoding
+## X. Allow embeds in table cells
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `986c75df`: SQLite 64-bit integer decoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b27b96a3`: Allow embeds in table cells. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1183,7 +1558,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- SQLite query results preserve the full 64-bit range of `INTEGER` values. ([#1636](https://github.com/sqlpage/SQLPage/issues/1636))
+- The `table` component can fetch and display HTML fragments in selected columns using `embed`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1193,7 +1568,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `986c75df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b27b96a3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

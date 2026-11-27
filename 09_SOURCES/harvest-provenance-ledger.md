@@ -13919,3 +13919,4 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `ad25d4b2` | Multi-dimensional audit evidence | 2026-11-27T22:05:17.295Z |
 | `learn-huggingface-tencent-hy4` | `https://huggingface.co/tencent/Hy4` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-27T22:14:02.797Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `c35d78d6` | Multi-dimensional audit evidence | 2026-11-27T22:14:12.919Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `b27b96a3` | Multi-dimensional audit evidence | 2026-11-27T22:22:59.950Z |

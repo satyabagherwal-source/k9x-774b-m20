@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "75fe8688",
+    "sourceVersion": "b27b96a3",
     "license": "MIT",
-    "contentHash": "aa3080d116bd5427ce36df32d4fce3b3ad0e7adb6d4c56f41515a834ed254d23",
-    "lastHarvestedAt": "2026-11-26T08:36:40.535Z",
+    "contentHash": "dfa11d5d0c737626eb022279e8866369c9195519b648b63d6cce6c98034a3941",
+    "lastHarvestedAt": "2026-11-27T22:22:59.950Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {

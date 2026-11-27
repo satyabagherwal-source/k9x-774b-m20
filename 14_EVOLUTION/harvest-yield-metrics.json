@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:14:12.924Z",
-  "total_cycles_completed": 13178,
-  "total_learnings_persisted": 13178,
-  "total_rules_promoted": 11890,
+  "last_updated": "2026-11-27T22:22:59.955Z",
+  "total_cycles_completed": 13179,
+  "total_learnings_persisted": 13179,
+  "total_rules_promoted": 11891,
   "history": [
-    {
-      "timestamp": "2026-11-27T04:45:28.759Z",
-      "repository": "kubeedge/kubeedge",
-      "learningId": "learn-github-kubeedge-kubeedge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T04:53:53.183Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T22:14:12.924Z",
       "repository": "higress-group/higress",
       "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:22:59.955Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

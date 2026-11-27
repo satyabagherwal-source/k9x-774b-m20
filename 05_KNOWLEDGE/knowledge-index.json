@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T22:14:19.637Z",
+  "last_updated": "2026-11-27T22:23:06.554Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26788,
+  "total_items": 26790,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219782,9 +219782,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "0b33cf37d233b42796957a408e58b032067d6ba2c2eaf9d22c38e44cb6555ab3",
+      "content_hash": "a48b7d6c721ca64a06a23609ab683aadd3aded188ba8101f9ecc61fc20c2a90d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:57:52.983Z"
+      "persisted_at": "2026-11-27T22:23:06.334Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219794,9 +219794,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "191a02e0b85025684443bf39bec8d165530cdd51abc1e02f801acd29d4d7a9a2",
+      "content_hash": "aaa0ac661afa4a8a498c90acfb63cb7b6a43331e42539a4883e5690de1b70c49",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:57:53.150Z"
+      "persisted_at": "2026-11-27T22:23:06.554Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -230456,9 +230456,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "340a38caef4aa83a2b4f129e806d6f644aaea6d8800768928bc6583b9c2ea13b",
+      "content_hash": "e388e2c46d022092dfdd84b043943c379aa42751132ad54cc03d6892f4896a50",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T21:56:47.282Z"
+      "persisted_at": "2026-11-27T22:23:05.343Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230468,9 +230468,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "8027f1f81778a04afedb91e63321cadec19e58932b6485ecf5c358b5d4a4dbcd",
+      "content_hash": "31e58b1f3ff86d22c175eb8e52b34b2f20b9e30346cfc5617723ae5e16557732",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T21:56:47.482Z"
+      "persisted_at": "2026-11-27T22:23:05.568Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -290767,8 +290767,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "75fe8688",
-      "content_hash": "aa3080d116bd5427ce36df32d4fce3b3ad0e7adb6d4c56f41515a834ed254d23",
+      "source_version": "b27b96a3",
+      "content_hash": "dfa11d5d0c737626eb022279e8866369c9195519b648b63d6cce6c98034a3941",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -290801,6 +290801,11 @@
           "number": 10632,
           "title": "SQLite 64-bit integer decoding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10976,
+          "title": "Allow embeds in table cells",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -290808,7 +290813,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T08:36:40.287Z",
+      "verified_at": "2026-11-27T22:22:59.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -290850,10 +290855,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-architecture-intelligence-sqlpage-sqlpage-core-invariants.md",
       "title": "Architecture Intelligence: sqlpage/SQLPage Core Invariants",
       "repository": "sqlpage/SQLPage",
-      "source_version": "75fe8688",
-      "content_hash": "4b3769d73b774bebcf53cad6b8f38e3b4d327ec2e10882937b00eef9885519d9",
+      "source_version": "b27b96a3",
+      "content_hash": "51a9fa1843e60dd2754ee0ac99db8b7039005770c90b7ddb007aa4f95e514eed",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:36:40.960Z"
+      "persisted_at": "2026-11-27T22:23:00.428Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage",
@@ -290862,10 +290867,10 @@
       "relative_path": "08_VERIFICATION/sqlpage-sqlpage-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpag.md",
       "title": "Verification Protocol: Empirical Defect Shield for sqlpage/SQLPage",
       "repository": "sqlpage/SQLPage",
-      "source_version": "75fe8688",
-      "content_hash": "f519cde0454ac4dbe1e2bbbc217599ad35bcf4996ffc3e020d8062972164f4c6",
+      "source_version": "b27b96a3",
+      "content_hash": "355dd230ab49ab5071c396c7b1879813208841081abefc48e4491da0115a6b83",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:36:41.146Z"
+      "persisted_at": "2026-11-27T22:23:00.634Z"
     },
     "rule-9143": {
       "learning_id": "rule-9143",
@@ -291001,9 +291006,9 @@
       "title": "Architecture Intelligence: sqlpage-sqlpage-learnings Core Invariants",
       "repository": "sqlpage-sqlpage-learnings",
       "source_version": "HEAD",
-      "content_hash": "439454cb77636bc2ff2b7e8a420a1c02f23b41de0003b088b02a88dafdb0c708",
+      "content_hash": "bf0df9a54f8382d75947fe604909e609bc749863a816ddddec9365a3adf201c1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:36:50.254Z"
+      "persisted_at": "2026-11-27T22:23:04.301Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage-learnings",
@@ -291013,9 +291018,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sqlpage-sqlpage-learnings",
       "repository": "sqlpage-sqlpage-learnings",
       "source_version": "HEAD",
-      "content_hash": "792c023ed2019b36be05f01b07665b6f5bdd986d6ea9aeb512e7565f8257b383",
+      "content_hash": "28c6e36fe623f2cec2c95ca7efbfb120bf5bd925a8deda275b72408ddc328fb4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:36:50.450Z"
+      "persisted_at": "2026-11-27T22:23:04.514Z"
     },
     "rule-9146": {
       "learning_id": "rule-9146",
@@ -350620,13 +350625,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UA8S-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-S4NH-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d77c9a84995280c15d5a69ebce3d1baf091aa80e296940281dbda9fe29c64fe",
+      "content_hash": "39d0ec5e66861294ffaeb2d1fcd674a3e44cad46f005b16acb4ef25b8c5ff77b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T21:56:47.068Z"
+      "persisted_at": "2026-11-27T22:23:06.126Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -367929,6 +367934,32 @@
       "content_hash": "e1fbf26a4ecae0b6a623b1d6a3749488126dd3fe795661792de081f2e9d9141b",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T22:14:17.715Z"
+    },
+    "rule-10976": {
+      "learning_id": "rule-10976",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10976,
+      "title": "Allow embeds in table cells",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "b27b96a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T22:22:59.671Z"
+    },
+    "candidate_directive-allow-embeds-in-table-cells": {
+      "item_id": "candidate_directive-allow-embeds-in-table-cells",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S332-allow-embeds-in-table-cells.md",
+      "title": "Allow embeds in table cells",
+      "repository": "sqlpage-sqlpage-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6029e8ba57c9331635caee2dd302750847dd89b6d88850a4efbf3ad383bc1c1b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T22:23:04.095Z"
     }
   },
   "ai-builder-brain": {
