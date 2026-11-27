@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-2Y4D",
-    "timestamp": "2026-11-25T14:32:16.957Z",
-    "repository": "burner22/numbat",
-    "learningId": "learn-huggingface-burner22-numbat",
-    "contentHash": "ca939786dd3bda386c709350bcfd44f80d25ac6b3a4588be8e56091307968332",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-35VK",
     "timestamp": "2026-11-25T14:32:27.008Z",
     "repository": "okteto/okteto",
@@ -7492,6 +7477,21 @@
     "contentHash": "34597999345b3f334b7e9b429c9b14cc0e5c6b41753c78176a30db70815ab037",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-DD6A",
+    "timestamp": "2026-11-27T02:07:53.842Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "bc042f6e2d8a34df8d159f47d8854d58d1cc019f1e2bbdc6d35be3ad1f8f8b65",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

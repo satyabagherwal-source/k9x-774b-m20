@@ -13668,3 +13668,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-27T01:54:56.019Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `9ed7804e` | Multi-dimensional audit evidence | 2026-11-27T01:55:05.275Z |
 | `learn-dom-d-d67ecc01` | `project://hf-ista-daslab-inkling-2-mini-gsq-rco-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ista-daslab-inkling-2-mini-gsq-rco-gguf-learnings.md` | 2026-11-27T01:55:37.085Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-11-27T02:07:53.846Z |

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T04:44:48.562Z",
+  "timestamp": "2026-11-27T02:08:05.798Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-lilylilith-qi_2.1_anyangle-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-lilylilith-qi_2.1_anyangle-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T04:44:48.562Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T02:08:05.798Z`  
 > **Learning ID**: `LEARN-EVO-hf-lilylilith-qi_2.1_anyangle-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-lilylilit`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T04:44:03.202Z  
+> **Timestamp**: 2026-11-27T02:07:53.282Z  
 > **Learning ID**: `learn-huggingface-lilylilith-qi_2-1_anyangle`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T04:44:03.035Z  
+> **Harvest Timestamp**: 2026-11-27T02:07:53.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 13091 downloads | 197 likes
+- **Stars / Engagement**: 12771 downloads | 203 likes
 
 ---
 

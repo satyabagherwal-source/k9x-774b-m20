@@ -3,7 +3,7 @@
 > **Source Version**: `hf-lilylilit`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-23T17:03:25.260Z  
+> **Timestamp**: 2026-11-27T02:07:53.282Z  
 > **Learning ID**: `learn-huggingface-lilylilith-qi_2-1_anyangle`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:03:25.043Z  
+> **Harvest Timestamp**: 2026-11-27T02:07:53.104Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 12946 downloads | 201 likes
+- **Stars / Engagement**: 12771 downloads | 203 likes
 
 ---
 

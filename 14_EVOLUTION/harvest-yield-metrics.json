@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T01:55:05.293Z",
-  "total_cycles_completed": 12942,
-  "total_learnings_persisted": 12942,
+  "last_updated": "2026-11-27T02:07:53.859Z",
+  "total_cycles_completed": 12943,
+  "total_learnings_persisted": 12943,
   "total_rules_promoted": 11720,
   "history": [
-    {
-      "timestamp": "2026-11-26T14:33:49.096Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T14:44:28.846Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -1403,6 +1396,13 @@
       "repository": "gardener/gardener",
       "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T02:07:53.859Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
