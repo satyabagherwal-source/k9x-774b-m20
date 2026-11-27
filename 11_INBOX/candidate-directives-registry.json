@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T09:17:47.630Z",
+  "last_updated": "2026-11-27T09:35:11.441Z",
   "directives": [
     {
       "id": "CD-001",
@@ -69616,6 +69616,108 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
       "domain_letter": "A"
+    },
+    {
+      "id": "CD-CL74",
+      "directive_title": "Empirical Invariant Guard in WebHistoryNavigation.kt",
+      "source_repo": "arkivanov-decompose-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CL74-empirical-invariant-guard-in-webhistorynavigation-kt.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-BRBC",
+      "directive_title": "Atomic Work-Claim Invariant in Parallel Rayon Graph Traversals",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BRBC-atomic-work-claim-invariant-in-parallel-rayon-graph-traversals.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-BRBD",
+      "directive_title": "Zero-Copy Heap Boxing for High-Churn RPC/IPC Configuration Types",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BRBD-zero-copy-heap-boxing-for-high-churn-rpc-ipc-configuration-types.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-BRBE",
+      "directive_title": "CST Trivia Transfer Invariant on Node Reordering and Splicing",
+      "source_repo": "biomejs-biome-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BRBE-cst-trivia-transfer-invariant-on-node-reordering-and-splicing.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-32D7DD",
+      "directive_title": "Redundant Transitive Dependency Indexing via Uncoordinated Parallel Rayon Scheduling (BUG-SCAN-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "biomejs-biome",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-32D7DD-redundant-transitive-dependency-indexing.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-5A8E03",
+      "directive_title": "Workspace Memory Inflation via Large Unboxed Configuration Parameters (BUG-MEM-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "biomejs-biome",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5A8E03-workspace-memory-inflation-via-large-unb.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-D26F0D",
+      "directive_title": "Engineering Pattern: - Linear Attention Gated DeltaNet State",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D26F0D-engineering-pattern-linear-attention-gat.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-CJPE",
+      "directive_title": "Zero-Padding Invariant for Low-Rank MoE Router Top-K Projections",
+      "source_repo": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CJPE-zero-padding-invariant-for-low-rank-moe-router-top-k-projections.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-CJPF",
+      "directive_title": "Linear-Attention Recurrent State Boundary Retention Under Chunked Prefill",
+      "source_repo": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CJPF-linear-attention-recurrent-state-boundary-retention-under-chunked-prefill.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-60DA4B",
+      "directive_title": "Empirical Invariant Guard in WebHistoryNavigation.kt",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arkivanov-decompose",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-60DA4B-empirical-invariant-guard-in-webhistoryn.md",
+      "staged_date": "2026-11-27"
     }
   ]
 }

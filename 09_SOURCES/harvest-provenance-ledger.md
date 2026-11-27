@@ -13776,3 +13776,7 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `8838e415` | Multi-dimensional audit evidence | 2026-11-27T09:17:32.932Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `d421d520` | Multi-dimensional audit evidence | 2026-11-27T09:17:43.839Z |
 | `learn-dom-d-e7237660` | `project://volcengine-openviking` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | 2026-11-27T09:18:16.473Z |
+| `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `01e04b09` | Multi-dimensional audit evidence | 2026-11-27T09:32:51.410Z |
+| `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-27T09:34:23.718Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `c199c75a` | Multi-dimensional audit evidence | 2026-11-27T09:34:27.832Z |
+| `learn-dom-h-fd509f0f` | `project://hf-nvidia-qwen3.8-flash-next-fp4-local` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | 2026-11-27T09:35:09.102Z |

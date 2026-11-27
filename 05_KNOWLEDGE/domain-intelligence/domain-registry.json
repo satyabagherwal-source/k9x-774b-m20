@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T09:18:17.202Z",
-  "total_records": 2822,
+  "last_updated": "2026-11-27T09:35:11.729Z",
+  "total_records": 2825,
   "domains": {
     "A": {
       "total": 23,
@@ -1740,7 +1740,7 @@
       ]
     },
     "H": {
-      "total": 686,
+      "total": 689,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2427,7 +2427,10 @@
         "DOM-H-B8E42626",
         "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-core-i",
         "domain_intelligence-technical-construction-intelligence-oracle-devrel-oracle-ai-developer-hub-learni",
-        "DOM-H-BDBEDA9A"
+        "DOM-H-BDBEDA9A",
+        "domain_intelligence-technical-construction-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-inv",
+        "DOM-H-FD509F0F",
+        "domain_intelligence-technical-construction-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learn"
       ]
     },
     "I": {
@@ -16837,8 +16840,8 @@
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "repository": "biomejs/biome",
-      "content_hash": "4999116d899846159248a7785de3f1c77cd31f22b20c44f497887696aceadf9f",
-      "created_at": "2026-11-25T01:44:19.795Z"
+      "content_hash": "e47821695dce77844474a385e87cd85e8f3aa63fcd86ca1c205845012577d73c",
+      "created_at": "2026-11-27T09:34:28.974Z"
     },
     "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-apple-foundationdb-core-invariants",
@@ -16897,8 +16900,8 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-learnings-architecture-intelligence-biomejs-biome-learnings-core-i.md",
       "repository": "biomejs-biome-learnings",
-      "content_hash": "6fcec659087f0f0f6edd341ef9e1350b6e3bbf5dc5f53b1e1c72a4e3f6e51878",
-      "created_at": "2026-11-25T01:44:36.259Z"
+      "content_hash": "59da48fc7bf138052c5eabab430c0a9649068ddf6ab94dc68a9ff594de82c884",
+      "created_at": "2026-11-27T09:34:33.529Z"
     },
     "DOM-L-817D65B4": {
       "record_id": "DOM-L-817D65B4",
@@ -30826,8 +30829,8 @@
       "title": "Architecture Intelligence: arkivanov/Decompose Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-architecture-intelligence-arkivanov-decompose-core-invariant.md",
       "repository": "arkivanov/Decompose",
-      "content_hash": "03aac23817f1a56bd415bc35be8bf99047f72b8de30c8e21ba4d8ad41c4a0ec3",
-      "created_at": "2026-11-25T01:00:58.947Z"
+      "content_hash": "5f422fba752ba7791684467ee8586be81562e3cdaf526d95f8c9cb4b2d323b4b",
+      "created_at": "2026-11-27T09:32:52.005Z"
     },
     "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant",
@@ -30886,8 +30889,8 @@
       "title": "Architecture Intelligence: arkivanov-decompose-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-learnings-architecture-intelligence-arkivanov-decompose-lear.md",
       "repository": "arkivanov-decompose-learnings",
-      "content_hash": "491f12fdcbd9f72e96d753c4f892f002f2a92f6a5fb14f96e893504e25532439",
-      "created_at": "2026-11-25T01:01:05.391Z"
+      "content_hash": "e4d73173dfe543b25936983e4f3154bd9d89473ea36c8c4b6cf721abfb47a276",
+      "created_at": "2026-11-27T09:35:11.729Z"
     },
     "DOM-H-75FCE7B9": {
       "record_id": "DOM-H-75FCE7B9",
@@ -47668,6 +47671,58 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-27T09:18:16.441Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nvidia/Qwen3.8-Flash-Next-FP4-Local Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-nvidia-qwen3-8-flash-next-fp4-local-technical-construction-intelligence-nvidi.md",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "content_hash": "a4ceb9c60950e189463faf7f28ec04a1860c0e09b1acbd1b09f8819ece33bb09",
+      "created_at": "2026-11-27T09:34:24.435Z"
+    },
+    "DOM-H-FD509F0F": {
+      "record_id": "DOM-H-FD509F0F",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Engineering Pattern: FP8 KV Cache  Recurrent Memory Pool",
+      "content": "FP8 KV Cache & Recurrent Memory Pool",
+      "content_hash": "cdf7b7189bf8003cbe5b01d648de438de20128f05e9e3d65aad2227b4844877b",
+      "summary": "FP8 KV Cache & Recurrent Memory Pool -> FP8 KV Cache & Recurrent Memory Pool",
+      "provenance": {
+        "source_uri": "project://hf-nvidia-qwen3.8-flash-next-fp4-local/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-qwen3.8-flash-next-fp4-local)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-nvidia-qwen3.8-flash-next-fp4-local"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T09:35:09.056Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learn": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learn",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-nvidia-qwen3.8-flash-next-fp4-local-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings-technical-construction-intellig.md",
+      "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "content_hash": "b81d4ceaa6e0e9ece39cfacc2e5690b3cfa0962365445f692a3d5081112aa468",
+      "created_at": "2026-11-27T09:35:10.368Z"
     }
   }
 }

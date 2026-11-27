@@ -1665,8 +1665,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceVersion": "hf-nvidia-qwen3.8-flash-next-fp4-local",
     "license": "Open-Source",
-    "contentHash": "f957a1b29908f297367dd92b825bc60869508e229cd40820193f440daf3027f7",
-    "lastHarvestedAt": "2026-11-23T23:48:40.851Z",
+    "contentHash": "f76446da44394ca2836346335674aac741d9bc63d737260fe76171f6bfb75afd",
+    "lastHarvestedAt": "2026-11-27T09:34:23.718Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
   },
   "hf-openmoss-team-moss-image-base": {
@@ -7343,10 +7343,10 @@
     "repository": "arkivanov/Decompose",
     "platform": "github",
     "sourceUrl": "https://github.com/arkivanov/Decompose",
-    "sourceVersion": "481080e3",
+    "sourceVersion": "01e04b09",
     "license": "Apache-2.0",
-    "contentHash": "79899c365fda4ecfdfabb94cedca039feca62fda62152917eb65f9b1e580699e",
-    "lastHarvestedAt": "2026-11-25T01:00:58.507Z",
+    "contentHash": "0eff7d989b0009bbafb23f659407cf5cbff581bfc4396ea3d36472ce0d73c227",
+    "lastHarvestedAt": "2026-11-27T09:32:51.410Z",
     "learningId": "learn-github-arkivanov-decompose"
   },
   "langchain4j-langchain4j": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "1413bf88",
+    "sourceVersion": "c199c75a",
     "license": "Apache-2.0",
-    "contentHash": "3f8da7855f37b0bdfa7449474e8b16344f9b3d8782e9cc224884dc28041ff74f",
-    "lastHarvestedAt": "2026-11-26T08:26:35.209Z",
+    "contentHash": "9cfe17b1182d5e3c1b66156a79992489e3ee830773d8d4163d5e7d3a0b66c8b2",
+    "lastHarvestedAt": "2026-11-27T09:34:27.832Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

@@ -13743,3 +13743,7 @@
 | `CYCLE-20261127-PWFP` | `2026-11-27T09:17:32.917Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10863` | Yes (`6703ccf7...`) |
 | `CYCLE-20261127-Q4UY` | `2026-11-27T09:17:43.834Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`6d0c2c9b...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T09:18:16.473Z` | `volcengine-openviking` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E7237660` [Domain D] | Yes (`39dd5e26...`) |
+| `CYCLE-20261127-9L4V` | `2026-11-27T09:32:51.391Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10864` | Yes (`0eff7d98...`) |
+| `CYCLE-20261127-BKD0` | `2026-11-27T09:34:23.700Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10865, Rule 10866, Rule 10867` | Yes (`f76446da...`) |
+| `CYCLE-20261127-BNJA` | `2026-11-27T09:34:27.814Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10868, Rule 10869, Rule 10870` | Yes (`9cfe17b1...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T09:35:09.102Z` | `hf-nvidia-qwen3.8-flash-next-fp4-local` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-FD509F0F` [Domain H] | Yes (`cdf7b718...`) |

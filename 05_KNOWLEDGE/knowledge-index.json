@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T09:18:17.202Z",
+  "last_updated": "2026-11-27T09:35:12.012Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26466,
+  "total_items": 26484,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -234128,8 +234128,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "1413bf88",
-      "content_hash": "3f8da7855f37b0bdfa7449474e8b16344f9b3d8782e9cc224884dc28041ff74f",
+      "source_version": "c199c75a",
+      "content_hash": "9cfe17b1182d5e3c1b66156a79992489e3ee830773d8d4163d5e7d3a0b66c8b2",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -234177,6 +234177,21 @@
           "number": 10631,
           "title": "each block parsing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10868,
+          "title": "Atomic Work-Claim Invariant in Parallel Rayon Graph Traversals",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10869,
+          "title": "Zero-Copy Heap Boxing for High-Churn RPC/IPC Configuration Types",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10870,
+          "title": "CST Trivia Transfer Invariant on Node Reordering and Splicing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234184,7 +234199,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T08:26:34.910Z",
+      "verified_at": "2026-11-27T09:34:27.499Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234226,10 +234241,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-biomejs-biome-architecture-intelligence-biomejs-biome-core-invariants.md",
       "title": "Architecture Intelligence: biomejs/biome Core Invariants",
       "repository": "biomejs/biome",
-      "source_version": "caaa90bc",
-      "content_hash": "4999116d899846159248a7785de3f1c77cd31f22b20c44f497887696aceadf9f",
+      "source_version": "c199c75a",
+      "content_hash": "e47821695dce77844474a385e87cd85e8f3aa63fcd86ca1c205845012577d73c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T01:44:19.795Z"
+      "persisted_at": "2026-11-27T09:34:28.974Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome",
@@ -234238,10 +234253,10 @@
       "relative_path": "08_VERIFICATION/biomejs-biome-verification-protocol-empirical-defect-shield-for-biomejs-biome.md",
       "title": "Verification Protocol: Empirical Defect Shield for biomejs/biome",
       "repository": "biomejs/biome",
-      "source_version": "1413bf88",
-      "content_hash": "e99e360cb89b552d667f2a5734e9871a3b5f759fc763d5ffc6520932c77a5ba2",
+      "source_version": "c199c75a",
+      "content_hash": "8519daec163f481f5779d12fb4eb8e24a1b1fabceeab3848a9eec78963ad197e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:26:35.919Z"
+      "persisted_at": "2026-11-27T09:34:29.241Z"
     },
     "rule-8497": {
       "learning_id": "rule-8497",
@@ -234422,9 +234437,9 @@
       "title": "Architecture Intelligence: biomejs-biome-learnings Core Invariants",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "6fcec659087f0f0f6edd341ef9e1350b6e3bbf5dc5f53b1e1c72a4e3f6e51878",
+      "content_hash": "59da48fc7bf138052c5eabab430c0a9649068ddf6ab94dc68a9ff594de82c884",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T01:44:36.259Z"
+      "persisted_at": "2026-11-27T09:34:33.529Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-biomejs-biome-learnings",
@@ -234434,9 +234449,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "adc00858ee1faaf4a9e75cad52b490a0c0c33735c6e163131583ad806d888a9b",
+      "content_hash": "fd7d4e9d87a7913f974e66384294b53c2c3d379cf0b6aa123bf33ede69a6e3de",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:26:40.914Z"
+      "persisted_at": "2026-11-27T09:34:33.792Z"
     },
     "candidate_directive-deps-bump-aiohttp": {
       "item_id": "candidate_directive-deps-bump-aiohttp",
@@ -246667,16 +246682,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "f957a1b29908f297367dd92b825bc60869508e229cd40820193f440daf3027f7",
+      "content_hash": "f76446da44394ca2836346335674aac741d9bc63d737260fe76171f6bfb75afd",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 10865,
+          "title": "Zero-Padding Invariant for Low-Rank MoE Router Top-K Projections",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10866,
+          "title": "Lossless Dual-Stage Dequantization Barrier for NVFP4 Compressed Formats",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10867,
+          "title": "Linear-Attention Recurrent State Boundary Retention Under Chunked Prefill",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:48:40.603Z",
+      "verified_at": "2026-11-27T09:34:23.386Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -290702,8 +290733,8 @@
       "slug": "arkivanov-decompose",
       "platform": "github",
       "source_url": "https://github.com/arkivanov/Decompose",
-      "source_version": "481080e3",
-      "content_hash": "79899c365fda4ecfdfabb94cedca039feca62fda62152917eb65f9b1e580699e",
+      "source_version": "01e04b09",
+      "content_hash": "0eff7d989b0009bbafb23f659407cf5cbff581bfc4396ea3d36472ce0d73c227",
       "dossier_path": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "promoted_rules": [
@@ -290716,6 +290747,11 @@
           "number": 10410,
           "title": "Empirical Invariant Guard in build.yml",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10864,
+          "title": "Empirical Invariant Guard in WebHistoryNavigation.kt",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -290723,7 +290759,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T01:00:58.281Z",
+      "verified_at": "2026-11-27T09:32:51.069Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -290739,10 +290775,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-architecture-intelligence-arkivanov-decompose-core-invariant.md",
       "title": "Architecture Intelligence: arkivanov/Decompose Core Invariants",
       "repository": "arkivanov/Decompose",
-      "source_version": "481080e3",
-      "content_hash": "03aac23817f1a56bd415bc35be8bf99047f72b8de30c8e21ba4d8ad41c4a0ec3",
+      "source_version": "01e04b09",
+      "content_hash": "5f422fba752ba7791684467ee8586be81562e3cdaf526d95f8c9cb4b2d323b4b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T01:00:58.947Z"
+      "persisted_at": "2026-11-27T09:32:52.005Z"
     },
     "rule-9149": {
       "learning_id": "rule-9149",
@@ -290802,9 +290838,9 @@
       "title": "Architecture Intelligence: arkivanov-decompose-learnings Core Invariants",
       "repository": "arkivanov-decompose-learnings",
       "source_version": "HEAD",
-      "content_hash": "491f12fdcbd9f72e96d753c4f892f002f2a92f6a5fb14f96e893504e25532439",
+      "content_hash": "e4d73173dfe543b25936983e4f3154bd9d89473ea36c8c4b6cf721abfb47a276",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T01:01:05.391Z"
+      "persisted_at": "2026-11-27T09:35:11.729Z"
     },
     "rule-9150": {
       "learning_id": "rule-9150",
@@ -300571,10 +300607,10 @@
       "relative_path": "08_VERIFICATION/arkivanov-decompose-verification-protocol-empirical-defect-shield-for-arkivanov-.md",
       "title": "Verification Protocol: Empirical Defect Shield for arkivanov/Decompose",
       "repository": "arkivanov/Decompose",
-      "source_version": "481080e3",
-      "content_hash": "a165327cdf7b2201a45eb97c7aa46ad36a173f8c1bebd9afb1cf3a32da339235",
+      "source_version": "01e04b09",
+      "content_hash": "981623079a6fb4d864b1e68991998e459a63a12a9ce1accba13bd9b37c37e44b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:00:59.148Z"
+      "persisted_at": "2026-11-27T09:32:52.269Z"
     },
     "rule-9366": {
       "learning_id": "rule-9366",
@@ -300660,9 +300696,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arkivanov-decompose-learnings",
       "repository": "arkivanov-decompose-learnings",
       "source_version": "HEAD",
-      "content_hash": "9759cc9e542f13beb72ac41aab68979bdac9e2a5f835df8b1e54a253c171fcd1",
+      "content_hash": "509e320b445e2a5030b4326452f1d36852a41898092efa989371dcbb1d3a7ad0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:01:05.578Z"
+      "persisted_at": "2026-11-27T09:35:12.012Z"
     },
     "rule-9368": {
       "learning_id": "rule-9368",
@@ -363202,6 +363238,236 @@
       "content_hash": "21c1806a5c26974be985aefeddc111927e6c6a790233b65ccf8215409e7ccfc4",
       "domain_letter": "A",
       "persisted_at": "2026-11-27T09:17:47.630Z"
+    },
+    "rule-10864": {
+      "learning_id": "rule-10864",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10864,
+      "title": "Empirical Invariant Guard in WebHistoryNavigation.kt",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "01e04b09",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:32:51.069Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-webhistorynavigation-kt": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-webhistorynavigation-kt",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CL74-empirical-invariant-guard-in-webhistorynavigation-kt.md",
+      "title": "Empirical Invariant Guard in WebHistoryNavigation.kt",
+      "repository": "arkivanov-decompose-learnings",
+      "source_version": "HEAD",
+      "content_hash": "af751e7af18a99e7ad4b73d5bda5cf39755fbbcc93c4c6ef17be649364dbb7ce",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T09:35:11.441Z"
+    },
+    "rule-10865": {
+      "learning_id": "rule-10865",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10865,
+      "title": "Zero-Padding Invariant for Low-Rank MoE Router Top-K Projections",
+      "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:34:23.386Z"
+    },
+    "rule-10866": {
+      "learning_id": "rule-10866",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10866,
+      "title": "Lossless Dual-Stage Dequantization Barrier for NVFP4 Compressed Formats",
+      "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:34:23.386Z"
+    },
+    "rule-10867": {
+      "learning_id": "rule-10867",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10867,
+      "title": "Linear-Attention Recurrent State Boundary Retention Under Chunked Prefill",
+      "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:34:23.386Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-inv": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-qwen3-8-flash-next-fp4-local-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-nvidia-qwen3-8-flash-next-fp4-local-technical-construction-intelligence-nvidi.md",
+      "title": "Technical Construction Intelligence: nvidia/Qwen3.8-Flash-Next-FP4-Local Core Invariants",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "content_hash": "a4ceb9c60950e189463faf7f28ec04a1860c0e09b1acbd1b09f8819ece33bb09",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T09:34:24.435Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-qwen3-8-flash-next-fp4-": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nvidia-qwen3-8-flash-next-fp4-",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-nvidia-qwen3-8-flash-next-fp4-local-verification-protocol-empirical-defect-sh.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
+      "content_hash": "4447f1cb8e96b64113f37600b5f0983a13a96427d61d82c2301aadbd11b5e156",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T09:34:24.701Z"
+    },
+    "rule-10868": {
+      "learning_id": "rule-10868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10868,
+      "title": "Atomic Work-Claim Invariant in Parallel Rayon Graph Traversals",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "c199c75a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:34:27.499Z"
+    },
+    "rule-10869": {
+      "learning_id": "rule-10869",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10869,
+      "title": "Zero-Copy Heap Boxing for High-Churn RPC/IPC Configuration Types",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "c199c75a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:34:27.499Z"
+    },
+    "rule-10870": {
+      "learning_id": "rule-10870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10870,
+      "title": "CST Trivia Transfer Invariant on Node Reordering and Splicing",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "c199c75a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:34:27.499Z"
+    },
+    "candidate_directive-atomic-work-claim-invariant-in-parallel-rayon-graph-traversals": {
+      "item_id": "candidate_directive-atomic-work-claim-invariant-in-parallel-rayon-graph-traversals",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BRBC-atomic-work-claim-invariant-in-parallel-rayon-graph-traversals.md",
+      "title": "Atomic Work-Claim Invariant in Parallel Rayon Graph Traversals",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3af2881e057117a8f5fb98d78f234dbe02b61e8a2deb7211f6ac4961a6c1add4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T09:34:32.715Z"
+    },
+    "candidate_directive-zero-copy-heap-boxing-for-high-churn-rpc-ipc-configuration-types": {
+      "item_id": "candidate_directive-zero-copy-heap-boxing-for-high-churn-rpc-ipc-configuration-types",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BRBD-zero-copy-heap-boxing-for-high-churn-rpc-ipc-configuration-types.md",
+      "title": "Zero-Copy Heap Boxing for High-Churn RPC/IPC Configuration Types",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "86e2ea68cf9e874adf43c8c977749f8890fca8b00616eadf3b47e36defc58ec7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:34:32.980Z"
+    },
+    "candidate_directive-cst-trivia-transfer-invariant-on-node-reordering-and-splicing": {
+      "item_id": "candidate_directive-cst-trivia-transfer-invariant-on-node-reordering-and-splicing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BRBE-cst-trivia-transfer-invariant-on-node-reordering-and-splicing.md",
+      "title": "CST Trivia Transfer Invariant on Node Reordering and Splicing",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "81cf49bcf62e4f91df030e4014821523c47eb6db42b9c49deddd12116d902a6c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T09:34:33.253Z"
+    },
+    "candidate_directive-zero-padding-invariant-for-low-rank-moe-router-top-k-projections": {
+      "item_id": "candidate_directive-zero-padding-invariant-for-low-rank-moe-router-top-k-projections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CJPE-zero-padding-invariant-for-low-rank-moe-router-top-k-projections.md",
+      "title": "Zero-Padding Invariant for Low-Rank MoE Router Top-K Projections",
+      "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7e84ff33af9ffcbebd3b772f738b4dc2db1b4777027b62795482949a0cc00a4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T09:35:09.508Z"
+    },
+    "candidate_directive-lossless-dual-stage-dequantization-barrier-for-nvfp4-compressed-formats": {
+      "item_id": "candidate_directive-lossless-dual-stage-dequantization-barrier-for-nvfp4-compressed-formats",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CJPF-lossless-dual-stage-dequantization-barrier-for-nvfp4-compressed-formats.md",
+      "title": "Lossless Dual-Stage Dequantization Barrier for NVFP4 Compressed Formats",
+      "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2bf9f8539b8b267d5bfc3702fdf4f44310b2191502d78c1b7bea062c5c7368bc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T09:35:09.795Z"
+    },
+    "candidate_directive-linear-attention-recurrent-state-boundary-retention-under-chunked-prefill": {
+      "item_id": "candidate_directive-linear-attention-recurrent-state-boundary-retention-under-chunked-prefill",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CJPF-linear-attention-recurrent-state-boundary-retention-under-chunked-prefill.md",
+      "title": "Linear-Attention Recurrent State Boundary Retention Under Chunked Prefill",
+      "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32670f7b82050573ed8d0c8b33f64d34f5297e043d76ef897053fd97bc7aaa11",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:35:10.080Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learn": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learn",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings-technical-construction-intellig.md",
+      "title": "Technical Construction Intelligence: hf-nvidia-qwen3.8-flash-next-fp4-local-learnings Core Invariants",
+      "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b81d4ceaa6e0e9ece39cfacc2e5690b3cfa0962365445f692a3d5081112aa468",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T09:35:10.368Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-nvidia-qwen3-8-flash-next-f": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-nvidia-qwen3-8-flash-next-f",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-nvidia-qwen3-8-flash-next-fp4-local-learnings-verification-protocol-empirical.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
+      "source_version": "HEAD",
+      "content_hash": "19ccc3c79053b430023426187e256caecae7b93c453c8726de4b5c18957d98c9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T09:35:10.664Z"
     }
   },
   "ai-builder-brain": {

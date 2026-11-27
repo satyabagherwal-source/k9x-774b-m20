@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T09:18:17.431Z",
+  "last_updated": "2026-11-27T09:35:12.263Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T08:46:49.070Z",
@@ -368,7 +368,7 @@
       "staged_for_review": 0
     },
     "arkivanov-decompose-learnings.md": {
-      "processed_at": "2026-11-25T01:01:04.865Z",
+      "processed_at": "2026-11-27T09:35:10.944Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1423,9 +1423,9 @@
       "staged_for_review": 0
     },
     "biomejs-biome-learnings.md": {
-      "processed_at": "2026-11-26T08:26:38.780Z",
+      "processed_at": "2026-11-27T09:34:32.335Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 2
     },
     "hf-comfy-org-z-image-turbo-learnings.md": {
       "processed_at": "2026-11-25T07:22:42.210Z",
@@ -2878,9 +2878,9 @@
       "staged_for_review": 0
     },
     "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md": {
-      "processed_at": "2026-11-23T23:48:56.979Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 0
+      "processed_at": "2026-11-27T09:35:09.129Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 1
     },
     "hf-openmoss-team-moss-image-base-learnings.md": {
       "processed_at": "2026-11-24T00:08:00.681Z",
@@ -4038,7 +4038,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4896,
-  "total_canonical_promoted": 577,
-  "total_staged_for_review": 3660
+  "total_dossiers_evaluated": 4899,
+  "total_canonical_promoted": 578,
+  "total_staged_for_review": 3664
 }

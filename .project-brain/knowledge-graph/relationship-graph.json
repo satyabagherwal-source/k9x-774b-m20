@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-27T09:18:16.470Z",
+  "updated_at": "2026-11-27T09:35:09.098Z",
   "statistics": {
-    "total_nodes": 577,
+    "total_nodes": 578,
     "total_edges": 238,
     "domain_distribution": {
       "D": 345,
       "M": 1,
-      "H": 110,
+      "H": 111,
       "J": 22,
       "K": 34,
       "L": 9,
@@ -12878,6 +12878,28 @@
       ],
       "created_at": "2026-11-27T09:18:16.470Z",
       "updated_at": "2026-11-27T09:18:16.470Z"
+    },
+    "DOM-H-FD509F0F": {
+      "id": "DOM-H-FD509F0F",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Engineering Pattern: FP8 KV Cache  Recurrent Memory Pool",
+      "summary": "FP8 KV Cache & Recurrent Memory Pool -> FP8 KV Cache & Recurrent Memory Pool",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-nvidia-qwen3.8-flash-next-fp4-local/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-nvidia-qwen3.8-flash-next-fp4-local)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-27T09:35:09.098Z",
+      "updated_at": "2026-11-27T09:35:09.098Z"
     }
   },
   "edges": [

@@ -4,22 +4,22 @@
 {
   "source_repository": "arkivanov/Decompose",
   "source_url": "https://github.com/arkivanov/Decompose",
-  "source_version": "481080e3",
+  "source_version": "01e04b09",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-25T01:00:58.759Z",
+  "timestamp": "2026-11-27T09:32:51.733Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-arkivanov-decompose",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [arkivanov/Decompose](https://github.com/arkivanov/Decompose) (Revision: `481080e3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-25T01:00:58.759Z`  
+> **Provenance**: Harvested from [arkivanov/Decompose](https://github.com/arkivanov/Decompose) (Revision: `01e04b09`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T09:32:51.733Z`  
 > **Learning ID**: `learn-github-arkivanov-decompose`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `arkivanov/Decompose` (Commit: `481080e3`)
+- **Target Repository**: `arkivanov/Decompose` (Commit: `01e04b09`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arkivanov/Decompose](https://github.com/arkivanov/Decompose))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T01:00:57.100Z  
+> **Harvest Timestamp**: 2026-11-27T09:32:49.783Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Kotlin Multiplatform lifecycle-aware business logic components (aka BLoCs) with routing (navigation) and pluggable UI (Jetpack Compose, SwiftUI, JS React, etc.)
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2886 stars
+- **Stars / Engagement**: 2885 stars
 
 ---
 
@@ -676,128 +676,328 @@ internal actual val KClass<*>.uniqueName: String?
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `481080e3` (2026-11-22)
-**Commit Message**: Merge pull request #1078 from arkivanov/ci/upload-build-artifacts
+### Incident Patch 1: `01e04b09` (2026-11-26)
+**Commit Message**: Merge pull request #1080 from sahuadarsh0/fix/1079-webhistory-save-state-pagehide
 
-Upload build reports and test results as CI artifacts
+Save state in window.onpagehide in addition to window.onbeforeunload
 
-**File**: `.github/workflows/build.yml` (modified, +20/-0)
+**File**: `decompose/src/jsMain/kotlin/com/arkivanov/decompose/router/webhistory/WebHistoryNavigation.kt` (modified, +12/-2)
 ```diff
-@@ -26,6 +26,16 @@ jobs:
-         uses: gradle/gradle-build-action@v2
-         with:
-           arguments: build -Dsplit_targets
-+      - name: Upload build reports
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: linux-build-reports
-+          path: |
-+            **/build/reports/
-+            **/build/test-results/
-+          if-no-files-found: ignore
-+          retention-days: 14
-   macos-build:
-     name: Build on macOS
-     runs-on: macos-15
-@@ -45,3 +55,13 @@ jobs:
-         run: xcodebuild -project sample/app-ios/app-ios.xcodeproj -scheme app-ios -sdk iphonesimulator -arch arm64 build
-       - name: Build iOS Compose sample
-         run: xcodebuild -project sample/app-ios-compose/app-ios-compose.xcodeproj -scheme app-ios-compose -sdk iphonesimulator -arch arm64 build
-+      - name: Upload build reports
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: macos-build-reports
-+          path: |
-+            **/build/reports/
-+            **/build/test-results/
-+          if-no-files-found: ignore
-+          retention-days: 14
+@@ -55,10 +55,20 @@ fun <T : WebNavigationOwner> withWebHistory(
+     val savedState = sessionStorage[KEY_SAVED_STATE]?.takeUnless { isNewUrl }?.let(::JsonString)?.decodeSavedState(version = schemaVersion)
+     var stateKeeper = StateKeeperDispatcher(savedState = savedState)
+ 
++    fun saveState() {
++        sessionStorage[KEY_SAVED_STATE] = stateKeeper.saveState(version = schemaVersion).value
++        sessionStorage[KEY_SAVED_URL] = window.location.href
++    }
++
+     window.onbeforeunload =
+         {
+-            sessionStorage[KEY_SAVED_STATE] = stateKeeper.saveState(version = schemaVersion).value
+-            sessionStorage[KEY_SAVED_URL] = window.location.href
++            saveState()
++            null
++        }
++
++    window.onpagehide =
++        {
++            saveState()
+             null
+         }
+ 
 ```
 
----
-
-### Incident Patch 2: `7ba840c9` (2026-11-22)
-**Commit Message**: Upload macOS build reports after iOS sample builds
-
-Co-authored-by: Arkadii Ivanov <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build.yml` (modified, +4/-4)
+**File**: `decompose/src/jsTest/kotlin/com/arkivanov/decompose/router/webhistory/WithWebHistoryTest.kt` (added, +122/-0)
 ```diff
-@@ -51,6 +51,10 @@ jobs:
-         uses: gradle/gradle-build-action@v2
-         with:
-           arguments: build -Dsplit_targets
-+      - name: Build iOS sample
-+        run: xcodebuild -project sample/app-ios/app-ios.xcodeproj -scheme app-ios -sdk iphonesimulator -arch arm64 build
-+      - name: Build iOS Compose sample
-+        run: xcodebuild -project sample/app-ios-compose/app-ios-compose.xcodeproj -scheme app-ios-compose -sdk iphonesimulator -arch arm64 build
-       - name: Upload build reports
-         if: always()
-         uses: actions/upload-artifact@v4
-@@ -61,7 +65,3 @@ jobs:
-             **/build/test-results/
-           if-no-files-found: ignore
-           retention-days: 14
--      - name: Build iOS sample
--        run: xcodebuild -project sample/app-ios/app-ios.xcodeproj -scheme app-ios -sdk iphonesimulator -arch arm64 build
--      - name: Build iOS Compose sample
--        run: xcodebuild -project sample/app-ios-compose/app-ios-compose.xcodeproj -scheme app-ios-compose -sdk iphonesimulator -arch arm64 build
+@@ -0,0 +1,122 @@
++package com.arkivanov.decompose.router.webhistory
++
++import com.arkivanov.decompose.isNodeJs
++import kotlinx.browser.document
++import kotlinx.browser.sessionStorage
++import kotlinx.browser.window
++import kotlinx.serialization.builtins.serializer
++import org.w3c.dom.PageTransitionEvent
++import kotlin.test.AfterTest
++import kotlin.test.BeforeTest
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertNull
++
++@Suppress("TestFunctionName")
++class WithWebHistoryTest {
++
++    private var initialHref: String? = null
++
++    @BeforeTest
++    fun before() {
++        if (isNodeJs()) {
++            return
++        }
++
++        initialHref = window.location.href
++        sessionStorage.clear()
++    }
++
++    @AfterTest
++    fun after() {
++        if (isNodeJs()) {
++            return
++        }
++
++        window.onbeforeunload = null
++        window.onpagehide = null
++        sessionStorage.clear()
++        initialHref?.let { window.history.replaceState(data = null, title = "", url = it) }
++    }
++
++    @Test
++    fun WHEN_beforeunload_dispatched_THEN_state_restored() {
++        if (isNodeJs()) {
++            return
++        }
++
++        withWebHistory(schemaVersion = "1") { stateKeeper, _ ->
++            stateKeeper.register(key = "key", strategy = String.serializer()) { "saved-value" }
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        window.dispatchEvent(document.createEvent("BeforeUnloadEvent").apply { initEvent("beforeunload", false, false) })
++
++        var restoredValue: String? = null
++        var receivedDeepLink: String? = "unset"
++        withWebHistory(schemaVersion = "1") { stateKeeper, deepLink ->
++            restoredValue = stateKeeper.consume(key = "key", strategy = String.serializer())
++            receivedDeepLink = deepLink
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        assertEquals("saved-value", restoredValue)
++        assertNull(receivedDeepLink)
++    }
++
++    @Test
++    fun WHEN_pagehide_dispatched_THEN_state_restored() {
++        if (isNodeJs()) {
++            return
++        }
++
++        withWebHistory(schemaVersion = "1") { stateKeeper, _ ->
++            stateKeeper.register(key = "key", strategy = String.serializer()) { "saved-value" }
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        window.dispatchEvent(PageTransitionEvent("pagehide"))
++
++        var restoredValue: String? = null
++        var receivedDeepLink: String? = "unset"
++        withWebHistory(schemaVersion = "1") { stateKeeper, deepLink ->
++            restoredValue = stateKeeper.consume(key = "key", strategy = String.serializer())
++            receivedDeepLink = deepLink
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        assertEquals("saved-value", restoredValue)
++        assertNull(receivedDeepLink)
++    }
++
++    @Test
++    fun WHEN_pagehide_dispatched_and_url_changed_THEN_state_not_restored() {
++        if (isNodeJs()) {
++            return
++        }
++
++        withWebHistory(schemaVersion = "1") { stateKeeper, _ ->
++            stateKeeper.register(key = "key", strategy = String.serializer()) { "saved-value" }
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        window.dispatchEvent(PageTransitionEvent("pagehide"))
++        window.history.replaceState(data = null, title = "", url = "/other")
++        val newHref = window.location.href
++
++        var restoredValue: String? = "unset"
++        var receivedDeepLink: String? = null
++        withWebHistory(schemaVersion = "1") { stateKeeper, deepLink ->
++            restoredValue = stateKeeper.consume(key = "key", strategy = String.serializer())
++            receivedDeepLink = deepLink
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        assertNull(restoredValue)
++        assertEquals(newHref, receivedDeepLink)
++    }
++
++    private class TestWebNavigationOwner(
++        override val webNavigation: WebNavigation<*>,
++    ) : WebNavigationOwner
++}
 ```
 
----
-
-### Incident Patch 3: `f9a974a4` (2026-11-22)
-**Commit Message**: Upload build reports and test results as artifacts on CI
-
-Co-authored-by: Arkadii Ivanov <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build.yml` (modified, +20/-0)
+**File**: `decompose/src/wasmJsMain/kotlin/com/arkivanov/decompose/router/webhistory/WebHistoryNavigation.kt` (modified, +12/-2)
 ```diff
-@@ -26,6 +26,16 @@ jobs:
-         uses: gradle/gradle-build-action@v2
-         with:
-           arguments: build -Dsplit_targets
-+      - name: Upload build reports
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: linux-build-reports
-+          path: |
-+            **/build/reports/
-+            **/build/test-results/
-+          if-no-files-found: ignore
-+          retention-days: 14
-   macos-build:
-     name: Build on macOS
-     runs-on: macos-15
-@@ -41,6 +51,16 @@ jobs:
-         uses: gradle/gradle-build-action@v2
-         with:
-           arguments: build -Dsplit_targets
-+      - name: Upload build reports
-+        if: always()
-+        uses: actions/upload-artifact@v4
-+        with:
-+          name: macos-build-reports
-+          path: |
-+            **/build/reports/
-+            **/build/test-results/
-+          if-no-files-found: ignore
-+          retention-days: 14
-       - name: Build iOS sample
-         run: xcodebuild -project sample/app-ios/app-ios.xcodeproj -scheme app-ios -sdk iphonesimulator -arch arm64 build
-       - name: Build iOS Compose sample
+@@ -55,10 +55,20 @@ fun <T : WebNavigationOwner> withWebHistory(
+     val savedState = sessionStorage[KEY_SAVED_STATE]?.takeUnless { isNewUrl }?.let(::JsonString)?.decodeSavedState(version = schemaVersion)
+     var stateKeeper = StateKeeperDispatcher(savedState = savedState)
+ 
++    fun saveState() {
++        sessionStorage[KEY_SAVED_STATE] = stateKeeper.saveState(version = schemaVersion).value
++        sessionStorage[KEY_SAVED_URL] = window.location.href
++    }
++
+     window.onbeforeunload =
+         {
+-            sessionStorage[KEY_SAVED_STATE] = stateKeeper.saveState(version = schemaVersion).value
+-            sessionStorage[KEY_SAVED_URL] = window.location.href
++            saveState()
++            null
++        }
++
++    window.onpagehide =
++        {
++            saveState()
+             null
+         }
+ 
+```
+
+**File**: `decompose/src/wasmJsTest/kotlin/com/arkivanov/decompose/router/webhistory/WithWebHistoryTest.kt` (added, +124/-0)
+```diff
+@@ -0,0 +1,124 @@
++package com.arkivanov.decompose.router.webhistory
++
++import com.arkivanov.decompose.isNodeJs
++import kotlinx.browser.document
++import kotlinx.browser.sessionStorage
++import kotlinx.browser.window
++import kotlinx.serialization.builtins.serializer
++import org.w3c.dom.PageTransitionEvent
++import kotlin.js.ExperimentalWasmJsInterop
++import kotlin.test.AfterTest
++import kotlin.test.BeforeTest
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertNull
++
++@OptIn(ExperimentalWasmJsInterop::class)
++@Suppress("TestFunctionName")
++class WithWebHistoryTest {
++
++    private var initialHref: String? = null
++
++    @BeforeTest
++    fun before() {
++        if (isNodeJs()) {
++            return
++        }
++
++        initialHref = window.location.href
++        sessionStorage.clear()
++    }
++
++    @AfterTest
++    fun after() {
++        if (isNodeJs()) {
++            return
++        }
++
++        window.onbeforeunload = null
++        window.onpagehide = null
++        sessionStorage.clear()
++        initialHref?.let { window.history.replaceState(data = null, title = "", url = it) }
++    }
++
++    @Test
++    fun WHEN_beforeunload_dispatched_THEN_state_restored() {
++        if (isNodeJs()) {
++            return
++        }
++
++        withWebHistory(schemaVersion = "1") { stateKeeper, _ ->
++            stateKeeper.register(key = "key", strategy = String.serializer()) { "saved-value" }
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        window.dispatchEvent(document.createEvent("BeforeUnloadEvent").apply { initEvent("beforeunload", false, false) })
++
++        var restoredValue: String? = null
++        var receivedDeepLink: String? = "unset"
++        withWebHistory(schemaVersion = "1") { stateKeeper, deepLink ->
++            restoredValue = stateKeeper.consume(key = "key", strategy = String.serializer())
++            receivedDeepLink = deepLink
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        assertEquals("saved-value", restoredValue)
++        assertNull(receivedDeepLink)
++    }
++
++    @Test
++    fun WHEN_pagehide_dispatched_THEN_state_restored() {
++        if (isNodeJs()) {
++            return
++        }
++
++        withWebHistory(schemaVersion = "1") { stateKeeper, _ ->
++            stateKeeper.register(key = "key", strategy = String.serializer()) { "saved-value" }
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        window.dispatchEvent(PageTransitionEvent("pagehide"))
++
++        var restoredValue: String? = null
++        var receivedDeepLink: String? = "unset"
++        withWebHistory(schemaVersion = "1") { stateKeeper, deepLink ->
++            restoredValue = stateKeeper.consume(key = "key", strategy = String.serializer())
++            receivedDeepLink = deepLink
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        assertEquals("saved-value", restoredValue)
++        assertNull(receivedDeepLink)
++    }
++
++    @Test
++    fun WHEN_pagehide_dispatched_and_url_changed_THEN_state_not_restored() {
++        if (isNodeJs()) {
++            return
++        }
++
++        withWebHistory(schemaVersion = "1") { stateKeeper, _ ->
++            stateKeeper.register(key = "key", strategy = String.serializer()) { "saved-value" }
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        window.dispatchEvent(PageTransitionEvent("pagehide"))
++        window.history.replaceState(data = null, title = "", url = "/other")
++        val newHref = window.location.href
++
++        var restoredValue: String? = "unset"
++        var receivedDeepLink: String? = null
++        withWebHistory(schemaVersion = "1") { stateKeeper, deepLink ->
++            restoredValue = stateKeeper.consume(key = "key", strategy = String.serializer())
++            receivedDeepLink = deepLink
++            TestWebNavigationOwner(TestWebNavigation(initialHistory = listOf(1)))
++        }
++
++        assertNull(restoredValue)
++        assertEquals(newHref, receivedDeepLink)
++    }
++
++    private class TestWebNavigationOwner(
++        override val webNavigation: WebNavigation<*>,
++    ) : WebNavigationOwner
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1080** (2026-11-26): Save state in window.onpagehide in addition to window.onbeforeunload (@sahuadarsh0)
 - **PR #1078** (2026-11-22): Upload build reports and test results as CI artifacts (@arkivanov-bot)
 - **PR #1077** (2026-11-22): [V4] Add API for creating ViewModels with SavedStateHandle and CreationExtras (@arkivanov)
 - **PR #1076** (2026-11-21): [V4] Add support for SavedStateRegistry (@arkivanov)
 - **PR #1075** (2026-11-21): [V4] Update v4 branch (@arkivanov)
 - **PR #1074** (2026-11-18): Make the Lifecycle constructor parameter in DefaultComponentContext optional (re-apply #1049) (@arkivanov-bot)
-- **PR #1073** (2026-11-15): Don't restart predictive back if a new gesture is started between completion and recomposition (@arkivanov)
 
 ---
 
@@ -817,50 +1017,43 @@ Co-authored-by: Arkadii Ivanov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in build.yml
+## X. Empirical Invariant Guard in WebHistoryNavigation.kt
 
 **RULE**:
-When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arkivanov/Decompose. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `decompose/src/jsMain/kotlin/com/arkivanov/decompose/router/webhistory/WebHistoryNavigation.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arkivanov/Decompose. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `481080e3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01e04b09`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `decompose/src/jsMain/kotlin/com/arkivanov/decompose/router/webhistory/WebHistoryNavigation.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-      - name: Upload build reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-build-reports
-          path: |
-            **/build/reports/
-            **/build/test-results/
-          if-no-files-found: ignore
-          retention-days: 14
-      - name: Upload build reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-build-reports
-          path: |
-            **/build/reports/
-            **/build/test-results/
-          if-no-files-found: ignore
-          retention-days: 14
+    fun saveState() {
+        sessionStorage[KEY_SAVED_STATE] = stateKeeper.saveState(version = schemaVersion).value
+        sessionStorage[KEY_SAVED_URL] = window.location.href
+    }
+
+            saveState()
+            null
+        }
+
+    window.onpagehide =
+        {
+            saveState()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            sessionStorage[KEY_SAVED_STATE] = stateKeeper.saveState(version = schemaVersion).value
+            sessionStorage[KEY_SAVED_URL] = window.location.href
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `481080e3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01e04b09` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
