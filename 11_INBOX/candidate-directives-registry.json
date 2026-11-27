@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:43:22.298Z",
+  "last_updated": "2026-11-27T10:52:03.531Z",
   "directives": [
     {
       "id": "CD-001",
@@ -69958,6 +69958,68 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-2D505C-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-3EDG",
+      "directive_title": "Delete only a failed Iceberg sink run's own files on cleanup",
+      "source_repo": "pola-rs-polars-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3EDG-delete-only-a-failed-iceberg-sink-run-s-own-files-on-cleanup.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-3ADI",
+      "directive_title": "deploy Pages after the artifact build job",
+      "source_repo": "MelnixDev/seo-crawl-audit",
+      "source_commit": "c4836429",
+      "staged_file": "11_INBOX/candidate-directives/CD-3ADI-deploy-pages-after-the-artifact-build-job.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-3FWR",
+      "directive_title": ":arrow_up: Bump com.helger:ph-css from 8.4.0 to 8.4.1",
+      "source_repo": "crosspaste-crosspaste-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3FWR-arrow_up-bump-com-helger-ph-css-from-8-4-0-to-8-4-1.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-41C9D6",
+      "directive_title": "Delete only a failed Iceberg sink run's own files on cleanup",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pola-rs-polars",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-41C9D6-delete-only-a-failed-iceberg-sink-run-s-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-3F4F",
+      "directive_title": "ci: deploy Pages after the artifact build job",
+      "source_repo": "melnixdev-seo-crawl-audit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3F4F-ci-deploy-pages-after-the-artifact-build-job.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-136C12",
+      "directive_title": ":arrow_up: Bump com.helger:ph-css from 8.4.0 to 8.4.1",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crosspaste-crosspaste-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-136C12--arrow-up-bump-com-helger-ph-css-from-8-.md",
       "staged_date": "2026-11-27"
     }
   ]

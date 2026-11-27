@@ -13796,3 +13796,6 @@ Every entry in this ledger must capture:
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `91c1df80` | Multi-dimensional audit evidence | 2026-11-27T10:34:23.853Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `7fa79ec4` | Multi-dimensional audit evidence | 2026-11-27T10:43:11.604Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `8425467c` | Multi-dimensional audit evidence | 2026-11-27T10:43:16.098Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `be2a5221` | Multi-dimensional audit evidence | 2026-11-27T10:51:52.452Z |
+| `learn-github-melnixdev-seo-crawl-audit` | `https://github.com/MelnixDev/seo-crawl-audit` | `c4836429` | Multi-dimensional audit evidence | 2026-11-27T10:51:56.099Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `343ee79d` | Multi-dimensional audit evidence | 2026-11-27T10:51:56.632Z |

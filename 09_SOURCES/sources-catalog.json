@@ -1763,10 +1763,10 @@
     "repository": "MelnixDev/seo-crawl-audit",
     "platform": "github",
     "sourceUrl": "https://github.com/MelnixDev/seo-crawl-audit",
-    "sourceVersion": "3e173529",
+    "sourceVersion": "c4836429",
     "license": "MIT",
-    "contentHash": "5e09fbe4b918c54283b2135645d6db4e5d11e208171a32e6034f6c96fceee671",
-    "lastHarvestedAt": "2026-11-19T19:39:02.341Z",
+    "contentHash": "0df35ec31eda24f2f610c18ed555e43d129a988245ca4aef2e3559ee32c38ed0",
+    "lastHarvestedAt": "2026-11-27T10:51:56.099Z",
     "learningId": "learn-github-melnixdev-seo-crawl-audit"
   },
   "istifano-seo-auditor": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "9498f76d",
+    "sourceVersion": "343ee79d",
     "license": "AGPL-3.0",
-    "contentHash": "9c09c433f6b3c42ec36e2886c7186a78bebbd203c3e3ac8d677ff2ce7c640478",
-    "lastHarvestedAt": "2026-11-25T02:02:03.921Z",
+    "contentHash": "d58328dee28e6e8007160050bafc9cff47cee18885e03fe937925bddb0980afb",
+    "lastHarvestedAt": "2026-11-27T10:51:56.632Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "e55d90ce",
+    "sourceVersion": "be2a5221",
     "license": "MIT",
-    "contentHash": "50e519a20977d38a4e7b02380b56643749b61d4673ec1252fe5640df8832b315",
-    "lastHarvestedAt": "2026-11-26T10:19:25.340Z",
+    "contentHash": "03fb72db54b384d870c96565a841ec6c79b36ce7e027e0e6d7e5caa5f17d126f",
+    "lastHarvestedAt": "2026-11-27T10:51:52.452Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {

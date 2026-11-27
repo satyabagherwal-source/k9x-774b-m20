@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-1D4N",
-    "timestamp": "2026-11-26T04:30:51.575Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "82705427cdaaaf0cb1ad850408b5d8f761fab810e77bb31af12220f6726e8f08",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-1IE0",
-    "timestamp": "2026-11-26T04:30:58.392Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "70cc56f89d96e43e9af60962300a75d012c1b3f664e04426b34d144c82adf83c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-BZZO",
-    "timestamp": "2026-11-26T04:39:07.764Z",
-    "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
-    "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
-    "contentHash": "cd22b4bde151b2bda2c311d1593193db09cfc5288892514534151a6ca0545438",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-C7PK",
     "timestamp": "2026-11-26T04:39:17.768Z",
     "repository": "juicedata/juicefs",
@@ -7490,6 +7445,51 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "b06021a2d08b0679e366466074ac5875a229f5a29aa1234c61cb7b46dee05e33",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-37CL",
+    "timestamp": "2026-11-27T10:51:52.437Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "03fb72db54b384d870c96565a841ec6c79b36ce7e027e0e6d7e5caa5f17d126f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-3A5W",
+    "timestamp": "2026-11-27T10:51:56.084Z",
+    "repository": "MelnixDev/seo-crawl-audit",
+    "learningId": "learn-github-melnixdev-seo-crawl-audit",
+    "contentHash": "0df35ec31eda24f2f610c18ed555e43d129a988245ca4aef2e3559ee32c38ed0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-3AKO",
+    "timestamp": "2026-11-27T10:51:56.616Z",
+    "repository": "CrossPaste/crosspaste-desktop",
+    "learningId": "learn-github-crosspaste-crosspaste-desktop",
+    "contentHash": "d58328dee28e6e8007160050bafc9cff47cee18885e03fe937925bddb0980afb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

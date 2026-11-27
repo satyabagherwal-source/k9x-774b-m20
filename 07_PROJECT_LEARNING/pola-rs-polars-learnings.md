@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `e55d90ce`  
+> **Source Version**: `be2a5221`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T10:19:24.115Z  
+> **Timestamp**: 2026-11-27T10:51:51.217Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:19:24.110Z  
+> **Harvest Timestamp**: 2026-11-27T10:51:51.072Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40519 stars
+- **Stars / Engagement**: 40538 stars
 
 ---
 
@@ -1697,11 +1697,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31100** (2026-11-26): **Table display misaligns borders for halfwidth katakana voiced sound marks (U+FF9E, U+FF9F)**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"a": ["ｶﾞ", "ab"]}) print(df) ```   ### Log output  ```shell shape: (2, 1) ┌─────┐ │ a   │ │ --- │ │ str │ ╞═════╡ │ ｶﾞ   │ │ ab  │ └─────┘ ```  ### Issue description  When a string contains the halfwidth katakana voiced sound mark `ﾞ` (U+FF9E) or semi-voiced sound mark `ﾟ` (U+FF9F), the table borders in `print(df)` are shifted one column to the right for each such character.  These two characters have East Asian Width `H` and take one cell in a terminal, but `unicode-width` 0.2.2, which Polars uses through `comfy-table`, returns width 0 for them. This was fixed in `unicode-width` 0.2.3 (unicode-rs/unicode-width#89); Polars' `Cargo.lock` on `main` still pins 0.2.2.  Also verified: - Other halfwidth katakana (e.g. `ｶﾀｶﾅ`) and fullwidth katakana align correctly. - A standalone Rust program using `comfy-table` 7.2.2 with `unicode-width` 0.2.2 shows the same misalignment; with `unicode-width` 0.2.3 the table aligns. - `unicode-width` returns 1 for these characters up to 0.1.11 and 0 from 0.1.12 to 0.2.2. - Reproduced on Polars 2.2.0 and 1.0.0.  This issue was drafted with help from Claude Code; I reviewed, edited and ran everything myself.  ### Expected behavior  The borders should line up, as they do for `ｶ` without th
+- **Issue #31148** (2026-11-27): **Scalar-only `select` returns one row per chunk, and `filter` with a scalar predicate raises `ShapeError` on large frames**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  # A frame with two chunks. df = pl.concat([pl.DataFrame({"a": range(500)})] * 2, rechunk=False) print(df.select(pl.lit("x").str.to_uppercase())) # shape: (2, 1) # ┌─────────┐ # │ literal │ # │ ---     │ # │ str     │ # ╞═════════╡ # │ X       │ # │ X       │ # └─────────┘  df.select(pl.lit(1).is_in(pl.Series([1, 2]).implode())).height  # 2 df.select_seq(pl.lit("x").str.to_uppercase()).height  # 1  # A frame with one chunk of 100k rows. pl.DataFrame({"a": range(100_000)}).filter(pl.lit("x").str.contains("x")) # ShapeError: filter predicate length of 12 doesn't match that of the DataFrame ```  ### Issue description  The in-memory engine evaluates an elementwise expression once per chunk in parallel and stacks the results. For an expression that does not reference a column, each chunk gives one row.  - **select:** a `select` in which every expression is a scalar returns one row per chunk. The guard from #19295 only skips bare literals. A function of literals gets through, such as `pl.lit(d).dt.year()`, `pl.lit("x").str.to_uppercase()`, `pl.lit(2).pow(10)` or `pl.lit(1).is_in(s.implode())`. It needs more than one chunk and a height above twice the thread count. It hits eager `select` and lazy `collect(engine="in-memory")` without projecti
 
-- **Issue #31076** (2026-11-25): **`round(mode="to_zero")` is documented and typed but refused by the binding**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"x": [0.9, -0.9, 1.29]})  print(df.select(pl.col("x").truncate()))  # 0.0, -0.0, 1.0 print(df.select(pl.col("x").round(0, mode="to_zero")))  # ValueError ```    ### Log output  ```shell total memory: 24.000 GiB (25769803776 bytes) async thread count: 8 blocking thread count: 512 ValueError: `mode` must be one of {'half_to_even', 'half_away_from_zero'}, got to_zero while processing 'mode' ```  ### Issue description  The docstring of `Expr.round` lists `mode : {'half_to_even', 'half_away_from_zero', 'to_zero'}` and describes `to_zero`, and the `RoundMode` type alias includes it. The Rust side has `RoundMode::ToZero`, which `truncate` uses (added in #26677). But passing `mode="to_zero"` raises a `ValueError` listing only the other two modes, so the binding's conversion of `mode` does not accept it. On the main branch, that conversion (`Wrap<RoundMode>` in `crates/polars-python/src/conversion/mod.rs`) still matches only `half_to_even` and `half_away_from_zero`.  *Bug found with Claude and fuzzing/shrinking.   ### Expected behavior  `round(0, mode="to_zero")` gives the same result as `truncate()`: `0.0, -0.0, 1.0`.   ### Installed versions  <details>  ``` --------Version info--------- Polars:              2.1.0 Build:   
+- **Issue #31124** (2026-11-26): **`ColumnNotFoundError` for arithmetic filter after lazy cross join**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  product = pl.LazyFrame({"a": [0.1, 0.5, 2.0]}).join(     pl.LazyFrame({"b": [0.5, 2.0, 10.0]}),     how="cross", )  rhs = 1.0 tolerance = 1e-8 predicate = (pl.col("a") * pl.col("b") - rhs).abs() <= tolerance  product.filter(predicate).collect(engine="in-memory") ```   ### Log output  ```shell async thread count: 12 blocking thread count: 512 Traceback (most recent call last):   File "<stdin>", line 11, in <module>   File "<venv>/lib/python3.13/site-packages/polars/_utils/deprecation.py", line 97, in wrapper     return function(*args, **kwargs)   File "<venv>/lib/python3.13/site-packages/polars/lazyframe/opt_flags.py", line 361, in wrapper     return function(*args, **kwargs)   File "<venv>/lib/python3.13/site-packages/polars/lazyframe/frame.py", line 2591, in collect     return engine_.collect(            ~~~~~~~~~~~~~~~^         self,         ^^^^^     ...<2 lines>...         post_opt_callback=post_opt_callback,         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     )     ^   File "<venv>/lib/python3.13/site-packages/polars/lazyframe/engine.py", line 443, in collect     return wrap_df(ldf.collect(self.name, callback))                    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^ polars.exceptions.ColumnNotFoundError: unable to find column "b"; valid
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1718,909 +1718,923 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2bb320e` (2026-11-25)
-**Commit Message**: fix: Raise on non-numeric `hist` bins instead of panicking (#31069)
+### Incident Patch 1: `af5b036a` (2026-11-27)
+**Commit Message**: fix: Delete only a failed Iceberg sink run's own files on cleanup (#31143)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-ops/src/chunked_array/hist.rs` (modified, +5/-0)
+**File**: `crates/polars-plan/dsl-schema-hashes.json` (modified, +1/-1)
 ```diff
-@@ -184,6 +184,11 @@ impl HistBreaks {
-     pub fn new(s: &Series, bin_count: Option<usize>, bins: Option<&Series>) -> PolarsResult<Self> {
-         let bins = bins
-             .map(|bins| {
-+                // `Null` is the dtype of empty bins, e.g. `bins=[]` from Python.
-+                polars_ensure!(
-+                    bins.dtype().is_numeric() || bins.dtype().is_null(),
-+                    InvalidOperation: "`hist` bins must be numeric, got dtype `{}`", bins.dtype()
-+                );
-                 polars_ensure!(bins.null_count() == 0, InvalidOperation: "nulls not supported in 'bins' argument");
-                 Ok(bins.cast(&DataType::Float64)?.rechunk())
-             })
+@@ -105,7 +105,7 @@
+   "IcebergProperties": "b7ea4bb73521ad28d193712c3a16fadc62f573c22237c98ba147ce4a7ec7d318",
+   "IcebergSchema": "d254f883b2a9ebc2c0c4f2d32f40fcc951ef0e0d79d905bcec298dfcb8561e78",
+   "IcebergSchemaMode": "228cf0532593a1e06dd78fdda1b6dc527200b7f0381ac2ad983b8867dcb587e7",
+-  "IcebergSinkState": "f592c241701f8d94849d94a31ba38181ce7d35850738870a72bd9db9a21e48db",
++  "IcebergSinkState": "7493c6e7307ce0659cd2042f5c3541371fe3c68ddb3ec12c8367cce71c700e0d",
+   "IntDataTypeExpr": "cd66dcd9c44cdddd8864c0fe642e5fcef5263f6f142cce906011a0180e0fd161",
+   "IntegerType": "2e73fb811a2830b8b114dfe914512bfa6031325da9ea5513875a6e49b6ab1a58",
+   "InterpolationMethod": "157b72c21c66950baafe8033836c3335571d2f227dd882ba6b9c8d3e2f5928d3",
 ```
 
-**File**: `py-polars/tests/unit/operations/test_hist.py` (modified, +26/-1)
+**File**: `crates/polars-plan/src/dsl/options/iceberg_sink_state.rs` (modified, +3/-0)
 ```diff
-@@ -1,10 +1,12 @@
- from __future__ import annotations
+@@ -51,6 +51,9 @@ pub struct IcebergSinkState {
+     #[cfg(feature = "python")]
+     pub commit_result_df: Option<PythonObject>, // NoPickleOption[pl.DataFrame]
  
-+from decimal import Decimal
++    #[cfg(feature = "python")]
++    pub write_dirs: Option<PythonObject>, // _WriteDirs: the directories cleanup may remove
 +
- import numpy as np
- import pytest
+     #[cfg(feature = "python")]
+     pub replace_files: Option<PythonObject>, // _ReplaceFiles: the data files a commit replaces
+ }
+```
+
+**File**: `py-polars/src/polars/io/iceberg/_delete.py` (modified, +6/-1)
+```diff
+@@ -420,7 +420,12 @@ def _write_rows(
+             )
+         raise
+     except Exception as error:
+-        if state is not None and (remaining := state.remove_written_files()):
++        # without rows, nothing was written
++        if (
++            state is not None
++            and lf is not None
++            and (remaining := state.remove_written_files())
++        ):
+             error.add_note(f"data files may remain under '{remaining}'")
+         raise
  
- import polars as pl
--from polars.exceptions import ComputeError
-+from polars.exceptions import ComputeError, InvalidOperationError
- from polars.testing import assert_frame_equal
+```
+
+**File**: `py-polars/src/polars/io/iceberg/_maintenance.py` (modified, +7/-3)
+```diff
+@@ -834,8 +834,6 @@ def rewrite_data_files(
+                 state.storage_file_io(),
+                 [file[0] for files, _ in written for file in files],
+             )
+-            if remaining := state.remove_written_files():
+-                error.add_note(f"data files may remain under '{remaining}'")
+             raise
+     return counts
  
- inf = float("inf")
-@@ -160,6 +162,29 @@ def test_hist_invalid_bins() -> None:
-         s.hist(bins=[1, 0])  # invalid order
+@@ -866,7 +864,13 @@ def _write_group(
+         table, storage_options=storage_options, replace_files=hand_back
+     )
+     state.sink_uuid_str = sink_uuid
+-    state.attach_sink(_scan_iceberg_files(table, group, storage_options)).collect()
++    try:
++        state.attach_sink(_scan_iceberg_files(table, group, storage_options)).collect()
++    except Exception as error:
++        # its files are in its own directory, which the caller does not know
++        if (remaining := state.remove_written_files()) is not None:
++            error.add_note(f"data files may remain under '{remaining}'")
++        raise
+     assert hand_back.files is not None
+     # a group whose rows were all deleted leaves no file
+     if empty := [path for path, rows, *_ in hand_back.files if rows == 0]:
+```
+
+**File**: `py-polars/src/polars/io/iceberg/_sink.py` (modified, +76/-9)
+```diff
+@@ -90,6 +90,24 @@ def __init__(self, table: pyiceberg.table.Table) -> None:
+         self.table = table
  
  
-+@pytest.mark.parametrize(
-+    "bins",
-+    [
-+        pl.Series(["a", "1"]),
-+        pl.Series(["1", "2"]),
-+        pl.Series([True, False]),
-+    ],
-+)
-+def test_hist_non_numeric_bins(bins: pl.Series) -> None:
-+    lf = pl.LazyFrame({"x": [1.0, 2.0]})
-+    q = lf.select(pl.col("x").hist(bins=pl.lit(bins)))
-+    with pytest.raises(InvalidOperationError, match="bins must be numeric"):
-+        q.collect()
++class _WriteDirs:
++    """The directories the executions of one attach of a sink write into.
++
++    Its cleanup may remove them. Serializing gives that up: the commit may then happen
++    elsewhere. A copy starts with none.
++    """
++
++    def __init__(self) -> None:
++        self.dirs: list[str] = []
++
++    def __getstate__(self) -> tuple[()]:
++        self.dirs.clear()
++        return ()
++
++    def __setstate__(self, _state: tuple[()]) -> None:
++        self.dirs = []
 +
 +
-+def test_hist_decimal_bins() -> None:
-+    lf = pl.LazyFrame({"x": [1.0, 2.0]})
-+    bins = pl.Series([Decimal("0.5"), Decimal("1.5")])
-+    result = lf.select(pl.col("x").hist(bins=pl.lit(bins))).collect()
-+    expected = pl.DataFrame({"x": pl.Series([1], dtype=pl.get_index_type())})
-+    assert_frame_equal(result, expected)
+ @dataclass(kw_only=True)
+ class _ReplaceFiles:
+     """Data files a sink's commit replaces by the files it wrote (`UPDATE`, `DELETE`).
+@@ -1340,6 +1358,9 @@ class IcebergSinkState:
+     # The partition spec of the partition keys.
+     partition_spec_id: int | None
+     commit_result_df: NoPickleOption[pl.DataFrame]
++    # The directories of the executions of the state's one attach, one per resolve,
++    # until a commit lands. Shared with the engine's copy, as `commit_result_df`.
++    write_dirs: _WriteDirs | None
+     # Data files the commit replaces, instead of appending or overwriting.
+     replace_files: _ReplaceFiles | _HandBack | None = None
+ 
+@@ -1459,6 +1480,7 @@ def new(
+             sort_order_id=None,
+             partition_spec_id=None,
+             commit_result_df=NoPickleOption(),
++            write_dirs=None,
+             replace_files=replace_files,
+         )
+ 
+@@ -1569,6 +1591,12 @@ def _get_converted_storage_options(self) -> dict[str, Any]:
+         )
+ 
+     def attach_sink(self, lf: pl.LazyFrame) -> pl.LazyFrame:
++        # one attach per state, recorded before anything can fail: cleanup owns only the
++        # files of this attach's executions
++        if self.write_dirs is not None:
++            msg = "an Iceberg sink state can be attached only once"
++            raise RuntimeError(msg)
++        self.write_dirs = _WriteDirs()
+         if self.create_if_not_exists:
+             from pyiceberg.io.pyarrow import schema_to_pyarrow
+ 
+@@ -1623,6 +1651,11 @@ def _attach_resolved_sink(self, plf: PyLazyFrame) -> PyLazyFrame:
+ 
+         import polars as pl
+ 
++        # this execution's own directory; a copy of the state (as on another worker) has
++        # no list to record it in, and its cleanup deletes nothing
++        write_dir = gen_uuid_v7().hex()
++        if self.write_dirs is not None:
++            self.write_dirs.dirs.append(write_dir)
+         table = self.table()
+         table_metadata = table.metadata
+         table_properties = table_metadata.properties
+@@ -1736,7 +1769,10 @@ def _attach_resolved_sink(self, plf: PyLazyFrame) -> PyLazyFrame:
+         return lf.sink_parquet(  # type: ignore[call-overload]
+             pl.PartitionBy(
+                 _normalize_windows_iceberg_file_uri(
+-                    self.sink_base_path(object_storage_enabled=object_storage_enabled)
++                    self.sink_base_path(
++                        object_storage_enabled=object_storage_enabled,
++                        write_dir=write_dir,
++                    )
+                 ),
+                 file_path_provider=PlIcebergPathProviderConfig(
+                     object_storage_partitioned_paths=object_storage_partitioned_paths
+@@ -1773,6 +1809,8 @@ def commit(self, sinked_files: list[_IcebergSinkedFile]) -> pl.DataFrame:
+         has expired, or if the table is rolled back while the re-execution is in
+         flight: no catalog requirement can detect the latter.
+         """
++        from pyiceberg.exceptions import CommitStateUnknownException
++
+         import polars as pl
+         import polars._utils.logging
+ 
+@@ -1789,7 +1827,12 @@ def commit(self, sinked_files: list[_IcebergSinkedFile]) -> pl.DataFrame:
+         # may have expired while the data was written.
+         refresh_file_io(table)
+ 
+-        self._commit(table, sinked_files, verbose=verbose)
++        try:
++            self._commit(table, sinked_files, verbose=verbose)
++        except CommitStateUnknownException:
++            self._keep_written_files()
++            raise
++        self._keep_written_files()
+ 
+         self.commit_result_df.set(
+             pl.DataFrame(
+@@ -2127,7 +2170,13 @@ def _write_survivors(
+         )
+         state.sink_uuid_str = self.sink_uuid_str
+         rows = _scan_iceberg_files(table, tasks, self.iceberg_storage_properties)
+-        state.attach_sink(rows.remove(predicate)).collect()
++        try:
++            state.attach_sink(rows.remove(predicate)).collect()
++        except Exception as error:
++            # its files are in its own directory, which the caller does not know
++            if (remaining := state.remove_written_files()) is not None:
++                error.add_note(f"data files may remain under '{remaining}'")
++            raise
+         assert hand_back.files is not None
+         return hand_back.files, hand_back.sort_order_id
+ 
+@@ -2204,10 +2253,19 @@ def _commit_create(
+             elapsed = per
+```
+
+**File**: `py-polars/tests/unit/io/test_iceberg.py` (modified, +160/-0)
+```diff
+@@ -86,6 +86,7 @@
+     _SINK_UUID_PROPERTY,
+     IcebergSinkState,
+     PlIcebergPathProviderConfig,
++    _HandBack,
+ )
+ from polars.io.iceberg._utils import (
+     _convert_predicate,
+@@ -3940,6 +3941,165 @@ def test_sink_iceberg_commit_retries_after_concurrent_foreign_write(
+     assert _rows(tbl) == [7, 42]
+ 
+ 
++def _expire_first_snapshot(tbl: pyiceberg.table.Table) -> None:
++    # a later snapshot still reads its files
++    tbl.refresh()
++    first = tbl.metadata.snapshots[0].snapshot_id
++    tbl.maintenance.expire_snapshots().by_id(first).commit()
 +
 +
- def test_hist_bin_outside_data() -> None:
-     s = pl.Series([-5, 2, 0, 1, 99], dtype=pl.Int32)
-     result = s.hist(bins=[-10, -9])
++# the conftest check resolves the sink once more after a collect
++@pytest.mark.may_fail_lazy_schema
++@pytest.mark.parametrize("failure", ["commit", "before-resolve", "none"])
++@pytest.mark.write_disk
++def test_sink_iceberg_failed_run_keeps_files_of_landed_run(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure: str
++) -> None:
++    tbl, _ = new_iceberg_table(
++        tmp_path, schema=IcebergSchema(NestedField(1, "a", LongType()))
++    )
++    state = IcebergSinkState.new(tbl, mode="append", schema_mode="merge")
++    state.attach_sink(pl.LazyFrame({"a": [1]})).collect()
++    pl.LazyFrame({"a": [2]}).sink_iceberg(tbl, mode="append")
++    _expire_first_snapshot(tbl)
++    files = set(tmp_path.rglob("*.parquet"))
++
++    # the sink runs again (another state of it) and fails, or the landed one cleans up
++    def fail(*args: Any, **kwargs: Any) -> None:
++        msg = "commit failed"
++        raise RuntimeError(msg)
++
++    monkeypatch.setattr(IcebergSinkState, "_commit", fail)
++    run = IcebergSinkState.new(tbl, mode="append", schema_mode="merge")
++    run.sink_uuid_str = state.sink_uuid_str
++    if failure == "commit":
++        with pytest.raises(RuntimeError, match="commit failed"):
++            run.attach_sink(pl.LazyFrame({"a": [1]})).collect()
++    elif failure == "before-resolve":
++        with pytest.raises(pl.exceptions.ColumnNotFoundError):
++            run.attach_sink(pl.LazyFrame({"a": [1]}).select(pl.col("missing")))
++    else:
++        run = state
++    monkeypatch.undo()
++    run.remove_written_files()
++
++    assert _rows(tbl) == [1, 2]
++    # the failed run's own files are gone
++    assert set(tmp_path.rglob("*.parquet")) == files
++
++
++# the conftest check resolves the sink once more after a collect
++@pytest.mark.may_fail_lazy_schema
++@pytest.mark.parametrize("committer", ["unknown-outcome", "serialized-copy"])
++@pytest.mark.write_disk
++def test_sink_iceberg_cleanup_gives_up_files_that_may_have_landed(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, committer: str
++) -> None:
++    from pyiceberg.exceptions import CommitStateUnknownException
++
++    tbl, _ = new_iceberg_table(
++        tmp_path, schema=IcebergSchema(NestedField(1, "a", LongType()))
++    )
++    state, sinked_files = _sink_uncommitted(monkeypatch, tbl)
++    if committer == "unknown-outcome":
++        # the commit lands, and its outcome is not known
++        commit = IcebergSinkState._commit
++
++        def land_unknown(self: IcebergSinkState, *args: Any, **kwargs: Any) -> None:
++            commit(self, *args, **kwargs)
++            msg = "response lost"
++            raise CommitStateUnknownException(msg)
++
++        monkeypatch.setattr(IcebergSinkState, "_commit", land_unknown)
++        with pytest.raises(CommitStateUnknownException):
++            state.commit(sinked_files)
++        monkeypatch.undo()
++    else:
++        # committed by a copy, as on another worker
++        _twin(state).commit(sinked_files)
++    pl.LazyFrame({"a": [2]}).sink_iceberg(tbl, mode="append")
++    _expire_first_snapshot(tbl)
++    files = set(tmp_path.rglob("*.parquet"))
++
++    state.remove_written_files()
++
++    assert set(tmp_path.rglob("*.parquet")) == files
++    assert _rows(tbl) == [2, 42]
++
++
++@pytest.mark.write_disk
++def test_sink_iceberg_state_attached_once(tmp_path: Path) -> None:
++    tbl, _ = new_iceberg_table(
++        tmp_path, schema=IcebergSchema(NestedField(1, "a", LongType()))
++    )
++    state = IcebergSinkState.new(tbl, mode="append")
++    state.attach_sink(pl.LazyFrame({"a": [1]}))
++    with pytest.raises(RuntimeError, match="attached only once"):
++        state.attach_sink(pl.LazyFrame({"a": [2]}))
++
++
++@pytest.mark.parametrize("writer", ["overwrite", "compaction"])
++@pytest.mark.write_disk
++def test_sink_iceberg_failed_nested_write_removes_its_files(
++    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, writer: str
++) -> None:
++    from polars.io.iceberg._maintenance import rewrite_data_files
++
++    tbl, _ = _one_file_table(tmp_path)
++    pl.LazyFrame({"k": [4], "v": ["d"]}).sink_iceberg(tbl, mode="append")
++    files = set(tmp_path.rglob("*.parquet"))
++    commit = IcebergSinkState._commit
++
++    def fail_nested(self: IcebergSinkState, *args: Any, **kwargs: Any) -> None:
++        # the nested writer's files are written, then its write fails
++        nested = isinstance(self.replace_files, _HandBack)
++        if nested:
++            msg = "nested write failed"
++           
 ```
 
 ---
 
-### Incident Patch 2: `e55d90ce` (2026-11-26)
-**Commit Message**: feat: Add memory budget to pl.Config (#31122)
+### Incident Patch 2: `6a4c442c` (2026-11-27)
+**Commit Message**: fix: Refuse Iceberg writes onto a table schema that changed during the write (#31128)
 
-**File**: `py-polars/docs/source/reference/config.rst` (modified, +1/-0)
+**File**: `crates/polars-plan/dsl-schema-hashes.json` (modified, +1/-1)
 ```diff
-@@ -18,6 +18,7 @@ Config options
-     Config.set_fmt_float
-     Config.set_fmt_str_lengths
-     Config.set_fmt_table_cell_list_len
-+    Config.set_memory_budget
-     Config.set_streaming_chunk_size
-     Config.set_tbl_cell_alignment
-     Config.set_tbl_cell_numeric_alignment
+@@ -105,7 +105,7 @@
+   "IcebergProperties": "b7ea4bb73521ad28d193712c3a16fadc62f573c22237c98ba147ce4a7ec7d318",
+   "IcebergSchema": "d254f883b2a9ebc2c0c4f2d32f40fcc951ef0e0d79d905bcec298dfcb8561e78",
+   "IcebergSchemaMode": "228cf0532593a1e06dd78fdda1b6dc527200b7f0381ac2ad983b8867dcb587e7",
+-  "IcebergSinkState": "7493c6e7307ce0659cd2042f5c3541371fe3c68ddb3ec12c8367cce71c700e0d",
++  "IcebergSinkState": "951261c970be99dba8ab9d95d6f165726ac98919a3ce671a11b41c1317721cd2",
+   "IntDataTypeExpr": "cd66dcd9c44cdddd8864c0fe642e5fcef5263f6f142cce906011a0180e0fd161",
+   "IntegerType": "2e73fb811a2830b8b114dfe914512bfa6031325da9ea5513875a6e49b6ab1a58",
+   "InterpolationMethod": "157b72c21c66950baafe8033836c3335571d2f227dd882ba6b9c8d3e2f5928d3",
 ```
 
-**File**: `py-polars/src/polars/config.py` (modified, +38/-0)
+**File**: `crates/polars-plan/src/dsl/options/iceberg_sink_state.rs` (modified, +4/-0)
 ```diff
-@@ -76,6 +76,7 @@
-     "POLARS_FMT_TABLE_INLINE_COLUMN_DATA_TYPE",
-     "POLARS_FMT_TABLE_ROUNDED_CORNERS",
-     "POLARS_IDEAL_MORSEL_SIZE",
-+    "POLARS_OOC_MEMORY_BUDGET_MB",
-     "POLARS_TABLE_WIDTH",
-     "POLARS_VERBOSE",
-     "POLARS_MAX_EXPR_DEPTH",
-@@ -151,6 +152,7 @@ class ConfigParameters(TypedDict, total=False):
-     fmt_float: FloatFmt | None
-     fmt_str_lengths: int | None
-     fmt_table_cell_list_len: int | None
-+    memory_budget: int | None
-     streaming_chunk_size: int | None
-     tbl_cell_alignment: Alignment | None
-     tbl_cell_numeric_alignment: Alignment | None
-@@ -178,6 +180,7 @@ class ConfigParameters(TypedDict, total=False):
-     set_fmt_float: FloatFmt | None
-     set_fmt_str_lengths: int | None
-     set_fmt_table_cell_list_len: int | None
-+    set_memory_budget: int | None
-     set_streaming_chunk_size: int | None
-     set_tbl_cell_alignment: Alignment | None
-     set_tbl_cell_numeric_alignment: Alignment | None
-@@ -957,6 +960,41 @@ def set_streaming_chunk_size(cls, size: int | None) -> type[Config]:
-         plr.config_reload_env_var("POLARS_IDEAL_MORSEL_SIZE")
-         return cls
+@@ -36,6 +36,10 @@ pub struct IcebergSinkState {
+     pub maintain_order: bool,
+     pub sort_order_id: Option<i32>,
+     pub partition_spec_id: Option<i32>,
++    pub table_uuid: Option<PlSmallStr>,
++    pub schema_id: Option<i32>,
++    pub last_column_id: Option<i32>,
++    pub require_empty_table: bool,
  
-+    @classmethod
-+    @unstable()
-+    def set_memory_budget(cls, mb: int | None) -> type[Config]:
-+        """
-+        Set the memory budget of the streaming engine in megabytes.
-+
-+        When the streaming engine uses more memory than this budget, it spills
-+        data to disk. The effective budget is the smaller of this value and
-+        `POLARS_OOC_MEMORY_BUDGET_FRACTION` (default 0.8) times the total memory.
-+
-+        This can also be triggered by setting the `POLARS_OOC_MEMORY_BUDGET_MB` env var.
-+
-+        Parameters
-+        ----------
-+        mb
-+            Memory budget in megabytes (1 MB = 1,000,000 bytes). Set to `None`
-+            to only use the fraction of the total memory.
-+
-+        Examples
-+        --------
-+        >>> pl.Config.set_memory_budget(4_000)  # doctest: +SKIP
-+        >>> with pl.Config(memory_budget=4_000):  # doctest: +SKIP
-+        ...     lf.collect(engine="streaming")
-+        """
-+        if mb is None:
-+            os.environ.pop("POLARS_OOC_MEMORY_BUDGET_MB", None)
-+        else:
-+            if mb < 0:
-+                msg = "memory budget must be >= 0"
-+                raise ValueError(msg)
-+
-+            os.environ["POLARS_OOC_MEMORY_BUDGET_MB"] = str(mb)
-+        plr.config_reload_env_var("POLARS_OOC_MEMORY_BUDGET_MB")
-+        return cls
-+
-     @classmethod
-     def set_tbl_cell_alignment(cls, format: Alignment | None) -> type[Config]:
-         """
+     pub sink_uuid_str: String,
+ 
 ```
 
-**File**: `py-polars/tests/unit/meta/test_config.py` (modified, +14/-0)
+**File**: `py-polars/src/polars/dataframe/frame.py` (modified, +17/-9)
 ```diff
-@@ -13,6 +13,7 @@
- from polars._utils.unstable import issue_unstable_warning
- from polars.config import _POLARS_CFG_ENV_VARS
- from polars.exceptions import AttributeRemovedError
-+from polars.testing import assert_frame_equal
+@@ -4871,9 +4871,15 @@ def write_iceberg(
+         -----
+         Columns of required (`NOT NULL`) table fields must not contain nulls.
+         Required fields nested in structs or lists are not supported.
++
++        If the table's schema or partition spec changed after the table was loaded,
++        for example by another writer during the write, the commit raises a
++        `ValidationException`. A `Table` target then has the current state, so the
++        write can run again, with data for the current schema.
+         """
+         from pyiceberg.catalog import load_catalog
+ 
++        from polars.io.iceberg._sink import _write_transaction
+         from polars.io.iceberg._utils import with_table_nullability
+ 
+         if isinstance(target, str):
+@@ -4882,15 +4888,17 @@ def write_iceberg(
+         else:
+             table = target
+ 
+-        # Arrow data from Polars is always nullable; required Iceberg fields reject it.
+-        data = with_table_nullability(
+-            self.to_arrow(compat_level=CompatLevel.oldest()), table.schema()
+-        )
+-
+-        if mode == "append":
+-            table.append(data)
+-        else:
+-            table.overwrite(data)
++        # commits only onto the schema and spec the data is written with
++        with _write_transaction(table) as tx:
++            # Polars' Arrow data is always nullable: required Iceberg fields reject it.
++            data = with_table_nullability(
++                self.to_arrow(compat_level=CompatLevel.oldest()),
++                tx.table_metadata.schema(),
++            )
++            if mode == "append":
++                tx.append(data)
++            else:
++                tx.overwrite(data)
+ 
+     @overload
+     def write_delta(
+```
+
+**File**: `py-polars/src/polars/io/iceberg/_add_files.py` (modified, +1/-7)
+```diff
+@@ -111,7 +111,6 @@ def add_files(
+         ValidationException,
+     )
+     from pyiceberg.table import Table, TableProperties
+-    from pyiceberg.table.update import AssertCurrentSchemaId
+     from pyiceberg.utils.concurrent import ExecutorFactory
+ 
+     from polars.exceptions import DuplicateError
+@@ -176,11 +175,6 @@ def same_mapping(metadata: Any) -> None:
+             schema_id=schema.schema_id,
+             check=same_mapping,
+         ) as tx:
+-            # the files were checked against this schema
+-            tx._stage(
+-                (),
+-                (AssertCurrentSchemaId(current_schema_id=schema.schema_id),),  # type: ignore[call-arg]
+-            )
+             # files without field ids are read through the name mapping
+             if sets_mapping:
+                 tx.set_properties({mapping_key: new_mapping})
+@@ -220,7 +214,7 @@ def same_mapping(metadata: Any) -> None:
+         if (
+             sets_mapping
+             and error is catalog._raised
+-            and not isinstance(error, CommitFailedException)
++            and not isinstance(error, (CommitFailedException, ValidationException))
+         ):
+             error.add_note(
+                 f"add_files also set the name mapping of table '{name}' "
+```
+
+**File**: `py-polars/src/polars/io/iceberg/_delete.py` (modified, +11/-4)
+```diff
+@@ -47,7 +47,7 @@ def _delete_whole_files(
+         _SINK_UUID_PROPERTY,
+         _AlreadyCommitted,
+         _copy_table_state,
+-        _raise_if_spec_changed,
++        _raise_if_base_changed,
+         _sink_transaction,
+         _SinkCatalog,
+     )
+@@ -85,11 +85,15 @@ def _delete_whole_files(
+                     delete._clean_all_uncommitted()
+                     return False
+                 delete.commit()
+-        except (_AlreadyCommitted, CommitStateUnknownException, ValidationException):
++        except (_AlreadyCommitted, CommitStateUnknownException):
++            raise
++        except ValidationException:
++            # refreshed by a retry: a rerun with the caller's table deletes from it
++            _copy_table_state(wrapped, table)
+             raise
+         except Exception as error:
+             if isinstance(error, CommitFailedException):
+-                _raise_if_spec_changed(table, spec_id, error)
++                _raise_if_base_changed(table, spec_id, error)
+             # a failure after a commit request, not of it: did the commit land?
+             _copy_table_state(catalog.landed_after(table, error), table)
+             return True
+@@ -392,11 +396,13 @@ def _write_rows(
+     storage_options: StorageOptionsDict | None,
+     *,
+     replace: _ReplaceFiles | None = None,
++    require_empty_table: bool = False,
+ ) -> None:
+     """Write the rows of `lf` to `table` in one commit, leaving no files on failure.
+ 
+     With `replace`, the commit replaces those data files with the written ones; with no
+-    `lf`, it only removes them.
++    `lf`, it only removes them. With `require_empty_table`, it refuses a table another
++    writer committed to.
+     """
+     from pyiceberg.exceptions import CommitStateUnknownException
+ 
+@@ -407,6 +413,7 @@ def _write_rows(
+         state = IcebergSinkState.new(
+             table, mode=mode, storage_options=storage_options, replace_files=replace
+         )
++        state.require_empty_table = require_empty_table
+         if lf is None:
+             state.commit([])
+         else:
+```
+
+**File**: `py-polars/src/polars/io/iceberg/_sink.py` (modified, +164/-30)
+```diff
+@@ -32,7 +32,7 @@
+     from polars._plr import gen_uuid_v7
  
  if TYPE_CHECKING:
-     from collections.abc import Iterator
-@@ -847,6 +848,18 @@ def test_set_streaming_chunk_size() -> None:
-         cfg.set_streaming_chunk_size(0)
+-    from collections.abc import Callable, Collection, Iterable
++    from collections.abc import Callable, Collection, Iterable, Iterator
+ 
+     import pyarrow as pa
+     import pyiceberg.catalog
+@@ -320,7 +320,10 @@ def _commit_table(
+         requirements: tuple[TableRequirement, ...],
+         updates: tuple[TableUpdate, ...],
+     ) -> CommitTableResponse:
+-        from pyiceberg.exceptions import CommitStateUnknownException
++        from pyiceberg.exceptions import (
++            CommitStateUnknownException,
++            ValidationException,
++        )
+         from pyiceberg.table import CommitTableResponse
+         from pyiceberg.table.update import AddSnapshotUpdate
+ 
+@@ -346,6 +349,10 @@ def _commit_table(
+                     metadata_location=current.metadata_location,  # type: ignore[call-arg]
+                 )
+ 
++            # a rejected request (it asserts the uuid) was for the dropped table
++            if metadata.table_uuid != table.metadata.table_uuid and _rejected(e):
++                raise ValidationException(_TABLE_RECREATED) from e
++
+             if _already_committed(metadata, self._sink_uuid):
+                 raise _AlreadyCommitted(current) from e
+ 
+@@ -356,27 +363,49 @@ def _commit_table(
  
  
-+def test_set_memory_budget() -> None:
-+    with pl.Config() as cfg:
-+        cfg.set_memory_budget(0)
-+        assert os.environ.get("POLARS_OOC_MEMORY_BUDGET_MB") == "0"
-+        lf = pl.LazyFrame({"a": [3, 1, 2] * 20, "b": range(60)})
-+        out = lf.sort("a", "b").collect(engine="streaming")
-+        assert_frame_equal(out, lf.collect().sort("a", "b"))
+ _SPEC_CHANGED = "the partition spec changed during the write"
++_SCHEMA_CHANGED = "the table schema changed during the write"
++_TABLE_RECREATED = "the table was dropped and created again during the write"
+ 
+ 
+-def _raise_if_spec_changed(
+-    table: pyiceberg.table.Table, spec_id: int | None, error: Exception
++def _raise_if_base_changed(
++    table: pyiceberg.table.Table,
++    spec_id: int | None,
++    error: Exception,
++    *,
++    check: Callable[[TableMetadata], None] | None = None,
+ ) -> None:
+-    """After a rejected commit, raise if `spec_id` is no longer the default spec."""
++    """
++    After a rejected commit, raise if `spec_id` is no longer the default spec.
 +
-+    with pytest.raises(ValueError), pl.Config() as cfg:
-+        cfg.set_memory_budget(-1)
++    Or if `check` raises for the table as it is now. The caller's `table` then gets
++    that state, so a rerun with it writes for the current table.
++    """
+     from pyiceberg.exceptions import ValidationException
+ 
+-    if spec_id is None:
++    if spec_id is None and check is None:
+         return
+     try:
+         current = table.catalog.load_table(table.name())
+     except Exception:
+         return
+-    if current.metadata.default_spec_id != spec_id:
+-        raise ValidationException(_SPEC_CHANGED) from error
++    refusal = None
++    if spec_id is not None and current.metadata.default_spec_id != spec_id:
++        refusal = ValidationException(_SPEC_CHANGED)
++    elif check is not None:
++        try:
++            check(current.metadata)
++        except ValidationException as e:
++            refusal = e
++    if refusal is None:
++        return
++    if current.metadata.table_uuid == table.metadata.table_uuid:
++        _copy_table_state(current, table)
++    raise refusal from error
+ 
+ 
+ def _sink_transaction(
+     table: pyiceberg.table.Table,
+-    sink_uuid: str,
++    sink_uuid: str | None,
+     spec_id: int | None,
+     *,
+     schema_id: int | None = None,
+@@ -390,39 +419,78 @@ def _sink_transaction(
+     """
+     from pyiceberg.exceptions import ValidationException
+     from pyiceberg.table import Transaction
+-    from pyiceberg.table.update import AssertDefaultSpecId
++    from pyiceberg.table.update import AssertCurrentSchemaId, AssertDefaultSpecId
+ 
+     class _SinkTransaction(Transaction):  # type: ignore[misc]
+         # pyiceberg calls this after refreshing the table for a retry, before it
+         # writes new manifests. A twin that lands after this check moves the branch
+         # ref, so the next commit fails and `_SinkCatalog` finds the twin.
+         def _rebuild_snapshot_updates(self) -> None:
+-            if _already_committed(self._table.metadata, sink_uuid):
++            if sink_uuid is not None and _already_committed(
++                self._table.metadata, sink_uuid
++            ):
+                 raise _AlreadyCommitted(self._table)
+             # pyiceberg would write the files' partition values under the new spec
+             if spec_id is not None and self._table.metadata.default_spec_id != spec_id:
+                 raise ValidationException(_SPEC_CHANGED)
++            # and add the files with the field ids they were written with
+             if (
+                 schema_id is not None
+                 and self._table.metadata.current_schema_id != schema_id
+             ):
+-                msg = "the table schema changed during the write"
+-                raise ValidationException(msg)
++                raise ValidationException(_SCHEMA_CHANGED)
+             if check is not None:
+                 check(self._table.metadata)
+             super()._rebuild_snapshot_updates()
+ 
+-    if spec_id is None:
+-        return _SinkTransaction(table)
+-    if table.metadata.default_spec_id != spec_id:
++    metadata = table.metadat
+```
+
+**File**: `py-polars/src/polars/lazyframe/frame.py` (modified, +5/-0)
+```diff
+@@ -3238,6 +3238,11 @@ def sink_iceberg(
+         each new data file. Existing files are not rewritten. Sorting materializes
+         the incoming data in memory. This does not guarantee a globally sorted table
+         scan.
 +
++        If the table's schema or partition spec changed after the table was loaded,
++        for example by another writer during the write, the commit raises a
++        `ValidationException`. A `Table` target then has the current state, so the
++        write can run again, with data for the current schema.
+         """
+         from polars.io.iceberg._sink import IcebergSinkState
+ 
+```
+
+**File**: `py-polars/src/polars/sql/context.py` (modified, +6/-2)
+```diff
+@@ -2789,15 +2789,19 @@ def _fill_created_table(
+     storage_options: StorageOptionsDict | None,
+     name: str,
+ ) -> None:
+-    """Append the rows of `lf` to the new, empty `table`, dropping it on failure."""
++    """
++    Append the rows of `lf` to the new, empty `table`, dropping it on failure.
 +
- def test_set_fmt_str_lengths_invalid_length() -> None:
-     with pl.Config() as cfg:
-         with pytest.raises(ValueError):
-@@ -1001,6 +1014,7 @@ def test_warn_unstable(recwarn: pytest.WarningsRecorder) -> None:
-             "1",
-         ),
-         ("POLARS_IDEAL_MORSEL_SIZE", "set_streaming_chunk_size", 100, "100"),
-+        ("POLARS_OOC_MEMORY_BUDGET_MB", "set_memory_budget", 4000, "4000"),
-         ("POLARS_TABLE_WIDTH", "set_tbl_width_chars", 80, "80"),
-         ("POLARS_VERBOSE", "set_verbose", True, "1"),
-         ("POLARS_WARN_UNSTABLE", "warn_unstable", True, "1"),
++    A commit of another writer meanwhile fails the append, and keeps the table.
++    """
+     from pyiceberg.exceptions import CommitStateUnknownException
+ 
+     from polars.io.iceberg._delete import _write_rows
+ 
+     table_name = _display_name(identifier)
+     created_location = table.metadata_location
+     try:
+-        _write_rows(table, lf, "append", storage_options)
++        _write_rows(table, lf, "append", storage_options, require_empty_table=True)
+     except CommitStateUnknownException as error:
+         error.add_note(
+             f"table '{name}' was created, its rows may be missing: catalog table "
 ```
 
 ---
 
-### Incident Patch 3: `4fd4e358` (2026-11-26)
-**Commit Message**: perf: Stream `drop_nulls` and `drop_nans` over non-elementwise inputs in group-by (#31096)
+### Incident Patch 3: `2262db43` (2026-11-27)
+**Commit Message**: ci: Avoid constantly capturing stacktraces for POLARS_TIMEOUT_MS (#31141)
 
-**File**: `crates/polars-plan/src/dsl/meta.rs` (modified, +3/-2)
+**File**: `crates/polars-python/src/timeout.rs` (modified, +105/-91)
 ```diff
-@@ -172,12 +172,13 @@ impl MetaNameSpace {
-         Ok(exprs.iter().all(|e| e.is_known_length(&expr_arena)))
-     }
+@@ -1,127 +1,141 @@
+ //! A global process-aborting timeout system, mainly intended for testing.
  
--    /// Indicate if this expression as a whole is row-separable (see [`is_row_separable_rec`]).
-+    /// Indicate if this expression as a whole is row-separable (see [`ExprProperties::is_row_separable`]).
-     pub fn is_row_separable(self, schema: Option<&Schema>) -> PolarsResult<bool> {
-         let has_schema = schema.is_some();
-         let (exprs, expr_arena) = self.into_expr_irs(schema)?;
-+        let mut expr_props = ExprProperties::default();
-         Ok(exprs.iter().all(|e| {
--            is_row_separable_rec(e.node(), &expr_arena)
-+            expr_props.is_row_separable(e.node(), &expr_arena)
-                 && (has_schema || !has_unresolved_set_argument(e.node(), &expr_arena))
-         }))
-     }
-```
-
-**File**: `crates/polars-plan/src/plans/aexpr/properties/expr_properties.rs` (added, +358/-0)
-```diff
-@@ -0,0 +1,358 @@
-+use std::ops::ControlFlow;
+-use std::cmp::Reverse;
+-use std::collections::BinaryHeap;
+-use std::sync::LazyLock;
+-use std::sync::mpsc::{Receiver, RecvTimeoutError, Sender, channel};
++use std::sync::{Arc, LazyLock, Mutex, Weak};
+ use std::time::Duration;
+ 
+-use polars::prelude::{InitHashMaps, PlHashSet};
+-use polars_utils::priority::Priority;
+ use polars_utils::relaxed_cell::RelaxedCell;
++use pyo3::sync::PyOnceLock;
++use pyo3::types::{IntoPyDict, PyAnyMethods};
++use pyo3::{PyResult, Python, intern};
 +
-+use polars_utils::aliases::PlIndexMap;
-+use polars_utils::idx_vec::UnitVec;
-+use polars_utils::scratch_vec::ScratchVec;
-+use polars_utils::unitvec;
++/// Incremented by the watchdog thread every period, starts at 1 so 0 can mean
++/// idle.
++static TICK: RelaxedCell<u64> = RelaxedCell::new_u64(1);
++static SLOTS: Mutex<Vec<Weak<Slot>>> = Mutex::new(Vec::new());
 +
-+use super::super::*;
-+use super::general::is_input_independent_scalar_top_level;
-+use crate::plans::projection_height::{ExprHeightVisitor, ExprProjectionHeight};
-+use crate::traversal::edge_provider::NodeEdgesProvider;
-+use crate::traversal::visitor::{NodeVisitor, SubtreeVisit};
-+
-+/// Memoized properties of the expressions in an `Arena<AExpr>`.
-+///
-+/// A `Node` must keep referring to the same expression for as long as `ExprProperties` is used.
-+#[derive(Default)]
-+pub struct ExprProperties {
-+    is_elementwise: PlIndexMap<Node, bool>,
-+    is_row_separable: PlIndexMap<Node, bool>,
-+    is_input_independent: PlIndexMap<Node, bool>,
-+    is_input_independent_scalar: PlIndexMap<Node, bool>,
-+    is_frame_dependent: PlIndexMap<Node, bool>,
-+    is_length_preserving: PlIndexMap<Node, bool>,
-+    node_scratch: ScratchVec<Node>,
-+    height_scratch: ScratchVec<ExprProjectionHeight>,
++struct Slot {
++    python_thread_ident: u64,
++    /// Tick at which the current call started, 0 if idle.
++    started_at: RelaxedCell<u64>,
++}
+ 
+-static TIMEOUT_REQUEST_HANDLER: LazyLock<Sender<TimeoutRequest>> = LazyLock::new(|| {
+-    let (send, recv) = channel();
+-    std::thread::Builder::new()
+-        .name("polars-timeout".to_string())
+-        .spawn(move || timeout_thread(recv))
+-        .unwrap();
+-    send
+-});
+-
+-enum TimeoutRequest {
+-    Start(Duration, u64, Option<String>),
+-    Cancel(u64),
++thread_local! {
++    static SLOT: Arc<Slot> = {
++        let slot = Arc::new(Slot {
++            python_thread_ident: u64::from(unsafe { pyo3::ffi::PyThread_get_thread_ident() }),
++            started_at: RelaxedCell::new_u64(0),
++        });
++        SLOTS.lock().unwrap().push(Arc::downgrade(&slot));
++        slot
++    };
+ }
+ 
+ pub fn is_timeout_enabled() -> bool {
+-    static TIMEOUT_DISABLED: RelaxedCell<bool> = RelaxedCell::new_bool(false);
+-
+-    // Fast path so we don't have to keep checking environment variables. Make
+-    // sure that if you want to use POLARS_TIMEOUT_MS it is set before the first
+-    // polars call.
+-    if TIMEOUT_DISABLED.load() {
+-        return false;
+-    }
+-
+-    let var = std::env::var("POLARS_TIMEOUT_MS").ok();
+-    if var.is_none_or(|v| v.is_empty()) {
+-        TIMEOUT_DISABLED.store(true);
+-        return false;
+-    }
+-
+-    true
++    get_timeout().is_some()
+ }
+ 
++/// Make sure that if you want to use POLARS_TIMEOUT_MS it is set before the
++/// first polars call.
+ pub fn get_timeout() -> Option<Duration> {
+-    if !is_timeout_enabled() {
+-        return None;
++    static TIMEOUT: LazyLock<Option<Duration>> = LazyLock::new(|| {
++        let var = std::env::var("POLARS_TIMEOUT_MS").ok()?;
++        if var.is_empty() {
++            return None;
++        }
++        match var.parse() {
++            Ok(ms) => Some(Duration::from_millis(ms)),
++            Err(e) => {
++                eprintln!("failed to parse POLARS_TIMEOUT_MS: {e:?}");
++                None
++            },
++        }
++    });
++    *TIMEOUT
 +}
 +
-+impl ExprProperties {
-+    pub fn with_capacity(capacity: usize) -> Self {
-+        Self {
-+            is_elementwise: PlIndexMap::with_capacity(capacity),
-+            is_row_separable: PlIndexMap::with_capacity(capacity),
-+            is_input_independent: PlIndexMap::with_capacity(capacity),
-+            is_input_independent_scalar: PlIndexMap::with_capacity(capacity),
-+            is_frame_dependent: PlIndexMap::with_capacity(capacity),
-+            is_length_preserving: PlIndexMap::with_capacity(capacity),
-+            node_scratch: ScratchVec::default(),
-+            height_scratch: ScratchVec::default(),
-+        }
-+    }
-+
-+    /// Return whether the expression at `node` is elementwise, as [`is_elementwise_rec`].
-+    #[recursive::recursive]
-+    pub fn is_elementwise(&mut self, node: Node, expr_arena: &Arena<AExpr>) -> bool {
-+        if let Some(&ret) = self.is_elementwise.get(&node) {
-+            return ret;
-+        }
-+
-+        // `is_elementwise` skips the single-literal right-hand side of `is_in`.
-+        let mut inputs = unitvec![];
-+        let ret = is_elementwise(&mut inputs, expr_arena.get(node), expr_arena)
-+            && inputs.iter().all(|&n| self.is_elementwise(n, expr_arena));
-+
-+        self.is_elementwise.insert(node, ret);
-+        ret
-+    }
-+
-+    /// Return whether the expression at `node` is row-separable: evaluating it on batches of rows
-+    /// and concatenating the results gives the same output as evaluating it on the whole frame,
-+    /// where a scalar result is broadcast to the frame's height.
-+    ///
-+    /// Every node must be row-separable, and the inputs it zips must line up within a batch (see
-+    /// [`Self::zipped_inputs_line_up`]). A node that isn't elementwise must also have an input that
-+    /// reads the frame: `lit([1, 2]).explode()` gives two rows per batch.
-+    #[recursive::recursive]
-+    pub fn is_row_separable(&mut self, node: Node, expr_arena: &Arena<AExpr>) -> bool {
-+        if let Some(&ret) = self.is_row_separable.get(&node) {
-+            return ret;
-+        }
-+
-+        let ae = expr_arena.get(node);
-+        let mut inputs = unitvec![];
-+        ae.inputs_rev(&mut inputs);
-+        let ret = ae.is_row_separable_top_level()
-+            && inputs.iter().all(|&n| self.is_row_separable(n, expr_arena))
-+            && self.zipped_inputs_line_up(&inputs, expr_arena)
-+            && (ae.is_elementwise_top_level()
-+                || inputs
-+                    .iter()
-+                    .any(|&n| self.is_frame_dependent(n, expr_arena)));
-+
-+        self.is_row_separable.insert(node, ret);
-+        ret
-+    }
-+
-+    /// Return whether `inputs`, zipped within a batch of rows, line up as they do over the whole
-+    /// frame: all are elementwise, or all but one are input-independent scalars.
-+    pub fn zipped_inputs_line_up(&mut self, inputs: &[Node], expr_arena: &Arena<AExpr>) -> bool {
-+        let non_scalars: UnitVec<Node> = inputs
-+            .iter()
-+            .copied()
-+            .filter(|&n| !self.is_input_independent_scalar(n, expr_arena))
-+            .collect();
-+        non_scalars.len() <= 1
-+            || non_scalars
-+                .iter()
-+                .all(|&n| self.is_elementwise(n, expr_arena))
-+    }
-+
-+    /// Return whether the expression at `node` reads a column or the frame's length.
-+    #[recursive::recursive]
-+    fn is_frame_dependent(&mut self, node: Node, expr_arena: &Arena<AExpr>) -> bool {
-+        if let Some(&ret) = self.is_frame_dependent.get(&node) {
-+            return ret;
-+        }
-+
-+        let ae = expr_arena.get(node);
-+        let ret = matches!(ae, AExpr::Column(_) | AExpr::Len) || {
-+            let mut inputs: UnitVec<Node> = unitvec![];
-+            ae.inputs_rev(&mut inputs);
-+            inputs
-+                .iter()
-+                .any(|&n| self.is_frame_dependent(n, expr_arena))
-+        };
-+
-+    
-```
-
-**File**: `crates/polars-plan/src/plans/aexpr/properties/general.rs` (modified, +1/-104)
-```diff
-@@ -1,4 +1,3 @@
--use polars_utils::aliases::PlIndexMap;
- use polars_utils::idx_vec::UnitVec;
- use polars_utils::unitvec;
- 
-@@ -242,7 +241,7 @@ pub fn is_input_independent_scalar_rec(node: Node, expr_arena: &Arena<AExpr>) ->
- }
- 
- /// Whether `ae` yields an input-independent scalar when all its inputs do.
--fn is_input_independent_scalar_top_level(ae: &AExpr) -> bool {
-+pub(super) fn is_input_independent_scalar_top_level(ae: &AExpr) -> bool {
-     match ae {
-         AExpr::Literal(lv) => lv.is_scalar(),
-         AExpr::BinaryExpr { .. } | AExpr::Cast { .. } | AExpr::Ternary { .. } => true,
-@@ -251,108 +250,6 @@ fn is_input_independent_scalar_top_level(ae: &AExpr) -> bool {
++fn start_watchdog(py: Python<'_>, timeout: Duration) {
++    // Dumps the Python stacks of all threads on abort, even if the GIL is held.
++    if let Err(e) = enable_faulthandler(py) {
++        eprintln!("failed to enable faulthandler for POLARS_TIMEOUT_MS: {e}");
      }
- }
++    std::thread::Builder::new()
++        .name("polars-timeout".to_string())
++        .spawn(move || watchdog(timeout))
++        .unwrap();
++}
  
--/// Checks if the top-level expression node is row-separable. If this is the case, then `stack` will
--/// be extended further with any nested expression nodes.
--///
--/// This doesn't check that the inputs it pushes line up within a batch, so walking it with
--/// `property_rec` accepts `a.filter(p) + b.filter(q)`; use [`is_row_separable_rec`] for a whole
--/// expression.
--pub fn is_row_separable(stack: &mut UnitVec<Node>, ae: &AExpr, expr_arena: &Arena<AExpr>) -> bool {
--    is_prop(stack, ae, expr_arena, |ae| ae.is_row_separable_top_level())
--}
--
--/// Whether each expression in `nodes` on its own is row-separable, see [`is_row_separable_rec`].
--/// Public API for downstream crates such as Polars Nanook.
--///
--/// This doesn't check that the outputs of several expressions line up with each other.
--pub fn all_row_separable<'a, N>(nodes: &'a [N], expr_arena: &Arena<AExpr>) -> bool
--where
--    Node: From<&'a N>,
--{
--    let mut memo = PlIndexMap::default();
--    nodes
--        .iter()
--        .all(|n| row_separability(n.into(), expr_arena, &mut memo).row_separable)
--}
--
--/// Whether the expression at `node` as a whole is row-separable, see [`row_separability`].
--pub fn is_row_separable_rec(node: Node, expr_arena: &Arena<AExpr>) -> bool {
--    row_separability(node, expr_arena, &mut PlIndexMap::default()).row_separable
--}
--
--/// The properties of an expression that decide whether it is row-separable.
--#[derive(Clone, Copy, Debug)]
--pub struct RowSeparability {
--    /// Evaluating the expression on batches of rows and concatenating the results gives the same
--    /// output as evaluating it on the whole frame, where a scalar result is broadcast to the
--    /// frame's height.
--    pub row_separable: bool,
--    /// As [`is_elementwise_rec`].
--    pub elementwise: bool,
--    /// As [`is_input_independent_scalar_rec`].
--    pub input_independent_scalar: bool,
--    /// The expression reads a column or the frame's length.
--    pub frame_dependent: bool,
--}
--
--/// Derives the [`RowSeparability`] of the expression at `node`, memoizing it and that of the
--/// subexpressions it visits in `memo`, so that sharing `memo` across calls visits each node once.
--///
--/// Every node must be row-separable, and the inputs it zips must line up within a batch (see
--/// [`zipped_inputs_line_up`]). A node that isn't elementwise must also have an input that reads the
--/// frame: `lit([1, 2]).explode()` gives two rows per batch.
--#[recursive::recursive]
--pub fn row_separability(
--    node: Node,
--    expr_arena: &Arena<AExpr>,
--    memo: &mut PlIndexMap<Node, RowSeparability>,
--) -> RowSeparability {
--    if let Some(&props) = memo.get(&node) {
--        return props;
--    }
--    let ae = expr_arena.get(node);
--    let mut stack = unitvec![];
--    ae.inputs_rev(&mut stack);
--    let inputs: UnitVec<RowSeparability> = stack
--        .iter()
--        .map(|&n| row_separability(n, expr_arena, memo))
--        .collect();
--    let row_separable = ae.is_row_separable_top_level()
--        && inputs.iter().all(|p| p.row_separable)
--        && zipped_inputs_line_up(&inputs)
--        && (ae.is_elementwise_top_level() || inputs.iter().any(|p| p.frame_dependent));
--
--    // `is_elementwise` skips the single-literal right-hand side of `is_in`, as
--    // `is_elementwise_rec` does. Every input it pushes is in `memo` already.
--    stack.clear();
--    let elementwise =
--        is_elementwise(&mut stack, ae, expr_arena) && stack.iter().all(|n| memo[n].elementwise);
--
--    let input_independent_scalar = is_input_independent_scalar_top_level(ae)
--        && inputs.iter().all(|p| p.input_independent_scalar);
--    let frame_dependent =
--        matches!(ae, AExpr::Column(_) | AExpr::Len) || inputs.iter().any(|p| p.frame_dependent);
--
--    let props = RowSeparability {
--        row_separable,
--        elementwise,
--        input_independent_scalar,
--        frame_dependent,
--    };
--    memo.insert(node, props);
--    props
--}
--
--/// Whether `inputs`, zipped within a batch of rows, line up as they do over the whole frame: all
--/// are elementwise, or all but one are input-independent scalars.
--///
--/// This is sufficient, not necessary: two filters on the same predicate line up, but are
--/// rejected.
--pub fn zipped_inputs_line_up(inputs: &[RowSeparability]) -> bool {
--    let mu
-```
-
-**File**: `crates/polars-plan/src/plans/aexpr/properties/mod.rs` (modified, +2/-0)
-```diff
-@@ -1,3 +1,5 @@
-+mod expr_properties;
- mod general;
- 
-+pub use expr_properties::ExprProperties;
- pub use general::*;
-```
-
-**File**: `crates/polars-plan/src/plans/optimizer/join_predicate_fusion.rs` (modified, +3/-3)
-```diff
-@@ -15,8 +15,8 @@ use crate::dsl::Operator;
- use crate::plans::iterator::ArenaExprIter;
- use crate::plans::options::JoinTypeOptionsIR;
- use crate::plans::{
--    AExpr, ExprIR, ExprPushdownGroup, IR, JoinOptionsIR, JoinType, MintermIter, OutputName,
--    is_row_separable_rec,
-+    AExpr, ExprIR, ExprProperties, ExprPushdownGroup, IR, JoinOptionsIR, JoinType, MintermIter,
-+    OutputName,
- };
- use crate::utils::{aexpr_to_leaf_names_iter, rename_columns};
- 
-@@ -58,7 +58,7 @@ pub(super) fn can_fuse_predicate(node: Node, expr_arena: &Arena<AExpr>) -> bool
-     group.update_with_expr_rec(expr_arena.get(node), expr_arena, None);
- 
-     matches!(group, ExprPushdownGroup::Pushable)
--        && is_row_separable_rec(node, expr_arena)
-+        && ExprProperties::default().is_row_separable(node, expr_arena)
-         && !contains_dynamic_pred(node, expr_arena)
- }
- 
-```
-
-**File**: `crates/polars-stream/src/physical_plan/lower_expr.rs` (modified, +34/-305)
-```diff
-@@ -1,11 +1,10 @@
--use std::ops::ControlFlow;
- use std::sync::Arc;
- 
- use polars_core::chunked_array::cast::CastOptions;
- use polars_core::datatypes::AnyValue;
- use polars_core::frame::DataFrame;
- use polars_core::prelude::{
--    DataType, Field, IDX_DTYPE, InitHashMaps, PlHashMap, PlHashSet, PlIndexMap, PlIndexSet,
-+    DataType, Field, IDX_DTYPE, InitHashMaps, PlHashSet, PlIndexMap, PlIndexSet,
-     SortMultipleOptions,
- };
- #[cfg(feature = "rolling_window")]
-@@ -20,13 +19,10 @@ use polars_expr::{ExpressionConversionState, create_physical_expr};
- use polars_ops::series::{RLE_LENGTH_COLUMN_NAME, RLE_VALUE_COLUMN_NAME};
- use polars_plan::plans::AExpr;
- use polars_plan::plans::expr_ir::{ExprIR, OutputName};
--use polars_plan::plans::projection_height::{ExprHeightVisitor, ExprProjectionHeight};
- use polars_plan::prelude::*;
--use polars_plan::traversal::visitor::{NodeVisitor, SubtreeVisit};
- use polars_utils::arena::{Arena, Node};
- use polars_utils::itertools::Itertools;
- use polars_utils::pl_str::PlSmallStr;
--use polars_utils::scratch_vec::ScratchVec;
- use polars_utils::slice_enum::Slice;
- use slotmap::DenseSlotMap;
- 
-@@ -44,32 +40,12 @@ use crate::physical_plan::lower_ir::{
- };
- use crate::unique_column_name;
- 
--type ExprNodeKey = Node;
--
--pub(crate) struct ExprCache {
--    is_elementwise: PlHashMap<Node, bool>,
--    is_input_independent: PlHashMap<Node, bool>,
--    is_length_preserving: PlHashMap<Node, bool>,
--}
--
--impl ExprCache {
--    pub fn with_capacity(capacity: usize) -> Self {
--        Self {
--            is_elementwise: PlHashMap::with_capacity(capacity),
--            is_input_independent: PlHashMap::with_capacity(capacity),
--            is_length_preserving: PlHashMap::with_capacity(capacity),
--        }
--    }
--}
--
- pub(crate) struct LowerExprContext<'a> {
-     pub(crate) prepare_visualization: bool,
-     pub(crate) sortedness: &'a IRPlanSorted,
-     pub(crate) expr_arena: &'a mut Arena<AExpr>,
-     pub(crate) phys_sm: &'a mut DenseSlotMap<PhysNodeKey, PhysNode>,
--    pub(crate) cache: &'a mut ExprCache,
--    pub(crate) node_scratch: &'a mut ScratchVec<Node>,
--    pub(crate) ae_height_scratch: &'a mut ScratchVec<ExprProjectionHeight>,
-+    pub(crate) expr_props: &'a mut ExprProperties,
- }
- 
- impl<'a> From<LowerExprContext<'a>> for StreamingLowerIRContext<'a> {
-@@ -91,174 +67,6 @@ impl<'a> From<&LowerExprContext<'a>> for StreamingLowerIRContext<'a> {
-     }
- }
- 
--pub(crate) fn is_elementwise_rec_cached(
--    expr_key: ExprNodeKey,
--    arena: &Arena<AExpr>,
--    cache: &mut ExprCache,
--) -> bool {
--    *cache
--        .is_elementwise
--        .entry(expr_key)
--        .or_insert_with(|| is_elementwise_rec(expr_key, arena))
--}
--
--#[recursive::recursive]
--pub fn is_input_independent_rec(
--    expr_key: ExprNodeKey,
--    arena: &Arena<AExpr>,
--    cache: &mut PlHashMap<ExprNodeKey, bool>,
--) -> bool {
--    if let Some(ret) = cache.get(&expr_key) {
--        return *ret;
--    }
--
--    let ret = match arena.get(expr_key) {
--        // Handled separately in `Eval`.
--        AExpr::Element | AExpr::EvalColumn(_) => unreachable!(),
--        AExpr::StructField(_) => false,
--        AExpr::Explode { expr: inner, .. }
--        | AExpr::Cast {
--            expr: inner,
--            dtype: _,
--            options: _,
--        }
--        | AExpr::Sort {
--            expr: inner,
--            options: _,
--        } => is_input_independent_rec(*inner, arena, cache),
--        AExpr::Column(_) => false,
--
--        AExpr::Literal(_) => true,
--        AExpr::BinaryExpr { left, op: _, right } => {
--            is_input_independent_rec(*left, arena, cache)
--                && is_input_independent_rec(*right, arena, cache)
--        },
--        AExpr::Gather {
--            expr,
--            idx,
--            returns_scalar: _,
--            null_on_oob: _,
--        } => {
--            is_input_independent_rec(*expr, arena, cache)
--                && is_input_independent_rec(*idx, arena, cache)
--        },
--        AExpr::SortBy {
--            expr,
--            by,
--            sort_options: _,
--        } => {
--            is_input_independent_rec(*expr, arena, cache)
--                && by
--                    .iter()
--                    .all(|expr| is_input_independent_rec(*expr, arena, cache))
--        },
--        AExpr::Filter { input, by } => {
--            is_input_independent_rec(*input, arena, cache)
--                && is_input_independent_rec(*by, arena, cache)
--        },
--        AExpr::Agg(agg_expr) => match agg_expr.get_input() {
--            polars_plan::plans::NodeInputs::Leaf => true,
--            polars_plan::plans::NodeInputs::Single(expr) => {
--                is_input_independent_rec(expr, arena, cache)
--            },
--            polars_plan::plans::NodeInputs::Many(exprs) => exprs
--                .iter()
--                .all(|expr| is_input_independent_rec(*expr, arena, cache)),
--        },
--        AExpr::Ternary {
--            predicate,
--            truthy,
--            falsy,
--        } => {
--
-```
-
-**File**: `crates/polars-stream/src/physical_plan/lower_group_by.rs` (modified, +71/-76)
-```diff
-@@ -25,10 +25,9 @@ use polars_utils::pl_str::PlSmallStr;
- use recursive::recursive;
- use slotmap::DenseSlotMap;
- 
--use super::{ExprCache, PhysNode, PhysNodeKey, PhysNodeKind, PhysStream, StreamingLowerIRContext};
-+use super::{PhysNode, PhysNodeKey, PhysNodeKind, PhysStream, StreamingLowerIRContext};
- use crate::physical_plan::lower_expr::{
-     build_hstack_stream, build_select_stream, build_sort_stream, compute_output_schema,
--    is_elementwise_rec_cached, is_input_independent,
- };
- use crate::physical_plan::lower_ir::{
-     build_filter_stream, build_row_idx_stream, build_slice_stream,
-@@ -126,7 +125,7 @@ fn replace_agg_uniq(
-     expr: Node,
-     unique_of: Option<Node>,
-     canonical_exprs: &mut CanonicalExprMap,
--    expr_cache: &mut ExprCache,
-+    expr_props: &mut ExprProperties,
-     expr_arena: &mut Arena<AExpr>,
-     agg_exprs: &mut Vec<ExprIR>,
-     uniq_input_names: &mut PlIndexMap<CanonicalExprId, PlSmallStr>,
-@@ -151,7 +150,7 @@ fn replace_agg_uniq(
-                         let (Some(x_id), x_col) = replace_elementwise_components(
-                             x,
-                             canonical_exprs,
--                            expr_cache,
-+                            expr_props,
-                             expr_arena,
-                             uniq_input_names,
-                             uniq_elementwise_exprs,
-@@ -171,7 +170,7 @@ fn replace_agg_uniq(
-                     let (input_id, node) = replace_elementwise_components(
-                         *input,
-                         canonical_exprs,
--                        expr_cache,
-+                        expr_props,
-                         expr_arena,
-                         uniq_input_names,
-                         uniq_elementwise_exprs,
-@@ -211,14 +210,14 @@ fn replace_agg_uniq(
- fn replace_elementwise_components(
-     expr: Node,
-     canonical_exprs: &mut CanonicalExprMap,
--    expr_cache: &mut ExprCache,
-+    expr_props: &mut ExprProperties,
-     expr_arena: &mut Arena<AExpr>,
-     uniq_input_names: &mut PlIndexMap<CanonicalExprId, PlSmallStr>,
-     uniq_elementwise_exprs: &mut PlIndexMap<CanonicalExprId, ExprIR>,
-     substream_input_ids: &mut PlIndexSet<CanonicalExprId>,
- ) -> (Option<CanonicalExprId>, Node) {
--    if is_elementwise_rec_cached(expr, expr_arena, expr_cache)
--        || (is_input_independent(expr, expr_arena, expr_cache) && is_scalar_ae(expr, expr_arena))
-+    if expr_props.is_elementwise(expr, expr_arena)
-+        || (expr_props.is_input_independent(expr, expr_arena) && is_scalar_ae(expr, expr_arena))
-     {
-         let id = canonical_exprs.resolve(expr, expr_arena);
-         let name = uniq_input_names
-@@ -240,7 +239,7 @@ fn replace_elementwise_components(
-             let (input_id, node) = replace_elementwise_components(
-                 *input,
-                 canonical_exprs,
--                expr_cache,
-+                expr_props,
-                 expr_arena,
-                 uniq_input_names,
-                 uniq_elementwise_exprs,
-@@ -265,7 +264,7 @@ fn try_lower_elementwise_scalar_agg_expr(
-     gbl_kind: GroupByLowerKind,
-     input_schema: &Schema,
-     canonical_exprs: &mut CanonicalExprMap,
--    expr_cache: &mut ExprCache,
-+    expr_props: &mut ExprProperties,
-     expr_arena: &mut Arena<AExpr>,
-     agg_exprs: &mut Vec<ExprIR>,
-     uniq_input_names: &mut PlIndexMap<CanonicalExprId, PlSmallStr>,
-@@ -282,7 +281,7 @@ fn try_lower_elementwise_scalar_agg_expr(
-                 gbl_kind,
-                 input_schema,
-                 canonical_exprs,
--                expr_cache,
-+                expr_props,
-                 expr_arena,
-                 agg_exprs,
-                 uniq_input_names,
-@@ -303,7 +302,7 @@ fn try_lower_elementwise_scalar_agg_expr(
-                 $input,
-                 $x,
-                 canonical_exprs,
--                expr_cache,
-+                expr_props,
-                 expr_arena,
-                 agg_exprs,
-                 uniq_input_names,
-@@ -314,7 +313,7 @@ fn try_lower_elementwise_scalar_agg_expr(
-         };
-     }
- 
--    if is_input_independent(expr, expr_arena, expr_cache) {
-+    if expr_props.is_input_independent(expr, expr_arena) {
-         if is_scalar_ae(expr, expr_arena) {
-             return Some(expr);
-         } else {
-@@ -328,7 +327,7 @@ fn try_lower_elementwise_scalar_agg_expr(
- 
-     // Whether `x` can be the input of a unique reduction.
-     let mut unique_reducible = |x: Node, expr_arena: &Arena<AExpr>| {
--        is_elementwise_rec_cached(x, expr_arena, expr_cache)
-+        expr_props.is_elementwise(x, expr_arena)
-             && expr_arena
-                 .get(x)
-                 .to_dtype(&ToFieldContext::new(expr_arena, input_schema))
-@@ -774,10 +773,10 @@ fn try_lower_agg_input_expr(
-     expr: Node,
-     expr_arena: &mut Arena<AExpr>,
-     phys_sm: &mut DenseSlotMap<PhysNodeKey, PhysNode>,
--    expr_cache: &mut ExprCache,
-+    expr_props: &mut ExprProperties,
-     ctx: StreamingLowerIRContext<'_>,
- ) -> PolarsR
-```
-
-**File**: `crates/polars-stream/src/physical_plan/lower_ir.rs` (modified, +36/-35)
-```diff
-@@ -54,8 +54,8 @@ use crate::nodes::io_sources::multi_scan::reader_interface::builder::FileReaderB
- use crate::nodes::recursive::{RecursiveInputs, RecursiveStep};
- use crate::physical_plan::ZipBehavior;
- use crate::physical_plan::lower_expr::{
--    ExprCache, LowerExprContext, build_hstack_stream_with_ctx, build_select_stream,
--    input_height_expr, is_elementwise_rec_cached, lower_exprs,
-+    LowerExprContext, build_hstack_stream_with_ctx, build_select_stream, input_height_expr,
-+    lower_exprs,
- };
- use crate::physical_plan::lower_group_by::build_group_by_stream_with_key_ranges;
- use crate::unique_column_name;
-@@ -88,17 +88,15 @@ pub fn build_filter_stream(
-     predicate: ExprIR,
-     expr_arena: &mut Arena<AExpr>,
-     phys_sm: &mut DenseSlotMap<PhysNodeKey, PhysNode>,
--    expr_cache: &mut ExprCache,
-+    expr_props: &mut ExprProperties,
-     ctx: StreamingLowerIRContext<'_>,
- ) -> PolarsResult<PhysStream> {
-     let mut ctx = LowerExprContext {
-         expr_arena,
-         phys_sm,
--        cache: expr_cache,
-+        expr_props,
-         prepare_visualization: ctx.prepare_visualization,
-         sortedness: ctx.sortedness,
--        node_scratch: &mut Default::default(),
--        ae_height_scratch: &mut Default::default(),
-     };
-     build_filter_stream_with_ctx(input, predicate, &mut ctx)
- }
-@@ -110,7 +108,10 @@ pub(crate) fn build_filter_stream_with_ctx(
- ) -> PolarsResult<PhysStream> {
-     let input_schema = input.output_schema(ctx.phys_sm).clone();
- 
--    if is_elementwise_rec_cached(predicate.node(), ctx.expr_arena, ctx.cache) {
-+    if ctx
-+        .expr_props
-+        .is_elementwise(predicate.node(), ctx.expr_arena)
+-    match std::env::var("POLARS_TIMEOUT_MS").unwrap().parse() {
+-        Ok(ms) => Some(Duration::from_millis(ms)),
+-        Err(e) => {
+-            eprintln!("failed to parse POLARS_TIMEOUT_MS: {e:?}");
++fn enable_faulthandler(py: Python<'_>) -> PyResult<()> {
++    let faulthandler = py.import(intern!(py, "faulthandler"))?;
++    if !faulthandler
++        .call_method0(intern!(py, "is_enabled"))?
++        .extract::<bool>()?
 +    {
-         let kind = PhysNodeKind::Filter {
-             input,
-             predicate,
-@@ -233,7 +234,7 @@ pub fn lower_ir(
-     phys_to_ir: &mut SecondaryMap<PhysNodeKey, Node>,
-     original_ir_len: usize,
-     schema_cache: &mut PlHashMap<Node, Arc<Schema>>,
--    expr_cache: &mut ExprCache,
-+    expr_props: &mut ExprProperties,
-     cache_nodes: &mut PlHashMap<UniqueId, PhysStream>,
-     ctx: StreamingLowerIRContext<'_>,
-     disable_morsel_split: Option<bool>,
-@@ -248,7 +249,7 @@ pub fn lower_ir(
-         phys_to_ir,
-         original_ir_len,
-         schema_cache,
--        expr_cache,
-+        expr_props,
-         cache_nodes,
-         ctx,
-         disable_morsel_split,
-@@ -276,7 +277,7 @@ fn lower_ir_inner(
-     phys_to_ir: &mut SecondaryMap<PhysNodeKey, Node>,
-     original_ir_len: usize,
-     schema_cache: &mut PlHashMap<Node, Arc<Schema>>,
--    expr_cache: &mut ExprCache,
-+    expr_props: &mut ExprProperties,
-     cache_nodes: &mut PlHashMap<UniqueId, PhysStream>,
-     ctx: StreamingLowerIRContext<'_>,
-     mut disable_morsel_split: Option<bool>,
-@@ -296,7 +297,7 @@ fn lower_ir_inner(
-                 phys_to_ir,
-                 original_ir_len,
-                 schema_cache,
--                expr_cache,
-+                expr_props,
-                 cache_nodes,
-                 ctx,
-                 disable_morsel_split,
-@@ -340,7 +341,7 @@ fn lower_ir_inner(
++        // The C stack would only show the watchdog thread aborting.
++        let kwargs = if py.version_info() >= (3, 14) {
++            Some([("c_stack", false)].into_py_dict(py)?)
++        } else {
+             None
+-        },
++        };
++        faulthandler.call_method(intern!(py, "enable"), (2,), kwargs.as_ref())?;
+     }
++    Ok(())
+ }
  
-             let phys_input = lower_ir!(*input)?;
-             return build_select_stream(
--                phys_input, &selectors, expr_arena, phys_sm, expr_cache, ctx,
-+                phys_input, &selectors, expr_arena, phys_sm, expr_props, ctx,
-             );
-         },
+-fn timeout_thread(recv: Receiver<TimeoutRequest>) {
+-    let mut active_timeouts: PlHashSet<u64> = PlHashSet::new();
+-    #[allow(clippy::type_complexity)]
+-    let mut shortest_timeout: BinaryHeap<Priority<Reverse<Duration>, (u64, Option<String>)>> =
+-        BinaryHeap::new();
++fn watchdog(timeout: Duration) {
++    let period = (timeout / 10).clamp(Duration::from_millis(1), Duration::from_secs(1));
++    let max_ticks = timeout.as_nanos().div_ceil(period.as_nanos()) as u64;
+     loop {
+-        // Remove cancelled requests.
+-        while let Some(Priority(_, (id, _))) = shortest_timeout.peek() {
+-            if active_timeouts.contains(id) {
+-                break;
+-            }
+-            shortest_timeout.pop();
+-        }
+-
+-        let request = if let Some(Priority(timeout, (_, traceback))) = shortest_timeout.peek() {
+-            match recv.recv_timeout(timeout.0) {
+-                Err(RecvTimeo
+```
+
+**File**: `crates/polars-python/src/utils.rs` (modified, +1/-9)
+```diff
+@@ -6,7 +6,6 @@ use polars_error::PolarsResult;
+ use polars_error::abort::{QueryAborted, catch_polars_abort};
+ use pyo3::exceptions::PyKeyboardInterrupt;
+ use pyo3::marker::Ungil;
+-use pyo3::types::PyAnyMethods;
+ use pyo3::{PyErr, PyResult, Python};
  
-@@ -391,7 +392,7 @@ fn lower_ir_inner(
-         IR::HStack { input, exprs, .. } | IR::Window { input, exprs, .. } => {
-             let exprs = exprs.to_vec();
-             let phys_input = lower_ir!(*input)?;
--            return build_hstack_stream(phys_input, &exprs, expr_arena, phys_sm, expr_cache, ctx);
-+            return build_hstack_stream(phys_input, &exprs, expr_arena, phys_sm, expr_props, ctx);
-         },
+ use crate::dataframe::PyDataFrame;
+@@ -126,13 +125,6 @@ pub trait EnterPolarsExt {
+     }
+ }
  
-         IR::Slice { input, slice } => {
-@@ -404,7 +405,7 @@ fn lower_ir_inner(
-             let predicate = predicate.clone();
-             let phys_input = lower_ir!(*input)?;
-             return build_filter_stream(
--                phys_input, predicate, expr_arena, phys_sm, expr_cache, ctx,
-+                phys_input, predicate, expr_arena, phys_sm, expr_props, ctx,
-             );
-         },
- 
-@@ -609,7 +610,7 @@ fn lower_ir_inner(
-                     AExprBuilder::col(key[0].clone(), expr_arena).expr_ir(key_name.clone())
-                 };
- 
--                *s = build_hstack_stream(*s, &[key_expr], expr_arena, phys_sm, expr_cache, ctx)?;
-+                *s = build_hstack_stream(*s, &[key_expr], expr_arena, phys_sm, expr_props, ctx)?;
-             }
- 
-             PhysNodeKind::MergeSorted {
-@@ -757,7 +758,7 @@ fn lower_ir_inner(
-                 }));
-                 let trans_exprs;
-                 (stream, trans_exprs) =
--                    lower_exprs(stream, &exprs, expr_arena, phys_sm, expr_cache, ctx)?;
-+                    lower_exprs(stream, &exprs, expr_arena, phys_sm, expr_props, ctx)?;
-                 output_exprs = trans_exprs[..output_exprs.len()].to_vec();
-                 trans_expr
+-fn get_traceback(py: Python<'_>) -> PyResult<String> {
+-    let tb = py.import(pyo3::intern!(py, "traceback"))?;
+-    let format_stack = tb.getattr("format_stack")?;
+-    let lines: Vec<String> = format_stack.call0()?.extract()?;
+-    Ok(lines.join("\n"))
+-}
+-
+ impl EnterPolarsExt for Python<'_> {
+     fn enter_polars<T, E, F>(self, f: F) -> PyResult<T>
+     where
+@@ -142,7 +134,7 @@ impl EnterPolarsExt for Python<'_> {
+     {
+         let _timeout_guard = is_timeout_enabled().then(|| {
+             std::hint::cold_path();
+-            schedule_polars_timeout(get_traceback(self).ok())
++            schedule_polars_timeout(self)
+         });
+         let ret = self.detach(|| catch_polars_abort(AssertUnwindSafe(f)));
+         match ret {
+```
+
+**File**: `py-polars/tests/unit/io/database/test_scan_api.py` (modified, +1/-4)
+```diff
+@@ -556,10 +556,7 @@ def test_count_of_a_slice_of_a_source_beyond_idxsize(
+     assert lf.head(3).select(pl.len()).collect(engine=engine).item() == 3
+     assert lf.slice(4_999_999_998).select(pl.len()).collect(engine=engine).item() == 2
+     # a negative slice was resolved from the count narrowed to IdxSize
+-    assert lf.tail(2).collect(engine=engine)["id"].to_list() == [
+-        4_999_999_998,
+-        4_999_999_999,
+-    ]
++    assert lf.tail(2).select(pl.len()).collect(engine=engine).item() == 2
+     assert lf.slice(-3, 2).select(pl.len()).collect(engine=engine).item() == 2
+     # the in-memory engine read (and numbered) the whole source below the row index
+     out = lf.with_row_index().slice(3, 2).collect(engine=engine)
+```
+
+**File**: `py-polars/tests/unit/meta/test_timeout.py` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++from __future__ import annotations
++
++import os
++import subprocess
++import sys
++
++
++def test_timeout_prints_traceback_and_exits() -> None:
++    script = """\
++import time
++import polars as pl
++
++def slow(s):
++    time.sleep(30)
++    return s
++
++def run_stuck_query():
++    pl.LazyFrame({"a": [1]}).select(pl.col("a").map_batches(slow)).collect()
++
++run_stuck_query()
++"""
++    result = subprocess.run(
++        [sys.executable, "-c", script],
++        env={**os.environ, "POLARS_TIMEOUT_MS": "200"},
++        capture_output=True,
++        text=True,
++        timeout=60,
++    )
++    assert result.returncode != 0
++    assert "POLARS_TIMEOUT_MS exceeded" in result.stderr
++    assert "in run_stuck_query" in result.stderr
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31122** (2026-11-26): feat: Add memory budget to pl.Config (@ritchie46)
-- **PR #31120** (closed): fix: Reject temporal duration bounds in is_between (@faizal4757)
-- **PR #31112** (2026-11-26): chore: Bump unicode-width to 0.2.3 (@orlp)
-- **PR #31111** (2026-11-26): perf: Improve Polars import time (@orlp)
-- **PR #31108** (2026-11-25): fix: Don't mark naive <-> tz-aware datetime cast as lossless (@orlp)
-- **PR #31106** (2026-11-25): perf: Use SIMD kernels for nan_min/nan_max, native skew/kurtosis and cheaper integer casts (@ritchie46)
+- **PR #31149** (2026-11-27): fix: Scalar-only `select` returns one row per chunk and scalar `filter` raises ShapeError (@kdn36)
+- **PR #31147** (2026-11-27): feat: Support CALL expire_snapshots on Iceberg catalog tables in SQL (@kdn36)
+- **PR #31145** (2026-11-27): ci: Mark more tests as slow (@orlp)
+- **PR #31144** (2026-11-27): feat(python): Require deltalake 1.7 for the native Delta sink (@Jesse-Bakker)
+- **PR #31143** (2026-11-27): fix: Delete only a failed Iceberg sink run's own files on cleanup (@kdn36)
+- **PR #31141** (2026-11-27): ci: Avoid constantly capturing stacktraces for POLARS_TIMEOUT_MS (@orlp)
 
 ---
 
@@ -2640,32 +2654,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Raise on non-numeric `hist` bins instead of panicking
+## X. Delete only a failed Iceberg sink run's own files on cleanup
 
 **RULE**:
-When implementing operations in `crates/polars-ops/src/chunked_array/hist.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-plan/dsl-schema-hashes.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2bb320e`: Raise on non-numeric `hist` bins instead of panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af5b036a`: Delete only a failed Iceberg sink run's own files on cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-ops/src/chunked_array/hist.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-plan/dsl-schema-hashes.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // `Null` is the dtype of empty bins, e.g. `bins=[]` from Python.
-                polars_ensure!(
-                    bins.dtype().is_numeric() || bins.dtype().is_null(),
-                    InvalidOperation: "`hist` bins must be numeric, got dtype `{}`", bins.dtype()
-                );
+  "IcebergSinkState": "7493c6e7307ce0659cd2042f5c3541371fe3c68ddb3ec12c8367cce71c700e0d",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  "IcebergSinkState": "f592c241701f8d94849d94a31ba38181ce7d35850738870a72bd9db9a21e48db",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2bb320e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af5b036a` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T10:43:22.510Z",
+  "last_updated": "2026-11-27T10:52:03.749Z",
   "total_records": 2827,
   "domains": {
     "A": {
@@ -17709,8 +17709,8 @@
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "repository": "pola-rs/polars",
-      "content_hash": "eabbd75abc1d12e90f00826619f51ce1a5ab677549de825e9c31d76fbb0e9252",
-      "created_at": "2026-11-26T10:19:25.821Z"
+      "content_hash": "f1d7f853f4f914b4c42f7fcfec52d18079625b2a07c6fe15d6892328ec26ca26",
+      "created_at": "2026-11-27T10:51:52.908Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -17727,8 +17727,8 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
       "repository": "pola-rs-polars-learnings",
-      "content_hash": "c5b13aa3ee6fa675e9f9f0a207a176ac833fd19217ec81ffae4e34284cb47a88",
-      "created_at": "2026-11-26T10:19:33.887Z"
+      "content_hash": "b75ebe0ce018e0b83a283323c65adca9c7979e46ad3944663798643500214ed4",
+      "created_at": "2026-11-27T10:52:01.748Z"
     },
     "DOM-D-A6170DB1": {
       "record_id": "DOM-D-A6170DB1",
@@ -31071,8 +31071,8 @@
       "title": "Architecture Intelligence: CrossPaste/crosspaste-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crosspaste-crosspaste-desktop-architecture-intelligence-crosspaste-crosspaste-de.md",
       "repository": "CrossPaste/crosspaste-desktop",
-      "content_hash": "1a80940f3b4f3ba9be2df5ab26305175df91657b7532e50b3bd41d2510b37a7c",
-      "created_at": "2026-11-19T13:08:04.930Z"
+      "content_hash": "e24559602bff806608880568eed831abf7953ca9984ca5715d176e476d5c9e46",
+      "created_at": "2026-11-27T10:51:57.101Z"
     },
     "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants",
@@ -31234,8 +31234,8 @@
       "title": "Architecture Intelligence: crosspaste-crosspaste-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crosspaste-crosspaste-desktop-learnings-architecture-intelligence-crosspaste-cro.md",
       "repository": "crosspaste-crosspaste-desktop-learnings",
-      "content_hash": "2bf80d5c2b6a14c8270c0f771e237f868b37e7e2dbc1e8bb1a14564070335071",
-      "created_at": "2026-11-19T13:08:09.525Z"
+      "content_hash": "2d1479adc1d51418aa663b5716f5b27dcd35fea9bc5bb5b054f053e1dad62afa",
+      "created_at": "2026-11-27T10:52:03.749Z"
     },
     "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants",
@@ -34626,8 +34626,8 @@
       "title": "Search & Distribution Intelligence: MelnixDev/seo-crawl-audit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-melnixdev-seo-crawl-audit-search-distribution-intelligence-melnixdev-seo-crawl-a.md",
       "repository": "MelnixDev/seo-crawl-audit",
-      "content_hash": "c5a0f95ca0cca2db6a46c23354eaf78486eaff9349874275b163226894fb6579",
-      "created_at": "2026-11-19T19:39:02.698Z"
+      "content_hash": "8cacdc5ff0d3926dad3969fff15c8815dc452ed0dc9f99f37c8c9714b75c27c3",
+      "created_at": "2026-11-27T10:51:56.575Z"
     },
     "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants",
@@ -34644,8 +34644,8 @@
       "title": "Search & Distribution Intelligence: melnixdev-seo-crawl-audit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-melnixdev-seo-crawl-audit-learnings-search-distribution-intelligence-melnixdev-s.md",
       "repository": "melnixdev-seo-crawl-audit-learnings",
-      "content_hash": "93c7e2f5ecfb1ee48a20016fbce6b2fac22a3ee89aba6781e3f0b37cf2d0b0e2",
-      "created_at": "2026-11-19T19:39:11.123Z"
+      "content_hash": "8a5bd8ba3dd8e6561d3690fe43ef9ef7b615217e1805cea8319f2a2f3f71a8e8",
+      "created_at": "2026-11-27T10:52:02.727Z"
     },
     "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants",

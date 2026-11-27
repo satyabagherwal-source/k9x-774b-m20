@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:43:16.109Z",
-  "total_cycles_completed": 13063,
-  "total_learnings_persisted": 13063,
-  "total_rules_promoted": 11792,
+  "last_updated": "2026-11-27T10:51:56.644Z",
+  "total_cycles_completed": 13066,
+  "total_learnings_persisted": 13066,
+  "total_rules_promoted": 11795,
   "history": [
-    {
-      "timestamp": "2026-11-26T20:40:38.261Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T20:49:38.186Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T20:49:40.027Z",
-      "repository": "erkamyaman/rust-anything",
-      "learningId": "learn-github-erkamyaman-rust-anything",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T20:59:31.445Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T10:43:16.109Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:51:52.462Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:51:56.111Z",
+      "repository": "MelnixDev/seo-crawl-audit",
+      "learningId": "learn-github-melnixdev-seo-crawl-audit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T10:51:56.644Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

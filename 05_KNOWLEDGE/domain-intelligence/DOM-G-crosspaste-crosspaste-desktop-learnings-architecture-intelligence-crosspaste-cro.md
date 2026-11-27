@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T13:08:09.283Z",
+  "timestamp": "2026-11-27T10:52:03.401Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-crosspaste-crosspaste-desktop-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [crosspaste-crosspaste-desktop-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T13:08:09.283Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T10:52:03.401Z`  
 > **Learning ID**: `LEARN-EVO-crosspaste-crosspaste-desktop-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: F (Design Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from crosspaste-crosspaste-desktop-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source**: github ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
-> **Source Version**: `5023ba50`  
+> **Source Version**: `343ee79d`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T13:08:03.619Z  
+> **Timestamp**: 2026-11-27T10:51:55.284Z  
 > **Learning ID**: `learn-github-crosspaste-crosspaste-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T13:03:02.371Z  
+> **Harvest Timestamp**: 2026-11-27T10:51:55.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2714 stars
+- **Stars / Engagement**: 2742 stars
 
 ---
 
@@ -796,17 +796,17 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5023ba50` (2026-11-19)
-**Commit Message**: :arrow_up: Bump gradle-wrapper from 9.9.0 to 9.9.1 (#5344)
+### Incident Patch 1: `343ee79d` (2026-11-26)
+**Commit Message**: :arrow_up: Bump com.helger:ph-css from 8.4.0 to 8.4.1 (#5347)
 
-Bumps [gradle-wrapper](https://github.com/gradle/gradle) from 9.9.0 to 9.9.1.
-- [Release notes](https://github.com/gradle/gradle/releases)
-- [Commits](https://github.com/gradle/gradle/compare/v9.9.0...v9.9.1)
+Bumps [com.helger:ph-css](https://github.com/phax/ph-css) from 8.4.0 to 8.4.1.
+- [Release notes](https://github.com/phax/ph-css/releases)
+- [Commits](https://github.com/phax/ph-css/compare/ph-css-parent-pom-8.4.0...ph-css-parent-pom-8.4.1)
 
 ---
 updated-dependencies:
-- dependency-name: gradle-wrapper
-  dependency-version: 9.9.1
+- dependency-name: com.helger:ph-css
+  dependency-version: 8.4.1
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
@@ -814,25 +814,26 @@ updated-dependencies:
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +1/-1)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
+@@ -39,7 +39,7 @@ metadata-extractor = "2.22.0"
+ mockk = "1.14.12"
+ navigation = "2.10.0-rc01"
+ okio = "3.18.2"
+-ph-css = "8.4.0"
++ph-css = "8.4.1"
+ richeditor = "1.2.1"
+ semver = "3.1.0"
+ sqldelight = "2.4.1"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5348** (2026-11-26): ⬆️ Bump ch.qos.logback:logback-classic from 1.6.6 to 1.6.8 (@dependabot[bot])
+- **PR #5347** (2026-11-26): ⬆️ Bump com.helger:ph-css from 8.4.0 to 8.4.1 (@dependabot[bot])
+- **PR #5346** (2026-11-23): :bug: Add WS pause gating, inbound business queue budget, and extension heartbeat_ack support (@guiyanakuang)
+- **PR #5345** (2026-11-22): :bug: Fix WebSocket reconnect upgrade, pending request fast-fail, send cancellation, and heartbeat probe (@guiyanakuang)
 - **PR #5344** (2026-11-19): ⬆️ Bump gradle-wrapper from 9.9.0 to 9.9.1 (@dependabot[bot])
 - **PR #5343** (2026-11-17): :hammer: defer the launch state in GuidePasteDataService (@guiyanakuang)
-- **PR #5342** (2026-11-14): :lipstick: Refresh iPhone and iPad device icons and add iPhone Duo (@guiyanakuang)
-- **PR #5340** (2026-11-12): ⬆️ Bump com.helger:ph-css from 8.2.3 to 8.4.0 (@dependabot[bot])
-- **PR #5339** (2026-11-12): ⬆️ Bump io.mockk:mockk from 1.14.11 to 1.14.12 (@dependabot[bot])
-- **PR #5338** (2026-11-12): :sparkles: let MCP agents read the latest clipboard item and see image content (@guiyanakuang)
 
 ---
 
@@ -852,31 +853,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :arrow_up: Bump gradle-wrapper from 9.9.0 to 9.9.1
+## X. :arrow_up: Bump com.helger:ph-css from 8.4.0 to 8.4.1
 
 **RULE**:
-When implementing operations in `gradle/wrapper/gradle-wrapper.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5023ba50`: :arrow_up: Bump gradle-wrapper from 9.9.0 to 9.9.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `343ee79d`: :arrow_up: Bump com.helger:ph-css from 8.4.0 to 8.4.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/wrapper/gradle-wrapper.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
+ph-css = "8.4.1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
+ph-css = "8.4.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5023ba50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `343ee79d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

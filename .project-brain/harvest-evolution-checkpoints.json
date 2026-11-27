@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:43:22.909Z",
+  "last_updated": "2026-11-27T10:52:04.131Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T08:46:49.070Z",
@@ -108,7 +108,7 @@
       "staged_for_review": 1
     },
     "pola-rs-polars-learnings.md": {
-      "processed_at": "2026-11-26T10:19:33.332Z",
+      "processed_at": "2026-11-27T10:52:01.217Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -453,7 +453,7 @@
       "staged_for_review": 1
     },
     "crosspaste-crosspaste-desktop-learnings.md": {
-      "processed_at": "2026-11-25T02:02:13.751Z",
+      "processed_at": "2026-11-27T10:52:03.143Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2928,7 +2928,7 @@
       "staged_for_review": 1
     },
     "melnixdev-seo-crawl-audit-learnings.md": {
-      "processed_at": "2026-11-19T19:39:10.615Z",
+      "processed_at": "2026-11-27T10:52:02.161Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4038,7 +4038,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4917,
+  "total_dossiers_evaluated": 4920,
   "total_canonical_promoted": 578,
-  "total_staged_for_review": 3677
+  "total_staged_for_review": 3680
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T10:43:20.965Z",
+  "updated_at": "2026-11-27T10:52:03.273Z",
   "stats": {
-    "total_discovered": 10291,
-    "approved_pending_harvest": 9762,
+    "total_discovered": 10292,
+    "approved_pending_harvest": 9763,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9766,
+      "COMMUNITY_AND_EXPERT": 9767,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222726,6 +222726,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
         "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-65A7D7918E53": {
+      "id": "SRC-65A7D7918E53",
+      "url": "https://github.com/phax/ph-css/compare/ph-css-parent-pom-8.4.0...ph-css-parent-pom-8.4.1",
+      "title": "https://github.com/phax/ph-css/compare/ph-css-parent-pom-8.4.0...ph-css-parent-pom-8.4.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T10:52:03.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
+        "fileName": "crosspaste-crosspaste-desktop-learnings.md"
       }
     }
   }
