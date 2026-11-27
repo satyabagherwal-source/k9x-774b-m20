@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:58:47.830Z",
+  "last_updated": "2026-11-27T00:07:38.935Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-26T23:32:29.720Z",
@@ -248,7 +248,7 @@
       "staged_for_review": 1
     },
     "prometheus-prometheus-learnings.md": {
-      "processed_at": "2026-11-26T06:18:34.356Z",
+      "processed_at": "2026-11-27T00:07:36.145Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -748,7 +748,7 @@
       "staged_for_review": 0
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-26T13:18:12.972Z",
+      "processed_at": "2026-11-27T00:07:37.159Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2553,7 +2553,7 @@
       "staged_for_review": 0
     },
     "hf-qwen-qwen3-vl-8b-instruct-learnings.md": {
-      "processed_at": "2026-11-23T15:13:16.613Z",
+      "processed_at": "2026-11-27T00:07:35.560Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4725,
+  "total_dossiers_evaluated": 4728,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3545
+  "total_staged_for_review": 3547
 }

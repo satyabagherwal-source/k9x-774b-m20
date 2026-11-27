@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-26T23:58:47.626Z",
+  "last_updated": "2026-11-27T00:07:38.493Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -11538,8 +11538,8 @@
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "repository": "prometheus/prometheus",
-      "content_hash": "ae1c04d71d23b92fd9a268fbe09219425da8692bd095b8501602e1642ba72714",
-      "created_at": "2026-11-26T06:18:25.697Z"
+      "content_hash": "9842dab19bd43477d65de4e55274311878a4cd0521e688f2aa8a365761fb36e8",
+      "created_at": "2026-11-27T00:07:25.243Z"
     },
     "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
@@ -12849,8 +12849,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "1260a29917ab1cae40eccc70feed3202afafc2161df974825768079e79c9b95b",
-      "created_at": "2026-11-26T18:59:03.349Z"
+      "content_hash": "051ca1494c520529f6dc93146f1cb9ae9939e494025e594d342b2c086ad210d4",
+      "created_at": "2026-11-27T00:07:32.388Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12918,8 +12918,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "9c03e163ceef7d125dda289576b4016e05a09e97af38d127a23528b7e2253ceb",
-      "created_at": "2026-11-26T13:18:14.705Z"
+      "content_hash": "764f89d1606f6216803e78c539ae1be71119807beb08b3327c8fc68767102c09",
+      "created_at": "2026-11-27T00:07:38.493Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -15835,8 +15835,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-VL-8B-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-vl-8b-instruct-research-knowledge-intelligence-qwen-qwen3-vl-8b-in.md",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "content_hash": "8abed93a4264eb119b56ed974ebaae77f20856c3b67e65b0c433c477ef01625c",
-      "created_at": "2026-11-23T15:12:34.141Z"
+      "content_hash": "f92ce6802895c8eadba9215914659be12b748a98cced981647de139eefd4b946",
+      "created_at": "2026-11-27T00:07:15.921Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants",
@@ -15931,8 +15931,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-vl-8b-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-vl-8b-instruct-learnings-research-knowledge-intelligence-hf-qwen-q.md",
       "repository": "hf-qwen-qwen3-vl-8b-instruct-learnings",
-      "content_hash": "cb6f19ed26b794bd90c7eead6fa93985c1792c5b6609c8b4a6c885cb35fcedca",
-      "created_at": "2026-11-23T15:13:16.830Z"
+      "content_hash": "aad28f180cfdbf136cf1bc6b335139ad28ea5e5a5929c9ae5f432941377940d5",
+      "created_at": "2026-11-27T00:07:35.854Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
@@ -24855,8 +24855,8 @@
       "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-learnings-content-information-intelligence-prometheus-prom.md",
       "repository": "prometheus-prometheus-learnings",
-      "content_hash": "5c699da77bccff6517ba1733e4dbb20eb824207053474aa461570881275575bd",
-      "created_at": "2026-11-26T06:18:34.849Z"
+      "content_hash": "5a3176da5177d2fdf4f20c014eebb5c2dcdf8f748706bf17710c93ad1ac9261e",
+      "created_at": "2026-11-27T00:07:36.701Z"
     },
     "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",

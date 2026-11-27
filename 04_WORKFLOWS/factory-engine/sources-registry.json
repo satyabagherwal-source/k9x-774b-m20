@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-26T23:58:45.006Z",
-    "lastVerified": "2026-11-26T23:58:45.006Z",
+    "lastChecked": "2026-11-27T00:07:35.377Z",
+    "lastVerified": "2026-11-27T00:07:35.377Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -194,22 +194,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T23:32:27.049Z",
-    "lastVerified": "2026-11-26T23:32:27.049Z",
+    "lastChecked": "2026-11-27T00:07:30.581Z",
+    "lastVerified": "2026-11-27T00:07:30.581Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "fdc815221989b9cdf2283017cbb2796ad2637d286a83189b1ef91ecb2b8608e8",
+    "contentHash": "9a144f66067f2cdefcb3d7d4a7447966a24ec68ad10f9cc91adc4f86209cca61",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f399f9fc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -478,8 +477,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T19:45:50.139Z",
-    "lastVerified": "2026-11-26T19:45:50.139Z",
+    "lastChecked": "2026-11-27T00:07:21.716Z",
+    "lastVerified": "2026-11-27T00:07:21.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -4216,12 +4215,12 @@
     "lastVerified": "2026-11-26T16:21:13.841Z"
   },
   "pixeltable-pixeltable": {
-    "name": "pixeltable/pixeltable",
+    "name": "pixeltable",
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T05:17:18.090Z",
-    "lastVerified": "2026-11-26T05:17:18.090Z",
+    "lastChecked": "2026-11-27T00:07:24.193Z",
+    "lastVerified": "2026-11-27T00:07:24.193Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
@@ -4230,7 +4229,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "704c8dc3"
   },
   "hf-compvis-stable-diffusion-v1-4": {
     "name": "CompVis/stable-diffusion-v1-4",
@@ -4397,12 +4397,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nativewind-nativewind": {
-    "name": "nativewind/nativewind",
+    "name": "nativewind",
     "officialUrl": "https://github.com/nativewind/nativewind",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-24T15:53:36.492Z",
-    "lastVerified": "2026-11-24T15:53:36.492Z",
+    "lastChecked": "2026-11-27T00:07:16.779Z",
+    "lastVerified": "2026-11-27T00:07:16.779Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nativewind-nativewind",
@@ -4411,7 +4411,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fbe86240"
   },
   "agent-field-agentfield": {
     "name": "agentfield",
@@ -5399,9 +5400,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-11-25T23:49:56.747Z",
+    "lastChecked": "2026-11-27T00:07:11.643Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-11-25T23:49:56.747Z"
+    "lastVerified": "2026-11-27T00:07:11.643Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -6342,12 +6343,12 @@
     "officialUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T15:12:33.471Z",
-    "lastVerified": "2026-11-23T15:12:33.471Z",
+    "lastChecked": "2026-11-27T00:07:14.823Z",
+    "lastVerified": "2026-11-27T00:07:14.823Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
+    "contentHash": "d027008c1a033d1ae8c7083b59942c25c52eda8b794ce776c86fe2fbd7f0c32e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7447,14 +7448,14 @@
     "officialUrl": "https://github.com/prometheus/prometheus",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T06:18:24.310Z",
-    "lastVerified": "2026-11-26T06:18:24.310Z",
+    "lastChecked": "2026-11-27T00:07:23.412Z",
+    "lastVerified": "2026-11-27T00:07:23.412Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "ba2fd7026ca982a2aa451eb82005e41427da3bfa95098dd714a6454ecb0823d9",
+    "contentHash": "b7b0cdcb96fbd33e620f78c60eb5e1f5515a6afb0bf73d1c96b6753e09db59a7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

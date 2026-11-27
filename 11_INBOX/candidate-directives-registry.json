@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-26T23:58:46.713Z",
+  "last_updated": "2026-11-27T00:07:38.270Z",
   "directives": [
     {
       "id": "CD-001",
@@ -67755,6 +67755,48 @@
       "domain_letter": "M",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7B6518-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-26"
+    },
+    {
+      "id": "CD-2FDM",
+      "directive_title": "update Go dependencies for 3.17",
+      "source_repo": "prometheus/prometheus",
+      "source_commit": "1e794b83",
+      "staged_file": "11_INBOX/candidate-directives/CD-2FDM-update-go-dependencies-for-3-17.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-2PLK",
+      "directive_title": "replace deprecated filetime calls with std::fs",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2PLK-replace-deprecated-filetime-calls-with-std-fs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-2O7U",
+      "directive_title": "deps): update Go dependencies for 3.17",
+      "source_repo": "prometheus-prometheus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-2O7U-deps-update-go-dependencies-for-3-17.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-A8D9C1",
+      "directive_title": "replace deprecated filetime calls with std::fs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A8D9C1-replace-deprecated-filetime-calls-with-s.md",
+      "staged_date": "2026-11-27"
     }
   ]
 }

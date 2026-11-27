@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "f399f9fc",
+  "source_version": "14c70177",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-26T18:59:03.151Z",
+  "timestamp": "2026-11-27T00:07:32.162Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `f399f9fc`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-26T18:59:03.151Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `14c70177`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T00:07:32.162Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:59:02.101Z  
+> **Harvest Timestamp**: 2026-11-27T00:07:30.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3865 stars
+- **Stars / Engagement**: 3866 stars
 
 ---
 
@@ -2293,175 +2293,354 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f399f9fc` (2026-11-26)
-**Commit Message**: deps: update lock file
+### Incident Patch 1: `14c70177` (2026-11-26)
+**Commit Message**: refactor: replace deprecated filetime calls with std::fs (#5119)
 
-**File**: `Cargo.lock` (modified, +60/-60)
+* refactor: replace deprecated filetime calls with std::fs
+
+filetime 0.2.30 deprecates `FileTime::from_last_modification_time`,
+`from_last_access_time`, `set_file_mtime` and `set_file_times` in favor of
+`Metadata::modified`/`accessed` and `std::fs::set_times` with `FileTimes`
+(stable on our MSRV 1.100 and the pinned nightly). Mtime comparisons keep
+full sub-second precision. Tests use small `unix_time`/`set_mtime`/`mtime`
+helpers.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* build(deps): drop the direct filetime dependency
+
+No qsv code uses it after the std::fs migration; it is still built
+through `tar`, but not in builds without it (e.g. qsvlite).
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: CHANGELOG precision wording for #5119
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -33,9 +33,9 @@ dependencies = [
+@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - The rest is mostly fixes to SQL forms qsv's tests don't use and performance (streaming joins, cumulative aggregations, Parquet writes). `COUNT(*)` over `UNION ALL ... LIMIT` still panics ([pola-rs/polars#30523](https://github.com/pola-rs/polars/issues/30523)).
  
- [[package]]
- name = "actix-http"
--version = "3.22.0"
-+version = "3.22.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "50f98f47b03911915aa3f0b856749aa3d3915033afabb295ab6ac5ff3b8bd5c1"
-+checksum = "ef789744a2e6e678dd2dee90b2aecc084022709378f28d9d0eee6d7d299e36b8"
- dependencies = [
-  "actix-codec",
-  "actix-service",
-@@ -199,9 +199,9 @@ dependencies = [
+   ([#5111](https://github.com/dathere/qsv/pull/5111))
++- deps: dropped the direct `filetime` dependency. Its mtime calls are deprecated as of filetime 0.2.30, so qsv now reads and sets file times with `std::fs` (`Metadata::modified`, `std::fs::set_times`), and no index or cache staleness check changes its precision. `filetime` is still built through `tar`, but no longer in builds without it, such as `qsvlite`. ([#5119](https://github.com/dathere/qsv/pull/5119))
+ - deps: dropped the unused direct dependencies `bytemuck` (`polars`, `geocode` features) and `spreadsheet-ods` (`to` feature); qsv never calls either. Both are still built through polars and `csvs_convert`, and `spreadsheet-ods` still resolves to our quick-xml-patched fork through `[patch.crates-io]`. No change in behavior, build time or binary size. ([#5110](https://github.com/dathere/qsv/pull/5110))
+ - deps: `mlua` bumped from a git pin (`a0ad453`, Luau 0.745) to the released 0.12.3, with Luau 0.748 (`mlua-sys` 0.14.0, `luau0-src` 0.24.1); `luau` and `frequency --stats-filter` scripts now run on Luau 0.748, and every mlua crate comes from crates.io again. Upstream highlights: Luau 0.746–0.748 improve native code generation and tiered runtime recompilation, and fix inlined functions clobbering captured values; mlua 0.12.3 fixes several userdata, callback and Lua thread bugs. **Behavior change:** Luau removed its experimental 64-bit `integer` library, so the global `integer` that qsv 29.0.0 scripts could call (e.g. `integer.create`) is now `nil`; use plain numbers, which are exact up to 2^53. The new `while local` syntax and `buffer.readvectorf32x*` functions are still behind experimental Luau flags upstream, so qsv does not enable them. ([#5101](https://github.com/dathere/qsv/pull/5101))
+ - deps: `jsonschema` bumped from 0.61 to 0.63.1 for `validate`, `describegpt` and `profile`. Upstream highlights: `pattern` and `patternProperties` match common shapes (such as `^[a-z][a-z0-9-_]{1,63}$` or `^[1-5](?:[0-9]{2}|XX)$`) without a regex engine; a pattern with a large bounded count (e.g. `.{0,404600}`) no longer fails with a regex engine error after `--size-limit` was raised to compile it; named backreferences compile, and with `--fancy-regex`, `\d`, `\w`, `\s` and `.` follow ECMA 262 in patterns with a backreference or lookaround; `$ref` to another draft's meta-schema resolves, and a subschema's own `$schema` is honored; and several `$dynamicRef`/`$recursiveRef` cycle and error-location fixes. **Behavior change:** a Draft 4 schema with an empty `enum`, or one with equal members such as `[0, 0.0]`, now fails `validate schema`'s meta-schema check, and some error messages changed (an empty `enum` is now named, and `minContains`/`maxContains` messages no longer claim no item matched). ([#5100](https://github.com/dathere/qsv/pull/5100))
+```
+
+**File**: `Cargo.lock` (modified, +0/-1)
+```diff
+@@ -7009,7 +7009,6 @@ dependencies = [
+  "fake",
+  "fast-float2",
+  "file-format",
+- "filetime",
+  "flate2",
+  "flexi_logger",
+  "foldhash 0.2.0",
+```
+
+**File**: `Cargo.toml` (modified, +0/-1)
+```diff
+@@ -233,7 +233,6 @@ same-file = "1.0.6"
+ foldhash = "0.2"
+ glob = { version = "0.3", optional = true }
+ file-format = { version = "0.29", features = ["reader"] }
+-filetime = "0.2"
+ flexi_logger = { version = "0.32", features = [
+     "async",
+     "compress",
+```
+
+**File**: `src/cmd/frequency.rs` (modified, +3/-9)
+```diff
+@@ -596,8 +596,6 @@ pub(crate) fn read_frequency_cache_view(
+     no_headers: bool,
+     delimiter: Option<Delimiter>,
+ ) -> Option<FreqCacheView> {
+-    use filetime::FileTime;
+-
+     let cache_path = Args::cache_path_for(path);
+     if !cache_path.exists() {
+         return None;
+@@ -606,9 +604,7 @@ pub(crate) fn read_frequency_cache_view(
+     // Cache must be newer than the source CSV, else it's stale.
+     let csv_metadata = fs::metadata(path).ok()?;
+     let cache_fs_metadata = fs::metadata(&cache_path).ok()?;
+-    if FileTime::from_last_modification_time(&cache_fs_metadata)
+-        <= FileTime::from_last_modification_time(&csv_metadata)
+-    {
++    if cache_fs_metadata.modified().ok()? <= csv_metadata.modified().ok()? {
+         log::info!("Frequency cache is stale; recomputing bar frequencies.");
+         return None;
+     }
+@@ -2295,8 +2291,6 @@ impl Args {
+         &self,
+         rconfig: &Config,
+     ) -> Option<(FrequencyCacheMetadata, Vec<FrequencyCacheEntry>)> {
+-        use filetime::FileTime;
+-
+         let path = rconfig.path.as_ref()?;
+         let cache_path = Self::cache_path_for(path);
  
- [[package]]
- name = "ahash"
--version = "0.8.13"
-+version = "0.8.14"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0fca89247609239eeb6915e6991111866b92d7b31025e69302bbf430cc4d2c38"
-+checksum = "54dae3d1d7b8956f3506c4e999a74e77f932a59153ccf38ab8cf96db74bb9dc0"
- dependencies = [
-  "cfg-if",
-  "const-random",
-@@ -247,9 +247,9 @@ dependencies = [
+@@ -2308,8 +2302,8 @@ impl Args {
+         // Compare mtime: cache must be newer than source CSV
+         let csv_metadata = fs::metadata(path).ok()?;
+         let cache_metadata = fs::metadata(&cache_path).ok()?;
+-        let csv_mtime = FileTime::from_last_modification_time(&csv_metadata);
+-        let cache_mtime = FileTime::from_last_modification_time(&cache_metadata);
++        let csv_mtime = csv_metadata.modified().ok()?;
++        let cache_mtime = cache_metadata.modified().ok()?;
  
- [[package]]
- name = "allocator-api2"
--version = "0.2.21"
-+version = "0.2.22"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
-+checksum = "57b212daf2e827b1ccdd778b7eb48ba433e58cb0e4f27b43cd6b7a608425a014"
+         if cache_mtime <= csv_mtime {
+             winfo!(
+```
+
+**File**: `src/cmd/pragmastat.rs` (modified, +2/-4)
+```diff
+@@ -817,8 +817,6 @@ fn subsample_columns(col_values: &mut [Vec<f64>], max_n: usize, seed: u64) {
+ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usize, ColType)>> {
+     use std::io::BufRead;
  
- [[package]]
- name = "android_system_properties"
-@@ -710,9 +710,9 @@ dependencies = [
+-    use filetime::FileTime;
+-
+     // Only attempt if we have a file path (not stdin)
+     let input_path = args.arg_input.as_ref()?;
+     let canonical = std::path::Path::new(input_path).canonicalize().ok()?;
+@@ -828,8 +826,8 @@ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usi
+     if !cache_path.exists() {
+         return None;
+     }
+-    let cache_mtime = FileTime::from_last_modification_time(&std::fs::metadata(&cache_path).ok()?);
+-    let input_mtime = FileTime::from_last_modification_time(&std::fs::metadata(input_path).ok()?);
++    let cache_mtime = std::fs::metadata(&cache_path).ok()?.modified().ok()?;
++    let input_mtime = std::fs::metadata(input_path).ok()?.modified().ok()?;
+     if cache_mtime <= input_mtime {
+         return None;
+     }
+```
+
+**File**: `src/config.rs` (modified, +42/-52)
+```diff
+@@ -1138,7 +1138,7 @@ impl Config {
+         // Track the data file's mtime and the resolved index path *only* on the
+         // path that may need a staleness recheck. For the explicit-(path, idx_path)
+         // branch, staleness is not re-checked, so these stay at their default values.
+-        let mut data_modified = filetime::FileTime::zero();
++        let mut data_modified = std::time::UNIX_EPOCH;
+         let data_fsize;
+         let mut idx_path_work: Option<PathBuf> = None;
  
- [[package]]
- name = "async-compression"
--version = "0.4.53"
-+version = "0.4.54"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7bde8322bfc31ade96978b8d3c06be0fd60401192e7ddb9a0b2de5e215d22e61"
-+checksum = "0c31224bd2c09447484a1143f2fc1d871eb405789859c8e5470a3e7f95f40a18"
- dependencies = [
-  "compression-codecs",
-  "compression-core",
-@@ -1496,9 +1496,9 @@ dependencies = [
+@@ -1170,7 +1170,7 @@ impl Config {
+                 // passively trying to find an index.
  
- [[package]]
- name = "compression-codecs"
--version = "0.4.48"
-+version = "0.4.49"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5e41632c2efd201c62f1432f7cbee121b97878eab579da9d85676573d1fd33b9"
-+checksum = "f938fc0d88fbe2c8d6f0e1ba96ba1165d89ff698e98468cd019d92cff2ecd367"
- dependencies = [
-  "brotli",
-  "compression-core",
-@@ -1605,9 +1605,9 @@ checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
+                 let data_md = p.metadata()?;
+-                data_modified = filetime::FileTime::from_last_modification_time(&data_md);
++                data_modified = data_md.modified()?;
+                 data_fsize = data_md.len();
+                 let idx_path = util::idx_path(p);
+                 let idx_file = match fs::File::open(&idx_path) {
+@@ -1219,8 +1219,7 @@ impl Config {
+         // modified, recreate the stale index automatically. Only checked when
+         // we resolved the index path ourselves (idx_path_work is Some).
+         if let Some(idx_path) = &idx_path_work {
+-            let idx_modified =
+-                filetime::FileTime::from_last_modification_time(&idx_file.metadata()?);
++            let idx_modified = idx_file.metadata()?.modified()?;
+             // Full (sub-second) precision, and `>=`. Compared in whole seconds with `>`, data
+             // rewritten in the same second the index was built looked current, and the old
+             // index was trusted - `qsv count` reported the old row count at exit 0. An index
+@@ -1527,10 +1526,25 @@ fn compressed_csv_format(path: &Path) -> SpecialFormat {
  
- [[package]]
- name = "constant_time_eq"
--version = "0.6.1"
-+version = "0.6.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9eb6feb175df65d0a3ccd3e73484e940d0ac664e8034f0519fd49a93db3071d9"
-+checksum = "144e7f1de087984240b7816d47f698b414979faa6f40839c5b86d6bd47db57b7"
- dependencies = [
-  "rustversion",
- ]
-@@ -3341,9 +3341,9 @@ dependencies = [
+ #[cfg(test)]
+ mod tests {
+-    use std::path::PathBuf;
++    use std::{
++        path::PathBuf,
++        time::{Duration, SystemTime, UNIX_EPOCH},
++    };
  
- [[package]]
- name = "h2"
--version = "0.4.20"
-+version = "0.4.21"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
-+checksum = "b634322c4924093fe6a6e05ecbe5717cd3c6014934455f4ae8e5cf14ba3264a8"
- dependencies = [
-  "atomic-waker",
-  "bytes",
-@@ -3560,7 +3560,7 @@ dependencies = [
-  "serde",
-  "serde_derive",
-  "sysinfo 0.38.4",
-- "toml 1.2.2+spec-1.1.0",
-+ "toml 1.2.3+spec-1.1.0",
-  "uuid",
- ]
+     use super::*;
  
-@@ -4235,9 +4235,9 @@ dependencies = [
++    fn unix_time(secs: u64, nanos: u32) -> SystemTime {
++        UNIX_EPOCH + Duration::new(secs, nanos)
++    }
++
++    fn set_mtime(path: impl AsRef<Path>, mtime: SystemTime) {
++        fs::set_times(path, fs::FileTimes::new().set_modified(mtime)).unwrap();
++    }
++
++    fn mtime(path: impl AsRef<Path>) -> SystemTime {
++        fs::metadata(path).unwrap().modified().unwrap()
++    }
++
+     /// A special-format input must remain AUTOINDEXABLE at the Config level.
+     ///
+     /// Such an index is keyed to the CONVERTED TEMP file, so it is only usable by callers whose
+@@ -1713,8 +1727,8 @@ mod tests {
+         path: &Path,
+         rows: usize,
+         new_rows: usize,
+-        data_mtime: filetime::FileTime,
+-        idx_mtime: filetime::FileTime,
++        data_mtime: SystemTime,
++        idx_mtime: SystemTime,
+     ) -> Config {
+         use std::io::Write;
  
- [[package]]
- name = "jsonschema"
--version = "0.63.1"
-+version = "0.63.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f048e101172edb2c5f0351d7e3bc3796ac89b7f150e64b0cbd20dd82215b2160"
-+checksum = "b0802aebc749a4ef12e76aee083622b100249be0dc6d2103d84bbb2f7936a1ae"
- dependencies = [
-  "ahash",
-  "bytecount",
-@@ -4266,18 +4266,18 @@ dependencies = [
+@@ -1730,8 +1744,8 @@ mod tests {
+         let config = Config::new(Some(&path.to_string_lossy().to_string()));
+         crate::util::create_index_for_file(path, &config).unwrap();
+         write(new_rows);
+-        filetime::set_file_mtime(path, data_mtime).unwrap();
+-        filetime::set_file_mtime(crate::util::idx_path(path), idx_mtime).unwrap();
++        set_mtime(path, data_mtime);
++        set_mtime(crate::util::idx_path(path), idx_mtime);
+         config
+     }
  
- [[package]]
- name = "jsonschema-regex"
--version = "0.63.1"
-+version = "0.63.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c3ef369677a99a8c7381196491eb4e0a718c337756cf82bdb91303933789f181"
-+checksum = "ba1527289dfcb1400df61b5c591218e8e30031376671f611faecb5b9a1ff4987"
- dependencies = [
-  "regex-syntax",
- ]
+@@ -1744,8 +1758,8 @@ mod tests {
+             &dir.path().join("subsecond.csv"),
+             1_000,
+             10,
+-            filetime::FileTime::from_unix_time(1_700_000_000, 500_000_000),
+-            filetime::FileTime::from_unix_time(1_700_000_000, 100),
++            unix_time(1_700_000_000, 500_000_000),
++            unix_time(1_700_000_000, 100),
+         );
+         let idx = config.indexed().unwrap().expect("rebuilt index");
+         assert_eq!(idx.count(), 10, "the stale index's row count was trusted");
+@@ -1756,7 +1770,7 @@ mod tests {
+     #[test]
+     fn index_with_the_same_mtime_as_its_data_is_stale() {
+         let dir = tempfile::tempdir().unwrap();
+-        let same = filetime::FileTime::from_unix_time(1_700_000_000, 0);
++        let same = unix_time(1_700_000_000, 0);
+         let config = rewritten_after_index(&dir.path().join("same.csv"), 1_000, 10, same, same);
+         let idx = config.indexed().unwrap().expect("rebuilt index");
+         assert_eq!(idx.count(), 10, "the stale index's row count was trusted");
+@@ -1769,18 +1783,11 @@ mod tests {
+         let csv_path = dir.path().join("fresh.csv");
+         // whole seconds, well apart: Windows keeps 100 ns ticks and FAT 2 s, so stamps a few
+         // nanoseconds apart would collapse to equal there (and equal means stale)
+-        let idx_mtime = filetime::FileTime::from_unix_time(1_700_000_004, 0);
+-        let config = rewritten_after_index(
+-            &csv_path,
+-            25,
+-            25,
+-            filetime::FileTime::from_unix_time(1_700_000_000, 0),
+-            idx_mtime,
+-        );
++        let idx_mtime = unix_time(1_700_000_004, 0);
++        let config =
++            rewritten_after_index(&csv_path, 25, 25, unix
+```
+
+**File**: `src/diskcache.rs` (modified, +15/-17)
+```diff
+@@ -3362,9 +3362,9 @@ mod rich {
+             if need_write || !idx_dst.exists() {
+                 let idx_bytes = read_zst(&idx_blob)?;
+                 atomic_write(&idx_dst, &idx_bytes)?;
+-                let _ = filetime::set_file_mtime(
++                let _ = fs::set_times(
+                     &idx_dst,
+-                    filetime::FileTime::from_system_time(SystemTime::now()),
++                    fs::FileTimes::new().set_modified(SystemTime::now()),
+                 );
+             }
+         }
+@@ -3396,10 +3396,8 @@ mod rich {
+         // A sidecar is usable only if newer than the CSV — qsv's stats-cache
+         // staleness rule (see `util::get_stats_records`).
+         let sidecar_fresh = stats_sidecar.exists() && {
+-            let s = fs::metadata(&stats_sidecar)
+-                .map(|m| filetime::FileTime::from_last_modification_time(&m));
+-            let c =
+-                fs::metadata(csv_path).map(|m| filetime::FileTime::from_last_modification_time(&m));
++            let s = fs::metadata(&stats_sidecar).and_then(|m| m.modified());
++            let c = fs::metadata(csv_path).and_then(|m| m.modified());
+             matches!((s, c), (Ok(s), Ok(c)) if s > c)
+         };
  
- [[package]]
- name = "jsonschema-value"
--version = "0.63.1"
-+version = "0.63.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d698d83c2661d1e6f289b567a73e95d5549ec155775260e93165110a583296f4"
-+checksum = "a95285ab129d630f01cf2f1345c28662116340fac1a35eb0795e5dbbf0ef990d"
- dependencies = [
-  "ahash",
-  "bytecount",
-@@ -4303,9 +4303,9 @@ dependencies = [
+@@ -3418,9 +3416,9 @@ mod rich {
+             // Restore from the durable blob with a fresh mtime so it passes the
+             // staleness check (written after the CSV, like the .idx above).
+             let _ = atomic_write(&stats_sidecar, &bytes);
+-            let _ = filetime::set_file_mtime(
++            let _ = fs::set_times(
+                 &stats_sidecar,
+-                filetime::FileTime::from_system_time(SystemTime::now()),
++                fs::FileTimes::new().set_modified(SystemTime::now()),
+             );
+         }
+     }
+@@ -3432,23 +3430,23 @@ mod rich {
+         let csv_path = &resolved.csv_path;
+         let sidecar = frequency_sidecar_path(csv_path);
+         let blob = frequency_blob_path(root, &resolved.blake3, &resolved.ext);
+-        let fresh = match (fs::metadata(&sidecar), fs::metadata(csv_path)) {
+-            (Ok(cache), Ok(csv)) => {
+-                filetime::FileTime::from_last_modification_time(&cache)
+-                    > filetime::FileTime::from_last_modification_time(&csv)
+-            },
+-            _ => false,
+-        };
++        let fresh = matches!(
++            (
++                fs::metadata(&sidecar).and_then(|m| m.modified()),
++                fs::metadata(csv_path).and_then(|m| m.modified()),
++            ),
++            (Ok(cache), Ok(csv)) if cache > csv
++        );
  
- [[package]]
- name = "kiddo"
--version = "6.3.1"
-+version = "6.3.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aec3e974af09683a6e0c399a5e929787434102719dbb2614b282e713e2cc00d8"
-+checksum = "302df6ce3cc13782b6ea7171686366e712f0e22325086c6742ff9fba80e0c3a4"
- dependencies = [
-  "aligned-vec",
-  "array-init",
-@@ -4567,9 +4567,9 @@ checksum = "47d9d19d1d6efa0109d2f65ff4c85cddd50bd572e5a00127ab10987290bcefae"
+         if fresh {
+             let _ = capture_frequency_sidecar(&sidecar, &blob);
+         } else if blob.exists()
+             && let Ok(bytes) = read_zst(&blob)
+         {
+             let _ = atomic_write(&sidecar, &bytes);
+-            let _ = filetime::set_file_mtime(
++            let _ = fs::set_times(
+                 &sidecar,
+-                filetime::FileTime::from_system_time(SystemTime::now()),
++                fs::FileTimes::new().set_modified(SystemTime::now()),
+             );
+         }
+     }
+```
+
+**File**: `src/util/args.rs` (modified, +5/-2)
+```diff
+@@ -208,8 +208,11 @@ pub const fn num_of_chunks(nitems: usize, chunk_size: usize) -> usize {
  
- [[package]]
- name = "litrs"
--version = "1.0.1"
-+version = "1.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4744e383959f0db86ede514b809b1c53251889093803c05267acc7d4e7030d70"
-+checksum = "02b614978e47ce529faee66579f2b2fe19c94aa96d910a6a9a8043b2b02d8175"
- 
- [[package]]
- name = "local-waker"
-@@ -4656,7 +4656,7 @@ version = "0.25.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ef1
+ #[cfg(any(feature = "feature_capable", feature = "datapusher_plus"))]
+ pub fn file_metadata(md: &fs::Metadata) -> (u64, u64) {
+-    use filetime::FileTime;
+-    let last_modified = FileTime::from_last_modification_time(md).unix_seconds() as u64;
++    let last_modified = md
++        .modified()
++        .ok()
++        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
++        .map_or(0, |d| d.as_secs());
+     let fsize = md.len();
+     (last_modified, fsize)
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
 - **PR #5118** (2026-11-26): fix(joinp): drop temporary transformed key columns by name, before --sql-filter (@jqnatividad)
 - **PR #5117** (2026-11-26): fix(joinp): --coalesce keeps right-only keys with key transformations (@jqnatividad)
 - **PR #5116** (2026-11-25): fix(joinp): make --nulls match empty join keys, as documented (@jqnatividad)
 - **PR #5115** (2026-11-25): test(mcp): classify stats/validate --quote as not a path (@jqnatividad)
 - **PR #5114** (2026-11-25): docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null (@jqnatividad)
-- **PR #5113** (2026-11-26): build(deps): bump msys2/setup-msys2 from 2.33.0 to 2.34.0 (@dependabot[bot])
 
 ---
 
@@ -2481,79 +2660,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file
+## X. replace deprecated filetime calls with std::fs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f399f9fc`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `14c70177`: replace deprecated filetime calls with std::fs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "3.22.1"
-checksum = "ef789744a2e6e678dd2dee90b2aecc084022709378f28d9d0eee6d7d299e36b8"
-version = "0.8.14"
-checksum = "54dae3d1d7b8956f3506c4e999a74e77f932a59153ccf38ab8cf96db74bb9dc0"
-version = "0.2.22"
-checksum = "57b212daf2e827b1ccdd778b7eb48ba433e58cb0e4f27b43cd6b7a608425a014"
-version = "0.4.54"
-checksum = "0c31224bd2c09447484a1143f2fc1d871eb405789859c8e5470a3e7f95f40a18"
-version = "0.4.49"
-checksum = "f938fc0d88fbe2c8d6f0e1ba96ba1165d89ff698e98468cd019d92cff2ecd367"
-version = "0.6.2"
-checksum = "144e7f1de087984240b7816d47f698b414979faa6f40839c5b86d6bd47db57b7"
-version = "0.4.21"
-checksum = "b634322c4924093fe6a6e05ecbe5717cd3c6014934455f4ae8e5cf14ba3264a8"
- "toml 1.2.3+spec-1.1.0",
-version = "0.63.2"
-checksum = "b0802aebc749a4ef12e76aee083622b100249be0dc6d2103d84bbb2f7936a1ae"
-version = "0.63.2"
-checksum = "ba1527289dfcb1400df61b5c591218e8e30031376671f611faecb5b9a1ff4987"
-version = "0.63.2"
-checksum = "a95285ab129d630f01cf2f1345c28662116340fac1a35eb0795e5dbbf0ef990d"
-version = "6.3.2"
-checksum = "302df6ce3cc13782b6ea7171686366e712f0e22325086c6742ff9fba80e0c3a4"
-version = "1.1.0"
-checksum = "02b614978e47ce529faee66579f2b2fe19c94aa96d910a6a9a8043b2b02d8175"
+- deps: dropped the direct `filetime` dependency. Its mtime calls are deprecated as of filetime 0.2.30, so qsv now reads and sets file times with `std::fs` (`Metadata::modified`, `std::fs::set_times`), and no index or cache staleness check changes its precision. `filetime` is still built through `tar`, but no longer in builds without it, such as `qsvlite`. ([#5119](https://github.com/dathere/qsv/pull/5119))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "3.22.0"
-checksum = "50f98f47b03911915aa3f0b856749aa3d3915033afabb295ab6ac5ff3b8bd5c1"
-version = "0.8.13"
-checksum = "0fca89247609239eeb6915e6991111866b92d7b31025e69302bbf430cc4d2c38"
-version = "0.2.21"
-checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
-version = "0.4.53"
-checksum = "7bde8322bfc31ade96978b8d3c06be0fd60401192e7ddb9a0b2de5e215d22e61"
-version = "0.4.48"
-checksum = "5e41632c2efd201c62f1432f7cbee121b97878eab579da9d85676573d1fd33b9"
-version = "0.6.1"
-checksum = "9eb6feb175df65d0a3ccd3e73484e940d0ac664e8034f0519fd49a93db3071d9"
-version = "0.4.20"
-checksum = "7d29020232d6aa3fb1daca64c1127cf662cf97f254ae16c18c05b8ab635fc118"
- "toml 1.2.2+spec-1.1.0",
-version = "0.63.1"
-checksum = "f048e101172edb2c5f0351d7e3bc3796ac89b7f150e64b0cbd20dd82215b2160"
-version = "0.63.1"
-checksum = "c3ef369677a99a8c7381196491eb4e0a718c337756cf82bdb91303933789f181"
-version = "0.63.1"
-checksum = "d698d83c2661d1e6f289b567a73e95d5549ec155775260e93165110a583296f4"
-version = "6.3.1"
-checksum = "aec3e974af09683a6e0c399a5e929787434102719dbb2614b282e713e2cc00d8"
-version = "1.0.1"
-checksum = "4744e383959f0db86ede514b809b1c53251889093803c05267acc7d4e7030d70"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f399f9fc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `14c70177` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

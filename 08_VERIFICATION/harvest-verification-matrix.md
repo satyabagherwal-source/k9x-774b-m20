@@ -13605,3 +13605,6 @@
 | `CYCLE-20261126-FJ12` | `2026-11-26T23:49:36.662Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10797` | Yes (`ead616ec...`) |
 | `CYCLE-2026-11-26-PROJ-EVOLVE` | `2026-11-26T23:50:09.433Z` | `envoyproxy-envoy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E3FDDFF0` [Domain H] | Yes (`8a85ebd3...`) |
 | `CYCLE-20261126-R106` | `2026-11-26T23:58:33.174Z` | `TenStrip/10Eros-Max` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tenstrip-10eros-max-learnings.md` | Yes (`1b5c4f8a...`) |
+| `CYCLE-20261127-2855` | `2026-11-27T00:07:15.641Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`d027008c...`) |
+| `CYCLE-20261127-2F5D` | `2026-11-27T00:07:24.721Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10798` | Yes (`b7b0cdcb...`) |
+| `CYCLE-20261127-2KNS` | `2026-11-27T00:07:31.864Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10799` | Yes (`9a144f66...`) |

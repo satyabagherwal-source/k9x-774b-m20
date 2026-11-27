@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T13:18:14.260Z",
+  "timestamp": "2026-11-27T00:07:38.131Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T13:18:14.260Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T00:07:38.131Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere-qsv-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `8fd5aa1b`  
+> **Source Version**: `14c70177`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T13:18:05.401Z  
+> **Timestamp**: 2026-11-27T00:07:30.587Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T13:18:05.394Z  
+> **Harvest Timestamp**: 2026-11-27T00:07:30.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3862 stars
+- **Stars / Engagement**: 3866 stars
 
 ---
 
@@ -2307,311 +2307,354 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7bfaf596` (2026-11-26)
-**Commit Message**: fix(joinp): --coalesce keeps right-only keys with key transformations (#5117)
+### Incident Patch 1: `14c70177` (2026-11-26)
+**Commit Message**: refactor: replace deprecated filetime calls with std::fs (#5119)
 
-* fix(joinp): --coalesce keeps right-only keys with key transformations
+* refactor: replace deprecated filetime calls with std::fs
 
-With -i, -z or -N, the join runs on temporary key columns, so Polars can't
-coalesce the original keys, and --coalesce dropped the right copy. Right-only
-rows of a full or right join then lost their key. Now each left key is filled
-from its right copy before --sql-filter runs and before that copy is dropped.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #5117 in CHANGELOG
+filetime 0.2.30 deprecates `FileTime::from_last_modification_time`,
+`from_last_access_time`, `set_file_mtime` and `set_file_times` in favor of
+`Metadata::modified`/`accessed` and `std::fs::set_times` with `FileTimes`
+(stable on our MSRV 1.100 and the pinned nightly). Mtime comparisons keep
+full sub-second precision. Tests use small `unix_time`/`set_mtime`/`mtime`
+helpers.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(joinp): coalesce only same-named transformed keys, drop only their copies
+* build(deps): drop the direct filetime dependency
 
-The fill step looked for `<left key>_right` whatever the right key was named,
-so a right payload column sharing the left key's name was mistaken for the
-key. The cleanup dropped any `<left key>_right` column, and its
-trim_end_matches stripped every `_right`, so a key named `id_right` was
-dropped too. Both now use the exact `<key>_right` copy of each key joined to
-a same-named right key.
+No qsv code uses it after the std::fs migration; it is still built
+through `tar`, but not in builds without it (e.g. qsvlite).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(joinp): no right-copy cleanup in semi/anti joins; drop copies before --
+* docs: CHANGELOG precision wording for #5119
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `synthesize`: under `QSV_NO_HEADERS`, `stats` numbers columns from 0 and `frequency` from 1, so each column was paired with the next column's frequency table: a column could be filled with its neighbor's values, and the first fell back to filler text. Frequency's column numbers are now shifted to match. ([#5068](https://github.com/dathere/qsv/pull/5068))
- - `synthesize`: relationship learning read source columns by their position in the `stats` output, so `--stats-options` that selected or reordered columns (e.g. `--select city,zip`) made `joint`, `ordered` and `correlated` groups learn from the wrong columns, such as pairing IDs with cities. Source columns are now mapped by position when the stats output matches the header, by unique header name under a selection, and by index for headerless input (`QSV_NO_HEADERS`). `--stats-options` may no longer include `--select`/`-s` or `--weight`, which change which columns `stats` reports; run `qsv select` on the input first. ([#5067](https://github.com/dathere/qsv/pull/5067))
- - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
-+- `joinp`: with a key transformation (`-i`, `-z` or `-N`) and `--coalesce`, right-only rows of a `--full` or `--right` join on same-named keys lost their key, written as empty. The cleanup also dropped any column named `<left key>_right`, even one that wasn't a key copy, and when selected key names collided, such as `id` and `id_right`, it dropped a key. Now the left key is filled from its same-named right key before `--sql-filter` runs, and only that key's right copy is dropped, in joins that output right columns. ([#5117](https://github.com/dathere/qsv/pull/5117))
+@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - The rest is mostly fixes to SQL forms qsv's tests don't use and performance (streaming joins, cumulative aggregations, Parquet writes). `COUNT(*)` over `UNION ALL ... LIMIT` still panics ([pola-rs/polars#30523](https://github.com/pola-rs/polars/issues/30523)).
  
- ### Changed
- - **deps: Polars bumped to upstream rev [`08b2814`](https://github.com/pola-rs/polars/commit/08b2814ce6386c0efe0fea512912353f42a8b7b6)** (94 commits past `93d31f0`; crates stay 0.55.1). Some `sqlp` results that already worked change:
+   ([#5111](https://github.com/dathere/qsv/pull/5111))
++- deps: dropped the direct `filetime` dependency. Its mtime calls are deprecated as of filetime 0.2.30, so qsv now reads and sets file times with `std::fs` (`Metadata::modified`, `std::fs::set_times`), and no index or cache staleness check changes its precision. `filetime` is still built through `tar`, but no longer in builds without it, such as `qsvlite`. ([#5119](https://github.com/dathere/qsv/pull/5119))
+ - deps: dropped the unused direct dependencies `bytemuck` (`polars`, `geocode` features) and `spreadsheet-ods` (`to` feature); qsv never calls either. Both are still built through polars and `csvs_convert`, and `spreadsheet-ods` still resolves to our quick-xml-patched fork through `[patch.crates-io]`. No change in behavior, build time or binary size. ([#5110](https://github.com/dathere/qsv/pull/5110))
+ - deps: `mlua` bumped from a git pin (`a0ad453`, Luau 0.745) to the released 0.12.3, with Luau 0.748 (`mlua-sys` 0.14.0, `luau0-src` 0.24.1); `luau` and `frequency --stats-filter` scripts now run on Luau 0.748, and every mlua crate comes from crates.io again. Upstream highlights: Luau 0.746–0.748 improve native code generation and tiered runtime recompilation, and fix inlined functions clobbering captured values; mlua 0.12.3 fixes several userdata, callback and Lua thread bugs. **Behavior change:** Luau removed its experimental 64-bit `integer` library, so the global `integer` that qsv 29.0.0 scripts could call (e.g. `integer.create`) is now `nil`; use plain numbers, which are exact up to 2^53. The new `while local` syntax and `buffer.readvectorf32x*` functions are still behind experimental Luau flags upstream, so qsv does not enable them. ([#5101](https://github.com/dathere/qsv/pull/5101))
+ - deps: `jsonschema` bumped from 0.61 to 0.63.1 for `validate`, `describegpt` and `profile`. Upstream highlights: `pattern` and `patternProperties` match common shapes (such as `^[a-z][a-z0-9-_]{1,63}$` or `^[1-5](?:[0-9]{2}|XX)$`) without a regex engine; a pattern with a large bounded count (e.g. `.{0,404600}`) no longer fails with a regex engine error after `--size-limit` was raised to compile it; named backreferences compile, and with `--fancy-regex`, `\d`, `\w`, `\s` and `.` follow ECMA 262 in patterns with a backreference or lookaround; `$ref` to another draft's meta-schema resolves, and a subschema's own `$schema` is honored; and several `$dynamicRef`/`$recursiveRef` cycle and error-location fixes. **Behavior change:** a Draft 4 schema with an empty `enum`, or one with equal members such as `[0, 0.0]`, now fails `validate schema`'s meta-schema check, and some error messages changed (an empty `enum` is now named, and `minContains`/`maxContains` messages no longer claim no item matched). ([#5100](https://github.com/dathere/qsv/pull/5100))
 ```
 
-**File**: `src/cmd/joinp.rs` (modified, +49/-12)
+**File**: `Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -906,6 +906,53 @@ impl JoinStruct {
-             }
-         };
- 
-+        // Transformed keys are joined through temporary columns, so Polars can't coalesce the
-+        // original key columns. With --coalesce, fill each left key from its right copy, which
-+        // is dropped below, so right-only rows keep their key. Only a key joined to a
-+        // same-named right key has such a copy, `<key>_right`.
-+        let same_name_keys: Vec<&str> = left_col_names
-+            .iter()
-+            .zip(&right_col_names)
-+            .filter(|(left, right)| left == right)
-+            .map(|(left, _)| *left)
-+            .collect();
-+        // Semi and anti joins output only left columns, so there is no right copy there.
-+        // The copies are dropped here, before --sql-filter, so the filter sees the same
-+        // columns as in a join without key transformations.
-+        let join_lf = if keys_transformed
-+            && self.coalesce
-+            && !matches!(jointype, JoinType::Semi | JoinType::Anti)
-+        {
-+            let mut join_lf = join_lf;
-+            let schema = join_lf.collect_schema()?;
-+            let copied: Vec<&str> = same_name_keys
-+                .iter()
-+                .copied()
-+                .filter(|name| schema.contains(&format!("{name}_right")))
-+                .collect();
-+            if copied.is_empty() {
-+                join_lf
-+            } else {
-+                let coalesced: Vec<Expr> = copied
-+                    .iter()
-+                    .map(|name| {
-+                        polars::lazy::dsl::coalesce(&[col(*name), col(format!("{name}_right"))])
-+                            .alias(*name)
-+                    })
-+                    .collect();
-+                let copies: Vec<String> =
-+                    copied.iter().map(|name| format!("{name}_right")).collect();
-+                let keep: Vec<Expr> = schema
-+                    .iter_names()
-+                    .filter(|name| !copies.iter().any(|copy| copy == name.as_str()))
-+                    .map(|name| col(name.as_str()))
-+                    .collect();
-+                join_lf.with_columns(coalesced).select(keep)
-+            }
-+        } else {
-+            join_lf
-+        };
-+
-         let mut results_lf = match &self.sql_filter {
-             Some(sql_filter) => {
-                 let mut ctx = util::new_sql_context();
-@@ -916,21 +963,11 @@ impl JoinStruct {
-         };
- 
-         if keys_transformed {
--            // Remove temporary transformed columns and
--            // duplicate right-side join columns if coalesce is true
--            let left_join_cols: Vec<&str> = self.left_sel.split(',').collect();
-+            // Remove temporary transformed columns
-             let keep_cols: Vec<Expr> = results_lf
-                 .collect_schema()?
-                 .iter_names()
--                .filter(|col| {
--                    if col.contains("-transformed") {
--                        return false;
--                    }
--                    // For join columns, only keep the left version if coalesce is true
--                    !(self.coalesce
--                        && col.ends_with("_right")
--                        && left_join_cols.contains(&col.trim_end_matches("_right")))
--                })
-+                .filter(|col| !col.contains("-transformed"))
-                 .map(|col| polars::lazy::dsl::col(col.as_str()))
-                 .collect();
-             results_lf = results_lf.select(keep_cols);
+@@ -7009,7 +7009,6 @@ dependencies = [
+  "fake",
+  "fast-float2",
+  "file-format",
+- "filetime",
+  "flate2",
+  "flexi_logger",
+  "foldhash 0.2.0",
 ```
 
-**File**: `tests/test_joinp.rs` (modified, +130/-0)
+**File**: `Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -3322,6 +3322,136 @@ fn joinp_cache_schema_floats_keep_f64_precision_issue_4752() {
- }
+@@ -233,7 +233,6 @@ same-file = "1.0.6"
+ foldhash = "0.2"
+ glob = { version = "0.3", optional = true }
+ file-format = { version = "0.29", features = ["reader"] }
+-filetime = "0.2"
+ flexi_logger = { version = "0.32", features = [
+     "async",
+     "compress",
+```
+
+**File**: `src/cmd/frequency.rs` (modified, +3/-9)
+```diff
+@@ -596,8 +596,6 @@ pub(crate) fn read_frequency_cache_view(
+     no_headers: bool,
+     delimiter: Option<Delimiter>,
+ ) -> Option<FreqCacheView> {
+-    use filetime::FileTime;
+-
+     let cache_path = Args::cache_path_for(path);
+     if !cache_path.exists() {
+         return None;
+@@ -606,9 +604,7 @@ pub(crate) fn read_frequency_cache_view(
+     // Cache must be newer than the source CSV, else it's stale.
+     let csv_metadata = fs::metadata(path).ok()?;
+     let cache_fs_metadata = fs::metadata(&cache_path).ok()?;
+-    if FileTime::from_last_modification_time(&cache_fs_metadata)
+-        <= FileTime::from_last_modification_time(&csv_metadata)
+-    {
++    if cache_fs_metadata.modified().ok()? <= csv_metadata.modified().ok()? {
+         log::info!("Frequency cache is stale; recomputing bar frequencies.");
+         return None;
+     }
+@@ -2295,8 +2291,6 @@ impl Args {
+         &self,
+         rconfig: &Config,
+     ) -> Option<(FrequencyCacheMetadata, Vec<FrequencyCacheEntry>)> {
+-        use filetime::FileTime;
+-
+         let path = rconfig.path.as_ref()?;
+         let cache_path = Self::cache_path_for(path);
  
- // joinp decompresses both inputs into one temp dir before running the join;
-+// with a key transformation, --coalesce must keep the key of right-only rows
-+#[test]
-+fn joinp_coalesce_transformed_keys_keeps_right_only_keys() {
-+    let wrk = Workdir::new("joinp_coalesce_transformed_keys_keeps_right_only_keys");
-+    wrk.create_from_string("left.csv", "k,a\nX,1\nZ,2\n");
-+    wrk.create_from_string("right.csv", "k,b\nx,p\nY,q\n");
-+
-+    let join = |extra: &[&str]| -> Vec<Vec<String>> {
-+        let mut cmd = wrk.command("joinp");
-+        cmd.args(["k", "left.csv", "k", "right.csv", "-i", "--coalesce"])
-+            .args(["--maintain-order", "left_right"])
-+            .args(extra);
-+        wrk.read_stdout(&mut cmd)
+@@ -2308,8 +2302,8 @@ impl Args {
+         // Compare mtime: cache must be newer than source CSV
+         let csv_metadata = fs::metadata(path).ok()?;
+         let cache_metadata = fs::metadata(&cache_path).ok()?;
+-        let csv_mtime = FileTime::from_last_modification_time(&csv_metadata);
+-        let cache_mtime = FileTime::from_last_modification_time(&cache_metadata);
++        let csv_mtime = csv_metadata.modified().ok()?;
++        let cache_mtime = cache_metadata.modified().ok()?;
+ 
+         if cache_mtime <= csv_mtime {
+             winfo!(
+```
+
+**File**: `src/cmd/pragmastat.rs` (modified, +2/-4)
+```diff
+@@ -817,8 +817,6 @@ fn subsample_columns(col_values: &mut [Vec<f64>], max_n: usize, seed: u64) {
+ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usize, ColType)>> {
+     use std::io::BufRead;
+ 
+-    use filetime::FileTime;
+-
+     // Only attempt if we have a file path (not stdin)
+     let input_path = args.arg_input.as_ref()?;
+     let canonical = std::path::Path::new(input_path).canonicalize().ok()?;
+@@ -828,8 +826,8 @@ fn columns_from_cache(args: &Args, headers: &csv::ByteRecord) -> Option<Vec<(usi
+     if !cache_path.exists() {
+         return None;
+     }
+-    let cache_mtime = FileTime::from_last_modification_time(&std::fs::metadata(&cache_path).ok()?);
+-    let input_mtime = FileTime::from_last_modification_time(&std::fs::metadata(input_path).ok()?);
++    let cache_mtime = std::fs::metadata(&cache_path).ok()?.modified().ok()?;
++    let input_mtime = std::fs::metadata(input_path).ok()?.modified().ok()?;
+     if cache_mtime <= input_mtime {
+         return None;
+     }
+```
+
+**File**: `src/config.rs` (modified, +42/-52)
+```diff
+@@ -1138,7 +1138,7 @@ impl Config {
+         // Track the data file's mtime and the resolved index path *only* on the
+         // path that may need a staleness recheck. For the explicit-(path, idx_path)
+         // branch, staleness is not re-checked, so these stay at their default values.
+-        let mut data_modified = filetime::FileTime::zero();
++        let mut data_modified = std::time::UNIX_EPOCH;
+         let data_fsize;
+         let mut idx_path_work: Option<PathBuf> = None;
+ 
+@@ -1170,7 +1170,7 @@ impl Config {
+                 // passively trying to find an index.
+ 
+                 let data_md = p.metadata()?;
+-                data_modified = filetime::FileTime::from_last_modification_time(&data_md);
++                data_modified = data_md.modified()?;
+                 data_fsize = data_md.len();
+                 let idx_path = util::idx_path(p);
+                 let idx_file = match fs::File::open(&idx_path) {
+@@ -1219,8 +1219,7 @@ impl Config {
+         // modified, recreate the stale index automatically. Only checked when
+         // we resolved the index path ourselves (idx_path_work is Some).
+         if let Some(idx_path) = &idx_path_work {
+-            let idx_modified =
+-                filetime::FileTime::from_last_modification_time(&idx_file.metadata()?);
++            let idx_modified = idx_file.metadata()?.modified()?;
+             // Full (sub-second) precision, and `>=`. Compared in whole seconds with `>`, data
+             // rewritten in the same second the index was built looked current, and the old
+             // index was trusted - `qsv count` reported the old row count at exit 0. An index
+@@ -1527,10 +1526,25 @@ fn compressed_csv_format(path: &Path) -> SpecialFormat {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use std::path::PathBuf;
++    use std::{
++        path::PathBuf,
++        time::{Duration, SystemTime, UNIX_EPOCH},
 +    };
+ 
+     use super::*;
+ 
++    fn unix_time(secs: u64, nanos: u32) -> SystemTime {
++        UNIX_EPOCH + Duration::new(secs, nanos)
++    }
 +
-+    // matched rows keep the left key, right-only rows get the right key
-+    assert_eq!(
-+        join(&["--full"]),
-+        vec![
-+            svec!["k", "a", "b"],
-+            svec!["X", "1", "p"],
-+            svec!["Z", "2", ""],
-+            svec!["Y", "", "q"]
-+        ]
-+    );
-+    assert_eq!(
-+        join(&["--right"]),
-+        vec![
-+            svec!["k", "a", "b"],
-+            svec!["X", "1", "p"],
-+            svec!["Y", "", "q"]
-+        ]
-+    );
-+    // --sql-filter sees the coalesced key
-+    assert_eq!(
-+        join(&[
-+            "--full",
-+            "--sql-filter",
-+            "SELECT * FROM join_result WHERE k = 'Y'"
-+        ]),
-+        vec![svec!["k", "a", "b"], svec!["Y", "", "q"]]
-+    );
-+    // only same-named key pairs are coalesced: a right column that merely shares the
-+    // left key's name is left alone
-+    wrk.create_from_string("payload.csv", "rk,k,b\nx,pay1,p\nY,pay2,q\n");
-+    let mut cmd = wrk.command("joinp");
-+    cmd.args([
-+        "k",
-+        "left.csv",
-+        "rk",
-+        "payload.csv",
-+        "-i",
-+        "--coalesce",
-+        "--full",
-+    ])
-+    .args(["--maintain-order", "left_right"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["k", "a", "rk", "k_right", "b"],
-+            svec!["X", "1", "x", "pay1", "p"],
-+            svec!["Z", "2", "", "", ""],
-+            svec!["", "", "Y", "pay2", "q"]
-+        ]
-+    );
++    fn set_mtime(path: impl AsRef<Path>, mtime: SystemTime) {
++        fs::set_times(path, fs::FileTimes::new().set_modified(mtime)).unwrap();
++    }
 +
-+    // a key whose name ends in _right keeps its right-only value
-+    wrk.create_from_string("ids1.csv", "id,id_right,a\nA,B,1\n");
-+    wrk.create_from_string("ids2.csv", "rid,id_right,b\na,b,p\nC,D,q\n");
-+    let mut cmd = wrk.command("joinp");
-+    cmd.args(["id,id_right", "ids1.csv", "rid,id_right", "ids2.csv"])
-+        .args([
-+            "-i",
-+            "--coalesce",
-+            "--full",
-+            "--maintain-order",
-+            "left_right",
-+        ]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["id", "id_right", "a", "rid", "b"],
-+            svec!["A", "B", "1", "a", "p"],
-+            svec!["", "D", "", "C", "q"]
-+        ]
-+    );
-+    // a semi join outputs only left columns, so a left column named like a right copy stays
-+    wrk.create_from_string("semi1.csv", "id_right,id_right_right,a\nA,keep,1\n");
-+    wrk.create_from_string("semi2.csv", "id_right,b\na,p\n");
-+    let mut cmd = wrk.command("joinp");
-+    cmd.args(["id_right", "semi1.csv", "id_right", "semi2.csv"])
-+        .args(["--left-semi", "-i", "--coalesce"]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["id_right", "id_right_right", "a"],
-+            svec!["A", "keep", "1"]
-+        ]
-+    );
++    fn mtime(path: impl AsRef<Path>) -> SystemTime {
++        fs::metadata(path).unwrap().modified().unwrap()
++    }
 +
-+    // the right copies are dropped before --sql-filter, so a column it names like one stays
-+    wrk.create_from_string("sql1.csv", "id_right,a\nA,1\n");
-+    wrk.create_from_string("sql2.csv", "id_right,b\na,p\nC,q\n");
-+    let mut cmd = wrk.command("joinp");
-+    cmd.args(["id_right", "sql1.csv", "id_right", "sql2.csv"])
-+        .args([
-+            "--full",
-+            "-i",
-+            "--coalesce",
-+            "--maintain-order",
-+            "left_right",
-+        ])
-+        .args([
-+            "--sql-filter",
-+            "SELECT id_right, b AS id_right_right FROM join_result",
-+        ]);
-+    let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["id_right", "id_right_right"],
-+            svec!["A", "p"],
-+            svec!["C", "q"]
-+        ]
-+    );
-+}
-+
- // same-named .sz inputs, snappy or not, must not overwrite each other (#4779).
- #[test]
- fn joinp_same_named_sz_inputs() {
+     /// A special-format input must remain AUTOINDEXABLE at the Config level.
+     ///
+     /// Such an index is keyed to the CONVERTED TEMP file, so it is only usable by callers whose
+@@ -1713,8 +1727,8 @@ mod tests {
+         path: &Path,
+         rows: usize,
+         new_rows: usize,
+-        data_mtime: filetime::FileTime,
+-        idx_mtime: filetime::FileTime,
++        data_mtime: SystemTime,
++        idx_mtime: SystemTime,
+     ) -> Config {
+         use std::io::Write;
+ 
+@@ -1730,8 +1744,8 @@ mod tests {
+         let config = Config::new(Some(&path.to_string_lossy().to_string()));
+         crate::util::create_index_for_file(path, &config).unwrap();
+         write(new_rows);
+-        filetime::set_file_mtime(path, data_mtime).unwrap();
+-        filetime::set_file_mtime(crate::util::idx_path(path), idx_mtime).unwrap();
++        set_mtime(path, data_mtime);
++        set_mtime(crate::util::idx_path(path), idx_mtime);
+         config
+     }
+ 
+@@ -1744,8 +1758,8 @@ mod tests {
+             &dir.path().join("subsecond.csv"),
+             1_000,
+             10,
+-            filetime::FileTime::from_unix_time(1_700_000_000, 500_000_000),
+-            filetime::FileTime::from_unix_time(1_700_000_000, 100),
++            unix_time(1_700_000_000, 500_000_000),
++            unix_time(1_700_000_000, 100),
+         );
+         let idx = config.indexed().unwrap().expect("rebuilt index");
+         assert_eq!(idx.count(), 10, "the stale index's row count was trusted");
+@@ -1756,7 +1770,7 @@ mod tests {
+     #[test]
+     fn index_with_the_same_mtime_as_its_data_is_stale() {
+         let dir = tempfile::tempdir().unwrap();
+-        let same = filetime::FileTime::from_unix_time(1_700_000_000, 0);
++        let same = unix_time(1_700_000_000, 0);
+         let config = rewritten_after_index(&dir.path().join("same.csv"), 1_000, 10, same, same);
+         let idx = config.indexed().unwrap().expect("rebuilt index");
+         assert_eq!(idx.count(), 10, "the stale index's row count was trusted");
+@@ -1769,18 +1783,11 @@ mod tests {
+         let csv_path = dir.path().join("fresh.csv");
+         // whole seconds, well apart: Windows keeps 100 ns ticks and FAT 2 s, so stamps a few
+         // nanoseconds apart would collapse to equal there (and equal means stale)
+-        let idx_mtime = filetime::FileTime::from_unix_time(1_700_000_004, 0);
+-        let config = rewritten_after_index(
+-            &csv_path,
+-            25,
+-            25,
+-            filetime::FileTime::from_unix_time(1_700_000_000, 0),
+-            idx_mtime,
+-        );
++        let idx_mtime = unix_time(1_700_000_004, 0);
++        let config =
++            rewritten_after_index(&csv_path, 25, 25, unix
 ```
 
----
-
-### Incident Patch 2: `8fd5aa1b` (2026-11-26)
-**Commit Message**: build(deps): bump msys2/setup-msys2 from 2.33.0 to 2.34.0 (#5113)
-
-Bumps [msys2/setup-msys2](https://github.com/msys2/setup-msys2) from 2.33.0 to 2.34.0.
-- [Release notes](https://github.com/msys2/setup-msys2/releases)
-- [Changelog](https://github.com/msys2/setup-msys2/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/msys2/setup-msys2/compare/ec48f7c5447b3140e2b088413ae3a55687bccb6e...3c51bf698df1e37b2261f53cb67797b97761185c)
-
----
-updated-dependencies:
-- dependency-name: msys2/setup-msys2
-  dependency-version: 2.34.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/publish-aarch64-pc-windows-msvc.yml` (modified, +1/-1)
+**File**: `src/diskcache.rs` (modified, +15/-17)
 ```diff
-@@ -77,7 +77,7 @@ jobs:
-     - name: Install Windows ARM64 GNU-family toolchain
-       if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
-       id: msys2
--      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
-+      uses: msys2/setup-msys2@3c51bf698df1e37b2261f53cb67797b97761185c # v2.34.0
-       with:
-         msystem: CLANGARM64
-         update: true
+@@ -3362,9 +3362,9 @@ mod rich {
+             if need_write || !idx_dst.exists() {
+                 let idx_bytes = read_zst(&idx_blob)?;
+                 atomic_write(&idx_dst, &idx_bytes)?;
+-                let _ = filetime::set_file_mtime(
++                let _ = fs::set_times(
+                     &idx_dst,
+-                    filetime::FileTime::from_system_time(SystemTime::now()),
++                    fs::FileTimes::new().set_modified(SystemTime::now()),
+                 );
+             }
+         }
+@@ -3396,10 +3396,8 @@ mod rich {
+         // A sidecar is usable only if newer than the CSV — qsv's stats-cache
+         // staleness rule (see `util::get_stats_records`).
+         let sidecar_fresh = stats_sidecar.exists() && {
+-            let s = fs::metadata(&stats_sidecar)
+-                .map(|m| filetime::FileTime::from_last_modification_time(&m));
+-            let c =
+-                fs::metadata(csv_path).map(|m| filetime::FileTime::from_last_modification_time(&m));
++            let s = fs::metadata(&stats_sidecar).and_then(|m| m.modified());
++            let c = fs::metadata(csv_path).and_then(|m| m.modified());
+             matches!((s, c), (Ok(s), Ok(c)) if s > c)
+         };
+ 
+@@ -3418,9 +3416,9 @@ mod rich {
+             // Restore from the durable blob with a fresh mtime so it passes the
+             // staleness check (written after the CSV, like the .idx above).
+             let _ = atomic_write(&stats_sidecar, &bytes);
+-            let _ = filetime::set_file_mtime(
++            let _ = fs::set_times(
+                 &stats_sidecar,
+-                filetime::FileTime::from_system_time(SystemTime::now()),
++                fs::FileTimes::new().set_modified(SystemTime::now()),
+             );
+         }
+     }
+@@ -3432,23 +3430,23 @@ mod rich {
+         let csv_path = &resolved.csv_path;
+         let sidecar = frequency_sidecar_path(csv_path);
+         let blob = frequency_blob_path(root, &resolved.blake3, &resolved.ext);
+-        let fresh = match (fs::metadata(&sidecar), fs::metadata(csv_path)) {
+-            (Ok(cache), Ok(csv)) => {
+-                filetime::FileTime::from_last_modification_time(&cache)
+-                    > filetime::FileTime::from_last_modification_time(&csv)
+-            },
+-            _ => false,
+-        };
++        let fresh = matches!(
++            (
++                fs::metadata(&sidecar).and_then(|m| m.modified()),
++                fs::metadata(csv_path).and_then(|m| m.modified()),
++            ),
++            (Ok(cache), Ok(csv)) if cache > csv
++        );
+ 
+         if fresh {
+             let _ = capture_frequency_sidecar(&sidecar, &blob);
+         } else if blob.exists()
+             && let Ok(bytes) = read_zst(&blob)
+         {
+             let _ = atomic_write(&sidecar, &bytes);
+-            let _ = filetime::set_file_mtime(
++            let _ = fs::set_times(
+                 &sidecar,
+-                filetime::FileTime::from_system_time(SystemTime::now()),
++                fs::FileTimes::new().set_modified(SystemTime::now()),
+             );
+         }
+     }
+```
+
+**File**: `src/util/args.rs` (modified, +5/-2)
+```diff
+@@ -208,8 +208,11 @@ pub const fn num_of_chunks(nitems: usize, chunk_size: usize) -> usize {
+ 
+ #[cfg(any(feature = "feature_capable", feature = "datapusher_plus"))]
+ pub fn file_metadata(md: &fs::Metadata) -> (u64, u64) {
+-    use filetime::FileTime;
+-    let last_modified = FileTime::from_last_modification_time(md).unix_seconds() as u64;
++    let last_modified = md
++        .modified()
++        .ok()
++        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
++        .map_or(0, |d| d.as_secs());
+     let fsize = md.len();
+     (last_modified, fsize)
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
+- **PR #5118** (2026-11-26): fix(joinp): drop temporary transformed key columns by name, before --sql-filter (@jqnatividad)
 - **PR #5117** (2026-11-26): fix(joinp): --coalesce keeps right-only keys with key transformations (@jqnatividad)
 - **PR #5116** (2026-11-25): fix(joinp): make --nulls match empty join keys, as documented (@jqnatividad)
 - **PR #5115** (2026-11-25): test(mcp): classify stats/validate --quote as not a path (@jqnatividad)
 - **PR #5114** (2026-11-25): docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null (@jqnatividad)
-- **PR #5113** (2026-11-26): build(deps): bump msys2/setup-msys2 from 2.33.0 to 2.34.0 (@dependabot[bot])
-- **PR #5112** (2026-11-25): feat: add timebucketp, Polars-powered time-window aggregation (@jqnatividad)
 
 ---
 
@@ -2631,13 +2674,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. joinp): --coalesce keeps right-only keys with key transformations
+## X. replace deprecated filetime calls with std::fs
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7bfaf596`: joinp): --coalesce keeps right-only keys with key transformations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `14c70177`: replace deprecated filetime calls with std::fs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2645,7 +2688,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- `joinp`: with a key transformation (`-i`, `-z` or `-N`) and `--coalesce`, right-only rows of a `--full` or `--right` join on same-named keys lost their key, written as empty. The cleanup also dropped any column named `<left key>_right`, even one that wasn't a key copy, and when selected key names collided, such as `id` and `id_right`, it dropped a key. Now the left key is filled from its same-named right key before `--sql-filter` runs, and only that key's right copy is dropped, in joins that output right columns. ([#5117](https://github.com/dathere/qsv/pull/5117))
+- deps: dropped the direct `filetime` dependency. Its mtime calls are deprecated as of filetime 0.2.30, so qsv now reads and sets file times with `std::fs` (`Metadata::modified`, `std::fs::set_times`), and no index or cache staleness check changes its precision. `filetime` is still built through `tar`, but no longer in builds without it, such as `qsvlite`. ([#5119](https://github.com/dathere/qsv/pull/5119))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2655,7 +2698,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7bfaf596` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `14c70177` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
-    "lastHarvestedAt": "2026-11-23T15:12:33.939Z",
+    "contentHash": "d027008c1a033d1ae8c7083b59942c25c52eda8b794ce776c86fe2fbd7f0c32e",
+    "lastHarvestedAt": "2026-11-27T00:07:15.645Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "f399f9fc",
+    "sourceVersion": "14c70177",
     "license": "NOASSERTION",
-    "contentHash": "fdc815221989b9cdf2283017cbb2796ad2637d286a83189b1ef91ecb2b8608e8",
-    "lastHarvestedAt": "2026-11-26T18:59:02.904Z",
+    "contentHash": "9a144f66067f2cdefcb3d7d4a7447966a24ec68ad10f9cc91adc4f86209cca61",
+    "lastHarvestedAt": "2026-11-27T00:07:31.868Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "e56aabdc",
+    "sourceVersion": "1e794b83",
     "license": "Apache-2.0",
-    "contentHash": "ba2fd7026ca982a2aa451eb82005e41427da3bfa95098dd714a6454ecb0823d9",
-    "lastHarvestedAt": "2026-11-26T06:18:25.276Z",
+    "contentHash": "b7b0cdcb96fbd33e620f78c60eb5e1f5515a6afb0bf73d1c96b6753e09db59a7",
+    "lastHarvestedAt": "2026-11-27T00:07:24.726Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

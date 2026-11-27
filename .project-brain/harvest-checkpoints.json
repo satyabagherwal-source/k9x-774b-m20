@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-26T23:58:33.192Z",
+  "last_updated": "2026-11-27T00:07:31.891Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1535,14 +1535,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
-      "verified_at": "2026-11-23T15:12:33.947Z",
+      "content_hash": "d027008c1a033d1ae8c7083b59942c25c52eda8b794ce776c86fe2fbd7f0c32e",
+      "verified_at": "2026-11-27T00:07:15.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T15:12:33.947Z"
+      "last_updated": "2026-11-27T00:07:15.662Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "fdc815221989b9cdf2283017cbb2796ad2637d286a83189b1ef91ecb2b8608e8",
-      "verified_at": "2026-11-26T18:59:02.923Z",
+      "content_hash": "9a144f66067f2cdefcb3d7d4a7447966a24ec68ad10f9cc91adc4f86209cca61",
+      "verified_at": "2026-11-27T00:07:31.890Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T18:59:02.923Z"
+      "last_updated": "2026-11-27T00:07:31.890Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "ba2fd7026ca982a2aa451eb82005e41427da3bfa95098dd714a6454ecb0823d9",
-      "verified_at": "2026-11-26T06:18:25.290Z",
+      "content_hash": "b7b0cdcb96fbd33e620f78c60eb5e1f5515a6afb0bf73d1c96b6753e09db59a7",
+      "verified_at": "2026-11-27T00:07:24.750Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:18:25.290Z"
+      "last_updated": "2026-11-27T00:07:24.750Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",

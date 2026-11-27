@@ -13638,3 +13638,6 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `603220f0` | Multi-dimensional audit evidence | 2026-11-26T23:49:36.666Z |
 | `learn-dom-h-e3fddff0` | `project://envoyproxy-envoy` | `603220f0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md` | 2026-11-26T23:50:09.433Z |
 | `learn-huggingface-tenstrip-10eros-max` | `https://huggingface.co/TenStrip/10Eros-Max` | `hf-tenstri` | Multi-dimensional audit evidence | 2026-11-26T23:58:33.177Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-27T00:07:15.645Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `1e794b83` | Multi-dimensional audit evidence | 2026-11-27T00:07:24.726Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `14c70177` | Multi-dimensional audit evidence | 2026-11-27T00:07:31.868Z |

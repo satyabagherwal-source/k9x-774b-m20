@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-26T23:58:47.626Z",
+  "last_updated": "2026-11-27T00:07:38.735Z",
   "total_verified_learnings": 9138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26268,
+  "total_items": 26273,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "f399f9fc",
-      "content_hash": "80d3e1630235ecc6cbf6d36f23c9bc63714412d7b6008b42a14c5af069227dc1",
+      "source_version": "14c70177",
+      "content_hash": "339420532c3abba5900f792b6d74b8b46e4a6b143d3fa5851faf6825b04356a8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:59:03.536Z"
+      "persisted_at": "2026-11-27T00:07:32.625Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "5261e78e213f24eb2c283a21cd265d822ccb47802cb7f168bbee00afbb107092",
+      "content_hash": "377f01aa6d3dcbe9f2cf835bebf1830dc7ac63bbb50c03a5e712e52ce47bee1d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:18:14.976Z"
+      "persisted_at": "2026-11-27T00:07:38.735Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -217258,8 +217258,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "e56aabdc",
-      "content_hash": "ba2fd7026ca982a2aa451eb82005e41427da3bfa95098dd714a6454ecb0823d9",
+      "source_version": "1e794b83",
+      "content_hash": "b7b0cdcb96fbd33e620f78c60eb5e1f5515a6afb0bf73d1c96b6753e09db59a7",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -217317,6 +217317,11 @@
           "number": 10613,
           "title": "update module golang.org/x/crypto to v0.59.0 [security]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10798,
+          "title": "update Go dependencies for 3.17",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217324,7 +217329,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T06:18:25.091Z",
+      "verified_at": "2026-11-27T00:07:24.425Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217366,10 +217371,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "repository": "prometheus/prometheus",
-      "source_version": "e56aabdc",
-      "content_hash": "ae1c04d71d23b92fd9a268fbe09219425da8692bd095b8501602e1642ba72714",
+      "source_version": "1e794b83",
+      "content_hash": "9842dab19bd43477d65de4e55274311878a4cd0521e688f2aa8a365761fb36e8",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T06:18:25.697Z"
+      "persisted_at": "2026-11-27T00:07:25.243Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-prometheus-prometheus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prometheus-prometheus",
@@ -217378,10 +217383,10 @@
       "relative_path": "08_VERIFICATION/prometheus-prometheus-verification-protocol-empirical-defect-shield-for-promethe.md",
       "title": "Verification Protocol: Empirical Defect Shield for prometheus/prometheus",
       "repository": "prometheus/prometheus",
-      "source_version": "e56aabdc",
-      "content_hash": "a0bff8e23f057e565b3fd1c9028e092f2f730af9f6ee394a1b12e3abd1f705f4",
+      "source_version": "1e794b83",
+      "content_hash": "9cd2dd289e7f963291ef12da7ec623ad0a076fbf058321e00ee6e57ae97a0e3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:18:25.877Z"
+      "persisted_at": "2026-11-27T00:07:25.499Z"
     },
     "learn-github-lancedb-lancedb": {
       "learning_id": "learn-github-lancedb-lancedb",
@@ -220684,8 +220689,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "f399f9fc",
-      "content_hash": "fdc815221989b9cdf2283017cbb2796ad2637d286a83189b1ef91ecb2b8608e8",
+      "source_version": "14c70177",
+      "content_hash": "9a144f66067f2cdefcb3d7d4a7447966a24ec68ad10f9cc91adc4f86209cca61",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220913,6 +220918,11 @@
           "number": 10743,
           "title": "drop temporary transformed key columns by name, before --sql-filter",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10799,
+          "title": "replace deprecated filetime calls with std::fs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220920,7 +220930,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:59:02.669Z",
+      "verified_at": "2026-11-27T00:07:31.587Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222047,10 +222057,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "f399f9fc",
-      "content_hash": "1260a29917ab1cae40eccc70feed3202afafc2161df974825768079e79c9b95b",
+      "source_version": "14c70177",
+      "content_hash": "051ca1494c520529f6dc93146f1cb9ae9939e494025e594d342b2c086ad210d4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T18:59:03.349Z"
+      "persisted_at": "2026-11-27T00:07:32.388Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -222120,9 +222130,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c03e163ceef7d125dda289576b4016e05a09e97af38d127a23528b7e2253ceb",
+      "content_hash": "764f89d1606f6216803e78c539ae1be71119807beb08b3327c8fc68767102c09",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T13:18:14.705Z"
+      "persisted_at": "2026-11-27T00:07:38.493Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -230779,7 +230789,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "084f3f603ca8de614ccaeca98f609e6646cf04c1d1c0e50c21e3d355faf63743",
+      "content_hash": "d027008c1a033d1ae8c7083b59942c25c52eda8b794ce776c86fe2fbd7f0c32e",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [],
@@ -230788,7 +230798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T15:12:33.730Z",
+      "verified_at": "2026-11-27T00:07:15.289Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230805,9 +230815,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-VL-8B-Instruct Core Invariants",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "8abed93a4264eb119b56ed974ebaae77f20856c3b67e65b0c433c477ef01625c",
+      "content_hash": "f92ce6802895c8eadba9215914659be12b748a98cced981647de139eefd4b946",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:12:34.141Z"
+      "persisted_at": "2026-11-27T00:07:15.921Z"
     },
     "learn-github-zenbu-labs-terminal-browser": {
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
@@ -231593,9 +231603,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-vl-8b-instruct-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-vl-8b-instruct-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb6f19ed26b794bd90c7eead6fa93985c1792c5b6609c8b4a6c885cb35fcedca",
+      "content_hash": "aad28f180cfdbf136cf1bc6b335139ad28ea5e5a5929c9ae5f432941377940d5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T15:13:16.830Z"
+      "persisted_at": "2026-11-27T00:07:35.854Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
@@ -262727,9 +262737,9 @@
       "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
       "repository": "prometheus-prometheus-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c699da77bccff6517ba1733e4dbb20eb824207053474aa461570881275575bd",
+      "content_hash": "5a3176da5177d2fdf4f20c014eebb5c2dcdf8f748706bf17710c93ad1ac9261e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-26T06:18:34.849Z"
+      "persisted_at": "2026-11-27T00:07:36.701Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-prometheus-prometheus-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prometheus-prometheus-learning",
@@ -262739,9 +262749,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for prometheus-prometheus-learnings",
       "repository": "prometheus-prometheus-learnings",
       "source_version": "HEAD",
-      "content_hash": "55e8c55748470c757f873e1695961dc0cf65b20c9575aa02817ef53d19016a86",
+      "content_hash": "d9c1c2deb665cce6d95926f1b9d530710c3d690a5c1d29163882993f3d263b06",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T06:18:35.029Z"
+      "persisted_at": "2026-11-27T00:07:36.926Z"
     },
     "learn-github-stakater-reloader": {
       "learning_id": "learn-github-stakater-reloader",
@@ -360297,6 +360307,70 @@
       "content_hash": "c49aa5caea6242189e674e37b16341ff50e55f528e952c5871eb13f18300bfb7",
       "domain_letter": "H",
       "persisted_at": "2026-11-26T23:50:09.812Z"
+    },
+    "rule-10798": {
+      "learning_id": "rule-10798",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10798,
+      "title": "update Go dependencies for 3.17",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "1e794b83",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T00:07:24.425Z"
+    },
+    "candidate_directive-update-go-dependencies-for-3-17": {
+      "item_id": "candidate_directive-update-go-dependencies-for-3-17",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2FDM-update-go-dependencies-for-3-17.md",
+      "title": "update Go dependencies for 3.17",
+      "repository": "prometheus/prometheus",
+      "source_version": "1e794b83",
+      "content_hash": "d6db00da6410caaafde7207b8118755a34308b17fc3cb5335664814d71d6e42f",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T00:07:25.024Z"
+    },
+    "rule-10799": {
+      "learning_id": "rule-10799",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10799,
+      "title": "replace deprecated filetime calls with std::fs",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "14c70177",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T00:07:31.587Z"
+    },
+    "candidate_directive-replace-deprecated-filetime-calls-with-std-fs": {
+      "item_id": "candidate_directive-replace-deprecated-filetime-calls-with-std-fs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2PLK-replace-deprecated-filetime-calls-with-std-fs.md",
+      "title": "replace deprecated filetime calls with std::fs",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c3f452ce501c8c861a1b15a84a556dc65bd91827aa28b6362a73660d2e4ff29f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T00:07:38.270Z"
+    },
+    "candidate_directive-deps-update-go-dependencies-for-3-17": {
+      "item_id": "candidate_directive-deps-update-go-dependencies-for-3-17",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2O7U-deps-update-go-dependencies-for-3-17.md",
+      "title": "deps): update Go dependencies for 3.17",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d54b11eaa57db5bf395b89eafafedc7d2a273af877595f11deb1d1f5478ddc64",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T00:07:36.479Z"
     }
   },
   "ai-builder-brain": {
