@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T21:11:36.086Z",
+  "last_updated": "2026-11-27T21:20:28.477Z",
   "total_records": 2857,
   "domains": {
     "A": {
@@ -9590,8 +9590,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "590d7bd9993117169d2efc01bfd16eda0f7ccea58cf0f83c27dd7ecd92f0271e",
-      "created_at": "2026-11-27T20:57:53.836Z"
+      "content_hash": "1a7592f5d6cc9798edaa42b344daff6ef2945a0fc44a3de59b5650e1febb1d15",
+      "created_at": "2026-11-27T21:20:27.346Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15936,8 +15936,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "3454c7ce9b9b6873ec0a1b5369da8032e46f4f44cdac8567ca3b85f4f60b6a54",
-      "created_at": "2026-11-27T18:43:58.760Z"
+      "content_hash": "7212b123d537bfebab1fa2b5e46407e1f7f33eb03ac2e7e3f20cfe2ca88d27fa",
+      "created_at": "2026-11-27T21:20:22.461Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16386,8 +16386,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "10a9e17c2ee321d47461539cc22633f47b439f5e233fdf42388f55ae1cbb4cb9",
-      "created_at": "2026-11-27T18:44:30.973Z"
+      "content_hash": "18b95f763307a86480e44feeed608f8994e6e25e52e82f81b8178e3e40355619",
+      "created_at": "2026-11-27T21:20:26.379Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -46804,8 +46804,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "98cc0c00732dc7a892e50288e78ef983262e47997331ffb28b5201dd6ae37af2",
-      "created_at": "2026-11-27T18:17:28.897Z"
+      "content_hash": "a376ccb5de5c4aebcf7bc2f3a371d6dbd51472f2c2dad01a2d5bca6d0d86a7b2",
+      "created_at": "2026-11-27T21:20:28.477Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

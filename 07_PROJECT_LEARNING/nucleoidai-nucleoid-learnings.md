@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `7af329a5`  
+> **Source Version**: `17ea4bc4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T18:43:57.108Z  
+> **Timestamp**: 2026-11-27T21:20:20.806Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T18:43:57.103Z  
+> **Harvest Timestamp**: 2026-11-27T21:20:20.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1552,110 +1552,112 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7af329a5` (2026-11-27)
-**Commit Message**: Draft NUC 153 State Labels of Reasoning Selections
+### Incident Patch 1: `17ea4bc4` (2026-11-27)
+**Commit Message**: Draft NUC 154 Symbolic Inclusive Comparisons
 
-Category: Reasoning enhancement
-
-Allocate only the final SELECTION |> states projection of existing typed StepState labels, equivalent to selection.map(step -> step.state). Preserve all accepted syntax and projection semantics. Continuous mode requires fresh accepted counterparts and per-case lexer-token evaluation. No runtime, grammar, executable document, test, dataset or export changes in this allocation.
+Allocate one continuous Syntax enhancement proposal after the uniform draw.
+Request only U+2264 and U+2265 as optional lexer spellings of the existing
+LessEqual and GreaterEqual tokens. Preserve accepted syntax and behavior.
+Use equivalent rewrites of two existing executable conditions; do not append
+normative cases or alter protected tests, assertions or diagnostics.
+This allocation changes only the Draft and its two index entries, and
+records no outcome or token measurement.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -173,6 +173,7 @@ Created: 31-Jul-2026
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
- | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Accepted |
-+| [153](nuc-0153.md) | State Labels of Reasoning Selections | Draft |
+@@ -72,6 +72,7 @@ Created: 31-Jul-2026
+ | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Accepted |
+ | [148](nuc-0148.md) | Integer Range Literals | Draft |
+ | [149](nuc-0149.md) | Newline-Separated List Elements | Accepted |
++| [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Draft |
  
- ### Language compatibility
+ ### Runtime features
  
-@@ -359,6 +360,7 @@ Created: 31-Jul-2026
- | [150](nuc-0150.md) | C# Truncation Method Alias | Standards Track | Language compatibility | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+@@ -361,6 +362,7 @@ Created: 31-Jul-2026
  | [151](nuc-0151.md) | Truthy Value Assignment | Standards Track | Runtime features | Accepted |
  | [152](nuc-0152.md) | Falsy Value Assignment | Standards Track | Runtime features | Rejected: protected truthy-assignment parser rejection test fails |
-+| [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ | [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: three protected executable-document guards fail |
++| [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Standards Track | Syntax enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0153.md` (added, +79/-0)
+**File**: `docs/nuc-0154.md` (added, +77/-0)
 ```diff
-@@ -0,0 +1,79 @@
-+# NUC 153 -- State Labels of Reasoning Selections
+@@ -0,0 +1,77 @@
++# NUC 154 -- Symbolic Inclusive Comparisons
 +
 +```
-+NUC: 153
-+Title: State Labels of Reasoning Selections
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
++NUC: 154
++Title: Symbolic Inclusive Comparisons
++Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Reasoning enhancement
++Category: Syntax enhancement
 +Created: 27-Nov-2026
-+Requires: 48, 112, 121, 133, 145
++Requires: 109
 +```
 +
 +## Abstract
 +
-+- Add only the final reasoning stage `SELECTION |> states`. It returns
-+  one String for each selected Step, in selection order: the existing
-+  typed state's `"stated"` or `"derived"` spelling. Its result is
-+  equivalent to the accepted `(SELECTION).map(step -> step.state)`.
-+- Preserve selection, record materialization, reference coercion,
-+  shadowing, observer exclusion, structural reactivity, nullish behavior
-+  and final-projection boundaries. Add no prefix or call alias, reserved
-+  word, lexer token kind, state, record field, traversal or graph mutation.
-+- The caller's one uniform live-registry draw selected Reasoning
-+  enhancement. This allocation requests a projection of explanation
-+  metadata, not a general collection helper or a change to state inference.
-+- This is an allocation only. The accepted language is unchanged;
-+  fresh preparation, the Rust improvement pass and independent evaluation
-+  follow against its pushed revision.
++- Add only `≤` (U+2264) and `≥` (U+2265) as optional, one-character
++  spellings of the existing `<=` and `>=` tokens. Reuse their token kinds,
++  parser paths, comparison semantics and canonical rendering.
++- Preserve every accepted input and output, including ASCII operators,
++  operator sections, precedence, bounded comparison chains, declarations,
++  rules, templates, literal text, diagnostics and source positions.
++- The caller's one uniform eligible-category draw selected Syntax
++  enhancement. This is a mathematical source-spelling change, not a
++  foreign-language compatibility alias. Continuous-mode lexer-token
++  comparison and all behavior, integrity and development checks apply.
++- Rewrite only the existing inclusive condition in
++  `Nucleoid throws an error inside a block` and the existing recursion
++  boundary in
++  `Nucleoid runs a recursive function with several return statements`.
++  Preserve their identities, assertions, results and executed coverage.
++  No new normative case or movement of existing cases is requested.
 +
 +## Motivation
 +
-+- Explanations distinguish stated facts from derived conclusions.
-+  `stated` and `derived` filter Step records; they do not project their
-+  labels. `nodes`, `holds`, `edges` and `indegrees` project other metadata.
-+- Reading each selected record's `state` through a callback is already
-+  supported. A final reasoning projection expresses the same graph query
-+  directly, including derived class-governed steps with no recorded inputs.
-+- Preserve every accepted program and pinned diagnostic. The continuous
-+  Reasoning category requires a real per-case lexer-token comparison and
-+  pre-executed accepted counterparts for the two new measured cases.
-+- The controls cover explanation order, equal-valued rewiring, snapshots,
-+  class-governed states, empty selections and subsequent source changes.
-+  Only their state-list constructions may be shortened; their six ordered
-+  canonical assertions and explicit return `1` remain unchanged.
++- Inclusive bounds are common in declarative models. One mathematical
++  character can express each existing two-character source spelling without
++  changing its meaning or adding a runtime operation.
++- Reusing the existing lexer tokens avoids new keywords, public variants,
++  lowering, dependencies, options and numerical behavior. The spelling is
++  shorter in characters; no reduction in lexer-token counts is claimed.
++- The accepted runtime rejects both glyphs outside literals and comments.
++  Keep every other lexical boundary, including ASCII names and whitespace.
++  No Unicode normalization or additional mathematical symbol is requested.
++- Existing executable conditions provide accepted-syntax counterparts
++  without appending cases that would shift protected document locators.
++  Never alter a protected test, assertion, diagnostic or sealed case to
++  accommodate the candidate.
 +
 +## Rationale
 +
-+Pending preparation in the isolated candidate.
++To be completed by the fresh proposal agent in the isolated candidate.
 +
 +## Specification
 +
-+Pending synchronization with the authoritative specification and references.
++To be completed against `nucleoid.spec.md`, including the exact lexer
++spellings and their existing contexts.
 +
-+## Errors
++## Backwards Compatibility
 +
-+Pending compatibility and error-precedence review.
++To be independently checked against the pushed allocation's accepted corpus,
++syntax, native test inventory and original source bytes.
 +
 +## Reference Implementation
 +
-+Pending a minimal extension of the existing final-projection machinery.
-+
-+## Backward Compatibility
-+
-+Pending replay of the immutable accepted corpus and original counterparts.
++To be prototyped only in the caller's fresh candidate worktree.
 +
 +## Evaluation
 +
-+Pending fresh preparation, the caller-owned Rust improvement pass, a frozen
-+handoff and independent evaluation. Token comparison is required in continuous
-+Reasoning mode. No scoring rubric or strategy-learning policy was supplied;
-+advisory usefulness is unscored and strategy learning is `not_configured`.
++Pending preparation, the caller-owned Rust improvement pass and independent
++evaluation. This allocation records no outcome, score or token measurement.
 +
 +## Copyright
 +
@@ -1663,6 +1665,149 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `b265e5e8` (2026-11-27)
+**Commit Message**: NUC 153 State Labels of Reasoning Selections
+
+Rejected: three protected executable-document guards fail.
+
+Automatic hard-criteria basis: all-target build, warning-denied Clippy
+and formatting passed; the full cargo test --no-fail-fast failed with
+4215 passed, 3 failed and 25 ignored. Accepted language compatibility
+passed on the pinned corpus, native suites and source review evidence.
+Every existing test passing is therefore not satisfied.
+
+The independent evaluator's overall policy decision is Rejected, while
+the core behavior/integrity and required continuous Reasoning token
+policy passed: 2 fewer, 1326 equal and no increases; the two controls
+measured 133 to 124 and 146 to 128 tokens. All 4223 accepted identities
+are retained and unweakened and all 20 new tests pass. The exact existing
+nullish, universal-claim and value-assignment document guards still fail;
+no controls, assertions, locators or sources were repaired to pass.
+
+Only docs/nuc-0000.md and docs/nuc-0153.md record this rejection. The
+frozen implementation, executable documents, grammar, tests and datasets
+remain isolated and were not applied. Report/candidate artifacts are
+retained; usefulness is unscored missing_rubr
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -173,7 +173,7 @@ Created: 31-Jul-2026
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
+ | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
+ | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Accepted |
+-| [153](nuc-0153.md) | State Labels of Reasoning Selections | Draft |
++| [153](nuc-0153.md) | State Labels of Reasoning Selections | Rejected: three protected executable-document guards fail |
+ 
+ ### Language compatibility
+ 
+@@ -360,7 +360,7 @@ Created: 31-Jul-2026
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Standards Track | Language compatibility | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+ | [151](nuc-0151.md) | Truthy Value Assignment | Standards Track | Runtime features | Accepted |
+ | [152](nuc-0152.md) | Falsy Value Assignment | Standards Track | Runtime features | Rejected: protected truthy-assignment parser rejection test fails |
+-| [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Rejected: three protected executable-document guards fail |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0153.md` (modified, +199/-13)
+```diff
+@@ -4,7 +4,7 @@
+ NUC: 153
+ Title: State Labels of Reasoning Selections
+ Author: Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Rejected
+ Type: Standards Track
+ Category: Reasoning enhancement
+ Created: 27-Nov-2026
+@@ -13,6 +13,10 @@ Requires: 48, 112, 121, 133, 145
+ 
+ ## Abstract
+ 
++- Rejected: three protected executable-document guards fail.
++  The Specification and Reference Implementation below describe the isolated
++  rejected prototype, not accepted language behavior. Its proposed specification
++  anchor, executable cases, runtime, grammar and datasets were not integrated.
+ - Add only the final reasoning stage `SELECTION |> states`. It returns
+   one String for each selected Step, in selection order: the existing
+   typed state's `"stated"` or `"derived"` spelling. Its result is
+@@ -24,9 +28,10 @@ Requires: 48, 112, 121, 133, 145
+ - The caller's one uniform live-registry draw selected Reasoning
+   enhancement. This allocation requests a projection of explanation
+   metadata, not a general collection helper or a change to state inference.
+-- This is an allocation only. The accepted language is unchanged;
+-  fresh preparation, the Rust improvement pass and independent evaluation
+-  follow against its pushed revision.
++- The prototype was frozen against the pushed allocation
++  `7af329a5347da9b526c022f150acef32aa2d3682`. Preparation, the one Rust
++  improvement pass and independent evaluation are complete; the rejected
++  language changes remain isolated.
+ 
+ ## Motivation
+ 
+@@ -46,30 +51,211 @@ Requires: 48, 112, 121, 133, 145
+ 
+ ## Rationale
+ 
+-Pending preparation in the isolated candidate.
++- Project existing explanation metadata rather than infer new provenance.
++  Read `StepState::as_str()`, including `"derived"` for a class-governed
++  Step whose `from` list is empty.
++- Reuse the existing one-value-per-Step final field projection. Keep
++  selection and its observations intact, and still materialize every
++  selected record before returning its label, matching the accepted map.
++- Recognize the ordinary Identifier `states` only in the existing
++  pipeline-stage dispatch. Extending `Stage::from_name` would also add
++  prefix forms and reinterpret ordinary names, so it is deliberately
++  unchanged.
++- The caller made one uniform draw from the live registry's five eligible
++  categories; Reasoning enhancement was selected with probability `0.2`.
++  Explanation metadata is the confirmed purpose. No redraw, reclassification
++  or general collection helper is part of this revision.
++- NUC 48's `stated` and `derived` retain Step records. NUC 11's dropped
++  source operation is not this final label projection. NUCs 112, 121, 133
++  and 145 supply other projections and remain unchanged.
+ 
+ ## Specification
+ 
+-Pending synchronization with the authoritative specification and references.
++- Add only `SELECTION |> states`, returning a plain list of one String per
++  selected Step, in its existing order: `"stated"` or `"derived"`.
++  It is equivalent to `(SELECTION).map(step -> step.state)`, where
++  `SELECTION` means the graph selection its source denotes.
++- An empty selection returns `[]`; a zero-input derived Step returns
++  `"derived"`. This is neither a filter nor a traversal, and adds no
++  state, record field or graph mutation.
++- A reference denotes its own graph node, not a value coerced into a
++  selection or a stored materialized list. Existing `model`, prefix and
++  pipeline stages retain their source coercion, ordering and metadata.
++- Preserve record materialization, anonymous allocation and identities,
++  source value/structural observations, observer exclusion and subscriptions
++  through equal-valued rewiring, declaration/deletion/reattachment, missing
++  properties and class-rule replacement.
++- Preserve functions, methods, class-level rules, hypotheses, snapshots and
++  transactions. Null-valued Steps still have labels; an Undefined selection
++  stays Undefined. Standing nullish depth selections retain deferred-null
++  behavior and recover when their depth is defined again.
++- This stage is final: its plain list is not a source for a later reasoning
++  stage or a `path`, `intersect`, `except`, `union` or `xor` argument.
++  Ordinary list operations on its parenthesized result remain ordinary.
++- `states` stays an ordinary Identifier outside the stage position. A
++  local/parameter, variable, function or class named `states` shadows the
++  operation before source selection. Add no prefix, bare or call alias,
++  global keyword or lexer token kind.
++- The isolated prototype proposes a `State labels of reasoning selections`
++  specification section. Its executable entry is
++  `Nucleoid projects typed states of an explanation`; `tests/reference.md`
++  adds `Nucleoid keeps reasoning state projections live`. Neither is integrated.
++  Only their state-list constructions differ from the sealed accepted
++  controls; all six ordered assertions, expected return `1` and coverage
 ```
 
 #### Recent Merged Pull Requests:
@@ -1691,13 +1836,13 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 153 State Labels of Reasoning Selections
+## X. Draft NUC 154 Symbolic Inclusive Comparisons
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7af329a5`: Draft NUC 153 State Labels of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17ea4bc4`: Draft NUC 154 Symbolic Inclusive Comparisons. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1705,8 +1850,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [153](nuc-0153.md) | State Labels of Reasoning Selections | Draft |
-| [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+| [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Draft |
+| [154](nuc-0154.md) | Symbolic Inclusive Comparisons | Standards Track | Syntax enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1716,4 +1861,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7af329a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17ea4bc4` are properly handled with clean fallback behavior.

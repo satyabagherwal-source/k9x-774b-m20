@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:11:36.611Z",
+  "last_updated": "2026-11-27T21:20:28.868Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T18:17:27.965Z",
+      "processed_at": "2026-11-27T21:20:27.766Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-27T20:57:53.326Z",
+      "processed_at": "2026-11-27T21:20:26.812Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,8 +773,8 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-27T18:44:30.049Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-27T21:20:25.547Z",
+      "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "tableproapp-tablepro-learnings.md": {
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5103,
+  "total_dossiers_evaluated": 5106,
   "total_canonical_promoted": 586,
-  "total_staged_for_review": 3852
+  "total_staged_for_review": 3855
 }

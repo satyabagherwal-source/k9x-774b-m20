@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T21:11:36.362Z",
+  "last_updated": "2026-11-27T21:20:28.676Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26763,
+  "total_items": 26765,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f076f8d4dc2c9ec8c68c67d5f2d8f030217945d79108319f7af5e07aa7eecb90",
+      "content_hash": "b40dda1b9a8157356535e62c3d1768ae616e0fd5fe69ad7435732573828763ff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T18:17:29.158Z"
+      "persisted_at": "2026-11-27T21:20:28.676Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "590d7bd9993117169d2efc01bfd16eda0f7ccea58cf0f83c27dd7ecd92f0271e",
+      "content_hash": "1a7592f5d6cc9798edaa42b344daff6ef2945a0fc44a3de59b5650e1febb1d15",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:57:53.836Z"
+      "persisted_at": "2026-11-27T21:20:27.346Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a27812e17a9e0d09cb419665ffd884cc742e2c0109253cbe86efbbb0a91b293b",
+      "content_hash": "00c4ff340ab3ba41ae377fa8fa1f7f8c767c95a26dca5d5d8cb5614342295184",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:57:54.025Z"
+      "persisted_at": "2026-11-27T21:20:27.555Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -231471,8 +231471,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "7af329a5",
-      "content_hash": "b102b7327a65f438397804e67aa507c98e28e1a338e9a46178ae8e447afaa489",
+      "source_version": "17ea4bc4",
+      "content_hash": "c979ca2d5a26ace32cf8bad23f686581ecd183d5811eda03a654e57017b3bce8",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231795,6 +231795,11 @@
           "number": 10951,
           "title": "Draft NUC 153 State Labels of Reasoning Selections",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10967,
+          "title": "Draft NUC 154 Symbolic Inclusive Comparisons",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231802,7 +231807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T18:43:58.065Z",
+      "verified_at": "2026-11-27T21:20:21.755Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231844,10 +231849,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "7af329a5",
-      "content_hash": "3454c7ce9b9b6873ec0a1b5369da8032e46f4f44cdac8567ca3b85f4f60b6a54",
+      "source_version": "17ea4bc4",
+      "content_hash": "7212b123d537bfebab1fa2b5e46407e1f7f33eb03ac2e7e3f20cfe2ca88d27fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:43:58.760Z"
+      "persisted_at": "2026-11-27T21:20:22.461Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231856,10 +231861,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "7af329a5",
-      "content_hash": "fa390accf6621537b66e3d3c00b1a4690bb07f73ce2fb9d23a1af6cfcae87041",
+      "source_version": "17ea4bc4",
+      "content_hash": "959b562d4d9deb16f8f2f5c1c74555cb2ec3ff8a1f68098cdf684402c0d7cd5d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T18:43:58.949Z"
+      "persisted_at": "2026-11-27T21:20:22.655Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -233037,9 +233042,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "10a9e17c2ee321d47461539cc22633f47b439f5e233fdf42388f55ae1cbb4cb9",
+      "content_hash": "18b95f763307a86480e44feeed608f8994e6e25e52e82f81b8178e3e40355619",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:44:30.973Z"
+      "persisted_at": "2026-11-27T21:20:26.379Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -233049,9 +233054,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a455674217737a000f18cf4cb31bafa624765c232c610675ba5c9c342efafa9",
+      "content_hash": "63340d695cef84936400d632c2d3dd08d484830914dc7fd930bc7ab66aa41f66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T18:44:31.187Z"
+      "persisted_at": "2026-11-27T21:20:26.595Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -358581,13 +358586,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0939-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JL2O-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c02d3358e240ec90e547ad663a06647f3fe57a2b5e40f3f63846fdc913f32544",
+      "content_hash": "0a00a62f24b778e366374f052dc2a84e0524b2510f5f741fe7bd9cb157a7706a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T18:17:28.587Z"
+      "persisted_at": "2026-11-27T21:20:28.275Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358597,9 +358602,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "98cc0c00732dc7a892e50288e78ef983262e47997331ffb28b5201dd6ae37af2",
+      "content_hash": "a376ccb5de5c4aebcf7bc2f3a371d6dbd51472f2c2dad01a2d5bca6d0d86a7b2",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T18:17:28.897Z"
+      "persisted_at": "2026-11-27T21:20:28.477Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361488,13 +361493,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-QJT4-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JK72-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0212f1230e1bc6872b928296052302851cf8d1ebcfe67f590319eaeee7f1facf",
+      "content_hash": "36d73cad83202038126073a6812655ef81101ed5acc716eb3cdb9dc3fae426ac",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:57:53.613Z"
+      "persisted_at": "2026-11-27T21:20:27.137Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -367566,6 +367571,32 @@
       "content_hash": "b0542517c6f9b5c9784b76b512186fdad0305894f761a7d30377015ec28dda6d",
       "domain_letter": "J",
       "persisted_at": "2026-11-27T21:11:34.353Z"
+    },
+    "rule-10967": {
+      "learning_id": "rule-10967",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10967,
+      "title": "Draft NUC 154 Symbolic Inclusive Comparisons",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "17ea4bc4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:20:21.755Z"
+    },
+    "candidate_directive-draft-nuc-154-symbolic-inclusive-comparisons": {
+      "item_id": "candidate_directive-draft-nuc-154-symbolic-inclusive-comparisons",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JJGF-draft-nuc-154-symbolic-inclusive-comparisons.md",
+      "title": "Draft NUC 154 Symbolic Inclusive Comparisons",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "82f58216d866d7927ff40666d13122dcf60c788af72eb1f8a79214a2d9f6827e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T21:20:26.178Z"
     }
   },
   "ai-builder-brain": {

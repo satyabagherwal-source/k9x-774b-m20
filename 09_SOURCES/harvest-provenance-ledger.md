@@ -13906,3 +13906,4 @@ Every entry in this ledger must capture:
 | `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `bedff729` | Multi-dimensional audit evidence | 2026-11-27T21:11:19.781Z |
 | `learn-github-gatenlp-ultimate-sitemap-parser` | `https://github.com/GateNLP/ultimate-sitemap-parser` | `6f532e9d` | Multi-dimensional audit evidence | 2026-11-27T21:11:22.406Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `3cc8b5c1` | Multi-dimensional audit evidence | 2026-11-27T21:11:27.088Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `17ea4bc4` | Multi-dimensional audit evidence | 2026-11-27T21:20:22.024Z |

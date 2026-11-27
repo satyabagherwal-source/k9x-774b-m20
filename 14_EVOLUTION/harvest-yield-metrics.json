@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:11:27.095Z",
-  "total_cycles_completed": 13165,
-  "total_learnings_persisted": 13165,
-  "total_rules_promoted": 11880,
+  "last_updated": "2026-11-27T21:20:22.030Z",
+  "total_cycles_completed": 13166,
+  "total_learnings_persisted": 13166,
+  "total_rules_promoted": 11881,
   "history": [
-    {
-      "timestamp": "2026-11-27T03:55:06.407Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T03:55:10.731Z",
       "repository": "rqlite/rqlite",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T21:11:27.095Z",
       "repository": "goharbor/harbor",
       "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:20:22.030Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

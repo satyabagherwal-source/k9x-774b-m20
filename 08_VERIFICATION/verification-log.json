@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-LWW1",
-    "timestamp": "2026-11-26T10:50:45.313Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "66b3dc0b35d9d73d729c19e45995ee83fa4541e95e80644fdade25f440d50d66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-2HQZ",
     "timestamp": "2026-11-26T11:03:38.843Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "goharbor/harbor",
     "learningId": "learn-github-goharbor-harbor",
     "contentHash": "dd074d2abd8729615588501adc9647f0ab14c658cd14948aaa3a7fed7b7ff885",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-JG8T",
+    "timestamp": "2026-11-27T21:20:22.013Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "c979ca2d5a26ace32cf8bad23f686581ecd183d5811eda03a654e57017b3bce8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

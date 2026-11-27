@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T21:11:30.767Z",
-    "lastVerified": "2026-11-27T21:11:30.767Z",
+    "lastChecked": "2026-11-27T21:20:25.370Z",
+    "lastVerified": "2026-11-27T21:20:25.370Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -399,22 +399,21 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T20:38:19.711Z",
-    "lastVerified": "2026-11-27T20:38:19.711Z",
+    "lastChecked": "2026-11-27T21:20:20.699Z",
+    "lastVerified": "2026-11-27T21:20:20.699Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "b102b7327a65f438397804e67aa507c98e28e1a338e9a46178ae8e447afaa489",
+    "contentHash": "c979ca2d5a26ace32cf8bad23f686581ecd183d5811eda03a654e57017b3bce8",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7af329a5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1600,8 +1599,8 @@
     "officialUrl": "https://github.com/go-kratos/kratos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T03:16:19.314Z",
-    "lastVerified": "2026-11-27T03:16:19.314Z",
+    "lastChecked": "2026-11-27T21:20:09.810Z",
+    "lastVerified": "2026-11-27T21:20:09.810Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-go-kratos-kratos",
@@ -2094,8 +2093,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T17:01:44.925Z",
-    "lastVerified": "2026-11-27T17:01:44.925Z",
+    "lastChecked": "2026-11-27T21:20:12.282Z",
+    "lastVerified": "2026-11-27T21:20:12.282Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -4356,12 +4355,12 @@
     "revisionIdentifier": "151572e0"
   },
   "svenstaro-miniserve": {
-    "name": "svenstaro/miniserve",
+    "name": "miniserve",
     "officialUrl": "https://github.com/svenstaro/miniserve",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T20:59:32.230Z",
-    "lastVerified": "2026-11-26T20:59:32.230Z",
+    "lastChecked": "2026-11-27T21:20:02.353Z",
+    "lastVerified": "2026-11-27T21:20:02.353Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-svenstaro-miniserve",
@@ -4370,7 +4369,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7dae3bbd"
   },
   "hf-hexgrad-kokoro-82m": {
     "name": "hexgrad/Kokoro-82M",
@@ -5103,9 +5103,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-27T02:08:02.969Z",
+    "lastChecked": "2026-11-27T21:20:14.800Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-27T02:08:02.969Z"
+    "lastVerified": "2026-11-27T21:20:14.800Z"
   },
   "transact-rs-sqlx": {
     "name": "sqlx",
@@ -10146,9 +10146,9 @@
   "touchlab-xcode-kotlin": {
     "name": "xcode-kotlin",
     "officialUrl": "https://github.com/touchlab/xcode-kotlin",
-    "lastChecked": "2026-11-25T12:39:08.410Z",
+    "lastChecked": "2026-11-27T21:20:07.305Z",
     "revisionIdentifier": "8e9834df",
-    "lastVerified": "2026-11-25T12:39:08.410Z"
+    "lastVerified": "2026-11-27T21:20:07.305Z"
   },
   "melbahja-seo": {
     "name": "seo",
@@ -10640,9 +10640,9 @@
   "jafforgehq-site-analytics-tool": {
     "name": "site-analytics-tool",
     "officialUrl": "https://github.com/jafforgehq/site-analytics-tool",
-    "lastChecked": "2026-11-24T13:12:27.922Z",
+    "lastChecked": "2026-11-27T21:20:04.798Z",
     "revisionIdentifier": "1788648c",
-    "lastVerified": "2026-11-24T13:12:27.922Z"
+    "lastVerified": "2026-11-27T21:20:04.798Z"
   },
   "mikepenz-multiplatform-markdown-renderer": {
     "name": "multiplatform-markdown-renderer",
