@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T06:29:21.527Z",
-    "lastVerified": "2026-11-27T06:29:21.527Z",
+    "lastChecked": "2026-11-27T06:37:53.074Z",
+    "lastVerified": "2026-11-27T06:37:53.074Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -289,9 +289,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T05:57:45.082Z",
+    "lastChecked": "2026-11-27T06:37:53.066Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T05:57:45.082Z"
+    "lastVerified": "2026-11-27T06:37:53.066Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1703,9 +1703,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-27T02:18:16.016Z",
+    "lastChecked": "2026-11-27T06:37:48.072Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-27T02:18:16.016Z"
+    "lastVerified": "2026-11-27T06:37:48.072Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -3244,9 +3244,9 @@
   "taubyte-tau": {
     "name": "tau",
     "officialUrl": "https://github.com/taubyte/tau",
-    "lastChecked": "2026-11-26T13:44:38.723Z",
+    "lastChecked": "2026-11-27T06:37:45.642Z",
     "revisionIdentifier": "59816f6f",
-    "lastVerified": "2026-11-26T13:44:38.723Z"
+    "lastVerified": "2026-11-27T06:37:45.642Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -6890,8 +6890,8 @@
     "officialUrl": "https://github.com/StarTrail-org/LEANN",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T12:38:40.661Z",
-    "lastVerified": "2026-11-26T12:38:40.661Z",
+    "lastChecked": "2026-11-27T06:37:50.545Z",
+    "lastVerified": "2026-11-27T06:37:50.545Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-startrail-org-leann",
@@ -7070,12 +7070,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kotest-kotest": {
-    "name": "kotest/kotest",
+    "name": "kotest",
     "officialUrl": "https://github.com/kotest/kotest",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-24T22:30:10.253Z",
-    "lastVerified": "2026-11-24T22:30:10.253Z",
+    "lastChecked": "2026-11-27T06:37:43.352Z",
+    "lastVerified": "2026-11-27T06:37:43.352Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kotest-kotest",
@@ -7084,7 +7084,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1185d7cf"
   },
   "kubeshark-kubeshark": {
     "name": "kubeshark",
@@ -8107,14 +8108,14 @@
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T05:38:31.880Z",
-    "lastVerified": "2026-11-26T05:38:31.880Z",
+    "lastChecked": "2026-11-27T06:37:40.919Z",
+    "lastVerified": "2026-11-27T06:37:40.919Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "7aa1f0958e871840f545861e7d7bba460da8fbef464a4ab462102063bc838bce",
+    "contentHash": "b25c481cbc85698a93a3784bba291d2e0de15b304fa7dfa83b87e266bc18951f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8526,12 +8527,12 @@
     "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T21:23:02.655Z",
-    "lastVerified": "2026-11-23T21:23:02.655Z",
+    "lastChecked": "2026-11-27T06:37:40.650Z",
+    "lastVerified": "2026-11-27T06:37:40.650Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "83c1d584b4afbdbe3781cabb2c2d0504ed00614622a2b75f33e058ea06c4c5fd",
+    "contentHash": "e2a4d90b5a3f3e5774edd51ecafe51cf6368a1a9f432728e31539d43480a653c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

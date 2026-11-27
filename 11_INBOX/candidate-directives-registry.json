@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:29:24.277Z",
+  "last_updated": "2026-11-27T06:37:55.424Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68059,11 +68059,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-HZNH",
+      "id": "CD-0ME5",
       "directive_title": "renderer): refuse last-error reads off the engine owner thread",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-HZNH-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0ME5-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -69113,6 +69113,46 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EE5D89-markdown-fix-image-syntax-for-unpreviewa.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-0CE6",
+      "directive_title": "cache the PDFium SDK alongside Cargo build artifacts",
+      "source_repo": "zvec-ai/zvec-grep",
+      "source_commit": "08e93f17",
+      "staged_file": "11_INBOX/candidate-directives/CD-0CE6-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-0L4L",
+      "directive_title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
+      "source_repo": "zvec-ai-zvec-grep-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0L4L-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-3DFDCE",
+      "directive_title": "Forensic Learning Record (Deep Inspection): abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3DFDCE-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-D752FA",
+      "directive_title": "renderer): refuse last-error reads off the engine owner thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D752FA-renderer-refuse-last-error-reads-off-the.md",
       "staged_date": "2026-11-27"
     }
   ]

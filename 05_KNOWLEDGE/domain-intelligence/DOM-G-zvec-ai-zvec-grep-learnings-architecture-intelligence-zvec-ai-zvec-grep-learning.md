@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T22:23:10.153Z",
+  "timestamp": "2026-11-27T06:37:53.644Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zvec-ai-zvec-grep-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zvec-ai-zvec-grep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T22:23:10.153Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T06:37:53.644Z`  
 > **Learning ID**: `LEARN-EVO-zvec-ai-zvec-grep-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zvec-ai-zvec-grep-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `cc3ff0fe`  
+> **Source Version**: `08e93f17`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T10:47:10.186Z  
+> **Timestamp**: 2026-11-27T06:37:40.925Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T10:47:10.181Z  
+> **Harvest Timestamp**: 2026-11-27T06:37:40.919Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4364 stars
+- **Stars / Engagement**: 4385 stars
 
 ---
 
@@ -1146,67 +1146,142 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `975a4777` (2026-11-18)
-**Commit Message**: fix(build): download ONNX Runtime archives from npmmirror (#437)
+### Incident Patch 1: `08e93f17` (2026-11-26)
+**Commit Message**: fix(ci): cache the PDFium SDK alongside Cargo build artifacts (#466)
 
-Co-authored-by: feihongxu0824 <[REDACTED_EMAIL]>
-
-**File**: `rust/scripts/onnxruntime-distributions.json` (modified, +5/-5)
+**File**: `.github/workflows/rust-ci.yml` (modified, +11/-7)
 ```diff
-@@ -4,7 +4,7 @@
-   "artifacts": {
-     "linux-x64": {
-       "archive": "onnxruntime-linux-x64-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
-       "sha256": "7485c7e7aac6501b27e353dcbe068e45c61ab51fbaf598d13970dfae669d20bf",
-       "files": {
-         "onnxruntime-linux-x64-1.21.0/lib/libonnxruntime.so.1.21.0": "libonnxruntime.so.1",
-@@ -14,7 +14,7 @@
-     },
-     "linux-aarch64": {
-       "archive": "onnxruntime-linux-aarch64-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
-       "sha256": "4508084bde1232ee1ab4b6fad2155be0ea2ccab1c1aae9910ddb3fb68a60805e",
-       "files": {
-         "onnxruntime-linux-aarch64-1.21.0/lib/libonnxruntime.so.1.21.0": "libonnxruntime.so.1",
-@@ -24,7 +24,7 @@
-     },
-     "linux-x64-gpu": {
-       "archive": "onnxruntime-linux-x64-gpu-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
-       "sha256": "ef37a33ba75e457aebfd0d7b342ab20424aa6126bc5f565d247f1201b66996cf",
-       "files": {
-         "onnxruntime-linux-x64-gpu-1.21.0/lib/libonnxruntime.so.1.21.0": "libonnxruntime.so.1",
-@@ -36,7 +36,7 @@
-     },
-     "osx-arm64": {
-       "archive": "onnxruntime-osx-arm64-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
-       "sha256": "5c3f2064ee97eb7774e87f396735c8eada7287734f1bb7847467ad30d4036115",
-       "files": {
-         "onnxruntime-osx-arm64-1.21.0/lib/libonnxruntime.1.21.0.dylib": "libonnxruntime.1.dylib",
-@@ -46,7 +46,7 @@
-     },
-     "osx-x86_64": {
-       "archive": "onnxruntime-osx-x86_64-1.21.0.tgz",
--      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
-+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
-       "sha256": "8305afd2d75ee5702844a23b099d41885af30ad3d1b4cf3d8d795e3d8c1f9396",
-       "files": {
-         "onnxruntime-osx-x86_64-1.21.0/lib/libonnxruntime.1.21.0.dylib": "libonnxruntime.1.dylib",
+@@ -116,11 +116,12 @@ jobs:
+       - name: Cache Rust dependencies
+         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+         with:
+-          prefix-key: rust-ci-v3-quality
++          prefix-key: rust-ci-v4-quality
+           workspaces: rust -> target
+           cache-directories: |
+             ~/.cargo/llama-cpp-sources/
+             ~/.cargo/llama-cpp-runtimes/
++            ~/.cache/pdfium-rs/
+           save-if: ${{ github.event_name != 'pull_request' }}
+       - name: Check formatting
+         run: cargo fmt --all --check
+@@ -210,11 +211,12 @@ jobs:
+         if: ${{ !matrix.cuda }}
+         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+         with:
+-          prefix-key: rust-ci-v3-test
++          prefix-key: rust-ci-v4-test
+           workspaces: rust -> target
+           cache-directories: |
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/llama-cpp-sources/
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/llama-cpp-runtimes/
++            ${{ runner.os == 'macOS' && '~/Library/Caches' || runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+           save-if: ${{ github.event_name != 'pull_request' }}
+       - name: Install cargo-nextest
+         uses: taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283 # v2.87.29
+@@ -235,14 +237,15 @@ jobs:
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/registry/
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/git/
+             ${{ env.LLAMA_CPP_RUNTIME_CACHE }}/
++            ${{ runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+             rust/target/
+             !rust/target/cuda-tests.tgz
+             !rust/target/cuda-tests/
+             !rust/target/cargo-cli.tgz
+             !rust/target/cargo-cli/
+-          key: rust-ci-v3-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-${{ needs.source.outputs.sha }}
++          key: rust-ci-v4-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-${{ needs.source.outputs.sha }}
+           restore-keys: |
+-            rust-ci-v3-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-
++            rust-ci-v4-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-
+       - name: Restore real embedding and layout models
+         uses: actions/cache@v5
+         with:
+@@ -259,7 +262,7 @@ jobs:
+         run: |
+           # Keep the shared log parent runner-owned: the container writes a
+           # subdirectory, then later host-side tee writes sibling CPU logs.
+-          mkdir -p rust/target rust/model-logs "$HOME/.cargo/registry" "$HOME/.cargo/git" "$ZVEC_GREP_MODEL_CACHE"
++          mkdir -p rust/target rust/model-logs "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs" "$ZVEC_GREP_MODEL_CACHE"
+           docker build --platform linux/amd64 --file rust/scripts/cuda/cuda-builder.Dockerfile \
+             --build-arg CUDA_IMAGE=ubuntu:24.04 \
+             --build-arg RUST_VERSION="$(sed -n 's/^channel = "\(.*\)"/\1/p' rust/rust-toolchain.toml)" \
+@@ -268,6 +271,7 @@ jobs:
+             --volume "${GITHUB_WORKSPACE}:/work" \
+             --volume "$HOME/.cargo/registry:/root/.cargo/registry" \
+             --volume "$HOME/.cargo/git:/root/.cargo/git" \
++            --volume "$HOME/.cache/pdfium-rs:/root/.cache/pdfium-rs" \
+             --volume "$ZVEC_GREP_MODEL_CACHE:/model-cache" \
+             --volume "$(command -v cargo-nextest):/usr/local/bin/cargo-nextest:ro" \
+             --env CARGO_INCREMENTAL --env CARGO_PROFILE_DEV_DEBUG --env CARGO_PROFILE_TEST_DEBUG \
+@@ -630,8 +634,8 @@ jobs:
+         if: ${{ always() && matrix.cuda && runner.os == 'Linux' }}
+         shell: bash
+         run: |
+-          mkdir -p target "$HOME/.cargo/registry" "$HOME/.cargo/git"
+-          sudo chown -R "$(id -u):$(id -g)" target "$HOME/.cargo/registry" "$HOME/.cargo/git"
++          mkdir -p target "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"
++          sudo chown -R "$(id -u):$(id -g)" target "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"
+           if [ -n "${ZVEC_GREP_MODEL_CACHE:-}" ]; then
+             mkdir -p "$ZVEC_GREP_MODEL_CACHE"
+             sudo chown -R "$(id -u):$(id -g)" "$ZVEC_GREP_MODEL_CACHE"
+```
+
+**File**: `.github/workflows/rust-package-build.yml` (modified, +6/-3)
+```diff
+@@ -103,9 +103,10 @@ jobs:
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/registry/src/
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/git/db/
+             rust/target/release/
++            ${{ runner.os == 'macOS' && '~/Library/Caches' || runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+           # Per-commit keys would exhaust the 10 GB repository cache quota and evict Rust CI caches.
+           # Keep objects linked against newer glibc out of the release cache.
+-          key: rust-release-${{ runner.os == 'Linux' && 'v6-manylinux2.28' || 'v3' }}-${{ inputs.target }}-${{ inputs.runner }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/release-builder.Dockerfile') }}
++          key: rust-release-${{ runner.os == 'Linux' && 'v6-manylinux2.28' || 'v3' }}-${{ inputs.target }}-${{ inputs.runner }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/release-builder.Dockerfile', 'rust/scripts/prepare-pdfium.py') }}
+       - name: Cache the pinned llama native SDK
+         uses: actions/cache@v5
+         with:
+@@ -140,12 +141,13 @@ jobs:
+         if: runner.os == 'Linux'
+         working-directory: ${{ github.workspace }}
+         run: |
+-          mkdir -p "$HOME/.cargo/registry" "$HOME/.cargo/git"
++          mkdir -p "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"
+           docker run --rm --platform ${{ inputs.target == 'linux-arm64-gnu' && 'linux/arm64' || 'linux/amd64' }} \
+             --volume "${GITHUB_WORKSPACE}:/work:ro" \
+             --volume "${GITHUB_WORKSPACE}/rust/target:/work-target" \
+             --volume "$HOME/.cargo/registry:/root/.cargo/registry" \
+             --volume "$HOME/.cargo/git:/root/.cargo/git" \
++            --volume "$HOME/.cache/pdfium-rs:/root/.cache/pdfium-rs" \
+             --env CARGO_TARGET_DIR=/work-target \
+             --env CARGO_BUILD_JOBS --env CMAKE_BUILD_PARALLEL_LEVEL \
+             --env LLAMA_CPP_BUILD_MODE=prebuilt --env LLAMA_CPP_RUNTIME_CACHE=/work-target/llama-runtimes \
+@@ -191,7 +193,7 @@ jobs:
+         if: ${{ always() && runner.os == 'Linux' }}
+         run: |
+           # Docker writes as root. Host packaging/cache save must retain access.
+-          for directory in target "$HOME/.cargo/registry" "$HOME/.cargo/git"; do
++          for directory in target "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"; do
+             if [[ -d "$directory" ]]; then
+               sudo chown -R "$(id -u):$(id -g)" "$directory"
+             fi
+@@ -228,6 +230,7 @@ jobs:
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/registry/src/
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/git/db/
+             rust/target/release/
++            ${{ runner.os == 'macOS' && '~/Library/Caches' || runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+           key: ${{ steps.cargo-cache.outputs.cache-primary-key }}
+       - name: Audit the Windows CPU/CUDA bundle
+         if: inputs.target == 'win32-x64-msvc'
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #437** (2026-11-18): fix(build): restore ONNX Runtime downloads via npmmirror (@feihongxu0824)
-- **PR #427** (2026-11-17): fix(rust): address the remaining issues in #418 (@lnfjpt)
-- **PR #424** (2026-11-17): fix(ort): release environment before CUDA provider destructors (@feihongxu0824)
-- **PR #419** (2026-11-16): chore(rust): prepare 0.3.1 release (@egolearner)
-- **PR #409** (2026-11-16): fix(storage): upgrade zvec-rust to 0.8.1 with WAL recovery (@egolearner)
-- **PR #407** (2026-11-13): fix(engine): preserve v2 indexes and validate workspace recovery (@zhourrr)
+- **PR #466** (2026-11-26): fix(ci): cache the PDFium SDK alongside Cargo build artifacts (@egolearner)
+- **PR #459** (closed): Add Blink Code 16M as a local embedding model (@egolearner)
+- **PR #458** (closed): feat(models): add Blink Multilingual 64M and compare retrieval budgets (@egolearner)
+- **PR #457** (2026-11-24): feat(models): add qwen3.7-text-embedding-flash to the catalog (@qrmd0)
+- **PR #456** (2026-11-25): fix(daemon): drain buffered watcher changes before returning from indexing (@egolearner)
+- **PR #451** (2026-11-25): fix: serialize workspace status inspections (@iyuzhang)
 
 ---
 
@@ -1226,39 +1301,47 @@ Co-authored-by: feihongxu0824 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): download ONNX Runtime archives from npmmirror
+## X. ci): cache the PDFium SDK alongside Cargo build artifacts
 
 **RULE**:
-When implementing operations in `rust/scripts/onnxruntime-distributions.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `975a4777`: build): download ONNX Runtime archives from npmmirror. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08e93f17`: ci): cache the PDFium SDK alongside Cargo build artifacts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/scripts/onnxruntime-distributions.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust-ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
-      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
+          prefix-key: rust-ci-v4-quality
+            ~/.cache/pdfium-rs/
+          prefix-key: rust-ci-v4-test
+            ${{ runner.os == 'macOS' && '~/Library/Caches' || runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+            ${{ runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+          key: rust-ci-v4-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-${{ needs.source.outputs.sha }}
+            rust-ci-v4-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-
+          mkdir -p rust/target rust/model-logs "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs" "$ZVEC_GREP_MODEL_CACHE"
+            --volume "$HOME/.cache/pdfium-rs:/root/.cache/pdfium-rs" \
+          mkdir -p target "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"
+          sudo chown -R "$(id -u):$(id -g)" target "$HOME/.cargo/registry" "$HOME/.cargo/git
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
-      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
+          prefix-key: rust-ci-v3-quality
+          prefix-key: rust-ci-v3-test
+          key: rust-ci-v3-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-${{ needs.source.outputs.sha }}
+            rust-ci-v3-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-
+          mkdir -p rust/target rust/model-logs "$HOME/.cargo/registry" "$HOME/.cargo/git" "$ZVEC_GREP_MODEL_CACHE"
+          mkdir -p target "$HOME/.cargo/registry" "$HOME/.cargo/git"
+          sudo chown -R "$(id -u):$(id -g)" target "$HOME/.cargo/registry" "$HOME/.cargo/git"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `975a4777` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08e93f17` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

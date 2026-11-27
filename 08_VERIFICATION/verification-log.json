@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-0P5T",
-    "timestamp": "2026-11-26T00:46:23.585Z",
-    "repository": "webAI-Official/TwIL-8B",
-    "learningId": "learn-huggingface-webai-official-twil-8b",
-    "contentHash": "78caf6c38f960aed2d717f64bf3591bce15b21b54bf3920a374a72515edbfcf6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-0XA5",
-    "timestamp": "2026-11-26T00:46:34.109Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "714b5e86ebe610c222a118afabd926f583bb5857c23d1791a930ca7c6cbdffef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-0ZBP",
     "timestamp": "2026-11-26T00:46:36.757Z",
     "repository": "tailscale/tailscale",
@@ -7490,6 +7460,36 @@
     "repository": "beclab/Olares",
     "learningId": "learn-github-beclab-olares",
     "contentHash": "8e2e61f510c65664434c67e732dc0a1e908d371b008de8032fb2c14c6211fdae",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-0BKT",
+    "timestamp": "2026-11-27T06:37:41.405Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+    "contentHash": "e2a4d90b5a3f3e5774edd51ecafe51cf6368a1a9f432728e31539d43480a653c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-0C73",
+    "timestamp": "2026-11-27T06:37:42.207Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "b25c481cbc85698a93a3784bba291d2e0de15b304fa7dfa83b87e266bc18951f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

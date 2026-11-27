@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source**: github ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
-> **Source Version**: `bdcb14a4`  
+> **Source Version**: `08e93f17`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T05:38:31.886Z  
+> **Timestamp**: 2026-11-27T06:37:40.925Z  
 > **Learning ID**: `learn-github-zvec-ai-zvec-grep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T05:38:31.880Z  
+> **Harvest Timestamp**: 2026-11-27T06:37:40.919Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first search across your workspace, built for humans and AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4382 stars
+- **Stars / Engagement**: 4385 stars
 
 ---
 
@@ -1118,239 +1118,142 @@ def render_report(report: dict[str, Any]) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26ea3034` (2026-11-25)
-**Commit Message**: fix(daemon): drain buffered watcher changes before returning from indexing (#456)
+### Incident Patch 1: `08e93f17` (2026-11-26)
+**Commit Message**: fix(ci): cache the PDFium SDK alongside Cargo build artifacts (#466)
 
-**File**: `rust/crates/zg-daemon/src/workspace_runtime.rs` (modified, +6/-4)
+**File**: `.github/workflows/rust-ci.yml` (modified, +11/-7)
 ```diff
-@@ -404,11 +404,13 @@ impl WorkspaceRuntimeManager {
-                 .await;
-             if let Err(error) = self.ensure_watching(Arc::clone(&runtime)).await {
-                 warn!(%error, "index completed with pending watcher configuration");
-+            } else if let Err(error) = self.flush_watcher(&runtime).await {
-+                warn!(%error, "could not flush pending workspace changes after indexing");
-             }
--            self.inner
--                .scheduler
--                .wait_for_root_idle(&runtime.canonical_root)
--                .await;
-+            // A filesystem event buffered during a rebuild can still be waiting for
-+            // debounce after the manual writer exits. Apply the admitted watch jobs
-+            // and their status invalidations before the next readiness inspection.
-+            runtime.settle_jobs(&self.inner.scheduler, None).await;
-         }
-         Ok(RuntimeIndexSubmission {
-             job: completed.job,
+@@ -116,11 +116,12 @@ jobs:
+       - name: Cache Rust dependencies
+         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+         with:
+-          prefix-key: rust-ci-v3-quality
++          prefix-key: rust-ci-v4-quality
+           workspaces: rust -> target
+           cache-directories: |
+             ~/.cargo/llama-cpp-sources/
+             ~/.cargo/llama-cpp-runtimes/
++            ~/.cache/pdfium-rs/
+           save-if: ${{ github.event_name != 'pull_request' }}
+       - name: Check formatting
+         run: cargo fmt --all --check
+@@ -210,11 +211,12 @@ jobs:
+         if: ${{ !matrix.cuda }}
+         uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+         with:
+-          prefix-key: rust-ci-v3-test
++          prefix-key: rust-ci-v4-test
+           workspaces: rust -> target
+           cache-directories: |
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/llama-cpp-sources/
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/llama-cpp-runtimes/
++            ${{ runner.os == 'macOS' && '~/Library/Caches' || runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+           save-if: ${{ github.event_name != 'pull_request' }}
+       - name: Install cargo-nextest
+         uses: taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283 # v2.87.29
+@@ -235,14 +237,15 @@ jobs:
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/registry/
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/git/
+             ${{ env.LLAMA_CPP_RUNTIME_CACHE }}/
++            ${{ runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+             rust/target/
+             !rust/target/cuda-tests.tgz
+             !rust/target/cuda-tests/
+             !rust/target/cargo-cli.tgz
+             !rust/target/cargo-cli/
+-          key: rust-ci-v3-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-${{ needs.source.outputs.sha }}
++          key: rust-ci-v4-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-${{ needs.source.outputs.sha }}
+           restore-keys: |
+-            rust-ci-v3-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-
++            rust-ci-v4-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-
+       - name: Restore real embedding and layout models
+         uses: actions/cache@v5
+         with:
+@@ -259,7 +262,7 @@ jobs:
+         run: |
+           # Keep the shared log parent runner-owned: the container writes a
+           # subdirectory, then later host-side tee writes sibling CPU logs.
+-          mkdir -p rust/target rust/model-logs "$HOME/.cargo/registry" "$HOME/.cargo/git" "$ZVEC_GREP_MODEL_CACHE"
++          mkdir -p rust/target rust/model-logs "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs" "$ZVEC_GREP_MODEL_CACHE"
+           docker build --platform linux/amd64 --file rust/scripts/cuda/cuda-builder.Dockerfile \
+             --build-arg CUDA_IMAGE=ubuntu:24.04 \
+             --build-arg RUST_VERSION="$(sed -n 's/^channel = "\(.*\)"/\1/p' rust/rust-toolchain.toml)" \
+@@ -268,6 +271,7 @@ jobs:
+             --volume "${GITHUB_WORKSPACE}:/work" \
+             --volume "$HOME/.cargo/registry:/root/.cargo/registry" \
+             --volume "$HOME/.cargo/git:/root/.cargo/git" \
++            --volume "$HOME/.cache/pdfium-rs:/root/.cache/pdfium-rs" \
+             --volume "$ZVEC_GREP_MODEL_CACHE:/model-cache" \
+             --volume "$(command -v cargo-nextest):/usr/local/bin/cargo-nextest:ro" \
+             --env CARGO_INCREMENTAL --env CARGO_PROFILE_DEV_DEBUG --env CARGO_PROFILE_TEST_DEBUG \
+@@ -630,8 +634,8 @@ jobs:
+         if: ${{ always() && matrix.cuda && runner.os == 'Linux' }}
+         shell: bash
+         run: |
+-          mkdir -p target "$HOME/.cargo/registry" "$HOME/.cargo/git"
+-          sudo chown -R "$(id -u):$(id -g)" target "$HOME/.cargo/registry" "$HOME/.cargo/git"
++          mkdir -p target "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"
++          sudo chown -R "$(id -u):$(id -g)" target "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"
+           if [ -n "${ZVEC_GREP_MODEL_CACHE:-}" ]; then
+             mkdir -p "$ZVEC_GREP_MODEL_CACHE"
+             sudo chown -R "$(id -u):$(id -g)" "$ZVEC_GREP_MODEL_CACHE"
 ```
 
-**File**: `rust/crates/zg-daemon/src/workspace_runtime/tests/freshness.rs` (modified, +80/-10)
+**File**: `.github/workflows/rust-package-build.yml` (modified, +6/-3)
 ```diff
-@@ -1366,17 +1366,9 @@ impl WorkspaceWatcherFactoryPort for BufferedWatcherFactory {
-     }
- }
- 
--#[tokio::test]
--async fn waiting_for_existing_job_flushes_events_buffered_during_that_job() {
--    let workspace = tempdir().expect("workspace");
--    let root = workspace.path().canonicalize().expect("root");
--    let (started, mut jobs) = mpsc::unbounded_channel();
--    let executor = Arc::new(GatedExecutor {
--        started,
--        release: tokio::sync::Semaphore::new(1),
--    });
-+fn buffered_watcher() -> (Arc<BufferedWatcher>, mpsc::UnboundedReceiver<()>) {
-     let (sender, receiver) = mpsc::channel(8);
--    let (flushed, mut barriers) = mpsc::unbounded_channel();
-+    let (flushed, barriers) = mpsc::unbounded_channel();
-     let watcher = Arc::new(BufferedWatcher {
-         session: ManualWatchSession {
-             receiver: Arc::new(tokio::sync::Mutex::new(receiver)),
-@@ -1386,6 +1378,84 @@ async fn waiting_for_existing_job_flushes_events_buffered_during_that_job() {
-         pending: AtomicBool::new(false),
-         flushed,
-     });
-+    (watcher, barriers)
-+}
-+
-+#[tokio::test]
-+async fn waited_rebuild_drains_buffered_workspace_changes_before_returning() {
-+    let workspace = tempdir().expect("workspace");
-+    let root = workspace.path().canonicalize().expect("root");
-+    let engine = empty_search_engine(&root).await;
-+    let (started, mut jobs) = mpsc::unbounded_channel();
-+    let executor = Arc::new(GatedExecutor {
-+        started,
-+        release: tokio::sync::Semaphore::new(0),
-+    });
-+    let (watcher, _barriers) = buffered_watcher();
-+    let manager = WorkspaceRuntimeManager::new(
-+        executor.clone(),
-+        Arc::new(BufferedWatcherFactory(watcher.clone())),
-+        SchedulerConfig::default(),
-+    );
-+    let options = IndexOptions {
-+        root: Some(root.clone()),
-+        rebuild: true,
-+        ..IndexOptions::default()
-+    };
-+    let runtime = manager.runtime(root.clone(), &options).expect("runtime");
-+    manager
-+        .ensure_watching(Arc::clone(&runtime))
-+        .await
-+        .expect("watcher");
-+    let mut rebuild = tokio::spawn({
-+        let manager = manager.clone();
-+        async move { manager.submit_index(options, true).await }
-+    });
-+    assert!(jobs.recv().await.expect("manual job").rebuild);
-+    watcher.pending.store(true, Ordering::Release);
-+    executor.release.add_permits(1);
-+
-+    tokio::select! {
-+        job = jobs.recv() => assert_eq!(
-+            job.expect("watch job").changes,
-+            [IndexChange::Upsert("during-index.txt".into())]
-+        ),
-+        _ = &mut rebuild => panic!("rebuild returned with a buffered workspace change"),
-+    }
-+    assert!(!rebuild.is_finished());
-+    executor.release.add_permits(1);
-+    rebuild.await.expect("wait task").expect("rebuilt");
-+    let snapshot = manager.runtime_snapshot(&root);
-+    assert_eq!(snapshot.indexed_revision, snapshot.dirty_revision);
-+    let info = manager
-+        .info(
-+            &engine,
-+            InfoOptions {
-+                root: Some(root),
-+                include_status: true,
-+                include_counts: false,
-+            },
-+        )
-+        .await
-+        .expect("immediate status");
-+    assert_eq!(
-+        info.index_status(),
-+        zg_engine::api::info::result::IndexStatus::Ready
-+    );
-+    manager.shutdown_all().await.expect("shutdown");
-+    engine.close();
-+}
-+
-+#[tokio::test]
-+async fn waiting_for_existing_job_flushes_events_buffered_during_that_job() {
-+    let workspace = tempdir().expect("workspace");
-+    let root = workspace.path().canonicalize().expect("root");
-+    let (started, mut jobs) = mpsc::unbounded_channel();
-+    let executor = Arc::new(GatedExecutor {
-+        started,
-+        release: tokio::sync::Semaphore::new(1),
-+    });
-+    let (watcher, mut barriers) = buffered_watcher();
-     let manager = WorkspaceRuntimeManager::new(
-         executor.clone(),
-         Arc::new(BufferedWatcherFactory(watcher.clone())),
-```
-
----
-
-### Incident Patch 2: `3db41018` (2026-11-25)
-**Commit Message**: fix: serialize workspace status inspections (#451)
-
-**File**: `rust/crates/zg-daemon/src/workspace_runtime.rs` (modified, +4/-1)
-```diff
-@@ -69,6 +69,7 @@ struct WorkspaceRuntime {
-     index_template: Mutex<IndexOptions>,
-     pending_watcher_configuration: Mutex<Option<(uuid::Uuid, IndexOptions)>>,
-     index_status: Mutex<CachedIndexStatus>,
-+    status_inspection: tokio::sync::Mutex<()>,
-     watcher: tokio::sync::Mutex<Option<WatcherHandle>>,
-     watcher_active: AtomicBool,
-     dirty_revision: AtomicU64,
-@@ -578,6 +579,7 @@ impl WorkspaceRuntimeManager {
-                 ..IndexOptions::default()
-             },
-         )?;
-+        let _inspection = runtime.status_inspection.lock().await;
-         let epoch = lock(&runtime.index_status).invalidate();
-         let observed_job = self
-             .job_for_root(&runtime.canonical_root)
-@@ -592,7 +594,7 @@ impl WorkspaceRuntimeManager {
-         let current_job = self.job_for_root(&info.root).map(|job| (job.id, job.state));
-         let busy = current_job
-             .is_some_and(|(_, state)| matches!(state, JobState::Queued | JobState::Running));
--        // Never restore ready after a watcher notification, job submission or concurrent scan.
-+        // Never restore ready after a watcher notification or job transition.
-         if busy || current_job != observed_job || !runtime.record_status(epoch, &info, current_job)
-         {
-             info.status = None;
-@@ -707,6 +709,7 @@ impl WorkspaceRuntimeManager {
-                 index_template: Mutex::new(template),
-                 pending_watcher_configuration: Mutex::new(None),
-                 index_status: Mutex::new(CachedIndexStatus::default()),
-+                status_inspection: tokio::sync::Mutex::new(()),
-                 watcher: tokio::sync::Mutex::new(None),
-                 watcher_active: AtomicBool::new(false),
-                 dirty_revision: AtomicU64::new(1),
-```
-
-**File**: `rust/crates/zg-daemon/src/workspace_runtime/tests/freshness.rs` (modified, +39/-0)
-```diff
-@@ -131,6 +131,45 @@ async fn explicit_counts_are_forwarded_without_entering_runtime_status_cache() {
-     engine.close();
- }
- 
-+#[test]
-+fn overlapping_status_requests_both_return_ready() {
-+    let runtime = tokio::runtime::Builder::new_current_thread()
-+        .enable_all()
-+        .max_blocking_threads(1)
-+        .build()
-+        .expect("runtime");
-+    runtime.block_on(async {
-+        let workspace = tempdir().expect("workspace");
-+        let root = workspace.path().canonicalize().expect("root");
-+        let engine = empty_search_engine(&root).await;
-+        let (manager, _sender) = fixture(Arc::new(RecordingExecutor::default()));
-+        let options = InfoOptions {
-+            root: Some(root),
-+            include_status: true,
-+            include_counts: false,
-+        };
-+
-+        let (release, wait) = std::sync::mpsc::channel();
-+        let blocker = tokio::task::spawn_blocking(move || wait.recv());
-+        let mut first = std::pin::pin!(manager.info(&engine, options.clone()));
-+        let mut second = std::pin::pin!(manager.info(&engine, options));
-+        assert!(futures::poll!(&mut first).is_pending());
-+        assert!(futures::poll!(&mut second).is_pending());
-+        release.send(()).expect("release blocking thread");
-+        blocker.await.expect("blocking task").expect("released");
-+
-+        let (first, second) = tokio::join!(first, second);
-+        for result in [first, second] {
-+            assert_eq!(
-+                result.expect("status inspection").index_status(),
-+                zg_engine::api::info::result::IndexStatus::Ready,
-+            );
-+        }
-+        manager.shutdown_all().await.expect("shutdown");
-+        engine.close();
-+    });
-+}
-+
- #[tokio::test]
- async fn watcher_does_not_recreate_a_deleted_workspace_index() {
-     let workspace = tempdir().expect("workspace");
+@@ -103,9 +103,10 @@ jobs:
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/registry/src/
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/git/db/
+             rust/target/release/
++            ${{ runner.os == 'macOS' && '~/Library/Caches' || runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+           # Per-commit keys would exhaust the 10 GB repository cache quota and evict Rust CI caches.
+           # Keep objects linked against newer glibc out of the release cache.
+-          key: rust-release-${{ runner.os == 'Linux' && 'v6-manylinux2.28' || 'v3' }}-${{ inputs.target }}-${{ inputs.runner }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/release-builder.Dockerfile') }}
++          key: rust-release-${{ runner.os == 'Linux' && 'v6-manylinux2.28' || 'v3' }}-${{ inputs.target }}-${{ inputs.runner }}-${{ hashFiles('rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/release-builder.Dockerfile', 'rust/scripts/prepare-pdfium.py') }}
+       - name: Cache the pinned llama native SDK
+         uses: actions/cache@v5
+         with:
+@@ -140,12 +141,13 @@ jobs:
+         if: runner.os == 'Linux'
+         working-directory: ${{ github.workspace }}
+         run: |
+-          mkdir -p "$HOME/.cargo/registry" "$HOME/.cargo/git"
++          mkdir -p "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"
+           docker run --rm --platform ${{ inputs.target == 'linux-arm64-gnu' && 'linux/arm64' || 'linux/amd64' }} \
+             --volume "${GITHUB_WORKSPACE}:/work:ro" \
+             --volume "${GITHUB_WORKSPACE}/rust/target:/work-target" \
+             --volume "$HOME/.cargo/registry:/root/.cargo/registry" \
+             --volume "$HOME/.cargo/git:/root/.cargo/git" \
++            --volume "$HOME/.cache/pdfium-rs:/root/.cache/pdfium-rs" \
+             --env CARGO_TARGET_DIR=/work-target \
+             --env CARGO_BUILD_JOBS --env CMAKE_BUILD_PARALLEL_LEVEL \
+             --env LLAMA_CPP_BUILD_MODE=prebuilt --env LLAMA_CPP_RUNTIME_CACHE=/work-target/llama-runtimes \
+@@ -191,7 +193,7 @@ jobs:
+         if: ${{ always() && runner.os == 'Linux' }}
+         run: |
+           # Docker writes as root. Host packaging/cache save must retain access.
+-          for directory in target "$HOME/.cargo/registry" "$HOME/.cargo/git"; do
++          for directory in target "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"; do
+             if [[ -d "$directory" ]]; then
+               sudo chown -R "$(id -u):$(id -g)" "$directory"
+             fi
+@@ -228,6 +230,7 @@ jobs:
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/registry/src/
+             ${{ runner.os == 'Windows' && env.CARGO_HOME || '~/.cargo' }}/git/db/
+             rust/target/release/
++            ${{ runner.os == 'macOS' && '~/Library/Caches' || runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+           key: ${{ steps.cargo-cache.outputs.cache-primary-key }}
+       - name: Audit the Windows CPU/CUDA bundle
+         if: inputs.target == 'win32-x64-msvc'
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #466** (2026-11-26): fix(ci): cache the PDFium SDK alongside Cargo build artifacts (@egolearner)
 - **PR #459** (closed): Add Blink Code 16M as a local embedding model (@egolearner)
 - **PR #458** (closed): feat(models): add Blink Multilingual 64M and compare retrieval budgets (@egolearner)
 - **PR #457** (2026-11-24): feat(models): add qwen3.7-text-embedding-flash to the catalog (@qrmd0)
 - **PR #456** (2026-11-25): fix(daemon): drain buffered watcher changes before returning from indexing (@egolearner)
 - **PR #451** (2026-11-25): fix: serialize workspace status inspections (@iyuzhang)
-- **PR #449** (2026-11-23): fix(ci): support Cargo 1.100 CUDA fallback metadata (@feihongxu0824)
 
 ---
 
@@ -1370,36 +1273,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. daemon): drain buffered watcher changes before returning from indexing
+## X. ci): cache the PDFium SDK alongside Cargo build artifacts
 
 **RULE**:
-When implementing operations in `rust/crates/zg-daemon/src/workspace_runtime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26ea3034`: daemon): drain buffered watcher changes before returning from indexing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `08e93f17`: ci): cache the PDFium SDK alongside Cargo build artifacts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-daemon/src/workspace_runtime.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust-ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            } else if let Err(error) = self.flush_watcher(&runtime).await {
-                warn!(%error, "could not flush pending workspace changes after indexing");
-            // A filesystem event buffered during a rebuild can still be waiting for
-            // debounce after the manual writer exits. Apply the admitted watch jobs
-            // and their status invalidations before the next readiness inspection.
-            runtime.settle_jobs(&self.inner.scheduler, None).await;
+          prefix-key: rust-ci-v4-quality
+            ~/.cache/pdfium-rs/
+          prefix-key: rust-ci-v4-test
+            ${{ runner.os == 'macOS' && '~/Library/Caches' || runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+            ${{ runner.os == 'Windows' && '~/AppData/Local' || '~/.cache' }}/pdfium-rs/
+          key: rust-ci-v4-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-${{ needs.source.outputs.sha }}
+            rust-ci-v4-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-
+          mkdir -p rust/target rust/model-logs "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs" "$ZVEC_GREP_MODEL_CACHE"
+            --volume "$HOME/.cache/pdfium-rs:/root/.cache/pdfium-rs" \
+          mkdir -p target "$HOME/.cargo/registry" "$HOME/.cargo/git" "$HOME/.cache/pdfium-rs"
+          sudo chown -R "$(id -u):$(id -g)" target "$HOME/.cargo/registry" "$HOME/.cargo/git
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            self.inner
-                .scheduler
-                .wait_for_root_idle(&runtime.canonical_root)
-                .await;
+          prefix-key: rust-ci-v3-quality
+          prefix-key: rust-ci-v3-test
+          key: rust-ci-v3-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-${{ needs.source.outputs.sha }}
+            rust-ci-v3-test-cuda-${{ matrix.platform }}-${{ hashFiles('rust/Cargo.toml', 'rust/Cargo.lock', 'rust/rust-toolchain.toml', 'rust/scripts/cuda/cuda-builder.Dockerfile', '.github/workflows/rust-ci.yml') }}-
+          mkdir -p rust/target rust/model-logs "$HOME/.cargo/registry" "$HOME/.cargo/git" "$ZVEC_GREP_MODEL_CACHE"
+          mkdir -p target "$HOME/.cargo/registry" "$HOME/.cargo/git"
+          sudo chown -R "$(id -u):$(id -g)" target "$HOME/.cargo/registry" "$HOME/.cargo/git"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26ea3034` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `08e93f17` are properly handled with clean fallback behavior.

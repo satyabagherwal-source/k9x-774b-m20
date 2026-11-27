@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T06:29:24.545Z",
+  "last_updated": "2026-11-27T06:37:55.639Z",
   "total_records": 2815,
   "domains": {
     "A": {
@@ -9548,8 +9548,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "c0dc79f3919e68faf554a005ad3ad52818d739ad3fdad1f4b50db78e8365018b",
-      "created_at": "2026-11-27T03:35:28.720Z"
+      "content_hash": "ad4679bbc30423a04ef75a9a4a63e817e3e2d6e2a69771576a4b643d36e2ec64",
+      "created_at": "2026-11-27T06:37:55.639Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -19214,10 +19214,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "82a9ced48ae938f584ae717a5b262ec6ee9dd4cc735d5eca2bf484257b09b7e8",
-      "created_at": "2026-11-26T09:21:58.909Z"
+      "content_hash": "de7ff7472eddd7e80533dce23de06be514c3295e462b554a9ce728e97d04d1c1",
+      "created_at": "2026-11-27T06:37:41.675Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -19234,8 +19234,8 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-learnings-research-knowledge-in.md",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings",
-      "content_hash": "7de38046cb2d978a2b98466c3bffc06c2f204b5a7f1b0e45f053996e47952b09",
-      "created_at": "2026-11-23T21:23:17.566Z"
+      "content_hash": "6902cd2d7f6eabb998023e04530cc39b0af72ffa708b564fee87165e6e77ac85",
+      "created_at": "2026-11-27T06:37:54.856Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants",
@@ -33936,8 +33936,8 @@
       "title": "Architecture Intelligence: zvec-ai/zvec-grep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-architecture-intelligence-zvec-ai-zvec-grep-core-invariants.md",
       "repository": "zvec-ai/zvec-grep",
-      "content_hash": "30957c6c636063ccf87dc354e773a5a12118841e1295f94d8a4b8bb8c6df5513",
-      "created_at": "2026-11-19T10:47:11.571Z"
+      "content_hash": "43b3d2a78add37ad1b198119c2a8f137ebb4bdc28f4173d6a1f63749cbf0474b",
+      "created_at": "2026-11-27T06:37:42.682Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -33945,8 +33945,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "46db597650a5dfa407cc648936d8df94c4aa05fb3c9bbd3a957962a2f9f77dcd",
-      "created_at": "2026-11-20T22:23:10.483Z"
+      "content_hash": "363b92b2eb7e03b74ac2efce46a05b3084ae6bbca369e6fd2ef21b066ed01ba4",
+      "created_at": "2026-11-27T06:37:53.994Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:29:17.828Z",
-  "total_cycles_completed": 13005,
-  "total_learnings_persisted": 13005,
-  "total_rules_promoted": 11753,
+  "last_updated": "2026-11-27T06:37:42.233Z",
+  "total_cycles_completed": 13007,
+  "total_learnings_persisted": 13007,
+  "total_rules_promoted": 11754,
   "history": [
-    {
-      "timestamp": "2026-11-26T17:39:31.066Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T17:48:07.749Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T17:48:09.036Z",
       "repository": "ratatui/ratatui",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T06:29:17.828Z",
       "repository": "beclab/Olares",
       "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T06:37:41.428Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T06:37:42.233Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
