@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T05:02:47.927Z",
-    "lastVerified": "2026-11-27T05:02:47.927Z",
+    "lastChecked": "2026-11-27T05:11:32.371Z",
+    "lastVerified": "2026-11-27T05:11:32.371Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,14 +140,14 @@
     "officialUrl": "https://github.com/react/react-native",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-26T15:11:45.722Z",
-    "lastVerified": "2026-11-26T15:11:45.722Z",
+    "lastChecked": "2026-11-27T05:11:19.640Z",
+    "lastVerified": "2026-11-27T05:11:19.640Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-react-native",
-    "contentHash": "38b07462e2b33fa8efa7b2b17f4698e68d508102dec2dd9037019e68d88b84e1",
+    "contentHash": "7ed7891d59941198d31c436309ab3f584c7ad28b80e27212c6cba35f2cbcfea3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -199,8 +199,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T04:36:58.682Z",
-    "lastVerified": "2026-11-27T04:36:58.682Z",
+    "lastChecked": "2026-11-27T05:11:24.820Z",
+    "lastVerified": "2026-11-27T05:11:24.820Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -934,9 +934,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-27T00:50:14.595Z",
+    "lastChecked": "2026-11-27T05:11:19.830Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-27T00:50:14.595Z"
+    "lastVerified": "2026-11-27T05:11:19.830Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -2629,12 +2629,12 @@
     "lastVerified": "2026-11-26T19:37:08.978Z"
   },
   "nats-io-nats.go": {
-    "name": "nats-io/nats.go",
+    "name": "nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T12:20:05.696Z",
-    "lastVerified": "2026-11-26T12:20:05.696Z",
+    "lastChecked": "2026-11-27T05:11:17.289Z",
+    "lastVerified": "2026-11-27T05:11:17.289Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
@@ -2643,7 +2643,8 @@
     "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "eb29cd1f"
   },
   "caviraoss-longmemory": {
     "name": "CaviraOSS/LongMemory",
@@ -7447,9 +7448,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-11-26T04:22:27.614Z",
+    "lastChecked": "2026-11-27T05:11:09.821Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-11-26T04:22:27.614Z"
+    "lastVerified": "2026-11-27T05:11:09.821Z"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
@@ -8137,16 +8138,16 @@
     "lastVerified": "2026-11-26T05:48:31.390Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
-    "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "name": "LoyalAI/Underdog-Saluki-27B-1.0",
     "officialUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T19:51:11.887Z",
-    "lastVerified": "2026-11-23T19:51:11.887Z",
+    "lastChecked": "2026-11-27T05:11:13.158Z",
+    "lastVerified": "2026-11-27T05:11:13.158Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "eb381602559a03f13a9888bce9ed675d3cf4ec9d5c251fbcc83abfcb246475c5",
+    "contentHash": "633bcb4297597cb8d5c2e8a9c62985b423cb348f59ffe6b85facdf165dda6418",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -15663,14 +15664,14 @@
     "officialUrl": "https://github.com/kividbio/kividb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T11:15:36.170Z",
-    "lastVerified": "2026-11-26T11:15:36.170Z",
+    "lastChecked": "2026-11-27T05:11:27.761Z",
+    "lastVerified": "2026-11-27T05:11:27.761Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kividbio-kividb",
-    "contentHash": "b0ab3752cb79c1dfc4de6f634f9d88362c514dc097fa35c07fe2a3c72b3ee6ba",
+    "contentHash": "9b917fc1e614d45d9d599ddb2a8f5c889c5784d1eb5c60c81bf247195e452be5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

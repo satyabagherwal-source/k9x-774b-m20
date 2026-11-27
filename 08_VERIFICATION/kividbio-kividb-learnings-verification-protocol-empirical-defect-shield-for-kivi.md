@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T11:15:54.747Z",
+  "timestamp": "2026-11-27T05:12:44.025Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kividbio-kividb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kividbio-kividb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T11:15:54.747Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T05:12:44.025Z`  
 > **Learning ID**: `LEARN-EVO-kividbio-kividb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kividbio-kividb-learnings.md`  
 > **Source**: github ([https://github.com/kividbio/kividb](https://github.com/kividbio/kividb))  
-> **Source Version**: `5a9db7f7`  
+> **Source Version**: `3405fdb6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T11:15:36.176Z  
+> **Timestamp**: 2026-11-27T05:11:27.767Z  
 > **Learning ID**: `learn-github-kividbio-kividb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kividbio-kividb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kividbio/kividb](https://github.com/kividbio/kividb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:15:36.170Z  
+> **Harvest Timestamp**: 2026-11-27T05:11:27.761Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A fast, multi-threaded Redis® and Valkey alternative written in Rust: drop-in compatible, with full-text and vector search built in
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1501 stars
+- **Stars / Engagement**: 1578 stars
 
 ---
 
@@ -1555,587 +1555,766 @@ for size in SIZES:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87a9d213` (2026-11-25)
-**Commit Message**: FLAT int8: holds bounded in time, the setting checked before the build, maxmemory (#1033)
+### Incident Patch 1: `6d3497e5` (2026-11-26)
+**Commit Message**: Regressions: suite 53 recorded with the SETRANGE cases (D4s_v5)
 
-publish builds the bitset of slots to code with no lock held and only
-swaps it in under the write lock, going round again if more than 4,096
-slots came meanwhile. The coder's copy-out under the read lock stops on
-the 50 us budget the write phase uses.
-
-The copy is built only while the setting is on, checked before publish
-and again under the write lock, with a count of CONFIG SETs so that a
-yes quickly followed by no makes none. A build that would take
-used_memory past maxmemory is skipped with a warning until the setting
-is set again.
-
-With the setting off a FLAT KNN takes no len() and no ids.count(). A
-panic while coding resets the index's coding flag and is logged.
-schedule() loads before it swaps; the skipped and re-scored counts sit
-on a cache line of their own; the cut-off is looked at on every
-candidate.
-
-Tests: rule 5 checked by the readers while the writes run; a document
-deleted and its id and slot given to another between two runs of one
-filtered scan, through a test-only hook between runs.
-
-**File**: `src/vector/flat.rs` (modified, +185/-37)
+**File**: `benchmarks/1.3.0/regressions/README.md` (modified, +1/-1)
 ```diff
-@@ -83,6 +83,15 @@ pub struct VectorIndex {
-     copy: OnceLock<Int8Copy>,
-     coding: AtomicBool,
-     cursor: AtomicUsize,
-+    declined: AtomicU64,
-+    counts: Counts,
-+    #[cfg(test)]
-+    always: AtomicBool,
-+}
-+
-+#[derive(Debug, Default)]
-+#[repr(align(128))]
-+struct Counts {
-     skipped: AtomicU64,
-     rescored: AtomicU64,
- }
-@@ -310,22 +319,31 @@ impl VectorIndex {
-         }
-         let count = map.by_key.len();
-         drop(map);
--        if copy.is_some() || self.wants_copy(count) {
-+        if copy.is_some() || self.wants_copy(|| count) {
-             self.schedule();
-         }
-     }
- 
--    fn wants_copy(&self, count: usize) -> bool {
-+    fn switched_on(&self) -> bool {
-+        #[cfg(test)]
-+        if self.always.load(Relaxed) {
-+            return true;
-+        }
-         flat_int8::enabled()
-+    }
-+
-+    fn wants_copy(&self, count: impl FnOnce() -> usize) -> bool {
-+        self.switched_on()
-             && flat_int8::supported()
-             && self.copy.get().is_none()
-+            && self.declined.load(Relaxed) != flat_int8::times_set() + 1
-             && self.dim().is_some_and(|d| d >= flat_int8::DIM_MIN)
--            && count >= flat_int8::BUILD_AT
-+            && count() >= flat_int8::BUILD_AT
-     }
- 
-     fn schedule(&self) {
-         use std::sync::atomic::Ordering::SeqCst;
--        if self.coding.swap(true, SeqCst) {
-+        if self.coding.load(Relaxed) || self.coding.swap(true, SeqCst) {
-             return;
-         }
-         match self.me.upgrade() {
-@@ -341,16 +359,25 @@ impl VectorIndex {
-             return false;
-         };
-         let Some(copy) = self.copy.get() else {
--            self.publish(slots);
-+            if !self.wants_copy(|| usize::MAX) || !self.publish(slots) {
-+                self.coding.store(false, SeqCst);
-+                return false;
-+            }
-             return true;
-         };
-         let mut picked: Vec<(usize, Vec<f32>)> = Vec::new();
-         let mut found = false;
-         {
-             let map = self.map.read();
-+            let since = std::time::Instant::now();
-             let words = map.dirty.len();
-             let start = self.cursor.load(Relaxed).min(words);
--            'words: for w in (start..words).chain(0..start) {
-+            'words: for (n, w) in (start..words).chain(0..start).enumerate() {
-+                if n % 1024 == 1023 && since.elapsed() >= CODING_HOLD {
-+                    self.cursor.store(w, Relaxed);
-+                    found = true;
-+                    break;
-+                }
-                 let word = &map.dirty[w];
-                 let mut bits = word.load(Relaxed);
-                 while bits != 0 {
-@@ -362,13 +389,18 @@ impl VectorIndex {
-                     if map.keys.get(slot).is_some_and(Option::is_some) {
-                         picked.push((slot, slots.vector(slot).to_vec()));
-                     }
--                    if picked.len() >= RUN {
-+                    if picked.len() >= RUN
-+                        || (picked.len().is_multiple_of(8) && since.elapsed() >= CODING_HOLD)
-+                    {
-                         self.cursor.store(w, Relaxed);
-                         break 'words;
-                     }
-                 }
-             }
-         }
-+        if picked.is_empty() && found {
-+            return true;
-+        }
-         if !found {
-             self.coding.store(false, SeqCst);
-             let more = self.map.read().any_dirty();
-@@ -404,28 +436,44 @@ impl VectorIndex {
-         true
-     }
- 
--    fn publish(&self, slots: &Slots) {
-+    fn publish(&self, slots: &Slots) -> bool {
-         let codec = Codec::new(slots.dim());
-+        let set = flat_int8::times_set();
-+        let limit = crate::RUNTIME_MAXMEMORY.load(Relaxed);
-+        let len = self.map.read().keys.len();
-+        let need = len.saturating_mul(codec.bytes());
-+        if limit != 0 && crate::memory_use::counted().saturating_add(need) > limit {
-+            self.declined.store(set + 1, Relaxed);
-+            crate::log_warn!(
-+                "search-flat-int8: no int8 copy made for a FLAT index of {len} vectors: its \
-+                 {need} bytes would go past maxmemory ({limit}); set search-flat-int8 again \
-+                 to try once more"
-+            );
-+            return false;
-+        }
-         let bytes = Slots::bytes_only(codec.bytes());
-         loop {
-             let len = self.map.read().keys.len();
-             if len > 0 {
-                 bytes.reserve(len - 1);
-             }
-+            let dirty: Vec<AtomicU64> = (0..len.div_ceil(64) + 64)
-+                .map(|_| AtomicU64::new(u64::MAX))
-+                .collect();
-             let mut map = self.map.write();
--            let len = map.keys.len();
--            if len == 0 || bytes.has(len - 1) {
--                for slot in 0..len {
--                    if map.keys[slot].is_some() {
--                        map.mark(slot as u32);
--                    }
--                }
--                let _ = 
+@@ -69,7 +69,7 @@ and why.
+ | `50-keys-wildcard` | #1018 | Plane's cache invalidation, `KEYS */api/workspaces/acme/labels/*` (django-redis `cache.keys(f"*{key}*")`), over 500,000 keys of 2 KB (`:1:/api/workspaces/other-ws/labels/:user-N`) and 5 that match: one `KEYS` alone (client wall time, median of 20), then GETs of random keys from 500 connections (this suite's own client, one asyncio process a client CPU, each connection one GET at a time) for 10 s, without and with another connection sending the `KEYS` every 250 ms: GETs a second, p99, p99.9 and the slowest GET. `--threads 4` (Redis `--io-threads 4`) on the first half of the CPUs, the clients on the other. Gates in the same session: `KEYS` at most 0.2x v1.2.2's and 0.2x Redis's; the GET p99.9 and the slowest GET with scans at most 0.25x v1.2.2's and 0.25x Redis's; GETs a second with scans within 10 % of recorded; the rest shown. `min_cpus=8`, recorded on a `Standard_D8s_v5` (see [the run](#recorded-run-suite-50)) |
+ | `51-filtered-flat-knn` | #1020 | KNN 5 on a FLAT FLOAT32 COSINE index of 100,000 1536-d HASH documents (numpy seed 1020) with #1020's TAG filter, `(@user_id:{user\-<u>|__shared__})`, about 10,090 matching documents (`big`), a second TAG field matching 100 (`small`) and no filter (`none`), one random user of 1,000 and query of 256 each time, `RETURN 1 vector_distance`: lookups a second and p99 from a closed loop of 8 and 64 connections (threads of 4 client processes on the client's CPUs), median of 3 rounds of 10 s; `--threads 4` (Redis `--io-threads 4 --search-workers 4`) on the first half of the CPUs; the exact top 5 of 10 queries of each layout checked against numpy (`wrong_top5`, exactly 0); `used_memory` a document and the load rate. Gates: `big` at 8 and 64 connections at least 1.25x v1.2.2's and 1.15x Redis's in the same session and within 10 % of recorded; `used_memory` a document 5 %; `small` (the Python client is the limit there), `none`, p99s and the load shown. Needs `REGRESS_REDISEARCH_SO` for Redis (as `28`); `min_cpus=8`, recorded on a `Standard_D8s_v5` (see [the run](#recorded-run-suite-51)) |
+ | `52-small-lists-memory` | #1022 | Misskey's home timelines: 10,000 lists of 300 ten-byte ids (`load`: `RPUSH`, one element a command through a raw pipelined socket as `redis-cli --pipe` sends them; `load-batch`: one `RPUSH` of 300 a list), then every list taken through 3,000 `LPUSH` + `LTRIM key 0 299` pairs (`timeline`: chunks filled at the front, trimmed at the back and given up), the same lists of 32- and 64-byte elements (`size32`, `size64`) and 10,000 lists of 30 elements (`tiny`): `used_memory` and RSS a list element and `MEMORY USAGE` of the first list, `LLEN` of it (300, 30). Gates: `used_per_element` within 5 % (or 1 B) of recorded, at most 1.3x Redis's in the same session and at most 0.8x v1.2.2's; `rss_per_element` within 10 % (or 1 B) of recorded, at most 1.5x Redis's (1.4x for `timeline`, whose chunks come and go in slab blocks: 1.17x measured) and at most 0.8x v1.2.2's (0.5x for `timeline`); `list_len` as recorded; the RSS of `tiny` (4.5 MB in all) is shown, not gated. Recorded through `run-all.sh --candidate <default build> --only 52 --record` on a `Standard_D4s_v5` with the default-features (glibc) candidate, the v1.2.2 release tarball's binary and the source-built Redis 8.10.2 (`results/pr-1022-52-d4s_v5`) |
+-| `53-large-string-writes` | #1027, #1031, #1016, #1065 | one string of 64 MiB a case (`SETRANGE k 67108863 a`), one connection, one call at a time (2,000 calls a round; v1.2.2, which copies the string on every call: 10), 3 rounds: a `SETBIT` that leaves the bit as it is and a `BITFIELD ... GET u8` (#1027), a `SETBIT` that changes a bit, by turns set and cleared (#1031), `APPEND` of 3 bytes and of 1 KiB (#1016), and `SETRANGE` of 3 bytes at the string's end and 1 KiB past it (#1065): the server's own microseconds a call (`INFO commandstats`) and the client's wall time a call, median of the rounds; `bad_replies` and the lengths the appends and `SETRANGE`s end at. Gates in the same session, with fixed margins: every server time at most 0.01x v1.2.2's (100x faster: v1.2.2 takes 30-130 ms a call, the candidate one or two microseconds), every wall time at most 0.05x v1.2.2's and at most 2x Redis's; no gate on the server times against Redis's (both about a microsecond, on a clock of whole microseconds); `bad_replies` exactly 0 and the lengths as recorded. Recorded through `run-all.sh --candidate <default build> --only 53 --record` on a `Standard_D4s_v5` (`results/pr-append-53-record`); the `SETRANGE` cases are not recorded yet |
++| `53-large-string-writes` | #1027, #1031, #1016, #1065 | one string of 64 MiB a case (`SETRANGE k 67108863 a`), one connection, one call at a time (2,000 calls a round; v1.2.2, which copies the string on every call: 10), 3 rounds: a `SETBIT` that leaves the bit as it is and a `BITFIELD ... GET u8` (#1027), a `SETBIT` that changes a bit, by turns set and cleared (#1031), `APPEND` of 3 byte
 ```
 
-**File**: `src/vector/flat_int8.rs` (modified, +7/-1)
+**File**: `benchmarks/1.3.0/regressions/baseline.json` (modified, +227/-69)
 ```diff
-@@ -3,7 +3,7 @@
- //! shows it cannot enter the nearest `k`, so a scan returns exactly what the
- //! exact scan returns, ties and order included.
- 
--use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
-+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering::Relaxed};
- 
- use super::{DistanceMetric, simd};
- 
-@@ -30,9 +30,15 @@ const EPSILON: f64 = 1.0 / (1u64 << 48) as f64;
- const SUBNORMAL: f64 = 1.401_298_464_324_817e-45;
- 
- static ENABLED: AtomicBool = AtomicBool::new(false);
-+static SET: AtomicU64 = AtomicU64::new(0);
- 
- pub fn set_enabled(on: bool) {
-     ENABLED.store(on, Relaxed);
-+    SET.fetch_add(1, Relaxed);
+@@ -35994,14 +35994,14 @@
+       "unit": "us",
+       "better": "lower",
+       "recorded": {
+-        "v1_2_2": 37871.0,
+-        "candidate": 0.5455,
+-        "redis": 0.813,
++        "v1_2_2": 38332.4,
++        "candidate": 1.094,
++        "redis": 1.549,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+       },
+@@ -36024,9 +36024,9 @@
+         "redis": 73255936.0,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+       },
+@@ -36044,14 +36044,14 @@
+       "unit": "us",
+       "better": "lower",
+       "recorded": {
+-        "v1_2_2": 38110.8891,
+-        "candidate": 48.8234,
+-        "redis": 47.7974,
++        "v1_2_2": 38562.7343,
++        "candidate": 56.9547,
++        "redis": 57.8328,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+       },
+@@ -36073,14 +36073,14 @@
+       "unit": "us",
+       "better": "lower",
+       "recorded": {
+-        "v1_2_2": 38109.5,
+-        "candidate": 0.0195,
+-        "redis": 0.2865,
++        "v1_2_2": 38914.1,
++        "candidate": 0.048,
++        "redis": 0.756,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+       },
+@@ -36103,9 +36103,9 @@
+         "redis": 67126873.0,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+       },
+@@ -36123,14 +36123,14 @@
+       "unit": "us",
+       "better": "lower",
+       "recorded": {
+-        "v1_2_2": 38330.6783,
+-        "candidate": 47.7555,
+-        "redis": 46.4863,
++        "v1_2_2": 39234.7752,
++        "candidate": 48.975,
++        "redis": 55.7706,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+       },
+@@ -36157,9 +36157,9 @@
+         "redis": 0.0,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+       },
+@@ -36177,14 +36177,14 @@
+       "unit": "us",
+       "better": "lower",
+       "recorded": {
+-        "v1_2_2": 75192.4,
+-        "candidate": 0.026,
+-        "redis": 0.3755,
++        "v1_2_2": 77233.0,
++        "candidate": 0.7595,
++        "redis": 0.3555,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+       },
+@@ -36202,14 +36202,14 @@
+       "unit": "us",
+       "better": "lower",
+       "recorded": {
+-        "v1_2_2": 75442.9157,
+-        "candidate": 52.1259,
+-        "redis": 50.8643,
++        "v1_2_2": 77622.2025,
++        "candidate": 56.01,
++        "redis": 53.8136,
+         "vm": "Standard_D4s_v5",
+         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+-        "date": "2026-11-24",
+-        "commit": "f3479b36",
+-        "label": "pr-append-53-record",
++        "date": "2026-11-26",
++        "commit": "3e50cc57",
++        "label": "pr-1065-53-record",
+         "rustc": "1.100.0",
+         "nproc": 4
+    
+```
+
+**File**: `benchmarks/1.3.0/regressions/results/pr-1065-53-record/env.json` (added, +73/-0)
+```diff
+@@ -0,0 +1,73 @@
++{
++ "label": "pr-1065-53-record",
++ "date": "2026-11-26",
++ "vm": "Standard_D4s_v5",
++ "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
++ "nproc": 4,
++ "cpu_count": 4,
++ "calib_ms": 95.0,
++ "kernel": "7.0.0-1017-azure",
++ "glibc": "2.39",
++ "python": "3.12.3",
++ "redis_py": "5.2.1",
++ "candidate_commit": "3e50cc57",
++ "candidate_allocator": "glibc",
++ "suite_seconds": {
++  "53-large-string-writes": 21
++ },
++ "scale": "1",
++ "full": "0",
++ "only": "53",
++ "engines_selected": [
++  "v1_2_2",
++  "candidate",
++  "redis"
++ ],
++ "failures": [],
++ "expected": [
++  {
++   "suite": "53-large-string-writes",
++   "config": "s64m",
++   "engines": [
++    "v1_2_2",
++    "candidate",
++    "redis"
++   ]
++  }
++ ],
++ "engines": {
++  "v1_2_2": {
++   "path": "/home/azureuser/.cache/kividb-regress/releases/v1.2.2/default/kividb",
++   "sha256": "38fc2cea40c131e041f4914527a98719e5d34dffdfe2abdc1f07ecb86aa6723e",
++   "version": "kividb 1.2.2",
++   "rustc": "1.100.0"
++  },
++  "candidate": {
++   "path": "/home/azureuser/kividb/target/release/kividb",
++   "sha256": "36a88ac8dd53cba32bcb717e4d706029eb348421bf017d3f943220e7c891ce75",
++   "version": "kividb 1.2.1 (default build: no Lua, no TLS)",
++   "rustc": "1.100.0"
++  },
++  "redis": {
++   "path": "/opt/redis-8.10.2/src/redis-server",
++   "sha256": "b0cd304980112fa6cd8dced524fdd6b136fd8efb802f5cf9e81610051a11891c",
++   "version": "Redis server v=8.10.2 sha=00000000:1 malloc=jemalloc-5.3.0 bits=64 build=75a9b36b1f0aa00",
++   "rustc": null
++  },
++  "v1_2_2_full": {
++   "path": "/home/azureuser/.cache/kividb-regress/releases/v1.2.2/full/kividb",
++   "sha256": "ac5e05fe1274fd1167780e512bc03aa103340f42525a2cef4a2a762e47317ad5",
++   "version": "kividb 1.2.2",
++   "rustc": "1.100.0"
++  }
++ },
++ "skipped_configs": [],
++ "rustc_override": false,
++ "allow_vm_change": false,
++ "redis_source_sha256": null,
++ "needs_more_cpus": {},
++ "ran_below_min_cpus": {},
++ "suite_min_cpus": {},
++ "min_cpus_only": false,
++ "run_failed": false
 +}
+\ No newline at end of file
+```
+
+**File**: `benchmarks/1.3.0/regressions/results/pr-1065-53-record/summary.json` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++{"label":"pr-1065-53-record","env":{"label":"pr-1065-53-record","date":"2026-11-26","vm":"Standard_D4s_v5","cpu":"Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz","nproc":4,"cpu_count":4,"calib_ms":95.0,"kernel":"7.0.0-1017-azure","glibc":"2.39","python":"3.12.3","redis_py":"5.2.1","candidate_commit":"3e50cc57","candidate_allocator":"glibc","suite_seconds":{"53-large-string-writes":21},"scale":"1","full":"0","only":"53","engines_selected":["v1_2_2","candidate","redis"],"failures":[],"expected":[{"suite":"53-large-string-writes","config":"s64m","engines":["v1_2_2","candidate","redis"]}],"engines":{"v1_2_2":{"path":"/home/azureuser/.cache/kividb-regress/releases/v1.2.2/default/kividb","sha256":"38fc2cea40c131e041f4914527a98719e5d34dffdfe2abdc1f07ecb86aa6723e","version":"kividb 1.2.2","rustc":"1.100.0"},"candidate":{"path":"/home/azureuser/kividb/target/release/kividb","sha256":"36a88ac8dd53cba32bcb717e4d706029eb348421bf017d3f943220e7c891ce75","version":"kividb 1.2.1 (default build: no Lua, no TLS)","rustc":"1.100.0"},"redis":{"path":"/opt/redis-8.10.2/src/redis-server","sha256":"b0cd304980112fa6cd8dced524fdd6b136fd8efb802f5cf9e81610051a11891c","version":"Redis server v=8.10.2 sha=00000000:1 malloc=jemalloc-5.3.0 bits=64 build=75a9b36b1f0aa00","rustc":null},"v1_2_2_full":{"path":"/home/azureuser/.cache/kividb-regress/releases/v1.2.2/full/kividb","sha256":"ac5e05fe1274fd1167780e512bc03aa103340f42525a2cef4a2a762e47317ad5","version":"kividb 1.2.2","rustc":"1.100.0"}},"skipped_configs":[],"rustc_override":false,"allow_vm_change":false,"redis_source_sha256":null,"needs_more_cpus":{},"ran_below_min_cpus":{},"suite_min_cpus":{},"min_cpus_only":false,"run_failed":false},"rows":[{"key":"53-large-string-writes/s64m/append_1k_srv_us","suite":"53-large-string-writes","config":"s64m","metric":"append_1k_srv_us","unit":"us","better":"lower","values":{"v1_2_2":38332.4,"candidate":1.094,"redis":1.549},"samples":{"v1_2_2":[38477.6,37988.9,38332.4],"candidate":[1.8475,0.5795,1.094],"redis":[1.6135,1.549,1.4785]},"recorded_candidate":0.5455,"host":null,"gates":[{"gate":{"kind":"vs_v1_2_2","max_x":0.01},"status":"pass","limit":"0.00x v1.2.2 <= 0.01x"}],"status":"pass"},{"key":"53-large-string-writes/s64m/append_1k_strlen","suite":"53-large-string-writes","config":"s64m","metric":"append_1k_strlen","unit":"bytes","better":"higher","values":{"v1_2_2":67142656.0,"candidate":73255936.0,"redis":73255936.0},"samples":{},"recorded_candidate":73255936.0,"host":null,"gates":[{"gate":{"kind":"bound","eq":"recorded"},"status":"pass","limit":"== 73,255,936"}],"status":"pass"},{"key":"53-large-string-writes/s64m/append_1k_us","suite":"53-large-string-writes","config":"s64m","metric":"append_1k_us","unit":"us","better":"lower","values":{"v1_2_2":38562.7343,"candidate":56.9547,"redis":57.8328},"samples":{"v1_2_2":[38756.7199,38212.255,38562.7343],"candidate":[57.5904,51.7928,56.9547],"redis":[57.8328,57.6071,60.6008]},"recorded_candidate":48.8234,"host":null,"gates":[{"gate":{"kind":"vs_v1_2_2","max_x":0.05},"status":"pass","limit":"0.00x v1.2.2 <= 0.05x"},{"gate":{"kind":"vs_redis","max_x":2.0},"status":"pass","limit":"0.98x Redis <= 2x"}],"status":"pass"},{"key":"53-large-string-writes/s64m/append_3b_srv_us","suite":"53-large-string-writes","config":"s64m","metric":"append_3b_srv_us","unit":"us","better":"lower","values":{"v1_2_2":38914.1,"candidate":0.048,"redis":0.756},"samples":{"v1_2_2":[38948.4,38914.1,38897.7],"candidate":[0.048,0.032,0.768],"redis":[0.756,0.744,0.7605]},"recorded_candidate":0.0195,"host":null,"gates":[{"gate":{"kind":"vs_v1_2_2","max_x":0.01},"status":"pass","limit":"0.00x v1.2.2 <= 0.01x"}],"status":"pass"},{"key":"53-large-string-writes/s64m/append_3b_strlen","suite":"53-large-string-writes","config":"s64m","metric":"append_3b_strlen","unit":"bytes","better":"higher","values":{"v1_2_2":67108963.0,"candidate":67126873.0,"redis":67126873.0},"samples":{},"recorded_candidate":67126873.0,"host":null,"gates":[{"gate":{"kind":"bound","eq":"recorded"},"status":"pass","limit":"== 67,126,873"}],"status":"pass"},{"key":"53-large-string-writes/s64m/append_3b_us","suite":"53-large-string-writes","config":"s64m","metric":"append_3b_us","unit":"us","better":"lower","values":{"v1_2_2":39234.7752,"candidate":48.975,"redis":55.7706},"samples":{"v1_2_2":[39306.7945,39234.7752,39199.4723],"candidate":[48.9124,48.975,60.7373],"redis":[58.8806,55.6658,55.7706]},"recorded_candidate":47.7555,"host":null,"gates":[{"gate":{"kind":"vs_v1_2_2","max_x":0.05},"status":"pass","limit":"0.00x v1.2.2 <= 0.05x"},{"gate":{"kind":"vs_redis","max_x":2.0},"status":"pass","limit":"0.88x Redis <= 2x"}],"status":"pass"},{"key":"53-large-string-writes/s64m/bad_replies","suite":"53-large-string-writes","config":"s64m","metric":"bad_replies","unit":"replies","better":"lower","values":{"v1_2_2":0.0,"candidate":0.0,"redis":0.0},"samples":{},"recorded_candidate":0.0,"host":null,"gates":[{"gate":{"kind":"bound","eq":"recorded"},"status":"pass","limit":
+```
+
+**File**: `benchmarks/1.3.0/regressions/results/pr-1065-53-record/summary.md` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++# Regression suite: pr-1065-53-record
 +
-+pub(crate) fn times_set() -> u64 {
-+    SET.load(Relaxed)
- }
- 
- pub fn enabled() -> bool {
++Verdict: **ok**
++
++- Machine: Standard_D4s_v5, 4 vCPU, Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz, kernel 7.0.0-1017-azure, glibc 2.39
++- CPU: recorded on INTEL(R) XEON(R) PLATINUM 8573C / Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz / Intel(R) Xeon(R) Platinum 8473C; now Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
++- calibration (indicative only): 95.0 ms for a fixed sha256 loop, 4 cores
++- Client: Python 3.12.3, redis-py 5.2.1
++- v1_2_2: `kividb 1.2.2`, sha256 `38fc2cea40c131e041f4914527a98719e5d34dffdfe2abdc1f07ecb86aa6723e`, rustc 1.100.0
++- candidate: `kividb 1.2.1 (default build: no Lua, no TLS)`, sha256 `36a88ac8dd53cba32bcb717e4d706029eb348421bf017d3f943220e7c891ce75`, rustc 1.100.0
++- redis: `Redis server v=8.10.2 sha=00000000:1 malloc=jemalloc-5.3.0 bits=64 build=75a9b36b1f0aa00`, sha256 `b0cd304980112fa6cd8dced524fdd6b136fd8efb802f5cf9e81610051a11891c`
++- v1_2_2_full: `kividb 1.2.2`, sha256 `ac5e05fe1274fd1167780e512bc03aa103340f42525a2cef4a2a762e47317ad5`, rustc 1.100.0
++- candidate commit: `3e50cc57`
++- date: 2026-11-26; FULL=0, SCALE=1
++- run time: 53-large-string-writes 21s
++
++Host speed (this host vs the recorded one; 1.00 = same, below 1 = slower), from v1.2.2 measured in both sessions: global 0.98x over 10 metrics
++- 53-large-string-writes/s64m: 0.98x (10 metrics)
++- recorded on Standard_D4s_v5 / Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz: 0.98x (10 metrics)
++
++## 53-large-string-writes
++
++| config | metric | unit | v1.2.2 | candidate | Redis | recorded | gate | result |
++|---|---|---|---:|---:|---:|---:|---|---|
++| s64m | append_1k_srv_us | us | 38,332 | 1.09 | 1.55 | 0.545 | vs_v1_2_2: 0.00x v1.2.2 <= 0.01x | pass |
++| s64m | append_1k_strlen | bytes | 67,142,656 | 73,255,936 | 73,255,936 | 73,255,936 | bound: == 73,255,936 | pass |
++| s64m | append_1k_us | us | 38,563 | 56.95 | 57.83 | 48.82 | vs_v1_2_2: 0.00x v1.2.2 <= 0.05x<br>vs_redis: 0.98x Redis <= 2x | pass<br>pass |
++| s64m | append_3b_srv_us | us | 38,914 | 0.048 | 0.756 | 0.0195 | vs_v1_2_2: 0.00x v1.2.2 <= 0.01x | pass |
++| s64m | append_3b_strlen | bytes | 67,108,963 | 67,126,873 | 67,126,873 | 67,126,873 | bound: == 67,126,873 | pass |
++| s64m | append_3b_us | us | 39,235 | 48.98 | 55.77 | 47.76 | vs_v1_2_2: 0.00x v1.2.2 <= 0.05x<br>vs_redis: 0.88x Redis <= 2x | pass<br>pass |
++| s64m | bad_replies | replies | 0 | 0 | 0 | 0 | bound: == 0 | pass |
++| s64m | bitfield_get_srv_us | us | 77,233 | 0.759 | 0.355 | 0.026 | vs_v1_2_2: 0.00x v1.2.2 <= 0.01x | pass |
++| s64m | bitfield_get_us | us | 77,622 | 56.01 | 53.81 | 52.13 | vs_v1_2_2: 0.00x v1.2.2 <= 0.05x<br>vs_redis: 1.04x Redis <= 2x | pass<br>pass |
++| s64m | setbit_change_srv_us | us | 77,682 | 1.77 | 0.368 | 1.01 | vs_v1_2_2: 0.00x v1.2.2 <= 0.01x | pass |
++| s64m | setbit_change_us | us | 78,073 | 55.04 | 53.48 | 49.72 | vs_v1_2_2: 0.00x v1.2.2 <= 0.05x<br>vs_redis: 1.03x Redis <= 2x | pass<br>pass |
++| s64m | setbit_noop_srv_us | us | 38,900 | 0.206 | 0.274 | 0.286 | vs_v1_2_2: 0.00x v1.2.2 <= 0.01x | pass |
++| s64m | setbit_noop_us | us | 39,232 | 51.28 | 53.46 | 50.39 | vs_v1_2_2: 0.00x v1.2.2 <= 0.05x<br>vs_redis: 0.96x Redis <= 2x | pass<br>pass |
++| s64m | setrange_gap_srv_us | us | 75,901 | 0.677 | 1.71 | - | vs_v1_2_2: 0.00x v1.2.2 <= 0.01x | pass |
++| s64m | setrange_gap_strlen | bytes | 67,142,755 | 73,273,945 | 73,273,945 | - | bound: eq: nothing recorded | new |
++| s64m | setrange_gap_us | us | 76,140 | 54.55 | 58.86 | - | vs_v1_2_2: 0.00x v1.2.2 <= 0.05x<br>vs_redis: 0.93x Redis <= 2x | pass<br>pass |
++| s64m | setrange_grow_srv_us | us | 76,557 | 2.01 | 0.867 | - | vs_v1_2_2: 0.00x v1.2.2 <= 0.01x | pass |
++| s64m | setrange_grow_strlen | bytes | 67,108,963 | 67,126,873 | 67,126,873 | - | bound: eq: nothing recorded | new |
++| s64m | setrange_grow_us | us | 76,800 | 69.51 | 57.86 | - | vs_v1_2_2: 0.00x v1.2.2 <= 0.05x<br>vs_redis: 1.20x Redis <= 2x | pass<br>pass |
++
++## Not run this time
++
++`01-scan-match/default/dbsize`, `01-scan-match/default/hscan_match_c1000_calls`, `01-scan-match/default/hscan_match_c1000_distinct`, `01-scan-match/default/hscan_match_c1000_ms`, `01-scan-match/default/keys_schedule_ms`, `01-scan-match/default/keys_schedule_returned`, `01-scan-match/default/scan_all_c1000_calls`, `01-scan-match/default/scan_all_c1000_distinct`, `01-scan-match/default/scan_all_c1000_ms`, `01-scan-match/default/scan_infix_c1000_calls`, `01-scan-match/default/scan_infix_c1000_distinct`, `01-scan-match/default/scan_infix_c1000_ms`, `01-scan-match/default/scan_match_c10000_calls`, `01-scan-match/default/scan_match_c10000_distinct`, `01-scan-match/default/scan_match_c10000_ms`, `01-scan-match/default/scan_match_c1000_calls`, `01-scan-match/default/scan_match_c1000_distinct`, `01-scan-match/default/scan_match_c1000_ms`, `01-scan-match/default/sscan_match_c1000_calls`, `01-scan-match/default/sscan_match_c1000_distinct`, `01-scan-match/default/sscan_match_c1000_ms`, `01-scan-match/default/zscan_
 ```
 
 ---
 
-### Incident Patch 2: `e23ebea9` (2026-11-25)
-**Commit Message**: Regression suite 54 recorded again; SCRIPTS.md: how keys without a tag are locked, and the cycle measured (#1049)
+### Incident Patch 2: `3e50cc57` (2026-11-26)
+**Commit Message**: Add SETRANGE growth regression benchmarks
 
-**File**: `benchmarks/1.3.0/regressions/baseline.json` (modified, +23/-23)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -36340,12 +36340,12 @@
-       "better": "lower",
-       "recorded": {
-         "v1_2_2": 252.0,
--        "candidate": 127.0,
--        "redis": 173.0,
-+        "candidate": 132.0,
-+        "redis": 178.0,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36365,13 +36365,13 @@
-       "unit": "us",
-       "better": "lower",
-       "recorded": {
--        "v1_2_2": 720.0,
--        "candidate": 178.0,
--        "redis": 295.0,
-+        "v1_2_2": 724.0,
-+        "candidate": 183.0,
-+        "redis": 308.0,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36391,13 +36391,13 @@
-       "unit": "ops/s",
-       "better": "higher",
-       "recorded": {
--        "v1_2_2": 127453.9,
--        "candidate": 253686.9,
--        "redis": 182647.9,
-+        "v1_2_2": 125979.9,
-+        "candidate": 244396.3,
-+        "redis": 177057.5,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36425,13 +36425,13 @@
-       "unit": "cpus",
-       "better": "lower",
-       "recorded": {
--        "v1_2_2": 3.3361,
--        "candidate": 3.9968,
--        "redis": 2.8553,
-+        "v1_2_2": 3.3344,
-+        "candidate": 3.9964,
-+        "redis": 2.862,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36450,13 +36450,13 @@
-       "unit": "us",
-       "better": "lower",
-       "recorded": {
--        "v1_2_2": 181.0,
--        "candidate": 122.0,
--        "redis": 169.0,
-+        "v1_2_2": 185.0,
-+        "candidate": 126.0,
-+        "redis": 175.0,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
-@@ -36475,13 +36475,13 @@
-       "unit": "us",
-       "better": "lower",
-       "recorded": {
--        "v1_2_2": 760.0,
--        "candidate": 172.0,
--        "redis": 291.0,
-+        "v1_2_2": 781.0,
-+        "candidate": 175.0,
-+        "redis": 302.0,
-         "vm": "Standard_D8s_v5",
-         "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-         "date": "2026-11-25",
--        "commit": "f3bd52d6",
-+        "commit": "8b3be2d3",
-         "label": "pr-1049-54-final",
-         "rustc": "1.100.0",
-         "rustc_full": "1.100.0",
+@@ -998,7 +998,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+   allocator may do by moving it, and a string held elsewhere is copied
+   once, each into a block with room for a quarter more, at most 16 MiB.
+   Before this change such a `SETRANGE` copied a string of more than
+-  26,208 bytes whole on every call. A key `SETRANGE` makes is made at its
++  26,208 bytes whole on every call. A missing key is made at its
+   length, and a value that starts inside the string is written as
+   before. The room is allocated memory: `used_memory`, `maxmemory` and
+   `MEMORY USAGE` count it. Replies, time to live, `WATCH`, keyspace
 ```
 
-**File**: `benchmarks/1.3.0/regressions/results/pr-1049-54-final/env.json` (modified, +5/-5)
+**File**: `benchmarks/1.3.0/regressions/README.md` (modified, +1/-1)
 ```diff
-@@ -5,15 +5,15 @@
-  "cpu": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
-  "nproc": 8,
-  "cpu_count": 8,
-- "calib_ms": 97.1,
-+ "calib_ms": 92.1,
-  "kernel": "7.0.0-1017-azure",
-  "glibc": "2.39",
-  "python": "3.12.3",
-  "redis_py": "5.2.1",
-- "candidate_commit": "f3bd52d6",
-+ "candidate_commit": "8b3be2d3",
-  "candidate_allocator": "mimalloc",
-  "suite_seconds": {
--  "54-yii2-mutex": 109
-+  "54-yii2-mutex": 110
-  },
-  "scale": "1",
-  "full": "0",
-@@ -44,7 +44,7 @@
-   },
-   "candidate": {
-    "path": "/home/azureuser/tgt-branch/release/kividb",
--   "sha256": "c6a808f7d8eda1034ff8be2ac061ab9a753898d2c3f7aa2eac2a697dfab86664",
-+   "sha256": "783f9be3fc712bda2f62f8368935bc6de282417e73452a21da3bd666a9e064c0",
-    "version": "kividb 1.2.1 (full build: Lua, TLS)",
-    "rustc": "1.100.0"
-   },
-@@ -62,7 +62,7 @@
-   },
-   "candidate_full": {
-    "path": "/home/azureuser/tgt-branch/release/kividb",
--   "sha256": "c6a808f7d8eda1034ff8be2ac061ab9a753898d2c3f7aa2eac2a697dfab86664",
-+   "sha256": "783f9be3fc712bda2f62f8368935bc6de282417e73452a21da3bd666a9e064c0",
-    "version": "kividb 1.2.1 (full build: Lua, TLS)",
-    "rustc": "1.100.0"
-   }
+@@ -69,7 +69,7 @@ and why.
+ | `50-keys-wildcard` | #1018 | Plane's cache invalidation, `KEYS */api/workspaces/acme/labels/*` (django-redis `cache.keys(f"*{key}*")`), over 500,000 keys of 2 KB (`:1:/api/workspaces/other-ws/labels/:user-N`) and 5 that match: one `KEYS` alone (client wall time, median of 20), then GETs of random keys from 500 connections (this suite's own client, one asyncio process a client CPU, each connection one GET at a time) for 10 s, without and with another connection sending the `KEYS` every 250 ms: GETs a second, p99, p99.9 and the slowest GET. `--threads 4` (Redis `--io-threads 4`) on the first half of the CPUs, the clients on the other. Gates in the same session: `KEYS` at most 0.2x v1.2.2's and 0.2x Redis's; the GET p99.9 and the slowest GET with scans at most 0.25x v1.2.2's and 0.25x Redis's; GETs a second with scans within 10 % of recorded; the rest shown. `min_cpus=8`, recorded on a `Standard_D8s_v5` (see [the run](#recorded-run-suite-50)) |
+ | `51-filtered-flat-knn` | #1020 | KNN 5 on a FLAT FLOAT32 COSINE index of 100,000 1536-d HASH documents (numpy seed 1020) with #1020's TAG filter, `(@user_id:{user\-<u>|__shared__})`, about 10,090 matching documents (`big`), a second TAG field matching 100 (`small`) and no filter (`none`), one random user of 1,000 and query of 256 each time, `RETURN 1 vector_distance`: lookups a second and p99 from a closed loop of 8 and 64 connections (threads of 4 client processes on the client's CPUs), median of 3 rounds of 10 s; `--threads 4` (Redis `--io-threads 4 --search-workers 4`) on the first half of the CPUs; the exact top 5 of 10 queries of each layout checked against numpy (`wrong_top5`, exactly 0); `used_memory` a document and the load rate. Gates: `big` at 8 and 64 connections at least 1.25x v1.2.2's and 1.15x Redis's in the same session and within 10 % of recorded; `used_memory` a document 5 %; `small` (the Python client is the limit there), `none`, p99s and the load shown. Needs `REGRESS_REDISEARCH_SO` for Redis (as `28`); `min_cpus=8`, recorded on a `Standard_D8s_v5` (see [the run](#recorded-run-suite-51)) |
+ | `52-small-lists-memory` | #1022 | Misskey's home timelines: 10,000 lists of 300 ten-byte ids (`load`: `RPUSH`, one element a command through a raw pipelined socket as `redis-cli --pipe` sends them; `load-batch`: one `RPUSH` of 300 a list), then every list taken through 3,000 `LPUSH` + `LTRIM key 0 299` pairs (`timeline`: chunks filled at the front, trimmed at the back and given up), the same lists of 32- and 64-byte elements (`size32`, `size64`) and 10,000 lists of 30 elements (`tiny`): `used_memory` and RSS a list element and `MEMORY USAGE` of the first list, `LLEN` of it (300, 30). Gates: `used_per_element` within 5 % (or 1 B) of recorded, at most 1.3x Redis's in the same session and at most 0.8x v1.2.2's; `rss_per_element` within 10 % (or 1 B) of recorded, at most 1.5x Redis's (1.4x for `timeline`, whose chunks come and go in slab blocks: 1.17x measured) and at most 0.8x v1.2.2's (0.5x for `timeline`); `list_len` as recorded; the RSS of `tiny` (4.5 MB in all) is shown, not gated. Recorded through `run-all.sh --candidate <default build> --only 52 --record` on a `Standard_D4s_v5` with the default-features (glibc) candidate, the v1.2.2 release tarball's binary and the source-built Redis 8.10.2 (`results/pr-1022-52-d4s_v5`) |
+-| `53-large-string-writes` | #1027, #1031, #1016 | one string of 64 MiB a case (`SETRANGE k 67108863 a`), one connection, one call at a time (2,000 calls a round; v1.2.2, which copies the string on every call: 10), 3 rounds: a `SETBIT` that leaves the bit as it is and a `BITFIELD ... GET u8` (#1027), a `SETBIT` that changes a bit, by turns set and cleared (#1031), and `APPEND` of 3 bytes and of 1 KiB (#1016): the server's own microseconds a call (`INFO commandstats`) and the client's wall time a call, median of the rounds; `bad_replies` and the lengths the appends end at. Gates in the same session, with fixed margins: every server time at most 0.01x v1.2.2's (100x faster: v1.2.2 takes 30-130 ms a call, the candidate one or two microseconds), every wall time at most 0.05x v1.2.2's and at most 2x Redis's; no gate on the server times against Redis's (both about a microsecond, on a clock of whole microseconds); `bad_replies` exactly 0 and the lengths as recorded. Recorded through `run-all.sh --candidate <default build> --only 53 --record` on a `Standard_D4s_v5` (`results/pr-append-53-record`) |
++| `53-large-string-writes` | #1027, #1031, #1016, #1065 | one string of 64 MiB a case (`SETRANGE k 67108863 a`), one connection, one call at a time (2,000 calls a round; v1.2.2, which copies the string on every call: 10), 3 rounds: a `SETBIT` that leaves the bit as it is and a `BITFIELD ... GET u8` (#1027), a `SETBIT` that changes a bit, by turns set and cleared (#1031), `APPEND` of 3 bytes and of 1 KiB (#1016), and `SETRANGE` of 3 bytes at the string's end and 1 KiB past it (#1065): the server's own microseconds a call (
 ```
 
-**File**: `benchmarks/1.3.0/regressions/results/pr-1049-54-final/summary.md` (modified, +15/-13)
+**File**: `benchmarks/1.3.0/regressions/suites/53-large-string-writes.py` (modified, +22/-9)
 ```diff
-@@ -2,31 +2,33 @@
+@@ -1,15 +1,16 @@
+ #!/usr/bin/env python3
+ """#1016: writes to a large string cost the same whatever its length.
  
- Verdict: **ok**
+-Three changes of 1.3.0 make a command on a long string cost what the bytes
++Four changes of 1.3.0 make a command on a long string cost what the bytes
+ it touches cost, not what the string's length does: #1027 reads a bit or a
+ field where the string is kept (a `SETBIT` that leaves the bit as it is, a
+ `BITFIELD` with only `GET`s), #1031 writes a `SETBIT` that changes a bit in
+-place when nothing but its key holds the string, and #1016's `APPEND`
++place when nothing but its key holds the string, #1016's `APPEND`
+ writes in place too, a long string keeping room for the next appends
+ (a quarter of its length, at most 16 MiB) and growing by `realloc` when it
+-has none left. In v1.2.2 each of these copied the whole string, twice for
+-a `SETBIT` that changed a bit.
++has none left, and #1065 grows a string a `SETRANGE` writes at or past its
++end as an `APPEND` does. In v1.2.2 each of these copied the whole string,
++twice for a `SETBIT` that changed a bit.
  
--NOTE: v1.2.2 has no usable value for the speed metrics of 1 gate(s): speed gates were compared absolutely against the recorded values (54-yii2-mutex/uring4/ops_per_s).
--
- - Machine: Standard_D8s_v5, 8 vCPU, Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz, kernel 7.0.0-1017-azure, glibc 2.39
- - CPU: recorded on INTEL(R) XEON(R) PLATINUM 8573C / Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz / Intel(R) Xeon(R) Platinum 8473C; now Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
--- calibration (indicative only): 97.1 ms for a fixed sha256 loop, 8 cores
-+- calibration (indicative only): 92.1 ms for a fixed sha256 loop, 8 cores
- - Client: Python 3.12.3, redis-py 5.2.1
- - v1_2_2: `kividb 1.2.2`, sha256 `38fc2cea40c131e041f4914527a98719e5d34dffdfe2abdc1f07ecb86aa6723e`, rustc 1.100.0
--- candidate: `kividb 1.2.1 (full build: Lua, TLS)`, sha256 `c6a808f7d8eda1034ff8be2ac061ab9a753898d2c3f7aa2eac2a697dfab86664`, rustc 1.100.0
-+- candidate: `kividb 1.2.1 (full build: Lua, TLS)`, sha256 `783f9be3fc712bda2f62f8368935bc6de282417e73452a21da3bd666a9e064c0`, rustc 1.100.0
- - redis: `Redis server v=8.10.2 sha=00000000:1 malloc=jemalloc-5.3.0 bits=64 build=75a9b36b1f0aa00`, sha256 `b0cd304980112fa6cd8dced524fdd6b136fd8efb802f5cf9e81610051a11891c`
- - v1_2_2_full: `kividb 1.2.2`, sha256 `ac5e05fe1274fd1167780e512bc03aa103340f42525a2cef4a2a762e47317ad5`, rustc 1.100.0
--- candidate_full: `kividb 1.2.1 (full build: Lua, TLS)`, sha256 `c6a808f7d8eda1034ff8be2ac061ab9a753898d2c3f7aa2eac2a697dfab86664`, rustc 1.100.0
--- candidate commit: `f3bd52d6`
-+- candidate_full: `kividb 1.2.1 (full build: Lua, TLS)`, sha256 `783f9be3fc712bda2f62f8368935bc6de282417e73452a21da3bd666a9e064c0`, rustc 1.100.0
-+- candidate commit: `8b3be2d3`
- - date: 2026-11-25; FULL=0, SCALE=1
--- run time: 54-yii2-mutex 109s
-+- run time: 54-yii2-mutex 110s
-+
-+Host speed (this host vs the recorded one; 1.00 = same, below 1 = slower), from v1.2.2 measured in both sessions: global 0.99x over 5 metrics
-+- 54-yii2-mutex/uring4: 0.99x (5 metrics)
-+- recorded on Standard_D8s_v5 / Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz: 0.99x (5 metrics)
+ Dataset, one server, one key per case: a string of 64 MiB (`SETRANGE k
+ 67108863 a`: zero bytes and an `a`), made afresh for each case.
+@@ -23,13 +24,17 @@
+   setbit_change   SETBIT k <bit> 1, then SETBIT k <bit> 0, by turns
+   append_3b       APPEND k abc
+   append_1k       APPEND k <1,024 bytes>
++  setrange_grow   SETRANGE k <length> abc (at the string's end)
++  setrange_gap    SETRANGE k <length + 1,024> abc (1,024 zero bytes before it)
  
- ## 54-yii2-mutex
+ Each emits `<case>_srv_us`, the server's own microseconds a call (`INFO
+ commandstats`, reset before each round), and `<case>_us`, the client's wall
+ time a call, round trip included. `bad_replies` counts replies that are not
+ what the case makes them (0 for the no-op `SETBIT`, `[0]` for the field,
+-the old bit, the new length); `append_3b_strlen` and `append_1k_strlen` are
+-the lengths the appends end at.
++the old bit, the new length); `append_3b_strlen`, `append_1k_strlen`,
++`setrange_grow_strlen` and `setrange_gap_strlen` are the lengths the strings
++end at. Every `SETRANGE` writes from the end its key's string has then, so
++each call grows it, and none makes the key or writes inside the string.
  
- | config | metric | unit | v1.2.2 | candidate | Redis | recorded | gate | result |
- |---|---|---|---:|---:|---:|---:|---|---|
--| uring4 | eval_p50_us | us | 252.0 | 127.0 | 173.0 | - | vs_redis: 0.73x Redis <= 0.9x | pass |
--| uring4 | eval_p99_us | us | 720.0 | 178.0 | 295.0 | - | vs_redis: 0.60x Redis <= 1.1x | pass |
--| uring4 | ops_per_s | ops/s | 127,454 | 253,687 | 182,648 | - | vs_redis: 0.72x Redis <= 0.833333x<br>vs_v1_2_2: 0.50x v1.2.2 <= 0.625x<br>rel: rel 10%: nothing recorded | pass<br>pass<br>new |
--| uring4 | server_cpus | cpus | 3.34 | 4 | 2.86 | - | info | info |
--| uring4 | set_p50_us | us | 181.0 | 122.0 | 169.0 | - | info | info |
--| uring4 | set_p99_us | us | 760.0 | 172.0 | 291.0 | - | info | info |
-+| uring4 | eval_p50_us | us | 252.0 | 132.0 | 178.0 | 127.0 | vs_redis: 0.74x Redis <= 0.9x | pass |
-+| uring4 | eval_p99_us | us | 724.0 | 183.0 | 308.0 | 178.0 | vs_redis: 0.59x Redis <= 1.1x | pass |
-+| uring4 | ops_per_s | ops/s | 125,980 | 244,396 | 177,058 | 253,687 | vs_redis: 0.72x Redis <= 0.833333x<br>vs_v1_2_2: 0.52x v1.2.2 <= 0.625x<br>rel: >= 225,678 (10% under 250,753, recorded 253,687 scaled by host speed 0.99x (group)) | pass<br>pass<br>pass |
-+| uring4 | server_cpus | cpus | 3.33 | 4 | 2.86 | 4 | info | info |
-+| uring4 | set_p50_us | us | 185.0 | 126.0 | 175.0 | 122.0 | info | info |
-+| uring4 | set_p99_us | us | 781.0 | 175.0 | 302.0 | 172.0 | info | info |
- 
- ## Not run this time
- 
-```
-
-**File**: `benchmarks/1.3.0/regressions/suites/54-yii2-mutex.py` (modified, +3/-3)
-```diff
-@@ -33,9 +33,9 @@
- Gates in the same session: commands a second at least 1.2x Redis's and at
- least 1.6x v1.2.2's, and within 10 % of recorded; the `EVAL` p50 at most
- 0.9x Redis's and its p99 at most 1.1x Redis's. Recorded on a
--`Standard_D8s_v5` (`results/pr-1049-54-final`): 253,687 commands a second
--against Redis's 182,648 (1.39x), an `EVAL` p50/p99 of 127/178 us against
--Redis's 173/295; all of the candidate's releases ran beside others. Needs
-+`Standard_D8s_v5` (`results/pr-1049-54-final`): 244,396 commands a second
-+against Redis's 177,058 (1.38x), an `EVAL` p50/p99 of 132/183 us against
-+Redis's 178/308; all of the candidate's releases ran beside others. Needs
- the `lua,tls` builds (`--candidate-full`); `min_cpus=8`.
+ Gates, all in the same session, with large fixed margins rather than
+ recorded values: every `<case>_srv_us` at most 0.01x v1.2.2's (at least
+@@ -38,7 +43,7 @@
+ at most 0.05x v1.2.2's (the round trip, about 50 us from Python, bounds
+ what can be seen) and at most 2x Redis's. The server times are not gated
+ against Redis's: both are around a microsecond, and the server clock counts
+-whole microseconds. `bad_replies` exactly 0, and the two lengths as
++whole microseconds. `bad_replies` exactly 0, and the four lengths as
+ recorded (they follow from the call counts).
  """
- import json
-```
-
-**File**: `docs/SCRIPTS.md` (modified, +10/-11)
-```diff
-@@ -414,24 +414,23 @@ whatever `lua-parallel-scripts` says. The setting decides whether a script
- may run beside others; a script that started by the setting before a
- `CONFIG SET` finds the tags it holds locked all the same.
+ import os
+@@ -54,8 +59,10 @@
+ LEN = 64 << 20
+ ROUNDS = 3
+ WARM = 3
+-CASES = ["setbit_noop", "bitfield_get", "setbit_change", "append_3b", "append_1k"]
++CASES = ["setbit_noop", "bitfield_get", "setbit_change", "append_3b", "append_1k",
++         "setrange_grow", "setrange_gap"]
+ KILO = b"x" * 1024
++GAP = 1024
  
--Measured on an Azure `Standard_D8s_v5` (Intel Xeon Platinum 8370C; the
--server pinned to 4 vCPUs with `taskset`, `--threads 4`; Redis 8.12 and
--Valkey 8.1 with `--io-threads 4`; the load on the other 4): yii2-redis's
-+Measured on 2026-11-26 on an Azure `Standard_D8s_v5` (Intel Xeon Platinum
-+8370C; the server pinned to 4 vCPUs with `taskset`, `--threads 4`; Redis
-+8.12 and Valkey 8.1 with `--io-threads 4`; the load on the other 4): yii2-redis's
- `Mutex` cycle, `SET <lock> <token> NX PX 30000` and then the release above
- by `EVAL` with the script's text every time, 32 connections each on a lock
- of its own, one command at a time per connection, 10 s, three runs each,
- the servers in turn (median):
  
- | | ops/s | `EVAL` p50 / p99 (µs) | `SET` p50 / p99 (µs) |
- |---|---:|---:|---:|
--| this build | 300,200 | 101 / 245 | 97 / 238 |
--| the build before | 159,500 | 203 / 432 | 184 / 396 |
--| Redis 8.12 | 211,300 | 146 / 285 | 142 / 280 |
--| Valkey 8.1 | 235,400 | 129 / 279 | 131 / 282 |
--
--The build before ran each release alone, the other commands held back
--around it; its four worker threads were 70 % busy. This build runs them
--beside each other, its four threads at 99 %.
-+| releases beside others (#1049) | 293,700 | 103 / 272 | 98 / 264 |
-+| releases alone (before #1049) | 159,900 | 203 / 428 | 184 / 392 |
-+| Redis 8.12 | 210,100 | 148 / 284 | 143 / 279 |
-+| Valkey 8.1 | 235,500 | 129 / 279 | 131 / 280 |
-+
-+Run alone, each release held the other commands back around it, and the
-+four worker threads were 70 % busy; beside each other, they were at 99 %.
- 
- ### What to know
- 
+ def calls_for(ctx):
+@@ -84,6 +91,12 @@ def plan(case, key, length):
+         return (lambda i: (["BITFIELD", key, "GET", "u8", LEN // 2], [0])), "bitfield"
+     if case == "setbit_change":
+         return (lambda i: (["SETBIT", key, bit, 1 - i % 2], i % 2)), "setbit"
++    if case.startswith("setrange"):
++        # Call i writes at the end calls 0..i-1 left, after the gap.
++        gap = GAP if case == "setrange_gap" else 0
++        step = gap + 3
++        return (lambda i: (["SETRANGE", key, length + step * i + gap, "abc"],
++                           length + step * (i + 1))), "setrange"
+     step = 3 if case == "append_3b" else 1024
+     extra = b"abc" if case == "append_3b" else KILO
+     return (lambda i: (["APPEND", key, extra], length + step * (i + 1))), "append"
+@@ -122,7 +135,7 @@ def run(ctx):
+         ctx.raw["cases"][case] = {"wall_us": wall, "server_us": server, "strlen": c.strlen(key)}
+         ctx.emit(case + "_srv_us", median(server), "us", "lower", gate=vs_v1_2_2(0.01), samples=server)
+         ctx.emit(case + "_us", median(wall), "us", "lower", gate=gate_wall, samples=wall)
+-        if case.startswith("append"):
++        if case.startswith(("append", "setrange")):
+             ctx.emit(case + "_strlen", c.strlen(key), "bytes", "higher", gate=EXACT)
+         c.delete(key)
+     ctx.emit("bad_replies", bad, "replies", "lower", gate=EXACT)
 ```
 
 ---
 
-### Incident Patch 3: `ac55551f` (2026-11-25)
-**Commit Message**: FLAT int8: the coder paced, and the build's cost to searches documented (#1033)
+### Incident Patch 3: `86d2a651` (2026-11-26)
+**Commit Message**: Merge pull request #1058 from lofoneh/fix/1054-error-values
 
-After each run the coder sleeps as long as the run took, three times as
-long when writes to the index arrived since its last run (counted under
-the write lock the write already holds): at most about half a CPU while
-it builds a copy, a quarter under a steady load.
+Scripts: what error() raises is placed as Redis places it (#1054)
 
-CONFIGURATION.md gives the search latency while a copy is made, from the
-D8s_v5 run, and the coder's pacing.
-
-**File**: `docs/CONFIGURATION.md` (modified, +10/-1)
+**File**: `CHANGELOG.md` (modified, +30/-8)
 ```diff
-@@ -389,7 +389,10 @@ x86_64 only; elsewhere the switch is taken and the pass is not used.
- The copy is made and kept up to date by one thread, `flat-int8`, not by the writes: a write
- marks its slot, and the thread codes what is marked with no lock held, stores each code
- under the write lock only if the slot still holds the same vector, and lets writers and
--searches in every 50 µs. Until a slot is coded again a scan measures it exactly. The copy
-+searches in every 50 µs. Until a slot is coded again a scan measures it exactly. After each
-+run the thread sleeps as long as the run took, three times as long while writes to the
-+index keep arriving, so it takes at most about half a CPU while it builds a copy and a
-+quarter under a steady load. The copy
- takes 16 bytes plus one a dimension per vector, is counted in `used_memory`, is not saved,
- and is made again after a restart. `FT.INFO` shows it under `flat_int8_indexes`: the field,
- its bytes, and how many candidates the pass skipped and measured exactly since the index
-@@ -403,6 +406,12 @@ again (`CONFIG SET search-flat-int8 yes`) lets it try once more. Made near the l
- can still leave too little room for the writes that follow, which then evict keys or, under
- `noeviction`, are refused.
+@@ -675,10 +675,28 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+   arithmetic on a nil value` was not counted at all.
  
-+While a copy is being made, searches of its index are slower than with the switch off,
-+and they are faster once it is made. On an Azure D8s_v5 (server on 4 CPUs) with 1M vectors
-+of 1,536 dimensions and 4 clients each running a KNN 5 over 100,000 candidates, the p99 was
-+69 ms with the switch off, 121 ms for the 36 s the copy took to make, and 37 ms after.
-+Switching it on over a large index is best done when the index is not busiest.
+ - **`error` reads a number as Lua 5.1 does (#1054).** Raised with a level,
+-  a number gets the place before it, as a string does: `error(42)` on
+-  line 2 is `user_script:2: 42`. What a script catches is what it would
+-  catch in Redis: `pcall(error, 42)` gives the string `"42"`, where it gave
+-  the number; `pcall(error, 42, 0)` still gives the number.
++  a number gets the place before it, as a string does, and is written
++  `%.14g`, as Redis's Lua writes it: `error(42)` on line 2 is
++  `user_script:2: 42`, and `error(10/2)` is `user_script:2: 5`, not `5.0`;
++  `error(10/2, 0)` replies `ERR 5`. What a script catches is what it would catch in Redis: `pcall(error, 42)`
++  gives the string `"42"`, where it gave the number; `pcall(error, 42, 0)`
++  still gives the number.
 +
- A scan the query's timeout cuts returns the nearest of the candidates it reached, as it
- does without the pass.
++- **`error` of a value that is not a string replies it with no place of its
++  own (#1054).** `error(nil)`, `error(true)`, `error(false)`, `error()` and
++  `error(42, 0)` reply `ERR nil`, `ERR true`, `ERR false`, `ERR nil` and
++  `ERR 42`, then `script: <sha>, on @user_script:N.` with the line they
++  were raised on, as in Redis; they replied `ERR user_script:1: nil …`
++  whatever the line. Inside `coroutine.wrap`, `N` is the line in the
++  coroutine, where Redis names the line of the call: Lua 5.4's `wrap`
++  places a string only and raises anything else as it is (Redis's, Lua
++  5.1's, places a number too, so that `error(42, 0)` there replies
++  `ERR user_script:4: 42 …`).
++
++- **A nil index error reads `attempt to index a nil value` however it is
++  raised (#1054).** Caught and raised again with `error(e, 0)`, it replied
++  the whole of Lua 5.4's message (`attempt to index a nil value (local
++  't')`); it is cut now as the one raised where it happened is.
  
+ - **A function library's lines are counted from its `#!lua` line, under
+   Redis's name `user_function` (#1054).** A `FUNCTION LOAD` error says
+@@ -2557,10 +2575,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ - **A script's error says where in the script it happened, as in Redis
+   (#1054).** A runtime error keeps the `user_script:N:` Lua gives it, and
+   its reply ends `script: <sha>, on @user_script:N.`, `N` being the line
+-  it left the script from. An `EVAL`'d script that does not compile is
+-  reported as `SCRIPT LOAD` reports it, `Error compiling script (new
+-  function): user_script:N: …`, where it said `user_script:1` whatever the
+-  line. `FCALL` names `user_function` and the function.
++  it left the script from (`=[C]:-1` when `error` was called by a C
++  function, as with `string.gsub(s, p, error)`, as Redis has it). An
++  `EVAL`'d script that does not compile is reported as `SCRIPT LOAD`
++  reports it, `Error compiling script (new function): user_script:N: …`,
++  where it said `user_script:1` whatever the line. `error(nil)`,
++  `error(true)`, `error(false)`, `error()` and `error(42, 0)` name the line
++  they were raised on.
++  `FCALL` names `user_function` and the function, a table error too.
+ 
+ - **`CONFIG REWRITE` writes every setting the server runs with, and no
+   `replicaof` after `REPLICAOF NO ONE`.** It writes each setting
 ```
 
-**File**: `src/vector/flat.rs` (modified, +19/-0)
+**File**: `src/commands/lua.rs` (modified, +204/-129)
 ```diff
-@@ -84,6 +84,7 @@ pub struct VectorIndex {
-     coding: AtomicBool,
-     cursor: AtomicUsize,
-     declined: AtomicU64,
-+    writes_seen: AtomicU64,
-     counts: Counts,
-     #[cfg(test)]
-     always: AtomicBool,
-@@ -128,6 +129,7 @@ struct Map {
-     /// says the same.
-     doc_slot: Vec<AtomicU32>,
-     dirty: Vec<AtomicU64>,
-+    writes: u64,
+@@ -747,20 +747,14 @@ fn lua_error_message(error: &LuaError) -> String {
+         LuaError::SyntaxError { message, .. } => message.clone(),
+         other => other.to_string(),
+     };
+-    if let Some((_, msg)) = marked_table_error(&message) {
+-        return msg.to_string();
+-    }
+-    // A string `error` raised, kept with its place (`remember_error_place`):
+-    // its message. `error` is not there while a library loads, as in Redis,
+-    // but nothing marked is let out if that changes.
+-    if let Some(at) = message.find(PLACE_ERROR_MARK) {
+-        let marked = &message[at + PLACE_ERROR_MARK.len()..];
+-        let marked = &marked[..marked.find('\n').unwrap_or(marked.len())];
+-        return marked
+-            .splitn(3, '\u{1}')
+-            .nth(2)
+-            .unwrap_or(marked)
+-            .to_string();
++    // A table's `err`, or what `error` raised kept with its place
++    // (`remember_error_place`): its message. `error` is not there while a
++    // library loads, as in Redis, but nothing marked is let out if that
++    // changes.
++    for mark in [TABLE_ERROR_MARK, PLACE_ERROR_MARK] {
++        if let Some((_, _, msg)) = marked_error(&message, mark) {
++            return msg.to_string();
++        }
+     }
+     message
+         .lines()
+@@ -4362,27 +4356,48 @@ fn normalize_redis_eval_nil_index_error(s: String) -> String {
+ /// message: as `SCRIPT LOAD` says it ([`script_compiles`]).
+ const SCRIPT_COMPILE_ERROR: &str = "ERR Error compiling script (new function): ";
+ 
+-/// A Lua error that says where in the script it happened (`user_script:3:
+-/// …`, `user_function:7: …`), kept with that place for the reply's tail,
+-/// the message as Lua gives it (#1054). `attempt to index a nil value` drops
+-/// what Lua 5.4 adds after it, as [`normalize_redis_eval_nil_index_error`]
+-/// has it, so that the reply reads `… nil value script: …` as Redis's does.
+-fn placed_error(message: &str) -> Option<String> {
+-    let (chunk, rest) = ["user_script", "user_function"]
++/// The place Lua puts before a message from a script's code
++/// (`user_script:3: `, `user_function:7: `): the chunk, the line and what
++/// follows.
++fn place_prefix(message: &str) -> Option<(&'static str, &str, &str)> {
++    ["user_script", "user_function"]
+         .into_iter()
+-        .find_map(|chunk| Some((chunk, message.strip_prefix(chunk)?.strip_prefix(':')?)))?;
+-    let digits = rest.bytes().take_while(u8::is_ascii_digit).count();
+-    let (line, what) = (&rest[..digits], rest[digits..].strip_prefix(": ")?);
+-    if line.is_empty() {
+-        return None;
++        .find_map(|chunk| {
++            let rest = message.strip_prefix(chunk)?.strip_prefix(':')?;
++            let digits = rest.bytes().take_while(u8::is_ascii_digit).count();
++            if digits == 0 {
++                return None;
++            }
++            Some((chunk, &rest[..digits], rest[digits..].strip_prefix(": ")?))
++        })
++}
++
++/// `attempt to index a nil value`, behind whatever places come before it,
++/// without what Lua 5.4 adds after it (`(local 't')`, `(field 'x')`), as
++/// [`normalize_redis_eval_nil_index_error`] has it: Redis's suite matches
++/// `*attempt to index a nil value script*`. The same error reads the same,
++/// raised where it happened or caught and raised again (#1055 review).
++fn index_nil_trimmed(message: &str) -> &str {
++    const NIL_INDEX: &str = "attempt to index a nil value";
++    let mut rest = message;
++    while let Some((_, _, after)) = place_prefix(rest) {
++        rest = after;
+     }
+-    let what = if what.starts_with("attempt to index a nil value") {
+-        "attempt to index a nil value"
++    if rest.starts_with(NIL_INDEX) {
++        &message[..message.len() - rest.len() + NIL_INDEX.len()]
+     } else {
+-        what
+-    };
++        message
++    }
++}
++
++/// A Lua error that says where in the script it happened (`user_script:3:
++/// …`, `user_function:7: …`), kept with that place for the reply's tail,
++/// the message as Lua gives it ([`index_nil_trimmed`]) (#1054).
++fn placed_error(message: &str) -> Option<String> {
++    let (chunk, line, _) = place_prefix(message)?;
+     Some(format!(
+-        "{PLACE_ERROR_MARK}{chunk}\u{1}{line}\u{1}{chunk}:{line}: {what}"
++        "{PLACE_ERROR_MARK}@{chunk}\u{1}{line}\u{1}{}",
++        index_nil_trimmed(message)
+     ))
  }
  
- impl Map {
-@@ -317,6 +319,7 @@ impl VectorIndex {
-             // the read lock.
-             unsafe { copy.slots.write_bytes(slot as usize, 0, &[0; HEADER]) };
-             map.mark(slot);
-+            map.writes += 1;
-         }
-         let count = map.by_key.len();
-         drop(map);
-@@ -353,6 +356,11 @@ impl VectorIndex {
+@@ -4411,8 +4426,10 @@ fn redis_simple_error_has_category_prefix(s: &str) -> bool {
+             .all(|c| c.is_ascii_uppercase() || c == '_' || c == '-')
+ }
+ 
+-/// What [`remember_error_table`] puts before a table's `err`, then the line
+-/// and a `\u{1}`. Not NUL: mlua reads an error's message as a C string.
++/// What [`remember_error_table`] puts before a table's `err`, then the
++/// source as Redis names it (`@user_script`, `@user_function`, `=[C]`) and
++/// the line, each followed by a `\u{1}`. Not NUL: mlua reads an error's
++/// message as a C string.
+ const TABLE_ERROR_MARK: &str = "\u{1}kividb-error\u{1}";
+ 
+ thread_local! {
+@@ -4429,16 +4446,21 @@ threa
+```
+
+**File**: `tests/luascripting.rs` (modified, +423/-0)
+```diff
+@@ -3806,3 +3806,426 @@ fn a_number_error_caught_is_what_redis_s_lua_gives() {
          }
      }
- 
-+    fn writes_arriving(&self) -> bool {
-+        let now = self.map.read().writes;
-+        self.writes_seen.swap(now, Relaxed) != now
+ }
++
++// ── #1055 review, second part: values, numbers and frames as Redis has them ──
++
++/// `error` reads a number as Lua 5.1 does: as a string with the place
++/// before it, written `%.14g` (`10/2` is `5`, not 5.4's `5.0`); at level 0
++/// the reply writes it so too. What a script catches is what it would
++/// catch in Redis.
++#[test]
++fn error_reads_a_number_as_lua_51_does() {
++    let _serial = LUA_SCRIPTING_SERIAL.lock().unwrap();
++    let port = free_port();
++    start_server(port);
++    let mut c = Conn::connect(port);
++
++    // Caught with a level: the string 5.1 makes of it.
++    match c.cmds(&[
++        "EVAL",
++        "local ok, e = pcall(error, 10/2) return {type(e), e}",
++        "0",
++    ]) {
++        RespValue::Array(items) => {
++            assert_eq!(items[0].as_str(), "string");
++            assert_eq!(items[1].as_str(), "5");
++        }
++        other => panic!("{other:?}"),
 +    }
 +
-     fn code_some(&self) -> bool {
-         use std::sync::atomic::Ordering::SeqCst;
-         let Some(slots) = self.slots.get() else {
-@@ -803,6 +811,10 @@ mod coder {
- 
-     type Queue = (VecDeque<Weak<VectorIndex>>, bool);
- 
-+    const PACE_WRITES: u32 = 3;
-+    const PACE_BUILD: u32 = 1;
-+    const PACE_MOST: std::time::Duration = std::time::Duration::from_millis(20);
++    for (script, expected) in [
++        (
++            "local x = 1\nerror(10/2)",
++            "ERR user_script:2: 5 script: {sha}, on @user_script:2.",
++        ),
++        (
++            "local x = 1\nerror(10/2, 0)",
++            "ERR 5 script: {sha}, on @user_script:2.",
++        ),
++        (
++            "error(-0.0)",
++            "ERR user_script:1: -0 script: {sha}, on @user_script:1.",
++        ),
++        (
++            "error(1e20)",
++            "ERR user_script:1: 1e+20 script: {sha}, on @user_script:1.",
++        ),
++        (
++            "error(0.1)",
++            "ERR user_script:1: 0.1 script: {sha}, on @user_script:1.",
++        ),
++    ] {
++        assert_script_error(&mut c, script, &["0"], expected);
++    }
++}
 +
-     static QUEUE: parking_lot::Mutex<Queue> = parking_lot::const_mutex((VecDeque::new(), false));
-     static READY: parking_lot::Condvar = parking_lot::Condvar::new();
- 
-@@ -840,6 +852,7 @@ mod coder {
-             let Some(strong) = index.upgrade() else {
-                 continue;
-             };
-+            let started = std::time::Instant::now();
-             let more =
-                 match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| strong.code_some()))
-                 {
-@@ -860,8 +873,14 @@ mod coder {
-                         false
-                     }
-                 };
-+            let pace = if more && strong.writes_arriving() {
-+                PACE_WRITES
-+            } else {
-+                PACE_BUILD
-+            };
-             drop(strong);
-             if more {
-+                std::thread::sleep((started.elapsed() * pace).min(PACE_MOST));
-                 QUEUE.lock().0.push_back(index);
-             }
-         }
++/// `error` given something that is not a string (or given nothing): what
++/// Redis's `tostring` says of it, and the line it was raised on.
++#[test]
++fn error_with_a_value_that_is_not_a_string_names_where_it_was_raised() {
++    let _serial = LUA_SCRIPTING_SERIAL.lock().unwrap();
++    let port = free_port();
++    start_server(port);
++    let mut c = Conn::connect(port);
++    c.cmds(&["SET", "notint", "abc"]);
++
++    for (raise, said) in [
++        ("error(42, 0)", "42"),
++        ("error(nil)", "nil"),
++        ("error(true)", "true"),
++        ("error(false)", "false"),
++        ("error()", "nil"),
++    ] {
++        assert_script_error(
++            &mut c,
++            &format!("local x = 1\n{raise}"),
++            &["0"],
++            &format!("ERR {said} script: {{sha}}, on @user_script:2."),
++        );
++    }
++    // A field of what `pcall` caught that is not there.
++    assert_script_error(
++        &mut c,
++        "local ok, e = pcall(redis.call, 'INCR', KEYS[1])\nerror(e.err, 0)",
++        &["1", "notint"],
++        "ERR nil script: {sha}, on @user_script:2.",
++    );
++}
++
++/// Where Redis's message handler finds an error raised through other
++/// functions: one frame past `error`, which is `=[C]:-1` when `error` was
++/// called by a C function (`string.gsub(s, p, error)`), and the line a
++/// coroutine or a `pcall`/`xpcall` that caught the error raises it again on.
++#[test]
++fn an_error_raised_through_other_functions_is_placed_as_in_redis() {
++    let _serial = LUA_SCRIPTING_SERIAL.lock().unwrap();
++    let port = free_port();
++    start_server(port);
++    let mut c = Conn::connect(port);
++
++    let caught = "local ok, e = xpcall(function()\n  local x\n  return x + 1\nend, function(m) return m end)\n";
++    for (script, expected) in [
++        (
++            "local x = 1\nreturn string.gsub('abc', 'b', error)".to_string(),
++            "ERR b script: {sha}, on =[C]:-1.",
++        ),
++        (
++            "local t = {3, 1, 2}\ntable.sort(t, function(a, b) error('sboom') end)".to_string(),
++            "ERR user_script:2: sboom script: {sha}, on @user_script:2.",
++        ),
++        (
++            "local f = coroutine.wrap(function()\n  error('cboom')\nend)\nf()".to_string(),
++            "ERR user_script:4: user_script:2: cboom script: {sha}, on @user_script:4.",
++        ),
++        (
++            "local f = coroutine.wrap(function()\n  local b\n  return 1 + b\nend)\nf()".to_string(),
++            "ERR user_script:5: user_script:3: attempt to perform arithmetic on a nil value \
++             (local 'b') script: {sha}, on @user_script:5.",
++        ),
++        (
++            format!("{caught}error(e)"),
++            "ERR user_script:5: user_script:3: attempt to perform arithmetic on a nil value \
++             (local 'x') script: {sha}, on @user_script:5.",
++        ),
++        (
++            format!("{caught}error(e, 0)"),
++            "ERR user_script:3: attempt to perform arithmetic on a nil value (local 'x') \
++             script: {sha}, on @user_script:5.",
++        ),
++    ] {
++        assert_script_error(&mut c, &script, &["0"], expected);
++    }
++}
++
++/// A message's line breaks are spaces in the reply, which is one line.
++#[test]
++fn an_error_message_is_
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1053** (2026-11-26): BITPOS works out its range in signed units, as Redis does (@Seyamalam)
-- **PR #1052** (2026-11-26): Scripts that keep to their keys run beside others when the keys have no hash tag (#1049) (@murtazayusuf)
-- **PR #1051** (2026-11-25): Wait for cluster promotion warning in mixed-version tests (@Parikalp-Bhardwaj)
-- **PR #1050** (2026-11-26): FLAT KNN: an int8 first pass with exact re-scoring (#1033) (@IIITManjeet)
-- **PR #1048** (2026-11-25): Write SETRANGE and BITFIELD changes in place on large strings (@Parikalp-Bhardwaj)
-- **PR #1047** (2026-11-25): Search: level rows come in the order their documents were written (@murtazayusuf)
+- **PR #1067** (2026-11-27): Allocate collection group arrays from chunk slabs (@BLVCK-MAMBA-6)
+- **PR #1066** (2026-11-26): Scripts: a script's own nil index message, a number err, and a finalizer's coroutine (#1054) (@lofoneh)
+- **PR #1065** (2026-11-26): Grow SETRANGE from the end using append capacity (@Parikalp-Bhardwaj)
+- **PR #1063** (2026-11-26): List ranges read integer arguments as Redis does (@Seyamalam)
+- **PR #1062** (2026-11-26): HRANDFIELD reads its count as Redis does (@Seyamalam)
+- **PR #1060** (2026-11-26): String ranges read integer arguments as Redis does (@Seyamalam)
 
 ---
 
@@ -2155,80 +2334,31 @@ D8s_v5 run, and the coder's pacing.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. FLAT int8: holds bounded in time, the setting checked before the build, maxmemor
+## X. Regressions: suite 53 recorded with the SETRANGE cases (D4s_v5)
 
 **RULE**:
-When implementing operations in `src/vector/flat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kividbio/kividb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/1.3.0/regressions/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kividbio/kividb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87a9d213`: FLAT int8: holds bounded in time, the setting checked before the build, maxmemory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6d3497e5`: Regressions: suite 53 recorded with the SETRANGE cases (D4s_v5). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/vector/flat.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/1.3.0/regressions/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    declined: AtomicU64,
-    counts: Counts,
-    #[cfg(test)]
-    always: AtomicBool,
-}
-
-#[derive(Debug, Default)]
-#[repr(align(128))]
-struct Counts {
-        if copy.is_some() || self.wants_copy(|| count) {
-    fn switched_on(&self) -> bool {
-        #[cfg(test)]
-        if self.always.load(Relaxed) {
-            return true;
-        }
-    }
-
-    fn wants_copy(&self, count: impl FnOnce() -> usize) -> bool {
-        self.switched_on()
-            && self.declined.load(Relaxed) != flat_int8::times_set() + 1
-            && count() >= flat_int8::BUILD_AT
-        if self.coding.load(Relaxed) || self.coding.swap(true, SeqCst) {
-            if !self.wants_copy(|| usize::MAX) || !self.publish(slots) {
-                self.coding.store(false, SeqCst);
-                return false;
-            }
-            let since = std::time::Instant::now();
-            'words: for (n, w) in (start..words).chain(0..start).enumerate() {
-                if n % 1024 == 1023 && since.elapsed() >= CODING_HOLD {
-                    self.cursor.store(w, Relaxed);
-                    found = true;
-                    break;
-                }
-                    if picked.len() >= RUN
-                        || 
+| `53-large-string-writes` | #1027, #1031, #1016, #1065 | one string of 64 MiB a case (`SETRANGE k 67108863 a`), one connection, one call at a time (2,000 calls a round; v1.2.2, which copies the string on every call: 10), 3 rounds: a `SETBIT` that leaves the bit as it is and a `BITFIELD ... GET u8` (#1027), a `SETBIT` that changes a bit, by turns set and cleared (#1031), `APPEND` of 3 byte
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        if copy.is_some() || self.wants_copy(count) {
-    fn wants_copy(&self, count: usize) -> bool {
-            && count >= flat_int8::BUILD_AT
-        if self.coding.swap(true, SeqCst) {
-            self.publish(slots);
-            'words: for w in (start..words).chain(0..start) {
-                    if picked.len() >= RUN {
-    fn publish(&self, slots: &Slots) {
-            let len = map.keys.len();
-            if len == 0 || bytes.has(len - 1) {
-                for slot in 0..len {
-                    if map.keys[slot].is_some() {
-                        map.mark(slot as u32);
-                    }
-                }
-                let _ = 
+| `53-large-string-writes` | #1027, #1031, #1016, #1065 | one string of 64 MiB a case (`SETRANGE k 67108863 a`), one connection, one call at a time (2,000 calls a round; v1.2.2, which copies the string on every call: 10), 3 rounds: a `SETBIT` that leaves the bit as it is and a `BITFIELD ... GET u8` (#1027), a `SETBIT` that changes a bit, by turns set and cleared (#1031), `APPEND` of 3 bytes and of 1 KiB (#1016), and `SETRANGE` of 3 bytes at the string's end and 1 KiB past it (#1065): the server's own microseconds a call (`INFO commandstats`) and the client's wall time a call, median of the rounds; `bad_replies` and the lengths the appends and `SETRANGE`s end at. Gates in the same session, with fixed margins: every server time at most 0.01x v1.2.2's (100x faster: v1.2.2 takes 30-130 ms a call, the candidate one or two microseconds), every wall time at most 0.05x v1.2.2's and at most 2x Redis's; no gate on the server times against Redis's (both about a microsecond, on a clock of whole microseconds); `bad_replies` exactly 0 and the lengths as recorded. Recorded through `run-all.sh --candidate <default build> --only 53 --record` on a `Standard_D4s_v5` (`results/pr-append-53-record`); t
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87a9d213` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6d3497e5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

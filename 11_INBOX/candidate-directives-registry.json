@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:02:49.896Z",
+  "last_updated": "2026-11-27T05:12:44.196Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68765,6 +68765,59 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F61675-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-XAGP",
+      "directive_title": "inherit text fonts for inline attachments",
+      "source_repo": "react/react-native",
+      "source_commit": "7a2d1d25",
+      "staged_file": "11_INBOX/candidate-directives/CD-XAGP-inherit-text-fonts-for-inline-attachments.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-XGPR",
+      "directive_title": "suite 53 recorded with the SETRANGE cases (D4s_v5)",
+      "source_repo": "kividbio/kividb",
+      "source_commit": "3405fdb6",
+      "staged_file": "11_INBOX/candidate-directives/CD-XGPR-suite-53-recorded-with-the-setrange-cases-d4s_v5.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-Z1OI",
+      "directive_title": "ios): inherit text fonts for inline attachments",
+      "source_repo": "react-react-native-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Z1OI-ios-inherit-text-fonts-for-inline-attachments.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-Z2J7",
+      "directive_title": "Regressions: suite 53 recorded with the SETRANGE cases (D4s_v5)",
+      "source_repo": "kividbio-kividb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Z2J7-regressions-suite-53-recorded-with-the-setrange-cases-d4s_v5.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-00EEE7",
+      "directive_title": "KNN 5 on a FLAT FLOAT32 COSINE index of 100,000 1536-d HASH documents (numpy seed 1020) with #1020's TAG filter, `(@user_id:{user\\-<u>: __shared__ about 10090 matching documents big a second TAG field match",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kividbio-kividb",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-00EEE7-knn-5-on-a-flat-float32-cosine-index-of-.md",
       "staged_date": "2026-11-27"
     }
   ]

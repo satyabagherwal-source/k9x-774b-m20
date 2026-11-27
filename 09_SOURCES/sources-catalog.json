@@ -1170,13 +1170,13 @@
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "repository": "LoyalAI/Underdog-Saluki-27B-1.0",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
     "license": "Open-Source",
-    "contentHash": "eb381602559a03f13a9888bce9ed675d3cf4ec9d5c251fbcc83abfcb246475c5",
-    "lastHarvestedAt": "2026-11-23T19:51:12.477Z",
+    "contentHash": "633bcb4297597cb8d5c2e8a9c62985b423cb348f59ffe6b85facdf165dda6418",
+    "lastHarvestedAt": "2026-11-27T05:11:13.871Z",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0"
   },
   "hf-google-gemma-4-26b-a4b-it": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "9743c098",
+    "sourceVersion": "7a2d1d25",
     "license": "MIT",
-    "contentHash": "38b07462e2b33fa8efa7b2b17f4698e68d508102dec2dd9037019e68d88b84e1",
-    "lastHarvestedAt": "2026-11-26T15:11:47.317Z",
+    "contentHash": "7ed7891d59941198d31c436309ab3f584c7ad28b80e27212c6cba35f2cbcfea3",
+    "lastHarvestedAt": "2026-11-27T05:11:20.905Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {
@@ -13523,10 +13523,10 @@
     "repository": "kividbio/kividb",
     "platform": "github",
     "sourceUrl": "https://github.com/kividbio/kividb",
-    "sourceVersion": "5a9db7f7",
+    "sourceVersion": "3405fdb6",
     "license": "AGPL-3.0",
-    "contentHash": "b0ab3752cb79c1dfc4de6f634f9d88362c514dc097fa35c07fe2a3c72b3ee6ba",
-    "lastHarvestedAt": "2026-11-26T11:15:37.406Z",
+    "contentHash": "9b917fc1e614d45d9d599ddb2a8f5c889c5784d1eb5c60c81bf247195e452be5",
+    "lastHarvestedAt": "2026-11-27T05:11:28.993Z",
     "learningId": "learn-github-kividbio-kividb"
   },
   "yetone-magpie": {

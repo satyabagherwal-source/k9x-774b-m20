@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T05:02:38.973Z",
+  "last_updated": "2026-11-27T05:11:29.007Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15426,14 +15426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-react-native",
-      "content_hash": "38b07462e2b33fa8efa7b2b17f4698e68d508102dec2dd9037019e68d88b84e1",
-      "verified_at": "2026-11-26T15:11:47.345Z",
+      "content_hash": "7ed7891d59941198d31c436309ab3f584c7ad28b80e27212c6cba35f2cbcfea3",
+      "verified_at": "2026-11-27T05:11:20.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T15:11:47.345Z"
+      "last_updated": "2026-11-27T05:11:20.918Z"
     },
     "faker-js/faker": {
       "repository": "faker-js/faker",
@@ -20406,14 +20406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kividbio-kividb",
-      "content_hash": "b0ab3752cb79c1dfc4de6f634f9d88362c514dc097fa35c07fe2a3c72b3ee6ba",
-      "verified_at": "2026-11-26T11:15:37.426Z",
+      "content_hash": "9b917fc1e614d45d9d599ddb2a8f5c889c5784d1eb5c60c81bf247195e452be5",
+      "verified_at": "2026-11-27T05:11:29.006Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T11:15:37.426Z"
+      "last_updated": "2026-11-27T05:11:29.006Z"
     },
     "yetone/magpie": {
       "repository": "yetone/magpie",
@@ -20534,6 +20534,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-27T04:36:47.898Z"
+    },
+    "LoyalAI/Underdog-Saluki-27B-1.0": {
+      "repository": "LoyalAI/Underdog-Saluki-27B-1.0",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "content_hash": "633bcb4297597cb8d5c2e8a9c62985b423cb348f59ffe6b85facdf165dda6418",
+      "verified_at": "2026-11-27T05:11:13.887Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-27T05:11:13.887Z"
     }
   },
   "repos": {

@@ -13710,3 +13710,8 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `e183bb1f` | Multi-dimensional audit evidence | 2026-11-27T04:54:08.161Z |
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-27T05:02:36.491Z |
 | `learn-github-apache-maka` | `https://github.com/apache/maka` | `218225f5` | Multi-dimensional audit evidence | 2026-11-27T05:02:38.960Z |
+| `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-27T05:11:13.871Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `7a2d1d25` | Multi-dimensional audit evidence | 2026-11-27T05:11:20.905Z |
+| `learn-github-kividbio-kividb` | `https://github.com/kividbio/kividb` | `3405fdb6` | Multi-dimensional audit evidence | 2026-11-27T05:11:28.993Z |
+| `learn-dom-d-d749cb6f` | `project://hf-conwayresearch-underdog-saluki-27b-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | 2026-11-27T05:12:02.878Z |
+| `learn-dom-h-b8e42626` | `project://react-react-native` | `7a2d1d25` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-27T05:12:42.247Z |

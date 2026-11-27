@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T04:37:00.907Z",
+  "updated_at": "2026-11-27T05:12:42.748Z",
   "stats": {
-    "total_discovered": 10172,
-    "approved_pending_harvest": 9644,
+    "total_discovered": 10174,
+    "approved_pending_harvest": 9646,
     "harvested_count": 0,
     "rejected_count": 528,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9651,
+      "COMMUNITY_AND_EXPERT": 9653,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -220115,6 +220115,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/geoportapp-geoport-learnings.md",
         "fileName": "geoportapp-geoport-learnings.md"
+      }
+    },
+    "SRC-AFCA7D982D58": {
+      "id": "SRC-AFCA7D982D58",
+      "url": "https://github.com/mym0404/react-native-ios-inline-view-font-repro/blob/main/evidence/RNTESTER.md",
+      "title": "https://github.com/mym0404/react-native-ios-inline-view-font-repro/blob/main/evidence/RNTESTER.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T05:12:42.641Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-BAC1C5F0C7E9": {
+      "id": "SRC-BAC1C5F0C7E9",
+      "url": "https://raw.githubusercontent.com/mym0404/react-native-ios-inline-view-font-repro/b92fc0eae30293c60dd2b45df8742bea4154d28b/evidence/rntester-before.png",
+      "title": "https://raw.githubusercontent.com/mym0404/react-native-ios-inline-view-font-repro/b92fc0eae30293c60dd2b45df8742bea4154d28b/evidence/rntester-before.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T05:12:42.748Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
       }
     }
   }

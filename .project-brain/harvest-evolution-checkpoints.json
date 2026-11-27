@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T05:02:50.498Z",
+  "last_updated": "2026-11-27T05:12:44.879Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T04:45:33.796Z",
@@ -2733,8 +2733,8 @@
       "staged_for_review": 0
     },
     "hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md": {
-      "processed_at": "2026-11-23T19:51:27.227Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-27T05:12:02.879Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md": {
@@ -3253,7 +3253,7 @@
       "staged_for_review": 1
     },
     "react-react-native-learnings.md": {
-      "processed_at": "2026-11-26T15:12:39.576Z",
+      "processed_at": "2026-11-27T05:12:42.247Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -3963,9 +3963,9 @@
       "staged_for_review": 0
     },
     "kividbio-kividb-learnings.md": {
-      "processed_at": "2026-11-26T11:15:54.582Z",
+      "processed_at": "2026-11-27T05:12:43.808Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 2
     },
     "yetone-magpie-learnings.md": {
       "processed_at": "2026-11-26T12:59:38.324Z",
@@ -4023,7 +4023,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4821,
-  "total_canonical_promoted": 572,
-  "total_staged_for_review": 3610
+  "total_dossiers_evaluated": 4824,
+  "total_canonical_promoted": 574,
+  "total_staged_for_review": 3612
 }

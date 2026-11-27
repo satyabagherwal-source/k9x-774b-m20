@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T15:12:40.336Z",
+  "timestamp": "2026-11-27T05:12:42.928Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-react-react-native-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [react-react-native-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T15:12:40.336Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T05:12:42.928Z`  
 > **Learning ID**: `LEARN-EVO-react-react-native-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 84%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from react-react-native-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source**: github ([https://github.com/react/react-native](https://github.com/react/react-native))  
-> **Source Version**: `9743c098`  
+> **Source Version**: `7a2d1d25`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T15:11:45.730Z  
+> **Timestamp**: 2026-11-27T05:11:19.645Z  
 > **Learning ID**: `learn-github-react-react-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T15:11:45.722Z  
+> **Harvest Timestamp**: 2026-11-27T05:11:19.640Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 127009 stars
+- **Stars / Engagement**: 127011 stars
 
 ---
 
@@ -650,546 +650,248 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ea73699` (2026-11-25)
-**Commit Message**: [iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemented fallbacks
+### Incident Patch 1: `562e397f` (2026-11-26)
+**Commit Message**: fix(ios): inherit text fonts for inline attachments
 
 ## Summary:
 
-`-[RCTComponentViewFactory _registerComponentIfPossible:]` runs on the JS thread, from the `ComponentDescriptorProviderRegistry` request callback. Its legacy-interop fallback and its `UnimplementedView` fallback write `_componentViewClasses` and `_registrationStatusMap` **without taking `_mutex`**. Its early `_registrationStatusMap.find` and `-_wasComponentRegistered:` also read without the lock.
+iOS Fabric inline `<View>` attachments omit the enclosing `<Text>` font. Apply that font to the attachment. The RNTester example covers font inheritance, line heights, wrapping, and Dynamic Type.
 
-On the main thread, `-createComponentViewWithComponentHandle:` takes only `std::shared_lock lock(_mutex)` before it calls `_componentViewClasses.find(handle)`. So an unlocked insert, particularly one that rehashes the map, can make that lookup miss a handle registered long ago. In practice the missed handle is often the built-in `Paragraph`:
+Rebased onto `main` at `2fed45cd`. Baseline positioning uses main's TextKit implementation from #59921; the superseded manual baseline-offset adjustment has been removed.
 
-- Debug builds abort with `RCTAssert: ComponentView with componentHandle … (Paragraph) not found.`
-- Release builds compile the assert out and dereference the end iterator. #58299 reports a production SIGSEGV at fault address `0x18`.
+The reproduction is included in RNTester under **Text > Inline view baseline alignment**, with ten samples, numeric alignment differences, and Dynamic Type. Direct link: `rntester://example/TextExample/inline-view-baseline`.
 
-Any app that renders a component through the legacy interop layer is exposed: a library without Fabric codegen,
+Earlier source-build comparison: `main@502f112f` and `PR@d969690b`. The screenshots and measurements below are from those revisions.
 
-**File**: `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm` (modified, +21/-7)
+[RNTester source-build results, commands, and measurements](https://github.com/mym0404/react-native-ios-inline-view-font-repro/blob/main/evidence/RNTESTER.md)
+
+| Before | After |
+| --- | --- |
+| ![RNTester before, default text size](https://raw.githubusercontent.com/mym0404/react-native-ios-inline-view-font-repro/b92fc0eae30293c60dd2b45df8742bea4154d28b/evidence/rntester-before.png) | ![RNTester after,
+
+**File**: `packages/react-native/ReactCommon/react/renderer/textlayoutmanager/platform/ios/react/renderer/textlayoutmanager/RCTAttributedTextUtils.mm` (modified, +4/-0)
 ```diff
-@@ -131,14 +131,18 @@ - (RCTComponentViewClassDescriptor)_componentViewClassDescriptorFromClass:(Class
+@@ -421,6 +421,10 @@ void RCTApplyBaselineOffset(NSMutableAttributedString *attributedText)
  
- - (BOOL)_wasComponentRegistered:(const std::string &)name
- {
-+  std::shared_lock lock(_mutex);
-   auto registrationResult = _registrationStatusMap.find(name);
-   return registrationResult != _registrationStatusMap.end() && (registrationResult->second);
- }
+     string = [NSString stringWithFormat:@"%C", (unichar)NSAttachmentCharacter];
+     attributes = [NSMutableDictionary dictionaryWithObject:attachment forKey:NSAttachmentAttributeName];
++    UIFont *font = RCTEffectiveFontFromTextAttributes(fragment.textAttributes);
++    if (font) {
++      attributes[NSFontAttributeName] = font;
++    }
+   } else {
+     NSString *decoded = [[NSString alloc] initWithBytes:fragment.string.data()
+                                                  length:fragment.string.size()
+```
+
+**File**: `packages/rn-tester/js/examples/Text/TextExample.ios.js` (modified, +6/-0)
+```diff
+@@ -15,6 +15,7 @@ import type {RNTesterModule} from '../../types/RNTesterTypes';
+ import hotdog from '../../assets/hotdog.jpg';
+ import RNTesterText from '../../components/RNTesterText';
+ import TextLegend from '../../components/TextLegend';
++import {TextInlineViewBaselineExample} from './TextInlineViewBaselineExample';
+ import TextSharedExamples from './TextSharedExamples';
+ import TextWidthModeExample from './TextWidthModeExample';
  
- - (void)_registerComponentIfPossible:(const std::string &)name
- {
--  if (_registrationStatusMap.find(name) != _registrationStatusMap.end()) {
--    return;
+@@ -1354,6 +1355,11 @@ const examples = [
+     title: 'Inline views',
+     render: (): React.Node => <TextInlineView.Basic />,
+   },
 +  {
-+    std::shared_lock lock(_mutex);
-+    if (_registrationStatusMap.find(name) != _registrationStatusMap.end()) {
-+      return;
-+    }
-   }
- 
-   // Fallback 1: Call provider function for component view class.
-@@ -177,10 +181,17 @@ - (void)_registerComponentIfPossible:(const std::string &)name
-     auto provider = ComponentDescriptorProvider{
-         .handle = componentHandle, .name = componentName, .flavor = flavor, .constructor = constructor};
- 
-+    // Only the map writes take the lock: building a legacy interop descriptor can wait on the
-+    // main queue (a view manager that requires main queue setup), which may itself be waiting
-+    // for this lock in -createComponentViewWithComponentHandle:.
-     _providerRegistry.add(provider);
--    _componentViewClasses[componentHandle] =
-+    auto classDescriptor =
-         [self _componentViewClassDescriptorFromClass:[RCTLegacyViewManagerInteropComponentView class]];
--    _registrationStatusMap.insert({provider.name, true});
-+    {
-+      std::unique_lock lock(_mutex);
-+      _componentViewClasses[componentHandle] = classDescriptor;
-+      _registrationStatusMap.insert({provider.name, true});
-+    }
-     return;
-   }
- #endif // RCT_REMOVE_LEGACY_COMPONENT_INTEROP
-@@ -194,9 +205,12 @@ - (void)_registerComponentIfPossible:(const std::string &)name
-       .handle = componentHandle, .name = componentName, .flavor = flavor, .constructor = constructor};
- 
-   _providerRegistry.add(provider);
--  _componentViewClasses[componentHandle] =
--      [self _componentViewClassDescriptorFromClass:[RCTUnimplementedViewComponentView class]];
--  _registrationStatusMap.insert({provider.name, false});
-+  auto classDescriptor = [self _componentViewClassDescriptorFromClass:[RCTUnimplementedViewComponentView class]];
-+  {
-+    std::unique_lock lock(_mutex);
-+    _componentViewClasses[componentHandle] = classDescriptor;
-+    _registrationStatusMap.insert({provider.name, false});
-+  }
- }
- 
- - (void)registerComponentViewClass:(Class<RCTComponentViewProtocol>)componentViewClass
++    title: 'Inline view baseline alignment',
++    name: 'inline-view-baseline',
++    render: (): React.Node => <TextInlineViewBaselineExample />,
++  },
+   {
+     title: 'Inline views with line height',
+     name: 'inlineViewsLineHeight',
 ```
 
----
-
-### Incident Patch 2: `9d6a2497` (2026-11-25)
-**Commit Message**: Report padding box from scroll view getClipBounds when overflow is not visible
-
-Summary:
-**Problem:** Systems that read a view's clip region through `View.getClipBounds` see React Native scroll views as unclipped. `ReactViewGroup` already reports its padding box there when overflow is not visible, behind the `syncAndroidClipBoundsWithOverflow` feature flag. The scroll views always return the default.
-
-**Fix:** Add the same two `getClipBounds` overrides to `ReactScrollView` and `ReactHorizontalScrollView`, and regenerate `ReactNestedScrollView` from `ReactScrollView`. The returned rect is the unscrolled padding box, because scrolling translates only the children.
-
-**Risk:** Only effective when `syncAndroidClipBoundsWithOverflow` is on (default off). With the flag on, every scroll view with non-visible overflow (the JS `ScrollView` default) reports a clip. Nothing inside React Native reads `getClipBounds`, so drawing does not change.
-
-**Review focus:** Confirm that the unscrolled padding box is the right coordinate space for clip-bounds consumers.
-
-Changelog: [Internal]
-
-Reviewed By: christophpurrer
-
-Differential Revision: D134353417
-
-Pull Request resolved: https://github.com/react/r
-
-**File**: `packages/react-native/ReactAndroid/api/ReactAndroid.api` (modified, +4/-0)
+**File**: `packages/rn-tester/js/examples/Text/TextInlineViewBaselineExample.js` (added, +197/-0)
 ```diff
-@@ -5504,6 +5504,8 @@ public class com/facebook/react/views/scroll/ReactHorizontalScrollView : android
- 	public fun fling (I)V
- 	public fun focusSearch (Landroid/view/View;I)Landroid/view/View;
- 	public fun getChildVisibleRect (Landroid/view/View;Landroid/graphics/Rect;Landroid/graphics/Point;)Z
-+	public fun getClipBounds ()Landroid/graphics/Rect;
-+	public fun getClipBounds (Landroid/graphics/Rect;)Z
- 	public fun getClippingRect (Landroid/graphics/Rect;)V
- 	public fun getFadingEdgeLengthEnd ()I
- 	public fun getFadingEdgeLengthStart ()I
-@@ -5654,6 +5656,8 @@ public class com/facebook/react/views/scroll/ReactScrollView : android/widget/Sc
- 	public fun focusSearch (Landroid/view/View;I)Landroid/view/View;
- 	protected fun getBottomFadingEdgeStrength ()F
- 	public fun getChildVisibleRect (Landroid/view/View;Landroid/graphics/Rect;Landroid/graphics/Point;)Z
-+	public fun getClipBounds ()Landroid/graphics/Rect;
-+	public fun getClipBounds (Landroid/graphics/Rect;)Z
- 	public fun getClippingRect (Landroid/graphics/Rect;)V
- 	public fun getFadingEdgeLengthEnd ()I
- 	public fun getFadingEdgeLengthStart ()I
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactHorizontalScrollView.kt` (modified, +27/-0)
-```diff
-@@ -458,6 +458,33 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
-     super.onDraw(canvas)
-   }
- 
-+  /**
-+   * Returns the padding box when overflow is not visible, so that systems querying
-+   * [View.getClipBounds] can determine this view's clipping region. The rect is not offset by the
-+   * scroll position: scrolling only translates children, not this view's own clip.
-+   */
-+  override fun getClipBounds(): Rect? {
-+    if (
-+        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
-+    ) {
-+      val rect = Rect()
-+      BackgroundStyleApplicator.getPaddingBoxRect(this, rect)
-+      return rect
-+    }
-+    return super.getClipBounds()
-+  }
-+
-+  /** See [getClipBounds]. */
-+  override fun getClipBounds(outRect: Rect): Boolean {
-+    if (
-+        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
-+    ) {
-+      BackgroundStyleApplicator.getPaddingBoxRect(this, outRect)
-+      return true
-+    }
-+    return super.getClipBounds(outRect)
-+  }
-+
-   override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-     MeasureSpecAssertions.assertExplicitMeasureSpec(widthMeasureSpec, heightMeasureSpec)
- 
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactNestedScrollView.kt` (modified, +28/-1)
-```diff
-@@ -4,7 +4,7 @@
-  * This source code is licensed under the MIT license found in the
-  * LICENSE file in the root directory of this source tree.
-  *
-- * @generated SignedSource<<2d0623d35595eba002baeb40062c5ed3>>
-+ * @generated SignedSource<<557812f5b7859a968d77969161d79133>>
-  */
- 
- /**
-@@ -801,6 +801,33 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
-     super.onDraw(canvas)
-   }
- 
-+  /**
-+   * Returns the padding box when overflow is not visible, so that systems querying
-+   * [View.getClipBounds] can determine this view's clipping region. The rect is not offset by the
-+   * scroll position: scrolling only translates children, not this view's own clip.
-+   */
-+  override fun getClipBounds(): Rect? {
-+    if (
-+        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
-+    ) {
-+      val rect = Rect()
-+      BackgroundStyleApplicator.getPaddingBoxRect(this, rect)
-+      return rect
-+    }
-+    return super.getClipBounds()
-+  }
-+
-+  /** See [getClipBounds]. */
-+  override fun getClipBounds(outRect: Rect): Boolean {
-+    if (
-+        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
-+    ) {
-+      BackgroundStyleApplicator.getPaddingBoxRect(this, outRect)
-+      return true
-+    }
-+    return super.getClipBounds(outRect)
-+  }
-+
-   /**
-    * This handles any sort of scrolling that may occur after a touch is finished. This may be
-    * momentum scrolling (fling) or because you have pagingEnabled on the scroll view. Because we
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/scroll/ReactScrollView.kt` (modified, +27/-0)
-```diff
-@@ -793,6 +793,33 @@ constructor(context: Context, private val fpsListener: FpsListener? = null) :
-     super.onDraw(canvas)
-   }
- 
-+  /**
-+   * Returns the padding box when overflow is not visible, so that systems querying
-+   * [View.getClipBounds] can determine this view's clipping region. The rect is not offset by the
-+   * scroll position: scrolling only translates children, not this view's own clip.
-+   */
-+  override fun getClipBounds(): Rect? {
-+    if (
-+        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
-+    ) {
-+      val rect = Rect()
-+      BackgroundStyleApplicator.getPaddingBoxRect(this, rect)
-+      return rect
-+    }
-+    return super.getClipBounds()
-+  }
-+
-+  /** See [getClipBounds]. */
-+  override fun getClipBounds(outRect: Rect): Boolean {
-+    if (
-+        ReactNativeFeatureFlags.syncAndroidClipBoundsWithOverflow() && _overflow != Overflow.VISIBLE
-+    ) {
-+      BackgroundStyleApplicator.getPaddingBoxRect(this, outRect)
-+      return true
-+    }
-+    return super.getClipBounds(outRect)
-+  }
-+
-   /**
-    * This handles any sort of scrolling that may occur after a touch is finished. This may be
-    * momentum scrolling (fling) or because you have pagingEnabled on the scroll view. Because we
-```
-
-**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/views/scroll/ReactScrollViewClipBoundsTest.kt` (added, +145/-0)
-```diff
-@@ -0,0 +1,145 @@
-+/*
+@@ -0,0 +1,197 @@
++/**
 + * Copyright (c) Meta Platforms, Inc. and affiliates.
 + *
 + * This source code is licensed under the MIT license found in the
 + * LICENSE file in the root directory of this source tree.
++ *
++ * @flow strict-local
++ * @format
 + */
 +
-+package com.facebook.react.views.scroll
++import type {TextStyle} from 'react-native';
 +
-+import android.graphics.Rect
-+import android.os.Build
-+import android.util.DisplayMetrics
-+import android.view.View
-+import android.view.ViewGroup
-+import androidx.annotation.RequiresApi
-+import com.facebook.react.bridge.ReactTestHelper.createTestReactApplicationContext
-+import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags
-+import com.facebook.react.internal.featureflags.ReactNativeFeatureFlagsDefaults
-+import com.facebook.react.internal.featureflags.ReactNativeFeatureFlagsForTests
-+import com.facebook.react.uimanager.BackgroundStyleApplicator
-+import com.facebook.react.uimanager.DisplayMetricsHolder
-+import com.facebook.react.uimanager.ThemedReactContext
-+import com.facebook.react.uimanager.UIManagerHelper
-+import com.facebook.react.uimanager.events.EventDispatcher
-+import com.facebook.react.uimanager.style.LogicalEdge
-+import com.facebook.testutils.shadows.ShadowSoLoader
-+import org.assertj.core.api.Assertions.assertThat
-+import org.junit.After
-+import org.junit.Before
-+import org.junit.Test
-+import org.junit.runner.RunWith
-+import org.mockito.MockedStatic
-+import org.mockito.Mockito.mockStatic
-+import org.mockito.kotlin.any
-+import org.mockito.kotlin.mock
-+import org.robolectric.RobolectricTestRunner
-+import org.robolectric.annotation.Config
++import RNTesterText from '../../components/RNTesterText';
++import * as React from 'react';
++import {
++  ScrollView,
++  StyleSheet,
++  Text,
++  View,
++  useWindowDimensions,
++} from 'react-native';
 +
-+/** Verifies that scroll views report their padding box from [View.getClipBounds]. */
-+@RunWith(RobolectricTestRunner::class)
-+@Config(shadows = [ShadowSoLoader::class])
-+@RequiresApi(Build.VERSION_CODES.M)
-+class ReactScrollViewClipBoundsTest {
++const INLINE_SIZE = 18;
++const DEFAULT_FONT_SIZE = 20;
++const MEDIUM_FONT_SIZE = 24;
++const LARGE_FONT_SIZE = 32;
++const TALL_LINE_HEIGHT = 48;
++const FONT_FAMILY = 'Helvetica';
++const SERIF_FONT_FAMILY = 'TimesNewRomanPSMT';
++const SPACING = 8;
++const DISPLAY_DECIMAL_PLACES = 3;
 +
-+  private lateinit var context: ThemedReactContext
-+  private lateinit var uiManagerHelperMock: MockedStatic<UIManagerHelper>
++type Sample = Readonly<{
++  name: string,
++  textStyle: TextStyle,
++  height?: number,
++  isNested?: boolean,
++  isWrapped?: boolean,
++  isScaled?: boolean,
++}>;
 +
-+  @Before
-+  fun setUp() {
-+    ReactNativeFeatureFlagsForTests.setUp()
-+    val reactContext = createTestReactApplicationContext()
-+    context = ThemedReactContext(reactContext, reactContext, null, -1)
-+    DisplayMetricsHolder.setScreenDisplayMetrics(DisplayMetrics().apply { density = 1f })
-+    uiManagerHelperMock = mockStatic(UIManagerHelper::class.java)
-+    uiManagerHelperMock
-+        .`when`<EventDispatcher?> { UIManagerHelper.getEventDispatcher(any()) }
-+        .thenReturn(mock())
-+  }
++const SAMPLES: Sample[] = [
++  {
++    name: 'Helvetica 12 (control)',
++    textStyle: {fontFamily: FONT_FAMILY, fontSize: 12},
++  },
++  {name: 'System 20', textStyle: {fontSize: DEFAULT_FONT_SIZE}},
++  {
++    name: 'Helvetica 32',
++    textStyle: {fontFamily: FONT_FAMILY, fontSize: LARGE_FONT_SIZE},
++  },
++  {
++    name: 'Times New Roman 32',
++    textStyle: {fontFamily: SERIF_FONT_FAMILY, fontSize: LARGE_FONT_SIZE},
++  },
++  {
++    name: 'Courier bold 24',
++    textStyle: {
++      fontFamily: 'Courier',
++      fontSize: MEDIUM_FONT_SIZE,
++      fontWeight: 'bold',
++    },
++  },
++  {
++    name: 'Helvetica 32 / lineHeight 48',
++    textStyle: {
++      fontFamily: FONT_FAMILY,
++      fontSize: LARGE_FONT_SIZE,
++      lineHeight: TALL_LINE_HEIGHT,
++    },
++  },
++  {
++    name: 'Nested Times New Roman 32',
++    textStyle: {fontFamily: SERIF_FONT_FAMILY, fontSize: LARGE_FONT_SIZE},
++    isNested: true,
++  },
++  {
++    name: 'Tall View / Helvetica 20',
++    textStyle: {fontFamily: FONT_FAMILY, fontSize: DEFAULT_FONT_SIZE},
++    height: TALL_LINE_HEIGHT,
++  },
++  {
++    name: 'Wrapped / Helvetica 24',
++    textStyle: {fontFamily: FONT_FAMILY, fontSize: MEDIUM_FONT_SIZE},
++    isWrapped: true,
++  },
++  {
++    name: 'Scaled / Helvetica 20',
++    textStyle: {fontFamily: FONT_FAMILY, fontSize: DEFAULT_FONT_SIZE},
++    isScaled: true,
++  },
++];
 +
-+  @After
-+  fun tearDown() {
-+    uiManagerHelperMock.close()
-+    ReactNativeFeatureFlags.dangerouslyReset()
-+    DisplayMetricsHolder.setScreenDisplayMetrics(null)
-+  }
++function InlineViewBaselineSample({
++  name,
++  textStyle,
++  height = INLINE_SIZE,
++  isNested = false,
++  isWrapped = false,
++  isScaled = false,
++}: Sample): React.Node {
++  const [baseline, setBaseline] = React.useState<?number>();
++  const [bottom, setBottom] = React.useState<?number>();
++  const inlineRef = React.useRef<React.ElementRef<typeof View> | null>(null);
 +
-+  private fun enableClipBoundsSync(enabled: Boolean) {
-+    ReactNativeFeatureFlags.dangerouslyReset()
-+    ReactNativeFeatureFlags.override(
-+        object : ReactNativeFeatureFlagsDefaults() {
-+          override fun syncAndroidClipBoundsWithOverflow(): Boolean = enabled
-+        },
-+    )
-+  }
++  React.useEffect(() => {
++    inlineRef.current?.measure((x, y, width, measuredHeight) => {
++      setBottom(measuredHeight > 0 ? y + measuredHeight : undefined);
++    });
++  }, [baseline]);
 +
-+  private fun scrollViews(): List<Pair<ViewGroup, (String?) -> Unit>> {
-+    val vertical = ReactScrollView(context)
-+    val horizontal = ReactHorizontalScrollView(context)
-+    val nested = ReactNestedScrollView(context)
-+    return listOf(
-+        vertical to vertical::setOverflow,
-+        horizontal to horizontal::setOverflow,
-+        nested to nested::setOverflow,
-+    )
-+  }
++  const content = (
++    <>
++      {'Hg '}
++      <View ref={inlineRef} testID={name} style={[styles.inline, {height}]} />
++      {' Hg'}
++    </>
++  );
 +
-+  private fun layoutScrolled(view: ViewGroup) {
-+    val content = View(context)
-+    view.addView(content)
-+    content.layout(0, 0, 1000, 1000)
-+    view.layout(0, 0, 100, 50)
-+    view.scrollTo(30, 40)
-+  }
-+
-+  @Test
-+  fun returnsUnscrolledPaddingBoxWhenOverflowHidden() {
-+    enableClipBoundsSync(true)
-+    scrollViews().forEach { (view, setOverflow) ->
-+      setOverflow("hidden")
-+      layoutScrolled(view)
-+      assertThat(view.scrollX + view.scrollY).isGreaterThan(0)
-+
-+      assertThat(view.clipBounds).isEqualTo(Rect(0, 0, 100, 50))
-+      val outRect = Rect()
-+      assertThat(view.getClipBounds(outRect)).isTrue()
-+      assertThat(outRect).isEqualTo(Rect(0, 0, 100, 50))
-+    }
-+  }
-+
-+  @Test
-+  fun excludesBordersFromPaddingBox() {
-+    enableClipBoundsSync(true)
-+    scrollViews().forEach { (view, setOverflow) ->
-+      setOverflow("scroll")
-+      BackgroundStyleApplicator.setBorderWidth(view, LogicalEdge.ALL, 5f)
-+      layoutScrolled(view)
-+
-+      assertThat(view.clipBounds).isEqualTo(Rect(5, 5, 95, 45))
-+    }
-+  }
-+
-+  @Test
-+  fun fallsBackToSuperWhenOverflowVisible() {
-+    enableClipBoundsSync(true)
-+    scrollViews().forEach { (view, setOverflow) ->
-+      setOverflow("visible")
-+      layoutScrolled(view)
-+
-+      assertThat(view.clipBounds).isNull()
-+      assertThat(view.getClipBounds(Rect())).isFalse()
-+    }
-+  }
-+
-+  @Test
-+  fun fallsBackToSuperWhenFlagDisabled() {
-+    enableClipBoundsSync(false)
-+    scrollViews().forEach { (view, setOverflow) ->
-+      setOverflow("hidden")
-+      layoutScrolled(view)
-+
-+      assertThat(view.clipBounds).isNull()
-+      assertThat(view.getClipBounds(Rect())).isFalse()
-+    }
-+  }
++  return (
++    <View style={styles.sample}>
++      <RNTesterText allowFontScaling={false} variant="label">
++        {name}
++      </RNTesterText>
++      <View style={styles.paragraph}>
++        <Text
++          allowFontScaling={isScaled}
++          style={[styles.text, isNested ? styles.nestedParent : textStyle]}
++          onTextLayout={event => {
++            const line = event.nativeEvent.lines[isWrapped ? 1 : 0];
++            if (line != null) {
++              setBaseline(line.y + line.ascender);
++            }
++          }}>
++          {isWrapped ? 'First line\n' : ''}
++          {isNested ? <Text style={textStyle}>{content}</Text> : content}
++        </Text>
++        {baseline != null ? (
++          <View
++            pointerEvents="none"
++            style={[styles.baseline, {top: baseline}]}
++          />
++        ) : null}
++      </View>
++      <RNTesterText
++        allowFontScaling={false}
++        testID={`${name}-metrics`}
++        style={styles.metrics}>
++        {baseline == null
++          ? 'Measuring...'
++          : bottom == null
++            ? 'View measurement unavailable'
++            : `baseline ${baseline.toFixed(DISPLAY_DECIMAL_PLACES)} | bottom ${bottom.toFixed(DISPLAY_DECIMAL_PLACES)} | error ${(bottom - baseline).toFixed(DISPLAY_DECIMAL_PLACES)} pt`}
++      </RNTesterText>
++    </View>
++  );
 +}
-```
-
----
-
-### Incident Patch 3: `0c688a79` (2026-11-25)
-**Commit Message**: Detect cyclic values in dynamicFromValue in debug builds
-
-Summary:
-A cyclic JavaScript value can leave prop conversion stuck while memory grows. Native debug builds now detect the cycle and throw a `JSError`, returning control to JavaScript instead of hanging. Release-build conversion is unchanged.
-
-**How the hang happens**
-1. Fabric converts a component's raw props through `RawProps::toDynamic` and `jsi::dynamicFromValue`.
-2. The converter walks objects with an explicit stack. A cycle keeps expanding the same path instead of finishing.
-3. The call never returns, so the JavaScript thread remains stuck while the partial output and pending handles grow.
-
-**What changes**
-When `NDEBUG` is not defined, the converter uses Brent's algorithm to detect cycles without a visited set. Cyclic values throw, while acyclic values—including objects shared across paths—continue to convert normally.
-
-When `NDEBUG` is defined, all cycle-detection code is excluded: depth fields and arguments, ancestor storage, comparisons and updates. The release converter retains its original code and behavior, including the existing hang on cyclic values. This is a native-build guard, not the JavaScript `__DEV__` fl
-
-**File**: `packages/react-native/ReactCommon/jsi/jsi/JSIDynamic.cpp` (modified, +56/-0)
-```diff
-@@ -125,11 +125,19 @@ Value valueFromDynamic(Runtime& runtime, const folly::dynamic& dynInput) {
- namespace {
- 
- struct FromValue {
-+#ifndef NDEBUG
-+  FromValue(folly::dynamic* dynArg, Object objArg, size_t depthArg)
-+      : dyn(dynArg), obj(std::move(objArg)), depth(depthArg) {}
-+#else
-   FromValue(folly::dynamic* dynArg, Object objArg)
-       : dyn(dynArg), obj(std::move(objArg)) {}
-+#endif
- 
-   folly::dynamic* dyn;
-   Object obj;
-+#ifndef NDEBUG
-+  size_t depth;
-+#endif
- };
- 
- // This converts one element.  If it's a collection, it gets pushed
-@@ -140,7 +148,12 @@ void dynamicFromValueShallow(
-     Runtime& runtime,
-     std::vector<FromValue>& stack,
-     const jsi::Value& value,
-+#ifndef NDEBUG
-+    folly::dynamic& output,
-+    size_t depth) {
-+#else
-     folly::dynamic& output) {
-+#endif
-   if (value.isUndefined() || value.isNull()) {
-     output = nullptr;
-   } else if (value.isBool()) {
-@@ -158,7 +171,11 @@ void dynamicFromValueShallow(
-     } else {
-       output = folly::dynamic::object();
-     }
-+#ifndef NDEBUG
-+    stack.emplace_back(&output, std::move(obj), depth);
-+#else
-     stack.emplace_back(&output, std::move(obj));
-+#endif
-   } else if (value.isBigInt()) {
-     throw JSError(runtime, "JS BigInts are not convertible to dynamic");
-   } else if (value.isSymbol()) {
-@@ -175,14 +192,33 @@ folly::dynamic dynamicFromValue(
-     const Value& valueInput,
-     const std::function<bool(const std::string&)>& filterObjectKeys) {
-   std::vector<FromValue> stack;
-+#ifndef NDEBUG
-+  std::vector<FromValue> ancestors;
-+#endif
-   folly::dynamic ret;
- 
-+#ifndef NDEBUG
-+  dynamicFromValueShallow(runtime, stack, valueInput, ret, 0);
-+#else
-   dynamicFromValueShallow(runtime, stack, valueInput, ret);
-+#endif
- 
-   while (!stack.empty()) {
-     auto top = std::move(stack.back());
-     stack.pop_back();
- 
-+#ifndef NDEBUG
-+    // Detect cycles with Brent's algorithm: compare each object with its
-+    // nearest ancestor saved at depth 0, 1, 2, 4, 8, ...
-+    while (!ancestors.empty() && ancestors.back().depth >= top.depth) {
-+      ancestors.pop_back();
-+    }
-+    if (!ancestors.empty() &&
-+        Object::strictEquals(runtime, ancestors.back().obj, top.obj)) {
-+      throw JSError(runtime, "Cyclic JS values are not convertible to dynamic");
-+    }
-+#endif
 +
-     if (top.obj.isArray(runtime)) {
-       // Inserting into a dyn can invalidate references into it, so we
-       // need to insert new elements up front, then push stuff onto
-@@ -194,8 +230,17 @@ folly::dynamic dynamicFromValue(
-         top.dyn->push_back(nullptr);
-       }
-       for (size_t i = 0; i < arraySize; ++i) {
-+#ifndef NDEBUG
-+        dynamicFromValueShallow(
-+            runtime,
-+            stack,
-+            array.getValueAtIndex(runtime, i),
-+            top.dyn->at(i),
-+            top.depth + 1);
-+#else
-         dynamicFromValueShallow(
-             runtime, stack, array.getValueAtIndex(runtime, i), top.dyn->at(i));
-+#endif
-       }
-     } else {
-       Array names = top.obj.getPropertyNames(runtime);
-@@ -220,10 +265,21 @@ folly::dynamic dynamicFromValue(
-         top.dyn->insert(props.back().first, nullptr);
-       }
-       for (const auto& prop : props) {
-+#ifndef NDEBUG
-+        dynamicFromValueShallow(
-+            runtime, stack, prop.second, (*top.dyn)[prop.first], top.depth + 1);
-+#else
-         dynamicFromValueShallow(
-             runtime, stack, prop.second, (*top.dyn)[prop.first]);
-+#endif
-       }
-     }
++export function TextInlineViewBaselineExample(): React.Node {
++  const {scale, fontScale} = useWindowDimensions();
 +
-+#ifndef NDEBUG
-+    if ((top.depth & (top.depth - 1)) == 0) {
-+      ancestors.push_back(std::move(top));
-+    }
-+#endif
-   }
- 
-   return ret;
++  return (
++    <ScrollView
++      contentContainerStyle={styles.example}
++      contentInsetAdjustmentBehavior="automatic"
++      testID="inline-view-baseline-example">
++      <RNTesterText allowFontScaling={false} variant="label">
++        Each blue View should end at the red text baseline. Allow one physical
++        pixel for rounding. Enlarge the system text size to check the scaled
++        sample.
++      </RNTesterText>
++      <RNTesterText allowFontScaling={false} style={styles.me
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #60321** (2026-11-26): Avoid Meta import labels from canceled triage runs (@cortinico)
+- **PR #60320** (2026-11-26): Document OkHttp 3 source compatibility in AGENTS.md (@cipolleschi)
 - **PR #60318** (2026-11-26): Revert "Fix stale packager connections on Android" (@cipolleschi)
 - **PR #60317** (closed): Keep dev-server host validation compatible across OkHttp versions (@cipolleschi)
 - **PR #60314** (2026-11-26): Clarify Fantom test mode selection (@rubennorte)
 - **PR #60313** (2026-11-26): Fix Meta import risk PR labeling permissions (@cortinico)
-- **PR #60308** (2026-11-26): Speed up disconnecting the final `ResizeObserver` (@rubennorte)
-- **PR #60297** (2026-11-25): Detect cyclic values in dynamicFromValue in debug builds (@dalves)
 
 ---
 
@@ -1209,57 +911,34 @@ When `NDEBUG` is defined, all cycle-detection code is excluded: depth fields and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemen
+## X. ios): inherit text fonts for inline attachments
 
 **RULE**:
-When implementing operations in `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native/ReactCommon/react/renderer/textlayoutmanager/platform/ios/react/renderer/textlayoutmanager/RCTAttributedTextUtils.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ea73699`: [iOS][Fabric] Fix data race in RCTComponentViewFactory legacy-interop/Unimplemented fallbacks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `562e397f`: ios): inherit text fonts for inline attachments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/React/Fabric/Mounting/RCTComponentViewFactory.mm`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactCommon/react/renderer/textlayoutmanager/platform/ios/react/renderer/textlayoutmanager/RCTAttributedTextUtils.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  std::shared_lock lock(_mutex);
-  {
-    std::shared_lock lock(_mutex);
-    if (_registrationStatusMap.find(name) != _registrationStatusMap.end()) {
-      return;
+    UIFont *font = RCTEffectiveFontFromTextAttributes(fragment.textAttributes);
+    if (font) {
+      attributes[NSFontAttributeName] = font;
     }
-    // Only the map writes take the lock: building a legacy interop descriptor can wait on the
-    // main queue (a view manager that requires main queue setup), which may itself be waiting
-    // for this lock in -createComponentViewWithComponentHandle:.
-    auto classDescriptor =
-    {
-      std::unique_lock lock(_mutex);
-      _componentViewClasses[componentHandle] = classDescriptor;
-      _registrationStatusMap.insert({provider.name, true});
-    }
-  auto classDescriptor = [self _componentViewClassDescriptorFromClass:[RCTUnimplementedViewComponentView class]];
-  {
-    std::unique_lock lock(_mutex);
-    _componentViewClasses[componentHandle] = classDescriptor;
-    _registrationStatusMap.insert({provider.name, false});
-  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  if (_registrationStatusMap.find(name) != _registrationStatusMap.end()) {
-    return;
-    _componentViewClasses[componentHandle] =
-    _registrationStatusMap.insert({provider.name, true});
-  _componentViewClasses[componentHandle] =
-      [self _componentViewClassDescriptorFromClass:[RCTUnimplementedViewComponentView class]];
-  _registrationStatusMap.insert({provider.name, false});
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ea73699` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `562e397f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

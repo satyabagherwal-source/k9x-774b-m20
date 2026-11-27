@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-DK2S",
-    "timestamp": "2026-11-25T23:32:24.676Z",
-    "repository": "moonshotai/Kimi-K3.1-Pro",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-    "contentHash": "f527d87d1b76f4ed761e306aea108bd158bb4cc9a5ec710d9fc61d385f4d422a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-DR3J",
-    "timestamp": "2026-11-25T23:32:33.775Z",
-    "repository": "dosco/deeporg",
-    "learningId": "learn-github-dosco-deeporg",
-    "contentHash": "8343d23013dc1bc103f370a5cf82f27f86d7abacb016c3aeef52ba29a3a81013",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261125-DUY7",
-    "timestamp": "2026-11-25T23:32:38.767Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "c03e19965fbce72ce1355027179662f8ae05783be077b2d6d61de5c85c4b4a46",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-DWFF",
     "timestamp": "2026-11-25T23:32:40.683Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7445,51 @@
     "repository": "apache/maka",
     "learningId": "learn-github-apache-maka",
     "contentHash": "4ddd7396abef2325ab567ed9d9bdbe2155db57a2312bf3dbec60e10dc23d8282",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-X4UI",
+    "timestamp": "2026-11-27T05:11:13.866Z",
+    "repository": "LoyalAI/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "633bcb4297597cb8d5c2e8a9c62985b423cb348f59ffe6b85facdf165dda6418",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-XA9M",
+    "timestamp": "2026-11-27T05:11:20.890Z",
+    "repository": "react/react-native",
+    "learningId": "learn-github-react-react-native",
+    "contentHash": "7ed7891d59941198d31c436309ab3f584c7ad28b80e27212c6cba35f2cbcfea3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-XGIB",
+    "timestamp": "2026-11-27T05:11:28.979Z",
+    "repository": "kividbio/kividb",
+    "learningId": "learn-github-kividbio-kividb",
+    "contentHash": "9b917fc1e614d45d9d599ddb2a8f5c889c5784d1eb5c60c81bf247195e452be5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

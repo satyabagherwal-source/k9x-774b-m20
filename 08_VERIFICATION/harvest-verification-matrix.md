@@ -13677,3 +13677,8 @@
 | `CYCLE-20261127-B5EC` | `2026-11-27T04:54:08.148Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10829` | Yes (`61087e51...`) |
 | `CYCLE-20261127-M1MU` | `2026-11-27T05:02:36.486Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`f4ac34c3...`) |
 | `CYCLE-20261127-M3J6` | `2026-11-27T05:02:38.946Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10830` | Yes (`4ddd7396...`) |
+| `CYCLE-20261127-X4UI` | `2026-11-27T05:11:13.866Z` | `LoyalAI/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`633bcb42...`) |
+| `CYCLE-20261127-XA9M` | `2026-11-27T05:11:20.890Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10831` | Yes (`7ed7891d...`) |
+| `CYCLE-20261127-XGIB` | `2026-11-27T05:11:28.979Z` | `kividbio/kividb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10832` | Yes (`9b917fc1...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T05:12:02.878Z` | `hf-conwayresearch-underdog-saluki-27b-1.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-D749CB6F` [Domain D] | Yes (`e8d10054...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T05:12:42.247Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B8E42626` [Domain H] | Yes (`54e0dc8e...`) |
