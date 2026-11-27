@@ -13662,3 +13662,7 @@
 | `CYCLE-20261127-78JR` | `2026-11-27T03:55:06.375Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10821` | Yes (`9a6aaf1d...`) |
 | `CYCLE-20261127-7BVU` | `2026-11-27T03:55:10.698Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10822` | Yes (`6f3d05ce...`) |
 | `CYCLE-20261127-Q3RN` | `2026-11-27T04:09:46.643Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`3adb18fa...`) |
+| `CYCLE-20261127-1119` | `2026-11-27T04:18:16.317Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`8123072c...`) |
+| `CYCLE-20261127-16UC` | `2026-11-27T04:18:23.844Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10823` | Yes (`8e4886c8...`) |
+| `CYCLE-20261127-1CZ0` | `2026-11-27T04:18:31.788Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10824` | Yes (`8f11f089...`) |
+| `CYCLE-20261127-1DXI` | `2026-11-27T04:18:33.030Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10825` | Yes (`fc082597...`) |

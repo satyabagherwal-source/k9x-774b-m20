@@ -13695,3 +13695,7 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `e97111d2` | Multi-dimensional audit evidence | 2026-11-27T03:55:06.392Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `0f54e1f8` | Multi-dimensional audit evidence | 2026-11-27T03:55:10.716Z |
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-27T04:09:46.649Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-27T04:18:16.322Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `3e0814c5` | Multi-dimensional audit evidence | 2026-11-27T04:18:23.859Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `6c6dd593` | Multi-dimensional audit evidence | 2026-11-27T04:18:31.804Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2889b681` | Multi-dimensional audit evidence | 2026-11-27T04:18:33.044Z |

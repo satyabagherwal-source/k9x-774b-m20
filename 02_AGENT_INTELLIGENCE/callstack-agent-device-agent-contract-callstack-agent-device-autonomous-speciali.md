@@ -4,17 +4,17 @@
 {
   "source_repository": "callstack/agent-device",
   "source_url": "https://github.com/callstack/agent-device",
-  "source_version": "b2d4ec05",
+  "source_version": "3e0814c5",
   "license": "MIT",
-  "timestamp": "2026-11-24T19:44:50.593Z",
+  "timestamp": "2026-11-27T04:18:24.115Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-callstack-agent-device",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `b2d4ec05`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T19:44:50.593Z`  
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `3e0814c5`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T04:18:24.115Z`  
 > **Learning ID**: `learn-github-callstack-agent-device`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T19:44:48.803Z  
+> **Harvest Timestamp**: 2026-11-27T04:18:22.596Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: Open source device layer for AI coding agents: a CLI, MCP server, and typed Node.js API to control mobile, web, TV, and desktop apps on devices and simulators, locally or in the cloud.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5503 stars
+- **Stars / Engagement**: 5524 stars
 
 ---
 
@@ -233,7 +233,7 @@ export async function runAdReplay(
 import type { SessionAction } from '@agent-device/contracts/session';
 import type { SessionRuntimeHints } from '@agent-device/kernel/contracts';
 import { appendScreenshotScriptFlags } from '@agent-device/contracts/capture';
-import { splitRefGenerationSuffix } from '@agent-device/kernel/snapshot';
+import { splitRecordedRefGenerationSuffix } from '@agent-device/kernel/snapshot';
 
 const SCRIPT_RUNTIME_PLATFORMS = {
   ios: true,
@@ -248,8 +248,9 @@ function isScriptRuntimePlatform(
 }
 
 /**
- * #1076 versioned refs: a recorded ref positional may carry a `~s<generation>`
- * pin from the client that issued it (`@e12~s3`). Generations are meaningless
+ * #1076 versioned refs: a recorded ref positional may carry a generation pin
+ * (`@e12-s3`, or the retired whole-token `@e12~s3` spelling from a script saved
+ * before the pin separator changed). Generations are meaningless
  * outside the session that minted them — a replayed script runs against a NEW
  * session with its own generation counter — so replay parsing and script
  * writing strip well-formed suffixes and IGNORE the generation instead of
@@ -259,7 +260,7 @@ function isScriptRuntimePlatform(
  */
 export function stripRecordedRefGeneration(token: string): string {
   if (!token.startsWith('@')) return token;
-  const split = splitRefGenerationSuffix(token);
+  const split = splitRecordedRefGenerationSuffix(token);
   return split?.base ?? token;
 }
 
@@ -475,8 +476,7 @@ export function formatDivergenceActionLabel(action: DivergenceActionLabelInput):
 }
 
 /**
- * The identifying (non-text) positional tokens of a typing action:
- * `@ref`, a two-token point (`x y`), or a singl
+ * The identifying (non-text) posi
 ```
 
 ### Core Architecture Module: `packages/apple-runner/src/runner-lifecycle.ts`
@@ -1755,14 +1755,13 @@ function representativesAreValid(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5074** (2026-11-26): **iOS simulator: refuse notifications permission with a hint to alert accept|dismiss**
+  *Symptoms*: ## Problem  On an iOS simulator, `settings permission grant|deny|reset notifications` sends `simctl privacy <udid> <action> notifications <bundle>`. `simctl privacy` does not list a `notifications` service, so the call fails and `isIosPrivacyServiceRefusal` classifies the failure as a refusal.  - Service map: `packages/platform-apple/src/core/simctl-settings.ts:75` maps `notifications` to `'notifications'`. - Refusal hint: `packages/platform-apple/src/core/simctl-settings.ts:255-258` tells the user to use the `all` target. For notifications, `all` cannot help either.  The working path is to answer the notification prompt with `alert accept` or `alert dismiss`. That path works on local simulators, physical iOS devices and Limrun. The refusal does not name it.  Context: #5046 and #4668 (closed as not planned for core).  ## Required behavior  - An iOS simulator request for the `notifications` permission refuses before it calls `simctl`. - The refusal has its own typed reason, for example `ios-notification-permission-unsupported`. - The hint tells the user to answer the prompt with `alert accept` or `alert dismiss`. - The settings catalog help and the user docs for permissions say the same. - Other permission targets and other platforms do not change.  ## Verification  - A unit test for the iOS simulator settings plan shows that `notifications` refuses with the new reason and hint, and that no `simctl` call is made. - The docs and help text name `alert accept|dismiss` for notific
+  **Post-Mortem & Fix Analysis**:
+  > ## Apex Sentinel · Issue review  **Suggested label:** `bug`  The issue reports that `settings permission ... notifications` calls `simctl privacy ... notifications` on iOS, but `simctl privacy` does not support a notifications service, causing the failure to be classified as a refusal instead of an unsupported/need-alert flow. It also specifies concrete file locations, a typed refusal reason, hint text, docs, and verification, so a maintainer can act on it.  ### Required sections - [ ] Steps to reproduce (missing) - [ ] Expected and actual behavior (missing) - [ ] Version or environment (missing)  <!-- apex-sentinel:issue-review -->
+
 - **Issue #5023** (2026-11-24): **iOS Duo: press/scroll/longpress fail with APP_SCREEN_WINDOW_UNRESOLVED on a deep AX tree**
   *Symptoms*: > Written by an AI agent on behalf of @Elehiggle.  ### Problem  On the iPhone Duo simulator, gestures fail without dispatching when the AX tree is deep enough that XCTest rejects the app root. On the test app's heavy feed, `press 'id="heavy-post-0-like"' --json` returns (trimmed):  ```json {   "code": "COMMAND_FAILED",   "message": "Neither the target app nor the system surface resolved a window, so no display could be named.",   "hint": "The capture follows the display that owns a window, so this is a runtime that is answering no window for any process; runner.log names the window frame and the query answer it refused.",   "details": { "runnerErrorCode": "APP_SCREEN_WINDOW_UNRESOLVED", "dispatched": "no" } } ```  `get text` still reads the screen. In the runner log, XCTest rejects the app's tree right before the lit-panel walk reports an empty window list:  ``` AGENT_DEVICE_RUNNER_COMMAND_ACCEPTED command=tap AGENT_DEVICE_RUNNER_AX_SNAPSHOT_ISSUE_SUPPRESSED count=4 description=Failed to resolve query: Error kAXErrorIllegalArgument getting snapshot for element <AXUIElementRef …> {pid=<app>} {uid=[ID:1 hash:0x0]} AGENT_DEVICE_RUNNER_LIT_PANEL_WINDOW lit=1(466x678) windows=0 outcome=no resolved application window frame=(inf,inf 0x0) AGENT_DEVICE_RUNNER_COMMAND_COMPLETED command=tap  ok=0 ```  Before the feed opened, the same walk found `windows=2` on the Settings screen.  From reading main (not traced at runtime): `RunnerCopyWindowList` returns nil when the query throws or retu
-
-- **Issue #5002** (2026-11-24): **iOS alert get fails when no alert is up, while Android reports none**
-  *Symptoms*: ## Purpose Agents use `alert get` as a "is anything up?" check. On Android (and the tree driver) a screen with no alert returns success with `No alert visible`. On an iOS simulator it fails with `COMMAND_FAILED: alert not found` and the generic hint "Read the diagnostics log for the failing step", so a scripted check exits non-zero and agents chase a failure that isn't one.  ## Current behavior - iOS: `RunnerTests+CommandExecution.swift` returns `alertNotFound`, and `packages/platform-apple/src/alert.ts` (`readAppleAlert`) passes it through as a failure. - Android and tree driver: `packages/capture-kit/src/alert-tree-driver.ts` returns `status: none`. - `website/docs/docs/commands.md` documents the split.  ## Required behavior (proposal) `alert get` with no alert succeeds on iOS with the same `status: none` shape as Android. `alert accept|dismiss` with no alert keep failing.  If maintainers prefer to keep the iOS error, attach the alert-not-found hint instead of "Read the diagnostics log".  ## Completion `alert get` on an iOS simulator with no alert exits 0 with `status: none`, matching Android, and the docs drop the platform note. 
-  **Post-Mortem & Fix Analysis**:
-  > The Apple read path now returns `status: none` for a quiet screen, with accept and dismiss still refusing when there is no alert. The change is in #5039 and `v0.21.43-nightly.20261124.245`. Could you confirm the original `alert get --json` case on that build? 
-  > Confirmed on `0.21.43-nightly.20261124.245`, iPhone 17 Pro simulator (iOS 27.2), Settings in front, no alert up:  ```text $ agent-device alert get --json {"success": true, "data": {"kind": "alertStatus", "platform": "ios", "action": "get", "alert": null, "status": "none", "message": "No alert visible"}} rc=0  $ agent-device alert accept --json {"success": false, "error": {"code": "COMMAND_FAILED", "message": "alert not found", ... "runnerErrorCode": "ALERT_NOT_FOUND", "dispatched": "no"}} rc=1  $ agent-device alert dismiss Error (COMMAND_FAILED): alert not found. Not dispatched. ... rc=1 ```  `commands.md` now says `status: none` on every platform. That covers the completion points, so I'm closing this. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1779,835 +1778,1630 @@ function representativesAreValid(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4dffcd31` (2026-11-24)
-**Commit Message**: fix(harmonyos): clamp the open foreground probe's hdc read to the request deadline (#5055)
+### Incident Patch 1: `2d29b6d6` (2026-11-26)
+**Commit Message**: fix(daemon-client): name a sandbox-denied connect and leave that daemon alone (#5095)
 
-* fix(harmonyos): clamp the open foreground probe's hdc read to the request deadline
+* fix(daemon-client): name a sandbox-denied connect and leave that daemon alone
 
-The pre-dispatch already-foreground probe ran one `aa dump -l` read on a
-fixed 15s timeout, so a hung read could hold the dispatch past a request
-deadline the post-open foreground poll (#4293) would have respected. The
-probe now receives the request's deadline beside the signal, clamps its
-read to the remaining budget (Math.min against the 15s default), skips
-the device entirely when a spent deadline leaves no room for one read,
-and still claims nothing when the deadline or a cancel cuts the read —
-the advisory outcome machinery is unchanged and no reason set grows.
+A reachability probe answered a boolean, so a loopback connect the host
+refused (EPERM or EACCES under a sandbox around the client) read exactly like a
+daemon that answers nothing. The client then judged a healthy daemon dead and
+tried to replace it, and reported "Daemon replacement could not be confirmed."
+The replacement attempt could also kill the daemon it could not reach.
 
-Follow-up to the optional question the #4860 review left open.
+Probes now answer a verdict, and a refusal carried by EPERM or EACCES is a
+denial, not an answer about the daemon. The takeover ladder answers a new
+connectDenied decision for it, and every client that hears it throws
+details.reason daemon-connect-denied with the errno, transport, port, and daemon
+identity, plus the host-access hint the denied listen already used. Nothing is
+spawned, retired, or signaled on that answer.
 
-* test: retrigger the android emulator smoke lane (no code change)
+The probe layer moves to daemon-client-loopback-probe.ts, which owns the
+denial set, so the transport module stays under the lint file-size limit.
 
-* docs(evidence): record the JDY-AL50 live runs for the open probe deadline clamp
+* fix(daemon-client): leave a daemon alone on every refused connect
 
-Scenario a: the already-foreground open answers with the alreadyForeground
-warning at 0.7 s with no added probe latency. Scenario b: an hdc wrapper that
-sleeps on the probe read cannot hold the dispatch past the admitted request
-budg
+A host-de
 
-**File**: `docs/evidence/ad-5055-lega/one-line.ad` (added, +1/-0)
+**File**: `packages/daemon-client/src/__tests__/daemon-client-ensure-drain.test.ts` (modified, +41/-0)
 ```diff
-@@ -0,0 +1 @@
-+open com.sankuai.dianping --platform harmonyos
-```
-
-**File**: `docs/evidence/ad-5055-lega/replay-lega.json` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+{
-+  "success": false,
-+  "error": {
-+    "code": "REPLAY_DIVERGENCE",
-+    "message": "Daemon request deadline exceeded",
-+    "hint": "Check completed steps and the current device state before retrying the timed-out operation.",
-+    "diagnosticId": "mwu8qema-6d287442",
-+    "logPath": "<state-dir>/sessions/cwd_1dd430edfb664982_default/requests/97d848997a368c7f.ndjson",
-+    "diagnosticsRecord": {
-+      "session": "cwd:1dd430edfb664982:default",
-+      "requestId": "97d848997a368c7f"
+@@ -287,6 +287,47 @@ test('a daemon still running past the deadline that answers a probe is left alon
+   }
+ });
+ 
++// The escalation route: a daemon still running at the drain deadline that answers no probe gets force
++// retired. A connect the HOST refused is not a missed probe, so this route names the sandbox instead.
++test('a drain that outlives the deadline with a probe the host refused signals nothing', async (t) => {
++  if (!(await withLoopback(t))) return;
++  const { stateDir, paths } = stateDirAndPaths();
++  let childPid = 0;
++  const drain = installVirtualDrain(() => childPid);
++  const stale = await startScriptedDaemon(draining, {
++    afterRpc: () => {
++      drain.begin(undefined);
++      void closeLoopbackServer(stale.server);
 +    },
-+    "details": {
-+      "reason": "daemon_request_timeout",
-+      "replayPath": "one-line.ad",
-+      "step": 1,
-+      "action": "open",
-+      "positionals": ["<arg>"],
-+      "artifactPaths": [],
-+      "divergence": {
-+        "version": 1,
-+        "kind": "action-failure",
-+        "step": {
-+          "index": 1,
-+          "source": {
-+            "path": "one-line.ad",
-+            "line": 1
-+          }
-+        },
-+        "action": "open \"com.sankuai.dianping\"",
-+        "cause": {
-+          "code": "COMMAND_FAILED",
-+          "message": "request canceled",
-+          "hint": "The request was canceled intentionally (explicit cancel or client disconnect) \u2014 no retry is needed unless the cancellation was unintended."
-+        },
-+        "screen": {
-+          "state": "unavailable",
-+          "reason": "no-session",
-+          "hint": "The session closed before a post-failure screen could be captured."
-+        },
-+        "suggestions": [],
-+        "suggestionCount": 0,
-+        "resume": {
-+          "allowed": true,
-+          "from": 1,
-+          "planDigest": "2777bba07a19f1bcec3952098a94d9748a792d6b4d6b986703a7295929933ccc"
-+        },
-+        "repairHint": "manual"
-+      },
-+      "causeReason": "request_canceled",
-+      "timeoutMs": 3000
-+    }
++  });
++  const { child } = await registerDaemon(paths, {
++    httpPort: stale.port,
++    version: '0.0.0-stale',
++    capabilities: ['quiesce'],
++  });
++  childPid = child.pid;
++  const liveness = await import('../daemon-client-liveness-probe.ts');
++  vi.spyOn(liveness, 'answersLivenessProbe').mockResolvedValue({
++    reachable: false,
++    denial: { errno: 'EPERM', transport: 'socket', port: stale.port },
++  });
++
++  try {
++    await assert.rejects(ensureDaemon({ stateDir, daemonTransport: 'http' }), (error: unknown) => {
++      assert.ok(error instanceof AppError);
++      assert.equal(error.details?.reason, 'daemon-connect-denied');
++      assert.equal(error.details?.errno, 'EPERM');
++      return true;
++    });
++
++    assert.deepEqual(drain.signals, []);
++    assert.equal(isProcessAlive(childPid), true);
++    assert.equal(spawn.mock.calls.length, 0);
++  } finally {
++    drain.end();
 +  }
-+}
++});
++
+ test('an embedded host that outlives the deadline and answers no probe is never signaled', async (t) => {
+   if (!(await withLoopback(t))) return;
+   const { stateDir, paths } = stateDirAndPaths();
 ```
 
-**File**: `docs/evidence/ad-5055-lega/request-97d84899.ndjson` (added, +10/-0)
+**File**: `packages/daemon-client/src/__tests__/daemon-client-ensure-explicit-lifecycle.test.ts` (modified, +35/-0)
 ```diff
-@@ -0,0 +1,10 @@
-+{"ts":"2026-11-24T05:14:59.075Z","level":"info","phase":"request_start","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"publicSession":"default","effectiveSession":"cwd:1dd430edfb664982:default","command":"replay","requestLogPath":"/tmp/ad5055-lega-r2-130926/state/sessions/cwd_1dd430edfb664982_default/requests/97d848997a368c7f.ndjson","runnerLogPath":"/tmp/ad5055-lega-r2-130926/state/sessions/cwd_1dd430edfb664982_default/runner.log"}}
-+{"ts":"2026-11-24T05:14:59.685Z","level":"info","phase":"resolve_target_device","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","durationMs":609,"data":{"platform":"harmonyos","cacheHit":false}}
-+{"ts":"2026-11-24T05:14:59.703Z","level":"info","phase":"request_start","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"publicSession":"cwd:1dd430edfb664982:default","effectiveSession":"cwd:1dd430edfb664982:default","command":"open","requestLogPath":"/tmp/ad5055-lega-r2-130926/state/sessions/cwd_1dd430edfb664982_default/requests/97d848997a368c7f.ndjson","runnerLogPath":"/tmp/ad5055-lega-r2-130926/state/sessions/cwd_1dd430edfb664982_default/runner.log"}}
-+{"ts":"2026-11-24T05:14:59.835Z","level":"info","phase":"resolve_target_device","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","durationMs":131,"data":{"platform":"harmonyos","cacheHit":false}}
-+{"ts":"2026-11-24T05:14:59.836Z","level":"info","phase":"resolve_target_device","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","durationMs":0,"data":{"platform":"harmonyos","cacheHit":true}}
-+{"ts":"2026-11-24T05:14:59.837Z","level":"info","phase":"resolve_target_device","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","durationMs":0,"data":{"platform":"harmonyos","cacheHit":true}}
-+{"ts":"2026-11-24T05:15:02.461Z","level":"warn","phase":"device_claim_open_effects_unconfirmed","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"deviceKey":"local:harmonyos:none:77TYD26826028730","outcome":"abandoned"}}
-+{"ts":"2026-11-24T05:15:02.461Z","level":"error","phase":"request_failed","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"error":"request canceled"}}
-+{"ts":"2026-11-24T05:15:02.462Z","level":"error","phase":"request_failed","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"code":"COMMAND_FAILED","message":"request canceled"}}
-+{"ts":"2026-11-24T05:15:02.464Z","level":"error","phase":"request_failed","session":"cwd:1dd430edfb664982:default","requestId":"97d848997a368c7f","command":"replay","data":{"code":"REPLAY_DIVERGENCE","message":"Replay failed at step 1 (open \"com.sankuai.dianping\"): request canceled"}}
-```
-
-**File**: `docs/evidence/ad-5055-partb.ad` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+# 5055 part-b replay: open an already-foreground target under a 3s request deadline
-+context platform=harmonyos
-+open com.sankuai.dianping
-+close
-```
-
-**File**: `docs/evidence/ad-5055-partb/571738ebf4f3424a.ndjson` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+{"ts":"2026-11-24T03:59:01.629Z","level":"info","phase":"request_start","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"publicSession":"default","effectiveSession":"cwd:e93f14f237f7fd4f:harmonyos","command":"replay","requestLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/571738ebf4f3424a.ndjson","runnerLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/runner.log"}}
-+{"ts":"2026-11-24T03:59:01.629Z","level":"info","phase":"request_start","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"publicSession":"cwd:e93f14f237f7fd4f:harmonyos","effectiveSession":"cwd:e93f14f237f7fd4f:harmonyos","command":"open","requestLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/571738ebf4f3424a.ndjson","runnerLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/runner.log"}}
-+{"ts":"2026-11-24T03:59:05.054Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"error":"request canceled"}}
-+{"ts":"2026-11-24T03:59:05.057Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"code":"COMMAND_FAILED","message":"request canceled"}}
-+{"ts":"2026-11-24T03:59:05.061Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"571738ebf4f3424a","command":"replay","data":{"code":"REPLAY_DIVERGENCE","message":"Replay failed at step 1 (open \"com.sankuai.dianping\"): request canceled"}}
-```
-
-**File**: `docs/evidence/ad-5055-partb/619fa17961d1bd2f.ndjson` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+{"ts":"2026-11-24T03:56:52.198Z","level":"info","phase":"request_start","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"publicSession":"default","effectiveSession":"cwd:e93f14f237f7fd4f:harmonyos","command":"replay","requestLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/619fa17961d1bd2f.ndjson","runnerLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/runner.log"}}
-+{"ts":"2026-11-24T03:56:52.199Z","level":"info","phase":"request_start","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"publicSession":"cwd:e93f14f237f7fd4f:harmonyos","effectiveSession":"cwd:e93f14f237f7fd4f:harmonyos","command":"open","requestLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/619fa17961d1bd2f.ndjson","runnerLogPath":"/tmp/ad-5055-partb/state/sessions/cwd_e93f14f237f7fd4f_harmonyos/runner.log"}}
-+{"ts":"2026-11-24T03:56:55.587Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"error":"request canceled"}}
-+{"ts":"2026-11-24T03:56:55.589Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"code":"COMMAND_FAILED","message":"request canceled"}}
-+{"ts":"2026-11-24T03:56:55.593Z","level":"error","phase":"request_failed","session":"cwd:e93f14f237f7fd4f:harmonyos","requestId":"619fa17961d1bd2f","command":"replay","data":{"code":"REPLAY_DIVERGENCE","message":"Replay failed at step 1 (open \"com.sankuai.dianping\"): request canceled"}}
-```
-
-**File**: `docs/evidence/ad-5055-partb/one-line.ad` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+open com.sankuai.dianping --platform harmonyos
-```
-
-**File**: `docs/evidence/ad-5055-partb/replay-oneline.json` (added, +55/-0)
-```diff
-@@ -0,0 +1,55 @@
-+{
-+  "success": false,
-+  "error": {
-+    "code": "REPLAY_DIVERGENCE",
-+    "message": "Daemon request deadline exceeded",
-+    "hint": "Check completed steps and the current device state before retrying the timed-out operation.",
-+    "diagnosticId": "mwu60q2l-f83095c6",
-+    "logPath": "<state-dir>/sessions/cwd_e93f14f237f7fd4f_harmonyos/requests/571738ebf4f3424a.ndjson",
-+    "diagnosticsRecord": {
-+      "session": "cwd:e93f14f237f7fd4f:harmonyos",
-+      "requestId": "571738ebf4f3424a"
-+    },
-+    "details": {
-+      "reason": "daemon_request_timeout",
-+      "replayPath": "one-line.ad",
-+      "step": 1,
-+      "action": "open",
-+      "positionals": ["<arg>"],
-+      "artifactPaths": [],
-+      "divergence": {
-+        "version": 1,
-+        "kind": "action-failure",
-+        "step": {
-+          "index": 1,
-+          "source": {
-+            "path": "one-line.ad",
-+            "line": 1
-+          }
-+        },
-+        "action": "open \"com.sankuai.dianping\"",
-+        "cause": {
-+          "code": "COMMAND_FAILED",
-+          "message": "request canceled",
-+          "hint": "The request was canceled intentionally (explicit cancel or client disconnect) — no retry is needed unless the cancellation was unintended."
-+        },
-+        "screen": {
-+          "state": "unavailable",
-+          "reason": "request-canceled",
-+          "hint": "Post-failure snapshot skipped after request cancellation; the original replay failure is unaffected."
-+        },
-+        "suggestions": [],
-+        "suggestionCount": 0,
-+        "resume": {
-+          "allowed": true,
-+          "from": 1,
-+          "planDigest": "2777bba07a19f1bcec3952098a94d9748a792d6b4d6b986703a7295929933ccc",
-+          "alternateFrom": 2
-+        },
-+        "repairHint": "manual"
-+      },
-+      "causeReason": "request_canceled",
-+      "timeoutMs": 3000
-+    }
+@@ -564,6 +564,41 @@ test('ensureDaemon retires a daemon that timed out on quiesce and answers no liv
+   }
+ });
+ 
++// The route that force-retires a daemon which timed out on quiesce and answered no probe. A connect
++// the HOST refused is not a missed probe, so this daemon is neither retired nor spawned over.
++test('ensureDaemon reports a host denial instead of retiring a daemon whose quiesce timed out', async (t) => {
++  if (!(await withLoopback(t))) return;
++  const { stateDir, paths } = stateDirAndPaths();
++  const stale = await startScriptedDaemon(okResult({}));
++  const { child } = await registerDaemon(paths, {
++    httpPort: stale.port,
++    version: '0.0.0-stale',
++    capabilities: ['quiesce'],
++  });
++  vi.spyOn(transport, 'sendRequest').mockRejectedValueOnce(
++    new AppError('COMMAND_FAILED', 'Daemon request timed out', {
++      reason: 'daemon_transport_timeout',
++    }),
++  );
++  const liveness = await import('../daemon-client-liveness-probe.ts');
++  vi.spyOn(liveness, 'answersLivenessProbe').mockResolvedValue({
++    reachable: false,
++    denial: { errno: 'EPERM', transport: 'socket', port: stale.port },
++  });
++
++  try {
++    const error = await failureOf(ensureDaemon({ stateDir, daemonTransport: 'http' }));
++
++    assert.equal(error.details?.reason, 'daemon-connect-denied');
++    assert.equal(error.details?.errno, 'EPERM');
++    assert.match(String(error.details?.hint), /A sandbox around this command/);
++    assert.equal(isProcessAlive(child.pid), true, 'a refused probe authorizes no signal');
++    assert.equal(spawn.mock.calls.length, 0, 'a daemon this client cannot see is not replaced');
++  } finally {
++    await closeLoopbackServer(stale.server);
 +  }
-+}
++});
++
+ test('ensureDaemon keeps a daemon that timed out on quiesce but still answers a probe', async (t) => {
+   if (!(await withLoopback(t))) return;
+   const { stateDir, paths } = stateDirAndPaths();
 ```
 
----
-
-### Incident Patch 2: `a7440cc4` (2026-11-23)
-**Commit Message**: ci(linux): install cached desktop packages without an apt index refresh (#5021)
-
-* ci(linux): install cached desktop packages without an apt index refresh
-
-The Smoke job failed when a slow Ubuntu mirror could not finish
-`apt-get update` within 3x30s, although the restored archive cache
-already held every package the step needs. Install the cached .debs
-directly, and refresh the index only when they do not cover the
-package set. The cache key is unique per run attempt so a refreshed
-set replaces a stale one.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ci(linux): stage cached debs in the apt archive before the cached install
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ci(linux): leave dpkg headroom inside the install step budget
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ci(linux): resolve cached packages against the lists that selected them
-
-Cache the authenticated package lists with the archives apt selected for
-the package set, keep both outside the system directories, and install
-only when the offline plan needs no download. A failed cached install
-recovers dpkg state and falls back to a clean archive directory. Every
-install runs with --no-downl
-
-**File**: `.github/workflows/linux.yml` (modified, +126/-41)
+**File**: `packages/daemon-client/src/__tests__/daemon-client-liveness-probe.test.ts` (modified, +48/-10)
 ```diff
-@@ -58,37 +58,51 @@ jobs:
-         run: node --experimental-strip-types scripts/device-lane-impact.ts replay-linux linux-command-evidence
+@@ -6,9 +6,10 @@
+ // absolute deadline exist for) spend wall-clock, and each stays inside the unit budget.
  
-       # Unbounded, this step could not fail — it could only stall. On 2026-08-19 a slow mirror
--      # held apt past the job's 30-minute budget on four main-branch runs and several unrelated
--      # PRs, which reported as a red check on branches that never ran a line of project code.
--      # On 2026-10-22 it recurred: the step took 20-60s normally, but 10 of 73 runs hit the
--      # 6-minute backstop. The Azure mirror appears to be a pull-through cache. A package nobody
--      # else requested recently (poppler-data, fonts-urw-base35, pulled in by gnome-calculator)
--      # is fetched from a slow upstream on first request, and the download crawls or stalls. The
--      # retry that warmed the mirror then succeeded in seconds, which is why re-runs were green.
--      # Three bounds fix that: the downloaded .debs are cached so most runs never ask the mirror
--      # for them, a download that does stall is dropped and retried under a per-attempt deadline
--      # (apt resumes with the files already fetched), and `timeout-minutes` stays as the
--      # backstop. dpkg itself never runs under a deadline.
--      - name: Restore Linux desktop package archives
--        id: apt-archives
-+      # held apt past the job's 30-minute budget. On 2026-10-22 a pull-through mirror crawled on
-+      # packages nobody else had requested recently (poppler-data, fonts-urw-base35, pulled in by
-+      # gnome-calculator). In November 2026 the index refresh itself became the failure: a slow
-+      # archive.ubuntu.com mirror could not serve the ~41 MB of indexes within the deadline.
-+      #
-+      # The cache holds the Ubuntu package lists of the last refresh and the archives that apt
-+      # selected for PACKAGES from them. A run verifies the signatures, list digests and archive
-+      # hashes, resolves PACKAGES against those lists and installs only when the plan needs no
-+      # download, so it never asks a mirror for anything. A miss, a failed check, a plan that
-+      # needs a download (a changed package list or runner image) or a failed install discards
-+      # the restored set, refreshes into empty job-private directories and saves a new entry.
-+      # The key is unique per run attempt, so restore-keys load the newest entry and a refreshed
-+      # set replaces a stale one.
-+      #
-+      # Every install runs with --no-download, so the network is reached only inside a bounded
-+      # phase. Worst case: cached install lock wait 60s, refresh 2 x (60s + 5s kill grace),
-+      # download 2 x (75s + 5s), final install lock wait 60s. That is 410s of the 540s step,
-+      # which leaves 130s for dpkg (2-5s per run in CI), the checks and the cache copy. dpkg
-+      # itself never runs under a deadline.
-+      - name: Restore Linux desktop packages
-         if: steps.impact.outputs.run != 'false'
-         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.2.3
-         with:
--          path: ~/apt-archives
--          key: apt-archives-${{ runner.os }}-${{ hashFiles('.github/workflows/linux.yml') }}
--          restore-keys: apt-archives-${{ runner.os }}-
-+          path: ~/apt-cache
-+          key: apt-cache-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
-+          restore-keys: apt-cache-${{ runner.os }}-
+ import net from 'node:net';
++import EventEmitter from 'node:events';
+ import http from 'node:http';
+ import assert from 'node:assert/strict';
+-import { test } from 'vitest';
++import { test, vi } from 'vitest';
  
-       - name: Install Linux desktop dependencies
-+        id: apt-install
-         if: steps.impact.outputs.run != 'false'
--        timeout-minutes: 6
-+        timeout-minutes: 9
-         run: |
-           set -euo pipefail
-+          CACHE="$HOME/apt-cache"
-+          KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
-           APT_OPTS=(
-             -o Acquire::Retries=2
-             -o Acquire::http::Timeout=15
-             -o Acquire::https::Timeout=15
-             # The runner's own unattended-upgrades timer holds the dpkg lock; wait, don't hang.
-             -o DPkg::Lock::Timeout=60
-+            # Job-private lists and archives: the runner's periodic index update cannot change the
-+            # plan between download and install, and a fallback never reuses a restored archive.
-+            -o "Dir::State::Lists=$CACHE/lists/"
-+            -o "Dir::Cache::Archives=$CACHE/archives/"
-           )
-           PACKAGES=(
-             xvfb
-@@ -102,40 +116,111 @@ jobs:
-             gnome-calculator
-             wmctrl
-           )
--          # Retry a network phase under a per-attempt deadline.
-+          stamp() { printf 'APT %s (UTC): %s\n' "$1" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"; }
-+          all_installed() {
-+            local missing
-+            missing="$(dpkg-query -W -f='${db:Status-Status} ${Package}\n' "${PACKAGES[@]}" 2>&1 | grep -v '^installed ' || true)"
-+            [ -z "$missing" ] || { printf 'Not installed:\n%s\n' "$missing"; return 1; }
-+          }
-+          # apt trusts a list by the presence of InRelease and an archiv
-```
-
----
-
-### Incident Patch 3: `b3acd235` (2026-11-23)
-**Commit Message**: fix(refs): name the settled diff in the plain-ref refusal and issue its replacement refs (#5037)
-
-After `fill @e3 … --settle; press @e4` with @e4 taken from the earlier full
-snapshot, the plain-ref refusal offered nothing: the agent could not tell
-that a settled diff replaced the frame and paid a full `snapshot -i` every
-time (#4571, the most common agent-blocking error in the dogfood data).
-
-The frame value now records which publication minted it. `RefFrameOrigin`
-(`complete` | `settle-diff` | `partial`) is set at issuance through the same
-factories; every partial publication flows through one choke point
-(`markSessionPartialRefsIssued`), and only the settle path
-(`issueSettleRefs`) passes `settle-diff`, so find, audit, replay divergence,
-and ambiguity issuances keep their refusal shape unchanged. Origin is
-diagnostic only: no admission decision and no ref lifetime changes — whether
-refs a diff left unchanged stay valid stays open for maintainers on #4571.
-
-When the refusing frame is settle-diff and the refused plain ref is not one
-of its issued refs, the refusal:
-
-- names the settled diff as the replacement in the message (and says when
-  the diff issued no refs),
-- carries `deta
-
-**File**: `docs/adr/0014-session-ref-frame-lifetime.md` (modified, +12/-0)
-```diff
-@@ -231,6 +231,18 @@ hint: Capture a fresh interactive snapshot or use a stable selector.
- The daemon cannot truthfully report `mintedGeneration` for a plain ref.
- When the actual failure is lifetime expiration, error messages must not claim that a found ref was missing or lacked bounds.
- 
-+#### 2026-11-24 amendment: a settled-diff frame names itself in the plain-ref refusal
-+
-+Issue #4571 measured the plain-ref refusal as the most common agent-blocking error after `--settle`: a bare ref from the earlier full snapshot is refused, the refusal offers nothing, and the agent pays a full `snapshot -i`.
-+The frame now records which publication minted it: a bounded `origin` (`complete`, `settle-diff`, or `partial`) set at issuance through the same factories.
-+The settle issuance path passes `settle-diff`; every other partial publication keeps `partial`.
-+Origin is diagnostic only: it changes no admission decision and no ref lifetime — whether refs a diff left unchanged stay valid remains an open contract question for maintainers.
-+
-+When a settled diff replaced the frame and the refused plain ref is not one of its issued refs, the refusal names the settled diff as the replacement and carries `details.replacedBy: "settle-diff"` plus `details.replacementRefs`, each issued ref pinned to the frame epoch in the ready-to-copy `@eN~s<epoch>` form.
-+The hint offers the same refs and keeps the fresh-snapshot escape.
-+When the diff issued no refs, the refusal still names the diff and keeps the recapture guidance.
-+The exact-emitted-ref suggestion (`details.suggestedRef`) keeps precedence when the refused body is itself in scope.
-+
- ### Expiration occurs at the side-effect seam
- 
- Expiration occurs after these and all other pre-action guards pass:
-```
-
-**File**: `packages/daemon/src/core/__tests__/ref-frame.test.ts` (modified, +20/-0)
-```diff
-@@ -8,6 +8,7 @@ import {
-   expireRefFrame,
-   refFrame,
-   refFrameEpoch,
-+  refFrameOrigin,
-   refFrameScope,
-   refFrameState,
-   type RefFrameAdmission,
-@@ -136,6 +137,25 @@ test('activateCompleteRefFrame re-authorizes a complete frame after expiry', ()
+ import { PUBLIC_COMMANDS } from '@agent-device/command-registry/catalog';
+ import { resolveCommandTimeoutPolicy } from '@agent-device/command-registry/registry';
+@@ -73,7 +74,7 @@ test('a daemon answering /health is responsive', async (t) => {
+     res.end('{}');
+   });
+   await withLoopback(server, async (port) => {
+-    assert.equal(await probeDaemonResponsive(daemonInfo({ httpPort: port })), true);
++    assert.equal((await probeDaemonResponsive(daemonInfo({ httpPort: port }))).reachable, true);
+     assert.deepEqual(requestedUrls, ['/health']);
+   });
+ });
+@@ -89,7 +90,7 @@ test('a 5xx answer is still an answer: the finding is liveness, not reachability
+     res.end('overloaded');
+   });
+   await withLoopback(server, async (port) => {
+-    assert.equal(await probeDaemonResponsive(daemonInfo({ httpPort: port })), true);
++    assert.equal((await probeDaemonResponsive(daemonInfo({ httpPort: port }))).reachable, true);
    });
  });
  
-+test('frame origin records which publication minted it and survives expiry', () => {
-+  // No issuance yet: no origin.
-+  assert.equal(refFrameOrigin(session()), undefined);
+@@ -110,7 +111,7 @@ test('headers alone answer: a daemon that stalls mid-body is still served', asyn
+   await withLoopback(stallingBodyServer, async (port) => {
+     const startedAt = Date.now();
+     assert.equal(
+-      await probeDaemonResponsive(daemonInfo({ httpPort: port })),
++      (await probeDaemonResponsive(daemonInfo({ httpPort: port }))).reachable,
+       true,
+       'a stalled body must not be read as an unresponsive daemon',
+     );
+@@ -158,7 +159,7 @@ test('the health leg rides a fresh connection, never the keep-alive pool', async
+       request.end();
+     });
+     assert.equal(clientSockets.size, 1, 'the prime must have connected');
+-    assert.equal(await probeDaemonResponsive(daemonInfo({ httpPort: port })), true);
++    assert.equal((await probeDaemonResponsive(daemonInfo({ httpPort: port }))).reachable, true);
+     assert.equal(probeRequests, 1, 'the health leg must actually have been asked');
+     assert.equal(
+       clientSockets.size,
+@@ -179,14 +180,44 @@ test('a refused endpoint is negative, not a hang: the verdict arrives well insid
+   });
+   await withLoopback(server, async (port) => {
+     const startedAt = Date.now();
+-    assert.equal(await probeDaemonResponsive(daemonInfo({ port })), false);
++    assert.equal((await probeDaemonResponsive(daemonInfo({ port }))).reachable, false);
+     assert.ok(
+       Date.now() - startedAt < LIVENESS_PROBE_BUDGET_MS / 2,
+       'refusal must settle the probe immediately, not by spending the window',
+     );
+   });
+ });
+ 
++// The verdict that authorizes a reset. A connect the HOST refused (EPERM or EACCES under a sandbox
++// around this client) is not a missed probe: read as silence it would SIGKILL a daemon only this
++// client's sandbox cannot reach, which is the same mistake #3177 removed for a live peer.
++test.for(['EPERM', 'EACCES'] as const)(
++  'a %s refusal is reported as a denial, not as an unresponsive daemon',
++  async (code) => {
++    const socket = Object.assign(new EventEmitter(), {
++      destroy: () => {},
++      setEncoding: () => {},
++      setTimeout: () => socket,
++      write: () => {},
++    });
++    const createConnection = vi.spyOn(net, 'createConnection').mockImplementation(((
++      _options: unknown,
++      _listener?: () => void,
++    ) => {
++      setImmediate(() => socket.emit('error', Object.assign(new Error(code), { code })));
++      return socket;
++    }) as unknown as typeof net.createConnection);
++    try {
++      assert.deepEqual(await probeDaemonResponsive(daemonInfo({ port: 65_530 })), {
++        reachable: false,
++        denial: { errno: code, transport: 'socket', port: 65_530 },
++      });
++    } finally {
++      createConnection.mockRestore();
++    }
++  },
++);
 +
-+  // A complete publication, the partial default, and the settle-diff partial.
-+  const complete = session({ snapshotGeneration: 42 });
-+  activateCompleteRefFrame(complete);
-+  assert.equal(refFrameOrigin(complete), 'complete');
-+  assert.equal(refFrameOrigin(partialSession(42, new Set(['e1']))), 'partial');
-+  const settled = session({ snapshotGeneration: 42 });
-+  activatePartialRefFrame(settled, new Set(['e1']), 'settle-diff');
-+  assert.equal(refFrameOrigin(settled), 'settle-diff');
-+
-+  // Expiry replaces the frame whole; the origin rides along.
-+  expireRefFrame(settled);
-+  assert.equal(refFrameState(settled), 'expired');
-+  assert.equal(refFrameOrigin(settled), 'settle-diff');
-+});
-+
- test('expireRefFrame clears scoped-snapshot lineage at the seam (ADR 0014)', () => {
-   const scopeTree = {
-     nodes: [],
+ test('a silent HTTP leg cannot veto a live socket leg', async (t) => {
+   if (await skipWhenLoopbackUnavailable(t)) return;
+   // The regression the concurrent-legs design exists for: sequential probing lets the first
+@@ -222,7 +253,7 @@ test('a silent HTTP leg cannot veto a live socket leg', async (t) => {
+     await withLoopback(liveSocketServer, async (port) => {
+       const startedAt = Date.now();
+       assert.equal(
+-        await probeDaemonResponsive(daemonInfo({ port, httpPort })),
++        (await probeDaemonResponsive(daemonInfo({ port, httpPort }))).reachable,
+         true,
+         'the socket answer alone is the finding; the silent HTTP leg must not outweigh it',
+       );
+@@ -252,7 +283,11 @@ async function expectMalformedLegAnswersNotThisOne(
+     () => null,
+     (error: unknown) => error,
+   );
+-  assert.equal(await probe, expectResponsive, `${name}: the malformed leg answers 'not this one'`);
++  assert.equal(
++    (await probe).reachable,
++    expectResponsive,
++    `${name}: th
 ```
 
-**File**: `packages/daemon/src/core/ref-frame-slot.ts` (modified, +15/-0)
+**File**: `packages/daemon-client/src/__tests__/daemon-client-loopback-probe-connect-denied.test.ts` (added, +373/-0)
 ```diff
-@@ -21,11 +21,20 @@ export type RefFrameScope = 'all' | ReadonlySet<string>;
- /** Lifecycle state of the current frame. */
- export type RefFrameState = 'active' | 'expired';
- 
-+/**
-+ * Which publication minted the frame. Diagnostic only — it feeds refusal text and
-+ * details (#4571) and never an admission decision. `partial` covers every non-settle
-+ * partial publication (`find`, `audit`, replay divergence, ambiguity candidates), which
-+ * all refuse a plain ref with the same recapture guidance.
-+ */
-+export type RefFrameOrigin = 'complete' | 'settle-diff' | 'partial';
+@@ -0,0 +1,373 @@
++import assert from 'node:assert/strict';
++import EventEmitter from 'node:events';
++import fs from 'node:fs';
++import net from 'node:net';
++import { afterEach, test, vi } from 'vitest';
++import { runCmdBackground, runCmdDetachedMonitored } from '@agent-device/host-kit/command';
++import {
++  isProcessAlive,
++  readProcessCommand,
++  readProcessStartTime,
++  waitForProcessExit,
++} from '@agent-device/host-kit/process';
++import { AppError } from '@agent-device/kernel/errors';
++import { readVersion } from '@agent-device/host-kit/version';
++import { resolveDaemonPaths } from '@agent-device/daemon-contracts/daemon-resolution';
++import {
++  closeLoopbackServer,
++  listenOnLoopback,
++  mkdtempForTestSync,
++  skipWhenLoopbackUnavailable,
++} from '@agent-device/test-kit';
++import { sendToDaemon } from '../index.ts';
++import { probeLoopbackPort, readAdvertisedConnectDenial } from '../daemon-client-loopback-probe.ts';
++import {
++  finishRegisteredDaemonFixture,
++  finishRegisteredDaemonFixtures,
++  planRegisteredDaemonLaunches,
++} from './registered-daemon-fixture.ts';
++import { currentDaemonCodeSignature } from './code-signature-fixture.ts';
 +
- type RefFrameFields = Readonly<{
-   state: RefFrameState;
-   scope: RefFrameScope;
-   tree: SnapshotState | undefined;
-   generation: number | undefined;
-+  origin: RefFrameOrigin | undefined;
- }>;
++// A loopback connect the HOST refused (EPERM under a macOS Seatbelt sandbox around this client) is
++// evidence about this client, not about the registered daemon. These cases pin that the client names
++// that refusal instead of judging the daemon dead and trying to replace it.
++
++const DENIED_ERRNO = 'EPERM';
++
++/** A host refusal to answer a probe with, naming the errno and endpoint family it refused. */
++type DeniedProbe = Readonly<{ errno: 'EPERM' | 'EACCES'; transport: 'socket' | 'http' }>;
++
++const { mockProbeAnswers } = vi.hoisted(() => ({
++  /**
++   * What each probe of the registered daemon answers, in order: `'silent'`, or the refusal the host
++   * gave. `null` stands for silence so the list reads as answers, not as verdict shapes.
++   */
++  mockProbeAnswers: [] as (DeniedProbe | null)[],
++}));
++
++function denied(errno: DeniedProbe['errno'], transport: DeniedProbe['transport']): DeniedProbe {
++  return { errno, transport };
++}
++
++vi.mock('../daemon-client-transport.ts', async (importOriginal) => {
++  const actual = await importOriginal<typeof import('../daemon-client-transport.ts')>();
++  return {
++    ...actual,
++    probeDaemonReachability: async (...args: Parameters<typeof actual.probeDaemonReachability>) => {
++      const answer = mockProbeAnswers.shift();
++      if (!answer) return { reachable: false };
++      // The port is the one this probe aimed at, as the real probe reports it.
++      const port = answer.transport === 'http' ? (args[0].httpPort ?? 0) : (args[0].port ?? 0);
++      return { reachable: false, denial: { ...answer, port } };
++    },
++  };
++});
++
++vi.mock('@agent-device/host-kit/command', async (importOriginal) => ({
++  ...(await importOriginal<typeof import('@agent-device/host-kit/command')>()),
++  runCmdDetachedMonitored: vi.fn(),
++}));
++
++const spawnDaemon = vi.mocked(runCmdDetachedMonitored);
++
++afterEach(async () => {
++  mockProbeAnswers.length = 0;
++  spawnDaemon.mockReset();
++  await finishRegisteredDaemonFixtures();
++});
++
++/**
++ * A stand-in for the daemon running OUTSIDE the sandbox: a live process, plus a registration this
++ * client wrote by hand that points at loopback endpoints and this pid. The process is a plain `node
++ * -e` stand-in, not a daemon build: what makes it a daemon is the registration and the live pid, and
++ * `readProcessCommand` is read only as a skip guard for environments where process inspection is
++ * unavailable. The client never started this lifetime, so an unreachable judgement lands as a
++ * retirement it may not confirm.
++ */
++async function withRegisteredStandIn(
++  t: { skip: (reason: string) => void },
++  body: (input: { stateDir: string; pid: number; port: number; httpPort: number }) => Promise<void>,
++): Promise<void> {
++  if (await skipWhenLoopbackUnavailable(t)) return;
++  const stateDir = mkdtempForTestSync('agent-device-connect-denied-');
++  const standIn = runCmdBackground(process.execPath, ['-e', 'setInterval(() => {}, 1000);'], {
++    stdio: 'ignore',
++    allowFailure: true,
++    captureOutput: false,
++  });
++  void standIn.wait.catch(() => {});
++  const pid = standIn.child.pid;
++  assert.ok(pid, 'the stand-in has a pid');
++  const server = net.createServer((socket) => socket.on('error', () => {}));
++  const httpServer = net.createServer((socket) => socket.on('error', () => {}));
++  try {
++    await new Promise((resolve) => setTimeout(resolve, 50));
++    const processStartTime = readProcessStartTime(pid) ?? undefined;
++    const command = readProcessCommand(pid);
++    if (command === null || processStartTime === undefined) {
++      t.skip('process command/start inspection is unavailable in this environment');
++      return;
++    }
++    const port = await listenOnLoopback(server);
++    const httpPort = await listenOnLoopback(httpServer);
++    const paths = resolveDaemonPaths(
+```
+
+**File**: `packages/daemon-client/src/__tests__/daemon-client-loopback-probe-pooled-socket.test.ts` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
++import assert from 'node:assert/strict';
++import http from 'node:http';
++import net from 'node:net';
++import { afterEach, test, vi, type Mock } from 'vitest';
++import {
++  closeLoopbackServer,
++  listenOnLoopback,
++  skipWhenLoopbackUnavailable,
++} from '@agent-device/test-kit';
++import * as hostTransport from '@agent-device/host-kit/transport';
++import { probeDaemonReachability } from '../daemon-client-transport.ts';
++
++// A reachability probe must not be answered around by a keep-alive socket an earlier command left in
++// the pool: a caller reads this verdict before it retires a daemon, and a pooled socket proves only
++// that SOME connect was allowed at SOME point, not that one is allowed NOW.
++//
++// This case owns a file because it patches `Socket.prototype.connect` for every socket made while the
++// patch is on and leans on the process-wide keep-alive pool. Vitest gives each file a worker of its
++// own, so the refusal cannot reach a case elsewhere that is mid-request on a shared socket, and
++// `afterEach` hands the prototype back before this file runs anything else.
++
++let server: http.Server | undefined;
++let connect: Mock<net.Socket['connect']> | undefined;
++const askedUrls: string[] = [];
++
++afterEach(async () => {
++  connect?.mockRestore();
++  connect = undefined;
++  askedUrls.length = 0;
++  if (server) await closeLoopbackServer(server);
++  server = undefined;
++});
++
++test('a fresh connect the host refused is not answered around by a pooled socket', async (t) => {
++  if (await skipWhenLoopbackUnavailable(t)) return;
++  server = http.createServer((req, res) => {
++    askedUrls.push(String(req.url));
++    res.end('{}');
++  });
++  const port = await listenOnLoopback(server);
++  // The pool may still hold a socket for THIS port from a server this worker already closed, and the
++  // OS hands loopback ports out again. Riding one would write the prime to a peer that never answers,
++  // so this endpoint's pooled sockets go first.
++  destroyPooledSockets(http.globalAgent, port);
++
++  // Prime the pool the way an earlier command primes it: one health request whose socket returns to
++  // the agent. It goes through the SAME module object the probe loads, or no candidate lands in the
++  // pool and the case proves nothing. The request is bounded so a pool this case does not control
++  // cannot hold it open to the test budget.
++  const requester = await hostTransport.loadNodeHttpRequester('http:');
++  await new Promise<void>((resolve, reject) => {
++    const request = requester.request(
++      { host: '127.0.0.1', port, path: '/health', method: 'GET', timeout: 2_000 },
++      (res) => {
++        res.resume();
++        res.on('end', resolve);
++      },
++    );
++    request.on('timeout', () => {
++      request.destroy(new Error(`the prime reached no daemon on port ${port}`));
++    });
++    request.on('error', reject);
++    request.end();
++  });
++  // A pool that took nothing in would leave the probe with nothing to ride, and a `reachable: false`
++  // verdict would then mean nothing.
++  assert.ok(
++    freeSocketCountFor(http.globalAgent, port) > 0,
++    'the prime left a keep-alive socket in the pool for this endpoint',
++  );
++
++  // A host that refuses a connect answers it immediately, with no round trip: the socket ends with
++  // the errno and carries no request. The connect is the real one, so the socket has a handle and the
++  // errno reaches the requester — destroying a socket that never connected reports only a closed
++  // socket. The refusal lands on a later turn, after the requester has put its listener on it.
++  const realConnect = net.Socket.prototype.connect;
++  connect = vi.spyOn(net.Socket.prototype, 'connect').mockImplementation(function (
++    this: net.Socket,
++    ...args: Parameters<net.Socket['connect']>
++  ) {
++    const socket = realConnect.apply(this, args as never) as net.Socket;
++    setImmediate(() => socket.destroy(Object.assign(new Error('EPERM'), { code: 'EPERM' })));
++    return socket;
++  });
++
++  assert.deepEqual(
++    await probeDaemonReachability({ token: 'secret', pid: 1, httpPort: port }, 'http'),
++    { reachable: false, denial: { errno: 'EPERM', transport: 'http', port } },
++  );
++  assert.deepEqual(askedUrls, ['/health'], 'only the prime reached the daemon');
++
++  // The primed socket is back in the pool now, pointed at a server about to close. Drop this
++  // endpoint's entry so nothing downstream rides it.
++  destroyPooledSockets(http.globalAgent, port);
++});
++
++/** Drops the keep-alive sockets the pool holds for one loopback port, and only those. */
++function destroyPooledSockets(agent: http.Agent, port: number): void {
++  // Node types the pool as read-only, and this is the one place a test has to empty it.
++  const free = agent.freeSockets as Record<string, net.Socket[] | undefined>;
++  for (const [key, sockets] of Object.entries(free)) {
++    if (!isPooledEndpointForPort(key, port)) continue;
++    for (const socket of sockets ?? []) socket
+```
+
+**File**: `packages/daemon-client/src/__tests__/daemon-client-timeout-route.test.ts` (modified, +48/-0)
+```diff
+@@ -514,6 +514,54 @@ test('request-timeout route: an attach client leaves a daemon that answers no pr
+   }
+ });
  
- /**
-@@ -57,6 +66,10 @@ class SessionRefFrame {
-     return this.#fields.generation;
++// A sandboxed client whose RPC times out AND whose probe connect the host refused holds no evidence
++// about the daemon, so the timeout's own hint must not claim its session survived. The refusal is the
++// finding worth reporting: it replaces the timeout's reason and carries the shared host-access hint.
++// EPERM and EACCES cannot be produced by a stand-in server, so the probe seam answers with the refusal
++// this client's host really gave it.
++test('a timeout whose liveness probe the host refused reports the refusal, not a kept-alive session', async (t) => {
++  if (await skipWhenLoopbackUnavailable(t)) return;
++  const daemon = await startStandIn('socket', 'refuse');
++  const paths = dummyStatePaths();
++  const info = await registeredOwner(paths, daemon.port, 'socket');
++  const liveness = await import('../daemon-client-liveness-probe.ts');
++  vi.spyOn(liveness, 'answersLivenessProbe').mockResolvedValue({
++    reachable: false,
++    denial: { errno: 'EPERM', transport: 'socket', port: daemon.port },
++  });
++  try {
++    const error = await expectRouteError(
++      sendRequest(
++        info,
++        buildRequest(RESET_POLICY_COMMAND, undefined),
++        'socket',
++        paths,
++        TIMEOUT_MS,
++        { host: createTestHostEnvironment() },
++      ),
++      /sandbox around this command/,
++    );
++
++    assert.equal(error.details?.reason, 'daemon-connect-denied');
++    assert.equal(error.details?.errno, 'EPERM');
++    assert.equal(error.details?.port, daemon.port);
++    // The refusal replaces the timeout's REASON, not its facts: this request had already been written,
++    // so the error still says the daemon may have run it. Without `daemonRequestSent` the disclosure
++    // seam would call a request that dispatched `no`, and a retrying caller would run it twice.
++    assert.equal(error.details?.daemonRequestSent, true);
++    assert.equal(error.details?.dispatched, 'unknown');
++    assert.ok(
++      !/kept alive|survive/i.test(String(error.details?.hint)),
++      'the hint claims no session this client could not have reached',
++    );
++    assert.equal(isProcessAlive(info.pid), true, 'a refused probe authorizes no signal');
++    assert.ok(fs.existsSync(paths.infoPath), 'the registration is left in place');
++    assert.ok(fs.existsSync(paths.lockPath), 'the lock is left in place');
++  } finally {
++    await closeLoopbackServer(daemon.server);
++  }
++});
++
+ test('request-timeout route: the reset acts on the resolved state paths, not the request flags', async (t) => {
+   if (await skipWhenLoopbackUnavailable(t)) return;
+   // Path resolution happens upstream of `sendRequest`, which receives the state paths the caller
+```
+
+**File**: `packages/daemon-client/src/__tests__/daemon-client-transport.test.ts` (modified, +43/-7)
+```diff
+@@ -23,8 +23,8 @@ import {
+ } from '@agent-device/contracts/daemon-http';
+ import { sendToDaemon } from '../index.ts';
+ import {
+-  canConnect,
+   isDaemonTransportUnavailableError,
++  probeDaemonReachability,
+   sendRequest,
+ } from '../daemon-client-transport.ts';
+ import { DAEMON_UNAVAILABLE_REASONS } from '../daemon-lifecycle-errors.ts';
+@@ -62,7 +62,13 @@ test('auto health probing reserves time for a healthy fallback when HTTP hangs',
+     const httpPort = await listenOnLoopback(httpServer);
+     const port = await listenOnLoopback(socketServer);
+     assert.equal(
+-      await canConnect({ token: 'secret', pid: 1, transport: 'http', httpPort, port }, 'auto', 120),
++      (
++        await probeDaemonReachability(
++          { token: 'secret', pid: 1, transport: 'http', httpPort, port },
++          'auto',
++          120,
++        )
++      ).reachable,
+       true,
+     );
+   } finally {
+@@ -71,6 +77,34 @@ test('auto health probing reserves time for a healthy fallback when HTTP hangs',
+   }
+ });
+ 
++// A reachability probe shape that a boolean "unreachable" would report wrongly, and that a caller
++// reads before it retires a daemon: a fallback leg that answers AFTER the deadline must not bury the
++// refusal the first leg already proved.
++test('a fallback leg answering past the deadline still reports the first leg as a denial', async () => {
++  const probe = await import('../daemon-client-loopback-probe.ts');
++  const denial = { errno: 'EPERM', transport: 'socket', port: 41_234 } as const;
++  // "Late" is spent, not faked: the budget is 20 ms and the socket leg answers after 40 ms, so the
++  // deadline has provably passed by the time the fallback's answer lands.
++  const socketLeg = vi.spyOn(probe, 'probeLoopbackPort').mockImplementation(async () => {
++    await sleep(40);
++    return { reachable: false, denial };
++  });
++  const httpLeg = vi.spyOn(probe, 'probeHttpEndpoint').mockResolvedValue({ reachable: true });
++  try {
++    assert.deepEqual(
++      await probeDaemonReachability(
++        { token: 'secret', pid: 1, transport: 'dual', port: 41_234, httpPort: 41_235 },
++        'auto',
++        20,
++      ),
++      { reachable: false, denial },
++    );
++  } finally {
++    socketLeg.mockRestore();
++    httpLeg.mockRestore();
++  }
++});
++
+ test('the health deadline includes requester loading and forbids a late request', async (t) => {
+   if (await skipWhenLoopbackUnavailable(t)) return;
+   let requests = 0;
+@@ -93,10 +127,12 @@ test('the health deadline includes requester loading and forbids a late request'
+   try {
+     const httpPort = await listenOnLoopback(server);
+     let settled = false;
+-    probing = canConnect({ token: 'secret', pid: 1, httpPort }, 'http', 40).then((reachable) => {
+-      settled = true;
+-      return reachable;
+-    });
++    probing = probeDaemonReachability({ token: 'secret', pid: 1, httpPort }, 'http', 40).then(
++      (probe) => {
++        settled = true;
++        return probe.reachable;
++      },
++    );
+     await sleep(90);
+     assert.equal(settled, true, 'loading must not extend the probe deadline');
+     assert.equal(await probing, false);
+@@ -560,7 +596,7 @@ test.for([
+ 
+ test('an endpoint missing for the requested transport rejects with a typed reason the classifier accepts', async () => {
+   const socketOnly = { port: 1, token: 't', pid: 1 };
+-  const error = await canConnect(socketOnly, 'http').then(
++  const error = await probeDaemonReachability(socketOnly, 'http').then(
+     () => undefined,
+     (error: unknown) => error,
+   );
+```
+
+**File**: `packages/daemon-client/src/__tests__/daemon-launch-spec.test.ts` (modified, +118/-5)
+```diff
+@@ -9,6 +9,7 @@ import {
+   type DaemonReachability,
+   resolveLocalDaemonCodeIdentity,
+ } from '../daemon-launch-spec.ts';
++import type { DaemonProbeVerdict } from '../daemon-client-loopback-probe.ts';
+ import { isSourceCheckoutProjectRoot, readVersion } from '@agent-device/host-kit/version';
+ import { resetAllProcessMemosForTests } from '@agent-device/kernel/ttl-memo';
+ 
+@@ -128,15 +129,37 @@ test('a version mismatch is decided without asking the client transport', async
+   const decision = await resolveDaemonTakeover(runningDaemon({ version: '0.0.1' }), {
+     onClientTransport: async () => {
+       asked = true;
+-      return false;
++      return silent;
+     },
+-    onAnyAdvertisedTransport: async () => false,
++    onAnyAdvertisedTransport: async () => silent,
++    refusedByHost: async () => undefined,
+   });
+ 
+   assert.equal(decision.kind, 'replace');
+   assert.equal(asked, false);
+ });
+ 
++// The guard a replacement asks for is a PERMISSION question, not a liveness one: it must be a bare
++// connect, so it costs no health request, no retry and no wait step. Reaching for the reachability
++// probe here would put a `/health` request and the probe's retries on every mismatched-daemon takeover.
++test('the guard before a replacement asks only whether the host refuses the connect', async () => {
++  let probedLiveness = 0;
++  const decision = await resolveDaemonTakeover(runningDaemon({ version: '0.0.1' }), {
++    onClientTransport: async () => {
++      probedLiveness += 1;
++      return silent;
++    },
++    onAnyAdvertisedTransport: async () => {
++      probedLiveness += 1;
++      return silent;
++    },
++    refusedByHost: async () => undefined,
++  });
++
++  assert.equal(decision.kind, 'replace');
++  assert.equal(probedLiveness, 0, 'a version mismatch is replaced without a reachability probe');
++});
++
+ test('a newer daemon alive only on a transport the client does not prefer is still refused', async () => {
+   assert.deepEqual(
+     await resolveDaemonTakeover(runningDaemon({ version: '999.0.0' }), onlyOnAnotherTransport()),
+@@ -156,6 +179,58 @@ test('a same-version daemon the client transport cannot reach is replaced', asyn
+   );
+ });
+ 
++test('a same-version daemon the host refused to connect to is not judged unreachable', async () => {
++  useClientTree(false);
++
++  assert.deepEqual(
++    await resolveDaemonTakeover(runningDaemon({ codeOrigin: 'installed' }), denied()),
++    { kind: 'connectDenied', denial: DENIAL },
++  );
++});
++
++// The unreachable branch retires too, so it asks the same permission question even when the client's
++// own transport leg answered only silence: a managed client pinned to a leg the daemon does not serve
++// would otherwise replace a daemon it was never allowed to reach.
++test('a daemon unreachable on the client transport but refused by the host is not replaced', async () => {
++  useClientTree(false);
++
++  assert.deepEqual(
++    await resolveDaemonTakeover(
++      runningDaemon({ codeOrigin: 'installed' }),
++      silentButRefusedOnTheGuard(),
++    ),
++    { kind: 'connectDenied', denial: DENIAL },
++  );
++});
++
++// A replacement retires a live process, so no branch of the ladder may answer it on the record alone.
++// Before this, only a NEWER daemon was probed: an older or code-mismatched one was replaced without
++// ever being seen, which let a client whose sandbox refuses the connect kill a healthy daemon.
++test('a version mismatch the host refused to probe is a denial, not a replacement', async () => {
++  assert.deepEqual(await resolveDaemonTakeover(runningDaemon({ version: '0.0.1' }), denied()), {
++    kind: 'connectDenied',
++    denial: DENIAL,
++  });
++});
++
++test('a code mismatch the host refused to probe is a denial, not a replacement', async () => {
++  useClientTree(false);
++
++  assert.deepEqual(
++    await resolveDaemonTakeover(runningDaemon({ codeOrigin: 'checkout' }), denied()),
++    { kind: 'connectDenied', denial: DENIAL },
++  );
++});
++
++// The refusal outranks the newer-daemon refusal: both stop the daemon being touched, and only
++// `connectDenied` says the reason is this client's sandbox rather than the daemon's version.
++test('a connect the host refused never reads as a newer daemon to refuse', async () => {
++  assert.deepEqual(await resolveDaemonTakeover(runningDaemon({ version: '999.0.0' }), denied()), {
++    kind: 'connectDenied',
++    denial: DENIAL,
++  });
++});
++
+ test('a reachable daemon older than the client is replaced', async () => {
+   assert.deepEqual(await resolveDaemonTakeover(runningDaemon({ version: '0.0.1' }), reachable()), {
+     kind: 'replace',
+@@ -175,17 +250,55 @@ function useClientTree(sourceCheckout: boolean): void {
+ }
+ 
+ function reachable(): DaemonReachability {
+-  return { onClientTransport: async () => true, onAnyAdvertisedTransport: async () => true };
++  return {
++    onClientTransport: async () => answered,
++    onAnyAdvertisedTransport: async () => answered,
++    refusedByHost: async () => undefined,
++  };
+ }
+ 
+ function unreachab
+```
+
+---
+
+### Incident Patch 2: `5d6c2f4b` (2026-11-25)
+**Commit Message**: fix(ios): read and press deep trees on physical devices through private AX (#5093)
+
+* fix(ios): recover deep trees on physical devices through the private-AX tier
+
+On a physical iPad, one deep screen failed every snapshot tier with
+kAXErrorIllegalArgument. The AX server limits the depth of each snapshot
+request, and XCUIElement.snapshot() and the query sweep both ask for the
+whole tree in one request. The runner's private-AX tier already works
+around this limit: it steps down a depth ladder and re-roots requests at
+the depth-capped frontier nodes. It was compiled for iOS Simulators only.
+
+The tier uses only XCTest's own in-process AX client
+(XCUIDevice.accessibilityInterface, requestSnapshotForElement), which is
+also present on a device. So the runner now offers it on iOS physical
+devices too. tvOS, visionOS, watchOS, and macOS still do not get it: a
+new otherApplePlatform environment keeps them on the XCTest backends,
+which is what they had when they were mapped to physicalDevice.
+
+Consequences on a physical device: a capture that the tree and query
+tiers cannot serve falls through to private AX, and a penalized XCTest
+channel defers to private AX instead of a bounded XCTest probe
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+AXSnapshotFallback.swift` (modified, +28/-13)
+```diff
+@@ -166,7 +166,7 @@ extension RunnerTests {
+     hint: CaptureHint,
+     deadline: Date = .distantFuture
+   ) -> SnapshotAcquisition? {
+-    #if os(iOS) && targetEnvironment(simulator)
++    #if os(iOS)
+       let app = target.app
+       let requestedDepth = hint.rawTraversalDepth ?? 64
+       // An explicit --depth request is honored as asked: no accepted-depth
+@@ -220,6 +220,7 @@ extension RunnerTests {
+       let viewport = privateAXSnapshotViewport(
+         app: app,
+         bundleId: target.bundleId,
++        soleScreenSize: target.soleScreenSize,
+         rootFrame: rootFrame
+       )
+       let nodes = privateAXAcquisition(
+@@ -275,14 +276,15 @@ extension RunnerTests {
+ 
+   /// The app's reported viewport when XCTest can read it, else the bridge's own root frame. That root
+   /// is `.derived`, which cannot establish a screen origin or anchor a rotation, so its local
+-  /// coordinates cannot authorize input (#4399), unless AXRuntime proves the app fills the screen.
++  /// coordinates cannot authorize input (#4399), unless the root is the full-screen proof frame.
+   private func privateAXSnapshotViewport(
+     app: XCUIApplication,
+     bundleId: String?,
++    soleScreenSize: CGSize,
+     rootFrame: CGRect
+   ) -> SnapshotViewport {
+     let fallback = {
+-      let fullScreenFrame = Self.fullScreenFrame(of: app)
++      let fullScreenFrame = Self.fullScreenFrame(of: app, soleScreenSize: { soleScreenSize })
+       let viewport = Self.privateAXRootViewport(rootFrame: rootFrame, fullScreenFrame: fullScreenFrame)
+       let kind: String
+       switch viewport {
+@@ -319,19 +321,32 @@ extension RunnerTests {
+     }
    }
  
-+  get origin(): RefFrameOrigin | undefined {
-+    return this.#fields.origin;
+-  /// The screen's frame when AXRuntime reports `app` as the primary app filling it, else `.null`.
+-  static func fullScreenFrame(of app: XCUIApplication) -> CGRect {
++  /// The frame `app`'s root must equal, at the origin, to prove that the app fills the screen, else
++  /// `.null` (`RunnerFullScreenProofFrame`). `soleScreenSize` is read only when the AXRuntime probe
++  /// proves nothing.
++  static func fullScreenFrame(of app: XCUIApplication, soleScreenSize: () -> CGSize) -> CGRect {
+     #if os(iOS)
+-      return RunnerFullScreenApplicationFrame(app)
++      return RunnerFullScreenApplicationFrame(app, soleScreenSize)
+     #else
+       return .null
+     #endif
+   }
+ 
+-  /// The viewport a private AX root establishes without XCTest. A root that is exactly the screen
+-  /// AXRuntime reports the app filling, at the origin, is `.reported`: two independent reads agree
+-  /// that window space is screen space, as on every iPhone app. Any other root stays `.derived`,
+-  /// including a placed iPad window's local root (#4399) and a root that is the screen rotated.
++  /// The device's only screen in portrait points, read at most once per command
++  /// (`soleDisplayPortraitSize`). `.zero` when the read fails or the platform has no such screen.
++  @MainActor
++  func commandSoleScreenSize() -> CGSize {
++    #if os(iOS)
++      return soleDisplayPortraitSize() ?? .zero
++    #else
++      return .zero
++    #endif
 +  }
 +
-   /** Idempotent by identity: an expired frame is returned as is, so repeated expiry compares `===`. */
-   static expire(frame: SessionRefFrame): SessionRefFrame {
-     if (frame.#fields.state === 'expired') return frame;
-@@ -77,13 +90,15 @@ export const PRISTINE_REF_FRAME: RefFrame = new SessionRefFrame({
-   scope: 'all',
-   tree: undefined,
-   generation: undefined,
-+  origin: undefined,
- });
++  /// The viewport a private AX root establishes without XCTest. A root that is exactly the
++  /// full-screen proof frame, at the origin, is `.reported`: two independent reads agree that window
++  /// space is screen space, as on every iPhone app. Any other root stays `.derived`, including a
++  /// placed iPad window's local root (#4399) and a root that is the screen rotated.
+   static func privateAXRootViewport(rootFrame: CGRect, fullScreenFrame: CGRect) -> SnapshotViewport {
+     // CONSERVATIVE: orientation is unknown here, so a landscape root (the portrait screen with width
+     // and height swapped) stays `.derived` rather than guess which way to rotate it.
+@@ -341,9 +356,9 @@ extension RunnerTests {
+     return .reported(box: rootFrame, interfaceOrientation: RunnerInterfaceOrientation.unknown)
+   }
  
- /** The frame an issuance mints. Retention and epoch semantics are the caller's; see `ref-frame.ts`. */
- export function issuedRefFrame(fields: {
-   scope: RefFrameScope;
-   tree: SnapshotState | undefined;
-   generation: number | undefined;
-+  origin: RefFrameOrigin;
- }): RefFrame {
-   return new SessionRefFrame({ state: 'active', ...fields });
+-  /// True when `frame` is exactly the screen AXRuntime reports the app filling, at the origin: the one
+-  /// case where window space is screen space without a live XCTest read. `fullScreenFrame` is `.null`
+-  /// when the app does not fill the screen.
++  /// True when `frame` is exactly the full-screen proof frame, at the origin: the one case where
++  /// window space is screen space without a live XCTest read. `fullScreenFrame` is `.null` when no
++  /// read proves that the app fills the screen.
+   static func isFullScreenAtOrigin(_ frame: CGRect, fullScreenFrame: CGRect) -> Bool {
+     !fullScreenFrame.isNull && frame.origin == .zero && frame == fullScreenFrame
+   }
+```
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+SnapshotAcquisition.swift` (modified, +5/-3)
+```diff
+@@ -145,7 +145,9 @@ extension RunnerTests {
+     if requestLitPanel == nil,
+       let frame = Self.fullScreenWindowFrame(
+         windowFrames: rootSnapshot.children.filter { $0.elementType == .window }.map(\.frame),
+-        fullScreenFrame: Self.fullScreenFrame(of: app)
++        fullScreenFrame: Self.fullScreenFrame(of: app) {
++          (try? runOnMainActor { self.commandSoleScreenSize() }.get()) ?? .zero
++        }
+       )
+     {
+       return .reported(box: frame, interfaceOrientation: capturedInterfaceOrientation(app: app))
+@@ -154,10 +156,10 @@ extension RunnerTests {
+   }
+ 
+   /// The first usable window frame of a snapshot, the window `resolveRunnerWindowElement` resolves,
+-  /// when it is exactly the screen AXRuntime reports the app filling, at the origin. Nil keeps the
++  /// when it is exactly the full-screen proof frame, at the origin. Nil keeps the
+   /// live read: a placed iPad window (#4399), an offset window, and a landscape window, whose frame
+   /// is the portrait screen with width and height swapped.
+-  /// `fullScreenFrame` runs its AXRuntime probe only once a usable window is found.
++  /// `fullScreenFrame` runs its probe only once a usable window is found.
+   static func fullScreenWindowFrame(windowFrames: [CGRect], fullScreenFrame: @autoclosure () -> CGRect) -> CGRect? {
+     guard
+       let window = windowFrames.first(where: { !$0.isEmpty }),
+```
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+SnapshotBackendCapabilities.swift` (modified, +6/-2)
+```diff
+@@ -3,6 +3,8 @@ import XCTest
+ enum SnapshotBackendEnvironment {
+   case simulator
+   case physicalDevice
++  /// tvOS, visionOS, watchOS, and macOS builds of the runner.
++  case otherApplePlatform
+ }
+ 
+ /// How a backend's acquisition relates to a regular `--depth` request. Every backend serves the
+@@ -72,8 +74,10 @@ enum SnapshotBackendKind: String, CaseIterable {
+   var isAvailableOnCurrentPlatform: Bool {
+     #if os(iOS) && targetEnvironment(simulator)
+       return isAvailable(on: .simulator)
+-    #else
++    #elseif os(iOS)
+       return isAvailable(on: .physicalDevice)
++    #else
++      return isAvailable(on: .otherApplePlatform)
+     #endif
+   }
+ 
+@@ -82,7 +86,7 @@ enum SnapshotBackendKind: String, CaseIterable {
+     case .recursiveTree, .querySweep:
+       return true
+     case .privateAX:
+-      return environment == .simulator
++      return environment != .otherApplePlatform
+     }
+   }
  }
 ```
 
-**File**: `packages/daemon/src/core/ref-frame.ts` (modified, +24/-4)
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+SnapshotCapturePlan.swift` (modified, +3/-2)
 ```diff
-@@ -5,6 +5,7 @@ import {
-   issuedRefFrame,
-   PRISTINE_REF_FRAME,
-   type RefFrame,
-+  type RefFrameOrigin,
-   type RefFrameScope,
-   type RefFrameState,
- } from './ref-frame-slot.ts';
-@@ -153,7 +154,7 @@ export function readSessionRuntimeRevision(session: SessionState): number {
-  * {@link activateRefFrame}.
-  */
- export function activateCompleteRefFrame(session: SessionState): void {
--  activateRefFrame(session, 'all');
-+  activateRefFrame(session, 'all', 'complete');
+@@ -153,8 +153,9 @@ extension RunnerTests {
+     let suppressXCTestPenalty = snapshotXCTestPenaltyWarmupExemption.consume()
+     var xCTestTierRan = false
+ 
+-    // Reorder is iOS-only: physical devices have no independent semantic backend, so a penalized
+-    // channel there uses the bounded probe instead of deferral.
++    // Only iOS runners penalize the channel. Every iOS runner, Simulator or physical device, has
++    // the private-AX backend, so a penalized regular visible plan defers to it. Raw and lit-panel
++    // plans keep their order.
+     var xCTestChannelPenalized = false
+     var breakerPenalized = false
+     var xCTestRecoveryProbeDue = false
+```
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+SnapshotCaptureTarget.swift` (modified, +5/-0)
+```diff
+@@ -17,6 +17,11 @@ struct SnapshotCaptureTarget {
+   /// Set on an observe-only capture, whose answer asserts app provenance: the system-alert tier then
+   /// refuses the capture instead of answering with the SpringBoard tree (#3348).
+   var refusesSystemAlertSubstitution = false
++  /// The device's only screen in portrait points, read on main because `XCUIScreen` is main-actor
++  /// isolated. The off-main private-AX tier proves a full-screen root against it. `.zero` when the read
++  /// failed, the platform has no such screen, or the request names a lit panel (its plan has no
++  /// private-AX tier).
++  var soleScreenSize: CGSize = .zero
  }
  
- /**
-@@ -165,8 +166,12 @@ export function activateCompleteRefFrame(session: SessionState): void {
-  * empty result must not (see `markSessionPartialRefsIssued`) — but the transition itself
-  * belongs here, with the complete form, because the two differ only in scope.
-  */
--export function activatePartialRefFrame(session: SessionState, scope: ReadonlySet<string>): void {
--  activateRefFrame(session, scope);
-+export function activatePartialRefFrame(
-+  session: SessionState,
-+  scope: ReadonlySet<string>,
-+  origin: RefFrameOrigin = 'partial',
-+): void {
-+  activateRefFrame(session, scope, origin);
+ /// The system-alert tier would have answered a capture that must come from the app.
+```
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+SnapshotExecution.swift` (modified, +6/-0)
+```diff
+@@ -33,6 +33,12 @@ extension RunnerTests {
+           )
+         target.litPanelSurface = self.litPanelState.surface
+         target.refusesSystemAlertSubstitution = context.observation != nil
++        // Snapshot commands skip `executePrepared`, which starts every other command without a
++        // cached screen size, so a display change between snapshots is read again.
++        self.mainOwned.soleDisplayPortraitSize = nil
++        if self.requestLitPanel == nil {
++          target.soleScreenSize = self.commandSoleScreenSize()
++        }
+         return .capture(
+           target,
+           systemSurface: context.systemSurface,
+```
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerXCTestEventBridge.h` (modified, +19/-4)
+```diff
+@@ -133,11 +133,26 @@ FOUNDATION_EXPORT RunnerFullScreenEvidence RunnerFullScreenEvidenceFromForegroun
+   CGRect screenFrame
+ );
+ 
+-// The screen's frame when AXRuntime reports `application` as the primary app filling it, else
+-// `CGRectNull`. The same probe the sole-screen route admits a non-phone app with; it reads two frames
+-// and walks no tree, so it answers while XCTest's accessibility channel is penalized.
++// The frame an app's own root must equal, at the origin, to prove that the app fills the screen.
++// Fills-screen evidence answers the screen AXRuntime read. Not-primary-app and windowed evidence
++// answer `CGRectNull`. Unknown evidence answers the sole XCTest screen in native portrait points,
++// because no window smaller than the screen equals it: AXRuntime answers no app from a runner on a
++// physical device. A missing, empty, or landscape sole screen answers `CGRectNull`.
++FOUNDATION_EXPORT CGRect RunnerFullScreenProofFrame(
++  RunnerFullScreenEvidence evidence,
++  CGRect probedScreenFrame,
++  CGSize soleScreenSize
++);
++
++// The frame `RunnerFullScreenProofFrame` decides for `application`, from the AXRuntime probe and,
++// only when that probe proves nothing, `soleScreenSize`. Neither read walks the app's tree, so it
++// answers while XCTest's accessibility channel is penalized. `XCUIScreen` is main-actor isolated, so
++// a caller off the main thread supplies a size that was read on main.
+ #if TARGET_OS_IOS
+-FOUNDATION_EXPORT CGRect RunnerFullScreenApplicationFrame(id application);
++FOUNDATION_EXPORT CGRect RunnerFullScreenApplicationFrame(
++  id application,
++  CGSize (^NS_NOESCAPE soleScreenSize)(void)
++);
+ #endif
+ 
+ FOUNDATION_EXPORT NSString * _Nullable RunnerRequireClass(
+```
+
+**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerXCTestEventBridge.m` (modified, +34/-5)
+```diff
+@@ -375,6 +375,30 @@ RunnerFullScreenEvidence RunnerFullScreenEvidenceFromForeground(
+     : RunnerFullScreenEvidenceWindowed;
  }
  
- /**
-@@ -179,18 +184,31 @@ export function activatePartialRefFrame(session: SessionState, scope: ReadonlySe
-  * `session.snapshot` without disturbing this tree, so a ref keeps resolving against the
-  * namespace that authorized it.
-  */
--function activateRefFrame(session: SessionState, scope: RefFrameScope): void {
-+function activateRefFrame(
-+  session: SessionState,
-+  scope: RefFrameScope,
-+  origin: RefFrameOrigin,
-+): void {
-   session.refFrame = issuedRefFrame({
-     scope,
-     tree: session.snapshot,
-     generation: session.snapshotGeneration,
-+    origin,
-   });
- }
- 
- export function refFrameState(session: SessionState): RefFrameState {
-   return refFrame(session).state;
- }
- 
-+/**
-+ * Which publication minted the frame (`ref-frame-slot.ts`). Diagnostic only: refusal text
-+ * and details read it (#4571); admission never does. Undefined before any issuance.
-+ */
-+export function refFrameOrigin(session: SessionState): RefFrameOrigin | undefined {
-+  return refFrame(session).origin;
++CGRect RunnerFullScreenProofFrame(
++  RunnerFullScreenEvidence evidence,
++  CGRect probedScreenFrame,
++  CGSize soleScreenSize
++) {
++  switch (evidence) {
++    case RunnerFullScreenEvidenceFillsScreen:
++      return probedScreenFrame;
++    case RunnerFullScreenEvidenceNotPrimaryApp:
++    case RunnerFullScreenEvidenceWindowed:
++      return CGRectNull;
++    case RunnerFullScreenEvidenceUnknown:
++      break;
++  }
++  CGRect soleScreen = CGRectMake(0, 0, soleScreenSize.width, soleScreenSize.height);
++  // CONSERVATIVE: a landscape root is the portrait screen with width and height swapped, and no
++  // read here says which way to rotate it.
++  if (!AgentDeviceForegroundFrameIsMeasurable(soleScreen) ||
++      soleScreenSize.height < soleScreenSize.width) {
++    return CGRectNull;
++  }
++  return soleScreen;
 +}
 +
- export function refFrameScope(session: SessionState): RefFrameScope {
-   return refFrame(session).scope;
- }
-@@ -199,6 +217,7 @@ export type RefMutationFrame = {
-   admission: RefFrameAdmission;
-   scope: RefFrameScope;
-   currentGeneration: number | undefined;
-+  origin: RefFrameOrigin | undefined;
- };
+ #if TARGET_OS_IOS
  
- export function readRefMutationFrame(params: {
-@@ -215,6 +234,7 @@ export function readRefMutationFrame(params: {
-     }),
-     scope: refFrameScope(params.session),
-     currentGeneration: refFrameEpoch(params.session),
-+    origin: refFrameOrigin(params.session),
-   };
+ // The private AXElement class the shared protocol describes comes from AXRuntime; the bridge guest
+@@ -481,12 +505,17 @@ static RunnerFullScreenEvidence RunnerProbeApplicationFillsScreen(id application
+   return RunnerProbeApplicationFillsScreenFrame(application, NULL);
  }
  
-```
-
-**File**: `packages/daemon/src/execution/__tests__/session-snapshot.test.ts` (modified, +4/-0)
-```diff
-@@ -19,6 +19,7 @@ import {
-   expireRefFrame,
-   refFrame,
-   refFrameEpoch,
-+  refFrameOrigin,
-   refFrameScope,
-   refFrameState,
- } from '../../core/ref-frame.ts';
-@@ -257,6 +258,9 @@ for (const retire of [false, true]) {
-     } else {
-       expect(generation).toBe(session.snapshotGeneration);
-       expect(refFrameScope(session)).toEqual(new Set(['e1']));
-+      // #4571: the settle-diff origin is what lets a later plain-ref refusal name
-+      // this diff as the replacement instead of a generic recapture.
-+      expect(refFrameOrigin(session)).toBe('settle-diff');
-     }
-   });
- }
-```
-
-**File**: `packages/daemon/src/execution/interaction/internal/__tests__/interaction-ref-policy.test.ts` (modified, +85/-0)
-```diff
-@@ -39,7 +39,92 @@ test('a plain ref outside the emitted partial scope keeps the recapture hint', (
- 
-   expect(response?.ok).toBe(false);
-   if (response && !response.ok) {
-+    expect(response.error.message).toBe(
-+      'Ref @e19 needs a complete snapshot — the current frame only authorizes its emitted refs',
-+    );
-     expect(response.error.details?.suggestedRef).toBeUndefined();
-+    expect(response.error.details?.replacedBy).toBeUndefined();
-+    expect(response.error.details?.replacementRefs).toBeUndefined();
-+    expect(response.error.details?.hint).toBe(
-+      'Capture a fresh interactive snapshot (snapshot -i) or use a stable selector, then retry.',
-+    );
-+  }
-+});
-+
-+// #4571: `fill @e3 … --settle; press @e4` with @e4 from the earlier full snapshot — the
-+// settle diff replaced the frame, so the refusal names it and hands back what it issued
-+// instead of leaving the caller a full `snapshot -i` round trip.
-+test('a settled-diff frame names the diff as the replacement and lists its issued refs pinned', () => {
-+  const session = makeStaleRefSession('settle-frame-replacement');
-+  session.snapshotGeneration = 531_735;
-+  activatePartialRefFrame(session, new Set(['e34', 'e7']), 'settle-diff');
-+
-+  const response = refMutationAdmissionResponse({
-+    ref: '@e4',
-+    mintedGeneration: undefined,
-+    staleRefsWarning: undefined,
-+    frame: readRefMutationFrame({ session, ref: '@e4', mintedGeneration: undefined }),
-+  });
-+
-+  expect(response?.ok).toBe(false);
-+  if (response && !response.ok) {
-+    expect(response.error.message).toBe(
-+      'Ref @e4 needs a complete snapshot — a settled diff replaced the ref frame and only authorizes its issued refs',
-+    );
-+    expect(response.error.details).toMatchObject({
-+      reason: 'plain_ref_requires_complete_frame',
-+      currentGeneration: 531_735,
-+      replacedBy: 'settle-diff',
-+      replacementRefs: ['@e34~s531735', '@e7~s531735'],
-+      hint: 'Retry with one of the refs the settled diff issued: @e34~s531735, @e7~s531735 — or capture a fresh interactive snapshot (snapshot -i).',
-+    });
-+  }
-+});
-+
-+test('a settled-diff frame keeps the exact-emitted suggestion when the refused body is one it issued', () => {
-+  const session = makeStaleRefSession('settle-frame-emitted');
-+  session.snapshotGeneration = 531_735;
-+  activatePartialRefFrame(session, new Set(['e34']), 'settle-diff');
-+
-+  const response = refMutationAdmissionResponse({
-+    ref: '@e34',
-+    mintedGeneration: undefined,
-+    staleRefsWarning: undefined,
-+    frame: readRefMutationFrame({ session, ref: '@e34', mintedGeneration: undefined }),
-+  });
-+
-+  expect(response?.ok).toBe(false);
-+  if (response && !response.ok) {
-+    expect(response.error.details).toMatchObject({
-+      suggestedRef: '@e34~s531735',
-+      hint: 'Retry with the exact emitted ref @e34~s531735.',
-+    });
-+    expect(response.error.details?.replacementRefs).toBeUndefined();
-+  }
-+});
-+
-+test('a settled-diff frame that issued no refs keeps the recapture guidance', () => {
-+  const session = makeStaleRefSession('settle-frame-empty');
-+  session.snapshotGeneration = 531_735;
-+  activatePartialRefFrame(session, new Set(), 'settle-diff');
-+
-+  const response = refMutationAdmissionResponse({
-+    ref: '@e19',
-+    mintedGeneration: undefined,
-+    staleRefsWarning: undefined,
-+    frame: readRefMutationFrame({ session, ref: '@e19', mintedGeneration: undefined }),
-+  });
-+
-+  expect(response?.ok).toBe(false);
-+  if (response && !response.ok) {
-+    expect(response.error.message).toBe(
-+      'Ref @e19 needs a complete snapshot — a settled diff replaced the ref frame and issued no refs',
-+    );
-+    expect(response.error.details).toMatchObject({
-+      reason: 'plain_ref_requires_complete_frame',
-+      replacedBy: 'settle-diff',
-+    });
-+    expect(response.error.details?.replacementRefs).toBeUndefined();
-     expect(response.error.details?.hint).toBe(
-       'Capture a fresh interactive snapshot (snapshot -i) or use a stable selector, then retry.',
-     );
-```
-
-**File**: `packages/daemon/src/execution/interaction/internal/interaction-ref-policy.ts` (modified, +77/-13)
-```diff
-@@ -37,30 +37,94 @@ export function assertRefMutationAdmitted(params: {
-     currentGeneration !== undefined
-       ? `@${refBody}~s${currentGeneration}`
-       : undefined;
--  throw new AppError('COMMAND_FAILED', rejectionMessage(admission.reason, params.ref), {
--    reason: admission.reason,
--    ref: params.ref,
--    currentGeneration,
--    scope: scope === 'all' ? 'all' : Array.from(scope),
--    ...(params.mintedGeneration !== undefined ? { mintedGeneration: params.mintedGeneration } : {}),
--    ...(suggestedRef ? { suggestedRef } : {}),
--    hint: suggestedRef
--      ? `Retry with the exact emitted ref ${suggestedRef}.`
--      : (params.staleRefsWarning ?? REJECTION_HINT),
--  });
-+  const replacement = settledDiffReplacement(params.frame, suggestedRef);
-+  throw new AppError(
-+    'COMMAND_FAILED',
-+    rejectionMessage(admission.reason, params.ref, replacement),
-+    {
-+      reason: admission.reason,
-+      ref: params.ref,
-+      currentGeneration,
-+      scope: scope === 'all' ? 'all' : Array.from(scope),
-+      ...(params.mintedGeneration !== undefined
-+        ? { mintedGeneration: params.mintedGeneration }
-+        : {}),
-+      ...(suggestedRef ? { suggestedRef } : {}),
-+      ...(replacement ? { replacedBy: 'settle-diff' } : {}),
-+      ...(replacement?.replacementRefs ? { replacementRefs: replacement.replacementRefs } : {}),
-+      hint: suggestedRef
-+        ? `Retry with the exact emitted ref ${suggestedRef}.`
-+        : (replacement?.hint ?? params.staleRefsWarning ?? REJECTION_HINT),
-+    },
+-CGRect RunnerFullScreenApplicationFrame(id application) {
++CGRect RunnerFullScreenApplicationFrame(
++  id application,
++  CGSize (^NS_NOESCAPE soleScreenSize)(void)
++) {
+   CGRect screen = CGRectNull;
+-  if (RunnerProbeApplicationFillsScreenFrame(application, &screen) != RunnerFullScreenEvidenceFillsScreen) {
+-    return CGRectNull;
+-  }
+-  return screen;
++  RunnerFullScreenEvidence evidence = RunnerProbeApplicationFillsScreenFrame(application, &screen);
++  return RunnerFullScreenProofFrame(
++    evidence,
++    screen,
++    evidence == RunnerFullScreenEvidenceUnknown ? soleScreenSize() : CGSizeZero
 +  );
  }
  
- const REJECTION_HINT =
-   'Capture a fresh interactive snapshot (snapshot -i) or use a stable selector, then retry.';
- 
--function rejectionMessage(reason: RefFrameRejectReason, ref: string): string {
-+/**
-+ * The settled-diff replacement of a plain-ref refusal (#4571): the refusal names the diff
-+ * that replaced the frame and hands back the refs that diff issued, each pinned to the
-+ * epoch the caller faces (#4853 paste-ready standard). The frame already authorized
-+ * exactly these bodies at this epoch, so printing them issues nothing new — a pasted ref
-+ * is admitted without another capture. Undefined for every other refusal shape.
-+ */
-+type SettledDiffReplacement = {
-+  /** `details.replacementRefs`; absent when the diff issued none or the exact-emitted suggestion won. */
-+  replacementRefs: string[] | undefined;
-+  /** The replacement hint; absent when the refusal keeps the recapture guidance. */
-+  hint: string | undefined;
-+};
-+
-+function settledDiffReplacement(
-+  frame: RefMutationFrame,
-+  suggestedRef: string | undefined,
-+): SettledDiffReplacement | undefined {
-+  if (
-+    frame.admission.admitted ||
-+    frame.admission.reason !== 'plain_ref_requires_complete_frame' ||
-+    frame.origin !== 'settle-diff'
-+  ) {
-+    return undefined;
-+  }
-+  const replacementRefs =
-+    suggestedRef === undefined &&
-+    frame.scope !== 'all' &&
-+    frame.scope.size > 0 &&
-+    frame.currentGeneration !== undefined
-+      ? Array.from(frame.scope, (body) => `@${body}~s${frame.currentGeneration}`)
-+      : undefined;
-+  return {
-+    replacementRefs,
-+    hint: replacementRefs ? settleReplacementHint(replacementRefs) : undefined,
-+  };
-+}
-+
-+/** The replacement route for a settled-diff frame: the diff's issued refs, ready to paste. */
-+function settleReplacementHint(replacementRefs: string[]): string {
-+  const list = replacementRefs.join(', ');
-+  return replacementRefs.length === 1
-+    ? `Retry with the ref the settled diff issued: ${list} — or capture a fresh interactive snapshot (snapshot -i).`
-+    : `Retry with one of the refs the settled diff issued: ${list} — or capture a fresh interactive snapshot (snapshot -i).`;
-+}
-+
-+function rejectionMessage(
-+  reason: RefFrameRejectReason,
-+  ref: string,
-+  replacement: SettledDiffReplacement | undefined,
-+): string {
-   switch (reason) {
-     case 'ref_frame_expired':
-       return `Ref ${ref} belongs to an expired ref frame — a device action since the snapshot invalidated it`;
-     case 'ref_generation_mismatch':
-       return `Ref ${ref} was minted from a superseded snapshot generation`;
-     case 'plain_ref_requires_complete_frame':
--      return `Ref ${ref} needs a complete snapshot — the current frame only authorizes its emitted refs`;
-+      if (!replacement) {
-+        return `Ref ${ref} needs a complete snapshot — the current frame only authorizes its emitted refs`;
-+      }
-+      return replacement.replacementRefs
-+        ? `Ref ${ref} needs a complete snapshot — a settled diff replaced the ref frame and only authorizes its issued refs`
-+        : `Ref ${ref} needs a complete snapshot — a settled diff replaced the ref frame and issued no refs`;
-     case 'ref_not_issued':
-       return `Ref ${ref} was not issued by the current ref frame`;
-   }
+ #endif
 ```
 
-**File**: `packages/daemon/src/execution/session-snapshot.ts` (modified, +14/-3)
+---
+
+### Incident Patch 3: `24f8181c` (2026-11-25)
+**Commit Message**: fix(metro): reload the app's own dev server instead of assuming port 8081 (#5098)
+
+* fix(metro): reload the app's own dev server instead of assuming port 8081
+
+A flagless metro reload resolved localhost:8081 whenever the session had bound no
+dev server, which reloaded whichever project owned that port, or failed as a bare
+fetch error. It now resolves in order: the session or explicit binding, the address
+the app itself stored (RCT_jsLocation in an iOS simulator's preferences), then a
+local dev server whose X-React-Native-Project-Root matches this directory. When
+nothing resolves, it fails with details.reason metro_dev_server_unresolved naming
+the address the fallback would have used. Only a session whose app runs on a local
+simulator or emulator runs the lookups; a remote or physical device keeps the
+previous default. Sessions that bind no address now record the app they opened so
+the reload has something to look that app's address up from.
+
+* test(metro): cover discovery branches and refuse a foreign app-reported server
+
+Splits the pure reads out of dev-server discovery — lsof and netstat port
+tables, the app's stored preferences, the project-root header, host:port, and
+root overl
+
+**File**: `packages/client/src/__tests__/index-metro-open-hosted-locally.test.ts` (added, +90/-0)
 ```diff
-@@ -10,6 +10,7 @@ import {
-   refFrameState,
-   REF_FRAME_REASONS,
- } from '../core/ref-frame.ts';
-+import type { RefFrameOrigin } from '../core/ref-frame-slot.ts';
- import type { SessionRef, SessionState } from '../core/session-state.ts';
- import type { SessionStore } from '../core/session-store.ts';
+@@ -0,0 +1,90 @@
++import { test } from 'vitest';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import path from 'node:path';
++import { createAgentDeviceClient } from '../index.ts';
++import { createClientTransport, mkdtempForTestSync } from '@agent-device/test-kit';
++
++// `open` records where the session's device runs, and that is what lets a later flagless
++// `metro reload` read this machine's simulator containers and listening ports at all. These pin the
++// mapping from the daemon's device-selection answer to that trait, through the real open path.
++
++type RecordedApp = {
++  platform: string;
++  deviceId: string;
++  appId: string;
++  hostedLocally?: boolean;
++};
++
++/** An `open` answered by a local daemon, as the given device-selection metadata reports it. */
++async function openWith(selection: unknown): Promise<{ stateDir: string; app: RecordedApp }> {
++  const stateDir = mkdtempForTestSync('agent-device-client-open-host-');
++  const setup = createClientTransport(async () => ({
++    ok: true,
++    data: {
++      session: 'qa',
++      platform: 'ios',
++      id: 'UDID-1',
++      device: 'iPhone Air',
++      kind: 'simulator',
++      appBundleId: 'com.example.app',
++      ...(selection === undefined ? {} : { selection }),
++    },
++  }));
++  const client = createAgentDeviceClient(
++    { ...setup.config, stateDir, daemonBaseUrl: 'http://127.0.0.1:1' },
++    { transport: setup.transport, host: { env: {}, cwd: stateDir } },
++  );
++
++  await client.apps.open({ app: 'com.example.app', platform: 'ios' });
++
++  const record = JSON.parse(
++    fs.readFileSync(path.join(stateDir, 'metro-sessions', 'qa.json'), 'utf8'),
++  ) as { app?: RecordedApp };
++  assert.ok(record.app, 'open records the app a later reload looks the dev server up from');
++  return { stateDir, app: record.app };
++}
++
++function selectionWith(source: string) {
++  return { reason: 'single-booted-local', source, candidateCount: 1, bootOccurred: false };
++}
++
++test('an open that resolved the device locally records it as hosted here', async () => {
++  const { stateDir, app } = await openWith(selectionWith('local'));
++  try {
++    assert.equal(app.hostedLocally, true);
++    assert.equal(app.deviceId, 'UDID-1');
++  } finally {
++    fs.rmSync(stateDir, { recursive: true, force: true });
++  }
++});
++
++test('an open of a provider device records it as not hosted here', async () => {
++  const { stateDir, app } = await openWith(selectionWith('provider'));
++  try {
++    // A provider's device can be anywhere, so a reload may not read this machine's state for it.
++    assert.equal(app.hostedLocally, false);
++  } finally {
++    fs.rmSync(stateDir, { recursive: true, force: true });
++  }
++});
++
++test('an open that says nothing about the device records no host trait at all', async () => {
++  // `session` means the device was carried over from an earlier request: that says nothing about where
++  // it runs, so it must stay unproven rather than claim either way.
++  const { stateDir, app } = await openWith(selectionWith('session'));
++  try {
++    assert.equal('hostedLocally' in app, false);
++  } finally {
++    fs.rmSync(stateDir, { recursive: true, force: true });
++  }
++});
++
++test('an open response without a selection block records no host trait either', async () => {
++  const { stateDir, app } = await openWith(undefined);
++  try {
++    assert.equal('hostedLocally' in app, false);
++  } finally {
++    fs.rmSync(stateDir, { recursive: true, force: true });
++  }
++});
+```
+
+**File**: `packages/client/src/__tests__/index-metro-reload-discovery.test.ts` (added, +271/-0)
+```diff
+@@ -0,0 +1,271 @@
++import { test, vi } from 'vitest';
++import assert from 'node:assert/strict';
++import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
++import { createServer } from 'node:http';
++import path from 'node:path';
++import { createAgentDeviceClient } from '../index.ts';
++import { AppError } from '@agent-device/kernel/errors';
++import {
++  closeLoopbackServer,
++  listenOnLoopback,
++  mkdtempForTestSync,
++  writeMetroSessionFixture,
++} from '@agent-device/test-kit';
++import type { MetroAppTarget } from '@agent-device/react-native';
++
++// `metro reload` may look a dev server up on this machine only when the client's daemon is local and
++// the session's app is recorded as hosted here. These pin that decision through the real client path.
++// The port listing is answered from a table, so a test sweeps its own ports instead of the machine's,
++// and never reaches the default port a refused search would otherwise call.
++
++const listing = vi.hoisted(() => ({ ports: [] as number[], commands: [] as string[] }));
++
++vi.mock('@agent-device/host-kit/command', async (importOriginal) => ({
++  ...(await importOriginal<typeof import('@agent-device/host-kit/command')>()),
++  runCmd: async (cmd: string) => {
++    listing.commands.push(cmd);
++    return cmd === 'lsof'
++      ? {
++          stdout: listing.ports.map((port) => `n127.0.0.1:${port}`).join('\n'),
++          stderr: '',
++          exitCode: 0,
++        }
++      : { stdout: '', stderr: '', exitCode: 1 };
++  },
++}));
++
++const localApp = {
++  platform: 'android',
++  deviceKind: 'emulator',
++  deviceId: 'emulator-5554',
++  appId: 'com.example.app',
++  hostedLocally: true,
++} as const satisfies MetroAppTarget;
++
++function devServer(projectRoot: string) {
++  const requests: string[] = [];
++  const server = createServer((req, res) => {
++    const url = req.url ?? '';
++    requests.push(url);
++    if (url.startsWith('/status')) {
++      res.setHeader('x-react-native-project-root', projectRoot);
++      res.end('packager-status:running');
++      return;
++    }
++    if (url.startsWith('/reload')) {
++      res.end('RELOADED');
++      return;
++    }
++    res.statusCode = 404;
++    res.end('not found');
++  });
++  return { server, requests };
++}
++
++function workspace(name: string) {
++  const root = mkdtempForTestSync(`agent-device-client-reload-${name}`);
++  const projectRoot = path.join(root, 'project');
++  mkdirSync(projectRoot, { recursive: true });
++  writeFileSync(path.join(projectRoot, 'package.json'), '{"name":"p","private":true}');
++  return { stateDir: path.join(root, 'state'), projectRoot };
++}
++
++/** A client whose daemon is local unless `daemonBaseUrl` says otherwise, and that never gets a command. */
++function clientFor(options: { stateDir: string; projectRoot: string; daemonBaseUrl: string }) {
++  return createAgentDeviceClient(
++    {
++      session: 'qa',
++      stateDir: options.stateDir,
++      cwd: options.projectRoot,
++      daemonBaseUrl: options.daemonBaseUrl,
++    },
++    {
++      transport: async () => {
++        throw new Error('flagless metro reload must stay local and never call the daemon');
++      },
++      host: { env: {}, cwd: options.projectRoot },
++    },
++  );
++}
++
++async function withDevServer<T>(
++  projectRoot: string,
++  ports: boolean,
++  run: (port: number, requests: string[]) => Promise<T>,
++): Promise<T> {
++  const { server, requests } = devServer(projectRoot);
++  const port = await listenOnLoopback(server);
++  listing.ports = ports ? [port] : [];
++  listing.commands = [];
++  try {
++    return await run(port, requests);
++  } finally {
++    listing.ports = [];
++    listing.commands = [];
++    await closeLoopbackServer(server);
++  }
++}
++
++test('a local daemon reload reloads the local dev server that serves this project', async () => {
++  const { stateDir, projectRoot } = workspace('local-found');
++  writeMetroSessionFixture({ stateDir, session: 'qa', hints: { app: localApp } });
++  try {
++    await withDevServer(projectRoot, true, async (port, requests) => {
++      const client = clientFor({
++        stateDir,
++        projectRoot,
++        daemonBaseUrl: `http://127.0.0.1:${port}`,
++      });
++      const result = await client.metro.reload();
++      assert.equal(result.reloadUrl, `http://127.0.0.1:${port}/reload`);
++      assert.equal(result.body, 'RELOADED');
++      assert.deepEqual(listing.commands, ['lsof']);
++      assert.ok(requests.some((url) => url.startsWith('/status')));
++    });
++  } finally {
++    rmSync(path.dirname(stateDir), { recursive: true, force: true });
++  }
++});
++
++test('a local daemon reload refuses another project’s server and fails typed', async () => {
++  const { stateDir, projectRoot } = workspace('local-foreign');
++  writeMetroSessionFixture({ stateDir, session: 'qa', hints: { app: localApp } });
++  try {
++    await withDevServer('/someone/else/project', true, async (port, requests) => {
++      const client = clientFor({
++        stateDir,
++        projectRoot,
++        daemonBaseUrl: `http://127.
+```
+
+**File**: `packages/client/src/index.ts` (modified, +85/-13)
+```diff
+@@ -19,6 +19,7 @@ import type {
+   CaptureSnapshotResult,
+   DaemonBinding,
+   DaemonLifecycle,
++  DeviceSelectionMetadata,
+   FlingOptions,
+   MaterializationReleaseOptions,
+   PanOptions,
+@@ -63,8 +64,12 @@ import {
+ } from '@agent-device/command-surface';
+ import type { CommandResult } from '@agent-device/command-registry/command-result';
+ import { createDaemonTransport, createRequestGuard } from '@agent-device/daemon-client';
+-import { resolveDaemonPaths } from '@agent-device/daemon-contracts/daemon-resolution';
++import {
++  daemonBaseUrlIsLocal,
++  resolveDaemonPaths,
++} from '@agent-device/daemon-contracts/daemon-resolution';
+ import * as devServer from '@agent-device/react-native';
++import type { MetroAppTarget } from '@agent-device/react-native';
+ import {
+   asOptionalRecord,
+   readPresentedSurfaceFact,
+@@ -114,6 +119,8 @@ export function createAgentDeviceClient(
+   ) => devServer.recordOpenedMetroSession(withHost(options), input);
+   const readMetroSessionRuntime = (options: { session: string; stateDir?: string }) =>
+     devServer.readMetroSessionRuntime(withHost(options));
++  const readMetroSessionAppTarget = (options: { session: string; stateDir?: string }) =>
++    devServer.readMetroSessionAppTarget(withHost(options));
  
-@@ -98,8 +99,16 @@ function normalizeRefBody(ref: string): string {
-  * epoch — a plain ref then requires a complete frame, and a pinned ref outside
-  * the set is rejected. An empty partial result does not supersede existing
-  * authority (it leaves the frame untouched), so a useful prior frame survives.
-+ *
-+ * `origin` records which publication issued the frame (ADR 0014 amendment): the
-+ * settle path passes `settle-diff` so a later plain-ref refusal can name the
-+ * diff as the replacement; every other partial publication keeps `partial`.
-  */
--export function markSessionPartialRefsIssued(session: SessionState, refs: Iterable<string>): void {
-+export function markSessionPartialRefsIssued(
-+  session: SessionState,
-+  refs: Iterable<string>,
-+  origin: RefFrameOrigin = 'partial',
-+): void {
-   const scope = new Set<string>();
-   for (const ref of refs) {
-     const body = normalizeRefBody(ref);
-@@ -115,7 +124,7 @@ export function markSessionPartialRefsIssued(session: SessionState, refs: Iterab
-   // depend on ancestors, siblings and viewport outside the emitted subset, so the whole
-   // tree is kept while the issuance set bounds authority) and the frozen epoch that keeps
-   // a later read-only capture from invalidating a correct pin from this frame.
--  activatePartialRefFrame(session, scope);
-+  activatePartialRefFrame(session, scope, origin);
+   // A non-default responseLevel (digest/full) makes the daemon return a leveled
+   // shape; the per-command client normalizers assume the default shape, so the
+@@ -338,17 +345,23 @@ export function createAgentDeviceClient(
+       open: async (options: AppOpenOptions) => {
+         const session = resolveRequestSession(options);
+         const data = await executeCommand<Record<string, unknown>>('open', options);
++        const device = normalizeOpenDevice(data);
++        const appBundleId = readOptionalString(data, 'appBundleId');
++        const appId = appBundleId;
++        const selection = normalizeDeviceSelection(data.selection);
+         await recordOpenedMetroSession(
+           { ...mergeClientOptions(config, options), session },
+           {
+             explicitRuntime: options.runtime !== undefined,
+             runtime: mergeClientOptions(config, options).runtime,
+             sessionReused: data.sessionReused === true,
++            app: metroAppTargetFromOpen(
++              device,
++              appBundleId,
++              appHostedLocally(config, host, selection),
++            ),
+           },
+         );
+-        const device = normalizeOpenDevice(data);
+-        const appBundleId = readOptionalString(data, 'appBundleId');
+-        const appId = appBundleId;
+         return {
+           session,
+           ...readScriptDeliveryDisclosure(data),
+@@ -359,7 +372,7 @@ export function createAgentDeviceClient(
+           appName: readOptionalString(data, 'appName'),
+           appBundleId,
+           appId,
+-          selection: normalizeDeviceSelection(data.selection),
++          selection,
+           startup: normalizeStartupSample(data.startup),
+           runtime: normalizeRuntimeHints(data.runtime),
+           device,
+@@ -430,15 +443,26 @@ export function createAgentDeviceClient(
+         );
+         return result;
+       },
+-      reload: async (options = {}) =>
+-        await reloadMetro({
++      reload: async (options = {}) => {
++        const session = resolveSessionName(config.session);
++        const sessionOptions = { ...config, session };
++        // Discovery reads this machine: an app's stored address in a simulator container, and this
++        // host's listening ports. A client aimed at a non-loopback daemon drives devices on another
++        // machine, so its reload keeps the address its hints resolve to and probes nothing here.
++        if (!daemonIsLocal(config, host)) {
++          return await reloadMetro({
++            ...options,
++            runtime: (await readMetroSessionRuntime(sessionOptions)) ?? config.runtime,
++          });
++        }
++        return await reloadMetro({
+           ...options,
+-          runtime:
+-            (await readMetroSessionRuntime({
+-              ...config,
+-              session: resolveSessionName(config.session),
+-            })) ?? config.runtime,
+-        }),
++          runtime: (await readMetroSessionRuntime(sessionOptions)) ?? config.runtime,
++          host,
++          projectRoot: config.cwd ?? host.cwd,
++          app: await readMetroSessionAppTarget(sessionOptions),
++        });
++      },
+     },
+     capture: {
+       snapshot: async (options: CaptureSnapshotOptions = {}) => {
+@@ -566,6 +590,54 @@ function centeredGestureInput(
+   };
  }
  
++/**
++ * Whether this client talks to a daemon on this machine. Discovery in `metro reload` reads local
++ * state — a simulator container file, this host's listening ports — so it is only meaningful when
++ * the devices the session drives are hosted here too, which for a client is the daemon's machine.
++ */
++function daemonIsLocal(config: AgentDeviceClientConfig, host: HostEnvironment): boolean {
++  return daemonBaseUrlIsLocal(config.daemonBaseUrl ?? host.env.
+```
+
+**File**: `packages/command-surface/src/metro/index.ts` (modified, +1/-1)
+```diff
+@@ -138,7 +138,7 @@ export const metroCommandFacet = defineCommandFacet({
+     summary: 'Prepare the dev server or reload apps',
+     searchHint: 'bundler',
+     cliDetail:
+-      "reload with no --metro-host/--metro-port/--bundle-url resolves against the dev server this session last bound via metro prepare or open's metro hint flags (falling back to localhost:8081 only when the session never bound one), so it never silently reloads a different project's server on the default port; pass an explicit flag to override the session hint for one call. After prepare, reload uses the local server address independently of the public or proxy address given to the device; a fresh open preserves it only when its client-config runtime points to the prepared device server, while explicit reload flags override it. For open or an explicit bundle URL, reload removes a .bundle/.jsbundle/.js entry filename and keeps the remaining path as the server mount, and when the server has no HTTP /reload route (Expo) the reload is broadcast over its /message websocket instead of trusting the app-page fallback. The binding is cleared when the session closes, and a fresh open without hint flags also clears any leftover binding from a previous same-name session. --kind expo (detected or forced) requests the virtual-entry bundle URL (.expo/.virtual-metro-entry.bundle) instead of index.bundle, since index.bundle 404s/500s against Expo dev servers in monorepos. Dependency install auto-detects the package manager from the nearest yarn.lock/pnpm-lock.yaml/bun.lock/bun.lockb/package-lock.json walking up from --project-root (bounded at the repo root), so Yarn/pnpm workspace monorepos with the lockfile at the repo root do not wrongly fall back to npm install (which fails on workspace: dependency specifiers); if install still fails, pass --no-install-deps when dependencies are already installed (for example via a monorepo root install).",
++      "reload with no --metro-host/--metro-port/--bundle-url resolves against the dev server this session last bound via metro prepare or open's metro hint flags. When the session never bound one, and the daemon that answered open reported the session's device as one of its own local devices, reload then reads the dev-server address the app itself stored (RCT_jsLocation in the app's preferences; an iOS simulator only) and accepts it when a running dev server there reports a project root that is this project's root or a parent or child of it. Failing that, it probes the ports a local process is listening on for a dev server whose X-React-Native-Project-Root is this project's root or a parent or child of it (a monorepo server reports the repo root), so it never silently reloads a different project's server. Run it from the project's own directory, or pass --metro-port, since a local search matches the working directory. When nothing resolves, reload fails with details.reason 'metro_dev_server_unresolved' naming the address it would have used, instead of calling localhost:8081, which belongs to whichever project owns that port. A session this machine cannot prove hosts its device — a provider device, a device inherited from an earlier request, or an app-less session — skips the local lookups and keeps the default address. Pass an explicit flag to override the session hint for one call. After prepare, reload uses the local server address independently of the public or proxy address given to the device; a fresh open preserves it only when its client-config runtime points to the prepared device server, while explicit reload flags override it. For open or an explicit bundle URL, reload removes a .bundle/.jsbundle/.js entry filename and keeps the remaining path as the server mount, and when the server has no HTTP /reload route (Expo) the reload is broadcast over its /message websocket instead of trusting the app-page fallback. The binding is cleared when the session closes, and a fresh open without hint flags also clears any leftover binding from a previous same-name session. --kind expo (detected or forced) requests the virtual-entry bundle URL (.expo/.virtual-metro-entry.bundle) instead of index.bundle, since index.bundle 404s/500s against Expo dev servers in monorepos. Dependency install auto-detects the package manager from the nearest yarn.lock/pnpm-lock.yaml/bun.lock/bun.lockb/package-lock.json walking up from --project-root (bounded at the repo root), so Yarn/pnpm workspace monorepos with the lockfile at the repo root do not wrongly fall back to npm install (which fails on workspace: dependency specifiers); if install still fails, pass --no-install-deps when dependencies are already installed (for example via a monorepo root install).",
+   },
+   metadata: metroCommandMetadata,
+   run: async (client, input): Promise<MetroPrepareResult | MetroReloadResult> =>
+```
+
+**File**: `packages/daemon-client/src/daemon-client-lifecycle.ts` (modified, +1/-17)
+```diff
+@@ -5,7 +5,6 @@ import type {
+   EnsureDaemonOptions,
+ } from '@agent-device/contracts/client';
+ import type { DaemonResponse } from '@agent-device/kernel/contracts';
+-import net from 'node:net';
+ import { AppError, normalizeError, type NormalizedError } from '@agent-device/kernel/errors';
+ import type { EnvMap, HostEnvironment } from '@agent-device/kernel/source-value';
+ import { readReplayDivergenceResume } from '@agent-device/ad-replay/divergence';
+@@ -16,6 +15,7 @@ import {
+   type OwnedReplayStateDir,
+ } from '@agent-device/daemon-contracts/daemon-registration-owner';
+ import {
++  isLoopbackHostname,
+   resolveDaemonPaths,
+   resolveDaemonServerMode,
+   resolveDaemonTransportPreference,
+@@ -72,11 +72,6 @@ export type EnsuredDaemon = {
+   startedByClient: boolean;
+ };
+ 
+-const LOOPBACK_BLOCK_LIST = new net.BlockList();
+-LOOPBACK_BLOCK_LIST.addSubnet('127.0.0.0', 8, 'ipv4');
+-LOOPBACK_BLOCK_LIST.addAddress('::1', 'ipv6');
+-LOOPBACK_BLOCK_LIST.addSubnet('::ffff:127.0.0.0', 104, 'ipv6');
+-
  /**
-@@ -140,7 +149,9 @@ export function issueSettleRefs(
-   if (!ref || !settle?.diff) return undefined;
-   const session = sessionStore.resolveCurrent(ref);
-   if (!session) return undefined;
--  markSessionPartialRefsIssued(session, collectSettleIssuedRefBodies(settle));
-+  // The settle-diff origin is what lets a later plain-ref refusal (#4571) name this
-+  // diff as the replacement instead of pointing at a generic recapture.
-+  markSessionPartialRefsIssued(session, collectSettleIssuedRefBodies(settle), 'settle-diff');
-   return session.snapshotGeneration;
+  * Whether a timed-out request may retire the daemon it was waiting on. An attach client never may: the
+  * daemon is not its to kill, and `ensureDaemon` reuses a compatible daemon that accepts a connection
+@@ -546,17 +541,6 @@ function validateRemoteDaemonTrust(
+   );
  }
  
+-function isLoopbackHostname(hostname: string): boolean {
+-  const normalized = hostname
+-    .trim()
+-    .toLowerCase()
+-    .replace(/^\[(.*)\]$/, '$1');
+-  if (normalized === 'localhost') return true;
+-  if (net.isIPv4(normalized)) return LOOPBACK_BLOCK_LIST.check(normalized, 'ipv4');
+-  if (net.isIPv6(normalized)) return LOOPBACK_BLOCK_LIST.check(normalized, 'ipv6');
+-  return false;
+-}
+-
+ export function attachSessionAddressHints(
+   response: DaemonResponse,
+   req: Omit<DaemonWireRequest, 'token'>,
+```
+
+**File**: `packages/daemon-contracts/src/daemon-resolution-loopback.test.ts` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++import { expect, test } from 'vitest';
++import { daemonBaseUrlIsLocal, isLoopbackHostname } from './daemon-resolution.ts';
++
++test('a daemon base URL on loopback addresses this machine', () => {
++  expect(daemonBaseUrlIsLocal(undefined)).toBe(true);
++  expect(daemonBaseUrlIsLocal('')).toBe(true);
++  expect(daemonBaseUrlIsLocal('http://localhost:4560')).toBe(true);
++  expect(daemonBaseUrlIsLocal('http://127.0.0.1:4560/rpc')).toBe(true);
++  expect(daemonBaseUrlIsLocal('http://[::1]:4560')).toBe(true);
++});
++
++test('a daemon base URL off loopback addresses another machine', () => {
++  expect(daemonBaseUrlIsLocal('https://fleet.example.test')).toBe(false);
++  expect(daemonBaseUrlIsLocal('http://10.0.0.7:4560')).toBe(false);
++  // An unusable base URL is refused when the transport resolves it; here it is treated as remote.
++  expect(daemonBaseUrlIsLocal('not a url')).toBe(false);
++});
++
++test('loopback hostnames are recognized in each spelling a base URL carries', () => {
++  expect(isLoopbackHostname('LocalHost ')).toBe(true);
++  expect(isLoopbackHostname('127.0.0.1')).toBe(true);
++  expect(isLoopbackHostname('[::1]')).toBe(true);
++  expect(isLoopbackHostname('::ffff:127.0.0.1')).toBe(true);
++  expect(isLoopbackHostname('0.0.0.0')).toBe(false);
++  expect(isLoopbackHostname('127.1.2.3')).toBe(true);
++  expect(isLoopbackHostname('localhost.example.test')).toBe(false);
++  expect(isLoopbackHostname('')).toBe(false);
++});
+```
+
+**File**: `packages/daemon-contracts/src/daemon-resolution.ts` (modified, +34/-0)
+```diff
+@@ -1,5 +1,6 @@
+ import crypto from 'node:crypto';
+ import fs from 'node:fs';
++import net from 'node:net';
+ import path from 'node:path';
+ import {
+   admitPrivateRoot,
+@@ -258,6 +259,39 @@ export function resolveDaemonServerMode(raw: string | undefined): DaemonServerMo
+   return 'socket';
+ }
+ 
++const LOOPBACK_BLOCK_LIST = new net.BlockList();
++LOOPBACK_BLOCK_LIST.addSubnet('127.0.0.0', 8, 'ipv4');
++LOOPBACK_BLOCK_LIST.addAddress('::1', 'ipv6');
++LOOPBACK_BLOCK_LIST.addSubnet('::ffff:127.0.0.0', 104, 'ipv6');
++
++/**
++ * Whether a daemon base URL addresses this machine. A caller on a non-loopback daemon drives devices
++ * hosted elsewhere, so it must not read this machine's state to answer a question about them.
++ */
++export function daemonBaseUrlIsLocal(raw: string | undefined): boolean {
++  if (!raw) return true;
++  let hostname: string;
++  try {
++    hostname = new URL(raw).hostname;
++  } catch {
++    // An unusable base URL is refused when the transport resolves it; treat it as remote here.
++    return false;
++  }
++  return isLoopbackHostname(hostname);
++}
++
++/** Whether an address names this machine: `localhost` or a loopback literal. */
++export function isLoopbackHostname(hostname: string): boolean {
++  const normalized = hostname
++    .trim()
++    .toLowerCase()
++    .replace(/^\[(.*)\]$/, '$1');
++  if (normalized === 'localhost') return true;
++  if (net.isIPv4(normalized)) return LOOPBACK_BLOCK_LIST.check(normalized, 'ipv4');
++  if (net.isIPv6(normalized)) return LOOPBACK_BLOCK_LIST.check(normalized, 'ipv6');
++  return false;
++}
++
+ export function resolveDaemonTransportPreference(
+   raw: string | undefined,
+ ): DaemonTransportPreference {
+```
+
+**File**: `packages/react-native/src/index.ts` (modified, +9/-0)
+```diff
+@@ -1,4 +1,5 @@
+ import type { MetroSessionOptions, MetroSessionOpenInput } from './metro/metro-session-hints.ts';
++import type { MetroAppTarget } from './metro/metro-dev-server-discovery.ts';
+ import type { SessionRuntimeHints } from '@agent-device/kernel/contracts';
+ import type { HostEnvironment } from '@agent-device/kernel/source-value';
+ import { resolveRuntimeTransportHints } from '@agent-device/host-kit/runtime-transport-hints';
+@@ -10,6 +11,7 @@ import type { ReactDevtoolsOutput } from './react-devtools/react-devtools-output
+ 
+ export type { PrepareMetroRuntimeOptions, ReloadMetroOptions } from './metro/client-metro.ts';
+ export type { PrepareMetroRuntimeResult, ReloadMetroResult } from '@agent-device/contracts/remote';
++export type { MetroAppTarget } from './metro/metro-dev-server-discovery.ts';
+ export type { MetroBridgeDescriptor } from './metro/metro-types.ts';
+ export type { ReactDevtoolsCommandOptions } from './react-devtools/react-devtools-connection.ts';
+ export type { ReactDevtoolsOutput } from './react-devtools/react-devtools-output.ts';
+@@ -96,6 +98,13 @@ export async function readMetroSessionRuntime(
+   return session.readMetroSessionRuntime(options);
+ }
+ 
++export async function readMetroSessionAppTarget(
++  options: MetroSessionOptions,
++): Promise<MetroAppTarget | undefined> {
++  const session = await import('./metro/metro-session-hints.ts');
++  return session.readMetroSessionAppTarget(options);
++}
++
+ export async function clearMetroSessionHintsQuietly(options: MetroSessionOptions): Promise<void> {
+   const session = await import('./metro/metro-session-hints.ts');
+   session.clearMetroSessionHintsQuietly(options);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5079** (2026-11-24): fix(apple): press Home through simulator HID on a foldable simulator (@kacperkapusciak)
-- **PR #5077** (2026-11-24): test(daemon-client): publish startup phase fixtures atomically (@thymikee)
-- **PR #5076** (2026-11-24): fix(device): select the only booted iPhone or iPad before ranking iPhones above iPads (@sjkim-expo)
-- **PR #5075** (2026-11-24): fix(settings): accept union-valued permission targets without mode (@thymikee)
-- **PR #5073** (closed): fix(test): repair provider restart test imports on 0.22 (@thymikee)
-- **PR #5072** (2026-11-24): refactor(daemon): bind find actions to the admitted session lifetime (@thymikee)
+- **PR #5130** (2026-11-26): perf(ios-runner): settle post-snapshot interactions on a deadline, not a fixed sleep (@imranbarbhuiya)
+- **PR #5128** (2026-11-26): fix(plugins): preserve pins in provider recovery (@thymikee)
+- **PR #5127** (2026-11-26): feat(settings): set the time zone on iOS simulators and Android (@imranbarbhuiya)
+- **PR #5126** (2026-11-26): fix(cli): bound hosted refusal amounts by the --max-usd width (@thymikee)
+- **PR #5124** (2026-11-26): fix(sdk): expose the version-matched ref pin formatter (@thymikee)
+- **PR #5119** (2026-11-26): perf(android): run settings permission all in one adb shell per batch (@imranbarbhuiya)
 
 ---
 
@@ -2627,54 +3421,49 @@ of its issued refs, the refusal:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. harmonyos): clamp the open foreground probe's hdc read to the request deadline
+## X. daemon-client): name a sandbox-denied connect and leave that daemon alone
 
 **RULE**:
-When implementing operations in `docs/evidence/ad-5055-lega/replay-lega.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/daemon-client/src/__tests__/daemon-client-ensure-drain.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4dffcd31`: harmonyos): clamp the open foreground probe's hdc read to the request deadline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d29b6d6`: daemon-client): name a sandbox-denied connect and leave that daemon alone. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/evidence/ad-5055-lega/replay-lega.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/daemon-client/src/__tests__/daemon-client-ensure-drain.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-{
-  "success": false,
-  "error": {
-    "code": "REPLAY_DIVERGENCE",
-    "message": "Daemon request deadline exceeded",
-    "hint": "Check completed steps and the current device state before retrying the timed-out operation.",
-    "diagnosticId": "mwu8qema-6d287442",
-    "logPath": "<state-dir>/sessions/cwd_1dd430edfb664982_default/requests/97d848997a368c7f.ndjson",
-    "diagnosticsRecord": {
-      "session": "cwd:1dd430edfb664982:default",
-      "requestId": "97d848997a368c7f"
+// The escalation route: a daemon still running at the drain deadline that answers no probe gets force
+// retired. A connect the HOST refused is not a missed probe, so this route names the sandbox instead.
+test('a drain that outlives the deadline with a probe the host refused signals nothing', async (t) => {
+  if (!(await withLoopback(t))) return;
+  const { stateDir, paths } = stateDirAndPaths();
+  let childPid = 0;
+  const drain = installVirtualDrain(() => childPid);
+  const stale = await startScriptedDaemon(draining, {
+    afterRpc: () => {
+      drain.begin(undefined);
+      void closeLoopbackServer(stale.server);
     },
-    "details": {
-      "reason": "daemon_request_timeout",
-      "replayPath": "one-line.ad",
-      "step": 1,
-      "action": "open",
-      "positionals": ["<arg>"],
-      "artifactPaths": [],
-      "divergence": {
-        "version": 1,
-        "kind": "action-failure",
-        "step": {
-          "index": 1,
-          "source": {
-            "path": "one-line.ad",
-            "line": 1
-          }
-        },
-        "action": "open \"com.sankuai.dianping\"",
-        "cause": {
-          "code": "COMMAND_FAILED",
-          "message": "request canceled",
-          "hint": "The request was canceled intentionally (explicit cancel or client disconnect) \u2014 no retry is needed unless the cancellation was
+  });
+  const { child } = await registerDaemon(paths, {
+    httpPort: stale.port,
+    version: '0.0.0-stale',
+    capabilities: ['quiesce'],
+  });
+  childPid = child.pid;
+  const liveness = await import('../daemon-client-liveness-probe.ts');
+  vi.spyOn(liveness, 'answersLivenessProbe').mockResolvedValue({
+    reachable: false,
+    denial: { errno: 'EPERM', transport: 'socket', port: stale.port },
+  });
+
+  try {
+    await assert.rejects(ensureDaemon({ stateDir, daemonTransport: 'http' }), (error: unknown) => {
+      assert.ok(error instanceof AppError);
+      ass
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2684,7 +3473,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4dffcd31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d29b6d6` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

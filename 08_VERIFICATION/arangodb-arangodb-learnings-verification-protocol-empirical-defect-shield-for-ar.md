@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T08:13:30.464Z",
+  "timestamp": "2026-11-27T04:18:39.140Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-arangodb-arangodb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [arangodb-arangodb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T08:13:30.464Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T04:18:39.140Z`  
 > **Learning ID**: `LEARN-EVO-arangodb-arangodb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `7dcb28d3`  
+> **Source Version**: `6c6dd593`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T08:13:18.928Z  
+> **Timestamp**: 2026-11-27T04:18:30.504Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T08:13:14.326Z  
+> **Harvest Timestamp**: 2026-11-27T04:18:30.499Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1666,11 +1666,11 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23751** (2026-11-24): **Bugfix/backport 3.12 bts 2480 unload index on collection open failures**
-  *Symptoms*: ### Scope & Purpose  This is a backport PR for the fix in https://github.com/arangodb/arangodb/pull/23719  - [X] :hankey: Bugfix - [ ] :pizza: New feature - [ ] :fire: Performance improvement - [ ] :hammer: Refactoring/simplification  ### Checklist  - [ ] Tests   - [ ] **Regression tests**   - [ ] C++ **Unit tests**   - [ ] **integration tests**   - [ ] **resilience tests** - [X] :book: CHANGELOG entry made - [ ] :books: documentation written (release notes, API changes, ...) - [ ] Backports   - [ ] Backport for 3.12.0: *(Please link PR)*   - [ ] Backport for 3.11: *(Please link PR)*   - [ ] Backport for 3.10: *(Please link PR)*  #### Related Information  *(Please reference tickets / specification / other PRs etc)*  - [ ] Docs PR:  - [ ] Enterprise PR: - [X] GitHub issue / Jira ticket: https://arangodb.atlassian.net/browse/BTS-2480 - [ ] Design document:  
+- **Issue #23781** (2026-11-26): **Bug fix 3.12/adjust bucket count**
+  *Symptoms*: backport of https://github.com/arangodb/arangodb/pull/23778/changes
 
-- **Issue #23749** (2026-11-24): **[COR-1310] Fix some improper cleanups in aql optimizers**
-  *Symptoms*: ### Scope & Purpose  This PR wants to fix some improper cleanups of variables in aql optimizers. It is related to https://github.com/arangodb/arangodb/pull/23557: allocations inside these optimizer rules can throw, and they don't cleanup leftovers properly.  Fixed two places:  1. `ExecutionNode::cloneDependencies()` Removed the try/catch block and `delete` operation, which was duplicated. So, `clone(plan, true)` (line 690) already have the plan own the copy of the plan, so its dtor will properly delete the copy. `delete c;` in the catch block is a kind of use-after-free.  2. `ExecutionPlan::findVarUsage()` This function updated the counts of ExecutionNodes by walking through the AST. The walk allocates. So, if it throws during the walk, the count table is half built, `_planValid` must be `false` so the dtor of ExecutionPlan skips the counting.  - [x] :hankey: Bugfix
+- **Issue #23778** (2026-11-26): **adjust bucket counts to the reality**
+  *Symptoms*: ### Scope & Purpose  we didn't adjust the buckets after moving tests into the large-suites  - [x] :hankey: Bugfix - [x] enterprise PR: https://github.com/arangodb/enterprise/pull/1750 - [x] backport https://github.com/arangodb/arangodb/pull/23781 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1687,61 +1687,632 @@ U_INTERNAL double  U_EXPORT2 uprv_ceil(double d);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7dcb28d3` (2026-11-24)
-**Commit Message**: Merge pull request #23749 from arangodb/bug-fix/cor-1310-fix-aql-optimizers
+### Incident Patch 1: `b4f8d47f` (2026-11-09)
+**Commit Message**: Fixe-ty-fix
 
-[COR-1310] Fix some improper cleanups in aql optimizers
-
-**File**: `arangod/Aql/ExecutionNode/ExecutionNode.cpp` (modified, +2/-7)
+**File**: `arangod/Aql/ExecutionNode/TraversalNode.cpp` (modified, +1/-1)
 ```diff
-@@ -689,13 +689,8 @@ void ExecutionNode::cloneDependencies(ExecutionPlan* plan,
-   while (it != _dependencies.end()) {
-     auto c = (*it)->clone(plan, true);
-     TRI_ASSERT(c != nullptr);
--    try {
--      c->_parents.emplace_back(theClone);
--      theClone->_dependencies.emplace_back(c);
--    } catch (...) {
--      delete c;
--      throw;
--    }
-+    c->_parents.emplace_back(theClone);
-+    theClone->_dependencies.emplace_back(c);
-     ++it;
-   }
- }
+@@ -25,7 +25,7 @@
+ #include "Aql/Ast.h"
+ #include "Aql/Collection.h"
+ #include "Aql/Condition.h"
+-#include "Aql/ConditionCoverage.h"
++#include "Aql/Optimizer/Utils/ConditionCoverage.h"
+ #include "Aql/ExecutionBlockImpl.tpp"
+ #include "Aql/ExecutionEngine.h"
+ #include "Aql/ExecutionNode/GraphNode.h"
 ```
 
-**File**: `arangod/Aql/ExecutionPlan.cpp` (modified, +5/-0)
+**File**: `arangod/Aql/Optimizer/Rule/HandleViews.cpp` (modified, +1/-1)
 ```diff
-@@ -2628,6 +2628,10 @@ void ExecutionPlan::findVarUsage() {
-   if (varUsageComputed()) {
-     return;
+@@ -25,7 +25,7 @@
+ #include "ApplicationFeatures/ApplicationServer.h"
+ #include "Aql/AqlFunctionFeature.h"
+ #include "Aql/Ast.h"
+-#include "Aql/CalculationNodeVarFinder.h"
++#include "Aql/Optimizer/Utils/CalculationNodeVarFinder.h"
+ #include "Aql/Condition.h"
+ #include "Aql/ExecutionNode/CalculationNode.h"
+ #include "Aql/ExecutionNode/ExecutionNode.h"
+```
+
+**File**: `arangod/Aql/Optimizer/Rule/LateDocumentMaterialization.cpp` (modified, +1/-1)
+```diff
+@@ -23,7 +23,7 @@
+ #include "LateDocumentMaterialization.h"
+ 
+ #include "Aql/Ast.h"
+-#include "Aql/CalculationNodeVarFinder.h"
++#include "Aql/Optimizer/Utils/CalculationNodeVarFinder.h"
+ #include "Aql/Collection.h"
+ #include "Aql/Condition.h"
+ #include "Aql/ExecutionNode/CalculationNode.h"
+```
+
+**File**: `arangod/Aql/Optimizer/Rule/LateDocumentMaterializationArangoSearch.cpp` (modified, +1/-1)
+```diff
+@@ -23,7 +23,7 @@
+ #include "LateDocumentMaterializationArangoSearch.h"
+ 
+ #include "Aql/Ast.h"
+-#include "Aql/CalculationNodeVarFinder.h"
++#include "Aql/Optimizer/Utils/CalculationNodeVarFinder.h"
+ #include "Aql/ExecutionNode/CalculationNode.h"
+ #include "Aql/ExecutionNode/ExecutionNode.h"
+ #include "Aql/ExecutionNode/IResearchViewNode.h"
+```
+
+**File**: `arangod/Aql/Optimizer/Rule/RemoveFiltersCoveredByIndex.cpp` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@
+ 
+ #include "Aql/Ast.h"
+ #include "Aql/Condition.h"
+-#include "Aql/ConditionCoverage.h"
++#include "Aql/Optimizer/Utils/ConditionCoverage.h"
+ #include "Aql/ExecutionNode/CalculationNode.h"
+ #include "Aql/ExecutionNode/ExecutionNode.h"
+ #include "Aql/ExecutionNode/FilterNode.h"
+```
+
+**File**: `arangod/Aql/Optimizer/Rule/RemoveFiltersCoveredByTraversal.cpp` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@
+ 
+ #include "Aql/Ast.h"
+ #include "Aql/Condition.h"
+-#include "Aql/ConditionCoverage.h"
++#include "Aql/Optimizer/Utils/ConditionCoverage.h"
+ #include "Aql/ExecutionNode/CalculationNode.h"
+ #include "Aql/ExecutionNode/ExecutionNode.h"
+ #include "Aql/ExecutionNode/FilterNode.h"
+```
+
+**File**: `arangod/Aql/Optimizer/Utils/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -2,6 +2,7 @@ target_sources(arango_aql PRIVATE
+   AccessesCollectionVariable.cpp
+   ConditionCoverage.cpp
+   ConditionFinder.cpp
++  CalculationNodeVarFinder.cpp
+   EnumeratePathsFilterMatcher.cpp
+   ExtractNonConstPartsOfIndexCondition.cpp
+   FindProjections.cpp
+```
+
+**File**: `arangod/Aql/Optimizer/Utils/CalculationNodeVarFinder.cpp` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@
+ ///
+ ////////////////////////////////////////////////////////////////////////////////
+ 
+-#include "Aql/CalculationNodeVarFinder.h"
++#include "Aql/Optimizer/Utils/CalculationNodeVarFinder.h"
+ 
+ namespace arangodb::aql {
+ 
+```
+
+---
+
+### Incident Patch 2: `00956873` (2026-11-26)
+**Commit Message**: Merge pull request #23762 from arangodb/bug-fix/reactivate-and-repair-tests
+
+Reactivate and fix some tests
+
+**File**: `tests/js/client/server_permissions/authorization-questions.js` (modified, +4/-6)
+```diff
+@@ -104,12 +104,10 @@ function authorizationQuestionsSuite() {
+         "DropCollection db=_system name=UnitTestsAuthzQuestions",
+         "UseCollection db=_system name=UnitTestsAuthzQuestions level=read",
+         "UseCollection db=_system name=_graphs level=read",
+-        // the single server also revokes the collection's permissions from all
+-        // users; in the cluster that happens without an ExecContext
+-        ...singleOnly([
+-          "UseCollection db=_system name=_users level=read",
+-          "UseCollection db=_system name=_users level=writedata"
+-        ])
++        // dropping also revokes the collection's permissions from all users
++        // (on single server and coordinator alike), which writes to _users
++        "UseCollection db=_system name=_users level=read",
++        "UseCollection db=_system name=_users level=writedata"
+       ], endObserve());
+     },
+ 
+```
+
+**File**: `tests/js/client/server_permissions/test-hardened-rest-apis.js` (modified, +2/-2)
+```diff
+@@ -244,7 +244,7 @@ function testSuite() {
+         let result = arango.GET("/_admin/cluster/numberOfServers");
+         assertTrue(result.error);
+         assertEqual(403, result.code);
+-        assertEqual("forbidden", result.errorMessage);
++        assertEqual(require("internal").errors.ERROR_FORBIDDEN.code, result.errorNum);
+       } else {
+         let result = arango.GET("/_admin/cluster/numberOfServers");
+         assertTrue(result.error);
+@@ -275,7 +275,7 @@ function testSuite() {
+         let result = arango.PUT("/_admin/cluster/numberOfServers", data);
+         assertTrue(result.error);
+         assertEqual(403, result.code);
+-        assertEqual("forbidden", result.errorMessage);
++        assertEqual(require("internal").errors.ERROR_FORBIDDEN.code, result.errorNum);
+       } else {
+         let result = arango.PUT("/_admin/cluster/numberOfServers", data);
+         assertTrue(result.error);
+```
+
+**File**: `tests/js/client/server_permissions/test-unhardened-rest-apis.js` (modified, +1/-1)
+```diff
+@@ -185,7 +185,7 @@ function testSuite() {
+         let result = arango.PUT("/_admin/cluster/numberOfServers", data);
+         assertTrue(result.error);
+         assertEqual(403, result.code);
+-        assertEqual("forbidden", result.errorMessage);
++        assertEqual(require("internal").errors.ERROR_FORBIDDEN.code, result.errorNum);
+       } else {
+         let result = arango.PUT("/_admin/cluster/numberOfServers", data);
+         assertTrue(result.error);
+```
+
+**File**: `tests/js/common/v8/shell-v8-crypto.js` (modified, +1/-4)
+```diff
+@@ -277,9 +277,7 @@ function CryptoSuite () {
+         [ "secret", "ArangoDB is a database", "sha512", "8ef4e708db5bbc13ecf675ab81c9bfac72faedaf68fae91c51c0736746d087396af758a43cd60f763a5a8187d856c906c1677c7525b756cdb1ad5a7df823df73" ],
+         [ "secret", "ArangoDB is a database", "SHA512", "8ef4e708db5bbc13ecf675ab81c9bfac72faedaf68fae91c51c0736746d087396af758a43cd60f763a5a8187d856c906c1677c7525b756cdb1ad5a7df823df73" ],
+         [ "secret", "ArangoDB is a database", "sha1", "f39d7a76e502ba3f79d663cfbc9ac43eb6fd323e" ],
+-        [ "secret", "ArangoDB is a database", "SHA1", "f39d7a76e502ba3f79d663cfbc9ac43eb6fd323e" ],
+-        [ "secret", "ArangoDB is a database", "md5", "6eecfc947725974efc24bbaaafe15a13" ],
+-        [ "secret", "ArangoDB is a database", "MD5", "6eecfc947725974efc24bbaaafe15a13" ]
++        [ "secret", "ArangoDB is a database", "SHA1", "f39d7a76e502ba3f79d663cfbc9ac43eb6fd323e" ]
+       ];
+ 
+       data.forEach(function (value) {
+@@ -389,7 +387,6 @@ function CryptoSuite () {
+         [ 'secret', 'ArangoDB is a database', 10, 16, 'sha256', '4af8fad53d19ac984c0d1a8c128d5391' ],
+         [ 'secret', 'ArangoDB is a database', 10, 16, 'sha384', '9684202a2d1c1ed248724d248c866f11' ],
+         [ 'secret', 'ArangoDB is a database', 10, 16, 'sha512', '5818089d14f7366e0656ec851d55a140' ],
+-        [ 'secret', 'ArangoDB is a database', 10, 16, 'md5', 'b4a63e5a9c02d76cb40aa37fd34c0a4f' ]
+       ];
+ 
+       data.forEach(function (value) {
+```
+
+**File**: `tests/js/common/v8/shell-v8-fs.js` (modified, +0/-11)
+```diff
+@@ -1076,17 +1076,6 @@ function FileSystemSuite () {
+       assertEqual(checksum, '1');
+     },
+ 
+-////////////////////////////////////////////////////////////////////////////////
+-/// @brief test alder32()
+-////////////////////////////////////////////////////////////////////////////////
+-
+-    testAdler32File : function() {
+-      const internal = require('internal');
+-      const file = fs.makeAbsolute(fs.join(internal.pathForTesting('common'), 'test-data', 'foxx','toomanysecrets.txt'));
+-      const checksum = fs.adler32(file);
+-      assertEqual(checksum, '583533794');
+-    },
+-
+ ////////////////////////////////////////////////////////////////////////////////
+ /// @brief test alder32()
+ ////////////////////////////////////////////////////////////////////////////////
+```
+
+**File**: `tests/tests.yml` (modified, +13/-0)
+```diff
+@@ -16,6 +16,7 @@
+       - version
+       - shell_client_large
+       - legacy
++      - shell_v8
+ 
+ # Single Server Replication Tests
+ - replication_shell:
+@@ -379,6 +380,18 @@
+             protocol: ssl
+             suffix: ssl
+ 
++# the single server run is part of shell_api_multi_permissions;
++# each testfile starts its own cluster, so give it a separate job
++- server_permissions:
++    options:
++      priority: 1000
++      parallelity: 5
++      size: medium
++      buckets: 4
++      type: cluster
++    args:
++      dumpAgencyOnError: true
++
+ # shell_client_multi tests run quite long, so want to have a
+ # separate job for each protocol
+ - shell_client_multi:
+```
+
+---
+
+### Incident Patch 3: `2e6422d0` (2026-11-26)
+**Commit Message**: Merge remote-tracking branch 'origin/devel' into bug-fix/reactivate-and-repair-tests
+
+**File**: `3rdParty/kaldi/src/fstext/determinize-star-inl.h` (modified, +52/-12)
+```diff
+@@ -31,6 +31,7 @@ using std::unordered_map;
+ 
+ #include <vector>
+ #include <climits>
++#include <chrono>
+ 
+ namespace fst {
+ 
+@@ -157,7 +158,6 @@ template<class Label, class StringId> class StringRepository {
+   std::vector<std::vector<Label>* > vec_;
+   MapType map_;
+ };
+-
+ template<class F> class DeterminizerStar {
+   typedef typename F::Arc Arc;
+  public:
+@@ -176,7 +176,8 @@ template<class F> class DeterminizerStar {
+   // Initializer.  After initializing the object you will typically call
+   // Determinize() and then one of the Output functions.
+   DeterminizerStar(const Fst<Arc> &ifst, float delta = kDelta,
+-                   int max_states = -1, bool allow_partial = false)
++                   int max_states = -1, bool allow_partial = false,
++                   const std::function<bool(void)>& isQueryKilled = []() { return false; })
+     : ifst_(ifst.Copy()),
+       delta_(delta),
+       max_states_(max_states),
+@@ -187,7 +188,8 @@ template<class F> class DeterminizerStar {
+               down_cast<const ExpandedFst<Arc>*,
+               const Fst<Arc> >(&ifst)->NumStates()/2 + 3 : 20,
+             SubsetKey(), SubsetEqual(delta_)),
+-      epsilon_closure_(ifst_, max_states, &repository_, delta) {
++      isQueryKilled_(isQueryKilled),
++      epsilon_closure_(ifst_, max_states, &repository_, delta, isQueryKilled) {
    }
-+  bool const wasValid = _planValid;
-+  // The counts are inconsistent during a walk, so if it throws
-+  // ~ExecutionPlan must skip its count check.
-+  _planValid = false;
  
-   // reset all counters
-   for (auto& counter : _typeCounts) {
-@@ -2638,6 +2642,7 @@ void ExecutionPlan::findVarUsage() {
-   VarUsageFinder finder(&_varSetBy);
-   root()->walk(finder);
+   void Determinize(bool *debug_ptr) {
+@@ -206,6 +208,10 @@ template<class F> class DeterminizerStar {
+     }
+     closed_subset_.clear();
+     while (!Q_.empty()) {
++      if (isQueryKilled_()) {
++        is_partial_ = true;
++        break;
++      }
+       std::pair<std::vector<Element>*, OutputStateId> cur_pair = Q_.front();
+       Q_.pop_front();
+       ProcessSubset(cur_pair);
+@@ -229,6 +235,8 @@ template<class F> class DeterminizerStar {
+     return is_partial_;
+   }
  
-+  _planValid = wasValid;
-   setVarUsageComputed();
++  bool TimedOut() { return isQueryKilled_(); }
++
+   // frees all except output_arcs_, which contains the important info
+   // we need to output.
+   void FreeMostMemory() {
+@@ -380,12 +388,14 @@ template<class F> class DeterminizerStar {
+   class EpsilonClosure {
+    public:
+     EpsilonClosure(const Fst<Arc> *ifst, int max_states,
+-        StringRepository<Label, StringId> *repository, float delta):
++        StringRepository<Label, StringId> *repository, float delta,
++        const std::function<bool(void)>& isQueryKilled = []() { return false; }):
+       ifst_(ifst),
+       max_states_(max_states),
+       repository_(repository),
+       delta_(delta),
+-      sorted_(ifst->Properties(kILabelSorted, false) & kILabelSorted) {
++      sorted_(ifst->Properties(kILabelSorted, false) & kILabelSorted),
++      isQueryKilled_(isQueryKilled) {
+     }
+ 
+     bool FstSorted() const noexcept {
+@@ -465,6 +475,7 @@ template<class F> class DeterminizerStar {
+     StringRepository<Label, StringId> *repository_;
+     float delta_;
+     bool sorted_;
++    const std::function<bool(void)>& isQueryKilled_;
+   };
+ 
+ 
+@@ -685,32 +696,57 @@ template<class F> class DeterminizerStar {
+ 
+   StringRepository<Label, StringId> repository_;  // associate integer id's with sequences of labels.
+   EpsilonClosure epsilon_closure_;
++  const std::function<bool(void)>& isQueryKilled_;
+ };
+ 
+ 
+ template<class F>
+ bool DeterminizeStar(F &ifst, MutableFst<typename F::Arc> *ofst,
+                      float delta, bool *debug_ptr, int max_states,
+-                     bool allow_partial) {
++                     bool allow_partial, const std::function<bool(void)>& isQueryKilled,
++                     bool* timed_out) {
+   ofst->SetOutputSymbols(ifst.OutputSymbols());
+   ofst->SetInputSymbols(ifst.InputSymbols());
+-  DeterminizerStar<F> det(ifst, delta, max_states, allow_partial);
++  DeterminizerStar<F> det(ifst, delta, max_states, allow_partial, isQueryKilled);
+   det.Determinize(debug_ptr);
+-  det.Output(ofst);
++  const bool did_time_out = det.TimedOut();
++
++  if (timed_out != nullptr) {
++    *timed_out = did_time_out;
++  }
++
++  // A timed-out determinization has no usable acceptor.
++  // Skip materializing it.
++  if (!did_time_out) {
++    det.Output(ofst);
++  }
++
+   return det.IsPartial();
  }
  
+ 
+ template<class F>
+ bool DeterminizeStar(F &ifst,
+                      MutableFst<GallicArc<typename F::Arc> > *ofst, float delta,
+-                     bool *debug_ptr, int max_states,
+-                     bool allow_partial) {
++                     bool *debug_ptr, int max_states, bool allow_partial,
++                     const std::function<bool(void)>& isQueryKilled,
++                     bool* timed_out) {
+   ofst->SetOutputSymbols(ifst.InputSymbols());
+   ofst->SetInputSymbols(ifst.InputSymbols());
+-  DeterminizerStar<F> det(ifst, delta, max_states, allow_partial);
++  DeterminizerStar<F> det(ifst, delta, max_states, allow_partial, isQueryKilled);
+   det.Determinize(debug_ptr);
+-  det.Output(ofst);
++  const bool did_time_out = det.TimedOut();
++
++  if (timed_out != nullptr) {
++    *timed_out = did_time_out;
++  }
++
++  // A timed-out determinization has no usa
+```
+
+**File**: `3rdParty/kaldi/src/fstext/determinize-star.h` (modified, +10/-2)
+```diff
+@@ -80,6 +80,8 @@ namespace fst {
+     If allow_partial is true, the algorithm will output partial results when the
+     specified max_states is reached (when larger than zero), instead of throwing
+     out an error.
++    isQueryKilled is polled to see whether an early stop is requested.
++    timed_out is set when determinization exceeds query budget.
+ 
+     Caution, the return status is un-intuitive: this function will return false if
+     determinization completed normally, and true if it was stopped early by
+@@ -90,7 +92,9 @@ bool DeterminizeStar(F &ifst, MutableFst<typename F::Arc> *ofst,
+                      float delta = kDelta,
+                      bool *debug_ptr = NULL,
+                      int max_states = -1,
+-                     bool allow_partial = false);
++                     bool allow_partial = false,
++                     const std::function<bool(void)>& isQueryKilled = []() { return false; },
++                     bool* timed_out = nullptr);
+ 
+ 
+ 
+@@ -102,6 +106,8 @@ bool DeterminizeStar(F &ifst, MutableFst<typename F::Arc> *ofst,
+     If allow_partial is true, the algorithm will output partial results when the
+     specified max_states is reached (when larger than zero), instead of throwing
+     out an error.
++    isQueryKilled is polled to see whether an early stop is requested.
++    timed_out is set when determinization exceeds query budget.
+ 
+     Caution, the return status is un-intuitive: this function will return false if
+     determinization completed normally, and true if it was stopped early by
+@@ -111,7 +117,9 @@ template<class F>
+ bool DeterminizeStar(F &ifst, MutableFst<GallicArc<typename F::Arc> > *ofst,
+                      float delta = kDelta, bool *debug_ptr = NULL,
+                      int max_states = -1,
+-                     bool allow_partial = false);
++                     bool allow_partial = false,
++                     const std::function<bool(void)>& isQueryKilled = []() { return false; },
++                     bool* timed_out = nullptr);
+ 
+ 
+ /// @} end "addtogroup fst_extensions"
+```
+
+**File**: `CHANGELOG` (modified, +5/-0)
+```diff
+@@ -1,6 +1,11 @@
+ 4.0.0 (XXXX-XX-XX)
+ ------------------
+ 
++* A MATCH edge with * 1..1 (e.g. -[e:knows * 1..1]-) is now treated as a single edge 
++ The edge variable holds the edge document, path variables contain one edge and one vertex, and undirected self-loops are matched only once. Previously, it was treated as a variable-length traversal, causing the edge variable to hold a path object and undirected self-loops to be matched twice.
++
++* COR-1016: Added query time budgeting to NFA to DFA pattern determinization.
++
+ * COR-1234: Reject a MATCH variable-length relationship whose lower bound is
+   zero, for example `* 0..0` or `* 0..2`. A zero-hop path has no edge, and its
+   endpoint projection is not defined.
+```
+
+**File**: `arangod/Aql/Executor/IResearchViewExecutorBase.tpp` (modified, +16/-6)
+```diff
+@@ -29,6 +29,7 @@
+ #include "IResearch/Search.h"
+ #include "IResearch/IResearchFilterFactoryCommon.h"
+ #include "IResearch/IResearchReadUtils.h"
++#include "error/error.hpp"
+ 
+ namespace arangodb::aql {
+ 
+@@ -817,12 +818,21 @@ void IResearchViewExecutorBase<Impl, ExecutionTraits>::reset() {
+   }
+ 
+   // compile filter
+-  _filter = root->prepare({
+-      .index = *_reader,
+-      .memory = _memory,
+-      .scorers = _scorers,
+-      .ctx = &_filterCtx,
+-  });
++  try {
++    _filter = root->prepare({
++        .index = *_reader,
++        .memory = _memory,
++        .scorers = _scorers,
++        .ctx = &_filterCtx,
++    });
++  } catch (...) {
++    if (_ctx.killed()) {
++      THROW_ARANGO_EXCEPTION_MESSAGE(
++          TRI_ERROR_QUERY_KILLED,
++          "AQL: ArangoSearch query killed (while executing)");
++    }
++    throw;
++  }
+ 
+   if constexpr (ExecutionTraits::EmitSearchDoc) {
+     TRI_ASSERT(_filterCookie);
+```
+
+**File**: `arangod/Aql/Match/PatternNormalizer.cpp` (modified, +7/-0)
+```diff
+@@ -422,6 +422,13 @@ PathRange PatternNormalizer::normalizeRange(AstNode const* node) const {
+         TRI_ERROR_QUERY_PARSE,
+         "zero-hop variable-length relationships are not supported");
+   }
++  // `* 1..1` represents a single edge. The default one-hop form binds the edge
++  // variable to the edge document, adds one edge and one vertex to the path,
++  // and matches an undirected self-loop only once. Other ranges remain
++  // variable-length traversals.
++  if (minDepth == 1 && maxDepth == 1) {
++    return PathRange::defaultFixedOne();
++  }
+   return PathRange::bounded(minDepth, maxDepth);
+ }
+ 
+```
+
+**File**: `arangod/Aql/Match/PatternTypes.h` (modified, +7/-5)
+```diff
+@@ -65,10 +65,11 @@ struct DataSource {
+ 
+ enum class EdgeDirection : uint8_t { kOutbound, kInbound, kAny };
+ 
+-/// @brief path depth for a MATCH edge pattern.
+-/// Distinguishes the default single-hop form (no `*`) from an explicit
+-/// `* min..max` range, including `* 1..1`, because planning treats them
+-/// differently (enumerate vs path-producing traversal).
++/// @brief Path depth of a MATCH edge pattern.
++/// An omitted range represents a single hop. Normalization also converts
++/// explicit `* 1..1` to this form, allowing planning to enumerate a single
++/// edge. Other `* min..max` ranges remain path-producing traversals.
++/// `PathRange::bounded(1, 1)` itself remains a bounded range.
+ struct PathRange {
+   enum class Kind : uint8_t { kDefaultFixedOne, kBounded, kUnboundedMin };
+ 
+@@ -80,7 +81,8 @@ struct PathRange {
+   static PathRange unboundedMin(uint64_t minDepth);
+ 
+   Kind kind() const noexcept { return _kind; }
+-  /// @brief true when the pattern had no `*` (default one-hop)
++  /// @brief Whether to use fixed one-hop edge access during planning.
++  /// Applies to omitted ranges and explicit `* 1..1` after normalization.
+   bool isDefaultFixedOne() const noexcept {
+     return _kind == Kind::kDefaultFixedOne;
+   }
+```
+
+**File**: `arangod/IResearch/IResearchFilterFactory.cpp` (modified, +23/-2)
+```diff
+@@ -46,9 +46,11 @@
+ #include "search/term_filter.hpp"
+ #include "search/top_terms_collector.hpp"
+ #include "search/wildcard_filter.hpp"
++#include "utils/wildcard_utils.hpp"
+ 
+ #include "ApplicationFeatures/ApplicationServer.h"
+ #include "Aql/Ast.h"
++#include "Aql/ExpressionContext.h"
+ #include "Aql/Function.h"
+ #include "Aql/Quantifier.h"
+ #include "Aql/Range.h"
+@@ -78,6 +80,15 @@ using namespace std::literals::string_literals;
+ 
+ namespace arangodb::iresearch {
+ 
++namespace {
++
++bool wildcardDeterminizationKilled(aql::ExpressionContext* ctx) noexcept {
++  TRI_ASSERT(ctx);
++  return ctx->killed();
++}
++
++}  // namespace
++
+ Result makeFilter(irs::boolean_filter* filter, FilterContext const& filterCtx,
+                   aql::AstNode const& node);
+ 
+@@ -2736,8 +2747,8 @@ Result fromFuncPhraseStartsWith(
+ Result fromFuncPhraseLike(char const* funcName,
+                           size_t const funcArgumentPosition,
+                           char const* subFuncName, irs::by_phrase* filter,
+-                          FilterContext const&, const VPackSlice& elem,
+-                          size_t firstOffset,
++                          FilterContext const& filterCtx,
++                          const VPackSlice& elem, size_t firstOffset,
+                           irs::analysis::analyzer* /*analyzer*/ = nullptr) {
+   std::string_view term;
+   auto res = oneArgumentfromFuncPhrase(funcName, funcArgumentPosition,
+@@ -2751,6 +2762,11 @@ Result fromFuncPhraseLike(char const* funcName,
+             firstOffset);
+     wildcard.term.assign(irs::ViewCast<irs::byte_type>(term));
+     wildcard.scored_terms_limit = FilterConstants::DefaultScoringTermsLimit;
++    if (filterCtx.query.ctx != nullptr) {
++      wildcard.stop = [ctx = filterCtx.query.ctx]() noexcept -> bool {
++        return wildcardDeterminizationKilled(ctx);
++      };
++    }
+   }
+   return {};
+ }
+@@ -3829,6 +3845,11 @@ Result fromFuncLike(char const* funcName, irs::boolean_filter* filter,
+       auto* opts = wildcardFilter.mutable_options();
+       opts->scored_terms_limit = FilterConstants::DefaultScoringTermsLimit;
+       opts->term = irs::ViewCast<irs::byte_type>(pattern);
++      if (ctx.ctx != nullptr) {
++        opts->stop = [ctx = ctx.ctx]() -> bool {
++          return wildcardDeterminizationKilled(ctx);
++        };
++      }
+     }
+   }
+ 
+```
+
+**File**: `arangod/IResearch/IResearchInvertedIndex.cpp` (modified, +1/-0)
+```diff
+@@ -48,6 +48,7 @@
+ #include "VocBase/LogicalCollection.h"
+ 
+ #include "analysis/token_attributes.hpp"
++#include "error/error.hpp"
+ #include "index/directory_reader.hpp"
+ #include "index/index_writer.hpp"
+ #include "index/heap_iterator.hpp"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23751** (2026-11-24): Bugfix/backport 3.12 bts 2480 unload index on collection open failures (@k0ushal)
-- **PR #23749** (2026-11-24): [COR-1310] Fix some improper cleanups in aql optimizers (@knakatasf)
-- **PR #23747** (2026-11-24): Sync stale node_modules/.package-lock.json and exclude it from packages (@KVS85)
-- **PR #23746** (2026-11-24): [3.12] Update node modules @xmldom/xmldom to 0.8.15 and patch minimatch 10.25 with adjusted waiver (@KVS85)
-- **PR #23740** (2026-11-24): [3.11.14] Update node modules: @xmldom/xmldom to 0.8.15, ajv, cross-spawn, flatted and tmp (eslint); Alpine 3.24 Docker base (@KVS85)
-- **PR #23739** (2026-11-24): Rewrite datetime.cpp to use std::chrono (@markuspf)
+- **PR #23781** (2026-11-26): Bug fix 3.12/adjust bucket count (@dothebart)
+- **PR #23778** (2026-11-26): adjust bucket counts to the reality (@dothebart)
+- **PR #23766** (2026-11-25): [COR-1234] Reject zero-hop variable-length MATCH relationships (@bluepal-avanthi-dundigala)
+- **PR #23765** (2026-11-25): Split WindowNode.h/WindowNode.cpp and remove references to date library (@markuspf)
+- **PR #23762** (2026-11-26): Reactivate and fix some tests (@neunhoef)
+- **PR #23757** (2026-11-25): [COR-1297] Remove unused "encryption" (@markuspf)
 
 ---
 
@@ -1761,38 +2332,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ExecutionNode.cpp
+## X. Fixe-ty-fix
 
 **RULE**:
-When implementing operations in `arangod/Aql/ExecutionNode/ExecutionNode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arangod/Aql/ExecutionNode/TraversalNode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7dcb28d3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b4f8d47f`: Fixe-ty-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Aql/ExecutionNode/ExecutionNode.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Aql/ExecutionNode/TraversalNode.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    c->_parents.emplace_back(theClone);
-    theClone->_dependencies.emplace_back(c);
+#include "Aql/Optimizer/Utils/ConditionCoverage.h"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    try {
-      c->_parents.emplace_back(theClone);
-      theClone->_dependencies.emplace_back(c);
-    } catch (...) {
-      delete c;
-      throw;
-    }
+#include "Aql/ConditionCoverage.h"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7dcb28d3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b4f8d47f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

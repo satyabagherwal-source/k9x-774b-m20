@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T04:10:01.724Z",
-  "total_records": 2800,
+  "last_updated": "2026-11-27T04:18:39.494Z",
+  "total_records": 2802,
   "domains": {
     "A": {
       "total": 23,
@@ -2648,7 +2648,7 @@
       ]
     },
     "K": {
-      "total": 178,
+      "total": 180,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2827,7 +2827,9 @@
         "domain_intelligence-quality-verification-intelligence-erkamyaman-rust-anything-learnings-core-invari",
         "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-core-invariants",
         "domain_intelligence-quality-verification-intelligence-linkerd-linkerd2-learnings-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-callstack-agent-device-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-callstack-agent-device-learnings-core-invarian"
       ]
     },
     "L": {
@@ -15879,8 +15881,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "07d1aac06efb993d7a0c0b013b8c912a99d658b86a063119d3b1f7fd898ad150",
-      "created_at": "2026-11-26T13:36:09.110Z"
+      "content_hash": "ad43bfdf74a0f381b98d42b439bf7e7fa895d10c12122a755298db2db971fcec",
+      "created_at": "2026-11-27T04:18:33.504Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -16953,8 +16955,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "3030871bed62b572a5344d3104f623a6915948623c2baf1fcabcf452f2cce538",
-      "created_at": "2026-11-26T10:08:29.586Z"
+      "content_hash": "ac45675e4dce5c8d5dc0af5e6f489f688b44bb5f9747f8ee891f542c5afb5f8b",
+      "created_at": "2026-11-27T04:18:32.298Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -17022,8 +17024,8 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-learnings-technical-construction-intelligence-arangodb-arangod.md",
       "repository": "arangodb-arangodb-learnings",
-      "content_hash": "4d00010e02ad16ca3c9459cb43da49d975c06953102d5596e90d53d7a1eff75b",
-      "created_at": "2026-11-26T10:09:02.454Z"
+      "content_hash": "6e0cc5841baf41efbefc7e0165904c9858f04cecfa6fc4c769e2d880b0d17883",
+      "created_at": "2026-11-27T04:18:39.494Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
@@ -18066,8 +18068,8 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/whistle Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-research-knowledge-intelligence-cactus-compute-whistle.md",
       "repository": "Cactus-Compute/whistle",
-      "content_hash": "d6d13c48e5ce294fa41a09142803c71e8453aa43ec46214d6a1a29364194e32d",
-      "created_at": "2026-11-23T19:00:45.490Z"
+      "content_hash": "603a1f3ea5bbc114481390d168d9a08fc6391d1260420059d7f72a90c480ae2e",
+      "created_at": "2026-11-27T04:18:16.566Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants",
@@ -18126,8 +18128,8 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-whistle-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-learnings-research-knowledge-intelligence-hf-cactus-co.md",
       "repository": "hf-cactus-compute-whistle-learnings",
-      "content_hash": "40bfd51ef4d46a8e77056a43766f5b766d940117072d61c5aae11d5579af1178",
-      "created_at": "2026-11-23T19:01:06.224Z"
+      "content_hash": "238314adcaf9ecc2e6225db8c136faa3ac562bd31e86a6c370f688933e18ae59",
+      "created_at": "2026-11-27T04:18:36.865Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
@@ -47277,6 +47279,24 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-27T03:44:38.898Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-callstack-agent-device-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-callstack-agent-device-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: callstack/agent-device Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-callstack-agent-device-quality-verification-intelligence-callstack-agent-device-.md",
+      "repository": "callstack/agent-device",
+      "content_hash": "ec877280177c95b58b1616f2a0fc711711e7fd3c06bbc77230bab813915bf309",
+      "created_at": "2026-11-27T04:18:24.319Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-callstack-agent-device-learnings-core-invarian": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-callstack-agent-device-learnings-core-invarian",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: callstack-agent-device-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-callstack-agent-device-learnings-quality-verification-intelligence-callstack-age.md",
+      "repository": "callstack-agent-device-learnings",
+      "content_hash": "8014fac58c243c3cabe232b24a6f205823f5aea8b2402ebbcece25cdd6fdc03f",
+      "created_at": "2026-11-27T04:18:38.089Z"
     }
   }
 }

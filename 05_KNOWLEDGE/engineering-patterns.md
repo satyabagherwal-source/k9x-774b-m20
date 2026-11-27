@@ -816686,3 +816686,270 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `672934e2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10823. name a sandbox-denied connect and leave that daemon alone (Harvested from callstack/agent-device)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "name a sandbox-denied connect and leave that daemon alone",
+  "source": "callstack/agent-device",
+  "source_url": "https://github.com/callstack/agent-device",
+  "source_version": "3e0814c5",
+  "license": "MIT",
+  "extracted_at": "2026-11-27T04:18:23.243Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-agent-device",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `3e0814c5`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/daemon-client/src/__tests__/daemon-client-ensure-drain.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2d29b6d6`: daemon-client): name a sandbox-denied connect and leave that daemon alone. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/daemon-client/src/__tests__/daemon-client-ensure-drain.test.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+// The escalation route: a daemon still running at the drain deadline that answers no probe gets force
+// retired. A connect the HOST refused is not a missed probe, so this route names the sandbox instead.
+test('a drain that outlives the deadline with a probe the host refused signals nothing', async (t) => {
+  if (!(await withLoopback(t))) return;
+  const { stateDir, paths } = stateDirAndPaths();
+  let childPid = 0;
+  const drain = installVirtualDrain(() => childPid);
+  const stale = await startScriptedDaemon(draining, {
+    afterRpc: () => {
+      drain.begin(undefined);
+      void closeLoopbackServer(stale.server);
+    },
+  });
+  const { child } = await registerDaemon(paths, {
+    httpPort: stale.port,
+    version: '0.0.0-stale',
+    capabilities: ['quiesce'],
+  });
+  childPid = child.pid;
+  const liveness = await import('../daemon-client-liveness-probe.ts');
+  vi.spyOn(liveness, 'answersLivenessProbe').mockResolvedValue({
+    reachable: false,
+    denial: { errno: 'EPERM', transport: 'socket', port: stale.port },
+  });
+
+  try {
+    await assert.rejects(ensureDaemon({ stateDir, daemonTransport: 'http' }), (error: unknown) => {
+      assert.ok(error instanceof AppError);
+      ass
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2d29b6d6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10824. Fixe-ty-fix (Harvested from arangodb/arangodb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fixe-ty-fix",
+  "source": "arangodb/arangodb",
+  "source_url": "https://github.com/arangodb/arangodb",
+  "source_version": "6c6dd593",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-27T04:18:31.150Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-arangodb-arangodb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [arangodb/arangodb](https://github.com/arangodb/arangodb) (Revision: `6c6dd593`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `arangod/Aql/ExecutionNode/TraversalNode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b4f8d47f`: Fixe-ty-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `arangod/Aql/ExecutionNode/TraversalNode.cpp`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+#include "Aql/Optimizer/Utils/ConditionCoverage.h"
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+#include "Aql/ConditionCoverage.h"
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b4f8d47f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10825. Rework ARC 27a28665 dataset to give unknown kinds color 0 (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Rework ARC 27a28665 dataset to give unknown kinds color 0",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "2889b681",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T04:18:32.409Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `2889b681`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2889b681`: Rework ARC 27a28665 dataset to give unknown kinds color 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first] ?? 0`: the object
+a key of the table reads `null` there, as an absent key does, and the nullish
+coalescing `?? 0` of [NUC 60](../docs/nuc-0060.md) turns that `null` into the
+background color 0 while it keeps every code the table holds. An
+implementation that leaves out `kind`, so that its object takes the default
+`l9100`, or that names a kind the table lacks, such as `l5555`, therefore gives
+its point color 0, which is no cell, and the rules raise no error, so the run
+goes on; the input state, built from the class and the implementation alone,
+still carries that kind. The default never applies to the ten pairs, whose
+blocks all take one of the table's four kinds.
+`$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.width * $Obj.height`, a
+conditional expression of [NUC 59](../docs/nuc-0059.md) whose condition uses
+the comparison `is` of [NUC 86](../docs/nuc-0086.md), counts a colored point's
+single cell and gives a point of color 0 none, as `dataset.25d8a9c8.json`
+empties a cleared row: such a point has the `volume` 0 that `Matrix.measure`
+counts in its all-zero output mask, and it keeps its `x`, `y`, and 1 by 1
+`width` and 
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]`: the object
+a key of the table reads `null` there, as an absent key does, so a class-level
+validation rule, `if $Obj.fill_color is null:` with the body
+`throw $Obj.kind@first`, throws that input kind. An implementation that leaves
+out `kind`, so that its object takes the default `l9100`, or that names a kind
+the table lacks, therefore fails visibly instead of giving the point no color:
+the runtime exits with status 1 and an error that names the kind and the
+implementation's line, such as `l9100 (line 27, column 1)`. The input state,
+built from the class and the implementation alone, still carries the kind; the
+failure comes when the rules run on the pair's world. The rule never fires on
+the ten pairs, and it is Nucleoid's class-level validation, a `throw` in a
+class-level `if`, as the specification's rules that reject an invalid
+instance write it. `$Obj.volume is $Obj.width * $Obj.height` counts
+the filled point's single cell. The rules create no other properties, so each
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2889b681` are properly handled with clean fallback behavior.

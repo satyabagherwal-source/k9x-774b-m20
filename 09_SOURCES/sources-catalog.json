@@ -195,8 +195,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "15111f8c9575de4c2d763217e9c7c062e2000661cb146789d122d7c2c280cad4",
-    "lastHarvestedAt": "2026-11-23T19:00:45.194Z",
+    "contentHash": "8123072c0a3e8da5656d884d5135d4c31f7a990985b20b2b496970426aac9eef",
+    "lastHarvestedAt": "2026-11-27T04:18:16.322Z",
     "learningId": "learn-huggingface-cactus-compute-whistle"
   },
   "hf-qwen-qwen3.8-27b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "a8825a25",
+    "sourceVersion": "2889b681",
     "license": "Apache-2.0",
-    "contentHash": "e0649035044e4ebea4360f06be6336fa841baa5b933617bab1ad04f79c15e705",
-    "lastHarvestedAt": "2026-11-26T13:36:08.682Z",
+    "contentHash": "fc082597ed9be46fd08d2a02a224ac333d5d8757f77f008e66a08d9d9ca35e83",
+    "lastHarvestedAt": "2026-11-27T04:18:33.044Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "6715b60b",
+    "sourceVersion": "6c6dd593",
     "license": "NOASSERTION",
-    "contentHash": "c5a9b3e29e1e5da18c889ec2438eed5b8502fea001f8799876a86198b1a5363c",
-    "lastHarvestedAt": "2026-11-26T10:08:29.346Z",
+    "contentHash": "8f11f089f20f6b602081f920433d2729ae64a5b5788392b490c22a162700128c",
+    "lastHarvestedAt": "2026-11-27T04:18:31.804Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "b2d4ec05",
+    "sourceVersion": "3e0814c5",
     "license": "MIT",
-    "contentHash": "467091c4e33392215177e47c72e6bea562b3338e27de505b7fdb0dcc75fab2ac",
-    "lastHarvestedAt": "2026-11-24T19:44:50.261Z",
+    "contentHash": "8e4886c885a0138baf923cc9bf5ea29ab0b02686a3f02447d42fad2a93b775a9",
+    "lastHarvestedAt": "2026-11-27T04:18:23.859Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {

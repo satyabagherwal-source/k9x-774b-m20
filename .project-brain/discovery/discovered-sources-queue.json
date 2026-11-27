@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T03:55:17.082Z",
+  "updated_at": "2026-11-27T04:18:39.014Z",
   "stats": {
-    "total_discovered": 10127,
-    "approved_pending_harvest": 9603,
+    "total_discovered": 10135,
+    "approved_pending_harvest": 9607,
     "harvested_count": 0,
-    "rejected_count": 524,
+    "rejected_count": 528,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9606,
+      "COMMUNITY_AND_EXPERT": 9614,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 160,
       "ENGINEERING_BLOGS": 7,
@@ -219153,6 +219153,154 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
         "fileName": "rqlite-rqlite-learnings.md"
+      }
+    },
+    "SRC-8D4531653CB0": {
+      "id": "SRC-8D4531653CB0",
+      "url": "http://0.0.0.127/",
+      "title": "http://0.0.0.127/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T04:18:37.250Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-3E4F2E411407": {
+      "id": "SRC-3E4F2E411407",
+      "url": "http://localhost:4560/",
+      "title": "http://localhost:4560/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T04:18:37.322Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-C28B4B6087B5": {
+      "id": "SRC-C28B4B6087B5",
+      "url": "http://127.0.0.1:4560/rpc",
+      "title": "http://127.0.0.1:4560/rpc",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T04:18:37.394Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-C1E0486CD577": {
+      "id": "SRC-C1E0486CD577",
+      "url": "https://fleet.example.test/",
+      "title": "https://fleet.example.test/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:18:37.496Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-23F136BC49B4": {
+      "id": "SRC-23F136BC49B4",
+      "url": "http://10.0.0.7:4560/",
+      "title": "http://10.0.0.7:4560/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T04:18:37.571Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-6DA1B4F7DCE6": {
+      "id": "SRC-6DA1B4F7DCE6",
+      "url": "https://github.com/arangodb/arangodb/pull/23778/changes",
+      "title": "https://github.com/arangodb/arangodb/pull/23778/changes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:18:38.861Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-CD25B9658E32": {
+      "id": "SRC-CD25B9658E32",
+      "url": "https://github.com/arangodb/enterprise/pull/1750",
+      "title": "https://github.com/arangodb/enterprise/pull/1750",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:18:38.940Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-9802AD2C2005": {
+      "id": "SRC-9802AD2C2005",
+      "url": "https://github.com/arangodb/arangodb/pull/23781",
+      "title": "https://github.com/arangodb/arangodb/pull/23781",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T04:18:39.014Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
+        "fileName": "arangodb-arangodb-learnings.md"
       }
     }
   }

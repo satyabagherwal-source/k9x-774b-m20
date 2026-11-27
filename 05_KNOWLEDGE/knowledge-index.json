@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T04:10:02.029Z",
+  "last_updated": "2026-11-27T04:18:39.705Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26340,
+  "total_items": 26349,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -231266,8 +231266,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "a8825a25",
-      "content_hash": "e0649035044e4ebea4360f06be6336fa841baa5b933617bab1ad04f79c15e705",
+      "source_version": "2889b681",
+      "content_hash": "fc082597ed9be46fd08d2a02a224ac333d5d8757f77f008e66a08d9d9ca35e83",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231575,6 +231575,11 @@
           "number": 10691,
           "title": "Rework ARC 27a28665 dataset to fail on unknown kinds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10825,
+          "title": "Rework ARC 27a28665 dataset to give unknown kinds color 0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231582,7 +231587,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T13:36:08.449Z",
+      "verified_at": "2026-11-27T04:18:32.765Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231624,10 +231629,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "a8825a25",
-      "content_hash": "07d1aac06efb993d7a0c0b013b8c912a99d658b86a063119d3b1f7fd898ad150",
+      "source_version": "2889b681",
+      "content_hash": "ad43bfdf74a0f381b98d42b439bf7e7fa895d10c12122a755298db2db971fcec",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T13:36:09.110Z"
+      "persisted_at": "2026-11-27T04:18:33.504Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231636,10 +231641,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "a8825a25",
-      "content_hash": "5d8117d947fcbfd0958cc9158a7744fd97d309295c280197920f9c8357f7e4ac",
+      "source_version": "2889b681",
+      "content_hash": "2bc2a48247d963ee0477e407bac911f9d4f01fa9d937ef003902bde393417c7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:36:09.293Z"
+      "persisted_at": "2026-11-27T04:18:33.715Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -234549,8 +234554,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "6715b60b",
-      "content_hash": "c5a9b3e29e1e5da18c889ec2438eed5b8502fea001f8799876a86198b1a5363c",
+      "source_version": "6c6dd593",
+      "content_hash": "8f11f089f20f6b602081f920433d2729ae64a5b5788392b490c22a162700128c",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -234608,6 +234613,11 @@
           "number": 10489,
           "title": "Empirical Invariant Guard in ExecutionNode.cpp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10824,
+          "title": "Fixe-ty-fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234615,7 +234625,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T10:08:29.079Z",
+      "verified_at": "2026-11-27T04:18:31.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234657,10 +234667,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "repository": "arangodb/arangodb",
-      "source_version": "6715b60b",
-      "content_hash": "3030871bed62b572a5344d3104f623a6915948623c2baf1fcabcf452f2cce538",
+      "source_version": "6c6dd593",
+      "content_hash": "ac45675e4dce5c8d5dc0af5e6f489f688b44bb5f9747f8ee891f542c5afb5f8b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T10:08:29.586Z"
+      "persisted_at": "2026-11-27T04:18:32.298Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb",
@@ -234669,10 +234679,10 @@
       "relative_path": "08_VERIFICATION/arangodb-arangodb-verification-protocol-empirical-defect-shield-for-arangodb-ara.md",
       "title": "Verification Protocol: Empirical Defect Shield for arangodb/arangodb",
       "repository": "arangodb/arangodb",
-      "source_version": "7dcb28d3",
-      "content_hash": "6c86b17a487f6cb6f603f3a28b3ad0f63a8c48f32a04e7cb768f9722ea900b1b",
+      "source_version": "6c6dd593",
+      "content_hash": "1bda49338f365a9b308ab06bda7b59a01e1f3771efbd42a9fba7cc45ea5823a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:13:21.177Z"
+      "persisted_at": "2026-11-27T04:18:32.508Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -234718,9 +234728,9 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d00010e02ad16ca3c9459cb43da49d975c06953102d5596e90d53d7a1eff75b",
+      "content_hash": "6e0cc5841baf41efbefc7e0165904c9858f04cecfa6fc4c769e2d880b0d17883",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T10:09:02.454Z"
+      "persisted_at": "2026-11-27T04:18:39.494Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings",
@@ -234730,9 +234740,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arangodb-arangodb-learnings",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "963b744b5c779d0a4633541f9417e43ac23cc1fd50823e052141ac49273ba2be",
+      "content_hash": "9b71bf9074ed2379f48e20cb6ea87211999f3988938bc5019a9a02152d8e08c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T08:13:31.128Z"
+      "persisted_at": "2026-11-27T04:18:39.705Z"
     },
     "learn-huggingface-zai-org-glm-5-3": {
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
@@ -236486,8 +236496,8 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "b2d4ec05",
-      "content_hash": "467091c4e33392215177e47c72e6bea562b3338e27de505b7fdb0dcc75fab2ac",
+      "source_version": "3e0814c5",
+      "content_hash": "8e4886c885a0138baf923cc9bf5ea29ab0b02686a3f02447d42fad2a93b775a9",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
@@ -236515,6 +236525,11 @@
           "number": 10348,
           "title": "clamp the open foreground probe's hdc read to the request deadline",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10823,
+          "title": "name a sandbox-denied connect and leave that daemon alone",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236522,7 +236537,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T19:44:49.978Z",
+      "verified_at": "2026-11-27T04:18:23.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236576,10 +236591,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/callstack-agent-device-agent-contract-callstack-agent-device-autonomous-speciali.md",
       "title": "Agent Contract: callstack/agent-device Autonomous Specialist Persona",
       "repository": "callstack/agent-device",
-      "source_version": "b2d4ec05",
-      "content_hash": "9c73bbebc0dd500c0148202a1bde2f184ef96719070b20c61e3053e52c8fac27",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:44:51.020Z"
+      "source_version": "3e0814c5",
+      "content_hash": "b207c97f10a5a56ffd427044cb5e9023a7420dd6d9fb56caaef223191fa35bc2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T04:18:24.526Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device",
@@ -236588,10 +236603,10 @@
       "relative_path": "08_VERIFICATION/callstack-agent-device-verification-protocol-empirical-defect-shield-for-callsta.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/agent-device",
       "repository": "callstack/agent-device",
-      "source_version": "b2d4ec05",
-      "content_hash": "2175d39374a1993e58b3c7894628ee4303098cde659878be61eae64e6acdec85",
+      "source_version": "3e0814c5",
+      "content_hash": "4ff5aa26de2bee3949021e595a4a4c88208a4ac2d60288bbed3bc86989425aee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:44:51.225Z"
+      "persisted_at": "2026-11-27T04:18:24.721Z"
     },
     "learn-github-apache-pinot": {
       "learning_id": "learn-github-apache-pinot",
@@ -236794,9 +236809,9 @@
       "title": "Agent Contract: callstack-agent-device-learnings Autonomous Specialist Persona",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "4afac59ec67965d7ae4f5b735459d5a272fbd127af5a9cc692eb0172f3a294f9",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-24T19:45:02.685Z"
+      "content_hash": "b7538996e6ccfc8d59cd4c37e4e20d2ed619b91d07a68396e5c25efed59717ee",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T04:18:38.309Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device-learnin",
@@ -236806,9 +236821,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-agent-device-learnings",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "72f7c718149f824ba012efb8edba4c62842da4b81a6219bca20691ab091c479b",
+      "content_hash": "e675d550733066bcbc499174d99510876b0a922033a23fb57d89207583312cb8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T19:45:02.943Z"
+      "persisted_at": "2026-11-27T04:18:38.492Z"
     },
     "learn-huggingface-canberkkkkkk-ema-lightning": {
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
@@ -238327,7 +238342,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "15111f8c9575de4c2d763217e9c7c062e2000661cb146789d122d7c2c280cad4",
+      "content_hash": "8123072c0a3e8da5656d884d5135d4c31f7a990985b20b2b496970426aac9eef",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [],
@@ -238336,7 +238351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T19:00:44.923Z",
+      "verified_at": "2026-11-27T04:18:16.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238353,9 +238368,9 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/whistle Core Invariants",
       "repository": "Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "d6d13c48e5ce294fa41a09142803c71e8453aa43ec46214d6a1a29364194e32d",
+      "content_hash": "603a1f3ea5bbc114481390d168d9a08fc6391d1260420059d7f72a90c480ae2e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:00:45.490Z"
+      "persisted_at": "2026-11-27T04:18:16.566Z"
     },
     "learn-github-hashicorp-terraform": {
       "learning_id": "learn-github-hashicorp-terraform",
@@ -238498,9 +238513,9 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-whistle-learnings Core Invariants",
       "repository": "hf-cactus-compute-whistle-learnings",
       "source_version": "HEAD",
-      "content_hash": "40bfd51ef4d46a8e77056a43766f5b766d940117072d61c5aae11d5579af1178",
+      "content_hash": "238314adcaf9ecc2e6225db8c136faa3ac562bd31e86a6c370f688933e18ae59",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T19:01:06.224Z"
+      "persisted_at": "2026-11-27T04:18:36.865Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
@@ -361356,6 +361371,120 @@
       "content_hash": "74f3d201d46b823ecbfeaa0a799fbd80150509a2056c8d21a67937ab2b5d0957",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T03:55:17.591Z"
+    },
+    "rule-10823": {
+      "learning_id": "rule-10823",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10823,
+      "title": "name a sandbox-denied connect and leave that daemon alone",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "3e0814c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T04:18:23.590Z"
+    },
+    "candidate_directive-name-a-sandbox-denied-connect-and-leave-that-daemon-alone": {
+      "item_id": "candidate_directive-name-a-sandbox-denied-connect-and-leave-that-daemon-alone",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-171S-name-a-sandbox-denied-connect-and-leave-that-daemon-alone.md",
+      "title": "name a sandbox-denied connect and leave that daemon alone",
+      "repository": "callstack/agent-device",
+      "source_version": "3e0814c5",
+      "content_hash": "6de709a84768c50d599e015771995ca6c5a649121c3a8ef65cddaff19db48706",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T04:18:24.116Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-callstack-agent-device-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-callstack-agent-device-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-callstack-agent-device-quality-verification-intelligence-callstack-agent-device-.md",
+      "title": "Quality & Verification Intelligence: callstack/agent-device Core Invariants",
+      "repository": "callstack/agent-device",
+      "source_version": "3e0814c5",
+      "content_hash": "ec877280177c95b58b1616f2a0fc711711e7fd3c06bbc77230bab813915bf309",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T04:18:24.319Z"
+    },
+    "rule-10824": {
+      "learning_id": "rule-10824",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10824,
+      "title": "Fixe-ty-fix",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "6c6dd593",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T04:18:31.517Z"
+    },
+    "candidate_directive-fixe-ty-fix": {
+      "item_id": "candidate_directive-fixe-ty-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1IR2-fixe-ty-fix.md",
+      "title": "Fixe-ty-fix",
+      "repository": "arangodb-arangodb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "13107e780fe1a4c1ef193538763791a4dc2a2286f6b5f79cdc873cbb4210654b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T04:18:39.281Z"
+    },
+    "rule-10825": {
+      "learning_id": "rule-10825",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10825,
+      "title": "Rework ARC 27a28665 dataset to give unknown kinds color 0",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "2889b681",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T04:18:32.765Z"
+    },
+    "candidate_directive-rework-arc-27a28665-dataset-to-give-unknown-kinds-color-0": {
+      "item_id": "candidate_directive-rework-arc-27a28665-dataset-to-give-unknown-kinds-color-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1E4N-rework-arc-27a28665-dataset-to-give-unknown-kinds-color-0.md",
+      "title": "Rework ARC 27a28665 dataset to give unknown kinds color 0",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "2889b681",
+      "content_hash": "5b1a569e3573ef8703ea04ad207889e225d7b83655c1734002b0247f95b4ab9a",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T04:18:33.290Z"
+    },
+    "candidate_directive-daemon-client-name-a-sandbox-denied-connect-and-leave-that-daemon-alone": {
+      "item_id": "candidate_directive-daemon-client-name-a-sandbox-denied-connect-and-leave-that-daemon-alone",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1HNC-daemon-client-name-a-sandbox-denied-connect-and-leave-that-daemon-alone.md",
+      "title": "daemon-client): name a sandbox-denied connect and leave that daemon alone",
+      "repository": "callstack-agent-device-learnings",
+      "source_version": "HEAD",
+      "content_hash": "13ecdfd57d37343f64d978e79d22a2565fd9f282c85b6c25c7775439960c7ff6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T04:18:37.852Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-callstack-agent-device-learnings-core-invarian": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-callstack-agent-device-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-callstack-agent-device-learnings-quality-verification-intelligence-callstack-age.md",
+      "title": "Quality & Verification Intelligence: callstack-agent-device-learnings Core Invariants",
+      "repository": "callstack-agent-device-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8014fac58c243c3cabe232b24a6f205823f5aea8b2402ebbcece25cdd6fdc03f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-27T04:18:38.089Z"
     }
   },
   "ai-builder-brain": {

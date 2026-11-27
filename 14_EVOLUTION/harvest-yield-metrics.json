@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T04:09:46.666Z",
-  "total_cycles_completed": 12968,
-  "total_learnings_persisted": 12968,
-  "total_rules_promoted": 11732,
+  "last_updated": "2026-11-27T04:18:33.055Z",
+  "total_cycles_completed": 12972,
+  "total_learnings_persisted": 12972,
+  "total_rules_promoted": 11735,
   "history": [
-    {
-      "timestamp": "2026-11-26T16:10:42.383Z",
-      "repository": "briaai/RMBG-3.0",
-      "learningId": "learn-huggingface-briaai-rmbg-3-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:10:52.688Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:10:55.289Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T16:10:58.217Z",
-      "repository": "run-llama/llama_index",
-      "learningId": "learn-github-run-llama-llama_index",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T16:21:09.888Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -1403,6 +1375,34 @@
       "repository": "LiquidAI/d1-3B",
       "learningId": "learn-huggingface-liquidai-d1-3b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:18:16.335Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:18:23.870Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:18:31.818Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T04:18:33.055Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

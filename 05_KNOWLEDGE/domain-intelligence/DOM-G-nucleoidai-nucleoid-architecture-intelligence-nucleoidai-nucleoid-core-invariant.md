@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "a8825a25",
+  "source_version": "2889b681",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T13:36:08.926Z",
+  "timestamp": "2026-11-27T04:18:33.287Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `a8825a25`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T13:36:08.926Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `2889b681`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T04:18:33.287Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 55%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T13:36:07.544Z  
+> **Harvest Timestamp**: 2026-11-27T04:18:31.733Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1566,281 +1566,154 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8825a25` (2026-11-26)
-**Commit Message**: Rework ARC 27a28665 dataset to fail on unknown kinds
+### Incident Patch 1: `2889b681` (2026-11-27)
+**Commit Message**: Rework ARC 27a28665 dataset to give unknown kinds color 0
 
 The dataset still models each pair as one whole five-cell block whose kind
-names its shape, and its output cell's color is the code that kind selects.
-A class-level rule now throws the input kind when the code table has no
-entry for it, so an implementation that leaves out `kind` (default `l9100`)
-or invents one stops the run instead of yielding a cell without a color. A
-turned block keeps its kind, and its orientation carries the turn. The table
-keys and the implementations' kinds are bare words; only the `kind: str =
-'l9100'` default keeps its quotes.
+names its shape, and its output point's color is the code that kind
+selects. A kind outside the code table, such as the default `l9100` that an
+implementation without `kind` takes, now reads `?? 0`: the point gets the
+background color 0, and the volume rule gives it no cell, so the rules raise
+no error. Version 4 threw the kind instead. Synthesis rejects a turned
+block with an unknown kind, because no drawn mask measures 1 by 1 without a
+cell. The 10 pairs' snapshots are unchanged.
 
 Files:
-- arc/src/dataset/dataset.27a28665.json: version 4; the same 7 training
-  and 3 test pairs, the same 10 instances and names, snapshots regenerated
-- arc/README.md: the dataset's paragraph and its sentences on bare words
-- arc/src/app.ts: default puzzle 27a28665
-- arc/arc.ebnf: adds `throw` in an `if` body, `null` and bare argument
-  words, with `null` and `throw` reserved; removes the unused `#` comment
-  prefix and quoted object keys and argument values
-- arc/docs/ARC-NUC-27a28665.md: version 4, the 25-Nov and 26-Nov runs
+- arc/src/dataset/dataset.27a28665.json: version 5, only its declarations
+  changed
+- arc/README.md: the dataset's paragraph
+- arc/arc.ebnf: adds `coalesce` for `??`; removes the `throw` in an `if`
+  body, `null`, and their reserved words, which no dataset uses any more
+- arc/docs/ARC-NUC-27a28665.md: version 5 and its run
 
-No NUC was requested. The quote-free NUC for the
+No NUC was requested. The quote-free NUC for the `kind` defaults was not
+started because no strategy policy was supplied.
 
-**File**: `arc/README.md` (modified, +52/-19)
+Run: `bun start 27a28665` exited 1 with difference 1.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `arc/README.md` (modified, +23/-14)
 ```diff
-@@ -444,7 +444,7 @@ default is the dataset's initial kind, such as `kind: str = 'l9100'`, and its
- constructor stores it with `this.kind is kind`. An implementation passes `kind`
- only when its object needs a kind other than that default: every
- implementation of `dataset.27a28665.json` passes the kind of its block's
--shape, as in `kind='l4262'`, and every other implementation leaves it out, so
-+shape, as in `kind=l4262`, and every other implementation leaves it out, so
- its input state carries the default. The parameter comes before the
- descriptive parameters, in the order of the constructor's assignments:
- Nucleoid lets a default occupy any parameter slot, and every implementation
-@@ -466,12 +466,15 @@ text, so kinds and directions drop their quotes there, as in
- `$Obj.kind is l3337` and `$Obj.extension_direction is right`, while
- `this.kind is kind` reads the constructor's `kind` parameter. No dataset
- program defines a name with those spellings, and the solver adds only
--`canvas_width` and `canvas_height`. Other strings keep their quotes, such as
--the object keys of the `fill_color` rule in `dataset.27a28665.json`, keyword
--arguments such as `kind='l1707'`, which are not assignments, and the default
--of the `kind` parameter, such as `kind: str = 'l9100'`: accepted Nucleoid takes
--only a literal as a parameter default and rejects the bare `kind: str = l9100`
--with `SyntaxError: Expected a scalar literal parameter default`.
-+`canvas_width` and `canvas_height`. Inside the value of an `is` assignment,
-+the item words of [NUC 95](../docs/nuc-0095.md) read the same way, so the
-+named arguments of the implementations in `dataset.27a28665.json` pass bare
-+kinds, as in `kind=l1707`, while the object keys of its `fill_color` rule are
-+names, as in `{l4262: 1, l2404: 2, l3743: 3, l1707: 6}`, which an object
-+literal reads as the same keys. Only the default of the `kind` parameter keeps
-+its quotes, such as `kind: str = 'l9100'`: accepted Nucleoid takes only a
-+literal as a parameter default and rejects the bare `kind: str = l9100` with
-+`SyntaxError: Expected a scalar literal parameter default`.
- `src\lib\nucleoid.ts` passes no syntax flag: the runtime reads `is`
- assignments without one since `d945213`, which removed the opt-in syntax
- options, so the solver needs that runtime or later. An older runtime reads
-@@ -814,7 +817,7 @@ up by that kind. The class takes the standard entries `x`, `y`, `width`,
- `height`, `orientation`, and `volume`, where `width` and `height` are the
- column and row counts of the block's bounding box and `volume` the number of
- its nonzero cells, 3, 3, and 5 in every pair, and `kind` as its only descriptive
--property, such as `kind='l4262'` for the first training input, with no color,
-+property, such as `kind=l4262` for the first training input, with no color,
- parts list, canvas size, or matrix of cells. Like every class, it takes `kind`
- right after `volume` as an optional parameter, here with the default `l9100`,
- a single shape, but every implementation passes its block's kind, so no
-@@ -828,25 +831,55 @@ Unconditional class-level rules set the output kind `l7544`, a single point, as
+@@ -831,23 +831,32 @@ Unconditional class-level rules set the output kind `l7544`, a single point, as
  in `dataset.44f52bb0.json`, shrink the block to that point's size, `width` 1
  and `height` 1, and introduce one property, `fill_color`, which is absent
  before the rules run, as
--`{'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.kind@first]`: the object
--literal states each shape's code once, and object bracket access reads the
--code of the block's input kind, anchored with `@first` because the kind rule
--turns the kind into `l7544`. `$Obj.volume is $Obj.width * $Obj.height` counts
-+`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]`: the object
-+literal states each shape's code once, keyed by the name of its kind, and
-+object bracket access reads the code of the block's input kind, anchored with
-+`@first` because the kind rule turns the kind into `l7544`. A kind that is not
-+a key of the table reads `null` there, as an absent key does, so a class-level
-+validation rule, `if $Obj.fill_color is null:` with the body
-+`throw $Obj.kind@first`, throws that input kind. An implementation that leaves
-+out `kind`, so that its object takes the default `l9100`, or that names a kind
-+the table lacks, therefore fails visibly instead of giving the point no color:
-+the runtime exits with status 1 and an error that names the kind and the
-+implementation's line, such as `l9100 (line 27, column 1)`. The input state,
-+built from the class and the implementation alone, still carries the kind; the
-+failure comes when the rules run on the pair's world. The rule never fires on
-+the ten pairs, and it is Nucleoid's class-level validation, a `throw` in a
-+class-level `if`, as the specification's rules that reject an invalid
-+instance write it. `$Obj.volume is $Obj.width * $Obj.height` counts
- the filled point's single cell. The rules create no other properties, so each
- output state adds only `fill_color` to its inpu
+-`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]`: the object
++`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first] ?? 0`: the object
+ literal states each shape's code once, keyed by the name of its kind, and
+ object bracket access reads the code of the block's input kind, anchored with
+ `@first` because the kind rule turns the kind into `l7544`. A kind that is not
+-a key of the table reads `null` there, as an absent key does, so a class-level
+-validation rule, `if $Obj.fill_color is null:` with the body
+-`throw $Obj.kind@first`, throws that input kind. An implementation that leaves
+-out `kind`, so that its object takes the default `l9100`, or that names a kind
+-the table lacks, therefore fails visibly instead of giving the point no color:
+-the runtime exits with status 1 and an error that names the kind and the
+-implementation's line, such as `l9100 (line 27, column 1)`. The input state,
+-built from the class and the implementation alone, still carries the kind; the
+-failure comes when the rules run on the pair's world. The rule never fires on
+-the ten pairs, and it is Nucleoid's class-level validation, a `throw` in a
+-class-level `if`, as the specification's rules that reject an invalid
+-instance write it. `$Obj.volume is $Obj.width * $Obj.height` counts
+-the filled point's single cell. The rules create no other properties, so each
++a key of the table reads `null` there, as an absent key does, and the nullish
++coalescing `?? 0` of [NUC 60](../docs/nuc-0060.md) turns that `null` into the
++background color 0 while it keeps every code the table holds. An
++implementation that leaves out `kind`, so that its object takes the default
++`l9100`, or that names a kind the table lacks, such as `l5555`, therefore gives
++its point color 0, which is no cell, and the rules raise no error, so the run
++goes on; the input state, built from the class and the implementation alone,
++still carries that kind. The default never applies to the ten pairs, whose
++blocks all take one of the table's four kinds.
++`$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.width * $Obj.height`, a
++conditional expression of [NUC 59](../docs/nuc-0059.md) whose condition uses
++the comparison `is` of [NUC 86](../docs/nuc-0086.md), counts a colored point's
++single cell and gives a point of color 0 none, as `dataset.25d8a9c8.json`
++empties a cleared row: such a point has the `volume` 0 that `Matrix.measure`
++counts in its all-zero output mask, and it keeps its `x`, `y`, and 1 by 1
++`width` and `height`, as an erased output object keeps its explicit position
++in [composition](#8-visualize-output-instance).
++No mask measures 1 by 1 without a cell, so the solver's synthesis, which keeps
++a synthesized instance only when its drawn output mask measures the state's
++`x`, `y`, `width`, `height`, and `volume`, rejects every turned block whose
++kind the table lacks, whatever the model draws for it.
++The rules create no other properties, so each
+ output state adds only `fill_color` to its input state's keys, and they leave
+ `x` and `y` unchanged because the point sits at the block's origin, 0 and 0 in
+ every training pair. The training pairs show each shape in one orientation
 ```
 
-**File**: `arc/arc.ebnf` (modified, +8/-7)
+**File**: `arc/arc.ebnf` (modified, +4/-5)
 ```diff
-@@ -1,5 +1,5 @@
--declaration          ::= COMMENT NEWLINE ( classStmt | ifStmt | classRule )
--implementation       ::= COMMENT NEWLINE NAME assign NAME
-+declaration          ::= classStmt | ifStmt | classRule
-+implementation       ::= NAME assign NAME
-                          '(' labeledArgument ( ',' labeledArgument )+ ')'
- assign               ::= 'is' | '='
- 
-@@ -11,11 +11,11 @@ classBody            ::= ( NEWLINE INDENT fieldAssignment )+
+@@ -11,13 +11,14 @@ classBody            ::= ( NEWLINE INDENT fieldAssignment )+
  fieldAssignment      ::= 'this' '.' NAME assign NAME
  
  ifStmt               ::= 'if' expression ':' ruleBody
--ruleBody             ::= ( NEWLINE INDENT classRule )+
-+ruleBody             ::= ( NEWLINE INDENT ( classRule | 'throw' expression ) )+
+-ruleBody             ::= ( NEWLINE INDENT ( classRule | 'throw' expression ) )+
++ruleBody             ::= ( NEWLINE INDENT classRule )+
  classRule            ::= CLASS_REF '.' NAME assign expression
  
  labeledArgument      ::= NAME '=' literal
--literal              ::= INTEGER | STRING | '[' literal ( ',' literal )+ ']'
-+literal              ::= INTEGER | NAME | '[' literal ( ',' literal )+ ']'
+ literal              ::= INTEGER | NAME | '[' literal ( ',' literal )+ ']'
  
- expression           ::= logicalOr ( 'if' logicalOr 'else' logicalOr )?
+-expression           ::= logicalOr ( 'if' logicalOr 'else' logicalOr )?
++expression           ::= coalesce ( 'if' logicalOr 'else' logicalOr )?
++coalesce             ::= logicalOr ( '??' logicalOr )?
  logicalOr            ::= logicalAnd ( 'or' logicalAnd )?
-@@ -36,20 +36,21 @@ primary              ::= quantified
+ logicalAnd           ::= equality ( 'and' equality )*
+ equality             ::= relational ( 'is' 'not'? relational )?
+@@ -36,7 +37,6 @@ primary              ::= quantified
                         | INTEGER
                         | NAME
                         | CLASS_REF
-+                       | 'null'
+-                       | 'null'
                         | '(' expression ')'
                         | listDisplay
                         | objectDisplay
- quantified           ::= ( 'all' | 'any' ) NAME 'in' expression ':' expression
- arrowFunction        ::= NAME '=>' expression
- listDisplay          ::= '[' expression ( ',' expression )+ ']'
- objectDisplay        ::= '{' objectEntry ( ',' objectEntry )+ '}'
--objectEntry          ::= ( NAME | STRING | INTEGER ) ':' expression
-+objectEntry          ::= ( NAME | INTEGER ) ':' expression
+@@ -47,8 +47,7 @@ objectDisplay        ::= '{' objectEntry ( ',' objectEntry )+ '}'
+ objectEntry          ::= ( NAME | INTEGER ) ':' expression
  
  NAME                 ::= ( [A-Za-z_] [A-Za-z0-9_]* ) - RESERVED
--RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'of' | 'or' | 'this'
-+RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'null' | 'of' | 'or' | 'this'
-+                       | 'throw'
+-RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'null' | 'of' | 'or' | 'this'
+-                       | 'throw'
++RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'of' | 'or' | 'this'
  CLASS_REF            ::= '$' NAME
  INTEGER              ::= [0-9]+
  STRING               ::= "'" [^']* "'"
--COMMENT              ::= '#' [^#xA]*
- NEWLINE              ::= #xA
- INDENT               ::= '    '
 ```
 
-**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +184/-32)
+**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +90/-26)
 ```diff
-@@ -6,12 +6,12 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
+@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
  | Item | Status |
  | --- | --- |
  | Puzzle | [`data/training/27a28665.json`](../data/training/27a28665.json) |
--| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 3, which `88c781d` committed, replacing version 2's 50 cell instances, which had replaced version 1 before any run; shared orientation comment added on 6-Nov-2026; descriptive `implementation` comments added on 7-Nov-2026; colors written as letters on 8-Nov-2026; respelled on 8-Nov-2026 with the `is` assignments of NUC 93 and bare words, every snapshot unchanged; colors written as numbers again on 8-Nov-2026; `volume` added as the sixth standard entry on 17-Nov-2026 |
-+| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 4 since 26-Nov-2026, which stops with an error on a kind outside its code table and writes its kinds and table keys as bare words; version 3, which `88c781d` committed, had replaced version 2's 50 cell instances, which had replaced version 1 before any run; version 3 gained a shared orientation comment on 6-Nov-2026, descriptive `implementation` comments on 7-Nov-2026, letter colors and then number colors again on 8-Nov-2026, the `is` assignments of NUC 93 and bare words on 8-Nov-2026, `volume` on 17-Nov-2026, an optional tag on 22-Nov-2026, and `kind` for `tag` on 24-Nov-2026, the day the user also removed every dataset's comments |
+-| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 4 since 26-Nov-2026, which stops with an error on a kind outside its code table and writes its kinds and table keys as bare words; version 3, which `88c781d` committed, had replaced version 2's 50 cell instances, which had replaced version 1 before any run; version 3 gained a shared orientation comment on 6-Nov-2026, descriptive `implementation` comments on 7-Nov-2026, letter colors and then number colors again on 8-Nov-2026, the `is` assignments of NUC 93 and bare words on 8-Nov-2026, `volume` on 17-Nov-2026, an optional tag on 22-Nov-2026, and `kind` for `tag` on 24-Nov-2026, the day the user also removed every dataset's comments |
++| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 5 since 26-Nov-2026, which gives a kind outside its code table the background color 0 and no cell, where version 4 of the same day stopped with an error, and writes its kinds and table keys as bare words; version 3, which `88c781d` committed, had replaced version 2's 50 cell instances, which had replaced version 1 before any run; version 3 gained a shared orientation comment on 6-Nov-2026, descriptive `implementation` comments on 7-Nov-2026, letter colors and then number colors again on 8-Nov-2026, the `is` assignments of NUC 93 and bare words on 8-Nov-2026, `volume` on 17-Nov-2026, an optional tag on 22-Nov-2026, and `kind` for `tag` on 24-Nov-2026, the day the user also removed every dataset's comments |
  | Output canvas | `FIT` |
--| Nucleoid enhancements | None requested, so no proposal strategy was selected; version 3's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), and version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md) |
--| Solver changes | None; two suggested changes await review, not applied; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
--| Solver runs | 1 local run on 4-Nov-2026 for version 2, exit 0; version 3 not run; none of the current version; none of the 8-Nov-2026 `is` version |
--| Updated | 17-Nov-2026 |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected for the dataset; version 4's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the item words of [NUC 95](../../docs/nuc-0095.md), and the specification's class-level `throw`; version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md); the quote-free NUC for the `kind` default was not started, because no strategy policy was supplied |
-+| Solver changes | None applied; suggested, not applied: carry every class parameter, `kind` included, through the implementation step, and let synthesis reject an instance whose rules fail (see [Open items](#open-items)); two earlier suggestions also await review; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
-+| Solver runs | 3 local runs: 4-Nov-2026 for version 2, exit 0; 25-Nov-2026 for version 3, exit 1, difference 1; 26-Nov-2026 for version 4, exit 1, stopped by the kind error before scoring |
-+| Updated | 26-Nov-2026 |
- 
- ## Puzzle
- 
-@@ -35,48 +35,78 @@ the dataset is `FIT`.
- - **Change.** The whole pattern collapses into one cell whose color codes
-   its shape: 1 for the diamond, 2 for the diagonal cross, 3 for the square
-   with a tail, and 6 for the orthogonal cross.
--- **World model.** One object per pair, the whole block, whose tag names its
--  shape. Version 2's one object per cell was the pixel-level start that
--  version 3 replaced.
-+- **World model.** One object per pair, the whole block, whose kind names its
-+  shape whatever its turn, while its orientation carries the turn. A block
-+  whose kind the code table lacks has no code, so the world model stops with
-+  that kind as its error instead of leaving the cell without a color.
-+  Version 2's one object per cell was the pixel-level start that version 3
-+  r
+-| Nucleoid enhancements | None requested, so no proposal strategy was selected for the dataset; version 4's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the item words of [NUC 95](../../docs/nuc-0095.md), and the specification's class-level `throw`; version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md); the quote-free NUC for the `kind` default was not started, because no strategy policy was supplied |
+-| Solver changes | None applied; suggested, not applied: carry every class parameter, `kind` included, through the implementation step, and let synthesis reject an instance whose rules fail (see [Open items](#open-items)); two earlier suggestions also await review; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
+-| Solver runs | 3 local runs: 4-Nov-2026 for version 2, exit 0; 25-Nov-2026 for version 3, exit 1, difference 1; 26-Nov-2026 for version 4, exit 1, stopped by the kind error before scoring |
++| Nucleoid enhancements | None requested, so no proposal strategy was selected for the dataset; version 5's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the item words of [NUC 95](../../docs/nuc-0095.md), the nullish coalescing of [NUC 60](../../docs/nuc-0060.md), and the conditional expression of [NUC 59](../../docs/nuc-0059.md) with the `is` comparison of [NUC 86](../../docs/nuc-0086.md), and version 4's used the specification's class-level `throw`; version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md); the quote-free NUC for the `kind` default was not started, because no strategy policy was supplied |
++| Solver changes | None applied; suggested, not applied: carry every class parameter, `kind` included, through the implementation step and show that step the rules that read it, and let synthesis reject an instance whose rules fail (see [Open items](#open-items)); two earlier suggestions also await review; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
++| Solver runs | 4 local runs: 4-Nov-2026 for version 2, exit 0; 25-Nov-2026 for version 3, exit 1, difference 1; 26-Nov-2026 fo
 ```
 
-**File**: `arc/src/app.ts` (modified, +1/-1)
+**File**: `arc/src/dataset/dataset.27a28665.json` (modified, +2/-3)
 ```diff
-@@ -9,7 +9,7 @@ import synthesizer from "./synthesizer.ts";
- import object from "./object.ts";
- 
- // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id: string = "3aa6fb7a") {
-+export async function start(puzzle_id: string = "27a28665") {
-   const { arc_train, test_input_matrix, test_output_matrix } =
-     await arc_dataset.load(puzzle_id);
- 
-```
-
-**File**: `arc/src/dataset/dataset.27a28665.json` (modified, +32/-31)
-```diff
-@@ -4,7 +4,8 @@
+@@ -4,9 +4,8 @@
      "$Obj.kind is l7544",
      "$Obj.width is 1",
      "$Obj.height is 1",
--    "$Obj.fill_color is {'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.kind@first]",
-+    "$Obj.fill_color is {l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]",
-+    "if $Obj.fill_color is null:\n    throw $Obj.kind@first",
-     "$Obj.volume is $Obj.width * $Obj.height"
+-    "$Obj.fill_color is {l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]",
+-    "if $Obj.fill_color is null:\n    throw $Obj.kind@first",
+-    "$Obj.volume is $Obj.width * $Obj.height"
++    "$Obj.fill_color is {l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first] ?? 0",
++    "$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.width * $Obj.height"
    ],
    "output_canvas": "FIT",
-@@ -29,9 +30,9 @@
-           "output_instance_matrix": [
-             [1]
-           ],
--          "implementation": "obj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind='l4262')",
--          "input_value": {"height":3,"id":"obj3fc7d6382a47","orientation":0,"kind":"l4262","volume":5,"width":3,"x":0,"y":0},
--          "output_value": {"fill_color":1,"height":1,"id":"obj3fc7d6382a47","orientation":0,"kind":"l7544","volume":1,"width":1,"x":0,"y":0}
-+          "implementation": "obj3fc7d6382a47 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind=l4262)",
-+          "input_value": {"height":3,"id":"obj3fc7d6382a47","kind":"l4262","orientation":0,"volume":5,"width":3,"x":0,"y":0},
-+          "output_value": {"fill_color":1,"height":1,"id":"obj3fc7d6382a47","kind":"l7544","orientation":0,"volume":1,"width":1,"x":0,"y":0}
-         }
-       ]
-     },
-@@ -55,9 +56,9 @@
-           "output_instance_matrix": [
-             [2]
-           ],
--          "implementation": "obj4eb5795d0cdd is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind='l2404')",
--          "input_value": {"height":3,"id":"obj4eb5795d0cdd","orientation":0,"kind":"l2404","volume":5,"width":3,"x":0,"y":0},
--          "output_value": {"fill_color":2,"height":1,"id":"obj4eb5795d0cdd","orientation":0,"kind":"l7544","volume":1,"width":1,"x":0,"y":0}
-+          "implementation": "obj4eb5795d0cdd is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind=l2404)",
-+          "input_value": {"height":3,"id":"obj4eb5795d0cdd","kind":"l2404","orientation":0,"volume":5,"width":3,"x":0,"y":0},
-+          "output_value": {"fill_color":2,"height":1,"id":"obj4eb5795d0cdd","kind":"l7544","orientation":0,"volume":1,"width":1,"x":0,"y":0}
-         }
-       ]
-     },
-@@ -81,9 +82,9 @@
-           "output_instance_matrix": [
-             [2]
-           ],
--          "implementation": "obj6601704d7bf6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind='l2404')",
--          "input_value": {"height":3,"id":"obj6601704d7bf6","orientation":0,"kind":"l2404","volume":5,"width":3,"x":0,"y":0},
--          "output_value": {"fill_color":2,"height":1,"id":"obj6601704d7bf6","orientation":0,"kind":"l7544","volume":1,"width":1,"x":0,"y":0}
-+          "implementation": "obj6601704d7bf6 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind=l2404)",
-+          "input_value": {"height":3,"id":"obj6601704d7bf6","kind":"l2404","orientation":0,"volume":5,"width":3,"x":0,"y":0},
-+          "output_value": {"fill_color":2,"height":1,"id":"obj6601704d7bf6","kind":"l7544","orientation":0,"volume":1,"width":1,"x":0,"y":0}
-         }
-       ]
-     },
-@@ -107,9 +108,9 @@
-           "output_instance_matrix": [
-             [3]
-           ],
--          "implementation": "objae50fa19d8b4 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind='l3743')",
--          "input_value": {"height":3,"id":"objae50fa19d8b4","orientation":0,"kind":"l3743","volume":5,"width":3,"x":0,"y":0},
--          "output_value": {"fill_color":3,"height":1,"id":"objae50fa19d8b4","orientation":0,"kind":"l7544","volume":1,"width":1,"x":0,"y":0}
-+          "implementation": "objae50fa19d8b4 is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind=l3743)",
-+          "input_value": {"height":3,"id":"objae50fa19d8b4","kind":"l3743","orientation":0,"volume":5,"width":3,"x":0,"y":0},
-+          "output_value": {"fill_color":3,"height":1,"id":"objae50fa19d8b4","kind":"l7544","orientation":0,"volume":1,"width":1,"x":0,"y":0}
-         }
-       ]
-     },
-@@ -133,9 +134,9 @@
-           "output_instance_matrix": [
-             [3]
-           ],
--          "implementation": "obj1f918c128ece is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind='l3743')",
--          "input_value": {"height":3,"id":"obj1f918c128ece","orientation":0,"kind":"l3743","volume":5,"width":3,"x":0,"y":0},
--          "output_value": {"fill_color":3,"height":1,"id":"obj1f918c128ece","orientation":0,"kind":"l7544","volume":1,"width":1,"x":0,"y":0}
-+          "implementation": "obj1f918c128ece is Obj(x=0, y=0, width=3, height=3, orientation=0, volume=5, kind=l3743)",
-+          "input_value": {"height":3,"id":"obj1f918c128ece","kind":"l3743","orientation":0,"volume":5,"width":3,"x":0,"y":0},
-+          "output_value": {"fill_color":3,"height":1,"id":"obj1f918c128ece","kind":"l7544","orientation":0,"volume":1,"width":1,"x":0,"y":0}
-         }
-       ]
-     },
-@@ -159,9 +160,9 @@
-           "output_instance_matrix": [
-             [1]
-           ],
--  
+   "dataset": [
 ```
 
 #### Recent Merged Pull Requests:
@@ -1869,13 +1742,13 @@ No NUC was requested. The quote-free NUC for the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rework ARC 27a28665 dataset to fail on unknown kinds
+## X. Rework ARC 27a28665 dataset to give unknown kinds color 0
 
 **RULE**:
 When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8825a25`: Rework ARC 27a28665 dataset to fail on unknown kinds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2889b681`: Rework ARC 27a28665 dataset to give unknown kinds color 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
@@ -1883,43 +1756,46 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-shape, as in `kind=l4262`, and every other implementation leaves it out, so
-`canvas_width` and `canvas_height`. Inside the value of an `is` assignment,
-the item words of [NUC 95](../docs/nuc-0095.md) read the same way, so the
-named arguments of the implementations in `dataset.27a28665.json` pass bare
-kinds, as in `kind=l1707`, while the object keys of its `fill_color` rule are
-names, as in `{l4262: 1, l2404: 2, l3743: 3, l1707: 6}`, which an object
-literal reads as the same keys. Only the default of the `kind` parameter keeps
-its quotes, such as `kind: str = 'l9100'`: accepted Nucleoid takes only a
-literal as a parameter default and rejects the bare `kind: str = l9100` with
-`SyntaxError: Expected a scalar literal parameter default`.
-property, such as `kind=l4262` for the first training input, with no color,
-`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]`: the object
-literal states each shape's code once, keyed by the name of its kind, and
-object bracket access reads the code of the block's input kind, anchored with
-`@first` because the kind rule turns the kind into `l7544`. A kind that is not
-a key of the table reads `null` there, as an absent key does, so a class-level
+`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first] ?? 0`: the object
+a key of the table reads `null` there, as an absent key does, and the nullish
+coalescing `?? 0` of [NUC 60](../docs/nuc-0060.md) turns that `null` into the
+background color 0 while it keeps every code the table holds. An
+implementation that leaves out `kind`, so that its object takes the default
+`l9100`, or that names a kind the table lacks, such as `l5555`, therefore gives
+its point color 0, which is no cell, and the rules raise no error, so the run
+goes on; the input state, built from the class and the implementation alone,
+still carries that kind. The default never applies to the ten pairs, whose
+blocks all take one of the table's four kinds.
+`$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.width * $Obj.height`, a
+conditional expression of [NUC 59](../docs/nuc-0059.md) whose condition uses
+the comparison `is` of [NUC 86](../docs/nuc-0086.md), counts a colored point's
+single cell and gives a point of color 0 none, as `dataset.25d8a9c8.json`
+empties a cleared row: such a point has the `volume` 0 that `Matrix.measure`
+counts in its all-zero output mask, and it keeps its `x`, `y`, and 1 by 1
+`width` and 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-shape, as in `kind='l4262'`, and every other implementation leaves it out, so
-`canvas_width` and `canvas_height`. Other strings keep their quotes, such as
-the object keys of the `fill_color` rule in `dataset.27a28665.json`, keyword
-arguments such as `kind='l1707'`, which are not assignments, and the default
-of the `kind` parameter, such as `kind: str = 'l9100'`: accepted Nucleoid takes
-only a literal as a parameter default and rejects the bare `kind: str = l9100`
-with `SyntaxError: Expected a scalar literal parameter default`.
-property, such as `kind='l4262'` for the first training input, with no color,
-`{'l4262': 1, 'l2404': 2, 'l3743': 3, 'l1707': 6}[$Obj.kind@first]`: the object
-literal states each shape's code once, and object bracket access reads the
-code of the block's input kind, anchored with `@first` because the kind rule
-turns the kind into `l7544`. `$Obj.volume is $Obj.width * $Obj.height` counts
+`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]`: the object
+a key of the table reads `null` there, as an absent key does, so a class-level
+validation rule, `if $Obj.fill_color is null:` with the body
+`throw $Obj.kind@first`, throws that input kind. An implementation that leaves
+out `kind`, so that its object takes the default `l9100`, or that names a kind
+the table lacks, therefore fails visibly instead of giving the point no color:
+the runtime exits with status 1 and an error that names the kind and the
+implementation's line, such as `l9100 (line 27, column 1)`. The input state,
+built from the class and the implementation alone, still carries the kind; the
+failure comes when the rules run on the pair's world. The rule never fires on
+the ten pairs, and it is Nucleoid's class-level validation, a `throw` in a
+class-level `if`, as the specification's rules that reject an invalid
+instance write it. `$Obj.volume is $Obj.width * $Obj.height` counts
+the filled point's single cell. The rules create no other properties, so each
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8825a25` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2889b681` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
