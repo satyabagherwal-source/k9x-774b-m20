@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T18:35:11.386Z",
+  "updated_at": "2026-11-27T18:44:02.728Z",
   "stats": {
-    "total_discovered": 10514,
-    "approved_pending_harvest": 9981,
+    "total_discovered": 10524,
+    "approved_pending_harvest": 9991,
     "harvested_count": 0,
     "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9985,
+      "COMMUNITY_AND_EXPERT": 9995,
       "OFFICIAL_DOCUMENTATION": 291,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -227604,6 +227604,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
         "fileName": "nolabs-ai-nono-learnings.md"
+      }
+    },
+    "SRC-5FFC62EEC6D2": {
+      "id": "SRC-5FFC62EEC6D2",
+      "url": "https://github.com/alfonsoristorato",
+      "title": "https://github.com/alfonsoristorato",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.058Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-47CCB3466222": {
+      "id": "SRC-47CCB3466222",
+      "url": "https://redirect.github.com/kotest/kotest/pull/6249",
+      "title": "https://redirect.github.com/kotest/kotest/pull/6249",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.131Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-3985E1A8AB0A": {
+      "id": "SRC-3985E1A8AB0A",
+      "url": "https://redirect.github.com/kotest/kotest/pull/6250",
+      "title": "https://redirect.github.com/kotest/kotest/pull/6250",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.205Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-4D1965C746F1": {
+      "id": "SRC-4D1965C746F1",
+      "url": "https://github.com/mockk/mockk",
+      "title": "https://github.com/mockk/mockk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.275Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-E6D7174C9A1B": {
+      "id": "SRC-E6D7174C9A1B",
+      "url": "https://github.com/mockk/mockk/releases",
+      "title": "https://github.com/mockk/mockk/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-860A8A4E44DB": {
+      "id": "SRC-860A8A4E44DB",
+      "url": "https://github.com/DOssaA",
+      "title": "https://github.com/DOssaA",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.435Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-EE87BB2849DB": {
+      "id": "SRC-EE87BB2849DB",
+      "url": "https://redirect.github.com/mockk/mockk/pull/1508",
+      "title": "https://redirect.github.com/mockk/mockk/pull/1508",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.505Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-48737A78F704": {
+      "id": "SRC-48737A78F704",
+      "url": "https://redirect.github.com/mockk/mockk/pull/1513",
+      "title": "https://redirect.github.com/mockk/mockk/pull/1513",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.577Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-EDEF28CF49F9": {
+      "id": "SRC-EDEF28CF49F9",
+      "url": "https://github.com/ilia1243",
+      "title": "https://github.com/ilia1243",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.653Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
+      }
+    },
+    "SRC-2B7D1486500C": {
+      "id": "SRC-2B7D1486500C",
+      "url": "https://redirect.github.com/mockk/mockk/pull/1515",
+      "title": "https://redirect.github.com/mockk/mockk/pull/1515",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T18:44:02.728Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
+        "fileName": "modelcontextprotocol-kotlin-sdk-learnings.md"
       }
     }
   }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T15:30:18.952Z",
+  "timestamp": "2026-11-27T18:44:30.612Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T15:30:18.952Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T18:44:30.612Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `3b956215`  
+> **Source Version**: `7af329a5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:30:11.644Z  
+> **Timestamp**: 2026-11-27T18:43:57.108Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:30:11.639Z  
+> **Harvest Timestamp**: 2026-11-27T18:43:57.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -83,6 +83,7 @@ pub fn generate(statement: &Stmt) -> String {
         Stmt::Assign { target, value } => assignment_source(target, value),
         Stmt::ValueAssign { target, value } => format!("{target}:={value}"),
         Stmt::NullishValueAssign { target, value } => format!("{target}??:={value}"),
+        Stmt::TruthyValueAssign { target, value } => format!("{target}&&:={value}"),
         Stmt::Expression(expression) => expression.to_string(),
         Stmt::If {
             condition,
@@ -90,6 +91,7 @@ pub fn generate(statement: &Stmt) -> String {
             alternate,
         } => conditional_source(condition, consequent, alternate.as_deref()),
         Stmt::Block(statements) => format!("{{{}}}", generate_all(statements)),
+        Stmt::Defer(body) => format!("defer{{{}}}", generate_all(body)),
         Stmt::Return(Some(expression)) => format!("return {expression}"),
         Stmt::Return(None) => "return".to_string(),
         Stmt::Throw(expression) => format!("throw {expression}"),
@@ -141,6 +143,19 @@ fn conditional_source(condition: &Expr, consequent: &[Stmt], alternate: Option<&
         .map(|branch| format!("else{{{}}}", generate(branch)))
         .unwrap_or_default();
     format!("if({condition}){{{}}}{alternate}", generate_all(consequent))
+}
+
+fn conditional_suite(condition: &Expr, consequent: &[Stmt], alternate: Option<&Stmt>) -> String {
+    let mut rendered = format!("if {condition}:\n{}", indent(&source_all(consequent)));
+    if let Some(alternate) = alternate {
+        let body = match alternate {
+            Stmt::Block(body) => source_all(body),
+            branch => source(branch),
+        };
+        rendered.push_str("\nelse:\n");
+        rendered.push_str(&indent(&body));
+    }
+    rendered
 }
 
 fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
@@ -249,18 +264,7 @@ fn source(statement: &Stmt) -> String {
             condition,
             consequent,
             alternate,
-        } => {
-            let mut rendered = format!("if {condition}:\n{}", indent(&source_all(consequent)));
-            if let Some(alternate) = alternate {
-                let body = match alternate.as_ref() {
-                    Stmt::Block(body) => source_all(body),
-                    branch => source(branch),
-                };
-                rendered.push_str("\nelse:\n");
-                rendered.push_str(&indent(&body));
-            }
-            rendered
-        }
+        } => conditional_suite(condition, consequent, alternate.as_deref()),
         Stmt::For {
             variable,
             iterable,
@@ -294,6 +298,7 @@ fn source(statement: &Stmt) -> String {
             catch,
             finally,
         } => finally_suite(&try_suite(body, parameter, catch), finally),
+        Stmt::Defer(body) => format!("defer:\n{}", indent(&source_all(body))),
         Stmt::Block(body) => format!("{{\n{}\n}}", source_all(body)),
         Stmt::Suppose { target, body } => format!(
             "{}suppose:\n{}",
@@ -464,6 +469,14 @@ impl Parser {
     }
 
     fn statement_inner(&mut self) -> Result<Stmt> {
+        if self.starts_statement()
+            && matches!(self.peek(), Token::Identifier(name) if name == "defer")
+            && self.has_indented_suite(1)
+        {
+            self.advance();
+            return self.suite().map(Stmt::Defer);
+        }
+
         if let Some(condition) = self.while_condition() {
             let body = self.suite()?;
             return Ok(Stmt::While { condition, body });
@@ -519,9 +532,9 @@ impl Parser {
     }
 
     fn expression_statement(&mut self) -> Result<Stmt> {
-        let outer = self.nullish_assignment_depth.replace(self.depth + 1);
+        let outer = self.guarded_assignment_depth.replace(self.depth + 1);
         let expression = self.without_head_read(Self::expression);
-        self.nullish_assignment_depth = outer;
+        self.guarded_assignment_depth = outer;
         let expression = expression?;
 
         if self.starts_is_assignment(&expression) {
@@ -536,6 +549,17 @@ impl Parser {
     }
 
     pub(super) fn expression_tail(&mut self, expression: Expr) -> Result<Stmt> {
+        if self.starts_truthy_assignment() {
+            self.check_path_target(&expression, "Invalid value assignment target")?;
+            self.advance();
+            self.advance();
+            let value = self.receiving(&expression, Self::expression)?;
+            return Ok(Stmt::TruthyValueAssign {
+                target: expression,
+                value,
+            });
+        }
+
         if self.starts_nullish_assignment() {
             self.check_path_target(&expression, "Invalid value assignment target")?;
             self.advance();
@@ -560,6 +584,10 @@ impl Parser {
 
     pub(super) fn starts_nullish_assignment(&self) -> bool {
         self.check(&Token::QuestionQuestion) && self.peek_at(1) == &Token::ColonAssign
+    }
+
+    pub(super) fn starts_truthy_assignment(&self) -> bool {
+        self.check(&Token::AndAnd) && self.peek_at(1) == &Token::ColonAssign
     }
 
     fn return_statement(&mut self) -> Result<Stmt> {
@@ -594,31 +622,6 @@ impl Parser {
         let mut body = Vec::new();
         if !self.check(&Token::Colon) {
             let Some(premise) = self.suppose_premise() else {
-                return Ok(None);
-            };
-            body.push(premise);
-        }
-        body.extend(self.suite()?);
-
-        Ok(Some(Stmt::Suppose { target, body }))
-    }
-
-    pub(super) fn suppose_premise(&mut self) -> Option<Stmt> {
-        if self.starts_colon_statement_at(0)
-            || matches!(
-                self.peek(),
-                Token::Newline | Token::Semicolon | Token::Dedent | Token::RightBrace | Token::Eof
-            )
-        {
-            return None;
-        }
-
-        let attempt = (self.position, self.depth);
-        let outcome = if let Some(outcome) = self.suppose_premises.get(&attempt) {
-            outcome.clone()
-        } else {
-            let outcome = self.attempt_suppose_premise();
-            self.suppose_premises.insert(attempt, o
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1332,40 +1335,6 @@ export async function value({ instance_name, train, input_matrix, instance }) {
   instance.input_value = input_value;
 }
 
-export async function state(train) {
-  const objects = [];
-
-  for (const dataset of train.dataset) {
-    const implementations = dataset.instances.map(
-      ({ implementation }) => implementation
-    );
-
-    const canvas_width: number = dataset.input_matrix[0].length;
-    const canvas_height: number = dataset.input_matrix.length;
-    const obj_list = await nucleoid.run(
-      [
-        `canvas_width = ${canvas_width}`,
-        `canvas_height = ${canvas_height}`,
-        train.class_declaration,
-        ...train.declarations,
-        ...implementations,
-        "Obj[:]",
-      ].join("\n\n")
-    );
-
-    objects.push(...obj_list);
-
-    [...obj_list].forEach((instance) => {
-      const found_instance = dataset.instances.find(
-        ({ instance_name }) => instance.id === instance_name
-      );
-      found_instance.output_value = instance;
-    });
-  }
-
-  milestone.state({ phase: "analysis", objects: objects });
-}
-
 ```
 
 ### Core Architecture Module: `arc/src/app.ts`
@@ -1381,7 +1350,7 @@ import synthesizer from "./synthesizer.ts";
 import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "6150a2bd") {
+export async function start(puzzle_id: string = "27a28665") {
   const { arc_train, test_input_matrix, test_output_matrix } =
     await arc_dataset.load(puzzle_id);
 
@@ -1409,7 +1378,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
 
   let instance_index: number = 0;
   const next_instance_name = (): string =>
-    `obj${String(instance_index++).padStart(12, "0")}`;
+    `o${String(instance_index++).padStart(12, "0")}`;
 
   const { class_declaration, declarations, output_canvas } =
     await analyzer.declarations({
@@ -1435,10 +1404,15 @@ export async function start(puzzle_id: string = "6150a2bd") {
       });
     }
 
+    await object.state({
+      class_declaration,
+      declarations,
+      input_matrix: dataset.input_matrix,
+      instances,
+    });
+
     dataset.instances = instances;
   }
-
-  await analyzer.state(train);
 
   milestone.synthesizing_training_dataset();
 
@@ -1455,7 +1429,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
     Array(test_input_matrix[0].length).fill(0)
   );
 
-  const test_input_instances = [];
+  const test_instances = [];
 
   for (const { input_instance_matrix } of instances) {
     const instance_name: string = next_instance_name();
@@ -1467,7 +1441,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
       input_instance_matrix,
     });
 
-    test_input_instances.push({
+    test_instances.push({
       instance_name,
       implementation,
       input_value,
@@ -1479,10 +1453,10 @@ export async function start(puzzle_id: string = "6150a2bd") {
     class_declaration,
     declarations,
     input_matrix: test_input_matrix,
-    input_instances: test_input_instances,
+    instances: test_instances,
   });
 
-  for (const input_instance of test_input_instances) {
+  for (const input_instance of test_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
       phase: "visualization",
       test_input_matrix,
@@ -1495,7 +1469,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
-  milestone.test_output_composed({ instances: test_input_instances });
+  milestone.test_output_composed({ instances: test_instances });
 
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
@@ -1511,7 +1485,7 @@ export async function start(puzzle_id: string = "6150a2bd") {
   const debug = {
     puzzle_id,
     train,
-    test_input_instances,
+    test_instances,
     test_input_matrix,
     test_output_matrix,
     result_matrix,
@@ -1603,128 +1577,114 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3b956215` (2026-11-25)
-**Commit Message**: Draft NUC 147 Deferred Suites
+### Incident Patch 1: `7af329a5` (2026-11-27)
+**Commit Message**: Draft NUC 153 State Labels of Reasoning Selections
 
-Category: Runtime features; mode continuous; existing_comparable.
+Category: Reasoning enhancement
 
-Request contextual indented defer suites registered only when reached and unwound LIFO at the current executable block exit, using accepted finalization outcome and transaction rules. Preserve ordinary defer names, typed/layout boundaries, required catch syntax and all accepted behavior. Do not add loop-exit behavior, asynchronous cleanup or a resource protocol. Baselines and fresh independent stages follow this allocation; the continuous token comparison is required.
-
-The live-registry draw selected Runtime features once. No allocated stale Draft exists: nine reference Drafts have no allocation/claim. An inline header-audit omission was corrected without a redraw; the original receipt remains retained. NUC119 lists defer as prior art and explicitly out of scope, not the feature it proposes.
+Allocate only the final SELECTION |> states projection of existing typed StepState labels, equivalent to selection.map(step -> step.state). Preserve all accepted syntax and projection semantics. Continuous mode requires fresh accepted counterparts and per-case lexer-token evaluation. No runtime, grammar, executable document, test, dataset or export changes in this allocation.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -104,6 +104,7 @@ Created: 31-Jul-2026
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Accepted |
- | [140](nuc-0140.md) | Match Statements | Rejected: not backward compatible, as an accepted statement that starts with `match` followed by `every`, `any` or `all` and `repeat:` or `suppose:` before an indented block, read as `match` beside a quantifier and a repeat-until loop or `suppose` block, now raises a `SyntaxError` |
- | [144](nuc-0144.md) | Nullish Value Assignment | Accepted |
-+| [147](nuc-0147.md) | Deferred Suites | Draft |
+@@ -173,6 +173,7 @@ Created: 31-Jul-2026
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Accepted |
+ | [139](nuc-0139.md) | Symmetric Difference Reasoning Selections | Accepted |
+ | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Accepted |
++| [153](nuc-0153.md) | State Labels of Reasoning Selections | Draft |
  
- ### Utility enhancement
+ ### Language compatibility
  
-@@ -347,6 +348,7 @@ Created: 31-Jul-2026
- | [144](nuc-0144.md) | Nullish Value Assignment | Standards Track | Runtime features | Accepted |
- | [145](nuc-0145.md) | Input Counts of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [146](nuc-0146.md) | Reactive Cubing | Standards Track | Utility enhancement | Accepted |
-+| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
+@@ -359,6 +360,7 @@ Created: 31-Jul-2026
+ | [150](nuc-0150.md) | C# Truncation Method Alias | Standards Track | Language compatibility | Rejected: existing Math.copySign document locator test fails after appended cases shift its locator |
+ | [151](nuc-0151.md) | Truthy Value Assignment | Standards Track | Runtime features | Accepted |
+ | [152](nuc-0152.md) | Falsy Value Assignment | Standards Track | Runtime features | Rejected: protected truthy-assignment parser rejection test fails |
++| [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0147.md` (added, +91/-0)
+**File**: `docs/nuc-0153.md` (added, +79/-0)
 ```diff
-@@ -0,0 +1,91 @@
-+# NUC 147 -- Deferred Suites
+@@ -0,0 +1,79 @@
++# NUC 153 -- State Labels of Reasoning Selections
 +
 +```
-+NUC: 147
-+Title: Deferred Suites
-+Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
++NUC: 153
++Title: State Labels of Reasoning Selections
++Author: Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Runtime features
-+Created: 25-Nov-2026
-+Requires: 119
++Category: Reasoning enhancement
++Created: 27-Nov-2026
++Requires: 48, 112, 121, 133, 145
 +```
 +
 +## Abstract
 +
-+- Add a contextual `defer:` statement with a genuinely indented suite.
-+  Reaching it registers that suite for the exit of the current executable
-+  statement block; it does not run the suite immediately.
-+- Run registered suites in reverse registration order after the remaining
-+  statements complete, return, fail or pass through an existing loop-exit
-+  outcome, before the block's active parameter/loop/catch scope is removed.
-+  A registration not reached has no effect.
-+- Evaluate deferred statements at exit in that active scope, not as a new
-+  closure or an eager argument snapshot. Preserve the value already computed
-+  by a pending return. Each deferred suite uses the outcome precedence and
-+  transaction rules of accepted finalization: a return or error can replace
-+  the pending outcome, but older registered suites still run.
-+- Preserve every accepted source, including runtime-failing sources, except
-+  the newly supported suite forms that were errors. Keep `defer` an ordinary
-+  name everywhere else; in particular, keep typed declarations, calls,
-+  properties and bare-name lines followed by blocks. Do not relax the
-+  mandatory catch clause of an ordinary `try`.
-+- Keep control flow and registration/unwinding bounded under the crate's
-+  existing limits. Add no asynchronous cleanup, new loop-exit behavior,
-+  implicit resource protocol, project version or dependency change.
++- Add only the final reasoning stage `SELECTION |> states`. It returns
++  one String for each selected Step, in selection order: the existing
++  typed state's `"stated"` or `"derived"` spelling. Its result is
++  equivalent to the accepted `(SELECTION).map(step -> step.state)`.
++- Preserve selection, record materialization, reference coercion,
++  shadowing, observer exclusion, structural reactivity, nullish behavior
++  and final-projection boundaries. Add no prefix or call alias, reserved
++  word, lexer token kind, state, record field, traversal or graph mutation.
++- The caller's one uniform live-registry draw selected Reasoning
++  enhancement. This allocation requests a projection of explanation
++  metadata, not a general collection helper or a change to state inference.
++- This is an allocation only. The accepted language is unchanged;
++  fresh preparation, the Rust improvement pass and independent evaluation
++  follow against its pushed revision.
 +
 +## Motivation
 +
-+- Cleanup and bookkeeping often belong to a whole block, including its
-+  early returns. Stating that action where it becomes necessary is clearer
-+  than repeating it before every exit or enclosing the remaining work in
-+  another explicit try/catch/finally.
-+- NUC 119 supplies finalization but explicitly leaves scope-exit `defer`
-+  registration out of scope. Deferred suites add that core execution
-+  behavior while retaining its transaction and outcome rules.
-+- The accepted executable reports
-+  `SyntaxError: Unexpected ':' (line 1, column 6)` for an indented `defer:`
-+  suite. The caller retained the actual diagnostic separately; the native
-+  REPL's zero process status is not reported as successful execution.
++- Explanations distinguish stated facts from derived conclusions.
++  `stated` and `derived` filter Step records; they do not project their
++  labels. `nodes`, `holds`, `edges` and `indegrees` project other metadata.
++- Reading each selected record's `state` through a callback is already
++  supported. A final reasoning projection expresses the same graph query
++  directly, including derived class-governed steps with no recorded inputs.
++- Preserve every accepted program and pinned diagnostic. The continuous
++  Reasoning category requires a real per-case lexer-token comparison and
++  pre-executed accepted counterparts for the two new measured cases.
++- The controls cover explanation order, equal-valued rewiring, snapshots,
++  class-governed states, empty selections and subsequent source changes.
++  Only their state-list constructions may be shortened; their six ordered
++  canonical assertions and explicit return `1` remain unchanged.
 +
 +## Rationale
 +
-+- The continuous caller drew Runtime features once from the live category
-+  registry, index 1 of five eligible categories with probability 20%.
-+  Scope-exit registration and unwinding are core execution/control flow,
-+  as NUC 119's finalization is, rather than a collection or numeric helper.
-+- Runtime applicability is `existing_comparable`: accepted
-+  try/catch/finally provides the finalization mechanism for equivalent
-+  protected control programs. Freeze and execute those original programs
-+  before candidate edits. The continuous token comparison is required;
-+  neither a missing counterpart nor a new spelling permits a skip.
-+- No hint, scoring rubric or strategy-learning configuration was supplied.
-+  This revision is unattributed and learning is `not_configured`.
++Pending preparation in the isolated candidate.
 +
 +## Specification
 +
-+- To be completed by the fresh preparation agent after allocation and
-+  immutable accepted-baseline capture, within the requested contract above.
++Pending synchronization with the authoritative specification and references.
 +
-+## Backwards Compatibility
++## Errors
 +
-+- To be demonstrated against the accepted corpus and original counterpart
-+  sources, including legacy ordinary-name, typed-declaration and layout
-+  boundaries. Do not edit protected diagnostics or assertions to pass.
++Pending compatibility and error-precedence review.
 +
 +## Reference Implementation
 +
-+- The isolated candidate and affected W3C EBNF, normative documents,
-+  generated exports and synthesized records follow the pushed allocation.
-+  Preserve existing public items and signatures; report any required
-+  semantic-versioning change for human action without editing a version.
++Pending a minimal extension of the existing final-projection machinery.
++
++## Backward Compatibility
++
++Pending replay of the immutable accepted corpus and original counterparts.
 +
 +## Evaluation
 +
-+- Draft allocation only. No candidate, token comparison, independent
-+  evaluation or outcome is claimed by this document.
++Pending fresh preparation, the caller-owned Rust improvement pass, a frozen
++handoff and independent evaluation. Token comparison is required in continuous
++Reasoning mode. No scoring rubric or strategy-learning policy was supplied;
++advisory usefulness is unscored and strategy learning is `not_configured`.
 +
 +## Copyright
++
++Copyright 2020 Nucleoid
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
@@ -1756,13 +1716,13 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 147 Deferred Suites
+## X. Draft NUC 153 State Labels of Reasoning Selections
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3b956215`: Draft NUC 147 Deferred Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7af329a5`: Draft NUC 153 State Labels of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1770,8 +1730,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [147](nuc-0147.md) | Deferred Suites | Draft |
-| [147](nuc-0147.md) | Deferred Suites | Standards Track | Runtime features | Draft |
+| [153](nuc-0153.md) | State Labels of Reasoning Selections | Draft |
+| [153](nuc-0153.md) | State Labels of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1781,7 +1741,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3b956215` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7af329a5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

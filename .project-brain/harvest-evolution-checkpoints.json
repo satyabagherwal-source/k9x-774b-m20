@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T18:35:12.533Z",
+  "last_updated": "2026-11-27T18:44:32.431Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T18:17:27.965Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-27T17:59:49.588Z",
+      "processed_at": "2026-11-27T18:44:31.423Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,8 +773,8 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-25T15:30:18.547Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-27T18:44:30.049Z",
+      "promoted_canonical": 1,
       "staged_for_review": 1
     },
     "tableproapp-tablepro-learnings.md": {
@@ -948,7 +948,7 @@
       "staged_for_review": 1
     },
     "modelcontextprotocol-kotlin-sdk-learnings.md": {
-      "processed_at": "2026-11-25T09:41:13.453Z",
+      "processed_at": "2026-11-27T18:44:01.826Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4048,7 +4048,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 5055,
-  "total_canonical_promoted": 584,
-  "total_staged_for_review": 3808
+  "total_dossiers_evaluated": 5058,
+  "total_canonical_promoted": 585,
+  "total_staged_for_review": 3811
 }

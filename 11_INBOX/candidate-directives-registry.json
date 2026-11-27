@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T18:35:11.735Z",
+  "last_updated": "2026-11-27T18:44:31.800Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68059,11 +68059,11 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-DK7M",
+      "id": "CD-Z1KC",
       "directive_title": "renderer): refuse last-error reads off the engine owner thread",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-DK7M-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-Z1KC-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -71982,6 +71982,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-Y417",
+      "directive_title": "bump the kotest group across 1 directory with 3 updates",
+      "source_repo": "modelcontextprotocol/kotlin-sdk",
+      "source_commit": "2deddb62",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y417-bump-the-kotest-group-across-1-directory-with-3-updates.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-Z0RA",
+      "directive_title": "Draft NUC 153 State Labels of Reasoning Selections",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Z0RA-draft-nuc-153-state-labels-of-reasoning-selections.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YFCA",
+      "directive_title": "deps): bump the kotest group across 1 directory with 3 updates",
+      "source_repo": "modelcontextprotocol-kotlin-sdk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YFCA-deps-bump-the-kotest-group-across-1-directory-with-3-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-235917",
+      "directive_title": "Draft NUC 153 State Labels of Reasoning Selections",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-235917-draft-nuc-153-state-labels-of-reasoning-.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-8FE1F1",
+      "directive_title": "renderer): refuse last-error reads off the engine owner thread",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8FE1F1-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-27"
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T18:35:12.355Z",
+  "last_updated": "2026-11-27T18:44:32.250Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26710,
+  "total_items": 26715,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb138bc3ba95f7e27ecd8be43507e03beb0af1caf0347c3659e97d4b88af2afe",
+      "content_hash": "c20242fb14d27c7dcc887ededb2a5f536dca188ba47a58790a728277b7032096",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T17:59:50.113Z"
+      "persisted_at": "2026-11-27T18:44:32.028Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1aed6002e3af87863afa731c5c33602c269a349dd004689dfd047d9cea61a0ca",
+      "content_hash": "28a956986ecc1a1ca9b3b57b5c73d3fee942a5cc63f6c76768ef724140816080",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T17:59:50.331Z"
+      "persisted_at": "2026-11-27T18:44:32.250Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -231436,8 +231436,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "a0377489",
-      "content_hash": "6057cae8724734334dd8549e70d5d9a9003b61384a00e7b9c88fba0f5b2caf2a",
+      "source_version": "7af329a5",
+      "content_hash": "b102b7327a65f438397804e67aa507c98e28e1a338e9a46178ae8e447afaa489",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231755,6 +231755,11 @@
           "number": 10873,
           "title": "Put kind first in ARC object definitions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10951,
+          "title": "Draft NUC 153 State Labels of Reasoning Selections",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231762,7 +231767,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T18:08:31.076Z",
+      "verified_at": "2026-11-27T18:43:58.065Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231804,10 +231809,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "a0377489",
-      "content_hash": "83a584908116ff233e1586dd5e52ab4d3908a526efaff0187a5ad49f56d3560e",
+      "source_version": "7af329a5",
+      "content_hash": "3454c7ce9b9b6873ec0a1b5369da8032e46f4f44cdac8567ca3b85f4f60b6a54",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:08:31.602Z"
+      "persisted_at": "2026-11-27T18:43:58.760Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231816,10 +231821,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "f176c30a",
-      "content_hash": "78916dcdddcc41db45a2aa695df8c822adedfd6a632b4a87b5488ba7ecf70238",
+      "source_version": "7af329a5",
+      "content_hash": "fa390accf6621537b66e3d3c00b1a4690bb07f73ce2fb9d23a1af6cfcae87041",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T09:44:55.656Z"
+      "persisted_at": "2026-11-27T18:43:58.949Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -232997,9 +233002,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0d74c5afbf5a1a32ab9ea30c387891348fe0bef143ca3b3077f890b0ffb0d77",
+      "content_hash": "10a9e17c2ee321d47461539cc22633f47b439f5e233fdf42388f55ae1cbb4cb9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T15:30:19.294Z"
+      "persisted_at": "2026-11-27T18:44:30.973Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -233009,9 +233014,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "c40aee3512c5b4d6c5d251fabba4592e03091ae404edd90ab471b77c7bdc8804",
+      "content_hash": "7a455674217737a000f18cf4cb31bafa624765c232c610675ba5c9c342efafa9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:30:19.478Z"
+      "persisted_at": "2026-11-27T18:44:31.187Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -254203,8 +254208,8 @@
       "slug": "modelcontextprotocol-kotlin-sdk",
       "platform": "github",
       "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
-      "source_version": "df24fb0b",
-      "content_hash": "1eef88ac08c697d249c2e88ce58e17c95251ada7d58e906ab9926c905781f40b",
+      "source_version": "2deddb62",
+      "content_hash": "8b16d4a7182e820ba44444836bff61315ab8062b07711164a9620764d4928e89",
       "dossier_path": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md",
       "promoted_rules": [
@@ -254217,6 +254222,11 @@
           "number": 10497,
           "title": "read a negative discovery ttlMs as zero instead of failing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10950,
+          "title": "bump the kotest group across 1 directory with 3 updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254224,7 +254234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T09:37:23.218Z",
+      "verified_at": "2026-11-27T18:43:47.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254266,10 +254276,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-modelcontextprotocol-kotlin-sdk-architecture-intelligence-modelcontextprotocol-k.md",
       "title": "Architecture Intelligence: modelcontextprotocol/kotlin-sdk Core Invariants",
       "repository": "modelcontextprotocol/kotlin-sdk",
-      "source_version": "df24fb0b",
-      "content_hash": "fdf52ec8ecf7bd2087b65dd44061c8b1982c9ca7bc827bfbcf19f09faff219e3",
+      "source_version": "2deddb62",
+      "content_hash": "f7b6ed2544a5c62b05a100443aa11e95bc61fdb9425c164adb8dde14dd00abb8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:37:24.044Z"
+      "persisted_at": "2026-11-27T18:43:48.528Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-modelcontextprotocol-kotlin-sd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-modelcontextprotocol-kotlin-sd",
@@ -254279,9 +254289,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for modelcontextprotocol-kotlin-sdk-learnings",
       "repository": "modelcontextprotocol-kotlin-sdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "87dcb7c6e43b23b21fb098f3f02cdb981ca7582877252f84e4d8a11eb4827ad8",
+      "content_hash": "d0de228d8826eae89b195c655db31a3afe3cc64c32cd0a7e916dbe050a98f99d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T09:41:14.634Z"
+      "persisted_at": "2026-11-27T18:44:03.398Z"
     },
     "rule-8647": {
       "learning_id": "rule-8647",
@@ -254341,9 +254351,9 @@
       "title": "Architecture Intelligence: modelcontextprotocol-kotlin-sdk-learnings Core Invariants",
       "repository": "modelcontextprotocol-kotlin-sdk-learnings",
       "source_version": "HEAD",
-      "content_hash": "72ef050c18d19611b2ac245c782cb80595ecc0642a798d0174f9d12c31a2389a",
+      "content_hash": "ac75554c2a7df29ce18f0b29a9f2dfe18c1cce9fad2b09869e3d77a1d2d028e1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T09:41:14.379Z"
+      "persisted_at": "2026-11-27T18:44:03.203Z"
     },
     "candidate_directive-ci-nightly-fixes-2026-11-13": {
       "item_id": "candidate_directive-ci-nightly-fixes-2026-11-13",
@@ -361408,13 +361418,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DK7M-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z1KC-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "db1f0e3bab2724965da94120e23fb98c9fe635fac1590ee87fb9cdc3dc2e23b5",
+      "content_hash": "bd2c31c8c04ba548347d51b1e8b81ba9910a4265deb43fa452597f9692d3c132",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T17:59:49.909Z"
+      "persisted_at": "2026-11-27T18:44:31.800Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -366780,6 +366790,70 @@
       "content_hash": "a04a8910e176daa2b2eb91417c7fffbb8d783afabbfac8154d79a44c348e3559",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T18:35:11.735Z"
+    },
+    "rule-10950": {
+      "learning_id": "rule-10950",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10950,
+      "title": "bump the kotest group across 1 directory with 3 updates",
+      "source_url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+      "source_version": "2deddb62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T18:43:47.821Z"
+    },
+    "candidate_directive-bump-the-kotest-group-across-1-directory-with-3-updates": {
+      "item_id": "candidate_directive-bump-the-kotest-group-across-1-directory-with-3-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y417-bump-the-kotest-group-across-1-directory-with-3-updates.md",
+      "title": "bump the kotest group across 1 directory with 3 updates",
+      "repository": "modelcontextprotocol/kotlin-sdk",
+      "source_version": "2deddb62",
+      "content_hash": "f6aa334dce2dd1d730341cdd584d2e8a8dfcf64027dbb8f0107d70a431cdd37d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T18:43:48.332Z"
+    },
+    "rule-10951": {
+      "learning_id": "rule-10951",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10951,
+      "title": "Draft NUC 153 State Labels of Reasoning Selections",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "7af329a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T18:43:58.065Z"
+    },
+    "candidate_directive-draft-nuc-153-state-labels-of-reasoning-selections": {
+      "item_id": "candidate_directive-draft-nuc-153-state-labels-of-reasoning-selections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z0RA-draft-nuc-153-state-labels-of-reasoning-selections.md",
+      "title": "Draft NUC 153 State Labels of Reasoning Selections",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e95d3081c33173be411c846da5692f169d1cb0944ce6dd5f6498445b498a5552",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T18:44:30.743Z"
+    },
+    "candidate_directive-deps-bump-the-kotest-group-across-1-directory-with-3-updates": {
+      "item_id": "candidate_directive-deps-bump-the-kotest-group-across-1-directory-with-3-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YFCA-deps-bump-the-kotest-group-across-1-directory-with-3-updates.md",
+      "title": "deps): bump the kotest group across 1 directory with 3 updates",
+      "repository": "modelcontextprotocol-kotlin-sdk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "115f9bf9aa6f2f8c865001220ffe5edcf50ec3439278d7a1a23af5b04fd569fd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T18:44:02.987Z"
     }
   },
   "ai-builder-brain": {

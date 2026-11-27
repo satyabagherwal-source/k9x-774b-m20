@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source**: github ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
-> **Source Version**: `df24fb0b`  
+> **Source Version**: `2deddb62`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T09:37:22.070Z  
+> **Timestamp**: 2026-11-27T18:43:46.865Z  
 > **Learning ID**: `learn-github-modelcontextprotocol-kotlin-sdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/modelcontextprotocol-kotlin-sdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/modelcontextprotocol/kotlin-sdk](https://github.com/modelcontextprotocol/kotlin-sdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T09:37:20.435Z  
+> **Harvest Timestamp**: 2026-11-27T18:43:46.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1075,348 +1075,99 @@ public open class TransportSendOptions(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `de2e90df` (2026-11-23)
-**Commit Message**: fix(core): read a negative discovery ttlMs as zero instead of failing (#1188)
+### Incident Patch 1: `2deddb62` (2026-11-25)
+**Commit Message**: chore(deps): bump the kotest group across 1 directory with 3 updates (#1179)
 
-## Why
+Bumps the kotest group with 3 updates in the / directory:
+[io.kotest:kotest-assertions-core](https://github.com/kotest/kotest),
+[io.kotest:kotest-assertions-json](https://github.com/kotest/kotest) and
+[io.kotest:kotest-assertions-ktor](https://github.com/kotest/kotest).
 
-Goal: turn the confirmed review findings on #985 into atomic fixes.
-Follow-up to #985.
+Updates `io.kotest:kotest-assertions-core` from 6.2.6 to 6.2.7
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/kotest/kotest/releases">io.kotest:kotest-assertions-core's
+releases</a>.</em></p>
+<blockquote>
+<h2>v6.2.7</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>attempt to use the element module to choose project path in IJ
+runner by <a
+href="https://github.com/alfonsoristorato"><code>@​alfonsoristorato</code></a>
+in <a
+href="https://redirect.github.com/kotest/kotest/pull/6249">kotest/kotest#6249</a></li>
+<li>remove usage of internal API for IJ plugin and add a verify step to
+avoid this in future by <a
+href="https://github.com/alfonsoristorato"><code>@​alfonsoristorato</code></a>
+in <a
+href="https://redirect.github.com/kotest/kotest/pull/6250">kotest/kotest#6250</a></li>
+<li>Keep the original error as th
 
-A server that sends `"ttlMs": -1` in a `server/discover` result makes
-the client fail to decode the whole result. The non-negative check in
-`DiscoverResult`'s `init` also ran on decode. The [caching
-spec](https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/caching)
-says: "If `ttlMs` is negative, clients SHOULD ignore it and treat it as
-`0`."
-
-## What changed
-
-- `TtlMsSerializer` in `serializers.kt` reads a negative `ttlMs` as `0`
-and writes the value unchanged.
-- `DiscoverResult.ttlMs` uses it through `@Serializable(with =
-TtlMsSerializer::class)`. The property stays `val`, so the non-negative
-check in `init` still guards direct construction and no setter can
-bypass it.
-- The `init` check stays, so `DiscoverResult(ttlMs = -1)` in code still
-throws `IllegalArgumentException`.
-
-Design history: the init-block clamp suggested in
-[review](https://github.com/modelcontextprotocol/kotlin-sdk/pull/1188#discussion_r4664081752)
-landed in 56f5dac and is reverted in f54cbf5. The clamp required `ttlMs`
-
-**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/discovery.kt` (modified, +1/-0)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -83,6 +83,7 @@ public data class DiscoverResult(
-     @EncodeDefault
-     val resultType: String = COMPLETE_RESULT_TYPE,
-     @Required
-+    @Serializable(with = TtlMsSerializer::class)
-     val ttlMs: Long = 0,
-     @Required
-     val cacheScope: CacheScope = CacheScope.Private,
-```
-
-**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/serializers.kt` (modified, +12/-0)
-```diff
-@@ -69,6 +69,18 @@ internal object MethodSerializer : KSerializer<Method> {
-     override fun deserialize(decoder: Decoder): Method = Method.from(decoder.decodeString())
- }
- 
-+/** Per the caching spec, clients SHOULD ignore a negative `ttlMs` and treat it as `0`. */
-+internal object TtlMsSerializer : KSerializer<Long> {
-+    override val descriptor: SerialDescriptor =
-+        PrimitiveSerialDescriptor("io.modelcontextprotocol.kotlin.sdk.types.TtlMs", PrimitiveKind.LONG)
-+
-+    override fun serialize(encoder: Encoder, value: Long) {
-+        encoder.encodeLong(value)
-+    }
-+
-+    override fun deserialize(decoder: Decoder): Long = decoder.decodeLong().coerceAtLeast(0)
-+}
-+
- // ============================================================================
- // Reference Serializers
- // ============================================================================
-```
-
-**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/types/DiscoveryTest.kt` (modified, +16/-0)
-```diff
-@@ -213,6 +213,22 @@ class DiscoveryTest {
-         }
-     }
- 
-+    @Test
-+    fun `should read a negative discovery ttl from the wire as zero`() {
-+        val result = McpJson.decodeFromString<ServerResult>(
-+            """
-+            {
-+              "supportedVersions": ["2026-07-28"],
-+              "capabilities": {},
-+              "ttlMs": -1,
-+              "cacheScope": "private"
-+            }
-+            """.trimIndent(),
-+        )
-+
-+        assertEquals(0L, assertIs<DiscoverResult>(result).ttlMs)
-+    }
-+
-     @Test
-     fun `should serialize unsupported protocol version data`() {
-         verifySerialization(
+@@ -13,7 +13,7 @@ mavenPublish = "0.37.0"
+ awaitility = "4.3.0"
+ collections-immutable = "0.5.2"
+ coroutines = "1.11.0"
+-kotest = "6.2.6"
++kotest = "6.2.7"
+ kotlinx-io = "0.9.2"
+ ktor = "3.6.1"
+ logging = "8.0.7"
 ```
 
 ---
 
-### Incident Patch 2: `08f3c91b` (2026-11-24)
-**Commit Message**: fix(core): fail requests on results of unknown shape instead of timing out (#1186)
+### Incident Patch 2: `70dcf98d` (2026-11-25)
+**Commit Message**: chore(deps): bump io.mockk:mockk from 1.14.11 to 1.14.12 in the testing group across 1 directory (#1180)
 
-A response whose result matched no known type failed to decode in the
-transport, so it was dropped and the request ended with a timeout. Such
-a result is now kept as received (internal `CustomResult`), and the
-request fails at once with `SerializationException`. Typed results of
-extension methods come later, picked by request method (Skills in
-#1020).
+Bumps the testing group with 1 update in the / directory:
+[io.mockk:mockk](https://github.com/mockk/mockk).
 
-## How Has This Been Tested?
+Updates `io.mockk:mockk` from 1.14.11 to 1.14.12
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/mockk/mockk/releases">io.mockk:mockk's
+releases</a>.</em></p>
+<blockquote>
+<h2>1.14.12</h2>
+<h2>What's Changed</h2>
+<ul>
+<li>fix: added SameInstanceMatcher to handle an issue with equals method
+when using EqMatcher along with a mock to an object by <a
+href="https://github.com/DOssaA"><code>@​DOssaA</code></a> in <a
+href="https://redirect.github.com/mockk/mockk/pull/1508">mockk/mockk#1508</a></li>
+<li>Add scoped confirmVerified overloads for callables (KFunction and
+KProperty) by <a
+href="https://github.com/DOssaA"><code>@​DOssaA</code></a> in <a
+href="https://redirect.github.com/mockk/mockk/pull/1513">mockk/mockk#1513</a></li>
+<li>feat: support MockKAnnotation.useDependencyOrder for JUnit 5 by <a
+href="https://github.com/ilia1243"><code>@​ilia1243</code></a> in <a
+href="https://redirect.github.com/mockk/mockk/pull/1515">mockk/mockk#1
 
-`JsonRpcTest` round-trips a response with a result of unknown shape.
-`ProtocolTest` checks that a request with such a result throws
-`SerializationException` instead of timing out. JVM tests of core,
-client and server pass, as do the core tests on JS; `ProtocolTest` and
-`JsonRpcTest` also pass on macosArm64.
-
-## Breaking Changes
-
-None in the API. A request whose result has an unknown shape now throws
-`SerializationException` at once; before, it timed out with
-`McpException` (`REQUEST_TIMEOUT`).
-
-Closes #1087
-
-**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/Protocol.kt` (modified, +8/-1)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,7 @@ package io.modelcontextprotocol.kotlin.sdk.shared
- import io.github.oshai.kotlinlogging.KotlinLogging
- import io.modelcontextprotocol.kotlin.sdk.types.CancelledNotification
- import io.modelcontextprotocol.kotlin.sdk.types.CancelledNotificationParams
-+import io.modelcontextprotocol.kotlin.sdk.types.CustomResult
- import io.modelcontextprotocol.kotlin.sdk.types.EmptyResult
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCEmptyMessage
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCError
-@@ -814,8 +815,14 @@ public abstract class Protocol(@PublishedApi internal val options: ProtocolOptio
-                 }
- 
-                 try {
-+                    val value = response!!.result
-+                    if (value is CustomResult) {
-+                        throw SerializationException(
-+                            "Cannot determine RequestResult type from JSON: ${value.json.keys}",
-+                        )
-+                    }
-                     @Suppress("UNCHECKED_CAST")
--                    result.complete(response!!.result as T)
-+                    result.complete(value as T)
-                 } catch (e: Throwable) {
-                     result.completeExceptionally(e)
-                 }
-```
-
-**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/request.kt` (modified, +9/-0)
-```diff
-@@ -240,6 +240,15 @@ public data class EmptyResult(@SerialName("_meta") override val meta: JsonObject
-     ClientResult,
-     ServerResult
- 
-+/**
-+ * A result whose shape matches no known [RequestResult] type, such as a custom method's, kept as received.
-+ */
-+@Serializable(with = CustomResultSerializer::class)
-+internal data class CustomResult(val json: JsonObject) : RequestResult {
-+    override val meta: JsonObject?
-+        get() = json["_meta"] as? JsonObject
-+}
-+
- /**
-  * Represents a paginated result.
-  */
-```
-
-**File**: `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/serializers.kt` (modified, +16/-2)
-```diff
-@@ -486,15 +486,29 @@ private fun selectServerResultDeserializer(element: JsonElement): Deserializatio
- /**
-  * Polymorphic serializer for [RequestResult] types.
-  * Supports both client and server results.
-- * Throws [SerializationException] if the result type cannot be determined.
-+ * Falls back to [CustomResult] if the result type cannot be determined.
-  */
- internal object RequestResultPolymorphicSerializer :
-     JsonContentPolymorphicSerializer<RequestResult>(RequestResult::class) {
-     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<RequestResult> =
-         selectClientResultDeserializer(element)
-             ?: selectServerResultDeserializer(element)
-             ?: selectEmptyResult(element)
--            ?: throw SerializationException("Cannot determine RequestResult type from JSON: ${element.jsonObject.keys}")
-+            ?: CustomResultSerializer
-+}
-+
-+/**
-+ * Writes and reads a [CustomResult] as its JSON object, unchanged.
-+ */
-+internal object CustomResultSerializer : KSerializer<CustomResult> {
-+    override val descriptor: SerialDescriptor = JsonObject.serializer().descriptor
-+
-+    override fun serialize(encoder: Encoder, value: CustomResult) {
-+        JsonObject.serializer().serialize(encoder, value.json)
-+    }
-+
-+    override fun deserialize(decoder: Decoder): CustomResult =
-+        CustomResult(JsonObject.serializer().deserialize(decoder))
- }
- 
- /**
-```
-
-**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/shared/ProtocolTest.kt` (modified, +20/-0)
-```diff
-@@ -9,6 +9,7 @@ import io.kotest.matchers.types.shouldBeInstanceOf
- import io.kotest.matchers.types.shouldBeSameInstanceAs
- import io.modelcontextprotocol.kotlin.sdk.types.CustomRequest
- import io.modelcontextprotocol.kotlin.sdk.types.EmptyResult
-+import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCMessage
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCNotification
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCRequest
- import io.modelcontextprotocol.kotlin.sdk.types.JSONRPCResponse
-@@ -28,6 +29,7 @@ import kotlinx.coroutines.async
- import kotlinx.coroutines.launch
- import kotlinx.coroutines.test.TestScope
- import kotlinx.coroutines.test.runTest
-+import kotlinx.serialization.SerializationException
- import kotlinx.serialization.json.JsonObject
- import kotlinx.serialization.json.buildJsonObject
- import kotlinx.serialization.json.encodeToJsonElement
-@@ -257,4 +259,22 @@ class ProtocolTest {
-         }
-         error.message.shouldNotBeNull() shouldContain "maxInFlightHandlers"
-     }
-+
-+    /** Decodes a response to [id] the way a transport does. */
-+    private fun wireResponse(id: RequestId, result: String): JSONRPCMessage =
-+        McpJson.decodeFromString("""{"jsonrpc":"2.0","id":${McpJson.encodeToString(id)},"result":$result}""")
-+
-+    @Test
-+    fun `request rejects a result of unknown shape instead of timing out`() = runTest {
-+        val (protocol, transport) = connectedProtocol()
-+        val inFlight = async {
-+            shouldThrow<SerializationException> {
-+                protocol.request<EmptyResult>(CustomRequest(Method.Custom("skills/list"), null))
-+            }
-+        }
-+
-+        transport.deliver(wireResponse(transport.awaitRequest().id, """{"skills":[]}"""))
-+
-+        inFlight.await()
-+    }
- }
-```
-
-**File**: `kotlin-sdk-core/src/commonTest/kotlin/io/modelcontextprotocol/kotlin/sdk/types/JsonRpcTest.kt` (modified, +20/-0)
-```diff
-@@ -186,6 +186,26 @@ class JsonRpcTest {
-         )
-     }
- 
-+    @Test
-+    fun `should keep a JSONRPCResponse result of unknown shape as received`() {
-+        val message = verifyDeserialization<JSONRPCMessage>(
-+            McpJson,
-+            """
-+            {
-+              "id": 3,
-+              "result": {
-+                "skills": [{ "uri": "skill://code-review/SKILL.md" }],
-+                "_meta": { "traceId": "abc" }
-+              },
-+              "jsonrpc": "2.0"
-+            }
-+            """.trimIndent(),
-+        )
-+
-+        val result = assertIs<CustomResult>(assertIs<JSONRPCResponse>(message).result)
-+        result.meta shouldBe buildJsonObject { put("traceId", "abc") }
-+    }
-+
-     @Test
-     fun `should decode JSONRPCMessage as request`() {
-         val json = """
-```
-
----
-
-### Incident Patch 3: `702cbf02` (2026-11-23)
-**Commit Message**: fix(server): log resource updates skipped without a subscription (#1216)
-
-The fallback for a session with no subscription was `?: { ... }`, a
-lambda that is never invoked, so the skip was never logged.
-
-The `?.let { ... } ?: ...` chain is now a `when`, and the skip is logged
-at `debug`: a session without a subscription is the common case and hits
-this branch on every resource update. Notification delivery is
-unchanged.
-
-Closes #1082
-
-**File**: `kotlin-sdk-server/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/server/FeatureNotificationService.kt` (modified, +14/-13)
-```diff
-@@ -119,23 +119,24 @@ private class SessionNotificationJob {
-             }
- 
-             is ResourceUpdatedNotification -> {
--                resourceSubscriptions.value[notification.params.uri]?.let { resourceFromTimestamp ->
--                    if (event.timestamp >= resourceFromTimestamp) {
-+                val uri = notification.params.uri
-+                val subscribedAt = resourceSubscriptions.value[uri]
-+                when {
-+                    subscribedAt == null -> logger.debug {
-+                        "No subscription for resource $uri in sessionId: ${session.sessionId}. Skipping notification"
-+                    }
-+
-+                    event.timestamp < subscribedAt -> logger.info {
-+                        "Skipping resource updated notification for resource $uri " +
-+                            "as it is older than subscription timestamp $subscribedAt"
-+                    }
-+
-+                    else -> {
-                         logger.info {
--                            "Sending resource updated notification for resource ${notification.params.uri} " +
-+                            "Sending resource updated notification for resource $uri " +
-                                 "to sessionId: ${session.sessionId}"
-                         }
-                         session.notification(notification)
--                    } else {
--                        logger.info {
--                            "Skipping resource updated notification for resource ${notification.params.uri} " +
--                                "as it is older than subscription timestamp $resourceFromTimestamp"
--                        }
--                    }
--                } ?: {
--                    logger.info {
--                        "No subscription for resource ${notification.params.uri}. " +
--                            "Skipping notification: $notification"
-                     }
-                 }
-             }
+@@ -17,7 +17,7 @@ kotest = "6.2.6"
+ kotlinx-io = "0.9.2"
+ ktor = "3.6.1"
+ logging = "8.0.7"
+-mockk = "1.14.11"
++mockk = "1.14.12"
+ serialization = "1.12.0"
+ slf4j = "2.0.20"
+ junit = "5.14.4"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1221** (2026-11-27): fix(core): don't send -32021 to handshake-era clients (@e5l)
+- **PR #1219** (2026-11-27): fix(options): restore 0.16 ClientOptions/ServerOptions JVM constructors (@e5l)
 - **PR #1216** (2026-11-23): fix(server): log resource updates skipped without a subscription (@devcrocod)
 - **PR #1207** (2026-11-20): fix(transport): hold inbound messages until the client transport is operational (@e5l)
 - **PR #1206** (2026-11-20): fix(client): forget the discovery result when reconnecting (@e5l)
 - **PR #1205** (closed): docs(server): describe the SSE response on the stateless endpoint (@e5l)
-- **PR #1204** (2026-11-24): fix(client): keep no result fetched across a cache invalidation (@e5l)
-- **PR #1203** (2026-11-24): fix(core): refuse a non-string protocolVersion in toEnvelope (@e5l)
 
 ---
 
@@ -1436,28 +1187,28 @@ Closes #1082
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): read a negative discovery ttlMs as zero instead of failing
+## X. deps): bump the kotest group across 1 directory with 3 updates
 
 **RULE**:
-When implementing operations in `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/discovery.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in modelcontextprotocol/kotlin-sdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `de2e90df`: core): read a negative discovery ttlMs as zero instead of failing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2deddb62`: deps): bump the kotest group across 1 directory with 3 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotlin-sdk-core/src/commonMain/kotlin/io/modelcontextprotocol/kotlin/sdk/types/discovery.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    @Serializable(with = TtlMsSerializer::class)
+kotest = "6.2.7"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+kotest = "6.2.6"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `de2e90df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2deddb62` are properly handled with clean fallback behavior.

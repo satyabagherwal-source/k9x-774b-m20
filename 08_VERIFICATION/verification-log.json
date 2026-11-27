@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-01XB",
-    "timestamp": "2026-11-26T09:37:46.175Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "36e77c7e99b3fac9ff0ebab7d8eb034b096b2f019ade32a321fe4aa320fbd4a4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-D2SM",
-    "timestamp": "2026-11-26T09:47:53.830Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "df77688a8b7ef0140278d69c2920069814663cee982fadc8ebe4e622058d71c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-D5VX",
     "timestamp": "2026-11-26T09:47:57.837Z",
     "repository": "TypeWhisper/typewhisper-mac",
@@ -7490,6 +7460,36 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "c2bb2477934e7f1d48d530b6aea225e989dc81c9a34403cbc003090b5cec45d0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-Y3UA",
+    "timestamp": "2026-11-27T18:43:48.082Z",
+    "repository": "modelcontextprotocol/kotlin-sdk",
+    "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
+    "contentHash": "8b16d4a7182e820ba44444836bff61315ab8062b07711164a9620764d4928e89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-YBQK",
+    "timestamp": "2026-11-27T18:43:58.316Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "b102b7327a65f438397804e67aa507c98e28e1a338e9a46178ae8e447afaa489",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

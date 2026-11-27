@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "a0377489",
+    "sourceVersion": "7af329a5",
     "license": "Apache-2.0",
-    "contentHash": "6057cae8724734334dd8549e70d5d9a9003b61384a00e7b9c88fba0f5b2caf2a",
-    "lastHarvestedAt": "2026-11-27T18:08:31.346Z",
+    "contentHash": "b102b7327a65f438397804e67aa507c98e28e1a338e9a46178ae8e447afaa489",
+    "lastHarvestedAt": "2026-11-27T18:43:58.328Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -8203,10 +8203,10 @@
     "repository": "modelcontextprotocol/kotlin-sdk",
     "platform": "github",
     "sourceUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
-    "sourceVersion": "df24fb0b",
+    "sourceVersion": "2deddb62",
     "license": "NOASSERTION",
-    "contentHash": "1eef88ac08c697d249c2e88ce58e17c95251ada7d58e906ab9926c905781f40b",
-    "lastHarvestedAt": "2026-11-25T09:37:23.488Z",
+    "contentHash": "8b16d4a7182e820ba44444836bff61315ab8062b07711164a9620764d4928e89",
+    "lastHarvestedAt": "2026-11-27T18:43:48.095Z",
     "learningId": "learn-github-modelcontextprotocol-kotlin-sdk"
   },
   "ivanvorobei-swiftui": {

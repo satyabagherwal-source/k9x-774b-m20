@@ -13880,3 +13880,6 @@ Every entry in this ledger must capture:
 | `learn-github-nsh07-tomato` | `https://github.com/nsh07/Tomato` | `394dfd20` | Multi-dimensional audit evidence | 2026-11-27T18:34:59.614Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `4e43910a` | Multi-dimensional audit evidence | 2026-11-27T18:35:02.680Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `ec255726` | Multi-dimensional audit evidence | 2026-11-27T18:35:04.924Z |
+| `learn-github-modelcontextprotocol-kotlin-sdk` | `https://github.com/modelcontextprotocol/kotlin-sdk` | `2deddb62` | Multi-dimensional audit evidence | 2026-11-27T18:43:48.095Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `7af329a5` | Multi-dimensional audit evidence | 2026-11-27T18:43:58.328Z |
+| `learn-dom-k-1440511c` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-27T18:44:30.049Z |

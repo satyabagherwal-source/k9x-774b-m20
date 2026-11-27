@@ -13847,3 +13847,6 @@
 | `CYCLE-20261127-MS29` | `2026-11-27T18:34:59.601Z` | `nsh07/Tomato` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10947` | Yes (`bd2bd1bf...`) |
 | `CYCLE-20261127-MUFG` | `2026-11-27T18:35:02.668Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10948` | Yes (`9de288f3...`) |
 | `CYCLE-20261127-MW5T` | `2026-11-27T18:35:04.913Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10949` | Yes (`c2bb2477...`) |
+| `CYCLE-20261127-Y3UA` | `2026-11-27T18:43:48.082Z` | `modelcontextprotocol/kotlin-sdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10950` | Yes (`8b16d4a7...`) |
+| `CYCLE-20261127-YBQK` | `2026-11-27T18:43:58.316Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10951` | Yes (`b102b732...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T18:44:30.049Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-1440511C` [Domain K] | Yes (`818da12b...`) |

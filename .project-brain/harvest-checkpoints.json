@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T18:35:04.933Z",
+  "last_updated": "2026-11-27T18:43:58.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "6057cae8724734334dd8549e70d5d9a9003b61384a00e7b9c88fba0f5b2caf2a",
-      "verified_at": "2026-11-27T18:08:31.354Z",
+      "content_hash": "b102b7327a65f438397804e67aa507c98e28e1a338e9a46178ae8e447afaa489",
+      "verified_at": "2026-11-27T18:43:58.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T18:08:31.354Z"
+      "last_updated": "2026-11-27T18:43:58.336Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -12336,14 +12336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "content_hash": "1eef88ac08c697d249c2e88ce58e17c95251ada7d58e906ab9926c905781f40b",
-      "verified_at": "2026-11-25T09:37:23.508Z",
+      "content_hash": "8b16d4a7182e820ba44444836bff61315ab8062b07711164a9620764d4928e89",
+      "verified_at": "2026-11-27T18:43:48.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T09:37:23.508Z"
+      "last_updated": "2026-11-27T18:43:48.103Z"
     },
     "ivanvorobei/SwiftUI": {
       "repository": "ivanvorobei/SwiftUI",
