@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T06:46:19.200Z",
+  "last_updated": "2026-11-27T06:55:06.391Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2126,14 +2126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "999b6417b175bf342f440bfb1ad77fd25c04688169a5915ccc2dcd12ac122e2d",
-      "verified_at": "2026-11-23T21:39:47.923Z",
+      "content_hash": "36e09dcb3efe2390641cc9232c92c15dbc7d349c52b05b3f2b0ef88b7dcbf82a",
+      "verified_at": "2026-11-27T06:54:51.540Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:39:47.923Z"
+      "last_updated": "2026-11-27T06:54:51.540Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -8856,14 +8856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mariadb-server",
-      "content_hash": "084ff4c713f8ae5e9bae4075b6c44f0417bbab2dccdd0917897097c1c6e7805e",
-      "verified_at": "2026-11-26T12:59:34.834Z",
+      "content_hash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
+      "verified_at": "2026-11-27T06:55:06.390Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T12:59:34.834Z"
+      "last_updated": "2026-11-27T06:55:06.390Z"
     },
     "NG-ZORRO/ng-zorro-antd": {
       "repository": "NG-ZORRO/ng-zorro-antd",

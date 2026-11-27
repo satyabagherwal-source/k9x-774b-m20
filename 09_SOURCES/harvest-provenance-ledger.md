@@ -13737,3 +13737,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-27T06:37:41.410Z |
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `08e93f17` | Multi-dimensional audit evidence | 2026-11-27T06:37:42.222Z |
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T06:46:19.184Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-27T06:54:51.527Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `d2844a41` | Multi-dimensional audit evidence | 2026-11-27T06:55:06.377Z |

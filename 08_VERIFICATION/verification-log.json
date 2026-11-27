@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-13E4",
-    "timestamp": "2026-11-26T00:46:42.028Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "2f3def1226a529990dec69be1d6d554089d2dc7a81622536631885b027185976",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-HEZY",
-    "timestamp": "2026-11-26T00:59:23.566Z",
-    "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-    "contentHash": "d6635611622e9d9dc6fd609c39dbba2fed499aa811c82b19bf981ffcab0c2d72",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-HFVC",
     "timestamp": "2026-11-26T00:59:24.696Z",
     "repository": "NVIDIA/cuda-rust",
@@ -7492,6 +7462,36 @@
     "contentHash": "39b9b6ab3eca5ef6fef49bab96b7d2747f43924369714190e9baca2b8cc1ed4d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-MEF7",
+    "timestamp": "2026-11-27T06:54:51.523Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+    "contentHash": "36e09dcb3efe2390641cc9232c92c15dbc7d349c52b05b3f2b0ef88b7dcbf82a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-MPVH",
+    "timestamp": "2026-11-27T06:55:06.365Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

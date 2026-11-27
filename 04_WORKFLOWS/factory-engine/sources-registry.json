@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T06:14:45.285Z",
-    "lastVerified": "2026-11-27T06:14:45.285Z",
+    "lastChecked": "2026-11-27T06:55:03.355Z",
+    "lastVerified": "2026-11-27T06:55:03.355Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T06:46:30.011Z",
-    "lastVerified": "2026-11-27T06:46:30.011Z",
+    "lastChecked": "2026-11-27T06:55:09.698Z",
+    "lastVerified": "2026-11-27T06:55:09.698Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1871,8 +1871,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T02:40:50.696Z",
-    "lastVerified": "2026-11-27T02:40:50.696Z",
+    "lastChecked": "2026-11-27T06:54:58.332Z",
+    "lastVerified": "2026-11-27T06:54:58.332Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -3347,9 +3347,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-26T14:04:05.056Z",
+    "lastChecked": "2026-11-27T06:54:55.826Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-26T14:04:05.056Z"
+    "lastVerified": "2026-11-27T06:54:55.826Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -7022,14 +7022,14 @@
     "officialUrl": "https://github.com/MariaDB/server",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-26T12:59:33.632Z",
-    "lastVerified": "2026-11-26T12:59:33.632Z",
+    "lastChecked": "2026-11-27T06:55:05.213Z",
+    "lastVerified": "2026-11-27T06:55:05.213Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mariadb-server",
-    "contentHash": "084ff4c713f8ae5e9bae4075b6c44f0417bbab2dccdd0917897097c1c6e7805e",
+    "contentHash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7193,9 +7193,9 @@
   "iconoir-icons-iconoir": {
     "name": "iconoir",
     "officialUrl": "https://github.com/iconoir-icons/iconoir",
-    "lastChecked": "2026-11-24T22:50:55.271Z",
+    "lastChecked": "2026-11-27T06:54:53.445Z",
     "revisionIdentifier": "39834e3f",
-    "lastVerified": "2026-11-24T22:50:55.271Z"
+    "lastVerified": "2026-11-27T06:54:53.445Z"
   },
   "opentofu-opentofu": {
     "name": "opentofu/opentofu",
@@ -8188,9 +8188,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-11-26T05:56:57.550Z",
+    "lastChecked": "2026-11-27T06:54:48.331Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-11-26T05:56:57.550Z"
+    "lastVerified": "2026-11-27T06:54:48.331Z"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
     "name": "Qwen/Qwen-Image-2.1-Turbo",
@@ -8589,12 +8589,12 @@
     "officialUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T21:39:47.242Z",
-    "lastVerified": "2026-11-23T21:39:47.242Z",
+    "lastChecked": "2026-11-27T06:54:50.869Z",
+    "lastVerified": "2026-11-27T06:54:50.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "999b6417b175bf342f440bfb1ad77fd25c04688169a5915ccc2dcd12ac122e2d",
+    "contentHash": "36e09dcb3efe2390641cc9232c92c15dbc7d349c52b05b3f2b0ef88b7dcbf82a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

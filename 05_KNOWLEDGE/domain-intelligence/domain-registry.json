@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T06:46:32.236Z",
+  "last_updated": "2026-11-27T06:55:12.034Z",
   "total_records": 2815,
   "domains": {
     "A": {
@@ -19387,8 +19387,8 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-research-knowledge-intelligence-openbmb-minicpm.md",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "content_hash": "126c0c13de1b3347f98d4bd5040ea425e10b9f35cea2825a3806b0dfcf34cefb",
-      "created_at": "2026-11-23T21:39:48.130Z"
+      "content_hash": "c99912f7b2367a034d88175ec886929cb949097314c98cab30731f430dd12a70",
+      "created_at": "2026-11-27T06:54:51.753Z"
     },
     "DOM-D-C5F6E511": {
       "record_id": "DOM-D-C5F6E511",
@@ -19438,8 +19438,8 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-research-knowledge-intelligence-hf-op.md",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings",
-      "content_hash": "d7740004272e6dd6bc73ec24a202867d0c1240ef973ed6f8e5a0d1ff381d84c4",
-      "created_at": "2026-11-23T21:40:05.250Z"
+      "content_hash": "0ce5767c2fc104ad0d7d6fc187525f86991c50e1883147c26f7c0f16e72d3a3c",
+      "created_at": "2026-11-27T06:55:10.120Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
@@ -24292,8 +24292,8 @@
       "title": "Architecture Intelligence: MariaDB/server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
       "repository": "MariaDB/server",
-      "content_hash": "b74a3f342375d2bd0869cd288ff91310eaf27a93a3d7cebbcd8758cd34e1fbf6",
-      "created_at": "2026-11-26T12:59:35.258Z"
+      "content_hash": "1bb75491c74203982a96d00cb0c7834fc11e6814b756aeeda55e14f53050fb8c",
+      "created_at": "2026-11-27T06:55:06.799Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
@@ -24310,8 +24310,8 @@
       "title": "Architecture Intelligence: mariadb-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-learnings-architecture-intelligence-mariadb-server-learnings-core.md",
       "repository": "mariadb-server-learnings",
-      "content_hash": "b1412deffeb5c0b4291bdca5bf8fdabaea12e37cce78c6724a37a6ff9eecdbc5",
-      "created_at": "2026-11-25T11:42:44.308Z"
+      "content_hash": "24fb7de1b1e7c96329597e15a83f242cf8b8ce86b5ab672d663b9c27d1b01941",
+      "created_at": "2026-11-27T06:55:10.979Z"
     },
     "domain_intelligence-content-information-intelligence-mikepenz-multiplatform-markdown-renderer-core-i": {
       "record_id": "domain_intelligence-content-information-intelligence-mikepenz-multiplatform-markdown-renderer-core-i",
@@ -46762,8 +46762,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "72eda21f34fecf11cb233c060e876d5ddc9cc2025c463499089fe7109277908f",
-      "created_at": "2026-11-27T06:29:24.545Z"
+      "content_hash": "b3e65030b460447437a1920183a532b96c57b90f6509cb1268416cd3f0a9884c",
+      "created_at": "2026-11-27T06:55:12.034Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

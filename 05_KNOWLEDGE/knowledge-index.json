@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T06:46:32.439Z",
+  "last_updated": "2026-11-27T06:55:12.229Z",
   "total_verified_learnings": 9141,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26418,
+  "total_items": 26420,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1cc0c9f7f70294a5c1752c90d2752d9354e7a9a9b9a0423494d7711c78ad6e85",
+      "content_hash": "f4533b666a4a5f93f6f6c4ecc87186b5baff18c56afa46e13ee133679bf4549d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T06:29:24.826Z"
+      "persisted_at": "2026-11-27T06:55:12.229Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -243190,7 +243190,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "999b6417b175bf342f440bfb1ad77fd25c04688169a5915ccc2dcd12ac122e2d",
+      "content_hash": "36e09dcb3efe2390641cc9232c92c15dbc7d349c52b05b3f2b0ef88b7dcbf82a",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [],
@@ -243199,7 +243199,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T21:39:47.682Z",
+      "verified_at": "2026-11-27T06:54:51.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243216,9 +243216,9 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B Core Invariants",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "126c0c13de1b3347f98d4bd5040ea425e10b9f35cea2825a3806b0dfcf34cefb",
+      "content_hash": "c99912f7b2367a034d88175ec886929cb949097314c98cab30731f430dd12a70",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:39:48.130Z"
+      "persisted_at": "2026-11-27T06:54:51.753Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-learnings-core-",
@@ -243228,9 +243228,9 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-learnings Core Invariants",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7740004272e6dd6bc73ec24a202867d0c1240ef973ed6f8e5a0d1ff381d84c4",
+      "content_hash": "0ce5767c2fc104ad0d7d6fc187525f86991c50e1883147c26f7c0f16e72d3a3c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T21:40:05.250Z"
+      "persisted_at": "2026-11-27T06:55:10.120Z"
     },
     "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
@@ -259411,8 +259411,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "e6521ee6",
-      "content_hash": "084ff4c713f8ae5e9bae4075b6c44f0417bbab2dccdd0917897097c1c6e7805e",
+      "source_version": "d2844a41",
+      "content_hash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -259435,6 +259435,11 @@
           "number": 10683,
           "title": "MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10845,
+          "title": "MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -259442,7 +259447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T12:59:34.565Z",
+      "verified_at": "2026-11-27T06:55:06.124Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259484,10 +259489,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mariadb-server-architecture-intelligence-mariadb-server-core-invariants.md",
       "title": "Architecture Intelligence: MariaDB/server Core Invariants",
       "repository": "MariaDB/server",
-      "source_version": "e6521ee6",
-      "content_hash": "b74a3f342375d2bd0869cd288ff91310eaf27a93a3d7cebbcd8758cd34e1fbf6",
+      "source_version": "d2844a41",
+      "content_hash": "1bb75491c74203982a96d00cb0c7834fc11e6814b756aeeda55e14f53050fb8c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T12:59:35.258Z"
+      "persisted_at": "2026-11-27T06:55:06.799Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server",
@@ -259496,10 +259501,10 @@
       "relative_path": "08_VERIFICATION/mariadb-server-verification-protocol-empirical-defect-shield-for-mariadb-server.md",
       "title": "Verification Protocol: Empirical Defect Shield for MariaDB/server",
       "repository": "MariaDB/server",
-      "source_version": "e6521ee6",
-      "content_hash": "f456f23819ebdc20d22bb3640ab859b1b5b02061e38ba5527beabecdace7e747",
+      "source_version": "d2844a41",
+      "content_hash": "e215ae95c90fed97c8cefd0872ef8545f620733458559b4194f0cc25d188e142",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:59:35.476Z"
+      "persisted_at": "2026-11-27T06:55:06.989Z"
     },
     "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-folkbench-folkbench-learnings-core-invariant",
@@ -259533,9 +259538,9 @@
       "title": "Architecture Intelligence: mariadb-server-learnings Core Invariants",
       "repository": "mariadb-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "b1412deffeb5c0b4291bdca5bf8fdabaea12e37cce78c6724a37a6ff9eecdbc5",
+      "content_hash": "24fb7de1b1e7c96329597e15a83f242cf8b8ce86b5ab672d663b9c27d1b01941",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T11:42:44.308Z"
+      "persisted_at": "2026-11-27T06:55:10.979Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mariadb-server-learnings",
@@ -259545,9 +259550,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mariadb-server-learnings",
       "repository": "mariadb-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "1e66f03bb6688e9a3b0ca192f2da8da2d9c80c3e50feb1277b3042165c54c063",
+      "content_hash": "87c038f219e15b9610f3c733aee1ebf72b50b4e3daa90ba313c5e6944d50d145",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T11:42:44.492Z"
+      "persisted_at": "2026-11-27T06:55:11.185Z"
     },
     "rule-8714": {
       "learning_id": "rule-8714",
@@ -357985,13 +357990,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PNZJ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MU3F-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "da997a47e943dd5f6f44c8c016373e72afc20919f4dc40c36b5bf0b887a39cb0",
+      "content_hash": "cd58e985578c47044551fbe6baf221d0ed961098d4ad1ef1c6dd69e2b204d279",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T06:29:24.277Z"
+      "persisted_at": "2026-11-27T06:55:11.838Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358001,9 +358006,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "72eda21f34fecf11cb233c060e876d5ddc9cc2025c463499089fe7109277908f",
+      "content_hash": "b3e65030b460447437a1920183a532b96c57b90f6509cb1268416cd3f0a9884c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T06:29:24.545Z"
+      "persisted_at": "2026-11-27T06:55:12.034Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362478,6 +362483,32 @@
       "content_hash": "ab5a673515fecb306bcaca98d8cac2a7a0d3906353d0dced851d0dcbd0ac9134",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T06:37:53.782Z"
+    },
+    "rule-10845": {
+      "learning_id": "rule-10845",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10845,
+      "title": "MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "d2844a41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T06:55:06.124Z"
+    },
+    "candidate_directive-mdev-24684-quadratic-time-for-min-max-std-variance-as-window-functions": {
+      "item_id": "candidate_directive-mdev-24684-quadratic-time-for-min-max-std-variance-as-window-functions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MTA0-mdev-24684-quadratic-time-for-min-max-std-variance-as-window-functions.md",
+      "title": "MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions",
+      "repository": "mariadb-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5b13d9b19d8e7abeac1448f72a5b9e2a0ad85dc5482ad206553a7c12933da28d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T06:55:10.779Z"
     }
   },
   "ai-builder-brain": {

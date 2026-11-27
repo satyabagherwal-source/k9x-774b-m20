@@ -1365,8 +1365,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
     "license": "Open-Source",
-    "contentHash": "999b6417b175bf342f440bfb1ad77fd25c04688169a5915ccc2dcd12ac122e2d",
-    "lastHarvestedAt": "2026-11-23T21:39:47.916Z",
+    "contentHash": "36e09dcb3efe2390641cc9232c92c15dbc7d349c52b05b3f2b0ef88b7dcbf82a",
+    "lastHarvestedAt": "2026-11-27T06:54:51.527Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b"
   },
   "hf-openbmb-minicpm-v-4.7-1b": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "e6521ee6",
+    "sourceVersion": "d2844a41",
     "license": "GPL-2.0",
-    "contentHash": "084ff4c713f8ae5e9bae4075b6c44f0417bbab2dccdd0917897097c1c6e7805e",
-    "lastHarvestedAt": "2026-11-26T12:59:34.815Z",
+    "contentHash": "8643f1e4a469639980ae0a52cb41bc522d4410f8becbda199244b7d0f665a8dc",
+    "lastHarvestedAt": "2026-11-27T06:55:06.377Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {

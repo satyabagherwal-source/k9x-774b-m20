@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:46:32.613Z",
+  "last_updated": "2026-11-27T06:55:12.388Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T06:29:23.628Z",
+      "processed_at": "2026-11-27T06:55:11.382Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1848,7 +1848,7 @@
       "staged_for_review": 0
     },
     "mariadb-server-learnings.md": {
-      "processed_at": "2026-11-25T11:42:43.714Z",
+      "processed_at": "2026-11-27T06:55:10.355Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2813,7 +2813,7 @@
       "staged_for_review": 0
     },
     "hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md": {
-      "processed_at": "2026-11-23T21:40:05.034Z",
+      "processed_at": "2026-11-27T06:55:09.867Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4033,7 +4033,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4854,
+  "total_dossiers_evaluated": 4857,
   "total_canonical_promoted": 574,
-  "total_staged_for_review": 3635
+  "total_staged_for_review": 3637
 }

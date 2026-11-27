@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T06:46:19.196Z",
-  "total_cycles_completed": 13008,
-  "total_learnings_persisted": 13008,
-  "total_rules_promoted": 11754,
+  "last_updated": "2026-11-27T06:55:06.388Z",
+  "total_cycles_completed": 13010,
+  "total_learnings_persisted": 13010,
+  "total_rules_promoted": 11755,
   "history": [
-    {
-      "timestamp": "2026-11-26T17:48:21.894Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T17:48:24.011Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T17:56:54.486Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1403,6 +1389,20 @@
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",
       "learningId": "learn-huggingface-autotrust-jev-35b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T06:54:51.538Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T06:55:06.388Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

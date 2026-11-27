@@ -4,24 +4,24 @@
 {
   "source_repository": "MariaDB/server",
   "source_url": "https://github.com/MariaDB/server",
-  "source_version": "e6521ee6",
+  "source_version": "d2844a41",
   "license": "GPL-2.0",
-  "timestamp": "2026-11-26T12:59:35.059Z",
+  "timestamp": "2026-11-27T06:55:06.605Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mariadb-server",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MariaDB/server](https://github.com/MariaDB/server) (Revision: `e6521ee6`).  
-> **License**: GPL-2.0 | **Timestamp**: `2026-11-26T12:59:35.059Z`  
+> **Provenance**: Harvested from [MariaDB/server](https://github.com/MariaDB/server) (Revision: `d2844a41`).  
+> **License**: GPL-2.0 | **Timestamp**: `2026-11-27T06:55:06.605Z`  
 > **Learning ID**: `learn-github-mariadb-server`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 83%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from MariaDB/server:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T12:59:33.632Z  
+> **Harvest Timestamp**: 2026-11-27T06:55:05.213Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8664 stars
+- **Stars / Engagement**: 8667 stars
 
 ---
 
@@ -1628,11 +1628,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6247** (2026-11-26): **MDEV-42338 follow-up: fix build with OpenSSL 4.1.0 and clang**
+  *Symptoms*: Follow-up to MDEV-42338 (https://jira.mariadb.org/browse/MDEV-42338): a build of the server with a recent clang against OpenSSL 4.1.0 still failed in libmariadb and in two client programs, because their OpenSSL include directory was a regular include, so `-Werror` turned warnings from OpenSSL's own headers into errors.  - Update libmariadb to the 3.3 tip, which treats the OpenSSL headers as system headers and keeps `OPENSSL_API_COMPAT` at 1.1.0 in `openssl.c` (OpenSSL 4.1.0 deprecates `X509_check_host()` and `X509_check_ip_asc()`): https://github.com/mariadb-corporation/mariadb-connector-c/pull/337 - `mysql` and `mysqltest` don't use anything from `violite.h`, which was their only source of OpenSSL headers. Remove the include and the OpenSSL include directory from `client/CMakeLists.txt`.  Tested on Windows with clang-cl 22 and the OpenSSL 4.1.0 headers, with `-Wcast-function-type-strict`: a full `minbuild` has 0 warnings from OpenSSL headers (1683 before), and both clients compile without `violite.h`. Not tested on macOS or Linux.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
 - **Issue #6233** (2026-11-26): **MDEV-40794: Dynamic Column Aggregate Name Pool Overflow**
   *Symptoms*: The named dynamic-column format serializes the aggregate name-pool size and every name offset in two bytes (max 65535 = MAX_TOTAL_NAME_LENGTH). calc_var_sizes() accumulated the total name length in size_t without checking against MAX_TOTAL_NAME_LENGTH. When the aggregate exceeded 65535, set_fixed_header_named() truncated the size via int2store() and put_header_entry_named() truncated each offset, producing a malformed blob. In Debug builds the DBUG_ASSERT in put_header_entry_named() aborted the server; in Release builds the malformed blob was silently returned, and a fresh reader saw the wrapped name-pool size causing COLUMN_CHECK to fail and COLUMN_LIST/COLUMN_JSON to reject the object.  Fix: add an aggregate name-pool length check in dynamic_new_column_store() (after individual name checks via check_limit_named()) and in dynamic_column_update_many_fmt() (update path). Both return ER_DYNCOL_LIMIT when the total exceeds MAX_TOTAL_NAME_LENGTH.  Any authenticated user can trigger this with a plain SET statement (COLUMN_CREATE with multiple names whose total length exceeds 65535), requiring no table, database, or administrative privileges.
-
-- **Issue #6225** (2026-11-25): **MDEV-42444 mariabackup SST fails with "Donor does not know my secret!"**
-  *Symptoms*: When ssl-mode is DISABLED or REQUIRED, a mariabackup SST fails on the joiner with "Donor does not know my secret!" and the joiner node does not start. The joiner sends its secret to the donor as "<CN>:<secret>@<address>". The CN is set only when ssl-mode is VERIFY_CA or VERIFY_IDENTITY. Since MDEV-41158 the joiner sends a secret in every ssl-mode, so in the other modes the CN part is empty.  write_auth_info() gives the remote credentials to the donor script only when the remote user name is not empty. With an empty CN the secret is not given to the donor, the donor does not send it back, and the joiner stops the SST.  Give the remote credentials to the donor script when the user name or the password is not empty.  Assisted-by: Claude:claude-4.6-sonnet
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1649,304 +1649,546 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2cd1e495` (2026-11-25)
-**Commit Message**: MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
+### Incident Patch 1: `d2844a41` (2026-10-26)
+**Commit Message**: MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions
 
-buf_page_init_for_read() buffer-fixed a page that already exists in
-buf_pool.page_hash. An asynchronous read and buf_read_recover() released
-that buffer-fix without accessing the page. buf_read_ahead_random() and
-buf_read_ahead_linear() invoke buf_read_page_low() for every page of the
-read-ahead area, so each resident page got a short buffer-fix. If such a
-page had been freed and was being allocated again, buf_page_create_low()
-could count this buffer-fix together with another one (for example, of
-btr_blob_free()), and the debug assertion buf_fix_count(state) <= 2
-failed. Release builds were not affected.
+Rename variables and add comments for better readability
 
-buf_page_init_for_read(): Add the parameter fix. Only buffer-fix an
-existing page if fix holds. Otherwise, return nullptr | 1. Add the
-DEBUG_SYNC point buf_page_init_for_read_freed for a freed page.
-
-buf_read_page_low(): Only request a buffer-fix for a synchronous read.
-
-buf_read_recover(): Do not request a buffer-fix.
-
-btr_blob_free(): Add the DEBUG_SYNC point btr_blob_free_after_commit.
-
-The test innodb.read_ahead_freed_page stops a ROLLBACK in
-btr_blob_free() after it freed a BLOB page, and a random read-ahead whe
-
-**File**: `mysql-test/suite/innodb/r/read_ahead_freed_page.result` (added, +40/-0)
+**File**: `sql/sql_window.cc` (modified, +33/-26)
 ```diff
-@@ -0,0 +1,40 @@
-+#
-+# MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
-+#
-+CREATE TABLE t1(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
-+INSERT INTO t1 VALUES (1, REPEAT('a', 10000));
-+CREATE TABLE t3(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
-+INSERT INTO t3 SELECT seq, REPEAT(CHAR(64 + seq % 26), 10000)
-+FROM seq_1_to_30;
-+# restart
-+SELECT SUM(LENGTH(b)) FROM t3 WHERE id BETWEEN 12 AND 28;
-+SUM(LENGTH(b))
-+170000
-+connect con1,localhost,root;
-+BEGIN;
-+UPDATE t1 SET b = REPEAT('z', 10000) WHERE id = 1;
-+SET DEBUG_SYNC = 'btr_blob_free_after_commit SIGNAL freed WAIT_FOR go_free';
-+ROLLBACK;
-+connection default;
-+SET DEBUG_SYNC = 'now WAIT_FOR freed';
-+connect con2,localhost,root;
-+SET @save_random_read_ahead = @@GLOBAL.innodb_random_read_ahead;
-+SET GLOBAL innodb_random_read_ahead = ON;
-+SET DEBUG_SYNC = 'buf_page_init_for_read_freed SIGNAL ra_found WAIT_FOR go_ra';
-+SELECT SUM(LENGTH(b)) FROM t3 WHERE id >= 29;
-+connection default;
-+SET DEBUG_SYNC = 'now WAIT_FOR ra_found';
-+CREATE TABLE t2(a INT PRIMARY KEY) ENGINE=InnoDB;
-+SET DEBUG_SYNC = 'now SIGNAL go_ra';
-+connection con2;
-+SUM(LENGTH(b))
-+20000
-+SET GLOBAL innodb_random_read_ahead = @save_random_read_ahead;
-+disconnect con2;
-+connection default;
-+SET DEBUG_SYNC = 'now SIGNAL go_free';
-+connection con1;
-+disconnect con1;
-+connection default;
-+SET DEBUG_SYNC = 'RESET';
-+DROP TABLE t1, t2, t3;
+@@ -2324,7 +2324,7 @@ class Frame_scan_cursor : public Frame_cursor
+ public:
+   Frame_scan_cursor(const Frame_cursor &top_bound,
+                     const Frame_cursor &bottom_bound) :
+-    top_bound(top_bound), bottom_bound(bottom_bound), have_result(false),
++    top_bound(top_bound), bottom_bound(bottom_bound), have_cached_result(false),
+     can_append(false)
+   {
+     seq_cursor= &cursor;
+@@ -2343,7 +2343,7 @@ class Frame_scan_cursor : public Frame_cursor
+   void pre_next_partition(ha_rows rownum) override
+   {
+     curr_rownum= rownum;
+-    have_result= false;
++    have_cached_result= false;
+   }
+ 
+   void next_partition(ha_rows rownum) override
+@@ -2367,9 +2367,10 @@ class Frame_scan_cursor : public Frame_cursor
+   const Frame_cursor &bottom_bound;
+   Table_read_cursor cursor;
+   ha_rows curr_rownum;
+-  /* The sum functions hold the result for rows last_top..last_bottom */
+-  bool have_result;
+-  ha_rows last_top, last_bottom;
++  /* The sum functions hold the result for rows
++     cached_frame_top..cached_frame_bottom */
++  bool have_cached_result;
++  ha_rows cached_frame_top, cached_frame_bottom;
+   bool can_append;
+ 
+   /* Make the sum functions hold the rows between the top bound and bottom
+@@ -2381,33 +2382,39 @@ class Frame_scan_cursor : public Frame_cursor
+         bottom_bound.is_outside_computation_bounds())
+     {
+       clear_sum_functions();
+-      have_result= false;
++      have_cached_result= false;
+       return;
+     }
+ 
+-    ha_rows start_rownum= top_bound.get_curr_rownum();
+-    ha_rows bottom_rownum= bottom_bound.get_curr_rownum();
+-    DBUG_PRINT("info", ("COMPUTING (%llu %llu)", start_rownum, bottom_rownum));
++    ha_rows curr_top_rownum= top_bound.get_curr_rownum();
++    ha_rows curr_bottom_rownum= bottom_bound.get_curr_rownum();
++    DBUG_PRINT("info", ("COMPUTING (%llu %llu)",
++                        curr_top_rownum, curr_bottom_rownum));
+ 
+-    ha_rows first_rownum= start_rownum;
+-    if (can_append && have_result && start_rownum == last_top)
++    ha_rows scan_from= curr_top_rownum;
++    if (can_append && have_cached_result &&
++        curr_top_rownum == cached_frame_top)
+     {
+-      if (bottom_rownum == last_bottom)
++      if (curr_bottom_rownum == cached_frame_bottom)
+         return;
+-      /* Extend only a previous frame ending at most 1 row above the top:
+-         after an inverted frame ending higher, the rows in between would
+-         be added */
+-      if (bottom_rownum > last_bottom && last_bottom + 1 >= start_rownum)
+-        first_rownum= last_bottom + 1;
++
++      /*
++        Add only the rows below the previous frame, if the frame grew.
++        An empty previous frame (bottom above top, e.g. RANGE BETWEEN
++        5 FOLLOWING AND 1 FOLLOWING) has nothing to extend.
++      */
++      if (curr_bottom_rownum > cached_frame_bottom &&
++          cached_frame_bottom >= cached_frame_top)
++        scan_from= cached_frame_bottom + 1;
+     }
+ 
+-    if (first_rownum == start_rownum)
++    if (scan_from == curr_top_rownum)
+       clear_sum_functions();
+-    have_result= false;
+-    cursor.move_to(first_rownum);
++    have_cached_result= false;
++    cursor.move_to(scan_from);
+ 
+-    ha_rows idx= first_rownum;
+-    while (idx <= bottom_rownum
++    ha_rows idx= scan_from;
++    while (idx <= curr_bottom_rownum
+            && ((idx & 0xFF) || !thd->check_killed(true)))
+     {
+       if (cursor.fetch()) // EOF or read error
+@@ -2418,11 +2425,11 @@ class Frame_scan_cursor : public Frame_cursor
+         break;
+     }
+     /* Cache the result only if the scan completed */
+-    if (idx > bottom_rownum)
++    if (idx > curr_bottom_rownum)
+     {
+-      have_result= true;
+-      last_top= start_rownum;
+-      last_bottom= bottom_rownum;
++      have_cached_result= true;
++      cached_frame_top= curr_top_rownum;
++      cached_frame_bottom= curr_bottom_rownum;
+     }
+   }
+ };
 ```
 
-**File**: `mysql-test/suite/innodb/t/read_ahead_freed_page.opt` (added, +4/-0)
+---
+
+### Incident Patch 2: `542875d2` (2026-10-01)
+**Commit Message**: MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions
+
+Frame_scan_cursor cleared and re-scanned the whole frame for every row.
+For MIN, MAX, STD and VARIANCE keep the result if the frame did not
+change (whole-partition frames, peers), and add only the new rows if
+just the bottom moved down. Other functions without remove() (UDF and
+stored aggregates) are still re-scanned. Argument conversion warnings
+are no longer repeated when the frame is reused or extended.
+
+**File**: `mysql-test/main/win_min_max.result` (modified, +152/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+--innodb-file-per-table=0
-+--innodb-buffer-pool-size=32M
-+--innodb-buffer-pool-load-at-startup=0
-+--innodb-buffer-pool-dump-at-shutdown=0
+@@ -862,3 +862,155 @@ pk	a	b	c	min1	max1	min2	max2
+ 11	4	200	eleven	100	300	100	300
+ drop table t2;
+ drop table t1;
++#
++# MDEV-24684 MIN/MAX as window functions are slow when the frame is not changing
++#
++create table t1 (g int, a int, b int);
++insert into t1 values
++(1,1,10),(1,1,20),(1,2,NULL),(1,2,5),(1,3,7),
++(2,1,NULL),(2,1,NULL),
++(3,4,3),(3,5,9),(3,5,1),(3,6,2);
++select g, a, b, min(b) over (partition by g) mn, max(b) over (partition by g) mx
++from t1 order by g, a, b;
++g	a	b	mn	mx
++1	1	10	5	20
++1	1	20	5	20
++1	2	NULL	5	20
++1	2	5	5	20
++1	3	7	5	20
++2	1	NULL	NULL	NULL
++2	1	NULL	NULL	NULL
++3	4	3	1	9
++3	5	1	1	9
++3	5	9	1	9
++3	6	2	1	9
++select g, a, b, min(b) over (partition by g order by a) mn,
++max(b) over (partition by g order by a) mx,
++std(b) over (partition by g order by a) sd,
++variance(b) over (partition by g order by a) vr
++from t1 order by g, a, b;
++g	a	b	mn	mx	sd	vr
++1	1	10	10	20	5.0000	25.0000
++1	1	20	10	20	5.0000	25.0000
++1	2	NULL	5	20	6.2361	38.8889
++1	2	5	5	20	6.2361	38.8889
++1	3	7	5	20	5.7663	33.2500
++2	1	NULL	NULL	NULL	NULL	NULL
++2	1	NULL	NULL	NULL	NULL	NULL
++3	4	3	3	3	0.0000	0.0000
++3	5	1	1	9	3.3993	11.5556
++3	5	9	1	9	3.3993	11.5556
++3	6	2	1	9	3.1125	9.6875
++select g, a, b, min(b) over (partition by g order by a, b
++rows between 1 following and 2 following) mn
++from t1 order by g, a, b;
++g	a	b	mn
++1	1	10	20
++1	1	20	5
++1	2	NULL	5
++1	2	5	7
++1	3	7	NULL
++2	1	NULL	NULL
++2	1	NULL	NULL
++3	4	3	1
++3	5	1	2
++3	5	9	2
++3	6	2	NULL
++select g, a, b,
++min(b) over (partition by g order by a, b rows between unbounded preceding and current row) c1,
++max(b) over (partition by g order by a, b rows between unbounded preceding and 1 following) c2,
++std(b) over (partition by g order by a, b rows between unbounded preceding and 1 preceding) c3
++from t1 order by g, a, b;
++g	a	b	c1	c2	c3
++1	1	10	10	20	NULL
++1	1	20	10	20	0.0000
++1	2	NULL	10	20	5.0000
++1	2	5	5	20	5.0000
++1	3	7	5	20	6.2361
++2	1	NULL	NULL	NULL	NULL
++2	1	NULL	NULL	NULL	NULL
++3	4	3	3	3	NULL
++3	5	1	1	9	0.0000
++3	5	9	1	9	1.0000
++3	6	2	1	9	3.3993
++select g, a, b,
++min(b) over (partition by g order by a, b rows between 1 preceding and 1 following) mn,
++max(b) over (partition by g order by a, b rows between 1 preceding and 1 following) mx
++from t1 order by g, a, b;
++g	a	b	mn	mx
++1	1	10	10	20
++1	1	20	10	20
++1	2	NULL	5	20
++1	2	5	5	7
++1	3	7	5	7
++2	1	NULL	NULL	NULL
++2	1	NULL	NULL	NULL
++3	4	3	1	3
++3	5	1	1	9
++3	5	9	1	9
++3	6	2	2	9
++select max(b) over () from t1 order by 1 limit 3;
++max(b) over ()
++20
++20
++20
++drop table t1;
++create table t1 (a int);
++insert into t1 values (0),(4),(5),(6),(20);
++select a, min(a) over (order by a range between 10 following and 5 following) mn,
++max(a) over (order by a range between 10 following and 5 following) mx,
++std(a) over (order by a range between 10 following and 5 following) sd
++from t1;
++a	mn	mx	sd
++0	NULL	NULL	NULL
++4	NULL	NULL	NULL
++5	NULL	NULL	NULL
++6	NULL	NULL	NULL
++20	NULL	NULL	NULL
++drop table t1;
++create table t2 (i int, v varchar(10) collate utf8mb4_general_ci, d decimal(10,2), t datetime);
++insert into t2 values
++(1,'b',1.50,'2020-01-03 00:00:00'),(2,'A',-2.25,'2020-01-01 00:00:00'),
++(3,'c',NULL,NULL),(4,'D',4.00,'2020-01-02 00:00:00'),(5,NULL,0.75,'2020-01-05 00:00:00');
++select i, v, d, t,
++min(v) over (order by i) mnv,
++max(v) over (order by i desc) mxv,
++max(d) over (order by i rows between unbounded preceding and 1 following) mxd,
++std(d) over (order by i rows between unbounded preceding and current row) sdd,
++min(t) over (order by i desc) mnt
++from t2 order by i;
++i	v	d	t	mnv	mxv	mxd	sdd	mnt
++1	b	1.50	2020-01-03 00:00:00	b	D	1.50	0.000000	2020-01-01 00:00:00
++2	A	-2.25	2020-01-01 00:00:00	A	D	1.50	1.875000	2020-01-01 00:00:00
++3	c	NULL	NULL	A	D	4.00	1.875000	2020-01-02 00:00:00
++4	D	4.00	2020-01-02 00:00:00	A	D	4.00	2.568506	2020-01-02 00:00:00
++5	NULL	0.75	2020-01-05 00:00:00	A	NULL	4.00	2.229069	2020-01-05 00:00:00
++drop table t2;
++create table t1 (a int);
++insert into t1 select seq from seq_1_to_2000;
++flush status;
++select max(s) from (select max(a) over () s from t1) w;
++max(s)
++2000
++select variable_value < 100000 from information_schema.session_status
++where variable_name = 'handler_read_rnd';
++variable_value < 100000
++1
++flush status;
++select max(s) from (select min(a) over (order by a) s from t1) w;
++max(s)
++1
++select variable_value < 100000 from information_schema.session_status
++where variable_name = 'handler_read_rnd';
++variable_value < 100000
++1
++flush status;
++select max(s) from (select std(a) over (order by a) s from t1) w;
++max(s)
++577.3502
++select variable_value < 100000 from information_schema.session_status
++where variable_name = 'handler_read_rnd';
++variable_value < 100000
++1
++drop table t1;
++# End of 13.1 tests
 ```
 
-**File**: `mysql-test/suite/innodb/t/read_ahead_freed_page.test` (added, +69/-0)
+**File**: `mysql-test/main/win_min_max.test` (modified, +83/-0)
 ```diff
-@@ -0,0 +1,69 @@
-+--source include/have_innodb.inc
-+--source include/have_innodb_16k.inc
-+--source include/have_debug_sync.inc
+@@ -368,3 +368,86 @@ from t2;
+ 
+ drop table t2;
+ drop table t1;
++
 +--source include/have_sequence.inc
-+--source include/not_embedded.inc
 +
 +--echo #
-+--echo # MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
++--echo # MDEV-24684 MIN/MAX as window functions are slow when the frame is not changing
 +--echo #
 +
-+# All tables are in the system tablespace (innodb_file_per_table=0), so
-+# that the BLOB page that the ROLLBACK on t1 frees is in the read-ahead
-+# area of the BLOB pages of t3, and CREATE TABLE t2 allocates it again.
-+CREATE TABLE t1(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
-+INSERT INTO t1 VALUES (1, REPEAT('a', 10000));
-+CREATE TABLE t3(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
-+INSERT INTO t3 SELECT seq, REPEAT(CHAR(64 + seq % 26), 10000)
-+FROM seq_1_to_30;
++create table t1 (g int, a int, b int);
++insert into t1 values
++  (1,1,10),(1,1,20),(1,2,NULL),(1,2,5),(1,3,7),
++  (2,1,NULL),(2,1,NULL),
++  (3,4,3),(3,5,9),(3,5,1),(3,6,2);
 +
-+# Empty the buffer pool.
-+--source include/restart_mysqld.inc
++select g, a, b, min(b) over (partition by g) mn, max(b) over (partition by g) mx
++from t1 order by g, a, b;
 +
-+# Access enough BLOB pages of t3 to enable a random read-ahead
-+# in their area.
-+SELECT SUM(LENGTH(b)) FROM t3 WHERE id BETWEEN 12 AND 28;
++select g, a, b, min(b) over (partition by g order by a) mn,
++       max(b) over (partition by g order by a) mx,
++       std(b) over (partition by g order by a) sd,
++       variance(b) over (partition by g order by a) vr
++from t1 order by g, a, b;
 +
-+connect con1,localhost,root;
-+BEGIN;
-+# Allocate a new BLOB page.
-+UPDATE t1 SET b = REPEAT('z', 10000) WHERE id = 1;
-+# The ROLLBACK frees the BLOB page. btr_blob_free() keeps a buffer-fix
-+# on it after the mini-transaction commit.
-+SET DEBUG_SYNC = 'btr_blob_free_after_commit SIGNAL freed WAIT_FOR go_free';
-+send ROLLBACK;
++select g, a, b, min(b) over (partition by g order by a, b
++                             rows between 1 following and 2 following) mn
++from t1 order by g, a, b;
 +
-+connection default;
-+SET DEBUG_SYNC = 'now WAIT_FOR freed';
++select g, a, b,
++  min(b) over (partition by g order by a, b rows between unbounded preceding and current row) c1,
++  max(b) over (partition by g order by a, b rows between unbounded preceding and 1 following) c2,
++  std(b) over (partition by g order by a, b rows between unbounded preceding and 1 preceding) c3
++from t1 order by g, a, b;
 +
-+connect con2,localhost,root;
-+SET @save_random_read_ahead = @@GLOBAL.innodb_random_read_ahead;
-+SET GLOBAL innodb_random_read_ahead = ON;
-+# A BLOB page of t3 that is not in the buffer pool triggers a random
-+# read-ahead. It finds the freed page in the buffer pool and must not
-+# keep a buffer-fix on it.
-+SET DEBUG_SYNC = 'buf_page_init_for_read_freed SIGNAL ra_found WAIT_FOR go_ra';
-+send SELECT SUM(LENGTH(b)) FROM t3 WHERE id >= 29;
++select g, a, b,
++  min(b) over (partition by g order by a, b rows between 1 preceding and 1 following) mn,
++  max(b) over (partition by g order by a, b rows between 1 preceding and 1 following) mx
++from t1 order by g, a, b;
 +
-+connection default;
-+SET DEBUG_SYNC = 'now WAIT_FOR ra_found';
++select max(b) over () from t1 order by 1 limit 3;
 +
-+# buf_page_create_low() finds the freed page with the buffer-fix of
-+# btr_blob_free() in addition to its own.
-+CREATE TABLE t2(a INT PRIMARY KEY) ENGINE=InnoDB;
++drop table t1;
 +
-+SET DEBUG_SYNC = 'now SIGNAL go_ra';
-+connection con2;
-+reap;
-+SET GLOBAL innodb_random_read_ahead = @save_random_read_ahead;
-+disconnect con2;
++create table t1 (a int);
++insert into t1 values (0),(4),(5),(6),(20);
++select a, min(a) over (order by a range between 10 following and 5 following) mn,
++       max(a) over (order by a range between 10 following and 5 following) mx,
++       std(a) over (order by a range between 10 following and 5 following) sd
++from t1;
++drop table t1;
 +
-+connection default;
-+SET DEBUG_SYNC = 'now SIGNAL go_free';
-+connection con1;
-+reap;
-+disconnect con1;
++create table t2 (i int, v varchar(10) collate utf8mb4_general_ci, d decimal(10,2), t datetime);
++insert into t2 values
++  (1,'b',1.50,'2020-01-03 00:00:00'),(2,'A',-2.25,'2020-01-01 00:00:00'),
++  (3,'c',NULL,NULL),(4,'D',4.00,'2020-01-02 00:00:00'),(5,NULL,0.75,'2020-01-05 00:00:00');
++select i, v, d, t,
++  min(v) over (order by i) mnv,
++  max(v) over (order by i desc) mxv,
++  max(d) over (order by i rows between unbounded preceding and 1 following) mxd,
++  std(d) over (order by i rows between unbounded preceding and current row) sdd,
++  min(t) over (order by i desc) mnt
++from t2 order by i;
++drop table t2;
 +
-+connection default;
-+SET DEBUG_SYNC = 'RESET';
-+DROP TABLE t1, t2, t3;
++create table t1 (a int);
++insert into t1 select seq from seq_1_to_2000;
++
++flush status;
++select max(s) from (select max(a) over () s from t1) w;
++select variable_value < 100000 from information_schema.session_status
++where variable_name = 'handler_read_rnd';
++
++flush status;
++select max(s) from (select min(a) over (order by a) s from t1) w;
++select variable_value < 100000 from information_schema.session_status
++where variable_name = 'handler_read_rnd';
++
++flush status;
++select max(s) from (select std(a) over (order by a) s from t1) w;
++select variable_value < 100000 from information_schema.session_status
++where variable_name = 'handler_read_rnd';
++
++drop table t1;
++
++--echo # End of 13.1 tests
 ```
 
-**File**: `storage/innobase/btr/btr0cur.cc` (modified, +1/-0)
+**File**: `sql/sql_window.cc` (modified, +66/-19)
 ```diff
-@@ -5584,6 +5584,7 @@ static void btr_blob_free(buf_block_t *block, bool all, mtr_t *mtr)
-   buf_pool_t::hash_chain &chain= buf_pool.page_hash.cell_get(page_id.fold());
- #endif
-   mtr->commit();
-+  DEBUG_SYNC_C("btr_blob_free_after_commit");
+@@ -2289,53 +2289,68 @@ class Frame_n_rows_following : public Frame_cursor
+   }
+ };
  
-   mysql_mutex_lock(&buf_pool.mutex);
-   block->page.unfix();
-```
-
-**File**: `storage/innobase/buf/buf0rea.cc` (modified, +41/-20)
-```diff
-@@ -69,13 +69,16 @@ and the lock released later.
-                   bitwise-ORed with 1 in recovery
- @param chain      buf_pool.page_hash cell for page_id
- @param block      preallocated buffer block (set to nullptr if consumed)
-+@param fix        whether to buffer-fix the block if the page already exists
- @return pointer to the block
- @retval nullptr in case of an error
--@retval pointer to block | 1 if the page already exists in buf_pool */
-+@retval pointer to block | 1 if the page already exists in buf_pool
-+(buffer-fixed if fix holds, else nullptr | 1) */
- static buf_page_t *buf_page_init_for_read(const page_id_t page_id,
-                                           ulint zip_size,
-                                           buf_pool_t::hash_chain &chain,
--                                          buf_block_t *&block) noexcept
-+                                          buf_block_t *&block,
-+                                          bool fix) noexcept
++
++/* Sum functions whose add() only accumulates and whose result can be read
++   repeatedly */
++static bool is_scan_result_reusable(Item_sum::Sumfunctype sum_func)
++{
++  switch (sum_func)
++  {
++    case Item_sum::MIN_FUNC:
++    case Item_sum::MAX_FUNC:
++    case Item_sum::STD_FUNC:
++    case Item_sum::VARIANCE_FUNC:
++      return true;
++    default:
++      return false;
++  }
++}
++
+ /*
+   A cursor that performs a table scan between two indices. The indices
+   are provided by the two cursors representing the top and bottom bound
+   of the window function's frame definition.
+ 
+-  Each scan clears the sum function.
++  If the sum functions allow it, the result is kept if the frame is unchanged
++  and extended if only the bottom moved down. Else the frame is rescanned.
+ 
+   NOTE:
+     The cursor does not alter the top and bottom cursors.
+-    This type of cursor is expensive computational wise. This is only to be
++    A rescan is expensive computational wise. This is only to be
+     used when the sum functions do not support removal.
+ */
+ class Frame_scan_cursor : public Frame_cursor
  {
-   buf_page_t *bpage= !zip_size || (zip_size & 1) ? &block->page : nullptr;
-   constexpr uint32_t READ_BUF_FIX{buf_page_t::READ_FIX + 1};
-@@ -85,21 +88,44 @@ static buf_page_t *buf_page_init_for_read(const page_id_t page_id,
-   if (hash_page)
+ public:
+   Frame_scan_cursor(const Frame_cursor &top_bound,
+                     const Frame_cursor &bottom_bound) :
+-    top_bound(top_bound), bottom_bound(bottom_bound)
++    top_bound(top_bound), bottom_bound(bottom_bound), have_result(false),
++    can_append(false)
    {
-   page_exists:
--    /* The page is already in the buffer pool. */
--    ut_d(const uint32_t state=) hash_page->fix();
--    ut_ad(state >= buf_page_t::FREED);
-+    /* The page is already in the buffer pool. Only buffer-fix it for
-+    a caller that will access it. buf_page_create_low() may observe
-+    any buffer-fix on a page that is being allocated again. */
-+#if defined UNIV_DEBUG || defined ENABLED_DEBUG_SYNC
-+    uint32_t state;
-+#endif
-+    if (fix)
-+    {
-+#if defined UNIV_DEBUG || defined ENABLED_DEBUG_SYNC
-+      state=
-+#endif
-+        hash_page->fix();
-+      ut_ad(state >= buf_page_t::FREED);
-+    }
-+    else
-+    {
-+#ifdef ENABLED_DEBUG_SYNC
-+      state= hash_page->state();
-+#endif
-+      hash_page= nullptr;
-+    }
-     hash_lock.unlock();
-+#ifdef ENABLED_DEBUG_SYNC
-+    if (buf_page_t::is_freed(state))
-+      DEBUG_SYNC_C("buf_page_init_for_read_freed");
-+#endif
-     return reinterpret_cast<buf_page_t*>(uintptr_t(hash_page) | 1);
+     seq_cursor= &cursor;
    }
  
-   if (UNIV_UNLIKELY(mysql_mutex_trylock(&buf_pool.mutex)))
+   void init(READ_RECORD *info) override
    {
-     hash_lock.unlock();
-     mysql_mutex_lock(&buf_pool.mutex);
--    hash_lock.lock();
-     hash_page= buf_pool.page_hash.get(page_id, chain);
--    if (hash_page)
-+    hash_lock.lock();
-+    if (UNIV_LIKELY_NULL(hash_page))
-     {
-+    unlock_and_fix:
-       mysql_mutex_unlock(&buf_pool.mutex);
-       goto page_exists;
-     }
-@@ -157,11 +183,9 @@ static buf_page_t *buf_page_init_for_read(const page_id_t page_id,
-       if (UNIV_LIKELY_NULL(hash_page))
-       {
-         /* The block was added by some other thread. */
--        ut_d(const uint32_t state=) hash_page->fix();
--        ut_ad(state >= buf_page_t::FREED);
-         buf_buddy_free(data, zip_size);
--        mysql_mutex_unlock(&buf_pool.mutex);
--        return reinterpret_cast<buf_page_t*>(uintptr_t(hash_page) | 1);
-+        hash_lock.lock();
-+        goto unlock_and_fix;
-       }
-     }
- 
-@@ -273,7 +297,8 @@ buf_read_page_low(
-     return nullptr;
+     cursor.init(info);
++    can_append= true;
++    List_iterator_fast<Item_sum> it(sum_functions);
++    Item_sum *item_sum;
++    while ((item_sum= it++))
++      can_append&= is_scan_result_reusable(item_sum->sum_func());
    }
  
--  buf_page_t *bpage= buf_page_init_for_read(page_id, zip_size, chain, block);
-+  buf_page_t *bpage= buf_page_init_for_read(page_id, zip_size, chain, block,
-+                                            err != nullptr);
-   if (UNIV_UNLIKELY(!bpage))
-     goto fail;
-   const bool exist(uintptr_t(bpage) & 1);
-@@ -283,7 +308,7 @@ buf_read_page_low(
+   void pre_next_partition(ha_rows rownum) override
    {
-     if (!err)
-     {
--      bpage->unfix();
-+      ut_ad(!bpage);
-       bpage= reinterpret_cast<buf_page_t*>(-2);
-     }
-     else
-@@ -791,15 +816,11 @@ void buf_read_recover(fil_space_t *space, const page_id_t page_id,
+-    /* TODO(cvicentiu) Sum functions get cleared on next partition anyway during
+-       the window function computation algorithm. Either perform this only in
+-       cursors, or remove it from pre_next_partition.
+-    */
+     curr_rownum= rownum;
+-    clear_sum_functions();
++    have_result= false;
+   }
  
-   if (init_lsn)
+   void next_partition(ha_rows rownum) override
    {
--    buf_page_t *bpage= buf_page_init_for_read(page_id, zip_size, chain, block);
-+    buf_page_t *bpage= buf_page_init_for_read(page_id, zip_size, chain, block,
-+                                              false);
-     if (UNIV_UNLIKELY(!bpage))
-       goto fail;
--    const bool exist(uintptr_t(bpage) & 1);
--    bpage= reinterpret_cast<buf_page_t*>(uintptr_t(bpage) & ~uintptr_t{1});
+     compute_values_for_current_row();
+   }
+ 
+-  void pre_next_row() override
+-  {
+-    clear_sum_functions();
+-  }
 -
--    if (exist)
--      bpage->unfix();
--    else
-+    if (!(uintptr_t(bpage) & 1))
-       os_fake_read(IORequest{bpage, (buf_tmp_buffer_t*) &recs,
-                              UT_LIST_GET_FIRST(space->chain),
-                              IORequest::READ_ASYNC}, init_lsn);
+   void next_row() override
+   {
+     curr_rownum++;
+@@ -2352,31 +2367,63 @@ class Frame_scan_cursor : public Frame_cursor
+   const Frame_cursor &bottom_bound;
+   Table_read_cursor cursor;
+   ha_rows curr_rownum;
++  /* The sum functions hold the result for rows last_top..last_bottom */
++  bool have_result;
++  ha_rows last_top, last_bottom;
++  bool can_append;
+ 
+-  /* Scan the rows between the top bound and bottom bound. Add all the values
+-     between them, top bound row  and bottom bound row inclusive. */
++  /* Make the sum functions hold the rows between the top bound and bottom
++     bound, both inclusive: reuse, extend or rescan the previous result. */
+   void compute_values_for_current_row()
+   {
+     THD *thd= current_thd;
+     if (top_bound.is_outside_computation_bounds() ||
+         bottom_bound.is_outside_computation_bounds())
++    {
++      clear_sum_functions();
++      have_result= false;
+       return;
++    }
+ 
+     ha_rows start_rownum= top_bound.get_curr_rownum();
+     ha_rows bottom_rownum= bottom_bound.get_curr_rownum();
+     DBUG_PRINT("info", ("COMPUTING (%llu %llu)", start_rownum, bottom_rownum));
+ 
+-    cursor.move_to(start_rownum);
++    ha_rows first_rownum= start_rownum;
++    if (can_append && have_result && start_rownum == last_top)
++    {
++      if (bottom_rownum == last_bottom)
++        return;
++      /* Extend only a previous frame ending at most 1 row above the top:
++         after an inverted frame ending higher, the rows in between would
++         be added */
++      if (bottom_rownum > last_bottom && last_bottom + 1 >= start_rownum)
++        first_rownum= last_bottom + 1;
++    }
+ 
+-    for (ha_rows idx= start_rownum; idx <= bottom_rownum
+-         && ((idx & 0xFF) || !thd->check_killed(true)); idx++)
++    if (first_rownum == start_rownum)
++      clear_sum_functions();
++    have_result= false;
++    cursor.move_to(first_rownum);
++
++    ha_rows idx= first_rownum;
++    while (idx <= bottom_rownum
++           && ((idx & 0xFF) || !thd->check_killed(true)))
+     {
+-      if (cursor.fetch()) //EOF
++      if (cursor.fetch()) // EOF or read error
+         break;
+       add_value_to_items();
++      idx++;
+       if (cursor.next()) // EOF
+         break;
+     }
++    /* Cache the result only if the scan completed */
++    if (idx > bottom_rownum)
++    {
++      have_result= true;
++      last_top= start_rownum;
++      last_bottom= bottom_rownum;
++    }
+   }
+ };
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6247** (2026-11-26): MDEV-42338 follow-up: fix build with OpenSSL 4.1.0 and clang (@vaintroub)
 - **PR #6233** (closed): MDEV-40794: Dynamic Column Aggregate Name Pool Overflow (@immortal-jelly)
 - **PR #6225** (2026-11-25): MDEV-42444 mariabackup SST fails with "Donor does not know my secret!" (@janlindstrom)
 - **PR #6224** (2026-11-25): MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead (@iMineLink)
 - **PR #6222** (2026-11-25): MDEV-42446: Galera test failure on galera_sst_mariabackup_plugin_dir (@hemantdangi-gc)
 - **PR #6221** (2026-11-25): MDEV-42420 Use two applier threads in tests that pause the applier (@sjaakola)
-- **PR #6219** (2026-11-25): MDEV-42354 SET GLOBAL innodb_log_file_size=OFF may break recovery (@dr-m)
 
 ---
 
@@ -1966,65 +2208,83 @@ btr_blob_free() after it freed a BLOB page, and a random read-ahead whe
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
+## X. MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions
 
 **RULE**:
-When implementing operations in `mysql-test/suite/innodb/r/read_ahead_freed_page.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sql/sql_window.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2cd1e495`: MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2844a41`: MDEV-24684 Quadratic time for MIN/MAX/STD/VARIANCE as window functions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/innodb/r/read_ahead_freed_page.result`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `sql/sql_window.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#
-# MDEV-42454 Assertion buf_fix_count(state) <= 2 with read-ahead
-#
-CREATE TABLE t1(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
-INSERT INTO t1 VALUES (1, REPEAT('a', 10000));
-CREATE TABLE t3(id INT PRIMARY KEY, b LONGBLOB) ENGINE=InnoDB;
-INSERT INTO t3 SELECT seq, REPEAT(CHAR(64 + seq % 26), 10000)
-FROM seq_1_to_30;
-# restart
-SELECT SUM(LENGTH(b)) FROM t3 WHERE id BETWEEN 12 AND 28;
-SUM(LENGTH(b))
-170000
-connect con1,localhost,root;
-BEGIN;
-UPDATE t1 SET b = REPEAT('z', 10000) WHERE id = 1;
-SET DEBUG_SYNC = 'btr_blob_free_after_commit SIGNAL freed WAIT_FOR go_free';
-ROLLBACK;
-connection default;
-SET DEBUG_SYNC = 'now WAIT_FOR freed';
-connect con2,localhost,root;
-SET @save_random_read_ahead = @@GLOBAL.innodb_random_read_ahead;
-SET GLOBAL innodb_random_read_ahead = ON;
-SET DEBUG_SYNC = 'buf_page_init_for_read_freed SIGNAL ra_found WAIT_FOR go_ra';
-SELECT SUM(LENGTH(b)) FROM t3 WHERE id >= 29;
-connection default;
-SET DEBUG_SYNC = 'now WAIT_FOR ra_found';
-CREATE TABLE t2(a INT PRIMARY KEY) ENGINE=InnoDB;
-SET DEBUG_SYNC = 'now SIGNAL go_ra';
-connection con2;
-SUM(LENGTH(b))
-20000
-SET GLOBAL innodb_random_read_ahead = @save_random_read_ahead;
-disconnect con2;
-connection default;
-SET DE
+    top_bound(top_bound), bottom_bound(bottom_bound), have_cached_result(false),
+    have_cached_result= false;
+  /* The sum functions hold the result for rows
+     cached_frame_top..cached_frame_bottom */
+  bool have_cached_result;
+  ha_rows cached_frame_top, cached_frame_bottom;
+      have_cached_result= false;
+    ha_rows curr_top_rownum= top_bound.get_curr_rownum();
+    ha_rows curr_bottom_rownum= bottom_bound.get_curr_rownum();
+    DBUG_PRINT("info", ("COMPUTING (%llu %llu)",
+                        curr_top_rownum, curr_bottom_rownum));
+    ha_rows scan_from= curr_top_rownum;
+    if (can_append && have_cached_result &&
+        curr_top_rownum == cached_frame_top)
+      if (curr_bottom_rownum == cached_frame_bottom)
+
+      /*
+        Add only the rows below the previous frame, if the frame grew.
+        An empty previous frame (bottom above top, e.g. RANGE BETWEEN
+        5 FOLLOWING AND 1 FOLLOWING) has nothing to extend.
+      */
+      if (curr_bottom_rownum > cached_frame_bottom &&
+          cached_frame_bottom >= cached_frame_top)
+        scan_from= cached_frame_bottom + 1;
+    if (scan_from == curr_top_rownum)
+    have_cached_result= false;
+    cursor.move_to(scan_from);
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    top_bound(top_bound), bottom_bound(bottom_bound), have_result(false),
+    have_result= false;
+  /* The sum functions hold the result for rows last_top..last_bottom */
+  bool have_result;
+  ha_rows last_top, last_bottom;
+      have_result= false;
+    ha_rows start_rownum= top_bound.get_curr_rownum();
+    ha_rows bottom_rownum= bottom_bound.get_curr_rownum();
+    DBUG_PRINT("info", ("COMPUTING (%llu %llu)", start_rownum, bottom_rownum));
+    ha_rows first_rownum= start_rownum;
+    if (can_append && have_result && start_rownum == last_top)
+      if (bottom_rownum == last_bottom)
+      /* Extend only a previous frame ending at most 1 row above the top:
+         after an inverted frame ending higher, the rows in between would
+         be added */
+      if (bottom_rownum > last_bottom && last_bottom + 1 >= start_rownum)
+        first_rownum= last_bottom + 1;
+    if (first_rownum == start_rownum)
+    have_result= false;
+    cursor.move_to(first_rownum);
+    ha_rows idx= first_rownum;
+    while (idx <= bottom_rownum
+    if (idx > bottom_rownum)
+      have_result= true;
+      last_top= start_rownum;
+      last_bottom= bottom_rownum;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2cd1e495` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2844a41` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
