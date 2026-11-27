@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T20:47:01.893Z",
-    "lastVerified": "2026-11-27T20:47:01.893Z",
+    "lastChecked": "2026-11-27T21:30:11.376Z",
+    "lastVerified": "2026-11-27T21:30:11.376Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T21:20:25.370Z",
-    "lastVerified": "2026-11-27T21:20:25.370Z",
+    "lastChecked": "2026-11-27T21:30:17.623Z",
+    "lastVerified": "2026-11-27T21:30:17.623Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1701,14 +1701,14 @@
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T03:24:56.249Z",
-    "lastVerified": "2026-11-27T03:24:56.249Z",
+    "lastChecked": "2026-11-27T21:30:07.624Z",
+    "lastVerified": "2026-11-27T21:30:07.624Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "1bccdef6953a32f51dd2f10da02c667f555dfa0037b1154fd05ba960d6cbc504",
+    "contentHash": "f25eb65d3213d2b60147dd325030bbf565d0039ead58b65327b98d90717b561a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2187,8 +2187,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T17:10:37.473Z",
-    "lastVerified": "2026-11-27T17:10:37.473Z",
+    "lastChecked": "2026-11-27T21:30:06.222Z",
+    "lastVerified": "2026-11-27T21:30:06.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -4413,9 +4413,9 @@
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
-    "lastChecked": "2026-11-26T21:08:46.639Z",
+    "lastChecked": "2026-11-27T21:29:56.192Z",
     "revisionIdentifier": "d762d9bb",
-    "lastVerified": "2026-11-26T21:08:46.639Z"
+    "lastVerified": "2026-11-27T21:29:56.192Z"
   },
   "hf-meta-llama-meta-llama-3-8b": {
     "name": "meta-llama/Meta-Llama-3-8B",
@@ -5167,22 +5167,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "slatedb-slatedb": {
-    "name": "slatedb",
+    "name": "slatedb/slatedb",
     "officialUrl": "https://github.com/slatedb/slatedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T02:18:18.605Z",
-    "lastVerified": "2026-11-27T02:18:18.605Z",
+    "lastChecked": "2026-11-27T21:30:12.078Z",
+    "lastVerified": "2026-11-27T21:30:12.078Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "08380e00481374329940b03b2311f84e2733464e9223b5864bdd1e6c6d55df7b",
+    "contentHash": "0d4a3a2c5c0cfccacaa5156810cbb839305f34cdc0eccc03f33086f12af92043",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "06717572"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "grpc-grpc-rust": {
     "name": "grpc-rust",
@@ -10160,9 +10159,9 @@
   "touchlab-skie": {
     "name": "SKIE",
     "officialUrl": "https://github.com/touchlab/SKIE",
-    "lastChecked": "2026-11-25T12:47:50.140Z",
+    "lastChecked": "2026-11-27T21:30:01.231Z",
     "revisionIdentifier": "25bb2b91",
-    "lastVerified": "2026-11-25T12:47:50.140Z"
+    "lastVerified": "2026-11-27T21:30:01.231Z"
   },
   "alfa546-crawler": {
     "name": "Crawler",
@@ -10654,9 +10653,9 @@
   "melihandic-deep-in-gsc": {
     "name": "deep-in-gsc",
     "officialUrl": "https://github.com/melihandic/deep-in-gsc",
-    "lastChecked": "2026-11-24T13:20:55.533Z",
+    "lastChecked": "2026-11-27T21:29:58.690Z",
     "revisionIdentifier": "bf8cb859",
-    "lastVerified": "2026-11-24T13:20:55.533Z"
+    "lastVerified": "2026-11-27T21:29:58.690Z"
   },
   "icerockdev-moko-mvvm": {
     "name": "moko-mvvm",

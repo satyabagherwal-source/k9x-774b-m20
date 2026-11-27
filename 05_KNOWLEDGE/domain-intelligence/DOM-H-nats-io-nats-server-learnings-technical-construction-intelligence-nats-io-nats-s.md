@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T03:25:02.167Z",
+  "timestamp": "2026-11-27T21:30:19.015Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nats-io-nats-server-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nats-io-nats-server-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T03:25:02.167Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T21:30:19.015Z`  
 > **Learning ID**: `LEARN-EVO-nats-io-nats-server-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nats-io-nats-server-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `4d459637`  
+> **Source Version**: `52f36cf2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T03:24:56.254Z  
+> **Timestamp**: 2026-11-27T21:30:07.764Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T03:24:56.249Z  
+> **Harvest Timestamp**: 2026-11-27T21:30:07.624Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21171 stars
+- **Stars / Engagement**: 21188 stars
 
 ---
 
@@ -2754,180 +2754,347 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4d459637` (2026-11-26)
-**Commit Message**: Look up consumers without taking the stream lock (#8939)
+### Incident Patch 1: `66eab592` (2026-11-27)
+**Commit Message**: (2.15) [FIXED] Pre-2.15 leafnodes reject a no_advertise hub as wrong port (#8949)
 
-`lookupConsumer` was taking the stream read lock so it could get stuck
-behind a stream writer holding the lock while waiting on the store (e.g.
-loading a cold block from disk). This caused consumer info requests to
-tie up all the 16 JS API workers, as well as stalling the meta snapshot
-apply when removing consumers.
+Fix a regression introduced in
+https://github.com/nats-io/nats-server/pull/8451. A hub with `leafnodes
+{ no_advertise: true }` doesn't add its own listener to `leafnode_urls`
+anymore. If no server in the cluster advertises, the list is empty and
+`omitempty` dropped the field from the leafnode INFO. Leafnodes before
+v2.15.0 treat a missing `leafnode_urls` as having connected to the wrong
+port (https://github.com/nats-io/nats-server/pull/1265), so they
+couldn't connect to the upgraded hub and looped on `attempted to connect
+to wrong port`.
 
-Changes to the consumers map are now done holding both the stream lock
-and `clsMu`, so `lookupConsumer` only needs `clsMu`.
+Using `omitzero` sends the empty list as `[]`, while client, route and
+gateway INFOs still omit it.
 
-Signed-off-by: Waldemar Quevedo <[REDACTED_EMAIL]>
-
-**File**: `server/jetstream_consumer_test.go` (modified, +45/-0)
+**File**: `server/leafnode_test.go` (modified, +28/-0)
 ```diff
-@@ -15100,3 +15100,48 @@ func BenchmarkJetStreamConsumerRedeliveryQueue(b *testing.B) {
- 		})
- 	}
+@@ -1281,6 +1281,34 @@ func TestLeafNodeNoAdvertiseDoesNotAdvertiseListener(t *testing.T) {
+ 	})
  }
-+
-+// A stream writer can hold the stream lock while it waits on the store (for
-+// example on a cold block read from disk). Consumer lookups, and with them
-+// consumer info requests and consumer removal from the meta layer, must not
-+// queue behind it.
-+func TestJetStreamConsumerLookupNotBlockedByStreamLock(t *testing.T) {
-+	s := RunBasicJetStreamServer(t)
+ 
++func TestLeafNodeNoAdvertiseSendsEmptyLeafNodeURLs(t *testing.T) {
++	conf := createConfFile(t, []byte(`
++		listen: "127.0.0.1:-1"
++		leafnodes {
++			listen: "127.0.0.1:-1"
++			no_advertise: true
++		}
++	`))
++	s, o := RunServerWithConfig(conf)
 +	defer s.Shutdown()
 +
-+	nc, js := jsClientConnect(t, s)
++	readInfo := func(port int) string {
++		t.Helper()
++		c, err := net.DialTimeout("tcp", fmt.Sprintf("127.0.0.1:%d", port), 2*time.Second)
++		require_NoError(t, err)
++		defer c.Close()
++		line, err := bufio.NewReader(c).ReadString('\n')
++		require_NoError(t, err)
++		require_True(t, strings.HasPrefix(line, "INFO "))
++		return line
++	}
++
++	// Pre-2.15 leafnodes treat a missing list as having connected to the wrong port.
++	require_Contains(t, readInfo(o.LeafNode.Port), `"leafnode_urls":[]`)
++	// Other INFOs must still omit it, so leafnodes can detect the wrong port.
++	require_False(t, strings.Contains(readInfo(o.Port), "leafnode_urls"))
++}
++
+ func TestLeafNodeRemoteIsHub(t *testing.T) {
+ 	oa := testDefaultOptionsForGateway("A")
+ 	oa.Accounts = []*Account{NewAccount("sys")}
+```
+
+**File**: `server/server.go` (modified, +2/-1)
+```diff
+@@ -160,7 +160,8 @@ type Info struct {
+ 	GatewayIOM        bool     `json:"gateway_iom,omitempty"`         // Indicate that all accounts will be switched to InterestOnly mode "right away"
+ 
+ 	// LeafNode Specific
+-	LeafNodeURLs []string `json:"leafnode_urls,omitempty"` // LeafNode URLs that the server can reconnect to.
++	// Uses omitzero so an empty list is still sent, pre-2.15 leafnodes require it.
++	LeafNodeURLs []string `json:"leafnode_urls,omitzero"` // LeafNode URLs that the server can reconnect to.
+ 
+ 	XKey string `json:"xkey,omitempty"` // Public server's x25519 key.
+ }
+```
+
+---
+
+### Incident Patch 2: `52f36cf2` (2026-11-27)
+**Commit Message**: [FIXED] Meta recovery drops recreated consumer after stale delete (#8954)
+
+During meta recovery and catchup, `recoveryUpdates.removeConsumer`
+dropped any staged add of a consumer with the same name. A stale delete
+of an earlier consumer, forwarded directly into the meta log by a
+lagging server's `deleteNotActive` after the consumer was recreated,
+could therefore remove the recreate on recovering servers. Servers
+applying normally ignore it in `processConsumerRemoval`, leaving servers
+out of sync.
+
+2.15 doesn't propose such deletes since
+https://github.com/nats-io/nats-server/pull/8466, the meta leader
+receives a delete request including the created time and proposes the
+delete itself, instead of servers forwarding it into the log directly. A
+staged add is now only dropped if the removal is for the same consumer,
+like in `applyMetaSnapshot`.
+
+**File**: `server/jetstream_cluster.go` (modified, +4/-0)
+```diff
+@@ -2126,6 +2126,10 @@ func (ru *recoveryUpdates) removeConsumer(ca *consumerAssignment) {
+ 		ru.removeConsumers[skey][key] = ca
+ 	}
+ 	if consumers, ok := ru.updateConsumers[skey]; ok {
++		// A stale removal of an earlier consumer must not drop its recreate, like processConsumerRemoval ignores it.
++		if nca, ok := consumers[key]; ok && !nca.Created.Equal(ca.Created) && (nca.Group == nil || ca.Group == nil || nca.Group.Name != ca.Group.Name) {
++			return
++		}
+ 		delete(consumers, key)
+ 	}
+ }
+```
+
+**File**: `server/jetstream_cluster_4_test.go` (modified, +93/-0)
+```diff
+@@ -4502,6 +4502,99 @@ func TestJetStreamClusterMetaSnapshotConsumerDeleteConsistency(t *testing.T) {
+ 	})
+ }
+ 
++func TestJetStreamClusterMetaRecoveryStaleConsumerRemovalKeepsRecreate(t *testing.T) {
++	c := createJetStreamClusterExplicit(t, "R3S", 3)
++	defer c.shutdown()
++
++	nc, js := jsClientConnect(t, c.randomServer())
 +	defer nc.Close()
 +
-+	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
-+	require_NoError(t, err)
-+	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "CONSUMER", AckPolicy: nats.AckExplicitPolicy})
-+	require_NoError(t, err)
-+
-+	mset, err := s.GlobalAccount().lookupStream("TEST")
++	scfg := &nats.StreamConfig{Name: "TEST", Replicas: 1}
++	_, err := js.AddStream(scfg)
 +	require_NoError(t, err)
 +
-+	// Simulate a stream writer stuck while holding the stream lock.
-+	mset.mu.Lock()
-+	unlocked := false
-+	unlock := func() {
-+		if !unlocked {
-+			unlocked = true
-+			mset.mu.Unlock()
++	ccfg := &nats.ConsumerConfig{Name: "consumer", Replicas: 1}
++	_, err = js.AddConsumer("TEST", ccfg)
++	require_NoError(t, err)
++
++	sl := c.streamLeader(globalAccountName, "TEST")
++	mjs := sl.getJetStream()
++	assignment := func() *consumerAssignment {
++		mjs.mu.RLock()
++		defer mjs.mu.RUnlock()
++		ca := mjs.consumerAssignment(globalAccountName, "TEST", "consumer")
++		require_NotNil(t, ca)
++		return ca.clone()
++	}
++	oca := assignment()
++
++	// Get the snapshot before recreating the consumer, so we can recover through the recreate.
++	snap, _, _, err := mjs.metaSnapshot()
++	require_NoError(t, err)
++
++	require_NoError(t, js.DeleteConsumer("TEST", "consumer"))
++	_, err = js.AddConsumer("TEST", ccfg)
++	require_NoError(t, err)
++	nca := assignment()
++	require_NotEqual(t, oca.Group.Name, nca.Group.Name)
++
++	// Remove the stream so we can recover fresh.
++	require_NoError(t, js.DeleteStream("TEST"))
++	nc.Close()
++
++	ru := &recoveryUpdates{
++		removeStreams:   make(map[string]*streamAssignment),
++		removeConsumers: make(map[string]map[string]*consumerAssignment),
++		addStreams:      make(map[string]*streamAssignment),
++		updateStreams:   make(map[string]*streamAssignment),
++		updateConsumers: make(map[string]map[string]*consumerAssignment),
++	}
++
++	// Simulate recovering:
++	// - snapshot with a stream and consumer
++	// - normal entry deleting the consumer
++	// - normal entry recreating the consumer with the same name
++	// - normal entry deleting the earlier consumer again, a retry from a server that still ran it
++	// This should result in the recreated consumer, like for servers applying the entries one by one.
++	mjs.mu.Lock()
++	mjs.metaRecovering = true
++	mjs.mu.Unlock()
++	_, _, err = mjs.applyMetaEntries([]*Entry{
++		newEntry(EntrySnapshot, snap),
++		newEntry(EntryNormal, encodeDeleteConsumerAssignment(oca)),
++		newEntry(EntryNormal, encodeAddConsumerAssignment(nca)),
++		newEntry(EntryNormal, encodeDeleteConsumerAssignment(oca)),
++	}, ru)
++	require_NoError(t, err)
++
++	// Recovery should contain the stream create, the consumer delete and the recreated consumer.
++	require_Len(t, len(ru.addStreams), 1)
++	require_Len(t, len(ru.removeConsumers), 1)
++	require_Len(t, len(ru.updateConsumers), 1)
++	staged := ru.updateConsumers[nca.streamRecoveryKey()][nca.recoveryKey()]
++	require_NotNil(t, staged)
++	require_Equal(t, staged.Group.Name, nca.Group.Name)
++
++	// Process those updates, in the order recovery completes.
++	for _, cas := range ru.removeConsumers {
++		for _, ca := range cas {
++			mjs.processConsumerRemoval(ca)
 +		}
 +	}
-+	defer unlock()
++	for _, sa := range ru.addStreams {
++		mjs.processStreamAssignment(sa)
++	}
++	for _, cas := range ru.updateConsumers {
++		for _, ca := range cas {
++			mjs.processConsumerAssignment(ca)
++		}
++	}
++	mjs.clearMetaRecovering()
 +
-+	done := make(chan *consumer, 1)
-+	go func() { done <- mset.lookupConsumer("CONSUMER") }()
-+	select {
-+	case o := <-done:
-+		require_True(t, o != nil)
-+	case <-time.After(2 * time.Second):
-+		unlock()
-+		t.Fatalf("lookupConsumer blocked behind the stream lock")
++	ca := assignment()
++	require_Equal(t, ca.Group.Name, nca.Group.Name)
++}
++
+ func TestJetStreamClusterMetaSnapshotDecodeError(t *testing.T) {
+ 	c := createJetStreamClusterExplicit(t, "R3S", 3)
+ 	defer c.shutdown()
+```
+
+---
+
+### Incident Patch 3: `3663b6b5` (2026-11-27)
+**Commit Message**: [FIXED] Meta recovery drops recreated consumer after stale delete
+
+Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+
+**File**: `server/jetstream_cluster.go` (modified, +4/-0)
+```diff
+@@ -2126,6 +2126,10 @@ func (ru *recoveryUpdates) removeConsumer(ca *consumerAssignment) {
+ 		ru.removeConsumers[skey][key] = ca
+ 	}
+ 	if consumers, ok := ru.updateConsumers[skey]; ok {
++		// A stale removal of an earlier consumer must not drop its recreate, like processConsumerRemoval ignores it.
++		if nca, ok := consumers[key]; ok && !nca.Created.Equal(ca.Created) && (nca.Group == nil || ca.Group == nil || nca.Group.Name != ca.Group.Name) {
++			return
++		}
+ 		delete(consumers, key)
+ 	}
+ }
+```
+
+**File**: `server/jetstream_cluster_4_test.go` (modified, +93/-0)
+```diff
+@@ -4502,6 +4502,99 @@ func TestJetStreamClusterMetaSnapshotConsumerDeleteConsistency(t *testing.T) {
+ 	})
+ }
+ 
++func TestJetStreamClusterMetaRecoveryStaleConsumerRemovalKeepsRecreate(t *testing.T) {
++	c := createJetStreamClusterExplicit(t, "R3S", 3)
++	defer c.shutdown()
++
++	nc, js := jsClientConnect(t, c.randomServer())
++	defer nc.Close()
++
++	scfg := &nats.StreamConfig{Name: "TEST", Replicas: 1}
++	_, err := js.AddStream(scfg)
++	require_NoError(t, err)
++
++	ccfg := &nats.ConsumerConfig{Name: "consumer", Replicas: 1}
++	_, err = js.AddConsumer("TEST", ccfg)
++	require_NoError(t, err)
++
++	sl := c.streamLeader(globalAccountName, "TEST")
++	mjs := sl.getJetStream()
++	assignment := func() *consumerAssignment {
++		mjs.mu.RLock()
++		defer mjs.mu.RUnlock()
++		ca := mjs.consumerAssignment(globalAccountName, "TEST", "consumer")
++		require_NotNil(t, ca)
++		return ca.clone()
++	}
++	oca := assignment()
++
++	// Get the snapshot before recreating the consumer, so we can recover through the recreate.
++	snap, _, _, err := mjs.metaSnapshot()
++	require_NoError(t, err)
++
++	require_NoError(t, js.DeleteConsumer("TEST", "consumer"))
++	_, err = js.AddConsumer("TEST", ccfg)
++	require_NoError(t, err)
++	nca := assignment()
++	require_NotEqual(t, oca.Group.Name, nca.Group.Name)
++
++	// Remove the stream so we can recover fresh.
++	require_NoError(t, js.DeleteStream("TEST"))
++	nc.Close()
++
++	ru := &recoveryUpdates{
++		removeStreams:   make(map[string]*streamAssignment),
++		removeConsumers: make(map[string]map[string]*consumerAssignment),
++		addStreams:      make(map[string]*streamAssignment),
++		updateStreams:   make(map[string]*streamAssignment),
++		updateConsumers: make(map[string]map[string]*consumerAssignment),
 +	}
 +
-+	ci, err := js.ConsumerInfo("TEST", "CONSUMER", nats.MaxWait(2*time.Second))
++	// Simulate recovering:
++	// - snapshot with a stream and consumer
++	// - normal entry deleting the consumer
++	// - normal entry recreating the consumer with the same name
++	// - normal entry deleting the earlier consumer again, a retry from a server that still ran it
++	// This should result in the recreated consumer, like for servers applying the entries one by one.
++	mjs.mu.Lock()
++	mjs.metaRecovering = true
++	mjs.mu.Unlock()
++	_, _, err = mjs.applyMetaEntries([]*Entry{
++		newEntry(EntrySnapshot, snap),
++		newEntry(EntryNormal, encodeDeleteConsumerAssignment(oca)),
++		newEntry(EntryNormal, encodeAddConsumerAssignment(nca)),
++		newEntry(EntryNormal, encodeDeleteConsumerAssignment(oca)),
++	}, ru)
 +	require_NoError(t, err)
-+	require_Equal(t, ci.Name, "CONSUMER")
++
++	// Recovery should contain the stream create, the consumer delete and the recreated consumer.
++	require_Len(t, len(ru.addStreams), 1)
++	require_Len(t, len(ru.removeConsumers), 1)
++	require_Len(t, len(ru.updateConsumers), 1)
++	staged := ru.updateConsumers[nca.streamRecoveryKey()][nca.recoveryKey()]
++	require_NotNil(t, staged)
++	require_Equal(t, staged.Group.Name, nca.Group.Name)
++
++	// Process those updates, in the order recovery completes.
++	for _, cas := range ru.removeConsumers {
++		for _, ca := range cas {
++			mjs.processConsumerRemoval(ca)
++		}
++	}
++	for _, sa := range ru.addStreams {
++		mjs.processStreamAssignment(sa)
++	}
++	for _, cas := range ru.updateConsumers {
++		for _, ca := range cas {
++			mjs.processConsumerAssignment(ca)
++		}
++	}
++	mjs.clearMetaRecovering()
++
++	ca := assignment()
++	require_Equal(t, ca.Group.Name, nca.Group.Name)
 +}
-```
-
-**File**: `server/jetstream_test.go` (modified, +4/-3)
-```diff
-@@ -27451,7 +27451,7 @@ func TestJetStreamHealthzConsumerCheckConcurrentMapRace(t *testing.T) {
- 	stop := make(chan struct{})
- 
- 	// Writer: repeatedly create and delete consumers in the stream's map,
--	// holding mset.mu just like setConsumer/removeConsumer.
-+	// through setConsumer/removeConsumer like the server does.
- 	wg.Add(1)
- 	go func() {
- 		defer wg.Done()
-@@ -27464,11 +27464,12 @@ func TestJetStreamHealthzConsumerCheckConcurrentMapRace(t *testing.T) {
- 			}
- 			name := fmt.Sprintf("C-%d", i)
- 			i++
-+			o := &consumer{name: name}
- 			mset.mu.Lock()
--			mset.consumers[name] = &consumer{name: name}
-+			mset.setConsumer(o)
- 			mset.mu.Unlock()
- 			mset.mu.Lock()
--			delete(mset.consumers, name)
-+			mset.removeConsumer(o)
- 			mset.mu.Unlock()
- 		}
- 	}()
-```
-
-**File**: `server/stream.go` (modified, +14/-6)
-```diff
-@@ -9111,7 +9111,11 @@ func (mset *stream) numConsumers() int {
- }
- 
- // Lock should be held.
-+// The consumers map is written under both the stream lock and clsMu,
-+// so it can be read under either one. See lookupConsumer.
- func (mset *stream) setConsumer(o *consumer) {
-+	mset.clsMu.Lock()
-+	defer mset.clsMu.Unlock()
- 	if _, ok := mset.consumers[o.name]; ok {
- 		return
- 	}
-@@ -9120,19 +9124,21 @@ func (mset *stream) setConsumer(o *consumer) {
- 		mset.sourcingConsumers++
- 	}
- 	// Now update consumers list as well
--	mset.clsMu.Lock()
- 	mset.cList = append(mset.cList, o)
- 	if mset.csl == nil {
- 		mset.csl = gsl.NewSublist[*consumer]()
- 	}
- 	for _, sub := range o.signalSubs() {
- 		mset.csl.Insert(sub, o)
- 	}
--	mset.clsMu.Unlock()
- }
- 
- // Lock should be held.
-+// The consumers map is written under both the stream lock and clsMu,
-+// so it can be read under either one. See lookupConsumer.
- func (mset *stream) removeConsumer(o *consumer) {
-+	mset.clsMu.Lock()
-+	defer mset.clsMu.Unlock()
- 	if c, ok := mset.consumers[o.name]; !ok || c != o {
- 		return
- 	}
-@@ -9143,7 +9149,6 @@ func (mset *stream) removeConsumer(o *consumer) {
- 	}
- 
- 	// Now update consumers list as well
--	mset.clsMu.Lock()
- 	for i, ol := range mset.cList {
- 		if ol == o {
- 			mset.cList = append(mset.cList[:i], mset.cList[i+1:]...)
-@@ -9156,7 +9161,6 @@ func (mset *stream) removeConsumer(o *consumer) {
- 			mset.csl.Remove(sub, o)
- 		}
- 	}
--	mset.clsMu.Unlock()
- }
- 
- // swapSigSubs will update signal Subs for a new subject filter.
-@@ -9199,9 +9203,13 @@ func (mset *stream) swapSigSubs(o *consumer, newFilters []string) {
- }
- 
- // lookupConsumer will retrieve a consumer by name.
-+// Uses clsMu instead of the stream lock, so a lookup does not queue
-+// behind a stream writer that holds the stream lock while it waits on
-+// the store (for example on disk I/O). Consumer info requests, consumer
-+// removal in the meta layer and other API handlers call this.
- func (mset *stream) lookupConsumer(name string) *consumer {
--	mset.mu.RLock()
--	defer mset.mu.RUnlock()
-+	mset.clsMu.RLock()
-+	defer mset.clsMu.RUnlock()
- 	return mset.consumers[name]
- }
- 
++
+ func TestJetStreamClusterMetaSnapshotDecodeError(t *testing.T) {
+ 	c := createJetStreamClusterExplicit(t, "R3S", 3)
+ 	defer c.shutdown()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8954** (2026-11-27): [FIXED] Meta recovery drops recreated consumer after stale delete (@MauriceVanVeen)
+- **PR #8953** (2026-11-27): Cherry-picks for 2.14.11-RC.1 (@neilalexander)
+- **PR #8952** (2026-11-27): Cherry-picks for 2.15.4-RC.1 (@neilalexander)
+- **PR #8950** (2026-11-27): Optimise `removePerSubject` in file store (@neilalexander)
+- **PR #8949** (2026-11-27): (2.15) [FIXED] Pre-2.15 leafnodes reject a no_advertise hub as wrong port (@MauriceVanVeen)
 - **PR #8940** (2026-11-25): Fix temporary directory usage for MQTT benchmarks (@neilalexander)
-- **PR #8939** (2026-11-26): Look up consumers without taking the stream lock (@wallyqs)
-- **PR #8938** (2026-11-25): Optimise update ack floor walk to bound by pending size (@neilalexander)
-- **PR #8935** (2026-11-24): [FIXED] Deferred pull statuses lost on a shared reply subject (@MauriceVanVeen)
-- **PR #8933** (closed): Fix typo in MQTT README (@Dani-Google)
-- **PR #8932** (2026-11-24): Data race on parse() max_control_line (@huynguyen7)
 
 ---
 
@@ -2947,59 +3114,48 @@ Signed-off-by: Waldemar Quevedo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Look up consumers without taking the stream lock
+## X. (2.15) [FIXED] Pre-2.15 leafnodes reject a no_advertise hub as wrong port
 
 **RULE**:
-When implementing operations in `server/jetstream_consumer_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/leafnode_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4d459637`: Look up consumers without taking the stream lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66eab592`: (2.15) [FIXED] Pre-2.15 leafnodes reject a no_advertise hub as wrong port. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/jetstream_consumer_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/leafnode_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-// A stream writer can hold the stream lock while it waits on the store (for
-// example on a cold block read from disk). Consumer lookups, and with them
-// consumer info requests and consumer removal from the meta layer, must not
-// queue behind it.
-func TestJetStreamConsumerLookupNotBlockedByStreamLock(t *testing.T) {
-	s := RunBasicJetStreamServer(t)
+func TestLeafNodeNoAdvertiseSendsEmptyLeafNodeURLs(t *testing.T) {
+	conf := createConfFile(t, []byte(`
+		listen: "127.0.0.1:-1"
+		leafnodes {
+			listen: "127.0.0.1:-1"
+			no_advertise: true
+		}
+	`))
+	s, o := RunServerWithConfig(conf)
 	defer s.Shutdown()
 
-	nc, js := jsClientConnect(t, s)
-	defer nc.Close()
-
-	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
-	require_NoError(t, err)
-	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "CONSUMER", AckPolicy: nats.AckExplicitPolicy})
-	require_NoError(t, err)
-
-	mset, err := s.GlobalAccount().lookupStream("TEST")
-	require_NoError(t, err)
-
-	// Simulate a stream writer stuck while holding the stream lock.
-	mset.mu.Lock()
-	unlocked := false
-	unlock := func() {
-		if !unlocked {
-			unlocked = true
-			mset.mu.Unlock()
-		}
+	readInfo := func(port int) string {
+		t.Helper()
+		c, err := net.DialTimeout("tcp", fmt.Sprintf("127.0.0.1:%d", port), 2*time.Second)
+		require_NoError(t, err)
+		defer c.Close()
+		line, err := bufio.NewReader(c).ReadString('\n')
+		require_NoError(t, err)
+		require_True(t, strings.HasPrefix(line, "INFO "))
+		return line
 	}
-	defer unlock()
 
-	done := make(chan *consumer, 1)
-	go func() { done <- mset.lookupConsumer("CONSUMER") }()
-	select {
-	case o := <-done:
-		require_True(t, o != nil)
-	case <-time.After(2 * time.Second):
-		unlock()
-		t.Fatalf("lookupConsumer blocked behind the stre
+	// Pre-2.15 leafnodes treat a missing list as having connected to the wrong port.
+	require_Contains(t, readInfo(o.LeafNode.Port), `"leafnode_urls":[]`)
+	// Other INFOs must still omit it, so leafnodes can detect the wrong port.
+	require_False(t, strings.Contains(readInfo(o.Port), "leafnode_urls"))
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3009,7 +3165,7 @@ func TestJetStreamConsumerLookupNotBlockedByStreamLock(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4d459637` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66eab592` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

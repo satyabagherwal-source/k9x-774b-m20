@@ -13874,3 +13874,5 @@
 | `CYCLE-20261127-7VVB` | `2026-11-27T21:11:22.391Z` | `GateNLP/ultimate-sitemap-parser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10965` | Yes (`da362629...`) |
 | `CYCLE-20261127-7ZHF` | `2026-11-27T21:11:27.075Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10966` | Yes (`dd074d2a...`) |
 | `CYCLE-20261127-JG8T` | `2026-11-27T21:20:22.013Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10967` | Yes (`c979ca2d...`) |
+| `CYCLE-20261127-W1J7` | `2026-11-27T21:30:09.475Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10968` | Yes (`f25eb65d...`) |
+| `CYCLE-20261127-W4TV` | `2026-11-27T21:30:13.747Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10969` | Yes (`0d4a3a2c...`) |

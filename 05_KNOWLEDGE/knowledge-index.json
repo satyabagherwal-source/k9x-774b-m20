@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T21:20:28.676Z",
+  "last_updated": "2026-11-27T21:30:22.901Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26765,
+  "total_items": 26769,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b40dda1b9a8157356535e62c3d1768ae616e0fd5fe69ad7435732573828763ff",
+      "content_hash": "aaa49f0f3c25bdc8c5a0303de7112a7982b1716c2aff4c65eceac1d00b93ee0e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T21:20:28.676Z"
+      "persisted_at": "2026-11-27T21:30:22.901Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -223251,8 +223251,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "4d459637",
-      "content_hash": "1bccdef6953a32f51dd2f10da02c667f555dfa0037b1154fd05ba960d6cbc504",
+      "source_version": "52f36cf2",
+      "content_hash": "f25eb65d3213d2b60147dd325030bbf565d0039ead58b65327b98d90717b561a",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -223305,6 +223305,11 @@
           "number": 10817,
           "title": "Look up consumers without taking the stream lock",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10968,
+          "title": "(2.15) [FIXED] Pre-2.15 leafnodes reject a no_advertise hub as wrong port",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223312,7 +223317,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T03:24:57.265Z",
+      "verified_at": "2026-11-27T21:30:09.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223354,10 +223359,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "repository": "nats-io/nats-server",
-      "source_version": "4d459637",
-      "content_hash": "644a8088f3c3374d583f011b63ecc95c7a0adfae31c912651957e43ff3484c42",
+      "source_version": "52f36cf2",
+      "content_hash": "b0bbd205894351be43af56a0a205604e990ae10e9e6454717b3297a68cba9fc2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T03:24:58.016Z"
+      "persisted_at": "2026-11-27T21:30:10.159Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server",
@@ -223366,10 +223371,10 @@
       "relative_path": "08_VERIFICATION/nats-io-nats-server-verification-protocol-empirical-defect-shield-for-nats-io-na.md",
       "title": "Verification Protocol: Empirical Defect Shield for nats-io/nats-server",
       "repository": "nats-io/nats-server",
-      "source_version": "4d459637",
-      "content_hash": "b93a76f5f638394d6d49d4ee19a54d475531941292b823228c7e6ed62f6f41e6",
+      "source_version": "52f36cf2",
+      "content_hash": "17bb2107d9e5675c9dbdb402f651ab326d9351658d504ea4772c3c4dec37a7a8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:24:58.227Z"
+      "persisted_at": "2026-11-27T21:30:10.477Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in",
@@ -223403,9 +223408,9 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "repository": "nats-io-nats-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fa9682f07177911b42274fae7db4dbd11f18ff5e916bfe53db034198910c9a1",
+      "content_hash": "b816a8bdeb273ed7a73b014a83b574c940ae4e8292394423ec378e2a49b87416",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T03:25:02.525Z"
+      "persisted_at": "2026-11-27T21:30:19.507Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server-learnings",
@@ -223415,9 +223420,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nats-io-nats-server-learnings",
       "repository": "nats-io-nats-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "374f5b82b6a5043fb1ff94ff5b4adecb283b37f74c28747857e64ba5bb8ed035",
+      "content_hash": "6fc82cbc775e0497d1dfd432d5a94573a7a9857d8c5d47133a319cbff041962b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:25:02.752Z"
+      "persisted_at": "2026-11-27T21:30:19.819Z"
     },
     "learn-huggingface-meta-llama-meta-llama-3-8b-instruct": {
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
@@ -231348,8 +231353,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "06717572",
-      "content_hash": "08380e00481374329940b03b2311f84e2733464e9223b5864bdd1e6c6d55df7b",
+      "source_version": "ae0c2b4c",
+      "content_hash": "0d4a3a2c5c0cfccacaa5156810cbb839305f34cdc0eccc03f33086f12af92043",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -231397,6 +231402,11 @@
           "number": 10624,
           "title": "add Supermetal to adopter listings",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10969,
+          "title": "Defer WAL cuts on plain flushes so concurrent writes share a WAL file",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231404,7 +231414,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T07:28:50.401Z",
+      "verified_at": "2026-11-27T21:30:13.321Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231446,10 +231456,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "repository": "slatedb/slatedb",
-      "source_version": "06717572",
-      "content_hash": "33db6e299561fffa86bcd2fc242e91795a3c4c78f208b3847384e7568a47f7b7",
+      "source_version": "ae0c2b4c",
+      "content_hash": "4f08b2f3d8947027941d6c45944127c041acbba846ca06c4c4227aec7840076f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T07:28:51.426Z"
+      "persisted_at": "2026-11-27T21:30:14.435Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb",
@@ -231458,10 +231468,10 @@
       "relative_path": "08_VERIFICATION/slatedb-slatedb-verification-protocol-empirical-defect-shield-for-slatedb-slated.md",
       "title": "Verification Protocol: Empirical Defect Shield for slatedb/slatedb",
       "repository": "slatedb/slatedb",
-      "source_version": "06717572",
-      "content_hash": "88259e59b398aa53681a4694e6c5e1a3432ec625b56ba18668fbce96155ac6fb",
+      "source_version": "ae0c2b4c",
+      "content_hash": "33d3eb6b9318c61168d237752bb8a0b2b487f6596dbba1b43fd880b43241174d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:28:51.714Z"
+      "persisted_at": "2026-11-27T21:30:14.772Z"
     },
     "learn-github-nucleoidai-nucleoid": {
       "learning_id": "learn-github-nucleoidai-nucleoid",
@@ -255554,9 +255564,9 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9eae0587a4cf95f8f38370a760965516ff62c6be5b2a2eb80f0f44206c0e1b28",
+      "content_hash": "60fd605af35629317e79bbe508516c962ef3e1cb367f4918d8bd55a77c0e9fb6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T07:28:56.929Z"
+      "persisted_at": "2026-11-27T21:30:20.942Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings",
@@ -255566,9 +255576,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for slatedb-slatedb-learnings",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9c375ee758796cca12f36abaaf530418b35d0f1de408d8b175ba081a92e7138",
+      "content_hash": "751d80278ab06eb3589b5363e51c48f15fd76907ad56e7398bed6c69a3c93df9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T07:28:57.239Z"
+      "persisted_at": "2026-11-27T21:30:21.247Z"
     },
     "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci": {
       "item_id": "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci",
@@ -358586,13 +358596,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JL2O-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-WBDM-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a00a62f24b778e366374f052dc2a84e0524b2510f5f741fe7bd9cb157a7706a",
+      "content_hash": "1a96103ee2c300e274e07507f5a4459e78d7c4055c7c0cafeca731d544900a21",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T21:20:28.275Z"
+      "persisted_at": "2026-11-27T21:30:22.238Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358602,9 +358612,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a376ccb5de5c4aebcf7bc2f3a371d6dbd51472f2c2dad01a2d5bca6d0d86a7b2",
+      "content_hash": "61687822cf9331c815c0b45232e388a8181a567e5d434ca3f0c853436c63bce0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T21:20:28.477Z"
+      "persisted_at": "2026-11-27T21:30:22.566Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -367597,6 +367607,58 @@
       "content_hash": "82f58216d866d7927ff40666d13122dcf60c788af72eb1f8a79214a2d9f6827e",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T21:20:26.178Z"
+    },
+    "rule-10968": {
+      "learning_id": "rule-10968",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10968,
+      "title": "(2.15) [FIXED] Pre-2.15 leafnodes reject a no_advertise hub as wrong port",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "52f36cf2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:30:09.052Z"
+    },
+    "candidate_directive-2-15-fixed-pre-2-15-leafnodes-reject-a-no_advertise-hub-as-wrong-port": {
+      "item_id": "candidate_directive-2-15-fixed-pre-2-15-leafnodes-reject-a-no_advertise-hub-as-wrong-port",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W90W-2-15-fixed-pre-2-15-leafnodes-reject-a-no_advertise-hub-as-wrong-port.md",
+      "title": "(2.15) [FIXED] Pre-2.15 leafnodes reject a no_advertise hub as wrong port",
+      "repository": "nats-io-nats-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "30a8efd4f988a4ab7dde5e73f3ada2a879619effee9c4e2e9f25c1904dcdad3a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T21:30:19.189Z"
+    },
+    "rule-10969": {
+      "learning_id": "rule-10969",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10969,
+      "title": "Defer WAL cuts on plain flushes so concurrent writes share a WAL file",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "ae0c2b4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T21:30:13.321Z"
+    },
+    "candidate_directive-defer-wal-cuts-on-plain-flushes-so-concurrent-writes-share-a-wal-file": {
+      "item_id": "candidate_directive-defer-wal-cuts-on-plain-flushes-so-concurrent-writes-share-a-wal-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WA55-defer-wal-cuts-on-plain-flushes-so-concurrent-writes-share-a-wal-file.md",
+      "title": "Defer WAL cuts on plain flushes so concurrent writes share a WAL file",
+      "repository": "slatedb-slatedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c09ccb83b98edbd9efc858f6e457ded9c273df757112a2b742e2cf0e003874b6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T21:30:20.637Z"
     }
   },
   "ai-builder-brain": {

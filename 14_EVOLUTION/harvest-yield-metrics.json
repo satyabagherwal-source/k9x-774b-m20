@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:20:22.030Z",
-  "total_cycles_completed": 13166,
-  "total_learnings_persisted": 13166,
-  "total_rules_promoted": 11881,
+  "last_updated": "2026-11-27T21:30:13.768Z",
+  "total_cycles_completed": 13168,
+  "total_learnings_persisted": 13168,
+  "total_rules_promoted": 11883,
   "history": [
-    {
-      "timestamp": "2026-11-27T03:55:10.731Z",
-      "repository": "rqlite/rqlite",
-      "learningId": "learn-github-rqlite-rqlite",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T04:09:46.666Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-liquidai-d1-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T04:18:16.335Z",
       "repository": "Cactus-Compute/whistle",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T21:20:22.030Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:30:09.497Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T21:30:13.768Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

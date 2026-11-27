@@ -13907,3 +13907,5 @@ Every entry in this ledger must capture:
 | `learn-github-gatenlp-ultimate-sitemap-parser` | `https://github.com/GateNLP/ultimate-sitemap-parser` | `6f532e9d` | Multi-dimensional audit evidence | 2026-11-27T21:11:22.406Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `3cc8b5c1` | Multi-dimensional audit evidence | 2026-11-27T21:11:27.088Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `17ea4bc4` | Multi-dimensional audit evidence | 2026-11-27T21:20:22.024Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `52f36cf2` | Multi-dimensional audit evidence | 2026-11-27T21:30:09.490Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `ae0c2b4c` | Multi-dimensional audit evidence | 2026-11-27T21:30:13.761Z |

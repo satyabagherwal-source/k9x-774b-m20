@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:20:28.868Z",
+  "last_updated": "2026-11-27T21:30:23.194Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T21:20:27.766Z",
+      "processed_at": "2026-11-27T21:30:21.551Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -458,7 +458,7 @@
       "staged_for_review": 1
     },
     "nats-io-nats-server-learnings.md": {
-      "processed_at": "2026-11-27T03:25:01.619Z",
+      "processed_at": "2026-11-27T21:30:17.828Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -608,7 +608,7 @@
       "staged_for_review": 1
     },
     "slatedb-slatedb-learnings.md": {
-      "processed_at": "2026-11-26T07:28:55.427Z",
+      "processed_at": "2026-11-27T21:30:20.181Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5106,
+  "total_dossiers_evaluated": 5109,
   "total_canonical_promoted": 586,
-  "total_staged_for_review": 3855
+  "total_staged_for_review": 3858
 }

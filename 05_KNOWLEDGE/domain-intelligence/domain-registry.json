@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T21:20:28.477Z",
+  "last_updated": "2026-11-27T21:30:22.566Z",
   "total_records": 2857,
   "domains": {
     "A": {
@@ -13271,8 +13271,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "repository": "nats-io/nats-server",
-      "content_hash": "644a8088f3c3374d583f011b63ecc95c7a0adfae31c912651957e43ff3484c42",
-      "created_at": "2026-11-27T03:24:58.016Z"
+      "content_hash": "b0bbd205894351be43af56a0a205604e990ae10e9e6454717b3297a68cba9fc2",
+      "created_at": "2026-11-27T21:30:10.159Z"
     },
     "DOM-D-3A6226D8": {
       "record_id": "DOM-D-3A6226D8",
@@ -13382,8 +13382,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-learnings-technical-construction-intelligence-nats-io-nats-s.md",
       "repository": "nats-io-nats-server-learnings",
-      "content_hash": "3fa9682f07177911b42274fae7db4dbd11f18ff5e916bfe53db034198910c9a1",
-      "created_at": "2026-11-27T03:25:02.525Z"
+      "content_hash": "b816a8bdeb273ed7a73b014a83b574c940ae4e8292394423ec378e2a49b87416",
+      "created_at": "2026-11-27T21:30:19.507Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
@@ -15927,8 +15927,8 @@
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "repository": "slatedb/slatedb",
-      "content_hash": "33db6e299561fffa86bcd2fc242e91795a3c4c78f208b3847384e7568a47f7b7",
-      "created_at": "2026-11-26T07:28:51.426Z"
+      "content_hash": "4f08b2f3d8947027941d6c45944127c041acbba846ca06c4c4227aec7840076f",
+      "created_at": "2026-11-27T21:30:14.435Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -23297,8 +23297,8 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-learnings-architecture-intelligence-slatedb-slatedb-learnings-co.md",
       "repository": "slatedb-slatedb-learnings",
-      "content_hash": "9eae0587a4cf95f8f38370a760965516ff62c6be5b2a2eb80f0f44206c0e1b28",
-      "created_at": "2026-11-26T07:28:56.929Z"
+      "content_hash": "60fd605af35629317e79bbe508516c962ef3e1cb367f4918d8bd55a77c0e9fb6",
+      "created_at": "2026-11-27T21:30:20.942Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",
@@ -46804,8 +46804,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a376ccb5de5c4aebcf7bc2f3a371d6dbd51472f2c2dad01a2d5bca6d0d86a7b2",
-      "created_at": "2026-11-27T21:20:28.477Z"
+      "content_hash": "61687822cf9331c815c0b45232e388a8181a567e5d434ca3f0c853436c63bce0",
+      "created_at": "2026-11-27T21:30:22.566Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

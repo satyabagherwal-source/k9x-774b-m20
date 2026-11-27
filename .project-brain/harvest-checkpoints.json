@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T21:20:22.033Z",
+  "last_updated": "2026-11-27T21:30:13.773Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "08380e00481374329940b03b2311f84e2733464e9223b5864bdd1e6c6d55df7b",
-      "verified_at": "2026-11-26T07:28:50.821Z",
+      "content_hash": "0d4a3a2c5c0cfccacaa5156810cbb839305f34cdc0eccc03f33086f12af92043",
+      "verified_at": "2026-11-27T21:30:13.772Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T07:28:50.821Z"
+      "last_updated": "2026-11-27T21:30:13.772Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "1bccdef6953a32f51dd2f10da02c667f555dfa0037b1154fd05ba960d6cbc504",
-      "verified_at": "2026-11-27T03:24:57.559Z",
+      "content_hash": "f25eb65d3213d2b60147dd325030bbf565d0039ead58b65327b98d90717b561a",
+      "verified_at": "2026-11-27T21:30:09.501Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T03:24:57.559Z"
+      "last_updated": "2026-11-27T21:30:09.501Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",

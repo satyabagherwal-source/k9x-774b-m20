@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-2HQZ",
-    "timestamp": "2026-11-26T11:03:38.843Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "e9796a17c89773293efcb18f9230e26c1578b6b93571c0a66b3b345491675716",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-2R2P",
-    "timestamp": "2026-11-26T11:03:50.929Z",
-    "repository": "moby/buildkit",
-    "learningId": "learn-github-moby-buildkit",
-    "contentHash": "5e80004cf5878cbee5c1f19896bcbd1925329f46a959f749bdb82a1659663e54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-2RCG",
     "timestamp": "2026-11-26T11:03:51.280Z",
     "repository": "wcandillon/react-native-skia",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "c979ca2d5a26ace32cf8bad23f686581ecd183d5811eda03a654e57017b3bce8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-W1J7",
+    "timestamp": "2026-11-27T21:30:09.475Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "f25eb65d3213d2b60147dd325030bbf565d0039ead58b65327b98d90717b561a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-W4TV",
+    "timestamp": "2026-11-27T21:30:13.747Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "0d4a3a2c5c0cfccacaa5156810cbb839305f34cdc0eccc03f33086f12af92043",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

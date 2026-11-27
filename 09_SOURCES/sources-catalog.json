@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "06717572",
+    "sourceVersion": "ae0c2b4c",
     "license": "Apache-2.0",
-    "contentHash": "08380e00481374329940b03b2311f84e2733464e9223b5864bdd1e6c6d55df7b",
-    "lastHarvestedAt": "2026-11-26T07:28:50.795Z",
+    "contentHash": "0d4a3a2c5c0cfccacaa5156810cbb839305f34cdc0eccc03f33086f12af92043",
+    "lastHarvestedAt": "2026-11-27T21:30:13.761Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "4d459637",
+    "sourceVersion": "52f36cf2",
     "license": "Apache-2.0",
-    "contentHash": "1bccdef6953a32f51dd2f10da02c667f555dfa0037b1154fd05ba960d6cbc504",
-    "lastHarvestedAt": "2026-11-27T03:24:57.546Z",
+    "contentHash": "f25eb65d3213d2b60147dd325030bbf565d0039ead58b65327b98d90717b561a",
+    "lastHarvestedAt": "2026-11-27T21:30:09.490Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {

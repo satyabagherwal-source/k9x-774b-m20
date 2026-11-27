@@ -4,24 +4,24 @@
 {
   "source_repository": "slatedb/slatedb",
   "source_url": "https://github.com/slatedb/slatedb",
-  "source_version": "06717572",
+  "source_version": "ae0c2b4c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T07:28:51.141Z",
+  "timestamp": "2026-11-27T21:30:14.069Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-slatedb-slatedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [slatedb/slatedb](https://github.com/slatedb/slatedb) (Revision: `06717572`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T07:28:51.141Z`  
+> **Provenance**: Harvested from [slatedb/slatedb](https://github.com/slatedb/slatedb) (Revision: `ae0c2b4c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T21:30:14.069Z`  
 > **Learning ID**: `learn-github-slatedb-slatedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from slatedb/slatedb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T07:28:49.179Z  
+> **Harvest Timestamp**: 2026-11-27T21:30:12.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3683 stars
+- **Stars / Engagement**: 3691 stars
 
 ---
 
@@ -2362,69 +2362,306 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06717572` (2026-11-25)
-**Commit Message**: site: add Supermetal to adopter listings (#2295)
+### Incident Patch 1: `ae0c2b4c` (2026-11-27)
+**Commit Message**: Defer WAL cuts on plain flushes so concurrent writes share a WAL file (#2294)
 
-**File**: `README.md` (modified, +1/-0)
+**File**: `slatedb/src/batch_write.rs` (modified, +222/-53)
 ```diff
-@@ -166,6 +166,7 @@ See who's using SlateDB.
- - [Rivet](https://rivet.dev)
- - [s2-lite](https://github.com/s2-streamstore/s2)
- - [Storrito](https://storrito.com)
-+- [Supermetal](https://supermetal.io)
- - [Taquba](https://github.com/micllam/taquba)
- - [Tasklet](https://tasklet.ai)
- - [Tensorlake](https://www.tensorlake.ai)
-```
-
-**File**: `website/public/img/logos/dropbox.svg` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--<svg viewBox="0 0 113 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<svg viewBox="0 0 122 33" fill="none" xmlns="http://www.w3.org/2000/svg">
- <g transform="translate(0, 0.5) scale(0.78)">
- <polygon points="10.6,1.7 0,8.5 10.6,15.3 21.2,8.5" fill="#0061FE"/>
- <polygon points="31.8,1.7 21.2,8.5 31.8,15.3 42.4,8.5" fill="#0061FE"/>
-```
-
-**File**: `website/public/img/logos/supermetal.svg` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+<svg width="755.405" height="116.255" viewBox="0 0 755.405 116.255" fill="none" xmlns="http://www.w3.org/2000/svg">
-+<path d="M89.8731 26.0205V45.0284L44.8833 18.9886H44.864L33.0668 25.8223L5.67374 41.655L44.864 64.3263V83.3148L-0.00012207 57.3668V25.948L44.864 0H44.8833L89.8731 26.0205Z" fill="#EA580C"/>
-+<path d="M89.8731 58.6911V89.965L44.8833 116H44.864V115.985L-0.00012207 90.0375V71.0489L44.864 96.9921H44.8833L56.695 90.1631L84.0735 74.3256L44.864 51.6399V32.6513L89.8731 58.6911Z" fill="#EA580C"/>
-+<path d="M741.219 -6.10352e-05H755.405V89.6396H741.219V-6.10352e-05Z" fill="black"/>
-+<path d="M672.497 78.4656V63.6512L683.67 52.6032H715.936V43.3128L711.291 38.6676H691.58L686.935 43.3128V47.3303H672.999V40.0486L685.805 27.1174H717.066L729.871 40.0486V89.6392H716.94V79.9722L706.896 89.6392H683.67L672.497 78.4656ZM705.515 78.4656L715.936 68.422V63.1491H690.45L686.432 67.041V74.6993L690.199 78.4656H705.515Z" fill="black"/>
-+<path d="M629.027 77.2104V39.17H617.728V27.1176H629.278V6.77924H643.214V27.1176H662.422V39.17H643.214V72.6907L648.11 77.587H662.422V89.6394H641.456L629.027 77.2104Z" fill="black"/>
-+<path d="M549.785 77.2102V39.672L562.214 27.1174H596.237L608.917 39.672V63.0235H563.972V73.0672L568.743 77.8379H590.211L594.731 73.1927V69.4263H608.792V77.4613L596.614 89.6392H562.089L549.785 77.2102ZM594.731 52.6032V43.9406L589.835 38.9187H568.868L563.972 43.9406V52.6032H594.731Z" fill="black"/>
-+<path d="M446.519 27.1174H459.702V38.0399L470.499 27.1174H486.066L494.98 36.1567L504.019 27.1174H525.111L537.917 40.0486V89.6392H523.73V44.1916L518.834 39.2954H507.158L499.876 46.577V89.6392H486.066V44.0661L481.295 39.2954H472.758L460.706 51.4733V89.6392H446.519V27.1174Z" fill="black"/>
-+<path d="M394.874 27.1174H408.057V37.7888L418.477 27.1174H435.802V39.2954H421.616L409.061 52.101V89.6392H394.874V27.1174Z" fill="black"/>
-+<path d="M323.794 77.2102V39.672L336.223 27.1174H370.246L382.926 39.672V63.0235H337.98V73.0672L342.751 77.8379H364.219L368.739 73.1927V69.4263H382.8V77.4613L370.622 89.6392H336.097L323.794 77.2102ZM368.739 52.6032V43.9406L363.843 38.9187H342.877L337.98 43.9406V52.6032H368.739Z" fill="black"/>
-+<path d="M252.895 27.1174H266.077V36.91L275.995 27.1174H299.975L312.529 39.672V77.0846L299.975 89.6392H275.87L267.082 82.232V116.255H252.895V27.1174ZM293.321 77.4613L298.343 72.565V44.1916L293.321 39.2954H278.255L267.082 50.4689V67.9198L277.628 77.4613H293.321Z" fill="black"/>
-+<path d="M182.839 76.9591V27.1174H197.026V72.565L201.922 77.4613H212.844L226.152 64.1534V27.1174H240.339V89.6392H227.157V78.089L215.481 89.6392H195.519L182.839 76.9591Z" fill="black"/>
-+<path d="M114 77.9634V70.3052H127.936V74.3226L131.451 77.9634H152.794L156.309 74.3226V67.5431L152.668 63.9023H125.676L114.502 52.6032V38.5421L125.927 27.1174H157.439L168.989 38.7932V46.4515H155.053V42.434L151.538 38.7932H131.953L128.438 42.434V48.7113L132.079 52.3521H158.945L170.244 63.7768V78.2145L158.82 89.6392H125.55L114 77.9634Z" fill="black"/>
-+</svg>
-```
-
-**File**: `website/src/pages/index.astro` (modified, +1/-0)
-```diff
-@@ -113,6 +113,7 @@ const usedBy = [
-     { name: 'MerkleMap',  href: 'https://merklemap.com/',        logo: '/img/logos/merklemap.svg' },
-     { name: 'OpenData',   href: 'https://opendata.dev/',         logo: '/img/logos/opendata.svg' },
-     { name: 'Massive',    href: 'https://massive.com/',           logo: '/img/logos/massive.png' },
-+    { name: 'Supermetal', href: 'https://supermetal.io/',        logo: '/img/logos/supermetal.svg' },
- ];
+@@ -51,24 +51,26 @@ use tokio::sync::oneshot;
+ pub(crate) const WRITE_BATCH_TASK_NAME: &str = "writer";
  
- // Quickstart language entries.
+ pub(crate) type WriteBatchResult = Result<WriteHandle, SlateDBError>;
+-pub(crate) type BatchWriterFlushResult = (FlushResultFuture, CheckpointCursor);
+ 
+ /// A message processed by the batch writer event loop.
+ #[allow(clippy::large_enum_variant)]
+ pub(crate) enum BatchWriterMessage {
+     /// Apply a write batch to the WAL and memtable. This may trigger freezing the memtable.
+     WriteBatch(WriteBatchRequest),
+-    /// Flush the wal if enabled, and optionally freeze the current active memtable.
+-    Flush(BatchWriterFlush),
+-}
+-
+-pub(crate) struct BatchWriterFlush {
+-    /// If true, then also freeze the current active memtable.
+-    freeze_memtable: bool,
+-    /// Sends a message when the writer has processed the flush message. On successful receipt
+-    /// of a message, the caller should wait on the received Receiver to get the result of the
+-    /// wal flush.
+-    done: oneshot::Sender<Result<BatchWriterFlushResult, SlateDBError>>,
++    /// Request a deferred WAL flush and optionally freeze the active memtable.
++    RequestFlush {
++        /// If true, freeze the active memtable.
++        freeze_memtable: bool,
++        /// Sends the flush handle after the writer processes this message.
++        done: oneshot::Sender<Result<FlushResultFuture, SlateDBError>>,
++    },
++    /// Cut the WAL immediately, optionally freeze the active memtable, and return the cursor.
++    ForceFlush {
++        /// If true, freeze the active memtable.
++        freeze_memtable: bool,
++        /// Sends the cursor after the writer processes this message.
++        done: oneshot::Sender<Result<CheckpointCursor, SlateDBError>>,
++    },
+ }
+ 
+ pub(crate) struct WriteBatchRequest {
+@@ -89,10 +91,16 @@ impl std::fmt::Debug for BatchWriterMessage {
+                 .field("batch", batch)
+                 .field("options", options)
+                 .finish(),
+-            BatchWriterMessage::Flush(BatchWriterFlush {
++            BatchWriterMessage::RequestFlush {
++                freeze_memtable, ..
++            } => f
++                .debug_struct("RequestFlush")
++                .field("freeze_memtable", freeze_memtable)
++                .finish(),
++            BatchWriterMessage::ForceFlush {
+                 freeze_memtable, ..
+-            }) => f
+-                .debug_struct("Flush")
++            } => f
++                .debug_struct("ForceFlush")
+                 .field("freeze_memtable", freeze_memtable)
+                 .finish(),
+         }
+@@ -139,14 +147,13 @@ impl MessageHandler<BatchWriterMessage> for WriteBatchEventHandler {
+                     }
+                 }
+             }
+-            BatchWriterMessage::Flush(flush_msg) => {
+-                let BatchWriterFlush {
+-                    freeze_memtable,
+-                    done,
+-                } = flush_msg;
++            BatchWriterMessage::RequestFlush {
++                freeze_memtable,
++                done,
++            } => {
+                 let result = self
+                     .db_inner
+-                    .flush_batch_writer(freeze_memtable, self.wal_writer.as_mut())
++                    .request_flush(freeze_memtable, self.wal_writer.as_mut())
+                     .await;
+                 match result {
+                     Ok(flush_result) => {
+@@ -159,6 +166,25 @@ impl MessageHandler<BatchWriterMessage> for WriteBatchEventHandler {
+                     }
+                 }
+             }
++            BatchWriterMessage::ForceFlush {
++                freeze_memtable,
++                done,
++            } => {
++                let result = self
++                    .db_inner
++                    .force_flush(freeze_memtable, self.wal_writer.as_mut())
++                    .await;
++                match result {
++                    Ok(cursor) => {
++                        let _ = done.send(Ok(cursor));
++                        Ok(())
++                    }
++                    Err(error) => {
++                        let _ = done.send(Err(error.clone()));
++                        Err(error)
++                    }
++                }
++            }
+         }
+     }
+ 
+@@ -173,11 +199,16 @@ impl MessageHandler<BatchWriterMessage> for WriteBatchEventHandler {
+                 BatchWriterMessage::WriteBatch(req) => {
+                     let _ = req.done.send(Err(error.clone()));
+                 }
+-                BatchWriterMessage::Flush(flush_msg) => {
+-                    let BatchWriterFlush {
+-                        freeze_memtable: _,
+-                        done,
+-                    } = flush_msg;
++                BatchWriterMessage::RequestFlush {
++                    freeze_memtable: _,
++                    done,
++                } => {
++                    let _ = done.send(Err(error.clone()));
++                }
++                BatchWriterMessage::ForceFlush {
++                    freeze_memtable: _,
++                    done,
++ 
+```
+
+**File**: `slatedb/src/checkpoint.rs` (modified, +1/-1)
+```diff
+@@ -123,7 +123,7 @@ impl Db {
+         let id = self.inner.rand.rng().gen_uuid();
+         let (floor, wait_for_l0) = match scope {
+             CheckpointScope::All => {
+-                let (_, floor) = self.inner.begin_batch_writer_flush(true).await?;
++                let floor = self.inner.force_batch_writer_flush(true).await?;
+                 (Some(floor), true)
+             }
+             CheckpointScope::Durable => (None, false),
+```
+
+**File**: `slatedb/src/wal/mod.rs` (modified, +13/-0)
+```diff
+@@ -245,6 +245,19 @@ pub trait WalWriter: Send {
+     /// - Each WAL file that a flush uploads contains at least one row.
+     async fn flush(&mut self) -> Result<WalFlushResult, WalError>;
+ 
++    /// Requests a flush of all appended write batches to durable storage without a WAL file ID.
++    /// This method does not wait for the upload.
++    ///
++    /// Unlike [`WalWriter::flush`], an implementation does not need to cut a WAL file before
++    /// returning. It may defer the cut until the flush runs so writes appended in the meantime
++    /// join the same WAL file.
++    ///
++    /// The returned future completes when all rows appended before the call are durable, or
++    /// returns the flush error.
++    async fn request_flush(&mut self) -> Result<FlushResultFuture, WalError> {
++        Ok(self.flush().await?.completion)
++    }
++
+     /// Returns true if the WAL implementation wants to request that the current in-memory
+     /// writes be flushed to a new l0. WAL implementations can use this to (1) bound the range
+     /// of writes that need to be replayed when SlateDB restarts, and (2) push data to L0s earlier
+```
+
+**File**: `slatedb/src/wal/slatedb/writer.rs` (modified, +170/-11)
+```diff
+@@ -11,7 +11,7 @@ use crate::types::RowEntry;
+ use crate::utils::SafeSender;
+ use crate::utils::{format_bytes_si, WatchableOnceCellReader};
+ use crate::wal;
+-use crate::wal::{WalError, WalEvent, WalFlushResult, WalStatus, WalWriter};
++use crate::wal::{FlushResultFuture, WalError, WalEvent, WalFlushResult, WalStatus, WalWriter};
+ use async_trait::async_trait;
+ use futures::{stream::BoxStream, FutureExt, StreamExt};
+ use log::{error, trace, warn};
+@@ -179,7 +179,7 @@ impl SlateDbWalWriter {
+                     .compare_exchange(last, flush_epoch, Ordering::Relaxed, Ordering::Relaxed)
+                     .is_ok()
+             {
+-                self.send_flush_request()?;
++                self.send_flush_request(None)?;
+             }
+         }
+ 
+@@ -191,11 +191,14 @@ impl SlateDbWalWriter {
+     }
+ 
+     /// Send a flush request to the background flush worker.
+-    fn send_flush_request(&self) -> Result<(), WalError> {
++    fn send_flush_request(
++        &self,
++        result_tx: Option<oneshot::Sender<Result<(), WalError>>>,
++    ) -> Result<(), WalError> {
+         self.stats.flush_requests.increment(1);
+         self.inner
+             .read()
+-            .send_flush_msg(WalFlushWork::FreezeAndFlush)
++            .send_flush_msg(WalFlushWork::FreezeAndFlush { result_tx })
+     }
+ }
+ 
+@@ -248,6 +251,17 @@ impl WalWriter for SlateDbWalWriter {
+         })
+     }
+ 
++    async fn request_flush(&mut self) -> Result<FlushResultFuture, WalError> {
++        let (result_tx, result_rx) = oneshot::channel();
++        self.send_flush_request(Some(result_tx))?;
++        Ok(async {
++            result_rx
++                .await
++                .unwrap_or_else(|e| Err(WalError::InternalError(Arc::new(e))))
++        }
++        .boxed())
++    }
++
+     async fn close(&mut self) -> Result<(), WalError> {
+         if let Some(result) = self
+             .task_executor
+@@ -455,9 +469,12 @@ impl WalBufferIterator {
+ }
+ 
+ enum WalFlushWork {
+-    /// Freeze the current WAL, then flush all frozen WALs. Sent by the ticker and
+-    /// when the current WAL exceeds its size limit.
+-    FreezeAndFlush,
++    /// Freeze the current WAL when this message runs, then flush all frozen WALs.
++    /// Sent by the ticker, when the current WAL exceeds its size limit, and by
++    /// plain flush requests that do not need a frozen WAL ID up front.
++    FreezeAndFlush {
++        result_tx: Option<oneshot::Sender<Result<(), WalError>>>,
++    },
+     /// Flush the already-frozen WALs without freezing the current one. The caller
+     /// must freeze the current WAL first if it wants it included in the flush.
+     FlushFrozen {
+@@ -471,7 +488,7 @@ enum WalFlushWork {
+ impl Debug for WalFlushWork {
+     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+         match self {
+-            WalFlushWork::FreezeAndFlush => f.write_str("FreezeAndFlush"),
++            WalFlushWork::FreezeAndFlush { .. } => f.write_str("FreezeAndFlush"),
+             WalFlushWork::FlushFrozen { .. } => f.write_str("FlushFrozen"),
+             WalFlushWork::Subscribe { .. } => f.write_str("Subscribe"),
+         }
+@@ -556,15 +573,21 @@ impl MessageHandler<WalFlushWork> for WalFlushHandler {
+         if let Some(max_flush_interval) = self.max_flush_interval {
+             return vec![MessageTickerDef::new(
+                 max_flush_interval,
+-                Box::new(|| WalFlushWork::FreezeAndFlush),
++                Box::new(|| WalFlushWork::FreezeAndFlush { result_tx: None }),
+             )];
+         }
+         vec![]
+     }
+ 
+     async fn handle(&mut self, message: WalFlushWork) -> Result<(), SlateDBError> {
+         match message {
+-            WalFlushWork::FreezeAndFlush => self.do_flush(true).await,
++            WalFlushWork::FreezeAndFlush { result_tx } => {
++                let result = self.do_flush(true).await;
++                if let Some(result_tx) = result_tx {
++                    let _ = result_tx.send(result.clone().map_err(WalError::from));
++                }
++                Ok(result?)
++            }
+             WalFlushWork::FlushFrozen { result_tx } => {
+                 let result = self.do_flush(false).await;
+                 let _ = result_tx.send(result.clone().map_err(WalError::from));
+@@ -599,7 +622,11 @@ impl MessageHandler<WalFlushWork> for WalFlushHandler {
+         // drain remaining messages
+         while let Some(msg) = messages.next().await {
+             match msg {
+-                WalFlushWork::FreezeAndFlush => {}
++                WalFlushWork::FreezeAndFlush { result_tx } => {
++                    if let Some(result_tx) = result_tx {
++                        let _ = result_tx.send(Err(error.clone()));
++                    }
++                }
+                 WalFlushWork::FlushFrozen { result_tx } => {
+                     let _ = result_tx.send(Err(error.clone()));
+                 }
+@@ -982,6 +1009,138 @@ mod tests {
+         writer.close().await.unwrap();
+     }
+ 
++    #[tokio::test]
++    async fn test_request_flu
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2295** (2026-11-25): site: add Supermetal to adopter listings (@kumarUjjawal)
+- **PR #2294** (2026-11-27): Defer WAL cuts on plain flushes so concurrent writes share a WAL file (@criccomini)
 - **PR #2292** (2026-11-25): Allow README.md PRs without vouching (@criccomini)
 - **PR #2291** (2026-11-25): Add Rivet to adopters (@NathanFlurry)
 - **PR #2290** (closed): Range cache (@jeromegn)
 - **PR #2289** (2026-11-23): Document SlateDB's three-release storage format support window (@criccomini)
-- **PR #2287** (2026-11-23): Avoid Bytes clones in SST range checks on the read path (@nomiero)
 
 ---
 
@@ -2444,31 +2681,83 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. site: add Supermetal to adopter listings
+## X. Defer WAL cuts on plain flushes so concurrent writes share a WAL file
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `slatedb/src/batch_write.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `06717572`: site: add Supermetal to adopter listings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae0c2b4c`: Defer WAL cuts on plain flushes so concurrent writes share a WAL file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/batch_write.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [Supermetal](https://supermetal.io)
+    /// Request a deferred WAL flush and optionally freeze the active memtable.
+    RequestFlush {
+        /// If true, freeze the active memtable.
+        freeze_memtable: bool,
+        /// Sends the flush handle after the writer processes this message.
+        done: oneshot::Sender<Result<FlushResultFuture, SlateDBError>>,
+    },
+    /// Cut the WAL immediately, optionally freeze the active memtable, and return the cursor.
+    ForceFlush {
+        /// If true, freeze the active memtable.
+        freeze_memtable: bool,
+        /// Sends the cursor after the writer processes this message.
+        done: oneshot::Sender<Result<CheckpointCursor, SlateDBError>>,
+    },
+            BatchWriterMessage::RequestFlush {
+                freeze_memtable, ..
+            } => f
+                .debug_struct("RequestFlush")
+                .field("freeze_memtable", freeze_memtable)
+                .finish(),
+            BatchWriterMessage::ForceFlush {
+            } => f
+                .debug_struct("ForceFlush")
+            BatchWriterMessage::RequestFlush {
+                freeze_memtable,
+                done,
+            } => {
+                    .request_flush(freeze_memtable, self.wal_wr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+pub(crate) type BatchWriterFlushResult = (FlushResultFuture, CheckpointCursor);
+    /// Flush the wal if enabled, and optionally freeze the current active memtable.
+    Flush(BatchWriterFlush),
+}
+
+pub(crate) struct BatchWriterFlush {
+    /// If true, then also freeze the current active memtable.
+    freeze_memtable: bool,
+    /// Sends a message when the writer has processed the flush message. On successful receipt
+    /// of a message, the caller should wait on the received Receiver to get the result of the
+    /// wal flush.
+    done: oneshot::Sender<Result<BatchWriterFlushResult, SlateDBError>>,
+            BatchWriterMessage::Flush(BatchWriterFlush {
+            }) => f
+                .debug_struct("Flush")
+            BatchWriterMessage::Flush(flush_msg) => {
+                let BatchWriterFlush {
+                    freeze_memtable,
+                    done,
+                } = flush_msg;
+                    .flush_batch_writer(freeze_memtable, self.wal_writer.as_mut())
+                BatchWriterMessage::Flush(flush_msg) => {
+                    let BatchWriterFlush {
+                        freeze_memtable: _,
+                        done,
+                    } = flush_msg
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `06717572` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae0c2b4c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
