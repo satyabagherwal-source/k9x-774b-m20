@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "394c7561",
+    "sourceVersion": "5fc7f346",
     "license": "Apache-2.0",
-    "contentHash": "0d0455ec528117351b5919162480c35e417dc1b3dc5de51c19a36b7b2fcb157b",
-    "lastHarvestedAt": "2026-11-26T11:39:50.253Z",
+    "contentHash": "bd78262ebe31bcc7efd5f3a58efa1a67fa6c30ca6c1e8fcaed11f108205c2f9c",
+    "lastHarvestedAt": "2026-11-27T22:36:13.996Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {

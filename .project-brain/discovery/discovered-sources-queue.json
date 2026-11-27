@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T22:05:22.705Z",
+  "updated_at": "2026-11-27T22:36:17.986Z",
   "stats": {
-    "total_discovered": 10590,
-    "approved_pending_harvest": 10053,
+    "total_discovered": 10592,
+    "approved_pending_harvest": 10054,
     "harvested_count": 0,
-    "rejected_count": 537,
+    "rejected_count": 538,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10060,
+      "COMMUNITY_AND_EXPERT": 10062,
       "OFFICIAL_DOCUMENTATION": 292,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -229248,6 +229248,43 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
         "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-2E249AEF4A56": {
+      "id": "SRC-2E249AEF4A56",
+      "url": "https://github.com/chaos-mesh/chaos-mesh/pull/5265",
+      "title": "https://github.com/chaos-mesh/chaos-mesh/pull/5265",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:36:17.864Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-EA3DDA86B323": {
+      "id": "SRC-EA3DDA86B323",
+      "url": "http://ec2.amazonaws.com/doc/2016-11-15",
+      "title": "http://ec2.amazonaws.com/doc/2016-11-15",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T22:36:17.986Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
+        "fileName": "chaos-mesh-chaos-mesh-learnings.md"
       }
     }
   }

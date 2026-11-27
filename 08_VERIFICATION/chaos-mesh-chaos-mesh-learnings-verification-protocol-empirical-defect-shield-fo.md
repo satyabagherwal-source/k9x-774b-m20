@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T11:40:01.049Z",
+  "timestamp": "2026-11-27T22:36:18.158Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-chaos-mesh-chaos-mesh-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [chaos-mesh-chaos-mesh-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T11:40:01.049Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T22:36:18.158Z`  
 > **Learning ID**: `LEARN-EVO-chaos-mesh-chaos-mesh-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `394c7561`  
+> **Source Version**: `5fc7f346`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T11:39:49.190Z  
+> **Timestamp**: 2026-11-27T22:36:12.837Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:39:49.186Z  
+> **Harvest Timestamp**: 2026-11-27T22:36:12.603Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7999 stars
+- **Stars / Engagement**: 8001 stars
 
 ---
 
@@ -963,205 +963,273 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26da5ae0` (2026-11-25)
-**Commit Message**: fix(selector): return cloud target encoding errors (#4964)
+### Incident Patch 1: `5fc7f346` (2026-11-27)
+**Commit Message**: fix(controllers): preserve recovery state across retries (#5265)
 
-* fix(api): handle json.Marshal error in AWSSelector, GCPSelector, AzureSelector Id()
-
-The Id() methods in AWSSelector, GCPSelector, and AzureSelector were
-silently discarding the error from json.Marshal using the blank
-identifier (_). This meant that if marshaling ever failed, the method
-would return an empty string with no indication of why, making it
-impossible to diagnose selector identity issues.
-
-Since these selectors contain only basic Go types that json.Marshal
-cannot fail on, the error is truly impossible in practice. Replace the
-silent discard with an explicit panic so that any future change that
-introduces an unmarshalable field is caught immediately rather than
-silently producing an empty string.
-
-Signed-off-by: Pankaj231123 <[REDACTED_EMAIL]>
-
-* fix(selector): return cloud target encoding errors
+* fix(controllers): preserve recovery state across retries
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-* docs(changelog): note cloud selector ID handling
+* docs(changelog): link the controller fixes
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+* docs(changelog): consolidate controller recovery fixes
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+* fix(controllers): clean cleared serial children and preserve azure diskdetach recovery phase
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ---------
 
-Signed-off-by: Pankaj231123 <[REDACTED_EMAIL]>
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -79,6 +79,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+@@ -82,6 +82,11 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
  
- ### Fixed
- 
-+- Report target ID encoding errors before creating records for AWSChaos, AzureChaos, and GCPChaos. Go callers that used `Id()` on a cloud selector now call it on the target returned by `Select()`. [#4964](https://github.com/chaos-mesh/chaos-mesh/pull/4964)
+ - Fix intermittent Dashboard errors when pausing or resuming experiments and schedules during concurrent Kubernetes updates. [#5272](https://github.com/chaos-mesh/chaos-mesh/pull/5272)
+ - Report target ID encoding errors before creating records for AWSChaos, AzureChaos, and GCPChaos. Go callers that used `Id()` on a cloud selector now call it on the target returned by `Select()`. [#4964](https://github.com/chaos-mesh/chaos-mesh/pull/4964)
++- Preserve existing Schedule runs after failed writes and return errors for missing experiment specs. Retain AzureChaos and BlockChaos settings in Workflow Schedule templates and retry failed Schedule creation. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
++- Preserve existing parallel and conditional Workflow branches on retry and wait for stale children to finish deleting. Scope cleanup and StatusChecks to the owning namespace, surface StatusCheck creation errors, and allow failed checks to abort Workflows without existing annotations. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
++- Keep experiment records attached to their original Kubernetes UID during concurrent writes and honor a zero or lowered record-event limit. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
++- Preserve the recovery phase when NetworkChaos partition, HTTPChaos, or IOChaos encounters an invalid target ID or when DNSChaos cannot list DNS Pods. Finish HTTPChaos recovery for stopped Pods without child configuration. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
++- Report a missing Azure credentials Secret name and handle VMs without attached data disks. Reject malformed GCPChaos recovery records before issuing requests and keep JVMChaos uninjected when rule generation fails. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
  - Return an error when the Helm chart repository responds with a non-success HTTP status. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
  - Set the Pod owner reference on newly created PodIOChaos resources even when the Kubernetes client omits Pod type metadata. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
  - Return a validation error when a Workflow chaos template omits its experiment specification. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
 ```
 
-**File**: `api/v1alpha1/awschaos_types.go` (modified, +1/-13)
+**File**: `api/v1alpha1/chaos_contract_test.go` (added, +152/-0)
 ```diff
-@@ -15,11 +15,7 @@
- 
- package v1alpha1
- 
--import (
--	"encoding/json"
--
--	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
--)
-+import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 
- // +kubebuilder:object:root=true
- // +kubebuilder:printcolumn:name="action",type=string,JSONPath=`.spec.action`
-@@ -115,11 +111,3 @@ func (obj *AWSChaos) GetSelectorSpecs() map[string]any {
- 		".": &obj.Spec.AWSSelector,
- 	}
- }
--
--func (selector *AWSSelector) Id() string {
--	// TODO: handle the error here
--	// or ignore it is enough ?
--	json, _ := json.Marshal(selector)
--
--	return string(json)
--}
+@@ -0,0 +1,152 @@
++// Copyright Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package v1alpha1
++
++import (
++	"encoding/json"
++	"fmt"
++	"strings"
++	"time"
++
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++)
++
++var _ = Describe("Chaos API contracts", func() {
++	DescribeTable("preserves the experiment spec through Workflow and Schedule templates",
++		func(ctx SpecContext, kind TemplateType, field, actionSpec string) {
++			scheme := runtime.NewScheme()
++			Expect(AddToScheme(scheme)).To(Succeed())
++			obj, err := scheme.New(SchemeGroupVersion.WithKind(string(kind)))
++			Expect(err).NotTo(HaveOccurred())
++			expected, ok := obj.(InnerObject)
++			Expect(ok).To(BeTrue())
++			fixture := json.NewDecoder(strings.NewReader(actionSpec))
++			fixture.DisallowUnknownFields()
++			Expect(fixture.Decode(expected)).To(Succeed())
++			Expect(json.Unmarshal([]byte(`{"spec":{"duration":"2m","remoteCluster":"edge"}}`), expected)).To(Succeed())
++
++			originalTemplate := []byte(fmt.Sprintf(`{%q:{"duration":"1m"}}`, field))
++			workflow := &EmbedChaos{}
++			Expect(json.Unmarshal(originalTemplate, workflow)).To(Succeed())
++			Expect(workflow.RestoreChaosSpec(expected)).To(Succeed())
++			workflowChaos, err := workflow.SpawnNewObject(kind)
++			Expect(err).NotTo(HaveOccurred())
++			Expect(workflowChaos).To(Equal(expected))
++
++			schedule := &ScheduleItem{}
++			Expect(json.Unmarshal(originalTemplate, schedule)).To(Succeed())
++			Expect(schedule.RestoreChaosSpec(expected)).To(Succeed())
++			scheduleChaos, err := schedule.SpawnNewObject(ScheduleTemplateType(kind))
++			Expect(err).NotTo(HaveOccurred())
++			Expect(scheduleChaos).To(Equal(expected))
++
++			list, err := workflow.SpawnNewList(kind)
++			Expect(err).NotTo(HaveOccurred())
++			Expect(json.Unmarshal([]byte(`{"items":[{"metadata":{"name":"first"}},{"metadata":{"name":"second"}}]}`), list)).To(Succeed())
++			items := list.GetItems()
++			Expect(items).To(HaveLen(2))
++			Expect(items[0]).To(BeAssignableToTypeOf(expected))
++			Expect(items[1]).To(BeAssignableToTypeOf(expected))
++			Expect(items[0].GetName()).To(Equal("first"))
++			Expect(items[1].GetName()).To(Equal("second"))
++
++			By("admitting metadata updates while protecting the experiment spec")
++			expected.SetName("experiment")
++			Expect(expected.Default(ctx, expected)).To(Succeed())
++			Expect(expected.ValidateCreate(ctx, expected)).Error().NotTo(HaveOccurred())
++			updated := expected.DeepCopyObject().(InnerObject)
++			updated.SetAnnotations(map[string]string{"test": "updated"})
++			Expect(expected.ValidateUpdate(ctx, expected, updated)).Error().NotTo(HaveOccurred())
++			Expect(expected.ValidateDelete(ctx, expected)).Error().NotTo(HaveOccurred())
++
++			Expect(json.Unmarshal([]byte(`{"spec":{"duration":"3m"}}`), updated)).To(Succeed())
++			Expect(expected.ValidateUpdate(ctx, expected, updated)).Error().To(MatchError(ErrCanNotUpdateChaos))
++
++			unrelated := &corev1.Pod{}
++			Expect(expected.ValidateCreate(ctx, unrelated)).Error().To(MatchError(ContainSubstring("expected type")))
++			Expect(expected.ValidateUpdate(ctx, unrelated, expected)).Error().To(MatchError(ContainSubstring("expected type")))
++			Expect(expected.ValidateUpdate(ctx, expected, unrelated)).Error().To(MatchError(ContainSubstring("expected type")))
++			Expect(expected.ValidateDelete(ctx, unrelated)).Error().To(MatchError(ContainSubstring("expected type")))
++
++			By("measuring the duration from the creation timestamp")
++			start := time.Date(2026, time.January, 1, 0, 0, 0, 0, time.UTC)
++			expected.SetCreationTimestamp(metav1.NewTime(start))
++			checkDuration := func(elapsed, wantRemaining time.Duration, wantExpired bool) {
++				GinkgoHelper()
++				expired, remaining, err := expected.DurationExceeded(start.Add(elapsed))
++				Expect(err).NotTo(HaveOccurred())
++				Expect(expired).To(Equal(wantExpired))
++				Expect(remaining).To(Equal(wantRemaining))
++			}
++			checkDuration(time.Minute, time.Minute, false)
++			checkDuration(2*time.Minute, 0, false)
++			checkDuration(3*time.Minute, 0, true)
++			Expect(json.Unmarshal([]byte(`{"spec":{"duration":null}}`), expected)).To(Succeed())
++			checkDuration(3*time.Minute, 0, false)
++			Expect(json.Unmarshal([]byte(`{"spec":{"duration":"invalid"}}`), expected)).To(Succeed())
++			expired, remaining, err := expected.DurationExceeded(start)
++			Expect(err).To(HaveOccurred())
+
 ```
 
-**File**: `api/v1alpha1/azurechaos_types.go` (modified, +1/-13)
+**File**: `api/v1alpha1/zz_generated.schedule.chaosmesh.go` (modified, +45/-0)
 ```diff
-@@ -15,11 +15,7 @@
- 
- package v1alpha1
- 
--import (
--	"encoding/json"
--
--	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
--)
-+import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 
- // +kubebuilder:object:root=true
- // +kubebuilder:printcolumn:name="action",type=string,JSONPath=`.spec.action`
-@@ -108,11 +104,3 @@ func (obj *AzureChaos) GetSelectorSpecs() map[string]any {
- 		".": &obj.Spec.AzureSelector,
- 	}
- }
--
--func (selector *AzureSelector) Id() string {
--	// TODO: handle the error here
--	// or ignore it is enough ?
--	json, _ := json.Marshal(selector)
--
--	return string(json)
--}
+@@ -64,62 +64,107 @@ var allScheduleTemplateType = []ScheduleTemplateType{
+ func (it *ScheduleItem) SpawnNewObject(templateType ScheduleTemplateType) (GenericChaos, error) {
+ 	switch templateType {
+ 	case ScheduleTypeAWSChaos:
++		if it.AWSChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing AWSChaos spec")
++		}
+ 		result := AWSChaos{}
+ 		result.Spec = *it.AWSChaos
+ 		return &result, nil
+ 	case ScheduleTypeAzureChaos:
++		if it.AzureChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing AzureChaos spec")
++		}
+ 		result := AzureChaos{}
+ 		result.Spec = *it.AzureChaos
+ 		return &result, nil
+ 	case ScheduleTypeBlockChaos:
++		if it.BlockChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing BlockChaos spec")
++		}
+ 		result := BlockChaos{}
+ 		result.Spec = *it.BlockChaos
+ 		return &result, nil
+ 	case ScheduleTypeDNSChaos:
++		if it.DNSChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing DNSChaos spec")
++		}
+ 		result := DNSChaos{}
+ 		result.Spec = *it.DNSChaos
+ 		return &result, nil
+ 	case ScheduleTypeGCPChaos:
++		if it.GCPChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing GCPChaos spec")
++		}
+ 		result := GCPChaos{}
+ 		result.Spec = *it.GCPChaos
+ 		return &result, nil
+ 	case ScheduleTypeHTTPChaos:
++		if it.HTTPChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing HTTPChaos spec")
++		}
+ 		result := HTTPChaos{}
+ 		result.Spec = *it.HTTPChaos
+ 		return &result, nil
+ 	case ScheduleTypeIOChaos:
++		if it.IOChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing IOChaos spec")
++		}
+ 		result := IOChaos{}
+ 		result.Spec = *it.IOChaos
+ 		return &result, nil
+ 	case ScheduleTypeJVMChaos:
++		if it.JVMChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing JVMChaos spec")
++		}
+ 		result := JVMChaos{}
+ 		result.Spec = *it.JVMChaos
+ 		return &result, nil
+ 	case ScheduleTypeKernelChaos:
++		if it.KernelChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing KernelChaos spec")
++		}
+ 		result := KernelChaos{}
+ 		result.Spec = *it.KernelChaos
+ 		return &result, nil
+ 	case ScheduleTypeNetworkChaos:
++		if it.NetworkChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing NetworkChaos spec")
++		}
+ 		result := NetworkChaos{}
+ 		result.Spec = *it.NetworkChaos
+ 		return &result, nil
+ 	case ScheduleTypePhysicalMachineChaos:
++		if it.PhysicalMachineChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing PhysicalMachineChaos spec")
++		}
+ 		result := PhysicalMachineChaos{}
+ 		result.Spec = *it.PhysicalMachineChaos
+ 		return &result, nil
+ 	case ScheduleTypePodChaos:
++		if it.PodChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing PodChaos spec")
++		}
+ 		result := PodChaos{}
+ 		result.Spec = *it.PodChaos
+ 		return &result, nil
+ 	case ScheduleTypeStressChaos:
++		if it.StressChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing StressChaos spec")
++		}
+ 		result := StressChaos{}
+ 		result.Spec = *it.StressChaos
+ 		return &result, nil
+ 	case ScheduleTypeTimeChaos:
++		if it.TimeChaos == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing TimeChaos spec")
++		}
+ 		result := TimeChaos{}
+ 		result.Spec = *it.TimeChaos
+ 		return &result, nil
+ 	case ScheduleTypeWorkflow:
++		if it.Workflow == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing Workflow spec")
++		}
+ 		result := Workflow{}
+ 		result.Spec = *it.Workflow
+ 		return &result, nil
 ```
 
-**File**: `api/v1alpha1/gcpchaos_types.go` (modified, +1/-13)
+**File**: `cmd/chaos-builder/generate_test.go` (added, +134/-0)
 ```diff
-@@ -15,11 +15,7 @@
- 
- package v1alpha1
- 
--import (
--	"encoding/json"
--
--	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
--)
-+import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 
- // +kubebuilder:object:root=true
- // +kubebuilder:printcolumn:name="action",type=string,JSONPath=`.spec.action`
-@@ -100,14 +96,6 @@ func (obj *GCPChaos) GetSelectorSpecs() map[string]any {
- 	}
- }
- 
--func (selector *GCPSelector) Id() string {
--	// TODO: handle the error here
--	// or ignore it is enough ?
--	json, _ := json.Marshal(selector)
--
--	return string(json)
--}
--
- // GCPChaosStatus represents the status of a GCPChaos
- type GCPChaosStatus struct {
- 	ChaosStatus `json:",inline"`
-```
-
-**File**: `pkg/selector/aws/selector.go` (modified, +3/-2)
-```diff
-@@ -20,12 +20,13 @@ import (
- 	"context"
- 
- 	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
-+	"github.com/chaos-mesh/chaos-mesh/pkg/selector/internal/cloud"
- )
- 
- type SelectImpl struct{}
- 
--func (impl *SelectImpl) Select(_ context.Context, awsSelector *v1alpha1.AWSSelector) ([]*v1alpha1.AWSSelector, error) {
--	return []*v1alpha1.AWSSelector{awsSelector}, nil
-+func (impl *SelectImpl) Select(_ context.Context, awsSelector *v1alpha1.AWSSelector) ([]cloud.Target, error) {
-+	return cloud.Select(awsSelector)
- }
- 
- func New() *SelectImpl {
-```
-
-**File**: `pkg/selector/azure/selector.go` (modified, +3/-2)
-```diff
-@@ -20,12 +20,13 @@ import (
- 	"context"
- 
- 	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
-+	"github.com/chaos-mesh/chaos-mesh/pkg/selector/internal/cloud"
- )
- 
- type SelectImpl struct{}
- 
--func (impl *SelectImpl) Select(_ context.Context, azureSelector *v1alpha1.AzureSelector) ([]*v1alpha1.AzureSelector, error) {
--	return []*v1alpha1.AzureSelector{azureSelector}, nil
-+func (impl *SelectImpl) Select(_ context.Context, azureSelector *v1alpha1.AzureSelector) ([]cloud.Target, error) {
-+	return cloud.Select(azureSelector)
- }
- 
- func New() *SelectImpl {
-```
-
-**File**: `pkg/selector/gcp/selector.go` (modified, +3/-2)
-```diff
-@@ -20,12 +20,13 @@ import (
- 	"context"
- 
- 	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
-+	"github.com/chaos-mesh/chaos-mesh/pkg/selector/internal/cloud"
- )
- 
- type SelectImpl struct{}
- 
--func (impl *SelectImpl) Select(_ context.Context, gcpSelector *v1alpha1.GCPSelector) ([]*v1alpha1.GCPSelector, error) {
--	return []*v1alpha1.GCPSelector{gcpSelector}, nil
-+func (impl *SelectImpl) Select(_ context.Context, gcpSelector *v1alpha1.GCPSelector) ([]cloud.Target, error) {
-+	return cloud.Select(gcpSelector)
- }
- 
- func New() *SelectImpl {
-```
-
-**File**: `pkg/selector/internal/cloud/selector.go` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+// Copyright 2026 Chaos Mesh Authors.
+@@ -0,0 +1,134 @@
++// Copyright 2021 Chaos Mesh Authors.
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -1176,214 +1244,465 @@ Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
 +// limitations under the License.
 +//
 +
-+// Package cloud encodes cloud selectors as target IDs for experiment records.
-+package cloud
++package main
 +
 +import (
-+	"encoding/json"
-+	"fmt"
++	"go/parser"
++	"go/token"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	. "github.com/onsi/gomega"
 +)
 +
-+type Target string
++func TestGenerateBuildsAPIAndTemplateArtifacts(t *testing.T) {
++	g := NewWithT(t)
++	root := t.TempDir()
++	apiDir := filepath.Join(root, "api", "v1alpha1")
++	uiDir := filepath.Join(root, "ui", "app", "src", "api")
++	g.Expect(os.MkdirAll(apiDir, 0o755)).To(Succeed())
++	g.Expect(os.MkdirAll(uiDir, 0o755)).To(Succeed())
 +
-+//revive:disable-next-line:var-naming Preserve the selector.Target identity contract.
-+func (t Target) Id() string {
-+	return string(t)
-+}
-+
-+func Select(spec any) ([]Target, error) {
-+	id, err := json.Marshal(spec)
-+	if err != nil {
-+		return nil, fmt.Errorf("encode cloud selector %T: %w", spec, err)
++	fixtures := map[string]string{
++		"pod.go": `package v1alpha1
++// +chaos-mesh:experiment
++// +chaos-mesh:oneshot=in.Spec.Action == PodKillAction
++type PodChaos struct{}`,
++		"http.go": `package v1alpha1
++// +chaos-mesh:experiment
++// +chaos-mesh:webhook:enableUpdate
++type HTTPChaos struct{}`,
++		"workflow.go": `package v1alpha1
++// +chaos-mesh:experiment
++type Workflow struct{}`,
++		"statuscheck.go": `package v1alpha1
++// +chaos-mesh:base
++type StatusCheck struct{}`,
++		"zz_generated.previous.go": "this invalid Go file must be ignored",
++		"readme.txt":               "this file must be ignored",
 +	}
-+	return []Target{Target(id)}, nil
++	for name, source := range fixtures {
++		g.Expect(os.WriteFile(filepath.Join(apiDir, name), []byte(source), 0o600)).To(Succeed())
++	}
++	g.Expect(generate(root)).To(Succeed())
++
++	readGo := func(name string) string {
++		t.Helper()
++		path := filepath.Join(apiDir, name)
++		content, err := os.ReadFile(path)
++		g.Expect(err).NotTo(HaveOccurred())
++		_, err = parser.ParseFile(token.NewFileSet(), path, content, parser.AllErrors)
++		g.Expect(err).NotTo(HaveOccurred())
++		return string(content)
++	}
++	api := readGo("zz_generated.chaosmesh.go")
++	g.Expect(api).To(ContainSubstring("func (in *PodChaos) IsOneShot()"))
++	g.Expect(api).To(ContainSubstring("if in.Spec.Action == PodKillAction"))
++	g.Expect(api).To(ContainSubstring("func (in *StatusCheck) ValidateCreate("))
++	for kind, allowsUpdate := range map[string]bool{"HTTPChaos": true, "PodChaos": false} {
++		_, function, found := strings.Cut(api, "func (in *"+kind+") ValidateUpdate(")
++		g.Expect(found).To(BeTrue(), "expected validation method for %s", kind)
++		body, _, found := strings.Cut(function, "\n}")
++		g.Expect(found).To(BeTrue())
++		g.Expect(strings.Contains(body, "ErrCanNotUpdateChaos")).To(Equal(!allowsUpdate), "unexpected update policy for %s", kind)
++	}
++	g.Expect(api).To(ContainSubstring("allScheduleItem.register(KindWorkflow"))
++	g.Expect(api).NotTo(ContainSubstring("func (in *Workflow) IsOneShot()"))
++
++	webhookTests := readGo("zz_generated.chaosmesh_test.go")
++	g.Expect(webhookTests).To(ContainSubstring("func TestPodChaosGetDuration("))
++	workflowTests := readGo("zz_generated.workflow.chaosmesh_test.go")
++	g.Expect(workflowTests).To(ContainSubstring("func TestChaosKindMapShouldContainsHTTPChaos("))
++
++	workflow := readGo("zz_generated.workflow.chaosmesh.go")
++	g.Expect(workflow).To(ContainSubstring("TypePodChaos TemplateType"))
++	g.Expect(workflow).To(ContainSubstring("json:\"httpChaos,omitempty\""))
++	g.Expect(workflow).NotTo(ContainSubstring("TypeWorkflow TemplateType"))
++	schedule := readGo("zz_generated.schedule.chaosmesh.go")
++	g.Expect(schedule).To(ContainSubstring("ScheduleTypeWorkflow ScheduleTemplateType"))
++	g.Expect(schedule).To(ContainSubstring("case ScheduleTypeWorkflow:"))
++	g.Expect(schedule).To(ContainSubstring("*it.Workflow = chaos.Spec"))
++	g.Expect(schedule).NotTo(ContainSubstring("ScheduleTypeStatusCheck"))
++
++	frontend, err := os.ReadFile(filepath.Join(uiDir, "zz_generated.frontend.chaos-mesh.ts"))
++	g.Expect(err).NotTo(HaveOccurred())
++	g.Expect(string(frontend)).To(ContainSubstring("['HTTPChaos', 'httpChaos']"))
++	g.Expect(string(frontend)).To(ContainSubstring("['PodChaos', 'podChaos']"))
++	g.Expect(string(frontend)).NotTo(ContainSubstring("['Workflow'"))
 +}
++
++func TestGeneratePreservesOutputsWhenInputIsInvalid(t *testing.T) {
++	for _, example := range []struct{ name, source, wantErr string }{
++		{"invalid Go syntax", "package v1alpha1\ntype broken struct {", "broken.go"},
++		{"marker on a function", "package v1alpha1\n// +chaos-mesh:experiment\nfunc f() {}", "node is not a *ast.GenDecl"},
++		{"marker on a variable", "package v1alpha1\n// +chaos-mesh:base\nvar v = 1", "node.Tok is not token.TYPE"},
++	} {
++		t.Run(example.name, func(t *testing.T) {
++			g := NewWithT(t)
++			root := t.TempDir()
++			apiDir := filepath.Join(root, "api", "v1alpha1")
++			g.Expect(os.Mkd
 ```
 
----
-
-### Incident Patch 2: `d9c12d3e` (2026-11-26)
-**Commit Message**: fix(dashboard): retry pause and resume on write conflicts (#5272)
-
-* test(dashboard): reproduce pause and start write conflicts
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-* fix(dashboard): retry pause and resume on write conflicts
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-* docs(changelog): link the Dashboard conflict fix
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `cmd/chaos-builder/main.go` (modified, +30/-54)
 ```diff
-@@ -79,6 +79,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- 
- ### Fixed
- 
-+- Fix intermittent Dashboard errors when pausing or resuming experiments and schedules during concurrent Kubernetes updates. [#5272](https://github.com/chaos-mesh/chaos-mesh/pull/5272)
- - Report target ID encoding errors before creating records for AWSChaos, AzureChaos, and GCPChaos. Go callers that used `Id()` on a cloud selector now call it on the target returned by `Select()`. [#4964](https://github.com/chaos-mesh/chaos-mesh/pull/4964)
- - Return an error when the Helm chart repository responds with a non-success HTTP status. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
- - Set the Pod owner reference on newly created PodIOChaos resources even when the Kubernetes client omits Pod type metadata. [#5256](https://github.com/chaos-mesh/chaos-mesh/pull/5256)
-```
-
-**File**: `pkg/dashboard/apiserver/experiment/experiment.go` (modified, +14/-12)
-```diff
-@@ -531,19 +531,21 @@ func (s *Service) start(c *gin.Context) {
+@@ -42,6 +42,13 @@ type metadata struct {
  }
  
- func patchExperiment(ctx context.Context, kubeCli client.Client, record *core.Experiment, annotations map[string]string) error {
--	chaos, err := getChaosForExperiment(ctx, kubeCli, record)
--	if err != nil {
--		return err
--	}
-+	return retry.RetryOnConflict(retry.DefaultRetry, func() error {
-+		chaos, err := getChaosForExperiment(ctx, kubeCli, record)
-+		if err != nil {
-+			return err
-+		}
+ func main() {
++	if err := generate("."); err != nil {
++		log.Error(err, "generate chaos API")
++		os.Exit(1)
++	}
++}
++
++func generate(root string) error {
+ 	var implCode strings.Builder
+ 	implCode.WriteString(boilerplate + implImport)
  
--	before := chaos.DeepCopyObject().(client.Object)
--	currentAnnotations := chaos.GetAnnotations()
--	if currentAnnotations == nil {
--		currentAnnotations = make(map[string]string, len(annotations))
--	}
--	maps.Copy(currentAnnotations, annotations)
--	chaos.SetAnnotations(currentAnnotations)
--	return kubeCli.Patch(ctx, chaos, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
-+		before := chaos.DeepCopyObject().(client.Object)
-+		currentAnnotations := chaos.GetAnnotations()
-+		if currentAnnotations == nil {
-+			currentAnnotations = make(map[string]string, len(annotations))
-+		}
-+		maps.Copy(currentAnnotations, annotations)
-+		chaos.SetAnnotations(currentAnnotations)
-+		return kubeCli.Patch(ctx, chaos, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
-+	})
- }
+@@ -57,11 +64,11 @@ func main() {
  
- // @Summary Get the status of all experiments.
-```
-
-**File**: `pkg/dashboard/apiserver/resource_identity_test.go` (modified, +41/-1)
-```diff
-@@ -78,11 +78,13 @@ func TestUIDScopedWritesRejectReplacementAfterLookup(t *testing.T) {
- 				key := client.ObjectKeyFromObject(original)
- 				path := "/" + resource.endpoint + "/uid"
- 				body := ""
-+				expectedStatus := http.StatusInternalServerError
- 				if method == http.MethodPut {
- 					if resource.endpoint == "workflows" {
- 						body = strings.Replace(resource.body, `"entry":"wait"`, `"entry":"other"`, 1)
- 					} else {
- 						path = "/" + resource.endpoint + "/pause/uid"
-+						expectedStatus = http.StatusNotFound
+ 	frontendGenerator := newFrontendCodeGenerator(nil)
+ 
+-	filepath.Walk("./api/v1alpha1", func(path string, info os.FileInfo, err error) error {
++	apiDir := filepath.Join(root, "api", "v1alpha1")
++	err := filepath.Walk(apiDir, func(path string, info os.FileInfo, err error) error {
+ 		log := log.WithValues("file", path)
+ 
+ 		if err != nil {
+-			log.Error(err, "fail to walk in directory")
+ 			return err
+ 		}
+ 		if info.IsDir() {
+@@ -77,7 +84,6 @@ func main() {
+ 		fset := token.NewFileSet()
+ 		file, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
+ 		if err != nil {
+-			log.Error(err, "fail to parse file")
+ 			return err
+ 		}
+ 
+@@ -102,11 +108,9 @@ func main() {
+ 						if err != nil {
+ 							return err
+ 						}
+-						if strings.Contains(comment.Text, "+chaos-mesh:base") {
+-							if baseType.Name.Name != "Workflow" {
+-								implCode.WriteString(generateImpl(baseType.Name.Name, oneShotExp, false, enableUpdate))
+-								initImpl.WriteString(generateInit(baseType.Name.Name, false))
+-							}
++						if baseType.Name.Name != "Workflow" {
++							implCode.WriteString(generateImpl(baseType.Name.Name, oneShotExp, false, enableUpdate))
++							initImpl.WriteString(generateInit(baseType.Name.Name, false))
+ 						}
+ 						continue out
  					}
- 				}
+@@ -143,61 +147,33 @@ func main() {
  
-@@ -119,7 +121,7 @@ func TestUIDScopedWritesRejectReplacementAfterLookup(t *testing.T) {
- 					},
- 				}, nil)
+ 		return nil
+ 	})
++	if err != nil {
++		return errors.Wrap(err, "read chaos API declarations")
++	}
  
--				apiRequest(t, router, method, path, body, http.StatusInternalServerError)
-+				apiRequest(t, router, method, path, body, expectedStatus)
- 				require.NotNil(t, replacement, "request must reach the Kubernetes mutation")
- 				actual := replacement.DeepCopyObject().(client.Object)
- 				require.NoError(t, kube.Get(t.Context(), key, actual))
-@@ -129,6 +131,44 @@ func TestUIDScopedWritesRejectReplacementAfterLookup(t *testing.T) {
+ 	implCode.WriteString(fmt.Sprintf(`
+ func init() {
+ %s
+ %s
+ }
+ `, initImpl.String(), scheduleImpl.String()))
+-	file, err := os.Create("./api/v1alpha1/zz_generated.chaosmesh.go")
+-	if err != nil {
+-		log.Error(err, "fail to create file")
+-		os.Exit(1)
+-	}
+-	fmt.Fprint(file, implCode.String())
+-	file.Close()
+-
+ 	testCode.WriteString(testInit)
+-	file, err = os.Create("./api/v1alpha1/zz_generated.chaosmesh_test.go")
+-	if err != nil {
+-		log.Error(err, "fail to create file")
+-		os.Exit(1)
+-	}
+-	fmt.Fprint(file, testCode.String())
+-	file.Close()
+-
+-	file, err = os.Create("./api/v1alpha1/zz_generated.workflow.chaosmesh.go")
+-	if err != nil {
+-		log.Error(err, "fail to create file")
+-		os.Exit(1)
+-	}
+-	fmt.Fprint(file, workflowGenerator.Render())
+-	file.Close()
+-
+-	file, err = os.Create("./api/v1alpha1/zz_generated.workflow.chaosmesh_test.go")
+-	if err != nil {
+-		log.Error(err, "fail to create file")
+-		os.Exit(1)
+-	}
+-	fmt.Fprint(file, workflowTestGenerator.Render())
+-	file.Close()
+-
+-	file, err = os.Create("./api/v1alpha1/zz_generated.schedule.chaosmesh.go")
+-	if err != nil {
+-		log.Error(err, "fail to create file")
+-		os.Exit(1)
+-	}
+-	fmt.Fprint(file, scheduleGenerator.Render())
+-	file.Close()
+-
+-	file, err = os.Create("./ui/app/src/api/zz_generated.frontend.chaos-mesh.ts")
+-	if err != nil {
+-		log.Error(err, "fail to create file")
+-		os.Exit(1)
++	for _, output := range []struct {
++		path    string
++		content string
++	}{
++		{filepath.Join(apiDir, "zz_generated.chaosmesh.go"), implCode.String()},
++		{filepath.Join(apiDir, "zz_generated.chaosmesh_test.go"), testCode.String()},
++		{filepath.Join(apiDir, "zz_generated.workflow.chaosmesh.go"), workflowGenerator.Render()},
++		{filepath.Join(apiDir, "zz_generated.workflow.chaosmesh_test.go"), workflowTestGenerator.Render()},
++		{filepath.Join(apiDir, "zz_generated.schedule.chaosmesh.go"), scheduleGenerator.Render()},
++		{filepath.Join(root, "ui", "app", "src", "api", "zz_generated.frontend.chaos-mesh.ts"), frontendGenerator.Render()},
++	} {
++		if err := os.WriteFile(output.path, []byte(output.content), 0o666); err != nil {
++			return errors.Wrapf(err, "write %s", output.path)
++		}
  	}
+-	fmt.Fprint(file, frontendGenerator.Render())
+-	file.Close()
++	return nil
  }
  
-+func TestPauseAndStartWithConcurrentUpdate(t *testing.T) {
-+	for _, resource := range apiResources()[:2] {
-+		for _, action := range []struct{ name, before, after string }{
-+			{"pause", "false", "true"},
-+			{"start", "true", "false"},
-+		} {
-+			t.Run(resource.endpoint+"/"+action.name, func(t *testing.T) {
-+				original := resource.object.DeepCopyObject().(client.Object)
-+				require.NoError(t, json.Unmarshal([]byte(resource.body), original))
-+				original.GetAnnotations()[v1alpha1.PauseAnnotationKey] = action.before
-+				key := client.ObjectKeyFromObject(original)
-+
-+				firstPatch := true
-+				router, kube := apiRouter(t, []client.Object{original}, interceptor.Funcs{
-+					Patch: func(ctx context.Context, kube client.WithWatch, obj client.Object, patch client.Patch, opts ...client.PatchOption) error {
-+						if firstPatch {
-+							firstPatch = false
-+							current := original.DeepCopyObject().(client.Object)
-+							require.NoError(t, kube.Get(ctx, key, current))
-+							current.GetAnnotations()["parallel"] = "preserved"
-+							require.NoError(t, kube.Update(ctx, current))
-+						}
-+						return kube.Patch(ctx, obj, patch, opts...)
-+					},
-+				}, nil)
-+
-+				apiRequest(t, router, http.MethodPut, "/"+resource.endpoint+"/"+action.name+"/uid", "", http.StatusOK)
-+				require.NoError(t, kube.Get(t.Context(), key, original))
-+				require.Equal(t, map[string]string{
-+					"keep":                      "value",
-+					"parallel":                  "preserved",
-+					v1alpha1.PauseAnnotationKey: action.after,
-+				}, original.GetAnnotations())
-+			})
-+		}
-+	}
-+}
-+
- func TestForceDeleteExperimentRetriesOnlyAgainstOriginalUID(t *testing.T) {
- 	for _, mode := range []string{"concurrent update", "replacement"} {
- 		t.Run(mode, func(t *testing.T) {
+ func getType(fset *token.FileSet, node ast.Node, comment *ast.Comment) (*ast.TypeSpec, error) {
 ```
 
-**File**: `pkg/dashboard/apiserver/schedule/schedule.go` (modified, +15/-12)
+**File**: `cmd/chaos-builder/schedule.go` (modified, +3/-0)
 ```diff
-@@ -31,6 +31,7 @@ import (
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/client-go/util/retry"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
- 
-@@ -490,16 +491,18 @@ func (s *Service) startSchedule(c *gin.Context) {
+@@ -184,6 +184,9 @@ func generateScheduleItem(typeName string) string {
  }
  
- func patchSchedule(ctx context.Context, kubeCli client.Client, record *core.Schedule, annotations map[string]string) error {
--	sch, err := getSchedule(ctx, kubeCli, record)
+ const scheduleFillingEntryTemplate = `	case ScheduleType{{.Type}}:
++		if it.{{.Type}} == nil {
++			return nil, errors.Wrap(errInvalidValue, "missing {{.Type}} spec")
++		}
+ 		result := {{.Type}}{}
+ 		result.Spec = *it.{{.Type}}
+ 		return &result, nil
+```
+
+**File**: `controllers/chaosimpl/awschaos/lifecycle_test.go` (added, +165/-0)
+```diff
+@@ -0,0 +1,165 @@
++// Copyright 2021 Chaos Mesh Authors.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++//
++
++package awschaos_test
++
++import (
++	"fmt"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"testing"
++
++	"github.com/go-logr/logr"
++	. "github.com/onsi/gomega"
++	corev1 "k8s.io/api/core/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++
++	"github.com/chaos-mesh/chaos-mesh/api/v1alpha1"
++	"github.com/chaos-mesh/chaos-mesh/controllers/chaosimpl/awschaos/detachvolume"
++	"github.com/chaos-mesh/chaos-mesh/controllers/chaosimpl/awschaos/ec2restart"
++	"github.com/chaos-mesh/chaos-mesh/controllers/chaosimpl/awschaos/ec2stop"
++	impltypes "github.com/chaos-mesh/chaos-mesh/controllers/chaosimpl/types"
++	"github.com/chaos-mesh/chaos-mesh/pkg/selector/aws"
++)
++
++func TestEC2ActionsAndRecovery(t *testing.T) {
++	for _, scenario := range []struct {
++		name, apply, recover string
++	}{
++		{"stop", "StopInstances", "StartInstances"},
++		{"restart", "RebootInstances", ""},
++		{"detach", "DetachVolume", "AttachVolume"},
++	} {
++		t.Run(scenario.name, func(t *testing.T) {
++			g := NewWithT(t)
++			requests := make(chan url.Values, 8)
++			reject := make(chan string, 1)
++			api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if r.Method != http.MethodPost || r.ParseForm() != nil || r.Header.Get("Authorization") == "" || r.Header.Get("X-Amz-Security-Token") != "fixture-token" {
++					http.Error(w, "invalid EC2 request", http.StatusBadRequest)
++					return
++				}
++				requests <- r.PostForm
++				action := r.PostForm.Get("Action")
++				select {
++				case fail := <-reject:
++					if action != fail {
++						http.Error(w, "unexpected action", http.StatusBadRequest)
++						return
++					}
++					w.Header().Set("Content-Type", "text/xml")
++					w.WriteHeader(http.StatusForbidden)
++					_, _ = fmt.Fprint(w, "<Response><Errors><Error><Code>UnauthorizedOperation</Code><Message>fixture denied</Message></Error></Errors></Response>")
++					return
++				default:
++				}
++				w.Header().Set("Content-Type", "text/xml")
++				_, _ = fmt.Fprintf(w, "<%sResponse xmlns=\"http://ec2.amazonaws.com/doc/2016-11-15/\"><requestId>fixture</requestId><return>true</return></%sResponse>", action, action)
++			}))
++			t.Cleanup(api.Close)
++			t.Setenv("AWS_ENDPOINT_URL_EC2", api.URL)
++			t.Setenv("AWS_IGNORE_CONFIGURED_ENDPOINT_URLS", "false")
++			t.Setenv("AWS_EC2_METADATA_DISABLED", "true")
++			t.Setenv("AWS_MAX_ATTEMPTS", "1")
++			t.Setenv("AWS_CONFIG_FILE", t.TempDir()+"/config")
++			t.Setenv("AWS_SHARED_CREDENTIALS_FILE", t.TempDir()+"/credentials")
++
++			secret := &corev1.Secret{
++				ObjectMeta: metav1.ObjectMeta{Name: "credentials", Namespace: "fixture"},
++				Data: map[string][]byte{
++					"aws_access_key_id": []byte("fixture-access"), "aws_secret_access_key": []byte("fixture-secret"),
++					"aws_session_token": []byte("fixture-token"),
++				},
++			}
++			kube := fake.NewClientBuilder().WithObjects(secret).Build()
++			implementations := map[string]impltypes.ChaosImpl{
++				"stop": ec2stop.NewImpl(kube, logr.Discard()), "restart": ec2restart.NewImpl(kube, logr.Discard()),
++				"detach": detachvolume.NewImpl(kube, logr.Discard()),
++			}
++			impl := implementations[scenario.name]
++			selected := v1alpha1.AWSSelector{AWSRegion: "us-east-1", Ec2Instance: "i-fixture",
++				EbsVolume: new("vol-fixture"), DeviceName: new("/dev/sdf")}
++			chaos := &v1alpha1.AWSChaos{ObjectMeta: metav1.ObjectMeta{Namespace: secret.Namespace}}
++			chaos.Spec.AWSSelector = selected
++			if scenario.name == "stop" {
++				selected.Endpoint = &api.URL
++			}
++			chaos.Spec.SecretName = &secret.Name
++			targets, err := aws.New().Select(t.Context(), &selected)
++			g.Expect(err).NotTo(HaveOccurred())
++			g.Expect(targets).To(HaveLen(1))
++			records := []*v1alpha1.Record{{Id: targets[0].Id()}}
++
++			checkRequest := func(action string) {
++				t.Helper()
++				var sent url.Values
++				g.Expect(requests).To(Receive(&sent))
++				g.Expect(sent.Get("Action")).To(Equal(action))
++				if scenario.name == "detach" {
++					g.Expect(sent.Get("InstanceId")).To(Equal(selected.Ec2Instance))
++					g.Expect(sent.Get("VolumeId")).To(Equal("vol-fixture"))
++					g.Expect(sent.Get("Device")).To(Equal("/dev/sdf"))
++					if action == "DetachVolume" {
++						g.Expect(sent.Get("Force")).To(Equal("true"))
++					}
++				} else {
++					g.Expect(sent.Get("InstanceId.1")
+```
+
+**File**: `controllers/chaosimpl/azurechaos/diskdetach/impl.go` (modified, +24/-12)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"errors"
++	"fmt"
+ 
+ 	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute"
+ 	"github.com/go-logr/logr"
+@@ -63,19 +64,24 @@ func (impl *Impl) Apply(ctx context.Context, index int, records []*v1alpha1.Reco
+ 		return v1alpha1.NotInjected, err
+ 	}
+ 
++	var disks []compute.DataDisk
++	if vm.StorageProfile != nil && vm.StorageProfile.DataDisks != nil {
++		disks = *vm.StorageProfile.DataDisks
++	}
+ 	diskIndex := -1
+-	for index, disk := range *vm.StorageProfile.DataDisks {
+-		if *disk.Lun == int32(*azurechaos.Spec.LUN) && *disk.Name == *azurechaos.Spec.DiskName {
++	for index, disk := range disks {
++		if disk.Lun != nil && disk.Name != nil && *disk.Lun == int32(*azurechaos.Spec.LUN) && *disk.Name == *azurechaos.Spec.DiskName {
+ 			diskIndex = index
+ 			break
+ 		}
+ 	}
+ 	if diskIndex == -1 {
+-		impl.Log.Error(err, "fail to get the disk, please check the LUN and diskName")
++		err := fmt.Errorf("disk %q at LUN %d is not attached to VM %q", *azurechaos.Spec.DiskName, *azurechaos.Spec.LUN, azurechaos.Spec.VMName)
++		impl.Log.Error(err, "fail to get the disk")
+ 		return v1alpha1.NotInjected, err
+ 	}
+ 
+-	newDiskList := append((*vm.StorageProfile.DataDisks)[:diskIndex], (*vm.StorageProfile.DataDisks)[diskIndex+1:]...)
++	newDiskList := append(disks[:diskIndex], disks[diskIndex+1:]...)
+ 	vm.StorageProfile.DataDisks = &newDiskList
+ 
+ 	_, err = vmClient.CreateOrUpdate(ctx, azurechaos.Spec.ResourceGroupName, azurechaos.Spec.VMName, vm)
+@@ -104,6 +110,13 @@ func (impl *Impl) Recover(ctx context.Context, index int, records []*v1alpha1.Re
+ 		return v1alpha1.Injected, err
+ 	}
+ 
++	var selected v1alpha1.AzureSelector
++	err = json.Unmarshal([]byte(records[index].Id), &selected)
++	if err != nil {
++		impl.Log.Error(err, "fail to unmarshal the selector")
++		return v1alpha1.Injected, err
++	}
++
+ 	disk, err := disksClient.Get(ctx, azurechaos.Spec.ResourceGroupName, *azurechaos.Spec.DiskName)
+ 	if err != nil {
+ 		impl.Log.Error(err, "fail to get the disk detail")
+@@ -115,7 +128,13 @@ func (impl *Impl) Recover(ctx context.Context, index int, records []*v1alpha1.Re
+ 		return v1alpha1.Injected, err
+ 	}
+ 
+-	newDiskList := *vm.StorageProfile.DataDisks
++	if vm.StorageProfile == nil {
++		return v1alpha1.Injected, errors.New("VM has no storage profile")
++	}
++	var newDiskList []compute.DataDisk
++	if vm.StorageProfile.DataDisks != nil {
++		newDiskList = *vm.StorageProfile.DataDisks
++	}
+ 	newDiskList = append(newDiskList, compute.DataDisk{
+ 		Lun:          new(int32(*azurechaos.Spec.LUN)),
+ 		Name:         azurechaos.Spec.DiskName,
+@@ -126,13 +145,6 @@ func (impl *Impl) Recover(ctx context.Context, index int, records []*v1alpha1.Re
+ 	})
+ 	vm.StorageProfile.DataDisks = &newDiskList
+ 
+-	var selected v1alpha1.AzureSelector
+-	err = json.Unmarshal([]byte(records[index].Id), &selected)
 -	if err != nil {
--		return err
+-		impl.Log.Error(err, "fail to unmarshal the selector")
+-		return v1alpha1.NotInjected, err
 -	}
--	before := sch.DeepCopy()
--	currentAnnotations := sch.GetAnnotations()
--	if currentAnnotations == nil {
--		currentAnnotations = make(map[string]string, len(annotations))
--	}
--	maps.Copy(currentAnnotations, annotations)
--	sch.SetAnnotations(currentAnnotations)
--	return kubeCli.Patch(ctx, sch, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
-+	return retry.RetryOnConflict(retry.DefaultRetry, func() error {
-+		sch, err := getSchedule(ctx, kubeCli, record)
-+		if err != nil {
-+			return err
-+		}
-+		before := sch.DeepCopy()
-+		currentAnnotations := sch.GetAnnotations()
-+		if currentAnnotations == nil {
-+			currentAnnotations = make(map[string]string, len(annotations))
-+		}
-+		maps.Copy(currentAnnotations, annotations)
-+		sch.SetAnnotations(currentAnnotations)
-+		return kubeCli.Patch(ctx, sch, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{}))
-+	})
- }
+-
+ 	_, err = vmClient.CreateOrUpdate(ctx, azurechaos.Spec.ResourceGroupName, azurechaos.Spec.VMName, vm)
+ 	if err != nil {
+ 		impl.Log.Error(err, "fail to attach the disk")
 ```
 
 #### Recent Merged Pull Requests:
@@ -1391,8 +1710,8 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 - **PR #5268** (2026-11-26): feat(api): validate JVM, stress and physical machine chaos rules in the CRD schema (@cvas22)
 - **PR #5267** (2026-11-25): feat(api): validate NetworkChaos, cloud, IO, HTTP and DNS chaos rules in the CRD schema (@cvas22)
 - **PR #5266** (closed): docs(changelog): consolidate daemon and dashboard fixes (@g1eny0ung)
+- **PR #5265** (2026-11-27): fix(controllers): preserve recovery state across retries (@g1eny0ung)
 - **PR #5264** (2026-11-22): fix(dashboard): protect resource identity and Helm lifecycle (@g1eny0ung)
-- **PR #5263** (2026-11-22): fix(daemon): harden fault application and recovery (@g1eny0ung)
 
 ---
 
@@ -1412,13 +1731,13 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. selector): return cloud target encoding errors
+## X. controllers): preserve recovery state across retries
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26da5ae0`: selector): return cloud target encoding errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5fc7f346`: controllers): preserve recovery state across retries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1426,7 +1745,11 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Report target ID encoding errors before creating records for AWSChaos, AzureChaos, and GCPChaos. Go callers that used `Id()` on a cloud selector now call it on the target returned by `Select()`. [#4964](https://github.com/chaos-mesh/chaos-mesh/pull/4964)
+- Preserve existing Schedule runs after failed writes and return errors for missing experiment specs. Retain AzureChaos and BlockChaos settings in Workflow Schedule templates and retry failed Schedule creation. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
+- Preserve existing parallel and conditional Workflow branches on retry and wait for stale children to finish deleting. Scope cleanup and StatusChecks to the owning namespace, surface StatusCheck creation errors, and allow failed checks to abort Workflows without existing annotations. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
+- Keep experiment records attached to their original Kubernetes UID during concurrent writes and honor a zero or lowered record-event limit. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
+- Preserve the recovery phase when NetworkChaos partition, HTTPChaos, or IOChaos encounters an invalid target ID or when DNSChaos cannot list DNS Pods. Finish HTTPChaos recovery for stopped Pods without child configuration. [#5265](https://github.com/chaos-mesh/chaos-mesh/pull/5265)
+- Report a missing Azure credentials Secret name and handle VMs without attached data disks. Rejec
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1436,7 +1759,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26da5ae0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5fc7f346` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

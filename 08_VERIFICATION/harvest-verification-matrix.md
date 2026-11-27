@@ -13887,3 +13887,4 @@
 | `CYCLE-20261127-GHEQ` | `2026-11-27T22:14:02.786Z` | `tencent/Hy4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md` | Yes (`3d088449...`) |
 | `CYCLE-20261127-GP7V` | `2026-11-27T22:14:12.907Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10975` | Yes (`dd10e7a1...`) |
 | `CYCLE-20261127-RZVM` | `2026-11-27T22:22:59.938Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10976` | Yes (`dfa11d5d...`) |
+| `CYCLE-20261127-90KF` | `2026-11-27T22:36:13.983Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10977` | Yes (`bd78262e...`) |

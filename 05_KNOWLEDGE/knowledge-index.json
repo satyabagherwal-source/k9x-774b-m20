@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T22:23:06.554Z",
+  "last_updated": "2026-11-27T22:36:20.745Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26790,
+  "total_items": 26795,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfdd6f8a737ff81631ef4cb268394ade216a8ccf01e17f25949c34b2645301c5",
+      "content_hash": "80d53c2e8984a96c75abba4264c2b26ac5220dd1532ae5ffba09a0906af0b9b0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T21:48:02.620Z"
+      "persisted_at": "2026-11-27T22:36:20.500Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "aeb09dd49020478c1086dc980675a9a2765fae35b391113544db3f77508a7452",
+      "content_hash": "be2aad3c5c04a31743c7497c0a4a3a9f8298e4f291e23ea819a494b5971b832a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T21:48:02.838Z"
+      "persisted_at": "2026-11-27T22:36:20.745Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219782,9 +219782,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "a48b7d6c721ca64a06a23609ab683aadd3aded188ba8101f9ecc61fc20c2a90d",
+      "content_hash": "b90e9aa9ade594ba5c3cbaa05f2a9f257b05b955aa752c739cc5ad7a602dca32",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T22:23:06.334Z"
+      "persisted_at": "2026-11-27T22:36:19.496Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219794,9 +219794,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "aaa0ac661afa4a8a498c90acfb63cb7b6a43331e42539a4883e5690de1b70c49",
+      "content_hash": "d9ac3972f307bd482c6768d205ba8be8eddde09dd98977579a1d12f9c80a409e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T22:23:06.554Z"
+      "persisted_at": "2026-11-27T22:36:19.712Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -267936,8 +267936,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "394c7561",
-      "content_hash": "0d0455ec528117351b5919162480c35e417dc1b3dc5de51c19a36b7b2fcb157b",
+      "source_version": "5fc7f346",
+      "content_hash": "bd78262ebe31bcc7efd5f3a58efa1a67fa6c30ca6c1e8fcaed11f108205c2f9c",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -267975,6 +267975,11 @@
           "number": 10666,
           "title": "return cloud target encoding errors",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10977,
+          "title": "preserve recovery state across retries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -267982,7 +267987,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:39:50.026Z",
+      "verified_at": "2026-11-27T22:36:13.690Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268036,10 +268041,10 @@
       "relative_path": "08_VERIFICATION/chaos-mesh-chaos-mesh-verification-protocol-empirical-defect-shield-for-chaos-me.md",
       "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh/chaos-mesh",
       "repository": "chaos-mesh/chaos-mesh",
-      "source_version": "394c7561",
-      "content_hash": "bb286e77479cc103e721e3511aabdacbefe83dc1acc2223561b2b1ce3ef798e4",
+      "source_version": "5fc7f346",
+      "content_hash": "fa52eccd6f34ca13e17dee9e5080f0a563511be8bb690a6cdeb03bf6133a4880",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:39:50.862Z"
+      "persisted_at": "2026-11-27T22:36:14.661Z"
     },
     "rule-8813": {
       "learning_id": "rule-8813",
@@ -268135,9 +268140,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh-chaos-mesh-learnings",
       "repository": "chaos-mesh-chaos-mesh-learnings",
       "source_version": "HEAD",
-      "content_hash": "f69b8e3f15f6f3c8e3cfaf162b55a917da0c2f090bcb5b8e9bcb06d53a35ee83",
+      "content_hash": "c1362a81c6e3d05fbf9853d38d4717faf39bd6cf2cb07b56c1fc011ac92fe110",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:40:01.529Z"
+      "persisted_at": "2026-11-27T22:36:18.727Z"
     },
     "learn-github-aio-libs-aiohttp": {
       "learning_id": "learn-github-aio-libs-aiohttp",
@@ -350625,13 +350630,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-S4NH-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-94NC-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "39d0ec5e66861294ffaeb2d1fcd674a3e44cad46f005b16acb4ef25b8c5ff77b",
+      "content_hash": "d4ca50e3d0509638cad0be562222a7b287642569849b93ee0b18c5daef1455c1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T22:23:06.126Z"
+      "persisted_at": "2026-11-27T22:36:19.272Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361538,13 +361543,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-J1EZ-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-95EF-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "95cc7e2565faaf60efb672a0ce1507c4171352bafa1504d52d4d4c1f493e8d5e",
+      "content_hash": "979e426be081b70c895ebda10d8c7034c9b90fd6a4bd1055e1048831625ad58a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T21:48:02.414Z"
+      "persisted_at": "2026-11-27T22:36:20.259Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -367960,6 +367965,68 @@
       "content_hash": "6029e8ba57c9331635caee2dd302750847dd89b6d88850a4efbf3ad383bc1c1b",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T22:23:04.095Z"
+    },
+    "rule-10977": {
+      "learning_id": "rule-10977",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10977,
+      "title": "preserve recovery state across retries",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "5fc7f346",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T22:36:13.690Z"
+    },
+    "candidate_directive-preserve-recovery-state-across-retries": {
+      "item_id": "candidate_directive-preserve-recovery-state-across-retries",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-90RU-preserve-recovery-state-across-retries.md",
+      "title": "preserve recovery state across retries",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "5fc7f346",
+      "content_hash": "67004adec0bcb64da6b33d5d27435df1e5ea9f0223c25c24614ee7ed5e61f5c5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T22:36:14.252Z"
+    },
+    "domain_intelligence-human-need-intelligence-chaos-mesh-chaos-mesh-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-chaos-mesh-chaos-mesh-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-chaos-mesh-chaos-mesh-human-need-intelligence-chaos-mesh-chaos-mesh-core-invaria.md",
+      "title": "Human & Need Intelligence: chaos-mesh/chaos-mesh Core Invariants",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "5fc7f346",
+      "content_hash": "91e50daad3fd85d52eadbd74559803b128c67c58a026d0ec8548dd50dab744a7",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T22:36:14.467Z"
+    },
+    "candidate_directive-controllers-preserve-recovery-state-across-retries": {
+      "item_id": "candidate_directive-controllers-preserve-recovery-state-across-retries",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-93VN-controllers-preserve-recovery-state-across-retries.md",
+      "title": "controllers): preserve recovery state across retries",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76aa78f04587892fb792f9409423bce4a76ad13515c4d7f38535de6bab16481f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T22:36:18.276Z"
+    },
+    "domain_intelligence-human-need-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-chaos-mesh-chaos-mesh-learnings-human-need-intelligence-chaos-mesh-chaos-mesh-le.md",
+      "title": "Human & Need Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f9d16f07a4a02eb7f8e685b7a4e2f438e60f94db6565600fadd8a33e463df749",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T22:36:18.516Z"
     }
   },
   "ai-builder-brain": {

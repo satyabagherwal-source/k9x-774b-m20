@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T22:23:03.335Z",
-    "lastVerified": "2026-11-27T22:23:03.335Z",
+    "lastChecked": "2026-11-27T22:36:17.408Z",
+    "lastVerified": "2026-11-27T22:36:17.408Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,8 +367,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T18:17:22.805Z",
-    "lastVerified": "2026-11-27T18:17:22.805Z",
+    "lastChecked": "2026-11-27T22:36:10.352Z",
+    "lastVerified": "2026-11-27T22:36:10.352Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T21:56:43.816Z",
-    "lastVerified": "2026-11-27T21:56:43.816Z",
+    "lastChecked": "2026-11-27T22:36:15.400Z",
+    "lastVerified": "2026-11-27T22:36:15.400Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2333,22 +2333,21 @@
     "lastVerified": "2026-11-26T18:58:48.008Z"
   },
   "chaos-mesh-chaos-mesh": {
-    "name": "chaos-mesh",
+    "name": "chaos-mesh/chaos-mesh",
     "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T04:36:51.313Z",
-    "lastVerified": "2026-11-27T04:36:51.313Z",
+    "lastChecked": "2026-11-27T22:36:12.603Z",
+    "lastVerified": "2026-11-27T22:36:12.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "0d0455ec528117351b5919162480c35e417dc1b3dc5de51c19a36b7b2fcb157b",
+    "contentHash": "bd78262ebe31bcc7efd5f3a58efa1a67fa6c30ca6c1e8fcaed11f108205c2f9c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "394c7561"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
@@ -4855,9 +4854,9 @@
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-11-26T22:30:08.711Z",
+    "lastChecked": "2026-11-27T22:36:00.304Z",
     "revisionIdentifier": "c4c2ca99",
-    "lastVerified": "2026-11-26T22:30:08.711Z"
+    "lastVerified": "2026-11-27T22:36:00.304Z"
   },
   "hf-openai-gpt-oss-120b": {
     "name": "openai/gpt-oss-120b",
@@ -5652,8 +5651,8 @@
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T03:24:57.449Z",
-    "lastVerified": "2026-11-27T03:24:57.449Z",
+    "lastChecked": "2026-11-27T22:36:12.942Z",
+    "lastVerified": "2026-11-27T22:36:12.942Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
@@ -10300,9 +10299,9 @@
   "obytes-react-native-template-obytes": {
     "name": "react-native-template-obytes",
     "officialUrl": "https://github.com/obytes/react-native-template-obytes",
-    "lastChecked": "2026-11-25T14:04:53.476Z",
+    "lastChecked": "2026-11-27T22:36:05.318Z",
     "revisionIdentifier": "fd9b358e",
-    "lastVerified": "2026-11-25T14:04:53.476Z"
+    "lastVerified": "2026-11-27T22:36:05.318Z"
   },
   "raghav453-multilipi-hreflang-generator": {
     "name": "multilipi-hreflang-generator",
@@ -10850,9 +10849,9 @@
   "agamm-pseo-next": {
     "name": "pseo-next",
     "officialUrl": "https://github.com/agamm/pseo-next",
-    "lastChecked": "2026-11-24T14:24:02.309Z",
+    "lastChecked": "2026-11-27T22:36:02.798Z",
     "revisionIdentifier": "2f816d2c",
-    "lastVerified": "2026-11-24T14:24:02.309Z"
+    "lastVerified": "2026-11-27T22:36:02.798Z"
   },
   "aakira-napier": {
     "name": "Napier",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-D17T",
-    "timestamp": "2026-11-26T11:39:50.249Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "0d0455ec528117351b5919162480c35e417dc1b3dc5de51c19a36b7b2fcb157b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-D34X",
     "timestamp": "2026-11-26T11:39:52.737Z",
     "repository": "DefGuard/defguard",
@@ -7490,6 +7475,21 @@
     "repository": "sqlpage/SQLPage",
     "learningId": "learn-github-sqlpage-sqlpage",
     "contentHash": "dfa11d5d0c737626eb022279e8866369c9195519b648b63d6cce6c98034a3941",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-90KF",
+    "timestamp": "2026-11-27T22:36:13.983Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "bd78262ebe31bcc7efd5f3a58efa1a67fa6c30ca6c1e8fcaed11f108205c2f9c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

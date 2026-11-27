@@ -13920,3 +13920,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy4` | `https://huggingface.co/tencent/Hy4` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-27T22:14:02.797Z |
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `c35d78d6` | Multi-dimensional audit evidence | 2026-11-27T22:14:12.919Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `b27b96a3` | Multi-dimensional audit evidence | 2026-11-27T22:22:59.950Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `5fc7f346` | Multi-dimensional audit evidence | 2026-11-27T22:36:13.996Z |
