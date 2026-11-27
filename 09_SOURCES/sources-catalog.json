@@ -1205,8 +1205,8 @@
     "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceVersion": "hf-intfloat-multilingual-e5-small",
     "license": "Open-Source",
-    "contentHash": "155ded916440c15151e28280665e398af43d62b6f8e8de3e6c81c6ba09224bf1",
-    "lastHarvestedAt": "2026-11-23T15:45:43.235Z",
+    "contentHash": "14b5932aad12a9204c384813d7e8276ef301420182d551844734b29f3af5919f",
+    "lastHarvestedAt": "2026-11-27T00:41:28.598Z",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small"
   },
   "hf-argmaxinc-whisperkit-coreml": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "2a7e1bd4",
+    "sourceVersion": "3ec1df58",
     "license": "NOASSERTION",
-    "contentHash": "a5ece367776b58dc0e4f6442671e501a7cffbf1f4d749e4fbee95b2efac1ff74",
-    "lastHarvestedAt": "2026-11-26T05:57:15.242Z",
+    "contentHash": "b86b44862516ec8157dd5737ce4a8b3417b560718280115bcc2ebe6f16544eb7",
+    "lastHarvestedAt": "2026-11-27T00:41:42.990Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {

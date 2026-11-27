@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T00:33:09.986Z",
-    "lastVerified": "2026-11-27T00:33:09.986Z",
+    "lastChecked": "2026-11-27T00:41:46.474Z",
+    "lastVerified": "2026-11-27T00:41:46.474Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -157,8 +157,8 @@
     "officialUrl": "https://github.com/stakater/Reloader",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-26T06:52:25.799Z",
-    "lastVerified": "2026-11-26T06:52:25.799Z",
+    "lastChecked": "2026-11-27T00:41:32.779Z",
+    "lastVerified": "2026-11-27T00:41:32.779Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-stakater-reloader",
@@ -195,12 +195,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T00:07:30.581Z",
-    "lastVerified": "2026-11-27T00:07:30.581Z",
+    "lastChecked": "2026-11-27T00:41:40.333Z",
+    "lastVerified": "2026-11-27T00:41:40.333Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -209,7 +209,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "14c70177"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -850,9 +851,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-26T20:22:57.449Z",
+    "lastChecked": "2026-11-27T00:41:35.302Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-26T20:22:57.449Z"
+    "lastVerified": "2026-11-27T00:41:35.302Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -4484,14 +4485,14 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T05:57:14.140Z",
-    "lastVerified": "2026-11-26T05:57:14.140Z",
+    "lastChecked": "2026-11-27T00:41:41.770Z",
+    "lastVerified": "2026-11-27T00:41:41.770Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "a5ece367776b58dc0e4f6442671e501a7cffbf1f4d749e4fbee95b2efac1ff74",
+    "contentHash": "b86b44862516ec8157dd5737ce4a8b3417b560718280115bcc2ebe6f16544eb7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4643,9 +4644,9 @@
   "ptomasroos-react-native-scrollable-tab-view": {
     "name": "react-native-scrollable-tab-view",
     "officialUrl": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
-    "lastChecked": "2026-11-24T16:28:15.431Z",
+    "lastChecked": "2026-11-27T00:41:30.426Z",
     "revisionIdentifier": "583a66f7",
-    "lastVerified": "2026-11-24T16:28:15.431Z"
+    "lastVerified": "2026-11-27T00:41:30.426Z"
   },
   "zarf-dev-zarf": {
     "name": "zarf",
@@ -5677,9 +5678,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-26T00:26:18.980Z",
+    "lastChecked": "2026-11-27T00:41:25.321Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-26T00:26:18.980Z"
+    "lastVerified": "2026-11-27T00:41:25.321Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -6562,12 +6563,12 @@
     "officialUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T15:45:42.604Z",
-    "lastVerified": "2026-11-23T15:45:42.604Z",
+    "lastChecked": "2026-11-27T00:41:27.939Z",
+    "lastVerified": "2026-11-27T00:41:27.939Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "155ded916440c15151e28280665e398af43d62b6f8e8de3e6c81c6ba09224bf1",
+    "contentHash": "14b5932aad12a9204c384813d7e8276ef301420182d551844734b29f3af5919f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

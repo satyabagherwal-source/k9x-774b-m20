@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
   "source_version": "hf-intfloat-multilingual-e5-small",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T15:45:43.435Z",
+  "timestamp": "2026-11-27T00:41:28.846Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-intfloat-multilingual-e5-small",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [intfloat/multilingual-e5-small](https://huggingface.co/intfloat/multilingual-e5-small) (Revision: `hf-intfloa`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T15:45:43.435Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T00:41:28.846Z`  
 > **Learning ID**: `learn-huggingface-intfloat-multilingual-e5-small`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/intfloat/multilingual-e5-small](https://huggingface.co/intfloat/multilingual-e5-small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T15:45:42.604Z  
+> **Harvest Timestamp**: 2026-11-27T00:41:27.939Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: sentence-similarity
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9393971 downloads | 505 likes
+- **Stars / Engagement**: 9550416 downloads | 508 likes
 
 ---
 

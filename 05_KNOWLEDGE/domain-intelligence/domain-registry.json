@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T00:33:12.145Z",
+  "last_updated": "2026-11-27T00:41:49.094Z",
   "total_records": 2792,
   "domains": {
     "A": {
@@ -16114,8 +16114,8 @@
       "title": "Research & Knowledge Intelligence: intfloat/multilingual-e5-small Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-intfloat-multilingual-e5-small-research-knowledge-intelligence-intfloat-multi.md",
       "repository": "intfloat/multilingual-e5-small",
-      "content_hash": "8acf9198fad1ff389d3bfe9ad1c42a9267413ec5e1b4b402b7ed320b45a74acb",
-      "created_at": "2026-11-23T15:45:43.436Z"
+      "content_hash": "6d94cb0955cf2bc4884ebd8cdbbfb7a191349ef713d19f47c2670f8b17ae4ffa",
+      "created_at": "2026-11-27T00:41:28.846Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-core-invariants",
@@ -16201,8 +16201,8 @@
       "title": "Research & Knowledge Intelligence: hf-intfloat-multilingual-e5-small-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-intfloat-multilingual-e5-small-learnings-research-knowledge-intelligence-hf-i.md",
       "repository": "hf-intfloat-multilingual-e5-small-learnings",
-      "content_hash": "615be1c543ca031d44f9b50d193642408807e43c667a2e6e8a05c90ef2036e69",
-      "created_at": "2026-11-23T15:45:58.463Z"
+      "content_hash": "e39544f7d0df7dbcea4c51a94b7289835a6e0a7fa3438fdbf06d3c3769a75e37",
+      "created_at": "2026-11-27T00:41:46.876Z"
     },
     "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants",
@@ -26372,8 +26372,8 @@
       "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "73cad3dbe60dd76562a49bfbbc34f7d1f47bf417ab825a59b38c3cf17a516b8b",
-      "created_at": "2026-11-26T05:57:15.647Z"
+      "content_hash": "3d5ba980d2dfc2032c7120230792faec01e1aecca87794fb3389f75ac7bc832c",
+      "created_at": "2026-11-27T00:41:43.426Z"
     },
     "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants": {
       "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants",
@@ -26399,8 +26399,8 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-learnings-research-knowledge-intelligence-materialize.md",
       "repository": "materializeinc-materialize-learnings",
-      "content_hash": "545b89573cbabe50aeed7a3b330371acd1ec3b37150cfdb0ded8a38ab7ba2ca5",
-      "created_at": "2026-11-26T05:57:47.578Z"
+      "content_hash": "68e3c2256e62b52b748a0c00ffd3767b10fc98f8d55f963e4c587c68ba557bdc",
+      "created_at": "2026-11-27T00:41:47.869Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
@@ -46739,8 +46739,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "fc96fd3c76a1a14aa940a7a65f7b6d41a1433bcd2436d11f7c2659f53fdbb502",
-      "created_at": "2026-11-27T00:16:08.382Z"
+      "content_hash": "c614b5a37f8ed393fa35434b4ca9d9f00920495d443f8d6e4635fc7bda391d6b",
+      "created_at": "2026-11-27T00:41:49.094Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

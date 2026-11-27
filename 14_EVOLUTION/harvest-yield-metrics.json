@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:32:58.240Z",
-  "total_cycles_completed": 12920,
-  "total_learnings_persisted": 12920,
-  "total_rules_promoted": 11709,
+  "last_updated": "2026-11-27T00:41:43.000Z",
+  "total_cycles_completed": 12922,
+  "total_learnings_persisted": 12922,
+  "total_rules_promoted": 11710,
   "history": [
-    {
-      "timestamp": "2026-11-26T13:44:34.904Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T13:44:36.984Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T13:44:41.884Z",
       "repository": "a2ui-project/a2ui",
@@ -1403,6 +1389,20 @@
       "repository": "google/gemma-4-26B-A4B-it",
       "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T00:41:28.613Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T00:41:43.000Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

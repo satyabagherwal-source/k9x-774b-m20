@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T00:33:12.504Z",
+  "last_updated": "2026-11-27T00:41:49.480Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T00:16:07.753Z",
+      "processed_at": "2026-11-27T00:41:48.418Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -498,7 +498,7 @@
       "staged_for_review": 1
     },
     "materializeinc-materialize-learnings.md": {
-      "processed_at": "2026-11-26T05:57:46.887Z",
+      "processed_at": "2026-11-27T00:41:47.093Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2573,7 +2573,7 @@
       "staged_for_review": 1
     },
     "hf-intfloat-multilingual-e5-small-learnings.md": {
-      "processed_at": "2026-11-23T15:45:58.262Z",
+      "processed_at": "2026-11-27T00:41:46.637Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4013,7 +4013,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4737,
+  "total_dossiers_evaluated": 4740,
   "total_canonical_promoted": 570,
-  "total_staged_for_review": 3553
+  "total_staged_for_review": 3555
 }
