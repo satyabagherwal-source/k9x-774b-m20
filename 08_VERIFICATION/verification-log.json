@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-RZ6E",
-    "timestamp": "2026-11-25T14:23:45.110Z",
-    "repository": "Edge0/Audio8-TTS-Realistic-Air",
-    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-    "contentHash": "c93c066b6344b42ab52e4c7ba3f5ec9998aa052d86b2c0793fe5ec370ef4c09d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-S42N",
     "timestamp": "2026-11-25T14:23:51.455Z",
     "repository": "zoontek/react-native-bootsplash",
@@ -7492,6 +7477,21 @@
     "contentHash": "691cd71c7e7471c231e46eb5c40ea0c4c2e4e5bbc04ebbd79815e7585bbeac1f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-LVLB",
+    "timestamp": "2026-11-27T01:46:31.343Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "ad0769d69a676a523c153172be186280b952bbdd0a003be4208422eb1aa0153e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

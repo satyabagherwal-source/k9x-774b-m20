@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T01:37:17.025Z",
+  "last_updated": "2026-11-27T01:46:31.367Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1670,14 +1670,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "f3871d0b968f98473234dee20d4e8daf2280f4e79c32746ecf4e14fd13f5464f",
-      "verified_at": "2026-11-23T16:44:40.292Z",
+      "content_hash": "ad0769d69a676a523c153172be186280b952bbdd0a003be4208422eb1aa0153e",
+      "verified_at": "2026-11-27T01:46:31.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:44:40.292Z"
+      "last_updated": "2026-11-27T01:46:31.366Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",

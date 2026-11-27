@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T01:37:25.390Z",
+  "last_updated": "2026-11-27T01:46:46.535Z",
   "total_verified_learnings": 9138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fc5aee72c12de923f23cab209724930ba2f66b477b9950facfd0483ca03992b",
+      "content_hash": "f62c0d79fd3cfc0d2b7c1c663f09167a47951866d389fb5b414cf240126742d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T01:17:09.112Z"
+      "persisted_at": "2026-11-27T01:46:46.040Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d689cec66d79abbbabef0d9e96923d5af353648f03c432dc1bebac0b09890303",
+      "content_hash": "6059bd09a59c88762ee8a4ef00232b27953040b9ecfaeb0576a079656edbba26",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T01:17:09.283Z"
+      "persisted_at": "2026-11-27T01:46:46.313Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb7cc0cd6ba09e65a9089249fbe1e7a603173c62fc3203815b5f89c9fe8508c1",
+      "content_hash": "d7f22ea7940994725c7617e00545002c61014250dd682aa099f6ea0237c6c92e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T01:17:09.514Z"
+      "persisted_at": "2026-11-27T01:46:46.535Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "fea64b40b696dddb500f0e555ff2aa053822edf0a3109f371c608a58ec5b82c6",
+      "content_hash": "44173130537f2ddbb7ab388a66c3fdb9729eab668aa5bee4ea8489611b13b56b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T01:17:08.370Z"
+      "persisted_at": "2026-11-27T01:46:44.850Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -215960,13 +215960,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
-      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings-researc.md",
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings Core Invariants",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc1ff3f553016a3944e321bbdbb9a1d24545353ca50b551014b7eb0ac66e838e",
+      "content_hash": "1f6908ed8001dfc9638750f9fba86138a4752b42d5e9c5fa4df0afcf65ff94ee",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T17:23:11.400Z"
+      "persisted_at": "2026-11-27T01:46:43.359Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -233333,7 +233333,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "f3871d0b968f98473234dee20d4e8daf2280f4e79c32746ecf4e14fd13f5464f",
+      "content_hash": "ad0769d69a676a523c153172be186280b952bbdd0a003be4208422eb1aa0153e",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [],
@@ -233342,7 +233342,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:44:40.110Z",
+      "verified_at": "2026-11-27T01:46:31.011Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233359,9 +233359,9 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-mpnet-base-v2 Core Invariants",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "117801a89f6b3f6df6fff99b15e20bf9d93515f2eb914f845cc5c7755cd20c57",
+      "content_hash": "4f923952821826d45cb254e52ab694b426316e35214334e8efbb82fd0a8478a2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T16:44:40.483Z"
+      "persisted_at": "2026-11-27T01:46:31.670Z"
     },
     "learn-github-codewhale-hq-codewhale": {
       "learning_id": "learn-github-codewhale-hq-codewhale",
@@ -352635,13 +352635,13 @@
       "item_id": "candidate_directive-daemon-drain-buffered-watcher-changes-before-returning-from-indexing",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-K3PN-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M6Q3-daemon-drain-buffered-watcher-changes-before-returning-from-indexing.md",
       "title": "daemon): drain buffered watcher changes before returning from indexing",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c696b0a9f554d1acb37a29288eba9b1a7e604ea08890ec83ea34525403ba0301",
+      "content_hash": "20895bb544b1971cd1234a8eadb6f7cbc6d7400f9b52769683451eb7ddd4b29e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T01:17:08.940Z"
+      "persisted_at": "2026-11-27T01:46:45.772Z"
     },
     "rule-10607": {
       "learning_id": "rule-10607",
@@ -357820,13 +357820,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-K2YJ-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-M5KY-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d001bc17bff5b83d4511a73d8112e864aafab773a59dc7b3a7506793cfbf5d1",
+      "content_hash": "074f1d6ac22b673dcfd16a467edf3326e385a9bd96ccdfb901b740059102cbfd",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T01:17:07.968Z"
+      "persisted_at": "2026-11-27T01:46:44.296Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -357836,9 +357836,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0af3c0e384c2e5b4f3b5b8fbc95e70b1c97e1c075cd279e9b75b32a44968e195",
+      "content_hash": "3d5c81d8bb578a133465eb691d772097d88593e75e65783d606c1fa9adbc5cde",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T01:17:08.203Z"
+      "persisted_at": "2026-11-27T01:46:44.567Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",

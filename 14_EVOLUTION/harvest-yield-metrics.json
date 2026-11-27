@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T01:37:17.021Z",
-  "total_cycles_completed": 12938,
-  "total_learnings_persisted": 12938,
+  "last_updated": "2026-11-27T01:46:31.363Z",
+  "total_cycles_completed": 12939,
+  "total_learnings_persisted": 12939,
   "total_rules_promoted": 11719,
   "history": [
-    {
-      "timestamp": "2026-11-26T14:22:22.456Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T14:33:35.162Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1403,6 +1396,13 @@
       "repository": "projectcontour/contour",
       "learningId": "learn-github-projectcontour-contour",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:46:31.363Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

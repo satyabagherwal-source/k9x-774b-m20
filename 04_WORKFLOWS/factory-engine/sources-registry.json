@@ -58,8 +58,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T01:06:56.014Z",
-    "lastVerified": "2026-11-27T01:06:56.014Z",
+    "lastChecked": "2026-11-27T01:46:42.809Z",
+    "lastVerified": "2026-11-27T01:46:42.809Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T01:37:20.635Z",
-    "lastVerified": "2026-11-27T01:37:20.635Z",
+    "lastChecked": "2026-11-27T01:46:42.821Z",
+    "lastVerified": "2026-11-27T01:46:42.821Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -832,12 +832,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kube-rs-kube": {
-    "name": "kube-rs/kube",
+    "name": "kube",
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T07:57:54.452Z",
-    "lastVerified": "2026-11-26T07:57:54.452Z",
+    "lastChecked": "2026-11-27T01:46:35.384Z",
+    "lastVerified": "2026-11-27T01:46:35.384Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
@@ -846,7 +846,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "45bb874b"
   },
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
@@ -1444,8 +1445,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T21:26:09.965Z",
-    "lastVerified": "2026-11-26T21:26:09.965Z",
+    "lastChecked": "2026-11-27T01:46:37.820Z",
+    "lastVerified": "2026-11-27T01:46:37.820Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -4925,9 +4926,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-26T07:00:58.585Z",
+    "lastChecked": "2026-11-27T01:46:40.294Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-26T07:00:58.585Z"
+    "lastVerified": "2026-11-27T01:46:40.294Z"
   },
   "actix-actix-web": {
     "name": "actix/actix-web",
@@ -5109,9 +5110,9 @@
   "jpush-aurora-imui": {
     "name": "aurora-imui",
     "officialUrl": "https://github.com/jpush/aurora-imui",
-    "lastChecked": "2026-11-24T17:33:03.953Z",
+    "lastChecked": "2026-11-27T01:46:32.961Z",
     "revisionIdentifier": "fb74b792",
-    "lastVerified": "2026-11-24T17:33:03.953Z"
+    "lastVerified": "2026-11-27T01:46:32.961Z"
   },
   "aquasecurity-trivy": {
     "name": "aquasecurity/trivy",
@@ -6076,8 +6077,8 @@
     "officialUrl": "https://github.com/Xudong-Huang/may",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T01:36:17.101Z",
-    "lastVerified": "2026-11-26T01:36:17.101Z",
+    "lastChecked": "2026-11-27T01:46:27.770Z",
+    "lastVerified": "2026-11-27T01:46:27.770Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xudong-huang-may",
@@ -6951,12 +6952,12 @@
     "officialUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T16:44:35.336Z",
-    "lastVerified": "2026-11-23T16:44:35.336Z",
+    "lastChecked": "2026-11-27T01:46:30.464Z",
+    "lastVerified": "2026-11-27T01:46:30.464Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "contentHash": "f3871d0b968f98473234dee20d4e8daf2280f4e79c32746ecf4e14fd13f5464f",
+    "contentHash": "ad0769d69a676a523c153172be186280b952bbdd0a003be4208422eb1aa0153e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -13663,3 +13663,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-27T01:37:03.277Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `f38ec06c` | Multi-dimensional audit evidence | 2026-11-27T01:37:07.026Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `b64eea09` | Multi-dimensional audit evidence | 2026-11-27T01:37:16.997Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-27T01:46:31.348Z |
