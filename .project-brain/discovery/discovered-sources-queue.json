@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T21:39:13.897Z",
+  "updated_at": "2026-11-27T22:05:22.705Z",
   "stats": {
-    "total_discovered": 10576,
-    "approved_pending_harvest": 10039,
+    "total_discovered": 10590,
+    "approved_pending_harvest": 10053,
     "harvested_count": 0,
     "rejected_count": 537,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10046,
+      "COMMUNITY_AND_EXPERT": 10060,
       "OFFICIAL_DOCUMENTATION": 292,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -228940,6 +228940,314 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-44B718E2465D": {
+      "id": "SRC-44B718E2465D",
+      "url": "https://github.com/docker/github-builder",
+      "title": "https://github.com/docker/github-builder",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:21.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-94E8B596C60B": {
+      "id": "SRC-94E8B596C60B",
+      "url": "https://github.com/docker/github-builder/releases",
+      "title": "https://github.com/docker/github-builder/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:21.574Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-040C842AE881": {
+      "id": "SRC-040C842AE881",
+      "url": "https://redirect.github.com/docker/github-builder/pull/339",
+      "title": "https://redirect.github.com/docker/github-builder/pull/339",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:21.696Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-61CAE23AE1FA": {
+      "id": "SRC-61CAE23AE1FA",
+      "url": "https://redirect.github.com/docker/github-builder/pull/338",
+      "title": "https://redirect.github.com/docker/github-builder/pull/338",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:21.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-DB3846E45CEC": {
+      "id": "SRC-DB3846E45CEC",
+      "url": "https://redirect.github.com/docker/github-builder/pull/344",
+      "title": "https://redirect.github.com/docker/github-builder/pull/344",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:21.852Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-77898B9E3278": {
+      "id": "SRC-77898B9E3278",
+      "url": "https://redirect.github.com/docker/github-builder/pull/348",
+      "title": "https://redirect.github.com/docker/github-builder/pull/348",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:21.928Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-03A22ED85695": {
+      "id": "SRC-03A22ED85695",
+      "url": "https://redirect.github.com/docker/github-builder/pull/349",
+      "title": "https://redirect.github.com/docker/github-builder/pull/349",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:22.005Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-75A40C090191": {
+      "id": "SRC-75A40C090191",
+      "url": "https://redirect.github.com/docker/github-builder/pull/337",
+      "title": "https://redirect.github.com/docker/github-builder/pull/337",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:22.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-2B32ADD20F4F": {
+      "id": "SRC-2B32ADD20F4F",
+      "url": "https://github.com/docker/github-builde",
+      "title": "https://github.com/docker/github-builde",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:22.173Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-45D6C5DFFC74": {
+      "id": "SRC-45D6C5DFFC74",
+      "url": "https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.6",
+      "title": "https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:22.318Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-5235502C5DEF": {
+      "id": "SRC-5235502C5DEF",
+      "url": "https://redirect.github.com/github/codeql-action/pull/4347",
+      "title": "https://redirect.github.com/github/codeql-action/pull/4347",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:22.407Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-F31F03793769": {
+      "id": "SRC-F31F03793769",
+      "url": "https://redirect.github.c/",
+      "title": "https://redirect.github.c/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:22.547Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-C105A86F30DA": {
+      "id": "SRC-C105A86F30DA",
+      "url": "https://github.com/github/codeql-action/compare/1bd86f2fdb4b86187fa4059f16f31a3202acc9ea...915412ff23e8b7659517e607487dbeae018f2934",
+      "title": "https://github.com/github/codeql-action/compare/1bd86f2fdb4b86187fa4059f16f31a3202acc9ea...915412ff23e8b7659517e607487dbeae018f2934",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:22.629Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
+      }
+    },
+    "SRC-61B8ECFED074": {
+      "id": "SRC-61B8ECFED074",
+      "url": "https://github.com/docker/github-builder/compare/a31d2311da4d55e21b978c1c52bab82ba97d51ee...bb1eb9fb69408ac52395fb21f49c6b52d564529a",
+      "title": "https://github.com/docker/github-builder/compare/a31d2311da4d55e21b978c1c52bab82ba97d51ee...bb1eb9fb69408ac52395fb21f49c6b52d564529a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:05:22.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/moby-buildkit-learnings.md",
+        "fileName": "moby-buildkit-learnings.md"
       }
     }
   }

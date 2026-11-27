@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:56:47.660Z",
+  "last_updated": "2026-11-27T22:05:24.719Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T21:30:21.551Z",
+      "processed_at": "2026-11-27T22:05:23.610Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -493,7 +493,7 @@
       "staged_for_review": 1
     },
     "moby-buildkit-learnings.md": {
-      "processed_at": "2026-11-26T11:03:57.246Z",
+      "processed_at": "2026-11-27T22:05:21.350Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3563,7 +3563,7 @@
       "staged_for_review": 1
     },
     "hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md": {
-      "processed_at": "2026-11-24T13:56:47.706Z",
+      "processed_at": "2026-11-27T22:05:20.835Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5118,
+  "total_dossiers_evaluated": 5121,
   "total_canonical_promoted": 586,
-  "total_staged_for_review": 3866
+  "total_staged_for_review": 3868
 }

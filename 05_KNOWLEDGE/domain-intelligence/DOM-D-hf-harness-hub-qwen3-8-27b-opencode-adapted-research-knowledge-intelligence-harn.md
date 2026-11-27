@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
   "source_version": "hf-harness-hub-qwen3.8-27b-opencode-adapted",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T13:56:28.638Z",
+  "timestamp": "2026-11-27T22:05:08.355Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [harness-hub/Qwen3.8-27B-opencode-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted) (Revision: `hf-harness`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T13:56:28.638Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T22:05:08.355Z`  
 > **Learning ID**: `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:56:27.740Z  
+> **Harvest Timestamp**: 2026-11-27T22:05:07.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 972 downloads | 284 likes
+- **Stars / Engagement**: 1245 downloads | 353 likes
 
 ---
 

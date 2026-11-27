@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:56:41.196Z",
-  "total_cycles_completed": 13174,
-  "total_learnings_persisted": 13174,
-  "total_rules_promoted": 11888,
+  "last_updated": "2026-11-27T22:05:17.300Z",
+  "total_cycles_completed": 13176,
+  "total_learnings_persisted": 13176,
+  "total_rules_promoted": 11889,
   "history": [
-    {
-      "timestamp": "2026-11-27T04:27:24.919Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T04:36:47.264Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T04:36:47.888Z",
       "repository": "GeoPortApp/GeoPort",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T21:56:41.196Z",
       "repository": "siderolabs/talos",
       "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:05:08.123Z",
+      "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:05:17.300Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

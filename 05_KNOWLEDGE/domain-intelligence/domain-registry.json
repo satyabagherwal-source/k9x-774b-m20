@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T21:56:47.282Z",
+  "last_updated": "2026-11-27T22:05:24.329Z",
   "total_records": 2859,
   "domains": {
     "A": {
@@ -13704,8 +13704,8 @@
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "repository": "moby/buildkit",
-      "content_hash": "f104f6d3b9df113138d6bc52d8cab5635fbb0882aaf1584e3d301b69e8ccf96c",
-      "created_at": "2026-11-26T11:03:51.597Z"
+      "content_hash": "5a7174c01db9c407d4c79db36e586afd156b08162ea2fd0a09d1136581f38e2d",
+      "created_at": "2026-11-27T22:05:17.761Z"
     },
     "DOM-D-F2B017DF": {
       "record_id": "DOM-D-F2B017DF",
@@ -13764,8 +13764,8 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
       "repository": "moby-buildkit-learnings",
-      "content_hash": "12e922e0c69cd42f7846eae7bd530919145e4ab2fa44cfdef0d455283a78fa82",
-      "created_at": "2026-11-26T11:03:58.032Z"
+      "content_hash": "b9bd846edfda800e4967570bfbe7d08106f675602bf639fe60aa25da2f5f6f70",
+      "created_at": "2026-11-27T22:05:23.204Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -36415,8 +36415,8 @@
       "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-opencode-adapted Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-opencode-adapted-research-knowledge-intelligence-harn.md",
       "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
-      "content_hash": "cbb9af91870c4b4477269f234d6d2d427f65abaa2ce61fc78c4387f8907e3382",
-      "created_at": "2026-11-24T13:56:28.639Z"
+      "content_hash": "119ae8c6418e5306f5994b564b1a9d6034ac4428c91d1622b35baf8210a81eaa",
+      "created_at": "2026-11-27T22:05:08.356Z"
     },
     "DOM-D-04A5E986": {
       "record_id": "DOM-D-04A5E986",
@@ -36466,8 +36466,8 @@
       "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-opencode-adapted-learnings-research-knowledge-intelli.md",
       "repository": "hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings",
-      "content_hash": "b38f1fbcb0484658f3dc6053a27ec603bf6ab82fd5d85b7010dde2a92a2e813a",
-      "created_at": "2026-11-24T13:56:47.927Z"
+      "content_hash": "16fbae3591c9661147e8288ec5f43edb58137cd5715b16834a29b1680a534040",
+      "created_at": "2026-11-27T22:05:21.108Z"
     },
     "DOM-D-19E80851": {
       "record_id": "DOM-D-19E80851",
@@ -46806,8 +46806,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "61687822cf9331c815c0b45232e388a8181a567e5d434ca3f0c853436c63bce0",
-      "created_at": "2026-11-27T21:30:22.566Z"
+      "content_hash": "4ae693e9fe8e59716c894446008f87e31b30e5a78db3c6939deb55e83307ac7b",
+      "created_at": "2026-11-27T22:05:24.329Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-YZLH",
-    "timestamp": "2026-11-26T11:28:54.965Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "5a926c6501a0cf7fb1cf9f0032d8d7c32e04545ea2e0f0ddb167b75abbbb21ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-Z4DR",
-    "timestamp": "2026-11-26T11:29:01.167Z",
-    "repository": "software-mansion/react-native-screens",
-    "learningId": "learn-github-software-mansion-react-native-screens",
-    "contentHash": "3534c49f7779ab0685cd88a5ca72218d1e8afb677214f6ef044011a86ed4d695",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-ZAFX",
     "timestamp": "2026-11-26T11:29:09.021Z",
     "repository": "GreptimeTeam/greptimedb",
@@ -7490,6 +7460,36 @@
     "repository": "siderolabs/talos",
     "learningId": "learn-github-siderolabs-talos",
     "contentHash": "dd1525c22313869a16d2bd995174cdd34695348dc130dc5d86e63b97134f9518",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-50UH",
+    "timestamp": "2026-11-27T22:05:08.105Z",
+    "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
+    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
+    "contentHash": "e4bb187e8d7c0da5efe292a22e24a2cdc922f488aeaa16e0bf8905fc74313186",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-57XF",
+    "timestamp": "2026-11-27T22:05:17.283Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "5d0f3a63160ecca1f561be54946e33faeaeb806dff1b2f9d40d120781547e91c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T21:56:47.068Z",
+  "last_updated": "2026-11-27T22:05:24.125Z",
   "directives": [
     {
       "id": "CD-001",
@@ -51168,14 +51168,14 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-VPSI",
+      "id": "CD-5CBP",
       "directive_title": "build(deps): bump github/codeql-action/upload-sarif",
-      "source_repo": "moby/buildkit",
-      "source_commit": "5f12fdd2",
-      "staged_file": "11_INBOX/candidate-directives/CD-VPSI-build-deps-bump-github-codeql-action-upload-sarif.md",
-      "status": "STAGED_FOR_REVIEW",
-      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-23",
+      "source_repo": "moby-buildkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5CBP-build-deps-bump-github-codeql-action-upload-sarif.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
       "domain_letter": "G"
     },
     {
@@ -66257,11 +66257,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-WBDM",
+      "id": "CD-5D7D",
       "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-WBDM-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5D7D-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-27",
@@ -72816,6 +72816,24 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9B11B5-bump-version-number.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-86A73B",
+      "directive_title": "build(deps): bump github/codeql-action/upload-sarif",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "moby-buildkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-86A73B-build-deps-bump-github-codeql-action-upl.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-AA4736",
+      "directive_title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AA4736-markdown-fix-image-syntax-for-unpreviewa.md",
       "staged_date": "2026-11-27"
     }
   ]

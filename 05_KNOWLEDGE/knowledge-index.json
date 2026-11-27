@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T21:56:47.482Z",
+  "last_updated": "2026-11-27T22:05:24.539Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34114,13 +34114,13 @@
       "rule_number": 1692,
       "title": "build(deps): bump github/codeql-action/upload-sarif",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "5f12fdd2",
+      "source_version": "ad25d4b2",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-23T21:23:12.925Z"
+      "verified_at": "2026-11-27T22:05:17.010Z"
     },
     "rule-1693": {
       "learning_id": "rule-1693",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "aaa49f0f3c25bdc8c5a0303de7112a7982b1716c2aff4c65eceac1d00b93ee0e",
+      "content_hash": "c11ec02bad6ad832e2c755e0d5aad23fc1351df8d32b1bb87ad97ea8c9ce48ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T21:30:22.901Z"
+      "persisted_at": "2026-11-27T22:05:24.539Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -224597,8 +224597,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "007a518f",
-      "content_hash": "5e80004cf5878cbee5c1f19896bcbd1925329f46a959f749bdb82a1659663e54",
+      "source_version": "ad25d4b2",
+      "content_hash": "5d0f3a63160ecca1f561be54946e33faeaeb806dff1b2f9d40d120781547e91c",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -224653,7 +224653,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T11:03:50.599Z",
+      "verified_at": "2026-11-27T22:05:17.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224695,10 +224695,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "repository": "moby/buildkit",
-      "source_version": "875f5143",
-      "content_hash": "b03ada91e942b5ca365c8ed5a806992f8700866eb7dbd3d59e602ea75877c944",
+      "source_version": "ad25d4b2",
+      "content_hash": "5a7174c01db9c407d4c79db36e586afd156b08162ea2fd0a09d1136581f38e2d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T10:45:38.225Z"
+      "persisted_at": "2026-11-27T22:05:17.761Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
@@ -224707,10 +224707,10 @@
       "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
       "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
       "repository": "moby/buildkit",
-      "source_version": "875f5143",
-      "content_hash": "a627712d93b976a2641434c92265e2e9e0cf9416fcf81500d6fcf7ebc6e1cfc8",
+      "source_version": "ad25d4b2",
+      "content_hash": "e0fc0e4e2420479091b74e9192cc9e3a7c55f003e8f7a779c7701dc74124fd1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T10:45:38.396Z"
+      "persisted_at": "2026-11-27T22:05:17.966Z"
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -224963,9 +224963,9 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "12e922e0c69cd42f7846eae7bd530919145e4ab2fa44cfdef0d455283a78fa82",
+      "content_hash": "b9bd846edfda800e4967570bfbe7d08106f675602bf639fe60aa25da2f5f6f70",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T11:03:58.032Z"
+      "persisted_at": "2026-11-27T22:05:23.204Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings",
@@ -224975,9 +224975,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for moby-buildkit-learnings",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "b07291ea9e4c5618fe87c8d72ddd598d2c660fb40ec79aba67be47d35acc2d46",
+      "content_hash": "2e8491573de630b27deb38481eab4e096639fa752740c858e1d90fe8d4bb2b8d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T11:03:58.295Z"
+      "persisted_at": "2026-11-27T22:05:23.415Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -309792,7 +309792,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
       "source_version": "hf-harness-hub-qwen3.8-27b-opencode-adapted",
-      "content_hash": "694148512fc8eec599fb9934eac0750de596cf38de3b77d6fa8ce2e2bdfe068c",
+      "content_hash": "e4bb187e8d7c0da5efe292a22e24a2cdc922f488aeaa16e0bf8905fc74313186",
       "dossier_path": "07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md",
       "promoted_rules": [],
@@ -309801,7 +309801,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T13:56:28.145Z",
+      "verified_at": "2026-11-27T22:05:07.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -309818,9 +309818,9 @@
       "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-opencode-adapted Core Invariants",
       "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
       "source_version": "hf-harness-hub-qwen3.8-27b-opencode-adapted",
-      "content_hash": "cbb9af91870c4b4477269f234d6d2d427f65abaa2ce61fc78c4387f8907e3382",
+      "content_hash": "119ae8c6418e5306f5994b564b1a9d6034ac4428c91d1622b35baf8210a81eaa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T13:56:28.639Z"
+      "persisted_at": "2026-11-27T22:05:08.356Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-opencode-adapted-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-opencode-adapted-lear",
@@ -309830,9 +309830,9 @@
       "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings Core Invariants",
       "repository": "hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings",
       "source_version": "HEAD",
-      "content_hash": "b38f1fbcb0484658f3dc6053a27ec603bf6ab82fd5d85b7010dde2a92a2e813a",
+      "content_hash": "16fbae3591c9661147e8288ec5f43edb58137cd5715b16834a29b1680a534040",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T13:56:47.927Z"
+      "persisted_at": "2026-11-27T22:05:21.108Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-learnings-core-invariants",
@@ -334134,13 +334134,13 @@
       "item_id": "candidate_directive-build-deps-bump-github-codeql-action-upload-sarif",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VPSI-build-deps-bump-github-codeql-action-upload-sarif.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5CBP-build-deps-bump-github-codeql-action-upload-sarif.md",
       "title": "build(deps): bump github/codeql-action/upload-sarif",
-      "repository": "moby/buildkit",
-      "source_version": "5f12fdd2",
-      "content_hash": "ef5242a9e7d873e073e43df6fb43a51b57bb70dbea5dcc99d601d5c8d756d040",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "39afc294579fdc8f6a7af473231957bed1c941d11629bfe99af6bb38b45796b0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-23T21:23:13.363Z"
+      "persisted_at": "2026-11-27T22:05:22.984Z"
     },
     "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -358621,13 +358621,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WBDM-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5D7D-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a96103ee2c300e274e07507f5a4459e78d7c4055c7c0cafeca731d544900a21",
+      "content_hash": "4d39ff7ee568923a7d1cd4fc5d895e60134f1d5f854bc22d1269a49694463b7f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T21:30:22.238Z"
+      "persisted_at": "2026-11-27T22:05:24.125Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358637,9 +358637,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "61687822cf9331c815c0b45232e388a8181a567e5d434ca3f0c853436c63bce0",
+      "content_hash": "4ae693e9fe8e59716c894446008f87e31b30e5a78db3c6939deb55e83307ac7b",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T21:30:22.566Z"
+      "persisted_at": "2026-11-27T22:05:24.329Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",

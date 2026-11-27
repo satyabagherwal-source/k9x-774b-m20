@@ -13882,3 +13882,5 @@
 | `CYCLE-20261127-IWPC` | `2026-11-27T21:47:56.304Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10972` | Yes (`7de45d4c...`) |
 | `CYCLE-20261127-TZRS` | `2026-11-27T21:56:33.496Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10973` | Yes (`e68c8f57...`) |
 | `CYCLE-20261127-U5P5` | `2026-11-27T21:56:41.177Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10974` | Yes (`dd1525c2...`) |
+| `CYCLE-20261127-50UH` | `2026-11-27T22:05:08.105Z` | `harness-hub/Qwen3.8-27B-opencode-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | Yes (`e4bb187e...`) |
+| `CYCLE-20261127-57XF` | `2026-11-27T22:05:17.283Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`5d0f3a63...`) |

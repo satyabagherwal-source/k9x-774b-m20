@@ -4,22 +4,22 @@
 {
   "source_repository": "moby/buildkit",
   "source_url": "https://github.com/moby/buildkit",
-  "source_version": "007a518f",
+  "source_version": "ad25d4b2",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T11:03:51.306Z",
+  "timestamp": "2026-11-27T22:05:17.552Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-moby-buildkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `007a518f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T11:03:51.306Z`  
+> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `ad25d4b2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T22:05:17.552Z`  
 > **Learning ID**: `learn-github-moby-buildkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `moby/buildkit` (Commit: `007a518f`)
+- **Target Repository**: `moby/buildkit` (Commit: `ad25d4b2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:03:49.317Z  
+> **Harvest Timestamp**: 2026-11-27T22:05:16.447Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10442 stars
+- **Stars / Engagement**: 10445 stars
 
 ---
 
@@ -2306,11 +2306,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7468** (2026-11-25): **source/git: authenticate Git metadata fetches**
-  *Symptoms*: Load session credentials before fetching Git objects. Commit SHA refs and fetch-by-commit can skip the ref lookup that normally loads credentials.
+- **Issue #7477** (2026-11-27): **build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.19.0 to 1.20.0**
+  *Symptoms*: Bumps [docker/github-builder/.github/workflows/bake.yml](https://github.com/docker/github-builder) from 1.19.0 to 1.20.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/github-builder/releases">docker/github-builder/.github/workflows/bake.yml's releases</a>.</em></p> <blockquote> <h2>v1.20.0</h2> <ul> <li>build/bake: Support configurable image layer compression by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/github-builder/pull/339">docker/github-builder#339</a></li> <li>build/bake: Support reproducible timestamps with <code>source-date-epoch</code> by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/github-builder/pull/338">docker/github-builder#338</a></li> <li>update BuildKit image to v0.35.1 in <a href="https://redirect.github.com/docker/github-builder/pull/344">docker/github-builder#344</a> <a href="https://redirect.github.com/docker/github-builder/pull/348">docker/github-builder#348</a></li> <li>update Buildx version to v0.39.1 in <a href="https://redirect.github.com/docker/github-builder/pull/349">docker/github-builder#349</a></li> <li>update chainguard-dev/setup-chainctl from 0.5.1 to 0.6.0 in <a href="https://redirect.github.com/docker/github-builder/pull/337">docker/github-builder#337</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/github-builde
 
-- **Issue #7467** (2026-11-25): **Dockerfile: test with stargz-snapshotter v0.19.1**
-  *Symptoms*: 
+- **Issue #7476** (2026-11-27): **build(deps): bump github/codeql-action/upload-sarif from 4.39.4 to 4.39.5**
+  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.4 to 4.39.5. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.5</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.6">2.27.6</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4347">#4347</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/codeql-action/upload-sarif's changelog</a>.</em></p> <blockquote> <h1>CodeQL Action Changelog</h1> <p>See the <a href="https://github.com/github/codeql-action/releases">releases page</a> for the relevant changes to the CodeQL CLI and language packs.</p> <h2>[UNRELEASED]</h2> <p>No user facing changes.</p> <h2>4.39.5 - 24 Nov 2026</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.6">2.27.6</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4347">#4347</a></li> </ul> <h2>4.39.4 - 20 Nov 2026</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.5">2.27.5</a>. <a href="https://redirect.github.c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2327,217 +2327,162 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `007a518f` (2026-11-25)
-**Commit Message**: Merge pull request #7468 from tonistiigi/git-auth-fix
+### Incident Patch 1: `defb51e0` (2026-11-27)
+**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
 
-source/git: authenticate Git metadata fetches
+Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.4 to 4.39.5.
+- [Release notes](https://github.com/github/codeql-action/releases)
+- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/github/codeql-action/compare/1bd86f2fdb4b86187fa4059f16f31a3202acc9ea...915412ff23e8b7659517e607487dbeae018f2934)
 
-**File**: `client/client_git_source_test.go` (modified, +140/-0)
+---
+updated-dependencies:
+- dependency-name: github/codeql-action/upload-sarif
+  dependency-version: 4.39.5
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"context"
- 	"encoding/json"
- 	"fmt"
-+	"maps"
- 	"net/http"
- 	"net/http/httptest"
- 	"os"
-@@ -21,6 +22,8 @@ import (
- 	"github.com/moby/buildkit/client/llb"
- 	"github.com/moby/buildkit/client/llb/sourceresolver"
- 	gateway "github.com/moby/buildkit/frontend/gateway/client"
-+	"github.com/moby/buildkit/session"
-+	"github.com/moby/buildkit/session/secrets/secretsprovider"
- 	provenancetypes "github.com/moby/buildkit/solver/llbsolver/provenance/types"
- 	"github.com/moby/buildkit/solver/pb"
- 	"github.com/moby/buildkit/util/contentutil"
-@@ -769,6 +772,143 @@ func testGitResolveSourceMetadata(t *testing.T, sb integration.Sandbox) {
- 	require.NoError(t, err)
- }
+@@ -161,7 +161,7 @@ jobs:
+       -
+         name: Upload SARIF report
+         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'moby/buildkit' }}
+-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
++        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+         with:
+           sarif_file: ${{ env.DESTDIR }}/govulncheck.out
  
-+// testGitResolveSourceMetadataAuth checks that fetching commit objects uses
-+// session credentials when metadata resolution skips the remote ref lookup
-+// (fetch-by-commit and commit SHA refs), both for returning the commit object
-+// and for checkout.
-+func testGitResolveSourceMetadataAuth(t *testing.T, sb integration.Sandbox) {
-+	// TODO: remove once CI has Git for Windows >= 2.56.0.windows.2
-+	// https://github.com/git-for-windows/git/issues/6449
-+	integration.SkipOnPlatform(t, "windows")
-+	ctx := sb.Context()
-+	c, err := New(ctx, sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	gitDir := t.TempDir()
-+	err = runInDir(gitDir,
-+		"git init",
-+		"git config --local user.email test@example.com",
-+		"git config --local user.name test",
-+		"git checkout -B master",
-+		"touch a",
-+		"git add a",
-+		"git commit -m a",
-+		"git tag commit-a",
-+		"touch b",
-+		"git add b",
-+		"git commit -m b",
-+		"git tag commit-b",
-+		"touch c",
-+		"git add c",
-+		"git commit -m c",
-+		"git update-server-info",
-+	)
-+	require.NoError(t, err)
-+
-+	revParse := func(rev string) string {
-+		cmd := exec.CommandContext(t.Context(), "git", "rev-parse", rev)
-+		cmd.Dir = gitDir
-+		out, err := cmd.Output()
-+		require.NoError(t, err)
-+		return strings.TrimSpace(string(out))
-+	}
-+	commitA := revParse("commit-a^{commit}")
-+	commitB := revParse("commit-b^{commit}")
-+	commitC := revParse("HEAD")
-+
-+	const authHeader = "Bearer s3cr3t"
-+	fileServer := http.FileServer(http.Dir(filepath.Clean(gitDir)))
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		if r.Header.Get("Authorization") != authHeader {
-+			w.WriteHeader(http.StatusUnauthorized)
-+			return
-+		}
-+		fileServer.ServeHTTP(w, r)
-+	}))
-+	defer server.Close()
-+
-+	so := SolveOpt{
-+		Session: []session.Attachable{secretsprovider.FromMap(map[string][]byte{
-+			"GIT_AUTH_HEADER": []byte(authHeader),
-+		})},
-+	}
-+	_, err = c.Build(ctx, so, "test", func(ctx context.Context, c gateway.Client) (*gateway.Result, error) {
-+		baseID := "git://" + strings.TrimPrefix(server.URL, "http://") + "/.git"
-+		for _, tc := range []struct {
-+			name    string
-+			ref     string
-+			attrs   map[string]string
-+			commit  string
-+			message string
-+		}{
-+			{
-+				name: "fetch-by-commit",
-+				ref:  "master",
-+				attrs: map[string]string{
-+					pb.AttrGitChecksum:      commitA,
-+					pb.AttrGitFetchByCommit: "true",
-+				},
-+				commit:  commitA,
-+				message: "a",
-+			},
-+			{
-+				name:    "commit sha ref",
-+				ref:     commitB,
-+				commit:  commitB,
-+				message: "b",
-+			},
-+		} {
-+			attrs := map[string]string{
-+				pb.AttrFullRemoteURL:    server.URL + "/.git",
-+				pb.AttrAuthHeaderSecret: "GIT_AUTH_HEADER",
-+			}
-+			maps.Copy(attrs, tc.attrs)
-+			md, err := c.ResolveSourceMetadata(ctx, &pb.SourceOp{
-+				Identifier: baseID + "#" + tc.ref,
-+				Attrs:      attrs,
-+			}, sourceresolver.Opt{
-+				GitOpt: &sourceresolver.ResolveGitOpt{
-+					ReturnObject: true,
-+				},
-+			})
-+			if err != nil {
-+				return nil, errors.Wrap(err, tc.name)
-+			}
-+			require.NotNil(t, md.Git, tc.name)
-+			require.Equal(t, tc.commit, md.Git.Checksum, tc.name)
-+
-+			commitObj, err := gitobject.Parse(md.Git.CommitObject)
-+			require.NoError(t, err, tc.name)
-+			require.NoError(t, commitObj.VerifyChecksum(tc.commit), tc.name)
-+			commit, err := commitObj.ToCommit()
-+			require.NoError(t, err, tc.name)
-+			require.Equal(t, tc.message, commit.Message, tc.name)
-+		}
-+
-+		// Checking out an uncached commit SHA ref skips the remote ref lookup
-+		// too, so the snapshot fetch must load auth itself.
-+		def, err := llb.Git(server.URL+"/.git", commitC).Marshal(ctx)
-+		if err != nil {
-+			return nil, err
-+		}
-+		res, err := c.Solve(ctx, gateway.SolveRequest{Definition: def.ToPB()})
-+		if err != nil {
-+			return nil, err
-+		}
-+		ref, err := res.SingleRef()
-+		if err != nil {
-+			return nil, err
-+		}
-+		_, err = ref.StatFile(ctx, gateway.StatRequest{Path: "c"})
-+		if err != nil {
-+			return nil, err
-+		}
-+		return nil, nil
-+	}, nil)
-+	require.NoError(t, err)
-+}
-+
- func runInDir(dir string, cmds ...string) error {
- 	return runInDirEnv(dir, nil, cmds...)
- }
+@@ -327,7 +327,7 @@ jobs:
+           jq . ${{ steps.scout.outputs.result-file }}
+       -
+         name: Upload SARIF report
+-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
++        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+         with:
+           sarif_file: ${{ steps.scout.outputs.result-file }}
+ 
 ```
 
-**File**: `client/client_test.go` (modified, +1/-0)
+**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
 ```diff
-@@ -165,6 +165,7 @@ var allTests = []func(t *testing.T, sb integration.Sandbox){
- 	testGitResolveMutatedSource,
- 	testGitResolveCacheAfterFailure,
- 	testGitResolveSourceMetadata,
-+	testGitResolveSourceMetadataAuth,
+@@ -227,7 +227,7 @@ jobs:
+           jq . ${{ steps.scout.outputs.result-file }}
+       -
+         name: Upload SARIF report
+-        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
++        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+         with:
+           sarif_file: ${{ steps.scout.outputs.result-file }}
  
- 	// client_http_source_test.go
- 	testBuildHTTPSource,
 ```
 
-**File**: `source/git/source.go` (modified, +3/-1)
+---
+
+### Incident Patch 2: `ad25d4b2` (2026-11-27)
+**Commit Message**: Merge pull request #7477 from moby/dependabot/github_actions/docker/github-builder/dot-github/workflows/bake.yml-1.20.0
+
+build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.19.0 to 1.20.0
+
+**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
 ```diff
-@@ -814,6 +814,9 @@ func (gs *gitSourceHandler) remoteFetch(ctx context.Context, jobCtx solver.JobCo
- 	if jobCtx != nil {
- 		g = jobCtx.Session()
- 	}
-+	// resolveMetadata loads auth only for ls-remote, which commit SHA refs,
-+	// fetch-by-commit and resolver cache hits skip.
-+	gs.getAuthToken(ctx, g)
+@@ -49,7 +49,7 @@ jobs:
+           fields: platforms
  
- 	repo, err := gs.tryRemoteFetch(ctx, jobCtx, g, false)
- 	if err != nil {
-@@ -883,7 +886,6 @@ func (gs *gitSourceHandler) Snapshot(ctx context.Context, jobCtx solver.JobConte
- 	if jobCtx != nil {
- 		g = jobCtx.Session()
- 	}
--	gs.getAuthToken(ctx, g)
- 	compatibilityVersion := 0
- 	if jobCtx != nil {
- 		var err error
+   binaries:
+-    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
++    uses: docker/github-builder/.github/workflows/bake.yml@bb1eb9fb69408ac52395fb21f49c6b52d564529a # v1.20.0
+     permissions:
+       contents: read # same as global permission
+       id-token: write # for signing attestation(s) with GitHub OIDC Token
+@@ -222,7 +222,7 @@ jobs:
+             core.setOutput('includes', JSON.stringify(matrix));
+ 
+   image:
+-    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
++    uses: docker/github-builder/.github/workflows/bake.yml@bb1eb9fb69408ac52395fb21f49c6b52d564529a # v1.20.0
+     needs:
+       - image-prepare
+       - test
+```
+
+**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
+```diff
+@@ -125,7 +125,7 @@ jobs:
+             core.setOutput('includes', JSON.stringify(matrix));
+ 
+   image:
+-    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
++    uses: docker/github-builder/.github/workflows/bake.yml@bb1eb9fb69408ac52395fb21f49c6b52d564529a # v1.20.0
+     needs:
+       - prepare
+       - test
+```
+
+---
+
+### Incident Patch 3: `e506dadb` (2026-11-27)
+**Commit Message**: build(deps): bump docker/github-builder/.github/workflows/bake.yml
+
+Bumps [docker/github-builder/.github/workflows/bake.yml](https://github.com/docker/github-builder) from 1.19.0 to 1.20.0.
+- [Release notes](https://github.com/docker/github-builder/releases)
+- [Commits](https://github.com/docker/github-builder/compare/a31d2311da4d55e21b978c1c52bab82ba97d51ee...bb1eb9fb69408ac52395fb21f49c6b52d564529a)
+
+---
+updated-dependencies:
+- dependency-name: docker/github-builder/.github/workflows/bake.yml
+  dependency-version: 1.20.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
+```diff
+@@ -49,7 +49,7 @@ jobs:
+           fields: platforms
+ 
+   binaries:
+-    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
++    uses: docker/github-builder/.github/workflows/bake.yml@bb1eb9fb69408ac52395fb21f49c6b52d564529a # v1.20.0
+     permissions:
+       contents: read # same as global permission
+       id-token: write # for signing attestation(s) with GitHub OIDC Token
+@@ -222,7 +222,7 @@ jobs:
+             core.setOutput('includes', JSON.stringify(matrix));
+ 
+   image:
+-    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
++    uses: docker/github-builder/.github/workflows/bake.yml@bb1eb9fb69408ac52395fb21f49c6b52d564529a # v1.20.0
+     needs:
+       - image-prepare
+       - test
+```
+
+**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
+```diff
+@@ -125,7 +125,7 @@ jobs:
+             core.setOutput('includes', JSON.stringify(matrix));
+ 
+   image:
+-    uses: docker/github-builder/.github/workflows/bake.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
++    uses: docker/github-builder/.github/workflows/bake.yml@bb1eb9fb69408ac52395fb21f49c6b52d564529a # v1.20.0
+     needs:
+       - prepare
+       - test
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7477** (2026-11-27): build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.19.0 to 1.20.0 (@dependabot[bot])
+- **PR #7476** (2026-11-27): build(deps): bump github/codeql-action/upload-sarif from 4.39.4 to 4.39.5 (@dependabot[bot])
 - **PR #7468** (2026-11-25): source/git: authenticate Git metadata fetches (@tonistiigi)
 - **PR #7467** (2026-11-25): Dockerfile: test with stargz-snapshotter v0.19.1 (@thaJeztah)
 - **PR #7462** (2026-11-23): lint: disable verbose output from gopls analyzers (@crazy-max)
 - **PR #7460** (2026-11-23): build(deps): bump github/codeql-action/upload-sarif from 4.39.2 to 4.39.4 (@dependabot[bot])
-- **PR #7456** (2026-11-20): testutil: fix the process-exit race in integration socket waits (@crazy-max)
-- **PR #7454** (closed): fileop: preserve existing parent directory mtime on timestamped actions (@davireis)
 
 ---
 
@@ -2557,69 +2502,33 @@ source/git: authenticate Git metadata fetches
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in client_git_source_test.go
+## X. build(deps): bump github/codeql-action/upload-sarif
 
 **RULE**:
-When implementing operations in `client/client_git_source_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `007a518f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `defb51e0`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/client_git_source_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"maps"
-	"github.com/moby/buildkit/session"
-	"github.com/moby/buildkit/session/secrets/secretsprovider"
-// testGitResolveSourceMetadataAuth checks that fetching commit objects uses
-// session credentials when metadata resolution skips the remote ref lookup
-// (fetch-by-commit and commit SHA refs), both for returning the commit object
-// and for checkout.
-func testGitResolveSourceMetadataAuth(t *testing.T, sb integration.Sandbox) {
-	// TODO: remove once CI has Git for Windows >= 2.56.0.windows.2
-	// https://github.com/git-for-windows/git/issues/6449
-	integration.SkipOnPlatform(t, "windows")
-	ctx := sb.Context()
-	c, err := New(ctx, sb.Address())
-	require.NoError(t, err)
-	defer c.Close()
-
-	gitDir := t.TempDir()
-	err = runInDir(gitDir,
-		"git init",
-		"git config --local user.email test@example.com",
-		"git config --local user.name test",
-		"git checkout -B master",
-		"touch a",
-		"git add a",
-		"git commit -m a",
-		"git tag commit-a",
-		"touch b",
-		"git add b",
-		"git commit -m b",
-		"git tag commit-b",
-		"touch c",
-		"git add c",
-		"git commit -m c",
-		"git update-server-info",
-	)
-	require.NoError(t, err)
-
-	revParse := func(rev string) string {
-		cmd := exec.CommandContext(t.Context
+        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
+        uses: github/codeql-action/upload-sarif@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+        uses: github/codeql-action/upload-sarif@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `007a518f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `defb51e0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

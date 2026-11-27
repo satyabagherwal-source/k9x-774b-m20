@@ -21,8 +21,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T17:50:08.037Z",
-    "lastVerified": "2026-11-27T17:50:08.037Z",
+    "lastChecked": "2026-11-27T22:05:14.870Z",
+    "lastVerified": "2026-11-27T22:05:14.870Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T21:30:11.376Z",
-    "lastVerified": "2026-11-27T21:30:11.376Z",
+    "lastChecked": "2026-11-27T22:05:19.983Z",
+    "lastVerified": "2026-11-27T22:05:19.983Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T21:56:44.544Z",
-    "lastVerified": "2026-11-27T21:56:44.544Z",
+    "lastChecked": "2026-11-27T22:05:20.680Z",
+    "lastVerified": "2026-11-27T22:05:20.680Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2071,22 +2071,21 @@
     "revisionIdentifier": "18c27502"
   },
   "moby-buildkit": {
-    "name": "buildkit",
+    "name": "moby/buildkit",
     "officialUrl": "https://github.com/moby/buildkit",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T04:09:50.519Z",
-    "lastVerified": "2026-11-27T04:09:50.519Z",
+    "lastChecked": "2026-11-27T22:05:16.447Z",
+    "lastVerified": "2026-11-27T22:05:16.447Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-moby-buildkit",
-    "contentHash": "5e80004cf5878cbee5c1f19896bcbd1925329f46a959f749bdb82a1659663e54",
+    "contentHash": "5d0f3a63160ecca1f561be54946e33faeaeb806dff1b2f9d40d120781547e91c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "007a518f"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
     "name": "nuclei",
@@ -4656,9 +4655,9 @@
   "wasm-bindgen-wasm-pack": {
     "name": "wasm-pack",
     "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
-    "lastChecked": "2026-11-26T22:02:01.973Z",
+    "lastChecked": "2026-11-27T22:05:04.877Z",
     "revisionIdentifier": "c262c330",
-    "lastVerified": "2026-11-26T22:02:01.973Z"
+    "lastVerified": "2026-11-27T22:05:04.877Z"
   },
   "hf-qwen-qwen3.8-flash-next": {
     "name": "Qwen/Qwen3.8-Flash-Next",
@@ -5442,9 +5441,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-27T02:58:24.053Z",
+    "lastChecked": "2026-11-27T22:05:17.364Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-27T02:58:24.053Z"
+    "lastVerified": "2026-11-27T22:05:17.364Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -10226,9 +10225,9 @@
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",
     "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
-    "lastChecked": "2026-11-25T13:31:40.456Z",
+    "lastChecked": "2026-11-27T22:05:09.998Z",
     "revisionIdentifier": "c637ad7d",
-    "lastVerified": "2026-11-25T13:31:40.456Z"
+    "lastVerified": "2026-11-27T22:05:09.998Z"
   },
   "a4csi-schema-org-validate": {
     "name": "schema-org-validate",
@@ -10821,12 +10820,12 @@
     "officialUrl": "https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-24T13:56:27.740Z",
-    "lastVerified": "2026-11-24T13:56:27.740Z",
+    "lastChecked": "2026-11-27T22:05:07.403Z",
+    "lastVerified": "2026-11-27T22:05:07.403Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
-    "contentHash": "694148512fc8eec599fb9934eac0750de596cf38de3b77d6fa8ce2e2bdfe068c",
+    "contentHash": "e4bb187e8d7c0da5efe292a22e24a2cdc922f488aeaa16e0bf8905fc74313186",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

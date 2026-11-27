@@ -13915,3 +13915,5 @@ Every entry in this ledger must capture:
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `40f0b84f` | Multi-dimensional audit evidence | 2026-11-27T21:47:56.317Z |
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `6837149e` | Multi-dimensional audit evidence | 2026-11-27T21:56:33.512Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `06f8d78a` | Multi-dimensional audit evidence | 2026-11-27T21:56:41.190Z |
+| `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-27T22:05:08.117Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `ad25d4b2` | Multi-dimensional audit evidence | 2026-11-27T22:05:17.295Z |
