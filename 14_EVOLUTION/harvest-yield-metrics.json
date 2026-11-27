@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T15:27:13.882Z",
-  "total_cycles_completed": 13104,
-  "total_learnings_persisted": 13104,
-  "total_rules_promoted": 11830,
+  "last_updated": "2026-11-27T15:36:46.799Z",
+  "total_cycles_completed": 13106,
+  "total_learnings_persisted": 13106,
+  "total_rules_promoted": 11832,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:32:24.559Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T23:40:53.532Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:40:54.920Z",
       "repository": "embassy-rs/embassy",
@@ -1403,6 +1389,20 @@
       "repository": "momenbasel/PureMac",
       "learningId": "learn-github-momenbasel-puremac",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T15:36:45.224Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T15:36:46.799Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

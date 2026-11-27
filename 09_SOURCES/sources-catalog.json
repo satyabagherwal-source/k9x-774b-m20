@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "92486c78",
+    "sourceVersion": "f5942749",
     "license": "Apache-2.0",
-    "contentHash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
-    "lastHarvestedAt": "2026-11-26T20:23:05.826Z",
+    "contentHash": "5950376ea3e4435a9528ff1887d1cf568b5402bc4b620a93d4127262c812ece4",
+    "lastHarvestedAt": "2026-11-27T15:36:46.789Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "7fa79ec4",
+    "sourceVersion": "35922adf",
     "license": "NOASSERTION",
-    "contentHash": "51d17bb0fdd7100386f1e1aa4c2280cb4f8af5e40d05100cb1036e9a1ee2562f",
-    "lastHarvestedAt": "2026-11-27T10:43:11.604Z",
+    "contentHash": "9ae0f2e53af99e50a7bfdcf5dd14ca13945eb0a2ea648a38de61a3b34186f14f",
+    "lastHarvestedAt": "2026-11-27T15:36:45.214Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

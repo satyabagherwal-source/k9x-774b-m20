@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `7fa79ec4`  
+> **Source Version**: `35922adf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T10:43:10.348Z  
+> **Timestamp**: 2026-11-27T15:36:43.935Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T10:43:10.203Z  
+> **Harvest Timestamp**: 2026-11-27T15:36:43.804Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,14 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6408** (2026-11-26): **fix: demote a native role only when rescues are a real share of its outcomes**
-  *Symptoms*: **DO NOT MERGE until the v0.2.167 settled read confirms (Ian-approved plan).**  ## Problem  At 100% native, the QUIC-native demotion (3 distinct-peer rescues inside the 6 h strike window, cleared by a success in the same role) demotes more nodes than it did at 25%. Field read for 0.2.167, 17:13Z to 21:44Z on 2026-11-26 (4.5 h, 285k snapshots, 1,060 nodes, rollout ramp included): 63 acceptor-role demotions on 62 nodes (5.8%) and 40 joiner-role demotions on 40 nodes (3.8%).  Rescue share of the role's native outcomes (rescues / (rescues + successes)) in the 6 h before each demotion: - joiner: p10/p50/p90 = 0.36 / 0.50 / 1.0 (these nodes really fail about half their native setups); - acceptor: p10/p25/p50/p75/p90 = 0.17 / 0.22 / 0.30 / 0.50 / 0.57, against a healthy baseline of about 0.04 (joiner 0.075).  About half the acceptor demotions are therefore nodes that completed three rescues in a row among 10 to 25 setups at a modest rescue share.  ## Approach  The streak stays the trigger. When it is full, the role is demoted only if rescues are at least `DEMOTION_MIN_RESCUE_SHARE_PERCENT` (30) of that role's native outcomes inside `STRIKE_WINDOW`. Otherwise the streak is cleared and the event is counted in a new counter, `connect_native_demotion_guard_spared_{joiner,acceptor}`. Each role keeps a bounded ring (`DEMOTION_OUTCOME_RING` = 256, oldest evicted first) of its rescues and successes.  The guard only holds a demotion back, so demotion stays lower-only and fail-safe: an empty 
-  **Post-Mortem & Fix Analysis**:
-  > Closing without merge: plan changed. Demotion will be removed rather than guarded (decision for Phase D; whether to remove it already before D is being evaluated from the 0.2.167 settled read). The branch stays for reference.
-  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md, transport.md **Files reviewed:** 5  - **Regression test:** The `fix:` PR adds tests that exercise the new guard.   - They cover the exact 30% boundary: 3 of 10 demotes and 3 of 11 does not.   - They cover a node with no successes at all.   - They cover a share that rises after a spared streak.   - They cover outcomes at the window edge, just inside it and just outside it.   - They cover the ring bound and eviction.   - They cover both roles through `NativeConnectState`.   - They cover the metrics snapshot, its JSON field and its reset. - **Cleanup bounds:** The new `outcomes` ring is bounded by age (`STRIKE_WINDOW`) and by size (`DEMOTION_OUTCOME_RING`). It adds no unbounded exemption. - **Docs:** `.claude/rules/transport.md` and `docs/architecture/transport/rules-reference.md` were updated in the same PR, so no stale documentation. - **Time and ra
+- **Issue #6415** (2026-11-27): **test: split the native transport survivor sim into one test per run**
+  *Symptoms*: ## Problem  `test_quic_native_both_ends_keep_the_same_transport` timed out at the 240 s nextest cap on main since #6121 (#6414). It is not a livelock. The test ran seven simulations in one test, and each forced-order run searches up to 32 seeds for the first one on which the survivor rule makes the required choice. #6121 reordered simulation tasks, which moved the `NativeFirstInbound` run from seed offset 1 to offset 11, so the test went from 8 simulations to 18. Per-simulation cost did not change.  Measured on a loaded machine (debug build, load average 12-19): 116 s at cb576c5d4, 304 s at 7fa79ec45, over the 240 s cap. CI's Simulation job does run the test and passed it in 78 s on #6413, so CI only had margin because its runners are faster. #6121 had already re-seeded `test_quic_native_symmetric_nat_pairs_fail_and_nodes_still_join` for the same reason.  ## Approach  - Split the test into one `#[test]` per run on a shared helper, so nextest runs them in parallel and each has its own budget. - Start the `NativeFirstInbound` search at the seed that hits at offset 0 on current main (`0x5940a500eb`). - Keep the search and the fail-closed premise. Add a guard: a forced-order run that needs an offset of 8 or more now fails with the seed to start from ("trajectories shifted; re-seed, do not raise the timeout"), so the next reordering reports itself instead of appearing as a timeout.  No timeout, retry or `#[ignore]` changes; test-only.  ## Testing  - `cargo nextest run --profile ci
 
-- **Issue #6406** (2026-11-27): **feat(transport): split short_dropped by cause**
-  *Symptoms*: ## Problem `quic_data_send_short_dropped` was 21,489 of 65.7M sends on the v0.2.167 floor release, and about 21k of those had no cause label: the give-up arm of `QuicPath::settle` (other stop codes, native sends that cannot fall back to UDP) counted a drop without saying why. The next release needs to show why Shorts are dropped.  ## Approach Telemetry only; no behaviour change. Every Short counted dropped now also counts exactly one `quic_short_dropped_<cause>` (uploaded only when non-zero, like `quic_pipe_dropped_*`).  `QuicPathStats::record_short_dropped(cause)` is the only way a Short is counted dropped, so the causes sum to `short_dropped` by construction. `record_send` asserts (debug) that a dropped Short never takes the uncaused path, and `only_record_short_dropped_counts_a_dropped_short` pins the call sites in source. The cause is chosen where the drop is decided: `route::short_drop_cause(outcome)` in `settle`, `DataRoute::queue_short`, and the route worker's `send_elsewhere` (its caller names the reason). Nothing is derived by subtraction.  Causes, and whether each can occur on a path with a UDP session (from the code: a path with a session sends these on UDP instead of giving up):  | cause | meaning | UDP-session path? | |---|---|---| | `not_opened_exhausted` | no stream opened in the deadline, native retries used up | native only | | `timed_out` | send deadline ran out | native only | | `paced` | pacer refused | native only | | `connection_lost` | connection lost /
+- **Issue #6414** (2026-11-27): **test: test_quic_native_both_ends_keep_the_same_transport times out on main since #6121**
+  *Symptoms*: ## Problem  `test_quic_native_both_ends_keep_the_same_transport` (`crates/core/tests/simulation_integration.rs`, features `simulation_tests,testing`) never finishes on main at 7fa79ec45 (#6121): nextest terminates it at 240 s, repeatedly, with no panic. The log is the same `connect` transactions processed over and over, so it looks like the simulated network livelocks rather than the test being slow.  ## Evidence  - `cargo nextest run -p freenet --test simulation_integration --features simulation_tests,testing --profile ci -E 'test(test_quic_native_both_ends_keep_the_same_transport)'` on a clean checkout of 7fa79ec45: TIMEOUT at 240 s (run 1 of 1, `--retries 0`). On an unrelated branch rebased onto it, 2 of 2 tries also timed out. - The same test passed (about 10 s) in a full `test_quic_native` run, 19 of 19, on a branch based on cb576c5d4 (#6406). So the regression is between cb576c5d4 and 7fa79ec45 (the diff is #6121 and its neighbours: broadcast spacing, broadcast queue, config, `verify_soon`, and ~246 added lines in `simulation_integration.rs`).  ## Not yet done  Bisect the commits in that range; I did not.  [AI-assisted - Claude] 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1762,425 +1759,634 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7fa79ec4` (2026-11-27)
-**Commit Message**: fix(test): do not await a heal's stream inside the simulation event loop (#6121)
+### Incident Patch 1: `366fdcad` (2026-11-27)
+**Commit Message**: fix: remove native-connect demotion (#6413)
 
-**File**: `.claude/rules/operations.md` (modified, +4/-3)
+**File**: `.claude/rules/transport.md` (modified, +4/-5)
 ```diff
-@@ -749,9 +749,10 @@ module doc.
- Do not hook it anywhere but `update_contract`'s `ClientLocal` +
- `state_changed` branch, and keep the escalation decision in the `Summaries`
- arm BEFORE `emit_stale_peer_syncs`: the force mark must exist when that heal's
--leg is built. In simulations the forced leg is spawned rather than awaited
--(`spawn_forced_leg`): the simulation sends heals inline on the event loop,
--and a stream leg awaits a completion signal that loop has to drive.
-+leg is built. In simulations every full-state leg, a heal's or a forced one, is spawned
-+rather than awaited (`spawn_leg`): a stream leg awaits a completion signal
-+that the event loop has to drive, so awaiting it on the loop stalls the node
-+until `STREAM_COMPLETION_TIMEOUT`.
+@@ -307,7 +307,7 @@ Mechanism detail: docs/architecture/transport/rules-reference.md § WHEN admitti
+ ### WHEN a joiner dials a gateway natively (#5940, phase B; on since the floor release, `GATEWAY_NATIVE_JOIN_PERCENT`)
  
- The INFO summary's per-contract lines are the top 8 by update activity, so a
- contract can fall into the "...and N others" rollup behind busier ones; the
+ - The joiner alone decides, in the handshake driver (`plan_gateway_join`); not in the connect op or event loop.
+-- Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures must never count toward the peer-to-peer demotion.
++- Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures only start that gateway's own cooldown.
+ - `setup::join_native` is always the client and never punches; count its ends as `gateway_native_join_*`, never `connect_native_setup_*`.
+ - A gateway hands a completed native join to the node (`QuicUpgrades::hand_off_join`): a full queue or no node closes it (`quic_gateway_admission_handoff_full`), and so does a join that finished after an endpoint rebuild replaced its stack (`stack_gone`). Every stack the listener builds, the first and each rebuilt one, gets the same hand-off. The handed-over connection holds the joiner's charge until the node promotes it under the proven key (`set_peer_identity` calls `JoinerCharge::promote`) and drops it with the connection; never leak it. Do not mark a gateway in the index before it runs a release with this hand-off: an older gateway closes a completed join after the Hello, and a joiner whose setup succeeded has no fallback.
+ - The node binds a native join to its proven key WITHOUT promoting it (`connection_lifecycle::accept_native_join`): the connect op promotes it at ConnectPeer, and a ConnectRequest naming another key closes it. Never pass a native join to `handle_successful_connection` with `Some(peer)` (on a gateway that promotes it into the ring before CONNECT accepts it). A proven native join skips the UDP survivor rule (a newer native join for the same key replaces the older; one beside a UDP entry is held, `hold_native`), and one that sends no request within `NATIVE_JOIN_REQUEST_WITHIN` (5 s, a one-shot timer: the zombie sweep's 30 s tick is too coarse) is closed.
+@@ -509,16 +509,15 @@ Mechanism detail: docs/architecture/transport/rules-reference.md § QUIC identit
+ - `breaker::UDP_FALLBACK` (D-3, dark, true today) is read by every path through `QuicPathLimits::effective_udp_fallback` (one reader; a source-scan pin in `breaker.rs` fails on any other). With it false an upgraded path gives up what it cannot carry, never turns suspect, a route whose path ended drops its queue, and a short the queue cannot take (full or closed) is dropped and counted instead of overflowing to UDP. This is the PATH-level fallback only: a connection with no route still sends on its UDP session, which D-8 deletes, so a sim or soak with the constant false is a partial check and cannot show what a no-UDP network costs.
+ - `queue_native_short` returns `SendQueueFull` (Transient, connection survives, no ShortOverflowUdp, counted `quic_data_event_native_short_queue_full`, not Dropped) on a full queue. A native connection counts in `GlobalBandwidthManager`; its drop closes NODE_DROPPED_PEER.
+ - A Short is counted dropped ONLY by `QuicPathStats::record_short_dropped(cause)` (`quic_short_dropped_<cause>` sums to `quic_data_send_short_dropped`); `record_send` asserts a dropped Short never takes the uncaused path, and `only_record_short_dropped_counts_a_dropped_short` pins the call sites. Choose the cause where the drop is decided; never derive it by subtraction.
+-- Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included) and on not being demoted. The joiner's offer reads `readiness()` (joiner demotion only); the relay's decision reads `acceptor_readiness()` (either role's demotion). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
++- Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included). The joiner's offer reads `readiness()`; the relay's decision reads `acceptor_readiness()` (the same, except that a simulation node with its joiner role off still decides). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
+ - Every accept site MUST pass the response's decision to `dispatch_expect_connection_from` (source-scrape pin).
+ - A failed native setup NEVER costs the join until UDP is removed (`test_quic_native_failed_setups_fall_back_to_udp`). Both sides fall back `NATIVE_FALLBACK_AFTER` after th
 ```
 
-**File**: `crates/core/src/config.rs` (modified, +15/-0)
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +0/-41)
 ```diff
-@@ -6104,6 +6104,7 @@ std::thread_local! {
-     static GLOBAL_FULL_STATE_SEND_BYTES: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
-     static GLOBAL_PENDING_OP_INSERTS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
-     static GLOBAL_PENDING_OP_REMOVES: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
-+    static GLOBAL_LONGEST_EVENT_LOOP_EVENT_NANOS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
-     static GLOBAL_PENDING_OP_HWM: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
-     static GLOBAL_PENDING_OP_SKIPS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
-     static GLOBAL_NEIGHBOR_HOSTING_UPDATES: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
-@@ -6221,6 +6222,7 @@ impl GlobalTestMetrics {
-         GLOBAL_PENDING_OP_INSERTS.with(|c| c.set(0));
-         GLOBAL_PENDING_OP_SKIPS.with(|c| c.set(0));
-         GLOBAL_PENDING_OP_REMOVES.with(|c| c.set(0));
-+        GLOBAL_LONGEST_EVENT_LOOP_EVENT_NANOS.with(|c| c.set(0));
-         GLOBAL_PENDING_OP_HWM.with(|c| c.set(0));
-         GLOBAL_NEIGHBOR_HOSTING_UPDATES.with(|c| c.set(0));
-         GLOBAL_NOTIFICATION_COHOSTS_SKIPPED.with(|c| c.set(0));
-@@ -6502,6 +6504,19 @@ impl GlobalTestMetrics {
-         GLOBAL_PENDING_OP_INSERTS.with(|c| c.get())
-     }
- 
-+    /// Records how long a node's event loop spent handling one event, keeping
-+    /// the longest. Every node's event loop on this thread shares the figure.
-+    pub fn record_event_loop_event(elapsed: std::time::Duration) {
-+        let nanos = u64::try_from(elapsed.as_nanos()).unwrap_or(u64::MAX);
-+        GLOBAL_LONGEST_EVENT_LOOP_EVENT_NANOS.with(|c| c.set(c.get().max(nanos)));
-+    }
-+
-+    /// The longest time any node's event loop on this thread spent on one event
-+    /// since the last reset. A loop busy that long received nothing else.
-+    pub fn longest_event_loop_event() -> std::time::Duration {
-+        std::time::Duration::from_nanos(GLOBAL_LONGEST_EVENT_LOOP_EVENT_NANOS.with(|c| c.get()))
-+    }
-+
-     pub fn record_pending_op_remove() {
-         GLOBAL_PENDING_OP_REMOVES.with(|c| c.set(c.get() + 1));
-     }
+@@ -1591,22 +1591,6 @@ impl P2pConnManager {
+                 if transport.is_native() {
+                     state.native_pending.remove(&peer_addr);
+                     let after_beside_udp = state.beside_udp_connected.remove(&peer_addr);
+-                    let native_connect = self
+-                        .bridge
+-                        .op_manager
+-                        .ring
+-                        .connection_manager
+-                        .native_connect();
+-                    match origin {
+-                        crate::transport::NatAttemptOrigin::ConnectJoiner => {
+-                            native_connect.record_success();
+-                        }
+-                        crate::transport::NatAttemptOrigin::ConnectAcceptor => {
+-                            native_connect.record_acceptor_success();
+-                        }
+-                        crate::transport::NatAttemptOrigin::Gateway
+-                        | crate::transport::NatAttemptOrigin::RingPeerNoTransport => {}
+-                    }
+                     #[cfg(any(test, feature = "testing"))]
+                     {
+                         use crate::operations::connect::native_wire_trace::{
+@@ -1724,31 +1708,6 @@ impl P2pConnManager {
+                         origin,
+                     );
+                 }
+-                // A strike needs evidence that native specifically failed
+-                // where UDP worked (a rescue, `native::DEMOTION_FAILURES`).
+-                // Here: the setup failed on the path while a UDP connection to
+-                // the same peer already exists (its UDP fallback, or the
+-                // other side's, connected first; the setup then ends
+-                // superseded below). The other rescue, the fallback
+-                // connecting after this failure, is counted where that dial
+-                // ends (`connect::record_native_rescue_strike` callers). A
+-                // failure with no UDP connection is no strike: UDP may fail
+-                // for the same reason (an incompatible pair, a peer that never
+-                // dialled), which says nothing against native.
+-                if native_outcome.is_some_and(|o| o.counts_toward_demotion())
+-                    && peer
+-                        .socket_addr()
+-                        .and_then(|addr| self.connections.get(&addr))
+-                        .is_some_and(|entry| {
+-                            !entry.native && entry.pub_key().is_none_or(|key| key == peer.pub_key())
+-                        })
+-                {
+-                    crate::operations::connect::record_native_rescue_strike(
+-                        &self.bridge.op_manager,
+-                        origin,
+-                        &peer,
+-                    );
+-                }
+                 // Outbound peers must have known addresses - extract once for reuse
+                 let peer_addr = match KnownPeerKeyLocation::try_from(&peer) {
+                     Ok(k) => k.socket_addr(),
 ```
 
-**File**: `crates/core/src/node/network_bridge/broadcast_queue.rs` (modified, +1/-1)
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +63/-267)
 ```diff
-@@ -7625,7 +7625,7 @@ mod tests {
-         let at = body
-             .find(call)
-             .expect("the heal handler resolves its peer here");
--        let first_send = [".enqueue(", "broadcast_to_single_peer("]
-+        let first_send = [".enqueue(", "Self::spawn_leg(", "broadcast_to_single_peer("]
-             .iter()
-             .filter_map(|send| body.find(send))
-             .min()
-```
-
-**File**: `crates/core/src/node/network_bridge/broadcast_spacing.rs` (modified, +55/-3)
-```diff
-@@ -263,6 +263,26 @@ mod tests {
-     const SIM_SRC: &str = include_str!("p2p_protoc/broadcast.rs");
-     const HANDLER_SRC: &str = include_str!("../../contract.rs");
+@@ -3670,71 +3670,88 @@ async fn a_native_connection_binds_its_proven_key() {
+     h.assert_own_key_absent();
+ }
  
-+    /// The body of the block that `opener` (ending in its `{`) starts in `src`,
-+    /// by brace matching, so a line moved out of the block is not in it.
-+    fn spawned_block<'a>(src: &'a str, opener: &str) -> Option<&'a str> {
-+        let start = src.find(opener)? + opener.len();
-+        let mut depth = 1usize;
-+        for (i, byte) in src.bytes().enumerate().skip(start) {
-+            match byte {
-+                b'{' => depth += 1,
-+                b'}' => {
-+                    depth -= 1;
-+                    if depth == 0 {
-+                        return Some(&src[start..i]);
-+                    }
-+                }
-+                _ => {}
-+            }
-+        }
-+        None
-+    }
++/// A harness whose node can dial native (override 100, QUIC endpoint up), so
++/// its readiness reads `ready` at percent 100 until something lowers it.
++async fn native_ready_harness(id: &str) -> Harness {
++    use crate::transport::{QuicAvailability, QuicAvailabilityWatch};
++    let h = Harness::with_config(id, |config| config.native_connect_override = Some(100)).await;
++    let (_endpoint, watch) = QuicAvailabilityWatch::for_test(QuicAvailability::Up);
++    h.mgr
++        .bridge
++        .op_manager
++        .ring
++        .connection_manager
++        .native_connect()
++        .set_endpoint(watch, true);
++    assert_native_still_on(&h, "premise");
++    h
++}
 +
-     /// #5842: BOTH fan-out paths apply the per-pair spacing. The simulation
-     /// runs only its inline copy and the production binary only the queue, so
-     /// a behavioural test of one says nothing about the other.
-@@ -299,6 +319,16 @@ mod tests {
-             );
-         }
- 
-+        // The fan-out runs on the event loop too, so it must not await a send
-+        // that waits for its stream's completion: it enqueues streams without
-+        // a completion (`send_stream`) and hands forced legs to `spawn_leg`.
-+        for awaited in ["broadcast_to_single_peer(", "send_stream_with_completion("] {
-+            assert!(
-+                !sim.contains(awaited),
-+                "the simulation fan-out must not await `{awaited}` on the event loop"
-+            );
-+        }
-+
-         // The targeted heal shares the queue in production; the simulation
-         // calls the send directly, so it must take the same claim.
-         let heal = region(
-@@ -308,9 +338,31 @@ mod tests {
-         );
-         assert!(
-             heal.contains("op_manager.broadcast_spacing.try_begin(key.id(), &peer_key)")
--                && heal.contains("Ok(_claim) =>"),
--            "the simulation heal path must apply the spacing and hold the claim \
--             across its send"
-+                && heal.contains("Ok(claim) =>"),
-+            "the simulation heal path must apply the spacing"
++/// The node still offers its full percent as joiner and still decides
++/// `Native` as acceptor (for every bucket it is asked about): native failures
++/// of any kind, in either role, lower neither.
++fn assert_native_still_on(h: &Harness, after: &str) {
++    use crate::operations::connect::native::{NativeDecision, NativeOffer, decide_native};
++    let native = h
++        .mgr
++        .bridge
++        .op_manager
++        .ring
++        .connection_manager
++        .native_connect();
++    let joiner = native.readiness();
++    assert!(joiner.ready, "{after}: ready as joiner");
++    assert_eq!(joiner.percent, 100, "{after}: joiner offer");
++    let acceptor = native.acceptor_readiness();
++    assert!(acceptor.ready, "{after}: ready as acceptor");
++    for bucket in [0u8, 50, 99] {
++        assert_eq!(
++            decide_native(Some(NativeOffer::capable(100)), acceptor, bucket, false),
++            NativeDecision::Native,
++            "{after}: acceptor decides Native in bucket {bucket}"
 +        );
-+        // The send runs in a spawned task, not on the event loop: it waits for
-+        // its stream's completion, which only the event loop dispatches. So the
-+        // heal hands its claim to `spawn_leg` and never calls the send itself
-+        // (the production arm enqueues instead)...
-+        assert!(
-+            heal.contains("Self::spawn_leg("),
-+            "the simulation heal must send through `spawn_leg`"
-+        );
-+        assert!(
-+            !heal.contains("broadcast_to_single_peer("),
-+            "the simulation heal must not await the send on the event loop"
-+        );
-+        // ...and the claim moves into that task and is bound there before the
-+        // send, so it stays held until the send ends.
-+        let leg = region(SIM_SRC, "    fn spawn_leg(", "\n    }\n");
-+        let task = spawned_block(&leg, "GlobalExecutor::spawn(async move {")
-+            .expect("`spawn_leg` sends from a spawned task");
-+        let held = task.find("let _claim = claim;");
-+        let sent = task.find("broadcast_to_single_peer(");
-+        assert!(
-+            matches!((held, sent), (Some(held), Some(sent)) if held < sent),
-+            "the spawned leg must hold the claim across its send, both inside the task"
-         );
-     }
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +18/-0)
-```diff
-@@ -1979,6 +1979,10 @@ impl P2pConnManager {
-             // for a frame (`HeldNative`); a no-op when none is held.
-             ctx.expire_held_native(Instant::now());
- 
-+            // How long this event holds the loop, for tests: nothing else the
-+            // node receives is handled until it ends.
-+            #[cfg(any(test, feature = "testing"))]
-+            let _event_timer = EventLoopTimer(tokio::time::Instant::now());
-             match event {
-                 EventResult::Continue => continue,
-                 EventResult::Event(event) => {
-@@ -4484,6 +4488,20 @@ fn extract_sender_from_message_mut(msg: &mut NetMessage) -> Option<&mut PeerKeyL
- 
- // TODO: add testing for the network loop, now it should be possible to do since we don't depend upon having real connections
- 
-+/// Records, when dropped, how long the event loop spent on one event
-+/// (`GlobalTestMetrics::longest_event_loop_event`).
-+/// Reads `tokio::time::Instant` on purpose, not `TimeSource`: the simulation
-+/// runs on tokio's virtual clock, and that is the time a held loop is measured in.
-+#[cfg(any(test, feature = "testing"))]
-+struct EventLoopTimer(tokio::time::Instant);
-+
-+#[cfg(any(test, feature = "testing"))]
-+impl Drop for EventLoopTimer {
-+    fn drop(&mut self) {
-+        crate::config::GlobalTestMetrics::record_event_loop_event(self.0.elapsed());
 +    }
 +}
 +
- #[cfg(test)]
- mod ring_transport_desync_tests {
-     use super::ring_transport_desync;
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/broadcast.rs` (modified, +16/-26)
-```diff
-@@ -739,14 +739,15 @@ impl P2pConnManager {
-             // interval is handed to the held-legs timer instead.
-             let peer_key = crate::ring::PeerKey::from(target.pub_key().clone());
-             match op_manager.broadcast_spacing.try_begin(key.id(), &peer_key) {
--                Ok(claim)
--                    if op_manager.verify_soon.has_forced(
--                        &key,
--                        &peer_key,
--                        op_manager.ring.time_source.now(),
--                    ) =>
--                {
--                    Self::spawn_forced_leg(
-+                Ok(claim) => {
-+                    // Detached, as production's queue worker is: the send waits
-+                    // for its stream's completion (up to
-+                    // `stream_completion_timeout`), and that stream is handed to
-+                    // the event loop through the bridge, so awaiting it here, on
-+                    // the event loop, would hold both until the timeout. Unlike
-+                    // production's queue lanes, nothing limits how many heals run
-+                    // at once.
-+                    Self::spawn_leg(
-                         self.bridge.clone(),
-                         op_manager.clone(),
-                         key,
-@@ -755,18 +756,6 @@ impl P2pConnManager {
-                         claim,
-                     );
-                 }
--                Ok(_claim) => {
--                    super::super::broadcast_queue::broadcast_to_single_peer(
--                        &self.bridge,
--                        op_manager,
--                        key,
--                        new_state,
--                        target,
--                        None,
--                        super::super::broadcast_queue::no_fanout(),
--                    )
--                    .await;
--                }
-                 Err(wait) => {
-                     crate::config::GlobalTestMetrics::record_broadcast_leg_spaced();
-                     let held = crate::operations::update::BroadcastTargetResult {
-@@ -792,15 +781,16 @@ impl P2pConnManager {
+ /// A failed native setup: the connect op dials UDP next, so the address is
+ /// not marked failed and the peer gets no backoff, either of which would
+-/// refuse that dial. With no UDP connection to the peer, no failure strikes
+-/// either streak, whatever its outcome or role: a strike needs evidence that
+-/// native failed where UDP worked (a rescue), and UDP may fail for the same
+-/// reason (an incompatible pair, a peer that never dialled).
++/// refuse that dial. However many setups fail, in whatever role and with
++/// whatever outcome, the node keeps offering native and deciding it.
+ #[tokio::test]
+-async fn a_failed_native_setup_leaves_the_udp_fallback_open_and_strikes_nothing_alone() {
++async fn a_failed_native_setup_leaves_the_udp_fallback_open_and_native_on() {
+     use crate::operations::connect::native::DialTransport;
+     use crate::transport::NativeSetupOutcome;
+-    let mut h = Harness::new("native-failure").await;
++    let mut h = native_ready_harness("native-failure").await;
+     use crate::transport::NatAttemptOrigin;
+-    // (round, outcome, origin, joiner demotions, acceptor demotions). Each
+-    // round fails with as many distinct peers as either threshold; none
+-    // demotes anything.
+-    for (round, outcome, origin, demotions, acceptor_demotions) in [
++    for (round, outcome, origin) in [
+         (
+             0u16,
+             NativeSetupOutcome::OverBudgetDestination,
+             NatAttemptOrigin::ConnectJoiner,
+-            0,
+-            0,
+         ),
+         (
+             1,
+             NativeSetupOutcome::OverBudgetDestination,
+             NatAttemptOrigin::ConnectAcceptor,
+-            0,
+-            0,
+-        ),
+-        // Before any role is demoted, so a leak into either streak would
+-        // demote it (a demoted streak ignores further failures).
+-        (
+-            2,
+-            NativeSetupOutcome::TimedOut,
+-            NatAttemptOrigin::Gateway,
+-            0,
+-            0,
+         ),
++        (2, NativeSetupOutcome::TimedOut, NatAttemptOrigin::Gateway),
+         (
+             3,
+             NativeSetupOutcome::TimedOut,
+             NatAttemptOrigin::RingPeerNoTransport,
+-            0,
+-            0,
+         ),
+         (
+             4,
+             NativeSetupOutcome::TimedOut,
+             NatAttemptOrigin::ConnectAcceptor,
+-            0,
+-            0,
+         ),
+         (
+             5,
+             NativeSetupOutcome::HandshakeFailed,
+             NatAttemptOrigin::ConnectJoiner,
+-            0,
+-            0,
+         ),
+     ] {
+-        for i in 0..crate::operations::connect::native::DEMOTION_FAILURES
+-            .max(crate::operations::connect::native::ACCEPTOR_DEMOTION_FAILURES)
+-            as u16
+-        {
++        for i in 0..10u16 {
+             let addr: SocketAddr = format!("203.0.113.231:{}", 6210 + round * 10 + i)
+                 .parse()
+                 .unwrap();
+@@ -3766,28 +3783,7 @@ async fn a_failed_native_setup_leaves_the_udp_fallback_open_and_strikes_nothing_
+                 "a native failure gives no backoff"
+             );
          }
-     }
- 
--    /// Send a verify-soon forced full-state leg (#6143) on its own task.
-+    /// Send one full-state leg (a stale-peer heal, or a verify-soon forced leg,
-+    /// #6143) on its own task.
-     ///
-     /// Simulation only. Production sends every leg from the broadcast queue's
--    /// tasks; the simulation sends heals inline on the event loop, and a stream
--    /// leg awaits its completion signal, which this same event loop has to
--    /// drive. Awaiting it here would stall the node. The task holds the pair's
-+    /// tasks; a stream leg awaits its completion signal, which the node's event
-+    /// loop has to drive, so awaiting the send on the event loop would stall the
-+    /// node until `stream_completion_timeout`. The task holds the pair's
-     /// spacing `claim` until the send ends, as an inline send would.
-     #[cfg(feature = "simulation_tests")]
--    fn spawn_forced_leg(
-+    fn spawn_leg(
-         bridge: P2pBridge,
-         op_manager: Arc<OpManager>,
-         key: freenet_stdlib::prelude::ContractKey,
-@@ -967,7 +957,7 @@ impl P2pConnManager {
-                 .verify_soon
-                 .has_forced(&key, &peer_key, op_manager.ring.time_source.now())
-             {
--                Self::spawn_forced_leg(
-+                Self::spawn_leg(
-                     bridge.clone(),
-                     op_manager.clone(),
-                     key,
+-        assert_eq!(
+-            h.mgr
+-                .bridge
+-                
 ```
 
-**File**: `crates/core/src/operations/update/verify_soon.rs` (modified, +1/-1)
+**File**: `crates/core/src/operations/connect.rs` (modified, +1/-92)
 ```diff
-@@ -1090,7 +1090,7 @@ pub mod test_switch {
+@@ -437,8 +437,7 @@ pub(crate) trait RelayContext {
+     ) -> Option<PeerKeyLocation>;
  
- /// Whether this node holds or is sending a leg for (`key`, `peer`). Production
- /// asks the broadcast queue; the simulation, which has no queue, asks the
--/// spacing claim its inline sends hold.
-+/// spacing claim its spawned sends hold.
- fn pair_busy(op_manager: &crate::node::OpManager, key: &ContractKey, peer: &PeerKey) -> bool {
-     #[cfg(feature = "simulation_tests")]
-     if op_manager.broadcast_spacing.is_in_flight(key.id(), peer) {
-```
-
-**File**: `crates/core/tests/simulation_integration.rs` (modified, +245/-1)
-```diff
-@@ -24786,7 +24786,13 @@ fn test_quic_native_without_frames_keeps_udp() {
- #[test_log::test]
- fn test_quic_native_symmetric_nat_pairs_fail_and_nodes_still_join() {
-     use freenet::dev_tool::{NatFiltering, SimNat};
--    const SEED: u64 = 0x0059_40A5_00E1;
-+    // The premise below (a UDP dial connected after a native failure) holds
-+    // for some trajectories and not others: on main, seeds 3 and 7 of 1..=8
-+    // fail it and the rest pass. Any change that reorders simulation tasks
-+    // (the heal send moving off the event loop did) moves this run to another
-+    // trajectory, so the seed is one for which it holds on both sides of that
-+    // change.
-+    const SEED: u64 = 4;
-     let name = "native-nat-symmetric";
-     let nat = SimNat {
-         classes: vec![NatFiltering::Symmetric, NatFiltering::PortRestricted],
-@@ -26261,3 +26267,241 @@ fn run_get_at_htl_zero_sim(ring_max_htl: usize, demandless: bool) -> GetAtHtlZer
-             as usize,
-     }
+     /// This node's readiness for QUIC-native connections, read when it
+-    /// decides as acceptor: off while either its joiner or its acceptor
+-    /// demotion runs (`NativeConnectState::acceptor_readiness`).
++    /// decides as acceptor (`NativeConnectState::acceptor_readiness`).
+     fn native_readiness(&self) -> native::NativeReadiness;
+ 
+     /// Whether this node holds a transport to the joiner, by key or by
+@@ -1785,11 +1784,6 @@ pub(super) async fn dispatch_expect_connection_from(
+                                 .record_connect_native_rescued_by_udp(
+                                     crate::transport::NativeConnectSide::Acceptor,
+                                 );
+-                            record_native_rescue_strike(
+-                                &op_manager,
+-                                crate::transport::NatAttemptOrigin::ConnectAcceptor,
+-                                &peer,
+-                            );
+                         }
+                         #[cfg(any(test, feature = "testing"))]
+                         native_wire_trace::record_at(
+@@ -1816,86 +1810,6 @@ pub(super) async fn dispatch_expect_connection_from(
+     Ok(())
  }
-+
-+/// A subscriber that misses a 1 MiB contract's update (crashed while it was
-+/// broadcast) is healed by anti-entropy, and the heal never holds a node's event
-+/// loop. Before the fix, the simulation build awaited the heal's send inside the
-+/// event loop, and that send waits for its stream's completion, which the blocked
-+/// loop could not dispatch: each heal held the loop for `stream_completion_timeout`
-+/// (270 s for this state), and every message the node received waited behind it.
-+#[test_log::test]
-+fn test_heal_of_a_streamed_state_does_not_block_the_event_loop() {
-+    use freenet::dev_tool::{
-+        NodeLabel, ScheduledOperation, SimOperation, register_crdt_contract,
-+        stale_peer_heal_observations,
-+    };
-+    const NETWORK: &str = "heal-event-loop";
-+    const SEED: u64 = 0x5842_E5B9_0001;
-+    const STATE_LEN: usize = 1024 * 1024;
-+    setup_deterministic_state(SEED);
-+    let contract = SimOperation::create_test_contract(0x91);
-+    let key = contract.key();
-+    register_crdt_contract(*key.id());
-+    stale_peer_heal_observations::clear(&key);
-+    let state = |version: u64| {
-+        let mut bytes = version.to_le_bytes().to_vec();
-+        bytes.extend((0..STATE_LEN).map(|i| (i % 251) as u8 ^ version as u8));
-+        bytes
-+    };
-+    let (initial, updated) = (state(1), state(2));
-+
-+    let rt = create_runtime();
-+    let sim = rt.block_on(async {
-+        let mut sim = SimNetwork::new(NETWORK, 1, 2, 7, 3, 10, 2, SEED).await;
-+        sim.with_streaming_threshold(64 * 1024);
-+        sim.with_controlled_op_interval(Duration::from_secs(10));
-+        sim.wait_for_join_convergence_before_ops(1.0, Duration::from_secs(60));
-+        sim
-+    });
-+    drop(rt);
-+    let gateway = NodeLabel::gateway(NETWORK, 0);
-+    let stale = NodeLabel::node(NETWORK, 1);
-+    let other = NodeLabel::node(NETWORK, 2);
-+    let subscribe = |label: &NodeLabel| {
-+        ScheduledOperation::new(
-+            label.clone(),
-+            SimOperation::Get {
-+                contract_id: *key.id(),
-+                return_contract_code: true,
-+                subscribe: true,
-+            },
-+        )
-+    };
-+    let operations = vec![
-+        ScheduledOperation::new(
-+            gateway.clone(),
-+            SimOperation::Put {
-+                contract: contract.clone(),
-+                state: initial,
-+                subscribe: true,
-+            },
-+        ),
-+        subscribe(&stale),
-+        subscribe(&other),
-+        ScheduledOperation::new(stale.clone(), SimOperation::CrashNode),
-+        ScheduledOperation::new(
-+            gateway.clone(),
-+            SimOperation::Update {
-+                key,
-+                data: updated.clone(),
-+            },
-+        ),
-+        ScheduledOperation::new(stale.clone(), SimOperation::RecoverNode),
-+    ];
-+    // Long enough for anti-entropy (about 5 minutes) to find and heal the
-+    // stale copy.
-+    let result = sim.run_controlled_simulation(
-+        SEED,
-+        operations,
-+        Duration::from_secs(1200),
-+        Duration::from_secs(600),
-+    );
-+    assert!(
-+        result.turmoil_result.is_ok(),
-+        "simulation failed: {:?}",
-+        result.turmoil_result.err()
-+    );
-+    let longest = GlobalTestMetrics::longest_event_loop_event();
-+    let heals = stale_peer_heal_observations::get(&key).heals_emitted;
-+    stale_peer_heal_observations::clear(&key);
-+    let stored = |label: &NodeLabel| {
-+        result
-+            .node_storages
-+            .get(label)
-+            .and_then(|storage| storage.get_stored_state(&key))
-+            .map(|state| state.as_ref().to_vec())
-+    };
-+    assert!(
-+        stored(&other).as_deref() == Some(updated.as_slice()),
-+        "premise: the subscriber that stayed up got the update"
-+    );
-+    assert!(
-+        heals >= 1,
-+        "premise: anti-entropy emitted a heal, so the path under test ran"
-+    );
-+    assert!(
-+        stored(&stale).as_deref() == Some(updated.as_slice()),
-+        "the crashed subscriber was h
+ 
+-/// A native setup with `peer`, made in the role `origin` names, failed on the
+-/// path and UDP to the same peer then connected: a rescue, the only evidence
+-/// that counts toward demotion (`native::DEMOTION_FAILURES`). Strikes that
+-/// role's streak (the joiner's or the acceptor's), each across distinct peers,
+-/// so the same rescue seen at two sites counts once. Other origins strike
+-/// nothing, and nor does a rescue with one of this node's configured gateways
+-/// (matched by address or key, as the connection lifecycle labels a dial to
+-/// one `Gateway`): callers pass the CONNECT role, which does not say whether
+-/// the peer is a gateway.
+-///
+-/// Known residuals, both giving the ACCEPTOR a rescue it did not earn, since
+-/// the joiner never dialled native but does dial UDP:
+-/// - the joiner's plan for this acceptor was a UDP dial at the fallback time
+-///   (`AcceptorDialPlan::UdpAt`: the response arrived with less than
+-///   `NATIVE_MIN_WINDOW_LEFT` of the acceptor's window left); bounded by the
+-///   response's travel time (10.2 item 6);
+-/// - the joiner's own native setup was refused locally (`TooLate`,
+-///   `OverBudget*`, `SetupsFull`, `AlreadyWaiting`, `AllowSetFull`,
+-///   `KeyConflict`, `UnusableKey`) and it fell back to UDP; the joiner's
+-///   streak does not count those (not a path failure), but the acceptor's
+-///   setup timed out and its UDP fallback connected;
+-/// - the joiner offered native and then lost it (demoted, or its endpoint
+-///   went down) before the acceptor's `Native` decision arrived, so it
+-///   refused the decision and dialled UDP at the fallback time
+-///   (`native::refused_decision_plan`). The acceptor cannot tell a refusal
+-///   from a broken path, so this is not fixed on the wire. Bounded: it needs
+-///   a demotion within the response's travel time, and the acceptor demotes
+-///   only after rescues with `ACCEPTOR_DEMOTION_FAILURES` (3) distinct
+-///   joiners within the streak window (6 h).
+-pub(crate) fn record_native_rescue_strike(
+-    op_manager: &OpManager,
+-    origin: crate::transport::NatAttemptOrigin,
+-    peer: &PeerKeyLocation,
+-) {
+-    let is_configured_gateway = op_manager.configured_gateways.iter().any(|gw| {
+-        gw.pub_key() == peer.pub_key()
+-            || (gw.socket_addr().is_some() && gw.socket_addr() == peer.socket_addr())
+-    });
+-    if is_configured_gateway {
+-        return;
+-    }
+-    let native_connect = op_manager.ring.connection_manager.native_connect();
+-    // (whether the acceptor's streak counted it, whether it demoted)
+-    let (as_acceptor, demoted) = match origin {
+-        crate::transport::NatAttemptOrigin::ConnectJoiner => {
+-            (false, native_connect.record_failure(peer.pub_key()))
+-        }
+-        crate::transport::NatAttemptOrigin::ConnectAcceptor => {
+-            (true, native_connect.record_acceptor_failure(peer.pub_key()))
+-        }
+-        crate::transport::NatAttemptOrigin::Gateway
+-        | crate::transport::NatAttemptOrigin::RingPeerNoTransport => return,
+-    };
+-    #[cfg(any(test, feature = "testing"))]
+-    {
+-        use native_wire_trace::{NativeWireEvent, record_at};
+-        let own = op_manager.ring.connection_manager.get_own_addr();
+-        match (as_acceptor, own, peer.socket_addr()) {
+-            (true, Some(own), _) => {
+-                record_at(
+-                    own,
+-                    NativeWireEvent::AcceptorStreak {
+-                        own,
+-                        len: native_connect.acceptor_streak(),
+-                    },
+-                );
+-                if demoted {
+-                    record_at(own, NativeWireEvent::AcceptorDemoted { own });
+-                }
+-            }
+-  
+```
+
+**File**: `crates/core/src/operations/connect/native.rs` (modified, +157/-530)
+```diff
+@@ -96,38 +96,6 @@ pub(crate) const LEVEL_NATIVE_CAPABLE: u8 = 1;
+ #[cfg_attr(not(test), allow(dead_code))]
+ pub(crate) const LEVEL_NATIVE_ONLY: u8 = 2;
+ 
+-/// Strikes, across distinct acceptors, after which a joiner offers percent 0
+-/// for [`DEMOTION_COOLDOWN`]. A strike is a RESCUE: a native setup with that
+-/// acceptor failed on the path (`NativeSetupOutcome::counts_toward_demotion`)
+-/// and UDP to the same acceptor then connected. A native failure where UDP
+-/// failed too (a symmetric or otherwise incompatible pair, a peer that never
+-/// dialled, a peer gone) is no evidence against native and is not counted.
+-pub(crate) const DEMOTION_FAILURES: usize = 3;
+-
+-/// Strikes, across distinct joiners, after which a node decides `Udp` as
+-/// acceptor for [`DEMOTION_COOLDOWN`]. A strike is a rescue, as for the joiner
+-/// ([`DEMOTION_FAILURES`]). Field data (0.2.162, independent-mapping nodes)
+-/// put a healthy acceptor's raw failure share at about 71% of the dials it
+-/// takes, almost all caused by the joiner (endpoint-dependent joiners, joiners
+-/// that never dial); counting those demoted a healthy acceptor within about
+-/// an hour at 25%. A rescue needs UDP to that joiner to work, which those
+-/// cases do not give, while an acceptor whose own native path is broken
+-/// collects a rescue on every pair UDP can connect.
+-pub(crate) const ACCEPTOR_DEMOTION_FAILURES: usize = 3;
+-
+-/// How long a strike counts: a streak drops strikes older than this, so
+-/// strikes spread thinly over days (a node that rarely uses native) do not
+-/// add up to a demotion. Equal to [`DEMOTION_COOLDOWN`]: a node whose native
+-/// path is broken collects its strikes at its rate of UDP-rescued native
+-/// setups, which at 25% was several an hour for a node that accepts or joins
+-/// at all (and is about four times that at 100%), so three fall well inside
+-/// 6 h; and a fault that does not recur
+-/// within one cooldown would not have kept native off for long either.
+-pub(crate) const STRIKE_WINDOW: Duration = DEMOTION_COOLDOWN;
+-
+-/// How long a demoted node offers (or decides) nothing native.
+-pub(crate) const DEMOTION_COOLDOWN: Duration = Duration::from_secs(6 * 3600);
+-
+ /// Native setups this node may have decided as acceptor and not yet seen end,
+ /// at a connection limit of `max_connections`: half of the node's native
+ /// setup slots (`QuicPolicy::native_setups_max`, which is
+@@ -271,16 +239,15 @@ pub(crate) fn native_bucket(a: &TransportPublicKey, b: &TransportPublicKey) -> u
+ }
+ 
+ /// A node's effective native percent: 0 unless the build can dial native, the
+-/// QUIC endpoint is up and the node is not demoted; otherwise the release's
++/// QUIC endpoint is up; otherwise the release's
+ /// percent, lowered (never raised) by a per-node override.
+ pub(crate) fn effective_native_percent(
+     dial_ready: bool,
+     endpoint_up: bool,
+-    demoted: bool,
+     release_percent: u8,
+     node_override: Option<u8>,
+ ) -> u8 {
+-    if !(dial_ready && endpoint_up) || demoted {
++    if !(dial_ready && endpoint_up) {
+         return 0;
+     }
+     let release_percent = release_percent.min(100);
+@@ -369,16 +336,10 @@ pub(crate) const NATIVE_CONNECT_WITHIN: std::time::Duration = std::time::Duratio
+ /// ([`NativeConnectState::acceptor_readiness`]).
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub(crate) struct NativeReadiness {
+-    /// The build can dial native, the endpoint is up and the node is not
+-    /// demoted.
++    /// The build can dial native and the endpoint is up.
+     pub ready: bool,
+     /// The effective percent ([`effective_native_percent`]).
+     pub percent: u8,
+-    /// A demotion holds native off for this readiness (other causes may as
+-    /// well): the joiner streak for [`NativeConnectState::readiness`], either
+-    /// streak for [`NativeConnectState::acceptor_readiness`].
+-    /// [`acceptor_arm`] then counts the pair in neither arm.
+-    pub demoted: bool,
+ }
+ 
+ impl NativeReadiness {
+@@ -391,28 +352,16 @@ impl NativeReadiness {
+     }
+ 
+     #[cfg(test)]
+-    pub(crate) fn from_inputs(dial_ready: bool, endpoint_up: bool, demoted: bool) -> Self {
+-        Self::from_parts(dial_ready, endpoint_up, demoted, QUIC_NATIVE_PERCENT)
++    pub(crate) fn from_inputs(dial_ready: bool, endpoint_up: bool) -> Self {
++        Self::from_parts(dial_ready, endpoint_up, QUIC_NATIVE_PERCENT)
+     }
+ 
+     /// As [`Self::from_inputs`], at `release_percent` in place of
+     /// [`QUIC_NATIVE_PERCENT`].
+-    pub(crate) fn from_parts(
+-        dial_ready: bool,
+-        endpoint_up: bool,
+-        demoted: bool,
+-        release_percent: u8,
+-    ) -> Self {
++    pub(crate) fn from_parts(dial_ready: bool, endpoint_up: bool, release_percent: u8) -> Self {
+         Self {
+-            ready: dial_ready && endpoint_up && !demoted,
+-            demoted,
+-            percent: effective_native_percent(
+-                dial_ready,
+-                endpoint_up,
+-                demoted,
+-                release_percent,
+-      
+```
+
+**File**: `crates/core/src/operations/connect/op_ctx_task.rs` (modified, +10/-117)
+```diff
+@@ -664,10 +664,8 @@ async fn drive_client_connect(
+                 // queue allows: the queue's own, plus these fallbacks, plus
+                 // the UDP dials to acceptors whose `Native` decision it
+                 // refused (at most `refused_native_cap`, also outside the
+-                // queue). A strike toward demotion is recorded when
+-                // that UDP dial connects after a path failure (a rescue,
+-                // below), or by the connection lifecycle when a UDP connection
+-                // to the acceptor already exists as the setup fails.
++                // queue). A rescue is counted when
++                // that UDP dial connects after a path failure (below).
+                 if transport.is_native() && !matches!(result, Some(Ok(_))) {
+                     tracing::info!(
+                         tx = %tx,
+@@ -697,11 +695,6 @@ async fn drive_client_connect(
+                         crate::transport::TRANSPORT_METRICS.record_connect_native_rescued_by_udp(
+                             crate::transport::NativeConnectSide::Joiner,
+                         );
+-                        super::record_native_rescue_strike(
+-                            op_manager,
+-                            crate::transport::NatAttemptOrigin::ConnectJoiner,
+-                            &acceptor,
+-                        );
+                     }
+                     #[cfg(any(test, feature = "testing"))]
+                     super::native_wire_trace::record_at(
+@@ -981,7 +974,7 @@ async fn drive_client_connect(
+                 // `None` and `Udp` dial UDP as today; `Native` dials native
+                 // when this node offered and can still dial. A `Native` this
+                 // node cannot honour is counted by why. When the node offered
+-                // and has since lost native (demoted, endpoint down), it dials
++                // and has since lost native (its endpoint went down), it dials
+                 // the acceptor over UDP at the time the acceptor's own
+                 // fallback starts, so the punches overlap
+                 // (`native::refused_decision_plan`). A `Native` that answered
+@@ -1303,12 +1296,12 @@ struct AcceptorDial {
+ 
+ /// Whether a native dial's result says native does not work on the path:
+ /// its setup timed out, failed its handshake or lost its Hello
+-/// (`NativeSetupOutcome::counts_toward_demotion`). A UDP dial that connects
++/// (`NativeSetupOutcome::says_native_failed_on_path`). A UDP dial that connects
+ /// after such a failure is a rescue (`connect_native_rescued_by_udp`); one
+ /// after a local refusal (punch budget, setups full, too late) or any other
+ /// failure is not, on either side (design note 10.2 item 16).
+ pub(super) fn native_path_failed(result: &Option<crate::message::ConnectResult>) -> bool {
+-    matches!(result, Some(Err(Some(outcome))) if outcome.counts_toward_demotion())
++    matches!(result, Some(Err(Some(outcome))) if outcome.says_native_failed_on_path())
+ }
+ 
+ /// The joiner's UDP dial to an acceptor that decided native, after a failed
+@@ -1381,7 +1374,7 @@ enum AcceptorDialPlan {
+ /// started it when it decided, a little before `answered_at`, so
+ /// `answered_at + acceptor_window` is a late estimate of its end, which errs
+ /// toward trying native. With less than `NATIVE_MIN_WINDOW_LEFT` of it left,
+-/// a native attempt could only time out, count toward this node's demotion and
++/// a native attempt could only time out and
+ /// push its UDP dial past the acceptor's, so the acceptor is dialled over UDP
+ /// at the common fallback time instead (`answered_at + NATIVE_FALLBACK_AFTER`,
+ /// now if it has passed). A native attempt's deadline is that fallback time,
+@@ -3874,7 +3867,7 @@ mod driver_timing_tests {
+         for outcome in O::ALL {
+             assert_eq!(
+                 super::native_path_failed(&Some(Err(Some(outcome)))),
+-                outcome.counts_toward_demotion(),
++                outcome.says_native_failed_on_path(),
+                 "{outcome:?}"
+             );
+         }
+@@ -3931,7 +3924,7 @@ mod driver_timing_tests {
+     }
+ 
+     /// A joiner that cannot use an acceptor's `Native` decision because it lost
+-    /// native after offering (demoted, endpoint down) dials that acceptor over
++    /// native after offering (its endpoint went down) dials that acceptor over
+     /// UDP at the fallback time instead of reporting it failed: otherwise the
+     /// acceptor's UDP fallback punches alone and cannot pass a restricted NAT
+     /// (`test_quic_native_blocked_pairs_connect_over_udp_behind_nats` failed
+@@ -4556,7 +4549,7 @@ mod driver_timing_tests {
+     /// 8 s, and its UDP fallback waits for the fallback time (12 s) outside
+     /// the dial queue, so the queue moves on at once. The second native
+     /// acceptor, a client whose window ended at 8 s, gets no native attempt (it
+-    /// could only time out and count a strike): it waits for its own fallback
++    /// could only time out): it waits for i
+```
+
+**File**: `crates/core/src/operations/connect/wire.rs` (modified, +20/-42)
+```diff
+@@ -286,16 +286,14 @@ pub mod sim_trace {
+         joiner_responses_without_decision: AtomicU64,
+         native_established: AtomicU64,
+         native_failed: AtomicU64,
+-        native_demotions: AtomicU64,
+         decisions_refused: AtomicU64,
+         /// Decisions on an offered request, as (acceptor, `seq` when it
+         /// decided, native, in the slice).
+         decisions: parking_lot::Mutex<Vec<(SocketAddr, u64, bool, bool)>>,
+         decision_causes: parking_lot::Mutex<std::collections::BTreeMap<&'static str, u64>>,
+-        /// Acceptor-role demotions, as (node, `seq`).
+-        acceptor_demotions: parking_lot::Mutex<Vec<(SocketAddr, u64)>>,
+-        /// The longest acceptor failure streak each node reached.
+-        acceptor_streak_peaks: parking_lot::Mutex<std::collections::BTreeMap<SocketAddr, usize>>,
++        /// Rescues (a UDP dial that connected after a native path failure) as
++        /// (node, `seq`), on the same order as `decisions`.
++        rescues: parking_lot::Mutex<Vec<(SocketAddr, u64)>>,
+         /// Native failures, as (transaction, node, peer), whose node has not
+         /// yet asked for a UDP dial to that peer in that transaction.
+         fallbacks_pending: parking_lot::Mutex<
+@@ -395,30 +393,21 @@ pub mod sim_trace {
+         JoinerResponse { with_decision: bool },
+         /// A node's QUIC-native dial ended, as joiner or acceptor.
+         NativeDial { established: bool },
+-        /// A node turned its own native connects off.
+-        NativeDemoted,
+         /// The node `own`, as acceptor, decided an offered request: `Native`
+         /// or not, and `in_slice`: the pair's bucket was below the offered
+         /// percent and the acceptor held no transport to the joiner, so a
+-        /// ready, undemoted acceptor at a release percent at or above the
++        /// ready acceptor at a release percent at or above the
+         /// offer would decide `Native`. Recorded where it decides, not when
+         /// the answer goes out.
+         Decided {
+             own: SocketAddr,
+             native: bool,
+             in_slice: bool,
+             /// Why the decision was what it was (`native`, or the cause of a
+-            /// UDP decision: `held`, `demoted`, `not_ready`, `setup_refused`,
++            /// UDP decision: `held`, `not_ready`, `setup_refused`,
+             /// `offered_zero`, `outside_slice`), as `native::ArmCause` labels them.
+             cause: &'static str,
+         },
+-        /// The node `own` stopped deciding `Native` as acceptor after native
+-        /// failures with distinct joiners.
+-        AcceptorDemoted { own: SocketAddr },
+-        /// The node `own` had a native failure as acceptor; its streak is now
+-        /// `len` distinct joiners (0 if this failure demoted it, or if it was
+-        /// already demoted and so counted nothing).
+-        AcceptorStreak { own: SocketAddr, len: usize },
+         /// The node `own` failed a native setup with `peer` in `tx`; the
+         /// connect op must dial UDP to that peer next.
+         NativeFailedFor {
+@@ -536,6 +525,10 @@ pub mod sim_trace {
+             } => {
+                 if connected && path_failed {
+                     c.fallbacks_rescued.fetch_add(1, Ordering::Relaxed);
++                    if let Some(own) = own {
++                        let seq = c.seq.fetch_add(1, Ordering::Relaxed);
++                        c.rescues.lock().push((own, seq));
++                    }
+                 }
+                 c.fallbacks_ended.lock().push((own, peer, connected));
+                 return;
+@@ -569,17 +562,6 @@ pub mod sim_trace {
+                 c.decisions.lock().push((own, seq, native, in_slice));
+                 return;
+             }
+-            NativeWireEvent::AcceptorStreak { own, len } => {
+-                let mut peaks = c.acceptor_streak_peaks.lock();
+-                let peak = peaks.entry(own).or_insert(0);
+-                *peak = (*peak).max(len);
+-                return;
+-            }
+-            NativeWireEvent::AcceptorDemoted { own } => {
+-                let seq = c.seq.fetch_add(1, Ordering::Relaxed);
+-                c.acceptor_demotions.lock().push((own, seq));
+-                return;
+-            }
+             NativeWireEvent::NativeReplacedByUdp { own } => {
+                 if !c.transports_frozen.load(Ordering::Relaxed) {
+                     c.native_replaced_by_udp.lock().push((own, addr));
+@@ -681,7 +663,6 @@ pub mod sim_trace {
+             } => &c.joiner_responses_without_decision,
+             NativeWireEvent::NativeDial { established: true } => &c.native_established,
+             NativeWireEvent::NativeDial { established: false } => &c.native_failed,
+-            NativeWireEvent::NativeDemoted => &c.native_demotions,
+             NativeWireEvent::DecisionRefused => &c.decisions_refused,
+             NativeWireEvent::NativeSuperseded => {
+                 c.native_failed.fetch_add(1, Ordering::Relaxed);
+@@ -812,34 +793,31 @@ pub mod sim_trace {
+        
+```
+
+**File**: `crates/core/src/ring/connection_manager.rs` (modified, +1/-1)
+```diff
+@@ -581,7 +581,7 @@ pub(crate) struct ConnectionManager {
+     /// the floor (`NodeConfig::quic_native_floor_override` or the production
+     /// one) and the simulation's pre-floor decoder mode.
+     native_wire: crate::operations::connect::native::NativeWire,
+-    /// This node's QUIC-native connect state: readiness and demotion.
++    /// This node's QUIC-native connect state: readiness.
+     native_connect: Arc<crate::operations::connect::native::NativeConnectState>,
+     /// Version-gate refusal counters (#5156). Both `supports_hash_first_summaries`
+     /// and `supports_summary_first_put` fail closed to the full-bytes fallback
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6415** (2026-11-27): test: split the native transport survivor sim into one test per run (@sanity)
+- **PR #6413** (2026-11-27): fix: remove native-connect demotion (@sanity)
 - **PR #6408** (closed): fix: demote a native role only when rescues are a real share of its outcomes (@sanity)
 - **PR #6406** (2026-11-27): feat(transport): split short_dropped by cause (@sanity)
 - **PR #6405** (2026-11-26): chore(put): log each PUT hop decision at INFO (@sanity)
 - **PR #6404** (2026-11-26): build: sync main to 0.2.167 after release (@sanity)
-- **PR #6403** (2026-11-26): fix(get): a relay holding the contract serves it at HTL 0 (@sanity)
-- **PR #6401** (2026-11-26): test: default simulations to QUIC data (prefer, 100%) (@sanity)
 
 ---
 
@@ -2200,33 +2406,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test): do not await a heal's stream inside the simulation event loop
+## X. remove native-connect demotion
 
 **RULE**:
-When implementing operations in `.claude/rules/operations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7fa79ec4`: test): do not await a heal's stream inside the simulation event loop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `366fdcad`: remove native-connect demotion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/operations.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-leg is built. In simulations every full-state leg, a heal's or a forced one, is spawned
-rather than awaited (`spawn_leg`): a stream leg awaits a completion signal
-that the event loop has to drive, so awaiting it on the loop stalls the node
-until `STREAM_COMPLETION_TIMEOUT`.
+- Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures only start that gateway's own cooldown.
+- Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included). The joiner's offer reads `readiness()`; the relay's decision reads `acceptor_readiness()` (the same, except that a simulation node with its joiner role off still decides). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-leg is built. In simulations the forced leg is spawned rather than awaited
-(`spawn_forced_leg`): the simulation sends heals inline on the event loop,
-and a stream leg awaits a completion signal that loop has to drive.
+- Fallback to the ordinary UDP dial is unconditional and immediate; nothing is sticky. Gateway join failures must never count toward the peer-to-peer demotion.
+- Native connect gates on this node's OWN endpoint availability (per-node `QuicAvailabilityWatch`, not the process-wide metric), on the configured `transport-quic` mode being `prefer` (a shadow or off node is never ready in any role, gateway joins included) and on not being demoted. The joiner's offer reads `readiness()` (joiner demotion only); the relay's decision reads `acceptor_readiness()` (either role's demotion). Dial: higher key serves; setups capped by `NATIVE_SETUPS_MAX`; setup errors counted by an EXHAUSTIVE match (`connect_native_setup_<label>`).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7fa79ec4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `366fdcad` are properly handled with clean fallback behavior.

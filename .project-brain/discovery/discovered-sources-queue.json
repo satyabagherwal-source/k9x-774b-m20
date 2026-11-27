@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T15:27:47.082Z",
+  "updated_at": "2026-11-27T15:36:51.840Z",
   "stats": {
-    "total_discovered": 10461,
-    "approved_pending_harvest": 9930,
+    "total_discovered": 10462,
+    "approved_pending_harvest": 9931,
     "harvested_count": 0,
     "rejected_count": 531,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9935,
+      "COMMUNITY_AND_EXPERT": 9936,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -226452,6 +226452,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
         "fileName": "momenbasel-puremac-learnings.md"
+      }
+    },
+    "SRC-3BD5DE3A15E5": {
+      "id": "SRC-3BD5DE3A15E5",
+      "url": "https://github.com/crate/crate/security/advisories/GHSA-hr4h-p68x-58j7",
+      "title": "https://github.com/crate/crate/security/advisories/GHSA-hr4h-p68x-58j7",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T15:36:51.840Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
       }
     }
   }

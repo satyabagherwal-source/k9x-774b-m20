@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T15:27:17.811Z",
-    "lastVerified": "2026-11-27T15:27:17.811Z",
+    "lastChecked": "2026-11-27T15:36:50.196Z",
+    "lastVerified": "2026-11-27T15:36:50.196Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -403,8 +403,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T15:00:11.322Z",
-    "lastVerified": "2026-11-27T15:00:11.322Z",
+    "lastChecked": "2026-11-27T15:36:43.571Z",
+    "lastVerified": "2026-11-27T15:36:43.571Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1283,12 +1283,12 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T10:43:10.203Z",
-    "lastVerified": "2026-11-27T10:43:10.203Z",
+    "lastChecked": "2026-11-27T15:36:43.804Z",
+    "lastVerified": "2026-11-27T15:36:43.804Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "51d17bb0fdd7100386f1e1aa4c2280cb4f8af5e40d05100cb1036e9a1ee2562f",
+    "contentHash": "9ae0f2e53af99e50a7bfdcf5dd14ca13945eb0a2ea648a38de61a3b34186f14f",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -1733,8 +1733,8 @@
     "officialUrl": "https://github.com/googleworkspace/cli",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T15:11:36.328Z",
-    "lastVerified": "2026-11-26T15:11:36.328Z",
+    "lastChecked": "2026-11-27T15:36:28.573Z",
+    "lastVerified": "2026-11-27T15:36:28.573Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-googleworkspace-cli",
@@ -2742,14 +2742,14 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-26T20:23:04.590Z",
-    "lastVerified": "2026-11-26T20:23:04.590Z",
+    "lastChecked": "2026-11-27T15:36:45.479Z",
+    "lastVerified": "2026-11-27T15:36:45.479Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
-    "contentHash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
+    "contentHash": "5950376ea3e4435a9528ff1887d1cf568b5402bc4b620a93d4127262c812ece4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6444,9 +6444,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-11-26T21:26:07.477Z",
+    "lastChecked": "2026-11-27T15:36:36.098Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-11-26T21:26:07.477Z"
+    "lastVerified": "2026-11-27T15:36:36.098Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -9450,9 +9450,9 @@
   "nalexn-clean-architecture-swiftui": {
     "name": "clean-architecture-swiftui",
     "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
-    "lastChecked": "2026-11-25T06:12:47.342Z",
+    "lastChecked": "2026-11-27T15:36:33.653Z",
     "revisionIdentifier": "9eca97b8",
-    "lastVerified": "2026-11-25T06:12:47.342Z"
+    "lastVerified": "2026-11-27T15:36:33.653Z"
   },
   "tuist-tuist": {
     "name": "tuist/tuist",
@@ -9990,9 +9990,9 @@
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
     "officialUrl": "https://github.com/chris-c-thomas/OxideSEO",
-    "lastChecked": "2026-11-24T05:42:25.839Z",
+    "lastChecked": "2026-11-27T15:36:31.212Z",
     "revisionIdentifier": "88feb867f5",
-    "lastVerified": "2026-11-24T05:42:25.839Z"
+    "lastVerified": "2026-11-27T15:36:31.212Z"
   },
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",

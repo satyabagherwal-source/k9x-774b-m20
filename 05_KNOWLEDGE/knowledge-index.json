@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T15:27:50.299Z",
+  "last_updated": "2026-11-27T15:36:53.551Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26620,
+  "total_items": 26624,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b5d38ab1ad992276d241ee4d1cae212af0d46f36d5d86f776ecc8037846f784",
+      "content_hash": "4268c6b2f3c42e5c9f9cf1cf7e99d95bfb72dca3d927c1b326d05607e4de6409",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:09:23.479Z"
+      "persisted_at": "2026-11-27T15:36:53.339Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a82475b89ea52df995625e327f10bf3603a1cdeea0de78e5c4e72d43f01e9a97",
+      "content_hash": "7953bafddc47e214c25a7997fb81c723db9ce5e89496ad505a1d4ae98a0901b5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T15:09:23.684Z"
+      "persisted_at": "2026-11-27T15:36:53.551Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "7fa79ec4",
-      "content_hash": "a1ff70e99393555686a2715ea02018f231f7acb33c1e7db041b6a483ec2ebcf2",
+      "source_version": "35922adf",
+      "content_hash": "038d75e11e23afa8d124014f6a97786f119af26dc658f305ea76c3d6e5d5d716",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:43:12.068Z"
+      "persisted_at": "2026-11-27T15:36:45.710Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "7fa79ec4",
-      "content_hash": "5df36482c4660caca0bbf02d0acc3f5d168b2bb2c1fb986200d273fd661b31fd",
+      "source_version": "35922adf",
+      "content_hash": "89994d6d40fe4660d2f19eed10c16c931b47fe77b6c45e98698c96762d3b391f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:43:12.276Z"
+      "persisted_at": "2026-11-27T15:36:46.167Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6f65eeaf903a52c90a988f5085e95d235d3417e28d64fe16199e398b98758b6",
+      "content_hash": "ae0cae4d2d66f9b2a4430f5ccb90e46e8c61b94c395b76e5bdc72c5f46537632",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T10:43:20.165Z"
+      "persisted_at": "2026-11-27T15:36:50.903Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "d45dea29695115de7a576dbb0134aee8b0f04185915927678b19524b075ac4b6",
+      "content_hash": "e136577b56a1c8f200a93975a336a8c6f8f0b6b5668b21984dc9431ba353bc35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T10:43:20.373Z"
+      "persisted_at": "2026-11-27T15:36:51.301Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -220006,8 +220006,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "92486c78",
-      "content_hash": "7cc86e05095d74a0ae3772ef03ddc6d47b0d44de117fe093a5be107560e6993d",
+      "source_version": "f5942749",
+      "content_hash": "5950376ea3e4435a9528ff1887d1cf568b5402bc4b620a93d4127262c812ece4",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -220055,6 +220055,11 @@
           "number": 10771,
           "title": "ClassCastException on object array subscript through view",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10919,
+          "title": "Add rel note for security fix",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220062,7 +220067,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T20:23:05.558Z",
+      "verified_at": "2026-11-27T15:36:46.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220104,10 +220109,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
       "title": "Architecture Intelligence: crate/crate Core Invariants",
       "repository": "crate/crate",
-      "source_version": "92486c78",
-      "content_hash": "64e1faee2aaeee179d4ebb3a1e0e03bd641c7d5a7b029371ab80f13c5b216eb4",
+      "source_version": "f5942749",
+      "content_hash": "3f54e45a7196afe6cd8799c53880d93e2ddf727748ba44974d659b3a745fbc31",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T20:23:06.333Z"
+      "persisted_at": "2026-11-27T15:36:47.256Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate",
@@ -220116,10 +220121,10 @@
       "relative_path": "08_VERIFICATION/crate-crate-verification-protocol-empirical-defect-shield-for-crate-crate.md",
       "title": "Verification Protocol: Empirical Defect Shield for crate/crate",
       "repository": "crate/crate",
-      "source_version": "92486c78",
-      "content_hash": "4e30b6aed6abdc3566b28d8f728f8885d0e1c9094c832c61fb4839f3dd663487",
+      "source_version": "f5942749",
+      "content_hash": "a0aceb145ead226fc38045cb3e02df990b1db014ba0337aa368b98b631758a61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:23:06.584Z"
+      "persisted_at": "2026-11-27T15:36:47.469Z"
     },
     "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action": {
       "item_id": "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action",
@@ -221341,8 +221346,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "7fa79ec4",
-      "content_hash": "51d17bb0fdd7100386f1e1aa4c2280cb4f8af5e40d05100cb1036e9a1ee2562f",
+      "source_version": "35922adf",
+      "content_hash": "9ae0f2e53af99e50a7bfdcf5dd14ca13945eb0a2ea648a38de61a3b34186f14f",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221540,6 +221545,11 @@
           "number": 10879,
           "title": "do not await a heal's stream inside the simulation event loop",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10918,
+          "title": "remove native-connect demotion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221547,7 +221557,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T10:43:11.324Z",
+      "verified_at": "2026-11-27T15:36:44.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -295251,9 +295261,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crate-crate-learnings",
       "repository": "crate-crate-learnings",
       "source_version": "HEAD",
-      "content_hash": "eee48c42eac65cb857bd27e8654d6cbccf1f64940d0712f85a3cbf29a333f667",
+      "content_hash": "2e1cf5ef77eee48191d95372b43a4cac60ec294efd983223155032ef40313486",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T20:23:12.698Z"
+      "persisted_at": "2026-11-27T15:36:52.581Z"
     },
     "rule-9245": {
       "learning_id": "rule-9245",
@@ -303384,9 +303394,9 @@
       "title": "Architecture Intelligence: crate-crate-learnings Core Invariants",
       "repository": "crate-crate-learnings",
       "source_version": "HEAD",
-      "content_hash": "304290c4e9ab8f4110384ee069a95d454d0f09257c74dc92c32b272a9e20ae70",
+      "content_hash": "ab3ebcbdac11c3ad8c5ce0a17ec0214b4784830cf2775cc5fe4b5524d593d4d8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T20:23:12.476Z"
+      "persisted_at": "2026-11-27T15:36:52.373Z"
     },
     "rule-9429": {
       "learning_id": "rule-9429",
@@ -334010,10 +334020,10 @@
       "relative_path": "12_DECISIONS/ADR-freenet-freenet-core-adr-subsystem-boundary-modular-decoupling-in-freenet-freene.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "66b78886",
-      "content_hash": "67624c2753444ffdcf6f5ba96a54b5eaa4eb09086522bbb589723935719a1fe7",
+      "source_version": "35922adf",
+      "content_hash": "bb3a05c644c4a7a5582cb8f775979ac6a8fb225924ad080367859e7cb0ef53aa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T17:06:25.657Z"
+      "persisted_at": "2026-11-27T15:36:45.940Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ling-3-2-air-learnings-core-invar",
@@ -334047,9 +334057,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "828a675ff2583a174253d2600c1a1f128bc9c33a3df316c574c8647aec6955cf",
+      "content_hash": "30f91976e8c36c1c596370793f1f9a06a2da1c217429bebe95a86b2a22644437",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T17:06:30.470Z"
+      "persisted_at": "2026-11-27T15:36:51.118Z"
     },
     "rule-10131": {
       "learning_id": "rule-10131",
@@ -361248,13 +361258,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ADAC-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9QBM-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a1ce992c45e78c7b77c48af4265b4531328a649fc6990f398940a91a9f12c16",
+      "content_hash": "bef339fd272720c7d98fb6f87c865cb2484fd354ae823c4c312f41329e2d8f1f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T15:09:23.271Z"
+      "persisted_at": "2026-11-27T15:36:53.125Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -365461,6 +365471,58 @@
       "content_hash": "97df9c821ceac0d17339a2c49e109da2f13f0218a34267158cea87f3e5afe4e9",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T15:18:35.965Z"
+    },
+    "rule-10918": {
+      "learning_id": "rule-10918",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10918,
+      "title": "remove native-connect demotion",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "35922adf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T15:36:44.928Z"
+    },
+    "candidate_directive-remove-native-connect-demotion": {
+      "item_id": "candidate_directive-remove-native-connect-demotion",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9OFB-remove-native-connect-demotion.md",
+      "title": "remove native-connect demotion",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f179a2fc6c7f4fa24b4add536d601bb545ddcb4cdc0736f5e9a00c1b7fc9a4d8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T15:36:50.667Z"
+    },
+    "rule-10919": {
+      "learning_id": "rule-10919",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10919,
+      "title": "Add rel note for security fix",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "f5942749",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T15:36:46.507Z"
+    },
+    "candidate_directive-add-rel-note-for-security-fix": {
+      "item_id": "candidate_directive-add-rel-note-for-security-fix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9PKN-add-rel-note-for-security-fix.md",
+      "title": "Add rel note for security fix",
+      "repository": "crate-crate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6ff615dc4e151a3472e960a23926b766f5bff812b976d2fe419baa17d8ebf9b3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T15:36:52.151Z"
     }
   },
   "ai-builder-brain": {

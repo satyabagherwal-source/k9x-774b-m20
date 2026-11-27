@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T15:27:49.845Z",
+  "last_updated": "2026-11-27T15:36:53.339Z",
   "total_records": 2839,
   "domains": {
     "A": {
@@ -9572,8 +9572,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "9b5d38ab1ad992276d241ee4d1cae212af0d46f36d5d86f776ecc8037846f784",
-      "created_at": "2026-11-27T15:09:23.479Z"
+      "content_hash": "4268c6b2f3c42e5c9f9cf1cf7e99d95bfb72dca3d927c1b326d05607e4de6409",
+      "created_at": "2026-11-27T15:36:53.339Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10205,8 +10205,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "a1ff70e99393555686a2715ea02018f231f7acb33c1e7db041b6a483ec2ebcf2",
-      "created_at": "2026-11-27T10:43:12.068Z"
+      "content_hash": "038d75e11e23afa8d124014f6a97786f119af26dc658f305ea76c3d6e5d5d716",
+      "created_at": "2026-11-27T15:36:45.710Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -10283,8 +10283,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "c6f65eeaf903a52c90a988f5085e95d235d3417e28d64fe16199e398b98758b6",
-      "created_at": "2026-11-27T10:43:20.165Z"
+      "content_hash": "ae0cae4d2d66f9b2a4430f5ccb90e46e8c61b94c395b76e5bdc72c5f46537632",
+      "created_at": "2026-11-27T15:36:50.903Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -12266,8 +12266,8 @@
       "title": "Architecture Intelligence: crate/crate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-architecture-intelligence-crate-crate-core-invariants.md",
       "repository": "crate/crate",
-      "content_hash": "64e1faee2aaeee179d4ebb3a1e0e03bd641c7d5a7b029371ab80f13c5b216eb4",
-      "created_at": "2026-11-26T20:23:06.333Z"
+      "content_hash": "3f54e45a7196afe6cd8799c53880d93e2ddf727748ba44974d659b3a745fbc31",
+      "created_at": "2026-11-27T15:36:47.256Z"
     },
     "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-learnings-core-invariants",
@@ -34611,8 +34611,8 @@
       "title": "Architecture Intelligence: crate-crate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crate-crate-learnings-architecture-intelligence-crate-crate-learnings-core-invar.md",
       "repository": "crate-crate-learnings",
-      "content_hash": "304290c4e9ab8f4110384ee069a95d454d0f09257c74dc92c32b272a9e20ae70",
-      "created_at": "2026-11-26T20:23:12.476Z"
+      "content_hash": "ab3ebcbdac11c3ad8c5ce0a17ec0214b4784830cf2775cc5fe4b5524d593d4d8",
+      "created_at": "2026-11-27T15:36:52.373Z"
     },
     "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants",

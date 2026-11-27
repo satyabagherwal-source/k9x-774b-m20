@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-QCCK",
-    "timestamp": "2026-11-26T07:10:15.044Z",
-    "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
-    "contentHash": "a294b783166795a57c47a9ceef87c04f0b5591d944b411a2822313e7a088ec29",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-QEBU",
-    "timestamp": "2026-11-26T07:10:17.610Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "fb9168feccce442476d2669dc5f76f0c865a2ba2ba1da995b8f2389f54ec6a00",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-QINV",
     "timestamp": "2026-11-26T07:10:23.227Z",
     "repository": "wzh4869/AppPorts",
@@ -7492,6 +7462,36 @@
     "contentHash": "36c4913f98f16850aac9f6bc00f5cb2aba15e6cd49c4b73164b8c8b66e207abd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-9K7J",
+    "timestamp": "2026-11-27T15:36:45.199Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "9ae0f2e53af99e50a7bfdcf5dd14ca13945eb0a2ea648a38de61a3b34186f14f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-9LFA",
+    "timestamp": "2026-11-27T15:36:46.774Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "5950376ea3e4435a9528ff1887d1cf568b5402bc4b620a93d4127262c812ece4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -13806,3 +13806,5 @@
 | `CYCLE-20261127-LVIN` | `2026-11-27T15:18:20.111Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10917` | Yes (`f27ffb22...`) |
 | `CYCLE-20261127-XBD1` | `2026-11-27T15:27:13.861Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | Yes (`36c4913f...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T15:27:46.469Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-ACBB63D0` [Domain D] | Yes (`9b7b9a1b...`) |
+| `CYCLE-20261127-9K7J` | `2026-11-27T15:36:45.199Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10918` | Yes (`9ae0f2e5...`) |
+| `CYCLE-20261127-9LFA` | `2026-11-27T15:36:46.774Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10919` | Yes (`5950376e...`) |

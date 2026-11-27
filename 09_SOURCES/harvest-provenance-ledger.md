@@ -13839,3 +13839,5 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `02e1c520` | Multi-dimensional audit evidence | 2026-11-27T15:18:20.123Z |
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `073d2fba` | Multi-dimensional audit evidence | 2026-11-27T15:27:13.866Z |
 | `learn-dom-d-acbb63d0` | `project://momenbasel-puremac` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md` | 2026-11-27T15:27:46.469Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `35922adf` | Multi-dimensional audit evidence | 2026-11-27T15:36:45.214Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `f5942749` | Multi-dimensional audit evidence | 2026-11-27T15:36:46.789Z |

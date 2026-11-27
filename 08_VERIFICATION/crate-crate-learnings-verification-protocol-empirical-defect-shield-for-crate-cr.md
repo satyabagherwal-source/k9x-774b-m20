@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T20:23:12.116Z",
+  "timestamp": "2026-11-27T15:36:52.010Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-crate-crate-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [crate-crate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T20:23:12.116Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T15:36:52.010Z`  
 > **Learning ID**: `LEARN-EVO-crate-crate-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `92486c78`  
+> **Source Version**: `f5942749`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T20:23:04.595Z  
+> **Timestamp**: 2026-11-27T15:36:45.483Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T20:23:04.590Z  
+> **Harvest Timestamp**: 2026-11-27T15:36:45.479Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -583,344 +583,33 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4529d4d5` (2026-11-23)
-**Commit Message**: Fix ClassCastException on object array subscript through view
+### Incident Patch 1: `f5942749` (2026-11-27)
+**Commit Message**: Add rel note for security fix
 
-A subscript on an ARRAY(OBJECT) column selected from a view or a
-subquery was planned with subscript_obj, which only works on objects.
-Use an array subscript instead.
-
-Fixes #20652
-
-**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +10/-0)
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +6/-0)
 ```diff
-@@ -46,6 +46,16 @@ series.
+@@ -43,6 +43,12 @@ Security Fixes
+ - Mitigation for CVE-2026-114938 by disabling the ``UseBASE64Intrinsics`` JVM
+   option.
+ 
++- Fixed a missing privilege check on the
++  :ref:`pg_catalog.pg_index <postgres-pg_catalog>` table, which allowed users
++  to see index metadata of tables they have no privileges on. For more details
++  see the `security advisory
++  <https://github.com/crate/crate/security/advisories/GHSA-hr4h-p68x-58j7>`__.
++
  Fixes
  =====
  
-+- Fixed a ``ClassCastException`` error which was thrown when using a subscript
-+  on a column of type ``ARRAY(OBJECT)``, including nested arrays of objects,
-+  selected from a view or a subquery, e.g.::
-+
-+      SELECT items['x'] FROM v
-+
-+  or::
-+
-+      SELECT items['arr']['z'] FROM v``
-+
- - Fixed an issue where a comparison on object columns could lead to a wrong
-   result if the objects had the same amount of keys and some values were
-   ``null``.
-```
-
-**File**: `server/src/main/java/io/crate/execution/dsl/projection/builder/InputColumns.java` (modified, +2/-12)
-```diff
-@@ -21,7 +21,6 @@
- 
- package io.crate.execution.dsl.projection.builder;
- 
--import static io.crate.common.collections.Lists.mapTail;
- import static io.crate.expression.symbol.Symbols.lookupValueByColumn;
- 
- import java.util.ArrayList;
-@@ -33,7 +32,7 @@
- 
- import org.jspecify.annotations.Nullable;
- 
--import io.crate.expression.scalar.SubscriptObjectFunction;
-+import io.crate.expression.scalar.SubscriptFunctions;
- import io.crate.expression.symbol.Aggregation;
- import io.crate.expression.symbol.AliasSymbol;
- import io.crate.expression.symbol.FetchMarker;
-@@ -309,16 +308,7 @@ private static Symbol tryCreateSubscriptOnRoot(RelationName relationName, Symbol
-             return symbol;
-         }
- 
--        DataType<?> returnType = symbol.valueType();
--        List<String> path = column.path();
--
--        List<Symbol> arguments = mapTail(rootIC, path, Literal::of);
--
--        return new Function(
--            SubscriptObjectFunction.SIGNATURE,
--            arguments,
--            returnType
--        );
-+        return SubscriptFunctions.tryCreateSubscript(rootIC, column.path());
-     }
- 
-     @Override
-```
-
-**File**: `server/src/main/java/io/crate/expression/scalar/SubscriptFunctions.java` (modified, +1/-1)
-```diff
-@@ -100,7 +100,7 @@ public static Function tryCreateSubscript(Symbol baseSymbol, List<String> path)
-                 Function subscript = new Function(
-                     SubscriptFunction.SIGNATURE_ARRAY_OF_OBJECTS,
-                     List.of(baseSymbol, Literal.of(child)),
--                    new ArrayType<>(returnType)
-+                    ArrayType.makeArray(returnType, ArrayType.dimensions(baseType))
-                 );
- 
-                 for (int i = 1; i < path.size(); i++) {
-```
-
-**File**: `server/src/test/java/io/crate/integrationtests/SubSelectIntegrationTest.java` (modified, +7/-8)
-```diff
-@@ -26,7 +26,6 @@
- import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
- import static io.crate.testing.Asserts.assertThat;
- import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
--import static org.assertj.core.api.Assertions.assertThat;
- 
- import java.util.Arrays;
- import java.util.Collections;
-@@ -183,7 +182,7 @@ public void testNestedGroupByAggregation() throws Exception {
-                 "  select min(age) as minAge from characters group by gender) as ch " +
-                 "group by minAge");
-         List<Object[]> rows = Arrays.asList(response.rows());
--        Collections.sort(rows, OrderingByPosition.arrayOrdering(DataTypes.INTEGER, 0, true, true));
-+        rows.sort(OrderingByPosition.arrayOrdering(DataTypes.INTEGER, 0, true, true));
-         assertThat(rows).containsExactly(
-             new Object[] { 1L },
-             new Object[] { 1L }
-@@ -742,15 +741,15 @@ public void testWhereSubsSelectAsClusteredByValue() {
- 
-     @Test
-     public void testSubscriptOnSubSelect() {
--        execute("create table t1 (a object, c object)");
--        execute("insert into t1 (a, c) values ({ b = 1 }, { d = { e = 2 }})");
-+        execute("create table t1 (a object, c object, items array(object as (x int)))");
-+        execute("insert into t1 (a, c, items) values ({ b = 1 }, { d = { e = 2 }}, [{ x = 3 }])");
-         execute("refresh table t1");
--        execute("select a['b'], c['d']['e'] from t1");
-+        execute("select a['b'], c['d']['e'], items['x'] from t1");
-         assertThat(response).hasRows(
--            "1| 2");
--        execute("select a['b'], c['d']['e'] from (select * from t1) t2");
-+            "1| 2| [3]");
-+        execute("select a['b'], c['d']['e'], items['x'] from (select * from t1) t2");
-         assertThat(response).hasRows(
--            "1| 2");
-+            "1| 2| [3]");
-     }
- 
-     @Test
-```
-
-**File**: `server/src/test/java/io/crate/integrationtests/ViewsITest.java` (modified, +33/-6)
-```diff
-@@ -26,7 +26,6 @@
- import static io.crate.protocols.postgres.PGErrorStatus.INTERNAL_ERROR;
- import static io.crate.testing.Asserts.assertThat;
- import static io.netty.handler.codec.http.HttpResponseStatus.CONFLICT;
--import static org.assertj.core.api.Assertions.assertThat;
- import static org.assertj.core.api.Assertions.assertThatThrownBy;
- 
- import java.util.Locale;
-@@ -45,6 +44,7 @@
- import io.crate.protocols.postgres.PGErrorStatus;
- import io.crate.sql.tree.BitString;
- import io.crate.testing.Asserts;
-+import io.crate.testing.UseJdbc;
- import io.netty.handler.codec.http.HttpResponseStatus;
- 
- public class ViewsITest extends IntegTestCase {
-@@ -234,14 +234,41 @@ public void testDropViewDoesNotFailIfViewIsMissingAndIfExistsIsUsed() {
-     }
- 
-     @Test
-+    @UseJdbc(0) // compares column types; pg reports nested arrays as json
-     public void testSubscriptOnViews() {
--        execute("create table t1 (a object as (b integer), c object as (d object as (e integer))) ");
--        execute("insert into t1 (a, c) values ({ b = 1 }, { d = { e = 2 }})");
--        execute("refresh table t1");
-+        execute("create table t1 (" +
-+                "a object as (b integer), " +
-+                "c object as (d object as (e integer)), " +
-+                "items array(object as (x integer, o object as (y integer))), " +
-+                "ign object(ignored) as (declared integer), " +
-+                "dyn object(dynamic), " +
-+                "nested array(object as (arr array(object as (z integer)))))");
-         execute("create view v1 as select * from t1");
-+        // dyn['added'] is created by dynamic mapping after the view exists
-+        execute("insert into t1 (a, c, items, ign, dyn, nested) values (" +
-+                "{ b = 1 }, { d = { e = 2 }}, [{ x = 3, o = { y = 4 }}], " +
-+                "{ declared = 5, undeclared = 'foo' }, { added = 6 }, [{ arr = [{ z = 7 }] }])");
-+        execute("refresh table t1");
-+
-         // must not throw an exception, subscript must be resolved
--        execute("select a['b'], c['d']['e'] from v1");
--        assertThat(response).hasRows("1| 2");
-+        // https://github.com/crate/crate/issues/20652: also on an array of objects
-+        String stmt = "select a['b'], c['d']['e'], items['x'], items['o']['y'], " +
-+                      "ign['declared'], ign['undeclared'], dyn['added'], nested['arr']['z'] from ";
-+        execute(stmt + "t1");
-+        var expectedTypes = response.columnTypes();
-+        var expectedRows = response.rows();
-+
-+        execute(stmt + "v1");
-+        assertThat(response).hasRows("1| 2| [3]| [4]| 5| foo| 6| [[7]]");
-+        assertThat(response.columnTypes()).isEqualTo(expectedTypes);
-+        assertThat(response.rows()).isEqualTo(expectedRows);
-+
-+        execute(stmt + "(select * from t1) t");
-+        assertThat(response.columnTypes()).isEqualTo(expectedTypes);
-+        assertThat(response.rows()).isEqualTo(expectedRows);
-+
-+        execute("select pg_typeof(dyn['added']) from v1");
-+        assertThat(response).hasRows("bigint");
-     }
- 
-     @Test
-```
-
----
-
-### Incident Patch 2: `d1ccbb51` (2026-11-26)
-**Commit Message**: Reword and merge rel notes for genseries fix.
-
-**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +3/-5)
-```diff
-@@ -63,8 +63,6 @@ Fixes
-   call.
- 
- - Fixed an issue that caused ``generate_series`` to return no rows, or to never
--  finish, if the series had more than 2147483647 values or if the step value
--  pointed away from the stop value.
--
--- Fixed an issue that caused ``generate_series`` to become endless if the stop
--  value is the maximum value for the given type.
-+  finish, if the series had more than ``2147483647`` values or if the step value
-+  pointed away from the stop value, or if the stop value is the maximum value
-+  for the given type.
-```
-
----
-
-### Incident Patch 3: `844201ee` (2026-11-25)
-**Commit Message**: Fix generate_series not stopping if the stop value is integer's or long's max value
-
-**File**: `docs/appendices/release-notes/6.5.3.rst` (modified, +3/-0)
-```diff
-@@ -65,3 +65,6 @@ Fixes
- - Fixed an issue that caused ``generate_series`` to return no rows, or to never
-   finish, if the series had more than 2147483647 values or if the step value
-   pointed away from the stop value.
-+
-+- Fixed an issue that caused ``generate_series`` to become endless if the stop
-+  value is the maximum value for the given type.
-```
-
-**File**: `server/src/main/java/io/crate/expression/tablefunctions/GenerateSeries.java` (modified, +20/-3)
-```diff
-@@ -30,6 +30,7 @@
- 
- import org.elasticsearch.common.settings.Settings;
- import org.joda.time.Period;
-+import org.jspecify.annotations.Nullable;
- 
- import io.crate.data.Input;
- import io.crate.data.Row;
-@@ -81,7 +82,7 @@ public static void register(Functions.Builder builder, Settings settings) {
-                 signature,
-                 boundSignature,
-                 1L,
--                Long::sum,
-+                GenerateSeries::sum,
-                 Long::compare,
-                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
-         );
-@@ -96,7 +97,7 @@ public static void register(Functions.Builder builder, Settings settings) {
-                 signature,
-                 boundSignature,
-                 1,
--                Integer::sum,
-+                GenerateSeries::sum,
-                 Integer::compare,
-                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
-         );
-@@ -114,7 +115,7 @@ public static void register(Functions.Builder builder, Settings settings) {
-                 signature,
-                 boundSignature,
-                 1L,
--                Long::sum,
-+                GenerateSeries::sum,
-                 Long::compare,
-                 new RowType(List.of(boundSignature.argTypes().get(0)), fieldNames))
-         );
-@@ -167,6 +168,22 @@ public static void register(Functions.Builder builder, Settings settings) {
-         }
-     }
- 
-+    private static @Nullable Long sum(long x, long y) {
-+        try {
-+            return Math.addExact(x, y);
-+        } catch (ArithmeticException e) {
-+            return null;
-+        }
-+    }
-+
-+    private static @Nullable Integer sum(int x, int y) {
-+        try {
-+            return Math.addExact(x, y);
-+        } catch (ArithmeticException e) {
-+            return null;
-+        }
-+    }
-+
-     private final T defaultStep;
-     private final BinaryOperator<T> plus;
-     private final Comparator<T> comparator;
-```
-
-**File**: `server/src/main/java/io/crate/expression/tablefunctions/RangeIterable.java` (modified, +3/-0)
-```diff
-@@ -64,6 +64,9 @@ public Iterator<Row> iterator() {
-         return new Iterator<>() {
-             @Override
-             public boolean hasNext() {
-+                if (value == null) {
-+                    return false;
-+                }
-                 int cmp = comparator.compare(value, endInclusive);
-                 return reversed ? cmp >= 0 : cmp <= 0;
-             }
-```
-
-**File**: `server/src/test/java/io/crate/expression/tablefunctions/GenerateSeriesTest.java` (modified, +17/-0)
-```diff
-@@ -222,4 +222,21 @@ public void test_generate_series_with_milliseconds_interval() {
-                 """
-         );
-     }
-+
-+    @Test
-+    public void test_generate_series_stops_at_max_value() {
-+        Iterable<Row> rows = execute("generate_series(9223372036854775805, 9223372036854775807)");
-+        assertThat(StreamSupport.stream(rows.spliterator(), false)
-+            .limit(4)
-+            .map(row -> row.get(0))
-+            .toList()
-+        ).containsExactly(9223372036854775805L, 9223372036854775806L, 9223372036854775807L);
-+
-+        rows = execute("generate_series(2147483645, 2147483647)");
-+        assertThat(StreamSupport.stream(rows.spliterator(), false)
-+            .limit(4)
-+            .map(row -> row.get(0))
-+            .toList()
-+        ).containsExactly(2147483645, 2147483646, 2147483647);
-+    }
- }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20713** (2026-11-27): Add rel note for security fix (backport #20712) (@mergify[bot])
+- **PR #20712** (2026-11-27): Add rel note for security fix (@matriv)
+- **PR #20710** (closed): Design doc: Possibility to exclude DELETE operations from a publication/logical replication (@hariso)
+- **PR #20708** (2026-11-27): Support up to 65535 parameters in pgwire Parse/Bind messages (backport #20625) (@mergify[bot])
 - **PR #20707** (2026-11-26): Fix ClassCastException on object array subscript through view (backport #20663) (@mergify[bot])
 - **PR #20706** (2026-11-26): Prevent DROP SCHEMA CASCADE from deleting subscribed tables (backport #20680) (@mergify[bot])
-- **PR #20705** (2026-11-26): Reword and merge rel notes for genseries fix. (backport #20704) (@mergify[bot])
-- **PR #20704** (2026-11-26): Reword and merge rel notes for genseries fix. (@matriv)
-- **PR #20703** (2026-11-26): Fix generate_series not stopping if the stop value is integer's or long's max value (backport #20695) (@mergify[bot])
-- **PR #20701** (2026-11-26): Fix generate_series if there are more than Integer.MAX_VALUE rows or if the step value points away from the stop value (backport #20692) (@mergify[bot])
 
 ---
 
@@ -940,29 +629,25 @@ Fixes #20652
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ClassCastException on object array subscript through view
+## X. Add rel note for security fix
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.5.3.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4529d4d5`: ClassCastException on object array subscript through view. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5942749`: Add rel note for security fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.3.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed a ``ClassCastException`` error which was thrown when using a subscript
-  on a column of type ``ARRAY(OBJECT)``, including nested arrays of objects,
-  selected from a view or a subquery, e.g.::
-
-      SELECT items['x'] FROM v
-
-  or::
-
-      SELECT items['arr']['z'] FROM v``
+- Fixed a missing privilege check on the
+  :ref:`pg_catalog.pg_index <postgres-pg_catalog>` table, which allowed users
+  to see index metadata of tables they have no privileges on. For more details
+  see the `security advisory
+  <https://github.com/crate/crate/security/advisories/GHSA-hr4h-p68x-58j7>`__.
 
 ```
 
@@ -973,7 +658,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4529d4d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5942749` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
