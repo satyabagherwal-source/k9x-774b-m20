@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T02:49:53.513Z",
+  "last_updated": "2026-11-27T02:58:28.975Z",
   "total_verified_learnings": 9139,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -219677,9 +219677,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "61aa93ff386a1b0bfc427c0c4dbfa19092fd2486a34b0b3ad7bdea5022e9864b",
+      "content_hash": "ad3069ea54417792395052932c878c3a3d235a9ded421a05feb2deec83bc59f5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T00:33:12.145Z"
+      "persisted_at": "2026-11-27T02:58:28.767Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219689,9 +219689,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "1bfdfce9ca72ee00d73ad928d7f7f6c0227a678c9fa239c2efe8f2775fa2c623",
+      "content_hash": "4df2788396ae7bb962e1b3f9cb4652f8e2476ed2d159fb9eef176903ae61949d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T00:33:12.338Z"
+      "persisted_at": "2026-11-27T02:58:28.975Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -230211,9 +230211,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f2ac3d232fc1c4f8c288820157f2324b0079ebc244121335db737f7d4018d30",
+      "content_hash": "09f894ef84eee1db864bcd1ae466c4f3ea86304712d147fe1c1d083e54b73595",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T02:08:07.977Z"
+      "persisted_at": "2026-11-27T02:58:27.797Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230223,9 +230223,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ace665f0722b760957602c4879cd2bf22ac887ffaf65f0e8da0dcb1cb16035bc",
+      "content_hash": "9fe38af399e16f03aa35ec6b45d515898adf87017480ba11e9c1de29004ef68b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T02:08:08.177Z"
+      "persisted_at": "2026-11-27T02:58:27.999Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -236001,7 +236001,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "10ac85247d9a564117431ff24affc71a7f8ad06149f6b7fe2c7340fa584aef78",
+      "content_hash": "a64f2ebaba65016f559fb248cf4e357537f6ef03474de27607c0e562085e3c78",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -236026,7 +236026,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T17:46:11.381Z",
+      "verified_at": "2026-11-27T02:58:15.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236039,13 +236039,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-research-knowledge-intelligence-au.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-research-knowledge-intelligence-autotrust-autotrust-deci.md",
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "source_version": "hf-autotrust-autotrust-decider-pro-vision-27b",
-      "content_hash": "2ee6ceed171cd05163f0342e6efcc8421a0f790ce003995d665022a0556c5fc7",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "content_hash": "3620abac58c8fb9e8e399f221be3c28795fd48d54dff6677bc2ea0a4259730c4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T06:10:23.921Z"
+      "persisted_at": "2026-11-27T02:58:15.872Z"
     },
     "candidate_directive-ci-remove-atomics-flags-from-wasm32-wasip1-job": {
       "item_id": "candidate_directive-ci-remove-atomics-flags-from-wasm32-wasip1-job",
@@ -236091,9 +236091,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-27b-vl-learnings Core Invariants",
       "repository": "hf-autotrust-jev-27b-vl-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2f14d6eb51029684a22dfd6cd294c08a65c96689e6954bccc761607a707a33d",
+      "content_hash": "959110ff069b769dd4561d1efff3b3057a144f3868d866c85b53be6dc43fb98d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T17:46:32.095Z"
+      "persisted_at": "2026-11-27T02:58:26.946Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant",
@@ -349844,13 +349844,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-DNWH-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6ERU-bump-version-number.md",
       "title": "Bump version number",
-      "repository": "zoontek-react-native-bootsplash-learnings",
+      "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ed506416b97abee478e58de1f6963c163ea8345a050d931c7af4efee7dcee6c",
+      "content_hash": "7ee45045a7f8eb4865a91c6890a1859e8389cfec1a4e80547b8047190805232b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T02:08:07.746Z"
+      "persisted_at": "2026-11-27T02:58:28.554Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",

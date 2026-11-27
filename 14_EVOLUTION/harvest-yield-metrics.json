@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T02:49:46.949Z",
-  "total_cycles_completed": 12951,
-  "total_learnings_persisted": 12951,
+  "last_updated": "2026-11-27T02:58:15.637Z",
+  "total_cycles_completed": 12952,
+  "total_learnings_persisted": 12952,
   "total_rules_promoted": 11724,
   "history": [
-    {
-      "timestamp": "2026-11-26T15:02:19.525Z",
-      "repository": "yazinsai/OpenOats",
-      "learningId": "learn-github-yazinsai-openoats",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T15:02:20.244Z",
       "repository": "PeerDB-io/peerdb",
@@ -1403,6 +1396,13 @@
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T02:58:15.637Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -13644,3 +13644,4 @@
 | `CYCLE-20261127-V0A7` | `2026-11-27T02:49:36.559Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`096c07fb...`) |
 | `CYCLE-20261127-V1V7` | `2026-11-27T02:49:38.611Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10813` | Yes (`94093094...`) |
 | `CYCLE-20261127-V8A3` | `2026-11-27T02:49:46.923Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10814` | Yes (`4afd110e...`) |
+| `CYCLE-20261127-64SJ` | `2026-11-27T02:58:15.619Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`a64f2eba...`) |

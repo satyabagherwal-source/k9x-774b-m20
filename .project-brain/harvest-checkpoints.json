@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T02:49:46.953Z",
+  "last_updated": "2026-11-27T02:58:15.641Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18950,15 +18950,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
-      "content_hash": "bf42363186cca9cfc9082c7e1aa1cd657a464ea56a420b503946ae88855a42b7",
-      "verified_at": "2026-11-26T06:10:23.716Z",
+      "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
+      "content_hash": "a64f2ebaba65016f559fb248cf4e357537f6ef03474de27607c0e562085e3c78",
+      "verified_at": "2026-11-27T02:58:15.640Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T06:10:23.716Z"
+      "last_updated": "2026-11-27T02:58:15.640Z"
     },
     "autotrust/AutoTrust-Decider-Pro-35B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",

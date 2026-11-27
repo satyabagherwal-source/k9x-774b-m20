@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261125-3H18",
-    "timestamp": "2026-11-25T15:00:41.084Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "3e3d793383a8720d6a5d8923a340c1465457478d5b67ec1baa14a043010de0f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261125-3J57",
     "timestamp": "2026-11-25T15:00:43.819Z",
     "repository": "milvus-io/milvus",
@@ -7492,6 +7477,21 @@
     "contentHash": "4afd110e62a51d96ef8429e02070a960f93573e17cff45f0fb869fa9ddc97adb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-64SJ",
+    "timestamp": "2026-11-27T02:58:15.619Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "a64f2ebaba65016f559fb248cf4e357537f6ef03474de27607c0e562085e3c78",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

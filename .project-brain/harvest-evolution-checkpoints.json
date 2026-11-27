@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T02:49:53.774Z",
+  "last_updated": "2026-11-27T02:58:29.155Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T02:27:08.788Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-27T00:33:11.613Z",
+      "processed_at": "2026-11-27T02:58:28.203Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-27T02:08:07.384Z",
+      "processed_at": "2026-11-27T02:58:27.186Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2663,7 +2663,7 @@
       "staged_for_review": 1
     },
     "hf-autotrust-jev-27b-vl-learnings.md": {
-      "processed_at": "2026-11-23T17:46:31.884Z",
+      "processed_at": "2026-11-27T02:58:26.694Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4018,7 +4018,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4779,
+  "total_dossiers_evaluated": 4782,
   "total_canonical_promoted": 571,
-  "total_staged_for_review": 3581
+  "total_staged_for_review": 3583
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T02:49:53.068Z",
+  "last_updated": "2026-11-27T02:58:28.767Z",
   "total_records": 2798,
   "domains": {
     "A": {
@@ -12189,8 +12189,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "61aa93ff386a1b0bfc427c0c4dbfa19092fd2486a34b0b3ad7bdea5022e9864b",
-      "created_at": "2026-11-27T00:33:12.145Z"
+      "content_hash": "ad3069ea54417792395052932c878c3a3d235a9ded421a05feb2deec83bc59f5",
+      "created_at": "2026-11-27T02:58:28.767Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -15589,8 +15589,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "6f2ac3d232fc1c4f8c288820157f2324b0079ebc244121335db737f7d4018d30",
-      "created_at": "2026-11-27T02:08:07.977Z"
+      "content_hash": "09f894ef84eee1db864bcd1ae466c4f3ea86304712d147fe1c1d083e54b73595",
+      "created_at": "2026-11-27T02:58:27.797Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -17366,10 +17366,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-research-knowledge-intelligence-au.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-research-knowledge-intelligence-autotrust-autotrust-deci.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "content_hash": "2ee6ceed171cd05163f0342e6efcc8421a0f790ce003995d665022a0556c5fc7",
-      "created_at": "2026-11-26T06:10:23.921Z"
+      "content_hash": "3620abac58c8fb9e8e399f221be3c28795fd48d54dff6677bc2ea0a4259730c4",
+      "created_at": "2026-11-27T02:58:15.872Z"
     },
     "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
@@ -17428,8 +17428,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-27b-vl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-27b-vl-learnings-research-knowledge-intelligence-hf-autotrust-j.md",
       "repository": "hf-autotrust-jev-27b-vl-learnings",
-      "content_hash": "c2f14d6eb51029684a22dfd6cd294c08a65c96689e6954bccc761607a707a33d",
-      "created_at": "2026-11-23T17:46:32.095Z"
+      "content_hash": "959110ff069b769dd4561d1efff3b3057a144f3868d866c85b53be6dc43fb98d",
+      "created_at": "2026-11-27T02:58:26.946Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-learnings-core-invariant",
