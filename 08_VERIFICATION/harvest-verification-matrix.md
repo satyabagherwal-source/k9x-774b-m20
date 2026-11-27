@@ -13884,3 +13884,5 @@
 | `CYCLE-20261127-U5P5` | `2026-11-27T21:56:41.177Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10974` | Yes (`dd1525c2...`) |
 | `CYCLE-20261127-50UH` | `2026-11-27T22:05:08.105Z` | `harness-hub/Qwen3.8-27B-opencode-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-opencode-adapted-learnings.md` | Yes (`e4bb187e...`) |
 | `CYCLE-20261127-57XF` | `2026-11-27T22:05:17.283Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1692` | Yes (`5d0f3a63...`) |
+| `CYCLE-20261127-GHEQ` | `2026-11-27T22:14:02.786Z` | `tencent/Hy4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md` | Yes (`3d088449...`) |
+| `CYCLE-20261127-GP7V` | `2026-11-27T22:14:12.907Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10975` | Yes (`dd10e7a1...`) |

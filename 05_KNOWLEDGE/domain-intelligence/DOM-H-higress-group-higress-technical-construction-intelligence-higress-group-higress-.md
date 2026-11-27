@@ -4,24 +4,24 @@
 {
   "source_repository": "higress-group/higress",
   "source_url": "https://github.com/higress-group/higress",
-  "source_version": "879a6512",
+  "source_version": "c35d78d6",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T11:15:44.569Z",
+  "timestamp": "2026-11-27T22:14:13.202Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-higress-group-higress",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `879a6512`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T11:15:44.569Z`  
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `c35d78d6`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T22:14:13.202Z`  
 > **Learning ID**: `learn-github-higress-group-higress`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from higress-group/higress:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T11:15:43.099Z  
+> **Harvest Timestamp**: 2026-11-27T22:14:11.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9856 stars
+- **Stars / Engagement**: 9870 stars
 
 ---
 
@@ -1750,11 +1750,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5433** (2026-11-26): **fix(wasm-rust): preserve SSE events with CRLF line endings**
-  *Symptoms*: ## I. Summary  CRLF 按一个逻辑换行处理，遇到空行才结束 SSE 事件。跨更新的 CR/LF 也会成对处理，避免 event 与 data 分离、多行 data 被拆开；新增所有切分位置和逐字节输入回归。  ## II. Related issue  Fixes #5407  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace, or formatting with no substantive choice or behavioral effect. - [ ] **Verified maintainer/administrator exception:** Material participation occurred and the canonical repository role and PR author were verified. - [x] **Material agent participation:** An AI or coding agent materially participated in analysis, design, implementation, testing, or PR preparation.  - [ ] **Before implementation began:** A Higress maintainer had approved the Proposal and Design Issues, and authorized implementation TASKs linked the work to the applicable SPECs. - [ ] **Before verification began:** The Design contained a concrete Verification Plan. - [ ] **Before requesting maintainer review or acceptance:** Applicable implementation and verification TASKs were done with exact commands, results, evidence links, and hashes.  - [ ] Complete: all three timed obligations above were satisfied. - [x] Noncompliant: one or more obligations were not satisfied; explain below. - [ ] Verified exception: material partic
+- **Issue #5457** (2026-11-27): **ci: allow full-snapshot non-production verification to finish**
+  *Symptoms*: The 52-entry `2.2.7` preparation snapshot exceeded the existing 15-minute `verify-snapshot --resolve` budget on the non-production acceptance runner. Raise that step to 40 minutes and the job bound to 120 minutes; no registry mutation or production behavior changes.  Exact failure: V04 run 46067716179, job 140736975219, exit 124 at `Validate exact inputs and resolve Q snapshot`.
 
-- **Issue #5428** (2026-11-26): **feat: define managed C++ release contracts and generalized verification**
-  *Symptoms*: ## I. Summary  Phase 1 only: TASK-5427001 (T01 then T02), implementing D7–D9/D13–D16 contracts and D10 generalized verification. Production catalog activation and release operations remain unauthorized and unchanged.  - Fixed-nine C++ catalog identities/states, explicit hash-bound candidate/history imports, effective artifact source distinct from release freeze and preparation/merge heads. - Optional generic Wasm byte hashes/history, calibrated structured publication evidence, offline derivation and live classification/byte replay, first-import immutable conflict rejection. - Catalog-derived nine-native/nine-Wasm CI, three existing final-byte e2e cases, pinned builder/runtime, complete run/head/artifact accounting, failure logs and cleanup. - Read-only imported-candidate preparation/PR wiring, C++/imports staging and Q verification; existing promotion helper keeps M verification.  Exact base: `c4c537f37175befc375e65ba059e8df477dc52a4`. Current implementation head: `0065667362bd3fbec0cf5ce01c8ab5f43ecfa260`; 13 DCO commits, 25 files, 3392 insertions/96 deletions. T01 was implemented and focused-tested before T02. Corrective commits and superseded failures remain recorded in external evidence.  ## II. Related issue  Refs #5426 Refs #5427  Canonical implementation TASK: TASK-5427001; no issue closure or TASK status transition is requested.  ## III. Change type  - [ ] Bug fix - [x] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maint
+- **Issue #5455** (2026-11-27): **fix(release): validate legacy exception-handling proxy modules**
+  *Symptoms*: The pinned C++ toolchain emits a legacy exception-handling `try`/`catch` encoding in the `oauth` Wasm. wazero v1.12 can decode the tag section but rejects the legacy opcodes before compilation, so the normal proxy-ABI compile gate cannot run for that reviewed artifact.  This keeps wazero as the primary validator for every module. Only when wazero reports `legacy exception handling instruction`, it falls back to structural validation of sections, exports, exported memory and the Proxy-Wasm callback/ABI signatures. It does not rewrite, rebuild, re-tag or otherwise change the artifact bytes.  Verification: `contracts` (Go tests including the legacy fixture, Python 12/12 + 5/5), plus exact-head managed native/Wasm and e2e checks. No public tag, latest or production configuration is changed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1771,151 +1771,351 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `879a6512` (2026-11-26)
-**Commit Message**: fix(wasm-rust): preserve SSE events with CRLF line endings (#5433)
+### Incident Patch 1: `9d941769` (2026-11-27)
+**Commit Message**: fix(release): validate legacy exception-handling proxy modules
 
-Signed-off-by: zhihao-yuan <[REDACTED_EMAIL]>
-Co-authored-by: zhihao-yuan <[REDACTED_EMAIL]>
-Co-authored-by: 纪卓志 <[REDACTED_EMAIL]>
-
-**File**: `plugins/wasm-rust/src/event_stream.rs` (modified, +67/-45)
+**File**: `tools/plugin-release/verify_pulled_plugin.go` (modified, +7/-0)
 ```diff
-@@ -24,51 +24,39 @@
- /// |field   |= 1*name-char [ colon [ space ] *any-char ] eol |
- /// |eol     |= ( cr lf / cr / lf )      |
- ///
--/// According to spec, we must judge EOL twice before we can identify a complete event.
--/// However, in the rules of event and field, there is an ambiguous grammar in the judgment of eol,
--/// and it will bring ambiguity (whether the field ends). In order to eliminate this ambiguity,
--/// we believe that CRLF as CR+LF belongs to event and field respectively.
-+/// CRLF is one logical line ending. An empty line, formed by two consecutive
-+/// logical line endings, terminates an event.
+@@ -254,6 +254,13 @@ func validateProxyWasmModule(data []byte) error {
  
- #[derive(Default)]
- pub struct EventStream {
-     buffer: Vec<u8>,
-     processed_offset: usize,
-+    skip_lf: bool,
+ 	module, err := runtime.CompileModule(ctx, data)
+ 	if err != nil {
++		const legacyExceptionHandlingError = "legacy exception handling instruction 0x6 not supported; recompile with wasm-opt --translate-to-exnref"
++		if strings.HasSuffix(err.Error(), legacyExceptionHandlingError) {
++			if legacyErr := validateLegacyProxyWasmModule(data); legacyErr != nil {
++				return fmt.Errorf("invalid WebAssembly module: %w", legacyErr)
++			}
++			return nil
++		}
+ 		return fmt.Errorf("invalid WebAssembly module: %w", err)
+ 	}
+ 	defer module.Close(ctx)
+```
+
+**File**: `tools/plugin-release/verify_pulled_plugin_legacy.go` (added, +353/-0)
+```diff
+@@ -0,0 +1,353 @@
++// Copyright 2026 Higress Authors
++// Licensed under the Apache License, Version 2.0.
++
++package main
++
++import (
++	"bytes"
++	"errors"
++	"fmt"
++)
++
++// validateLegacyProxyWasmModule validates the proxy ABI of a module that
++// wazero can decode but cannot compile because it uses the legacy exception
++// handling encoding. The pinned C++ toolchain emits that encoding for oauth;
++// rewriting the artifact would change its reviewed bytes, so the release gate
++// checks the module structure and ABI directly instead of compiling it. The
++// normal wazero compile path remains the primary validator for every other
++// module.
++func validateLegacyProxyWasmModule(data []byte) error {
++	if len(data) < 8 || !bytes.Equal(data[:4], []byte{0x00, 0x61, 0x73, 0x6d}) || !bytes.Equal(data[4:8], []byte{0x01, 0x00, 0x00, 0x00}) {
++		return errors.New("invalid WebAssembly header")
++	}
++
++	var types []wasmFuncType
++	var importedFuncTypes []uint32
++	var definedFuncTypes []uint32
++	var importedMemories uint32
++	var definedMemories uint32
++	var codeFunctions uint32
++	var exports []wasmExport
++
++	offset := 8
++	for offset < len(data) {
++		sectionID := data[offset]
++		cursor := &wasmCursor{data: data, offset: offset + 1}
++		sectionSize, err := cursor.uleb()
++		if err != nil {
++			return fmt.Errorf("section %d size: %w", sectionID, err)
++		}
++		payload, err := cursor.bytes(sectionSize)
++		if err != nil {
++			return fmt.Errorf("section %d payload: %w", sectionID, err)
++		}
++		offset = cursor.offset
++		if err := parseLegacyWasmSection(sectionID, payload, &types, &importedFuncTypes, &definedFuncTypes, &importedMemories, &definedMemories, &codeFunctions, &exports); err != nil {
++			return err
++		}
++	}
++
++	if codeFunctions != uint32(len(definedFuncTypes)) {
++		return fmt.Errorf("function and code section counts differ: %d functions, %d bodies", len(definedFuncTypes), codeFunctions)
++	}
++	for _, typeIndex := range importedFuncTypes {
++		if typeIndex >= uint32(len(types)) {
++			return errors.New("imported function type index is out of range")
++		}
++	}
++	for _, typeIndex := range definedFuncTypes {
++		if typeIndex >= uint32(len(types)) {
++			return errors.New("defined function type index is out of range")
++		}
++	}
++
++	funcType := func(index uint32) (wasmFuncType, error) {
++		if index < uint32(len(importedFuncTypes)) {
++			typeIndex := importedFuncTypes[index]
++			if typeIndex >= uint32(len(types)) {
++				return wasmFuncType{}, errors.New("imported function type index is out of range")
++			}
++			return types[typeIndex], nil
++		}
++		definedIndex := index - uint32(len(importedFuncTypes))
++		if definedIndex >= uint32(len(definedFuncTypes)) {
++			return wasmFuncType{}, errors.New("function export index is out of range")
++		}
++		typeIndex := definedFuncTypes[definedIndex]
++		if typeIndex >= uint32(len(types)) {
++			return wasmFuncType{}, errors.New("defined function type index is out of range")
++		}
++		return types[typeIndex], nil
++	}
++
++	exportedFunctions := map[string]wasmFuncType{}
++	exportedMemory := false
++	for _, export := range exports {
++		switch export.kind {
++		case 0:
++			tp, err := funcType(export.index)
++			if err != nil {
++				return err
++			}
++			exportedFunctions[export.name] = tp
++		case 2:
++			if export.index >= importedMemories+definedMemories {
++				return errors.New("memory export index is out of range")
++			}
++			exportedMemory = true
++		}
++	}
++	if !exportedMemory {
++		return errors.New("required exported memory is missing")
++	}
++
++	callbackParams := []byte{0x7f, 0x7f}
++	callbackResults := []byte{0x7f}
++	for _, name := range []string{"proxy_on_vm_start", "proxy_on_configure"} {
++		tp, ok := exportedFunctions[name]
++		if !ok {
++			return fmt.Errorf("required function export %q is missing", name)
++		}
++		if !bytes.Equal(tp.params, callbackParams) || !bytes.Equal(tp.results, callbackResults) {
++			return fmt.Errorf("required function export %q must have signature (i32,i32)->i32", name)
++		}
++	}
++	for name, tp := range exportedFunctions {
++		if len(name) > len("proxy_abi_version_0_2_") && name[:len("proxy_abi_version_0_2_")] == "proxy_abi_version_0_2_" && len(tp.params) == 0 && len(tp.results) == 0 {
++			return nil
++		}
++	}
++	return errors.New("required proxy_abi_version_0_2_* function export with signature ()->() is missing")
++}
++
++type wasmFuncType struct {
++	params  []byte
++	results []byte
++}
++
++type wasmExport struct {
++	name  string
++	kind  byte
++	index uint32
++}
++
++type wasmCursor struct {
++	data   []byte
++	offset int
++}
++
++func (c *wasmCursor) byte() (byte, error) {
++	if c.offset >= len(c.data) {
++		return 0, errors.New("unexpected end of section")
++	}
++	value := c.data[c.offset]
++	c.offset++
++	return value, nil
++}
++
++func (c *wasmCursor) uleb() (uint32, error) {
++	var value uint32
++	var shift uint
++	for {
++		current, err := c.byte()
++		if err != nil {
++			return 0, err
++		}
++		value |= uint32(current&0x7f) << shift
++		if current&0x80 == 0 {
++			return value, nil
++		}
++		shift += 7
++		if shift >= 35 {
++			
+```
+
+**File**: `tools/plugin-release/verify_pulled_plugin_test.go` (modified, +65/-0)
+```diff
+@@ -29,6 +29,30 @@ func TestVerifyPulledPluginAcceptsStrictTwoLayerProxyWasm(t *testing.T) {
+ 	}
  }
  
- impl Iterator for EventStream {
-     type Item = Vec<u8>;
-     /// Get the next event from the event stream. Return the event data if available, otherwise return None.
--    /// Next will consume all the data in the current buffer. However, if there is a valid event at the end of the buffer,
--    /// it will return the event directly even if the data after the next `update` could be considered part of the same event
--    /// (especially in cases where CRLF hits an ambiguous grammar).
--    /// When this happens, the next call to next may return an empty event.
--    ///
--    /// ```
--    /// let mut parser = EventStream::new();
--    /// parser.update(...);
--    /// loop {
--    ///     match parser.next() {
--    ///         None => {}
--    ///         Some(event) => {
--    ///             if !event.is_empty() {
--    ///                 ...
--    ///             }
--    ///         }
--    ///     }
--    /// }
--    /// ```
-+    /// CRLF pairs are consumed together, including pairs split across updates.
-     ///
-+    /// A delimiter ending in CR at the buffer boundary completes the event
-+    /// immediately. Waiting for the next byte to distinguish CR from CRLF
-+    /// would delay dispatch when that byte is not LF, or never arrives.
-+    /// `update` skips an optional following LF using `skip_lf`, so it does not
-+    /// become an extra line ending.
-     fn next(&mut self) -> Option<Self::Item> {
-         let mut i = self.processed_offset;
++func TestValidateProxyWasmModuleAcceptsLegacyExceptionHandling(t *testing.T) {
++	if err := validateProxyWasmModule(legacyExceptionProxyWasmModule()); err != nil {
++		t.Fatalf("legacy exception-handling proxy module was rejected: %v", err)
++	}
++}
++
++func TestValidateProxyWasmModuleRejectsSpoofedLegacyError(t *testing.T) {
++	module := proxyWasmModule(true, nil, "proxy_on_vm_start", "proxy_on_configure", "proxy_abi_version_0_2_1", "legacy exception handling instruction")
++	// Corrupt an interior instruction while keeping the final OpcodeEnd, so
++	// wazero produces the export-name-bearing diagnostic the old substring
++	// check would have accepted.
++	module[len(module)-3] = 0xff
++	if err := validateProxyWasmModule(module); err == nil {
++		t.Fatal("malformed module with a spoofed legacy error export name was accepted")
++	}
++}
++
++func TestValidateProxyWasmModuleRejectsLegacyModuleWithInvalidFunctionType(t *testing.T) {
++	module := legacyExceptionProxyWasmModuleWithFunctionTypes([]byte{0x00, 0x00, 0x01, 0x7f})
++	if err := validateProxyWasmModule(module); err == nil || !strings.Contains(err.Error(), "type index") {
++		t.Fatalf("legacy module with an out-of-range function type was accepted or returned the wrong error: %v", err)
++	}
++}
++
+ func TestVerifyPulledPluginAcceptsUnknownArtifactType(t *testing.T) {
+ 	manifest, config, wasm, _ := writePulledPluginFixture(t)
+ 	mutatePulledManifest(t, manifest, func(m map[string]any) {
+@@ -473,6 +497,47 @@ func proxyWasmFixture() []byte {
+ 	return proxyWasmModule(true, nil, "proxy_on_vm_start", "proxy_on_configure", "proxy_abi_version_0_2_1")
+ }
  
-         while i < self.buffer.len() {
-             if let Some(size) = self.is_2eol(i) {
-                 let event = self.buffer[self.processed_offset..i].to_vec();
-                 self.processed_offset = i + size;
-+                self.skip_lf = self.processed_offset == self.buffer.len()
-+                    && self.buffer.last() == Some(&b'\r');
-                 return Some(event);
-             }
++func legacyExceptionProxyWasmModule() []byte {
++	return legacyExceptionProxyWasmModuleWithFunctionTypes([]byte{0x00, 0x00, 0x01})
++}
++
++func legacyExceptionProxyWasmModuleWithFunctionTypes(functionTypes []byte) []byte {
++	module := []byte{0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00}
++	typePayload := []byte{0x02, 0x60, 0x02, 0x7f, 0x7f, 0x01, 0x7f, 0x60, 0x00, 0x00}
++	module = appendWasmSection(module, 1, typePayload)
++	functionPayload := wasmVarUint(uint32(len(functionTypes)))
++	functionPayload = append(functionPayload, functionTypes...)
++	module = appendWasmSection(module, 3, functionPayload)
++	module = appendWasmSection(module, 5, []byte{0x01, 0x00, 0x01})
++	// One tag with attribute 0 and function type 0, matching the pinned C++
++	// toolchain's legacy exception-handling encoding.
++	module = appendWasmSection(module, 13, []byte{0x01, 0x00, 0x00})
++	exportPayload := []byte{0x04, 0x06}
++	exportPayload = append(exportPayload, []byte("memory")...)
++	exportPayload = append(exportPayload, 0x02, 0x00)
++	for index, name := range []string{"proxy_on_vm_start", "proxy_on_configure", "proxy_abi_version_0_2_1"} {
++		exportPayload = append(exportPayload, wasmVarUint(uint32(len(name)))...)
++		exportPayload = append(exportPayload, []byte(name)...)
++		exportPayload = append(exportPayload, 0x00)
++		exportPayload = append(exportPayload, wasmVarUint(uint32(index))...)
++	}
++	module = appendWasmSection(module, 7, exportPayload)
++	codePayload := wasmVarUint(uint32(len(functionTypes)))
++	for index, typeIndex := range functionTypes {
++		switch {
++		case index == 0:
++			// The callback body uses the legacy try/catch_all opcodes that
++			// wazero v1.12 decodes but refuses to compile.
++			codePayload = append(codePayload, 0x0a, 0x00, 0x06, 0x7f, 0x41, 0x01, 0x19, 0x41, 0x00, 0x0b, 0x0b)
++		case typeIndex == 0x01:
++			codePayload = append(codePayload, 0x02, 0x00, 0x0b)
++		default:
++			codePayload = append(codePayload, 0x04, 0x00, 0x41, 0x01, 0x0b)
++		}
++	}
++	return appendWasmSection(module, 10, codePayload)
++}
++
+ func proxyWasmModule(exportMemory bool, typeOverrides map[string]uint32, names ...string) []byte {
+ 	module := []byte{0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00}
+ 	// Type 0 is the Proxy-Wasm callback signature (i32,i32)->i32; type 1
+```
+
+---
+
+### Incident Patch 2: `aa441f09` (2026-11-27)
+**Commit Message**: fix(release): accept exception-handling tag sections
+
+**File**: `tools/plugin-release/go.mod` (modified, +4/-2)
+```diff
+@@ -1,5 +1,7 @@
+ module github.com/higress-group/higress/tools/plugin-release
  
--            i += 1;
-+            i += self.is_eol(i).unwrap_or(1);
-         }
+-go 1.24
++go 1.25.0
  
-         None
-@@ -83,7 +71,14 @@ impl EventStream {
-             self.processed_offset = 0;
-         }
+-require github.com/tetratelabs/wazero v1.7.2
++require github.com/tetratelabs/wazero v1.12.0
++
++require golang.org/x/sys v0.44.0 // indirect
+```
+
+**File**: `tools/plugin-release/go.sum` (modified, +4/-2)
+```diff
+@@ -1,2 +1,4 @@
+-github.com/tetratelabs/wazero v1.7.2 h1:1+z5nXJNwMLPAWaTePFi49SSTL0IMx/i3Fg8Yc25GDc=
+-github.com/tetratelabs/wazero v1.7.2/go.mod h1:ytl6Zuh20R/eROuyDaGPkp82O9C/DJfXAwJfQ3X6/7Y=
++github.com/tetratelabs/wazero v1.12.0 h1:DuWcpNu/FzgEXgGBDp8J1Spc+CWOvvtvVyjKlaZopYU=
++github.com/tetratelabs/wazero v1.12.0/go.mod h1:LvKtzl2RqO4gyF27BiXU+nKAjcV8f38U+kP/q2vgxh0=
++golang.org/x/sys v0.44.0 h1:ildZl3J4uzeKP07r2F++Op7E9B29JRUy+a27EibtBTQ=
++golang.org/x/sys v0.44.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+```
+
+**File**: `tools/plugin-release/verify_pulled_plugin.go` (modified, +3/-1)
+```diff
+@@ -20,6 +20,7 @@ import (
  
--        self.buffer.extend(data);
-+        let mut start = 0;
-+        if self.skip_lf && !data.is_empty() {
-+            if data[0] == b'\n' {
-+                start = 1;
-+            }
-+            self.skip_lf = false;
-+        }
-+        self.buffer.extend_from_slice(&data[start..]);
-     }
+ 	"github.com/tetratelabs/wazero"
+ 	"github.com/tetratelabs/wazero/api"
++	"github.com/tetratelabs/wazero/experimental"
+ )
  
-     /// Flush the event stream and return any remaining unprocessed event data. Return None if there is none.
-@@ -110,18 +105,7 @@ impl EventStream {
-     fn is_2eol(&self, i: usize) -> Option<usize> {
-         let size1 = self.is_eol(i)?;
-         if i + size1 < self.buffer.len() {
--            match self.is_eol(i + size1) {
--                None => {
--                    if size1 == 2 {
--                        Some(2)
--                    } else {
--                        None
--                    }
--                }
--                Some(size2) => Some(size1 + size2),
--            }
--        } else if size1 == 2 {
--            Some(2)
-+            self.is_eol(i + size1).map(|size2| size1 + size2)
-         } else {
-             None
-         }
-@@ -144,7 +128,7 @@ mod tests {
-     #[test]
-     fn test_lf_events() {
-         let mut parser = EventStream::default();
--        parser.update(b"event3\n\r\nevent4\r\n".to_vec());
-+        parser.update(b"event3\n\r\nevent4\r\n\r\n".to_vec());
+ const (
+@@ -247,7 +248,8 @@ func verifyInlineData(name string, encoded string, digest string, size int64) er
  
-         assert_eq!(parser.next(), Some(b"event3".to_vec()));
-         assert_eq!(parser.next(), Some(b"event4".to_vec()));
-@@ -166,20 +150,20 @@ mod tests {
-         let mut parser = EventStream::default();
-         parser.update(b"event5\r\nevent6\r\n\r\nevent7\r\n".to_vec());
+ func validateProxyWasmModule(data []byte) error {
+ 	ctx := context.Background()
+-	runtime := wazero.NewRuntimeWithConfig(ctx, wazero.NewRuntimeConfigInterpreter())
++	features := api.CoreFeaturesV2 | experimental.CoreFeaturesExceptionHandling
++	runtime := wazero.NewRuntimeWithConfig(ctx, wazero.NewRuntimeConfigInterpreter().WithCoreFeatures(features))
+ 	defer runtime.Close(ctx)
  
--        assert_eq!(parser.next(), Some(b"event5".to_vec()));
--        assert_eq!(parser.next(), Some(b"event6".to_vec()));
--        assert_eq!(parser.next(), Some(b"event7".to_vec()));
-+        assert_eq!(parser.next(), Some(b"event5\r\nevent6".to_vec()));
-+        assert_eq!(parser.next(), None);
-+        assert_eq!(parser.flush(), Some(b"event7\r\n".to_vec()));
-     }
- 
-     #[test]
-     fn test_mixed2_eol_events() {
-         let mut parser = EventStream::default();
-         parser.update(b"event5\r\nevent6\r\n".to_vec());
--        assert_eq!(parser.next(), Some(b"event5".to_vec()));
--        assert_
+ 	module, err := runtime.CompileModule(ctx, data)
+```
+
+**File**: `tools/plugin-release/verify_pulled_plugin_test.go` (modified, +4/-0)
+```diff
+@@ -496,6 +496,10 @@ func proxyWasmModule(exportMemory bool, typeOverrides map[string]uint32, names .
+ 	if exportMemory {
+ 		module = appendWasmSection(module, 5, []byte{0x01, 0x00, 0x01})
+ 	}
++	// Exception-handling tag section (id 13) is emitted by the pinned C++
++	// toolchain for oauth. It must be accepted without weakening the proxy ABI
++	// checks on the surrounding sections.
++	module = appendWasmSection(module, 13, []byte{0x00})
+ 	exportCount := len(names)
+ 	if exportMemory {
+ 		exportCount++
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5433** (2026-11-26): fix(wasm-rust): preserve SSE events with CRLF line endings (@zhihao-yuan)
-- **PR #5428** (2026-11-26): feat: define managed C++ release contracts and generalized verification (@johnlanni)
-- **PR #5420** (2026-11-24): fix(release): run C++ candidate native tests in pinned builder (@johnlanni)
-- **PR #5417** (2026-11-24): ci: allow non-public C++ hotfix candidate preparation (@johnlanni)
-- **PR #5400** (2026-11-24): feat: add restricted C++ 2.0.1 hotfix release adapter (@johnlanni)
-- **PR #5399** (2026-11-24): fix(wasm-cpp): prepare 2.0.1 hotfix verification (@johnlanni)
+- **PR #5457** (2026-11-27): ci: allow full-snapshot non-production verification to finish (@johnlanni)
+- **PR #5455** (2026-11-27): fix(release): validate legacy exception-handling proxy modules (@johnlanni)
+- **PR #5454** (2026-11-27): fix(release): accept exception-handling tag sections (@johnlanni)
+- **PR #5451** (2026-11-27): ci: add read-only managed-history plugin-server acceptance (@johnlanni)
+- **PR #5450** (2026-11-27): ci: add candidate-source and all-managed HTTP acceptance modes (@johnlanni)
+- **PR #5445** (2026-11-27): ci: verify managed plugin history over plugin-server HTTP (@johnlanni)
 
 ---
 
@@ -1935,80 +2135,37 @@ Co-authored-by: 纪卓志 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. wasm-rust): preserve SSE events with CRLF line endings
+## X. release): validate legacy exception-handling proxy modules
 
 **RULE**:
-When implementing operations in `plugins/wasm-rust/src/event_stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/plugin-release/verify_pulled_plugin.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `879a6512`: wasm-rust): preserve SSE events with CRLF line endings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d941769`: release): validate legacy exception-handling proxy modules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-rust/src/event_stream.rs`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/plugin-release/verify_pulled_plugin.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-/// CRLF is one logical line ending. An empty line, formed by two consecutive
-/// logical line endings, terminates an event.
-    skip_lf: bool,
-    /// CRLF pairs are consumed together, including pairs split across updates.
-    /// A delimiter ending in CR at the buffer boundary completes the event
-    /// immediately. Waiting for the next byte to distinguish CR from CRLF
-    /// would delay dispatch when that byte is not LF, or never arrives.
-    /// `update` skips an optional following LF using `skip_lf`, so it does not
-    /// become an extra line ending.
-                self.skip_lf = self.processed_offset == self.buffer.len()
-                    && self.buffer.last() == Some(&b'\r');
-            i += self.is_eol(i).unwrap_or(1);
-        let mut start = 0;
-        if self.skip_lf && !data.is_empty() {
-            if data[0] == b'\n' {
-                start = 1;
-            }
-            self.skip_lf = false;
-        }
-        self.buffer.extend_from_slice(&data[start..]);
-            self.is_eol(i + size1).map(|size2| size1 + size2)
-        parser.update(b"event3\n\r\nevent4\r\n\r\n".to_vec());
-        assert_eq!(parser.next(), Some(b"event5\r\nevent6".to_vec()));
-        asser
+		const legacyExceptionHandlingError = "legacy exception handling instruction 0x6 not supported; recompile with wasm-opt --translate-to-exnref"
+		if strings.HasSuffix(err.Error(), legacyExceptionHandlingError) {
+			if legacyErr := validateLegacyProxyWasmModule(data); legacyErr != nil {
+				return fmt.Errorf("invalid WebAssembly module: %w", legacyErr)
+			}
+			return nil
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-/// According to spec, we must judge EOL twice before we can identify a complete event.
-/// However, in the rules of event and field, there is an ambiguous grammar in the judgment of eol,
-/// and it will bring ambiguity (whether the field ends). In order to eliminate this ambiguity,
-/// we believe that CRLF as CR+LF belongs to event and field respectively.
-    /// Next will consume all the data in the current buffer. However, if there is a valid event at the end of the buffer,
-    /// it will return the event directly even if the data after the next `update` could be considered part of the same event
-    /// (especially in cases where CRLF hits an ambiguous grammar).
-    /// When this happens, the next call to next may return an empty event.
-    ///
-    /// ```
-    /// let mut parser = EventStream::new();
-    /// parser.update(...);
-    /// loop {
-    ///     match parser.next() {
-    ///         None => {}
-    ///         Some(event) => {
-    ///             if !event.is_empty() {
-    ///                 ...
-    ///             }
-    ///         }
-    ///     }
-    /// }
-    /// ```
-            i += 1;
-        self.buffer.extend(data);
-            match self.is_eol(i + size1) {
-  
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `879a6512` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d941769` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

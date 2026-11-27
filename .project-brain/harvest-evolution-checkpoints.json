@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:05:24.719Z",
+  "last_updated": "2026-11-27T22:14:19.835Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T22:05:23.610Z",
+      "processed_at": "2026-11-27T22:14:18.497Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -513,9 +513,9 @@
       "staged_for_review": 0
     },
     "higress-group-higress-learnings.md": {
-      "processed_at": "2026-11-26T11:16:24.150Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-27T22:14:17.235Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-pika-labs-pika-h3-flex-learnings.md": {
       "processed_at": "2026-11-25T12:48:08.534Z",
@@ -3568,7 +3568,7 @@
       "staged_for_review": 0
     },
     "hf-tencent-hy4-learnings.md": {
-      "processed_at": "2026-11-24T14:05:56.088Z",
+      "processed_at": "2026-11-27T22:14:16.664Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5121,
+  "total_dossiers_evaluated": 5124,
   "total_canonical_promoted": 586,
-  "total_staged_for_review": 3868
+  "total_staged_for_review": 3870
 }

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-tencent-h`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T14:05:34.227Z  
+> **Timestamp**: 2026-11-27T22:14:02.109Z  
 > **Learning ID**: `learn-huggingface-tencent-hy4`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Hy4](https://huggingface.co/tencent/Hy4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:05:34.075Z  
+> **Harvest Timestamp**: 2026-11-27T22:14:01.956Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2384 downloads | 290 likes
+- **Stars / Engagement**: 4106 downloads | 366 likes
 
 ---
 

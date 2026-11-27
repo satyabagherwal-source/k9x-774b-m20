@@ -13917,3 +13917,5 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `06f8d78a` | Multi-dimensional audit evidence | 2026-11-27T21:56:41.190Z |
 | `learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-opencode-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-27T22:05:08.117Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `ad25d4b2` | Multi-dimensional audit evidence | 2026-11-27T22:05:17.295Z |
+| `learn-huggingface-tencent-hy4` | `https://huggingface.co/tencent/Hy4` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-27T22:14:02.797Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `c35d78d6` | Multi-dimensional audit evidence | 2026-11-27T22:14:12.919Z |

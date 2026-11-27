@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T22:05:20.680Z",
-    "lastVerified": "2026-11-27T22:05:20.680Z",
+    "lastChecked": "2026-11-27T22:14:16.499Z",
+    "lastVerified": "2026-11-27T22:14:16.500Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -171,9 +171,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-27T17:59:42.370Z",
+    "lastChecked": "2026-11-27T22:14:09.003Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-27T17:59:42.370Z"
+    "lastVerified": "2026-11-27T22:14:09.003Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -194,12 +194,12 @@
     "revisionIdentifier": "9fb6a904"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T21:39:07.876Z",
-    "lastVerified": "2026-11-27T21:39:07.876Z",
+    "lastChecked": "2026-11-27T22:14:14.323Z",
+    "lastVerified": "2026-11-27T22:14:14.323Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -208,7 +208,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1441b6a4"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -2164,22 +2165,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "higress-group-higress": {
-    "name": "higress",
+    "name": "higress-group/higress",
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T04:18:20.577Z",
-    "lastVerified": "2026-11-27T04:18:20.577Z",
+    "lastChecked": "2026-11-27T22:14:11.597Z",
+    "lastVerified": "2026-11-27T22:14:11.597Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
-    "contentHash": "550b364cea175cc3737e23443ea913963ddb12fc0152db63752bae38acd570ea",
+    "contentHash": "dd10e7a124b74bb6c0f14b2c5c12ca9f055f706b055c8be02c702d857f72abdd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "879a6512"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
     "name": "trufflehog",
@@ -4724,8 +4724,8 @@
     "officialUrl": "https://github.com/aome510/spotify-player",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T22:10:36.076Z",
-    "lastVerified": "2026-11-26T22:10:36.076Z",
+    "lastChecked": "2026-11-27T22:13:59.096Z",
+    "lastVerified": "2026-11-27T22:13:59.096Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aome510-spotify-player",
@@ -5495,12 +5495,12 @@
     "revisionIdentifier": "4bd01c70"
   },
   "sfu-db-connector-x": {
-    "name": "sfu-db/connector-x",
+    "name": "connector-x",
     "officialUrl": "https://github.com/sfu-db/connector-x",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T03:07:48.895Z",
-    "lastVerified": "2026-11-27T03:07:48.895Z",
+    "lastChecked": "2026-11-27T22:14:11.524Z",
+    "lastVerified": "2026-11-27T22:14:11.524Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sfu-db-connector-x",
@@ -5509,7 +5509,8 @@
     "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c5c3f409"
   },
   "tokio-rs-console": {
     "name": "console",
@@ -10241,8 +10242,8 @@
     "officialUrl": "https://github.com/rainbow-me/rainbow",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T13:39:58.387Z",
-    "lastVerified": "2026-11-25T13:39:58.387Z",
+    "lastChecked": "2026-11-27T22:14:04.206Z",
+    "lastVerified": "2026-11-27T22:14:04.206Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rainbow-me-rainbow",
@@ -10786,12 +10787,12 @@
     "officialUrl": "https://huggingface.co/tencent/Hy4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-24T14:05:34.075Z",
-    "lastVerified": "2026-11-24T14:05:34.075Z",
+    "lastChecked": "2026-11-27T22:14:01.956Z",
+    "lastVerified": "2026-11-27T22:14:01.956Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-tencent-hy4",
-    "contentHash": "966666fb066ea085af1acc2cf8fbf1bc16948afd01bacf524ec8bc633490c289",
+    "contentHash": "3d0884494fdb1c3a67d3e7ad99671e8aa2ebdc28643935951934da542aca6f9a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

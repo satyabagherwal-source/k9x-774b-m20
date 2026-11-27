@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:05:17.300Z",
-  "total_cycles_completed": 13176,
-  "total_learnings_persisted": 13176,
-  "total_rules_promoted": 11889,
+  "last_updated": "2026-11-27T22:14:12.924Z",
+  "total_cycles_completed": 13178,
+  "total_learnings_persisted": 13178,
+  "total_rules_promoted": 11890,
   "history": [
-    {
-      "timestamp": "2026-11-27T04:36:47.888Z",
-      "repository": "GeoPortApp/GeoPort",
-      "learningId": "learn-github-geoportapp-geoport",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T04:45:18.038Z",
-      "repository": "RadixArk/DaisyRose-27B",
-      "learningId": "learn-huggingface-radixark-daisyrose-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T04:45:28.759Z",
       "repository": "kubeedge/kubeedge",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T22:05:17.300Z",
       "repository": "moby/buildkit",
       "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:14:02.803Z",
+      "repository": "tencent/Hy4",
+      "learningId": "learn-huggingface-tencent-hy4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:14:12.924Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

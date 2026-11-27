@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T22:05:17.304Z",
+  "last_updated": "2026-11-27T22:14:12.928Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "550b364cea175cc3737e23443ea913963ddb12fc0152db63752bae38acd570ea",
-      "verified_at": "2026-11-26T11:15:44.334Z",
+      "content_hash": "dd10e7a124b74bb6c0f14b2c5c12ca9f055f706b055c8be02c702d857f72abdd",
+      "verified_at": "2026-11-27T22:14:12.928Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T11:15:44.334Z"
+      "last_updated": "2026-11-27T22:14:12.928Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -19626,14 +19626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy4",
-      "content_hash": "966666fb066ea085af1acc2cf8fbf1bc16948afd01bacf524ec8bc633490c289",
-      "verified_at": "2026-11-24T14:05:34.894Z",
+      "content_hash": "3d0884494fdb1c3a67d3e7ad99671e8aa2ebdc28643935951934da542aca6f9a",
+      "verified_at": "2026-11-27T22:14:02.806Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:05:34.894Z"
+      "last_updated": "2026-11-27T22:14:02.806Z"
     },
     "harness-hub/Qwen3.8-27B-opencode-adapted": {
       "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",

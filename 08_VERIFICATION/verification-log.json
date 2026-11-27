@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-ZAFX",
-    "timestamp": "2026-11-26T11:29:09.021Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "b466ab27e7768ac80754f45dcece40cd41a4906d3dfb880d89d46eb5bdd7c644",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-CRC4",
-    "timestamp": "2026-11-26T11:39:37.444Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "a8fa0234013d6e72ce5156bb3182b68f70a46dc7471871d8ea851f08ccd79dca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-CXZU",
     "timestamp": "2026-11-26T11:39:46.074Z",
     "repository": "tauri-apps/tauri",
@@ -7490,6 +7460,36 @@
     "repository": "moby/buildkit",
     "learningId": "learn-github-moby-buildkit",
     "contentHash": "5d0f3a63160ecca1f561be54946e33faeaeb806dff1b2f9d40d120781547e91c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-GHEQ",
+    "timestamp": "2026-11-27T22:14:02.786Z",
+    "repository": "tencent/Hy4",
+    "learningId": "learn-huggingface-tencent-hy4",
+    "contentHash": "3d0884494fdb1c3a67d3e7ad99671e8aa2ebdc28643935951934da542aca6f9a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-GP7V",
+    "timestamp": "2026-11-27T22:14:12.907Z",
+    "repository": "higress-group/higress",
+    "learningId": "learn-github-higress-group-higress",
+    "contentHash": "dd10e7a124b74bb6c0f14b2c5c12ca9f055f706b055c8be02c702d857f72abdd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

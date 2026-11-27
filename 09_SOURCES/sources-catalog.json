@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "879a6512",
+    "sourceVersion": "c35d78d6",
     "license": "Apache-2.0",
-    "contentHash": "550b364cea175cc3737e23443ea913963ddb12fc0152db63752bae38acd570ea",
-    "lastHarvestedAt": "2026-11-26T11:15:44.313Z",
+    "contentHash": "dd10e7a124b74bb6c0f14b2c5c12ca9f055f706b055c8be02c702d857f72abdd",
+    "lastHarvestedAt": "2026-11-27T22:14:12.919Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -13025,8 +13025,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy4",
     "sourceVersion": "hf-tencent-hy4",
     "license": "Open-Source",
-    "contentHash": "966666fb066ea085af1acc2cf8fbf1bc16948afd01bacf524ec8bc633490c289",
-    "lastHarvestedAt": "2026-11-24T14:05:34.874Z",
+    "contentHash": "3d0884494fdb1c3a67d3e7ad99671e8aa2ebdc28643935951934da542aca6f9a",
+    "lastHarvestedAt": "2026-11-27T22:14:02.797Z",
     "learningId": "learn-huggingface-tencent-hy4"
   },
   "hf-harness-hub-qwen3.8-27b-opencode-adapted": {

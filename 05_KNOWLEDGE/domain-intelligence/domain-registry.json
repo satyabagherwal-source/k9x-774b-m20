@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T22:05:24.329Z",
+  "last_updated": "2026-11-27T22:14:19.395Z",
   "total_records": 2859,
   "domains": {
     "A": {
@@ -36388,8 +36388,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-research-knowledge-intelligence-tencent-hy4-core-invariants.md",
       "repository": "tencent/Hy4",
-      "content_hash": "dffc945b50e2579222c7e4472e0b7c6501ba0ee63aa42f0f5ae95600f1a41da3",
-      "created_at": "2026-11-24T14:05:35.191Z"
+      "content_hash": "bbcd5f96b8c83227c0efb366f818107cfb12f8fd50898dd2d63c11604c1b432b",
+      "created_at": "2026-11-27T22:14:03.074Z"
     },
     "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-touchlab-kermit-core-invariants",
@@ -36517,8 +36517,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-learnings-research-knowledge-intelligence-hf-tencent-hy4-learning.md",
       "repository": "hf-tencent-hy4-learnings",
-      "content_hash": "11057258f7e86d1e596756750c0ac3d0d89c1b2bffc82640b319f81f9df5ed2f",
-      "created_at": "2026-11-24T14:05:56.403Z"
+      "content_hash": "347589741036688c95271c4687bce96e9dec25b20e008b050c0ce8ac4a055728",
+      "created_at": "2026-11-27T22:14:16.968Z"
     },
     "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-touchlab-kermit-learnings-core-invariants",
@@ -46380,8 +46380,8 @@
       "title": "Technical Construction Intelligence: higress-group/higress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-higress-group-higress-technical-construction-intelligence-higress-group-higress-.md",
       "repository": "higress-group/higress",
-      "content_hash": "bda31016f964adb3740c0ce83a821e132c3e9afdf6a26bbffcb30d5fd6fe247b",
-      "created_at": "2026-11-26T11:15:44.773Z"
+      "content_hash": "ead150b2062bece947dad907b4accf0859368e7a5a42db28a2dc3c7f244269ad",
+      "created_at": "2026-11-27T22:14:13.433Z"
     },
     "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -46449,8 +46449,8 @@
       "title": "Technical Construction Intelligence: higress-group-higress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-higress-group-higress-learnings-technical-construction-intelligence-higress-grou.md",
       "repository": "higress-group-higress-learnings",
-      "content_hash": "2244da006ac4239b6b029dd767f04405ac674a3112e821624b08092aafcfc165",
-      "created_at": "2026-11-26T11:16:24.804Z"
+      "content_hash": "870c62be50fa155ab00e898bada4d4a567fe4a179f1a4aae26cb260548b1cb78",
+      "created_at": "2026-11-27T22:14:18.006Z"
     },
     "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tauri-apps-tauri-core-invariants",
@@ -46806,8 +46806,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "4ae693e9fe8e59716c894446008f87e31b30e5a78db3c6939deb55e83307ac7b",
-      "created_at": "2026-11-27T22:05:24.329Z"
+      "content_hash": "f803cc062b20c0c9b46a5c10bfd3f44f31387b5e1096bd31dfe55fd9667e4996",
+      "created_at": "2026-11-27T22:14:19.395Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/tencent/Hy4",
   "source_version": "hf-tencent-hy4",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T14:05:35.190Z",
+  "timestamp": "2026-11-27T22:14:03.073Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-tencent-hy4",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tencent/Hy4](https://huggingface.co/tencent/Hy4) (Revision: `hf-tencent`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T14:05:35.190Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T22:14:03.073Z`  
 > **Learning ID**: `learn-huggingface-tencent-hy4`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Hy4](https://huggingface.co/tencent/Hy4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:05:34.075Z  
+> **Harvest Timestamp**: 2026-11-27T22:14:01.956Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2384 downloads | 290 likes
+- **Stars / Engagement**: 4106 downloads | 366 likes
 
 ---
 
