@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T08:32:45.912Z",
+  "last_updated": "2026-11-27T08:46:51.143Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-27T08:32:44.864Z",
+      "processed_at": "2026-11-27T08:46:49.070Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-27T07:13:38.544Z",
+      "processed_at": "2026-11-27T08:46:50.036Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2858,7 +2858,7 @@
       "staged_for_review": 0
     },
     "hf-pyannote-speaker-diarization-community-1-learnings.md": {
-      "processed_at": "2026-11-23T23:10:05.993Z",
+      "processed_at": "2026-11-27T08:46:48.622Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4033,7 +4033,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 4884,
+  "total_dossiers_evaluated": 4887,
   "total_canonical_promoted": 575,
-  "total_staged_for_review": 3654
+  "total_staged_for_review": 3656
 }

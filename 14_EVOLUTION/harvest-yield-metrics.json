@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T08:32:39.487Z",
-  "total_cycles_completed": 13036,
-  "total_learnings_persisted": 13036,
+  "last_updated": "2026-11-27T08:46:40.153Z",
+  "total_cycles_completed": 13037,
+  "total_learnings_persisted": 13037,
   "total_rules_promoted": 11772,
   "history": [
-    {
-      "timestamp": "2026-11-26T19:07:35.114Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T19:07:37.600Z",
       "repository": "GitoxideLabs/gitoxide",
@@ -1403,6 +1396,13 @@
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T08:46:40.153Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

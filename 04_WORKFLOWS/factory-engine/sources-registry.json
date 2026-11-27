@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T08:32:42.851Z",
-    "lastVerified": "2026-11-27T08:32:42.851Z",
+    "lastChecked": "2026-11-27T08:46:48.480Z",
+    "lastVerified": "2026-11-27T08:46:48.480Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -289,9 +289,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T07:48:57.728Z",
+    "lastChecked": "2026-11-27T08:46:48.474Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T07:48:57.728Z"
+    "lastVerified": "2026-11-27T08:46:48.474Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -368,8 +368,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T04:18:23.086Z",
-    "lastVerified": "2026-11-27T04:18:23.087Z",
+    "lastChecked": "2026-11-27T08:46:43.474Z",
+    "lastVerified": "2026-11-27T08:46:43.474Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -4049,9 +4049,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-26T15:50:10.599Z",
+    "lastChecked": "2026-11-27T08:46:41.091Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-26T15:50:10.599Z"
+    "lastVerified": "2026-11-27T08:46:41.091Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -7720,8 +7720,8 @@
     "officialUrl": "https://github.com/Open-Source-Legal/OpenContracts",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T14:33:44.255Z",
-    "lastVerified": "2026-11-26T14:33:44.255Z",
+    "lastChecked": "2026-11-27T08:46:45.963Z",
+    "lastVerified": "2026-11-27T08:46:45.963Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-source-legal-opencontracts",
@@ -7890,9 +7890,9 @@
   "joreilly-peopleinspace": {
     "name": "PeopleInSpace",
     "officialUrl": "https://github.com/joreilly/PeopleInSpace",
-    "lastChecked": "2026-11-25T00:26:39.927Z",
+    "lastChecked": "2026-11-27T08:46:38.468Z",
     "revisionIdentifier": "2db46a03",
-    "lastVerified": "2026-11-25T00:26:39.927Z"
+    "lastVerified": "2026-11-27T08:46:38.468Z"
   },
   "volcengine-openviking": {
     "name": "volcengine/OpenViking",
@@ -8582,9 +8582,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-11-26T07:40:09.318Z",
+    "lastChecked": "2026-11-27T08:46:33.516Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-11-26T07:40:09.318Z"
+    "lastVerified": "2026-11-27T08:46:33.516Z"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
     "name": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -9001,12 +9001,12 @@
     "officialUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T23:09:48.446Z",
-    "lastVerified": "2026-11-23T23:09:48.446Z",
+    "lastChecked": "2026-11-27T08:46:35.964Z",
+    "lastVerified": "2026-11-27T08:46:35.964Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "7cb37523bf94afd7029a10dbe59bd8631b1e6257b7465157a6267007a567175f",
+    "contentHash": "282d190844df703aae0158419de7b25586ed036b0d33f1e0d1db58d2c24aa8a1",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

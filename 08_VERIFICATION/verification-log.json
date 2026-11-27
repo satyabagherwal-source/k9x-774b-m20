@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-M29O",
-    "timestamp": "2026-11-26T02:26:59.196Z",
-    "repository": "tencent/Qwen3.8-27B-DSpine-b16",
-    "learningId": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-    "contentHash": "13c0bac3d3c42d1d38d3a440fb7212408b755827ee2a3f50071f78ab3cf93194",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-0GJ3",
     "timestamp": "2026-11-26T02:38:10.863Z",
     "repository": "VideoRebirthAI/hyperflow-h3-flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "afe26651206de310ee177e2d4b993f4da8b0f611a2ab09e97006c5edc2bc53a4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-M6TL",
+    "timestamp": "2026-11-27T08:46:40.137Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "282d190844df703aae0158419de7b25586ed036b0d33f1e0d1db58d2c24aa8a1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

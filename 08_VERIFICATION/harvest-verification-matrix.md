@@ -13733,3 +13733,4 @@
 | `CYCLE-20261127-H52B` | `2026-11-27T08:14:44.963Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10860` | Yes (`880fcba3...`) |
 | `CYCLE-20261127-34YL` | `2026-11-27T08:31:51.261Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`e1eef5a4...`) |
 | `CYCLE-20261127-465I` | `2026-11-27T08:32:39.462Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10861` | Yes (`afe26651...`) |
+| `CYCLE-20261127-M6TL` | `2026-11-27T08:46:40.137Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`282d1908...`) |

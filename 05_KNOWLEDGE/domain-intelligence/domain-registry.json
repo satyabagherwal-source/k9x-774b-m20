@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T08:32:45.531Z",
+  "last_updated": "2026-11-27T08:46:50.678Z",
   "total_records": 2816,
   "domains": {
     "A": {
@@ -20075,8 +20075,8 @@
       "title": "Research & Knowledge Intelligence: pyannote/speaker-diarization-community-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-community-1-research-knowledge-intelligence-pyan.md",
       "repository": "pyannote/speaker-diarization-community-1",
-      "content_hash": "606fcadffc672ebfb60f5aeb4bc0294cd5aa186f62293dcbe61856c02956dcaf",
-      "created_at": "2026-11-23T23:09:50.641Z"
+      "content_hash": "872e0f9ec13d1bdb356fbf18dcd12c800fe0489f61deb52de565c11e0efcfe55",
+      "created_at": "2026-11-27T08:46:40.366Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-core-invariants",
@@ -20144,8 +20144,8 @@
       "title": "Research & Knowledge Intelligence: hf-pyannote-speaker-diarization-community-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pyannote-speaker-diarization-community-1-learnings-research-knowledge-intelli.md",
       "repository": "hf-pyannote-speaker-diarization-community-1-learnings",
-      "content_hash": "cfa6c121c6e04e71497a24b823d05e937058800f9a1513114f2624583998ef2c",
-      "created_at": "2026-11-23T23:10:06.190Z"
+      "content_hash": "62d171709e4ec291c947ea8211151baf72e7bac4831727b00b708cd33dc880cf",
+      "created_at": "2026-11-27T08:46:48.864Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-core-invar",
@@ -33946,8 +33946,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "fc7ccf766e3712feb785035cc43bd4d168df88b7577f3b0f94530802de238a05",
-      "created_at": "2026-11-27T07:13:39.249Z"
+      "content_hash": "9cfbe920bf0a1f7bf61a87ecbb322fe41df757fbce27159a96078780e39ae489",
+      "created_at": "2026-11-27T08:46:50.678Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46763,8 +46763,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "0b18d4ec84bd4c3c329516b8d81cee326d8bdf68ac8f1df1497099e9d7e3c3da",
-      "created_at": "2026-11-27T08:32:45.531Z"
+      "content_hash": "8003b97206e889b539faf8f2cdb86579fca11aed340ea9e8914a23996ec93bf9",
+      "created_at": "2026-11-27T08:46:49.684Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

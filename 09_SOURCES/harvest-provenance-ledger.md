@@ -13766,3 +13766,4 @@ Every entry in this ledger must capture:
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `91c1df80` | Multi-dimensional audit evidence | 2026-11-27T08:14:44.981Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-27T08:31:51.266Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `204997d8` | Multi-dimensional audit evidence | 2026-11-27T08:32:39.476Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-27T08:46:40.141Z |
