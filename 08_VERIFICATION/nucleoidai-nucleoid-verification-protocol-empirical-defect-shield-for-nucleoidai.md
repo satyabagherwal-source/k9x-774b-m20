@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "2889b681",
+  "source_version": "f176c30a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T04:18:33.290Z",
+  "timestamp": "2026-11-27T09:44:55.232Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `2889b681`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T04:18:33.290Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `f176c30a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T09:44:55.232Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `2889b681`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `f176c30a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T04:18:31.733Z  
+> **Harvest Timestamp**: 2026-11-27T09:44:53.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1364,7 +1364,7 @@ export async function start(puzzle_id: string = "27a28665") {
 
   let instance_index: number = 0;
   const next_instance_name = (): string =>
-    `obj${String(instance_index++).padStart(12, "0")}`;
+    `o${String(instance_index++).padStart(12, "0")}`;
 
   const { class_declaration, declarations, output_canvas } =
     await analyzer.declarations({
@@ -1563,154 +1563,482 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2889b681` (2026-11-27)
-**Commit Message**: Rework ARC 27a28665 dataset to give unknown kinds color 0
+### Incident Patch 1: `f176c30a` (2026-11-27)
+**Commit Message**: Put kind first in ARC object definitions
 
-The dataset still models each pair as one whole five-cell block whose kind
-names its shape, and its output point's color is the code that kind
-selects. A kind outside the code table, such as the default `l9100` that an
-implementation without `kind` takes, now reads `?? 0`: the point gets the
-background color 0, and the volume rule gives it no cell, so the rules raise
-no error. Version 4 threw the kind instead. Synthesis rejects a turned
-block with an unknown kind, because no drawn mask measures 1 by 1 without a
-cell. The 10 pairs' snapshots are unchanged.
+Reorder kind in dataset class declarations and object constructors, and update dataset authoring guidance and progress records.
 
-Files:
-- arc/src/dataset/dataset.27a28665.json: version 5, only its declarations
-  changed
-- arc/README.md: the dataset's paragraph
-- arc/arc.ebnf: adds `coalesce` for `??`; removes the `throw` in an `if`
-  body, `null`, and their reserved words, which no dataset uses any more
-- arc/docs/ARC-NUC-27a28665.md: version 5 and its run
-
-No NUC was requested. The quote-free NUC for the `kind` defaults was not
-started because no strategy policy was supplied.
-
-Run: `bun start 27a28665` exited 1 with difference 1.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `arc/README.md` (modified, +23/-14)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +20/-20)
 ```diff
-@@ -831,23 +831,32 @@ Unconditional class-level rules set the output kind `l7544`, a single point, as
- in `dataset.44f52bb0.json`, shrink the block to that point's size, `width` 1
- and `height` 1, and introduce one property, `fill_color`, which is absent
- before the rules run, as
--`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]`: the object
-+`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first] ?? 0`: the object
- literal states each shape's code once, keyed by the name of its kind, and
- object bracket access reads the code of the block's input kind, anchored with
- `@first` because the kind rule turns the kind into `l7544`. A kind that is not
--a key of the table reads `null` there, as an absent key does, so a class-level
--validation rule, `if $Obj.fill_color is null:` with the body
--`throw $Obj.kind@first`, throws that input kind. An implementation that leaves
--out `kind`, so that its object takes the default `l9100`, or that names a kind
--the table lacks, therefore fails visibly instead of giving the point no color:
--the runtime exits with status 1 and an error that names the kind and the
--implementation's line, such as `l9100 (line 27, column 1)`. The input state,
--built from the class and the implementation alone, still carries the kind; the
--failure comes when the rules run on the pair's world. The rule never fires on
--the ten pairs, and it is Nucleoid's class-level validation, a `throw` in a
--class-level `if`, as the specification's rules that reject an invalid
--instance write it. `$Obj.volume is $Obj.width * $Obj.height` counts
--the filled point's single cell. The rules create no other properties, so each
-+a key of the table reads `null` there, as an absent key does, and the nullish
-+coalescing `?? 0` of [NUC 60](../docs/nuc-0060.md) turns that `null` into the
-+background color 0 while it keeps every code the table holds. An
-+implementation that leaves out `kind`, so that its object takes the default
-+`l9100`, or that names a kind the table lacks, such as `l5555`, therefore gives
-+its point color 0, which is no cell, and the rules raise no error, so the run
-+goes on; the input state, built from the class and the implementation alone,
-+still carries that kind. The default never applies to the ten pairs, whose
-+blocks all take one of the table's four kinds.
-+`$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.width * $Obj.height`, a
-+conditional expression of [NUC 59](../docs/nuc-0059.md) whose condition uses
-+the comparison `is` of [NUC 86](../docs/nuc-0086.md), counts a colored point's
-+single cell and gives a point of color 0 none, as `dataset.25d8a9c8.json`
-+empties a cleared row: such a point has the `volume` 0 that `Matrix.measure`
-+counts in its all-zero output mask, and it keeps its `x`, `y`, and 1 by 1
-+`width` and `height`, as an erased output object keeps its explicit position
-+in [composition](#8-visualize-output-instance).
-+No mask measures 1 by 1 without a cell, so the solver's synthesis, which keeps
-+a synthesized instance only when its drawn output mask measures the state's
-+`x`, `y`, `width`, `height`, and `volume`, rejects every turned block whose
-+kind the table lacks, whatever the model draws for it.
-+The rules create no other properties, so each
- output state adds only `fill_color` to its input state's keys, and they leave
- `x` and `y` unchanged because the point sits at the block's origin, 0 and 0 in
- every training pair. The training pairs show each shape in one orientation
+@@ -127,20 +127,20 @@ formatting exactly:
+   allowed, but the big picture is always the starting point, and the handoff
+   names the big-picture formulation you started from and why it fell short.
+ - `declarations[0]` holds every class declaration of the world model, because
+-  the solver runs it alone to build input states. Existing datasets declare
+-  one class, `Object(x: int, y: int, width: int, height: int, orientation: int,
+-  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
+-  distinct sort of object the transformation needs. Each class whose
+-  instances are annotated objects takes the standard entries `x: int, y: int,
+-  width: int, height: int, orientation: int, volume: int` first, in that
+-  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
+-  initial kind, and its body assigns every parameter to `this`, the kind with
+-  `this.kind is kind` right after `this.volume is volume`. An implementation
+-  passes `kind` only when its object needs a kind other than the default, as
+-  every implementation in `dataset.27a28665.json` names its block's shape
+-  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+-  keeps its quotes, because accepted Nucleoid takes only a literal as a
+-  parameter default. Add only the descriptive properties the transformation
++  the solver runs it alone to build input states. Existing datasets declare one
++  class,
++  `Object(kind: str = 'default', x: int, y: int, width: int, height: int, orientation: int, volume: int, ...)`;
++  add another class only for a distinct sort of object the transformation needs.
++  Each class whose instances are annotated objects takes the optional
++  `kind: str = 'default'` first, which names no geometry, then the standard
++  entries
++  `x: int, y: int, width: int, height: int, orientation: int, volume: int`, in
++  that order, and its body assigns every parameter to `this` in that order,
++  starting with `this.kind is kind`. Every implementation passes its object's
++  kind first, as a bare word, such as `kind=l9100`, or `kind=unknown` for an
++  object of a shape that the pairs never show, so no instance takes the default.
++  The default keeps its quotes, because accepted Nucleoid takes only a literal
++  as a parameter default. Add only the descriptive properties the transformation
+   needs, such as categorical colors.
+ - `width` and `height` are the column and row counts of the object's own
+   shape, the nonzero bounding box of its input mask. They do not change when
+@@ -253,12 +253,12 @@ The caller decides whether to propose the feature; you never start a NUC.
+ - `instance_name` is `o` plus 12 random lowercase hexadecimal characters,
+   unique across all datasets
+   (`node -e "console.log(require('crypto').randomBytes(6).toString('hex'))"`).
+-- `implementation` is `<instance_name> = <Class>(x=<input_x>, y=<input_y>,
+-  width=<width>, height=<height>, orientation=<input_orientation>,
+-  volume=<volume>, ...)`, constructing the instance's class (`Object` in existing
+-  datasets) with named arguments matching its parameters, where `width` and
+-  `height` are the input mask's nonzero bounding-box column and row counts and
+-  `volume` is its number of nonzero cells, below its comment line.
++- `implementation` is
++  `<instance_name> is <Class>(kind=<kind>, x=<input_x>, y=<input_y>, width=<width>, height=<height>, orientation=<input_orientation>, volume=<volume>, ...)`,
++  constructing the instance's class (`Object` in existing datasets) with named
++  arguments matching its parameters, where `width` and `height` are the input
++  mask's nonzero bounding-box column and row counts and `volume` is its number
++  of nonzero cells, below its comment line.
+ - Never hand-write `input_value` or `output_value`. As `arc/src/analyzer.ts`
+   does, run the Nucleoid executable (`NUCLEOID_EXECUTABLE`, else the debug
+   build in `target/debug/`; build it with `cargo build` if missing) as
 ```
 
-**File**: `arc/arc.ebnf` (modified, +4/-5)
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -11,13 +11,14 @@ classBody            ::= ( NEWLINE INDENT fieldAssignment )+
- fieldAssignment      ::= 'this' '.' NAME assign NAME
- 
- ifStmt               ::= 'if' expression ':' ruleBody
--ruleBody             ::= ( NEWLINE INDENT ( classRule | 'throw' expression ) )+
-+ruleBody             ::= ( NEWLINE INDENT classRule )+
- classRule            ::= CLASS_REF '.' NAME assign expression
- 
- labeledArgument      ::= NAME '=' literal
- literal              ::= INTEGER | NAME | '[' literal ( ',' literal )+ ']'
- 
--expression           ::= logicalOr ( 'if' logicalOr 'else' logicalOr )?
-+expression           ::= coalesce ( 'if' logicalOr 'else' logicalOr )?
-+coalesce             ::= logicalOr ( '??' logicalOr )?
- logicalOr            ::= logicalAnd ( 'or' logicalAnd )?
- logicalAnd           ::= equality ( 'and' equality )*
- equality             ::= relational ( 'is' 'not'? relational )?
-@@ -36,7 +37,6 @@ primary              ::= quantified
-                        | INTEGER
-                        | NAME
-                        | CLASS_REF
--                       | 'null'
-                        | '(' expression ')'
-                        | listDisplay
-                        | objectDisplay
-@@ -47,8 +47,7 @@ objectDisplay        ::= '{' objectEntry ( ',' objectEntry )+ '}'
- objectEntry          ::= ( NAME | INTEGER ) ':' expression
- 
- NAME                 ::= ( [A-Za-z_] [A-Za-z0-9_]* ) - RESERVED
--RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'null' | 'of' | 'or' | 'this'
--                       | 'throw'
-+RESERVED             ::= 'and' | 'class' | 'else' | 'if' | 'in' | 'not' | 'of' | 'or' | 'this'
- CLASS_REF            ::= '$' NAME
- INTEGER              ::= [0-9]+
- STRING               ::= "'" [^']* "'"
+@@ -148,7 +148,7 @@ wherever the run's runtime, run as `arc/src/lib/nucleoid.ts` runs it, reads
+ that word as the same value, as NUC 86, NUC 93 and NUC 94 read `right` in
+ `if $Object.repeat_direction is right:`, `$Object.repeat_direction is right` and
+ `$Object.repeat_direction is right if $Object.wide else down`. The arc-dataset
+-profile's quoted default, `kind: str = 'lNNNN'`, is a quote that accepted
++profile's quoted default, `kind: str = 'default'`, is a quote that accepted
+ Nucleoid cannot do without, because it rejects a bare parameter default
+ with `SyntaxError`. Have the
+ handoff list every quote it keeps, with the actual result of its bare
 ```
 
-**File**: `arc/docs/ARC-NUC-27a28665.md` (modified, +90/-26)
+**File**: `arc/README.md` (modified, +173/-155)
 ```diff
-@@ -6,11 +6,11 @@ the solver and Nucleoid changes it needed, its runs, and what is still open.
- | Item | Status |
- | --- | --- |
- | Puzzle | [`data/training/27a28665.json`](../data/training/27a28665.json) |
--| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 4 since 26-Nov-2026, which stops with an error on a kind outside its code table and writes its kinds and table keys as bare words; version 3, which `88c781d` committed, had replaced version 2's 50 cell instances, which had replaced version 1 before any run; version 3 gained a shared orientation comment on 6-Nov-2026, descriptive `implementation` comments on 7-Nov-2026, letter colors and then number colors again on 8-Nov-2026, the `is` assignments of NUC 93 and bare words on 8-Nov-2026, `volume` on 17-Nov-2026, an optional tag on 22-Nov-2026, and `kind` for `tag` on 24-Nov-2026, the day the user also removed every dataset's comments |
-+| Instruction dataset | [`dataset.27a28665.json`](../src/dataset/dataset.27a28665.json): the puzzle's 7 original training pairs and its 3 test pairs, one whole-block instance each (10 instances); version 5 since 26-Nov-2026, which gives a kind outside its code table the background color 0 and no cell, where version 4 of the same day stopped with an error, and writes its kinds and table keys as bare words; version 3, which `88c781d` committed, had replaced version 2's 50 cell instances, which had replaced version 1 before any run; version 3 gained a shared orientation comment on 6-Nov-2026, descriptive `implementation` comments on 7-Nov-2026, letter colors and then number colors again on 8-Nov-2026, the `is` assignments of NUC 93 and bare words on 8-Nov-2026, `volume` on 17-Nov-2026, an optional tag on 22-Nov-2026, and `kind` for `tag` on 24-Nov-2026, the day the user also removed every dataset's comments |
- | Output canvas | `FIT` |
--| Nucleoid enhancements | None requested, so no proposal strategy was selected for the dataset; version 4's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the item words of [NUC 95](../../docs/nuc-0095.md), and the specification's class-level `throw`; version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md); the quote-free NUC for the `kind` default was not started, because no strategy policy was supplied |
--| Solver changes | None applied; suggested, not applied: carry every class parameter, `kind` included, through the implementation step, and let synthesis reject an instance whose rules fail (see [Open items](#open-items)); two earlier suggestions also await review; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
--| Solver runs | 3 local runs: 4-Nov-2026 for version 2, exit 0; 25-Nov-2026 for version 3, exit 1, difference 1; 26-Nov-2026 for version 4, exit 1, stopped by the kind error before scoring |
-+| Nucleoid enhancements | None requested, so no proposal strategy was selected for the dataset; version 5's rules use the `@first` anchors of [NUC 53](../../docs/nuc-0053.md) and [NUC 55](../../docs/nuc-0055.md), the item words of [NUC 95](../../docs/nuc-0095.md), the nullish coalescing of [NUC 60](../../docs/nuc-0060.md), and the conditional expression of [NUC 59](../../docs/nuc-0059.md) with the `is` comparison of [NUC 86](../../docs/nuc-0086.md), and version 4's used the specification's class-level `throw`; version 2's also used the `any` quantifier of [NUC 62](../../docs/nuc-0062.md), the `**` of [NUC 64](../../docs/nuc-0064.md), the population count of [NUC 73](../../docs/nuc-0073.md), and the property selector of [NUC 79](../../docs/nuc-0079.md); the quote-free NUC for the `kind` default was not started, because no strategy policy was supplied |
-+| Solver changes | None applied; suggested, not applied: carry every class parameter, `kind` included, through the implementation step and show that step the rules that read it, and let synthesis reject an instance whose rules fail (see [Open items](#open-items)); two earlier suggestions also await review; since 8-Nov-2026 every respelled dataset needs `is` assignments, which `src/lib/nucleoid.ts` enabled with `--is-assignment` until `d945213` made them the default; since 17-Nov-2026 `Matrix.locate` measures each object's `volume`, which `object.implementation` receives as `input_volume` |
-+| Solver runs | 4 local runs: 4-Nov-2026 for version 2, exit 0; 25-Nov-2026 for version 3, exit 1, difference 1; 26-Nov-2026 fo
+@@ -410,13 +410,13 @@ the user's request, is the dataset's use case: one object in the dataset's
+ colors whose shape no other pair of the dataset shows, under any turn or
+ mirror, constructed with `kind=unknown`, which no rule changes, so its output
+ repeats its input, as the sentence on each dataset below describes.
+-Each genesis class takes the standard entries `x`, `y`, `width`, `height`,
+-`orientation`, and `volume` first, then the optional `kind`, then its
+-descriptive properties in their existing order, and every implementation
+-passes the input shape's bounding-box `width` and `height` and its input
+-mask's `volume`, its number of nonzero cells, and then its object's kind as a
+-bare word: `kind=l6747` for a corner, `kind=l7544` for a point, `kind=l8001`
+-for a line, and `kind=unknown` for the object of the use case. The class
++Each genesis class takes the optional `kind` first, then the standard entries
++`x`, `y`, `width`, `height`, `orientation`, and `volume`, then its descriptive
++properties in their existing order, and every implementation passes its object's
++kind first, as a bare word, `kind=l6747` for a corner, `kind=l7544` for a point,
++`kind=l8001` for a line, and `kind=unknown` for the object of the use case, and
++then the input shape's bounding-box `width` and `height` and its input mask's
++`volume`, its number of nonzero cells. The class
+ default `kind: str = 'default'` names no geometry and applies to no pair.
+ Every rule transforms only the objects of its dataset's kind: each `if` opens
+ with `$Object.kind is` and that kind, joined to its other conditions with `and`, as
+@@ -491,9 +491,9 @@ every program it runs, as
+ rules read it from those variables. Native snapshots are captured the same
+ way, with the pair's `input_matrix` size declared first.
+ 
+-Every class takes `kind` right after `volume` as an optional parameter whose
+-default, `kind: str = 'default'`, names no geometry, and its constructor
+-stores it with `this.kind is kind`. Every implementation passes its object's
++Every class takes `kind` first as an optional parameter whose
++default, `kind: str = 'default'`, names no geometry, and its constructor stores
++it first, with `this.kind is kind`. Every implementation passes its object's
+ kind, such as `kind=l9100`, `kind=l4262` for a block shape of
+ `dataset.27a28665.json`, or `kind=unknown` for the object of a dataset's use
+ case, so no pair's object takes the default. In every dataset but
+@@ -509,10 +509,11 @@ in one `if` block,
+ because a class-level `if` replaces an earlier one with the same condition
+ text, and the statements of a block run in order. An object of any other
+ kind, `unknown`, `default`, or an invented one, matches no rule and keeps
+-its input state. The parameter comes before the
+-descriptive parameters, in the order of the constructor's assignments:
+-Nucleoid lets a default occupy any parameter slot, and every implementation
+-names its arguments. A kind acts as a child class that the rules assign
++its input state. The parameter comes before the standard entries and the
++descriptive parameters, in the order of the constructor's assignments: Nucleoid
++lets a default occupy any parameter slot, the first included, and every
++implementation names its arguments. A kind acts as a child class that the rules
++assign
+ declaratively: Nucleoid never converts an instance to another class, so a
+ class-level rule such as `$Object.kind is l1707` moves the instance to another
+ kind instead. The property was called `tag` until 24-Nov-2026.
+@@ -522,7 +523,7 @@ Every dataset writes its assignments with `is`, the opt-in assignment of
+ the comparisons of [NUC 86](../docs/nuc-0086.md). Constructors set
+ `this.x is x`, class-level rules set `$Object.height is $Object.height@first * 2`,
+ and implementations construct
+-`o0c2414cf33eb is Object(x=0, y=0, width=3, height=3, orientation=0, volume=6, kind=l9100)`;
++`o0c2414cf33eb is Object(kind=l9100, x=0, y=0, width=3, height=3, orientation=0, volume=6)`;
+ each `target is value` builds exactly the syntax tree of `target = value`. When
+ a whole value, or the whole right operand of an `is` comparison, is one bare
+ word, it reads the name of that spelling if one exists and otherwise its own
+@@ -541,7 +542,7 @@ parameter default and rejects the bare `kind: str = default` with
+ `src\lib\nucleoid.ts` passes no syntax flag: the runtime reads `is`
+ assignments without one since `d945213`, which removed the opt-in syntax
+ options, so the solver needs that runtime or later. An older runtime reads
+-`o0c2414cf33eb is Object(...)` as
++`o0c2414cf33eb is Object(kind=l9100, x=0, y=0, width=3, height=3, orientation=0, volume=6)` as
+ three juxtaposed statements and raises `ReferenceError`. The solver's own
+ `canvas_width = 3` and `canvas_height = 3` lines keep `=`, which reads the
+ same. Every snapshot is the state that the same rules give when spelled with
+@@ -640,10 +641,12 @@ input.
+ `period` is the smallest number of rows such that every row of the box e
 ```
 
-**File**: `arc/src/dataset/dataset.27a28665.json` (modified, +2/-3)
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +11/-0)
 ```diff
-@@ -4,9 +4,8 @@
-     "$Obj.kind is l7544",
-     "$Obj.width is 1",
-     "$Obj.height is 1",
--    "$Obj.fill_color is {l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]",
--    "if $Obj.fill_color is null:\n    throw $Obj.kind@first",
--    "$Obj.volume is $Obj.width * $Obj.height"
-+    "$Obj.fill_color is {l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first] ?? 0",
-+    "$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.width * $Obj.height"
-   ],
-   "output_canvas": "FIT",
-   "dataset": [
+@@ -433,6 +433,17 @@ spelling of their time. Every snapshot replays with the new names, with no other
+ change, and the [dataset grammar](../arc.ebnf) names no class, so it is
+ unchanged.
+ 
++### Kind first
++
++On 27-Nov-2026, at the user's request, `kind` moved to the front. The class
++takes `kind: str = 'default'` as its first parameter, before the standard
++entries `x`, `y`, `width`, `height`, `orientation`, and `volume`, and its body
++sets `this.kind is kind` first, while every implementation passes its kind
++first, as in
++`o7868bfbcdc17 is Object(kind=l9100, x=0, y=0, width=3, height=6, orientation=0, volume=9, color=1, period=4)`.
++Every snapshot replays unchanged, because the runtime orders a state's keys by
++name and every implementation names its arguments.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +11/-0)
+```diff
+@@ -522,6 +522,17 @@ spelling of their time. Every snapshot replays with the new names, with no other
+ change, and the [dataset grammar](../arc.ebnf) names no class, so it is
+ unchanged.
+ 
++### Kind first
++
++On 27-Nov-2026, at the user's request, `kind` moved to the front. The class
++takes `kind: str = 'default'` as its first parameter, before the standard
++entries `x`, `y`, `width`, `height`, `orientation`, and `volume`, and its body
++sets `this.kind is kind` first, while every implementation passes its kind
++first, as in
++`o08c8feaa60ea is Object(kind=l7544, x=2, y=3, width=1, height=1, orientation=0, volume=1, vertex_color=2)`.
++Every snapshot replays unchanged, because the runtime orders a state's keys by
++name and every implementation names its arguments.
++
+ ## Runs
+ 
+ | Date | Run | Commit | Exit status | Difference | Seconds |
+```
+
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +11/-0)
+```diff
+@@ -394,6 +394,17 @@ spelling of their time. Every snapshot replays with the new names, with no other
+ change, and the [dataset grammar](../arc.ebnf) names no class, so it is
+ unchanged.
+ 
++### Kind first
++
++On 27-Nov-2026, at the user's request, `kind` moved to the front. The class
++takes `kind: str = 'default'` as its first parameter, before the standard
++entries `x`, `y`, `width`, `height`, `orientation`, and `volume`, and its body
++sets `this.kind is kind` first, while every implementation passes its kind
++first, as in
++`o4d683f973e7d is Object(kind=l6953, x=0, y=0, width=1, height=3, orientation=0, volume=3, color=3)`.
++Every snapshot replays unchanged, because the runtime orders a state's keys by
++name and every implementation names its arguments.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +11/-0)
+```diff
+@@ -411,6 +411,17 @@ spelling of their time. Every snapshot replays with the new names, with no other
+ change, and the [dataset grammar](../arc.ebnf) names no class, so it is
+ unchanged.
+ 
++### Kind first
++
++On 27-Nov-2026, at the user's request, `kind` moved to the front. The class
++takes `kind: str = 'default'` as its first parameter, before the standard
++entries `x`, `y`, `width`, `height`, `orientation`, and `volume`, and its body
++sets `this.kind is kind` first, while every implementation passes its kind
++first, as in
++`o264fe4293acf is Object(kind=l3058, x=0, y=0, width=3, height=1, orientation=90, volume=3, parts=[4, 4, 4])`.
++Every snapshot replays unchanged, because the runtime orders a state's keys by
++name and every implementation names its arguments.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-25ff71a9.md` (modified, +11/-0)
+```diff
+@@ -341,6 +341,17 @@ spelling of their time. Every snapshot replays with the new names, with no other
+ change, and the [dataset grammar](../arc.ebnf) names no class, so it is
+ unchanged.
+ 
++### Kind first
++
++On 27-Nov-2026, at the user's request, `kind` moved to the front. The class
++takes `kind: str = 'default'` as its first parameter, before the standard
++entries `x`, `y`, `width`, `height`, `orientation`, and `volume`, and its body
++sets `this.kind is kind` first, while every implementation passes its kind
++first, as in
++`o56f6c04f44d8 is Object(kind=l9100, x=0, y=0, width=3, height=1, orientation=90, volume=3)`.
++Every snapshot replays unchanged, because the runtime orders a state's keys by
++name and every implementation names its arguments.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+---
+
+### Incident Patch 2: `1aa65dc8` (2026-11-27)
+**Commit Message**: Rename ARC world-model objects
+
+Use Object for the world-model class and o-prefixed instance names in datasets, state queries, and agent guidance.
+
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +11/-11)
+```diff
+@@ -128,7 +128,7 @@ formatting exactly:
+   names the big-picture formulation you started from and why it fell short.
+ - `declarations[0]` holds every class declaration of the world model, because
+   the solver runs it alone to build input states. Existing datasets declare
+-  one class, `Obj(x: int, y: int, width: int, height: int, orientation: int,
++  one class, `Object(x: int, y: int, width: int, height: int, orientation: int,
+   volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
+   distinct sort of object the transformation needs. Each class whose
+   instances are annotated objects takes the standard entries `x: int, y: int,
+@@ -148,7 +148,7 @@ formatting exactly:
+   A rule changes them only when the shape itself changes size, such as a point
+   that grows into a bar or a pattern that repeats, and then computes the new
+   size from the input value with `@first`, as in
+-  `$Obj.width = $Obj.width@first + 1`. Use them for an object's size instead
++  `$Object.width = $Object.width@first + 1`. Use them for an object's size instead
+   of separate size properties such as `bar_height` or `bar_width`.
+ - `volume` is the number of nonzero cells in the object's input mask, not the
+   area of its bounding box; the solver measures it with `Matrix.measure` and
+@@ -157,20 +157,20 @@ formatting exactly:
+   transformation adds or removes cells, a rule recomputes it, so that every
+   output state's `volume` is the number of nonzero cells in its output mask:
+   from the input value with `@first`, as in
+-  `$Obj.volume is $Obj.volume@first * 2` for a mirror image
++  `$Object.volume is $Object.volume@first * 2` for a mirror image
+   (`dataset.6d0aefbc.json`), or from other properties, as in
+-  `$Obj.volume is $Obj.width * $Obj.height` for a filled box
++  `$Object.volume is $Object.width * $Object.height` for a filled box
+   (`dataset.5582e5ca.json`). Use it for an object's cell count instead of a
+   separate property such as `cell_count`.
+ - The solver starts every Nucleoid program with `canvas_width` and
+   `canvas_height`, the column and row counts of the pair's `input_matrix`
+   (every `nucleoid.run` call in `arc/src/analyzer.ts` and
+   `arc/src/visualizer.ts`). Rules that need the canvas size read these
+-  variables, as `$Obj.height = canvas_height - $Obj.y@first` in
++  variables, as `$Object.height = canvas_height - $Object.y@first` in
+   `dataset.d037b0a7.json` does. No class takes the canvas size as a parameter
+   or stores it as a property, and no implementation passes it.
+ - The remaining declarations are declarative class-level rules, written with
+-  the class reference `$Class` (for example `$Obj`), using `if` for
++  the class reference `$Class` (for example `$Object`), using `if` for
+   conditions and `$Class.x@first` for a property's value before the rules
+   ran. One rule set must explain every original train and test pair: no
+   per-pair or per-instance cases, puzzle IDs, or hard-coded grids. Properties
+@@ -179,12 +179,12 @@ formatting exactly:
+ - Always prefer declarative, higher-order logic. State each relationship once
+   over every instance of a class, derive properties from other rules or from
+   relations between objects, and use higher-order operations on class
+-  populations, such as `Obj.filter`, `map`, `reduce`, `some`, `every`,
++  populations, such as `Object.filter`, `map`, `reduce`, `some`, `every`,
+   `find`, and reasoning selections, where they express the rule. Avoid `for`
+   loops, imperative steps, and manual bookkeeping.
+ - A kind is `l` followed by four digits and names a geometry. It acts as a
+   child class that the rules assign declaratively: an instance never changes
+-  its class, so a rule such as `$Obj.kind is l1707` moves it to another kind.
++  its class, so a rule such as `$Object.kind is l1707` moves it to another kind.
+   Reuse the kind an existing dataset uses for the same geometry; otherwise
+   mint one unused elsewhere.
+ - Orientation is degrees clockwise from north (N = 0, E = 90, S = 180,
+@@ -250,12 +250,12 @@ The caller decides whether to propose the feature; you never start a NUC.
+   may differ.
+ - `input_x`/`input_y` and `output_x`/`output_y` are the zero-based column and
+   row of each mask's nonzero bounding-box origin.
+-- `instance_name` is `obj` plus 12 random lowercase hexadecimal characters,
++- `instance_name` is `o` plus 12 random lowercase hexadecimal characters,
+   unique across all datasets
+   (`node -e "console.log(require('crypto').randomBytes(6).toString('hex'))"`).
+ - `implementation` is `<instance_name> = <Class>(x=<input_x>, y=<input_y>,
+   width=<width>, height=<height>, orientation=<input_orientation>,
+-  volume=<volume>, ...)`, constructing the instance's class (`Obj` in existing
++  volume=<volume>, ...)`, constructing the instance's class (`Object` in existing
+   datasets) with named arguments matching its parameters, where `width` and
+   `height` are the input mask's nonzero bounding-box column and row counts and
+   `volume` is its n
+```
+
+**File**: `.claude/agents/arc-debug.agent.md` (modified, +2/-2)
+```diff
+@@ -110,7 +110,7 @@ between that code and the log. At the time of writing, `start()` writes
+    instance's name, with `x`, `y`, `width` and `height` of its located input
+    object and `orientation` turned with it, every other argument unchanged.
+ 5. `analyzer.state` (Nucleoid on all declarations, implementations and
+-   `Obj[:]`, once per pair): each training instance's `output_value`. Every
++   `Object[:]`, once per pair): each training instance's `output_value`. Every
+    pair, synthesized or not, is one world on its own canvas.
+ 6. `visualizer.instances` (LLM): the test `input_instances[].input_instance_matrix`.
+ 7. `visualizer.value` (LLM, then Nucleoid): test `implementation`, `input_value`.
+@@ -169,7 +169,7 @@ Run every check that applies and record each result:
+   `output_matrix` equals `Matrix.canvas` of the merge of its output instance
+   matrices with `output_canvas`. Turned objects may overlap, the later one
+   winning in the merge, which is intended; count the pairs where they do.
+-- **Instance names.** Every name is unique, has the form `obj` plus twelve
++- **Instance names.** Every name is unique, has the form `o` plus twelve
+   digits, and is consecutive from `0` in dataset order, across the training
+   pairs, the synthesized pairs and then test.
+ - **Values.** Every instance has an `implementation`, an `input_value` whose
+```
+
+**File**: `.claude/rules/arc.instructions.md` (modified, +1/-1)
+```diff
+@@ -91,7 +91,7 @@ symbolic execution. Avoid unstructured textual reasoning as the world model.
+ 
+ Always prefer declarative, higher-order logic. State each transformation once
+ as rules over every object and the relations between objects: class-level
+-rules and conditions on each class of the world model (for example `$Obj`),
++rules and conditions on each class of the world model (for example `$Object`),
+ properties derived from other rules, and higher-order operations such as
+ `filter`, `map`, `reduce`, `some`, `every`, `find`, and reasoning selections. Avoid imperative loops, per-instance or
+ per-case steps, and manual bookkeeping. When accepted Nucleoid cannot express
+```
+
+**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +2/-2)
+```diff
+@@ -146,8 +146,8 @@ double-quoted string literal that the runtime lexer reads in a code field,
+ and `#` comments are not quotes. The dataset writes a literal as a bare word
+ wherever the run's runtime, run as `arc/src/lib/nucleoid.ts` runs it, reads
+ that word as the same value, as NUC 86, NUC 93 and NUC 94 read `right` in
+-`if $Obj.repeat_direction is right:`, `$Obj.repeat_direction is right` and
+-`$Obj.repeat_direction is right if $Obj.wide else down`. The arc-dataset
++`if $Object.repeat_direction is right:`, `$Object.repeat_direction is right` and
++`$Object.repeat_direction is right if $Object.wide else down`. The arc-dataset
+ profile's quoted default, `kind: str = 'lNNNN'`, is a quote that accepted
+ Nucleoid cannot do without, because it rejects a bare parameter default
+ with `SyntaxError`. Have the
+```
+
+**File**: `arc/docs/ARC-NUC-017c7c7b.md` (modified, +10/-0)
+```diff
+@@ -423,6 +423,16 @@ coalescing, which no dataset uses any more. No NUC was requested, so no proposal
+ strategy was selected, and no solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Object and o names
++
++On 27-Nov-2026, at the user's request, the class is called `Object` instead of
++`Obj`, and every instance name starts with `o` instead of `obj`, so
++`obj7868bfbcdc17` is now `o7868bfbcdc17`. Class references read `$Object`, and
++the solver's state queries read `Object[:]`; the sections above keep the
++spelling of their time. Every snapshot replays with the new names, with no other
++change, and the [dataset grammar](../arc.ebnf) names no class, so it is
++unchanged.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-0ca9ddb6.md` (modified, +10/-0)
+```diff
+@@ -512,6 +512,16 @@ coalescing, which no dataset uses any more. No NUC was requested, so no proposal
+ strategy was selected, and no solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Object and o names
++
++On 27-Nov-2026, at the user's request, the class is called `Object` instead of
++`Obj`, and every instance name starts with `o` instead of `obj`, so
++`obj08c8feaa60ea` is now `o08c8feaa60ea`. Class references read `$Object`, and
++the solver's state queries read `Object[:]`; the sections above keep the
++spelling of their time. Every snapshot replays with the new names, with no other
++change, and the [dataset grammar](../arc.ebnf) names no class, so it is
++unchanged.
++
+ ## Runs
+ 
+ | Date | Run | Commit | Exit status | Difference | Seconds |
+```
+
+**File**: `arc/docs/ARC-NUC-0d3d703e.md` (modified, +10/-0)
+```diff
+@@ -384,6 +384,16 @@ coalescing, which no dataset uses any more. No NUC was requested, so no proposal
+ strategy was selected, and no solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Object and o names
++
++On 27-Nov-2026, at the user's request, the class is called `Object` instead of
++`Obj`, and every instance name starts with `o` instead of `obj`, so
++`obj4d683f973e7d` is now `o4d683f973e7d`. Class references read `$Object`, and
++the solver's state queries read `Object[:]`; the sections above keep the
++spelling of their time. Every snapshot replays with the new names, with no other
++change, and the [dataset grammar](../arc.ebnf) names no class, so it is
++unchanged.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
+```
+
+**File**: `arc/docs/ARC-NUC-25d8a9c8.md` (modified, +10/-0)
+```diff
+@@ -401,6 +401,16 @@ coalescing, which no dataset uses any more. No NUC was requested, so no proposal
+ strategy was selected, and no solver run has measured this version, so its
+ difference is unknown, not zero.
+ 
++### Object and o names
++
++On 27-Nov-2026, at the user's request, the class is called `Object` instead of
++`Obj`, and every instance name starts with `o` instead of `obj`, so
++`obj264fe4293acf` is now `o264fe4293acf`. Class references read `$Object`, and
++the solver's state queries read `Object[:]`; the sections above keep the
++spelling of their time. Every snapshot replays with the new names, with no other
++change, and the [dataset grammar](../arc.ebnf) names no class, so it is
++unchanged.
++
+ ## Runs
+ 
+ | Date | Dataset version | Runtime | Exit status | Difference | Elapsed |
 ```
 
 #### Recent Merged Pull Requests:
@@ -1739,60 +2067,62 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rework ARC 27a28665 dataset to give unknown kinds color 0
+## X. Put kind first in ARC object definitions
 
 **RULE**:
-When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2889b681`: Rework ARC 27a28665 dataset to give unknown kinds color 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f176c30a`: Put kind first in ARC object definitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first] ?? 0`: the object
-a key of the table reads `null` there, as an absent key does, and the nullish
-coalescing `?? 0` of [NUC 60](../docs/nuc-0060.md) turns that `null` into the
-background color 0 while it keeps every code the table holds. An
-implementation that leaves out `kind`, so that its object takes the default
-`l9100`, or that names a kind the table lacks, such as `l5555`, therefore gives
-its point color 0, which is no cell, and the rules raise no error, so the run
-goes on; the input state, built from the class and the implementation alone,
-still carries that kind. The default never applies to the ten pairs, whose
-blocks all take one of the table's four kinds.
-`$Obj.volume is 0 if $Obj.fill_color is 0 else $Obj.width * $Obj.height`, a
-conditional expression of [NUC 59](../docs/nuc-0059.md) whose condition uses
-the comparison `is` of [NUC 86](../docs/nuc-0086.md), counts a colored point's
-single cell and gives a point of color 0 none, as `dataset.25d8a9c8.json`
-empties a cleared row: such a point has the `volume` 0 that `Matrix.measure`
-counts in its all-zero output mask, and it keeps its `x`, `y`, and 1 by 1
-`width` and 
+  the solver runs it alone to build input states. Existing datasets declare one
+  class,
+  `Object(kind: str = 'default', x: int, y: int, width: int, height: int, orientation: int, volume: int, ...)`;
+  add another class only for a distinct sort of object the transformation needs.
+  Each class whose instances are annotated objects takes the optional
+  `kind: str = 'default'` first, which names no geometry, then the standard
+  entries
+  `x: int, y: int, width: int, height: int, orientation: int, volume: int`, in
+  that order, and its body assigns every parameter to `this` in that order,
+  starting with `this.kind is kind`. Every implementation passes its object's
+  kind first, as a bare word, such as `kind=l9100`, or `kind=unknown` for an
+  object of a shape that the pairs never show, so no instance takes the default.
+  The default keeps its quotes, because accepted Nucleoid takes only a literal
+  as a parameter default. Add only the descriptive properties the transformation
+- `implementation` is
+  `<instance_name> is <Class>(kind=<kind>, x=<input_x>, y=<input_y>, width=<width>, height=<height>, orientation=<input_orientation>, volume=<volume>, ...)`,
+  constructing the instance's c
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-`{l4262: 1, l2404: 2, l3743: 3, l1707: 6}[$Obj.kind@first]`: the object
-a key of the table reads `null` there, as an absent key does, so a class-level
-validation rule, `if $Obj.fill_color is null:` with the body
-`throw $Obj.kind@first`, throws that input kind. An implementation that leaves
-out `kind`, so that its object takes the default `l9100`, or that names a kind
-the table lacks, therefore fails visibly instead of giving the point no color:
-the runtime exits with status 1 and an error that names the kind and the
-implementation's line, such as `l9100 (line 27, column 1)`. The input state,
-built from the class and the implementation alone, still carries the kind; the
-failure comes when the rules run on the pair's world. The rule never fires on
-the ten pairs, and it is Nucleoid's class-level validation, a `throw` in a
-class-level `if`, as the specification's rules that reject an invalid
-instance write it. `$Obj.volume is $Obj.width * $Obj.height` counts
-the filled point's single cell. The rules create no other properties, so each
+  the solver runs it alone to build input states. Existing datasets declare
+  one class, `Object(x: int, y: int, width: int, height: int, orientation: int,
+  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
+  distinct sort of object the transformation needs. Each class whose
+  instances are annotated objects takes the standard entries `x: int, y: int,
+  width: int, height: int, orientation: int, volume: int` first, in that
+  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
+  initial kind, and its body assigns every parameter to `this`, the kind with
+  `this.kind is kind` right after `this.volume is volume`. An implementation
+  passes `kind` only when its object needs a kind other than the default, as
+  every implementation in `dataset.27a28665.json` names its block's shape
+  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+  keeps its quotes, because accepted Nucleoid takes only a literal as a
+  parameter default. Add only the descriptive properties the transformation
+- `implementation` is `<instance_name> = <Class>(x=<input_x>, y=<input_y>,
+  width=<width>, height=<height>, orientation=<input_orientation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2889b681` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f176c30a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,24 +4,24 @@
 {
   "source_repository": "tw93/Mole",
   "source_url": "https://github.com/tw93/Mole",
-  "source_version": "7966afdd",
+  "source_version": "3da229e1",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-19T10:15:44.955Z",
+  "timestamp": "2026-11-27T09:44:46.171Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tw93-mole",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tw93/Mole](https://github.com/tw93/Mole) (Revision: `7966afdd`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-19T10:15:44.955Z`  
+> **Provenance**: Harvested from [tw93/Mole](https://github.com/tw93/Mole) (Revision: `3da229e1`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-27T09:44:46.171Z`  
 > **Learning ID**: `learn-github-tw93-mole`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tw93/Mole:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T10:15:43.828Z  
+> **Harvest Timestamp**: 2026-11-27T09:44:44.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🐹 Open-source Mac and PC cleaner. Keep your machine clean, light, and running like new. Fast CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 75569 stars
+- **Stars / Engagement**: 76385 stars
 
 ---
 
@@ -1239,12 +1239,10 @@ func isProtectedAnalyzeDeletePath(path string) bool {
 	if isCriticalAnalyzeDeletePath(cleanPath) {
 		return true
 	}
-	if isLibraryHeadFolder(cleanPath, "/Library") {
+	if isSessionSocketFolderPath(cleanPath) || isTempSocketPath(cleanPath) {
 		return true
 	}
-
-	homeRoots := protectedAnalyzeHomeRoots()
-
+	if isLibraryHeadF
 ```
 
 ### Core Architecture Module: `cmd/analyze/format.go`
@@ -1933,11 +1931,14 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2026** (2026-11-18): **[Mac App Bug] Clean screen reports $1 of Mac Storage message after run**
-  *Symptoms*: ### Mole Mac app version  1.20.1  ### macOS version  27.3 Beta (26C5047e) (Also happened on released 27.2.1 build  ### Mac model  Mac mini M6  ### Affected area  Clean  ### What happened?  After running the Clean feature and completing the cleanup, Mole reports the success and the space/items freed, but also shows an odd "$1 of Mac storage" line that looks out of place?  ### Steps to reproduce  1. Open Mole 2. Select Clean and perform a scan 3. Select one or more items to clean 4. Wait for Clean to complete 5. Observe results screen  ### Expected behavior  Results page is displayed with size and quantity of cleaned items displayed correctly.  ### Screenshots or safe logs  <img width="1548" height="1000" alt="image" src="https://github.com/user-attachments/assets/8a530247-84d7-415c-8185-ca87d6b4d161" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+- **Issue #2121** (2026-11-27): **[BUG] mole update 失败**
+  *Symptoms*: <img width="440" height="440" alt="20261127135559_rec_" src="https://github.com/user-attachments/assets/91326984-d143-419e-b2a8-3063ec19fb66" />
+  **Post-Mortem & Fix Analysis**:
+  > <img width="435" height="443" alt="image" src="https://github.com/user-attachments/assets/72702065-d7fa-4271-960d-ac23f334042d" />  开了 cli 代理之后，成功，但还是存在多次 cmd c 没办法终止 update 进程的问题
+  > @yuluo-yx 谢谢反馈，按 Ctrl+C 停不下来是 Mole 这边的问题，Homebrew 安装时 brew 跑在单独的进程组里，Ctrl+C 传不到它，要等更新和升级两步各自的超时走完，现在已经在 main 修好了，按下去会马上退出。  第一次失败是 brew 自己联网出错，开了代理就正常，这部分 Mole 改不了。  想现在就用上修复，可以先装 main 的版本，`brew list --versions mole` 会显示成 HEAD，等正式版发布后再用 `brew uninstall mole && brew install mole` 换回来：  ``` brew uninstall mole && brew install --HEAD mole ```  先关掉了，还有问题随时重开。 
 
-- **Issue #2024** (2026-11-18): **[Mac App Bug]**
-  *Symptoms*: ### Mole Mac app version  1.20.1 (376)  ### macOS version  27.2.1  ### Mac model  Mac16,8 (Apple M4 Pro)  ### Affected area  Status  ### What happened?  I'm raising this issue again as the previous case was closed. Within the Status tab, all of the cores show in the colour green but I understand there should be a difference in colour between the efficiency and performance cores. I have a MacBook Pro M4 Pro with 12 cores. Please can you look into this issue. Thanks   ### Steps to reproduce  Open Mole and go to the Status tab.  ### Expected behavior  I expect the CPU core types to be in different colours.  ### Screenshots or safe logs  <img width="529" height="360" alt="Mole CPU Cores" src="https://github.com/user-attachments/assets/8c6a672c-9cb7-4599-b4ea-d5dcb34c8176" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+- **Issue #2111** (2026-11-26): **[Mac App Bug] Removes iStat Menus 6 files even though the app is running**
+  *Symptoms*: ### Mole Mac app version  1.21.0  ### macOS version  26.7.3  ### Mac model  M2  ### Affected area  Clean  ### What happened?  Mole removes plist files needed by iStat Menus 6, even though iStat Menus is installed and running, breaking iStat and having to reinstall it and import its settings again. It thinks some of the iStat agents are orphaned. `/Library/LaunchAgents/com.bjango.istatmenus.*`  ### Steps to reproduce  Run Clean in the Mole UI, it will clean iStat Menus 6 plist files breaking the app. It thinks some of the iStat agents are orphaned.  ### Expected behavior  Don't break iStat Menus 6  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1954,533 +1955,617 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ae277c0` (2026-11-18)
-**Commit Message**: docs(incidents): record I-79 to I-84 for the fixes since V1.72.0
+### Incident Patch 1: `b5fd0ed4` (2026-11-27)
+**Commit Message**: fix(protection): route Bitdefender VPN to its uninstaller and guard extension and AI data
 
-Six defects reported against the published release were fixed without a
-ledger row: the Alfred helper app plist (#2028), per-item sizing failures
-cancelling clean (#1997), optimize task timeouts stopping the run (#2003),
-the Clang cache resolver timeout (#2005), fish completion for the
-completion subcommand (#2007) and analyze cursor navigation over hidden
-rows (#1995). Causes are taken from each issue's own analysis.
+Synced from Mole Mac and Mole CLI (Windows):
+- com.bitdefender.vpn joins the official-uninstaller refusal; Endpoint
+  Security self-protection refuses any other process deleting its files
+  (Mole Mac 26e409f4b). The App Store com.bitdefender.iosvpn stays ordinary.
+- Cleanup refuses Chromium extension stores (extension settings, state,
+  rules, scripts, Service Worker ScriptCache and Database), as the Windows
+  CLI does since e4e29c99; Mole Mac once broke MV3 extensions there.
+  Uninstall mode is unchanged and Service Worker CacheStorage stays.
+- Cleanup refuses the AI tool data folders Mole Mac's PathGuard lists
+  under ~/.claude, ~/.codex, ~/.grok and ~/.gemini.
 
-Verified: scripts/audit_incidents.py (84 rows).
+No current row reaches the guarded paths, so nothing users see changes
+today; this keeps a future glob from reaching them.
 
-**File**: `docs/incidents.md` (modified, +6/-0)
+Verified: the new cases fail 20 times on the previous code and pass now;
+full suite and check.sh --no-format pass. An independent review found no
+P0 or P1 issues.
+
+**File**: `lib/core/app_protection.sh` (modified, +30/-0)
 ```diff
-@@ -113,3 +113,9 @@ when it was confirmed by reading the history, otherwise `unknown`.
- | I-76 | 2026-11-14 | `mo clean` never removed idleassetsd's aborted Aerial wallpaper downloads: the cleanup reused the 7-day temp-file age, but that directory is emptied at every restart, so the young partial files that fill the disk and drive a jetsam loop always passed (#1994) | 30ae9787 | 3b56a6fa | review | `safe_sudo_find_delete minute ages remove only files idle that long, at scan and recheck (#1994)` |
- | I-77 | 2026-11-15 | Analyze Home overview counted one file twice when hard links crossed immediate children or the Home root, because each child had an independent du and direct files were added separately | unknown | 3c4f01d8 | unit | `TestHomeOverviewDeduplicatesHardlinks`, `TestHomeOverviewPreservesPartialDuTotal`, `TestHomeOverviewDoesNotFollowTopLevelSymlinks` |
- | I-78 | 2026-11-17 | `mo uninstall` on Alfred 4 never offered `Application Support/Alfred`: discovery tried only the file name "Alfred 4", while the app writes under its CFBundleName "Alfred", and the family checks did not treat a trailing release number as the same product (#2027) | unknown | c7523ef1 | write-time | `find_app_files takes a numbered app's folders under its CFBundleName (#2027)`, `uninstall of a numbered app offers its CFBundleName data folder (#2027)`, `uninstall of a numbered app keeps the data folder a differently identified build still uses (#2027)` |
-+| I-79 | 2026-11-17 | `mo uninstall` on Alfred 4 left `com.runningwithcrayons.Alfred-Preferences.plist` behind: embedded helper bundle ids were read only under `Contents/Library/LoginItems/`, and Alfred ships its settings app under `Contents/Preferences/` (#2027, #2028) | unknown | c47ea46e | write-time | `embedded bundle ids include a helper app under Contents/Preferences (#2027)` |
-+| I-80 | 2026-11-14 | A per-item size probe that failed without a signal, in old browser and updater cleanup, device firmware, Tart caches and the Handoff pasteboard, returned its status and cancelled the whole `mo clean` run instead of only leaving that item unsized (#1997) | unknown | fa6bbea9 | review | `old browser and updater cleanup continues on non-signal size failure and stops on signal`, `clean_tart_caches tolerates non-signal size failures before and after prune` |
-+| I-81 | 2026-11-14 | `mo optimize` stopped every later task when one task's sizing, scan or plist-read probe timed out, because cache refresh, saved state, launch agent and shared file list handlers passed status 124 up to the run (#2003) | unknown | 97f66d63 | review | `cache refresh sizing timeouts finish the run while removal timeouts and signals still cancel`, `saved state and shared file list scan timeouts fail only their task without a new message` |
-+| I-82 | 2026-11-14 | A timed-out `getconf DARWIN_USER_CACHE_DIR` lookup in Clang module cache cleanup cancelled the rest of `mo clean` instead of skipping that one section (#2005) | unknown | 022bdf42 | review | `clean_clang_module_cache skips only Clang cleanup on resolver timeout and keeps a signal sticky` |
-+| I-83 | 2026-11-14 | `mo completion fish` never offered bash, zsh or fish after `mo completion`: each generated rule carried two `-n` conditions, the second overwriting the first, and the helper read the root command instead of the subcommand (#2007) | unknown | bfcf20ae | unit | `completion fish completes shell names only under completion subcommand` |
-+| I-84 | 2026-11-14 | `mo analyze` moved the cursor onto hidden empty rows and skipped over unavailable rows, because key navigation tested `Size == 0` instead of the renderer's hidden-when-empty rule (#1995) | unknown | 060fba8b | unit | `TestCursorNavigationSkipsHiddenEdgesAndStopsOnUnavailableRows`, `TestOverviewSelectionAvoidsHiddenRowsAndEnterIgnoresThem` |
-```
-
----
-
-### Incident Patch 2: `c7523ef1` (2026-11-18)
-**Commit Message**: fix(uninstall): find a numbered app's data under its CFBundleName (#2027)
-
-Alfred 4.app writes to Application Support/Alfred, the name in its own
-Info.plist, but discovery only tried "Alfred 4", so that 45 MB folder was
-never offered. find_app_files now drops a trailing release number when the
-bundle's CFBundleName is exactly the shorter name and not a common word; a
-file name alone still proves nothing. The helper-app plist half of #2027
-landed in #2028.
-
-Alfred 4 and 5 can be installed side by side and share that folder, so the
-family checks now treat a trailing number like a channel suffix: the
-find_app_files family filter and the batch sibling strip both read
-"Alfred 5" as the same product and keep the shared folders. Both only
-narrow what is removed.
-
-Verified: the new find_app_files and batch cases fail on the old code and
-on each guard removed in turn (CFBundleName check, common-name filter,
-family suffix, batch strip); uninstall suites 437/437, full
-MOLE_TEST_NO_AUTH=1 ./scripts/test.sh passed, check.sh --no-format exit 0.
-
-Rollback: git revert this commit; no persisted state or cache changes.
-
-**File**: `lib/core/app_protection.sh` (modified, +19/-2)
-```diff
-@@ -1296,9 +1296,11 @@ _mole_app_family_sibling_installed() {
-     return 1
- }
- 
--# The base name an app's family shares: "Zed Nightly" and "Zed" are both "Zed".
-+# The base name an app's family shares: "Zed Nightly" and "Zed" are both "Zed",
-+# and so are "Alfred 4" and "Alfred 5" (#2027). This list only narrows what an
-+# uninstall takes, so a release number counts without bundle evidence.
- _mole_app_family_suffixes="Nightly|Beta|Alpha|Dev|Canary|Preview|Insider|Edge|Stable|Release|RC|LTS"
--_mole_app_family_suffixes+="|Developer Edition|Technology Preview"
-+_mole_app_family_suffixes+="|Developer Edition|Technology Preview|[0-9]+"
- 
- # Print the lowercase name leaves ("zed", "zed-nightly"...) of the family that
- # another installed build still uses, or nothing when no other build is
-@@ -1368,6 +1370,21 @@ find_app_files() {
-     if [[ "$app_name" =~ ^(.+)[[:space:]]+(${version_suffixes})$ ]]; then
-         base_name="${BASH_REMATCH[1]}"
+@@ -419,6 +419,21 @@ should_protect_path() {
+                 "$HOME/.bash_history.bak"* | "$HOME/.zsh_history.bak"*)
+                 return 0
+                 ;;
++            # Chromium extension storage: settings, state, declarative rules and
++            # the MV3 service worker scripts. Mole Mac once offered Service
++            # Worker/ScriptCache and broke MV3 extensions. No rule lists these;
++            # this keeps a future glob from reaching them (Mole CLI (Windows)
++            # e4e29c99). Service Worker/CacheStorage stays cleanable.
++            */"Local Extension Settings" | */"Local Extension Settings/"* | \
++                */"Sync Extension Settings" | */"Sync Extension Settings/"* | \
++                */"Managed Extension Settings" | */"Managed Extension Settings/"* | \
++                */"Extension State" | */"Extension State/"* | \
++                */"Extension Rules" | */"Extension Rules/"* | \
++                */"Extension Scripts" | */"Extension Scripts/"* | \
++                */"Service Worker/ScriptCache" | */"Service Worker/ScriptCache/"* | \
++                */"Service Worker/Database" | */"Service Worker/Database/"*)
++                return 0
++                ;;
+         esac
      fi
-+    # "Alfred 4.app" writes to "Application Support/Alfred", its CFBundleName
-+    # (#2027). A trailing release number is dropped only when the bundle itself
-+    # names the shorter product; a file name alone proves nothing.
-+    if [[ "$base_name" == "$app_name" && -n "$app_path" &&
-+        "$app_name" =~ ^(.+)[[:space:]]+[0-9]+$ ]]; then
-+        local numbered_base="${BASH_REMATCH[1]}" bundle_short_name=""
-+        if [[ -f "$app_path/Contents/Info.plist" ]]; then
-+            bundle_short_name=$(/usr/bin/plutil -extract CFBundleName raw \
-+                "$app_path/Contents/Info.plist" 2> /dev/null) || bundle_short_name=""
-+        fi
-+        if [[ "$bundle_short_name" == "$numbered_base" ]] &&
-+            ! _mole_uninstall_is_common_app_name "$numbered_base"; then
-+            base_name="$numbered_base"
-+        fi
-+    fi
-     local base_lowercase=$(echo "$base_name" | /usr/bin/tr '[:upper:]' '[:lower:]') # "Zed" -> "zed"
  
-     # Only use bundle_id in literal paths or find patterns after reverse-DNS
+@@ -579,6 +594,21 @@ should_protect_path() {
+             */.[Cc][Ll][Aa][Uu][Dd][Ee]/[Hh][Ii][Ss][Tt][Oo][Rr][Yy].[Jj][Ss][Oo][Nn][Ll])
+             return 0
+             ;;
++        # The other AI tool stores Mole Mac's PathGuard refuses: plans, tasks,
++        # plugins, skills, memories, attachments, generated images and session
++        # archives are user data, not caches. No rule reaches them today.
++        */.claude/plans | */.claude/plans/* | */.claude/tasks | */.claude/tasks/* | \
++            */.claude/plugins | */.claude/plugins/* | */.claude/skills | */.claude/skills/* | \
++            */.claude/backups | */.claude/backups/* | */.claude/paste-cache | */.claude/paste-cache/* | \
++            */.codex/archived_sessions | */.codex/archived_sessions/* | \
++            */.codex/sqlite | */.codex/sqlite/* | */.codex/memories | */.codex/memories/* | \
++            */.codex/attachments | */.codex/attachments/* | \
++            */.codex/generated_images | */.codex/generated_images/* | \
++            */.codex/computer-use | */.codex/computer-use/* | */.codex/plugins | */.codex/plugins/* | \
++            */.grok/sessions | */.grok/sessions/* | \
++            */.gemini/antigravity | */.gemini/antigravity/* | */.gemini/tmp | */.gemini/tmp/*)
++            return 0
++            ;;
+         # Bluetooth and WiFi configurations
+         */ByHost/com.apple.bluetooth.* | */ByHost/com.apple.wifi.*)
+             return 0
 ```
 
-**File**: `lib/uninstall/batch.sh` (modified, +4/-1)
+**File**: `lib/core/app_protection_data.sh` (modified, +4/-2)
 ```diff
-@@ -1868,7 +1868,10 @@ _uninstall_strip_version_suffix_into() {
-     local _strip_value="$2"
-     local version_suffixes="Nightly|Beta|Alpha|Dev|Canary|Preview|Insider|Edge|Stable|Release|RC|LTS"
-     version_suffixes+="|Developer Edition|Technology Preview"
--    if [[ "$_strip_value" =~ ^(.+)[[:space:]]+(${version_suffixes})$ ]]; then
-+    # A trailing release number too ("Alfred 4" is "Alfred", #2027). Broader
-+    # than find_app_files, which also wants CFBundleName to agree, because here
-+    # a wider match only keeps more of a survivor's data.
-+    if [[ "$_strip_value" =~ ^(.+)[[:space:]]+(${version_suffixes}|[0-9]+)$ ]]; then
-         _strip_value="${BASH_REMATCH[1]}"
-     fi
-     printf -v "$1" '%s' "$_strip_value"
+@@ -189,13 +189,15 @@ readonly OFFICIAL_UNINSTALLER_RULES=(
+     # tool removes, so Mole points to it instead of trashing the app. A wrong
+     # id matches nothing; a match only refuses. TeamViewer: UninstallTeamViewer
+     # (maintainer 2026-11-01). Bitdefender, Intego, Norton and Trend Micro ids
+-    # are unconfirmed leads, as in Mole Mac.
++    # are unconfirmed leads, as in Mole Mac. com.bitdefender.vpn: Endpoint
++    # Security self-protection refuses any other process deleting its files
++    # (Mole Mac 26e409f4b); the App Store com.bitdefender.iosvpn stays ordinary.
+     "Adobe Genuine Service|com.adobe.gcclient,gocart.|adobe genuine service"
+     "Avast|com.avast.aafm,com.avast.avast,com.avast.hub|"
+     "AVG|com.avg.hub|avgantivirus,avg antivirus"
+     "Malwarebytes|com.malwarebytes.mbam|"
+     "TeamViewer|com.teamviewer.|"
+-    "Bitdefender|com.bitdefender.antivirusformac|"
++    "Bitdefender|com.bitdefender.antivirusformac,com.bitdefender.vpn|"
+     "Intego|com.intego.virusbarrier.,com.intego.virusbarrier-,com.intego.app.netbarrier|"
+     "Kaspersky|com.kaspersky.kav|"
+     "Norton|com.symantec.nfm|"
 ```
 
-**File**: `tests/uninstall.bats` (modified, +65/-0)
+**File**: `tests/clean_developer_state.bats` (modified, +30/-0)
 ```diff
-@@ -872,6 +872,71 @@ fi
- EOF
+@@ -198,3 +198,33 @@ EOF
+ @test "Yarn Berry producer and sink preserve dependencies with a custom whitelist" {
+     probe_yarn_berry_boundary custom
  }
- 
-+# Alfred 4.app writes to Application Support/Alfred, its CFBundleName (#2027).
-+run_numbered_app_batch() {
-+    local survivor="$1"
-+    local fixture_home
-+    fixture_home=$(mktemp -d "$HOME/numbered-fixture.XXXXXX")
-+    local plist='<?xml version="1.0" encoding="UTF-8"?><plist version="1.0"><dict><key>CFBundleIdentifier</key><string>%s</string><key>CFBundleName</key><string>Alfred</string></dict></plist>'
-+    mkdir -p "$fixture_home/Applications/Alfred 4.app/Contents" \
-+        "$fixture_home/Library/Application Support/Alfred"
-+    # shellcheck disable=SC2059 # The fixture plist is the format string.
-+    printf "$plist" com.runningwithcrayons.Alfred > "$fixture_home/Applications/Alfred 4.app/Contents/Info.plist"
-+    touch "$fixture_home/Library/Application Support/Alfred/prefs.plist"
-+    if [[ "$survivor" == yes ]]; then
-+        # Another root and another bundle id, so only the batch family check sees it.
-+        mkdir -p "$fixture_home/OtherApps/Alfred 5.app/Contents"
-+        # shellcheck disable=SC2059 # The fixture plist is the format string.
-+        printf "$plist" com.runningwithcrayons.Alfred5 > "$fixture_home/OtherApps/Alfred 5.app/Contents/Info.plist"
-+    fi
 +
-+    run env HOME="$fixture_home" PROJECT_ROOT="$PROJECT_ROOT" \
-+        /bin/bash --noprofile --norc << 'EOF'
++@test "should_protect_path refuses Chromium extension stores and AI tool data in cleanup only" {
++    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
 +set -euo pipefail
 +source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/uninstall/batch.sh"
-+source "$PROJECT_ROOT/tests/helpers/uninstall.bash"
-+mole_test_isolate_uninstall_inventory
-+_MOLE_UNINSTALL_LIVE_APP_ROOTS+=("$HOME/OtherApps")
-+brew() { :; }
-+export MOLE_DELETE_MODE=trash
-+export MOLE_TEST_TRASH_DIR="$HOME/test-trash" MOLE_TEST_NO_AUTH=1
-+request_sudo_access() { return 0; }
-+start_inline_spinner() { :; }
-+stop_inline_spinner() { :; }
-+enter_alt_screen() { :; }
-+leave_alt_screen() { :; }
-+hide_cursor() { :; }
-+show_cursor() { :; }
-+remove_apps_from_dock() { :; }
-+drain_pending_input() { :; }
-+pgrep() { return 1; }
-+pkill() { return 0; }
-+sudo() { return 0; }
-+
-+selected_apps=("0|$HOME/Applications/Alfred 4.app|Alfred 4|com.runningwithcrayons.Alfred|0|Never")
-+files_cleaned=0
-+total_items=0
-+total_size_cleaned=0
-+MOLE_UNINSTALL_WITH_DATA=1
-+printf '\n' | MOLE_TEST_MODE=1 batch_uninstall_applications
-+[[ ! -d "$HOME/Applications/Alfred 4.app" ]] || { echo "app kept"; exit 1; }
-+if [[ -e "$HOME/Library/Application Support/Alfred" ]]; then echo "ALFRED_DATA=kept"; else echo "ALFRED_DATA=removed"; fi
++chrome="$HOME/Library/Application Support/Google/Chrome/Default"
++for p in \
++    "$chrome/Local Extension Settings/abc/000003.log" "$chrome/Sync Extension Settings" \
++    "$chrome/Managed Extension Settings/abc" "$chrome/Extension State/LOG" \
++    "$chrome/Extension Rules/000001.ldb" "$chrome/Extension Scripts" \
++    "$chrome/Service Worker/ScriptCache/index" "$chrome/Service Worker/Database/MANIFEST" \
++    "$HOME/.claude/plans/p.md" "$HOME/.claude/skills" "$HOME/.claude/paste-cache/x" \
++    "$HOME/.codex/archived_sessions/2026/a.jsonl" "$HOME/.codex/memories" "$HOME/.codex/generated_images/i.png" \
++    "$HOME/.grok/sessions/s" "$HOME/.gemini/antigravity/brain" "$HOME/.gemini/tmp/h/logs.json"; do
++    should_protect_path "$p" || echo "UNPROTECTED|$p"
++done
++for p in \
++    "$chrome/Service Worker/CacheStorage/abc/def" "$chrome/Cache/Cache_Data/f_000001" \
++    "$HOME/.gemini/antigravity-browser-profile/Default/Cache/x" "$HOME/.codex/.tmp/old" \
++    "$HOME/.claude/worktrees/w"; do
++    if should_protect_path "$p"; then echo "OVERPROTECTED|$p"; fi
++done
++MOLE_UNINSTALL_MODE=1 should_protect_path "$chrome/Extension State" && echo "UNINSTALL_BLOCKED"
++echo DONE
 +EOF
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" == *"DONE"* ]] || { echo "$output"; return 1; }
++    [[ "$output" != *"UNPROTECTED|"* && "$output" != *"OVERPROTECTED|"* && "$output" != *"UNINSTALL_BLOCKED"* ]] || { echo "$output"; return 1; }
 +}
 +
-+@test "uninstall of a numbered app offers its CFBundleName data folder (#2027)" {
-+    run_numbered_app_batch no
-+    [ "$status" -eq 0 ] || { printf 'exit status: %s\n%s\n' "$status" "$output"; return 1; }
-+    [[ "$output" == *"ALFRED_DATA=removed"* ]] || { printf '%s\n' "$output"; return 1; }
-+}
-+
-+@test "uninstall of a numbered app keeps the data folder a differently identified build still uses (#2027)" {
-+    run_numbered_app_batch yes
-+    [ "$status" -eq 0 ] || { printf 'exit status: %s\n%s\n' "$status" "$output"; return 1; }
-+    [[ "$output" == *"ALFRED_DATA=kept"* ]] || { printf '%s\n' "$output"; return 1; }
-+}
-+
- @test "uninstall --with-data preselects personal data and Enter removes it" {
-     run_with_data_batch enter
-     [ "$status" -eq 0 ] || {
 ```
 
-**File**: `tests/uninstall_naming_variants.bats` (modified, +46/-0)
+**File**: `tests/uninstall.bats` (modified, +2/-0)
 ```diff
-@@ -605,6 +605,52 @@ EOF
-     [[ "$result" == *".config/zed"* ]]
- }
- 
-+_naming_write_bundle_name() {
-+    mkdir -p "$1/Contents"
-+    printf '<?xml version="1.0" encoding="UTF-8"?>\n<plist version="1.0"><dict><key>CFBundleName</key><string>%s</string></dict></plist>\n' "$2" > "$1/Contents/Info.plist"
-+}
-+
-+@test "find_app_files takes a numbered app's folders under its CFBundleName (#2027)" {
-+    local app="$HOME/apps/Alfred 4.app"
-+    _naming_write_bundle_name "$app" "Alfred"
-+    mkdir -p "$HOME/Library/Application Support/Alfred"
-+
-+    result=$(MOLE_TEST_MODE=1 MOLE_TEST_APP_FAMILY_ROOT="$HOME/apps" find_app_files com.runningwithcrayons.Alfred "Alfred 4" "$app")
-+    [[ "$result" == *"/Application Support/Alfred"* ]]
-+}
-+
-+@test "find_app_files keeps a numbered app's short-name folder without CFBundleName agreeing (#2027)" {
-+    local app="$HOME/apps/Studio 3.app"
-+    mkdir -p "$HOME/Library/Application Support/Studio"
-+
-+    _naming_write_bundle_name "$app" "Studio 3"
-+    result=$(MOLE_TEST_MODE=1 MOLE_TEST_APP_FAMILY_ROOT="$HOME/apps" find_app_files com.example.studio3 "Studio 3" "$app")
-+    [[ "$result" != *"/Application Support/Studio"* ]] || return 1
-+
-+    rm -f "$app/Contents/Info.plist"
-+    result=$(MOLE_TEST_MODE=1 MOLE_TEST_APP_FAMILY_ROOT="$HOME/apps" find_app_files com.example.studio3 "Studio 3" "$app")
-+    [[ "$result" != *"/Application Support/Studio"* ]]
-+}
-+
-+@test "find_app_files never derives a common word from a numbered app's CFBundleName (#2027)" {
-+    local app="$HOME/apps/Helper 2.app"
-+    _naming_write_bundle_name "$app" "Helper"
-+    mkdir -p "$HOME/Library/Application Support/Helper"
-+
-+    result=$(MOLE_TEST_MODE=1 MOLE_TEST_APP_FAMILY_ROOT="$HOME/apps" find_app_files com.example.helper2 "Helper 2" "$app")
-+    [[ "$result" != *"/Application Support/Helper"* ]]
-+}
-+
-+@test "find_app_files leaves Alfred's folder to Alfred 5 while it is installed (#2027)" {
-+    local app="$HOME/apps/Alfred 4.app"
-+    _naming_write_bundle_name "$app" "Alfred"
-+    _naming_write_bundle_name "$HOME/apps/Alfred 5.app" "Alfred"
-+    mkdir -p "$HOME/Library/Application Support/Alfred"
-+
-+    result=$(MOLE_TEST_MODE=1 MOLE_TEST_APP_FAMILY_ROOT="$HOME/apps" find_app_files com.runningwithcrayons.Alfred4 "Alfred 4" "$app")
-+    [[ "$result" != *"/Application Support/Alfred"* ]]
-+}
-+
- @test "find_shared_app_paths reaches a localized short name's folder through the bundle product token" {
-     local shared="$HOME/Shared"
-     mkdir -p "$shared/UURemote" "$shared/UURemote Data" "$shared/UUPlayer" "$shared/Other"
-```
-
-**File**: `tests/uninstall_safety.bats` (modified, +2/-0)
-```diff
-@@ -1458,6 +1458,7 @@ verdict same_id_any_case com.Foo.Bar COM.FOO.BAR /A/Foo.app /A/Other.app
- verdict channel_name_any_case com.a.x com.b.y "/A/Zed Nightly.app" /A/ZED.app
- verdict suffix_strip_is_case_sensitive com.a.x com.b.y "/A/Zed nightly.app" /A/Zed.app
- verdict unrelated com.a.x com.b.y /A/Alpha.app /A/Beta.app
-+verdict release_number_name com.a.x com.b.y "/A/Alfred 4.app" "/A/Alfred 5.app"
- verdict one_letter_names com.a.x com.b.y /A/X.app /A/x.app
- rc=0
- uninstall_live_bundle_has_other_install com.example.selected "$selected" || rc=$?
-@@ -1481,6 +1482,7 @@ EOF
-     [[ "$output" == *"channel_name_any_case=shared"* ]] || { echo "$output"; return 1; }
-     [[ "$output" == *"suffix_strip_is_case_sensitive=open"* ]] || { echo "$output"; return 1; }
-     [[ "$output" == *"unrelated=open"* && "$output" == *"one_letter_names=open"* ]] || { echo "$output"; return 1; }
-+    [[ "$output" == *"release_number_name=shared"* ]] || { echo "$output"; return 1; }
-     [[ "$output" == *"scan_rc=1"* && "$output" == *"rows_rc=1"* && "$output" == *"names=[]"* ]] || { echo "$output"; return 1; }
-     [[ "$output" == *"scan_with_sibling_rc=0"* ]] || { echo "$output"; return 1; }
-     [[ "$output" == *"tr_execs=0"* ]] || { echo "$output"; return 1; }
+@@ -2705,6 +2705,7 @@ expect com.avg.hub AVG
+ expect com.example.app AVG "AVG AntiVirus"
+ expect com.malwarebytes.mbam.frontend.application Malwarebytes
+ expect com.bitdefender.antivirusformac Bitdefender
++expect com.bitdefender.vpn Bitdefender
+ expect com.intego.virusbarrier.app Intego
+ expect com.kaspersky.kav.gui Kaspersky
+ expect com.symantec.nfm Norton
+@@ -2714,6 +2715,7 @@ expect com.adobe.gcclient "Adobe Genuine Service"
+ expect com.kaspersky.passwordmanager ""
+ expect com.intego.washingmachine ""
+ expect com.bitdefender.virusscanner ""
++expect com.bitdefender.iosvpn ""
+ expect com.adobe.Photoshop ""
+ echo DONE
+ EOF
 ```
 
 ---
 
-### Incident Patch 3: `1041c3ae` (2026-11-19)
-**Commit Message**: fix(clean): skip dataless project artifact directories (#2035)
+### Incident Patch 2: `b6b1af96` (2026-11-27)
+**Commit Message**: fix(clean): keep what zsh tab completion reads from Oh My Zsh and Homebrew
 
-The Project artifacts hint in mo clean checked paths inside every child of
-a configured purge root. When a child was an online-only iCloud package,
-that stat() waited on the File Provider and the scan deadline could not
-interrupt it (#2034). Prune dataless directories with BSD find before
-looking inside them at the root, project, nested and artifact levels, and
-keep the previous scan when find does not know the flag.
+clean_dev_shell removed every child of ~/.oh-my-zsh/cache, including
+completions/, which is on fpath: an open zsh that registered _gh or
+_docker loads it on the first Tab and failed with "function definition
+file not found" (#2110). It now keeps completions/.
 
-Fixes #2034.
+The generic User app cache sweep also removed ~/Library/Caches/Homebrew
+whole, including api/formula_names.txt and cask_names.txt that zsh
+completion rebuilds from. It now skips that root like Google and mbx; the
+Homebrew section's brew cleanup keeps handling downloads, as Mole Mac
+offers only Homebrew/downloads.
 
-**File**: `docs/incidents.md` (modified, +1/-0)
+Verified: the three new #2110 cases fail on the old lines and pass now;
+with #2118 and #2113 applied the full suite passed except one host-only
+failure fixed in the next commit, and check.sh --no-format passes.
+Rule lines added to .claude/rules/clean.md and clean-dev.md.
+
+**File**: `.claude/rules/clean-dev.md` (modified, +2/-0)
 ```diff
-@@ -120,3 +120,4 @@ when it was confirmed by reading the history, otherwise `unknown`.
- | I-83 | 2026-11-14 | `mo completion fish` never offered bash, zsh or fish after `mo completion`: each generated rule carried two `-n` conditions, the second overwriting the first, and the helper read the root command instead of the subcommand (#2007) | unknown | bfcf20ae | unit | `completion fish completes shell names only under completion subcommand` |
- | I-84 | 2026-11-14 | `mo analyze` moved the cursor onto hidden empty rows and skipped over unavailable rows, because key navigation tested `Size == 0` instead of the renderer's hidden-when-empty rule (#1995) | unknown | 060fba8b | unit | `TestCursorNavigationSkipsHiddenEdgesAndStopsOnUnavailableRows`, `TestOverviewSelectionAvoidsHiddenRowsAndEnterIgnoresThem` |
- | I-85 | 2026-11-19 | `mo analyze` wrote a deletion that rounds to a full unit as `1000KB` or `1000.0MB` in operations.log and the `mo history` session line, while deletions.log showed `1.0MB` for the same file, because the Go size formatter never picked up the shell formatter's step-up (#2036) | unknown | c4a99749 | write-time | `TestLogSizeTextMatchesShellBytesToHuman` |
-+| I-86 | 2026-11-19 | `mo clean` stalled at Project artifacts when a synchronous child lookup entered a dataless iCloud project folder (#2034) | unknown | 3d4f767f | unit | `project artifact hints skip dataless directories at every depth (#2034)` |
+@@ -27,6 +27,8 @@ General clean target policy, including the owner-command rule, is in `.claude/ru
+ - Keep AI-tool cache cleanup conservative. Claude Code, opencode, Copilot CLI, Zed, Warp, Ghostty, and similar developer tools may have active versions, config, credentials, or session state that must not be removed accidentally.
+ - `~/.aws/cli/cache` is never cleaned: it holds the temporary credentials of assumed roles and SSO sessions, and AGENTS.md keeps credentials and sessions out of every sweep (Mole Mac lists it unticked, Mole for Windows refuses `.aws`). Locked by `clean_dev_cloud keeps the AWS CLI credential cache` in `tests/clean_dev_caches.bats`.
+ - `~/.kube/cache` gives up only kubectl's own `discovery` and `http` folders: kubelogin (`oidc-login`), Azure kubelogin (`kubelogin`) and aws-iam-authenticator keep tokens and cached credentials beside them, and a plugin folder Mole does not know stays too (I-109). Locked by `clean_dev_cloud keeps kubectl credential plugin caches (#2096)` in `tests/clean_dev_caches.bats`.
++- `~/.sonar` is the SonarScanner user home: only `~/.sonar/cache` is cleaned, because `~/.sonar/ssl` holds the truststore and keystore the user built from a company CA or client certificate, which no tool recreates (I-114). Locked by `clean_dev_cicd keeps the SonarScanner SSL stores (#2117)` in `tests/clean_dev_caches.bats`.
++- `~/.oh-my-zsh/cache` keeps `completions`: it is on fpath, and an open zsh autoloads a registered completion such as `_gh` from it on the first Tab, so removing it breaks completion in every terminal already open (I-115). Locked by the two `clean_dev_shell` `#2110` cases in `tests/clean_dev_caches.bats`.
+ - `clean_t3code_desktop_caches` takes only `Cache` and `Code Cache` under `Partitions/t3code-preview-*` of the `t3code-v2` and `T3 Code (Alpha)` profiles, while no T3 Code app runs. `should_protect_path` does not cover these profiles, so that exact list is the whole boundary: sign-ins, IndexedDB and Service Worker data stay, and `~/.t3` is never a target (its worktrees are `mo purge` scope). Locked by the `clean_t3code_desktop_caches` cases in `tests/clean_ai_cli_caches.bats`.
+ - **Docker is asked only on a local engine, and Mole prunes only what the engine rebuilds.** Every Docker query (`docker system df` in Large files, `docker ps` in `mo optimize`, the prune) first reads the endpoint through `mole_docker_endpoint_is_local` in `lib/core/common.sh`, which runs `docker context inspect` (local configuration, honours `DOCKER_HOST`, never dials the engine); anything but a `unix://` socket, or an unknown answer, skips the query, so a remote context neither reports another machine's storage nor hides the Docker Desktop data row (#1922). `clean_docker_unused_data` then runs `docker builder prune -f --filter until=168h` and `docker image prune -f` (dangling only) only after `docker info` answers, so a stopped Docker Desktop is never started; containers, volumes, networks and tagged images are never touched, and no config option exists for any of this. The engine serialises prune against running builds, so there is no process guard. `docker builder` is `docker buildx` once the plugin is installed and prunes the selected buildx builder, which can be a cloud or remote one under a local context, so the build cache prune runs with `BUILDX_BUILDER` set to `docker context show` (the local context's own builder; the legacy builder ignores it) and is skipped when that name is unknown. On the classic image store an image pulled only by digest and used by no container counts as dangling and goes too; that is accepted, since a registry pull restores it. Its whitelist row is the Docker Desktop data folder, every prune that exits 0 logs `REMOVED` (with its size when Docker printed one), a timeout skips that one prune and a signal cancels; the dry run says `would prune` without a size, like the other owner rows. Locked by the `clean_dev_docker` cases in `tests/clean_dev_caches.bats` (`clean_dev_docker pins the build cache prune to the local context builder` for the builder), `large files never queries a remote Docker engine (#1922)` in `tests/clean_user_core.bats` and `idle VM never asks a remote Docker engine about containers (#1922)` in `tests/optimize_perf_diagnosis.bats`; `docker` is a fail-loud stub in `tests/helpers/common.bash`, so a test that forgets its double can never prune the host.
+ 
 ```
 
-**File**: `lib/clean/hints.sh` (modified, +81/-54)
+**File**: `.claude/rules/clean.md` (modified, +1/-0)
 ```diff
-@@ -7,26 +7,6 @@ mole_hints_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
- # shellcheck disable=SC1090
- source "$mole_hints_dir/purge_shared.sh"
- 
--# Quick reminder probe for project build artifacts handled by `mo purge`.
--# Designed to be very fast: shallow directory checks only, no deep find scans.
--# shellcheck disable=SC2329
--load_quick_purge_hint_paths() {
--    local config_file="$HOME/.config/mole/purge_paths"
--    local -a paths=()
--
--    while IFS= read -r line; do
--        [[ -n "$line" ]] && paths+=("$line")
--    done < <(mole_purge_read_paths_config "$config_file" 2> /dev/null)
--
--    if [[ ${#paths[@]} -eq 0 ]]; then
--        paths=("${MOLE_PURGE_DEFAULT_SEARCH_PATHS[@]}")
--    fi
--
--    if [[ ${#paths[@]} -gt 0 ]]; then
--        printf '%s\n' "${paths[@]}"
--    fi
--}
--
- # shellcheck disable=SC2329
- hint_get_path_size_kb_with_timeout() {
-     local path="$1"
-@@ -54,19 +34,38 @@ hint_get_path_size_kb_with_timeout() {
-     printf '%s\n' "$size_kb"
- }
- 
-+# shellcheck disable=SC2329
-+hint_find_local_dirs() {
-+    local timeout_seconds="$1" skip_dataless="$2" print_arg="$3"
-+    shift 3
-+
-+    local -a prune=()
-+    if [[ "$skip_dataless" == true ]]; then
-+        prune=(-type d -flags +dataless -prune -o)
-+    fi
-+    run_with_timeout "$timeout_seconds" "$FIND_BSD" "$@" ${prune[@]+"${prune[@]}"} \
-+        -type d "$print_arg" < /dev/null 2> /dev/null
-+}
-+
-+# Follow a configured root or artifact symlink just as [[ -d ]] does.
-+# shellcheck disable=SC2329
-+hint_is_local_dir() {
-+    local path="$1" timeout_seconds="$2" skip_dataless="$3"
-+    local found
-+    found=$(hint_find_local_dirs "$timeout_seconds" "$skip_dataless" -print -H -f "$path" -- -maxdepth 0) || return $?
-+    [[ -n "$found" ]]
-+}
-+
- # shellcheck disable=SC2329
- hint_collect_child_dirs_with_timeout() {
-     local parent="$1"
-     local output_file="$2"
-     local timeout_seconds="${3:-1}"
-+    local skip_dataless="${4:-false}"
- 
--    [[ -d "$parent" ]] || return 1
--    : > "$output_file" || return 1
--
--    # 1s: shallow directory listing should be near-instant on healthy local
--    # paths. Slow/cloud-backed roots are skipped so `mo clean` never appears
--    # stuck while rendering this non-destructive hint.
--    run_with_timeout "$timeout_seconds" "$FIND_BSD" "$parent" -mindepth 1 -maxdepth 1 -type d -print0 > "$output_file" 2> /dev/null
-+    # Keep online-only children out of the list before the caller checks paths
-+    # inside them. Skip a listing that stalls on a cloud or network root.
-+    hint_find_local_dirs "$timeout_seconds" "$skip_dataless" -print0 "$parent" -mindepth 1 -maxdepth 1 > "$output_file"
- }
- 
- # shellcheck disable=SC2329
-@@ -187,10 +186,34 @@ record_project_artifact_hint() {
- }
- 
- # shellcheck disable=SC2329
--is_quick_purge_project_root() {
--    mole_purge_is_project_root "$1"
-+hint_record_project_dir_artifacts() {
-+    local directory="$1" skip_dataless="$2" scan_deadline="$3"
-+    shift 3
-+    local target_name candidate probe_rc
-+
-+    for target_name in "$@"; do
-+        if [[ $SECONDS -ge $scan_deadline ]]; then
-+            PROJECT_ARTIFACT_HINT_TRUNCATED=true
-+            PROJECT_ARTIFACT_HINT_SCAN_SKIPPED=true
-+            break
-+        fi
-+        candidate="$directory/$target_name"
-+        [[ -d "$candidate" ]] || continue
-+        if [[ "$skip_dataless" == true ]]; then
-+            # du would enter a dataless artifact even if its parent is local.
-+            probe_rc=0
-+            hint_is_local_dir "$candidate" 1 true || probe_rc=$?
-+            if mole_rc_timeout "$probe_rc"; then
-+                PROJECT_ARTIFACT_HINT_TRUNCATED=true
-+                PROJECT_ARTIFACT_HINT_SCAN_SKIPPED=true
-+            fi
-+            [[ $probe_rc -eq 0 ]] || continue
-+        fi
-+        record_project_artifact_hint "$candidate"
+@@ -54,6 +54,7 @@ Developer and toolchain caches in `lib/clean/dev.sh` also follow `.claude/rules/
+ - The fixed rows are measured ahead of the report by a pool of at most four workers under one shared deadline (`_large_prefetch_queue_rows`), and the worktree container search runs beside it; a new fixed row belongs in that list too, or it is measured inline after the pool and adds its full time. `large files queue lists every fixed HOME row the report measures` in `tests/clean_user_core.bats` reads every literal `$HOME` row out of the report source and fails when the queue misses one. The Docker Desktop data row stays queued unconditionally, because whether the report skips it depends on the later `docker system df` probe. That probe runs only on a local engine (`.claude/rules/clean-dev.md`), once, and its row reads `Images 931.5MB, 859.1MB reclaimable`: types and reclaimable figures under 1MB are left out.
+ - The snapshot rows (`check_large_file_candidates`, and `clean_local_snapshots` with its `tmutil status` probe) run no `tmutil` while any volume without the `local` flag is mounted (`mole_network_volume_mounted` in `lib/clean/snapshots.sh`); the rows are then absent, with no skip line. Every tmutil verb opens each mounted volume, and the Mac app raised "access files on a network volume" from its scan with an SMB share mounted and no Full Disk Access (2026-11-10); the CLI's call would be charged to the terminal the same way (not reproduced on the CLI). The table is `/sbin/mount` with no arguments, which reads the cached `getmntinfo(MNT_NOWAIT)` table and touches no volume (the same flags the Mac app reads with `getfsstat(MNT_NOWAIT)`); the options are taken after the LAST ` (` so a mount point holding parentheses parses, and `autofs` trigger nodes (`/System/Volumes/Data/home`) do not count. An unreadable or unparsable table also skips (report-only rows, so skipping costs nothing; the Mac app fails open there), and an unparsed line is named in a `debug_log` line. Open item: `clean_time_machine_failed_backups` keeps its `tmutil` calls with a share mounted, since a network Time Machine destination is itself such a mount and skipping would stop that cleanup for every NAS-backup user. Whether those calls raise the network-volume prompt is unsettled; it is settled by running that path on a Mac with an SMB share mounted and the terminal lacking Full Disk Access, once with a network Time Machine destination and once without, and recording whether the prompt appears and which `tmutil` verb raised it. Tests stub `_mole_mount_table`. Locked by `mole_network_volume_mounted reads the local flag of every mount table entry`, `clean_local_snapshots runs no tmutil while a network share is mounted` and `large files lists snapshots with only local volumes and runs no tmutil beside a network share` in `tests/clean_system_maintenance.bats`.
+ - The generic Application Support sweep (`clean_application_support_logs`) skips an app folder whose `SingletonLock` (Chromium and Electron write `<host>-<pid>` there while running) names a live pid or cannot be read, and checks again before each cache folder; it cleared Code Cache and GPUCache under running Docker Desktop, VS Code and T3 Code before. A stale lock left by a crash, and apps with no lock, keep the old behaviour. Locked by `clean_application_support_logs keeps caches of a running Electron app` in `tests/clean_user_core.bats`. `clean_service_worker_cache` asks `app_support_path_held_by_singleton` (in `lib/core/file_ops.sh` beside `app_support_dir_in_use`, since both modules use it), which reads a `SingletonLock` one to three folders down the path (`Vivaldi`, `Google/Chrome`, `Arc/User Data`), before its walk and again before each removal, in a dry run too, so a running Chromium browser keeps its Service Worker store (Mole Mac `ProcessGuard.singletonLockOwner`). Locked by `clean_service_worker_cache holds a Chromium store while a SingletonLock one to three folders up is live` in `tests/clean_system_caches.bats`. Discovering unnamed Chromium roots by shape (Mole Mac `discoveredChromiumUserDataRoots`) is an intentional difference: the CLI sweeps Service Worker stores for its named browsers only, with no review step, and keeps to exact known targets.
++- The generic User app cache sweep never takes `Caches/Google` (Chrome's live cache, cleaned by the Browsers rows after Chrome quits), `Caches/mbx` (a build cache with live target folders and its own eviction) or `Caches/Homebrew`, whose `api/formula_names.txt` and `cask_names.txt` zsh completion rebuilds from; Homebrew downloads go through the Homebrew section's `brew cleanup`, as Mole Mac offers only `Homebrew/downloads` (I-115). Locked by `clean_user_essentials leaves Caches/Google to the Chrome and Android Studio rows`, `clean_user_essentials leaves the mbx build cache root to its own eviction` and `clean_user_essentials leaves the Homebrew cache root to brew cleanup (#2110)` in `tests/clean_user_core.bats`.
+ - The generic User 
+```
+
+**File**: `lib/clean/dev.sh` (modified, +12/-1)
+```diff
+@@ -6398,7 +6398,18 @@ clean_dev_misc() {
+ clean_dev_shell() {
+     # Git owns its transaction lock; config and history backups can be the
+     # only remaining copy of user state. Neither is an automatic cache target.
+-    safe_clean ~/.oh-my-zsh/cache/* "Oh My Zsh cache"
++    # completions/ is on fpath: an open shell autoloads _gh or _docker from it
++    # on the first Tab, so removing it breaks completion there (#2110).
++    local omz_entry
++    local -a omz_targets=()
++    for omz_entry in "$HOME/.oh-my-zsh/cache"/*; do
++        [[ -e "$omz_entry" || -L "$omz_entry" ]] || continue
++        [[ "${omz_entry##*/}" == "completions" ]] && continue
++        omz_targets+=("$omz_entry")
 +    done
++    if [[ ${#omz_targets[@]} -gt 0 ]]; then
++        safe_clean "${omz_targets[@]}" "Oh My Zsh cache"
++    fi
+     safe_clean ~/.cache/pre-commit/* "pre-commit cache"
  }
- 
-+# Shallow, read-only reminder for build artifacts handled by `mo purge`.
- # shellcheck disable=SC2329
- probe_project_artifact_hints() {
-     PROJECT_ARTIFACT_HINT_DETECTED=false
-@@ -222,11 +245,21 @@ probe_project_artifact_hints() {
-     done < <(mole_purge_quick_hint_target_names)
- 
-     local -a scan_roots=()
-+    local configured_roots=true
-     while IFS= read -r path; do
-         [[ -n "$path" ]] && scan_roots+=("$path")
--    done < <(load_quick_purge_hint_paths)
-+    done < <(mole_purge_read_paths_config "$HOME/.config/mole/purge_paths" literal 2> /dev/null)
-+    if [[ ${#scan_roots[@]} -eq 0 ]]; then
-+        scan_roots=("${MOLE_PURGE_DEFAULT_SEARCH_PATHS[@]}")
-+        configured_roots=false
-+    fi
- 
--    [[ ${#scan_roots[@]} -eq 0 ]] && return 0
-+    # As in purge, keep scanning on macOS versions whose find lacks dataless.
-+    local skip_dataless=false
-+    if [[ $SECONDS -lt $scan_deadline ]] &&
-+        run_with_timeout "$list_timeout_seconds" "$FIND_BSD" / -maxdepth 0 -flags +dataless < /dev/null > /dev/null 2>&1; then
-+        skip_dataless=true
-+    fi
- 
-     # Fairness: avoid one very large root exhausting the entire scan budget.
-     if [[ $max_pr
+ # Network tool caches.
 ```
 
-**File**: `lib/clean/purge_shared.sh` (modified, +5/-1)
+**File**: `lib/clean/user.sh` (modified, +4/-1)
 ```diff
-@@ -348,6 +348,7 @@ mole_purge_resolve_path_case() {
- 
- mole_purge_read_paths_config() {
-     local config_file="${1:-$HOME/.config/mole/purge_paths}"
-+    local path_mode="${2:-resolved}"
-     [[ -f "$config_file" ]] || return 0
- 
-     local line
-@@ -356,7 +357,10 @@ mole_purge_read_paths_config() {
-         line="${line%"${line##*[![:space:]]}"}"
-         [[ -z "$line" || "$line" =~ ^# ]] && continue
-         line="${line/#\~/$HOME}"
--        line=$(mole_purge_resolve_path_case "$line")
-+        # The read-only hint checks the dataless flag before entering a root.
-+        if [[ "$path_mode" != literal ]]; then
-+            line=$(mole_purge_resolve_path_case "$line")
-+        fi
-         printf '%s\n' "$line"
-     done < "$config_file"
- }
+@@ -350,8 +350,11 @@ clean_user_essentials() {
+             # shims, scheduler leases and the live target folders checkouts
+             # link into, and evicts to its own size budget; swept whole it
+             # broke builds, so it stays out like Mole Mac's protected root.
++            # Homebrew's api/ holds formula_names.txt and cask_names.txt that
++            # zsh completion rebuilds from (#2110); the Homebrew section runs
++            # `brew cleanup` for downloads, like Mole Mac's downloads-only row.
+             case "${user_cache_target##*/}" in
+-                Google | mbx) continue ;;
++                Google | mbx | Homebrew) continue ;;
+             esac
+             # Another Chromium browser keeps its live cache in a plain folder
+             # here the way Chrome does under Google; leave it while that
 ```
 
-**File**: `tests/clean_hints.bats` (modified, +51/-0)
+**File**: `tests/clean_dev_caches.bats` (modified, +46/-0)
 ```diff
-@@ -48,6 +48,57 @@ EOT1
-     [[ "$output" != *"/bin"* ]]
+@@ -501,6 +501,52 @@ EOF
+     rm -rf "$test_home"
  }
  
-+@test "project artifact hints skip dataless directories at every depth (#2034)" {
-+    local root="$HOME/Documents"
-+    local offline_root="$HOME/OnlineOnly"
-+    mkdir -p "$offline_root/target" "$root/OnlineOnly/target" \
-+        "$root/workspace/OnlineOnly/target" "$root/workspace/Local Project/node_modules" \
-+        "$root/workspace/build" "$root/workspace/dist"
-+    touch "$offline_root/package.json" "$root/workspace/package.json"
-+    ln -s "$root" "$HOME/Documents alias"
-+    printf '%s\n' "$offline_root" "$HOME/Documents alias" > "$HOME/.config/mole/purge_paths"
++@test "clean_dev_shell keeps the Oh My Zsh completions folder (#2110)" {
++    # An open zsh autoloads a registered completion from it on the first Tab.
++    local test_home="$HOME/omz-home"
++    mkdir -p "$test_home/.oh-my-zsh/cache/completions" "$test_home/.oh-my-zsh/cache/plugin-data"
++    touch "$test_home/.oh-my-zsh/cache/completions/_gh" "$test_home/.oh-my-zsh/cache/grep-alias"
 +
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
++    run env HOME="$test_home" PATH="/usr/bin:/bin" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
 +set -euo pipefail
 +source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/hints.sh"
-+FIND_BSD=find
-+run_with_timeout() { shift; "$@"; }
-+cd() {
-+    if [[ "$1" == "$HOME/OnlineOnly" ]]; then
-+        : > "$HOME/entered-placeholder"
-+    fi
-+    builtin cd "$@"
-+}
-+# Use BSD find's actual expression and traversal. Ordinary fixtures cannot
-+# carry the File Provider flag, so give the flag predicate fixture matches.
-+find() {
-+    local -a args=()
-+    while [[ $# -gt 0 ]]; do
-+        if [[ "$1" == "-flags" && "$2" == "+dataless" ]]; then
-+            args+=(\( -name OnlineOnly -o -path "$HOME/Documents/workspace/build" \))
-+            shift 2
-+        else
-+            args+=("$1")
-+            shift
-+        fi
++source "$PROJECT_ROOT/lib/clean/dev.sh"
++DRY_RUN=false
++safe_clean() {
++    local description="${!#}"
++    while [[ $# -gt 1 ]]; do
++        printf 'CLEAN=%s|%s\n' "$description" "$1"
++        shift
 +    done
-+    /usr/bin/find "${args[@]}"
 +}
-+probe_project_artifact_hints
-+printf 'count=%s\n' "$PROJECT_ARTIFACT_HINT_COUNT"
-+printf 'skipped=%s\n' "$PROJECT_ARTIFACT_HINT_SCAN_SKIPPED"
-+printf 'example=%s\n' "${PROJECT_ARTIFACT_HINT_EXAMPLES[@]}"
++clean_dev_shell
 +EOF
 +
 +    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+    [[ "$output" == *"count=2"$'\n'* ]] || { echo "$output"; return 1; }
-+    [ ! -e "$HOME/entered-placeholder" ]
-+    [[ "$output" == *"skipped=false"* ]] || return 1
-+    [[ "$output" == *"example=~/Documents/workspace/dist"* ]] || return 1
-+    [[ "$output" == *"example=~/Documents/workspace/Local Project/node_modules"* ]]
++    [[ "$output" == *"CLEAN=Oh My Zsh cache|$test_home/.oh-my-zsh/cache/plugin-data"* ]] || return 1
++    [[ "$output" == *"CLEAN=Oh My Zsh cache|$test_home/.oh-my-zsh/cache/grep-alias"* ]] || return 1
++    [[ "$output" != *"completions"* ]] || return 1
++    rm -rf "$test_home"
 +}
 +
- @test "show_project_artifact_hint_notice renders sampled summary" {
-     run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOT2'
- set -euo pipefail
++@test "clean_dev_shell runs no Oh My Zsh row when only completions exist (#2110)" {
++    local test_home="$HOME/omz-only-home"
++    mkdir -p "$test_home/.oh-my-zsh/cache/completions"
++
++    run env HOME="$test_home" PATH="/usr/bin:/bin" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/dev.sh"
++DRY_RUN=false
++safe_clean() { printf 'CLEAN=%s\n' "$*"; }
++clean_dev_shell
++EOF
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" != *"Oh My Zsh"* ]] || return 1
++    rm -rf "$test_home"
++}
++
+ @test "clean_dev_cloud stops on GitHub CLI probe or clear cancellation" {
+     local failure_phase failure_rc
+     for failure_phase in help clear; do
 ```
 
-**File**: `tests/purge_config_paths.bats` (modified, +1/-1)
+**File**: `tests/clean_user_core.bats` (modified, +35/-0)
 ```diff
-@@ -224,7 +224,7 @@ EOF
-     run env HOME="$HOME" MOLE_TEST_MODE=1 MOLE_TEST_NO_AUTH=1 /bin/bash --noprofile --norc -c "
-         source '$PROJECT_ROOT/bin/clean.sh'
-         discover_project_cache_roots > /dev/null
--        load_quick_purge_hint_paths > /dev/null
-+        probe_project_artifact_hints > /dev/null
-         echo finished
-     "
+@@ -380,6 +380,41 @@ EOF
+     rm -rf "$test_home"
+ }
  
++@test "clean_user_essentials leaves the Homebrew cache root to brew cleanup (#2110)" {
++    # api/ holds the formula and cask name lists zsh completion rebuilds from.
++    local test_home="$HOME/brew-cache-home"
++    mkdir -p "$test_home/Library/Caches/Homebrew/api" "$test_home/Library/Caches/ordinary-app/junk"
++    touch "$test_home/Library/Caches/Homebrew/api/formula_names.txt"
++
++    run env HOME="$test_home" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/user.sh"
++start_section_spinner() { :; }
++stop_section_spinner() { :; }
++clean_trash() { :; }
++_clean_recent_items() { :; }
++_clean_mail_downloads() { :; }
++safe_clean() {
++    local description="${!#}"
++    while [[ $# -gt 1 ]]; do
++        printf 'CLEAN=%s|%s\n' "$description" "$1"
++        shift
++    done
++}
++safe_clean_guarded() {
++    shift
++    safe_clean "$@"
++}
++clean_user_essentials
++EOF
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" != *"$test_home/Library/Caches/Homebrew"* ]] || return 1
++    [[ "$output" == *"User app cache|$test_home/Library/Caches/ordinary-app"* ]] || return 1
++    rm -rf "$test_home"
++}
++
+ @test "clean_user_essentials leaves the cache root of a running Chromium browser (#2094)" {
+     # Chromium keeps a profile's live HTTP cache at the same path under Caches
+     # as the profile under Application Support, whose SingletonLock names the
+```
+
+---
+
+### Incident Patch 3: `140f6c35` (2026-11-25)
+**Commit Message**: fix(clean): leave items another user owns out of every user-level preview
+
+72e63f39 stopped safe_clean from previewing an item this user cannot
+unlink, but twenty cleaners record their own dry-run rows and remove
+through safe_remove (clean_trash, the Application Support logs, service
+worker caches, group container caches, external volume metadata, Xcode
+DerivedData and device support, cached firmware, safe_find_delete and
+others). Their preview still listed such an item while the real run
+logged it SKIPPED (owned by another user).
+
+They now preview through mole_record_user_sink_dry_run_target, which asks
+the same _mole_user_sink_refuses_on_ownership check safe_remove asks
+before recording. Sudo sinks (safe_sudo_find_delete, orphaned system
+services, CoreSimulator caches, Time Machine) and the cleaners whose run
+does not go through safe_remove (Chromium old versions, which pick sudo
+at run time; container stubs; simctl's unavailable devices) still call
+record_dry_run_cleanup_target directly, so root-owned rows stay listed.
+Over-listing only: nothing was deleted that should not have been.
+
+Verified: new Bats test "cleaners that record their own preview leave out
+an item another user 
+
+**File**: `lib/clean/app_caches.sh` (modified, +2/-2)
+```diff
+@@ -298,7 +298,7 @@ clean_xcode_derived_data() {
+                 break
+             fi
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$dir" "$dir_size_kb" 1 "$size_known" || continue
++                mole_record_user_sink_dry_run_target "$dir" "$dir_size_kb" 1 "$size_known" || continue
+             fi
+             size_kb=$((size_kb + dir_size_kb))
+             dry_run_count=$((dry_run_count + 1))
+@@ -1922,7 +1922,7 @@ clean_autodesk_fusion_old_bundles() {
+                 break
+             fi
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$dir" "$size_kb" 1 true || continue
++                mole_record_user_sink_dry_run_target "$dir" "$size_kb" 1 true || continue
+             fi
+             total_size=$((total_size + size_kb))
+             cleaned_count=$((cleaned_count + 1))
+```
+
+**File**: `lib/clean/apps.sh` (modified, +1/-1)
+```diff
+@@ -67,7 +67,7 @@ clean_ds_store_tree() {
+             fi
+             local preview_size_kb=$(((size + 1023) / 1024))
+             local preview_rc=0
+-            record_dry_run_cleanup_target "$ds_file" "$preview_size_kb" 1 true || preview_rc=$?
++            mole_record_user_sink_dry_run_target "$ds_file" "$preview_size_kb" 1 true || preview_rc=$?
+             if mole_rc_timeout_or_signal "$preview_rc"; then
+                 delete_rc=$preview_rc
+                 break
+```
+
+**File**: `lib/clean/caches.sh` (modified, +2/-2)
+```diff
+@@ -196,7 +196,7 @@ clean_service_worker_cache() {
+             fi
+             if [[ "$DRY_RUN" == "true" ]]; then
+                 if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                    record_dry_run_cleanup_target "$cache_dir" "$size" 1 true || continue
++                    mole_record_user_sink_dry_run_target "$cache_dir" "$size" 1 true || continue
+                 fi
+             else
+                 local remove_rc=0
+@@ -1044,7 +1044,7 @@ clean_python_bytecode_cache_group() {
+         [[ $guard_rc -eq 0 ]] || continue
+         if [[ "$DRY_RUN" == "true" ]]; then
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$cache_dir" "$size_kb" 1 true || continue
++                mole_record_user_sink_dry_run_target "$cache_dir" "$size_kb" 1 true || continue
+             elif declare -f register_dry_run_cleanup_target > /dev/null 2>&1; then
+                 register_dry_run_cleanup_target "$cache_dir" || continue
+             fi
+```
+
+**File**: `lib/clean/dev.sh` (modified, +2/-2)
+```diff
+@@ -2554,7 +2554,7 @@ clean_xcode_device_support() {
+                         break
+                     fi
+                     if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                        record_dry_run_cleanup_target "$stale_entry" "$entry_size_kb" 1 "$size_known" || continue
++                        mole_record_user_sink_dry_run_target "$stale_entry" "$entry_size_kb" 1 "$size_known" || continue
+                     fi
+                     preview_stale_dirs+=("$stale_entry")
+                     stale_size_kb=$((stale_size_kb + entry_size_kb))
+@@ -5496,7 +5496,7 @@ clean_codex_crashpad_pending() {
+         remove_rc=1
+         if [[ "$dry_run_mode" == "true" ]]; then
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$file_path" "$file_size_kb" 1 true || continue
++                mole_record_user_sink_dry_run_target "$file_path" "$file_size_kb" 1 true || continue
+             fi
+             MOLE_DRY_RUN=1 safe_remove "$file_path" true "$file_size_kb" && remove_rc=0
+         elif safe_remove "$file_path" true "$file_size_kb"; then
+```
+
+**File**: `lib/clean/user.sh` (modified, +12/-12)
+```diff
+@@ -110,7 +110,7 @@ clean_trash() {
+                 [[ $validate_rc -eq 0 ]] || continue
+                 if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+                     local _MOLE_DRY_RUN_TARGET_PREVALIDATED=true
+-                    record_dry_run_cleanup_target "$trash_item" "$trash_item_kb" 1 "$trash_size_known" || continue
++                    mole_record_user_sink_dry_run_target "$trash_item" "$trash_item_kb" 1 "$trash_size_known" || continue
+                 fi
+                 preview_count=$((preview_count + 1))
+             done < <(command find "$HOME/.Trash" -mindepth 1 -maxdepth 1 -print0 2> /dev/null || true)
+@@ -628,7 +628,7 @@ _clean_mail_downloads() {
+                     local remove_rc=1
+                     if [[ "$dry_run_mode" == "true" ]]; then
+                         if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                            record_dry_run_cleanup_target "$file_path" "$file_size_kb" 1 true || continue
++                            mole_record_user_sink_dry_run_target "$file_path" "$file_size_kb" 1 true || continue
+                         fi
+                         MOLE_DRY_RUN=1 safe_remove "$file_path" true "$file_size_kb" && remove_rc=0
+                     elif _MOLE_SAFE_REMOVE_FINAL_GUARD=_mail_attachment_delete_guard safe_remove \
+@@ -1081,7 +1081,7 @@ clean_edge_updater_old_versions() {
+         fi
+         if [[ "$DRY_RUN" == "true" ]]; then
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$dir" "$size_kb" 1 "$size_known" || continue
++                mole_record_user_sink_dry_run_target "$dir" "$size_kb" 1 "$size_known" || continue
+             fi
+             total_size=$((total_size + size_kb))
+             cleaned_count=$((cleaned_count + 1))
+@@ -1509,7 +1509,7 @@ clean_handoff_pasteboard_cache() {
+         mole_rc_timeout "$size_rc" && size_known=false
+         if [[ "$DRY_RUN" == "true" ]]; then
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$item" "$item_kb" 1 "$size_known" || continue
++                mole_record_user_sink_dry_run_target "$item" "$item_kb" 1 "$size_known" || continue
+             fi
+             cleaned_count=$((cleaned_count + 1))
+             total_kb=$((total_kb + item_kb))
+@@ -1804,7 +1804,7 @@ clean_group_container_caches() {
+                         # SQLite guards have all run after sizing. Avoid only
+                         # repeating that complete eligibility pass.
+                         local _MOLE_DRY_RUN_TARGET_PREVALIDATED=true
+-                        record_dry_run_cleanup_target \
++                        mole_record_user_sink_dry_run_target \
+                             "$item" "$item_size" 1 "$candidate_size_known" || action_rc=$?
+                     fi
+                 else
+@@ -2112,7 +2112,7 @@ clean_external_volume_target() {
+                 continue
+             fi
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$target_path" "$size_kb" 1 true || continue
++                mole_record_user_sink_dry_run_target "$target_path" "$size_kb" 1 true || continue
+             fi
+             found_any=true
+             cleaned_count=$((cleaned_count + 1))
+@@ -2166,7 +2166,7 @@ clean_external_volume_target() {
+                 continue
+             fi
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$metadata_file" "$size_kb" 1 "$metadata_size_known" || continue
++                mole_record_user_sink_dry_run_target "$metadata_file" "$size_kb" 1 "$metadata_size_known" || continue
+             fi
+             found_any=true
+             cleaned_count=$((cleaned_count + 1))
+@@ -2883,7 +2883,7 @@ clean_application_support_logs() {
+                     start_section_spinner "Scanning Application Support... $app_count/$total_apps [$app_label, bulk clean]"
+                     if [[ "$DRY_RUN" == "true" ]]; then
+                         if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                            record_dry_run_cleanup_target "$candidate" 0 1 false || continue
++                            mole_record_user_sink_dry_run_target "$candidate" 0 1 false || continue
+                         fi
+                     else
+                         # Remove entire candidate directory in one go
+@@ -2920,7 +2920,7 @@ clean_application_support_logs() {
+                         fi
+                     fi
+                     if [[ "$DRY_RUN" == "true" ]] && declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                        record_dry_run_cleanup_target "$item" "$item_size_kb" 1 "$item_size_known" || continue
++                        mole_record_user_sink_dry_run_target "$item" "$item_size_kb" 1 "$item_size_known" || continue
+
+```
+
+**File**: `lib/core/file_ops.sh` (modified, +13/-1)
+```diff
+@@ -1542,6 +1542,18 @@ _mole_user_sink_refuses_on_ownership() {
+     return 1
+ }
+ 
++# The preview half of a user-level cleaner that records its own rows and then
++# removes through safe_remove: an item safe_remove would refuse on ownership is
++# not listed, so the preview matches the run. Sudo sinks keep calling
++# record_dry_run_cleanup_target directly, which still lists root-owned rows.
++mole_record_user_sink_dry_run_target() {
++    if _mole_user_sink_refuses_on_ownership "$1"; then
++        debug_log "Preview left out an item another user owns: $1"
++        return 1
++    fi
++    record_dry_run_cleanup_target "$@"
++}
++
+ safe_remove() {
+     local path="$1"
+     local silent="${2:-false}"
+@@ -3635,7 +3647,7 @@ safe_find_delete() {
+             [[ $match_size_rc -eq 0 ]] || match_size_kb=0
+             [[ "$match_size_kb" =~ ^[0-9]+$ ]] || match_size_kb=0
+             local preview_rc=0
+-            record_dry_run_cleanup_target "$match" "$match_size_kb" 1 true || preview_rc=$?
++            mole_record_user_sink_dry_run_target "$match" "$match_size_kb" 1 true || preview_rc=$?
+             if [[ $preview_rc -ge 128 ]]; then
+                 delete_rc=$preview_rc
+                 break
+```
+
+**File**: `tests/clean_core.bats` (modified, +37/-0)
+```diff
+@@ -287,6 +287,43 @@ EOF
+     [[ "$output" == *"SUDO_SINK_RECORDED=$logs/install.log"* ]] || { echo "$output"; return 1; }
+ }
+ 
++@test "cleaners that record their own preview leave out an item another user owns" {
++    # safe_find_delete stands in for the twenty cleaners that preview through
++    # mole_record_user_sink_dry_run_target and remove through safe_remove: the
++    # preview lists nothing the run would skip on ownership.
++    local logs="$HOME/Library/Logs/OtherUser"
++    mkdir -p "$logs"
++    printf 'x' > "$logs/old.log"
++    chmod 555 "$logs"
++    rm -f "$HOME/Library/Logs/mole/operations.log"
++
++    local mode
++    for mode in dry real; do
++        run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_TEST_MODE=1 MODE="$mode" LOGS="$logs" \
++            /bin/bash --noprofile --norc << 'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/bin/clean.sh"
++if [[ "$MODE" == dry ]]; then DRY_RUN=true; export MOLE_DRY_RUN=1; else DRY_RUN=false; export MOLE_DRY_RUN=0; fi
++MOLE_CURRENT_COMMAND=clean
++_mole_path_owned_by_current_user() { [[ "$1" != "$LOGS/"* && -O "$1" ]]; }
++register_dry_run_cleanup_target() { :; }
++append_dry_run_cleanup_target() { echo "RECORDED=$1"; }
++safe_find_delete "$LOGS" "*.log" 0 f || true
++mole_record_user_sink_dry_run_target "$LOGS/old.log" 1 1 true || echo "WRAPPER_REFUSED"
++echo "MODE=$MODE DONE"
++EOF
++        [ "$status" -eq 0 ] || { chmod 755 "$logs"; echo "$output"; return 1; }
++        [[ "$output" != *"RECORDED="* ]] || { chmod 755 "$logs"; echo "$output"; return 1; }
++        [[ "$output" == *"WRAPPER_REFUSED"* && "$output" == *"MODE=$mode DONE"* ]] || { chmod 755 "$logs"; echo "$output"; return 1; }
++    done
++    chmod 755 "$logs"
++
++    [[ -f "$logs/old.log" ]] || return 1
++    ! grep -q 'FAILED' "$HOME/Library/Logs/mole/operations.log" 2> /dev/null || { cat "$HOME/Library/Logs/mole/operations.log"; return 1; }
++    rm -rf "$logs"
++}
++
+ @test "safe_clean leaves out of the preview many files another user owns in one folder" {
+     # More than 20 mostly-file paths take the batched sizing branch of
+     # _safe_clean_impl, whose preview asks the ownership refusal on its own.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2038** (2026-11-19): test(purge): send TERM after activity probes start (@r266-tech)
-- **PR #2037** (2026-11-19): docs(readme): add Brazilian Portuguese translation (@goul4rt)
-- **PR #2036** (2026-11-19): fix(analyze): step up the logged size when it rounds to 1000KB or 1000.0MB (@Dev-next-gen)
-- **PR #2035** (2026-11-19): fix(clean): skip dataless project artifact directories (@r266-tech)
-- **PR #2033** (2026-11-19): perf(core): attach tree walk snapshots without Add-Member (@b84330808)
-- **PR #2032** (2026-11-19): feat(clean): clean Postman partition HTTP and code caches (@valentynapolienova)
+- **PR #2123** (2026-11-27): perf(clean): batch size measurement for cache rules (@luojiyin1987)
+- **PR #2122** (2026-11-27): fix(analyze): clear multi-selection on Escape (@oranshea)
+- **PR #2120** (closed): fix(clean): show elapsed time for Bun cache measurement (@luojiyin1987)
+- **PR #2118** (2026-11-27): fix(clean): keep the SonarScanner truststore and keystore in ~/.sonar (@viniciusdsandrade)
+- **PR #2116** (2026-11-27): fix(clean): count owner cache reductions above 2 GiB on Windows (@r266-tech)
+- **PR #2114** (2026-11-27): fix(status): refresh Mac Studio power with CPU and memory (@PeterNiu7403)
 
 ---
 
@@ -2500,23 +2585,38 @@ Fixes #2034.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(incidents): record I-79 to I-84 for the fixes since V1.72.0
+## X. protection): route Bitdefender VPN to its uninstaller and guard extension and AI
 
 **RULE**:
-When implementing operations in `docs/incidents.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/core/app_protection.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ae277c0`: docs(incidents): record I-79 to I-84 for the fixes since V1.72.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b5fd0ed4`: protection): route Bitdefender VPN to its uninstaller and guard extension and AI data. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/incidents.md`.
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/core/app_protection.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-| I-79 | 2026-11-17 | `mo uninstall` on Alfred 4 left `com.runningwithcrayons.Alfred-Preferences.plist` behind: embedded helper bundle ids were read only under `Contents/Library/LoginItems/`, and Alfred ships its settings app under `Contents/Preferences/` (#2027, #2028) | unknown | c47ea46e | write-time | `embedded bundle ids include a helper app under Contents/Preferences (#2027)` |
-| I-80 | 2026-11-14 | A per-item size probe that failed without a signal, in old browser and updater cleanup, device firmware, Tart caches and the Handoff pasteboard, returned its status and cancelled the whole `mo clean` run instead of only leaving that item unsized (#1997) | unknown | fa6bbea9 | review | `old browser and updater cleanup continues on non-signal size failure and stops on signal`, `clean_tart_caches tolerates non-signal size failures before and after prune` |
-| I-81 | 2026-11-14 | `mo optimize` stopped every later task when one task's sizing, scan or plist-read probe timed out, because cache refresh, saved state, launch agent and shared file list handlers passed status 124 up to the run (#2003) | unknown | 97f66d63 | review | `cache refresh sizing timeouts finish the run while removal t
+            # Chromium extension storage: settings, state, declarative rules and
+            # the MV3 service worker scripts. Mole Mac once offered Service
+            # Worker/ScriptCache and broke MV3 extensions. No rule lists these;
+            # this keeps a future glob from reaching them (Mole CLI (Windows)
+            # e4e29c99). Service Worker/CacheStorage stays cleanable.
+            */"Local Extension Settings" | */"Local Extension Settings/"* | \
+                */"Sync Extension Settings" | */"Sync Extension Settings/"* | \
+                */"Managed Extension Settings" | */"Managed Extension Settings/"* | \
+                */"Extension State" | */"Extension State/"* | \
+                */"Extension Rules" | */"Extension Rules/"* | \
+                */"Extension Scripts" | */"Extension Scripts/"* | \
+                */"Service Worker/ScriptCache" | */"Service Worker/ScriptCache/"* | \
+                */"Service Worker/Database" | */"Service Worker/Database/"*)
+                return 0
+                ;;
+        # The other AI tool stores Mole Mac's PathGuard refuses: plans, tasks,
+        # plugins, skills, memories, attachments, generated images and session
+        # 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2526,7 +2626,7 @@ Subsystems managing Shell data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ae277c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b5fd0ed4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

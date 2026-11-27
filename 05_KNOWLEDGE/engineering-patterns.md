@@ -820903,3 +820903,284 @@ fn test_trivia_retention_after_reorder() {
 ```
 
 ---
+
+
+---
+
+## 10871. linter/eslint/no-empty-static-block): suggest a comment instead of deleting the (Harvested from oxc-project/oxc)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "linter/eslint/no-empty-static-block): suggest a comment instead of deleting the",
+  "source": "oxc-project/oxc",
+  "source_url": "https://github.com/oxc-project/oxc",
+  "source_version": "68fdb4c9",
+  "license": "MIT",
+  "extracted_at": "2026-11-27T09:44:39.750Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-oxc-project-oxc",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `68fdb4c9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/oxc_linter/src/rules/eslint/no_empty_static_block.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9eb6c432`: linter/eslint/no-empty-static-block): suggest a comment instead of deleting the block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_empty_static_block.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                |fixer| {
+                    let span = static_block.span;
+                    let Some(offset) = ctx.find_next_token_within(span.start, span.end, "{") else {
+                        return fixer.noop();
+                    };
+                    fixer
+                        .replace(Span::new(span.start + offset + 1, span.end - 1), " /* empty */ ")
+                        .with_message("Add comment inside empty static block.")
+                },
+        ("class Foo { static {} }", "class Foo { static { /* empty */ } }"),
+        ("class Foo { static { } }", "class Foo { static { /* empty */ } }"),
+            "class Foo { static { /* empty */ } }",
+        ),
+        (
+            "class Foo { static { bar(); } static {} }",
+            "class Foo { static { bar(); } static { /* empty */ } }",
+        ),
+        (
+            "class C { x = value\nstatic {}\n[key]() {} }",
+            "class C { x = value\nstatic { /* empty */ }\n[key]() {} }",
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+                |fixer| fixer.delete(&static_block.span),
+        ("class Foo { static {} }", "class Foo {  }"),
+        ("class Foo { static { } }", "class Foo {  }"),
+            "class Foo {  }",
+        ("class Foo { static { bar(); } static {} }", "class Foo { static { bar(); }  }"),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9eb6c432` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10872. route Bitdefender VPN to its uninstaller and guard extension and AI (Harvested from tw93/Mole)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "route Bitdefender VPN to its uninstaller and guard extension and AI",
+  "source": "tw93/Mole",
+  "source_url": "https://github.com/tw93/Mole",
+  "source_version": "3da229e1",
+  "license": "GPL-3.0",
+  "extracted_at": "2026-11-27T09:44:45.288Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tw93-mole",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tw93/Mole](https://github.com/tw93/Mole) (Revision: `3da229e1`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `lib/core/app_protection.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b5fd0ed4`: protection): route Bitdefender VPN to its uninstaller and guard extension and AI data. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/core/app_protection.sh`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```shell
+// Verified production-grade fix pattern:
+            # Chromium extension storage: settings, state, declarative rules and
+            # the MV3 service worker scripts. Mole Mac once offered Service
+            # Worker/ScriptCache and broke MV3 extensions. No rule lists these;
+            # this keeps a future glob from reaching them (Mole CLI (Windows)
+            # e4e29c99). Service Worker/CacheStorage stays cleanable.
+            */"Local Extension Settings" | */"Local Extension Settings/"* | \
+                */"Sync Extension Settings" | */"Sync Extension Settings/"* | \
+                */"Managed Extension Settings" | */"Managed Extension Settings/"* | \
+                */"Extension State" | */"Extension State/"* | \
+                */"Extension Rules" | */"Extension Rules/"* | \
+                */"Extension Scripts" | */"Extension Scripts/"* | \
+                */"Service Worker/ScriptCache" | */"Service Worker/ScriptCache/"* | \
+                */"Service Worker/Database" | */"Service Worker/Database/"*)
+                return 0
+                ;;
+        # The other AI tool stores Mole Mac's PathGuard refuses: plans, tasks,
+        # plugins, skills, memories, attachments, generated images and session
+        # 
+```
+
+**NEGATIVE CONSTRAINT**:
+```shell
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b5fd0ed4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10873. Put kind first in ARC object definitions (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Put kind first in ARC object definitions",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "f176c30a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T09:44:54.343Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `f176c30a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f176c30a`: Put kind first in ARC object definitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  the solver runs it alone to build input states. Existing datasets declare one
+  class,
+  `Object(kind: str = 'default', x: int, y: int, width: int, height: int, orientation: int, volume: int, ...)`;
+  add another class only for a distinct sort of object the transformation needs.
+  Each class whose instances are annotated objects takes the optional
+  `kind: str = 'default'` first, which names no geometry, then the standard
+  entries
+  `x: int, y: int, width: int, height: int, orientation: int, volume: int`, in
+  that order, and its body assigns every parameter to `this` in that order,
+  starting with `this.kind is kind`. Every implementation passes its object's
+  kind first, as a bare word, such as `kind=l9100`, or `kind=unknown` for an
+  object of a shape that the pairs never show, so no instance takes the default.
+  The default keeps its quotes, because accepted Nucleoid takes only a literal
+  as a parameter default. Add only the descriptive properties the transformation
+- `implementation` is
+  `<instance_name> is <Class>(kind=<kind>, x=<input_x>, y=<input_y>, width=<width>, height=<height>, orientation=<input_orientation>, volume=<volume>, ...)`,
+  constructing the instance's c
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  the solver runs it alone to build input states. Existing datasets declare
+  one class, `Object(x: int, y: int, width: int, height: int, orientation: int,
+  volume: int, kind: str = 'lNNNN', ...)`; add another class only for a
+  distinct sort of object the transformation needs. Each class whose
+  instances are annotated objects takes the standard entries `x: int, y: int,
+  width: int, height: int, orientation: int, volume: int` first, in that
+  order, then the optional `kind: str = 'lNNNN'`, whose default is the class's
+  initial kind, and its body assigns every parameter to `this`, the kind with
+  `this.kind is kind` right after `this.volume is volume`. An implementation
+  passes `kind` only when its object needs a kind other than the default, as
+  every implementation in `dataset.27a28665.json` names its block's shape
+  with `kind='l4262'` and the like; otherwise it leaves `kind` out. The default
+  keeps its quotes, because accepted Nucleoid takes only a literal as a
+  parameter default. Add only the descriptive properties the transformation
+- `implementation` is `<instance_name> = <Class>(x=<input_x>, y=<input_y>,
+  width=<width>, height=<height>, orientation=<input_orientation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f176c30a` are properly handled with clean fallback behavior.

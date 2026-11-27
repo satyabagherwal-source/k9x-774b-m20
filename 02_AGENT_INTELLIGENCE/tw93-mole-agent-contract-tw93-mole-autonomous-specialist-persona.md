@@ -4,17 +4,17 @@
 {
   "source_repository": "tw93/Mole",
   "source_url": "https://github.com/tw93/Mole",
-  "source_version": "ee710b48",
+  "source_version": "3da229e1",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-25T01:09:19.650Z",
+  "timestamp": "2026-11-27T09:44:46.174Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tw93-mole",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tw93/Mole](https://github.com/tw93/Mole) (Revision: `ee710b48`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-25T01:09:19.650Z`  
+> **Provenance**: Harvested from [tw93/Mole](https://github.com/tw93/Mole) (Revision: `3da229e1`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-27T09:44:46.174Z`  
 > **Learning ID**: `learn-github-tw93-mole`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T01:09:18.121Z  
+> **Harvest Timestamp**: 2026-11-27T09:44:44.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: 🐹 Open-source Mac and PC cleaner. Keep your machine clean, light, and running like new. Fast CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 76088 stars
+- **Stars / Engagement**: 76385 stars
 
 ---
 
@@ -1929,11 +1929,14 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2081** (2026-11-23): **[Mac App ] 建议增加系统代理设置**
-  *Symptoms*: ### Mole Mac app version  1.20.1 (376)  ### macOS version  15.5.0 (Sequoia)  ### Mac model  MacBookPro18,4 (Apple M1 Max)  ### Affected area  Other  ### What happened?  无法更新一些通过Homebrew安装的插件  ### Steps to reproduce  无法更新  ### Expected behavior  建议增加系统代理入口，因为某些原因无法使用VPN软件，目前是通过Docker跑Mihomo裸核的方式，希望能给Mole单独设置代理从而无痛更新外部软件和一些需要依赖外部网络的需求  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+- **Issue #2121** (2026-11-27): **[BUG] mole update 失败**
+  *Symptoms*: <img width="440" height="440" alt="20261127135559_rec_" src="https://github.com/user-attachments/assets/91326984-d143-419e-b2a8-3063ec19fb66" />
+  **Post-Mortem & Fix Analysis**:
+  > <img width="435" height="443" alt="image" src="https://github.com/user-attachments/assets/72702065-d7fa-4271-960d-ac23f334042d" />  开了 cli 代理之后，成功，但还是存在多次 cmd c 没办法终止 update 进程的问题
+  > @yuluo-yx 谢谢反馈，按 Ctrl+C 停不下来是 Mole 这边的问题，Homebrew 安装时 brew 跑在单独的进程组里，Ctrl+C 传不到它，要等更新和升级两步各自的超时走完，现在已经在 main 修好了，按下去会马上退出。  第一次失败是 brew 自己联网出错，开了代理就正常，这部分 Mole 改不了。  想现在就用上修复，可以先装 main 的版本，`brew list --versions mole` 会显示成 HEAD，等正式版发布后再用 `brew uninstall mole && brew install mole` 换回来：  ``` brew uninstall mole && brew install --HEAD mole ```  先关掉了，还有问题随时重开。 
 
-- **Issue #2039** (2026-11-20): **[BUG] `mo clean --dry-run` silently omits Xcode/Simulator cleanup that the real run then performs (~48GB)**
-  *Symptoms*: ## Before submitting  - [x] This report explains why I cannot reproduce on the same data: I ran it from a source checkout of current `main` (1.73.0, commit `7966afdd`), and the real run already removed the affected items, so the same preview can't be repeated on this Mac.  ## Describe the bug  `mo clean --dry-run` showed no Xcode DerivedData, iOS DeviceSupport, Simulator device data, Interface Builder cache or Xcode build products rows. `clean-list.txt` from that preview had zero paths under `Xcode/DerivedData`, `iOS DeviceSupport` or `IB Support`. DerivedData appeared only as a `⊙` review row under Large files, which reads as "not removed".  I approved the cleanup from that preview. About two minutes later, `mo clean` removed all of the following, none of which the preview listed:  | Row in real run | Size | |---|---| | Xcode DerivedData · 45 projects | 29.71GB | | iOS DeviceSupport · removed 2 old versions | 13.83GB | | Simulator device data · 30 items | 4.25GB | | Xcode Interface Builder cache | 394.9MB | | Clang module cache | 61.1MB | | Xcode build products · 51 items | 893KB |  Everything removed is rebuildable, and nothing ran while Xcode was active, so this is not an unsafe-deletion report. The problem is that the preview showed less than the real run then removed, with no notice, so the preview could not be trusted as the full list of what would be deleted.  **Likely cause (from reading the source; not confirmed with `--debug`):** each of these steps is gated on `xco
+- **Issue #2111** (2026-11-26): **[Mac App Bug] Removes iStat Menus 6 files even though the app is running**
+  *Symptoms*: ### Mole Mac app version  1.21.0  ### macOS version  26.7.3  ### Mac model  M2  ### Affected area  Clean  ### What happened?  Mole removes plist files needed by iStat Menus 6, even though iStat Menus is installed and running, breaking iStat and having to reinstall it and import its settings again. It thinks some of the iStat agents are orphaned. `/Library/LaunchAgents/com.bjango.istatmenus.*`  ### Steps to reproduce  Run Clean in the Mole UI, it will clean iStat Menus 6 plist files breaking the app. It thinks some of the iStat agents are orphaned.  ### Expected behavior  Don't break iStat Menus 6  ### Screenshots or safe logs  _No response_  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1950,600 +1953,617 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fae04a5a` (2026-11-23)
-**Commit Message**: fix(clean): show and count the aged log sweeps in preview and real runs
+### Incident Patch 1: `b5fd0ed4` (2026-11-27)
+**Commit Message**: fix(protection): route Bitdefender VPN to its uninstaller and guard extension and AI data
 
-Why: safe_find_delete removed matches quietly. The preview still added
-them to Potential space, but showed no row, and a real run removed them
-without counting them, so the preview promised bytes the real run never
-reported and nothing on screen named what went. On the maintainer's Mac
-this was nine Cursor Agent worker logs, 61 MB, after #2077.
+Synced from Mole Mac and Mole CLI (Windows):
+- com.bitdefender.vpn joins the official-uninstaller refusal; Endpoint
+  Security self-protection refuses any other process deleting its files
+  (Mole Mac 26e409f4b). The App Store com.bitdefender.iosvpn stays ordinary.
+- Cleanup refuses Chromium extension stores (extension settings, state,
+  rules, scripts, Service Worker ScriptCache and Database), as the Windows
+  CLI does since e4e29c99; Mole Mac once broke MV3 extensions there.
+  Uninstall mode is unchanged and Service Worker CacheStorage stays.
+- Cleanup refuses the AI tool data folders Mole Mac's PathGuard lists
+  under ~/.claude, ~/.codex, ~/.grok and ~/.gemini.
 
-safe_find_delete takes an optional row label. With one, the completed
-matches go through safe_clean, which shows the row, counts it, records
-the preview and applies the protection and whitelist checks. The three
-clean callers pass "Cursor Agent logs", "Cursor Agent worker logs" and
-"Crash reporter data". Unlabeled calls behave as before.
+No current row reaches the guarded paths, so nothing users see changes
+today; this keeps a future glob from reaching them.
 
-Verified: the new Bats case fails on the old file_ops.sh (0 files, 0
-rows in both modes) and passes now; check.sh --no-format and the full
-suite pass. Mole CLI (Linux) has no safe_find_delete caller.
+Verified: the new cases fail 20 times on the previous code and pass now;
+full suite and check.sh --no-format pass. An independent review found no
+P0 or P1 issues.
 
-Rollback: git revert this commit; the sweeps go back to removing quietly.
-
-**File**: `.claude/rules/core.md` (modified, +1/-0)
+**File**: `lib/core/app_protection.sh` (modified, +30/-0)
 ```diff
-@@ -19,6 +19,7 @@ paths:
+@@ -419,6 +419,21 @@ should_protect_path() {
+                 "$HOME/.bash_history.bak"* | "$HOME/.zsh_history.bak"*)
+                 return 0
+                 ;;
++            # Chromium extension storage: settings, state, declarative rules and
++            # the MV3 service worker scripts. Mole Mac once offered Service
++            # Worker/ScriptCache and broke MV3 extensions. No rule lists these;
++            # this keeps a future glob from reaching them (Mole CLI (Windows)
++            # e4e29c99). Service Worker/CacheStorage stays cleanable.
++            */"Local Extension Settings" | */"Local Extension Settings/"* | \
++                */"Sync Extension Settings" | */"Sync Extension Settings/"* | \
++                */"Managed Extension Settings" | */"Managed Extension Settings/"* | \
++                */"Extension State" | */"Extension State/"* | \
++                */"Extension Rules" | */"Extension Rules/"* | \
++                */"Extension Scripts" | */"Extension Scripts/"* | \
++                */"Service Worker/ScriptCache" | */"Service Worker/ScriptCache/"* | \
++                */"Service Worker/Database" | */"Service Worker/Database/"*)
++                return 0
++                ;;
+         esac
+     fi
  
- - `lib/core/file_ops.sh` owns the deletion funnel, Trash/permanent routing, operation-log outcomes, size accounting, and last-mile path validation. `lib/core/base.sh` owns shared shell primitives and source-order-sensitive section helpers. Keep policy in the existing protection helpers rather than adding a second delete path. Run `MOLE_TEST_NO_AUTH=1 bats tests/file_ops_mole_delete.bats tests/file_ops_size.bats tests/file_ops_safe_remove_symlink.bats tests/user_file_ops.bats tests/core_safe_functions.bats tests/history.bats`.
- - `safe_remove` is a plain `rm` as the invoking user, so `_mole_user_sink_refuses_on_ownership` refuses an item another user owns that this user cannot unlink (folder not writable or sticky, or a folder item not writable), logging `SKIPPED ... (owned by another user)` instead of a `FAILED` row on every clean, and `_safe_clean_impl` asks the same function before recording its preview, so the preview never lists it (Mole Mac I-314, `CacheScanner.userSinkRefusesOnOwnership`). Links and runs as root are never refused here. Never put this check in `record_dry_run_cleanup_target`: `safe_sudo_remove`, `safe_sudo_find_delete` and other sudo sinks preview through it and remove root-owned items themselves, so their rows would vanish from the dry run. The preview half covers `safe_clean` only: about twenty user-level cleaners that record their own preview and remove through `safe_remove` (`clean_trash`, `clean_application_support_logs`, `safe_find_delete` and others) still list such an item and then log it `SKIPPED`, which over-lists but never deletes more than shown; moving them onto one user-sink recorder is open in `SYNC.md`. Locked by `safe_clean neither lists nor removes an item another user owns that this user cannot unlink` (red with either half removed), `safe_clean leaves out of the preview many files another user owns in one folder` (the batched-sizing branch) and `record_dry_run_cleanup_target still records a root-owned item for a sudo sink` (direct and through `safe_sudo_remove`) in `tests/clean_core.bats`.
-+- A clean sweep through `safe_find_delete` passes its fifth argument, a row label: with one, the completed matches go through `safe_clean`, so the preview and a real run both show the row and count it in the total. Without a label no row is shown, the preview still adds the matches to Potential space and a real run removes them without counting them, so the preview promised bytes the real run never reported (the Cursor Agent worker logs, 61 MB on the maintainer's Mac, 2026-11-23). Locked by `a labeled safe_find_delete shows one row and counts it in the preview and a real run` in `tests/core_safe_functions.bats`.
- - Both find/delete helpers preserve signal statuses in the clean cancellation marker, including scan, sizing, preview and privileged preflight failures; a prior cancellation stops them before further work. Read-only scan or sizing timeouts stay local and never set that marker. A signal from `validate_path_for_deletion` must stop the privileged scan loop and discard its accumulated removal batch, not become an ordinary refusal via `if ! ...; then continue`; a validator timeout still skips only its target. Locked by the `preserves scan signals`, `preserves dry-run sizing signals`, `read-only timeouts remain local`, `preserves preview validation signals`, `stops before work after sticky cancellation`, `stops accumulated batches on validation signals` and `validation timeout skips only its target` cases in `tests/core_safe_functions.bats`.
- - `validate_path_for_deletion` refuses every path when `should_protect_path` is not defined (a caller that sourced `file_ops.sh` without `app_protection.sh`), logging `protection rules not loaded`; it never skips the protection check. Every product entrypoint loads both through `common.sh`. Locked by `validate_path_for_deletion refuses every path when protection rules are not loaded` and `safe_find_delete keeps files when app protection is not loaded` in `tests/core_safe_functions.bats`.
- - **A stored timestamp from the future is expired, not fresh.** A freshness or throttle window (`now - stamp < ttl`, `find -mmin -N`) accepts a negative age, so after a clock correction a cache or a daily stamp stays valid until the clock catches up and the work it gates is skipped. Cache and throttle checks treat a negative age as expired; an age check that decides whether to delete or list an old item keeps a future-dated one, the safe direction. Locked by `brew_cleanup_ran_recently treats a stamp from the future as expired` in `tests/clean_system_maintenance.bats`, `Darwin temp root prune lists again when its stamp is from the future` in `tests/user_file_ops.bats`, `cached app metadata stamped in the future is refreshed, a recent stamp is not` and `a receipt cache stamped in the future is rebuilt, a recent one answers` in `tests/uninstall_scan_bash32.bats`, and `TestStampWithinTreatsFutureStampAsExpired` in `cmd/analyze/cac
+@@ -579,6 +594,21 @@ should_protect_path() {
+             */.[Cc][Ll][Aa][Uu][Dd][Ee]/[Hh][Ii][Ss][Tt][Oo][Rr][Yy].[Jj][Ss][Oo][Nn][Ll])
+             return 0
+             ;;
++        # The other AI tool stores Mole Mac's PathGuard refuses: plans, tasks,
++        # plugins, skills, memories, attachments, generated images and session
++        # archives are user data, not caches. No rule reaches them today.
++        */.claude/plans | */.claude/plans/* | */.claude/tasks | */.claude/tasks/* | \
++            */.claude/plugins | */.claude/plugins/* | */.claude/skills | */.claude/skills/* | \
++            */.claude/backups | */.claude/backups/* | */.claude/paste-cache | */.claude/paste-cache/* | \
++            */.codex/archived_sessions | */.codex/archived_sessions/* | \
++            */.codex/sqlite | */.codex/sqlite/* | */.codex/memories | */.codex/memories/* | \
++            */.codex/attachments | */.codex/attachments/* | \
++            */.codex/generated_images | */.codex/generated_images/* | \
++            */.codex/computer-use | */.codex/computer-use/* | */.codex/plugins | */.codex/plugins/* | \
++            */.grok/sessions | */.grok/sessions/* | \
++            */.gemini/antigravity | */.gemini/antigravity/* | */.gemini/tmp | */.gemini/tmp/*)
++            return 0
++            ;;
+         # Bluetooth and WiFi configurations
+         */ByHost/com.apple.bluetooth.* | */ByHost/com.apple.wifi.*)
+             return 0
+```
+
+**File**: `lib/core/app_protection_data.sh` (modified, +4/-2)
+```diff
+@@ -189,13 +189,15 @@ readonly OFFICIAL_UNINSTALLER_RULES=(
+     # tool removes, so Mole points to it instead of trashing the app. A wrong
+     # id matches nothing; a match only refuses. TeamViewer: UninstallTeamViewer
+     # (maintainer 2026-11-01). Bitdefender, Intego, Norton and Trend Micro ids
+-    # are unconfirmed leads, as in Mole Mac.
++    # are unconfirmed leads, as in Mole Mac. com.bitdefender.vpn: Endpoint
++    # Security self-protection refuses any other process deleting its files
++    # (Mole Mac 26e409f4b); the App Store com.bitdefender.iosvpn stays ordinary.
+     "Adobe Genuine Service|com.adobe.gcclient,gocart.|adobe genuine service"
+     "Avast|com.avast.aafm,com.avast.avast,com.avast.hub|"
+     "AVG|com.avg.hub|avgantivirus,avg antivirus"
+     "Malwarebytes|com.malwarebytes.mbam|"
+     "TeamViewer|com.teamviewer.|"
+-    "Bitdefender|com.bitdefender.antivirusformac|"
++    "Bitdefender|com.bitdefender.antivirusformac,com.bitdefender.vpn|"
+     "Intego|com.intego.virusbarrier.,com.intego.virusbarrier-,com.intego.app.netbarrier|"
+     "Kaspersky|com.kaspersky.kav|"
+     "Norton|com.symantec.nfm|"
+```
+
+**File**: `tests/clean_developer_state.bats` (modified, +30/-0)
+```diff
+@@ -198,3 +198,33 @@ EOF
+ @test "Yarn Berry producer and sink preserve dependencies with a custom whitelist" {
+     probe_yarn_berry_boundary custom
+ }
++
++@test "should_protect_path refuses Chromium extension stores and AI tool data in cleanup only" {
++    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++chrome="$HOME/Library/Application Support/Google/Chrome/Default"
++for p in \
++    "$chrome/Local Extension Settings/abc/000003.log" "$chrome/Sync Extension Settings" \
++    "$chrome/Managed Extension Settings/abc" "$chrome/Extension State/LOG" \
++    "$chrome/Extension Rules/000001.ldb" "$chrome/Extension Scripts" \
++    "$chrome/Service Worker/ScriptCache/index" "$chrome/Service Worker/Database/MANIFEST" \
++    "$HOME/.claude/plans/p.md" "$HOME/.claude/skills" "$HOME/.claude/paste-cache/x" \
++    "$HOME/.codex/archived_sessions/2026/a.jsonl" "$HOME/.codex/memories" "$HOME/.codex/generated_images/i.png" \
++    "$HOME/.grok/sessions/s" "$HOME/.gemini/antigravity/brain" "$HOME/.gemini/tmp/h/logs.json"; do
++    should_protect_path "$p" || echo "UNPROTECTED|$p"
++done
++for p in \
++    "$chrome/Service Worker/CacheStorage/abc/def" "$chrome/Cache/Cache_Data/f_000001" \
++    "$HOME/.gemini/antigravity-browser-profile/Default/Cache/x" "$HOME/.codex/.tmp/old" \
++    "$HOME/.claude/worktrees/w"; do
++    if should_protect_path "$p"; then echo "OVERPROTECTED|$p"; fi
++done
++MOLE_UNINSTALL_MODE=1 should_protect_path "$chrome/Extension State" && echo "UNINSTALL_BLOCKED"
++echo DONE
++EOF
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" == *"DONE"* ]] || { echo "$output"; return 1; }
++    [[ "$output" != *"UNPROTECTED|"* && "$output" != *"OVERPROTECTED|"* && "$output" != *"UNINSTALL_BLOCKED"* ]] || { echo "$output"; return 1; }
++}
++
+```
+
+**File**: `tests/uninstall.bats` (modified, +2/-0)
+```diff
+@@ -2705,6 +2705,7 @@ expect com.avg.hub AVG
+ expect com.example.app AVG "AVG AntiVirus"
+ expect com.malwarebytes.mbam.frontend.application Malwarebytes
+ expect com.bitdefender.antivirusformac Bitdefender
++expect com.bitdefender.vpn Bitdefender
+ expect com.intego.virusbarrier.app Intego
+ expect com.kaspersky.kav.gui Kaspersky
+ expect com.symantec.nfm Norton
+@@ -2714,6 +2715,7 @@ expect com.adobe.gcclient "Adobe Genuine Service"
+ expect com.kaspersky.passwordmanager ""
+ expect com.intego.washingmachine ""
+ expect com.bitdefender.virusscanner ""
++expect com.bitdefender.iosvpn ""
+ expect com.adobe.Photoshop ""
+ echo DONE
+ EOF
+```
+
+---
+
+### Incident Patch 2: `b6b1af96` (2026-11-27)
+**Commit Message**: fix(clean): keep what zsh tab completion reads from Oh My Zsh and Homebrew
+
+clean_dev_shell removed every child of ~/.oh-my-zsh/cache, including
+completions/, which is on fpath: an open zsh that registered _gh or
+_docker loads it on the first Tab and failed with "function definition
+file not found" (#2110). It now keeps completions/.
+
+The generic User app cache sweep also removed ~/Library/Caches/Homebrew
+whole, including api/formula_names.txt and cask_names.txt that zsh
+completion rebuilds from. It now skips that root like Google and mbx; the
+Homebrew section's brew cleanup keeps handling downloads, as Mole Mac
+offers only Homebrew/downloads.
+
+Verified: the three new #2110 cases fail on the old lines and pass now;
+with #2118 and #2113 applied the full suite passed except one host-only
+failure fixed in the next commit, and check.sh --no-format passes.
+Rule lines added to .claude/rules/clean.md and clean-dev.md.
+
+**File**: `.claude/rules/clean-dev.md` (modified, +2/-0)
+```diff
+@@ -27,6 +27,8 @@ General clean target policy, including the owner-command rule, is in `.claude/ru
+ - Keep AI-tool cache cleanup conservative. Claude Code, opencode, Copilot CLI, Zed, Warp, Ghostty, and similar developer tools may have active versions, config, credentials, or session state that must not be removed accidentally.
+ - `~/.aws/cli/cache` is never cleaned: it holds the temporary credentials of assumed roles and SSO sessions, and AGENTS.md keeps credentials and sessions out of every sweep (Mole Mac lists it unticked, Mole for Windows refuses `.aws`). Locked by `clean_dev_cloud keeps the AWS CLI credential cache` in `tests/clean_dev_caches.bats`.
+ - `~/.kube/cache` gives up only kubectl's own `discovery` and `http` folders: kubelogin (`oidc-login`), Azure kubelogin (`kubelogin`) and aws-iam-authenticator keep tokens and cached credentials beside them, and a plugin folder Mole does not know stays too (I-109). Locked by `clean_dev_cloud keeps kubectl credential plugin caches (#2096)` in `tests/clean_dev_caches.bats`.
++- `~/.sonar` is the SonarScanner user home: only `~/.sonar/cache` is cleaned, because `~/.sonar/ssl` holds the truststore and keystore the user built from a company CA or client certificate, which no tool recreates (I-114). Locked by `clean_dev_cicd keeps the SonarScanner SSL stores (#2117)` in `tests/clean_dev_caches.bats`.
++- `~/.oh-my-zsh/cache` keeps `completions`: it is on fpath, and an open zsh autoloads a registered completion such as `_gh` from it on the first Tab, so removing it breaks completion in every terminal already open (I-115). Locked by the two `clean_dev_shell` `#2110` cases in `tests/clean_dev_caches.bats`.
+ - `clean_t3code_desktop_caches` takes only `Cache` and `Code Cache` under `Partitions/t3code-preview-*` of the `t3code-v2` and `T3 Code (Alpha)` profiles, while no T3 Code app runs. `should_protect_path` does not cover these profiles, so that exact list is the whole boundary: sign-ins, IndexedDB and Service Worker data stay, and `~/.t3` is never a target (its worktrees are `mo purge` scope). Locked by the `clean_t3code_desktop_caches` cases in `tests/clean_ai_cli_caches.bats`.
+ - **Docker is asked only on a local engine, and Mole prunes only what the engine rebuilds.** Every Docker query (`docker system df` in Large files, `docker ps` in `mo optimize`, the prune) first reads the endpoint through `mole_docker_endpoint_is_local` in `lib/core/common.sh`, which runs `docker context inspect` (local configuration, honours `DOCKER_HOST`, never dials the engine); anything but a `unix://` socket, or an unknown answer, skips the query, so a remote context neither reports another machine's storage nor hides the Docker Desktop data row (#1922). `clean_docker_unused_data` then runs `docker builder prune -f --filter until=168h` and `docker image prune -f` (dangling only) only after `docker info` answers, so a stopped Docker Desktop is never started; containers, volumes, networks and tagged images are never touched, and no config option exists for any of this. The engine serialises prune against running builds, so there is no process guard. `docker builder` is `docker buildx` once the plugin is installed and prunes the selected buildx builder, which can be a cloud or remote one under a local context, so the build cache prune runs with `BUILDX_BUILDER` set to `docker context show` (the local context's own builder; the legacy builder ignores it) and is skipped when that name is unknown. On the classic image store an image pulled only by digest and used by no container counts as dangling and goes too; that is accepted, since a registry pull restores it. Its whitelist row is the Docker Desktop data folder, every prune that exits 0 logs `REMOVED` (with its size when Docker printed one), a timeout skips that one prune and a signal cancels; the dry run says `would prune` without a size, like the other owner rows. Locked by the `clean_dev_docker` cases in `tests/clean_dev_caches.bats` (`clean_dev_docker pins the build cache prune to the local context builder` for the builder), `large files never queries a remote Docker engine (#1922)` in `tests/clean_user_core.bats` and `idle VM never asks a remote Docker engine about containers (#1922)` in `tests/optimize_perf_diagnosis.bats`; `docker` is a fail-loud stub in `tests/helpers/common.bash`, so a test that forgets its double can never prune the host.
+ 
+```
+
+**File**: `.claude/rules/clean.md` (modified, +1/-0)
+```diff
+@@ -54,6 +54,7 @@ Developer and toolchain caches in `lib/clean/dev.sh` also follow `.claude/rules/
+ - The fixed rows are measured ahead of the report by a pool of at most four workers under one shared deadline (`_large_prefetch_queue_rows`), and the worktree container search runs beside it; a new fixed row belongs in that list too, or it is measured inline after the pool and adds its full time. `large files queue lists every fixed HOME row the report measures` in `tests/clean_user_core.bats` reads every literal `$HOME` row out of the report source and fails when the queue misses one. The Docker Desktop data row stays queued unconditionally, because whether the report skips it depends on the later `docker system df` probe. That probe runs only on a local engine (`.claude/rules/clean-dev.md`), once, and its row reads `Images 931.5MB, 859.1MB reclaimable`: types and reclaimable figures under 1MB are left out.
+ - The snapshot rows (`check_large_file_candidates`, and `clean_local_snapshots` with its `tmutil status` probe) run no `tmutil` while any volume without the `local` flag is mounted (`mole_network_volume_mounted` in `lib/clean/snapshots.sh`); the rows are then absent, with no skip line. Every tmutil verb opens each mounted volume, and the Mac app raised "access files on a network volume" from its scan with an SMB share mounted and no Full Disk Access (2026-11-10); the CLI's call would be charged to the terminal the same way (not reproduced on the CLI). The table is `/sbin/mount` with no arguments, which reads the cached `getmntinfo(MNT_NOWAIT)` table and touches no volume (the same flags the Mac app reads with `getfsstat(MNT_NOWAIT)`); the options are taken after the LAST ` (` so a mount point holding parentheses parses, and `autofs` trigger nodes (`/System/Volumes/Data/home`) do not count. An unreadable or unparsable table also skips (report-only rows, so skipping costs nothing; the Mac app fails open there), and an unparsed line is named in a `debug_log` line. Open item: `clean_time_machine_failed_backups` keeps its `tmutil` calls with a share mounted, since a network Time Machine destination is itself such a mount and skipping would stop that cleanup for every NAS-backup user. Whether those calls raise the network-volume prompt is unsettled; it is settled by running that path on a Mac with an SMB share mounted and the terminal lacking Full Disk Access, once with a network Time Machine destination and once without, and recording whether the prompt appears and which `tmutil` verb raised it. Tests stub `_mole_mount_table`. Locked by `mole_network_volume_mounted reads the local flag of every mount table entry`, `clean_local_snapshots runs no tmutil while a network share is mounted` and `large files lists snapshots with only local volumes and runs no tmutil beside a network share` in `tests/clean_system_maintenance.bats`.
+ - The generic Application Support sweep (`clean_application_support_logs`) skips an app folder whose `SingletonLock` (Chromium and Electron write `<host>-<pid>` there while running) names a live pid or cannot be read, and checks again before each cache folder; it cleared Code Cache and GPUCache under running Docker Desktop, VS Code and T3 Code before. A stale lock left by a crash, and apps with no lock, keep the old behaviour. Locked by `clean_application_support_logs keeps caches of a running Electron app` in `tests/clean_user_core.bats`. `clean_service_worker_cache` asks `app_support_path_held_by_singleton` (in `lib/core/file_ops.sh` beside `app_support_dir_in_use`, since both modules use it), which reads a `SingletonLock` one to three folders down the path (`Vivaldi`, `Google/Chrome`, `Arc/User Data`), before its walk and again before each removal, in a dry run too, so a running Chromium browser keeps its Service Worker store (Mole Mac `ProcessGuard.singletonLockOwner`). Locked by `clean_service_worker_cache holds a Chromium store while a SingletonLock one to three folders up is live` in `tests/clean_system_caches.bats`. Discovering unnamed Chromium roots by shape (Mole Mac `discoveredChromiumUserDataRoots`) is an intentional difference: the CLI sweeps Service Worker stores for its named browsers only, with no review step, and keeps to exact known targets.
++- The generic User app cache sweep never takes `Caches/Google` (Chrome's live cache, cleaned by the Browsers rows after Chrome quits), `Caches/mbx` (a build cache with live target folders and its own eviction) or `Caches/Homebrew`, whose `api/formula_names.txt` and `cask_names.txt` zsh completion rebuilds from; Homebrew downloads go through the Homebrew section's `brew cleanup`, as Mole Mac offers only `Homebrew/downloads` (I-115). Locked by `clean_user_essentials leaves Caches/Google to the Chrome and Android Studio rows`, `clean_user_essentials leaves the mbx build cache root to its own eviction` and `clean_user_essentials leaves the Homebrew cache root to brew cleanup (#2110)` in `tests/clean_user_core.bats`.
+ - The generic User 
+```
+
+**File**: `lib/clean/dev.sh` (modified, +12/-1)
+```diff
+@@ -6398,7 +6398,18 @@ clean_dev_misc() {
+ clean_dev_shell() {
+     # Git owns its transaction lock; config and history backups can be the
+     # only remaining copy of user state. Neither is an automatic cache target.
+-    safe_clean ~/.oh-my-zsh/cache/* "Oh My Zsh cache"
++    # completions/ is on fpath: an open shell autoloads _gh or _docker from it
++    # on the first Tab, so removing it breaks completion there (#2110).
++    local omz_entry
++    local -a omz_targets=()
++    for omz_entry in "$HOME/.oh-my-zsh/cache"/*; do
++        [[ -e "$omz_entry" || -L "$omz_entry" ]] || continue
++        [[ "${omz_entry##*/}" == "completions" ]] && continue
++        omz_targets+=("$omz_entry")
++    done
++    if [[ ${#omz_targets[@]} -gt 0 ]]; then
++        safe_clean "${omz_targets[@]}" "Oh My Zsh cache"
++    fi
+     safe_clean ~/.cache/pre-commit/* "pre-commit cache"
+ }
+ # Network tool caches.
+```
+
+**File**: `lib/clean/user.sh` (modified, +4/-1)
+```diff
+@@ -350,8 +350,11 @@ clean_user_essentials() {
+             # shims, scheduler leases and the live target folders checkouts
+             # link into, and evicts to its own size budget; swept whole it
+             # broke builds, so it stays out like Mole Mac's protected root.
++            # Homebrew's api/ holds formula_names.txt and cask_names.txt that
++            # zsh completion rebuilds from (#2110); the Homebrew section runs
++            # `brew cleanup` for downloads, like Mole Mac's downloads-only row.
+             case "${user_cache_target##*/}" in
+-                Google | mbx) continue ;;
++                Google | mbx | Homebrew) continue ;;
+             esac
+             # Another Chromium browser keeps its live cache in a plain folder
+             # here the way Chrome does under Google; leave it while that
+```
+
+**File**: `tests/clean_dev_caches.bats` (modified, +46/-0)
+```diff
+@@ -501,6 +501,52 @@ EOF
+     rm -rf "$test_home"
+ }
+ 
++@test "clean_dev_shell keeps the Oh My Zsh completions folder (#2110)" {
++    # An open zsh autoloads a registered completion from it on the first Tab.
++    local test_home="$HOME/omz-home"
++    mkdir -p "$test_home/.oh-my-zsh/cache/completions" "$test_home/.oh-my-zsh/cache/plugin-data"
++    touch "$test_home/.oh-my-zsh/cache/completions/_gh" "$test_home/.oh-my-zsh/cache/grep-alias"
++
++    run env HOME="$test_home" PATH="/usr/bin:/bin" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/dev.sh"
++DRY_RUN=false
++safe_clean() {
++    local description="${!#}"
++    while [[ $# -gt 1 ]]; do
++        printf 'CLEAN=%s|%s\n' "$description" "$1"
++        shift
++    done
++}
++clean_dev_shell
++EOF
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" == *"CLEAN=Oh My Zsh cache|$test_home/.oh-my-zsh/cache/plugin-data"* ]] || return 1
++    [[ "$output" == *"CLEAN=Oh My Zsh cache|$test_home/.oh-my-zsh/cache/grep-alias"* ]] || return 1
++    [[ "$output" != *"completions"* ]] || return 1
++    rm -rf "$test_home"
++}
++
++@test "clean_dev_shell runs no Oh My Zsh row when only completions exist (#2110)" {
++    local test_home="$HOME/omz-only-home"
++    mkdir -p "$test_home/.oh-my-zsh/cache/completions"
++
++    run env HOME="$test_home" PATH="/usr/bin:/bin" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/dev.sh"
++DRY_RUN=false
++safe_clean() { printf 'CLEAN=%s\n' "$*"; }
++clean_dev_shell
++EOF
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" != *"Oh My Zsh"* ]] || return 1
++    rm -rf "$test_home"
++}
++
+ @test "clean_dev_cloud stops on GitHub CLI probe or clear cancellation" {
+     local failure_phase failure_rc
+     for failure_phase in help clear; do
+```
+
+**File**: `tests/clean_user_core.bats` (modified, +35/-0)
+```diff
+@@ -380,6 +380,41 @@ EOF
+     rm -rf "$test_home"
+ }
+ 
++@test "clean_user_essentials leaves the Homebrew cache root to brew cleanup (#2110)" {
++    # api/ holds the formula and cask name lists zsh completion rebuilds from.
++    local test_home="$HOME/brew-cache-home"
++    mkdir -p "$test_home/Library/Caches/Homebrew/api" "$test_home/Library/Caches/ordinary-app/junk"
++    touch "$test_home/Library/Caches/Homebrew/api/formula_names.txt"
++
++    run env HOME="$test_home" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc <<'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/user.sh"
++start_section_spinner() { :; }
++stop_section_spinner() { :; }
++clean_trash() { :; }
++_clean_recent_items() { :; }
++_clean_mail_downloads() { :; }
++safe_clean() {
++    local description="${!#}"
++    while [[ $# -gt 1 ]]; do
++        printf 'CLEAN=%s|%s\n' "$description" "$1"
++        shift
++    done
++}
++safe_clean_guarded() {
++    shift
++    safe_clean "$@"
++}
++clean_user_essentials
++EOF
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" != *"$test_home/Library/Caches/Homebrew"* ]] || return 1
++    [[ "$output" == *"User app cache|$test_home/Library/Caches/ordinary-app"* ]] || return 1
++    rm -rf "$test_home"
++}
++
+ @test "clean_user_essentials leaves the cache root of a running Chromium browser (#2094)" {
+     # Chromium keeps a profile's live HTTP cache at the same path under Caches
+     # as the profile under Application Support, whose SingletonLock names the
+```
+
+---
+
+### Incident Patch 3: `140f6c35` (2026-11-25)
+**Commit Message**: fix(clean): leave items another user owns out of every user-level preview
+
+72e63f39 stopped safe_clean from previewing an item this user cannot
+unlink, but twenty cleaners record their own dry-run rows and remove
+through safe_remove (clean_trash, the Application Support logs, service
+worker caches, group container caches, external volume metadata, Xcode
+DerivedData and device support, cached firmware, safe_find_delete and
+others). Their preview still listed such an item while the real run
+logged it SKIPPED (owned by another user).
+
+They now preview through mole_record_user_sink_dry_run_target, which asks
+the same _mole_user_sink_refuses_on_ownership check safe_remove asks
+before recording. Sudo sinks (safe_sudo_find_delete, orphaned system
+services, CoreSimulator caches, Time Machine) and the cleaners whose run
+does not go through safe_remove (Chromium old versions, which pick sudo
+at run time; container stubs; simctl's unavailable devices) still call
+record_dry_run_cleanup_target directly, so root-owned rows stay listed.
+Over-listing only: nothing was deleted that should not have been.
+
+Verified: new Bats test "cleaners that record their own preview leave out
+an item another user 
+
+**File**: `lib/clean/app_caches.sh` (modified, +2/-2)
+```diff
+@@ -298,7 +298,7 @@ clean_xcode_derived_data() {
+                 break
+             fi
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$dir" "$dir_size_kb" 1 "$size_known" || continue
++                mole_record_user_sink_dry_run_target "$dir" "$dir_size_kb" 1 "$size_known" || continue
+             fi
+             size_kb=$((size_kb + dir_size_kb))
+             dry_run_count=$((dry_run_count + 1))
+@@ -1922,7 +1922,7 @@ clean_autodesk_fusion_old_bundles() {
+                 break
+             fi
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$dir" "$size_kb" 1 true || continue
++                mole_record_user_sink_dry_run_target "$dir" "$size_kb" 1 true || continue
+             fi
+             total_size=$((total_size + size_kb))
+             cleaned_count=$((cleaned_count + 1))
+```
+
+**File**: `lib/clean/apps.sh` (modified, +1/-1)
+```diff
+@@ -67,7 +67,7 @@ clean_ds_store_tree() {
+             fi
+             local preview_size_kb=$(((size + 1023) / 1024))
+             local preview_rc=0
+-            record_dry_run_cleanup_target "$ds_file" "$preview_size_kb" 1 true || preview_rc=$?
++            mole_record_user_sink_dry_run_target "$ds_file" "$preview_size_kb" 1 true || preview_rc=$?
+             if mole_rc_timeout_or_signal "$preview_rc"; then
+                 delete_rc=$preview_rc
+                 break
+```
+
+**File**: `lib/clean/caches.sh` (modified, +2/-2)
+```diff
+@@ -196,7 +196,7 @@ clean_service_worker_cache() {
+             fi
+             if [[ "$DRY_RUN" == "true" ]]; then
+                 if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                    record_dry_run_cleanup_target "$cache_dir" "$size" 1 true || continue
++                    mole_record_user_sink_dry_run_target "$cache_dir" "$size" 1 true || continue
+                 fi
+             else
+                 local remove_rc=0
+@@ -1044,7 +1044,7 @@ clean_python_bytecode_cache_group() {
+         [[ $guard_rc -eq 0 ]] || continue
+         if [[ "$DRY_RUN" == "true" ]]; then
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$cache_dir" "$size_kb" 1 true || continue
++                mole_record_user_sink_dry_run_target "$cache_dir" "$size_kb" 1 true || continue
+             elif declare -f register_dry_run_cleanup_target > /dev/null 2>&1; then
+                 register_dry_run_cleanup_target "$cache_dir" || continue
+             fi
 ```
 
 **File**: `lib/clean/dev.sh` (modified, +2/-2)
 ```diff
-@@ -6351,15 +6351,15 @@ clean_dev_misc() {
-     # Cursor Agent session logs (versions cleaned separately in clean_dev_ai_agents)
-     if [[ -d "$HOME/.local/share/cursor-agent" ]]; then
-         local cursor_logs_rc=0
--        safe_find_delete "$HOME/.local/share/cursor-agent" "*.log" "$MOLE_LOG_AGE_DAYS" "f" || cursor_logs_rc=$?
-+        safe_find_delete "$HOME/.local/share/cursor-agent" "*.log" "$MOLE_LOG_AGE_DAYS" "f" "Cursor Agent logs" || cursor_logs_rc=$?
-         if mole_rc_signal "$cursor_logs_rc"; then
-             return "$cursor_logs_rc"
-         fi
-     fi
-     local cursor_worker_dir="$HOME/Library/Application Support/Cursor/User/globalStorage/anysphere.cursor-agent-worker"
-     if [[ -d "$cursor_worker_dir" && ! -L "$cursor_worker_dir" ]]; then
-         local cursor_worker_logs_rc=0
--        safe_find_delete "$cursor_worker_dir" "cursor-agent-worker-*.log" "$MOLE_LOG_AGE_DAYS" "f" || cursor_worker_logs_rc=$?
-+        safe_find_delete "$cursor_worker_dir" "cursor-agent-worker-*.log" "$MOLE_LOG_AGE_DAYS" "f" "Cursor Agent worker logs" || cursor_worker_logs_rc=$?
-         if mole_rc_signal "$cursor_worker_logs_rc"; then
-             return "$cursor_worker_logs_rc"
-         fi
+@@ -2554,7 +2554,7 @@ clean_xcode_device_support() {
+                         break
+                     fi
+                     if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                        record_dry_run_cleanup_target "$stale_entry" "$entry_size_kb" 1 "$size_known" || continue
++                        mole_record_user_sink_dry_run_target "$stale_entry" "$entry_size_kb" 1 "$size_known" || continue
+                     fi
+                     preview_stale_dirs+=("$stale_entry")
+                     stale_size_kb=$((stale_size_kb + entry_size_kb))
+@@ -5496,7 +5496,7 @@ clean_codex_crashpad_pending() {
+         remove_rc=1
+         if [[ "$dry_run_mode" == "true" ]]; then
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$file_path" "$file_size_kb" 1 true || continue
++                mole_record_user_sink_dry_run_target "$file_path" "$file_size_kb" 1 true || continue
+             fi
+             MOLE_DRY_RUN=1 safe_remove "$file_path" true "$file_size_kb" && remove_rc=0
+         elif safe_remove "$file_path" true "$file_size_kb"; then
 ```
 
-**File**: `lib/clean/user.sh` (modified, +1/-1)
+**File**: `lib/clean/user.sh` (modified, +12/-12)
 ```diff
-@@ -1088,7 +1088,7 @@ clean_support_app_data() {
-     local crash_reporter_dir="$HOME/Library/Application Support/CrashReporter"
-     if [[ -d "$crash_reporter_dir" && ! -L "$crash_reporter_dir" ]]; then
-         local crash_reporter_rc=0
--        safe_find_delete "$crash_reporter_dir" "*" "$support_age_days" "f" || crash_reporter_rc=$?
-+        safe_find_delete "$crash_reporter_dir" "*" "$support_age_days" "f" "Crash reporter data" || crash_reporter_rc=$?
-         if mole_rc_signal "$crash_reporter_rc"; then
-             return "$crash_reporter_rc"
+@@ -110,7 +110,7 @@ clean_trash() {
+                 [[ $validate_rc -eq 0 ]] || continue
+                 if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+                     local _MOLE_DRY_RUN_TARGET_PREVALIDATED=true
+-                    record_dry_run_cleanup_target "$trash_item" "$trash_item_kb" 1 "$trash_size_known" || continue
++                    mole_record_user_sink_dry_run_target "$trash_item" "$trash_item_kb" 1 "$trash_size_known" || continue
+                 fi
+                 preview_count=$((preview_count + 1))
+             done < <(command find "$HOME/.Trash" -mindepth 1 -maxdepth 1 -print0 2> /dev/null || true)
+@@ -628,7 +628,7 @@ _clean_mail_downloads() {
+                     local remove_rc=1
+                     if [[ "$dry_run_mode" == "true" ]]; then
+                         if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                            record_dry_run_cleanup_target "$file_path" "$file_size_kb" 1 true || continue
++                            mole_record_user_sink_dry_run_target "$file_path" "$file_size_kb" 1 true || continue
+                         fi
+                         MOLE_DRY_RUN=1 safe_remove "$file_path" true "$file_size_kb" && remove_rc=0
+                     elif _MOLE_SAFE_REMOVE_FINAL_GUARD=_mail_attachment_delete_guard safe_remove \
+@@ -1081,7 +1081,7 @@ clean_edge_updater_old_versions() {
          fi
+         if [[ "$DRY_RUN" == "true" ]]; then
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$dir" "$size_kb" 1 "$size_known" || continue
++                mole_record_user_sink_dry_run_target "$dir" "$size_kb" 1 "$size_known" || continue
+             fi
+             total_size=$((total_size + size_kb))
+             cleaned_count=$((cleaned_count + 1))
+@@ -1509,7 +1509,7 @@ clean_handoff_pasteboard_cache() {
+         mole_rc_timeout "$size_rc" && size_known=false
+         if [[ "$DRY_RUN" == "true" ]]; then
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$item" "$item_kb" 1 "$size_known" || continue
++                mole_record_user_sink_dry_run_target "$item" "$item_kb" 1 "$size_known" || continue
+             fi
+             cleaned_count=$((cleaned_count + 1))
+             total_kb=$((total_kb + item_kb))
+@@ -1804,7 +1804,7 @@ clean_group_container_caches() {
+                         # SQLite guards have all run after sizing. Avoid only
+                         # repeating that complete eligibility pass.
+                         local _MOLE_DRY_RUN_TARGET_PREVALIDATED=true
+-                        record_dry_run_cleanup_target \
++                        mole_record_user_sink_dry_run_target \
+                             "$item" "$item_size" 1 "$candidate_size_known" || action_rc=$?
+                     fi
+                 else
+@@ -2112,7 +2112,7 @@ clean_external_volume_target() {
+                 continue
+             fi
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$target_path" "$size_kb" 1 true || continue
++                mole_record_user_sink_dry_run_target "$target_path" "$size_kb" 1 true || continue
+             fi
+             found_any=true
+             cleaned_count=$((cleaned_count + 1))
+@@ -2166,7 +2166,7 @@ clean_external_volume_target() {
+                 continue
+             fi
+             if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                record_dry_run_cleanup_target "$metadata_file" "$size_kb" 1 "$metadata_size_known" || continue
++                mole_record_user_sink_dry_run_target "$metadata_file" "$size_kb" 1 "$metadata_size_known" || continue
+             fi
+             found_any=true
+             cleaned_count=$((cleaned_count + 1))
+@@ -2883,7 +2883,7 @@ clean_application_support_logs() {
+                     start_section_spinner "Scanning Application Support... $app_count/$total_apps [$app_label, bulk clean]"
+                     if [[ "$DRY_RUN" == "true" ]]; then
+                         if declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                            record_dry_run_cleanup_target "$candidate" 0 1 false || continue
++                            mole_record_user_sink_dry_run_target "$candidate" 0 1 false || continue
+                         fi
+                     else
+                         # Remove entire candidate directory in one go
+@@ -2920,7 +2920,7 @@ clean_application_support_logs() {
+                         fi
+                     fi
+                     if [[ "$DRY_RUN" == "true" ]] && declare -f record_dry_run_cleanup_target > /dev/null 2>&1; then
+-                        record_dry_run_cleanup_target "$item" "$item_size_kb" 1 "$item_size_known" || continue
++                        mole_record_user_sink_dry_run_target "$item" "$item_size_kb" 1 "$item_size_known" || continue
+
 ```
 
-**File**: `lib/core/file_ops.sh` (modified, +16/-1)
+**File**: `lib/core/file_ops.sh` (modified, +13/-1)
 ```diff
-@@ -3539,12 +3539,16 @@ _mole_delete_log() {
- # Safe Find and Delete Operations
- # ============================================================================
- 
--# Safe file discovery and deletion with depth and age limits
-+# Safe file discovery and deletion with depth and age limits. With a label,
-+# the completed matches go through safe_clean, so the preview and a real run
-+# both show one row and count it in the total. Without one no row is shown,
-+# the preview still counts the matches and a real run does not.
- safe_find_delete() {
-     local base_dir="$1"
-     local pattern="$2"
-     local age_days="${3:-7}"
-     local type_filter="${4:-f}"
-+    local label="${5:-}"
- 
-     local pending_clean_cancel="${MOLE_CLEAN_CANCEL_STATUS:-0}"
-     if [[ "${MOLE_CURRENT_COMMAND:-}" == "clean" ]] && mole_rc_timeout_or_signal "$pending_clean_cancel"; then
-@@ -3598,6 +3602,17 @@ safe_find_delete() {
- 
-     # Iterate only a completed result set so a timeout cannot authorize
-     # deletion of the partial prefix.
-+    if [[ -n "$label" ]] && declare -f safe_clean > /dev/null 2>&1; then
-+        local -a labeled_matches=()
-+        while IFS= read -r -d '' match; do
-+            labeled_matches+=("$match")
-+        done < "$scan_file"
-+        rm -f -- "$scan_file" 2> /dev/null || true # SAFE: exact tracked temp file created above
-+        [[ ${#labeled_matches[@]} -gt 0 ]] || return 0
-+        local labeled_rc=0
-+        safe_clean "${labeled_matches[@]}" "$label" || labeled_rc=$?
-+        return "$labeled_rc"
-+    fi
-     # Per-caller whitelist gates were missed in past releases (see #710, #724,
-     # #738, #744, #757); enforcing here makes the protection structural so
-     # new clean_* functions get whitelist enforcement for free.
-```
-
-**File**: `tests/core_safe_functions.bats` (modified, +35/-0)
-```diff
-@@ -1984,6 +1984,41 @@ SCRIPT
-     [ -f "$target_dir/file2.log" ] || return 1
+@@ -1542,6 +1542,18 @@ _mole_user_sink_refuses_on_ownership() {
+     return 1
  }
  
-+@test "a labeled safe_find_delete shows one row and counts it in the preview and a real run" {
-+    local target_dir="$TEST_DIR/find-labeled"
-+    mkdir -p "$target_dir"
-+    printf 'old log\n' > "$target_dir/a.log"
-+    printf 'old log\n' > "$target_dir/b.log"
-+    printf 'new log\n' > "$target_dir/new.log"
-+    touch -t 202601010000 "$target_dir/a.log" "$target_dir/b.log"
++# The preview half of a user-level cleaner that records its own rows and then
++# removes through safe_remove: an item safe_remove would refuse on ownership is
++# not listed, so the preview matches the run. Sudo sinks keep calling
++# record_dry_run_cleanup_target directly, which still lists root-owned rows.
++mole_record_user_sink_dry_run_target() {
++    if _mole_user_sink_refuses_on_ownership "$1"; then
++        debug_log "Preview left out an item another user owns: $1"
++        return 1
++    fi
++    record_dry_run_cleanup_target "$@"
++}
++
+ safe_remove() {
+     local path="$1"
+     local silent="${2:-false}"
+@@ -3635,7 +3647,7 @@ safe_find_delete() {
+             [[ $match_size_rc -eq 0 ]] || match_size_kb=0
+             [[ "$match_size_kb" =~ ^[0-9]+$ ]] || match_size_kb=0
+             local preview_rc=0
+-            record_dry_run_cleanup_target "$match" "$match_size_kb" 1 true || preview_rc=$?
++            mole_record_user_sink_dry_run_target "$match" "$match_size_kb" 1 true || preview_rc=$?
+             if [[ $preview_rc -ge 128 ]]; then
+                 delete_rc=$preview_rc
+                 break
+```
+
+**File**: `tests/clean_core.bats` (modified, +37/-0)
+```diff
+@@ -287,6 +287,43 @@ EOF
+     [[ "$output" == *"SUDO_SINK_RECORDED=$logs/install.log"* ]] || { echo "$output"; return 1; }
+ }
+ 
++@test "cleaners that record their own preview leave out an item another user owns" {
++    # safe_find_delete stands in for the twenty cleaners that preview through
++    # mole_record_user_sink_dry_run_target and remove through safe_remove: the
++    # preview lists nothing the run would skip on ownership.
++    local logs="$HOME/Library/Logs/OtherUser"
++    mkdir -p "$logs"
++    printf 'x' > "$logs/old.log"
++    chmod 555 "$logs"
++    rm -f "$HOME/Library/Logs/mole/operations.log"
 +
 +    local mode
 +    for mode in dry real; do
-+        run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" TARGET_DIR="$target_dir" MODE="$mode" /bin/bash --noprofile --norc <<'SCRIPT'
++        run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" MOLE_TEST_MODE=1 MODE="$mode" LOGS="$logs" \
++            /bin/bash --noprofile --norc << 'EOF'
 +set -euo pipefail
 +source "$PROJECT_ROOT/lib/core/common.sh"
 +source "$PROJECT_ROOT/bin/clean.sh"
-+if [[ "$MODE" == dry ]]; then
-+    export MOLE_DRY_RUN=1
-+    DRY_RUN=true
-+fi
-+safe_remove() { printf 'REMOVE:%s\n' "${1##*/}"; }
-+rc=0
-+safe_find_delete "$TARGET_DIR" "*.log" 7 f "Old test logs" || rc=$?
-+printf 'RC=%s FILES=%s ROWS=%s\n' "$rc" "$files_cleaned" "$total_items"
-+SCRIPT
-+        [ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+        [[ "$output" == *"Old test logs"* ]] || { echo "$output"; return 1; }
-+        [[ "$output" == *"RC=0 FILES=2 ROWS=1"* ]] || { echo "$output"; return 1; }
-+        [[ "$output" != *"REMOVE:new.log"* ]] || return 1
-+        if [[ "$mode" == dry ]]; then
-+            [[ "$output" != *"REMOVE:"* ]] || return 1
-+        else
-+            [[ "$output" == *"REMOVE:a.log"* && "$output" == *"REMOVE:b.log"* ]] || { echo "$output"; return 1; }
-+        fi
-+    done
-+}
-+
- @test "the V1.36.3 aged sweep of ~/.claude/projects keeps every transcript folder" {
-     local projects="$HOME/.claude/projects"
-     local control="$TEST_DIR/aged-control"
-```
-
----
-
-### Incident Patch 2: `f3804188` (2026-11-23)
-**Commit Message**: fix(clean): show each Electron app's caches as one row
-
-VS Code, Cursor, CodeBuddy CN, Qoder, Claude, Antigravity, Filo,
-mihomo-party, legacy Microsoft Teams, Vesktop, Figma and Codex Desktop
-cleaned each cache or log folder in its own call, so one app printed up
-to nine rows (Cursor cache, cached data, code cache, GPU cache, Dawn
-cache, logs and more), and Zed printed two rows with the same label.
-
-Pass every folder of an app to one mole_safe_clean_app_cache call (or
-the Codex guarded helper) under one "<App> cache" label. The target set,
-glob spellings and symlink refusals are unchanged; the delete guard still
-rechecks the owner before every item, and a running or unknown owner now
-stops the whole app at once instead of folder by folder.
-
-The Codex row test and the I-108 catcher are renamed to the one-row form.
-
-Verified: new call-count assertions fail on the old code (Cursor,
-CodeBuddy CN, Teams, Zed, Figma, Vesktop and the Codex preview) and pass
-now; the full MOLE_TEST_NO_AUTH=1 ./scripts/test.sh and check.sh
---no-format pass; a real-HOME preview shows VS Code as one 24.0MB row
-where it showed two. Independent review found no safety issue and three
-test and wording gaps, fixed
-
-**File**: `.claude/rules/clean.md` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ Developer and toolchain caches in `lib/clean/dev.sh` also follow `.claude/rules/
- 
- - `bin/clean.sh` owns clean command orchestration, section output, and safe cleanup execution. Run `MOLE_TEST_NO_AUTH=1 bats tests/clean_core.bats tests/clean_apps.bats tests/cli.bats tests/clean_summary_cancel.bats tests/clean_developer_state.bats`.
- - Section output follows one fixed rhythm: title, then loading state, then content, then one trailing blank line, for every section. When touching any step of it, re-run the command and read the whole rendered output (column alignment, block spacing, icon consistency) instead of patching the one step that was reported.
--- **Rows report what Mole did, once.** A `safe_clean` row that measured 0B still removes and counts its items but prints nothing, unless a sizing timeout made the 0B unknown; roots that share a label clean in one call so per-profile caches read as one row; Large files skips the DerivedData row once developer tools covered every project (`_MOLE_DERIVED_DATA_COVERED`); counts go through `mole_count_label` (`1 item`). The summary box holds two lines: `Removed: X · N items` plus the free-space line, or `Potential space: X · N items` plus the file list. Locked by `safe_clean removes a 0B target without printing a row for it` (`tests/clean_core.bats`), `clean_wechat_container_caches cleans every web profile in one row per cache kind`, `clean_codex_desktop_caches previews one row per cache kind across every partition` (`tests/clean_ai_cli_caches.bats`) and `large files leaves out DerivedData that developer tools already covered`.
-+- **Rows report what Mole did, once.** A `safe_clean` row that measured 0B still removes and counts its items but prints nothing, unless a sizing timeout made the 0B unknown; roots that share a label clean in one call so per-profile caches read as one row, and an app's cache and log folders (an Electron app's Cache, Code Cache, GPUCache, Dawn caches and logs, every Codex partition) go through one `mole_safe_clean_app_cache` call with one `<App> cache` label, so a well-used editor reads as one line; the delete guard still rechecks the owner before every item, and a running or unknown owner now stops the whole app at once; Large files skips the DerivedData row once developer tools covered every project (`_MOLE_DERIVED_DATA_COVERED`); counts go through `mole_count_label` (`1 item`). The summary box holds two lines: `Removed: X · N items` plus the free-space line, or `Potential space: X · N items` plus the file list. Locked by `safe_clean removes a 0B target without printing a row for it` (`tests/clean_core.bats`), `clean_wechat_container_caches cleans every web profile in one row per cache kind`, `clean_codex_desktop_caches previews one row across every profile and partition` (`tests/clean_ai_cli_caches.bats`), `clean_code_editors includes Cursor caches when directory exists` and `large files leaves out DerivedData that developer tools already covered`.
- - **Review rows go through `mole_review_row`: `⊙ label · value · fact`.** On a terminal the label is an OSC 8 link to the path, so the row carries no path or command field; plain output keeps the path last. The fact is worked out read-only and bounded (`_large_dir_fact`: simulator count, archive builds and month range, pnpm store versions, project count; version folders besides the default for Rust and NDK) and is dropped, never guessed, when its probe fails. Do not add a command for the user to run where Mole can state the fact itself; two of three suggested commands freed nothing on the maintainer's Mac (2026-10-31). Locked by `large files links each review label to its full path` and `large files names what the simulator and pnpm rows hold` in `tests/clean_user_core.bats`.
- - `_safe_clean_impl` skips targets that do not currently exist before expensive policy probes, then filters protected, whitelisted, and compiled-model targets before consulting the dry-run guard or registering previews. Every surviving target is revalidated at its action boundary, so preview and real cleanup keep the same eligible set. A delete guard that refuses only the path it was handed names it in `_MOLE_SAFE_CLEAN_SKIP_PATH`, which skips that target and continues the batch; any other nonzero guard status stops with 75 and a timeout or signal cancels. `safe_clean_guarded skips only the path its guard names and keeps going` in `tests/clean_core.bats` locks it.
- - `normalize_paths_for_cleanup` collapses a Gradle DSL path only in the `<version>/groovy-dsl|kotlin-dsl/<hash>` layout, because the `*` in its case glob spans slashes and a deeper directory that merely contains `groovy-dsl` would otherwise widen to its parent.
-```
-
-**File**: `docs/incidents.md` (modified, +1/-1)
-```diff
-@@ -142,4 +142,4 @@ when it was confirmed by reading the history, otherwise `unknown`.
- | I-105 | 2026-11-22 | Saving the clean or optimize whitelist truncated the file first and wrote patterns one by one, so a write that failed part-way (full disk, I/O error) left a partial list that the next run trusted as complete, and the lost patterns stopped protecting anything (#2079) | unknown | f6ed27937 | review | `save_whitelist_patterns keeps the previous list when a write fails` |
- | I-106 | 2026-11-22 | `mo purge` that found nothing, was cancelled or failed its scan never wrote the end marker, so `mo history` showed the finished run as never ended (#2080) | unknown | 65eebec66 | review | `purge ends its run when nothing is purged` |
- | I-107 | 2026-11-23 | `mo clean` removed aged Cursor Agent logs and CrashReporter files without a row: the preview added them to Potential space while a real run never counted them, so the preview promised more than the run reported (61 MB of Cursor Agent worker logs on the maintainer's Mac) | unknown | fae04a5a | review | `a labeled safe_find_delete shows one row and counts it in the preview and a real run` |
--| I-108 | 2026-11-23 | `mo clean` printed one "Codex Desktop Cache" row per Codex profile and webview partition, so the preview repeated the same label three times on a plain install and two more for every MCP app sandbox | fb180654 | 24e42862 | review | `clean_codex_desktop_caches previews one row per cache kind across every partition` |
-+| I-108 | 2026-11-23 | `mo clean` printed one "Codex Desktop Cache" row per Codex profile and webview partition, so the preview repeated the same label three times on a plain install and two more for every MCP app sandbox | fb180654 | 24e42862 | review | `clean_codex_desktop_caches previews one row across every profile and partition` |
-```
-
-**File**: `lib/clean/app_caches.sh` (modified, +84/-65)
-```diff
-@@ -620,17 +620,24 @@ _codebuddy_shared_cache_running() {
- 
- # Code editors.
- clean_code_editors() {
--    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/logs/* "VS Code logs"
--    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/Cache/* "VS Code cache"
--    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/CachedExtensionVSIXs/* "VS Code extension cache"
--    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/CachedData/* "VS Code data cache"
--    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/WebStorage/*/CacheStorage/* "VS Code webview cache"
-+    # Each Electron editor's cache and log folders go through one call, so a
-+    # well-used editor reads as one line, not nine. Every item is still
-+    # rechecked before removal, and a running owner stops the whole app.
-+    mole_safe_clean_app_cache "Visual Studio Code" \
-+        ~/Library/Application\ Support/Code/logs/* \
-+        ~/Library/Application\ Support/Code/Cache/* \
-+        ~/Library/Application\ Support/Code/CachedExtensionVSIXs/* \
-+        ~/Library/Application\ Support/Code/CachedData/* \
-+        ~/Library/Application\ Support/Code/WebStorage/*/CacheStorage/* \
-+        "VS Code cache"
-     safe_clean ~/Library/Caches/com.sublimetext.*/* "Sublime Text cache"
-     safe_clean ~/Library/Caches/Zed/* "Zed cache"
-     # Zed npm caches: node/cache (system-node scratch) and node/node-v*/cache
-     # (per-version managed runtime, see #88); keep editor state under db/ untouched.
--    mole_safe_clean_app_cache "Zed" ~/Library/Application\ Support/Zed/node/cache/* "Zed npm cache"
--    mole_safe_clean_app_cache "Zed" ~/Library/Application\ Support/Zed/node/node-v*/cache/* "Zed npm cache"
-+    mole_safe_clean_app_cache "Zed" \
-+        ~/Library/Application\ Support/Zed/node/cache/* \
-+        ~/Library/Application\ Support/Zed/node/node-v*/cache/* \
-+        "Zed npm cache"
-     safe_clean ~/Library/Logs/Zed/* "Zed logs"
-     clean_editor_obsolete_extensions
-     # Shared desktop extension caches have more than one possible owner.
-@@ -646,26 +653,30 @@ clean_code_editors() {
-     fi
-     # CodeBuddy CN (VS Code fork, Electron)
-     if [[ -d ~/Library/Application\ Support/CodeBuddy\ CN ]]; then
--        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/Cache/* "CodeBuddy CN cache"
--        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/CachedData/* "CodeBuddy CN cached data"
--        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/CachedExtensionVSIXs/* "CodeBuddy CN extension cache"
--        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/Code\ Cache/* "CodeBuddy CN code cache"
--        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/GPUCache/* "CodeBuddy CN GPU cache"
--        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/DawnGraphiteCache/* "CodeBuddy CN Dawn cache"
--        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/DawnWebGPUCache/* "CodeBuddy CN WebGPU cache"
--        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/logs/* "CodeBuddy CN logs"
-+        mole_safe_clean_app_cache "CodeBuddy CN" \
-+            ~/Library/Application\ Support/CodeBuddy\ CN/Cache/* \
-+            ~/Library/Application\ Support/CodeBuddy\ CN/CachedData/* \
-+            ~/Library/Application\ Support/CodeBuddy\ CN/CachedExtensionVSIXs/* \
-+            ~/Library/Application\ Support/CodeBuddy\ CN/Code\ Cache/* \
-+            ~/Library/Application\ Support/CodeBuddy\ CN/GPUCache/* \
-+            ~/Library/Application\ Support/CodeBuddy\ CN/DawnGraphiteCache/* \
-+            ~/Library/Application\ Support/CodeBuddy\ CN/DawnWebGPUCache/* \
-+            ~/Library/Application\ Support/CodeBuddy\ CN/logs/* \
-+            "CodeBuddy CN cache"
-     fi
-     # Cursor (VS Code fork, Electron)
-     if [[ -d ~/Library/Application\ Support/Cursor ]]; then
--        mole_safe_clean_app_cache "Cursor" ~/Library/Application\ Support/Cursor/Cache/* "Cursor cache"
--        mole_safe_clean_app_cache "Cursor" ~/Library/Application\ Support/Cursor/CachedData/* "Cursor cached data"
--        mole_safe_clean_app_cache "Cursor" ~/Library/Application\ Support/Cursor/CachedExtensionVSIXs/* "Cursor extension cache"
--        mole_safe_clean_app_cache "Cursor" ~/Library/Application\ Support/Cursor/Code\ Cache/* "Cursor code cache"
--        mole_safe_clean_app_cache "Cursor" ~/Library/Application\ Support/Cursor/GPUCache/* "Cursor GPU cache"
--        mole_safe_clean_app_cache "Cursor" ~/Library/Application\ Support/Cursor/DawnGraphiteCache/* "Cursor Dawn cache"
--        mole_safe_clean_app_cache "Cursor" ~/Library/Application\ Support/Cu
-```
-
-**File**: `lib/clean/dev.sh` (modified, +40/-45)
-```diff
-@@ -4696,28 +4696,23 @@ clean_codex_desktop_caches() {
-     else
-         profiles+=("$cache_root/Default/Partitions/codex-browser-app")
-     fi
--    # Every profile and partition shares one row per cache kind, so a Mac
--    # with many MCP sandboxes still reads as two rows, not one per partition.
-+    # Every profile and partition shares one row, so a Mac with many MCP
-+    # sandboxes still reads as one Codex Desktop line, not one per partition.
-     local -a cache_targets=()
--    local -a code_cache_targets=()
-     local profile leaf physical_leaf
-     for profile in "${profiles[@]}"; do
-         for leaf in "Cache" "Code Cache"; do
-             physical_leaf=""
-             if physical_leaf=$(codex_staging_physical_path "$profile/$leaf" "$cache_root" any); then
-                 if mole_cleanup_targets_exist "$physical_leaf"/*; then
--                    if [[ "$leaf" == "Cache" ]]; then
--                        cache_targets+=("$physical_leaf"/*)
--                    else
--                        code_cache_targets+=("$physical_leaf"/*)
--                    fi
-+                    cache_targets+=("$physical_leaf"/*)
-                 fi
-             else
-                 debug_log "Codex Desktop cache leaf skipped: $profile/$leaf"
-             fi
-         done
-     done
--    [[ ${#cache_targets[@]} -gt 0 || ${#code_cache_targets[@]} -gt 0 ]] || return 0
-+    [[ ${#cache_targets[@]} -gt 0 ]] || return 0
- 
-     local process_state=0
-     codex_desktop_process_state || process_state=$?
-@@ -4731,18 +4726,10 @@ clean_codex_desktop_caches() {
-         return 0
-     fi
- 
--    if [[ ${#cache_targets[@]} -gt 0 ]]; then
--        _codex_desktop_safe_clean_guarded \
--            "Codex Desktop caches" \
--            "${cache_targets[@]}" \
--            "Codex Desktop Cache" || return 0
--    fi
--    if [[ ${#code_cache_targets[@]} -gt 0 ]]; then
--        _codex_desktop_safe_clean_guarded \
--            "Codex Desktop caches" \
--            "${code_cache_targets[@]}" \
--            "Codex Desktop Code Cache" || return 0
--    fi
-+    _codex_desktop_safe_clean_guarded \
-+        "Codex Desktop caches" \
-+        "${cache_targets[@]}" \
-+        "Codex Desktop cache" || return 0
- }
- 
- codex_sparkle_updater_running() {
-@@ -6304,43 +6291,51 @@ clean_dev_misc() {
-     safe_clean ~/Library/Caches/KSCrash/* "KSCrash reports"
-     safe_clean ~/Library/Caches/com.crashlytics.data/* "Crashlytics data"
-     if [[ -d ~/Library/Application\ Support/Antigravity ]]; then
--        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/Cache/* "Antigravity cache"
--        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/Code\ Cache/* "Antigravity code cache"
--        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/GPUCache/* "Antigravity GPU cache"
--        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/DawnGraphiteCache/* "Antigravity Dawn cache"
--        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/DawnWebGPUCache/* "Antigravity WebGPU cache"
-+        mole_safe_clean_app_cache "Antigravity" \
-+            ~/Library/Application\ Support/Antigravity/Cache/* \
-+            ~/Library/Application\ Support/Antigravity/Code\ Cache/* \
-+            ~/Library/Application\ Support/Antigravity/GPUCache/* \
-+            ~/Library/Application\ Support/Antigravity/DawnGraphiteCache/* \
-+            ~/Library/Application\ Support/Antigravity/DawnWebGPUCache/* \
-+            "Antigravity cache"
-     fi
-     # Antigravity browser profile caches (~/.gemini)
-     clean_antigravity_caches
-     # agent-browser's superseded Chrome for Testing builds (#1748)
-     clean_agent_browser_old_chrome
-     # Filo (Electron)
-     if [[ -d ~/Library/Application\ Support/Filo ]]; then
--        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/Cache/* "Filo cache"
--        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/Code\ Cache/* "Filo code cache"
--        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/GPUCache/* "Filo GPU cache"
--        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/DawnGraphiteCache/* "Filo Dawn cache"
--        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/DawnWebGPUCache/* "Filo WebGPU cache"
-+        mole_safe_clean_app_cache "Filo" \
-+            ~/Library/Application\ Support/Filo/production/Cache/* \
-+            ~/Library/Application\ Support/Filo/production/Code\ Cache/* \
-+            ~/Library/Application\ Support/Filo/production/GPUCache/* \
-+            ~/Library/Application\ Support/Filo/production/DawnGraphiteCache/* \
-+            ~/Library/Application\ Support/Filo/production/DawnWebGPUCache/* \
-+            "Filo cache"
-     fi
-     # Claude (Electron)
-     if [[ -d ~/Library/Application\ Support/Claude
-```
-
-**File**: `tests/clean_ai_cli_caches.bats` (modified, +5/-5)
-```diff
-@@ -158,7 +158,7 @@ EOF
-     assert_output_not_contains "STILL_PRESENT:"
- }
- 
--@test "clean_codex_desktop_caches previews one row per cache kind across every partition" {
-+@test "clean_codex_desktop_caches previews one row across every profile and partition" {
-     run env HOME="$HOME/codex-cache-rows" PROJECT_ROOT="$PROJECT_ROOT" MOLE_TEST_NO_AUTH=1 /bin/bash --noprofile --norc << 'EOF'
- set -euo pipefail
- cache_root="$HOME/Library/Caches/Codex"
-@@ -178,15 +178,15 @@ pgrep() { return 1; }
- DRY_RUN=true
- MOLE_DRY_RUN=1
- rows=$(clean_codex_desktop_caches 2>&1)
--printf 'ROWS_CACHE=%s;\n' "$(printf '%s\n' "$rows" | grep -c 'Codex Desktop Cache' || true)"
--printf 'ROWS_CODE_CACHE=%s;\n' "$(printf '%s\n' "$rows" | grep -c 'Codex Desktop Code Cache' || true)"
-+printf 'ROWS=%s;\n' "$(printf '%s\n' "$rows" | grep -c 'Codex Desktop' || true)"
-+printf 'ITEMS=%s;\n' "$(printf '%s\n' "$rows" | grep -c '10 items' || true)"
- remaining=$(find "$cache_root" -name entry.bin | wc -l | tr -d ' ')
- printf 'REMAINING=%s\n' "$remaining"
- EOF
- 
-     assert_run_success
--    assert_output_contains "ROWS_CACHE=1;"
--    assert_output_contains "ROWS_CODE_CACHE=1;"
-+    assert_output_contains "ROWS=1;"
-+    assert_output_contains "ITEMS=1;"
-     assert_output_contains "REMAINING=10"
- }
- 
-```
-
-**File**: `tests/clean_app_caches.bats` (modified, +69/-24)
-```diff
-@@ -939,14 +939,16 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/app_caches.sh"
--safe_clean() { echo "$2"; }
-+safe_clean() { echo "${!#}"; }
- pgrep() { return 1; }
- clean_design_tools
- EOF
- 
-     [ "$status" -eq 0 ]
-     [[ "$output" == *"Sketch cache"* ]] || return 1
--    [[ "$output" == *"Figma cache"* ]]
-+    [[ "$output" == *"Figma cache"* ]] || return 1
-+    # Desktop, agent and profile caches are one Figma row.
-+    [[ "$(grep -c '^Figma' <<< "$output")" == 1 ]]
- }
- 
- @test "clean_figma_desktop_caches targets all profile cache leaves and preserves state" {
-@@ -992,7 +994,7 @@ EOF
-     [[ "$output" == *"CLEAN:$pbase/GPUCache/data_0"* ]] || return 1
-     [[ "$output" == *"CLEAN:$pbase/DawnGraphiteCache/data_0"* ]] || return 1
-     [[ "$output" == *"CLEAN:$pbase/DawnWebGPUCache/data_0"* ]] || return 1
--    [[ "$output" == *"CLEAN:Figma desktop cache"* ]] || return 1
-+    [[ "$output" == *"CLEAN:Figma cache"* ]] || return 1
-     [[ "$output" != *"Cookies"* ]] || return 1
-     [[ "$output" != *"Local Storage"* ]] || return 1
-     [[ "$output" != *"IndexedDB"* ]] || return 1
-@@ -1251,13 +1253,14 @@ mkdir -p ~/Library/Application\ Support/Microsoft/Teams
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/app_caches.sh"
- pgrep() { return 1; }
--safe_clean() { echo "$2"; }
-+safe_clean() { local label="${!#}" target; echo "CALL:$label"; for target in "${@:1:$#-1}"; do echo "CLEAN:$target|$label"; done; }
- clean_communication_apps
- EOF
- 
-     [ "$status" -eq 0 ]
--    [[ "$output" == *"Microsoft Teams legacy cache"* ]] || return 1
--    [[ "$output" == *"Microsoft Teams legacy logs"* ]]
-+    [[ "$output" == *"/Microsoft/Teams/Cache/"*"|Microsoft Teams legacy cache"* ]] || return 1
-+    [[ "$output" == *"/Microsoft/Teams/logs/"*"|Microsoft Teams legacy cache"* ]] || return 1
-+    [[ "$(grep -c '^CALL:Microsoft Teams legacy' <<< "$output")" == 1 ]]
- }
- 
- @test "clean_communication_apps cleans Vesktop session caches only while Vesktop is not running" {
-@@ -1818,7 +1821,7 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/app_caches.sh"
--safe_clean() { echo "CLEAN:$1|$2"; }
-+safe_clean() { local label="${!#}" target; echo "CALL:$label"; for target in "${@:1:$#-1}"; do echo "CLEAN:$target|$label"; done; }
- clean_code_editors
- EOF
- 
-@@ -1829,6 +1832,8 @@ EOF
-     [[ "$output" != *"$HOME/Library/Application Support/Zed/db"* ]] || return 1
-     [[ "$output" != *"node-v24.11.0-darwin-arm64/bin"* ]] || return 1
-     [[ "$output" == *"Zed logs"* ]] || return 1
-+    [[ "$(grep -c '^CALL:Zed npm cache' <<< "$output")" == 1 ]] || return 1
-+    [[ "$(grep -c '^CALL:VS Code cache' <<< "$output")" == 1 ]]
- }
- 
- @test "clean_code_editors includes VS Code WebStorage CacheStorage only" {
-@@ -1841,12 +1846,12 @@ set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/app_caches.sh"
- pgrep() { return 1; }
--safe_clean() { echo "CLEAN:$1|$2"; }
-+safe_clean() { local label="${!#}" target; echo "CALL:$label"; for target in "${@:1:$#-1}"; do echo "CLEAN:$target|$label"; done; }
- clean_code_editors
- EOF
- 
-     [ "$status" -eq 0 ]
--    [[ "$output" == *"CLEAN:$HOME/Library/Application Support/Code/WebStorage/29/CacheStorage/uuid-1|VS Code webview cache"* ]] || return 1
-+    [[ "$output" == *"CLEAN:$HOME/Library/Application Support/Code/WebStorage/29/CacheStorage/uuid-1|VS Code cache"* ]] || return 1
-     [[ "$output" != *"Local Storage"* ]] || return 1
-     [[ "$output" != *"QuotaManager"* ]]
- }
-@@ -2211,14 +2216,15 @@ EOF
- set -euo pipefail
- source "$PROJECT_ROOT/lib/core/common.sh"
- source "$PROJECT_ROOT/lib/clean/app_caches.sh"
--safe_clean() { echo "$2"; }
-+safe_clean() { local label="${!#}" target; echo "CALL:$label"; for target in "${@:1:$#-1}"; do echo "CLEAN:$target|$label"; done; }
- clean_code_editors
- EOF
- 
-     [ "$status" -eq 0 ]
--    [[ "$output" == *"CodeBuddy CN cache"* ]] || return 1
--    [[ "$output" == *"CodeBuddy CN logs"* ]] || return 1
--    [[ "$output" == *"CodeBuddy CN GPU cache"* ]]
-+    [[ "$output" == *"/CodeBuddy CN/Cache/"*"|CodeBuddy CN cache"* ]] || return 1
-+    [[ "$output" == *"/CodeBuddy CN/logs/"*"|CodeBuddy CN cache"* ]] || return 1
-+    [[ "$output" == *"/CodeBuddy CN/GPUCache/"*"|CodeBuddy CN cache"* ]] || return 1
-+    [[ "$(grep -c '^CALL:CodeBuddy CN' <<< "$output")" == 1 ]]
- }
- 
- @test "clean_code_editors skips CodeBuddy when directories are absent" {
-@@ -2236,27 +2242,66 @@ EOF
-     [[ "$output" != *"CodeBuddy"* ]]
- }
- 
-+@test "Electron app caches clean in one call per app" {
-+    local case_home="$HOME/one-call-per-app"
-+    local app_support="$case_home/Library/Application Support"
-+    mkdir -p "$app_support/vesktop/sessionData/Cache" "$app_support/mihomo-party/Cache" \
-+        "$app_support/Antigravity/Cache" "$app_support/Filo/production/Cache" \
-+        "$app_support/Claude/Cache" "$app_support/Qoder/Cache"
-+
-+    run env HOME=
-```
-
----
-
-### Incident Patch 3: `8b1c08d5` (2026-11-23)
-**Commit Message**: fix(clean): leave the Figma cache to its process-guarded row
-
-clean_dev_misc also cleaned ~/Library/Caches/com.figma.Desktop/* with a
-plain safe_clean. Developer tools run before GUI apps in bin/clean.sh, so
-that copy cleared the cache while Figma ran, ahead of the Figma process
-check that clean_figma_desktop_caches applies to the same folder.
-
-Remove the duplicate; clean_design_tools still cleans it, deferring while
-Figma runs. No release shipped the guarded copy, so the behaviour every
-released version had (cleaned while running) ends here.
-
-Verified: the new clean_dev_misc case fails with the line present and
-passes without it; the full MOLE_TEST_NO_AUTH=1 ./scripts/test.sh and
-check.sh --no-format pass.
-
-Rollback: git revert this commit.
-
-**File**: `lib/clean/dev.sh` (modified, +0/-1)
-```diff
-@@ -6299,7 +6299,6 @@ clean_agent_browser_old_chrome() {
- clean_dev_misc() {
-     safe_clean ~/Library/Caches/com.unity3d.*/* "Unity cache"
-     safe_clean ~/Library/Caches/com.mongodb.compass/* "MongoDB Compass cache"
--    safe_clean ~/Library/Caches/com.figma.Desktop/* "Figma cache"
-     safe_clean ~/Library/Caches/com.github.GitHubDesktop/* "GitHub Desktop cache"
-     safe_clean ~/Library/Caches/SentryCrash/* "Sentry crash reports"
-     safe_clean ~/Library/Caches/KSCrash/* "KSCrash reports"
-```
-
-**File**: `tests/clean_ai_cli_caches.bats` (modified, +27/-0)
-```diff
-@@ -841,6 +841,33 @@ EOF
-     assert_output_contains "ANTIGRAVITY_CALLED"
- }
- 
-+@test "clean_dev_misc leaves the Figma cache to the guarded design tools row" {
-+    mkdir -p "$HOME/Library/Caches/com.figma.Desktop"
-+    touch "$HOME/Library/Caches/com.figma.Desktop/cache.bin"
-+    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
-+set -euo pipefail
-+source "$PROJECT_ROOT/lib/core/common.sh"
-+source "$PROJECT_ROOT/lib/clean/dev.sh"
-+safe_clean() { printf 'CLEAN:%s\n' "$@"; }
-+safe_find_delete() { :; }
-+clean_service_worker_cache() { :; }
-+clean_codex_runtimes() { :; }
-+clean_codex_desktop_staging() { :; }
-+clean_codex_desktop_caches() { :; }
-+note_activity() { :; }
-+clean_codex_cli() { :; }
-+clean_antigravity_caches() { :; }
-+clean_dev_misc
-+echo "DEV_MISC_DONE"
++if [[ "$MODE" == dry ]]; then DRY_RUN=true; export MOLE_DRY_RUN=1; else DRY_RUN=false; export MOLE_DRY_RUN=0; fi
++MOLE_CURRENT_COMMAND=clean
++_mole_path_owned_by_current_user() { [[ "$1" != "$LOGS/"* && -O "$1" ]]; }
++register_dry_run_cleanup_target() { :; }
++append_dry_run_cleanup_target() { echo "RECORDED=$1"; }
++safe_find_delete "$LOGS" "*.log" 0 f || true
++mole_record_user_sink_dry_run_target "$LOGS/old.log" 1 1 true || echo "WRAPPER_REFUSED"
++echo "MODE=$MODE DONE"
 +EOF
++        [ "$status" -eq 0 ] || { chmod 755 "$logs"; echo "$output"; return 1; }
++        [[ "$output" != *"RECORDED="* ]] || { chmod 755 "$logs"; echo "$output"; return 1; }
++        [[ "$output" == *"WRAPPER_REFUSED"* && "$output" == *"MODE=$mode DONE"* ]] || { chmod 755 "$logs"; echo "$output"; return 1; }
++    done
++    chmod 755 "$logs"
 +
-+    assert_run_success
-+    assert_output_contains "DEV_MISC_DONE"
-+    # Developer tools run before GUI apps, so an unguarded copy here would
-+    # clear the cache while Figma runs, ahead of the process check.
-+    assert_output_not_contains "com.figma.Desktop"
++    [[ -f "$logs/old.log" ]] || return 1
++    ! grep -q 'FAILED' "$HOME/Library/Logs/mole/operations.log" 2> /dev/null || { cat "$HOME/Library/Logs/mole/operations.log"; return 1; }
++    rm -rf "$logs"
 +}
 +
- @test "clean_dev_ai_agents reaps stale Claude Desktop bundled versions when active version is known" {
-     local claude_support="$HOME/Library/Application Support/Claude"
-     mkdir -p "$claude_support/claude-code/2.1.140" "$claude_support/claude-code/2.1.142" "$claude_support/claude-code/2.1.150"
+ @test "safe_clean leaves out of the preview many files another user owns in one folder" {
+     # More than 20 mostly-file paths take the batched sizing branch of
+     # _safe_clean_impl, whose preview asks the ownership refusal on its own.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2100** (2026-11-24): chore(deps): bump the github-actions group with 4 updates (@dependabot[bot])
-- **PR #2099** (2026-11-24): chore(deps): bump github.com/charmbracelet/x/ansi from 0.11.9 to 0.11.10 (@dependabot[bot])
-- **PR #2098** (closed): fix(clean): count and report privileged system sweeps in run totals (@Yuxin-Qiao)
-- **PR #2097** (2026-11-24): fix(clean): keep kubectl credential plugin caches in ~/.kube/cache (@viniciusdsandrade)
-- **PR #2095** (2026-11-24): fix(clean): leave a running Chromium browser's cache out of the user cache sweep (@viniciusdsandrade)
-- **PR #2093** (2026-11-24): fix(clean): count the System section's privileged sweeps in the run total (@viniciusdsandrade)
+- **PR #2123** (2026-11-27): perf(clean): batch size measurement for cache rules (@luojiyin1987)
+- **PR #2122** (2026-11-27): fix(analyze): clear multi-selection on Escape (@oranshea)
+- **PR #2120** (closed): fix(clean): show elapsed time for Bun cache measurement (@luojiyin1987)
+- **PR #2118** (2026-11-27): fix(clean): keep the SonarScanner truststore and keystore in ~/.sonar (@viniciusdsandrade)
+- **PR #2116** (2026-11-27): fix(clean): count owner cache reductions above 2 GiB on Windows (@r266-tech)
+- **PR #2114** (2026-11-27): fix(status): refresh Mac Studio power with CPU and memory (@PeterNiu7403)
 
 ---
 
@@ -2563,21 +2583,38 @@ Rollback: git revert this commit.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clean): show and count the aged log sweeps in preview and real runs
+## X. protection): route Bitdefender VPN to its uninstaller and guard extension and AI
 
 **RULE**:
-When implementing operations in `.claude/rules/core.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/core/app_protection.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fae04a5a`: clean): show and count the aged log sweeps in preview and real runs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b5fd0ed4`: protection): route Bitdefender VPN to its uninstaller and guard extension and AI data. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/core.md`.
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/core/app_protection.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-- A clean sweep through `safe_find_delete` passes its fifth argument, a row label: with one, the completed matches go through `safe_clean`, so the preview and a real run both show the row and count it in the total. Without a label no row is shown, the preview still adds the matches to Potential space and a real run removes them without counting them, so the preview promised bytes the real run never reported (the Cursor Agent worker logs, 61 MB on the maintainer's Mac, 2026-11-23). Locked by `a labeled safe_find_delete shows one row and counts it in the preview and a real run` in `tests/core_safe_functions.bats`.
+            # Chromium extension storage: settings, state, declarative rules and
+            # the MV3 service worker scripts. Mole Mac once offered Service
+            # Worker/ScriptCache and broke MV3 extensions. No rule lists these;
+            # this keeps a future glob from reaching them (Mole CLI (Windows)
+            # e4e29c99). Service Worker/CacheStorage stays cleanable.
+            */"Local Extension Settings" | */"Local Extension Settings/"* | \
+                */"Sync Extension Settings" | */"Sync Extension Settings/"* | \
+                */"Managed Extension Settings" | */"Managed Extension Settings/"* | \
+                */"Extension State" | */"Extension State/"* | \
+                */"Extension Rules" | */"Extension Rules/"* | \
+                */"Extension Scripts" | */"Extension Scripts/"* | \
+                */"Service Worker/ScriptCache" | */"Service Worker/ScriptCache/"* | \
+                */"Service Worker/Database" | */"Service Worker/Database/"*)
+                return 0
+                ;;
+        # The other AI tool stores Mole Mac's PathGuard refuses: plans, tasks,
+        # plugins, skills, memories, attachments, generated images and session
+        # 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2587,7 +2624,7 @@ Subsystems managing Shell data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fae04a5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b5fd0ed4` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T09:35:12.012Z",
+  "last_updated": "2026-11-27T09:45:01.136Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26484,
+  "total_items": 26493,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -231311,8 +231311,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "2889b681",
-      "content_hash": "fc082597ed9be46fd08d2a02a224ac333d5d8757f77f008e66a08d9d9ca35e83",
+      "source_version": "f176c30a",
+      "content_hash": "a4557fcb8e85aed15af881cfa875a7a20e1506e2ddd198c965c053e4d2fac5f9",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -231625,6 +231625,11 @@
           "number": 10825,
           "title": "Rework ARC 27a28665 dataset to give unknown kinds color 0",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10873,
+          "title": "Put kind first in ARC object definitions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231632,7 +231637,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T04:18:32.765Z",
+      "verified_at": "2026-11-27T09:44:54.695Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231674,10 +231679,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "2889b681",
-      "content_hash": "ad43bfdf74a0f381b98d42b439bf7e7fa895d10c12122a755298db2db971fcec",
+      "source_version": "f176c30a",
+      "content_hash": "9e8aec33c64a5265d7da1ff681241599a8dd12cf0d082da9bcd6cbdbf5ef4739",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T04:18:33.504Z"
+      "persisted_at": "2026-11-27T09:44:55.446Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -231686,10 +231691,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "2889b681",
-      "content_hash": "2bc2a48247d963ee0477e407bac911f9d4f01fa9d937ef003902bde393417c7f",
+      "source_version": "f176c30a",
+      "content_hash": "78916dcdddcc41db45a2aa695df8c822adedfd6a632b4a87b5488ba7ecf70238",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T04:18:33.715Z"
+      "persisted_at": "2026-11-27T09:44:55.656Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -234876,8 +234881,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "ab594768",
-      "content_hash": "fb59056d95b1c1fbd5b5fb0ce771da1d992e9ec78ce2de129f30ef7ebeb8f857",
+      "source_version": "68fdb4c9",
+      "content_hash": "951c774eca9364aa4d93e5cf8a5f07df47304dafeee0d1c32e13fdd88e3ba493",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -234925,6 +234930,11 @@
           "number": 10633,
           "title": "napi/parser, linter/plugins): deserialize statements directly onto directives in",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10871,
+          "title": "linter/eslint/no-empty-static-block): suggest a comment instead of deleting the",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234932,7 +234942,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T08:36:44.005Z",
+      "verified_at": "2026-11-27T09:44:40.116Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234986,10 +234996,10 @@
       "relative_path": "08_VERIFICATION/oxc-project-oxc-verification-protocol-empirical-defect-shield-for-oxc-project-ox.md",
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project/oxc",
       "repository": "oxc-project/oxc",
-      "source_version": "ab594768",
-      "content_hash": "5812847c3925cbc82590730a426bbb174c6a9eac3ad3cbbc45fc2ecdc74f6353",
+      "source_version": "68fdb4c9",
+      "content_hash": "b2778a2e34d60690de9154e0045fb55a8de26525207c9e4027a8f7c6970dd1e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:36:44.891Z"
+      "persisted_at": "2026-11-27T09:44:41.104Z"
     },
     "learn-github-agent-field-agentfield": {
       "learning_id": "learn-github-agent-field-agentfield",
@@ -235299,9 +235309,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project-oxc-learnings",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "e685bfb0085ed09c1117e21f3d97c3a7de1da0fe2ca94b25e2c65309f86b05c0",
+      "content_hash": "0741a3ad6c05fbe4b9302cbfcc6aeb3f03cf5c2e5695610200da9a55deb4e64a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:36:48.906Z"
+      "persisted_at": "2026-11-27T09:44:59.412Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
@@ -245368,8 +245378,8 @@
       "slug": "tw93-mole",
       "platform": "github",
       "source_url": "https://github.com/tw93/Mole",
-      "source_version": "ee710b48",
-      "content_hash": "ea3178340e8191670504b3cea2e19f3e850894dfdd2a390f9fde9da0888c4db6",
+      "source_version": "3da229e1",
+      "content_hash": "2a5861a12ce17665e313738b4e8cc478d8c2f6d03788a4b7d6237c3a6a2e0816",
       "dossier_path": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tw93-mole-learnings.md",
       "promoted_rules": [
@@ -245397,6 +245407,11 @@
           "number": 10412,
           "title": "show and count the aged log sweeps in preview and real runs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10872,
+          "title": "route Bitdefender VPN to its uninstaller and guard extension and AI",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245404,7 +245419,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T01:09:19.168Z",
+      "verified_at": "2026-11-27T09:44:45.639Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245446,10 +245461,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-architecture-intelligence-tw93-mole-core-invariants.md",
       "title": "Architecture Intelligence: tw93/Mole Core Invariants",
       "repository": "tw93/Mole",
-      "source_version": "7966afdd",
-      "content_hash": "c7160dff5be72ce8e04721269fd867499b1412d46003097828d4c1f0467d8064",
+      "source_version": "3da229e1",
+      "content_hash": "6d6e01d7cf743e560bb2daeec933ce73d1a2bf11bde1734f07705bc9b401f63d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:15:45.097Z"
+      "persisted_at": "2026-11-27T09:44:46.379Z"
     },
     "agent_contract-agent-contract-tw93-mole-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-tw93-mole-autonomous-specialist-persona",
@@ -245458,10 +245473,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/tw93-mole-agent-contract-tw93-mole-autonomous-specialist-persona.md",
       "title": "Agent Contract: tw93/Mole Autonomous Specialist Persona",
       "repository": "tw93/Mole",
-      "source_version": "ee710b48",
-      "content_hash": "93ae5d6de404d7848bf10d096bd16dbf0a47b91ff39688f66ac43641162bb662",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:09:20.043Z"
+      "source_version": "3da229e1",
+      "content_hash": "5c504bbc6c31259cdadd5fb6c68a4c43b15934960af23cbacd35d0f6a69210ef",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:44:46.588Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole",
@@ -245470,10 +245485,10 @@
       "relative_path": "08_VERIFICATION/tw93-mole-verification-protocol-empirical-defect-shield-for-tw93-mole.md",
       "title": "Verification Protocol: Empirical Defect Shield for tw93/Mole",
       "repository": "tw93/Mole",
-      "source_version": "ee710b48",
-      "content_hash": "ebbc6e9d6791d2326a84c1c1dd30b7a6c8049a246f0a64b75b16ba279284d9c5",
+      "source_version": "3da229e1",
+      "content_hash": "3e48ad23e689fd353786dd99c88c0f6fa62ea53af00d44b473b51eef30a759ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:09:20.200Z"
+      "persisted_at": "2026-11-27T09:44:46.763Z"
     },
     "rule-8569": {
       "learning_id": "rule-8569",
@@ -245651,9 +245666,9 @@
       "title": "Architecture Intelligence: tw93-mole-learnings Core Invariants",
       "repository": "tw93-mole-learnings",
       "source_version": "HEAD",
-      "content_hash": "7bc860e524da8fea89c00e8e2305b7ff0873819560d8e9abd4af53598613f33c",
+      "content_hash": "096dacf13e04e39b05bcebcc4d53dbe0c273caa8faa4ba9e7d608246520a5cd3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T10:16:29.304Z"
+      "persisted_at": "2026-11-27T09:45:00.740Z"
     },
     "agent_contract-agent-contract-tw93-mole-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-tw93-mole-learnings-autonomous-specialist-persona",
@@ -245663,9 +245678,9 @@
       "title": "Agent Contract: tw93-mole-learnings Autonomous Specialist Persona",
       "repository": "tw93-mole-learnings",
       "source_version": "HEAD",
-      "content_hash": "e3af694cb6e4593da2b3fd5c91e59a6764aaa3dd68c04150bbb7ad870b6d68bc",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-25T01:09:26.201Z"
+      "content_hash": "61af9fdde2f5879c1dcfa5498d148eba329439676de5015adf2b044c89902df7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:45:00.958Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tw93-mole-learnings",
@@ -245675,9 +245690,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tw93-mole-learnings",
       "repository": "tw93-mole-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb386a5d010eb691d2bab5be94bfddc38d2d804dda942208a808b2708dcce917",
+      "content_hash": "7c281353fef308d0a4f06cd40c8ca74c2eae4e2dfc176e5408d8fa181c4d013b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T01:09:26.383Z"
+      "persisted_at": "2026-11-27T09:45:01.136Z"
     },
     "candidate_directive-ci-retry-transient-package-download-failures": {
       "item_id": "candidate_directive-ci-retry-transient-package-download-failures",
@@ -246859,7 +246874,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "bb56b63e660fb722ed65f25f71cca2f1b099f086b4d2c8f4d6176bbb5ef5e1c0",
+      "content_hash": "2cba1916f12396231bd98aa0b22527dba59ae53f05aa215b45d056b7ee9f2668",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "promoted_rules": [],
@@ -246868,7 +246883,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T00:07:13.640Z",
+      "verified_at": "2026-11-27T09:44:38.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246885,9 +246900,9 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-Base Core Invariants",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "088da67f9fd7b9c9a01fe6b71f9e8a9413ac8947adf9c1f3776745ef3a5ec8d0",
+      "content_hash": "efba1a48d11ae9da12c9468fc80237368226af7778233505a9a02a9cbd578468",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T00:07:14.115Z"
+      "persisted_at": "2026-11-27T09:44:38.564Z"
     },
     "learn-github-crosspaste-crosspaste-desktop": {
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
@@ -247017,9 +247032,9 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-base-learnings Core Invariants",
       "repository": "hf-openmoss-team-moss-image-base-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a4e6c34a1475d733a216e892864d187e8bdda0f71607ae97fe3fe6c86be334b",
+      "content_hash": "1ba282ba215512cb7826640978b96e93c961efd5a56bf36790d83aa223a35abc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T00:08:00.942Z"
+      "persisted_at": "2026-11-27T09:44:59.849Z"
     },
     "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
@@ -363468,6 +363483,120 @@
       "content_hash": "19ccc3c79053b430023426187e256caecae7b93c453c8726de4b5c18957d98c9",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T09:35:10.664Z"
+    },
+    "rule-10871": {
+      "learning_id": "rule-10871",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10871,
+      "title": "linter/eslint/no-empty-static-block): suggest a comment instead of deleting the",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "68fdb4c9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:44:40.116Z"
+    },
+    "candidate_directive-linter-eslint-no-empty-static-block-suggest-a-comment-instead-of-deleting-the": {
+      "item_id": "candidate_directive-linter-eslint-no-empty-static-block-suggest-a-comment-instead-of-deleting-the",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P6JX-linter-eslint-no-empty-static-block-suggest-a-comment-instead-of-deleting-the.md",
+      "title": "linter/eslint/no-empty-static-block): suggest a comment instead of deleting the",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "91d4820b13fc90844683533c12fd68e9b88835ad32dddbe284e516ae2f5de048",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T09:44:58.993Z"
+    },
+    "domain_intelligence-design-intelligence-oxc-project-oxc-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-oxc-project-oxc-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-oxc-project-oxc-design-intelligence-oxc-project-oxc-core-invariants.md",
+      "title": "Design Intelligence: oxc-project/oxc Core Invariants",
+      "repository": "oxc-project/oxc",
+      "source_version": "68fdb4c9",
+      "content_hash": "c790fc2c7e20455aac7a3b6f83ffab497b6e67fc297d6ec58a53cfe9c44e5554",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T09:44:40.899Z"
+    },
+    "rule-10872": {
+      "learning_id": "rule-10872",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10872,
+      "title": "route Bitdefender VPN to its uninstaller and guard extension and AI",
+      "source_url": "https://github.com/tw93/Mole",
+      "source_version": "3da229e1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:44:45.639Z"
+    },
+    "candidate_directive-route-bitdefender-vpn-to-its-uninstaller-and-guard-extension-and-ai": {
+      "item_id": "candidate_directive-route-bitdefender-vpn-to-its-uninstaller-and-guard-extension-and-ai",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OWNV-route-bitdefender-vpn-to-its-uninstaller-and-guard-extension-and-ai.md",
+      "title": "route Bitdefender VPN to its uninstaller and guard extension and AI",
+      "repository": "tw93/Mole",
+      "source_version": "3da229e1",
+      "content_hash": "974eb1ca423c86940971672f190f51f9bd82585045082ba0c7aca74f85bb6c3c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:44:46.175Z"
+    },
+    "rule-10873": {
+      "learning_id": "rule-10873",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10873,
+      "title": "Put kind first in ARC object definitions",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "f176c30a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:44:54.695Z"
+    },
+    "candidate_directive-put-kind-first-in-arc-object-definitions": {
+      "item_id": "candidate_directive-put-kind-first-in-arc-object-definitions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P3NH-put-kind-first-in-arc-object-definitions.md",
+      "title": "Put kind first in ARC object definitions",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "f176c30a",
+      "content_hash": "eea8a1c5dfa5236b521c7f8f1821aa670ee963bad4dd5d6b947253cb68e1509b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:44:55.233Z"
+    },
+    "domain_intelligence-design-intelligence-oxc-project-oxc-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-oxc-project-oxc-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-oxc-project-oxc-learnings-design-intelligence-oxc-project-oxc-learnings-core-inv.md",
+      "title": "Design Intelligence: oxc-project-oxc-learnings Core Invariants",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "07774261b76683e5bc982956d1dc9f85bf646ffa4baac9b00b349e8690958730",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-27T09:44:59.200Z"
+    },
+    "candidate_directive-protection-route-bitdefender-vpn-to-its-uninstaller-and-guard-extension-and-ai": {
+      "item_id": "candidate_directive-protection-route-bitdefender-vpn-to-its-uninstaller-and-guard-extension-and-ai",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-P7QG-protection-route-bitdefender-vpn-to-its-uninstaller-and-guard-extension-and-ai.md",
+      "title": "protection): route Bitdefender VPN to its uninstaller and guard extension and AI",
+      "repository": "tw93-mole-learnings",
+      "source_version": "HEAD",
+      "content_hash": "12e6d38262a037824a0b8cc0a49d01ea05dafa617a99bf1dcd6121807ca513cd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T09:45:00.523Z"
     }
   },
   "ai-builder-brain": {

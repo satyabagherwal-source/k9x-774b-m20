@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T09:34:27.850Z",
+  "last_updated": "2026-11-27T09:44:54.983Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2646,14 +2646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "bb56b63e660fb722ed65f25f71cca2f1b099f086b4d2c8f4d6176bbb5ef5e1c0",
-      "verified_at": "2026-11-24T00:07:13.890Z",
+      "content_hash": "2cba1916f12396231bd98aa0b22527dba59ae53f05aa215b45d056b7ee9f2668",
+      "verified_at": "2026-11-27T09:44:38.336Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T00:07:13.890Z"
+      "last_updated": "2026-11-27T09:44:38.336Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "fc082597ed9be46fd08d2a02a224ac333d5d8757f77f008e66a08d9d9ca35e83",
-      "verified_at": "2026-11-27T04:18:33.057Z",
+      "content_hash": "a4557fcb8e85aed15af881cfa875a7a20e1506e2ddd198c965c053e4d2fac5f9",
+      "verified_at": "2026-11-27T09:44:54.983Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T04:18:33.057Z"
+      "last_updated": "2026-11-27T09:44:54.983Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -11106,14 +11106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-mole",
-      "content_hash": "ea3178340e8191670504b3cea2e19f3e850894dfdd2a390f9fde9da0888c4db6",
-      "verified_at": "2026-11-25T01:09:19.411Z",
+      "content_hash": "2a5861a12ce17665e313738b4e8cc478d8c2f6d03788a4b7d6237c3a6a2e0816",
+      "verified_at": "2026-11-27T09:44:45.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-25T01:09:19.411Z"
+      "last_updated": "2026-11-27T09:44:45.925Z"
     },
     "siderolabs/talos": {
       "repository": "siderolabs/talos",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "fb59056d95b1c1fbd5b5fb0ce771da1d992e9ec78ce2de129f30ef7ebeb8f857",
-      "verified_at": "2026-11-26T08:36:44.285Z",
+      "content_hash": "951c774eca9364aa4d93e5cf8a5f07df47304dafeee0d1c32e13fdd88e3ba493",
+      "verified_at": "2026-11-27T09:44:40.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T08:36:44.285Z"
+      "last_updated": "2026-11-27T09:44:40.441Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",

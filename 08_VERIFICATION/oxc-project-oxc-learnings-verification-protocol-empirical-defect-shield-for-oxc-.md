@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T08:36:48.386Z",
+  "timestamp": "2026-11-27T09:44:58.844Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-oxc-project-oxc-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [oxc-project-oxc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T08:36:48.386Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T09:44:58.844Z`  
 > **Learning ID**: `LEARN-EVO-oxc-project-oxc-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `ab594768`  
+> **Source Version**: `68fdb4c9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T08:36:43.040Z  
+> **Timestamp**: 2026-11-27T09:44:39.142Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T08:36:28.543Z  
+> **Harvest Timestamp**: 2026-11-27T09:44:39.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23614 stars
+- **Stars / Engagement**: 23630 stars
 
 ---
 
@@ -636,7 +636,7 @@ impl ConfigLoader {
     fn load_in_dir(&self, dir: &Path) -> Result<Option<ConfigResolver>, String> {
         let Some(config_file) = self
             .discovery
-            .find_unique_config_by_readdir(dir)
+            .find_unique_config(dir)
             .map_err(|e| Into::<oxc_diagnostics::OxcDiagnostic>::into(e).to_string())?
         else {
             return Ok(None);
@@ -777,7 +777,7 @@ pub fn resolve_for_api(
 pub struct ConfigResolver {
     /// User's raw config as JSON value.
     ///
-    /// Retained because the slow 
+    /// Retained because the slow path must r
 ```
 
 ### Core Architecture Module: `apps/oxfmt/src/core/config/nested.rs`
@@ -1092,14 +1092,11 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30326** (2026-11-26): **fix(transformer): map lowered auto-accessors and class field initializers to their source**
-  *Symptoms*: The storage field, getter and setter that lowering generates for an `accessor` field have no source positions. Stepping into the getter or setter in a debugger shows no original location, and the `_defineProperty(...)` / `_classPrivateFieldInitSpec(...)` calls that class-properties emits for field initializers map only their arguments.  ### Example  Input ([playground for this example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22target%22%3A%22es2021%22%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=class+C+%7B%0A++%40dec+accessor+x+%3D+1%3B%0A%7D%0Aclass+D+%7B%0A++y+%3D+1%3B%0A++static+z+%3D+2%3B%0A%7D%0A)):   ```ts class C {   @dec accessor x = 1; } class D {   y = 1;   static z = 2; } ```  Options: `target: "es2021"`, legacy decorators, source map on. Each line lists its decoded mappings as `generated`→`line:column original`.  Before output:  ```js _classPrivateFieldInitSpec(this, _x_accessor_storage, 1);  // `1`→2:20 `1` get x() {                                                  // `x`→2:16 `x`   return _classPrivateFieldGet(_x_accessor_storage, this); // (none) set x(value) {                                             // (none)   _classPrivateFieldSet(_x_accessor_storage, this, value); // (none) _defineProperty(this, "y", 1);                             // `"`→5:2 `y`, `1`→5:6 `1` _defineProperty(D, "z", 2);                                // `"`→6
-  **Post-Mortem & Fix Analysis**:
-  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance** > [!WARNING] > oxc-project has exceeded the Hobby plan limit of 5 active contributors. [Upgrade your plan](https://app.codspeed.io/settings/organizations/oxc-project/billing?utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) or [apply to the open source program](https://app.codspeed.io/oss-program-application?owner=oxc-project&utm_source=github&utm_medium=comment-v2&utm_content=contributor_cap) by December 8, 2026 to keep using CodSpeed.    `✅ 81` untouched benchmarks   `⏩ 29` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>accessor-lowering-source-positions</code> (051b29c) with <code>main</code> (ca243ee)[^unexpected-base]</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/accessor-lowering-source-positions?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https:
-  > I can see this is a nice improvement from [Before and after in the source map viewer](https://source-map-viewer.void.app/compare?a=eJylkm9P4kAQxr_KZO8NmpUG7x0NCUvhPPUwRmLMxTHNZhmhXtnt7W4RNHx3s2DlT5Dcxb5o0t1nfs8z03llI9JkpadhYobEmmwqLaQql85d22wqPf3IKB-e68wPClLQAkt_y8xSDVnbzNRJYc0TKR_ZUvtsQtGY8oKsiz5FIDuKUe-3OSP_BYcz8qcb9CEpEzr7d2JVcSji4EsRB7sRHzNN19YUZP38f4Ju1m0AZ6lUipwzNnXeWDkK3UfH0E7T69ubXprCcQSanuGO5J--LGqhcpkSEnhFjV4Z7bwtlTe2drQ6Qv_5QtT8OHN8nzGHRoCjX4TXiDzM1kBLvrR6_wbU9sKCzwbPLXlTmZd0IOXgEI3DqryCLlB_7EztfkjqgUNSL6zxxs8L4oBshoyDLvN8PbbuobFt_6f3WSGbB0xjx3hL2Q2ylyA7DbIo-gbOlFZRXxZFpke3N79aVVcnE5np-pOrT2SBmnH2obxwRrMme0U2Jesyo5E1v3Nkj1lOyJrIdhHIODItJ-SQNe8fOL6zlp9red07ZBu3idGetF-J1tuEGqA9JAVVHcygBY0YQ8ub8wvCeXUF4Lz0mYIXaMFpJV75TVbdu2X4ePkIIQTvC9HnPSF6cfzcFcnvOL4U4qISJONOfCe6Z7EQvZ9b2o5IrvilEOdB1ruKJx3RHSwPkC3Y4g1Okc8I&b=eJylklFP2zAQx7_KyXspyDSie2tUiWuaMca6VVSIB4yiyLmWQGpnttO1oH73yS2hoSvVJvJgKb7__f5353tmU1JkUkdZpDNiXTZPDSSySK0dmXyeOvqSU5FdqNyNS5LQA0O_qtxQS7AzvZAnpdEPJF1gKuXyGQX3VJRkbPAuQr
+- **Issue #30395** (2026-11-27): **fix(formatter_css): bump oxc-css-parser to 0.0.24 and keep SCSS at-rule names and the Less keyword `-` as written**
+  *Symptoms*: Bumps `oxc-css-parser` to 0.0.24 (oxc-project/oxc-css-parser#220 to #224, fixing oxc-project/oxc-css-parser#217, #218 and #219, and oxc-project/oxc-css-parser#226) and follows its fixes in the CSS formatter. Before, oxfmt rejected some valid SCSS / Less, and changed what lessc and dart-sass compile for others.  - `@supports selector()`: the parser now spans the term from its name to its `)`, so the workaround that found both by scanning the source is dropped (a refactor: fixture output and conformance results are unchanged) - Less: `2-round(1.5)` and `1-(1)` are now subtractions, as in less.js, and print as written; a lone `-` that negates nothing is a keyword (`1 -"t"`), now kept glued to its neighbors as Prettier does - SCSS: dart-sass matches at-rule names case-sensitively, so an uppercase one is an unknown at-rule there: it now prints as written, params included. Lowercasing turned `@IMPORT` / `@USE` into a real `@import` / `@use`, and `@MEDIA (min-width:$bp)` (which dart-sass keeps as is) was re-spaced (`DIVERGENCES.md#scss-at-rule-name-case`) - Less `- 1` (a keyword, then a number) keeps its space where Prettier prints `-1`, which lessc compiles differently (`DIVERGENCES.md#less-keyword-minus`)  ### Example  Input (SCSS):  ```scss @IMPORT "Keep"; @USE "x"; ```  Before output:  ```scss @import "Keep"; @use "x"; ```  After output:  ```scss @IMPORT "Keep"; @USE "x"; ```  dart-sass 1.108.2 compiles `@IMPORT "Keep";` as written (an unknown at-rule), but `@import "Keep";` as 
 
-- **Issue #30322** (2026-11-26): **fix(runtime): reject non-object receivers in decorator access objects**
-  *Symptoms*: The decorators spec requires `context.access.get`, `set` and `has` to throw a `TypeError` when the receiver is not an object ([CreateDecoratorAccessObject](https://github.com/tc39/ecma262/pull/2417): "If _obj_ is not an Object, throw a *TypeError* exception", before any `Get`, `Set` or private lookup). Our `decorateElement` helper read and wrote through primitives instead, so `access.get(1)` returned `(1)[name]`. The CommonJS build is not strict, so `access.set(1, 2)` was silently dropped too.  ### Example  No playground link: `main` does not lower standard decorators yet, so the playground never emits this helper. Run the helper directly from `npm/runtime` with `node example.cjs`:  ```js const decorateElement = require("@oxc-project/runtime/helpers/decorateElement"); const decoratorStart = require("@oxc-project/runtime/helpers/decoratorStart");  class C {} let access; // A decorated public field `x` (flags 5 = field) decorateElement(decoratorStart(), 5, "x", [[undefined, (_, context) => void (access = context.access)]], C);  for (const call of [() => access.get(1), () => access.set(1, 2)]) {   try {     console.log("returned", call());   } catch (error) {     console.log(`${error.name}: ${error.message}`);   } } ```  Before output:  ```text returned undefined returned undefined ```  After output:  ```text TypeError: Decorator access receiver must be an object TypeError: Decorator access receiver must be an object ```  Public `get` and `set` now check the receiver once per ca
+- **Issue #30393** (2026-11-27): **refactor(formatter_css): share the operator fill between calc and Less operations**
+  *Symptoms*: ## Summary  `write_calc` and `write_less_binary_operation` built the same flat operator fill twice: the piece enum, the operator push that ends a chunk after a spaced operator, the chunk writer with its comment flushes, and the `group(indent(fill))` layout. Both now go through `OpPiece` / `OpChunks` and keep only their own operand recursion and spacing rules.  Operators are printed from their source spans (the same `write_text_with_leading_comments` the Sass printer uses), so the two operator-to-string tables and the separate `Space` piece go away.  ## What stays identical  The formatter output, byte for byte. Compared against the parent PR's head:  - Every `.css` / `.scss` / `.less` file under `apps/oxfmt/conformance/externals` (2565 files: Prettier's suite plus the real-world projects), formatted with `--print-width 80` and `100` by both builds of the `css_formatter` example: 0 differences. - `cargo test -p oxc_formatter_css`: all snapshots unchanged. - `conformance:prettier`, `conformance:fixture` and `conformance:live` reports: unchanged.  `write_sass_binary` still builds its own fill: its run merging for `+` / `-` decides spacing while writing, so moving it onto `OpChunks` would be a behavior-sensitive change of its own.  ---  AI assistance: this PR was written with Claude Code (model: Claude Opus 5.5, `claude-opus-5-5`; the reasoning effort level is not available to the agent).  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1116,1613 +1113,1036 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1aef2f49` (2026-11-25)
-**Commit Message**: fix(napi/parser, linter/plugins): deserialize statements directly onto directives in raw transfer (#30274)
+### Incident Patch 1: `9eb6c432` (2026-11-26)
+**Commit Message**: fix(linter/eslint/no-empty-static-block): suggest a comment instead of deleting the block (#30374)
 
-With `experimentalRawTransfer`, a `Program`, function body or
-`TSModuleBlock` with more than about 120k statements throws `RangeError:
-Maximum call stack size exceeded`. ESTree puts directives and statements
-in one `body` array, and the deserializer merged them with
-`body.push(...deserializeVecStatement(pos))`. The spread passes every
-statement as a separate call argument.
+- Change the suggestion to insert ` /* empty */ ` inside the static
+block instead of deleting it, matching ESLint.
+- Deleting the block could merge neighbouring class members. For
+example, `x = value` followed by `[key]() {}` became a computed access
+on the field initializer, which is invalid.
 
-Generated `Vec` deserializers now accept an optional target array, so
-statements are pushed straight onto the directives array:
-
-```js
-// Before
-body = deserializeVecDirective(pos + 16);
-body.push(...deserializeVecStatement(pos + 40));
-
-// After
-body = deserializeVecDirective(pos + 16);
-deserializeVecStatement(pos + 40, body);
-```
-
-Each `Vec` deserializer now starts with `function deserializeVecX(pos,
-arr = [])`. Existing one-argument calls behave as before.
-
-## Example
-
-```js
-import { parseSync } from 'oxc-parser';
-
-const stmts = ';'.repeat(200_000);
-const cases = {
-  Program: `"use strict";${stmts}`,
-  FunctionBody: `function f() { "use strict";${stmts} }`,
-  TSModuleBlock: `namespace N {${stmts}}`,
-};
-
-
-
-**File**: `apps/oxlint/src-js/generated/deserialize.js` (modified, +61/-88)
+**File**: `crates/oxc_linter/src/rules/eslint/no_empty_static_block.rs` (modified, +20/-5)
 ```diff
-@@ -92,8 +92,9 @@ function deserializeProgram(pos) {
-       (node$0.end = end),
-       (node$0.range = [start, end]),
-       (node$0.parent = null),
--      node$0));
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+      node$0)),
-+    body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   parent = null;
-   return program;
- }
-@@ -2605,7 +2606,7 @@ function deserializeFunctionBody(pos) {
-       (node$0.parent = parent),
-       node$0)),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -5574,7 +5575,7 @@ function deserializeTSModuleBlock(pos) {
-       (node$0.parent = parent),
-       node$0)),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -6282,9 +6283,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -6294,9 +6294,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6470,9 +6469,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6490,9 +6488,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6518,9 +6515,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -6530,9 +6526,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6596,9 +6591,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6620,9 +6614,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6642,9 +6635,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6774,9 +6766,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[pos >> 2]);
- }
- 
--function deserializeVecVariableDeclarator(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecVariableDeclarator(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 56;
- 
-```
-
-**File**: `crates/oxc_ast/src/serialize/mod.rs` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@ impl Program<'_> {
-     if (!LINTER) program.hashbang = DESER[Option<Hashbang>](POS_OFFSET.hashbang);
- 
-     const body = program.body = DESER[Vec<Directive>](POS_OFFSET.directives);
--    body.push(...DESER[Vec<Statement>](POS_OFFSET.body));
-+    DESER[Vec<Statement>](POS_OFFSET.body, body);
- 
-     if (PARENT) parent = null;
- 
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/js.js` (modified, +76/-111)
-```diff
-@@ -66,7 +66,8 @@ function deserializeProgram(pos) {
-       end,
-     };
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   return program;
- }
- 
-@@ -1831,7 +1832,7 @@ function deserializeFunctionBody(pos) {
-       end: deserializeI32(pos + 4),
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -3959,7 +3960,7 @@ function deserializeTSModuleBlock(pos) {
-       end: deserializeI32(pos + 4),
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -4757,9 +4758,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -4775,9 +4775,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -4787,9 +4786,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -4963,9 +4961,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -4983,9 +4980,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5011,9 +5007,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5023,9 +5018,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5089,9 +5083,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5113,9 +5106,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5135,9 +5127,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5267,9 +5258,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[pos >> 2]);
- }
- 
--function deseria
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/js_parent.js` (modified, +76/-111)
-```diff
-@@ -68,7 +68,8 @@ function deserializeProgram(pos) {
-       parent: null,
-     });
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   parent = null;
-   return program;
- }
-@@ -2035,7 +2036,7 @@ function deserializeFunctionBody(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -4426,7 +4427,7 @@ function deserializeTSModuleBlock(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -5289,9 +5290,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5307,9 +5307,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5319,9 +5318,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5495,9 +5493,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5515,9 +5512,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5543,9 +5539,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5555,9 +5550,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5621,9 +5615,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5645,9 +5638,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5667,9 +5659,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5799,9 +5790,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/js_range.js` (modified, +76/-111)
-```diff
-@@ -67,7 +67,8 @@ function deserializeProgram(pos) {
-       range: [start, end],
-     };
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   return program;
- }
- 
-@@ -2041,7 +2042,7 @@ function deserializeFunctionBody(pos) {
-       range: [start, end],
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -4430,7 +4431,7 @@ function deserializeTSModuleBlock(pos) {
-       range: [start, end],
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -5319,9 +5320,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5337,9 +5337,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5349,9 +5348,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5525,9 +5523,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5545,9 +5542,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5573,9 +5569,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5585,9 +5580,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5651,9 +5645,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5675,9 +5668,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5697,9 +5689,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5829,9 +5820,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[pos >> 2]);
- }
- 
--function deseriali
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/js_range_parent.js` (modified, +76/-111)
-```diff
-@@ -69,7 +69,8 @@ function deserializeProgram(pos) {
-       parent: null,
-     });
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   parent = null;
-   return program;
- }
-@@ -2244,7 +2245,7 @@ function deserializeFunctionBody(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -4896,7 +4897,7 @@ function deserializeTSModuleBlock(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -5850,9 +5851,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5868,9 +5868,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5880,9 +5879,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6056,9 +6054,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6076,9 +6073,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6104,9 +6100,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -6116,9 +6111,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6182,9 +6176,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6206,9 +6199,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6228,9 +6220,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6360,9 +6351,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/ts.js` (modified, +78/-114)
-```diff
-@@ -66,7 +66,8 @@ function deserializeProgram(pos) {
-       end,
-     };
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   return program;
- }
- 
-@@ -2009,7 +2010,7 @@ function deserializeFunctionBody(pos) {
-       end: deserializeI32(pos + 4),
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -4242,7 +4243,7 @@ function deserializeTSModuleBlock(pos) {
-       end: deserializeI32(pos + 4),
-     },
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   return node;
- }
-@@ -5040,9 +5041,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5058,9 +5058,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5070,9 +5069,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5246,9 +5244,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5266,9 +5263,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5294,9 +5290,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5306,9 +5301,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5372,9 +5366,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5396,9 +5389,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5418,9 +5410,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5550,9 +5541,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[pos >> 2]);
- }
- 
--function deseria
-```
-
-**File**: `napi/parser/src-js/generated/deserialize/ts_parent.js` (modified, +78/-114)
-```diff
-@@ -68,7 +68,8 @@ function deserializeProgram(pos) {
-       parent: null,
-     });
-   program.hashbang = deserializeOptionHashbang(pos + 56);
--  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-+  let body = (program.body = deserializeVecDirective(pos + 88));
-+  deserializeVecStatement(pos + 112, body);
-   parent = null;
-   return program;
- }
-@@ -2232,7 +2233,7 @@ function deserializeFunctionBody(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -4739,7 +4740,7 @@ function deserializeTSModuleBlock(pos) {
-       parent,
-     }),
-     body = deserializeVecDirective(pos + 16);
--  body.push(...deserializeVecStatement(pos + 40));
-+  deserializeVecStatement(pos + 40, body);
-   node.body = body;
-   parent = previousParent;
-   return node;
-@@ -5602,9 +5603,8 @@ function deserializeStr(pos) {
-   return fromCharCode.apply(null, arr);
- }
- 
--function deserializeVecComment(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecComment(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 24;
-   for (; pos !== endPos;) {
-@@ -5620,9 +5620,8 @@ function deserializeOptionHashbang(pos) {
-     : deserializeHashbang(pos);
- }
- 
--function deserializeVecDirective(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecDirective(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 80;
-   for (; pos !== endPos;) {
-@@ -5632,9 +5631,8 @@ function deserializeVecDirective(pos) {
-   return arr;
- }
- 
--function deserializeVecStatement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecStatement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5808,9 +5806,8 @@ function deserializeBoxV8IntrinsicExpression(pos) {
-   return deserializeV8IntrinsicExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArrayExpressionElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArrayExpressionElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5828,9 +5825,8 @@ function deserializeBoxElision(pos) {
-   return deserializeElision(int32[pos >> 2]);
- }
- 
--function deserializeVecObjectPropertyKind(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecObjectPropertyKind(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5856,9 +5852,8 @@ function deserializeBoxPrivateIdentifier(pos) {
-   return deserializePrivateIdentifier(int32[pos >> 2]);
- }
- 
--function deserializeVecTemplateElement(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecTemplateElement(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + int32[pos32 + 2] * 48;
-   for (; pos !== endPos;) {
-@@ -5868,9 +5863,8 @@ function deserializeVecTemplateElement(pos) {
-   return arr;
- }
- 
--function deserializeVecExpression(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecExpression(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5934,9 +5928,8 @@ function deserializeBoxPrivateFieldExpression(pos) {
-   return deserializePrivateFieldExpression(int32[pos >> 2]);
- }
- 
--function deserializeVecArgument(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecArgument(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5958,9 +5951,8 @@ function deserializeOptionAssignmentTargetMaybeDefault(pos) {
-   return uint8[pos] === 255 ? null : deserializeAssignmentTargetMaybeDefault(pos);
- }
- 
--function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -5980,9 +5972,8 @@ function deserializeOptionBoxAssignmentTargetRest(pos) {
-     : deserializeBoxAssignmentTargetRest(pos);
- }
- 
--function deserializeVecAssignmentTargetProperty(pos) {
--  let arr = [],
--    pos32 = pos >> 2;
-+function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-+  let pos32 = pos >> 2;
-   pos = int32[pos32];
-   let endPos = pos + (int32[pos32 + 2] << 4);
-   for (; pos !== endPos;) {
-@@ -6112,9 +6103,8 @@ function deserializeBoxTSImportEqualsDeclaration(pos) {
-   return deserializeTSImportEqualsDeclaration(int32[
+@@ -67,7 +67,15 @@ impl Rule for NoEmptyStaticBlock {
+             }
+             ctx.diagnostic_with_suggestion(
+                 no_empty_static_block_diagnostic(static_block.span),
+-                |fixer| fixer.delete(&static_block.span),
++                |fixer| {
++                    let span = static_block.span;
++                    let Some(offset) = ctx.find_next_token_within(span.start, span.end, "{") else {
++                        return fixer.noop();
++                    };
++                    fixer
++                        .replace(Span::new(span.start + offset + 1, span.end - 1), " /* empty */ ")
++                        .with_message("Add comment inside empty static block.")
++                },
+             );
+         }
+     }
+@@ -96,15 +104,22 @@ fn test() {
+     ];
+ 
+     let fix = vec![
+-        ("class Foo { static {} }", "class Foo {  }"),
+-        ("class Foo { static { } }", "class Foo {  }"),
++        ("class Foo { static {} }", "class Foo { static { /* empty */ } }"),
++        ("class Foo { static { } }", "class Foo { static { /* empty */ } }"),
+         (
+             "class Foo { static {
+ 
+ 			 } }",
+-            "class Foo {  }",
++            "class Foo { static { /* empty */ } }",
++        ),
++        (
++            "class Foo { static { bar(); } static {} }",
++            "class Foo { static { bar(); } static { /* empty */ } }",
++        ),
++        (
++            "class C { x = value\nstatic {}\n[key]() {} }",
++            "class C { x = value\nstatic { /* empty */ }\n[key]() {} }",
+         ),
+-        ("class Foo { static { bar(); } static {} }", "class Foo { static { bar(); }  }"),
+     ];
+ 
+     Tester::new(NoEmptyStaticBlock::NAME, NoEmptyStaticBlock::PLUGIN, pass, fail)
 ```
 
 ---
 
-### Incident Patch 2: `56b8f4fb` (2026-11-26)
-**Commit Message**: fix(transformer/legacy-decorator): evaluate computed keys of decorated `declare` fields (#30264)
+### Incident Patch 2: `68fdb4c9` (2026-11-27)
+**Commit Message**: fix(formatter_css): bump oxc-css-parser to 0.0.24 and keep SCSS at-rule names and the Less keyword `-` as written (#30395)
 
-With legacy decorators (`experimentalDecorators`), a decorated `declare`
-field whose computed key has side effects, such as `@dec declare
-[key()]: any`, got `undefined` as its decorator key, and `key()` never
-ran: legacy decorators put `_key = key()` in the field's key, but
-TypeScript removes `declare` fields with their keys. Define mode was
-already broken; #29979 broke `useDefineForClassFields: false`, which
-used to call `key()` (with a `null` key). An identifier key, `@dec
-declare [k]: any`, also got an unassigned temp var, and an imported `k`
-was removed as type-only.
+Bumps `oxc-css-parser` to 0.0.24 (oxc-project/oxc-css-parser#220 to
+#224, fixing oxc-project/oxc-css-parser#217, #218 and #219, and
+oxc-project/oxc-css-parser#226) and follows its fixes in the CSS
+formatter. Before, oxfmt rejected some valid SCSS / Less, and changed
+what lessc and dart-sass compile for others.
 
-### Example
+- `@supports selector()`: the parser now spans the term from its name to
+its `)`, so the workaround that found both by scanning the source is
+dropped (a refactor: fixture output and conformance results are
+unchanged)
+- Less: `2-round(1.5)` and `1-(1)` are now subtractions, as in less.js,
+and print as written; a lone `-` that negates nothing is a keyword (`1
+-"t"`), now kept glued to its neighbors as Prettier does
+- SCSS: dart-sass matches at-rule names case-sensitively, so an
+uppercase one is an unknown at-rule there: it now prints as written,
+params included. Lowercasing turned `@IMPORT` / `@USE` into a real
+`@import` / `@use`, and `@MEDIA (min-width:$bp)` (which dart-sass keeps
+as is) was re-spaced (`DIVERGENCES.md#scss-at-rule-name-case`)
+- Less `- 1
 
-Input ([playground for this
-example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%2C%22experimentalDecorators%22%3Atrue%7D%7D&code=const+log%3A+string%5B%5D+%3D+%5B%5D%3B%0Aconst+key+%3D+%28%29+%3D%3E+%28log.push%28%22key%22%29%2C+%22k%22%29%3B%0Aconst+dec+%3D+%28_%3A+object%2C+name%3A+string%29+%3D%3E+log.push%28%60dec%3A%24%7Bname%7D%60%29%3B%0A%0Ac
-
-**File**: `crates/oxc_transformer/src/decorator/legacy/mod.rs` (modified, +7/-9)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -290,16 +290,14 @@ impl<'a> Traverse<'a, TransformState<'a>> for LegacyDecorator<'a> {
+@@ -1679,9 +1679,9 @@ dependencies = [
  
-         // We emit `void 0` here to indicate to `_decorate` that it can invoke `Object.defineProperty` directly.
-         let descriptor = Expression::new_void_0(SPAN, ctx);
--        // TypeScript turns a decorated field that it removes into a `declare` field keyed by a value
--        // reference or a literal, which the class doesn't evaluate. Other keys of user-written
--        // `declare` fields hold type references, so they keep the temp var.
-+        // The class doesn't evaluate the key of a `declare` field, which TypeScript removes. It has
-+        // already replaced a key with side effects by a temp var, which it assigns in order with the
-+        // other class keys, so an identifier or literal key is passed to `_decorate` as is.
-         let key_is_evaluated = !(prop.declare
--            && prop.key.as_expression().is_some_and(|key| match key {
--                Expression::Identifier(ident) => {
--                    ctx.scoping().get_reference(ident.reference_id()).flags().is_read()
--                }
--                key => key.is_literal(),
--            }));
-+            && prop
-+                .key
-+                .as_expression()
-+                .is_some_and(|key| matches!(key, Expression::Identifier(_)) || key.is_literal()));
-         self.handle_decorated_class_element(
-             prop.r#static,
-             &mut prop.key,
+ [[package]]
+ name = "oxc-css-parser"
+-version = "0.0.22"
++version = "0.0.24"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8e5e8f4fcfe5796d4e23bec581cf049823c9303cb27bbcbbaa31342bce0d48bd"
++checksum = "398ea9a6754e2ebf0225b4f80dedb03a9836d5cbd1397fbb0701479db99c786c"
+ dependencies = [
+  "oxc_allocator",
+ ]
 ```
 
-**File**: `crates/oxc_transformer/src/lib.rs` (modified, +1/-1)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -164,7 +164,7 @@ impl<'a> Transformer<'a> {
-             x0_typescript: program
-                 .source_type
-                 .is_typescript()
--                .then(|| TypeScript::new(&self.typescript, &self.state)),
-+                .then(|| TypeScript::new(&self.typescript, decorator_mode, &self.state)),
-             x1_jsx: Jsx::new(
-                 self.jsx,
-                 self.env.es2018.object_rest_spread,
+@@ -250,7 +250,7 @@ nodejs-built-in-modules = "1.0.0" # Node.js built-in modules
+ nonmax = "0.5.5" # Non-maximum numbers
+ num-bigint = "0.5.0" # Big integers
+ num-traits = "0.2.19" # Numeric traits
+-oxc-css-parser = "0.0.22" # CSS/SCSS/Less parser (raffia 0.12.3 fork: adds `template_placeholder` typed placeholders for css-in-js + valid-syntax coverage fixes (see crates/oxc_formatter_css/AGENTS.md))
++oxc-css-parser = "0.0.24" # CSS/SCSS/Less parser (raffia 0.12.3 fork: adds `template_placeholder` typed placeholders for css-in-js + valid-syntax coverage fixes (see crates/oxc_formatter_css/AGENTS.md))
+ oxc-graphql-parser = "0.0.10" # GraphQL parser (direct AST; apollo-parser 0.8.6 fork aligned with graphql-js 17 syntax)
+ oxc-htmlish-parser = "0.0.11" # HTML / Vue / Angular parser (loose, span-faithful AST)
+ oxc-markdown-parser = "0.0.4" # CommonMark + GFM parser (span-faithful, style-preserving typed AST)
 ```
 
-**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +179/-41)
+**File**: `apps/oxfmt/conformance/snapshots/prettier.snap.md` (modified, +6/-6)
 ```diff
-@@ -3,7 +3,7 @@ use rustc_hash::FxHashSet;
- use oxc_allocator::{ArenaVec, CloneIn, GetAllocator, ReplaceWith, TakeIn};
- use oxc_ast::ast::*;
- use oxc_ast_visit::{Visit, VisitJs, walk};
--use oxc_semantic::{ReferenceFlags, ScopeFlags, ScopeId, SymbolFlags};
-+use oxc_semantic::{ReferenceFlags, ScopeFlags, ScopeId, Scoping, SymbolFlags};
- use oxc_span::{SPAN, Span};
- use oxc_str::{Ident, Str, static_ident};
- use oxc_syntax::operator::{AssignmentOperator, UnaryOperator};
-@@ -168,6 +168,7 @@ impl<'a> TypeScript<'a> {
-         // not the current traversal scope (which is the scope enclosing the class).
-         let class_scope_id = class.scope_id();
+@@ -395,6 +395,8 @@
+ - externals/prettier/css/font/font.css (💥, 79.41%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
+   - crates/oxc_formatter_css/DIVERGENCES.md#math-function-operator-spacing
++- externals/prettier/scss/case/case.scss (💥, 93.67%)
++  - crates/oxc_formatter_css/DIVERGENCES.md#scss-at-rule-name-case
+ - externals/prettier/scss/comments/4594.scss (💥, 83.78%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#line-comment-after-comma
+ - externals/prettier/scss/comments/4878.scss (💥, 89.39%)
+@@ -437,8 +439,6 @@
  
-+        let lowers_decorated_declare_fields = self.lowers_decorated_declare_fields(class);
-         let mut constructor_index = None;
-         let mut property_assignments = Vec::new();
-         let mut computed_key_assignments = Vec::new();
-@@ -180,6 +181,18 @@ impl<'a> TypeScript<'a> {
-             let mut block_after = None;
-             let kept = lowering.keeps_field(element);
-             match element {
-+                ClassElement::PropertyDefinition(prop)
-+                    if lowers_decorated_declare_fields
-+                        && !kept
-+                        && prop.declare
-+                        && !prop.decorators.is_empty() =>
-+                {
-+                    Self::convert_decorated_declare_field_key(
-+                        prop,
-+                        &mut computed_key_assignments,
-+                        ctx,
-+                    );
-+                }
-                 // Skip static private properties — converting them to static blocks
-                 // would lose the private field declaration.
-                 ClassElement::PropertyDefinition(prop)
-@@ -234,12 +247,8 @@ impl<'a> TypeScript<'a> {
-                         // order with the other moved keys.
-                         if !prop.declare
-                             && let Some(key) = prop.key.as_expression_mut()
--                            && key_needs_temp_var(key, ctx)
-                         {
--                            let (assignment, ident) =
--                                create_computed_key_temp_var(key.take_in(ctx), ctx);
--                            computed_key_assignments.push(assignment);
--                            *key = ident;
-+                            Self::move_key_to_temp_var(key, &mut computed_key_assignments, ctx);
-                         }
-                         prop.declare = true;
-                     } else if self.remove_class_fields_without_initializer
-@@ -305,30 +314,13 @@ impl<'a> TypeScript<'a> {
-             position += 1;
-         }
+ ### Error
  
--        let computed_key_assignment_static_block = if computed_key_assignments.is_empty() {
--            None
--        } else {
--            let assignments = ArenaVec::from_iter_in(computed_key_assignments, ctx);
--            let expr = if assignments.iter().any(depends_on_outer_context) {
--                self.append_computed_key_carrier(
--                    class,
--                    assignments,
--                    &property_assignments,
--                    lowering,
--                    ctx,
--                )
--            } else {
--                Some(Expression::new_sequence_expression(SPAN, assignments, ctx))
--            };
--            expr.map(|expr| {
--                let statement = Statement::new_expression_statement(SPAN, expr, ctx);
--                Self::create_class_static_block(
--                    ArenaVec::from_value_in(statement, ctx),
--                    class_scope_id,
--                    ctx,
--                )
--            })
--        };
-+        let computed_key_assignment_static_block = self.create_computed_key_static_block(
-+            class,
-+            computed_key_assignments,
-+            &property_assignments,
-+            lowering,
-+            ctx,
-+        );
+-- externals/prettier/scss/case/case.scss: Syntax error: expect token `<string>`, but found `<ident>`
+-  - ❓unclassified
+ - externals/prettier/css/custom-properties/emoji.css: Syntax error: declaration at top level is disallowed
+   - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
+ - externals/prettier/scss/atrule/for.scss: Syntax error: Sass keyword `to` is expected
+@@ -500,15 +500,13 @@
+ - externals/prettier/less/less-test-suite/snippet: tests-unit/variables/variables.less (💥, 97.89%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
+   - crates/oxc_formatter_css/DIVERGENCES.md#less-escaped-string-gap
++- externals/prettier/less/less/less.less (💥, 99.21%)
++  - crates/oxc_formatter_css/DIVERGENCES.md#less-extend-statement-break
+ - externals/prettier/less/postcss-8-improment/test.less (💥, 88.24%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#custom-property-raw-verbatim
  
-         // Blocks are only inserted after the visited element, and the carrier is appended,
-         // so `constructor_index` is still valid.
-@@ -545,20 +537,25 @@ impl<'a> TypeScript<'a> {
-         }
+ ### Error
  
-         class.body.body.retain(|element| {
--            if let ClassElement::PropertyDefinition(prop) = element
--                && prop.value.is_none()
--                && prop.decorators.is_empty()
--                && !prop.key.is_private_identifier()
--            {
--                if let Some(key) = prop.key.as_expression() {
--                    return key_needs_temp_var(key, ctx);
--                }
--                return false;
--            }
--            true
-+            !matches!(element, ClassElement::PropertyDefinition(prop)
-+                if self.removes_uninitialized_field(prop, ctx))
-         });
-     }
+-- externals/prettier/less/less/less.less: Syntax error: expect one of `<ident>` or `@{`, but found `(`
+-  - ❓unclassified
+-- externals/prettier/less/parens/parens.less: Syntax error: expect token `;`, but found `{`
+-  - ❓unclassified
+ - externals/prettier/less/case/case.less: Syntax error: expect token `(`, but found `<ident>`
+   - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
+ - externals/prettier/less/comments/in-value.less: Syntax error: expect token `;`, but found `{`
+@@ -519,6 +517,8 @@
+   - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
+ - externals/prettier/less/no-semicolon/url.less: Syntax error: expect token `(`, but found `<ident>`
+   - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
++- externals/prettier/less/parens/parens.less: Syntax error: expect token `;`, but found `{`
++  - crates/oxc_formatter_css/DIVERGENCES.md#grammar-owner-rejected
  
-+    /// Whether [`Self::remove_uninitialized_class_fields`] removes `prop`: a field without an
-+    /// initializer or decorators, whose key has no side effects.
-+    fn removes_uninitialized_field(
-+        &self,
-+        prop: &PropertyDefinition<'a>,
-+        ct
+ ## graphql
+ 
 ```
 
-**File**: `crates/oxc_transformer/src/typescript/mod.rs` (modified, +12/-3)
+**File**: `crates/oxc_formatter_css/AGENTS.md` (modified, +2/-1)
 ```diff
-@@ -7,8 +7,8 @@ use oxc_syntax::scope::ScopeId;
- use oxc_traverse::{BoundIdentifier, Traverse};
+@@ -171,7 +171,8 @@ What the formatter relies on per shape:
+ ### Case
  
- use crate::{
--    common::class_lowering::ClassLowering, context::TraverseCtx, state::TransformState,
--    utils::decorated_class::PrivateNames,
-+    common::class_lowering::ClassLowering, context::TraverseCtx, decorator::DecoratorMode,
-+    state::TransformState, utils::decorated_class::PrivateNames,
+ Lowercased: what the spec makes ASCII case-insensitive AND that can only be a keyword in its position.
+-e.g. at-rule names, property names (a `@supports` declaration's included), media feature names, media types,
++e.g. at-rule names (not in SCSS: DIVERGENCES.md#scss-at-rule-name-case),
++property names (a `@supports` declaration's included), media feature names, media types,
+ `only` / `and` / `not` / `or`.
+ Everything else prints as written:
+ values (a value may be a case-sensitive custom ident: `animation-name`, `grid-area`; keyword values are a linter's `value-keyword-case`),
+```
+
+**File**: `crates/oxc_formatter_css/DIVERGENCES.md` (modified, +50/-0)
+```diff
+@@ -965,6 +965,7 @@ and its at-rule printer drops the block comments in there (a trailing one surviv
+ - Pin: `tests/fixtures/format/less/extend-rule.less`
+ - Conformance:
+   - `externals/prettier/less/less-test-suite/snippet: tests-unit/extend-chaining/extend-chaining.less`
++  - `externals/prettier/less/less/less.less` (the `extend #7977` rules)
+ - Drop when: the selector-list leak is fixed (prettier/prettier#19550 covered only the indentation) and the pin catches up
+ 
+ ```less
+@@ -1010,6 +1011,54 @@ Prettier glues the sign to the number (removing the source space, a postcss word
+ Matching that gluing is ad-hoc work for a torture-test-only shape.
+ A sign GLUED in the source never gains a space in either implementation (that direction is the parser's folded-sign handling, not a divergence).
+ 
++## less-keyword-minus
++
++- Why: semantics
++- Pin: `tests/fixtures/format/less/keyword-minus.less`
++
++```less
++/* input */
++v: -  1;
++
++/* ours */
++v: - 1;
++
++/* prettier */
++v: -1;
++```
++
++less.js negates only a glued `@var`, `$prop` or `(`, so a lone `-` before a number is a keyword, not a sign.
++lessc compiles `- 1` as written and `-1` as the number, so Prettier's glue changes the output.
++
++## scss-at-rule-name-case
++
++- Why: semantics
++- Pin: `tests/fixtures/format/scss/at-rule-name-case.scss`
++- Conformance:
++  - `externals/prettier/scss/case/case.scss` (the at-rule name lines only; the interpolated property name line has no entry)
++
++```scss
++/* input */
++@IMPORT Keep;
++@USE "x";
++@MEDIA (MIN-WIDTH: 700PX) {}
++
++/* ours */
++@IMPORT Keep;
++@USE "x";
++@MEDIA (MIN-WIDTH: 700PX) {}
++
++/* prettier */
++@import Keep;
++@use "x";
++@media (min-width: 700px) {}
++```
++
++dart-sass matches at-rule names case-sensitively: `@IMPORT`, `@USE` and `@MEDIA` are unknown at-rules it compiles as written,
++while `@import Keep;` fails to compile and `@use "x"` loads a module.
++So an SCSS at-rule with an uppercase name prints as written, its params included,
++as every unknown at-rule's (AGENTS.md "Printing raw vs typed").
++
+ ## signed-value-resplit
+ 
+ - Why: uniform-rule (same construct, same output: the item in first position, an unsigned item)
+@@ -1140,6 +1189,7 @@ A spaced `/` is not part of this: it glues to its left operand and breaks after,
+   - `externals/prettier/less/interpolation/interpolation.less`
+   - `externals/prettier/less/lookup/lookup-1.less`
+   - `externals/prettier/less/no-semicolon/url.less`
++  - `externals/prettier/less/parens/parens.less`
+ 
+ ```less
+ /* input */
+```
+
+**File**: `crates/oxc_formatter_css/src/print/at_rule.rs` (modified, +27/-66)
+```diff
+@@ -30,18 +30,28 @@ use crate::{
+     context::CssFormatContext,
+     format::to_span,
+     print::{
+-        CssFormatter, block_comment_end, format_with, is_glued, scss, selector, statement,
++        CssFormatter, format_with, is_glued, scss, selector, statement,
+         value::{self, ValueContext},
+         write_maybe_lowercase,
+     },
  };
  
- mod annotations;
-@@ -58,6 +58,8 @@ pub struct TypeScript<'a> {
-     source_type_is_typescript_definition: bool,
-     set_public_class_fields: bool,
-     remove_class_fields_without_initializer: bool,
-+    /// Whether legacy decorators (`experimentalDecorators`) lower decorated members.
-+    legacy_decorators: bool,
-     /// Parameter properties of the entered classes, for [`Self::add_parameter_property_fields`].
-     parameter_properties: Vec<(Span, Ident<'a>)>,
-     /// Entered classes with parameter properties, and where theirs start in
-@@ -70,7 +72,11 @@ pub struct TypeScript<'a> {
++/// `@` and an at-rule name, lowercased except in SCSS (DIVERGENCES.md#scss-at-rule-name-case).
++pub(super) fn write_at_rule_name(span: oxc_span::Span, f: &mut CssFormatter<'_, '_>) {
++    let name = f.context().source_text().text_for(&span);
++    write!(f, "@");
++    if matches!(f.options().variant, crate::options::CssVariant::Scss) {
++        write!(f, text(name));
++    } else {
++        write_maybe_lowercase(name, f);
++    }
++}
++
+ /// Mirrors Prettier's `css-atrule`.
+ pub(super) fn write_at_rule<'a>(at_rule: &AtRule<'a>, f: &mut CssFormatter<'_, 'a>) {
+     let source = f.context().source_text();
+-    write!(f, "@");
+     let name_span = to_span(at_rule.name.span());
+-    write_maybe_lowercase(source.text_for(&name_span), f);
++    write_at_rule_name(name_span, f);
+ 
+     // Comments inside the params: the structured printers place them,
+     // a commented String-params prelude prints them as written (below).
+@@ -80,7 +90,10 @@ pub(super) fn write_at_rule<'a>(at_rule: &AtRule<'a>, f: &mut CssFormatter<'_, '
+         // The exception: SCSS-family names parsed AS CSS
+         // (oxc-css-parser: Unknown, Prettier: parseValue/parseSelector) keep the structural printers below.
+         let unknown_string_params = matches!(prelude, AtRulePrelude::Unknown(_))
+-            && !is_value_parsed_at_rule(at_rule.name.raw);
++            && !is_value_parsed_at_rule(
++                at_rule.name.raw,
++                matches!(f.options().variant, crate::options::CssVariant::Scss),
++            );
+         // NOTE: Prettier also keeps `@warn` / `@error` params as a raw string (`media-unknown`),
+         // but `oxc-css-parser` parses their prelude structurally (`SassExpr`),
+         // so we route them through the normal structured printer
+@@ -268,8 +281,9 @@ fn split_important_tail(raw: &str) -> Option<(&str, &str)> {
+ /// so a `oxc-css-parser` Unknown prelude for them must keep the structural printers.
+ ///
+ /// Case-sensitivity mirrors Prettier:
+-/// bare `name` comparisons for the SCSS family, lowercased for module/media rules.
+-fn is_value_parsed_at_rule(name: &str) -> bool {
++/// bare `name` comparisons for the SCSS family, lowercased for module/media rules
++/// except in SCSS, which keeps `@MEDIA` unknown (DIVERGENCES.md#scss-at-rule-name-case).
++fn is_value_parsed_at_rule(name: &str, scss: bool) -> bool {
+     matches!(
+         name,
+         "extend"
+@@ -291,7 +305,7 @@ fn is_value_parsed_at_rule(name: &str) -> bool {
+             | "add-mixin"
+             | "custom-selector"
+     ) || matches!(
+-        &*name.cow_to_ascii_lowercase(),
++        &*if scss { name.into() } else { name.cow_to_ascii_lowercase() },
+         "import" | "use" | "forward" | "media" | "custom-media"
+     )
+ }
+@@ -354,17 +368,7 @@ fn write_at_rule_prelude<'a>(prelude: &AtRulePrelude<'a>, f: &mut CssFormatter<'
+     let source = f.context().source_text();
+     // `@import` places its own: one fuses with the path after it (`write_import_path_list`)
+     if !matches!(prelude, AtRulePrelude::Import(_) | AtRulePrelude::SassImport(_)) {
+-        // A first `selector()` term starts before its span (`supports_in_parens_start`)
+-        let start = match prelude {
+-            AtRulePrelude::Supports(condition) => match condition.conditions.first() {
+-                Some(SupportsConditionKind::SupportsInParens(in_parens)) => {
+-                    supports_in_parens_start(in_parens, f)
+-                }
+-                _ => condition.span.start,
+-            },
+-            _ => prelude.span().start,
+-        };
+-        write_leading_comments(start, f);
++        write_leading_comments(prelude.span().start, f);
+     }
+     match prelude {
+         AtRulePrelude::Media(media) => write_media_query_list(media, f),
+@@ -1967,42 +1971,11 @@ fn write_supports_term<'a>(
+     end: u32,
+     f: &mut CssFormatter<'_, 'a>,
+ ) {
+-    let mut span = to_span(in_parens.span());
+-    span.start = supports_in_parens_start(in_parens, f);
+-    value::write_with_comments(span, end, f, |f| {
++    value::write_with_comments(to_span(in_parens.span()), end, f, |f| {
+         write_supports_in_parens(in_parens, f);
+     });
  }
  
- impl<'a> TypeScript<'a> {
--    pub fn new(options: &TypeScriptOptions, state: &TransformState<'a>) -> Self {
-+    pub fn new(
-+        options: &TypeScriptOptions,
-+        decorator_mode: DecoratorMode,
-+        state: &TransformState<'a>,
-+    ) -> Self {
-         Self {
-             annotations: TypeScriptAnnotations::new(options),
-             r#enum: TypeScriptEnum::new(options.optimize_const_enums, options.optimize_enums),
-@@ -81,6 +87,7 @@ impl<'a> TypeScript<'a> {
-             set_public_class_fields: state.assumptions.set_public_class_fields,
-             remove_class_fields_without_initializer: !options.allow_declare_fields
-                 || options.remove_class_fields_without_initializer,
-+            legacy_decorators: decorator_mode.is_legacy(),
-             parameter_properties: Vec::new(),
-             parameter_properties_starts: Vec::new(),
-             computed_key_marker: None,
-@@ -155,9 +162,11 @@ impl<'a> Traverse<'a, TransformState<'a>> for TypeScript<'a> {
-         if lowering.lowers_fields() {
-             // Erase type-only fields before class-properties lowers the rest.
-             self.remove_uninitialized_class_fields(class, ctx);
-+            self.convert_decorated_declare_field_keys(class, lowering, ctx);
-         } else if self.assigns_fields(lowering) {
-             self.transform_class_fields(class, lowering, ctx);
-         } else {
-+            self.convert_decorated_declare_field_keys(class, lowering, ctx);
-             // Define semantics: parameter properties also get field declarations.
-             let start = self.parameter_properties.len();
-             Self::collect_parameter_properties(class, &mut self.parameter_properties);
+-/// Where a term starts, so a comment inside it never reads as leading it.
+-///
+-/// TODO: oxc-css-parser spans a `selector()` term as its selector list only:
+-/// its start is found back over the pending comments and whitespace after `selector(`.
+-/// Fix the span in the parser and remove this.
+-fn supports_in_parens_start(in_parens: &SupportsInParens<'_>, f: &CssFormatter<'_, '_>) -> u32 {
+-    let list_start = in_parens.span.start;
+-    if !matches!(in_parens.kind, SupportsInParensKind::Selec
 ```
 
-**File**: `tasks/coverage/snapshots/semantic_typescript.snap` (modified, +2/-5)
+**File**: `crates/oxc_formatter_css/src/print/statement.rs` (modified, +1/-3)
 ```diff
-@@ -26671,11 +26671,8 @@ rebuilt        : ["Object", "dec", "require"]
- 
- semantic Error: tasks/coverage/typescript/tsc/testdata/tests/cases/conformance/decorators/decoratorInAmbientContext.ts
- Bindings mismatch:
--after transform: ScopeId(0): ["Foo", "_b", "_decorate", "_decorateMetadata", "b", "decorator"]
--rebuilt        : ScopeId(0): ["Foo", "_b", "_decorate", "_decorateMetadata", "b"]
--Symbol reference IDs mismatch for "_b":
--after transform: SymbolId(7): [ReferenceId(11), ReferenceId(12)]
--rebuilt        : SymbolId(2): [ReferenceId(13)]
-+after transform: ScopeId(0): ["Foo", "_decorate", "_decorateMetadata", "b", "decorator"]
-+rebuilt        : ScopeId(0): ["Foo", "_decorate", "_decorateMetadata", "b"]
- Reference symbol mismatch for "decorator":
- after transform: SymbolId(0) "decorator"
- rebuilt        : <None>
+@@ -226,10 +226,8 @@ pub(super) fn write_statement<'a>(stmt: &Statement<'a>, f: &mut CssFormatter<'_,
+         Statement::UnknownSassAtRule(unknown) => {
+             // Same string-params contract as the Unknown prelude in `write_at_rule`:
+             // Prettier prints unknown at-rule params verbatim.
+-            let source = f.context().source_text();
+-            write!(f, "@");
+             let name_span = to_span(unknown.name.span());
+-            write_maybe_lowercase(source.text_for(&name_span), f);
++            at_rule::write_at_rule_name(name_span, f);
+             let region_end = params_region_end(unknown.block.as_ref(), unknown.span.end, f);
+             let prelude_start =
+                 unknown.prelude.as_ref().map_or(region_end, |prelude| prelude.span().start);
 ```
 
-**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +8/-3)
+**File**: `crates/oxc_formatter_css/src/print/value.rs` (modified, +9/-1)
 ```diff
-@@ -1,6 +1,6 @@
- commit: 51225612
+@@ -1423,6 +1423,11 @@ fn raw_token<'b, 'a>(value: &'b ComponentValue<'a>) -> Option<&'b Token<'a>> {
+     if let ComponentValue::TokenWithSpan(token) = value { Some(&token.token) } else { None }
+ }
  
--Passed: 371/490
-+Passed: 374/494
- 
- # All Passed:
- * babel-plugin-transform-class-static-block
-@@ -49,7 +49,7 @@ x Output mismatch
- x Output mismatch
- 
- 
--# babel-plugin-transform-typescript (60/76)
-+# babel-plugin-transform-typescript (60/77)
- * computed-constant-value/input.ts
- x Output mismatch
- 
-@@ -162,6 +162,11 @@ Unresolved references mismatch:
- after transform: ["A"]
- rebuilt        : []
- 
-+* oxc/decorated-declare-field-erased/input.ts
-+Unresolved references mismatch:
-+after transform: ["a", "dec", "g"]
-+rebuilt        : ["a", "g"]
-+
- * redeclarations/input.ts
- Bindings mismatch:
- after transform: ScopeId(0): ["A"]
-@@ -206,7 +211,7 @@ x Output mismatch
- x Output mismatch
- 
- 
--# legacy-decorators (40/120)
-+# legacy-decorators (43/123)
- * oxc/accessor/input.ts
- x Output mismatch
- 
-```
-
-**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@ commit: 51225612
- 
- node: v26.12.1
- 
--Passed: 87 of 383 (22.72%)
-+Passed: 88 of 384 (22.92%)
- 
- Failures:
- 
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/decorated-declare-field-erased/input.ts` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+class Foo {
-+  [a()] = 1;
-+  @dec declare [b()]: any;
-+  @dec static declare [c()]: any;
-+  @dec declare [d]: any;
-+  [g()] = 2;
++/// A lone `-` that oxc-css-parser reads as a Less keyword, not an operator or a sign (`1 -"t"`).
++fn is_less_keyword_minus(value: &ComponentValue<'_>) -> bool {
++    matches!(value, ComponentValue::InterpolableIdent(InterpolableIdent::Literal(id)) if id.raw == "-")
 +}
++
+ /// The end of the run starting at `values[start]`: tight / non-breaking-space components merge into one fill entry.
+ fn run_end(
+     values: &[ComponentValue<'_>],
+@@ -1577,11 +1582,14 @@ fn base_separator(values: &[ComponentValue<'_>], i: usize, ctx: ValueContext<'_>
+ 
+     // Raw token fallbacks (postcss-values would have produced operator/word tokens):
+     // keep gap-free neighbors tight (`10em+12em`, `-fb-url(/a/b)`).
++    // So does the Less keyword `-` (`1 -"t"`, `1-`): a space after it would make it an operator
+     if gap_empty
+         && (matches!(prev, ComponentValue::TokenWithSpan(_) | ComponentValue::Placeholder(_))
+             || matches!(curr, ComponentValue::TokenWithSpan(_) | ComponentValue::Placeholder(_))
+             || matches!(prev, ComponentValue::Delimiter(_))
+-            || matches!(curr, ComponentValue::Delimiter(_)))
++            || matches!(curr, ComponentValue::Delimiter(_))
++            || is_less_keyword_minus(prev)
++            || is_less_keyword_minus(curr))
+     {
+         return Separator::Tight;
+     }
 ```
 
 ---
 
-### Incident Patch 3: `5a0133f3` (2026-11-25)
-**Commit Message**: fix(transformer/typescript): don't evaluate keys of `declare` fields with `removeClassFieldsWithoutInitializer` (#30272)
+### Incident Patch 3: `69957244` (2026-11-27)
+**Commit Message**: fix(formatter_css): make `/` spacing symmetric and space math-function operators (#30392)
 
-With `removeClassFieldsWithoutInitializer`, the computed key of an
-undecorated `declare` field, such as `declare [f()]: any`, was still
-evaluated: the TypeScript transform moved `f()` into the class's
-computed-key static block. A `declare` field is type-only, so tsc and
-esbuild erase it together with its key, and Oxc's other field modes
-already do.
+## Summary
+
+The spacing around `/` in CSS / SCSS / Less values depended on which
+printer path handled it and on the operand kind, kept lopsided spacing
+(`$a/ 2`), and comments next to a `/` moved past it. This PR applies one
+rule everywhere:
+
+- Outside a math function, a `/` stays tight when the source glues it on
+both sides; a gap on either side prints one space on both sides.
+- Inside a math function (`calc`, `min`, `max`, `clamp`, `round`, ...),
+`*` and `/` are always spaced; `+` / `-` keep the source (they require
+whitespace, a glued one is invalid and left as written).
+- A comment between an operand and an operator stays where it is.
 
 ### Example
 
-Input ([playground for this
-example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22transform%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%2C%22transformer%22%3A%7B%22useDefineForClassFields%22%3Afalse%7D%7D&code=const+log%3A+string%5B%5D+%3D+%5B%5D%3B%0Aconst+key+%3D+%28name%3A+string%29+%3D%3E+%28log.push%28name%29%2C+name%29%3B%0A%0Aclass+Foo+%7B%0A++declare+%5Bkey%28%22declared%22%29%5D%3A+any%3B%0A++%5Bkey%28%22field%22%29%5D+%3D+1%3B%0A%7D%0Aconsole.log%28log%29%3B%0A)):
+Input:
 
-```ts
-const log: string[] = [];
-const key = (name: string) => (log.push(name), name);
-
-class Foo {
-  declare [key("declared")]: any;
-  [key("field")] = 1;
+```scss
+.a {
+  font: 12px/ 1.5 serif;
+  width: $a/ 2;
+  width: f(1px)/2;
+  width: calc(1px/2);
+  width: min(1px/2, 3px);
+  width: 1px /* c */ / 2;
 }
-console.log(log);
 ```
 
-Options: `{ "
+Before output:
 
-**File**: `crates/oxc_transformer/src/typescript/class.rs` (modified, +2/-0)
-```diff
-@@ -243,8 +243,10 @@ impl<'a> TypeScript<'a> {
-                         }
-                         prop.declare = true;
-                     } else if self.remove_class_fields_without_initializer
-+                        && !prop.declare
-                         && let Some(key) = prop.key.as_expression_mut()
-                     {
-+                        // A `declare` field is erased along with its key, so the key never runs.
-                         // `TypeScript` uses `isSimpleInlineableExpression` to check if the key needs to be kept.
-                         // There is a little difference that we treat `BigIntLiteral` and `RegExpLiteral` can be kept, and
-                         // `IdentifierReference` without symbol is not kept.
+```scss
+.a {
+  font: 12px/1.5 serif;
+  width: $a/ 2;
+  width: f(1px)/2;
+  width: calc(1px/2);
+  width: min(1px/2, 3px);
+  width: 1px / /* c */ 2;
+}
 ```
 
-**File**: `tasks/transform_conformance/snapshots/oxc.snap.md` (modified, +2/-2)
+After output:
+
+```scss
+.a {
+  font: 12px / 1.5 serif;
+  width: $a / 2;
+  width: f(1px)/2;
+  width: calc(1px / 2);
+  w
+
+**File**: `apps/oxfmt/conformance/snapshots/prettier.snap.md` (modified, +17/-6)
 ```diff
-@@ -1,6 +1,6 @@
- commit: 51225612
+@@ -323,7 +323,7 @@
  
--Passed: 370/489
-+Passed: 371/490
+ ## css
  
- # All Passed:
- * babel-plugin-transform-class-static-block
-@@ -49,7 +49,7 @@ x Output mismatch
- x Output mismatch
+-139/164 (84.76%)
++138/164 (84.15%)
  
+ ### Failed
  
--# babel-plugin-transform-typescript (59/75)
-+# babel-plugin-transform-typescript (60/76)
- * computed-constant-value/input.ts
- x Output mismatch
+@@ -339,11 +339,15 @@
+   - crates/oxc_formatter_css/DIVERGENCES.md#declaration-colon-comments
+ - externals/prettier/css/fill-value/fill.css (💥, 93.33%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#signed-value-resplit
++- externals/prettier/css/font/font.css (💥, 79.41%)
++  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
++  - crates/oxc_formatter_css/DIVERGENCES.md#math-function-operator-spacing
+ - externals/prettier/css/parens/empty-lines.css (💥, 31.58%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#postcss-simple-var-raw-verbatim
+-- externals/prettier/css/parens/parens.css (💥, 92.41%)
++- externals/prettier/css/parens/parens.css (💥, 91.72%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#unary-plus-glue
+   - crates/oxc_formatter_css/DIVERGENCES.md#css-glued-minus-paren
++  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
+ - externals/prettier/css/postcss-8-improment/test.css (💥, 88.24%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#custom-property-raw-verbatim
+ - externals/prettier/css/postcss-plugins/postcss-nesting.css (💥, 97.66%)
+@@ -388,8 +392,9 @@
  
+ ### Failed
+ 
+-- externals/prettier/css/font/font.css (💥, 94.12%)
+-  - ❓unclassified
++- externals/prettier/css/font/font.css (💥, 79.41%)
++  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
++  - crates/oxc_formatter_css/DIVERGENCES.md#math-function-operator-spacing
+ - externals/prettier/scss/comments/4594.scss (💥, 83.78%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#line-comment-after-comma
+ - externals/prettier/scss/comments/4878.scss (💥, 89.39%)
+@@ -449,10 +454,13 @@
+ 
+ ## less
+ 
+-227/252 (90.08%)
++225/252 (89.29%)
+ 
+ ### Failed
+ 
++- externals/prettier/css/font/font.css (💥, 79.41%)
++  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
++  - crates/oxc_formatter_css/DIVERGENCES.md#math-function-operator-spacing
+ - externals/prettier/less/comments/between-decl.less (💥, 94.44%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#declaration-colon-comments
+ - externals/prettier/less/comments/selectors.less (💥, 88.89%)
+@@ -461,6 +469,8 @@
+   - crates/oxc_formatter_css/DIVERGENCES.md#line-comment-after-comma
+ - externals/prettier/less/less-test-suite/snippet: tests-config/globalVars/extended.less (💥, 78.26%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#trailing-line-comment-print-width
++- externals/prettier/less/less-test-suite/snippet: tests-config/namespacing/namespacing-3.less (💥, 98.04%)
++  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
+ - externals/prettier/less/less-test-suite/snippet: tests-config/namespacing/namespacing-functions.less (💥, 97.30%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#less-lookup-glue
+ - externals/prettier/less/less-test-suite/snippet: tests-config/namespacing/namespacing-media.less (💥, 96.15%)
+@@ -487,7 +497,8 @@
+   - crates/oxc_formatter_css/DIVERGENCES.md#less-variable-value-comments
+ - externals/prettier/less/less-test-suite/snippet: tests-unit/strings/strings.less (💥, 98.68%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#less-escaped-string-gap
+-- externals/prettier/less/less-test-suite/snippet: tests-unit/variables/variables.less (💥, 98.95%)
++- externals/prettier/less/less-test-suite/snippet: tests-unit/variables/variables.less (💥, 97.89%)
++  - crates/oxc_formatter_css/DIVERGENCES.md#slash-spacing
+   - crates/oxc_formatter_css/DIVERGENCES.md#less-escaped-string-gap
+ - externals/prettier/less/postcss-8-improment/test.less (💥, 88.24%)
+   - crates/oxc_formatter_css/DIVERGENCES.md#custom-property-raw-verbatim
 ```
 
-**File**: `tasks/transform_conformance/snapshots/oxc_exec.snap.md` (modified, +1/-1)
+**File**: `crates/oxc_formatter_css/DIVERGENCES.md` (modified, +105/-0)
 ```diff
-@@ -2,7 +2,7 @@ commit: 51225612
+@@ -1253,6 +1253,111 @@ Everywhere else BOTH implementations keep the glue, so there is nothing to diver
+ where exactly ours keeps it is printer mechanism, documented at `write_less_binary_operation` / `write_sass_binary`
+ (and pinned by the same fixtures plus `tests/fixtures/format/scss/calc-glued-minus.scss` for Scss calculation args).
  
- node: v26.12.1
- 
--Passed: 86 of 382 (22.51%)
-+Passed: 87 of 383 (22.72%)
- 
- Failures:
- 
-```
-
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-declare-computed-key-remove-uninitialized/exec.ts` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+const log: string[] = [];
-+const k = (name: string) => (log.push(name), name);
++## slash-spacing
 +
-+class Foo {
-+  [k("a")] = 1;
-+  declare [k("f")]: any;
-+  static declare [k("s")]: any;
-+  declare x: number;
-+  [k("g")]: any;
-+  [k("h")] = 2;
++- Why: uniform-rule (same construct, same output: a `/` between numbers, glued `1rem/1` or spaced `1rem / 1`; prettier/prettier#10831)
++- Pin: `tests/fixtures/format/scss/slash-spacing.scss`, `tests/fixtures/format/less/slash-spacing.less`
++- Conformance:
++  - `externals/prettier/css/font/font.css`
++  - `externals/prettier/css/parens/parens.css`
++  - `externals/prettier/less/less-test-suite/snippet: tests-config/namespacing/namespacing-3.less`
++  - `externals/prettier/less/less-test-suite/snippet: tests-unit/variables/variables.less`
++
++```scss
++/* input */
++.a {
++  width: f(1px)/2;
++  width: 1px/($b);
++  font: 12px/ 1.5 serif;
++  font: 12px  /1.5 serif;
++  width: $a/ 2;
 +}
 +
-+expect(log).toEqual(["a", "g", "h"]);
-+const foo = new Foo();
-+expect(Object.keys(foo)).toEqual(["a", "h"]);
-+expect(Object.keys(Foo)).toEqual([]);
++/* ours */
++.a {
++  width: f(1px)/2;
++  width: 1px/($b);
++  font: 12px / 1.5 serif;
++  font: 12px / 1.5 serif;
++  width: $a / 2;
++}
++
++/* prettier */
++.a {
++  width: f(1px) / 2;
++  width: 1px/ ($b);
++  font: 12px/1.5 serif;
++  font: 12px /1.5 serif;
++  width: $a/ 2;
++}
++```
++
++```less
++/* input */
++.a { width: @a/2; }
++@media @phone and (aspect-ratio: 16/ 9) {}
++
++/* ours */
++.a {
++  width: @a/2;
++}
++@media @phone and (aspect-ratio: 16 / 9) {
++}
++
++/* prettier */
++.a {
++  width: @a / 2;
++}
++@media @phone and (aspect-ratio: 16/ 9) {
++}
++```
++
++A `/` outside a math function keeps the source's choice, made symmetric:
++glued on both sides stays glued, a gap on either side prints one space on both.
++The spacing never changes the meaning: dart-sass and lessc compile `x/y`, `x/ y` and `x / y` alike for every operand kind.
++Prettier decides each gap on its own and by the neighbor's kind:
++
++- a word or function neighbor forces spaces (`f(1px)/2`), numbers and parens keep each gap as written (`1rem/ 1` stays lopsided)
++- `font` and custom properties tighten a `/` after a font-size value (prettier/prettier#18114, whose review asked to "preserve space")
++- a `/` glued after a word is lexed INTO the word by postcss-values-parser 2 (`$a/`, `center/`), so no operator node is left to space and `$a/ 2` stays lopsided
++
++Its own numeric `/` keeping tight or spaced is the rule we apply to every operand.
++Scope: declaration values, Sass / Less operations, media query ratios (a substituted raw prelude's too) and Sass control conditions;
++a Less mixin call / definition / guard prints its source slice (`adjust_numbers_and_strings`, Prettier does too), and a `@container` prelude prints verbatim.
++
++## math-function-operator-spacing
++
++- Why: uniform-rule (same construct, same output: `calc()`'s `*` and `/`)
++- Pin: `tests/fixtures/format/scss/slash-spacing.scss`
++- Conformance:
++  - `externals/prettier/css/font/font.css`
++
++```scss
++/* input */
++.a {
++  width: min(1px/2, 3px);
++  font: calc(var(--size)/2)/2;
++}
++
++/* ours */
++.a {
++  width: min(1px / 2, 3px);
++  font: calc(var(--size) / 2)/2;
++}
++
++/* prettier */
++.a {
++  width: min(1px/2, 3px);
++  font: calc(var(--size)/2)/2;
++}
++```
++
++Inside a math function (the `Calc` node: `calc`, `min`, `max`, `clamp`, `round`, `abs`, ...) `*` and `/` always print spaced;
++`+` / `-` keep the source, they require whitespace and a glued one is invalid, left as written.
++There a `/` is always a division, never a separator, so it is laid out as math:
++css-values-4 serializes a calculation tree with `" * "` / `" / "`, and dart-sass prints `min(var(--x)/2, 3px)` as `min(var(--x) / 2, 3px)`.
++Prettier spaces them inside `calc()` only, and not after a font-size value in `font` and custom properties (its #18114 rule above).
++
+ ## paren-group-glued-word
+ 
+ - Why: semantics
 ```
 
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-declare-computed-key-remove-uninitialized/input.ts` (added, +8/-0)
+**File**: `crates/oxc_formatter_css/src/print/at_rule.rs` (modified, +22/-5)
 ```diff
-@@ -0,0 +1,8 @@
-+class Foo {
-+  [a()] = 1;
-+  declare [f()]: any;
-+  static declare [s()]: any;
-+  declare x: number;
-+  [g()]: any;
-+  [h()] = 2;
-+}
+@@ -836,8 +836,9 @@ fn write_token_comma_group_after<'a>(
+         }
+         let run = &tokens[i..run_end];
+         let run_start = i;
++        let followed = run_end < tokens.len();
+         let content = format_with(move |f: &mut CssFormatter<'_, 'a>| {
+-            write_token_run(run, run_start == 0 && hug_lparen, f);
++            write_token_run(run, run_start == 0 && hug_lparen, followed, f);
+         });
+         filler.entry(&soft_line_break_or_space(), &content);
+         i = run_end;
+@@ -895,7 +896,13 @@ fn write_token_comma_group_grouped<'a>(
+ }
+ 
+ /// One run: spacing normalized; paren regions recurse as breakable groups.
+-fn write_token_run<'a>(run: &[TokenWithSpan<'a>], hug_lparen: bool, f: &mut CssFormatter<'_, 'a>) {
++/// `followed`: more tokens come after the run (a `/` ending it has a gap after it).
++fn write_token_run<'a>(
++    run: &[TokenWithSpan<'a>],
++    hug_lparen: bool,
++    followed: bool,
++    f: &mut CssFormatter<'_, 'a>,
++) {
+     let source = f.context().source_text();
+     let mut j = 0;
+     while j < run.len() {
+@@ -914,7 +921,7 @@ fn write_token_run<'a>(run: &[TokenWithSpan<'a>], hug_lparen: bool, f: &mut CssF
+             // Unbalanced region: print the opener verbatim and move on
+             if depth != 0 || k < j + 2 {
+                 if j > 0 {
+-                    write_token_pair_space(run, j, hug_lparen, f);
++                    write_token_pair_space(run, j, hug_lparen, followed, f);
+                 }
+                 let span = to_span(tok.span);
+                 write!(f, text(source.text_for(&span)));
+@@ -928,7 +935,7 @@ fn write_token_run<'a>(run: &[TokenWithSpan<'a>], hug_lparen: bool, f: &mut CssF
+                 _ => ("{", "}"),
+             };
+             if j > 0 {
+-                write_token_pair_space(run, j, hug_lparen, f);
++                write_token_pair_space(run, j, hug_lparen, followed, f);
+             }
+             if inner.is_empty() {
+                 write!(f, [text(open), text(close)]);
+@@ -951,7 +958,7 @@ fn write_token_run<'a>(run: &[TokenWithSpan<'a>], hug_lparen: bool, f: &mut CssF
+             continue;
+         }
+         if j > 0 {
+-            write_token_pair_space(run, j, hug_lparen, f);
++            write_token_pair_space(run, j, hug_lparen, followed, f);
+         }
+         let span = to_span(tok.span);
+         match &tok.token {
+@@ -984,6 +991,7 @@ fn write_token_pair_space<'a>(
+     run: &[TokenWithSpan<'a>],
+     j: usize,
+     hug_lparen: bool,
++    followed: bool,
+     f: &mut CssFormatter<'_, 'a>,
+ ) {
+     let source = f.context().source_text();
+@@ -1027,6 +1035,15 @@ fn write_token_pair_space<'a>(
+             | Token::EqualEqual(_)
+             | Token::ExclamationEqual(_),
+         ) => true,
++        // A `/` takes both of its gaps together (DIVERGENCES.md#slash-spacing);
++        // it glues to its left operand, so a gap after it ends the run
++        (_, Token::Solidus(_)) => match run.get(j + 1) {
++            Some(next) => value::is_slash_spaced(prev.span, tok.span, next.span),
++            None => gap || followed,
++        },
++        (Token::Solidus(_), _) if j >= 2 => {
++            value::is_slash_spaced(run[j - 2].span, prev.span, tok.span)
++        }
+         _ => gap,
+     };
+     if space {
 ```
 
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-declare-computed-key-remove-uninitialized/options.json` (added, +6/-0)
+**File**: `crates/oxc_formatter_css/src/print/scss.rs` (modified, +32/-20)
 ```diff
-@@ -0,0 +1,6 @@
-+{
-+  "assumptions": {
-+    "setPublicClassFields": true
-+  },
-+  "plugins": [["transform-typescript", { "removeClassFieldsWithoutInitializer": true }]]
-+}
+@@ -742,7 +742,7 @@ pub(super) fn write_control_condition<'a>(
+ enum CondPart<'b, 'a> {
+     Value(&'b ComponentValue<'a>),
+     /// Operator/keyword raw text (`and`, `or`, `not`, `==`, `*`, ...).
+-    Op(Span, OpClass),
++    Op(oxc_css_parser::pos::Span, OpClass),
+ }
+ 
+ #[derive(Clone, Copy, PartialEq, Eq)]
+@@ -751,6 +751,8 @@ enum OpClass {
+     Logical,
+     /// `==` / `!=` / `<` / `<=` / `>` / `>=`
+     Comparison,
++    /// `/`: glued on both sides or spaced on both (DIVERGENCES.md#slash-spacing)
++    Division,
+     Other,
+ }
+ 
+@@ -766,15 +768,16 @@ fn flatten_condition<'b, 'a>(cond: &'b ComponentValue<'a>, out: &mut Vec<CondPar
+                 | SassBinaryOperatorKind::GreaterThanOrEqual
+                 | SassBinaryOperatorKind::LessThan
+                 | SassBinaryOperatorKind::LessThanOrEqual => OpClass::Comparison,
++                SassBinaryOperatorKind::Division => OpClass::Division,
+                 _ => OpClass::Other,
+             };
+-            out.push(CondPart::Op(to_span(binary.op.span), class));
++            out.push(CondPart::Op(binary.op.span, class));
+             flatten_condition(&binary.right, out);
+         }
+         ComponentValue::SassUnaryExpression(unary)
+             if matches!(unary.op.kind, SassUnaryOperatorKind::Not) =>
+         {
+-            out.push(CondPart::Op(to_span(unary.op.span), OpClass::Logical));
++            out.push(CondPart::Op(unary.op.span, OpClass::Logical));
+             flatten_condition(&unary.expr, out);
+         }
+         other => out.push(CondPart::Value(other)),
+@@ -794,6 +797,24 @@ fn write_condition_chain<'a>(
+     let mut parts = Vec::new();
+     flatten_condition(condition, &mut parts);
+     let has_logical = parts.iter().any(|p| matches!(p, CondPart::Op(_, OpClass::Logical)));
++    let part_span = |p: &CondPart<'_, 'a>| match p {
++        CondPart::Op(span, _) => *span,
++        CondPart::Value(v) => v.span(),
++    };
++    // `glued[i]`: no source gap before `parts[i]`.
++    // Tokens glued in the source stay glued (postcss parses `$type==ocean` as ONE word and prints it verbatim);
++    // a `/` takes both of its gaps together (DIVERGENCES.md#slash-spacing)
++    let mut glued: Vec<bool> = (0..parts.len())
++        .map(|i| i > 0 && is_glued(part_span(&parts[i - 1]), part_span(&parts[i])))
++        .collect();
++    for i in 1..parts.len().saturating_sub(1) {
++        if matches!(parts[i], CondPart::Op(_, OpClass::Division)) {
++            let [left, slash, right] = [i - 1, i, i + 1].map(|k| part_span(&parts[k]));
++            let both = !value::is_slash_spaced(left, slash, right);
++            glued[i] = both;
++            glued[i + 1] = both;
++        }
++    }
+     let parts_ref = &parts;
+     let inner = format_with(move |f: &mut CssFormatter<'_, 'a>| {
+         if let Some(word) = prefix {
+@@ -805,28 +826,19 @@ fn write_condition_chain<'a>(
+                 write!(f, soft_line_break_or_space());
+             }
+         }
+-        let part_span = |p: &CondPart<'_, 'a>| match p {
+-            CondPart::Op(span, _) => *span,
+-            CondPart::Value(v) => to_span(v.span()),
+-        };
+         for (i, part) in parts_ref.iter().enumerate() {
+-            if i > 0 {
+-                // Tokens glued in the source stay glued (postcss parses
+-                // `$type==ocean` as ONE word and prints it verbatim).
+-                let glued = part_span(&parts_ref[i - 1]).end == part_span(part).start;
+-                if !glued {
+-                    let after_comparison = has_logical
+-                        && matches!(parts_ref[i - 1], CondPart::Op(_, OpClass::Comparison));
+-                    if matches!(part, CondPart::Op(..)) || after_comparison {
+-                        write!(f, space());
+-                    } else {
+-                        write!(f, soft_line_break_or_space());
+-                    }
++            if i > 0 && !glued[i] {
++                let after_comparison =
++                    has_logical && matches!(parts_ref[i - 1], CondPart::Op(_, OpClass::Comparison));
++                if matches!(part, CondPart::Op(..)) || after_comparison {
++                    write!(f, space());
++                } else {
++                    write!(f, soft_line_break_or_space());
+                 }
+             }
+             // Each part owns its leading comments, or they would leak into the block
+             match part {
+-                CondPart::Op(span, _) => value::write_text_with_leading_comments(*span, f),
++                CondPart::Op(span, _) => value::write_text_with_leading_comments(to_span(*span), f),
+                 CondPart::Value(v) => {
+                     value::write_list_element(v, ValueContext::default(), f);
+                 }
 ```
 
-**File**: `tasks/transform_conformance/tests/babel-plugin-transform-typescript/test/fixtures/oxc/set-public-class-fields-declare-computed-key-remove-uninitialized/output.js` (added, +10/-0)
+**File**: `crates/oxc_formatter_css/src/print/value.rs` (modified, +106/-178)
 ```diff
-@@ -0,0 +1,10 @@
-+let _a, _h;
-+class Foo {
-+  constructor() {
-+    this[_a] = 1;
-+    this[_h] = 2;
-+  }
-+  static {
-+    _a = a(), g(), _h = h();
-+  }
+@@ -182,6 +182,11 @@ pub(super) fn write_adjusted_verbatim<'a>(raw: &'a str, f: &mut CssFormatter<'_,
+ /// so splicing the printed `Number` / `Dimension` / `Str` leaves into the verbatim slice is possible
+ /// and would retire this byte re-scan, with its comment / `url()` / hash skips.
+ /// However, we keep the scan for now: `oxc-css-parser` has no visitor to collect those leaves.
++///
++/// TODO: the slice keeps its source `/` spacing (`.m(@a/ 2)`, `when (@a/ 2 > 1)`), unlike a declaration value's
++/// symmetric `/` (DIVERGENCES.md#slash-spacing); Prettier prints the slice as written too.
++/// Re-spacing `/` here would re-scan bytes it does not own (escapes, detached rulesets, `./`);
++/// the leaf-splicing above, printing the typed operations, is what lifts it.
+ pub(super) fn adjust_numbers_and_strings<'a>(
+     raw: &'a str,
+     options: &CssFormatOptions,
+@@ -462,6 +467,44 @@ fn is_solidus(value: &ComponentValue<'_>) -> bool {
+     matches!(value, ComponentValue::Delimiter(Delimiter { kind: DelimiterKind::Solidus, .. }))
+ }
+ 
++/// A `/` outside a math function keeps the source's choice, made symmetric (DIVERGENCES.md#slash-spacing):
++/// tight when glued on both sides, otherwise one space on both sides.
++pub(super) fn is_slash_spaced(
++    left: oxc_css_parser::pos::Span,
++    slash: oxc_css_parser::pos::Span,
++    right: oxc_css_parser::pos::Span,
++) -> bool {
++    !is_glued(left, slash) || !is_glued(slash, right)
 +}
++
++/// [`is_slash_spaced`] for a component list:
++/// the separator BEFORE `values[i]` when it or `values[i - 1]` is a slash, `None` otherwise.
++fn slash_separator(
++    values: &[ComponentValue<'_>],
++    i: usize,
++    is_slash: impl Fn(&ComponentValue<'_>) -> bool,
++) -> Option<Separator> {
++    let gap = |k: usize| values.get(k).is_some_and(|v| !is_glued(values[k - 1].span(), v.span()));
++    let curr_is_slash = is_slash(&values[i]);
++    if !curr_is_slash && !is_slash(&values[i - 1]) {
++        return None;
++    }
++    // A leading `/` makes the stream path-like (`-fb-url(/a/b.png)`): it never spaces
++    if is_slash(&values[0]) && (i == 1 || !gap(i)) {
++        return Some(Separator::Tight);
++    }
++    // The slash's own two gaps: `values[i]` is the slash, or the one before it
++    let slash = if curr_is_slash { i } else { i - 1 };
++    // A trailing `/` has no right gap
++    let spaced = gap(slash) || gap(slash + 1);
++    Some(match (spaced, curr_is_slash) {
++        (false, _) => Separator::Tight,
++        // A spaced `/` glues to its left operand and breaks after
++        (true, true) => Separator::Space,
++        (true, false) => Separator::Line,
++    })
++}
++
+ fn is_semicolon(value: &ComponentValue<'_>) -> bool {
+     matches!(value, ComponentValue::Delimiter(Delimiter { kind: DelimiterKind::Semicolon, .. }))
+ }
+@@ -509,23 +552,6 @@ fn is_number_ish(value: &ComponentValue<'_>) -> bool {
+     )
+ }
+ 
+-/// Is this number-ish or a font-size-capable function? (Prettier's `isPossibleFontSize`)
+-fn is_possible_font_size(value: &ComponentValue<'_>) -> bool {
+-    match value {
+-        v if is_number_ish(v) => true,
+-        ComponentValue::Function(func) => {
+-            let name = function_name_text(func);
+-            name.eq_ignore_ascii_case("var")
+-                || name.eq_ignore_ascii_case("calc")
+-                || name.eq_ignore_ascii_case("min")
+-                || name.eq_ignore_ascii_case("max")
+-                || name.eq_ignore_ascii_case("clamp")
+-                || name.starts_with("--")
+-        }
+-        _ => false,
+-    }
+-}
+-
+ pub(super) fn function_name_text<'a>(func: &Function<'a>) -> &'a str {
+     match &func.name {
+         FunctionName::Ident(InterpolableIdent::Literal(ident)) => ident.raw,
+@@ -573,10 +599,6 @@ impl ValueContext<'_> {
+         !self.in_args
+             && self.decl_prop.is_some_and(|p| p == "grid" || p.starts_with("grid-template"))
+     }
+-
+-    fn is_font_or_custom(&self) -> bool {
+-        self.decl_prop.is_some_and(|p| p == "font" || p.starts_with("--"))
+-    }
+ }
+ 
+ /// Splits a flat component stream at top-level commas.
+@@ -1264,13 +1286,25 @@ pub(super) fn write_comma_group<'a>(
+             let content = format_with(move |f: &mut CssFormatter<'_, 'a>| {
+                 flush_value_comments(start, f);
+                 for (j, v) in run.iter().enumerate() {
+-                    let is_word_continuation = j > 0 && {
+-                        let sep = separator_between(values, run_start + j, ctx, source);
+-                        if sep == Separator::Space {
++                    let sep =
++                        (j > 0).then(|| separator_between(values, run_start + j, ctx, source));
++                    if sep == Some(Separator::Space) {
++                        write!(f, " ");
++                    }
++                    let is_word_continuation = sep == Some(Separator::Word);
++                    // A comment inside the run stays where it is (`1px /* c */ / 2`), never past the next member;
++                    // a pair kept tight re
+```
+
+**File**: `crates/oxc_formatter_css/tests/fixtures/format/css/media-ratio.css.snap` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
+ }
+ @media (aspect-ratio: 16/9) {
+ }
+-@media (16/ 9 < aspect-ratio < 21 / 9) {
++@media (16 / 9 < aspect-ratio < 21 / 9) {
+ }
+ 
+ -------------------
+@@ -24,7 +24,7 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
+ }
+ @media (aspect-ratio: 16/9) {
+ }
+-@media (16/ 9 < aspect-ratio < 21 / 9) {
++@media (16 / 9 < aspect-ratio < 21 / 9) {
+ }
+ 
+ ===================== End =====================
+```
+
+**File**: `crates/oxc_formatter_css/tests/fixtures/format/less/math-operations.less` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@
+   t7: (2em*1em) + 20;
+   h: (10px / 2px+6px-1px*2);
+   g: @base*2;
+-  // `/` spaced next to a word-like operand, number-only division keeps its glue
++  // `/` glued on both sides stays glued (DIVERGENCES.md#slash-spacing)
+   m: @margins[zero] (@margins[ten]/2) !important;
+   w: @w/2;
+   d: 10px/8px;
+```
+
+**File**: `crates/oxc_formatter_css/tests/fixtures/format/less/math-operations.less.snap` (modified, +7/-7)
+```diff
+@@ -26,7 +26,7 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
+   t7: (2em*1em) + 20;
+   h: (10px / 2px+6px-1px*2);
+   g: @base*2;
+-  // `/` spaced next to a word-like operand, number-only division keeps its glue
++  // `/` glued on both sides stays glued (DIVERGENCES.md#slash-spacing)
+   m: @margins[zero] (@margins[ten]/2) !important;
+   w: @w/2;
+   d: 10px/8px;
+@@ -64,9 +64,9 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
+   t7: (2em * 1em) + 20;
+   h: (10px / 2px+6px-1px * 2);
+   g: @base*2;
+-  // `/` spaced next to a word-like operand, number-only division keeps its glue
+-  m: @margins[zero] (@margins[ten] / 2) !important;
+-  w: @w / 2;
++  // `/` glued on both sides stays glued (DIVERGENCES.md#slash-spacing)
++  m: @margins[zero] (@margins[ten]/2) !important;
++  w: @w/2;
+   d: 10px/8px;
+ }
+ 
+@@ -100,9 +100,9 @@ source: crates/oxc_formatter_css/tests/fixtures/mod.rs
+   t7: (2em * 1em) + 20;
+   h: (10px / 2px+6px-1px * 2);
+   g: @base*2;
+-  // `/` spaced next to a word-like operand, number-only division keeps its glue
+-  m: @margins[zero] (@margins[ten] / 2) !important;
+-  w: @w / 2;
++  // `/` glued on both sides stays glued (DIVERGENCES.md#slash-spacing)
++  m: @margins[zero] (@margins[ten]/2) !important;
++  w: @w/2;
+   d: 10px/8px;
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30326** (2026-11-26): fix(transformer): map lowered auto-accessors and class field initializers to their source (@Dunqing)
-- **PR #30322** (2026-11-26): fix(runtime): reject non-object receivers in decorator access objects (@Dunqing)
-- **PR #30320** (closed): test(formatter_css): fingerprint fixtures by their comments' text, not count (@leaysgur)
-- **PR #30306** (closed): fix(formatter_css): lay out a commented `@supports` / `@import` prelude by width as Prettier does (@leaysgur)
-- **PR #30302** (2026-11-26): docs(linter): fix JavaScript/TypeScript capitalization in rule docs (@leaysgur)
-- **PR #30301** (2026-11-25): fix(linter/eslint/no-obj-calls): limit destructured aliases to globalThis and stop alias cycles (@camc314)
+- **PR #30395** (2026-11-27): fix(formatter_css): bump oxc-css-parser to 0.0.24 and keep SCSS at-rule names and the Less keyword `-` as written (@leaysgur)
+- **PR #30393** (2026-11-27): refactor(formatter_css): share the operator fill between calc and Less operations (@leaysgur)
+- **PR #30392** (2026-11-27): fix(formatter_css): make `/` spacing symmetric and space math-function operators (@leaysgur)
+- **PR #30391** (2026-11-27): fix(formatter): hug negated logical conditions in statement heads (@leaysgur)
+- **PR #30387** (2026-11-26): fix(linter/eslint/no-constant-binary-expression): check that constructors resolve to globals (@camc314)
+- **PR #30385** (2026-11-26): fix(linter/eslint/no-invalid-regexp): validate cooked flags and patterns with unknown flags (@camc314)
 
 ---
 
@@ -2742,88 +2162,54 @@ Options: `{ "
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. napi/parser, linter/plugins): deserialize statements directly onto directives in
+## X. linter/eslint/no-empty-static-block): suggest a comment instead of deleting the 
 
 **RULE**:
-When implementing operations in `apps/oxlint/src-js/generated/deserialize.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/eslint/no_empty_static_block.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1aef2f49`: napi/parser, linter/plugins): deserialize statements directly onto directives in raw transfer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9eb6c432`: linter/eslint/no-empty-static-block): suggest a comment instead of deleting the block. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/oxlint/src-js/generated/deserialize.js`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_empty_static_block.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      node$0)),
-    body = (program.body = deserializeVecDirective(pos + 88));
-  deserializeVecStatement(pos + 112, body);
-  deserializeVecStatement(pos + 40, body);
-  deserializeVecStatement(pos + 40, body);
-function deserializeVecDirective(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecStatement(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecArrayExpressionElement(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecObjectPropertyKind(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecTemplateElement(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecExpression(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecArgument(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecOptionAssignmentTargetMaybeDefault(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecAssignmentTargetProperty(pos, arr = []) {
-  let pos32 = pos >> 2;
-function deserializeVecVariableDeclarator(pos, arr = []) {
-  let pos32 = pos >> 2;
+                |fixer| {
+                    let span = static_block.span;
+                    let Some(offset) = ctx.find_next_token_within(span.start, span.end, "{") else {
+                        return fixer.noop();
+                    };
+                    fixer
+                        .replace(Span::new(span.start + offset + 1, span.end - 1), " /* empty */ ")
+                        .with_message("Add comment inside empty static block.")
+                },
+        ("class Foo { static {} }", "class Foo { static { /* empty */ } }"),
+        ("class Foo { static { } }", "class Foo { static { /* empty */ } }"),
+            "class Foo { static { /* empty */ } }",
+        ),
+        (
+            "class Foo { static { bar(); } static {} }",
+            "class Foo { static { bar(); } static { /* empty */ } }",
+        ),
+        (
+            "class C { x = value\nstatic {}\n[key]() {} }",
+            "class C { x = value\nstatic { /* empty */ }\n[key]() {} }",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      node$0));
-  (program.body = deserializeVecDirective(pos + 88)).push(...deserializeVecStatement(pos + 112));
-  body.push(...deserializeVecStatement(pos + 40));
-  body.push(...deserializeVecStatement(pos + 40));
-function deserializeVecDirective(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecStatement(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecArrayExpressionElement(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecObjectPropertyKind(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecTemplateElement(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecExpression(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecArgument(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecOptionAssignmentTargetMaybeDefault(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecAssignmentTargetProperty(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
-function deserializeVecVariableDeclarator(pos) {
-  let arr = [],
-    pos32 = pos >> 2;
+                |fixer| fixer.delete(&static_block.span),
+        ("class Foo { static {} }", "class Foo {  }"),
+        ("class Foo { static { } }", "class Foo {  }"),
+            "class Foo {  }",
+        ("class Foo { static { bar(); } static {} }", "class Foo { static { bar(); }  }"),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1aef2f49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9eb6c432` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

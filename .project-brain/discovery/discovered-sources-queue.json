@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T09:18:16.893Z",
+  "updated_at": "2026-11-27T09:45:00.217Z",
   "stats": {
-    "total_discovered": 10284,
-    "approved_pending_harvest": 9755,
+    "total_discovered": 10286,
+    "approved_pending_harvest": 9757,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9759,
+      "COMMUNITY_AND_EXPERT": 9761,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222572,6 +222572,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
         "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-36801743D0B1": {
+      "id": "SRC-36801743D0B1",
+      "url": "https://github.com/user-attachments/assets/91326984-d143-419e-b2a8-3063ec19fb66",
+      "title": "https://github.com/user-attachments/assets/91326984-d143-419e-b2a8-3063ec19fb66",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T09:45:00.149Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-mole-learnings.md",
+        "fileName": "tw93-mole-learnings.md"
+      }
+    },
+    "SRC-38555699CD19": {
+      "id": "SRC-38555699CD19",
+      "url": "https://github.com/user-attachments/assets/72702065-d7fa-4271-960d-ac23f334042d",
+      "title": "https://github.com/user-attachments/assets/72702065-d7fa-4271-960d-ac23f334042d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T09:45:00.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-mole-learnings.md",
+        "fileName": "tw93-mole-learnings.md"
       }
     }
   }

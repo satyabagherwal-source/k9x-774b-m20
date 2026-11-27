@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T09:35:11.729Z",
-  "total_records": 2825,
+  "last_updated": "2026-11-27T09:45:00.740Z",
+  "total_records": 2827,
   "domains": {
     "A": {
       "total": 23,
@@ -1124,7 +1124,7 @@
       ]
     },
     "F": {
-      "total": 120,
+      "total": 122,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1245,7 +1245,9 @@
         "domain_intelligence-design-intelligence-kividbio-kividb-core-invariants",
         "domain_intelligence-design-intelligence-kividbio-kividb-learnings-core-invariants",
         "DOM-F-1B31BB0E",
-        "DOM-F-B48FD193"
+        "DOM-F-B48FD193",
+        "domain_intelligence-design-intelligence-oxc-project-oxc-core-invariants",
+        "domain_intelligence-design-intelligence-oxc-project-oxc-learnings-core-invariants"
       ]
     },
     "G": {
@@ -15904,8 +15906,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "ad43bfdf74a0f381b98d42b439bf7e7fa895d10c12122a755298db2db971fcec",
-      "created_at": "2026-11-27T04:18:33.504Z"
+      "content_hash": "9e8aec33c64a5265d7da1ff681241599a8dd12cf0d082da9bcd6cbdbf5ef4739",
+      "created_at": "2026-11-27T09:44:55.446Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -20006,8 +20008,8 @@
       "title": "Architecture Intelligence: tw93/Mole Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-architecture-intelligence-tw93-mole-core-invariants.md",
       "repository": "tw93/Mole",
-      "content_hash": "c7160dff5be72ce8e04721269fd867499b1412d46003097828d4c1f0467d8064",
-      "created_at": "2026-11-19T10:15:45.097Z"
+      "content_hash": "6d6e01d7cf743e560bb2daeec933ce73d1a2bf11bde1734f07705bc9b401f63d",
+      "created_at": "2026-11-27T09:44:46.379Z"
     },
     "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants",
@@ -20075,8 +20077,8 @@
       "title": "Architecture Intelligence: tw93-mole-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-learnings-architecture-intelligence-tw93-mole-learnings-core-invariant.md",
       "repository": "tw93-mole-learnings",
-      "content_hash": "7bc860e524da8fea89c00e8e2305b7ff0873819560d8e9abd4af53598613f33c",
-      "created_at": "2026-11-19T10:16:29.304Z"
+      "content_hash": "096dacf13e04e39b05bcebcc4d53dbe0c273caa8faa4ba9e7d608246520a5cd3",
+      "created_at": "2026-11-27T09:45:00.740Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in",
@@ -20489,8 +20491,8 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-Base Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-research-knowledge-intelligence-openmoss-team-m.md",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "content_hash": "088da67f9fd7b9c9a01fe6b71f9e8a9413ac8947adf9c1f3776745ef3a5ec8d0",
-      "created_at": "2026-11-24T00:07:14.115Z"
+      "content_hash": "efba1a48d11ae9da12c9468fc80237368226af7778233505a9a02a9cbd578468",
+      "created_at": "2026-11-27T09:44:38.564Z"
     },
     "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
@@ -20549,8 +20551,8 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-base-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-learnings-research-knowledge-intelligence-hf-op.md",
       "repository": "hf-openmoss-team-moss-image-base-learnings",
-      "content_hash": "0a4e6c34a1475d733a216e892864d187e8bdda0f71607ae97fe3fe6c86be334b",
-      "created_at": "2026-11-24T00:08:00.942Z"
+      "content_hash": "1ba282ba215512cb7826640978b96e93c961efd5a56bf36790d83aa223a35abc",
+      "created_at": "2026-11-27T09:44:59.849Z"
     },
     "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
@@ -47723,6 +47725,24 @@
       "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
       "content_hash": "b81d4ceaa6e0e9ece39cfacc2e5690b3cfa0962365445f692a3d5081112aa468",
       "created_at": "2026-11-27T09:35:10.368Z"
+    },
+    "domain_intelligence-design-intelligence-oxc-project-oxc-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-oxc-project-oxc-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: oxc-project/oxc Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-oxc-project-oxc-design-intelligence-oxc-project-oxc-core-invariants.md",
+      "repository": "oxc-project/oxc",
+      "content_hash": "c790fc2c7e20455aac7a3b6f83ffab497b6e67fc297d6ec58a53cfe9c44e5554",
+      "created_at": "2026-11-27T09:44:40.899Z"
+    },
+    "domain_intelligence-design-intelligence-oxc-project-oxc-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-oxc-project-oxc-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: oxc-project-oxc-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-oxc-project-oxc-learnings-design-intelligence-oxc-project-oxc-learnings-core-inv.md",
+      "repository": "oxc-project-oxc-learnings",
+      "content_hash": "07774261b76683e5bc982956d1dc9f85bf646ffa4baac9b00b349e8690958730",
+      "created_at": "2026-11-27T09:44:59.200Z"
     }
   }
 }

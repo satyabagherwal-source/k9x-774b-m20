@@ -13747,3 +13747,7 @@
 | `CYCLE-20261127-BKD0` | `2026-11-27T09:34:23.700Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10865, Rule 10866, Rule 10867` | Yes (`f76446da...`) |
 | `CYCLE-20261127-BNJA` | `2026-11-27T09:34:27.814Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10868, Rule 10869, Rule 10870` | Yes (`9cfe17b1...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T09:35:09.102Z` | `hf-nvidia-qwen3.8-flash-next-fp4-local` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-FD509F0F` [Domain H] | Yes (`cdf7b718...`) |
+| `CYCLE-20261127-OQLN` | `2026-11-27T09:44:38.315Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`2cba1916...`) |
+| `CYCLE-20261127-OS7W` | `2026-11-27T09:44:40.412Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10871` | Yes (`951c774e...`) |
+| `CYCLE-20261127-OWG9` | `2026-11-27T09:44:45.897Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10872` | Yes (`2a5861a1...`) |
+| `CYCLE-20261127-P3FU` | `2026-11-27T09:44:54.954Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10873` | Yes (`a4557fcb...`) |

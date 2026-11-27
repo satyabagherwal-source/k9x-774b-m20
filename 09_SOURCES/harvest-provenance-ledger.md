@@ -13780,3 +13780,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-27T09:34:23.718Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `c199c75a` | Multi-dimensional audit evidence | 2026-11-27T09:34:27.832Z |
 | `learn-dom-h-fd509f0f` | `project://hf-nvidia-qwen3.8-flash-next-fp4-local` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | 2026-11-27T09:35:09.102Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-27T09:44:38.320Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `68fdb4c9` | Multi-dimensional audit evidence | 2026-11-27T09:44:40.427Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `3da229e1` | Multi-dimensional audit evidence | 2026-11-27T09:44:45.912Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f176c30a` | Multi-dimensional audit evidence | 2026-11-27T09:44:54.970Z |

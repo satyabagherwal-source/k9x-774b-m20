@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "bb56b63e660fb722ed65f25f71cca2f1b099f086b4d2c8f4d6176bbb5ef5e1c0",
-    "lastHarvestedAt": "2026-11-24T00:07:13.880Z",
+    "contentHash": "2cba1916f12396231bd98aa0b22527dba59ae53f05aa215b45d056b7ee9f2668",
+    "lastHarvestedAt": "2026-11-27T09:44:38.320Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "2889b681",
+    "sourceVersion": "f176c30a",
     "license": "Apache-2.0",
-    "contentHash": "fc082597ed9be46fd08d2a02a224ac333d5d8757f77f008e66a08d9d9ca35e83",
-    "lastHarvestedAt": "2026-11-27T04:18:33.044Z",
+    "contentHash": "a4557fcb8e85aed15af881cfa875a7a20e1506e2ddd198c965c053e4d2fac5f9",
+    "lastHarvestedAt": "2026-11-27T09:44:54.970Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "ee710b48",
+    "sourceVersion": "3da229e1",
     "license": "GPL-3.0",
-    "contentHash": "ea3178340e8191670504b3cea2e19f3e850894dfdd2a390f9fde9da0888c4db6",
-    "lastHarvestedAt": "2026-11-25T01:09:19.395Z",
+    "contentHash": "2a5861a12ce17665e313738b4e8cc478d8c2f6d03788a4b7d6237c3a6a2e0816",
+    "lastHarvestedAt": "2026-11-27T09:44:45.912Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "ab594768",
+    "sourceVersion": "68fdb4c9",
     "license": "MIT",
-    "contentHash": "fb59056d95b1c1fbd5b5fb0ce771da1d992e9ec78ce2de129f30ef7ebeb8f857",
-    "lastHarvestedAt": "2026-11-26T08:36:44.267Z",
+    "contentHash": "951c774eca9364aa4d93e5cf8a5f07df47304dafeee0d1c32e13fdd88e3ba493",
+    "lastHarvestedAt": "2026-11-27T09:44:40.427Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
