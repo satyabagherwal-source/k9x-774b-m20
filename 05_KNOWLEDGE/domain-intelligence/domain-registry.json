@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T09:08:13.704Z",
-  "total_records": 2821,
+  "last_updated": "2026-11-27T09:18:17.202Z",
+  "total_records": 2822,
   "domains": {
     "A": {
       "total": 23,
@@ -72,7 +72,7 @@
       ]
     },
     "D": {
-      "total": 1038,
+      "total": 1039,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1111,7 +1111,8 @@
         "domain_intelligence-research-knowledge-intelligence-loyalai-underdog-saluki-27b-1-0-core-invariants",
         "DOM-D-D749CB6F",
         "domain_intelligence-research-knowledge-intelligence-inclusionai-ming-image-0-2-design-core-invariant",
-        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-2-design-learnings-c"
+        "domain_intelligence-research-knowledge-intelligence-hf-inclusionai-ming-image-0-2-design-learnings-c",
+        "DOM-D-E7237660"
       ]
     },
     "E": {
@@ -9398,8 +9399,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "72496767dfd574d44d70963dfce02f05e5c81babbd52ceb9c5dd60897d7447e4",
-      "created_at": "2026-11-26T15:02:26.020Z"
+      "content_hash": "d93083bacd658b9b8b00f815534c3e9a8b771c439e8ecbd9ecf3d0c02d5582ff",
+      "created_at": "2026-11-27T09:17:44.101Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -9467,8 +9468,8 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-learnings-technical-construction-intelligence-volcengine-o.md",
       "repository": "volcengine-openviking-learnings",
-      "content_hash": "ff0ca5017f1d68cc357ed35cac38be2b3051c77575bb526a85954e3d7422b4ae",
-      "created_at": "2026-11-24T18:35:08.517Z"
+      "content_hash": "7b1bbe8e9b2f831f2309604d572a44ea7446ad8741d306a3ac3f05510bbb5fb0",
+      "created_at": "2026-11-27T09:18:17.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -16660,10 +16661,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "78e09723fbf84afa3571d973196af5099f1214f3c53032c9da634e307d6e2d78",
-      "created_at": "2026-11-26T14:53:26.187Z"
+      "content_hash": "c0b23c1da6a6a68fae5645f82a4a2d1243d8724262b0f752928a3153da9267ab",
+      "created_at": "2026-11-27T09:17:33.405Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -16671,8 +16672,8 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-learnings-architecture-intelligence-codewhale-hq-codewhal.md",
       "repository": "codewhale-hq-codewhale-learnings",
-      "content_hash": "c03f1899ded9cb7d656255766ee2268216bbc76c8f3295c84d23dbfc58f9a120",
-      "created_at": "2026-11-26T08:10:26.212Z"
+      "content_hash": "8cb888ba30a2ce82bbd6caf6fb841f775e924328b6ff7defede122a0b500402f",
+      "created_at": "2026-11-27T09:17:47.846Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
@@ -34464,8 +34465,8 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-research-knowledge-intelligence-openbmb-mi.md",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "content_hash": "00c896ac8c1f9f58083c4135782c665798e70b28079df534aa66c2811b6cd737",
-      "created_at": "2026-11-23T23:39:46.462Z"
+      "content_hash": "5ee734e6fbf5ac37c3c8022c1c61acea4e2ad3a9bf77ac8fb17005b9d971d513",
+      "created_at": "2026-11-27T09:17:29.756Z"
     },
     "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants",
@@ -34524,8 +34525,8 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
-      "content_hash": "068e0986627f272f6069225ca6bb390d22e133fd4d5f2d60a5e6a3512859f1e8",
-      "created_at": "2026-11-23T23:40:00.894Z"
+      "content_hash": "bdfe3070fc1fe91ee62a0ce584efbc0fe396e300510cfaeb074397a0726e56fd",
+      "created_at": "2026-11-27T09:17:48.647Z"
     },
     "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants",
@@ -47625,6 +47626,48 @@
       "repository": "abue-ammar-tinycast-learnings",
       "content_hash": "386923e5c9884e2d915cd39a4633b6ac126574ba203ac86f3c408a2349404bf1",
       "created_at": "2026-11-27T09:08:12.797Z"
+    },
+    "DOM-D-E7237660": {
+      "record_id": "DOM-D-E7237660",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): volcengine/OpenViking",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  \n> **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  \n> **Source Version**: `d421d520`  \n> **License**: AGPL-3.0  \n> **Synthesized By**: zero-clone-st",
+      "content_hash": "39dd5e2611647e09290dafe5692f302f10104b0a0ac25e2eca177d78cdf7e7c3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  \n> **Source**: github ([https://github.com/volc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  \n> **Source**: github ([https://github.com/volc",
+      "provenance": {
+        "source_uri": "project://volcengine-openviking/volcengine-openviking-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T09:17:48.851Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (volcengine-openviking)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of volcengine-openviking"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T09:18:16.441Z"
     }
   }
 }

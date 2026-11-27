@@ -4,24 +4,24 @@
 {
   "source_repository": "volcengine/OpenViking",
   "source_url": "https://github.com/volcengine/OpenViking",
-  "source_version": "fe354f74",
+  "source_version": "d421d520",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-26T15:02:25.786Z",
+  "timestamp": "2026-11-27T09:17:44.097Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-volcengine-openviking",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `fe354f74`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-26T15:02:25.786Z`  
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `d421d520`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-27T09:17:44.097Z`  
 > **Learning ID**: `learn-github-volcengine-openviking`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), G (Architecture Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from volcengine/OpenViking:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T15:02:24.163Z  
+> **Harvest Timestamp**: 2026-11-27T09:17:43.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42862 stars
+- **Stars / Engagement**: 42909 stars
 
 ---
 
@@ -903,10 +903,13 @@ import numpy as np
 BENCHMARK_DIR = Path(__file__).resolve().parent
 if str(BENCHMARK_DIR) not in sys.path:
     sys.path.insert(0, str(BENCHMARK_DIR))
+if not __package__:
+    sys.path.insert(0, str(BENCHMARK_DIR.parents[1]))
 
 from run_collection_benchmark import parse_positive_int_list  # noqa: E402
 from run_index_benchmark import percentile, prepare_dataset, runtime_metadata  # noqa: E402
 
+from benchmark.vector_config import BenchmarkVectorConfigResolver  # noqa: E402
 from openviking.server.identity import RequestContext, Role  # noqa: E402
 from openviking.storage.viking_vector_index_backend import (  # noqa: E402
     VikingVectorIndexBackend,
@@ -928,18 +931,21 @@ def collection_schema(collection_name: str, dimension: int) -> dict[str, Any]:
             {"FieldName": "id", "FieldType": "string", "IsPrimaryKey": True},
             {"FieldName": "vector", "FieldType": "vector", "Dim": dimension},
             {"FieldName": "account_id", "FieldType": "string"},
+            {"FieldName": "uri", "FieldType": "path"},
             {"FieldName": "uniform_bucket", "FieldType": "int64"},
             {"FieldName": "row_number", "FieldType": "int64"},
         ],
-        "ScalarIndex": ["account_id", "uniform_bucket", "row_number"],
+        "ScalarIndex": ["account_id", "uri", "uniform_bucket", "row_number"],
     }
 
 
 def make_record(row_index: int, vector: Sequence[float]) -> dict[str, Any]:
+    record_id = f"record-{row_index}"
     return {
-        "id": f"record-{row_index}",
+        "id": record_id,
         "vector": list(vector),
         "account_id": ACCOUNT_ID,
+        "uri": f"viking://resources/bench/cuvs-service/{record_id}",
         "uniform_bucket": row_index % 1000,
         "row_number": row_index,
     }
@@ -1166,21 +1172,7 @@ async def run_cached_scenario(
         result["concurrency"] = concurrency
         results.append(result)
     return {
-        "name": name,
-        "filter_mode": "cached",
-        "filter": filter,
-        "initial_filter_query_ms": initial_filter_ms,
-        "results": results,
-    }
-
-
-async def run_unique_filter_scenario(
-    manager: VikingVectorIndexBackend,
-    ctx: RequestContext,
-    queries: np.ndarray,
-    *,
-    vector_count: int,
-   
+        "name": name
 ```
 
 ### Core Architecture Module: `benchmark/locomo/vikingbot/progress_utils.py`
@@ -1491,11 +1483,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8416** (2026-11-27): **[Bug]: `backup --include-vectors` fails permanently — consistency checker expects index records for namespaces that reindex cannot build**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  `ov backup --include-vectors` and `ov system consistency viking://` fail with `Cannot export incomplete OpenViking vector index snapshot` because the consistency checker (`openviking/storage/index_consistency.py`) builds index expectations for namespaces where the reindex path either refuses to run or skips by design. The checker and the indexer disagree on which namespaces are indexable, so the check can never pass — not after a full-namespace `semantic_and_vectors --force` reindex that completes with `failed_records=0`.  Three concrete mismatches were observed:  1. **`viking://system/*` (FILE_ONLY)** — `namespace_policy.py` marks the system    namespace `processing_mode=FILE_ONLY, supports_reindex=False`, and    `reindex_executor.py` rejects it with `reindex is not supported for namespace`,    but `index_consistency.py` only excludes sessions    (`NON_INDEX_SCOPES = frozenset({"session"})`), so it still expects level=0/1    records for every system sidecar. These records can never be created. 2. **`viking://agent` root** — reindex of the root URI is rejected    (`UNSUPPORTED_URI`), yet the checker expects its level=0/1 records. Children    (`endpoints`, `payments`) reindex fine; `agent/skills` reindex completes    (`rebuilt_records=6, failed_records=0`) but its level=0/1 records stay missing. 3. **Fingerprint-skip with absent record** — for `viking://user/alice/skills`,    `.abstract.md`/`.
+
 - **Issue #7814** (2026-11-19): **[Bug]: 100篇目录输入，生成wiki，非常耗时且存在循环调用**
   *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  版本	 ：                          0.4.20	                    ；       新版对照（官方 0.5.5 包） 运行时间：	          约 11 分 50 秒，完成	     ；       30 分 12 秒，未完成 模型 token：	      约 208 万                      ；     	已消耗约 501 万 来源抽取	：       138 篇进入清单	         ；          138 篇均生成中间记录 最终 Wiki	 ：           26 个 Markdown 文件	    ；            0 个页面  来源抽取已完成 134/138，只有 4 个仍在运行。到目前为止，输入约 245 万、输出约 149 万 token；新版确实显著更耗模型资源。马上可以观察它进入合并阶段后的实际页面产出。   138/138 个来源都完成了逐篇抽取，并生成 138 条记录。流程已进入审阅／合并；这一阶段决定最终 Wiki 的内容覆盖，我会继续核对任务状态和实际页面。   逐篇抽取完成后，审阅器判断这 138 条记录跨多个无关主题，正在调整合并指令；目前已生成分组文件，但还没有最终 Wiki 页面。这里是新版的关键风险点：若把全部记录压到同一组，可能再次遗漏独立主题。我会继续观察合并结果和 token 增量。  现在满足你设定的停止条件：138 条抽取记录已生成，但合并阶段连续 27 次模型调用，额外消耗约 74 万输入 token，只反复读取同一个 assignment.json 的异常偏移，仍未写出 Wiki 页面。我会停止这轮独立服务，保存工作区和日志，再分析卡住的原因；继续等待只会增加无效调用。  ### Steps to Reproduce  可以随便找100篇文章，或者200篇，调用wiki能力。  ### Expected Behavior  能完整较快的生成wiki  ### Actual Behavior  wiki生成  ### Minimal Reproducible Example  ```python  ```  ### Error Logs  ```shell  ```  ### OpenViking Version  0.5.5  ### Python Version  Python 3.12.8  ### Operating System  Windows  ### Model Backend  None  ### Additional Context  _No response_
-
-- **Issue #7802** (2026-11-19): **[Bug]: 环境存在 socks5 代理（ALL_PROXY）时 ov 命令报 unsupported scheme socks5，且配置向导隐藏真实错误**
-  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  而同一台机器上浏览器、curl访问同一个服务端均正常，但使用 `ov config` 添加配置时报错 「无法连接服务器。请检查 URL 和网络连接。」  ### Steps to Reproduce  1. 准备 socks5 代理环境：     ```bash    export ALL_PROXY=socks5://127.0.0.1:10808    ```  2. 服务端可直连，自部署地址为 `http://private-server:1933`，用 curl 验证正常：     ```bash    curl -s http://private-server:1933/health    # {"status":"ok","healthy":true,"version":"v0.5.5","auth_mode":"api_key"}    ```  3. 用 CLI 写入配置：     ```bash    printf '%s' "$KEY" | ov config add custom --name home \      --url http://private-server:1933 --api-key-stdin --activate    ```  4. 执行健康检查：     ```bash    ov health    ```  ### Expected Behavior  1. 正常通过 socks5 代理访问服务端； 2. 遇到不支持的代理 scheme 时，忽略该代理（回退直连）并给出警告，而不是让所有请求失败； 3. 至少把真实错误（`unsupported scheme socks5`）透出到 `ov config` / 向导界面上，并提示检查 `ALL_PROXY` / `NO_PROXY`。  ### Actual Behavior  `ov health`（含详情）：  ``` OPENVIKING 健康检查  ╭─ 连接错误 ───────────────────────────────────────────────────────────╮ │ 无法连接 OpenViking。请先查看详情，再确认服务器是否运行、URL         │ │ 是否正确。 详情：HTTP request failed: error sending request for url  │ │ (http://private-server:1933/health): client error (Connect):            │ │ unsupported scheme socks5                                            │ ╰──────────────────────────────────────────────────────────────────────╯ ```  `ov config add custom` / 配置向导（向导界面上只剩一句通用文案）：  ``` Error [validation_failed] Could not reach the custom server. HTTP request failed: error sending request for ur
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1512,993 +1504,1943 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b4dc8c4` (2026-11-26)
-**Commit Message**: fix(plugins): send the profile again after a host compaction drops it (#8497)
+### Incident Patch 1: `220dd481` (2026-11-27)
+**Commit Message**: test(security): 收敛权限、隐私与加密核心测试 (#8511)
 
-* fix(dsh): send the profile again after a compaction drops it
+将重复覆盖合并到请求、存储和密钥的真实流程，补强跨账户隔离和根密钥恢复的结果断言。
 
-The profile block (with the skill catalog) went out once per process: a
-latch set at delivery was never cleared, and the re-seed check scanned the
-raw event log, which a compaction never edits. After the first compaction
-the model lost the block for the rest of the session, and a restart over
-the compacted session did not bring it back either.
-
-The latch is gone. A pre-step sends the block whenever the model would not
-see it: not in session.deriveMessages() (the history the model keeps), the
-pending inbox, or the step's claimed batch. The batch check also covers a
-pressure compaction that runs inside the pre-step after the startup block
-was claimed, and a cancelled step no longer loses the block for good.
-
-* fix(opencode): send the session-start context again after a compaction
-
-The session-start block went out on the first message of a session and an
-in-memory set kept it from ever going out again, so a compaction that
-summarized it away left the session without the profile and skill catalog.
-
-- The set now records the compaction each block
-
-**File**: `docs/en/agent-integrations/16-capability-reference.md` (modified, +12/-11)
+**File**: `openviking/crypto/exceptions.py` (modified, +0/-12)
 ```diff
-@@ -60,7 +60,7 @@ Long-term memories are extracted from a session only after a **commit**. Capture
- | Qoder CLI | Yes, session-aware | Profile, memory index, skills | Every 8 captured messages | Yes | Commits uncommitted messages |
- | Antigravity | Yes, session-aware, at the first model call of each turn | Profile, memory index, skills | Every turn | No exit hook; turns are already committed | No pre-compaction hook |
- | OpenCode | Yes, session-aware | Profile, memory index, skills, indexed repositories | At 20,000 pending tokens, when idle | Yes, within the host's cleanup time | Commits around compaction |
--| DSH | Yes, session-aware | Profile, memory index, skills, once per session | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
-+| DSH | Yes, session-aware | Profile, memory index, skills | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
- | pi | Yes, session-aware | Profile, memory index, skills, every turn | Takeover on: about 30,000 tokens; off: 20,000 | Takeover on: no; off: yes | Takeover replaces pi's summary |
- | OpenClaw | Yes, session-aware | Profile, every turn | At half the token budget (64,000 by default) | No | The plugin owns compaction |
- | Hermes (bundled) | Yes, session-aware with a fallback | Profile and memory listings | No; only at session boundaries | Yes, if pending uploads finish within 10 seconds | Commits at fork-style compaction |
-@@ -257,13 +257,14 @@ When each integration injects it:
- | Integration | When |
- |---|---|
- | Claude Code | `SessionStart`, every source |
--| Codex | `SessionStart` on startup, clear, and resume |
--| Cursor, TRAE, TRAE CN, ZCode, Antigravity | `SessionStart` |
-+| Codex | `SessionStart` on startup, clear, resume, and compact |
-+| Cursor, TRAE, TRAE CN, ZCode | `SessionStart` |
-+| Antigravity | `SessionStart`, and the first turn after each compaction checkpoint in the transcript |
- | Kimi Code | The first prompt; retried on later prompts until it succeeds |
--| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent |
-+| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent. CodeBuddy drops `SessionStart` context at a compaction, so the next prompt sends it again |
- | Qoder CLI | `SessionStart`, every source (`startup`, `resume`, `compact`) |
--| OpenCode | The first message of each session; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
--| DSH | Once per session; not sent again after compaction |
-+| OpenCode | The first message of each session and the first after each compaction; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
-+| DSH | At session start, and again on the next model step when a compaction dropped it |
- | pi | In the system prompt, rebuilt every turn |
- | OpenClaw | In the system prompt, rebuilt every turn: `<user-profile>` for the user's profile and, with `peer_role`, the actor peer's profile. No memory index or skill catalog |
- | Hermes | Its own reader loads the profile and the preferences and entities listings, with a 6,000-token default budget |
-@@ -442,15 +443,15 @@ When the host shortens its context, most integrations make sure the dropped mess
- | Integration | Approach | Before compaction | After compaction |
- |---|---|---|---|
- | Claude Code | Host summarizes | `PreCompact` commits synchronously; this is the one write that never runs in the background, because the host rewrites the transcript right after | `SessionStart` with `source="compact"` injects the archive overview and up to 5 summaries |
--| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | The archive summary is injected on resume |
-+| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | `SessionStart` with `source="compact"` sends the profile again; the archive summary is injected on resume |
- | Cursor | Host summarizes | `preCompact` commits | Nothing |
--| CodeBuddy Code | Host summarizes | `PreCompact` commits | Nothing |
-+| CodeBuddy Code | Host summarizes | `PreCompact` commits | The next prompt sends the profile again |
- | Qoder CLI | Host summarizes | `PreCompact` commits | Nothing |
- | TRAE, TRAE CN, ZCode | Host summarizes | No pre-compaction event | Nothing |
--| Antigravity | Not verified | No pre-compaction hook | Nothing |
-+| Antigravity | Host summarizes | No pre-compaction hook | The first turn after the compaction checkpoint sends the profile again |
- | Kimi Code | Host s
-```
-
-**File**: `docs/en/agent-integrations/17-dsh.md` (modified, +1/-1)
-```diff
-@@ -118,7 +118,7 @@ To remove the bundle, use **Uninstall** on its Plugins page entry, or quit Deskt
+@@ -35,19 +35,7 @@ class KeyMismatchError(EncryptionError):
+     pass
  
- ## How it works
  
--The bundle runs inside DSH as a Cordis plugin rather than as external hooks, so it follows the session in-process. At session start it injects your OpenViking profile block, an index of available memories, and an `<available-skills>` catalog of your OpenViking skills. When a model step takes new user input, it searches OpenViking with the text the user typed and appends what it finds to that step as a durable message, so the injection replays with the session and is visible to compaction. Context that DSH or other plugins inject (for example `time-context` or job notices) and tool results neither trigger recall nor enter the query. It captures user, assistant, and (optionally) tool-result messages straight from DSH's event stream, skipping injected context, and commits to OpenViking once pending tokens cross the threshold or when DSH begins a compaction, archiving every captured message. Writes that fail land in a pending queue and replay at the next session start.
-+The bundle runs inside DSH as a Cordis plugin rather than as external hooks, so it follows the session in-process. At session start it injects your OpenViking profile block, an index of available memories, and an `<available-skills>` catalog of your OpenViking skills; when a compaction summarizes that block away, the next model step sends it again. When a model step takes new user input, it searches OpenViking with the text the user typed and appends what it finds to that step as a durable message, so the injection replays with the session and is visible to compaction. Context that DSH or other plugins inject (for example `time-context` or job notices) and tool results neither trigger recall nor enter the query. It captures user, assistant, and (optionally) tool-result messages straight from DSH's event stream, skipping injected context, and commits to OpenViking once pending tokens cross the threshold or when DSH begins a compaction, archiving every captured message. Writes that fail land in a pending queue and replay at the next session start.
- 
- Each DSH session maps to `dsh-<session-id>` in OpenViking, and every subagent gets its own session.
- 
-```
-
-**File**: `docs/zh/agent-integrations/16-capability-reference.md` (modified, +12/-11)
-```diff
-@@ -60,7 +60,7 @@
- | Qoder CLI | 是，带会话 | profile、记忆索引、skill | 每捕获 8 条消息 | 是 | 提交尚未提交的消息 |
- | Antigravity | 是，带会话，在每轮第一次模型调用时 | profile、记忆索引、skill | 每轮 | 没有退出 hook；每轮已提交 | 没有压缩前 hook |
- | OpenCode | 是，带会话 | profile、记忆索引、skill、已索引的仓库 | 空闲时，待提交 token 达到 20,000 | 是，在宿主的清理时限内 | 在压缩前后提交 |
--| DSH | 是，带会话 | profile、记忆索引、skill，每个会话一次 | 待提交 token 达到 20,000 | 是，预算 3 秒 | 先提交，再由宿主摘要 |
-+| DSH | 是，带会话 | profile、记忆索引、skill | 待提交 token 达到 20,000 | 是，预算 3 秒 | 先提交，再由宿主摘要 |
- | pi | 是，带会话 | profile、记忆索引、skill，每轮 | takeover 开：约 30,000 token；关：20,000 | takeover 开：否；关：是 | takeover 替换 pi 的摘要 |
- | OpenClaw | 是，带会话 | profile，每轮 | token 预算的一半（默认 64,000） | 否 | 插件接管压缩 |
- | Hermes（内置） | 是，带会话，有回退路径 | profile 与记忆清单 | 否；只在会话边界 | 是，前提是待上传内容在 10 秒内完成 | fork 型压缩时提交 |
-@@ -255,13 +255,14 @@ skill 走单独的路径。创建、安装或替换 skill 用 MCP `add_skill` 
- | 集成 | 时机 |
- |---|---|
- | Claude Code | `SessionStart`，所有 source |
--| Codex | `SessionStart` 的 startup、clear 和 resume |
--| Cursor、TRAE、TRAE CN、ZCode、Antigravity | `SessionStart` |
-+| Codex | `SessionStart` 的 startup、clear、resume 和 compact |
-+| Cursor、TRAE、TRAE CN、ZCode | `SessionStart` |
-+| Antigravity | `SessionStart`，以及 transcript 中每个压缩检查点之后的第一轮 |
- | Kimi Code | 首次提问时；失败后在后续提问中重试，直到成功 |
--| CodeBuddy Code | `SessionStart`，所有 source；同一会话内可能投递两次，因此 hook 是幂等的 |
-+| CodeBuddy Code | `SessionStart`，所有 source；同一会话内可能投递两次，因此 hook 是幂等的。CodeBuddy 压缩时会丢掉 `SessionStart` 上下文，因此下一次提问重新发送 |
- | Qoder CLI | `SessionStart`，所有 source（`startup`、`resume`、`compact`） |
--| OpenCode | 每个会话的第一条消息；失败后不重试，子代理会话跳过。已索引仓库的列表同时进入 system prompt |
--| DSH | 每个会话一次；压缩后不再发送 |
-+| OpenCode | 每个会话的第一条消息，以及每次压缩后的第一条消息；失败后不重试，子代理会话跳过。已索引仓库的列表同时进入 system prompt |
-+| DSH | 会话开始时；压缩去掉它之后，在下一个模型步骤重新发送 |
- | pi | 放在 system prompt 中，每轮重建 |
- | OpenClaw | 放在 system prompt 中，每轮重建：`<user-profile>` 包含用户的 profile，设置了 `peer_role` 时还包含当前 actor peer 的 profile。不注入记忆索引和 skill 清单 |
- | Hermes | 用自己的读取逻辑加载 profile 及 preferences、entities 清单，默认预算 6,000 token |
-@@ -440,15 +441,15 @@ Claude Code 和 Codex 默认 `auto`，其他集成默认 `off`。支持服务端
- | 集成 | 方式 | 压缩前 | 压缩后 |
- |---|---|---|---|
- | Claude Code | 宿主摘要 | `PreCompact` 同步提交；这是唯一不在后台运行的写入，因为宿主紧接着就会重写 transcript | `source="compact"` 的 `SessionStart` 注入归档概览和最多 5 条摘要 |
--| Codex、TraeCode CLI 2.0 | 宿主摘要 | `PreCompact` 补齐未捕获的轮次，提交全部内容，并开始一个新的 OpenViking 会话。补齐不完整时不提交，稍后重试 | resume 时注入归档摘要 |
-+| Codex、TraeCode CLI 2.0 | 宿主摘要 | `PreCompact` 补齐未捕获的轮次，提交全部内容，并开始一个新的 OpenViking 会话。补齐不完整时不提交，稍后重试 | `source="compact"` 的 `SessionStart` 重新发送 profile；resume 时注入归档摘要 |
- | Cursor | 宿主摘要 | `preCompact` 提交 | 无 |
--| CodeBuddy Code | 宿主摘要 | `PreCompact` 提交 | 无 |
-+| CodeBuddy Code | 宿主摘要 | `PreCompact` 提交 | 下一次提问重新发送 profile |
- | Qoder CLI | 宿主摘要 | `PreCompact` 提交 | 无 |
- | TRAE、TRAE CN、ZCode | 宿主摘要 | 没有压缩前事件 | 无 |
--| Antigravity | 未验证 | 没有压缩前 hook | 无 |
-+| Antigravity | 宿主摘要 | 没有压缩前 hook | 压缩检查点之后的第一轮重新发送 profile |
- | Kimi Code | 宿主摘要 | `PreCompact` 提交 | 无 |
--| OpenCode | 宿主摘要 | v1 刷新并提交；v2 捕获 transcript | v1 在 `session.compacted` 时再提交一次；v2 在 `session.compaction.ended` 后提交 |
--| DSH | 宿主摘要 | `compaction/start` 无论 token 阈值如何都会提交。注入的上下文是一条用户消息，随宿主压缩一起缩减；profile 不再发送 | 无 |
-+| OpenCode | 宿主摘要 | v1 刷新并提交；v2 捕获 transcript | v1 在 `session.compacted` 时再提交一次；v2 在 `session.compaction.ended` 后提交。下一条消息重新发送会话开始上下文 |
-+| DSH | 宿主摘要 | `compaction/start` 无论 token 阈值如何都会提交。注入的上下文是一条用户消息，随宿主压缩一起缩减 | 压缩去掉了 profile 时，下一个模型步骤重新发送 |
- | pi | takeover，默认开启 | 提交并等待归档概览 | 用概览替换 pi 的摘要；失败时 pi 照常压缩 |
- | OpenClaw | 插件接管压缩 | `compact()` 提交并等待 | 下一次上下文组装从服务端重建历史 |
- | Hermes（内置） | 宿主摘要 | fork 型压缩提交旧会话；原地压缩不做任何处理 | 无 |
-```
-
-**File**: `docs/zh/agent-integrations/17-dsh.md` (modified, +1/-1)
-```diff
-@@ -118,7 +118,7 @@ Windows 上安装器不可用，只能用这种方式；macOS 上不想跑安装
- 
- ## 工作方式
- 
--插件以 Cordis 插件的形式跑在 DSH 进程内，而不是外挂 hook，因此能贴着会话走。会话开始时注入 OpenViking 画像块、可用记忆索引和 OpenViking 技能清单 `<available-skills>`；模型步骤带有新的用户输入时，用用户输入的文本做语义检索，把结果作为持久消息追加到同一步骤，因此注入会随会话重放，也对压缩可见。DSH 或其他插件注入的上下文（例如 `time-context`、job 通知）和工具结果既不触发召回，也不拼进检索文本。它直接从 DSH 的事件流捕获 user、assistant 以及（可选的）工具结果消息，并跳过注入的上下文，待同步 token 超过阈值或 DSH 开始压缩时即 commit，每次 commit 都归档全部已捕获的消息。写入失败会进入待写队列，在下次会话开始时重放。
-+插件以 Cordis 插件的形式跑在 DSH 进程内，而不是外挂 hook，因此能贴着会话走。会话开始时注入 OpenViking 画像块、可用记忆索引和 OpenViking 技能清单 `<available-skills>`，压缩把这块内容摘要掉后，下一个模型步骤会重新发送；模型步骤带有新的用户输入时，用用户输入的文本做语义检索，把结果作为持久消息追加到同一步骤，因此注入会随会话重放，也对压缩可见。DSH 或其他插件注入的上下文（例如 `time-context`、job 通知）和工具结果既不触发召回，也不拼进检索文本。它直接从 DSH 的事件流捕获 user、assistant 以及（可选的）工具结果消息，并跳过注入的上下文，待同步 token 超过阈值或 DSH 开始压缩时即 commit，每次 commit 都归档全部已捕获的消息。写入失败会进入待写队列，在下次会话开始时重放。
- 
- 每个 DSH 会话映射为 OpenViking 中的 `dsh-<session-id>`，子 agent 各自拥有独立会话。
- 
-```
-
-**File**: `examples/agent-hook-plugin/hosts/antigravity.mjs` (modified, +20/-2)
-```diff
-@@ -98,6 +98,23 @@ export function resolveAntigravityTurnStep(jsonl, initialNumSteps, lastUserInput
-   return lastUserStep + 1;
- }
- 
-+/**
-+ * The step index of the latest compaction. Antigravity has no compaction hook;
-+ * each compaction writes a `CHECKPOINT` step, and the context before it, the
-+ * session-start profile included, is gone.
-+ */
-+export function latestAntigravityCheckpoint(jsonl) {
-+  let latest;
-+  for (const line of String(jsonl || "").split("\n")) {
-+    if (!line.includes('"CHECKPOINT"')) continue;
-+    try {
-+      const step = JSON.parse(line);
-+      if (step.type === "CHECKPOINT" && step.source === "SYSTEM") latest = step.step_index;
-+    } catch { /* a partial last line */ }
-+  }
-+  return latest;
-+}
-+
- /** The user requests and text replies of finished steps after `afterStep`. */
- export function buildAntigravityTurns(jsonl, afterStep = -1) {
-   const turns = [];
-@@ -168,8 +185,9 @@ export const antigravity = {
-     let turnStep;
-     if (input.transcriptPath) {
-       try {
--        turnStep = resolveAntigravityTurnStep(
--          readFileSync(antigravityTranscriptPath(input.transcriptPath), "utf8"), input.initialNumSteps, text);
-+        const jsonl = readFileSync(antigravityTranscriptPath(input.transcriptPath), "utf8");
-+        turnStep = resolveAntigravityTurnStep(jsonl, input.initialNumSteps, text);
-+        input.latestCompaction = latestAntigravityCheckpoint(jsonl);
-       } catch {
-         turnStep = undefined;
-       }
-```
-
-**File**: `examples/agent-hook-plugin/hosts/codebuddy.mjs` (modified, +4/-2)
-```diff
-@@ -42,8 +42,10 @@ export const codebuddy = {
-     return null;
-   },
-   // SessionStart context is dropped after a compaction and a --resume, so they
--  // leave the note for the next UserPromptSubmit. `/compact` after `-c` fired
--  // no PreCompact, hence SessionStart(compact) too (DESIGN.md §12).
-+  // leave the note, and after a compaction the profile, for the next
-+  // UserPromptSubmit. `/compact` after `-c` fired no PreCompact, hence
-+  // SessionStart(compact) too (DESIGN.md §12).
-+  compactionDropsProfile: true,
-   historyPointer: {
-     sessionDefault: true,
-     defer: (event, input) => {
-```
-
-**File**: `examples/agent-hook-plugin/hosts/codebuddy/plugin.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "openviking-memory",
--  "version": "0.5.37",
-+  "version": "0.5.38",
-   "description": "Long-term semantic memory for the CodeBuddy Code CLI, powered by OpenViking. Injects relevant context at session start and on each prompt, and captures the conversation back into OpenViking.",
-   "author": {
-     "name": "OpenViking",
-```
-
-**File**: `examples/agent-hook-plugin/hosts/cursor/openviking.integration.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "schemaVersion": 1,
-   "id": "openviking-memory",
--  "version": "0.5.37",
-+  "version": "0.5.38",
-   "clients": [
-     "cursor"
-   ],
-```
-
----
-
-### Incident Patch 2: `fe354f74` (2026-11-26)
-**Commit Message**: fix(snapshot-log): isolate sqlite/mysql index by service_name (#8452)
-
-* feat(snapshot-log): isolate sqlite/mysql index by service_name
-
-Add a service_name column to the SQLite and MySQL snapshot_log tables and
-prefix the unique key and both lookup indexes with it, so multiple OV
-deployments sharing one database keep independent path-history indexes.
-
-Thread the top-level service_name from the binding through build_git_service
-into the SQLite/MySQL store constructors; validate it as 1..=255 ASCII
-[0-9A-Za-z._-] at connect time. The SnapshotLogStore trait and GitService
-are unchanged.
-
-MySQL no longer runs CREATE TABLE at startup. Provision the table once with
-the new snapshot_log_mysql_init.sql so the runtime role needs only
-SELECT/INSERT, keeping DDL and DML privileges separate. A missing table or
-insufficient privilege disables the index and falls back to Git scanning.
-
-PostgreSQL is intentionally left unchanged and gets the same service_name
-treatment in a follow-up change, keeping this commit easy to backport.
-
-* fix(snapshot-log): cap mysql service_name at 128 to fit index limit
-
-Adding service_name to the MySQL composite indexes pushed the path-bearing
-keys past InnoDB's 3072
-
-**File**: `crates/ragfs-python/src/binding/client.rs` (modified, +4/-2)
-```diff
-@@ -8,25 +8,27 @@ fn build_git_from_cfg(
-     git_cfg: ragfs::git::GitConfig,
-     fs: &Arc<MountableFS>,
-     rt: &tokio::runtime::Runtime,
-+    service_name: &str,
- ) -> PyResult<(Option<Arc<ragfs::git::GitService>>, Option<String>)> {
-     let backend = git_cfg.backend.clone();
-     let vfs = fs.clone() as Arc<dyn ragfs::core::FileSystem>;
-     let _guard = rt.enter();
--    let svc = git::build_git_service(&git_cfg, vfs)?;
-+    let svc = git::build_git_service(&git_cfg, vfs, service_name)?;
-     Ok((svc, Some(backend)))
- }
- 
- fn load_git_from_config(
-     path: &str,
-     fs: &Arc<MountableFS>,
-     rt: &tokio::runtime::Runtime,
-+    service_name: &str,
- ) -> PyResult<(Option<Arc<ragfs::git::GitService>>, Option<String>)> {
-     let body = std::fs::read_to_string(path)
-         .map_err(|e| PyRuntimeError::new_err(format!("read config_path {}: {}", path, e)))?;
-     let cfg: BindingConfig = toml::from_str(&body)
-         .map_err(|e| PyRuntimeError::new_err(format!("parse config_path: {}", e)))?;
-     match cfg.git {
--        Some(git_cfg) => build_git_from_cfg(git_cfg, fs, rt),
-+        Some(git_cfg) => build_git_from_cfg(git_cfg, fs, rt, service_name),
-         None => Ok((None, None)),
-     }
- }
-```
-
-**File**: `crates/ragfs-python/src/binding/client/constructor.rs` (modified, +12/-2)
-```diff
-@@ -236,9 +236,19 @@ impl RAGFSBindingClient {
-         // Build the git service from inline config when present; otherwise fall
-         // back to loading the [git] section from a config file path.
-         let (git_service, git_backend) = match inline_git_cfg {
--            Some(git_cfg) => build_git_from_cfg(git_cfg, &stack.mountable, &rt)?,
-+            Some(git_cfg) => {
-+                let service_name = service_name
-+                    .as_deref()
-+                    .ok_or_else(|| PyValueError::new_err("service_name is required"))?;
-+                build_git_from_cfg(git_cfg, &stack.mountable, &rt, service_name)?
-+            }
-             None => match git_config_path {
--                Some(path) => load_git_from_config(path, &stack.mountable, &rt)?,
-+                Some(path) => load_git_from_config(
-+                    path,
-+                    &stack.mountable,
-+                    &rt,
-+                    service_name.as_deref().unwrap_or("ragfs"),
-+                )?,
-                 None => (None, None),
-             },
-         };
-```
-
-**File**: `crates/ragfs-python/src/git.rs` (modified, +16/-9)
-```diff
-@@ -42,6 +42,7 @@ use ragfs::git::{CasMode, S3Config, S3IndexStore, S3ObjectStore, S3RefStore};
- pub fn build_git_service(
-     cfg: &GitConfig,
-     vfs: Arc<dyn FileSystem>,
-+    service_name: &str,
- ) -> PyResult<Option<Arc<GitService>>> {
-     if !cfg.enabled {
-         return Ok(None);
-@@ -82,7 +83,7 @@ pub fn build_git_service(
-         }
-     };
- 
--    let snapshot_log_store = build_snapshot_log_store(cfg)?;
-+    let snapshot_log_store = build_snapshot_log_store(cfg, service_name)?;
- 
-     let svc = GitService::with_index(vfs, object_store, ref_store, index_store)
-         .with_blob_exists_precheck(cfg.tuning.blob_exists_precheck_enabled);
-@@ -93,6 +94,7 @@ pub fn build_git_service(
- 
- fn build_snapshot_log_store(
-     cfg: &GitConfig,
-+    service_name: &str,
- ) -> PyResult<Option<Arc<dyn ragfs::git::SnapshotLogStore>>> {
-     match cfg.snapshot.log.provider.as_str() {
-         "none" => Ok(None),
-@@ -105,8 +107,11 @@ fn build_snapshot_log_store(
-                     "git.snapshot.log.sqlite.path is required for sqlite provider",
-                 )
-             })?;
-+            let service_name = service_name.to_string();
-             match handle
--                .block_on(async move { ragfs::git::SqliteSnapshotLogStore::connect(&path).await })
-+                .block_on(async move {
-+                    ragfs::git::SqliteSnapshotLogStore::connect(&service_name, &path).await
-+                })
-             {
-                 Ok(store) => Ok(Some(
-                     Arc::new(store) as Arc<dyn ragfs::git::SnapshotLogStore>
-@@ -132,8 +137,10 @@ fn build_snapshot_log_store(
-             })?;
-             let max_connections = mysql.max_connections;
-             let connect_timeout_ms = mysql.connect_timeout_ms;
-+            let service_name = service_name.to_string();
-             match handle.block_on(async move {
-                 ragfs::git::MySqlSnapshotLogStore::connect(
-+                    &service_name,
-                     &dsn,
-                     max_connections,
-                     connect_timeout_ms,
-@@ -806,7 +813,7 @@ mod tests {
-         Python::initialize();
-         let mut cfg = local_cfg("/tmp/snapshot-pg-config");
-         cfg.snapshot.log.provider = "postgres".into();
--        let err = match build_snapshot_log_store(&cfg) {
-+        let err = match build_snapshot_log_store(&cfg, "test-service") {
-             Err(err) => err,
-             Ok(_) => panic!("missing PostgreSQL section must fail"),
-         };
-@@ -819,7 +826,7 @@ mod tests {
-             connect_timeout_ms: 1000,
-             operation_timeout_ms: 1000,
-         });
--        let err = match build_snapshot_log_store(&cfg) {
-+        let err = match build_snapshot_log_store(&cfg, "test-service") {
-             Err(err) => err,
-             Ok(_) => panic!("missing PostgreSQL DSN environment must fail"),
-         };
-@@ -841,7 +848,7 @@ mod tests {
-         });
-         let runtime = tokio::runtime::Runtime::new().unwrap();
-         let _enter = runtime.enter();
--        let store = build_snapshot_log_store(&cfg)
-+        let store = build_snapshot_log_store(&cfg, "test-service")
-             .unwrap()
-             .expect("PG index enabled");
-         runtime.block_on(async {
-@@ -876,15 +883,15 @@ mod tests {
-         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
-         let mut cfg = local_cfg("/tmp/ov-git-test-disabled");
-         cfg.enabled = false;
--        let svc = build_git_service(&cfg, fs).expect("build ok");
-+        let svc = build_git_service(&cfg, fs, "test-service").expect("build ok");
-         assert!(svc.is_none());
-     }
- 
-     #[tokio::test]
-     async fn build_git_service_local_returns_some() {
-         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
-         let cfg = local_cfg("/tmp/ov-git-test-local");
--        let svc = build_git_service(&cfg, fs).expect("build ok");
-+        let svc = build_git_service(&cfg, fs, "test-service").expect("build ok");
-         assert!(svc.is_some());
-     }
- 
-@@ -897,7 +904,7 @@ mod tests {
-         let mut cfg = local_cfg("/tmp/ov-git-test-bad");
-         cfg.backend = "bogus".into();
-         // `GitService` is not `Debug`, so we can't use `unwrap_err()`; match instead.
--        let err = match build_git_service(&cfg, fs) {
-+        let err = match build_git_service(&cfg, fs, "test-service") {
-             Ok(_) => panic!("expected error for bogus backend"),
-             Err(e) => e,
-         };
-@@ -910,7 +917,7 @@ mod tests {
-         let fs = Arc::new(MountableFS::new()) as Arc<dyn ragfs::core::FileSystem>;
-         let mut cfg = local_cfg("/tmp/ov-git-test-nolocal");
-         cfg.local = None;
--        let err = match build_git_service(&cfg, fs) {
-+        let err = match build_git_service(&cfg, fs, "test-service") {
-             Ok(_) => panic!("expected error when [git.local] missing"),
-             Err(e) => e,
-         };
-```
-
-**File**: `crates/ragfs/src/git/snapshot_log/mod.rs` (modified, +2/-2)
-```diff
-@@ -11,8 +11,8 @@ pub use mysql::MySqlSnapshotLogStore;
- pub use postgres::PostgresSnapshotLogStore;
- pub use sqlite::SqliteSnapshotLogStore;
- pub use store::{
--    can_index_account_branch, can_index_paths, fanout_changed_paths, SnapshotLogError,
--    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
-+    can_index_account_branch, can_index_paths, fanout_changed_paths, validate_service_name,
-+    SnapshotLogError, SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
- };
- 
- /// Conservative per-commit row cap for synchronous best-effort indexing.
-```
-
-**File**: `crates/ragfs/src/git/snapshot_log/mysql.rs` (modified, +24/-20)
-```diff
-@@ -5,37 +5,28 @@ use sqlx::mysql::MySqlPoolOptions;
- use sqlx::{MySql, MySqlPool, QueryBuilder};
- 
- use super::store::{
--    ensure_latest_matches, validate_append, SnapshotLogError, SnapshotLogHit, SnapshotLogLimits,
--    SnapshotLogRow, SnapshotLogStore,
-+    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError,
-+    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
- };
- 
- const MYSQL_INSERT_BATCH_ROWS: usize = 1_000;
- 
--const MYSQL_SCHEMA: &str = r#"CREATE TABLE IF NOT EXISTS snapshot_log (
--  id BIGINT AUTO_INCREMENT PRIMARY KEY,
--  account VARBINARY(255) NOT NULL,
--  branch VARBINARY(512) NOT NULL,
--  path VARBINARY(2048) NOT NULL,
--  commit_oid CHAR(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
--  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
--  UNIQUE KEY uniq_snapshot_log_path_commit (account, branch, path, commit_oid),
--  KEY idx_snapshot_log_latest (account, branch, id DESC),
--  KEY idx_snapshot_log_lookup (account, branch, path, id DESC)
--)"#;
+-class KeyNotFoundError(EncryptionError):
+-    """Key not found error."""
 -
- /// MySQL-backed SnapshotLog store.
- pub struct MySqlSnapshotLogStore {
-     pool: MySqlPool,
-     limits: SnapshotLogLimits,
-+    service_name: String,
- }
+-    pass
+-
+-
+ class ConfigError(EncryptionError):
+     """Configuration error."""
  
- impl MySqlSnapshotLogStore {
--    /// Open a MySQL SnapshotLog store and run idempotent migrations.
-+    /// Connect to a pre-provisioned MySQL table without creating or migrating it.
-     pub async fn connect(
-+        service_name: &str,
-         dsn: &str,
-         max_connections: u32,
-         connect_timeout_ms: u64,
-     ) -> Result<Self, SnapshotLogError> {
-+        validate_service_name(service_name)?;
-         if dsn.is_empty() {
-             return Err(SnapshotLogError::Config(
-                 "mysql snapshot_log dsn must not be empty".to_string(),
-@@ -46,10 +37,18 @@ impl MySqlSnapshotLogStore {
-             .acquire_timeout(Duration::from_millis(connect_timeout_ms))
-             .connect(dsn)
-             .await?;
--        sqlx::query(MYSQL_SCHEMA).execute(&pool).await?;
-+        // Fail initialization when deployment DDL/permissions are missing, allowing
-+        // the binding's best-effort fallback to the Git scan path. The runtime role
-+        // needs only DML (SELECT/INSERT), so the table is provisioned separately.
-+        sqlx::query(
-+            "SELECT id, service_name, account, branch, path, commit_oid FROM snapshot_log LIMIT 0",
-+        )
-+        .execute(&pool)
-+        .await?;
-         Ok(Self {
-             pool,
-             limits: SnapshotLogLimits::default(),
-+            service_name: service_name.to_string(),
-         })
-     }
- }
-@@ -69,8 +68,9 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
-     ) -> Result<Option<(i64, String)>, SnapshotLogError> {
-         let row = sqlx::query_as::<_, (i64, Vec<u8>)>(
-             "SELECT id, commit_oid FROM snapshot_log \
--             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-+             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-         )
-+        .bind(&self.service_name)
-         .bind(account)
-         .bind(branch)
-         .fetch_optional(&self.pool)
-@@ -92,8 +92,9 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
-         let mut tx = self.pool.begin().await?;
-         let latest = sqlx::query_as::<_, (i64, Vec<u8>)>(
-             "SELECT id, commit_oid FROM snapshot_log \
--             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1 FOR UPDATE",
-+             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1 FOR UPDATE",
-         )
-+        .bind(&self.service_name)
-         .bind(account)
-         .bind(branch)
-         .fetch_optional(&mut *tx)
-@@ -108,10 +109,11 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
-         )?;
-         for chunk in rows.chunks(MYSQL_INSERT_BATCH_ROWS) {
-             let mut builder = QueryBuilder::<MySql>::new(
--                "INSERT INTO snapshot_log (account, branch, path, commit_oid) ",
-+                "INSERT INTO snapshot_log (service_name, account, branch, path, commit_oid) ",
-             );
-             builder.push_values(chunk, |mut row_builder, row| {
-                 row_builder
-+                    .push_bind(&self.service_name)
-                     .push_bind(account)
-                     .push_bind(branch)
-                     .push_bind(&row.path)
-@@ -140,9 +142,11 @@ impl SnapshotLogStore for MySqlSnapshotLogStore {
-             i64::try_from(offset).map_err(|err| sqlx::Error::Encode(Box::new(err)))?;
-         let mut builder = QueryBuilder::<MySql>::new(
-             "SELECT commit_oid, MAX(id) AS last_id FROM snapshot_log \
--             WHERE account = ",
-+             WHERE service_name = ",
-         );
-         builder
-+            .push_bind(&self.service_name)
-+            .push(" AND account = ")
-             .push_bind(account)
-             .push(" AND branch = ")
-             .push_bind(branch)
+     pass
+-
+-
+-class KMSError(EncryptionError):
+-    """KMS service error."""
+-
+-    pass
 ```
 
-**File**: `crates/ragfs/src/git/snapshot_log/sqlite.rs` (modified, +19/-10)
+**File**: `tests/integration/test_encryption_integration.py` (modified, +123/-437)
 ```diff
-@@ -7,38 +7,41 @@ use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePoolOptions};
- use sqlx::{QueryBuilder, Sqlite, SqlitePool};
+@@ -7,148 +7,69 @@
+ Tests encryption functionality integrated with VikingFS and OpenViking service.
+ """
  
- use super::store::{
--    ensure_latest_matches, validate_append, SnapshotLogError, SnapshotLogHit, SnapshotLogLimits,
--    SnapshotLogRow, SnapshotLogStore,
-+    ensure_latest_matches, validate_append, validate_service_name, SnapshotLogError,
-+    SnapshotLogHit, SnapshotLogLimits, SnapshotLogRow, SnapshotLogStore,
- };
+-import os
+ import secrets
+ from pathlib import Path
  
- const SQLITE_INSERT_BATCH_ROWS: usize = 200;
+ import pytest
+ import pytest_asyncio
  
- const SQLITE_SCHEMA: &[&str] = &[
-     r#"CREATE TABLE IF NOT EXISTS snapshot_log (
-   id INTEGER PRIMARY KEY AUTOINCREMENT,
-+  service_name TEXT NOT NULL,
-   account TEXT NOT NULL,
-   branch TEXT NOT NULL,
-   path TEXT NOT NULL,
-   commit_oid TEXT NOT NULL,
-   created_at INTEGER NOT NULL DEFAULT (unixepoch())
- )"#,
-     r#"CREATE UNIQUE INDEX IF NOT EXISTS uniq_snapshot_log_path_commit
--ON snapshot_log (account, branch, path, commit_oid)"#,
-+ON snapshot_log (service_name, account, branch, path, commit_oid)"#,
-     r#"CREATE INDEX IF NOT EXISTS idx_snapshot_log_lookup
--ON snapshot_log (account, branch, path, id DESC)"#,
-+ON snapshot_log (service_name, account, branch, path, id DESC)"#,
-     r#"CREATE INDEX IF NOT EXISTS idx_snapshot_log_latest
--ON snapshot_log (account, branch, id DESC)"#,
-+ON snapshot_log (service_name, account, branch, id DESC)"#,
- ];
+ from openviking.crypto.config import bootstrap_encryption
+-from openviking.crypto.encryptor import FileEncryptor
+-from openviking.crypto.providers import LocalFileProvider
++from openviking.crypto.exceptions import KeyMismatchError
+ from openviking.message import TextPart
+ from openviking.server.api_keys import is_valid_format_key
+ from openviking.server.identity import RequestContext, Role
+ from openviking.server.store_assembly import build_api_key_manager
+ from openviking.service.core import OpenVikingService
+ from openviking_cli.session.user_id import UserIdentifier
+ from openviking_cli.utils.config.open_viking_config import OpenVikingConfigSingleton
++from tests.integration.conftest import (
++    VAULT_ADDR,
++    VAULT_TOKEN,
++    VOLCENGINE_ACCESS_KEY,
++    VOLCENGINE_KMS_KEY_ID,
++    VOLCENGINE_KMS_REGION,
++    VOLCENGINE_SECRET_KEY,
++    requires_vault,
++    requires_volcengine_kms,
++)
+ from tests.server.conftest import _install_fake_embedder, _install_fake_vlm
  
- /// SQLite-backed SnapshotLog store.
- pub struct SqliteSnapshotLogStore {
-     pool: SqlitePool,
-     limits: SnapshotLogLimits,
-+    service_name: String,
- }
  
- impl SqliteSnapshotLogStore {
-     /// Open a SQLite SnapshotLog store and run idempotent migrations.
--    pub async fn connect(path: &str) -> Result<Self, SnapshotLogError> {
-+    pub async fn connect(service_name: &str, path: &str) -> Result<Self, SnapshotLogError> {
-+        validate_service_name(service_name)?;
-         if !Path::new(path).is_absolute() {
-             return Err(SnapshotLogError::Config(
-                 "sqlite snapshot_log path must be absolute".to_string(),
-@@ -62,6 +65,7 @@ impl SqliteSnapshotLogStore {
-         Ok(Self {
-             pool,
-             limits: SnapshotLogLimits::default(),
-+            service_name: service_name.to_string(),
-         })
-     }
- }
-@@ -81,8 +85,9 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
-     ) -> Result<Option<(i64, String)>, SnapshotLogError> {
-         let row = sqlx::query_as::<_, (i64, String)>(
-             "SELECT id, commit_oid FROM snapshot_log \
--             WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-+             WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-         )
-+        .bind(&self.service_name)
-         .bind(account)
-         .bind(branch)
-         .fetch_optional(&self.pool)
-@@ -106,8 +111,9 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
-         let result = async {
-             let latest = sqlx::query_as::<_, (i64, String)>(
-                 "SELECT id, commit_oid FROM snapshot_log \
--                 WHERE account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-+                 WHERE service_name = ? AND account = ? AND branch = ? ORDER BY id DESC LIMIT 1",
-             )
-+            .bind(&self.service_name)
-             .bind(account)
-             .bind(branch)
-             .fetch_optional(&mut *conn)
-@@ -118,9 +124,10 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
-             )?;
-             for chunk in rows.chunks(SQLITE_INSERT_BATCH_ROWS) {
-                 let mut builder =
--                    QueryBuilder::<Sqlite>::new("INSERT INTO snapshot_log (account, branch, path, commit_oid) ");
-+                    QueryBuilder::<Sqlite>::new("INSERT INTO snapshot_log (service_name, account, branch, path, commit_oid) ");
-                 builder.push_values(chunk, |mut row_builder, row| {
-                     row_builder
-+                        .push_bind(&self.service_name)
-                         .push_bind(account)
-                         .push_bind(branch)
-                         .push_bind(&row.path)
-@@ -161,9 +168,11 @@ impl SnapshotLogStore for SqliteSnapshotLogStore {
-             i64::try_from(offset).map_err(|err| sqlx::Error::Encode(Box::new(err)))?;
-         let mut builder = QueryBuilder::<Sqlite>::new(
-             "SELECT commit_oid, MAX(id) AS last_id FROM snapshot_log \
--             WHERE account = ",
-+             WHERE service_name = ",
-         );
-         builder
-+            .push_bind(&self.service_name)
-+            .push(" AND account = ")
-             .push_bind(account)
-             .push(" AND branch = ")
-             .push_bind(branch)
-```
-
-**File**: `crates/ragfs/src/git/snapshot_log/store.rs` (modified, +20/-1)
-```diff
-@@ -19,7 +19,7 @@ pub struct SnapshotLogLimits {
- impl Default for SnapshotLogLimits {
-     fn default() -> Self {
-         Self {
--            account_bytes: 255,
-+            account_bytes: 64,
-             branch_bytes: 512,
-             path_bytes: 2048,
-             max_rows_per_commit: SNAPSHOT_LOG_MAX_ROWS_PER_COMMIT,
-@@ -122,6 +122,25 @@ pub trait SnapshotLogStore: Send + Sync {
-     ) -> Result<Vec<SnapshotLogHit>, SnapshotLogError>;
- }
- 
-+/// Maximum service_name length in bytes.
-+pub const SNAPSHOT_LOG_SERVICE_NAME_BYTES: usize = 64;
+-@pytest_asyncio.fixture(scope="function")
+-async def encryption_config(tmp_path):
+-    """Fixture that provides encryption configuration with local provider"""
+-    # Create temporary key file
+-    key_file = tmp_path / "master.key"
+-    root_key = secrets.token_bytes(32)
+-    key_file.write_text(root_key.hex())
+-    os.chmod(key_file, 0o600)
+-
++@pytest.fixture
++def encryption_provider():
++    return "local"
 +
-+/// Validate the deployment-scoped service_name used for shared-DB isolation.
-+pub fn validate_service_name(service_name: &str) -> Result<(), SnapshotLogError> {
-+    if service_name.is_empty()
-+        || service_name.len() > SNAPSHOT_LOG_SERVICE_NAME_BYTES
-+        || !service_name
-+            .bytes()
-+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
-+    {
-+        return Err(SnapshotLogError::Config(
-+            "snapshot log service_name must be 1..=64 ASCII letters, digits, '.', '_' or '-'"
-+                .to_string(),
-+        ));
++
++@pytest.fixture
++def encryption_config(tmp_path, encryption_provider):
++    if encryption_provider == "disabled":
++        return {"encryption": {"enabled": False}}
++    if encryption_provider == "vault":
++        options = {"address": VAULT_ADDR, "token": VAULT_TOKEN}
++    elif encryption_provider == "volcengine_kms":
++        options = {
++            "region": VOLCENGINE_KMS_REGION,
++            "access_key": VOLCENGINE_ACCESS_KEY,
++            "secret_key": VOLCENGINE_SECRET_KEY,
++            "key_id": VOLCENGINE_KMS_KEY_ID,
++            "key_file": str(tmp_path / "kms-root-key.enc"),
++        }
++    else:
++        key_file = tmp_path / "master.key"
++        key_file.write_text(secrets.token_hex(32))
++        key_file.chmod(0o600)
++        options = {"key_file": str(key_file)}
+     return {
+-        "encryption": {"enabled": True, "provider": "local", "local": {"key_file": str(key_file)}}
++        "encryption": {
++            "enabled": True,
++            "provider": encryption_provider,
++            encryption_provider: options,
++        }
+     }
+ 
+ 
+-@pytest_asyncio.fixture(scope="function")
+-async def file_encryptor(tmp_path):
+-    """Fixture that provides a FileEncryptor instance for testing"""
+-    # Create temporary key file
+-    key_file = tmp_path / "master.key"
+-    root_key = secrets.token_bytes(32)
+-    key_file.write_text(root_key.hex())
+-    os.chmod(key_file, 0o600)
+-
+-    provider = LocalFileProvider(key_file=str(key_file))
+-    return FileEncryptor(provider)
+-
+-
+-class TestEncryptionBootstrap:
+-    """Tests for encryption module bootstrap"""
+-
+-    async def test_bootstrap_encryption_enabled(self, encryption_config):
+-        """Test bootstrapping encryption with enabled configuration"""
+-        encryptor = await bootstrap_encryption(encryption_config)
+-        assert encryptor is not None
+-        assert isinstance(encryptor, FileEncryptor)
+-
+-    async def test_bootstrap_encryption_disabled(self):
+-        """Test bootstrapping encryption with disabled configuration"""
+-        config = {"encryption": {"enabled": False}}
+-        encryptor = await bootstrap_encryption(config)
+-        assert encryptor is None
+-
+-
+-class TestFileEncryptorIntegration:
+-    """Tests for FileEncryptor integration"""
+-
+-    async def test_encrypt_decrypt_roundtrip(self, file_encryptor):
+-        """Test basic encryption/decryption roundtrip"""
+-        account_id = "test_account"
+-        plaintext = b"This is a test file content for encryption integration"
+-
+-        # Encrypt
+-        ciphertext = await file_encryptor.encrypt(account_id, plaintext)
+-        assert ciphertext != plaintext
+-        assert ciphertext.startswith(b"OVE1")
+-
+-        # Decrypt
+-        decrypted = await file_encryptor.decrypt(account_id, ciphertext)
+-        assert decrypted == plaintext
+-
+-    async def test_different_accounts_isolation(self, file_encryptor):
+-        """Test that different accounts cannot decrypt each other's data"""
+-        account1 = "account_1"
+-        account2 = "account_2"
+-        plaintext = b"Sensitive data for account isolation test"
+-
+-        # Encrypt with account1
+-        ciphertext = await file_encryptor.encrypt(account1, plaintext)
+-
+-        # Decrypt with account1 should work
+-        decrypted1 = await file_encryptor.decrypt(account1, ciphertext)
+-        assert decrypted1 == plaintext
+-
+-        # Decrypt with ac
+```
+
+**File**: `tests/integration/test_vault_encryption_integration.py` (modified, +13/-663)
+```diff
+@@ -1,678 +1,28 @@
+ # Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
+ # SPDX-License-Identifier: AGPL-3.0
+-
+-"""
+-Vault encryption integration tests.
+-
+-Tests encryption functionality with HashiCorp Vault as the key provider.
+-Requires VAULT_TOKEN env var to be set.
+-Run: pytest tests/integration/test_vault_encryption_integration.py -v -m integration
+-"""
+-
+-import secrets
+-from pathlib import Path
++"""Vault-specific failure handling. The file roundtrip is shared by all providers."""
+ 
+ import pytest
+-import pytest_asyncio
+ 
+-from openviking.crypto.config import bootstrap_encryption
+-from openviking.crypto.encryptor import FileEncryptor
+ from openviking.crypto.exceptions import AuthenticationFailedError, ConfigError
+-from openviking.crypto.providers import VaultProvider, create_root_key_provider
+-from openviking.server.store_assembly import build_api_key_manager
+-from openviking.service.core import OpenVikingService
+-from openviking_cli.session.user_id import UserIdentifier
+-from openviking_cli.utils.config.open_viking_config import OpenVikingConfigSingleton
+-from tests.integration.conftest import VAULT_ADDR, VAULT_TOKEN, requires_vault
+-
+-pytestmark = [pytest.mark.integration, requires_vault]
+-
+-# Vault environment configuration
+-VAULT_MOUNT_PATH = "transit"
+-
+-
+-class TestVaultProviderIntegration:
+-    """Integration tests for VaultProvider."""
+-
+-    @pytest_asyncio.fixture(scope="function")
+-    async def vault_provider(self):
+-        """Fixture that provides a VaultProvider instance."""
+-        provider = VaultProvider(addr=VAULT_ADDR, token=VAULT_TOKEN, mount_path=VAULT_MOUNT_PATH)
+-        yield provider
+-
+-    @pytest.fixture(scope="function")
+-    def vault_config(self):
+-        """Fixture that provides Vault configuration."""
+-        return {
+-            "vault": {
+-                "address": VAULT_ADDR,
+-                "token": VAULT_TOKEN,
+-                "mount_point": VAULT_MOUNT_PATH,
+-            }
+-        }
+-
+-    async def test_vault_provider_initialization(self, vault_provider):
+-        """Test VaultProvider initialization and Vault connection."""
+-        client = await vault_provider._get_client()
+-        assert client is not None
+-        assert client.is_authenticated()
+-
+-    async def test_derive_account_key(self, vault_provider):
+-        """Test deriving account keys."""
+-        account_id = "test-account-vault"
+-        account_key = await vault_provider.derive_account_key(account_id)
+-
+-        assert account_key is not None
+-        assert isinstance(account_key, bytes)
+-        assert len(account_key) == 32
+-
+-    async def test_derive_different_account_keys(self, vault_provider):
+-        """Test that different accounts get different keys."""
+-        account1_key = await vault_provider.derive_account_key("account-1")
+-        account2_key = await vault_provider.derive_account_key("account-2")
+-
+-        assert account1_key != account2_key
+-
+-    async def test_derive_same_account_key_consistent(self, vault_provider):
+-        """Test that same account gets consistent key."""
+-        key1 = await vault_provider.derive_account_key("test-account")
+-        key2 = await vault_provider.derive_account_key("test-account")
+-
+-        assert key1 == key2
+-
+-    async def test_encrypt_decrypt_file_key(self, vault_provider):
+-        """Test encrypting and decrypting file keys."""
+-        plaintext_key = secrets.token_bytes(32)
+-        account_id = "test-account-encrypt"
+-
+-        encrypted_key, iv = await vault_provider.encrypt_file_key(plaintext_key, account_id)
++from openviking.crypto.providers import create_root_key_provider
++from tests.integration.conftest import VAULT_ADDR, requires_vault
+ 
+-        assert encrypted_key is not None
+-        assert isinstance(encrypted_key, bytes)
+-        assert encrypted_key != plaintext_key
+-        assert iv is not None
+-        assert isinstance(iv, bytes)
+-
+-        decrypted = await vault_provider.decrypt_file_key(encrypted_key, iv, account_id)
+-
+-        assert decrypted == plaintext_key
+-
+-    async def test_encrypt_decrypt_multiple_keys(self, vault_provider):
+-        """Test encrypting and decrypting multiple different keys."""
+-        key1 = secrets.token_bytes(32)
+-        key2 = secrets.token_bytes(32)
+-        account_id = "test-account-multiple"
+-
+-        encrypted1, iv1 = await vault_provider.encrypt_file_key(key1, account_id)
+-        encrypted2, iv2 = await vault_provider.encrypt_file_key(key2, account_id)
+-
+-        assert encrypted1 != encrypted2
+-
+-        decrypted1 = await vault_provider.decrypt_file_key(encrypted1, iv1, account_id)
+-        decrypted2 = await vault_provider.decrypt_file_key(encrypted2, iv2, account_id)
+-
+-        assert decrypted1 == key1
+-        assert decrypted2 == key2
+-
+-    async def test_create_root_key_provider_vault(self, vault_config):
+-        """Test creating VaultProvider via create_root_key_provider."""
+-        provider = create_root_key_provider("vault", vau
+```
+
+**File**: `tests/integration/test_volcengine_kms_encryption_integration.py` (removed, +0/-697)
+```diff
+@@ -1,697 +0,0 @@
+-# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
+-# SPDX-License-Identifier: AGPL-3.0
+-
+-"""
+-Volcengine KMS Encryption Integration Tests
+-
+-Tests encryption functionality integrated with VikingFS and OpenViking service
+-using Volcengine KMS as the key provider.
+-Requires VOLCENGINE_ACCESS_KEY, VOLCENGINE_SECRET_KEY, and VOLCENGINE_KMS_KEY_ID env vars.
+-Run: pytest tests/integration/test_volcengine_kms_encryption_integration.py -v -m integration
+-"""
+-
+-import secrets
+-import tempfile
+-from pathlib import Path
+-
+-import pytest
+-import pytest_asyncio
+-
+-from openviking.crypto.encryptor import FileEncryptor
+-from openviking.crypto.providers import VolcengineKMSProvider
+-from openviking.server.api_keys import is_valid_format_key
+-from openviking.server.store_assembly import build_api_key_manager
+-from openviking.service.core import OpenVikingService
+-from openviking_cli.session.user_id import UserIdentifier
+-from openviking_cli.utils.config.open_viking_config import OpenVikingConfigSingleton
+-from tests.integration.conftest import (
+-    VOLCENGINE_ACCESS_KEY,
+-    VOLCENGINE_KMS_KEY_ID,
+-    VOLCENGINE_KMS_REGION,
+-    VOLCENGINE_SECRET_KEY,
+-    requires_volcengine_kms,
+-)
+-
+-pytestmark = [pytest.mark.integration, requires_volcengine_kms]
+-
+-
+-class TestVolcengineKMSProvider:
+-    """Tests for VolcengineKMSProvider"""
+-
+-    @pytest_asyncio.fixture(scope="module")
+-    async def volcengine_kms_provider(self):
+-        """
+-        Fixture that provides a VolcengineKMSProvider instance for testing.
+-        Requires valid Volcengine KMS credentials from environment variables.
+-        """
+-        provider = VolcengineKMSProvider(
+-            region=VOLCENGINE_KMS_REGION,
+-            access_key_id=VOLCENGINE_ACCESS_KEY,
+-            secret_access_key=VOLCENGINE_SECRET_KEY,
+-            key_id=VOLCENGINE_KMS_KEY_ID,
+-        )
+-        return provider
+-
+-    @pytest.mark.asyncio
+-    async def test_initialize_provider(self, volcengine_kms_provider):
+-        """Test that VolcengineKMSProvider initializes correctly"""
+-        assert volcengine_kms_provider is not None
+-        assert volcengine_kms_provider.region == "cn-beijing"
+-        assert volcengine_kms_provider.key_id == "d926aa0d-deee-455a-9186-0d07e2e250e1"
+-
+-    @pytest.mark.asyncio
+-    async def test_get_root_key(self, volcengine_kms_provider):
+-        """Test getting root key"""
+-        root_key = await volcengine_kms_provider.get_root_key()
+-        assert isinstance(root_key, bytes)
+-        assert len(root_key) > 0
+-
+-    @pytest.mark.asyncio
+-    async def test_derive_account_key(self, volcengine_kms_provider):
+-        """Test deriving account key"""
+-        account_id = "test-account-volcengine"
+-        account_key = await volcengine_kms_provider.derive_account_key(account_id)
+-        assert isinstance(account_key, bytes)
+-        assert len(account_key) == 32  # Should be 256-bit key
+-
+-    @pytest.mark.asyncio
+-    async def test_derive_different_account_keys(self, volcengine_kms_provider):
+-        """Test that different account IDs produce different keys"""
+-        account1 = "account-1-volc"
+-        account2 = "account-2-volc"
+-
+-        key1 = await volcengine_kms_provider.derive_account_key(account1)
+-        key2 = await volcengine_kms_provider.derive_account_key(account2)
+-
+-        assert key1 != key2
+-
+-    @pytest.mark.asyncio
+-    async def test_derive_same_account_key(self, volcengine_kms_provider):
+-        """Test that same account ID produces same key"""
+-        account_id = "test-account-consistent"
+-
+-        key1 = await volcengine_kms_provider.derive_account_key(account_id)
+-        key2 = await volcengine_kms_provider.derive_account_key(account_id)
+-
+-        assert key1 == key2
+-
+-    @pytest.mark.asyncio
+-    async def test_encrypt_decrypt_file_key(self, volcengine_kms_provider):
+-        """Test encrypting and decrypting a file key"""
+-        plaintext_key = secrets.token_bytes(32)  # 256-bit key
+-        account_id = "test-account-encrypt"
+-
+-        encrypted_key, iv = await volcengine_kms_provider.encrypt_file_key(
+-            plaintext_key, account_id
+-        )
+-        assert isinstance(encrypted_key, bytes)
+-        assert isinstance(iv, bytes)
+-
+-        decrypted = await volcengine_kms_provider.decrypt_file_key(encrypted_key, iv, account_id)
+-        assert decrypted == plaintext_key
+-
+-    @pytest.mark.asyncio
+-    async def test_encrypt_different_keys(self, volcengine_kms_provider):
+-        """Test that different plaintexts produce different ciphertexts"""
+-        key1 = secrets.token_bytes(32)
+-        key2 = secrets.token_bytes(32)
+-        account_id = "test-account-multi"
+-
+-        encrypted1, iv1 = await volcengine_kms_provider.encrypt_file_key(key1, account_id)
+-        encrypted2, iv2 = await volcengine_kms_provider.encrypt_file_key(key2, account_id)
+-
+-        assert encrypted1 != encrypted2
+-
+-    @pytest.mark.asyncio
+-    async def test_full_rou
+```
+
+**File**: `tests/server/oauth/test_router.py` (modified, +32/-102)
+```diff
+@@ -329,6 +329,11 @@ async def test_full_device_flow(app_with_oauth, client):
+     assert body["client_name"] == "Claude"
+     pending = await store.load_pending_authorization(pending_id)
+     assert pending["verified_key_fp"] == "f" * 64
++    repeated = await client.post(
++        "/api/v1/auth/oauth-verify", json={"code": display_code, "decision": "approve"}
++    )
++    assert repeated.status_code == 400
++    assert repeated.json()["error_description"] == "Invalid or expired verification code"
+ 
+     # Status after verify: approved + redirect_url with code/state.
+     post = await client.get("/oauth/authorize/page/status", params={"pending": pending_id})
+@@ -370,6 +375,21 @@ async def test_full_device_flow(app_with_oauth, client):
+     refresh_record = await store.peek_refresh(tokens["refresh_token"])
+     assert record.authorizing_key_fp == refresh_record["authorizing_key_fp"] == "f" * 64
+ 
++    refresh_form = {
++        "grant_type": "refresh_token",
++        "refresh_token": tokens["refresh_token"],
++        "client_id": client_id,
 +    }
-+    Ok(())
-+}
++    rotated = await client.post("/token", data=refresh_form)
++    assert rotated.status_code == 200, rotated.text
++    replacement = rotated.json()
++    assert replacement["access_token"] != tokens["access_token"]
++    assert replacement["refresh_token"] != tokens["refresh_token"]
 +
- /// Return whether an account and branch fit provider index limits.
- pub fn can_index_account_branch(
-     limits: SnapshotLogLimits,
++    replay = await client.post("/token", data=refresh_form)
++    assert replay.status_code == 400
++    assert replay.json()["error"] == "invalid_grant"
++
+ 
+ @pytest.mark.asyncio
+ async def test_oauth_pending_info_endpoint(app_with_oauth, client):
+@@ -392,36 +412,13 @@ async def test_oauth_pending_info_endpoint(app_with_oauth, client):
+     record = await store.load_pending_authorization(pending_id)
+     assert record is not None and record["display_code"]
+ 
+-
+-@pytest.mark.asyncio
+-async def test_oauth_pending_info_404_when_missing(client):
+-    resp = await client.get("/api/v1/auth/oauth/pending/doesnotexist")
+-    assert resp.status_code == 404
+-    status = await client.get("/oauth/authorize/page/status", params={"pending": "doesnotexist"})
+-    assert status.status_code == 410
+-    assert status.json() == {"status": "expired"}
+-
+-
+-@pytest.mark.asyncio
+-async def test_oauth_verify_by_pending_id(app_with_oauth, client):
+-    """Studio consent path: verify with pending_id instead of display_code."""
+-    _, store, _ = app_with_oauth
+-    client_id, pending_id, _, _ = await _start_authorize(
+-        client, redirect_uri="https://claude.ai/cb", state="abc"
++    verified = await client.post(
++        "/api/v1/auth/oauth-verify", json={"pending_id": pending_id, "decision": "approve"}
+     )
+-
+-    verify = await client.post(
+-        "/api/v1/auth/oauth-verify",
+-        json={"pending_id": pending_id, "decision": "approve"},
+-    )
+-    assert verify.status_code == 200, verify.text
+-    body = verify.json()
+-    assert body["status"] == "approved"
+-    assert body["client_id"] == client_id
+-
+-    record = await store.load_pending_authorization(pending_id)
+-    assert record is not None
+-    assert record["verified"] is True
++    assert verified.status_code == 200, verified.text
++    assert verified.json()["status"] == "approved"
++    assert verified.json()["client_id"] == client_id
++    assert (await store.load_pending_authorization(pending_id))["verified"] is True
+ 
+ 
+ @pytest.mark.asyncio
+@@ -430,17 +427,11 @@ async def test_oauth_verify_requires_pending_or_code(client):
+     assert resp.status_code == 400
+     assert resp.json()["error_description"] == "Must provide either 'pending_id' or 'code'"
+ 
+-
+-@pytest.mark.asyncio
+-async def test_oauth_verify_unknown_code(app_with_oauth, client):
+-    _, _, _ = app_with_oauth
+-    resp = await client.post(
+-        "/api/v1/auth/oauth-verify",
+-        json={"code": "BOGUS1", "decision": "approve"},
++    unknown = await client.post(
++        "/api/v1/auth/oauth-verify", json={"code": "BOGUS1", "decision": "approve"}
+     )
+-    assert resp.status_code == 400
+-    body = resp.json()
+-    assert "Invalid" in body.get("error_description", "") or "Invalid" in body.get("message", "")
++    assert unknown.status_code == 400
++    assert "Invalid" in unknown.json()["error_description"]
+ 
+ 
+ @pytest.mark.asyncio
+@@ -459,69 +450,8 @@ async def test_oauth_verify_deny_destroys_pending(app_with_oauth, client):
+     # Pending row gone — page polling now returns 410.
+     status = await client.get("/oauth/authorize/page/status", params={"pending": pending_id})
+     assert status.status_code == 410
+-
+-
+-@pytest.mark.asyncio
+-async def test_oauth_verify_idempotency(app_with_oauth, client):
+-    """A second verify with the same code must fail — pending is one-shot."""
+-    _, store, _ = app_with_oauth
+-    _, pending_id, _, _ = await _start_authorize(client)
+-    record = await store.load_pending_authorization(pending_id)
+-    code = record["display_code"]
+-
+-    first = await client.post(
+-        "/api/v1/auth/oauth-verify", json={"code": code, "decision": "ap
 ```
 
-**File**: `crates/ragfs/src/git/tests/test_snapshot_log.rs` (modified, +44/-1)
+**File**: `tests/server/oauth/test_storage.py` (modified, +68/-147)
 ```diff
-@@ -14,7 +14,7 @@ async fn make_snapshot_log_store() -> Arc<dyn SnapshotLogStore> {
-     let dir = tempfile::tempdir().unwrap().keep();
-     let db_path = dir.join("snapshot-log.db");
-     Arc::new(
--        SqliteSnapshotLogStore::connect(db_path.to_str().unwrap())
-+        SqliteSnapshotLogStore::connect("test-service", db_path.to_str().unwrap())
-             .await
-             .unwrap(),
+@@ -5,12 +5,12 @@
+ from __future__ import annotations
+ 
+ import asyncio
+-import time
++from types import SimpleNamespace
+ 
+ import pytest
+ import pytest_asyncio
+ 
+-from openviking.server.oauth.otp import hash_secret
++from openviking.server.oauth import storage
+ from openviking.server.oauth.storage import OAuthStore
+ 
+ # Test stand-in for an API key fingerprint. Real fps come from
+@@ -29,6 +29,13 @@ async def store(tmp_path):
+         await s.close()
+ 
+ 
++@pytest.fixture
++def clock(monkeypatch):
++    now = SimpleNamespace(seconds=1_000)
++    monkeypatch.setattr(storage, "time", SimpleNamespace(time=lambda: now.seconds))
++    return now
++
++
+ @pytest.mark.asyncio
+ async def test_refresh_path_role_downgrade_rejected(store):
+     """Provider's exchange_refresh_token must refuse to mint new tokens
+@@ -70,42 +77,26 @@ async def test_refresh_path_role_downgrade_rejected(store):
+     assert await store.peek_refresh(token) is not None
+ 
+ 
+-@pytest.mark.asyncio
+-async def test_register_and_get_client(store):
+-    record = await store.register_client(
+-        redirect_uris=["https://claude.ai/api/mcp/auth_callback"],
+-        client_name="Claude.ai",
+-        scope="mcp",
+-    )
+-    assert record["client_id"]
+-    assert record["redirect_uris"] == ["https://claude.ai/api/mcp/auth_callback"]
+-    assert record["token_endpoint_auth_method"] == "none"
+-    assert record["scope"] == "mcp"
+-    fetched = await store.get_client(record["client_id"])
+-    assert fetched is not None
+-    assert fetched["redirect_uris"] == ["https://claude.ai/api/mcp/auth_callback"]
+-    assert fetched["client_name"] == "Claude.ai"
+-    assert fetched["scope"] == "mcp"
+-    assert "authorization_code" in fetched["grant_types"]
+-    assert await store.get_client("unregistered-client") is None
+-
+-
+-@pytest.mark.asyncio
+ async def test_provider_get_client_keeps_registered_scope(store):
+-    """The missing-scope fallback must not clobber an explicitly registered
+-    scope (e.g. Claude registers its own scope string via DCR)."""
+     from openviking.server.oauth.provider import OpenVikingOAuthProvider
+ 
++    callback = "https://claude.ai/api/mcp/auth_callback"
+     record = await store.register_client(
+-        redirect_uris=["https://claude.ai/api/mcp/auth_callback"],
+-        client_name="Claude.ai",
+-        scope="claudeai",
++        redirect_uris=[callback], client_name="Claude.ai", scope="claudeai"
      )
-@@ -325,3 +325,46 @@ async fn test_snapshot_log_store_rejects_non_root_commit_when_empty() {
-         .unwrap()
-         .is_none());
- }
+     provider = OpenVikingOAuthProvider(store=store, issuer="https://ov.test")
 +
-+/// Verify two services sharing one SQLite file keep independent index progress.
-+#[tokio::test]
-+async fn test_snapshot_log_service_name_isolates_shared_sqlite_db() {
-+    let dir = tempfile::tempdir().unwrap().keep();
-+    let path = dir.join("snapshot-log-isolation.db").to_str().unwrap().to_string();
+     client = await provider.get_client(record["client_id"])
+     assert client is not None
++    assert client.client_id == record["client_id"]
++    assert client.redirect_uris is not None
++    assert [str(uri) for uri in client.redirect_uris] == [callback]
++    assert client.client_name == "Claude.ai"
++    assert client.token_endpoint_auth_method == "none"
++    assert "authorization_code" in client.grant_types
+     assert client.scope == "claudeai"
+     assert client.validate_scope("claudeai") == ["claudeai"]
++    assert await provider.get_client("unregistered-client") is None
+ 
+ 
+ def _insert_code(store, code, *, account_id="a", user_id="u", ttl_seconds=300):
+@@ -125,115 +116,56 @@ def _insert_code(store, code, *, account_id="a", user_id="u", ttl_seconds=300):
+     )
+ 
+ 
+-@pytest.mark.asyncio
+ async def test_auth_code_concurrent_consume_race(store, tmp_path):
+-    """Two coroutines racing to consume the same code — exactly one wins."""
+     code = "race-code"
+-    await _insert_code(store, code)
++    claims = {
++        "client_id": "cx",
++        "redirect_uri": "https://x.test/cb",
++        "code_challenge": "challenge-xyz",
++        "code_challenge_method": "S256",
++        "scope": "mcp",
++        "resource": "https://x.test/mcp",
++        "account_id": "a",
++        "user_id": "u",
++        "role": "user",
++        "authorizing_key_fp": _FP,
++    }
++    await store.insert_auth_code(code_plain=code, ttl_seconds=300, **claims)
+     second_store = OAuthStore(tmp_path / "oauth.db")
+     await second_store.initialize()
+     try:
+         results = await asyncio.gather(
+             store.consume_auth_code(code), second_store.consume_auth_code(code)
+         )
+-        winners = [record for record in results if record is not None]
+-        assert len(winners) == 1
+-        assert (winners[0]["account_id"], winners[0]["user_id"]) == ("a", "u")
++        [winner] = [record for record in results if record is not None]
++        assert {field: winner[field] for field in claims} == claims
+         assert await second_store.peek_auth_code(code) is None
+     finally:
+         await second_store.close()
+ 
+ 
+-@pytest.mark.asyncio
+-async def test_auth_code_expired_rejected(store):
+-    code = "stale-code"
+-    await _insert_code(store, code, ttl_seconds=60)
+-    # Forge expiry by editing the row to be in the past.
+-    assert store._conn is not None
+-    store._conn.execute(
+-        "UPDATE oauth_codes SET expires_at = ? WHERE used = 0",
+-        (int(time.time()) - 10,),
+```
+
+**File**: `tests/server/test_api_key_manager.py` (modified, +50/-147)
+```diff
+@@ -428,22 +428,6 @@ async def mutate():
+ # ---- User lifecycle tests ----
+ 
+ 
+-async def test_register_user(manager: APIKeyManager):
+-    """register_user should create a user with given role."""
+-    from openviking.server.api_keys import parse_api_key
+-
+-    acct = _uid()
+-    await manager.create_account(acct, "alice")
+-    key = await manager.register_user(acct, "bob", "user")
+-    assert parse_api_key(key)[:2] == (acct, "bob")
+-
+-    identity = await manager.resolve_identity(key)
+-    assert identity.role == Role.USER
+-    assert identity.account_id == acct
+-    assert identity.user_id == "bob"
+-    assert await manager.get_registered_user_role(acct, "bob") == Role.USER
+-
+-
+ async def test_register_user_in_nonexistent_account_raises(manager: APIKeyManager):
+     """Registering user in nonexistent account should raise NotFoundError."""
+     with pytest.raises(NotFoundError):
+@@ -516,7 +500,6 @@ async def test_regenerate_key(manager: APIKeyManager):
+     old_key = await manager.register_user(account, "bob", Role.USER)
+     original_fingerprint = hashlib.sha256(old_key.encode()).hexdigest()
+     assert await manager.get_user_key_fingerprint(account, "bob") == original_fingerprint
+-    assert await manager.get_user_key_fingerprint(account, "bob") == original_fingerprint
+ 
+     new_key = await manager.regenerate_key(account, "bob")
+     assert new_key != old_key
+@@ -579,144 +562,74 @@ async def test_conditional_rotation_checks_persisted_key(manager_service, hashin
+ 
+ 
+ async def test_set_role(manager: APIKeyManager):
+-    """set_role should update user's role in both storage and index."""
++    """An issued key keeps its identity and sees the registered role change."""
++    from openviking.server.api_keys import parse_api_key
 +
-+    let store_a = SqliteSnapshotLogStore::connect("svc-a", &path).await.unwrap();
-+    let store_b = SqliteSnapshotLogStore::connect("svc-b", &path).await.unwrap();
+     acct = _uid()
+     await manager.create_account(acct, "alice")
+-    bob_key = await manager.register_user(acct, "bob", "user")
+-
+-    assert (await manager.resolve_identity(bob_key)).role == Role.USER
++    key = await manager.register_user(acct, "bob", "user")
++    assert parse_api_key(key)[:2] == (acct, "bob")
++    identity = await manager.resolve_identity(key)
++    assert (identity.account_id, identity.user_id, identity.role) == (acct, "bob", Role.USER)
++    assert await manager.get_registered_user_role(acct, "bob") == Role.USER
+ 
+     await manager.set_role(acct, "bob", "admin")
+-    assert (await manager.resolve_identity(bob_key)).role == Role.ADMIN
+-
+     with pytest.raises(PermissionDeniedError, match="server.root_api_key"):
+         await manager.set_role(acct, "bob", Role.ROOT)
+-    assert (await manager.resolve_identity(bob_key)).role == Role.ADMIN
++    assert (await manager.resolve_identity(key)).role == Role.ADMIN
++    assert await manager.get_registered_user_role(acct, "bob") == Role.ADMIN
+ 
+ 
+-async def test_get_users(manager: APIKeyManager):
+-    """list_users should list all users in an account."""
++async def test_get_users_pagination_and_ordering(manager: APIKeyManager):
+     acct = _uid()
+     await manager.create_account(acct, "alice")
+-    await manager.register_user(acct, "bob", "user")
++    for user in ("dave", "alan", "carol"):
++        await manager.register_user(acct, user, "user")
+ 
+     users = await _list_users(manager, acct)
+-    user_ids = {u["user_id"] for u in users}
+-    assert user_ids == {"alice", "bob"}
+-
+-    roles = {u["user_id"]: u["role"] for u in users}
+-    assert roles["alice"] == "admin"
+-    assert roles["bob"] == "user"
++    assert [(u["user_id"], u["role"]) for u in users] == [
++        ("alice", Role.ADMIN),
++        ("dave", Role.USER),
++        ("alan", Role.USER),
++        ("carol", Role.USER),
++    ]
++    for page, expected in enumerate((["alice", "dave"], ["alan", "carol"], []), start=1):
++        assert [
++            u["user_id"] for u in await _list_users(manager, acct, limit=2, page=page)
++        ] == expected
++    for pattern, expected in (("al*", ["alice", "alan"]), ("alice", ["alice"]), ("zzz*", [])):
++        assert [
++            u["user_id"] for u in await _list_users(manager, acct, name_filter=pattern)
++        ] == expected
+ 
+     await manager.begin_deletion(
+         acct,
+-        "bob",
+-        task_id="delete-bob",
++        "alan",
++        task_id="delete-alan",
+         owner_account_id=acct,
+         owner_user_id="alice",
+     )
+-    users = await _list_users(manager, acct)
+-    assert {u["user_id"] for u in users} == {"alice"}
+-
+-
+-async def test_get_users_name_filter(manager: APIKeyManager):
+-    """list_users name_filter uses fnmatch wildcard matching against user IDs."""
+-    acct = _uid()
+-    await manager.create_account(acct, "alice")
+-    await manager.register_user(acct, "alan", "user")
+-    await manager.register_user(acct, "bob", "user")
+-
+-    # Wildcard substring match
+-    matched = {u["user_id"] for u in await _list_users(manager, acct, name_filter="al*")}
+-    assert matched == {"alice", "alan"}
+-
+-    # Exact match (no wildcard) only hits the literal ID
+-    assert {u["user_id"] for u in 
+```
+
+**File**: `tests/server/test_api_privacy_configs.py` (modified, +23/-49)
+```diff
+@@ -122,19 +122,25 @@ async def test_privacy_config_api_roundtrip(client: httpx.AsyncClient):
+     assert current_body["result"]["current"]["values"]["api_key"] == "sample"
+     assert current_body["result"]["meta"]["active_version"] == 1
+ 
++    second_values = {"api_key": "secret-2", "new_key": "x"}
+     second = await client.post(
+         "/api/v1/privacy-configs/credential/demo-skill",
+         json={
+-            "values": {"api_key": "secret-2"},
++            "values": second_values,
+             "change_reason": "rotate",
+         },
+     )
+     assert second.status_code == 200
+     assert second.json()["result"]["version"] == 2
++    assert second.json()["result"]["values"] == second_values
+ 
+     versions = await client.get("/api/v1/privacy-configs/credential/demo-skill/versions")
+     assert versions.status_code == 200
+     assert versions.json()["result"] == [1, 2]
++    missing = await client.get("/api/v1/privacy-configs/credential/demo-skill/versions/10")
++    assert missing.status_code == 404
++    assert missing.json()["status"] == "error"
++    assert missing.json()["error"]["code"] == "NOT_FOUND"
+ 
+     activate = await client.post(
+         "/api/v1/privacy-configs/credential/demo-skill/activate",
+@@ -144,31 +150,7 @@ async def test_privacy_config_api_roundtrip(client: httpx.AsyncClient):
+     assert activate.json()["result"]["version"] == 1
+ 
+     final_current = await client.get("/api/v1/privacy-configs/credential/demo-skill")
+-    assert final_current.json()["result"]["current"]["values"]["api_key"] == "sample"
+-
+-
+-async def test_privacy_config_update_allows_new_keys(client: httpx.AsyncClient):
+-    create = await client.post(
+-        "/api/v1/privacy-configs/skill/demo-skill-unknown-key",
+-        json={
+-            "values": {"api_key": "secret-1"},
+-            "change_reason": "seed",
+-        },
+-    )
+-    assert create.status_code == 200
+-
+-    update = await client.post(
+-        "/api/v1/privacy-configs/skill/demo-skill-unknown-key",
+-        json={
+-            "values": {"api_key": "secret-2", "new_key": "x"},
+-            "change_reason": "extend-keys",
+-        },
+-    )
+-    assert update.status_code == 200
+-    body = update.json()
+-    assert body["status"] == "ok"
+-    assert body["result"]["values"]["api_key"] == "secret-2"
+-    assert body["result"]["values"]["new_key"] == "x"
++    assert final_current.json()["result"]["current"]["values"] == {"api_key": "sample"}
+ 
+ 
+ async def test_privacy_config_patch_creates_target_and_atomically_merges_fields(
+@@ -188,10 +170,11 @@ async def test_privacy_config_patch_creates_target_and_atomically_merges_fields(
+     )
+     assert updated.status_code == 200, updated.text
+     assert updated.json()["result"]["version"] == 2
+-    assert updated.json()["result"]["values"] == {
+-        "pat": "github_pat_mock_value",
+-        "username": "alice",
+-    }
++    expected = {"pat": "github_pat_mock_value", "username": "alice"}
++    assert updated.json()["result"]["values"] == expected
++    current = await client.get("/api/v1/privacy-configs/credential/github")
++    assert current.status_code == 200, current.text
++    assert current.json()["result"]["current"]["values"] == expected
+ 
+ 
+ async def test_privacy_api_rejects_invalid_target_with_structured_format_error(
+@@ -227,25 +210,6 @@ async def test_privacy_api_rejects_oversized_values_without_echoing_secret(
+     assert secret not in response.text
+ 
+ 
+-async def test_privacy_config_get_version_not_found(client: httpx.AsyncClient):
+-    create = await client.post(
+-        "/api/v1/privacy-configs/skill/demo-skill-version-not-found",
+-        json={
+-            "values": {"api_key": "secret-1"},
+-            "change_reason": "seed",
+-        },
+-    )
+-    assert create.status_code == 200
+-
+-    missing = await client.get(
+-        "/api/v1/privacy-configs/skill/demo-skill-version-not-found/versions/10"
+-    )
+-    assert missing.status_code == 404
+-    body = missing.json()
+-    assert body["status"] == "error"
+-    assert body["error"]["code"] == "NOT_FOUND"
+-
+-
+ async def test_privacy_config_target_not_found(client: httpx.AsyncClient):
+     missing_target = "demo-skill-target-not-found"
+ 
+@@ -394,6 +358,16 @@ async def test_privacy_config_delete_is_idempotent_and_removes_history(
+     assert deleted_again.status_code == 200, deleted_again.text
+     assert deleted_again.json()["result"]["deleted"] is False
+ 
++    recreated = await client.post(
++        "/api/v1/privacy-configs/credential/delete-me",
++        json={"values": {"api_key": "replacement"}},
++    )
++    assert recreated.status_code == 200, recreated.text
++    assert recreated.json()["result"]["version"] == 1
++    old_version = await client.get("/api/v1/privacy-configs/credential/delete-me/versions/2")
++    assert old_version.status_code == 404
++    assert old_version.json()["error"]["code"] == "NOT_FOUND"
 +
-+    let root_row = vec![SnapshotLogRow {
-+        path: "/".into(),
-+        commit_oid: "1111111111111111111111111111111111111111".into(),
-+    }];
-+    store_a
-+        .append_rows_if_latest("acct", "main", None, &root_row)
-+        .await
-+        .unwrap();
-+
-+    // service b must not see service a's indexed progress.
-+    assert!(store_b
-+        .load_latest_indexed_commit("acct", "main")
-+        .await
-+        .unwrap()
-+        .is_none());
-+    assert!(store_a
-+        .load_latest_indexed_commit("acct", "main")
-+        .await
-+        .unwrap()
-+        .is_some());
-+
-+    // The same account/branch/commit under another service is not a unique-key conflict.
-+    store_b
-+        .append_rows_if_latest("acct", "main", None, &root_row)
-+        .await
-+        .unwrap();
-+
-+    // Illegal service_name values are rejected before touching the database.
-+    assert!(SqliteSnapshotLogStore::connect("bad name", &path)
-+        .await
-+        .is_err());
-+    assert!(SqliteSnapshotLogStore::connect("", &path).await.is_err());
-+}
+ 
+ async def test_privacy_scan_is_dry_run_by_default_and_fix_rewrites_content(
+     client: httpx.AsyncClient,
 ```
 
 ---
 
-### Incident Patch 3: `2faf02a6` (2026-11-26)
-**Commit Message**: fix(task): make periodic task history cleanup configurable (#8469)
+### Incident Patch 2: `4fe7846b` (2026-11-27)
+**Commit Message**: fix(studio): manage Compile plans by compile_name (#8393)
 
-* fix(task): allow read replicas to disable history cleanup
+* fix(studio): manage Compile plans by compile_name
 
-* docs(config): 补充读副本任务历史清理说明 (#8492)
+The scheduled plans tab crashed with "Cannot read properties of undefined
+(reading 'map')" because GET /api/v1/compile/configs returns configs, not
+targets. Studio also still read and updated configurations by to, and
+created scheduled plans through the full-input POST /api/v1/compile,
+which now rejects scheduling options.
 
-说明读节点如何关闭清理，以及共享历史存储如何保留可写清理节点。
+- List, read and update configurations by compile_name, and carry saved
+  args through updates so they are not cleared.
+- Show next_triggered_slot and last_run_time instead of the removed
+  next_run_at and running fields.
+- Save new scheduled plans with POST /api/v1/compile/create under a
+  validated plan name.
+- Open the editor at /compile/new?name=<compile_name>.
 
-Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+Fixes #8392
 
-* fix(config): move task history cleanup under server
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
----------
+* fix(studio): read last_run_time as Unix seconds
 
-Co-authored-by: bot-of-qin-ctx <[REDACTED_EMAIL]>
-Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
+The Last run column passed last_run_time to new Date() as milliseconds,
+but the API returns Unix seconds from task created_at, so 1793606700
+rendered as 1970-01-21. Type last_run_time and task_first_create_time as
+number | null and scale Last run by 1000; next_triggered_slot s
 
-**File**: `docs/en/guides/01-configuration.md` (modified, +12/-1)
+**File**: `web-studio/src/features/workbench/compile/components/compile-form.test.tsx` (modified, +56/-15)
 ```diff
-@@ -2193,6 +2193,16 @@ When config files are at the default path, OpenViking loads them automatically 
- > the two values identical and rotate both files together. The normal
- > tenant-scoped `api_key` remains a separate user/admin credential.
- 
-+### Task history cleanup on read replicas {#task-history-cleanup}
-+
-+The startup option `server.enable_task_history_cleanup` defaults to `true`.
-+When enabled, the node cleans up expired Task and Compile history every five minutes.
-+On a read replica, set it to `false` in `ov.conf` and restart the service.
-+Running tasks can still receive cancellation signals.
-+
-+For each shared Task store and Compile history store, keep cleanup enabled on
-+at least one node with write access to that store.
-+
- ### Reload boundary
- 
- The server reads `ov.conf` during process startup and does not watch the file
-@@ -2476,7 +2486,8 @@ When running OpenViking as an HTTP service, add a `server` section to `ov.conf`:
- | `root_api_key` | str | Root API key for multi-tenant auth in `api_key` mode. In `trusted` mode it is required on every deployment, including localhost; it does not become the source of user identity | `null` |
- | `account_store.provider` | str | Complete Account store provider. Built-in values are `"file"`, `"mysql"`, `"postgres"`, and `"redis_mysql"`; it owns account, user, group, and API-key records. `"file"` preserves the existing AGFS JSON registry and owns its process-local lookup indexes. `"postgres"` uses PostgreSQL directly. `"redis_mysql"` keeps MySQL authoritative and adds a shared Redis cache for authentication and request identity reads. | `"file"` |
- | `account_store.params` | object | Provider-specific startup parameters. Framework-owned filesystem and File-provider API-key hashing dependencies cannot be overridden here. | `{}` |
--| `account_store.params.read_only` | bool | File provider only. Load an existing writer-created registry without locks, bootstrap, or credential migrations, and reject identity mutations. Keep the replica's data mount read-only and set `reconcile_system_assets_on_startup=false`; enable `api_key_watch_enabled` to observe writer changes. A missing registry prevents startup. | `false` |
-+| `account_store.params.read_only` | bool | File provider only. Load an existing writer-created registry without locks, bootstrap, or credential migrations, and reject identity mutations. Keep the replica's data mount read-only and set `reconcile_system_assets_on_startup=false`; enable `api_key_watch_enabled` to observe writer changes. A missing registry prevents startup. Configure [task history cleanup](#task-history-cleanup) separately. | `false` |
-+| `enable_task_history_cleanup` | bool | Periodically delete expired Task and Compile history on this node. | `true` |
- | `profile_enabled` | bool | Whether to allow request-scoped cProfile via `profile=1` on HTTP requests. When disabled, the server ignores that query parameter. When enabled, the CLI can display the returned `profile`, while the Python HTTP client currently triggers profiling but does not automatically attach the top-level `profile` field to most SDK return values. | `false` |
- | `cors_origins` | list | Allowed CORS origins | `["*"]` |
- | `public_base_url` | str | Public-facing base URL emitted in MCP-issued upload instructions. Resolution order: env var `OPENVIKING_PUBLIC_BASE_URL` → this field → `X-Forwarded-Host`/`X-Forwarded-Proto` request headers → `Host` request header → listen-address fallback. Set this (or the env var) when the server runs behind a reverse proxy that does not forward `X-Forwarded-*` headers. | `null` |
-```
-
-**File**: `docs/zh/guides/01-configuration.md` (modified, +9/-1)
-```diff
-@@ -2153,6 +2153,13 @@ OpenViking 使用两个配置文件：
- > 副本。如果该 CLI 用于管理这个服务端，两处值必须一致，并在轮换时同时更新。
- > 普通租户数据使用的 `api_key` 仍是另一把 user/admin 凭据。
- 
-+### 读副本的任务历史清理 {#task-history-cleanup}
-+
-+启动参数 `server.enable_task_history_cleanup` 默认为 `true`。开启时，本节点每 5 分钟清理过期的 Task 和 Compile 历史。
-+在读副本的 `ov.conf` 中设为 `false` 并重启服务，运行中的任务仍能收到取消信号。
-+
-+每组共享的 Task 存储和 Compile 历史存储，都应至少有一个能写入相应存储的节点开启清理。
-+
- ### 配置重载边界
- 
- 服务端只在进程启动时读取 `ov.conf`，不会监听文件变化。修改 `embedding`、
-@@ -2431,7 +2438,8 @@ ov add-resource ./docs --exclude "*.tmp"
- | `root_api_key` | str | `api_key` 模式必填的 Root API Key；`trusted` 模式在所有部署中均必填，包括 localhost，不负责解析普通用户身份 | `null` |
- | `account_store.provider` | str | 完整 Account Store Provider。内置 `"file"`、`"mysql"`、`"postgres"` 和 `"redis_mysql"`；统一持久化 Account、User、Group 和 API Key。`"file"` 兼容现有 AGFS JSON 注册表，并由 Provider 自身维护进程内查询索引。`"postgres"` 直接使用 PostgreSQL。`"redis_mysql"` 保持 MySQL 为权威存储，并增加共享 Redis 认证和请求身份读取缓存。 | `"file"` |
- | `account_store.params` | object | Provider 启动参数。不能通过这里覆盖框架注入的 VikingFS 和 File Provider API Key Hash 配置。 | `{}` |
--| `account_store.params.read_only` | bool | 仅 File Provider。只读取 writer 已创建的注册表，启动时不写锁、不初始化、不迁移凭据，并拒绝身份变更。副本数据盘仍保持只读挂载，设置 `reconcile_system_assets_on_startup=false`；开启 `api_key_watch_enabled` 感知 writer 的变更。注册表缺失时拒绝启动。 | `false` |
-+| `account_store.params.read_only` | bool | 仅 File Provider。只读取 writer 已创建的注册表，启动时不写锁、不初始化、不迁移凭据，并拒绝身份变更。副本数据盘仍保持只读挂载，设置 `reconcile_system_assets_on_startup=false`；开启 `api_key_watch_enabled` 感知 writer 的变更。注册表缺失时拒绝启动。[任务历史清理](#task-history-cleanup)需另行配置。 | `false` |
-+| `enable_task_history_cleanup` | bool | 是否在本节点定期清理过期的 Task 和 Compile 历史。 | `true` |
- | `profile_enabled` | bool | 是否允许 HTTP 请求通过 `profile=1` 开启请求级 cProfile。关闭时服务端会忽略该请求参数；开启后，CLI 可以显示返回的 `profile`，而 Python HTTP client 默认只触发服务端 profile，不会把顶层 `profile` 字段自动附着到大多数 SDK 返回值上。 | `false` |
- | `cors_origins` | list | CORS 允许的来源 | `["*"]` |
- | `public_base_url` | str | MCP `add_resource` 和 `add_skill` 工具向客户端返回的上传指令里使用的对外可见 base URL。解析顺序：环境变量 `OPENVIKING_PUBLIC_BASE_URL` → 本字段 → 请求头 `X-Forwarded-Host` / `X-Forwarded-Proto` → 请求头 `Host` → 监听地址兜底。当 server 部署在反向代理后且代理不转发 `X-Forwarded-*` 时，请显式设置本字段（或环境变量）。 | `null` |
-```
-
-**File**: `openviking/server/config.py` (modified, +4/-0)
-```diff
-@@ -483,6 +483,10 @@ class ServerConfig(BaseModel):
-     roles: List[Literal["api", "queue_worker", "scheduler"]] = Field(
-         default_factory=lambda: ["api", "queue_worker", "scheduler"], min_length=1
+@@ -18,6 +18,8 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+ const api = vi.hoisted(() => ({
+   BUILTIN_SKILLS_ROOT: 'viking://system/compile/example-skills',
+   createCompile: vi.fn(),
++  createCompileConfig: vi.fn(),
++  isCompileName: (name: string) => /^[A-Za-z0-9_][A-Za-z0-9_-]*$/.test(name),
+   fetchCompileConfig: vi.fn(),
+   updateCompileConfig: vi.fn(),
+   lookupSubmission: vi.fn(),
+@@ -81,7 +83,7 @@ const storageKey = 'compile-submission:recovery-test'
+ const clients: QueryClient[] = []
+ const task = { task_id: 'cmp-original', status: 'pending' }
+ function mount(
+-  props: { fromTask?: string; sourceUri?: string; target?: string } = {},
++  props: { fromTask?: string; sourceUri?: string; compileName?: string } = {},
+   cachedConfig?: unknown,
+   cachedAt = Date.now(),
+ ) {
+@@ -91,7 +93,7 @@ function mount(
+   clients.push(client)
+   if (cachedConfig)
+     client.setQueryData(
+-      ['compile-config', 'recovery-test', props.target],
++      ['compile-config', 'recovery-test', props.compileName],
+       cachedConfig,
+       { updatedAt: cachedAt },
      )
-+    enable_task_history_cleanup: bool = Field(
-+        default=True,
-+        description="Periodically delete expired Task and Compile history on this node.",
+@@ -259,22 +261,32 @@ it('still recovers an accepted task when execution is no longer configured', asy
+   await waitFor(() => expect(api.navigate).toHaveBeenCalled())
+   expect(api.createCompile).not.toHaveBeenCalled()
+ })
++// Shape follows GET /api/v1/compile/config.
+ const configuredTarget = {
+-  ...savedDraft,
++  compile_name: 'weekly-wiki',
+   from: savedDraft.sources.split('\n'),
++  to: savedDraft.to,
++  skill: savedDraft.skill,
++  instruction: savedDraft.instruction,
++  args: { mode_hint: 'summary' },
+   auto_update: true,
+   update_schedule: { frequency: 'weekly', weekday: 3, hour: 14, minute: 30 },
+-  next_run_at: '2026-11-04T14:30:00+08:00',
++  task_first_create_time: null,
++  last_run_time: null,
++  last_triggered_slot: null,
++  next_triggered_slot: '2026-11-04T14:30:00+08:00',
+ }
++const planName = () => screen.getByRole('textbox', { name: 'schedule.name *' })
+ 
+ it('saves a weekly plan without navigating to a task or leaving a submission recovery key', async () => {
+   prepareCompileHandoff(
+     'recovery-test',
+     'compile --from viking://resources/source --to viking://resources/wiki --skill viking://agent/skills/wiki',
+   )
+-  api.createCompile.mockResolvedValueOnce(configuredTarget)
++  api.createCompileConfig.mockResolvedValueOnce({ compile_name: 'weekly-wiki' })
+   const page = mount()
+   fireEvent.click(page.getByRole('checkbox', { name: 'schedule.enabled' }))
++  fireEvent.change(planName(), { target: { value: 'weekly-wiki' } })
+   await choose(
+     page.getByRole('combobox', { name: 'schedule.frequency' }),
+     'schedule.weekly',
+@@ -292,23 +304,47 @@ it('saves a weekly plan without navigating to a task or leaving a submission rec
+       search: { tab: 'schedules' },
+     }),
+   )
+-  expect(api.createCompile.mock.calls[0][0].args).toEqual({
+-    auto_update: true,
+-    update_schedule: configuredTarget.update_schedule,
++  expect(api.createCompileConfig).toHaveBeenCalledWith({
++    compile_name: 'weekly-wiki',
++    from: ['viking://resources/source'],
++    to: 'viking://resources/wiki',
++    skill: 'viking://agent/skills/wiki',
++    args: {
++      auto_update: true,
++      update_schedule: configuredTarget.update_schedule,
++    },
+   })
++  expect(api.createCompile).not.toHaveBeenCalled()
+   expect(sessionStorage.getItem(storageKey)).toBeNull()
+ })
+ 
++it('requires a valid plan name before saving a schedule', async () => {
++  prepareCompileHandoff(
++    'recovery-test',
++    'compile --from viking://resources/source --to viking://resources/wiki --skill viking://agent/skills/wiki',
++  )
++  const page = mount()
++  fireEvent.click(page.getByRole('checkbox', { name: 'schedule.enabled' }))
++  page.submit()
++  expect(await page.findByText('schedule.nameRequired')).toBeTruthy()
++  fireEvent.change(planName(), { target: { value: '-weekly' } })
++  page.submit()
++  expect(await page.findByText('schedule.nameInvalid')).toBeTruthy()
++  expect(api.createCompileConfig).not.toHaveBeenCalled()
++  expect(api.createCompile).not.toHaveBeenCalled()
++})
++
+ it('keeps a failed plan save retryable without task submission recovery', async () => {
+   prepareCompileHandoff(
+     'recovery-test',
+     'compile --from viking://resources/source --to viking://resources/wiki --skill viking://agent/skills/wiki',
+   )
+-  api.createCompile
++  api.createCompileConfig
+     .mockRejectedValueOnce(new Error('response lost'))
+-    .mockResolvedValueOnce(configuredTarget)
++    .mockResolvedValueOnce({ compile_name: 'weekly-wiki' })
+   const page = mount()
+   fireEvent.click(page.getByRole('checkbox', { name: 'schedule.enabled' }))
++  fireEvent.change(planName(), { target: { value: 'weekly-wiki' } })
+   page.submit()
+   await waitFor(() => expect(page.getByRole('alert')).toBeTruthy())
+   expect(sessionStorage.getItem(storageKey)).toBeNull()
+@@ -329,7 +365,7 @@ it('loads a registered target and disables its schedule without requiring an exe
+     configur
+```
+
+**File**: `web-studio/src/features/workbench/compile/components/compile-form.tsx` (modified, +82/-41)
+```diff
+@@ -16,14 +16,15 @@ import {
+   ScheduleFields,
+ } from '#/features/workbench/compile/components/schedule-fields'
+ import type {
+-  CompileConfig,
+   CompileRequest,
+   CompileTask,
+   UpdateSchedule,
+ } from '#/features/workbench/compile/lib/api'
+ import {
+   createCompile,
++  createCompileConfig,
+   fetchCompileConfig,
++  isCompileName,
+   fetchCompileTask,
+   lookupSubmission,
+   updateCompileConfig,
+@@ -53,6 +54,7 @@ import {
+ import { isOvClientError } from '#/shared/api/ov-client/index'
+ import { createRandomUuid } from '#/shared/lib/browser-crypto'
+ import { Button } from '#/shared/ui/button'
++import { Input } from '#/shared/ui/input'
+ import {
+   Dialog,
+   DialogContent,
+@@ -87,11 +89,11 @@ function readDraft(key: string): Draft {
+ export function CompileForm({
+   fromTask,
+   sourceUri,
+-  target,
++  compileName,
+ }: {
+   fromTask?: string
+   sourceUri?: string
+-  target?: string
++  compileName?: string
+ }) {
+   const { t } = useTranslation('compile'),
+     navigate = useNavigate()
+@@ -103,14 +105,15 @@ export function CompileForm({
+   const queryClient = useQueryClient()
+   const [autoUpdate, setAutoUpdate] = useState(false)
+   const [schedule, setSchedule] = useState<UpdateSchedule>(defaultSchedule)
++  const [planName, setPlanName] = useState('')
+   const config = useQuery({
+-    queryKey: ['compile-config', identityScopeKey, target],
+-    queryFn: ({ signal }) => fetchCompileConfig(target!, signal),
+-    enabled: !!target,
++    queryKey: ['compile-config', identityScopeKey, compileName],
++    queryFn: ({ signal }) => fetchCompileConfig(compileName!, signal),
++    enabled: !!compileName,
+     staleTime: 0,
+   })
+   const [recoverKey, setRecoverKey] = useState(() => {
+-    if (target) return null
++    if (compileName) return null
+     try {
+       return sessionStorage.getItem(submissionKey)
+     } catch {
+@@ -125,8 +128,8 @@ export function CompileForm({
+     clearCompileHandoff()
+   }, [])
+   const [draft, setDraft] = useState(() =>
+-    target
+-      ? { ...empty, to: target }
++    compileName
++      ? empty
+       : recoverKey
+         ? savedDraft
+         : handoff
+@@ -144,7 +147,7 @@ export function CompileForm({
+               },
+   )
+   const [args, setArgs] = useState(
+-      !target && !recoverKey && handoff?.args
++      !compileName && !recoverKey && handoff?.args
+         ? JSON.stringify(handoff.args, null, 2)
+         : '',
+     ),
+@@ -175,14 +178,14 @@ export function CompileForm({
+     enableBeforeUnload: () => !completed.current && !!args.trim(),
+   })
+   useEffect(() => {
+-    if (completed.current || !draftStarted || target) return
++    if (completed.current || !draftStarted || compileName) return
+     try {
+       localStorage.setItem(draftKey, JSON.stringify(draft))
+       setSavingError(false)
+     } catch {
+       setSavingError(true)
+     }
+-  }, [draft, draftKey, draftStarted, target])
++  }, [draft, draftKey, draftStarted, compileName])
+   useEffect(() => {
+     if (!config.isSuccess || !config.isFetchedAfterMount || filled.current)
+       return
+@@ -243,6 +246,15 @@ export function CompileForm({
+         ? t('invalidUri')
+         : '',
+     to: targetError(draft.to.trim()) ? t(targetError(draft.to.trim())!) : '',
++    // Only new plans need a name; existing configurations keep theirs.
++    name:
++      compileName || !autoUpdate
++        ? ''
++        : !planName.trim()
++          ? t('schedule.nameRequired')
++          : !isCompileName(planName.trim())
++            ? t('schedule.nameInvalid')
++            : '',
+     args: (() => {
+       try {
+         const parsed = parseArgs(args)
+@@ -319,10 +331,10 @@ export function CompileForm({
+   function isCurrent() {
+     return mounted.current
+   }
+-  async function finish(result: CompileTask | CompileConfig) {
++  async function finish(result: CompileTask | { compile_name: string }) {
+     if (!isCurrent()) return
+     completed.current = true
+-    if (!target) {
++    if (!compileName) {
+       try {
+         localStorage.removeItem(draftKey)
+         sessionStorage.removeItem(submissionKey)
+@@ -350,7 +362,7 @@ export function CompileForm({
+   async function submit() {
+     if (
+       busy ||
+-      (target &&
++      (compileName &&
+         (!config.data || !config.isFetchedAfterMount || config.isError))
+     )
+       return
+@@ -375,14 +387,16 @@ export function CompileForm({
+           throw new Error(t('expiredSubmission'))
+       }
+       if (!submission.current && !validate()) return
+-      if (target) {
++      if (compileName) {
+         const body = request()
+         await finish(
+           await updateCompileConfig({
+-            to: target,
++            compile_name: compileName,
+             from: body.from,
+             skill: body.skill,
+             instruction: draft.instruction.trim() || null,
++            // Args are not editable here; updates replace them, so keep the saved ones.
++            args: config.data?.args ?? null,
+             auto_update: autoUpdate,
+             update_schedule: autoUpdate ? 
+```
+
+**File**: `web-studio/src/features/workbench/compile/components/schedule-list.test.tsx` (modified, +68/-45)
+```diff
+@@ -54,25 +54,37 @@ vi.mock('#/features/workbench/compile/components/shared', () => ({
+   ),
+ }))
+ 
++// Shapes follow GET /api/v1/compile/configs.
+ const daily = {
++  compile_name: 'daily',
++  from: ['viking://resources/source'],
+   to: 'viking://resources/daily',
+-  status: 'ready',
+-  initialized: true,
+-  running: true,
++  skill: 'viking://agent/skills/wiki',
++  instruction: null,
++  args: {},
+   auto_update: true,
+   update_schedule: { frequency: 'daily', hour: 8, minute: 5 },
+-  next_run_at: '2026-11-03T08:05:00+00:00',
++  task_first_create_time: 1793577600,
++  last_run_time: 1793606700,
++  last_triggered_slot: '2026-11-02T08:05:00+00:00',
++  next_triggered_slot: '2026-11-03T08:05:00+00:00',
++  owner_user_id: 'alice',
++  executor_user_id: 'alice',
++  updated_by: 'alice',
+ }
+ const weekly = {
+   ...daily,
++  compile_name: 'weekly',
+   to: 'viking://resources/weekly',
+-  running: false,
+   auto_update: false,
+   update_schedule: { frequency: 'weekly', weekday: 3, hour: 14, minute: 30 },
+-  next_run_at: null,
++  last_run_time: null,
++  last_triggered_slot: null,
++  next_triggered_slot: null,
+ }
+ const unscheduled = {
+   ...weekly,
++  compile_name: 'unscheduled',
+   to: 'viking://resources/unscheduled',
+   update_schedule: null,
+ }
+@@ -91,7 +103,10 @@ function mount(cachedConfig?: unknown) {
+   })
+   clients.push(client)
+   if (cachedConfig)
+-    client.setQueryData(['compile-config', 'account-a', daily.to], cachedConfig)
++    client.setQueryData(
++      ['compile-config', 'account-a', daily.compile_name],
++      cachedConfig,
 +    )
-     executor_threads: int = Field(
-         default=64,
-         ge=0,
+   const content = () => (
+     <QueryClientProvider client={client}>
+       <CompileScheduleList />
+@@ -114,7 +129,7 @@ afterEach(() => {
+ 
+ it('shows all registered targets, schedule details, execution state, and editor actions', async () => {
+   mocks.fetchCompileConfigs.mockResolvedValue({
+-    targets: [daily, weekly, unscheduled],
++    configs: [daily, weekly, unscheduled],
+     next_cursor: null,
+   })
+   const page = mount()
+@@ -125,22 +140,24 @@ it('shows all registered targets, schedule details, execution state, and editor
+     page.getByText('schedule.weeklyAt schedule.weekdays.3 14:30'),
+   ).toBeTruthy()
+   expect(page.getByText('schedule.noSchedule')).toBeTruthy()
+-  expect(page.getByText('schedule.running')).toBeTruthy()
+-  expect(page.getAllByText('schedule.idle')).toHaveLength(2)
++  expect(page.getByRole('heading', { name: daily.compile_name })).toBeTruthy()
++  expect(page.getAllByText('schedule.neverRun')).toHaveLength(2)
+   expect(page.getAllByText('schedule.active')).toHaveLength(1)
+   const nextRun = page.container.querySelector('time')!
+   expect(nextRun.dateTime).toBe('2026-11-03T08:05:00.000Z')
+   expect(nextRun.textContent).toBe(
+-    new Date(daily.next_run_at).toLocaleString('en', {
++    new Date(daily.next_triggered_slot).toLocaleString('en', {
+       timeZone: 'Asia/Shanghai',
+     }),
+   )
++  const lastRun = page.container.querySelectorAll('time')[1]
++  expect(lastRun.dateTime).toBe('2026-11-02T08:05:00.000Z')
+   fireEvent.click(
+-    page.getByRole('button', { name: `schedule.edit: ${weekly.to}` }),
++    page.getByRole('button', { name: `schedule.edit: ${weekly.compile_name}` }),
+   )
+   expect(mocks.navigate).toHaveBeenCalledWith({
+     to: '/compile/new',
+-    search: { target: weekly.to },
++    search: { name: weekly.compile_name },
+   })
+   expect(mocks.fetchCompileConfigs).toHaveBeenCalledWith(
+     undefined,
+@@ -150,8 +167,8 @@ it('shows all registered targets, schedule details, execution state, and editor
+ 
+ it('filters loaded targets locally and keeps pagination available when a page has no matches', async () => {
+   mocks.fetchCompileConfigs
+-    .mockResolvedValueOnce({ targets: [daily], next_cursor: 'page-2' })
+-    .mockResolvedValueOnce({ targets: [weekly], next_cursor: null })
++    .mockResolvedValueOnce({ configs: [daily], next_cursor: 'page-2' })
++    .mockResolvedValueOnce({ configs: [weekly], next_cursor: null })
+   const page = mount()
+   await page.findByRole('link', { name: daily.to })
+   await choose(
+@@ -178,7 +195,7 @@ it('filters loaded targets locally and keeps pagination available when a page ha
+ 
+ it('only claims an exhaustive filtered empty result after the last page', async () => {
+   mocks.fetchCompileConfigs.mockResolvedValue({
+-    targets: [daily],
++    configs: [daily],
+     next_cursor: null,
+   })
+   const page = mount()
+@@ -199,7 +216,7 @@ it('shows loading and retryable errors, then the empty registered-target state',
+   await page.findByRole('alert')
+   expect(page.queryByText('schedule.empty')).toBeNull()
+   mocks.fetchCompileConfigs.mockResolvedValueOnce({
+-    targets: [],
++    configs: [],
+     next_cursor: null,
+   })
+   fireEvent.click(page.getByRole('button', { name: 'Retry' }))
+@@ -209,9 +226,9 @@ it('shows loading and retryable errors, then the empty registered-target state',
+ 
+ it('refreshes the current list and isolates data when the active identity changes', async () => {
+   mocks.fetchCompileC
 ```
 
-**File**: `openviking/service/core.py` (modified, +5/-1)
+**File**: `web-studio/src/features/workbench/compile/components/schedule-list.tsx` (modified, +2/-2)
 ```diff
-@@ -1049,7 +1049,11 @@ async def start_background(self, *, queue_worker: bool = True, scheduler: bool =
-             await self._expiry_runtime.start_roles()
-         if self._runtime_config_manager is not None:
-             self._runtime_config_manager.start_refresh_loop()
--        get_task_tracker().start_cleanup_loop()
-+        get_task_tracker().start_cleanup_loop(
-+            cleanup_history=(
-+                self._server_config is None or self._server_config.enable_task_history_cleanup
-+            )
-+        )
-         if scheduler:
-             await self.start_scheduler()
-         if queue_worker:
+@@ -25,7 +25,7 @@ export function CompileScheduleList() {
+   const targets = [
+     ...new Map(
+       query.data?.pages.flatMap((page) =>
+-        page.targets.map((target) => [target.to, target] as const),
++        page.configs.map((config) => [config.compile_name, config] as const),
+       ),
+     ).values(),
+   ].filter(
+@@ -83,7 +83,7 @@ export function CompileScheduleList() {
+         <ul className="overflow-hidden rounded-xl border">
+           {targets.map((target) => (
+             <CompileScheduleTarget
+-              key={`${identityScopeKey}:${target.to}`}
++              key={`${identityScopeKey}:${target.compile_name}`}
+               target={target}
+             />
+           ))}
 ```
 
-**File**: `openviking/service/task_tracker.py` (modified, +3/-2)
+**File**: `web-studio/src/features/workbench/compile/components/schedule-target.tsx` (modified, +54/-24)
 ```diff
-@@ -422,8 +422,9 @@ async def restore_work_tasks(self, owners: Dict[str, tuple[str, str]]) -> List[T
-                 restored.append(task)
-         return restored
+@@ -36,6 +36,10 @@ import { useTranslation } from 'react-i18next'
+ import { toast } from 'sonner'
  
--    def start_cleanup_loop(self) -> None:
--        if self._cleanup_task is None or self._cleanup_task.done():
-+    def start_cleanup_loop(self, *, cleanup_history: bool = True) -> None:
-+        """Start cancellation polling. Set cleanup_history=False on read-only replicas."""
-+        if cleanup_history and (self._cleanup_task is None or self._cleanup_task.done()):
-             self._cleanup_task = asyncio.create_task(self._cleanup_loop())
-         if self._cancel_poll_task is None or self._cancel_poll_task.done():
-             self._cancel_poll_task = asyncio.create_task(self._cancel_poll_loop())
+ const SCHEDULE_TIME_ZONE = 'Asia/Shanghai'
++const parseTime = (value: string | null | undefined) => {
++  const time = value ? new Date(value) : null
++  return time && !Number.isNaN(time.getTime()) ? time : null
++}
+ type ConfigPage = Awaited<ReturnType<typeof fetchCompileConfigs>>
+ 
+ export function CompileScheduleTarget({
+@@ -56,14 +60,19 @@ export function CompileScheduleTarget({
+       // Read fresh source/Skill settings so a list action cannot restore stale ones.
+       const controller = new AbortController()
+       pendingRead.current = controller
+-      const config = await fetchCompileConfig(target.to, controller.signal)
++      const config = await fetchCompileConfig(
++        target.compile_name,
++        controller.signal,
++      )
+       // The active connection may have changed while reading the configuration.
+       controller.signal.throwIfAborted()
+       return updateCompileConfig({
+-        to: target.to,
++        compile_name: target.compile_name,
+         from: config.from,
+         skill: config.skill,
+         instruction: config.instruction,
++        // Updates replace args, so carry the saved ones forward.
++        args: config.args,
+         auto_update: schedule !== null,
+         update_schedule: schedule,
+       })
+@@ -78,8 +87,10 @@ export function CompileScheduleTarget({
+             ...data,
+             pages: data.pages.map((page) => ({
+               ...page,
+-              targets: page.targets.map((item) =>
+-                item.to === target.to ? { ...item, ...config } : item,
++              configs: page.configs.map((item) =>
++                item.compile_name === target.compile_name
++                  ? { ...item, ...config }
++                  : item,
+               ),
+             })),
+           },
+@@ -91,7 +102,7 @@ export function CompileScheduleTarget({
+       await Promise.all([
+         client.invalidateQueries({ queryKey: listKey }),
+         client.invalidateQueries({
+-          queryKey: ['compile-config', identityScopeKey, target.to],
++          queryKey: ['compile-config', identityScopeKey, target.compile_name],
+           refetchType: 'none',
+         }),
+       ])
+@@ -105,25 +116,38 @@ export function CompileScheduleTarget({
+   const time = schedule
+     ? `${String(schedule.hour).padStart(2, '0')}:${String(schedule.minute).padStart(2, '0')}`
+     : ''
+-  const nextRun = target.next_run_at ? new Date(target.next_run_at) : null
+-  const validNextRun = nextRun && !Number.isNaN(nextRun.getTime())
++  const nextRun = parseTime(target.next_triggered_slot)
++  const lastRun =
++    target.last_run_time == null
++      ? null
++      : new Date(target.last_run_time * 1000)
++  const formatTime = (value: Date) =>
++    value.toLocaleString(i18n.language, { timeZone: SCHEDULE_TIME_ZONE })
+ 
+   return (
+     <li
+       className="space-y-4 border-b p-5 last:border-b-0"
+       aria-busy={mutation.isPending}
+     >
+       <div className="flex flex-wrap items-start justify-between gap-3">
+-        <h2 className="min-w-0 flex-1 break-words text-sm font-medium [overflow-wrap:anywhere]">
+-          <ContextLink uri={target.to}>{target.to}</ContextLink>
+-        </h2>
++        <div className="min-w-0 flex-1 space-y-1">
++          <h2 className="break-words text-sm font-medium [overflow-wrap:anywhere]">
++            {target.compile_name}
++          </h2>
++          <p className="break-words text-xs text-muted-foreground [overflow-wrap:anywhere]">
++            <ContextLink uri={target.to}>{target.to}</ContextLink>
++          </p>
++        </div>
+         <Button
+           variant="ghost"
+           size="sm"
+           disabled={mutation.isPending}
+-          aria-label={`${t('schedule.edit')}: ${target.to}`}
++          aria-label={`${t('schedule.edit')}: ${target.compile_name}`}
+           onClick={() =>
+-            void navigate({ to: '/compile/new', search: { target: target.to } })
++            void navigate({
++              to: '/compile/new',
++              search: { name: target.compile_name },
++            })
+           }
+         >
+           {t('schedule.edit')}
+@@ -132,11 +156,11 @@ export function CompileScheduleTarget({
+       <div className="flex flex-wrap items-center gap-3">
+         <label htmlFor={switchId} className="text-sm font-medium">
+           {t('schedule.autoUpdate')}
+-          <span className="sr-only">{`: ${target.to}`}</span>
++          <span className="sr-only">{`: ${target.compile_name}`}</span>
+         </label>
+         <Switch
+           id={switchId}
+-          aria-label={`${t('schedule.autoUpdate')}: ${target.to}`}
++          aria-label={`${t('schedule.autoUpdate')}: ${target.compile_name}`}
+           checked={target.auto_update}
+           disabled={mutation.isPending}
+           onCheckedChange={(checked) => {
+@@ -181,7 +205,7 @@ export function CompileScheduleTarget({
+               size="sm"
+               className="h-auto px-1 py-0.5 te
 ```
 
-**File**: `tests/service/test_task_work_contract.py` (modified, +1/-1)
+**File**: `web-studio/src/features/workbench/compile/lib/api.test.ts` (modified, +38/-22)
 ```diff
-@@ -736,7 +736,7 @@ async def execute():
-         assert await tracker.get_work_state("task", work_ids[0], **OWNER) is WorkState.CANCELLED
-         assert not worker.done()
-         monkeypatch.setattr("openviking.service.task_tracker._CANCEL_POLL_INTERVAL", 0)
--        remote.start_cleanup_loop()
-+        remote.start_cleanup_loop(cleanup_history=False)
-         # Cancellation delivery precedes durable cleanup. MySQL commits during
-         # unregister_running_task must settle before the worker propagates it;
-         # a one-second timeout on the worker can cancel that cleanup itself.
-```
-
-**File**: `tests/test_server_config_loader.py` (modified, +3/-0)
-```diff
-@@ -56,6 +56,7 @@ def test_load_server_config_preserves_supported_fields(tmp_path):
-                     "host": "0.0.0.0",
-                     "port": 1944,
-                     "workers": 2,
-+                    "enable_task_history_cleanup": False,
-                     "executor_threads": 48,
-                     "timeout_keep_alive": 120,
-                     "auth_mode": "trusted",
-@@ -74,6 +75,7 @@ def test_load_server_config_preserves_supported_fields(tmp_path):
-     assert config.host == "0.0.0.0"
-     assert config.port == 1944
-     assert config.workers == 2
-+    assert config.enable_task_history_cleanup is False
-     assert config.executor_threads == 48
-     assert config.timeout_keep_alive == 120
-     assert config.auth_mode == "trusted"
-@@ -89,6 +91,7 @@ def test_load_server_config_defaults(tmp_path):
+@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
  
-     config = load_server_config(str(config_path))
+ import {
+   BUILTIN_SKILLS_ROOT,
+-  createCompile,
++  createCompileConfig,
+   fetchCompileConfig,
+   fetchCompileConfigs,
+   fetchCompileSkills,
++  isCompileName,
+   updateCompileConfig,
+   fetchCompileTask,
+   fetchCompileTasks,
+@@ -39,44 +40,46 @@ beforeEach(() => {
+ })
  
-+    assert config.enable_task_history_cleanup is True
-     assert config.timeout_keep_alive == 5
-     assert config.executor_threads == 64
+ describe('Compile scheduling APIs', () => {
+-  it('accepts a saved configuration without inventing a task ID', async () => {
+-    const config = {
++  it('creates a named configuration without executing it', async () => {
++    clientMocks.post.mockResolvedValueOnce({ compile_name: '每日_wiki' })
++    const body = {
++      compile_name: '每日_wiki',
++      from: ['viking://resources/source'],
+       to: 'viking://resources/wiki',
+-      auto_update: true,
+-      next_run_at: '2026-11-03T09:00:00+08:00',
+-    }
+-    clientMocks.post.mockResolvedValueOnce(config)
+-    const result = await createCompile(
+-      {
+-        from: ['viking://resources/source'],
+-        to: config.to,
+-        skill: 'viking://agent/skills/wiki',
+-        args: { auto_update: true },
++      skill: 'viking://agent/skills/wiki',
++      args: {
++        auto_update: true,
++        update_schedule: { frequency: 'daily' as const, hour: 9, minute: 0 },
+       },
+-      'schedule-save-key',
+-    )
+-    expect(result).toEqual(config)
+-    expect(result).not.toHaveProperty('task_id')
++    }
++    await expect(createCompileConfig(body)).resolves.toEqual({
++      compile_name: '每日_wiki',
++    })
++    expect(clientMocks.post).toHaveBeenLastCalledWith({
++      url: '/api/v1/compile/create',
++      body,
++    })
+   })
  
-```
-
-**File**: `tests/test_task_tracker.py` (modified, +23/-0)
-```diff
-@@ -687,6 +687,29 @@ def __deepcopy__(self, memo):
- # ── TTL / Eviction ──
- 
- 
-+@pytest.mark.parametrize("cleanup_history", [True, False])
-+async def test_periodic_history_cleanup(tracker, monkeypatch, cleanup_history):
-+    compile_cleanup = AsyncMock(return_value=0)
-+    # End the loop after one sweep reaches the Task store.
-+    task_cleanup = AsyncMock(side_effect=asyncio.CancelledError)
-+    tracker.compile_history_cleanup = compile_cleanup
-+    monkeypatch.setattr(tracker._store, "delete_expired", task_cleanup)
-+    monkeypatch.setattr(tracker, "CLEANUP_INTERVAL", 0)
+-  it('passes target cursors and URI query values without changing them', async () => {
+-    const cursor = 'viking://resources/a folder?value=1'
++  it('addresses configurations by compile_name and passes cursors unchanged', async () => {
++    const cursor = 'team-wiki_2'
+     await fetchCompileConfigs(cursor)
+     expect(clientMocks.get).toHaveBeenLastCalledWith({
+       url: '/api/v1/compile/configs',
+       signal: undefined,
+       query: { limit: 30, cursor },
+     })
+-    await fetchCompileConfig(cursor)
++    await fetchCompileConfig('团队 wiki?')
+     expect(clientMocks.get).toHaveBeenLastCalledWith({
+       url: '/api/v1/compile/config',
+       signal: undefined,
+-      query: { to: cursor },
++      query: { compile_name: '团队 wiki?' },
+     })
+     const body = {
+-      to: cursor,
++      compile_name: 'team-wiki',
+       from: ['viking://resources/source'],
+       skill: 'viking://agent/skills/wiki',
++      args: { mode_hint: 'summary' },
+       auto_update: false,
+       update_schedule: null,
+     }
+@@ -86,6 +89,19 @@ describe('Compile scheduling APIs', () => {
+       body,
+     })
+   })
 +
-+    tracker.start_cleanup_loop(cleanup_history=cleanup_history)
-+    try:
-+        if cleanup_history:
-+            await asyncio.wait_for(tracker._cleanup_task, timeout=1)
-+            compile_cleanup.assert_awaited_once()
-+            task_cleanup.assert_awaited_once()
-+        else:
-+            assert tracker._cleanup_task is None
-+            compile_cleanup.assert_not_awaited()
-+            task_cleanup.assert_not_awaited()
-+    finally:
-+        await tracker.stop_background_loops()
++  it.each([
++    ['team-wiki_2', true],
++    ['每日编译', true],
++    ['-leading', false],
++    ['has space', false],
++    ['a'.repeat(64), true],
++    ['a'.repeat(65), false],
++    ['汉'.repeat(32), true],
++    ['汉'.repeat(33), false],
++  ])('validates compile name %s', (name, valid) => {
++    expect(isCompileName(name)).toBe(valid)
++  })
+ })
+ 
+ describe('compile task API normalization', () => {
+```
+
+**File**: `web-studio/src/features/workbench/compile/lib/api.ts` (modified, +43/-23)
+```diff
+@@ -19,33 +19,47 @@ export type CompileRequest = {
+ export type UpdateSchedule =
+   | { frequency: 'daily'; hour: number; minute: number }
+   | { frequency: 'weekly'; weekday: number; hour: number; minute: number }
+-export type CompileConfigSummary = {
+-  status: string
++// Saved configurations are identified by their creator-scoped compile_name.
++export type CompileConfig = {
++  compile_name: string
++  from: string[]
+   to: string
+-  initialized: boolean
+-  running: boolean
++  skill: string
++  instruction: string | null
++  args: Record<string, unknown> | null
+   auto_update: boolean
+   update_schedule: UpdateSchedule | null
+-  next_run_at: string | null
++  // Unix seconds, as stored on the task records.
++  task_first_create_time: number | null
++  last_run_time: number | null
++  last_triggered_slot: string | null
++  next_triggered_slot: string | null
+ }
+-export type CompileConfig = Omit<CompileConfigSummary, 'running'> & {
+-  from: string[]
+-  skill: string
+-  instruction: string | null
+-  last_error: string | null
+-  last_run: unknown
++export type CompileConfigSummary = CompileConfig & {
++  owner_user_id?: string
++  executor_user_id?: string | null
++  updated_by?: string | null
+ }
++export type CompileConfigCreate = Required<
++  Pick<CompileRequest, 'from' | 'to' | 'skill'>
++> &
++  Pick<CompileRequest, 'instruction' | 'args'> & { compile_name: string }
+ export type CompileConfigUpdate = {
+-  to: string
++  compile_name: string
+   from: string[]
+   skill: string
+   instruction?: string | null
++  args?: Record<string, unknown> | null
+   auto_update: boolean
+   update_schedule: UpdateSchedule | null
+ }
++// Mirrors the server's CompileName pattern; the server remains authoritative.
++const COMPILE_NAME =
++  /^(?:[A-Za-z0-9_][A-Za-z0-9_-]{0,63}|[\p{Script=Han}A-Za-z0-9_][\p{Script=Han}A-Za-z0-9_-]{0,31})$/u
++export const isCompileName = (name: string) => COMPILE_NAME.test(name)
+ export function fetchCompileConfigs(cursor?: string, signal?: AbortSignal) {
+   return getOvResult<{
+-    targets: CompileConfigSummary[]
++    configs: CompileConfigSummary[]
+     next_cursor: string | null
+   }>(
+     ovClient.client.get({
+@@ -55,15 +69,20 @@ export function fetchCompileConfigs(cursor?: string, signal?: AbortSignal) {
+     }),
+   )
+ }
+-export function fetchCompileConfig(to: string, signal?: AbortSignal) {
++export function fetchCompileConfig(compileName: string, signal?: AbortSignal) {
+   return getOvResult<CompileConfig>(
+     ovClient.client.get({
+       url: '/api/v1/compile/config',
+       signal,
+-      query: { to },
++      query: { compile_name: compileName },
+     }),
+   )
+ }
++export function createCompileConfig(body: CompileConfigCreate) {
++  return getOvResult<{ compile_name: string }>(
++    ovClient.client.post({ url: '/api/v1/compile/create', body }),
++  )
++}
+ export function updateCompileConfig(body: CompileConfigUpdate) {
+   return getOvResult<CompileConfig>(
+     ovClient.client.post({
+@@ -147,15 +166,16 @@ export async function fetchCompileTask(id: string, signal?: AbortSignal) {
+ export async function createCompile(
+   body: CompileRequest,
+   key: string,
+-): Promise<CompileTask | CompileConfig> {
+-  const result = await getOvResult<CompileTaskPayload | CompileConfig>(
+-    ovClient.client.post({
+-      url: '/api/v1/compile',
+-      body,
+-      headers: { 'Idempotency-Key': key },
+-    }),
++): Promise<CompileTask> {
++  return normalizeCompileTask(
++    await getOvResult<CompileTaskPayload>(
++      ovClient.client.post({
++        url: '/api/v1/compile',
++        body,
++        headers: { 'Idempotency-Key': key },
++      }),
++    ),
+   )
+-  return 'task_id' in result ? normalizeCompileTask(result) : result
+ }
+ export async function cancelCompile(id: string) {
+   return normalizeCompileTask(
+```
+
+**File**: `web-studio/src/features/workbench/compile/lib/terminal.test.ts` (modified, +6/-14)
+```diff
+@@ -21,23 +21,15 @@ beforeEach(() => vi.resetAllMocks())
+ afterEach(() => vi.unstubAllGlobals())
+ 
+ describe('Compile terminal regressions', () => {
+-  it('handles a saved plan without a task ID or a persistent recovery key', async () => {
+-    api.createCompile.mockResolvedValue({
+-      to: 'viking://resources/b',
+-      next_run_at: '2026-11-03T09:00:00+08:00',
+-    })
++  it('surfaces scheduling-option rejections without keeping a recovery key', async () => {
++    const rejection = new Error('use POST /api/v1/compile/create')
++    api.createCompile.mockRejectedValue(rejection)
+     const saveKey = vi.fn()
+     const pending = { current: null }
+     const command = `compile --from viking://resources/a --to viking://resources/b --skill viking://agent/skills/s --args '{"auto_update":true,"update_schedule":{"frequency":"daily"}}'`
+-    const result = await runCompileSubmission(
+-      command,
+-      pending,
+-      (value) => value,
+-      saveKey,
+-    )
+-    expect(result.taskId).toBeUndefined()
+-    expect(result.body).toContain('2026-11-03T09:00:00+08:00')
+-    expect(result.body).not.toContain('undefined')
++    await expect(
++      runCompileSubmission(command, pending, (value) => value, saveKey),
++    ).rejects.toBe(rejection)
+     expect(pending.current).toBeNull()
+     expect(saveKey).not.toHaveBeenCalled()
+   })
+```
+
+---
+
+### Incident Patch 3: `28194c3b` (2026-11-27)
+**Commit Message**: fix(retry): apply the rate-limit backoff on 429 responses (#7948)
+
+rate_limit_retry_delay() has no call site: every retryable error, including
+a provider rate limit, is delayed by _compute_delay() with the generic
+0.5s -> 8s backoff. The dedicated LLM backoff (5s -> 120s with jitter)
+was added in #2503 and never wired in.
+
+The generic backoff is short enough to keep a provider's limiter
+saturated: the retries themselves consume the quota, so the limit window
+never recovers and the work unit fails with the raw 429 instead of
+backing off and succeeding. Measured against a provider that allows ~5
+concurrent requests: 3277 rejected requests in 5 minutes, with the log
+showing "retrying in 0.94s".
+
+retry_sync() and retry_async() now pick the delay through _retry_delay(),
+which uses rate_limit_retry_delay() for errors that
+is_retryable_rate_limit_error() accepts and keeps the generic backoff for
+every other transient error. The attempt number is 1-based, so the ramp
+is 5s, 10s, 20s, 40s, 80s, 120s.
+
+Fixes #7936
+
+**File**: `openviking/utils/model_retry.py` (modified, +29/-2)
+```diff
+@@ -431,6 +431,31 @@ def _compute_delay(
+     return delay
+ 
+ 
++def _retry_delay(
++    error: BaseException,
++    attempt: int,
++    *,
++    base_delay: float,
++    max_delay: float,
++    jitter: bool,
++) -> float:
++    """Pick the backoff to wait before the next attempt.
++
++    Rate-limit errors use the dedicated LLM backoff (5s -> 120s). The generic
++    backoff (0.5s -> 8s by default) is short enough to keep a provider's
++    limiter saturated: the retries themselves consume the quota, so the limit
++    window never recovers and the work unit fails with the raw 429.
++    """
++    if is_retryable_rate_limit_error(error):
++        return rate_limit_retry_delay(attempt + 1)
++    return _compute_delay(
++        attempt,
++        base_delay=base_delay,
++        max_delay=max_delay,
++        jitter=jitter,
++    )
 +
 +
- @pytest.mark.parametrize("already_missing", [False, True])
- async def test_evict_expired_completed(already_missing, monkeypatch):
-     agfs = _FakeAgfs()
+ def _retry_limit(
+     error: Exception,
+     *,
+@@ -481,7 +506,8 @@ def retry_sync(
+             if attempt >= retry_limit:
+                 raise
+ 
+-            delay = _compute_delay(
++            delay = _retry_delay(
++                e,
+                 attempt,
+                 base_delay=base_delay,
+                 max_delay=max_delay,
+@@ -529,7 +555,8 @@ async def retry_async(
+             if attempt >= retry_limit:
+                 raise
+ 
+-            delay = _compute_delay(
++            delay = _retry_delay(
++                e,
+                 attempt,
+                 base_delay=base_delay,
+                 max_delay=max_delay,
+```
+
+**File**: `tests/unit/test_model_retry.py` (modified, +75/-0)
+```diff
+@@ -229,6 +229,81 @@ async def _call():
+     assert attempts["count"] == 1
+ 
+ 
++# --- rate-limit backoff ---
++
++
++def _rate_limit_error() -> RuntimeError:
++    return RuntimeError(
++        "Error code: 429 - {'error': {'code': '1302', 'message': 'Rate limit reached for requests'}}"
++    )
++
++
++def test_retry_sync_uses_rate_limit_backoff_for_rate_limit_errors(monkeypatch):
++    delays: list[float] = []
++    attempts: list[int] = []
++    monkeypatch.setattr(
++        "openviking.utils.model_retry.time.sleep", lambda delay: delays.append(delay)
++    )
++    monkeypatch.setattr(
++        "openviking.utils.model_retry.rate_limit_retry_delay",
++        lambda attempt: attempts.append(attempt) or float(attempt),
++    )
++    error = _rate_limit_error()
++
++    @model_error_boundary
++    def _call():
++        raise error
++
++    with pytest.raises(RuntimeError) as raised:
++        retry_sync(_call, max_retries=3)
++
++    assert raised.value is error
++    assert attempts == [1, 2, 3]
++    assert delays == [1.0, 2.0, 3.0]
++
++
++@pytest.mark.asyncio
++async def test_retry_async_uses_rate_limit_backoff_for_rate_limit_errors(monkeypatch):
++    delays: list[float] = []
++    attempts: list[int] = []
++
++    async def _sleep(delay):
++        delays.append(delay)
++
++    monkeypatch.setattr("openviking.utils.model_retry.asyncio.sleep", _sleep)
++    monkeypatch.setattr(
++        "openviking.utils.model_retry.rate_limit_retry_delay",
++        lambda attempt: attempts.append(attempt) or float(attempt),
++    )
++    error = _rate_limit_error()
++
++    @model_error_boundary
++    async def _call():
++        raise error
++
++    with pytest.raises(RuntimeError) as raised:
++        await retry_async(_call, max_retries=3)
++
++    assert raised.value is error
++    assert attempts == [1, 2, 3]
++    assert delays == [1.0, 2.0, 3.0]
++
++
++def test_retry_sync_keeps_generic_backoff_for_other_transient_errors(monkeypatch):
++    delays: list[float] = []
++    monkeypatch.setattr(
++        "openviking.utils.model_retry.time.sleep", lambda delay: delays.append(delay)
++    )
++
++    def _fail():
++        raise TimeoutError("timed out")
++
++    with pytest.raises(TimeoutError):
++        retry_sync(_fail, max_retries=3, base_delay=0.5, max_delay=8.0, jitter=False)
++
++    assert delays == [0.5, 1.0, 2.0]
++
++
+ # --- quota_exceeded classification ---
+ 
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8535** (2026-11-26): fix(snapshot-log): backport service_name isolation to v0.5.6 (@baojun-zhang)
-- **PR #8534** (2026-11-26): fix(setup): detect an Antigravity sign-in that lives outside ~/.gemini (@ZaynJarvis)
-- **PR #8520** (2026-11-26): feat(compile): limit source directories to 100 (@fujiajie666)
-- **PR #8515** (2026-11-26): fix(superagent): report apps the upgrade left running (@ZaynJarvis)
-- **PR #8513** (2026-11-26): docs: clarify managed setup connection requirements (@ehz0ah)
-- **PR #8500** (2026-11-26): feat(onboarding): align BytePlus managed-service setup (@ehz0ah)
+- **PR #8585** (2026-11-27): feat(privacy): widen built-in detectors with Betterleaks rules and OpenViking keys (@t0saki)
+- **PR #8582** (2026-11-27): feat(pgvector): select native or ByteDance enhanced search explicitly (@zhanglistar)
+- **PR #8581** (2026-11-27): Revert "fix(ovpack): 修复向量备份校验与目录索引重建" (@qin-ctx)
+- **PR #8579** (2026-11-27): feat(superagent): make the worker slot count configurable per instance and at runtime (@openviking-superagent)
+- **PR #8575** (2026-11-27): Revert "fix(memory): narrow automatic output language detection to four languages" (@MaojiaSheng)
+- **PR #8572** (2026-11-27): fix(storage): 停止预建 Agent 端点和支付目录 (@qin-ctx)
 
 ---
 
@@ -2512,52 +3454,6 @@ Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. plugins): send the profile again after a host compaction drops it
-
-**RULE**:
-When implementing operations in `docs/en/agent-integrations/16-capability-reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `2b4dc8c4`: plugins): send the profile again after a host compaction drops it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/agent-integrations/16-capability-reference.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-| DSH | Yes, session-aware | Profile, memory index, skills | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
-| Codex | `SessionStart` on startup, clear, resume, and compact |
-| Cursor, TRAE, TRAE CN, ZCode | `SessionStart` |
-| Antigravity | `SessionStart`, and the first turn after each compaction checkpoint in the transcript |
-| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent. CodeBuddy drops `SessionStart` context at a compaction, so the next prompt sends it again |
-| OpenCode | The first message of each session and the first after each compaction; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
-| DSH | At session start, and again on the next model step when a compaction dropped it |
-| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | `SessionStart` with `source="compact"` sends the profile again; the archive summary is injected
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Induced defect failure mode:
-| DSH | Yes, session-aware | Profile, memory index, skills, once per session | At 20,000 pending tokens | Yes, with a 3-second budget | Commits, then the host summarizes |
-| Codex | `SessionStart` on startup, clear, and resume |
-| Cursor, TRAE, TRAE CN, ZCode, Antigravity | `SessionStart` |
-| CodeBuddy Code | `SessionStart`, every source; it can be delivered twice in one session, so the hook is idempotent |
-| OpenCode | The first message of each session; not retried after a failure, and skipped for subagent sessions. The list of indexed repositories also goes into the system prompt |
-| DSH | Once per session; not sent again after compaction |
-| Codex, TraeCode CLI 2.0 | Host summarizes | `PreCompact` catches up uncaptured turns, commits everything, and starts a new OpenViking session. If the catch-up is incomplete, it does not commit and retries later | The archive summary is injected on resume |
-| CodeBuddy Code | Host summarizes | `PreCompact` commits | Nothing |
-| Antigravity | Not verified | No pre-compaction hook | Nothing |
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b4dc8c4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

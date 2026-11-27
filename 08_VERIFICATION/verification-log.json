@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-MIMS",
-    "timestamp": "2026-11-26T02:55:20.020Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "a3712fa62289633276eb9cdce4fdb0ecdefa7418011dede608409ef9260fd1a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-Y8BB",
-    "timestamp": "2026-11-26T03:04:26.519Z",
-    "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
-    "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-    "contentHash": "0260b28342fdd3e65cc6cba83e8c413bf6c3b4f9fe28864ac32b6053005643ea",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-YEV9",
-    "timestamp": "2026-11-26T03:04:35.013Z",
-    "repository": "0xCUB3/wBlock",
-    "learningId": "learn-github-0xcub3-wblock",
-    "contentHash": "10ed56907380abf6d6c983152d1442d186fba5cc56b9596311df94c222917b5f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-YJK7",
     "timestamp": "2026-11-26T03:04:41.095Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7447,51 @@
     "contentHash": "942bddd7c8c32cbbc548f56cf01ebc042288c6136424e27447cf7ea7cba931f1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-PTT5",
+    "timestamp": "2026-11-27T09:17:29.513Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "48821d6d458bb60fbde668797e7eb5a12eadb6472b0c5dda0599e4ccb9b6eaec",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-PWFP",
+    "timestamp": "2026-11-27T09:17:32.917Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "6703ccf7b77f4d5f0c78d09ec1ab9ac01b2009eba61d0a601aee3bb868d912d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-Q4UY",
+    "timestamp": "2026-11-27T09:17:43.834Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "6d0c2c9be61c5f4b6c75c583c38afbeb9839964f7d39a969b0c26f670c0f296b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

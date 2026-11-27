@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T09:08:12.377Z",
+  "updated_at": "2026-11-27T09:18:16.893Z",
   "stats": {
-    "total_discovered": 10278,
-    "approved_pending_harvest": 9749,
+    "total_discovered": 10284,
+    "approved_pending_harvest": 9755,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9753,
+      "COMMUNITY_AND_EXPERT": 9759,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222440,6 +222440,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/abue-ammar-tinycast-learnings.md",
         "fileName": "abue-ammar-tinycast-learnings.md"
+      }
+    },
+    "SRC-559489BFD5CB": {
+      "id": "SRC-559489BFD5CB",
+      "url": "https://github.com/NieZhuZhu",
+      "title": "https://github.com/NieZhuZhu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T09:17:47.345Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-E40D07295F29": {
+      "id": "SRC-E40D07295F29",
+      "url": "https://claude.ai/cb",
+      "title": "https://claude.ai/cb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T09:18:16.553Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-924735BF7DD2": {
+      "id": "SRC-924735BF7DD2",
+      "url": "https://claude.ai/api/mcp/auth_callback",
+      "title": "https://claude.ai/api/mcp/auth_callback",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T09:18:16.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-D6C82442FC3B": {
+      "id": "SRC-D6C82442FC3B",
+      "url": "https://ov.test/",
+      "title": "https://ov.test/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T09:18:16.737Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-2322BA8935FC": {
+      "id": "SRC-2322BA8935FC",
+      "url": "https://x.test/cb",
+      "title": "https://x.test/cb",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T09:18:16.815Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
+      }
+    },
+    "SRC-FB5926865A96": {
+      "id": "SRC-FB5926865A96",
+      "url": "https://x.test/mcp",
+      "title": "https://x.test/mcp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T09:18:16.893Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+        "fileName": "volcengine-openviking-learnings.md"
       }
     }
   }

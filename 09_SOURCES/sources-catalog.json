@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "fe354f74",
+    "sourceVersion": "d421d520",
     "license": "AGPL-3.0",
-    "contentHash": "f03b2add7b726dd6b0937b245ed884f059dd8d44f5ca34c8c48d654023d3899b",
-    "lastHarvestedAt": "2026-11-26T15:02:25.492Z",
+    "contentHash": "6d0c2c9be61c5f4b6c75c583c38afbeb9839964f7d39a969b0c26f670c0f296b",
+    "lastHarvestedAt": "2026-11-27T09:17:43.839Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "db2fb7bdd3a9ded4d23a119fdd12331148fef1d49a05d555dbd3685073c23165",
-    "lastHarvestedAt": "2026-11-23T23:39:46.262Z",
+    "contentHash": "48821d6d458bb60fbde668797e7eb5a12eadb6472b0c5dda0599e4ccb9b6eaec",
+    "lastHarvestedAt": "2026-11-27T09:17:29.517Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "a6682352",
+    "sourceVersion": "8838e415",
     "license": "MIT",
-    "contentHash": "e0825208fd0705fe210c08810e91370a8970beb658d0486d538bf05176429055",
-    "lastHarvestedAt": "2026-11-26T08:10:15.603Z",
+    "contentHash": "6703ccf7b77f4d5f0c78d09ec1ab9ac01b2009eba61d0a601aee3bb868d912d1",
+    "lastHarvestedAt": "2026-11-27T09:17:32.932Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

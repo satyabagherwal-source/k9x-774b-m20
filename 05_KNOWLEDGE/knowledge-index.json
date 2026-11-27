@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T09:08:13.878Z",
+  "last_updated": "2026-11-27T09:18:17.202Z",
   "total_verified_learnings": 9142,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26463,
+  "total_items": 26466,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113541,10 +113541,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "fe354f74",
-      "content_hash": "72496767dfd574d44d70963dfce02f05e5c81babbd52ceb9c5dd60897d7447e4",
+      "source_version": "d421d520",
+      "content_hash": "d93083bacd658b9b8b00f815534c3e9a8b771c439e8ecbd9ecf3d0c02d5582ff",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T15:02:26.020Z"
+      "persisted_at": "2026-11-27T09:17:44.101Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113602,9 +113602,9 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff0ca5017f1d68cc357ed35cac38be2b3051c77575bb526a85954e3d7422b4ae",
+      "content_hash": "7b1bbe8e9b2f831f2309604d572a44ea7446ad8741d306a3ac3f05510bbb5fb0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T18:35:08.517Z"
+      "persisted_at": "2026-11-27T09:18:17.202Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning",
@@ -233478,13 +233478,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
       "source_version": "8838e415",
-      "content_hash": "e2a9a46a150a5a8e385c0e1c3d4a575ded97f2883317f70a43a38fe0e6253679",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "content_hash": "6703ccf7b77f4d5f0c78d09ec1ab9ac01b2009eba61d0a601aee3bb868d912d1",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -233565,6 +233565,11 @@
           "number": 10628,
           "title": "background facet carries a fn pointer and plain request, not",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10863,
+          "title": "expand prompt-bound user commands on the Runtime turn path (CW-8421)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233572,7 +233577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T14:53:25.370Z",
+      "verified_at": "2026-11-27T09:17:32.656Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233611,37 +233616,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
       "source_version": "8838e415",
-      "content_hash": "78e09723fbf84afa3571d973196af5099f1214f3c53032c9da634e307d6e2d78",
+      "content_hash": "c0b23c1da6a6a68fae5645f82a4a2d1243d8724262b0f752928a3153da9267ab",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T14:53:26.187Z"
+      "persisted_at": "2026-11-27T09:17:33.405Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
       "source_version": "8838e415",
-      "content_hash": "19e68ec14a88b233ad95a23cf79c395179b0bb035834e5f1bc79ad92b3132584",
+      "content_hash": "75b8117aa81783b6e12c64e0cc7e42e3b003cfb03d1b782963256ea20b3f4833",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T14:53:26.664Z"
+      "persisted_at": "2026-11-27T09:17:33.611Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
+      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
       "source_version": "8838e415",
-      "content_hash": "f7caad3b3d2a7527c3a67ef0ebfc596678e1b5edd2ed0576990961032107238d",
+      "content_hash": "f72844ca7ad18d5cdfaa546d6f431a4954c068c9edda5567a0b49de7154eaa7d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:53:26.850Z"
+      "persisted_at": "2026-11-27T09:17:33.810Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -233663,9 +233668,9 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "c03f1899ded9cb7d656255766ee2268216bbc76c8f3295c84d23dbfc58f9a120",
+      "content_hash": "8cb888ba30a2ce82bbd6caf6fb841f775e924328b6ff7defede122a0b500402f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:10:26.212Z"
+      "persisted_at": "2026-11-27T09:17:47.846Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona",
@@ -233675,9 +233680,9 @@
       "title": "Agent Contract: codewhale-hq-codewhale-learnings Autonomous Specialist Persona",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "76d2e11943127a4ae0d94ae8b8c6a10503542fa0bcd0ebd01f92047a2cc959d7",
+      "content_hash": "3cb35c37d164f6370387084476ee094e3b8f6fa3130d7e83565ec2c508aa429a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T08:10:26.650Z"
+      "persisted_at": "2026-11-27T09:17:48.049Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin",
@@ -233687,9 +233692,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "0178d85d937468cbdb44d2b14ffa977f95055821b69381cca66ddbc2915f445a",
+      "content_hash": "b7e1af6ccf0ac8e7ffa0b41f5451cb55b2f1b2a86dd02993e3266a0d8c0ca0cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T08:10:26.839Z"
+      "persisted_at": "2026-11-27T09:17:48.223Z"
     },
     "learn-huggingface-bingsu-adetailer": {
       "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -243591,8 +243596,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "fe354f74",
-      "content_hash": "f03b2add7b726dd6b0937b245ed884f059dd8d44f5ca34c8c48d654023d3899b",
+      "source_version": "d421d520",
+      "content_hash": "6d0c2c9be61c5f4b6c75c583c38afbeb9839964f7d39a969b0c26f670c0f296b",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -243647,7 +243652,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T15:02:25.177Z",
+      "verified_at": "2026-11-27T09:17:43.560Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246440,7 +246445,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "db2fb7bdd3a9ded4d23a119fdd12331148fef1d49a05d555dbd3685073c23165",
+      "content_hash": "48821d6d458bb60fbde668797e7eb5a12eadb6472b0c5dda0599e4ccb9b6eaec",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "promoted_rules": [
@@ -246460,7 +246465,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T23:39:46.036Z",
+      "verified_at": "2026-11-27T09:17:29.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -302869,9 +302874,9 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B-gguf Core Invariants",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "00c896ac8c1f9f58083c4135782c665798e70b28079df534aa66c2811b6cd737",
+      "content_hash": "5ee734e6fbf5ac37c3c8022c1c61acea4e2ad3a9bf77ac8fb17005b9d971d513",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T23:39:46.462Z"
+      "persisted_at": "2026-11-27T09:17:29.756Z"
     },
     "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants",
@@ -302893,9 +302898,9 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings Core Invariants",
       "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "068e0986627f272f6069225ca6bb390d22e133fd4d5f2d60a5e6a3512859f1e8",
+      "content_hash": "bdfe3070fc1fe91ee62a0ce584efbc0fe396e300510cfaeb074397a0726e56fd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T23:40:00.894Z"
+      "persisted_at": "2026-11-27T09:17:48.647Z"
     },
     "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants",
@@ -363159,6 +363164,44 @@
       "content_hash": "386923e5c9884e2d915cd39a4633b6ac126574ba203ac86f3c408a2349404bf1",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T09:08:12.797Z"
+    },
+    "rule-10863": {
+      "learning_id": "rule-10863",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10863,
+      "title": "expand prompt-bound user commands on the Runtime turn path (CW-8421)",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "8838e415",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T09:17:32.656Z"
+    },
+    "candidate_directive-expand-prompt-bound-user-commands-on-the-runtime-turn-path-cw-8421": {
+      "item_id": "candidate_directive-expand-prompt-bound-user-commands-on-the-runtime-turn-path-cw-8421",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PWNA-expand-prompt-bound-user-commands-on-the-runtime-turn-path-cw-8421.md",
+      "title": "expand prompt-bound user commands on the Runtime turn path (CW-8421)",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "8838e415",
+      "content_hash": "45e45f0df31eacaabf0331d6baae0cf88a4b258494ac1c9fc97cb11580cea9e1",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T09:17:33.195Z"
+    },
+    "candidate_directive-engine-expand-prompt-bound-user-commands-on-the-runtime-turn-path-cw-8421": {
+      "item_id": "candidate_directive-engine-expand-prompt-bound-user-commands-on-the-runtime-turn-path-cw-8421",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q7S9-engine-expand-prompt-bound-user-commands-on-the-runtime-turn-path-cw-8421.md",
+      "title": "engine): expand prompt-bound user commands on the Runtime turn path (CW-8421)",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "21c1806a5c26974be985aefeddc111927e6c6a790233b65ccf8215409e7ccfc4",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-27T09:17:47.630Z"
     }
   },
   "ai-builder-brain": {

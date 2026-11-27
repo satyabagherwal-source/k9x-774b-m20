@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T09:08:06.874Z",
+  "last_updated": "2026-11-27T09:17:43.847Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "f03b2add7b726dd6b0937b245ed884f059dd8d44f5ca34c8c48d654023d3899b",
-      "verified_at": "2026-11-26T15:02:25.515Z",
+      "content_hash": "6d0c2c9be61c5f4b6c75c583c38afbeb9839964f7d39a969b0c26f670c0f296b",
+      "verified_at": "2026-11-27T09:17:43.847Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T15:02:25.515Z"
+      "last_updated": "2026-11-27T09:17:43.847Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -2616,14 +2616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "content_hash": "db2fb7bdd3a9ded4d23a119fdd12331148fef1d49a05d555dbd3685073c23165",
-      "verified_at": "2026-11-23T23:39:46.269Z",
+      "content_hash": "48821d6d458bb60fbde668797e7eb5a12eadb6472b0c5dda0599e4ccb9b6eaec",
+      "verified_at": "2026-11-27T09:17:29.532Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T23:39:46.269Z"
+      "last_updated": "2026-11-27T09:17:29.532Z"
     },
     "nvidia/Qwen3.8-Flash-Next-FP4-Local": {
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "e2a9a46a150a5a8e385c0e1c3d4a575ded97f2883317f70a43a38fe0e6253679",
-      "verified_at": "2026-11-26T14:53:25.671Z",
+      "content_hash": "6703ccf7b77f4d5f0c78d09ec1ab9ac01b2009eba61d0a601aee3bb868d912d1",
+      "verified_at": "2026-11-27T09:17:32.944Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T14:53:25.671Z"
+      "last_updated": "2026-11-27T09:17:32.944Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",

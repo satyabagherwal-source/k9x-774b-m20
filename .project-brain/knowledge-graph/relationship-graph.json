@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-27T08:58:55.781Z",
+  "updated_at": "2026-11-27T09:18:16.470Z",
   "statistics": {
-    "total_nodes": 576,
+    "total_nodes": 577,
     "total_edges": 238,
     "domain_distribution": {
-      "D": 344,
+      "D": 345,
       "M": 1,
       "H": 110,
       "J": 22,
@@ -12856,6 +12856,28 @@
       ],
       "created_at": "2026-11-27T08:58:55.780Z",
       "updated_at": "2026-11-27T08:58:55.780Z"
+    },
+    "DOM-D-E7237660": {
+      "id": "DOM-D-E7237660",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): volcengine/OpenViking",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  \n> **Source**: github ([https://github.com/volc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  \n> **Source**: github ([https://github.com/volc",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://volcengine-openviking/volcengine-openviking-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T09:17:48.851Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (volcengine-openviking)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-27T09:18:16.470Z",
+      "updated_at": "2026-11-27T09:18:16.470Z"
     }
   },
   "edges": [

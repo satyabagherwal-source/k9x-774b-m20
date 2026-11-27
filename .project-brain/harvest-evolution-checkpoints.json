@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T09:08:14.028Z",
+  "last_updated": "2026-11-27T09:18:17.431Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T08:46:49.070Z",
@@ -48,7 +48,7 @@
       "staged_for_review": 1
     },
     "codewhale-hq-codewhale-learnings.md": {
-      "processed_at": "2026-11-26T08:10:25.422Z",
+      "processed_at": "2026-11-27T09:17:46.985Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1043,9 +1043,9 @@
       "staged_for_review": 1
     },
     "volcengine-openviking-learnings.md": {
-      "processed_at": "2026-11-24T18:35:07.921Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-27T09:18:16.473Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "vercel-labs-agent-desktop-learnings.md": {
       "processed_at": "2026-11-24T01:38:06.040Z",
@@ -2873,7 +2873,7 @@
       "staged_for_review": 0
     },
     "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md": {
-      "processed_at": "2026-11-23T23:40:00.703Z",
+      "processed_at": "2026-11-27T09:17:48.409Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -4038,7 +4038,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 4893,
-  "total_canonical_promoted": 576,
-  "total_staged_for_review": 3659
+  "total_dossiers_evaluated": 4896,
+  "total_canonical_promoted": 577,
+  "total_staged_for_review": 3660
 }

@@ -13739,3 +13739,7 @@
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T08:58:55.783Z` | `hf-inclusionai-ming-image-0.2-design` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-B48FD193` [Domain F] | Yes (`506cdd49...`) |
 | `CYCLE-20261127-DPWY` | `2026-11-27T09:08:04.594Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`d36f86d7...`) |
 | `CYCLE-20261127-DRNJ` | `2026-11-27T09:08:06.847Z` | `abue-ammar/tinycast` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10862` | Yes (`942bddd7...`) |
+| `CYCLE-20261127-PTT5` | `2026-11-27T09:17:29.513Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`48821d6d...`) |
+| `CYCLE-20261127-PWFP` | `2026-11-27T09:17:32.917Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10863` | Yes (`6703ccf7...`) |
+| `CYCLE-20261127-Q4UY` | `2026-11-27T09:17:43.834Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`6d0c2c9b...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T09:18:16.473Z` | `volcengine-openviking` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E7237660` [Domain D] | Yes (`39dd5e26...`) |

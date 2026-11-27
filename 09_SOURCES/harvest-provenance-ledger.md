@@ -13772,3 +13772,7 @@ Every entry in this ledger must capture:
 | `learn-dom-f-b48fd193` | `project://hf-inclusionai-ming-image-0.2-design` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.2-design-learnings.md` | 2026-11-27T08:58:55.783Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-27T09:08:04.598Z |
 | `learn-github-abue-ammar-tinycast` | `https://github.com/abue-ammar/tinycast` | `c2690533` | Multi-dimensional audit evidence | 2026-11-27T09:08:06.861Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-27T09:17:29.517Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `8838e415` | Multi-dimensional audit evidence | 2026-11-27T09:17:32.932Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `d421d520` | Multi-dimensional audit evidence | 2026-11-27T09:17:43.839Z |
+| `learn-dom-d-e7237660` | `project://volcengine-openviking` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | 2026-11-27T09:18:16.473Z |

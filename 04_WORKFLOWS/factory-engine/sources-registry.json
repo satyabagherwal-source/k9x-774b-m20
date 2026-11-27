@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T09:08:11.640Z",
-    "lastVerified": "2026-11-27T09:08:11.640Z",
+    "lastChecked": "2026-11-27T09:17:46.825Z",
+    "lastVerified": "2026-11-27T09:17:46.825Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -199,8 +199,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T08:31:57.276Z",
-    "lastVerified": "2026-11-27T08:31:57.276Z",
+    "lastChecked": "2026-11-27T09:17:41.161Z",
+    "lastVerified": "2026-11-27T09:17:41.161Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -666,9 +666,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-27T04:45:24.504Z",
+    "lastChecked": "2026-11-27T09:17:36.179Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-27T04:45:24.504Z"
+    "lastVerified": "2026-11-27T09:17:36.180Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -4226,9 +4226,9 @@
   "argoproj-argo-events": {
     "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
-    "lastChecked": "2026-11-26T16:21:13.841Z",
+    "lastChecked": "2026-11-27T09:17:33.717Z",
     "revisionIdentifier": "727b3155",
-    "lastVerified": "2026-11-26T16:21:13.841Z"
+    "lastVerified": "2026-11-27T09:17:33.717Z"
   },
   "pixeltable-pixeltable": {
     "name": "pixeltable",
@@ -7899,14 +7899,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-26T15:02:24.163Z",
-    "lastVerified": "2026-11-26T15:02:24.163Z",
+    "lastChecked": "2026-11-27T09:17:43.222Z",
+    "lastVerified": "2026-11-27T09:17:43.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "f03b2add7b726dd6b0937b245ed884f059dd8d44f5ca34c8c48d654023d3899b",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "contentHash": "6d0c2c9be61c5f4b6c75c583c38afbeb9839964f7d39a969b0c26f670c0f296b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7997,9 +7997,9 @@
   "kosi-libs-kodein": {
     "name": "Kodein",
     "officialUrl": "https://github.com/kosi-libs/Kodein",
-    "lastChecked": "2026-11-25T00:51:56.685Z",
+    "lastChecked": "2026-11-27T09:17:31.140Z",
     "revisionIdentifier": "8ef0da27",
-    "lastVerified": "2026-11-25T00:51:56.685Z"
+    "lastVerified": "2026-11-27T09:17:31.140Z"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
     "name": "autotrust/GEV-26B-Decide-NVFP4",
@@ -8656,14 +8656,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T08:10:00.425Z",
-    "lastVerified": "2026-11-26T08:10:00.425Z",
+    "lastChecked": "2026-11-27T09:17:31.670Z",
+    "lastVerified": "2026-11-27T09:17:31.670Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "e0825208fd0705fe210c08810e91370a8970beb658d0486d538bf05176429055",
+    "contentHash": "6703ccf7b77f4d5f0c78d09ec1ab9ac01b2009eba61d0a601aee3bb868d912d1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 24,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9134,12 +9134,12 @@
     "officialUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-23T23:39:45.688Z",
-    "lastVerified": "2026-11-23T23:39:45.688Z",
+    "lastChecked": "2026-11-27T09:17:28.836Z",
+    "lastVerified": "2026-11-27T09:17:28.836Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "db2fb7bdd3a9ded4d23a119fdd12331148fef1d49a05d555dbd3685073c23165",
+    "contentHash": "48821d6d458bb60fbde668797e7eb5a12eadb6472b0c5dda0599e4ccb9b6eaec",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
