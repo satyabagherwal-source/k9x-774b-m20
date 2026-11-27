@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T19:26:55.525Z",
+  "last_updated": "2026-11-27T19:35:34.267Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -20106,14 +20106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-llamaindex-ocria-nano-1",
-      "content_hash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
-      "verified_at": "2026-11-24T11:30:08.387Z",
+      "content_hash": "4bb0fa810d7209dd8ce40a0f3bc8c44bd9db0c3fae130a7a9434d9cdfeb4a6fe",
+      "verified_at": "2026-11-27T19:35:34.266Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T11:30:08.387Z"
+      "last_updated": "2026-11-27T19:35:34.266Z"
     },
     "nari-labs/Qwen3.8-27B-NariQ-GGUF": {
       "repository": "nari-labs/Qwen3.8-27B-NariQ-GGUF",

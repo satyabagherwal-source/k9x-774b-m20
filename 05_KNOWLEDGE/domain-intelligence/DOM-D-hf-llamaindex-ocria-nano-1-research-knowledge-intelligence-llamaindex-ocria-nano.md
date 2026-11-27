@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/llamaindex/OCRia-nano-1",
   "source_version": "hf-llamaindex-ocria-nano-1",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T11:30:08.604Z",
+  "timestamp": "2026-11-27T19:35:34.493Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-llamaindex-ocria-nano-1",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [llamaindex/OCRia-nano-1](https://huggingface.co/llamaindex/OCRia-nano-1) (Revision: `hf-llamain`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T11:30:08.604Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T19:35:34.493Z`  
 > **Learning ID**: `learn-huggingface-llamaindex-ocria-nano-1`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/llamaindex/OCRia-nano-1](https://huggingface.co/llamaindex/OCRia-nano-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T11:30:07.690Z  
+> **Harvest Timestamp**: 2026-11-27T19:35:33.560Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,9 +39,9 @@ The following architectural invariants have been empirically discovered and reco
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `llamaindex/OCRia-nano-1`
 - **Description**: image-to-text
-- **Primary Language / Ecosystem**: Model
+- **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 88 likes
+- **Stars / Engagement**: 626 downloads | 319 likes
 
 ---
 

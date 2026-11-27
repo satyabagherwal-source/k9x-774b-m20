@@ -13887,3 +13887,4 @@ Every entry in this ledger must capture:
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `5b79cae5` | Multi-dimensional audit evidence | 2026-11-27T19:18:15.473Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `28009b62` | Multi-dimensional audit evidence | 2026-11-27T19:18:17.207Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `d26fc7e4` | Multi-dimensional audit evidence | 2026-11-27T19:26:55.513Z |
+| `learn-huggingface-llamaindex-ocria-nano-1` | `https://huggingface.co/llamaindex/OCRia-nano-1` | `hf-llamain` | Multi-dimensional audit evidence | 2026-11-27T19:35:34.258Z |

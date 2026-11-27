@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T19:27:06.817Z",
+  "last_updated": "2026-11-27T19:35:48.467Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -219777,9 +219777,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "bd3ab6824a1ca2e602469ffe0b8dcff75a2377bad60e4365a200d75a0b348752",
+      "content_hash": "0bac350152df5d73cc1ee7d5a5395990c8987697f52ae1061a08ef65c65aae39",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:27:06.596Z"
+      "persisted_at": "2026-11-27T19:35:48.267Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219789,9 +219789,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6ed0e4e8856b4db6552c8bde54dc02279896156139ef15224612e7bceb0e31f",
+      "content_hash": "9a40477e60fe52eb73379b9f4e17de83bd4a7b345fcd1a012ceede02ba7674fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:27:06.817Z"
+      "persisted_at": "2026-11-27T19:35:48.467Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -230401,9 +230401,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "bebc78b09232a249f21b6aa163ce50de7d3a2f737c987e09a876058e48e5a268",
+      "content_hash": "3ec55fe1513ac6b2e89c34d86b3a4452ef17d8606eb7f7ff212b710222dbf8b1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:27:05.565Z"
+      "persisted_at": "2026-11-27T19:35:47.276Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230413,9 +230413,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ab452c25505fe7f030163186dd31d6f2394cbd96947785a979ffa84524517945",
+      "content_hash": "0b1b7f7a312908bf105825eb80f045fcd842e74bf10d86723ba0046a1f21f607",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:27:05.782Z"
+      "persisted_at": "2026-11-27T19:35:47.480Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -338901,7 +338901,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/llamaindex/OCRia-nano-1",
       "source_version": "hf-llamaindex-ocria-nano-1",
-      "content_hash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
+      "content_hash": "4bb0fa810d7209dd8ce40a0f3bc8c44bd9db0c3fae130a7a9434d9cdfeb4a6fe",
       "dossier_path": "07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md",
       "promoted_rules": [],
@@ -338910,7 +338910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T11:30:08.121Z",
+      "verified_at": "2026-11-27T19:35:33.976Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -338927,9 +338927,9 @@
       "title": "Research & Knowledge Intelligence: llamaindex/OCRia-nano-1 Core Invariants",
       "repository": "llamaindex/OCRia-nano-1",
       "source_version": "hf-llamaindex-ocria-nano-1",
-      "content_hash": "d038939f4001039e83f5b89963fa3042b3c13b7350c685bc1940ab49530ae444",
+      "content_hash": "7563817e3defea48bd406ab7051f56170c3bcdabd29926e7f6a0ef5ed7f4219d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T11:30:08.605Z"
+      "persisted_at": "2026-11-27T19:35:34.494Z"
     },
     "rule-10248": {
       "learning_id": "rule-10248",
@@ -339003,9 +339003,9 @@
       "title": "Research & Knowledge Intelligence: hf-llamaindex-ocria-nano-1-learnings Core Invariants",
       "repository": "hf-llamaindex-ocria-nano-1-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2af2166347ddf7769615ee8036143710e25f4bc1f2eb4137f813924ae2290d7",
+      "content_hash": "c643eaa841e80f68b7d59a0fea9aaef6aadc4bbb06afee499a46468b60806c6f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-24T11:31:00.765Z"
+      "persisted_at": "2026-11-27T19:35:46.441Z"
     },
     "candidate_directive-helm-fix-purge-osd-clusterrole-helm-ownership-conflict": {
       "item_id": "candidate_directive-helm-fix-purge-osd-clusterrole-helm-ownership-conflict",
@@ -350525,13 +350525,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HSOZ-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-SZ8B-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d3342b6141d5ffeadb88192b63c2b9df4535a4e9293261962c3dbc026a9b4dfe",
+      "content_hash": "89e8db7defb84e86a4ed6ac26eab1c0e85ac068d8b415571961d4dbf8e672d49",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:27:06.371Z"
+      "persisted_at": "2026-11-27T19:35:48.059Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",

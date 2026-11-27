@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T18:59:50.271Z",
-    "lastVerified": "2026-11-27T18:59:50.271Z",
+    "lastChecked": "2026-11-27T19:35:46.016Z",
+    "lastVerified": "2026-11-27T19:35:46.016Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T19:27:03.542Z",
-    "lastVerified": "2026-11-27T19:27:03.542Z",
+    "lastChecked": "2026-11-27T19:35:46.026Z",
+    "lastVerified": "2026-11-27T19:35:46.026Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -650,8 +650,8 @@
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T01:25:24.184Z",
-    "lastVerified": "2026-11-27T01:25:24.184Z",
+    "lastChecked": "2026-11-27T19:35:38.577Z",
+    "lastVerified": "2026-11-27T19:35:38.577Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
@@ -1091,9 +1091,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-27T15:18:23.685Z",
+    "lastChecked": "2026-11-27T19:35:41.064Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-27T15:18:23.685Z"
+    "lastVerified": "2026-11-27T19:35:41.064Z"
   },
   "chroma-core-chroma": {
     "name": "chroma-core/chroma",
@@ -3675,9 +3675,9 @@
   "imsnif-bandwhich": {
     "name": "bandwhich",
     "officialUrl": "https://github.com/imsnif/bandwhich",
-    "lastChecked": "2026-11-26T19:25:14.920Z",
+    "lastChecked": "2026-11-27T19:35:31.013Z",
     "revisionIdentifier": "1899870c",
-    "lastVerified": "2026-11-26T19:25:14.920Z"
+    "lastVerified": "2026-11-27T19:35:31.013Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -4402,9 +4402,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-27T00:24:38.480Z",
+    "lastChecked": "2026-11-27T19:35:43.521Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-27T00:24:38.480Z"
+    "lastVerified": "2026-11-27T19:35:43.521Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -9956,9 +9956,9 @@
   "productdevbook-port-killer": {
     "name": "port-killer",
     "officialUrl": "https://github.com/productdevbook/port-killer",
-    "lastChecked": "2026-11-25T10:45:30.767Z",
+    "lastChecked": "2026-11-27T19:35:36.155Z",
     "revisionIdentifier": "2209b0fd",
-    "lastVerified": "2026-11-25T10:45:30.767Z"
+    "lastVerified": "2026-11-27T19:35:36.155Z"
   },
   "kaiopiola-seocheck": {
     "name": "SEOCheck",
@@ -15368,12 +15368,12 @@
     "officialUrl": "https://huggingface.co/llamaindex/OCRia-nano-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-24T11:30:07.690Z",
-    "lastVerified": "2026-11-24T11:30:07.690Z",
+    "lastChecked": "2026-11-27T19:35:33.560Z",
+    "lastVerified": "2026-11-27T19:35:33.560Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-llamaindex-ocria-nano-1",
-    "contentHash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
+    "contentHash": "4bb0fa810d7209dd8ce40a0f3bc8c44bd9db0c3fae130a7a9434d9cdfeb4a6fe",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

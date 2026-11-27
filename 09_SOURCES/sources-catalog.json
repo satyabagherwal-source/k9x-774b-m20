@@ -13325,8 +13325,8 @@
     "sourceUrl": "https://huggingface.co/llamaindex/OCRia-nano-1",
     "sourceVersion": "hf-llamaindex-ocria-nano-1",
     "license": "Open-Source",
-    "contentHash": "0cd8fc7bccccf2639fb9fe3bc2b739d9398d53b08466d6112fb05e58a07ba1cb",
-    "lastHarvestedAt": "2026-11-24T11:30:08.370Z",
+    "contentHash": "4bb0fa810d7209dd8ce40a0f3bc8c44bd9db0c3fae130a7a9434d9cdfeb4a6fe",
+    "lastHarvestedAt": "2026-11-27T19:35:34.258Z",
     "learningId": "learn-huggingface-llamaindex-ocria-nano-1"
   },
   "hf-nari-labs-qwen3.8-27b-nariq-gguf": {

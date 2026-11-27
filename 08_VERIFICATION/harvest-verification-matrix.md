@@ -13854,3 +13854,4 @@
 | `CYCLE-20261127-6F1H` | `2026-11-27T19:18:15.461Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10953` | Yes (`56bef338...`) |
 | `CYCLE-20261127-6GDN` | `2026-11-27T19:18:17.195Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10954` | Yes (`de3f4610...`) |
 | `CYCLE-20261127-HKAW` | `2026-11-27T19:26:55.496Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10955` | Yes (`5b7656e2...`) |
+| `CYCLE-20261127-SOKL` | `2026-11-27T19:35:34.245Z` | `llamaindex/OCRia-nano-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md` | Yes (`4bb0fa81...`) |

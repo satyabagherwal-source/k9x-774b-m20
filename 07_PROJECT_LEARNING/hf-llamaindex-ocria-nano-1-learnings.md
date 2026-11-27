@@ -3,7 +3,7 @@
 > **Source Version**: `hf-llamainde`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T11:30:07.832Z  
+> **Timestamp**: 2026-11-27T19:35:33.665Z  
 > **Learning ID**: `learn-huggingface-llamaindex-ocria-nano-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-llamaindex-ocria-nano-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/llamaindex/OCRia-nano-1](https://huggingface.co/llamaindex/OCRia-nano-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T11:30:07.690Z  
+> **Harvest Timestamp**: 2026-11-27T19:35:33.560Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -25,9 +25,9 @@
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `llamaindex/OCRia-nano-1`
 - **Description**: image-to-text
-- **Primary Language / Ecosystem**: Model
+- **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 88 likes
+- **Stars / Engagement**: 626 downloads | 319 likes
 
 ---
 

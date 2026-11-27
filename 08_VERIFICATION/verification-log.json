@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-3AHC",
-    "timestamp": "2026-11-26T10:08:16.848Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "f4ba7dc2d6ff34b2bcf68b214dd131d75e6f51efaf071ade1b729ab20fda466c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-3K4D",
     "timestamp": "2026-11-26T10:08:29.341Z",
     "repository": "arangodb/arangodb",
@@ -7492,6 +7477,21 @@
     "contentHash": "5b7656e23bd55ba2408f1789483acb1492a10cd377c70381ecb6b6d729019f0d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-SOKL",
+    "timestamp": "2026-11-27T19:35:34.245Z",
+    "repository": "llamaindex/OCRia-nano-1",
+    "learningId": "learn-huggingface-llamaindex-ocria-nano-1",
+    "contentHash": "4bb0fa810d7209dd8ce40a0f3bc8c44bd9db0c3fae130a7a9434d9cdfeb4a6fe",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
