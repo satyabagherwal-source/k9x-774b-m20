@@ -5482,3 +5482,7 @@ https://huggingface.co/inclusionAI/Ming-Image-0.2-Design
 # --- Automatically Discovered by AI Scout Engine [2026-11-27T17:31:58.130Z] ---
 # [HUGGINGFACE-AI-MODELS] ai-sage/GigaChat4-708B-A41B (1097 score) - Verified Hugging Face Model: ai-sage/GigaChat4-708B-A41B (81 likes, 287 download
 https://huggingface.co/ai-sage/GigaChat4-708B-A41B
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-27T20:19:36.843Z] ---
+# [HUGGINGFACE-AI-MODELS] OpenUncensored/Inkling-2-Mini-Uncensored (5900 score) - Verified Hugging Face Model: OpenUncensored/Inkling-2-Mini-Uncensored (390 likes
+https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored

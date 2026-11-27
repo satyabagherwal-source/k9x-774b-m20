@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T20:10:10.645Z",
-  "total_verified_learnings": 9145,
+  "last_updated": "2026-11-27T20:20:49.020Z",
+  "total_verified_learnings": 9146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26739,
+  "total_items": 26746,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "3a3d137a",
-      "content_hash": "e53e303e3d425c87d278196357efa64ee379113ede1936963e2476bb5216d92f",
+      "source_version": "5feb8f1e",
+      "content_hash": "b375d90d21f8c0b6dae85fea0f4512323c777747b6ff94f82f00798a7f4f1927",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:44:24.136Z"
+      "persisted_at": "2026-11-27T20:20:03.888Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b87e9aca5559621e78d387db2ccda0250f4d54ee4f628d8fcf8e8e92b62df10",
+      "content_hash": "77bec5a2b14a9ff1b4243a53608f97e9e412f4dd880ed1425e61e3024d4b3204",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:44:29.197Z"
+      "persisted_at": "2026-11-27T20:20:49.020Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -220824,8 +220824,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "3a3d137a",
-      "content_hash": "93a8bb336269a70fd02336c25a917fcbd42a3e61ee8bd0f6f5cf9d0fd3e099ae",
+      "source_version": "5feb8f1e",
+      "content_hash": "924b169ad95a4da42f1ef98dced8111ab12a093f925a7d23411eb69c8553e2eb",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -221068,6 +221068,11 @@
           "number": 10946,
           "title": "ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10960,
+          "title": "bump polars-readstat-rs to 0.27.1 (rebased fork)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221075,7 +221080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T19:44:23.188Z",
+      "verified_at": "2026-11-27T20:20:02.581Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222222,10 +222227,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "3a3d137a",
-      "content_hash": "6d04191d39a5a5c83e97ce6b6e584d077aa0e613b60ea26712e560f39cf3ceff",
+      "source_version": "5feb8f1e",
+      "content_hash": "c3c79e244f9f2005a60b3cb6b5ccca08b5136c0221329df219b51268c671aa1f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T19:44:23.929Z"
+      "persisted_at": "2026-11-27T20:20:03.587Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -222295,9 +222300,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8784859144f64bbc079c45f851424246c7ed4e4e0252214d6fd806048a74674",
+      "content_hash": "be72e633ce4a2de22092ab323b80e77d1211321369c6c0a19b66909746f373db",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T19:44:28.986Z"
+      "persisted_at": "2026-11-27T20:20:48.692Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -311031,8 +311036,8 @@
       "slug": "kong-kubernetes-ingress-controller",
       "platform": "github",
       "source_url": "https://github.com/Kong/kubernetes-ingress-controller",
-      "source_version": "5091dc87",
-      "content_hash": "10fec5864a5952f9047d5650325d08f92fec3447eeaa2117e405678f69797c19",
+      "source_version": "41e944f8",
+      "content_hash": "3b8f04f82495e4e4602757475754c8bd184ab885cf8aa247cc82bf05635424d3",
       "dossier_path": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
       "promoted_rules": [
@@ -311047,7 +311052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T15:35:16.124Z",
+      "verified_at": "2026-11-27T20:19:54.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -311089,10 +311094,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kong-kubernetes-ingress-controller-architecture-intelligence-kong-kubernetes-ing.md",
       "title": "Architecture Intelligence: Kong/kubernetes-ingress-controller Core Invariants",
       "repository": "Kong/kubernetes-ingress-controller",
-      "source_version": "5091dc87",
-      "content_hash": "f8a5e170d13c9e46f4445d0da38b1b264e892336cfe77e3739c114babf813424",
+      "source_version": "41e944f8",
+      "content_hash": "c7ccc8c5c118f95674b33fd7f6f56608754d06940be67e452b756ddacbb01144",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T15:35:16.756Z"
+      "persisted_at": "2026-11-27T20:19:55.186Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kong-kubernetes-ingress-contro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kong-kubernetes-ingress-contro",
@@ -311102,9 +311107,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kong-kubernetes-ingress-controller-learnings",
       "repository": "kong-kubernetes-ingress-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "3873447494fa129dce8d6ae78d9278e316c9f92bba6eaa50ed26e569161e9ce9",
+      "content_hash": "dbc59cf99823559078aeadbbcfe4519b95c128518a91803a89cf59b2876c0bd0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:35:25.828Z"
+      "persisted_at": "2026-11-27T20:20:45.586Z"
     },
     "rule-9590": {
       "learning_id": "rule-9590",
@@ -311166,9 +311171,9 @@
       "title": "Architecture Intelligence: kong-kubernetes-ingress-controller-learnings Core Invariants",
       "repository": "kong-kubernetes-ingress-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "e8ae5850399053451d5e6f2d804a012d4933b6cd5dc989ba792385a964f38329",
+      "content_hash": "149e8c8198ce198d821127d1952ab667fd1412c5e8fa22d1902378d9769aaa33",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T15:35:25.649Z"
+      "persisted_at": "2026-11-27T20:20:45.259Z"
     },
     "candidate_directive-cli-preserve-agent-tuis-during-remote-approvals": {
       "item_id": "candidate_directive-cli-preserve-agent-tuis-during-remote-approvals",
@@ -367198,6 +367203,107 @@
       "content_hash": "2ae60800fa515301346350d5ab139664bd647261b4b3c0d0905d56eb4df92965",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T20:10:08.621Z"
+    },
+    "learn-huggingface-openuncensored-inkling-2-mini-uncensored": {
+      "learning_id": "learn-huggingface-openuncensored-inkling-2-mini-uncensored",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "OpenUncensored/Inkling-2-Mini-Uncensored",
+      "repository": "OpenUncensored/Inkling-2-Mini-Uncensored",
+      "slug": "hf-openuncensored-inkling-2-mini-uncensored",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored",
+      "source_version": "hf-openuncensored-inkling-2-mini-uncensored",
+      "content_hash": "73d6788a6a616318682c4e7b6e7894238a32b0e9e4896ca45c92c62fd9ef32f0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-27T20:19:43.185Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-openuncensored-inkling-2-mini-uncensored-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-openuncensored-inkling-2-mini-uncensored-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openuncensored-inkling-2-mini-uncensored-research-knowledge-intelligence-open.md",
+      "title": "Research & Knowledge Intelligence: OpenUncensored/Inkling-2-Mini-Uncensored Core Invariants",
+      "repository": "OpenUncensored/Inkling-2-Mini-Uncensored",
+      "source_version": "hf-openuncensored-inkling-2-mini-uncensored",
+      "content_hash": "1ea80a08f5186bf72adce75156e18fcf16cad5947fd7dcc18d77a00cb427c602",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T20:19:43.935Z"
+    },
+    "candidate_directive-update-security-md-to-let-reporters-to-create-ghsas-instead": {
+      "item_id": "candidate_directive-update-security-md-to-let-reporters-to-create-ghsas-instead",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ES4C-update-security-md-to-let-reporters-to-create-ghsas-instead.md",
+      "title": "update security.md to let reporters to create GHSAs instead",
+      "repository": "kong-kubernetes-ingress-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "963dbe014c909f7ccf751cf464c46f724fa4501ffd59724624bb08607e7e8096",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T20:20:44.903Z"
+    },
+    "rule-10960": {
+      "learning_id": "rule-10960",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10960,
+      "title": "bump polars-readstat-rs to 0.27.1 (rebased fork)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "5feb8f1e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T20:20:02.581Z"
+    },
+    "candidate_directive-bump-polars-readstat-rs-to-0-27-1-rebased-fork": {
+      "item_id": "candidate_directive-bump-polars-readstat-rs-to-0-27-1-rebased-fork",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DW06-bump-polars-readstat-rs-to-0-27-1-rebased-fork.md",
+      "title": "bump polars-readstat-rs to 0.27.1 (rebased fork)",
+      "repository": "dathere/qsv",
+      "source_version": "5feb8f1e",
+      "content_hash": "9c8bc141d97f46fc3717a76ddcf955088e76257833a8c6f7188abb9575c46b82",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T20:20:03.274Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openuncensored-inkling-2-mini-uncensored-lear": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openuncensored-inkling-2-mini-uncensored-lear",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openuncensored-inkling-2-mini-uncensored-learnings-research-knowledge-intelli.md",
+      "title": "Research & Knowledge Intelligence: hf-openuncensored-inkling-2-mini-uncensored-learnings Core Invariants",
+      "repository": "hf-openuncensored-inkling-2-mini-uncensored-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2e610c483a102946a710c21ace8e73de6279b17dad2f5c4579a0f7073647d07a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T20:20:43.579Z"
+    },
+    "candidate_directive-deps-bump-polars-readstat-rs-to-0-27-1-rebased-fork": {
+      "item_id": "candidate_directive-deps-bump-polars-readstat-rs-to-0-27-1-rebased-fork",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EUSO-deps-bump-polars-readstat-rs-to-0-27-1-rebased-fork.md",
+      "title": "deps: bump polars-readstat-rs to 0.27.1 (rebased fork)",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "784d135e4a88bd2cd1b9dee7cdccc7b70b8d9f87b66f34ecd87d8cb093b42ab6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T20:20:48.372Z"
     }
   },
   "ai-builder-brain": {

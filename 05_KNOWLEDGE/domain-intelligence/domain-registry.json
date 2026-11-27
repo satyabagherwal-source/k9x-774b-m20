@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T20:10:10.426Z",
-  "total_records": 2852,
+  "last_updated": "2026-11-27T20:20:48.692Z",
+  "total_records": 2855,
   "domains": {
     "A": {
       "total": 25,
@@ -74,7 +74,7 @@
       ]
     },
     "D": {
-      "total": 1047,
+      "total": 1050,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1122,7 +1122,10 @@
         "DOM-D-CFD4C4AD",
         "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-708b-a41b-core-invariants",
         "DOM-D-33234269",
-        "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-708b-a41b-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-708b-a41b-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-openuncensored-inkling-2-mini-uncensored-core-in",
+        "DOM-D-3686F390",
+        "domain_intelligence-research-knowledge-intelligence-hf-openuncensored-inkling-2-mini-uncensored-lear"
       ]
     },
     "E": {
@@ -12909,8 +12912,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "6d04191d39a5a5c83e97ce6b6e584d077aa0e613b60ea26712e560f39cf3ceff",
-      "created_at": "2026-11-27T19:44:23.929Z"
+      "content_hash": "c3c79e244f9f2005a60b3cb6b5ccca08b5136c0221329df219b51268c671aa1f",
+      "created_at": "2026-11-27T20:20:03.587Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12978,8 +12981,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "f8784859144f64bbc079c45f851424246c7ed4e4e0252214d6fd806048a74674",
-      "created_at": "2026-11-27T19:44:28.986Z"
+      "content_hash": "be72e633ce4a2de22092ab323b80e77d1211321369c6c0a19b66909746f373db",
+      "created_at": "2026-11-27T20:20:48.692Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -36729,8 +36732,8 @@
       "title": "Architecture Intelligence: Kong/kubernetes-ingress-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kong-kubernetes-ingress-controller-architecture-intelligence-kong-kubernetes-ing.md",
       "repository": "Kong/kubernetes-ingress-controller",
-      "content_hash": "f8a5e170d13c9e46f4445d0da38b1b264e892336cfe77e3739c114babf813424",
-      "created_at": "2026-11-20T15:35:16.756Z"
+      "content_hash": "c7ccc8c5c118f95674b33fd7f6f56608754d06940be67e452b756ddacbb01144",
+      "created_at": "2026-11-27T20:19:55.186Z"
     },
     "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-learnings-core-inva": {
       "record_id": "domain_intelligence-architecture-intelligence-kong-kubernetes-ingress-controller-learnings-core-inva",
@@ -36738,8 +36741,8 @@
       "title": "Architecture Intelligence: kong-kubernetes-ingress-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kong-kubernetes-ingress-controller-learnings-architecture-intelligence-kong-kube.md",
       "repository": "kong-kubernetes-ingress-controller-learnings",
-      "content_hash": "e8ae5850399053451d5e6f2d804a012d4933b6cd5dc989ba792385a964f38329",
-      "created_at": "2026-11-20T15:35:25.649Z"
+      "content_hash": "149e8c8198ce198d821127d1952ab667fd1412c5e8fa22d1902378d9769aaa33",
+      "created_at": "2026-11-27T20:20:45.259Z"
     },
     "domain_intelligence-architecture-intelligence-archivebox-archivebox-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-archivebox-archivebox-core-invariants",
@@ -48216,6 +48219,66 @@
       "repository": "maziyarpanahi-openmed-learnings",
       "content_hash": "8b2179faad897de494580ed515abed55c21e900762fdf3c405a3898612cf2ad6",
       "created_at": "2026-11-27T19:18:21.766Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openuncensored-inkling-2-mini-uncensored-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openuncensored-inkling-2-mini-uncensored-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: OpenUncensored/Inkling-2-Mini-Uncensored Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openuncensored-inkling-2-mini-uncensored-research-knowledge-intelligence-open.md",
+      "repository": "OpenUncensored/Inkling-2-Mini-Uncensored",
+      "content_hash": "1ea80a08f5186bf72adce75156e18fcf16cad5947fd7dcc18d77a00cb427c602",
+      "created_at": "2026-11-27T20:19:43.935Z"
+    },
+    "DOM-D-3686F390": {
+      "record_id": "DOM-D-3686F390",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): OpenUncensored/Inkling-2-Mini-Uncensored",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored](https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored))  \n> **Source Version**: `",
+      "content_hash": "be0f24a6dc0e0ba012b0af040ece902460ab8ac87f5dda2742be435b30befe8c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md`  \n> **Source**: huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md`  \n> **Source**: huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-openuncensored-inkling-2-mini-uncensored/hf-openuncensored-inkling-2-mini-uncensored-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T20:20:06.841Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openuncensored-inkling-2-mini-uncensored)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openuncensored-inkling-2-mini-uncensored"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T20:20:43.073Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openuncensored-inkling-2-mini-uncensored-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openuncensored-inkling-2-mini-uncensored-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openuncensored-inkling-2-mini-uncensored-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openuncensored-inkling-2-mini-uncensored-learnings-research-knowledge-intelli.md",
+      "repository": "hf-openuncensored-inkling-2-mini-uncensored-learnings",
+      "content_hash": "2e610c483a102946a710c21ace8e73de6279b17dad2f5c4579a0f7073647d07a",
+      "created_at": "2026-11-27T20:20:43.579Z"
     }
   }
 }

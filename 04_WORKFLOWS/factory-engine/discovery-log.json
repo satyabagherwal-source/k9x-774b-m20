@@ -22537,5 +22537,17 @@
     "downloads": 287,
     "qualityScore": 1097,
     "discoveredAt": "2026-11-27T17:29:49.661Z"
+  },
+  {
+    "name": "OpenUncensored/Inkling-2-Mini-Uncensored",
+    "fullName": "OpenUncensored/Inkling-2-Mini-Uncensored",
+    "url": "https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: OpenUncensored/Inkling-2-Mini-Uncensored (390 likes, 5624 downloads)",
+    "likes": 390,
+    "downloads": 5624,
+    "qualityScore": 5900,
+    "discoveredAt": "2026-11-27T20:17:28.957Z"
   }
 ]

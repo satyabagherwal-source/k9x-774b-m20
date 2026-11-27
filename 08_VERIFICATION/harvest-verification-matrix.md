@@ -13863,3 +13863,7 @@
 | `CYCLE-20261127-0QGO` | `2026-11-27T20:09:49.560Z` | `nari-labs/Qwen3.8-27B-NariQ-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nari-labs-qwen3.8-27b-nariq-gguf-learnings.md` | Yes (`8f3a7cf4...`) |
 | `CYCLE-20261127-0SCL` | `2026-11-27T20:09:52.005Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10959` | Yes (`12630ab1...`) |
 | `CYCLE-20261127-11UD` | `2026-11-27T20:10:04.309Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md` | Yes (`c0b1297b...`) |
+| `CYCLE-20261127-DGU2` | `2026-11-27T20:19:43.610Z` | `OpenUncensored/Inkling-2-Mini-Uncensored` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md` | Yes (`73d6788a...`) |
+| `CYCLE-20261127-DP6V` | `2026-11-27T20:19:54.439Z` | `Kong/kubernetes-ingress-controller` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md` | Yes (`3b8f04f8...`) |
+| `CYCLE-20261127-DVR2` | `2026-11-27T20:20:02.942Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10960` | Yes (`924b169a...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T20:20:43.119Z` | `hf-openuncensored-inkling-2-mini-uncensored` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3686F390` [Domain D] | Yes (`be0f24a6...`) |

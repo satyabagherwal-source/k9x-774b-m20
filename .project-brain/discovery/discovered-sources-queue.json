@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T20:10:09.947Z",
+  "updated_at": "2026-11-27T20:20:47.876Z",
   "stats": {
-    "total_discovered": 10544,
-    "approved_pending_harvest": 10011,
+    "total_discovered": 10554,
+    "approved_pending_harvest": 10021,
     "harvested_count": 0,
     "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10014,
+      "COMMUNITY_AND_EXPERT": 10024,
       "OFFICIAL_DOCUMENTATION": 292,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -228264,6 +228264,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
         "fileName": "trailbaseio-trailbase-learnings.md"
+      }
+    },
+    "SRC-3CA19C118887": {
+      "id": "SRC-3CA19C118887",
+      "url": "https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored",
+      "title": "https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:43.178Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md",
+        "fileName": "hf-openuncensored-inkling-2-mini-uncensored-learnings.md"
+      }
+    },
+    "SRC-2C9B93A53AF4": {
+      "id": "SRC-2C9B93A53AF4",
+      "url": "https://github.com/Kong/kubernetes-ingress-controller/security/advisories/new",
+      "title": "https://github.com/Kong/kubernetes-ingress-controller/security/advisories/new",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:44.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-5787B185850F": {
+      "id": "SRC-5787B185850F",
+      "url": "https://konghq.com/compliance/bug-bounty",
+      "title": "https://konghq.com/compliance/bug-bounty",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:44.515Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kong-kubernetes-ingress-controller-learnings.md",
+        "fileName": "kong-kubernetes-ingress-controller-learnings.md"
+      }
+    },
+    "SRC-F0472522B786": {
+      "id": "SRC-F0472522B786",
+      "url": "https://github.com/dathere/qsv/pull/5116",
+      "title": "https://github.com/dathere/qsv/pull/5116",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:46.732Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-F65E97654224": {
+      "id": "SRC-F65E97654224",
+      "url": "https://github.com/dathere/qsv/pull/5114",
+      "title": "https://github.com/dathere/qsv/pull/5114",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:46.847Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-2686E673D5CB": {
+      "id": "SRC-2686E673D5CB",
+      "url": "https://github.com/jrothbaum/polars_readstat/commit/ace0caafe6fb734ef533d7fbfcdb13148a9cda9c",
+      "title": "https://github.com/jrothbaum/polars_readstat/commit/ace0caafe6fb734ef533d7fbfcdb13148a9cda9c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:47.314Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-B541F932D1EE": {
+      "id": "SRC-B541F932D1EE",
+      "url": "https://github.com/dathere/qsv/pull/5121",
+      "title": "https://github.com/dathere/qsv/pull/5121",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:47.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-A567E1AD09A0": {
+      "id": "SRC-A567E1AD09A0",
+      "url": "https://github.com/dathere/polars_readstat?rev=18551f90697b23e677c5e17a0fe8f03ad710d90b",
+      "title": "https://github.com/dathere/polars_readstat?rev=18551f90697b23e677c5e17a0fe8f03ad710d90b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:47.603Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-7A747361930F": {
+      "id": "SRC-7A747361930F",
+      "url": "https://github.com/dathere/polars_readstat?rev=43b9b7b9d8def3d4883af76409ac885be5873639",
+      "title": "https://github.com/dathere/polars_readstat?rev=43b9b7b9d8def3d4883af76409ac885be5873639",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:47.711Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-B0C3C35708C6": {
+      "id": "SRC-B0C3C35708C6",
+      "url": "https://github.com/dathere/polars_readstat",
+      "title": "https://github.com/dathere/polars_readstat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T20:20:47.876Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

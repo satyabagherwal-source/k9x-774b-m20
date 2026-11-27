@@ -13896,3 +13896,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nari-labs-qwen3-8-27b-nariq-gguf` | `https://huggingface.co/nari-labs/Qwen3.8-27B-NariQ-GGUF` | `hf-nari-la` | Multi-dimensional audit evidence | 2026-11-27T20:09:49.572Z |
 | `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `1c8de458` | Multi-dimensional audit evidence | 2026-11-27T20:09:52.017Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `f5c3a834` | Multi-dimensional audit evidence | 2026-11-27T20:10:04.323Z |
+| `learn-huggingface-openuncensored-inkling-2-mini-uncensored` | `https://huggingface.co/OpenUncensored/Inkling-2-Mini-Uncensored` | `hf-openunc` | Multi-dimensional audit evidence | 2026-11-27T20:19:43.624Z |
+| `learn-github-kong-kubernetes-ingress-controller` | `https://github.com/Kong/kubernetes-ingress-controller` | `41e944f8` | Multi-dimensional audit evidence | 2026-11-27T20:19:54.452Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5feb8f1e` | Multi-dimensional audit evidence | 2026-11-27T20:20:02.958Z |
+| `learn-dom-d-3686f390` | `project://hf-openuncensored-inkling-2-mini-uncensored` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md` | 2026-11-27T20:20:43.119Z |

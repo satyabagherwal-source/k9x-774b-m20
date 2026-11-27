@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T20:10:10.217Z",
+  "last_updated": "2026-11-27T20:20:48.372Z",
   "directives": [
     {
       "id": "CD-001",
@@ -72354,6 +72354,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-DF2982-prepare-new-release-v0-37-2-.md",
       "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-ES4C",
+      "directive_title": "update security.md to let reporters to create GHSAs instead",
+      "source_repo": "kong-kubernetes-ingress-controller-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ES4C-update-security-md-to-let-reporters-to-create-ghsas-instead.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DW06",
+      "directive_title": "bump polars-readstat-rs to 0.27.1 (rebased fork)",
+      "source_repo": "dathere/qsv",
+      "source_commit": "5feb8f1e",
+      "staged_file": "11_INBOX/candidate-directives/CD-DW06-bump-polars-readstat-rs-to-0-27-1-rebased-fork.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-5D1ED1",
+      "directive_title": "update security.md to let reporters to create GHSAs instead",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kong-kubernetes-ingress-controller",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5D1ED1-update-security-md-to-let-reporters-to-c.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-EUSO",
+      "directive_title": "deps: bump polars-readstat-rs to 0.27.1 (rebased fork)",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EUSO-deps-bump-polars-readstat-rs-to-0-27-1-rebased-fork.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "G"
     }
   ]
 }

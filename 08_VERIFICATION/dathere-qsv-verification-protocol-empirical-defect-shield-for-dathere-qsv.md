@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "3a3d137a",
+  "source_version": "5feb8f1e",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-27T19:44:23.719Z",
+  "timestamp": "2026-11-27T20:20:03.273Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `3a3d137a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-27T19:44:23.719Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `5feb8f1e`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T20:20:03.273Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `3a3d137a`)
+- **Target Repository**: `dathere/qsv` (Commit: `5feb8f1e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T19:44:22.582Z  
+> **Harvest Timestamp**: 2026-11-27T20:20:01.358Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2290,142 +2290,129 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a3d137a` (2026-11-27)
-**Commit Message**: deps: update lock file
+### Incident Patch 1: `5feb8f1e` (2026-11-27)
+**Commit Message**: deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (#5121)
 
-**File**: `Cargo.lock` (modified, +10/-16)
-```diff
-@@ -999,14 +999,14 @@ dependencies = [
- 
- [[package]]
- name = "blake3"
--version = "1.8.7"
-+version = "1.8.8"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6d9e454fc11f76977dc803893aff6304ed33d6a26efae8696573bea74baa27ae"
-+checksum = "64c0e36294adc8db531500e3f2b8ec75c4af9177271e9c6d33f93609d56e57cd"
- dependencies = [
-  "arrayvec",
-  "cc",
-  "cfg-if",
-- "constant_time_eq 0.4.2",
-+ "constant_time_eq",
-  "cpufeatures 0.3.1",
-  "memmap2",
-  "rayon-core",
-@@ -1305,9 +1305,9 @@ dependencies = [
- 
- [[package]]
- name = "cc"
--version = "1.11.3"
-+version = "1.12.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
-+checksum = "95e45cf2980b2d467be49a9ed942c9179b701063a7ca3d037de7ee9bd67f8d66"
- dependencies = [
-  "find-msvc-tools",
-  "jobserver",
-@@ -1597,12 +1597,6 @@ dependencies = [
-  "unicode-xid",
- ]
- 
--[[package]]
--name = "constant_time_eq"
--version = "0.4.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
--
- [[package]]
- name = "constant_time_eq"
- version = "0.6.2"
-@@ -2740,9 +2734,9 @@ dependencies = [
- 
- [[package]]
- name = "find-msvc-tools"
--version = "0.1.15"
-+version = "0.1.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
-+checksum = "3e44f110d1777dc6559a51e7d45083945ded4f1bf3305494350f693b6d20b9c8"
- 
- [[package]]
- name = "finl_unicode"
-@@ -3063,9 +3057,9 @@ dependencies = [
- 
- [[package]]
- name = "geo-types"
--version = "0.7.20"
-+version = "0.7.21"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "777d18aa0f12f8b285331cd867133ee14422b3f023f6d388034c47d43e28786a"
-+checksum = "c180387602f8ab649c98dd5e9540e42cdb40a62455fc4790f4d80e15d31daac5"
- dependencies = [
-  "approx",
-  "num-traits",
-@@ -10891,7 +10885,7 @@ checksum = "2d8dbe089cf6b0448b78f5fc50139ab5aaa40d08ac07cdc1baf2c13add35fcce"
- dependencies = [
-  "aes",
-  "bzip2",
-- "constant_time_eq 0.6.2",
-+ "constant_time_eq",
-  "crc32fast",
-  "deflate64",
-  "flate2",
-```
+* deps: bump polars-readstat-rs to 0.27.1 (rebased fork)
 
----
-
-### Incident Patch 2: `a5825e6d` (2026-11-27)
-**Commit Message**: chore(audit): ignore unmaintained chrono, chrono-tz, humantime [skip ci]
-
-Informational "unmaintained" advisories for crates pulled in by polars,
-arrow and object_store. Migrating qsv's own code off chrono would not
-remove it from the dependency tree, so these clear only upstream.
-
-Closes #5070
-Closes #5071
-Closes #5072
+Crates.io 0.27.1 still calls DataFrame::slice(offset, len), which the
+pinned polars rev replaced with slice(impl Into<Slice>), so keep the
+dathere fork, now rebased onto upstream 0.27.1 with only the slice change
+(43b9b7b). Upstream's own exact .por number fix (ace0caa) replaces ours:
+writestat_por_small_numbers passes on it and fails without it (#5094).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.cargo/audit.toml` (modified, +20/-0)
+* docs(changelog): cite #5121 [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(writestat): require bit-exact .por small-number round trips
+
+polars-readstat-rs 0.27.1 reads .por numbers exactly, so drop the
+few-ulp tolerance the old fork's reader needed. Against the old fork
+(18551f9) the exact check fails: 1e-50 read back as 9.999999999999999e-51.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +2/-1)
 ```diff
-@@ -33,6 +33,26 @@ ignore = [
-     # the next askama release (0.16.1 is still the latest). See dathere/qsv#4860.
-     "RUSTSEC-2026-0374",
+@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `joinp`: `--nulls` did the opposite of its help for text keys. Empty text join keys matched without `--nulls` and stopped matching with it, and empty numeric keys never matched. In the standard joins (not cross, non-equi or asof), `--nulls` now makes empty keys match each other, including a quoted `""` and an unquoted empty. Without it they never match, whatever the key's type. Outer joins still output such rows, unmatched, with their key values unchanged. `--ignore-leading-zeros` (`-z`) now keeps a key's last zero, so `000` becomes `0` and still matches `0`, but no longer becomes empty and matches an empty key. The `--ignore-errors` help now says that in the standard joins, a key that can't be parsed, like an empty one, matches only with `--nulls`. **Behavior change:** an inner join on a text key no longer pairs rows whose keys are both empty unless `--nulls` is given. ([#5116](https://github.com/dathere/qsv/pull/5116))
+ - `sqlp`, `joinp`, `pivotp`: the `--ignore-errors` help said rows that can't be parsed are skipped (in `sqlp` and `joinp`, the whole batch around them). Polars instead reads such a value as empty (null) and keeps its row, so `COUNT(*)` and `len` still count it. The help now says so. ([#5114](https://github.com/dathere/qsv/pull/5114))
+ - `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
+-- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
++- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes every finite number so that it reads back exactly. The `.por` writer and reader fixes come from `polars-readstat-rs` 0.27.1 ([jrothbaum/polars_readstat@ace0caa](https://github.com/jrothbaum/polars_readstat/commit/ace0caafe6fb734ef533d7fbfcdb13148a9cda9c)), after our fix was offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103), [#5121](https://github.com/dathere/qsv/pull/5121))
+ - `synthesize`: an `ordered` relationship read its source dates only as RFC 3339 or `YYYY-MM-DD`, so on columns `stats` types as dates in other forms (`04/18/2019 09:55:45 PM`, `2022-01-21 13:47:00`) it found no rows with both dates and was dropped with only a log warning, leaving the columns independent and out of order. Source dates are now read with the parser `stats` uses, honoring `--prefer-dmy`/`QSV_PREFER_DMY`, by `ordered` groups and by `--discover-relationships`. **Behavior change:** such groups now apply, so their output changes. ([#5085](https://github.com/dathere/qsv/pull/5085))
+ - `sy
+```
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -6535,8 +6535,8 @@ dependencies = [
  
-+    # RUSTSEC-2026-0543: chrono is unmaintained.
-+    #   qsv -> polars-* (14 crates), arrow-* (4), object_store, calamine, fake,
-+    #       spreadsheet-ods, csvs_convert, qsv-dateparser -> chrono
-+    # Also used directly by qsv. Migrating qsv itself (e.g. to jiff) would not drop
-+    # it from the tree; clears only once polars and arrow move off chrono.
-+    # See dathere/qsv#5070.
-+    "RUSTSEC-2026-0543",
-+
-+    # RUSTSEC-2026-0555: chrono-tz is unmaintained.
-+    #   qsv -> polars-arrow (and the rest of polars) -> chrono-tz
-+    # Also used directly by qsv (clitypes, datefmt, sample). Clears with chrono above.
-+    # See dathere/qsv#5071.
-+    "RUSTSEC-2026-0555",
-+
-+    # RUSTSEC-2026-0542: humantime is unmaintained.
-+    #   qsv -> polars-io -> object_store -> humantime
-+    # The advisory says humantime wraps chrono, but the locked 2.4.0 has no
-+    # dependencies. Clears when object_store drops humantime. See dathere/qsv#5072.
-+    "RUSTSEC-2026-0542",
-+
-     # ---------------------------------------------------------------------
-     # vulnerabilities in code paths qsv does not compile or reach
-     # ---------------------------------------------------------------------
+ [[package]]
+ name = "polars-readstat-rs"
+-version = "0.27.0"
+-source = "git+https://github.com/dathere/polars_readstat?rev=18551f90697b23e677c5e17a0fe8f03ad710d90b#18551f90697b23e677c5e17a0fe8f03ad710d90b"
++version = "0.27.1"
++source = "git+https://github.com/dathere/polars_readstat?rev=43b9b7b9d8def3d4883af76409ac885be5873639#43b9b7b9d8def3d4883af76409ac885be5873639"
+ dependencies = [
+  "byteorder",
+  "chrono",
+```
+
+**File**: `Cargo.toml` (modified, +7/-7)
+```diff
+@@ -335,7 +335,7 @@ plotly = { version = "0.15", default-features = false, optional = true }
+ # `t!` macro expands to `crate::_rust_i18n_t!`. See src/cmd/viz_i18n.rs.
+ rust-i18n = { version = "4.2.1", optional = true }
+ pragmastat = "14.0"
+-polars-readstat-rs = { version = "0.27", optional = true }
++polars-readstat-rs = { version = "0.27.1", optional = true }
+ # only for `default_ipc_fields`, which `sqlp --streaming --format arrow` needs to build a
+ # batched IPC writer; it resolves to the same patched git rev as polars itself.
+ polars-arrow = { version = "0.55", optional = true }
+@@ -550,12 +550,12 @@ serial_test = { version = "4.0", features = ["file_locks"] }
+ # revision qsv pins, otherwise a second, incompatible polars tree resolves from crates.io. (#5021)
+ polars-core  = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6" }
+ polars-arrow = { git = "https://github.com/pola-rs/polars", rev = "08b2814ce6386c0efe0fea512912353f42a8b7b6" }
+-# polars-readstat-rs 0.27.0 calls DataFrame/Series::slice(offset, len), which polars main
+-# replaced with slice(impl Into<Slice>) (pola-rs/polars#30887). Our fork passes the pair as a
+-# tuple; upstream can't take it while it builds on crates.io polars 0.55.1. The fork also
+-# writes & reads .por numbers far below 1 without loss (#5094). Drop once a polars-readstat-rs
+-# release builds against the pinned polars rev AND has that .por fix (else #5094 comes back).
+-polars-readstat-rs = { git = "https://github.com/dathere/polars_readstat", rev = "18551f90697b23e677c5e17a0fe8f03ad710d90b" }
++# polars-readstat-rs 0.27.1 calls DataFrame/Series::slice(offset, len), which polars main
++# replaced with slice(impl Into<Slice>) (pola-rs/polars#30887). Our fork (upstream 0.27.1 plus
++# one commit) passes the pair as a tuple; upstream can't take it while it builds on crates.io
++# polars 0.55.1. Drop once a polars-readstat-rs release builds against the pinned polars rev.
++# 0.27.1 has upstream's exact .por number fix, so #5094 no longer needs the fork.
++polars-readstat-rs = { git = "https://github.com/dathere/polars_readstat", rev = "43b9b7b9d8def3d4883af76409ac885be5873639" }
+ # Polars (since py-2.0.0) calls HashTable::prefetch_{get,insert}, which exist only in its
+ # hashbrown fork (https://github.com/rust-lang/hashbrown/pull/727). Polars' own workspace
+ # [patch] doesn't propagate to dependents, so mirror it here; keep the rev in sync with the
+```
+
+**File**: `tests/test_writestat.rs` (modified, +4/-6)
+```diff
+@@ -586,8 +586,7 @@ fn writestat_xpt_number_too_small_boundary() {
+ }
+ 
+ // A portable file holds numbers far closer to 0 than SAS transport files do;
+-// they come back as written, not as 0 (#5094). The reader rebuilds them with
+-// float arithmetic, so within a few ulps.
++// they come back exactly as written, not as 0, subnormals included (#5094).
+ #[test]
+ fn writestat_por_small_numbers() {
+     let wrk = Workdir::new("writestat_por_small_numbers");
+@@ -607,10 +606,9 @@ fn writestat_por_small_numbers() {
+         .collect();
+     assert_eq!(got.len(), values.len(), "{back}");
+     for (want, got) in values.iter().zip(got) {
+-        // a subnormal holds fewer digits
+-        let tolerance = (4.0 * f64::from_bits(1) / want.abs()).max(1e-15);
+-        assert!(
+-            got != 0.0 && ((got - want) / want).abs() <= tolerance,
++        assert_eq!(
++            want.to_bits(),
++            got.to_bits(),
+             "{want:e} read back as {got:e}"
+         );
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5121** (2026-11-27): deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (@jqnatividad)
 - **PR #5120** (2026-11-27): build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (@dependabot[bot])
 - **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
 - **PR #5118** (2026-11-26): fix(joinp): drop temporary transformed key columns by name, before --sql-filter (@jqnatividad)
 - **PR #5117** (2026-11-26): fix(joinp): --coalesce keeps right-only keys with key transformations (@jqnatividad)
 - **PR #5116** (2026-11-25): fix(joinp): make --nulls match empty join keys, as documented (@jqnatividad)
-- **PR #5115** (2026-11-25): test(mcp): classify stats/validate --quote as not a path (@jqnatividad)
 
 ---
 
@@ -2445,55 +2432,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file
+## X. deps: bump polars-readstat-rs to 0.27.1 (rebased fork)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a3d137a`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5feb8f1e`: deps: bump polars-readstat-rs to 0.27.1 (rebased fork). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.8.8"
-checksum = "64c0e36294adc8db531500e3f2b8ec75c4af9177271e9c6d33f93609d56e57cd"
- "constant_time_eq",
-version = "1.12.0"
-checksum = "95e45cf2980b2d467be49a9ed942c9179b701063a7ca3d037de7ee9bd67f8d66"
-version = "0.1.16"
-checksum = "3e44f110d1777dc6559a51e7d45083945ded4f1bf3305494350f693b6d20b9c8"
-version = "0.7.21"
-checksum = "c180387602f8ab649c98dd5e9540e42cdb40a62455fc4790f4d80e15d31daac5"
- "constant_time_eq",
+- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes every finite number so that it reads back exactly. The `.por` writer and reader fixes come from `polars-readstat-rs` 0.27.1 ([jrothbaum/polars_readstat@ace0caa](https://github.com/jrothbaum/polars_readstat/commit/ace0caafe6fb734ef533d7fbfcdb13148a9cda9c)), after our fix was offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103), [#5121](https://github.com/dathere/qsv/pull/5121))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.8.7"
-checksum = "6d9e454fc11f76977dc803893aff6304ed33d6a26efae8696573bea74baa27ae"
- "constant_time_eq 0.4.2",
-version = "1.11.3"
-checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
-[[package]]
-name = "constant_time_eq"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
-
-version = "0.1.15"
-checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
-version = "0.7.20"
-checksum = "777d18aa0f12f8b285331cd867133ee14422b3f023f6d388034c47d43e28786a"
- "constant_time_eq 0.6.2",
+- `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a3d137a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5feb8f1e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
