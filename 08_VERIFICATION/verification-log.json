@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-9HMC",
-    "timestamp": "2026-11-26T10:41:05.652Z",
-    "repository": "citusdata/citus",
-    "learningId": "learn-github-citusdata-citus",
-    "contentHash": "8525134da6b568210328966dbe7188ca085cb7c7da3a334f6b8a27bf5b3d1007",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-LKKI",
-    "timestamp": "2026-11-26T10:50:29.346Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "112e4d5cbf6735e874fa57be8ff3b80462607a599eecf4ae3a3b99ec50f6210e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-LMUD",
     "timestamp": "2026-11-26T10:50:32.293Z",
     "repository": "google/tcmalloc",
@@ -7490,6 +7460,36 @@
     "repository": "jellyfin/Swiftfin",
     "learningId": "learn-github-jellyfin-swiftfin",
     "contentHash": "2e017c5e0d1ec85e37317c9fb331a0212a618f59893bd3673e64ef163475463d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-CKHF",
+    "timestamp": "2026-11-27T20:47:01.299Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "75c95a8af85b27cc1509216654deca7f90e5109dc8615a78af345e7cdaed868c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-CLNF",
+    "timestamp": "2026-11-27T20:47:02.811Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "d44a52c9ce52c117033b7363c234b5d3cf121bef7b24282ada67488232a19ada",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

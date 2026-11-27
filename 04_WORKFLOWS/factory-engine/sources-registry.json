@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T20:10:01.466Z",
-    "lastVerified": "2026-11-27T20:10:01.466Z",
+    "lastChecked": "2026-11-27T20:47:01.893Z",
+    "lastVerified": "2026-11-27T20:47:01.893Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T20:38:19.719Z",
-    "lastVerified": "2026-11-27T20:38:19.719Z",
+    "lastChecked": "2026-11-27T20:47:06.158Z",
+    "lastVerified": "2026-11-27T20:47:06.158Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1367,14 +1367,14 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T02:49:45.579Z",
-    "lastVerified": "2026-11-27T02:49:45.579Z",
+    "lastChecked": "2026-11-27T20:46:59.960Z",
+    "lastVerified": "2026-11-27T20:46:59.960Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "4afd110e62a51d96ef8429e02070a960f93573e17cff45f0fb869fa9ddc97adb",
+    "contentHash": "75c95a8af85b27cc1509216654deca7f90e5109dc8615a78af345e7cdaed868c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1791,12 +1791,12 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T16:30:26.067Z",
-    "lastVerified": "2026-11-27T16:30:26.067Z",
+    "lastChecked": "2026-11-27T20:47:01.557Z",
+    "lastVerified": "2026-11-27T20:47:01.557Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
+    "contentHash": "d44a52c9ce52c117033b7363c234b5d3cf121bef7b24282ada67488232a19ada",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -4147,9 +4147,9 @@
   "pemistahl-grex": {
     "name": "grex",
     "officialUrl": "https://github.com/pemistahl/grex",
-    "lastChecked": "2026-11-26T20:31:35.704Z",
+    "lastChecked": "2026-11-27T20:46:46.750Z",
     "revisionIdentifier": "99cc3477",
-    "lastVerified": "2026-11-26T20:31:35.704Z"
+    "lastVerified": "2026-11-27T20:46:46.750Z"
   },
   "hf-amazon-chronos-2": {
     "name": "amazon/chronos-2",
@@ -4894,8 +4894,8 @@
     "officialUrl": "https://github.com/skyzh/mini-lsm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T01:37:12.132Z",
-    "lastVerified": "2026-11-27T01:37:12.132Z",
+    "lastChecked": "2026-11-27T20:46:59.252Z",
+    "lastVerified": "2026-11-27T20:46:59.252Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyzh-mini-lsm",
@@ -10102,9 +10102,9 @@
   "sergdort-moderncleanarchitectureswiftui": {
     "name": "ModernCleanArchitectureSwiftUI",
     "officialUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
-    "lastChecked": "2026-11-25T12:09:02.630Z",
+    "lastChecked": "2026-11-27T20:46:51.781Z",
     "revisionIdentifier": "4fd07daa",
-    "lastVerified": "2026-11-25T12:09:02.630Z"
+    "lastVerified": "2026-11-27T20:46:51.781Z"
   },
   "kaimodev-trivium": {
     "name": "trivium",
@@ -10576,9 +10576,9 @@
   "m0ntydad0n-pseo-engine-oss": {
     "name": "pseo-engine-oss",
     "officialUrl": "https://github.com/m0ntydad0n/pseo-engine-oss",
-    "lastChecked": "2026-11-24T12:45:29.813Z",
+    "lastChecked": "2026-11-27T20:46:49.247Z",
     "revisionIdentifier": "945ce349",
-    "lastVerified": "2026-11-24T12:45:29.813Z"
+    "lastVerified": "2026-11-27T20:46:49.247Z"
   },
   "juullabs-kable": {
     "name": "JuulLabs/kable",

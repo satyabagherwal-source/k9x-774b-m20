@@ -13868,3 +13868,5 @@
 | `CYCLE-20261127-DVR2` | `2026-11-27T20:20:02.942Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10960` | Yes (`924b169a...`) |
 | `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T20:20:43.119Z` | `hf-openuncensored-inkling-2-mini-uncensored` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3686F390` [Domain D] | Yes (`be0f24a6...`) |
 | `CYCLE-20261127-1AOW` | `2026-11-27T20:38:15.392Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10961` | Yes (`2e017c5e...`) |
+| `CYCLE-20261127-CKHF` | `2026-11-27T20:47:01.299Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10962` | Yes (`75c95a8a...`) |
+| `CYCLE-20261127-CLNF` | `2026-11-27T20:47:02.811Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10963` | Yes (`d44a52c9...`) |

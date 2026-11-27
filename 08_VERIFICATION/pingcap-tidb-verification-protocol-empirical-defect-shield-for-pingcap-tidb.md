@@ -4,22 +4,22 @@
 {
   "source_repository": "pingcap/tidb",
   "source_url": "https://github.com/pingcap/tidb",
-  "source_version": "fa2f007e",
+  "source_version": "72791552",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-27T02:49:47.237Z",
+  "timestamp": "2026-11-27T20:47:01.575Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pingcap-tidb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `fa2f007e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T02:49:47.237Z`  
+> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `72791552`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T20:47:01.575Z`  
 > **Learning ID**: `learn-github-pingcap-tidb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `pingcap/tidb` (Commit: `fa2f007e`)
+- **Target Repository**: `pingcap/tidb` (Commit: `72791552`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T02:49:45.579Z  
+> **Harvest Timestamp**: 2026-11-27T20:46:59.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40779 stars
+- **Stars / Engagement**: 40782 stars
 
 ---
 
@@ -1937,11 +1937,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73829** (2026-11-26): **executor: redact temporal input values in INSERT diagnostics**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: close #73163  Problem Summary:  Temporal conversion errors on INSERT use a custom errno 1292 message that omits the value’s redaction metadata. INSERT IGNORE exposes the same message as a warning.  ### What changed and how does it work?  Mark the input value (argument 1) as redactable in the INSERT-specific message. This keeps the type, column and row number visible. Cover OFF, ON and MARKER with the formatter used by both error and warning paths.  This fixes part B. The independent JSON path position fix (part A) is in #73171. The earlier #73212 addressing part B was closed without merging.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Verification: `go test -tags=intest,deadlock ./pkg/util/dbterror/exeerro
+- **Issue #73887** (2026-11-27): **planner: push virtual TEXT filters down on common-handle scans | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5**
+  *Symptoms*: ### What problem does this PR solve?  Issue Number: ref #73782  The virtual `LOWER(TEXT)` filter can stay in TiDB when the table has a common handle. A regular TiFlash table scan carries its clustered primary index as handle metadata, so the planner's existing check skips virtual-column expansion. A correlated `EXISTS` can then be evaluated as a root semi-join.  ### What changed and how does it work?  Allow the MPP filter expansion on ordinary TiFlash scans that carry clustered primary-key metadata. Keep the existing expression and MPP protocol checks.  ### Check List  - [x] Unit test - [x] Manual test  The new planner regression fails with the old guard and passes with the fix. It verifies an MPP hash semi-join and the pushed filter on a table with a composite clustered primary key in V3. It also checks that V2 retains the existing behavior.  On a local TiDB and TiFlash pair with seeded tables, `EXPLAIN ANALYZE` placed the filter and hash semi-join in TiFlash MPP V3, and the query returned the same rows as TiKV.  ### Release note  ```release-note Fix virtual LOWER(TEXT) filter pushdown to TiFlash MPP V3 for tables with composite clustered primary keys. ```   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Improved distributed query planning for filters on virtual text columns in TiFlash scans of tables with composite primary keys. Eligible filters can now be evaluat
 
-- **Issue #73827** (2026-11-26): **planner: expand value-preserving virtual filters in MPP | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5**
-  *Symptoms*: ### What problem does this PR solve?  Issue Number: ref #73782  This follows up on #73789 and adapts the filter expansion from #73823 to the 8.5 FTS MPP scan path. A filter on a virtual column can prevent MPP even when TiFlash can compute the same value from stored columns.  ### What changed and how does it work?  - Use the same scan and column-pruning path for virtual filters that can be expanded into either a value-preserving expression or an explicit generated-column cast. - Allow same-type virtual integer aliases and `ABS` over a stored integer to expand using the existing MPP protocol. Keep the marked `TEXT` assignment cast from #73789 behind MPP v3. Its TiFlash support is in pingcap/tiflash#11380. - Leave projection and index substitution behavior unchanged. The boundary test checks that `txt_lower = 'x'` returns the row and `LOWER(txt) = 'x'` returns no rows, even with the generated-column index present.  ### Check List  - [x] Focused Go planner regressions for MPP v2 and v3 filters, root fallback, and the generated-column index boundary. - [x] Bazel planner build with nogo. - [x] Local TiDB and one TiFlash node using the #11380 implementation. Verified integer filter results on v2 and matching root results and warning 1406 for the original virtual TEXT query on v2, v3, and v3 shuffle. The v3 plans used an MPP Hash Semi Join.  ### Release note  ```release-note Allow eligible filter-only virtual integer columns defined as a stored integer or its absolute value to be eva
+- **Issue #73857** (2026-11-27): **util: preserve accumulated null rejection in hash join keys (backport #71205)**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #71197  Problem Summary:  Hash join v1 can produce incorrect `EXISTS` and `NOT EXISTS` results when ordinary equality (`=`) and null-safe equality (`<=>`) join keys contain NULLs. A later null-safe key clears the null-rejection flag set by an earlier ordinary equality key.  Backport #71205 to `feature/release-8.5-materialized-view`.  ### What changed and how does it work?  Accumulate `isNull` with logical OR in all 13 NULL-handling branches of `HashChunkSelected`, preserving null rejection across join keys. Hash bytes and row selection are unchanged; `HashContext.InitHash` resets the flags between batches.  Carry over the original unit regression for 12 NULL field types and selected/unselected rows, plus SQL cases for both key orders, `EXISTS`/`NOT EXISTS`, all-null-safe keys, and ordinary matching/nonmatching rows. The four-file patch has the same stable patch-id as the original fix; no adaptation was needed.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1958,647 +1958,909 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f964de31` (2026-11-26)
-**Commit Message**: dxf: support cancelling paused tasks and drain paused subtasks before reverting (#73519)
+### Incident Patch 1: `5b1bb528` (2026-11-27)
+**Commit Message**: ddl: fix affinity cleanup after out-of-place MV cutover (#73720)
 
-close pingcap/tidb#73518
+close pingcap/tidb#72068
 
-**File**: `pkg/dxf/framework/mock/scheduler_mock.go` (modified, +14/-0)
+**File**: `pkg/ddl/affinity_test.go` (modified, +69/-0)
 ```diff
-@@ -736,6 +736,20 @@ func (mr *MockTaskManagerMockRecorder) ResumeSubtasks(arg0, arg1 any) *gomock.Ca
- 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResumeSubtasks", reflect.TypeOf((*MockTaskManager)(nil).ResumeSubtasks), arg0, arg1)
+@@ -67,6 +67,7 @@ type truncateAffinityPDClient struct {
+ 	lastCreatedGroups atomic.Value
+ 	createCalls       atomic.Int64
+ 	createFailures    atomic.Int64
++	deleteCalls       atomic.Int64
+ 	nilDeleteContext  atomic.Bool
+ 	deleteHasDeadline atomic.Bool
+ 	afterCreate       func(context.Context) error
+@@ -168,6 +169,7 @@ func (c *truncateAffinityPDClient) createPartially(ctx context.Context, groups m
  }
  
-+// CancelPausedSubtasks mocks base method.
-+func (m *MockTaskManager) CancelPausedSubtasks(arg0 context.Context, arg1 int64) error {
-+	m.ctrl.T.Helper()
-+	ret := m.ctrl.Call(m, "CancelPausedSubtasks", arg0, arg1)
-+	ret0, _ := ret[0].(error)
-+	return ret0
-+}
-+
-+// CancelPausedSubtasks indicates an expected call of CancelPausedSubtasks.
-+func (mr *MockTaskManagerMockRecorder) CancelPausedSubtasks(arg0, arg1 any) *gomock.Call {
-+	mr.mock.ctrl.T.Helper()
-+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CancelPausedSubtasks", reflect.TypeOf((*MockTaskManager)(nil).CancelPausedSubtasks), arg0, arg1)
-+}
-+
- // ResumedTask mocks base method.
- func (m *MockTaskManager) ResumedTask(arg0 context.Context, arg1 int64) error {
- 	m.ctrl.T.Helper()
-```
-
-**File**: `pkg/dxf/framework/scheduler/interface.go` (modified, +1/-0)
-```diff
-@@ -108,6 +108,7 @@ type TaskManager interface {
- 	// GetSubtaskStateCntAndErrorsByStep returns the subtask count by state and failed/canceled errors of some step.
- 	GetSubtaskStateCntAndErrorsByStep(ctx context.Context, taskID int64, step proto.Step) (map[proto.SubtaskState]int64, []error, error)
- 	ResumeSubtasks(ctx context.Context, taskID int64) error
-+	CancelPausedSubtasks(ctx context.Context, taskID int64) error
- 	GetSubtaskErrors(ctx context.Context, taskID int64) ([]error, error)
- 	UpdateSubtasksExecIDs(ctx context.Context, subtasks []*proto.SubtaskBase) error
- 
-```
-
-**File**: `pkg/dxf/framework/scheduler/scheduler.go` (modified, +6/-1)
-```diff
-@@ -376,12 +376,17 @@ func (s *BaseScheduler) onReverting() error {
- 	task := s.getTaskClone()
- 	s.logger.Debug("on reverting state", zap.Stringer("state", task.State),
- 		zap.String("step", proto.Step2Str(task.Type, task.Step)))
-+	// Batched step publication can leave paused subtasks beyond task.Step.
-+	// Drain the whole task before deciding whether reversion is complete.
-+	if err := s.taskMgr.CancelPausedSubtasks(s.ctx, task.ID); err != nil {
-+		return errors.Trace(err)
-+	}
- 	cntByStates, err := s.taskMgr.GetSubtaskCntGroupByStates(s.ctx, task.ID, task.Step)
- 	if err != nil {
- 		s.logger.Warn("check task failed", zap.Error(err))
- 		return err
- 	}
--	runnableSubtaskCnt := cntByStates[proto.SubtaskStatePending] + cntByStates[proto.SubtaskStateRunning]
-+	runnableSubtaskCnt := cntByStates[proto.SubtaskStatePending] + cntByStates[proto.SubtaskStateRunning] + cntByStates[proto.SubtaskStatePaused]
- 	if runnableSubtaskCnt == 0 {
- 		if err = s.OnDone(s.ctx, s, task); err != nil {
- 			return errors.Trace(err)
-```
-
-**File**: `pkg/dxf/framework/scheduler/scheduler_nokit_test.go` (modified, +41/-7)
-```diff
-@@ -646,6 +646,7 @@ func TestSchedulerNotAllocateSlots(t *testing.T) {
- 		return &cloneTask.TaskBase, nil
- 	})
- 
-+	taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), cloneTask.ID).Return(nil)
- 	taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), cloneTask.ID, cloneTask.Step).Return(map[proto.SubtaskState]int64{
- 		proto.SubtaskStatePending: 0,
- 		proto.SubtaskStateRunning: 0}, nil)
-@@ -787,6 +788,18 @@ func TestSchedulerMaintainTaskFields(t *testing.T) {
- 	t.Run("test onResuming", func(t *testing.T) {
- 		scheduler.task.Store(&schTask)
- 
-+		// finish resuming once paused subtasks are 0 even if running subtasks remain
-+		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(map[proto.SubtaskState]int64{
-+			proto.SubtaskStateRunning: 1,
-+		}, nil)
-+		taskMgr.EXPECT().ResumedTask(gomock.Any(), task.ID).Return(nil)
-+		require.NoError(t, scheduler.onResuming())
-+		tmpTask := task
-+		tmpTask.State = proto.TaskStateRunning
-+		require.Equal(t, *scheduler.getTaskClone(), tmpTask)
-+		require.True(t, ctrl.Satisfied())
-+
-+		scheduler.task.Store(&schTask)
- 		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(nil, nil)
- 		taskMgr.EXPECT().ResumedTask(gomock.Any(), task.ID).Return(fmt.Errorf("resume err"))
- 		require.ErrorContains(t, scheduler.onResuming(), "resume err")
-@@ -797,7 +810,7 @@ func TestSchedulerMaintainTaskFields(t *testing.T) {
- 		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(nil, nil)
- 		taskMgr.EXPECT().ResumedTask(gomock.Any(), task.ID).Return(nil)
- 		require.NoError(t, scheduler.onResuming())
--		tmpTask := task
-+		tmpTask = task
- 		tmpTask.State = proto.TaskStateRunning
- 		require.Equal(t, *scheduler.getTaskClone(), tmpTask)
- 		require.True(t, ctrl.Satisfied())
-@@ -806,17 +819,38 @@ func TestSchedulerMaintainTaskFields(t *testing.T) {
- 	t.Run("test onReverting", func(t *testing.T) {
- 		scheduler.task.Store(&schTask)
- 
--		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(nil, nil)
--		schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
--		taskMgr.EXPECT().RevertedTask(gomock.Any(), task.ID).Return(fmt.Errorf("reverted err"))
-+		// paused subtasks must be drained before checking current step or calling OnDone/RevertedTask
-+		taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), task.ID).Return(fmt.Errorf("cancel paused err"))
-+		require.ErrorContains(t, scheduler.onReverting(), "cancel paused err")
-+		require.Equal(t, *scheduler.getTaskClone(), task)
-+		require.True(t, ctrl.Satisfied())
-+
-+		gomock.InOrder(
-+			taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), task.ID).Return(nil),
-+			taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, task.Step).Return(nil, nil),
-+			schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(fmt.Errorf("on done err")),
-+		)
-+		require.ErrorContains(t, scheduler.onReverting(), "on done err")
-+		require.Equal(t, *scheduler.getTaskClone(), task)
-+		require.True(t, ctrl.Satisfied())
-+
-+		gomock.InOrder(
-+			taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), task.ID).Return(nil),
-+			taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, task.Step).Return(nil, nil),
-+			schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
-+			taskMgr.EXPECT().RevertedTask(gomock.Any(), task.ID).Return(fmt.Errorf("reverted err")),
-+		)
- 		require.ErrorContains(t, scheduler.onReverting(), "reverted err")
- 		require.Equal(t, *scheduler.getTaskClone(), task)
- 		require.True(t, ctrl.Satisfied())
- 
- 		// revert task successfully
--		taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, gomock.Any()).Return(nil, nil)
--		schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
--		taskMgr.EXPECT().RevertedTask(gomock.Any(), task.ID).Return(nil)
-+		gomock.InOrder(
-+			taskMgr.EXPECT().CancelPausedSubtasks(gomock.Any(), task.ID).Return(nil),
-+			taskMgr.EXPECT().GetSubtaskCntGroupByStates(gomock.Any(), task.ID, task.Step).Return(nil, nil),
-+			schExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil),
-+			taskMgr.EXPECT().RevertedTask(gomock.Any(), task.ID).Return(nil),
-+		)
- 		require.NoError(t, scheduler.onReverting())
- 		tmpTask := task
- 		tmpTask.State = proto.TaskStateReverted
-```
-
-**File**: `pkg/dxf/framework/scheduler/scheduler_test.go` (modified, +63/-0)
-```diff
-@@ -540,3 +540,66 @@ func TestManagerScheduleLoop(t *testing.T) {
- 		}, time.Second*10, time.Millisecond*100)
- 	})
+ func (c *truncateAffinityPDClient) BatchDeleteAffinityGroups(ctx context.Context, ids []string, _ bool) error {
++	c.deleteCalls.Add(1)
+ 	// Match the real HTTP client's context validation; the mock manager ignores it.
+ 	if _, err := http.NewRequestWithContext(ctx, http.MethodDelete, "http://pd/affinity-groups", nil); err != nil {
+ 		c.nilDeleteContext.Store(ctx == nil)
+@@ -240,6 +242,73 @@ func (s *affinityDDLTest) groupsOf(t *testing.T, info *model.TableInfo) map[stri
+ 	return groups
  }
-+
-+func TestOnRevertingDrainsNextStepPausedSubtasks(t *testing.T) {
-+	testfailpoint.Enable(t, "github.com/pingcap/tidb/pkg/domain/MockDisableDistTask", "return(true)")
-+	store := testkit.CreateMockStore(t)
-+	pool := pools.NewResourcePool(func() (pools.Resource, error) {
-+		return testkit.NewTestKit(t, store).Session(), nil
-+	}, 4, 4, time.Second)
-+	defer pool.Close()
-+
-+	ctrl := gomock.NewController(t)
-+	defer ctrl.Finish()
-+	ctx := util.WithInternalSourceType(context.Background(), "scheduler")
-+
-+	var mgr *storage.TaskManager
-+	onDoneVerified := make(chan struct{})
-+	mockExt := mockscheduler.NewMockExtension(ctrl)
-+	mockExt.EXPECT().OnTick(gomock.Any(), gomock.Any()).Return().AnyTimes()
-+	mockExt.EXPECT().OnDone(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-+		func(_ context.Context, _ storage.TaskHandle, gotTask *proto.Task) error {
-+			subtasks, err := mgr.GetSubtasksWithHistory(ctx, gotTask.ID, proto.StepTwo)
+ 
++func TestAffinityMViewOutOfPlaceCutoverCleanup(t *testing.T) {
++	for _, tc := range []struct {
++		name           string
++		oldAffinity    bool
++		shadowAffinity bool
++		failDelete     bool
++	}{
++		{name: "without_affinity"},
++		{name: "with_affinity", oldAffinity: true, shadowAffinity: true},
++		{name: "shadow_only", shadowAffinity: true},
++		{name: "old_only", oldAffinity: true},
++		{name: "cleanup_failure", oldAffinity: true, shadowAffinity: true, failDelete: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			s := newAffinityDDLTest(t)
++			s.tk.MustExec("set tidb_mview_enable = on")
++			s.tk.MustExec("create table source (a int not null)")
++			s.tk.MustExec("create materialized view log on source (a)")
++			s.tk.MustExec("create materialized view mv (a, cnt) as select a, count(*) from source group by a")
++			oldMV := s.tableInfo(t, "mv")
++			if tc.oldAffinity {
++				oldMV.Affinity = &model.TableAffinityInfo{Level: ast.TableAffinityLevelTable}
++				require.NoError(t, kv.RunInNewTxn(context.Background(), s.store, true, func(_ context.Context, txn kv.Transaction) error {
++					return meta.NewMutator(txn).UpdateTable(s.schemaID, oldMV)
++				}))
++				require.NoError(t, affinity.CreateGroupsIfNotExists(context.Background(), s.groupsOf(t, oldMV)))
++				require.NoError(t, s.dom.Reload())
++			}
++			shadowName := ast.NewCIStr("__mv_shadow_affinity_cleanup")
++			shadow, err := ddl.BuildTableInfoWithLike(ast.Ident{Name: shadowName}, oldMV, &ast.CreateTableStmt{})
 +			require.NoError(t, err)
-+			require.Len(t, subtasks, 1)
-+			require.Equal(t, proto.SubtaskStateCanceled, subtasks[0].State)
-+			close(onDoneVerified)
-+			return nil
-+		},
-+	)
-+
-+	var schManager *scheduler.Manager
-+	schManager, mgr = MockSchedulerManager(store, pool, mockExt, nil)
-+	scope := handle.GetTargetScope()
-+	require.NoError(t, mgr.InitMeta(ctx, ":4000", scope))
-+
-+	taskID, err := mgr.CreateTask(ctx, "next-step-paused-revert", proto.TaskTypeExample, store.GetKeyspace(), 1, scope, 0, proto.ExtraParams{}, []byte("{}"))
-+	require.NoError(t, err)
-+	task, err := mgr.GetTaskByID(ctx, taskID)
-+	require.NoError(t, err)
-+	require.NoError(t, mgr.SwitchTaskStep(ctx, task, proto.TaskStateRunning, proto.StepOne, nil))
-+	pausedID := testutil.InsertSubtask(t, mgr, taskID, proto.StepTwo, ":4000", []byte(""), proto.SubtaskStatePaused, proto.TaskTypeExample, 1)
-+	require.NoError(t, mgr.RevertTask(ctx, taskID, proto.TaskStateRunning, errors.New("revert err")))
-+
-+	schManager.Start()
-+	defer schManager.Stop()
-+
-+	select {
-+	case <-onDoneVerified:
-+	case <-time.After(10 * time.Second):
-+		require.FailNow(t, "timed out waiting for OnDone after draining next-step paused subtask")
++			shadow.MaterializedViewShadow = &model.MaterializedViewShadowInfo{SourceMViewID: oldMV.ID}
++			// The cleanup decision must describe the retired table, even when the
++			// internal DDL API is given a shadow with different affinity metadata.
++			shadow.Affinity = nil
++			if tc.shadowAffinity {
++				shadow.Affinity = &model.TableAffinityInfo{Level: ast.TableAffinityLevelTable}
++			}
++			require.NoError(t, s.dom.DDLExecutor().CreateMaterializedViewShadowTable(s.tk.Session(), s.schemaID, ast.NewCIStr("test"), shadow))
++			shadow = s.tableInfo(t, shadowName.O)
++			source := s.tableInfo(t, "source")
++			sources := []model.MViewRefreshSource{{TableID: source.ID, MLogID: source.MaterializedViewBase.MLogID}}
++			s.tk.MustExec("update mysql.tidb_mview_refresh_info set last_success_read_tso = null where mview_id = ?", oldMV.ID)
++			s.tk.Session().SetValue(sessionctx.QueryString, "REFRESH MATERIALIZED VIEW mv COMPLETE OUT OF PLACE")
++			s.cli.deleteCalls.Store(0)
++			s.cli.failDelete.Store(tc.failDelete)
++			require.NoError(t, s.dom.DDLExecutor().RefreshMaterializedViewCompleteOutOfPlaceCutover(
++				s.tk.Session(), s.schemaID, ast.NewCIStr("test"), oldMV.Name, oldMV.ID, shadow.ID,
++				123456789, sources, nil, 0, true, nil, false,
++			))
++			s.cli.failDelete.Store(false)
++			require.Equal(t, shadow.ID, s.tableInfo(t, "mv").ID, "cleanup failure must not undo cutover")
++			if tc.oldAffinity {
++				require.Positive(t, s.cli.deleteCalls.Load())
++				require.False(t, s.cli.nilDeleteContext.Load())
++				require.True(t, s.cli.deleteHasDeadline.Load(), "post-commit cleanup must have a deadline")
++				requireAffinityGroupsWithLabelRules(t, s.cli, s.groupsOf(t, oldMV), tc.failDelete, "only the retired MV's group is eligible for cleanup")
++			} else {
++				require.Zero(t, s.cli.deleteCalls.Load(), "an MV without affinity must not issue deletion RPCs")
++			}
++			if tc.shadowAffinity {
++				requireAffinityGroupsWithLabelRules(t, s.cli, s.groupsOf(t, shadow), true, "cutover must preserve the replacement MV's group")
++			}
++		})
 +	}
-+
-+	require.Eventually(t, func() bool {
-+		gotTask, err := mgr.GetTaskByIDWithHistory(ctx, taskID)
-+		require.NoError(t, err)
-+		return gotTask.State == proto.TaskStateReverted
-+	}, 10*time.Second, 100*time.Millisecond)
-+
-+	subtasks, err := mgr.GetSubtasksWithHistory(ctx, taskID, proto.StepTwo)
-+	require.NoError(t, err)
-+	require.Len(t, subtasks, 1)
-+	require.Equal(t, pausedID, subtasks[0].ID)
-+	require.Equal(t, proto.SubtaskStateCanceled, subtasks[0].State)
-+	require.True(t, ctrl.Satisfied())
 +}
++
+ func TestAffinityCancelledCreateOnEntryTooLarge(t *testing.T) {
+ 	for _, action := range []model.ActionType{model.ActionCreateTable, model.ActionCreateMaterializedViewShadow} {
+ 		t.Run(action.String(), func(t *testing.T) {
 ```
 
-**File**: `pkg/dxf/framework/storage/BUILD.bazel` (modified, +1/-1)
+**File**: `pkg/ddl/table.go` (modified, +15/-9)
 ```diff
-@@ -49,7 +49,7 @@ go_test(
-     ],
-     embed = [":storage"],
-     flaky = True,
--    shard_count = 35,
-+    shard_count = 38,
-     deps = [
-         "//pkg/config",
-         "//pkg/dxf/framework/proto",
+@@ -77,15 +77,19 @@ func (w *worker) cleanupMViewOutOfPlaceCutoverAfterCommit(jobCtx *jobContext, jo
+ 		)
+ 	}
+ 
+-	// Materialized views in Stage-1 are non-partitioned, so their table-level
+-	// affinity group ID is derived directly from the old physical table ID.
+-	groupID := GetTableAffinityGroupID(jobCtx.store.GetCodec(), args.OldMViewID)
+-	if err := affinity.DeleteGroupsWithRetry(jobCtx.ctx, []string{groupID}); err != nil {
+-		logutil.DDLLogger().Warn(
+-			"failed to delete old materialized view affinity group after cutover",
+-			zap.Int64("tableID", args.OldMViewID),
+-			zap.Error(err),
+-		)
++	if args.OldMViewHasAffinity {
++		// Stage-1 MVs are non-partitioned. Post-commit cleanup must not use
++		// the step context, which may already be canceled.
++		ctx, cancel := context.WithTimeout(jobCtx.ctx, affinityCleanupTimeout)
++		defer cancel()
++		groupID := GetTableAffinityGroupID(jobCtx.store.GetCodec(), args.OldMViewID)
++		if err := affinity.DeleteGroupsWithRetry(ctx, []string{groupID}); err != nil {
++			logutil.DDLLogger().Warn(
++				"failed to delete old materialized view affinity group after cutover",
++				zap.Int64("tableID", args.OldMViewID),
++				zap.Error(err),
++			)
++		}
+ 	}
+ 
+ 	// Stage-1 MVs and MLogs are non-partitioned. Retain their progress until
+@@ -2608,6 +2612,8 @@ func (w *worker) onRefreshMaterializedViewCompleteOutOfPlaceCutover(jobCtx *jobC
+ 	if err := asyncNotifyEvent(jobCtx, notifier.NewMViewRefreshOutOfPlaceCutoverEvent(newMViewTblInfo, oldMViewTblInfo, newMLog, oldMLog), job, noSubJob, w.sess); err != nil {
+ 		return ver, errors.Trace(err)
+ 	}
++	args.OldMViewHasAffinity = oldMViewTblInfo.Affinity != nil
++	job.FillArgs(args)
+ 	job.FinishTableJob(model.JobStateDone, model.StatePublic, ver, newMViewTblInfo)
+ 	return ver, nil
+ }
 ```
 
-**File**: `pkg/dxf/framework/storage/subtask_state.go` (modified, +35/-4)
+**File**: `pkg/meta/model/job_args.go` (modified, +4/-2)
 ```diff
-@@ -34,14 +34,24 @@ func (mgr *TaskManager) StartSubtask(ctx context.Context, subtaskID int64, execI
- 			se.GetSQLExecutor(),
- 			`update mysql.tidb_background_subtask
- 			 set state = %?, start_time = unix_timestamp(), state_update_time = unix_timestamp()
--			 where id = %? and exec_id = %?`,
-+			 where id = %? and exec_id = %? and state = %?`,
- 			proto.SubtaskStateRunning,
- 			subtaskID,
--			execID)
-+			execID,
-+			proto.SubtaskStatePending)
- 		if err != nil {
- 			return err
- 		}
- 		if vars.StmtCtx.AffectedRows() == 0 {
-+			rows, err := sqlexec.ExecSQL(ctx, se.GetSQLExecutor(),
-+				`select state from mysql.tidb_background_subtask where id = %? and exec_id = %?`,
-+				subtaskID, execID)
-+			if err != nil {
-+				return err
-+			}
-+			if len(rows) > 0 && rows[0].GetString(0) == string(proto.SubtaskStateRunning) {
-+				return nil
-+			}
- 			return ErrSubtaskNotFound
- 		}
- 		return nil
-@@ -108,13 +118,34 @@ func (mgr *TaskManager) CancelSubtask(ctx context.Context, execID string, taskID
- 	return err1
+@@ -811,18 +811,20 @@ type RefreshMaterializedViewCompleteOutOfPlaceCutoverArgs struct {
+ 	ExpectedLastSuccessReadTSONull     bool                 `json:"expected_last_success_read_tso_null,omitempty"`
+ 	NextRefreshUnixSeconds             *int64               `json:"next_refresh_unix_seconds,omitempty"`
+ 	ShouldUpdateNextRefreshUnixSeconds bool                 `json:"should_update_next_refresh_unix_seconds,omitempty"`
++	// OldMViewHasAffinity is recorded at cutover for post-commit cleanup.
++	OldMViewHasAffinity bool `json:"old_mview_has_affinity,omitempty"`
  }
  
--// PauseSubtasks update all running/pending subtasks to pasued state.
-+// PauseSubtasks update all running/pending subtasks to paused state.
- func (mgr *TaskManager) PauseSubtasks(ctx context.Context, execID string, taskID int64) error {
- 	if err := injectfailpoint.DXFRandomErrorWithOnePercent(); err != nil {
- 		return err
- 	}
- 	_, err := mgr.ExecuteSQLWithNewSession(ctx,
--		`update mysql.tidb_background_subtask set state = "paused" where task_key = %? and state in ("running", "pending") and exec_id = %?`, TaskIDToKey(taskID), execID)
-+		`update mysql.tidb_background_subtask
-+		 set state = %?, state_update_time = unix_timestamp()
-+		 where task_key = %? and state in (%?, %?) and exec_id = %?`,
-+		proto.SubtaskStatePaused, TaskIDToKey(taskID),
-+		proto.SubtaskStateRunning, proto.SubtaskStatePending, execID,
-+	)
-+	return err
+ func (a *RefreshMaterializedViewCompleteOutOfPlaceCutoverArgs) getArgsV1(*Job) []any {
+ 	return []any{a.OldMViewID, a.ShadowTableID, a.BuildReadTSO, a.ExpectedLastSuccessReadTSO,
+ 		a.ExpectedLastSuccessReadTSONull, a.NextRefreshUnixSeconds, a.ShouldUpdateNextRefreshUnixSeconds,
+-		a.ExpectedOldMViewRevision, a.BuildSources, a.OldMLogID, a.NewMLogID}
++		a.ExpectedOldMViewRevision, a.BuildSources, a.OldMLogID, a.NewMLogID, a.OldMViewHasAffinity}
+ }
+ 
+ func (a *RefreshMaterializedViewCompleteOutOfPlaceCutoverArgs) decodeV1(job *Job) error {
+ 	return errors.Trace(job.decodeArgs(&a.OldMViewID, &a.ShadowTableID, &a.BuildReadTSO,
+ 		&a.ExpectedLastSuccessReadTSO, &a.ExpectedLastSuccessReadTSONull, &a.NextRefreshUnixSeconds,
+-		&a.ShouldUpdateNextRefreshUnixSeconds, &a.ExpectedOldMViewRevision, &a.BuildSources, &a.OldMLogID, &a.NewMLogID))
++		&a.ShouldUpdateNextRefreshUnixSeconds, &a.ExpectedOldMViewRevision, &a.BuildSources, &a.OldMLogID, &a.NewMLogID, &a.OldMViewHasAffinity))
+ }
+ 
+ // GetRefreshMaterializedViewCompleteOutOfPlaceCutoverArgs gets cutover args.
+```
+
+**File**: `pkg/meta/model/job_args_test.go` (modified, +1/-0)
+```diff
+@@ -701,6 +701,7 @@ func TestGetRefreshMaterializedViewCompleteOutOfPlaceCutoverArgs(t *testing.T) {
+ 			ExpectedLastSuccessReadTSONull:     false,
+ 			NextRefreshUnixSeconds:             &nextRefreshUnixSeconds,
+ 			ShouldUpdateNextRefreshUnixSeconds: true,
++			OldMViewHasAffinity:                true,
+ 		},
+ 		{
+ 			OldMViewID:                         101,
+```
+
+---
+
+### Incident Patch 2: `cfb54f9e` (2026-11-27)
+**Commit Message**: executor: preserve query timeout errors during result fetching (#73478)
+
+ref pingcap/tidb#68097
+
+**File**: `pkg/executor/adapter.go` (modified, +2/-0)
+```diff
+@@ -209,6 +209,8 @@ func (a *recordSet) Next(ctx context.Context, req *chunk.Chunk) (err error) {
+ 
+ 	err = a.stmt.next(ctx, e, req)
+ 	if err != nil {
++		// A kill can cancel an in-flight fetch after the SQLKiller check above.
++		err = NormalizeStmtCancellationError(a.stmt.Ctx.GetSessionVars(), err)
+ 		if errors.Cause(err) == context.DeadlineExceeded {
+ 			if maxExecErr := checkMaxExecutionTimeExceeded(a.stmt.Ctx); maxExecErr != nil {
+ 				err = maxExecErr
+```
+
+**File**: `pkg/executor/adapter_internal_test.go` (modified, +32/-0)
+```diff
+@@ -24,6 +24,7 @@ import (
+ 	"github.com/pingcap/kvproto/pkg/meta_storagepb"
+ 	"github.com/pingcap/tidb/pkg/domain"
+ 	"github.com/pingcap/tidb/pkg/domain/infosync"
++	"github.com/pingcap/tidb/pkg/executor/internal/exec"
+ 	"github.com/pingcap/tidb/pkg/expression"
+ 	"github.com/pingcap/tidb/pkg/kv"
+ 	"github.com/pingcap/tidb/pkg/parser"
+@@ -158,6 +159,37 @@ func TestRecordSetNextAfterFinish(t *testing.T) {
+ 	require.True(t, exeerrors.ErrQueryInterrupted.Equal(err), err)
+ }
+ 
++type recordSetNextHookExecutor struct {
++	exec.BaseExecutor
++	next func() error
 +}
 +
-+// CancelPausedSubtasks cancels all paused subtasks of taskID across all steps.
-+func (mgr *TaskManager) CancelPausedSubtasks(ctx context.Context, taskID int64) error {
-+	if err := injectfailpoint.DXFRandomErrorWithOnePercent(); err != nil {
++func (e *recordSetNextHookExecutor) Next(context.Context, *chunk.Chunk) error {
++	return e.next()
++}
++
++func TestRecordSetNextTimeoutDuringFetch(t *testing.T) {
++	sctx := mock.NewContext()
++	vars := sctx.GetSessionVars()
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++
++	rs := &recordSet{
++		stmt: &ExecStmt{Ctx: sctx},
++		executor: &recordSetNextHookExecutor{
++			BaseExecutor: exec.NewBaseExecutor(sctx, nil, 0),
++			next: func() error {
++				// Cancellation can wake a blocked fetch after the initial SQLKiller checks.
++				vars.SQLKiller.SendKillSignal(sqlkiller.MaxExecTimeExceeded)
++				cancel()
++				return ctx.Err()
++			},
++		},
++	}
++	err := rs.Next(ctx, rs.NewChunk(nil))
++	require.True(t, exeerrors.ErrMaxExecTimeExceeded.Equal(err), "%v", err)
++}
++
+ func TestCheckMaxExecutionTimeExceededPreservesPendingKillReason(t *testing.T) {
+ 	sctx := &maxExecutionTimeTestContext{
+ 		Context: mock.NewContext(),
+```
+
+**File**: `pkg/server/conn_test.go` (modified, +46/-0)
+```diff
+@@ -1151,6 +1151,52 @@ func TestConnExecutionTimeout(t *testing.T) {
+ 	require.NoError(t, err)
+ }
+ 
++func TestConnCopRPCExecutionTimeout(t *testing.T) {
++	store := testkit.CreateMockStore(t)
++	tk := testkit.NewTestKit(t, store)
++	tk.MustExec("create table test.cop_rpc_timeout (v int)")
++	tk.MustExec("insert into test.cop_rpc_timeout values (1)")
++	srv := CreateMockServer(t, store)
++	defer srv.Close()
++
++	// The inline Cop worker delivers the error returned by SendRequest.
++	testfailpoint.Enable(t, "github.com/pingcap/tidb/pkg/distsql/TryCopLiteWorker", "return(0)")
++	testfailpoint.Enable(t, "github.com/pingcap/tidb/pkg/store/mockstore/unistore/unistoreRPCClientSendHook", "return(true)")
++	query := append([]byte{mysql.ComQuery}, "select /*+ MAX_EXECUTION_TIME(100000) */ v from test.cop_rpc_timeout"...)
++
++	for _, timedOut := range []bool{false, true} {
++		t.Run(fmt.Sprintf("sql timeout=%t", timedOut), func(t *testing.T) {
++			conn := CreateMockConn(t, srv)
++			defer conn.Close()
++			ctx, cancel := context.WithCancel(context.Background())
++			defer cancel()
++
++			var sent atomic.Bool
++			hook := func(req *tikvrpc.Request) {
++				if req.Type != tikvrpc.CmdCop || req.Cop().GetConnectionId() != conn.ID() || !sent.CompareAndSwap(false, true) {
++					return
++				}
++				if timedOut {
++					srv.Kill(conn.ID(), true, true, false)
++				} else {
++					cancel()
++				}
++			}
++			previousHook := unistore.UnistoreRPCClientSendHook.Swap(&hook)
++			t.Cleanup(func() { unistore.UnistoreRPCClientSendHook.Store(previousHook) })
++
++			err := conn.Dispatch(ctx, query)
++			require.True(t, sent.Load(), "Cop RPC did not reach SendRequest")
++			if timedOut {
++				require.ErrorIs(t, err, exeerrors.ErrMaxExecTimeExceeded)
++			} else {
++				require.ErrorIs(t, err, context.Canceled)
++			}
++			require.NoError(t, conn.Dispatch(context.Background(), query))
++		})
++	}
++}
++
+ func TestConnDMLExecutionTimeout(t *testing.T) {
+ 	const dmlTimeout = 500
+ 
+```
+
+**File**: `pkg/store/copr/BUILD.bazel` (modified, +3/-0)
+```diff
+@@ -106,6 +106,7 @@ go_test(
+         "//pkg/store/driver/backoff",
+         "//pkg/store/driver/error",
+         "//pkg/testkit/testsetup",
++        "//pkg/util/dbterror/exeerrors",
+         "//pkg/util/logutil",
+         "//pkg/util/paging",
+         "//pkg/util/tiflash",
+@@ -129,7 +130,9 @@ go_test(
+         "@com_github_tikv_client_go_v2//util/async",
+         "@com_github_tikv_pd_client//:client",
+         "@com_github_tikv_pd_client//clients/gc",
++        "@com_github_tikv_pd_client//clients/router",
+         "@com_github_tikv_pd_client//constants",
++        "@com_github_tikv_pd_client//opt",
+         "@com_github_tikv_pd_client//pkg/caller",
+         "@org_uber_go_goleak//:goleak",
+         "@org_uber_go_zap//:zap",
+```
+
+**File**: `pkg/store/copr/batch_coprocessor.go` (modified, +7/-1)
+```diff
+@@ -39,6 +39,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
+ 	"github.com/pingcap/tidb/pkg/store/driver/backoff"
+ 	derr "github.com/pingcap/tidb/pkg/store/driver/error"
++	"github.com/pingcap/tidb/pkg/util/dbterror/exeerrors"
+ 	"github.com/pingcap/tidb/pkg/util/intest"
+ 	"github.com/pingcap/tidb/pkg/util/logutil"
+ 	"github.com/pingcap/tidb/pkg/util/tiflash"
+@@ -1243,7 +1244,7 @@ func (c *CopClient) sendBatch(ctx context.Context, req *kv.Request, vars *tikv.V
+ 
+ 	if req.MaxExecutionTime > 0 {
+ 		// If MaxExecutionTime is set, we need to set the deadline for the whole batch coprocessor request context.
+-		ctxWithTimeout, cancel := context.WithTimeout(bo.GetCtx(), time.Duration(req.MaxExecutionTime)*time.Millisecond)
++		ctxWithTimeout, cancel := context.WithTimeoutCause(bo.GetCtx(), time.Duration(req.MaxExecutionTime)*time.Millisecond, exeerrors.ErrMaxExecTimeExceeded)
+ 		defer cancel()
+ 		bo.TiKVBackoffer().SetCtx(ctxWithTimeout)
+ 	}
+@@ -1266,6 +1267,11 @@ func (c *CopClient) sendBatch(ctx context.Context, req *kv.Request, vars *tikv.V
+ 	}
+ 
+ 	if err != nil {
++		// Region lookup may format cancellation errors as text, losing the error chain.
++		// Check the context cause to recover the statement timeout.
++		if context.Cause(bo.GetCtx()) == exeerrors.ErrMaxExecTimeExceeded {
++			return copErrorResponse{exeerrors.ErrMaxExecTimeExceeded.GenWithStackByArgs()}
++		}
+ 		return copErrorResponse{err}
+ 	}
+ 	it := &batchCopIterator{
+```
+
+**File**: `pkg/store/copr/coprocessor.go` (modified, +7/-2)
+```diff
+@@ -157,7 +157,7 @@ func (c *CopClient) BuildCopIterator(ctx context.Context, req *kv.Request, vars
+ 	if req.MaxExecutionTime > 0 {
+ 		// If the request has a MaxExecutionTime, we need to set the deadline of the context.
+ 		var cancel context.CancelFunc
+-		boCtx, cancel = context.WithTimeout(boCtx, time.Duration(req.MaxExecutionTime)*time.Millisecond)
++		boCtx, cancel = context.WithTimeoutCause(boCtx, time.Duration(req.MaxExecutionTime)*time.Millisecond, exeerrors.ErrMaxExecTimeExceeded)
+ 		defer func() {
+ 			cancel()
+ 		}()
+@@ -570,6 +570,11 @@ func buildCopTasks(bo *Backoffer, ranges *KeyRanges, opt *buildCopTaskOpt) ([]*c
+ 		locs, err = cache.SplitKeyRangesByBuckets(bo, ranges)
+ 	}
+ 	if err != nil {
++		// Region lookup may format cancellation errors as text, losing the error chain.
++		// Check the context cause to recover the statement timeout.
++		if context.Cause(ctx) == exeerrors.ErrMaxExecTimeExceeded {
++			return nil, exeerrors.ErrMaxExecTimeExceeded.GenWithStackByArgs()
++		}
+ 		return nil, errors.Trace(err)
+ 	}
+ 	if opt.skipBuckets {
+@@ -1689,7 +1694,7 @@ func chooseBackoffer(ctx context.Context, backoffermap map[uint64]*Backoffer, ta
+ 	var cancel context.CancelFunc
+ 	boCtx := ctx
+ 	if worker.req.MaxExecutionTime > 0 {
+-		boCtx, cancel = context.WithTimeout(boCtx, time.Duration(worker.req.MaxExecutionTime)*time.Millisecond)
++		boCtx, cancel = context.WithTimeoutCause(boCtx, time.Duration(worker.req.MaxExecutionTime)*time.Millisecond, exeerrors.ErrMaxExecTimeExceeded)
+ 	}
+ 	newbo := backoff.NewBackofferWithVars(boCtx, boMaxSleep, worker.vars)
+ 	backoffermap[task.region.GetID()] = newbo
+```
+
+**File**: `pkg/store/copr/coprocessor_test.go` (modified, +101/-1)
+```diff
+@@ -29,6 +29,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/resourcegroup"
+ 	"github.com/pingcap/tidb/pkg/store/driver/backoff"
+ 	derr "github.com/pingcap/tidb/pkg/store/driver/error"
++	"github.com/pingcap/tidb/pkg/util/dbterror/exeerrors"
+ 	"github.com/pingcap/tidb/pkg/util/paging"
+ 	"github.com/pingcap/tidb/pkg/util/trxevents"
+ 	"github.com/stretchr/testify/require"
+@@ -39,7 +40,9 @@ import (
+ 	tikvutil "github.com/tikv/client-go/v2/util"
+ 	pd "github.com/tikv/pd/client"
+ 	pdgc "github.com/tikv/pd/client/clients/gc"
++	"github.com/tikv/pd/client/clients/router"
+ 	"github.com/tikv/pd/client/constants"
++	"github.com/tikv/pd/client/opt"
+ 	"github.com/tikv/pd/client/pkg/caller"
+ )
+ 
+@@ -753,7 +756,13 @@ func TestBuildPagingTasks(t *testing.T) {
+ 	require.Equal(t, tasks[0].pagingSize, paging.MinPagingSize)
+ }
+ 
+-func TestBuildCopTaskDoesNotCancelBoCtx(t *testing.T) {
++func TestBuildCopTaskContext(t *testing.T) {
++	t.Run("does not cancel backoffer context", testBuildCopTaskDoesNotCancelBoCtx)
++	t.Run("statement timeout during PD region scan", testBuildCopTasksTimeoutDuringPDRegionScan)
++	t.Run("batch statement timeout during PD region scan", testBuildBatchCopTasksTimeoutDuringPDRegionScan)
++}
++
++func testBuildCopTaskDoesNotCancelBoCtx(t *testing.T) {
+ 	// nil --- 'g' --- 'n' --- 't' --- nil
+ 	// <-  0  -> <- 1 -> <- 2 -> <- 3 ->
+ 	mockClient, cluster, pdClient, err := testutils.NewMockTiKV("", nil)
+@@ -788,6 +797,97 @@ func TestBuildCopTaskDoesNotCancelBoCtx(t *testing.T) {
+ 	require.False(t, contextDone, "buildCopTasks should not cancel bo context")
+ }
+ 
++type cancelRegionScanPDClient struct {
++	pd.Client
++}
++
++func (c cancelRegionScanPDClient) WithCallerComponent(caller.Component) pd.Client {
++	return c
++}
++
++func (c cancelRegionScanPDClient) BatchScanRegions(ctx context.Context, ranges []router.KeyRange, limit int, opts ...opt.GetRegionOption) ([]*router.Region, error) {
++	if _, ok := ctx.Deadline(); !ok {
++		return c.Client.BatchScanRegions(ctx, ranges, limit, opts...)
++	}
++	<-ctx.Done()
++	return nil, ctx.Err()
++}
++
++func testBuildCopTasksTimeoutDuringPDRegionScan(t *testing.T) {
++	mockClient, cluster, pdClient, err := testutils.NewMockTiKV("", nil)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, mockClient.Close()) })
++	testutils.BootstrapWithSingleStore(cluster)
++	pdCli := tikv.NewCodecPDClient(tikv.ModeTxn, cancelRegionScanPDClient{Client: pdClient})
++	t.Cleanup(pdCli.Close)
++	cache := NewRegionCache(tikv.NewRegionCache(pdCli))
++	t.Cleanup(cache.Close)
++
++	req := &kv.Request{MaxExecutionTime: 1}
++	worker := &copIteratorWorker{req: req}
++	build := func(ctx context.Context) error {
++		bo, cancel := chooseBackoffer(ctx, make(map[uint64]*Backoffer), &copTask{}, worker)
++		defer cancel()
++		_, err := buildTestCopTasks(bo, cache, buildCopRanges("a", "c"), req, nil)
 +		return err
 +	}
-+	_, err := mgr.ExecuteSQLWithNewSession(ctx,
-+		`update mysql.tidb_background_subtask
-+		 set state = %?,
-+			 state_update_time = unix_timestamp(),
-+			 end_time = CURRENT_TIMESTAMP()
-+		 where task_key = %? and state = %?`,
-+		proto.SubtaskStateCanceled, TaskIDToKey(taskID), proto.SubtaskStatePaused,
-+	)
++	t.Run("statement deadline", func(t *testing.T) {
++		require.ErrorIs(t, build(context.Background()), exeerrors.ErrMaxExecTimeExceeded)
++	})
++	t.Run("caller deadline", func(t *testing.T) {
++		ctx, cancel := context.WithTimeout(context.Background(), 0)
++		defer cancel()
++		err := build(ctx)
++		require.ErrorContains(t, err, "batchScanRegion from PD failed")
++		require.False(t, exeerrors.ErrMaxExecTimeExceeded.Equal(err))
++	})
++}
++
++func testBuildBatchCopTasksTimeoutDuringPDRegionScan(t *testing.T) {
++	mockClient, cluster, pdClient, err := testutils.NewMockTiKV("", nil)
++	require.NoError(t, err)
++	testutils.BootstrapWithSingleStore(cluster)
++	tikvStore, err := tikv.NewTestTiKVStore(mockClient, cancelRegionScanPDClient{Client: pdClient}, nil, nil, 0)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, tikvStore.Close()) })
++	copStore, err := NewStore(tikvStore, nil)
++	require.NoError(t, err)
++	t.Cleanup(copStore.Close)
++	client := &CopClient{store: copStore}
++
++	for _, partitioned := range []bool{false, true} {
++		name := "non-partitioned"
++		if partitioned {
++			name = "partitioned"
++		}
++		t.Run(name, func(t *testing.T) {
++			build := func(ctx context.Context) error {
++				req := &kv.Request{StoreType: kv.TiFlash, MaxExecutionTime: 1}
++				ranges := BuildKeyRanges("a", "c")
++				if partitioned {
++					req.PartitionIDAndRanges = []kv.PartitionIDAndRanges{{ID: 1, KeyRanges: ranges}}
++				} else {
++					req.KeyRanges = kv.NewNonPartitionedKeyRanges(ranges)
++				}
++				resp := client.sendBatch(ctx, req, kv.NewVariables(nil), &kv.ClientSendOption{})
++				defer func() { require.NoError(t, resp.Close()) }()
++				_, err := resp.Next(ctx)
++				return err
++			}
++			t.Run("statement deadline", func(t *testing.T) {
++				require.ErrorIs(t, build(context.Background()), exeerrors.ErrMaxExecTimeExceeded)
++			})
++			t.Run("caller deadline", func(t *testing.T) {
++				ctx, cancel := context.WithTimeout(context.Background(), 0)
++				defer cancel()
++				err := build(ctx)
++				require.ErrorContains(t, err, "batchScanRegion from PD failed")
++				require.False(t, exeerrors.ErrMaxExecTimeExceeded.Equal(err))
++			})
++		})
++	}
++}
++
+```
+
+---
+
+### Incident Patch 3: `72791552` (2026-11-27)
+**Commit Message**: *: fix affinity group creation and SHOW AFFINITY (#73804)
+
+ref pingcap/tidb#72064
+
+**File**: `docs/agents/ddl/08-partition-ddl.md` (modified, +15/-10)
+```diff
+@@ -109,13 +109,14 @@ State machine (`job.SchemaState`):
+ 
+ Key behaviors:
+ 
+-- Affinity groups for replacement partitions are prepared in `StatePublic`, before
+-  new partition IDs are published. Preparation uses the replacement IDs for the
+-  old IDs that still match a current partition. A queued job can carry IDs that
+-  an earlier truncate has replaced. Preparation errors use the rollback cleanup
+-  path because PD may have created groups before its response failed. Rollback
+-  deletes only replacement partition groups and uses a 10-second timeout
+-  derived from the DDL owner's context so it can run after step cancellation.
++- In `StatePublic`, the worker prepares the full set of affinity groups that
++  will be needed after the truncate. It uses replacement IDs only for partitions
++  that still match and backfills missing groups for untouched partitions. It
++  persists `AffinityGroupsPrepared` in the job arguments before publishing new
++  partition IDs. During an upgrade, `StateWriteOnly` prepares any job missing
++  this flag before publishing. Rollback deletes only replacement groups and
++  uses a 10-second timeout derived from the DDL owner's context so cleanup can
++  run after step cancellation.
+ - It replaces old partition IDs with new ones in table metadata:
+   - ID replacement helper: `pkg/ddl/partition.go:replaceTruncatePartitions`
+ - During intermediate states, it sets flags to filter global index reads/writes correctly:
+@@ -124,9 +125,13 @@ Key behaviors:
+ - The job keeps the queued ID pairs for retries and cancellation. If none of the
+   old IDs still match, no partition is replaced and existing rows are preserved.
+ - At finalization, `DroppingDefinitions` limits global-index cleanup, the schema
+-  diff, and delete-range GC to the partitions this job replaced. The truncate
+-  notification pairs each dropped definition with the replacement ID originally
+-  assigned to its old ID.
++  diff, and delete-range GC to the partitions this job replaced. Only jobs
++  published by an older owner without `AffinityGroupsPrepared` create groups in
++  this step. For partition affinity they request groups for all current
++  partitions, including untouched ones. They retry creation errors with a delay
++  because the replacement IDs are already visible. The truncate notification
++  pairs each dropped definition with the replacement ID originally assigned to
++  its old ID.
+ 
+ ## REORGANIZE PARTITION (`ActionReorganizePartition`)
+ 
+```
+
+**File**: `pkg/ddl/affinity.go` (modified, +3/-1)
+```diff
+@@ -115,7 +115,9 @@ func collectAffinityGroupIDs(groups map[string][]pdhttp.AffinityGroupKeyRange) [
+ 
+ // createTableAffinityGroupsInPD creates affinity groups for a table in PD.
+ // With no partition definitions, it uses all partitions of the table.
+-// This is a critical operation. If it fails, the DDL should fail.
++// Callers that intend to create groups for only selected partitions must skip
++// this call if their selection is empty. Callers must handle creation errors
++// according to whether the DDL can still be rolled back.
+ // Used by: CREATE TABLE, ALTER TABLE AFFINITY = 'xxx', TRUNCATE TABLE, TRUNCATE PARTITION.
+ func createTableAffinityGroupsInPD(jobCtx *jobContext, tblInfo *model.TableInfo, partitionDefs ...model.PartitionDefinition) error {
+ 	if tblInfo == nil || tblInfo.Affinity == nil {
+```
+
+**File**: `pkg/ddl/affinity_test.go` (modified, +242/-43)
+```diff
+@@ -37,6 +37,7 @@ import (
+ 	"github.com/pingcap/tidb/pkg/meta/model"
+ 	"github.com/pingcap/tidb/pkg/parser/ast"
+ 	"github.com/pingcap/tidb/pkg/sessionctx"
++	"github.com/pingcap/tidb/pkg/sessionctx/vardef"
+ 	"github.com/pingcap/tidb/pkg/table"
+ 	"github.com/pingcap/tidb/pkg/tablecodec"
+ 	"github.com/pingcap/tidb/pkg/testkit"
+@@ -67,16 +68,19 @@ type truncateAffinityPDClient struct {
+ 	lastCreatedGroups atomic.Value
+ 	createCalls       atomic.Int64
+ 	createFailures    atomic.Int64
++	notFoundCreates   atomic.Int64
++	legacyPD          atomic.Bool
++	attemptedGroups   sync.Map
+ 	deleteCalls       atomic.Int64
+ 	nilDeleteContext  atomic.Bool
+ 	deleteHasDeadline atomic.Bool
+ 	afterCreate       func(context.Context) error
+ 	// labelRules maps a group ID to its key ranges. PD stores them in a label
+ 	// rule that is created and force-deleted together with the group.
+ 	labelRules sync.Map
+-	// partialCreateLimit, when positive, makes a creation request commit at
+-	// most that many of its groups and then fail, after partialCreateSkip
+-	// requests have succeeded. partialCreatedIDs records the committed IDs.
++	// partialCreateLimit, when positive, fails a request once it commits that
++	// many groups, after partialCreateSkip requests have succeeded.
++	// partialCreatedIDs records the committed IDs.
+ 	partialCreateLimit atomic.Int64
+ 	partialCreateSkip  atomic.Int64
+ 	partialCreatedIDs  atomic.Value
+@@ -92,6 +96,19 @@ func (c *truncateAffinityPDClient) requireEverCreated(t *testing.T, groups map[s
+ 	}
+ }
+ 
++// newlyRequestedGroups excludes groups that already belonged to the table.
++func newlyRequestedGroups(
++	requested, original map[string][]pdhttp.AffinityGroupKeyRange,
++) map[string][]pdhttp.AffinityGroupKeyRange {
++	newGroups := make(map[string][]pdhttp.AffinityGroupKeyRange)
++	for id, ranges := range requested {
++		if _, exists := original[id]; !exists {
++			newGroups[id] = ranges
++		}
++	}
++	return newGroups
++}
++
+ func (c *truncateAffinityPDClient) labelRule(id string) ([]pdhttp.AffinityGroupKeyRange, bool) {
+ 	ranges, ok := c.labelRules.Load(id)
+ 	if !ok {
+@@ -109,6 +126,10 @@ func (c *truncateAffinityPDClient) CreateAffinityGroups(ctx context.Context, gro
+ 		c.retryFailures.Add(-1)
+ 		return nil, c.retryError.Load().(error)
+ 	}
++	if c.notFoundCreates.Load() > 0 {
++		c.notFoundCreates.Add(-1)
++		return nil, fmt.Errorf("request pd http api failed with status: '404 Not Found', body: 'unsupported affinity POST'")
++	}
+ 	if c.fail503Once.Swap(false) {
+ 		c.createFailures.Add(1)
+ 		return nil, fmt.Errorf("request pd http api failed with status: '503 Service Unavailable', body: 'injected transient creation failure'")
+@@ -118,23 +139,38 @@ func (c *truncateAffinityPDClient) CreateAffinityGroups(ctx context.Context, gro
+ 		return nil, fmt.Errorf("injected affinity creation failure")
+ 	}
+ 	if c.partialCreateLimit.Load() > 0 && c.partialCreateSkip.Add(-1) < 0 {
+-		return nil, c.createPartially(ctx, groups, int(c.partialCreateLimit.Swap(0)))
++		return c.createPartially(ctx, groups, int(c.partialCreateLimit.Swap(0)))
+ 	}
+-	err := c.manager.CreateAffinityGroupsIfNotExists(ctx, groups)
+-	if err == nil {
+-		for id, ranges := range groups {
+-			c.labelRules.LoadOrStore(id, ranges)
+-			c.everCreated.Store(id, struct{}{})
++	if c.legacyPD.Load() {
++		conflict := false
++		for id := range groups {
++			c.attemptedGroups.Store(id, struct{}{})
++			_, exists := c.labelRules.Load(id)
++			conflict = conflict || exists
+ 		}
+-		c.lastCreatedGroups.Store(groups)
+-		if c.failAfterCreate.Swap(false) {
+-			return nil, c.exhaustCreationRetries(fmt.Errorf("injected response loss after affinity creation"))
++		if conflict {
++			return nil, fmt.Errorf("request pd http api failed with status: '409 Conflict', body: 'affinity group already exists'")
+ 		}
+-		if c.afterCreate != nil {
+-			return nil, c.afterCreate(ctx)
++	}
++	if err := c.manager.CreateAffinityGroupsIfNotExists(ctx, groups); err != nil {
++		return nil, err
++	}
++	ids := make([]string, 0, len(groups))
++	for id, ranges := range groups {
++		ids = append(ids, id)
++		c.labelRules.LoadOrStore(id, ranges)
++		c.everCreated.Store(id, struct{}{})
++	}
++	c.lastCreatedGroups.Store(groups)
++	if c.failAfterCreate.Swap(false) {
++		return nil, c.exhaustCreationRetries(fmt.Errorf("injected response loss after affinity creation"))
++	}
++	if c.afterCreate != nil {
++		if err := c.afterCreate(ctx); err != nil {
++			return nil, err
+ 		}
+ 	}
+-	return nil, err
++	return c.manager.GetAffinityGroups(ctx, ids)
+ }
+ 
+ func (c *truncateAffinityPDClient) exhaustCreationRetries(err error) error {
+@@ -143,10 +179,10 @@ func (c *truncateAffinityPDClient) exhaustCreationRetries(err error) error {
  	return err
  }
  
+-// createPartially commits the first limit groups in ID order and then fails.
++// createPartially commits groups in ID order and fails if it reaches limit.
+ // PD does this when a request spans several etcd transactions and a later one
+ // fails after the earlier ones have committed.
+-func (c *truncateAffinityPDClient
 ```
 
-**File**: `pkg/dxf/framework/storage/task_state.go` (modified, +33/-18)
+**File**: `pkg/ddl/ddl_test.go` (modified, +7/-4)
 ```diff
-@@ -42,28 +42,43 @@ func (mgr *TaskManager) CancelTask(ctx context.Context, taskID int64) error {
- 	if err := injectfailpoint.DXFRandomErrorWithOnePercent(); err != nil {
- 		return err
- 	}
--	_, err := mgr.ExecuteSQLWithNewSession(ctx,
--		`update mysql.tidb_global_task
--		 set state = %?,
--			 state_update_time = CURRENT_TIMESTAMP()
--		 where id = %? and state in (%?, %?, %?)`,
--		proto.TaskStateCancelling, taskID, proto.TaskStatePending, proto.TaskStateRunning,
--		proto.TaskStateAwaitingResolution,
--	)
--	return err
-+	return mgr.WithNewTxn(ctx, func(se sessionctx.Context) error {
-+		return cancelTaskByField(ctx, se, true, taskID)
+@@ -968,16 +968,19 @@ func TestDetectAndUpdateClassicCompatibility(t *testing.T) {
+ 	t.Cleanup(func() { require.NoError(t, store.Close()) })
+ 	d := &ddl{ddlCtx: &ddlCtx{ctx: ctx, store: store}}
+ 
++	originalJobVersion := model.GetJobVerInUse()
++	originalGlobalIndexV1 := model.GetGlobalIndexV1Supported()
+ 	originalDisabled := vardef.IsLegacyECDSASessionTokenDisabled()
++	t.Cleanup(func() {
++		model.SetJobVerInUse(originalJobVersion)
++		model.SetGlobalIndexV1Supported(originalGlobalIndexV1)
++		vardef.SetLegacyECDSASessionTokenDisabled(originalDisabled)
 +	})
- }
+ 	reset := func() {
+ 		model.SetJobVerInUse(model.JobVersion1)
+ 		model.SetGlobalIndexV1Supported(false)
+ 		vardef.SetLegacyECDSASessionTokenDisabled(kerneltype.IsNextGen())
+ 	}
+-	t.Cleanup(func() {
+-		reset()
+-		vardef.SetLegacyECDSASessionTokenDisabled(originalDisabled)
+-	})
+ 	// other ut in the same address space might change it
+ 	reset()
+ 	require.Equal(t, model.JobVersion1, model.GetJobVerInUse())
+```
+
+**File**: `pkg/ddl/job_worker.go` (modified, +6/-2)
+```diff
+@@ -923,9 +923,13 @@ func (w *worker) transitOneJobStep(
+ 	}
+ 	jobCtx.addUnSynced(job.ID)
  
- // CancelTaskByKeySession cancels task by key using input session.
- func (*TaskManager) CancelTaskByKeySession(ctx context.Context, se sessionctx.Context, taskKey string) error {
--	_, err := sqlexec.ExecSQL(ctx, se.GetSQLExecutor(),
--		`update mysql.tidb_global_task
--		 set state = %?,
--			 state_update_time = CURRENT_TIMESTAMP()
--		 where task_key = %? and state in (%?, %?, %?)`,
--		proto.TaskStateCancelling, taskKey, proto.TaskStatePending, proto.TaskStateRunning,
--		proto.TaskStateAwaitingResolution,
--	)
--	return err
-+	return cancelTaskByField(ctx, se, false, taskKey)
-+}
-+
-+func cancelTaskByField(ctx context.Context, se sessionctx.Context, byID bool, keyOrID any) error {
-+	selectSQL := `select state from mysql.tidb_global_task where task_key = %? for update`
-+	updateSQL := `update mysql.tidb_global_task set state = %?, state_update_time = CURRENT_TIMESTAMP() where task_key = %? and state = %?`
-+	if byID {
-+		selectSQL = `select state from mysql.tidb_global_task where id = %? for update`
-+		updateSQL = `update mysql.tidb_global_task set state = %?, state_update_time = CURRENT_TIMESTAMP() where id = %? and state = %?`
+-	// If error is non-retryable, we can ignore the sleep.
+-	if runJobErr != nil && isRetryableJobError(runJobErr, job.ErrorCount) {
++	// If error is non-retryable, we can ignore the sleep unless the job is in a
++	// non-rollbackable state and must keep retrying to roll forward.
++	retryableErr := runJobErr != nil && isRetryableJobError(runJobErr, job.ErrorCount)
++	if retryableErr {
+ 		metrics.RetryableErrorCount.WithLabelValues(runJobErr.Error()).Inc()
 +	}
-+	rs, err := sqlexec.ExecSQL(ctx, se.GetSQLExecutor(), selectSQL, keyOrID)
-+	if err != nil || len(rs) == 0 {
-+		return err
-+	}
-+	state := proto.TaskState(rs[0].GetString(0))
-+	switch state {
-+	case proto.TaskStatePending, proto.TaskStateRunning, proto.TaskStateAwaitingResolution, proto.TaskStatePaused:
-+		_, err = sqlexec.ExecSQL(ctx, se.GetSQLExecutor(), updateSQL, proto.TaskStateCancelling, keyOrID, state)
-+		if err != nil {
-+			return err
++	if retryableErr || (runJobErr != nil && job.State == model.JobStateRunning && !job.IsRollbackable()) {
+ 		jobCtx.logger.Info("run DDL job failed, sleeps a while then retries it.",
+ 			zap.Duration("waitTime", GetWaitTimeWhenErrorOccurred()), zap.Error(runJobErr))
+ 		// wait a while to retry again. If we don't wait here, DDL will retry this job immediately,
+```
+
+**File**: `pkg/ddl/partition.go` (modified, +33/-11)
+```diff
+@@ -2727,7 +2727,11 @@ func (w *worker) onTruncateTablePartition(jobCtx *jobContext, job *model.Job) (i
+ 	}
+ 
+ 	if job.IsRollingback() {
+-		return convertTruncateTablePartitionJob2RollbackJob(jobCtx, job, dbterror.ErrCancelledDDLJob, tblInfo)
++		rollbackErr := error(dbterror.ErrCancelledDDLJob)
++		if job.Error != nil {
++			rollbackErr = job.Error
 +		}
-+		if se.GetSessionVars().StmtCtx.AffectedRows() == 0 {
-+			return ErrTaskChanged
-+		}
-+		return nil
-+	case proto.TaskStatePausing, proto.TaskStateResuming, proto.TaskStateModifying:
-+		return errors.Annotatef(ErrTaskStateNotAllow, "cannot cancel task in %s state", state)
-+	default:
-+		return nil
-+	}
- }
++		return convertTruncateTablePartitionJob2RollbackJob(jobCtx, job, rollbackErr, tblInfo)
+ 	}
  
- // FailTask implements the scheduler.TaskManager interface.
-```
-
----
-
-### Incident Patch 2: `12807382` (2026-11-26)
-**Commit Message**: pkg/statistics: fix auto analyze table size calc (#65778)
-
-close pingcap/tidb#63677
-
-**File**: `pkg/statistics/handle/autoanalyze/priorityqueue/analysis_job_factory.go` (modified, +19/-6)
-```diff
-@@ -208,10 +208,18 @@ func (f *AnalysisJobFactory) CalculateChangePercentage(tblStats *statistics.Tabl
- // CalculateTableSize calculates the size of the table.
- func (*AnalysisJobFactory) CalculateTableSize(tblStats *statistics.Table) float64 {
- 	tblCnt := float64(tblStats.RealtimeCount)
--	colCnt := float64(tblStats.ColAndIdxExistenceMap.ColNum())
--	intest.Assert(colCnt != 0, "Column count should not be 0")
--
--	return tblCnt * colCnt
-+	intest.Assert(tblCnt >= 0, "Table count should not be negative")
-+	intest.Assert(tblStats.ColAndIdxExistenceMap != nil, "ColAndIdxExistenceMap should not be nil")
-+	if tblStats.ColAndIdxExistenceMap == nil {
-+		return tblCnt
-+	}
-+	// The map is empty if the stats were loaded before the DDL event wrote the column records.
-+	// Fall back to row count only, so that the size does not need table info.
-+	colCnt := tblStats.ColAndIdxExistenceMap.ColNum()
-+	if colCnt == 0 {
-+		return tblCnt
-+	}
-+	return tblCnt * float64(colCnt)
- }
- 
- // GetTableLastAnalyzeDuration gets the last analyze duration of the table.
-@@ -276,8 +284,13 @@ func (f *AnalysisJobFactory) CalculateIndicatorsForPartitions(
- 	totalSize := 0.0
- 	count := 0.0
- 	partitionIDs = make(map[int64]struct{}, len(partitionStats))
--	cols := float64(globalStats.ColAndIdxExistenceMap.ColNum())
--	intest.Assert(cols != 0, "Column count should not be 0")
-+	intest.Assert(globalStats.ColAndIdxExistenceMap != nil, "ColAndIdxExistenceMap should not be nil")
-+	// The map is empty if the stats were loaded before the DDL event wrote the column records.
-+	// Fall back to row count only, so that the size does not need table info.
-+	cols := 1.0
-+	if m := globalStats.ColAndIdxExistenceMap; m != nil && m.ColNum() != 0 {
-+		cols = float64(m.ColNum())
-+	}
- 	totalLastAnalyzeDuration := time.Duration(0)
- 
- 	for pIDAndName, tblStats := range partitionStats {
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/refresher/BUILD.bazel` (modified, +1/-1)
-```diff
-@@ -35,7 +35,7 @@ go_test(
-         "worker_test.go",
-     ],
-     flaky = True,
--    shard_count = 12,
-+    shard_count = 13,
-     deps = [
-         ":refresher",
-         "//pkg/ddl/notifier",
-```
-
-**File**: `pkg/statistics/handle/autoanalyze/refresher/refresher_test.go` (modified, +28/-0)
-```diff
-@@ -614,3 +614,31 @@ func insertFailedJobForPartitionWithStartTime(
- 		startTime,
- 	)
- }
-+
-+func TestAutoAnalyzeHandlesEmptyExistenceMapInCache(t *testing.T) {
-+	store, dom := testkit.CreateMockStoreAndDomain(t)
-+	tk := testkit.NewTestKit(t, store)
-+	tk.MustExec("use test")
-+	tk.MustExec("create table t(a int, b int)")
-+	tk.MustExec("create table tp(a int, b int) partition by hash(a) partitions 2")
-+	tk.MustExec("insert into t values (1,1),(2,2)")
-+	tk.MustExec("insert into tp values (1,1),(2,2)")
-+	h := dom.StatsHandle()
-+	// Make sure the count and modify count are updated.
-+	tk.MustExec("flush stats_delta *.*")
-+
-+	// Ensure the stats object is created in memory and the existence map is initialized but empty (no cols/idxs).
-+	// This happens because we haven't handled DDL events yet, so no rows exist in mysql.histograms.
-+	require.NoError(t, h.Cache().Update(context.Background(), dom.InfoSchema()))
-+	for _, name := range []string{"t", "tp"} {
-+		tbl, err := dom.InfoSchema().TableByName(context.Background(), ast.NewCIStr("test"), ast.NewCIStr(name))
-+		require.NoError(t, err)
-+		st, ok := h.Cache().Get(tbl.Meta().ID)
-+		require.True(t, ok)
-+		require.True(t, st.ColAndIdxExistenceMap.IsEmpty())
-+	}
-+	old := statistics.AutoAnalyzeMinCnt
-+	statistics.AutoAnalyzeMinCnt = 0
-+	t.Cleanup(func() { statistics.AutoAnalyzeMinCnt = old })
-+	require.True(t, h.AutoAnalyze().HandleAutoAnalyze())
-+}
-```
-
----
-
-### Incident Patch 3: `6ceba0c1` (2026-11-26)
-**Commit Message**: executor: correct JSON_OBJECTAGG replacement memory deltas (#73683)
-
-close pingcap/tidb#73681
-
-**File**: `pkg/executor/aggfuncs/func_json_objectagg.go` (modified, +13/-4)
-```diff
-@@ -39,6 +39,17 @@ type partialResult4JsonObjectAgg struct {
- 	entries hack.MemAwareMap[string, any]
- }
- 
-+func (p *partialResult4JsonObjectAgg) set(key string, value any) (memDelta int64) {
-+	memDelta = getValMemDelta(value)
-+	if oldValue, exists := p.entries.Get(key); exists {
-+		// Replacing a value releases its previous payload, but retains the key.
-+		memDelta -= getValMemDelta(oldValue)
-+	} else {
-+		memDelta += int64(len(key))
-+	}
-+	return memDelta + p.entries.Set(key, value)
-+}
-+
- func (*jsonObjectAgg) AllocPartialResult() (pr PartialResult, memDelta int64) {
- 	p := partialResult4JsonObjectAgg{}
- 	p.entries.Init(make(map[string]any))
-@@ -94,9 +105,7 @@ func (e *jsonObjectAgg) UpdatePartialResult(sctx AggFuncUpdateContext, rowsInGro
- 
- 		switch x := realVal.(type) {
- 		case nil, bool, int64, uint64, float64, string, types.BinaryJSON, types.Opaque, types.Time, types.Duration:
--			if delta, insert := p.entries.SetExt(key, realVal); insert {
--				memDelta += int64(len(key)) + getValMemDelta(realVal) + delta
--			}
-+			memDelta += p.set(key, realVal)
- 		default:
- 			return 0, types.ErrUnsupportedSecondArgumentType.GenWithStackByArgs(x)
+ 	failpoint.Inject("truncatePartCancel1", func(val failpoint.Value) {
+@@ -2741,14 +2745,19 @@ func (w *worker) onTruncateTablePartition(jobCtx *jobContext, job *model.Job) (i
+ 	switch job.SchemaState {
+ 	case model.StatePublic:
+ 		// A queued job can still reference partitions a previous DDL has replaced.
+-		_, replacements := replaceTruncatePartitions(slices.Clone(pi.Definitions), oldIDs, newIDs)
+-		// Prepare the replacement groups while cancellation is still safe.
+-		// Publishing new partition IDs before this succeeds can lose data if a
+-		// later PD failure cancels the job instead of finishing the truncate.
+-		if tblInfo.Affinity != nil && len(replacements) > 0 {
+-			if err = createTableAffinityGroupsInPD(jobCtx, tblInfo, replacements...); err != nil {
++		postDefs := slices.Clone(pi.Definitions)
++		_, replacements := replaceTruncatePartitions(postDefs, oldIDs, newIDs)
++		// Prepare the full post-truncate affinity group set while cancellation is
++		// still safe. Publishing new partition IDs before this succeeds can lose
++		// data if a later PD failure cancels the job instead of finishing the
++		// truncate, and passing postDefs also backfills missing groups for
++		// untouched partitions (e.g. tables created before PD supported affinity).
++		if tblInfo.Affinity != nil {
++			if err = createTableAffinityGroupsInPD(jobCtx, tblInfo, postDefs...); err != nil {
+ 				return convertTruncateTablePartitionJob2RollbackJob(jobCtx, job, err, tblInfo)
+ 			}
++			args.AffinityGroupsPrepared = true
++			job.FillArgs(args)
  		}
-@@ -208,7 +217,7 @@ func (*jsonObjectAgg) MergePartialResult(_ AggFuncUpdateContext, src, dst Partia
- 	// When the result of this function is normalized, values having duplicate keys are discarded,
- 	// and only the last value encountered is used with that key in the returned object
- 	for k, v := range p1.entries.M {
--		memDelta += int64(len(k)) + getValMemDelta(v) + p2.entries.Set(k, v)
-+		memDelta += p2.set(k, v)
- 	}
- 	return memDelta, nil
- }
+ 		// IDsInDDLToIgnore uses these IDs to filter global index entries.
+ 		pi.NewPartitionIDs = getPartitionIDsFromDefinitions(replacements)
+@@ -2759,6 +2768,19 @@ func (w *worker) onTruncateTablePartition(jobCtx *jobContext, job *model.Job) (i
+ 		return updateVersionAndTableInfo(jobCtx, job, tblInfo, true)
+ 	case model.StateWriteOnly:
+ 		// We can still rollback here, since we have not yet started to write to the new partitions!
++		// During a rolling upgrade, an older DDL owner can advance a job to
++		// StateWriteOnly without preparing affinity groups. Prepare them here
++		// before publishing new partition IDs so PD errors can still roll back
++		// cleanly instead of retrying indefinitely in StateDeleteReorganization.
++		if tblInfo.Affinity != nil && !args.AffinityGroupsPrepared {
++			postDefs := slices.Clone(pi.Definitions)
++			replaceTruncatePartitions(postDefs, oldIDs, newIDs)
++			if err = createTableAffinityGroupsInPD(jobCtx, tblInfo, postDefs...); err != nil {
++				return convertTruncateTablePartitionJob2RollbackJob(jobCtx, job, err, tblInfo)
++			}
++			args.AffinityGroupsPrepared = true
++			job.FillArgs(args)
++		}
+ 		oldDefinitions, newDefinitions := replaceTruncatePartitions(pi.Definitions, oldIDs, newIDs)
+ 		if len(newDefinitions) > 0 {
+ 			if err = clearTruncatePartitionTiflashStatus(tblInfo, newDefinitions, getPartitionIDsFromDefinitions(oldDefinitions)); err != nil {
+@@ -2836,10 +2858,10 @@ func (w *worker) onTruncateTablePartition(jobCtx *jobContext, job *model.Job) (i
+ 		pi.DDLState = model.StateNone
+ 		pi.DDLAction = model.ActionNone
+ 
+-		// Also prepare groups for jobs started by an older TiDB version. The
+-		// replacement is already visible, so failures here must retry rather
+-		// than cancel the job and leave the partition metadata unfinished.
+-		if tblInfo.Affinity != nil {
++		// Backfill groups for all current partitions if an older owner already
++		// published the replacement without preparing affinity groups.
++		// Retry on failure because the replacement is already visible.
++		if tblInfo.Affinity != nil && !args.AffinityGroupsPrepared {
+ 			if err = createTableAffinityGroupsInPD(jobCtx, tblInfo); err != nil {
+ 				return ver, errors.Trace(err)
+ 			}
 ```
 
-**File**: `pkg/executor/aggfuncs/func_json_objectagg_test.go` (modified, +100/-0)
+**File**: `pkg/ddl/rollingback.go` (modified, +11/-3)
 ```diff
-@@ -15,6 +15,7 @@
- package aggfuncs_test
- 
- import (
-+	"strings"
- 	"testing"
- 
- 	"github.com/pingcap/errors"
-@@ -257,6 +258,105 @@ func TestMemJsonObjectagg(t *testing.T) {
+@@ -364,10 +364,11 @@ func convertTruncateTablePartitionJob2RollbackJob(jobCtx *jobContext, job *model
+ 		return ver, nil
  	}
- }
- 
-+func TestMemJsonObjectaggReplacement(t *testing.T) {
-+	large := strings.Repeat("x", 4096)
-+	smallJSON := types.CreateBinaryJSON("a")
-+	largeJSON := types.CreateBinaryJSON(large)
-+	smallJSONSize, largeJSONSize := int64(len(smallJSON.Value)+1), int64(len(largeJSON.Value)+1)
-+	tests := []struct {
-+		name         string
-+		valueType    *types.FieldType
-+		values       []any
-+		payloadSizes []int64
-+	}{
-+		{
-+			name:         "string",
-+			valueType:    types.NewFieldType(mysql.TypeVarString),
-+			values:       []any{nil, "a", large, "b", "c", nil, nil, "d"},
-+			payloadSizes: []int64{0, 1, 4096, 1, 1, 0, 0, 1},
-+		},
-+		{
-+			name:         "json",
-+			valueType:    types.NewFieldType(mysql.TypeJSON),
-+			values:       []any{nil, smallJSON, largeJSON, smallJSON, smallJSON, nil, nil, smallJSON},
-+			payloadSizes: []int64{0, smallJSONSize, largeJSONSize, smallJSONSize, smallJSONSize, 0, 0, smallJSONSize},
-+		},
-+		{
-+			name:         "opaque",
-+			valueType:    types.NewFieldTypeBuilder().SetType(mysql.TypeBlob).SetCharset(charset.CharsetBin).SetCollate(charset.CollationBin).BuildP(),
-+			values:       []any{nil, []byte("a"), []byte(large), []byte("b"), []byte("c"), nil, nil, []byte("d")},
-+			payloadSizes: []int64{0, 2, 4097, 2, 2, 0, 0, 2},
-+		},
-+		{
-+			name:         "integer",
-+			valueType:    types.NewFieldType(mysql.TypeLonglong),
-+			values:       []any{nil, int64(1), int64(2), nil, nil, int64(3)},
-+			payloadSizes: []int64{0, aggfuncs.DefInt64Size, aggfuncs.DefInt64Size, 0, 0, aggfuncs.DefInt64Size},
-+		},
-+	}
-+	for _, test := range tests {
-+		for _, mode := range []string{"update", "merge", "batch"} {
-+			t.Run(test.name+"/"+mode, func(t *testing.T) {
-+				ctx := mock.NewContext()
-+				keyType := types.NewFieldType(mysql.TypeVarString)
-+				args := []expression.Expression{
-+					&expression.Column{Index: 0, RetType: keyType},
-+					&expression.Column{Index: 1, RetType: test.valueType},
-+				}
-+				desc, err := aggregation.NewAggFuncDesc(ctx, ast.AggFuncJsonObjectAgg, args, false)
-+				require.NoError(t, err)
-+				fn := aggfuncs.Build(ctx, desc, 0)
-+				pr, _ := fn.AllocPartialResult()
-+				const key = "duplicate"
-+				input := chunk.NewChunkWithCapacity([]*types.FieldType{keyType, test.valueType}, len(test.values))
-+				rows := make([]chunk.Row, 0, len(test.values))
-+				for i, value := range test.values {
-+					input.AppendString(0, key)
-+					datum := types.NewDatum(value)
-+					input.AppendDatum(1, &datum)
-+					rows = append(rows, input.GetRow(i))
-+				}
-+				// Repeating after reset also checks that old payloads are no longer charged.
-+				for range 2 {
-+					if mode == "batch" {
-+						delta, err := fn.UpdatePartialResult(ctx, rows, pr)
-+						require.NoError(t, err)
-+						require.Equal(t, int64(len(key))+aggfuncs.DefInterfaceSize+test.payloadSizes[len(rows)-1], delta)
-+					} else {
-+						for i, row := range rows {
-+							var delta int64
-+							if mode == "merge" {
-+								src, _ := fn.AllocPartialResult()
-+								_, err = fn.UpdatePartialResult(ctx, []chunk.Row{row}, src)
-+								require.NoError(t, err)
-+								delta, err = fn.MergePartialResult(ctx, src, pr)
-+							} else {
-+								delta, err = fn.UpdatePartialResult(ctx, []chunk.Row{row}, pr)
-+							}
-+							require.NoError(t, err)
-+							expected := test.payloadSizes[i]
-+							if i == 0 {
-+								expected += int64(len(key)) + aggfuncs.DefInterfaceSize
-+							} else {
-+								expected -= test.payloadSizes[i-1]
-+							}
-+							require.Equal(t, expected, delta, "value %d", i)
-+						}
-+					}
-+					value := test.values[len(rows)-1]
-+					if buf, ok := value.([]byte); ok {
-+						value = types.Opaque{TypeCode: test.valueType.GetType(), Buf: buf}
-+					}
-+					output := chunk.NewChunkWithCapacity([]*types.FieldType{desc.RetTp}, 1)
-+					require.NoError(t, fn.AppendFinalResult2Chunk(ctx, pr, output))
-+					require.Equal(t, types.CreateBinaryJSON(map[string]any{key: value}), output.GetRow(0).GetJSON(0))
-+					fn.ResetPartialResult(pr)
-+				}
-+			})
+ 	pi := tblInfo.Partition
++	args, argsErr := model.GetTruncateTableArgs(job)
+ 	if tblInfo.Affinity != nil && tblInfo.Affinity.Level == ast.TableAffinityLevelPartition {
+ 		// PD may have created groups before the replacement IDs reached table metadata.
+-		args, deleteErr := model.GetTruncateTableArgs(job)
+-		if deleteErr == nil && len(args.NewPartitionIDs) != 0 {
++		deleteErr := argsErr
++		if deleteErr == nil && args != nil && len(args.NewPartitionIDs) != 0 {
+ 			deleteErr = deleteTableAffinityGroupsWithTimeout(jobCtx, tblInfo, partitionDefinitionsFromIDs(args.NewPartitionIDs))
+ 		}
+ 		if deleteErr != nil {
+@@ -380,11 +381,18 @@ func convertTruncateTablePartitionJob2RollbackJob(jobCtx *jobContext, job *model
+ 		tblInfo.Partition.NewPartitionIDs = nil
+ 		tblInfo.Partition.DDLAction = model.ActionNone
+ 		tblInfo.Partition.DDLState = model.StateNone
++		// Transitioning into JobStateRollingback makes runOneJobStep re-encode job
++		// arguments, so refill the decoded args first to keep V1/V2 partition IDs intact.
++		if argsErr == nil && args != nil {
++			jobCtx.jobArgs = args
++			job.FillArgs(args)
 +		}
-+	}
-+}
-+
- func jsonMultiArgsMemDeltaGens(_ sessionctx.Context, srcChk *chunk.Chunk, dataTypes []*types.FieldType, byItems []*util.ByItems) (memDeltas []int64, err error) {
- 	memDeltas = make([]int64, 0)
- 	m := make(map[string]bool)
+ 		ver, err = updateVersionAndTableInfo(jobCtx, job, tblInfo, true)
+ 		if err != nil {
+ 			return ver, errors.Trace(err)
+ 		}
+-		return ver, nil
++		job.State = model.JobStateRollingback
++		return ver, errors.Trace(otherwiseErr)
+ 	}
+ 	// No change yet, just cancel the job.
+ 	job.State = model.JobStateCancelled
+```
+
+**File**: `pkg/domain/affinity/BUILD.bazel` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ go_test(
+     ],
+     embed = [":affinity"],
+     flaky = True,
+-    shard_count = 17,
++    shard_count = 19,
+     deps = [
+         "//pkg/errno",
+         "//pkg/parser/terror",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #73887** (2026-11-27): planner: push virtual TEXT filters down on common-handle scans | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5 (@AilinKid)
+- **PR #73857** (2026-11-27): util: preserve accumulated null rejection in hash join keys (backport #71205) (@windtalker)
+- **PR #73847** (2026-11-27): objstore: enable S3 SDK request/response logging only at DEBUG level (@joechenrh)
 - **PR #73829** (2026-11-26): executor: redact temporal input values in INSERT diagnostics (@YangKeao)
 - **PR #73827** (2026-11-26): planner: expand value-preserving virtual filters in MPP | pd=release-8.5 tikv=release-8.5 tiflash=release-8.5 ticdc=release-8.5 (@AilinKid)
 - **PR #73826** (2026-11-26): server: route PATCH status requests to HTTP (@D3Hunter)
-- **PR #73819** (closed): util/geocodec: check bytes given for a geometry column (@mjonss)
-- **PR #73810** (2026-11-26): tests: disable periodic stats refresh in SQL integration tests | tidb-test=pr/2827 (@winoros)
-- **PR #73790** (2026-11-26): dumpling: fix integration CI timeout and duplicate cache saves (@expxiaoli)
 
 ---
 
@@ -2618,34 +2880,48 @@ close pingcap/tidb#73681
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dxf: support cancelling paused tasks and drain paused subtasks before reverting
+## X. ddl: fix affinity cleanup after out-of-place MV cutover
 
 **RULE**:
-When implementing operations in `pkg/dxf/framework/mock/scheduler_mock.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ddl/affinity_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f964de31`: dxf: support cancelling paused tasks and drain paused subtasks before reverting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b1bb528`: ddl: fix affinity cleanup after out-of-place MV cutover. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/dxf/framework/mock/scheduler_mock.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ddl/affinity_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// CancelPausedSubtasks mocks base method.
-func (m *MockTaskManager) CancelPausedSubtasks(arg0 context.Context, arg1 int64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CancelPausedSubtasks", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CancelPausedSubtasks indicates an expected call of CancelPausedSubtasks.
-func (mr *MockTaskManagerMockRecorder) CancelPausedSubtasks(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CancelPausedSubtasks", reflect.TypeOf((*MockTaskManager)(nil).CancelPausedSubtasks), arg0, arg1)
-}
-
+	deleteCalls       atomic.Int64
+	c.deleteCalls.Add(1)
+func TestAffinityMViewOutOfPlaceCutoverCleanup(t *testing.T) {
+	for _, tc := range []struct {
+		name           string
+		oldAffinity    bool
+		shadowAffinity bool
+		failDelete     bool
+	}{
+		{name: "without_affinity"},
+		{name: "with_affinity", oldAffinity: true, shadowAffinity: true},
+		{name: "shadow_only", shadowAffinity: true},
+		{name: "old_only", oldAffinity: true},
+		{name: "cleanup_failure", oldAffinity: true, shadowAffinity: true, failDelete: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s := newAffinityDDLTest(t)
+			s.tk.MustExec("set tidb_mview_enable = on")
+			s.tk.MustExec("create table source (a int not null)")
+			s.tk.MustExec("create materialized view log on source (a)")
+			s.tk.MustExec("create materialized view mv (a, cnt) as select a, count(*) from source group by a")
+			oldMV := s.tableInfo(t, "mv")
+			if tc.oldAffinity {
+				oldMV.Affinity = &model.TableAffinityInfo{Level: ast.TableAffinityLevelTable}
+				require.NoError(t, kv.RunInNewTxn(context.Background(), s.store, true, func(_ context.Context, txn kv.Transaction) error {
+					return meta.NewMutator(txn).UpdateTable(s.schemaID, oldMV)
+				}))
+				r
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2655,7 +2931,7 @@ func (mr *MockTaskManagerMockRecorder) CancelPausedSubtasks(arg0, arg1 any) *gom
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f964de31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b1bb528` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

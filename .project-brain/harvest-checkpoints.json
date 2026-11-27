@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T20:38:15.413Z",
+  "last_updated": "2026-11-27T20:47:02.832Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
-      "verified_at": "2026-11-27T16:30:27.347Z",
+      "content_hash": "d44a52c9ce52c117033b7363c234b5d3cf121bef7b24282ada67488232a19ada",
+      "verified_at": "2026-11-27T20:47:02.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T16:30:27.347Z"
+      "last_updated": "2026-11-27T20:47:02.831Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "4afd110e62a51d96ef8429e02070a960f93573e17cff45f0fb869fa9ddc97adb",
-      "verified_at": "2026-11-27T02:49:46.952Z",
+      "content_hash": "75c95a8af85b27cc1509216654deca7f90e5109dc8615a78af345e7cdaed868c",
+      "verified_at": "2026-11-27T20:47:01.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T02:49:46.952Z"
+      "last_updated": "2026-11-27T20:47:01.319Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",

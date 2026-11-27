@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `977e617f`  
+> **Source Version**: `ebb631f8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T16:30:26.073Z  
+> **Timestamp**: 2026-11-27T20:47:01.563Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T16:30:26.067Z  
+> **Harvest Timestamp**: 2026-11-27T20:47:01.557Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1938,372 +1938,211 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `977e617f` (2026-11-27)
-**Commit Message**: refactor(integer)!: split CRT and make it experimental
+### Incident Patch 1: `ebb631f8` (2026-11-27)
+**Commit Message**: chore: add dependabot for python (#4170)
 
-* refactor(integer)!: split CRT and make it experimental
+- add script to verify manifests are properly tracked by dependabot
+- use uv ecosystem and update script to be uv friendly
 
-CRT operations used the same ServerKey as radix ones,
-built with a different max degree, different assumptions on
-message modulus, carry modulus and other things.
+heavily AI generated
 
-So now they are separated as they should always have been
-
-Make things related to CRT gated behing experimental feature
-
-* chore: remove IntegerKeyKind
-
-* refactor(integer): drop the redundant crt from CRT op files and methods
-
-**File**: `tfhe-benchmark/benches/integer/aes.rs` (modified, +3/-3)
+**File**: `.github/dependabot.yaml` (modified, +34/-0)
 ```diff
-@@ -12,7 +12,7 @@ pub mod cuda {
-     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
-     use tfhe::integer::gpu::CudaServerKey;
-     use tfhe::integer::keycache::KEY_CACHE;
--    use tfhe::integer::{IntegerKeyKind, RadixClientKey};
-+    use tfhe::integer::RadixClientKey;
-     use tfhe::keycache::NamedParam;
-     use tfhe::shortint::AtomicPatternParameters;
+@@ -1,3 +1,6 @@
++# The ci_lint workflow checks with 'make check_dependabot_coverage' that the directories
++# listed below track all the manifests of their ecosystem, a manifest added elsewhere
++# has to be listed here, see scripts/check_dependabot_coverage.py
+ version: 2
  
-@@ -35,7 +35,7 @@ pub mod cuda {
-         let param_name = param.name();
- 
-         let streams = CudaStreams::new_multi_gpu();
--        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-         let sks = CudaServerKey::new(&cpu_cks, &streams);
-         let cks = RadixClientKey::from((cpu_cks, 1));
- 
-@@ -118,7 +118,7 @@ pub mod cuda {
-             let bench_id = spec.to_string();
- 
-             let streams = CudaStreams::new_multi_gpu();
--            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-             let sks = CudaServerKey::new(&cpu_cks, &streams);
-             let cks = RadixClientKey::from((cpu_cks, 1));
- 
+ updates:
+@@ -55,3 +58,34 @@ updates:
+         update-types:
+           - "minor"
+           - "patch"
++
++  # Python requirements lock files (*requirements.txt) are generated from their
++  # *requirements.in sources by uv, see scripts/python_requirements.sh, hence the uv
++  # ecosystem: the pip one runs pip-tools, which cannot generate lock files valid on all
++  # platforms. Dependabot runs 'uv pip compile' itself, from the listed directory, with
++  # the options it finds in the header of the lock file, and its pull requests have to
++  # pass 'make check_python_requirements'.
++  # Requirements files must not be in a directory directly below a listed one:
++  # Dependabot reads those from the listed directory as well, under another path, which
++  # ends up in the lock file, see scripts/check_dependabot_coverage.py.
++  # Security updates are another matter: for requirements files, Dependabot generates
++  # them with pip-tools, as the pip ecosystem does, even with this entry. This is not
++  # documented but observed. When such a pull request fails the lock files check, run
++  # 'make compile_python_requirements' on its branch: it repairs the lock files and
++  # keeps the versions Dependabot selected.
++  - package-ecosystem: "uv"
++    directories:
++      - "/ci/"
++      - "/backends/tfhe-hpu-backend/python/"
++      - "/scripts/"
++    schedule:
++      interval: "monthly"
++    cooldown:
++      default-days: 7
++    groups:
++      python-minor-patch:
++        applies-to: version-updates
++        group-by: dependency-name
++        update-types:
++          - "minor"
++          - "patch"
 ```
 
-**File**: `tfhe-benchmark/benches/integer/aes256.rs` (modified, +3/-3)
+**File**: `.github/workflows/ci_lint.yml` (modified, +4/-0)
 ```diff
-@@ -12,7 +12,7 @@ pub mod cuda {
-     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
-     use tfhe::integer::gpu::CudaServerKey;
-     use tfhe::integer::keycache::KEY_CACHE;
--    use tfhe::integer::{IntegerKeyKind, RadixClientKey};
-+    use tfhe::integer::RadixClientKey;
-     use tfhe::keycache::NamedParam;
-     use tfhe::shortint::AtomicPatternParameters;
- 
-@@ -38,7 +38,7 @@ pub mod cuda {
-         let param_name = param.name();
- 
-         let streams = CudaStreams::new_multi_gpu();
--        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-         let sks = CudaServerKey::new(&cpu_cks, &streams);
-         let cks = RadixClientKey::from((cpu_cks, 1));
- 
-@@ -122,7 +122,7 @@ pub mod cuda {
-             let bench_id = spec.to_string();
- 
-             let streams = CudaStreams::new_multi_gpu();
--            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-             let sks = CudaServerKey::new(&cpu_cks, &streams);
-             let cks = RadixClientKey::from((cpu_cks, 1));
- 
+@@ -80,3 +80,7 @@ jobs:
+       - name: Check python is only run from a venv
+         run: |
+           make check_python_venv_usage
++
++      - name: Check dependency manifests are tracked by Dependabot
++        run: |
++          make check_dependabot_coverage
 ```
 
-**File**: `tfhe-benchmark/benches/integer/bench.rs` (modified, +26/-31)
+**File**: `Makefile` (modified, +9/-0)
 ```diff
-@@ -30,7 +30,7 @@ use std::cmp::max;
- use std::env;
- use tfhe::integer::keycache::KEY_CACHE;
- use tfhe::integer::prelude::*;
--use tfhe::integer::{IntegerKeyKind, RadixCiphertext, RadixClientKey, ServerKey, U256};
-+use tfhe::integer::{RadixCiphertext, RadixClientKey, ServerKey, U256};
- use tfhe::keycache::NamedParam;
- #[cfg(any(feature = "gpu", feature = "hpu"))]
- use tfhe::{get_pbs_count, reset_pbs_count};
-@@ -78,7 +78,7 @@ fn bench_server_key_binary_function_clean_inputs<F>(
-         match get_bench_type() {
-             BenchmarkType::Latency => {
-                 let bench_data = LazyCell::new(|| {
--                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                    let (cks, sks) = KEY_CACHE.get_from_params(param);
+@@ -539,6 +539,15 @@ check_iac_security:
+ 	fi; \
+ 	MISCONFIG_SCANNERS=terraform "$$dir/.github/actions/trivy-iac/scan.sh"
  
-                     let clear_0 = gen_random_u256(&mut rng);
-                     let clear_1 = gen_random_u256(&mut rng);
-@@ -96,7 +96,7 @@ fn bench_server_key_binary_function_clean_inputs<F>(
-                 });
-             }
-             BenchmarkType::Throughput => {
--                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                let (cks, sks) = KEY_CACHE.get_from_params(param);
- 
-                 bench_group
-                     .sample_size(10)
-@@ -183,7 +183,7 @@ fn bench_server_key_unary_function_dirty_inputs<F>(
-     for (param, num_block, bit_size) in ParamsAndNumBlocksIter::default() {
-         let param_name = param.name();
- 
--        let keys = LazyCell::new(move || KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix));
-+        let keys = LazyCell::new(move || KEY_CACHE.get_from_params(param));
- 
-         let bits = PrecisionTag::Bits(bit_size);
-         let benchmark_spec = BenchmarkSpec::new_integer_ops(
-@@ -269,7 +269,7 @@ fn bench_server_key_unary_function_clean_inputs<F>(
-         match get_bench_type() {
-             BenchmarkType::Latency => {
-                 let bench_data = LazyCell::new(|| {
--                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                    let (cks, sks) = KEY_CACHE.get_from_params(param);
- 
-                     let clear_0 = gen_random_u256(&mut rng);
- 
-@@ -286,7 +286,7 @@ fn bench_server_key_unary_function_clean_inputs<F>(
-                 });
-             }
-             BenchmarkType::Throughput => {
--                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                let (cks, sks) = KEY_CACHE.get_from_params(param);
- 
-                 bench_group
-                     .sample_size(10)
-@@ -384,8 +384,7 @@ fn bench_server_key_binary_scalar_function_clean_inputs<F, G>(
- 
-         match get_bench_type() {
-             BenchmarkType::Latency => {
--                let bench_data =
--                    LazyCell::new(|| KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix));
-+                let bench_data = LazyCell::new(|| KEY_CACHE.get_from_params(param));
- 
-                 bench_group.bench_function(&bench_id, |b| {
-                     let (cks, sks) = (&bench_data.0, &bench_data.1);
-@@ -406,7 +405,7 @@ fn bench_server_key_binary_scalar_function_clean_inputs<F, G>(
-                 });
-             }
-             BenchmarkType::Throughput => {
--                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                let (cks, sks) = KEY_CACHE.get_from_params(param);
- 
-                 bench_group
-                     .sample_size(10)
-@@ -529,7 +528,7 @@ fn if_then_else_parallelized(c: &mut Criterion) {
-         match get_bench_type() {
-             BenchmarkType::Latency => {
-                 let bench_data = LazyCell::new(|| {
--                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                    let (cks, sks) = KEY_CACHE.get_from_params(param);
- 
-                     let clear_0 = gen_random_u256(&mut rng);
-                     let clear_1 = gen_random_u256(&mut rng);
-@@ -550,7 +549,7 @@ fn if_then_else_parallelized(c: &mut Criterion) {
-                 });
-             }
-             BenchmarkType::Throughput => {
--                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                let (cks, sks) = KEY_CACHE.get_from_params(param);
- 
-                 bench_group
-                     .sample_size(10)
-@@ -643,7 +642,7 @@ fn flip_parallelized(c: &mut Criterion) {
-         match get_bench_type() {
-             BenchmarkType::Latency => {
-                 let bench_data = LazyCell::new(|| {
--                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                    let (cks, sks) = KEY_CACHE.get_from_params(param);
- 
-                     let clear_0 = gen_random_u256(&mut rng);
-                     let clear_1 = gen_random_u256(&mut rng);
-@@ -664,7 +663,7 @@ fn flip_parallelized(c: &mut Criterion) {
-                 });
-             }
-             BenchmarkType::Throughput => {
--                let (cks, sks
++DEPENDABOT_COVERAGE_VENV=venv_dependabot_coverage
++.PHONY: dependabot_coverage_setup_venv # Create venv with the python requirements of the dependabot coverage check
++dependabot_coverage_setup_venv:
++	$(call create_python_venv_with_requirements,$(DEPENDABOT_COVERAGE_VENV),scripts/dependabot-coverage-requirements.txt)
++
++.PHONY: check_dependabot_coverage # Check that the dependabot configuration tracks all the dependency manifests
++check_dependabot_coverage: dependabot_coverage_setup_venv
++	$(DEPENDABOT_COVERAGE_VENV)/bin/python scripts/check_dependabot_coverage.py
++
+ .PHONY: clippy_core # Run clippy lints on core_crypto with and without experimental features
+ clippy_core: install_rs_check_toolchain
+ 	RUSTFLAGS="$(RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" clippy \
 ```
 
-**File**: `tfhe-benchmark/benches/integer/glwe_packing_compression_128b.rs` (modified, +1/-2)
+**File**: `backends/tfhe-hpu-backend/python/requirements.txt` (modified, +3/-3)
 ```diff
-@@ -21,7 +21,6 @@ mod cpu {
-     };
-     use tfhe::integer::keycache::KEY_CACHE;
-     use tfhe::integer::noise_squashing::{NoiseSquashingKey, NoiseSquashingPrivateKey};
--    use tfhe::integer::IntegerKeyKind;
-     use tfhe::keycache::NamedParam;
- 
-     fn default_config(lwe_per_glwe: usize, bits_per_block: u32) -> Vec<u32> {
-@@ -68,7 +67,7 @@ mod cpu {
-         if cases.is_empty() {
-             return;
-         }
--        let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+        let (cks, sks) = KEY_CACHE.get_from_params(param);
-         let squashing_private_key = NoiseSquashingPrivateKey::new(
-             BENCH_NOISE_SQUASHING_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-         );
+@@ -1,5 +1,5 @@
+ # This file was autogenerated by uv via the following command:
+-#    make compile_python_requirements
++#    make compile_python_requirements # uv pip compile --universal --python-version 3.12 --generate-hashes
+ numpy==1.26.3 \
+     --hash=sha256:02f98011ba4ab17f46f80f7f8f1c291ee7d855fcef0a5a98db80767a468c85cd \
+     --hash=sha256:0b7e807d6888da0db6e7e75838444d62495e2b588b99e90dd80c3459594e857b \
+@@ -38,7 +38,7 @@ numpy==1.26.3 \
+     --hash=sha256:f25e2811a9c932e43943a2615e65fc487a0b6b49218899e62e426e7f0a57eeda \
+     --hash=sha256:f73497e8c38295aaa4741bdfa4fda1a5aedda5473074369eca10626835445511
+     # via
+-    #   -r backends/tfhe-hpu-backend/python/requirements.in
++    #   -r requirements.in
+     #   pandas
+ pandas==2.2.3 \
+     --hash=sha256:062309c1b9ea12a50e8ce661145c6aab431b1e99530d3cd60640e255778bd43a \
+@@ -83,7 +83,7 @@ pandas==2.2.3 \
+     --hash=sha256:f00d1345d84d8c86a63e476bb4955e46458b304b9575dcf71102b5c705320015 \
+     --hash=sha256:f3a255b2c19987fbbe62a9dfd6cff7ff2aa9ccab3fc75218fd4b7530f01efa24 \
+     --hash=sha256:fffb8ae78d8af97f849404f21411c95062db1496aeb3e56f146f0355c9989319
+-    # via -r backends/tfhe-hpu-backend/python/requirements.in
++    # via -r requirements.in
+ python-dateutil==4.0.0 \
+     --hash=sha256:a5e246f79eb80475e691bf93862cead98decd8a498cf53ba0516fcdc0f50dc1c \
+     --hash=sha256:d7295ff14fdc0f92f662100bfb6c551d160ca090f2939f1ec5b9794265c03f06
 ```
 
-**File**: `tfhe-benchmark/benches/integer/goldschmidt_division.rs` (modified, +1/-2)
+**File**: `ci/data_extractor_requirements.txt` (renamed, +5/-5)
 ```diff
-@@ -19,7 +19,6 @@ pub mod cuda {
-     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
-     use tfhe::integer::gpu::CudaServerKey;
-     use tfhe::integer::keycache::KEY_CACHE;
--    use tfhe::integer::IntegerKeyKind;
-     use tfhe::keycache::NamedParam;
-     use tfhe::shortint::AtomicPatternParameters;
- 
-@@ -51,7 +50,7 @@ pub mod cuda {
-         let streams = CudaStreams::new_multi_gpu();
- 
-         for (atomic_param, param_name) in param_sets() {
--            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-             let sks = CudaServerKey::new(&cpu_cks, &streams);
- 
-             // Full-width operands: the cost is data independent, but a random
+@@ -1,5 +1,5 @@
+ # This file was autogenerated by uv via the following command:
+-#    make compile_python_requirements
++#    make compile_python_requirements # uv pip compile --universal --python-version 3.12 --generate-hashes
+ black==26.10.1 \
+     --hash=sha256:03c0ddd93bb392e71209903a691767eb366fe1a76deb9509ccbaae9e1f14bb52 \
+     --hash=sha256:0ce08b367307b0fd91c9dd1d4084e62b05b3055475f951f0f34a46b6e2393b64 \
+@@ -28,7 +28,7 @@ black==26.10.1 \
+     --hash=sha256:f6dba8138cdc99061ef07b958ac082d2aa057b6961d1936f9717c350f02bab5f \
+     --hash=sha256:fe85fc4019bee59bc495c0f2a8ee76c5cd02c7015508d94a967ba2376f39a52c \
+     --hash=sha256:ff57f63029aa1353fa8b1b0c8971fd88a6c92dc766608d2eee33ad2deb23270e
+-    # via -r ci/data_extractor/requirements.in
++    # via -r data_extractor_requirements.in
+ click==8.5.1 \
+     --hash=sha256:8bb5376d2006950386f8c6427613334a2acadc5f559cb80e638d00b4df957e37 \
+     --hash=sha256:9bbfada76703fd1d784b83eea012e3e8c6a001a876543ef104fa56aaaeb072b4
+@@ -122,11 +122,11 @@ psycopg2-binary==2.9.9 \
+     --hash=sha256:f7ae5d65ccfbebdfa761585228eb4d0df3a8b15cfb53bd953e713e09fbb12957 \
+     --hash=sha256:f7fc5a5acafb7d6ccca13bfa8c90f8c51f13d8fb87d95656d3950f0158d3ce53 \
+     --hash=sha256:f9b5571d33660d5009a8b3c25dc1db560206e2d2f89d3df1cb32d72c0d117d52
+-    # via -r ci/data_extractor/requirements.in
++    # via -r data_extractor_requirements.in
+ py-markdown-table==1.3.0 \
+     --hash=sha256:b8740b57e466f343dbb1e9c7ca4e2d1b4281d96fb922bf1ed60b6c496c8725c4 \
+     --hash=sha256:be63f6bcbe32e10a9a68575eb48a648949df067b54b48ad6d993b0e5748f57d6
+-    # via -r ci/data_extractor/requirements.in
++    # via -r data_extractor_requirements.in
+ pytokens==0.4.1 \
+     --hash=sha256:0fc71786e629cef478cbf29d7ea1923299181d0699dbe7c3c0f4a583811d9fc1 \
+     --hash=sha256:11edda0942da80ff58c4408407616a310adecae1ddd22eef8c692fe266fa5009 \
+@@ -174,4 +174,4 @@ pytokens==0.4.1 \
+ svg-py==1.5.0 \
+     --hash=sha256:5c467efd5a43e8df4dd6f6d078063f195a04966721d36c43d62f5d7529f908d1 \
+     --hash=sha256:a036d0118176c2498601fab33b9b68dd9754e6a5fa12e4d36cce071b307b5c11
+-    # via -r ci/data_extractor/requirements.in
++    # via -r data_extractor_requirements.in
 ```
 
-**File**: `tfhe-benchmark/benches/integer/kreyvium.rs` (modified, +3/-3)
+**File**: `ci/gpu_workflows_table_requirements.txt` (modified, +2/-2)
 ```diff
-@@ -17,7 +17,7 @@ pub mod cuda {
-     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
-     use tfhe::integer::gpu::CudaServerKey;
-     use tfhe::integer::keycache::KEY_CACHE;
--    use tfhe::integer::{IntegerKeyKind, RadixCiphertext, RadixClientKey};
-+    use tfhe::integer::{RadixCiphertext, RadixClientKey};
-     use tfhe::keycache::NamedParam;
-     use tfhe::shortint::{AtomicPatternParameters, Ciphertext};
- 
-@@ -91,7 +91,7 @@ pub mod cuda {
-         let iv_bits = vec![0u64; KREYVIUM_KEY_BITS];
- 
-         let streams = CudaStreams::new_multi_gpu();
--        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-         let sks = CudaServerKey::new(&cpu_cks, &streams);
-         let cks = RadixClientKey::from((cpu_cks, 1));
- 
-@@ -217,7 +217,7 @@ pub mod cuda {
-         let key_bits = vec![0u64; KREYVIUM_KEY_BITS * num_inputs];
-         let iv_bits = vec![0u64; KREYVIUM_KEY_BITS * num_inputs];
- 
--        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-         let sks = CudaServerKey::new(&cpu_cks, &streams);
-         let cks = RadixClientKey::from((cpu_cks, 1));
- 
+@@ -1,5 +1,5 @@
+ # This file was autogenerated by uv via the following command:
+-#    make compile_python_requirements
++#    make compile_python_requirements # uv pip compile --universal --python-version 3.12 --generate-hashes
+ pyyaml==6.0.3 \
+     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \
+     --hash=sha256:0150219816b6a1fa26fb4699fb7daa9caf09eb1999f3b70fb6e786805e80375a \
+@@ -74,4 +74,4 @@ pyyaml==6.0.3 \
+     --hash=sha256:f7057c9a337546edc7973c0d3ba84ddcdf0daa14533c2065749c9075001090e6 \
+     --hash=sha256:fa160448684b4e94d80416c0fa4aac48967a969efe22931448d853ada8baf926 \
+     --hash=sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0
+-    # via -r ci/gpu_workflows_table_requirements.in
++    # via -r gpu_workflows_table_requirements.in
 ```
 
-**File**: `tfhe-benchmark/benches/integer/mul_add_fixed_point.rs` (modified, +2/-3)
+**File**: `ci/perf_regression_requirements.txt` (renamed, +2/-2)
 ```diff
-@@ -22,7 +22,6 @@ pub mod cuda {
-     use tfhe::integer::gpu::ciphertext::CudaUnsignedRadixCiphertext;
-     use tfhe::integer::gpu::CudaServerKey;
-     use tfhe::integer::keycache::KEY_CACHE;
--    use tfhe::integer::IntegerKeyKind;
-     use tfhe::keycache::NamedParam;
-     use tfhe::shortint::AtomicPatternParameters;
- 
-@@ -64,7 +63,7 @@ pub mod cuda {
-         let streams = CudaStreams::new_multi_gpu();
- 
-         for (atomic_param, param_name) in param_sets() {
--            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-             let sks = CudaServerKey::new(&cpu_cks, &streams);
- 
-             for (lhs_blocks, rhs_blocks, rescaling, precision) in fixed_point_shapes() {
-@@ -129,7 +128,7 @@ pub mod cuda {
-         let streams = CudaStreams::new_multi_gpu();
- 
-         for (atomic_param, param_name) in param_sets() {
--            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-+            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-             let sks = CudaServerKey::new(&cpu_cks, &streams);
- 
-             // 32 x 32 blocks with the two addends the Goldschmidt remainder needs
+@@ -1,6 +1,6 @@
+ # This file was autogenerated by uv via the following command:
+-#    make compile_python_requirements
++#    make compile_python_requirements # uv pip compile --universal --python-version 3.12 --generate-hashes
+ py-markdown-table==1.3.0 \
+     --hash=sha256:b8740b57e466f343dbb1e9c7ca4e2d1b4281d96fb922bf1ed60b6c496c8725c4 \
+     --hash=sha256:be63f6bcbe32e10a9a68575eb48a648949df067b54b48ad6d993b0e5748f57d6
+-    # via -r ci/perf_regression/requirements.in
++    # via -r perf_regression_requirements.in
 ```
 
-**File**: `tfhe-benchmark/benches/integer/oprf.rs` (modified, +6/-9)
+**File**: `ci/pip_requirements.txt` (modified, +2/-2)
 ```diff
-@@ -12,7 +12,6 @@ use std::cmp::max;
- use std::hint::black_box;
- use tfhe::integer::keycache::KEY_CACHE;
- use tfhe::integer::oprf::{OprfPrivateKey, OprfServerKey};
--use tfhe::integer::IntegerKeyKind;
- use tfhe::keycache::NamedParam;
- #[cfg(any(feature = "gpu", feature = "hpu"))]
- use tfhe::{get_pbs_count, reset_pbs_count};
-@@ -51,7 +50,7 @@ pub fn unsigned_oprf(c: &mut Criterion) {
-         match bench_type {
-             BenchmarkType::Latency => {
-                 bench_group.bench_function(&bench_id_oprf, |b| {
--                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                    let (cks, sks) = KEY_CACHE.get_from_params(param);
-                     let oprf_pk = OprfPrivateKey::new(&cks);
-                     let oprf_sk = OprfServerKey::new(&oprf_pk, &cks).unwrap();
- 
-@@ -67,7 +66,7 @@ pub fn unsigned_oprf(c: &mut Criterion) {
-                 });
- 
-                 bench_group.bench_function(&bench_id_oprf_bounded, |b| {
--                    let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                    let (cks, sks) = KEY_CACHE.get_from_params(param);
-                     let oprf_pk = OprfPrivateKey::new(&cks);
-                     let oprf_sk = OprfServerKey::new(&oprf_pk, &cks).unwrap();
- 
-@@ -84,7 +83,7 @@ pub fn unsigned_oprf(c: &mut Criterion) {
-                 });
-             }
-             BenchmarkType::Throughput => {
--                let (cks, sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                let (cks, sks) = KEY_CACHE.get_from_params(param);
-                 let oprf_pk = OprfPrivateKey::new(&cks);
-                 let oprf_sk = OprfServerKey::new(&oprf_pk, &cks).unwrap();
- 
-@@ -210,8 +209,7 @@ pub mod cuda {
-                     let streams = CudaStreams::new_multi_gpu();
- 
-                     bench_group.bench_function(&bench_id_oprf, |b| {
--                        let (cks, _cpu_sks) =
--                            KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                        let (cks, _cpu_sks) = KEY_CACHE.get_from_params(param);
-                         let gpu_sks = CudaServerKey::new(&cks, &streams);
-                         let oprf_pk = OprfPrivateKey::new(&cks);
-                         let compressed_oprf_sk =
-@@ -232,8 +230,7 @@ pub mod cuda {
-                     });
- 
-                     bench_group.bench_function(&bench_id_oprf_bounded, |b| {
--                        let (cks, _cpu_sks) =
--                            KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                        let (cks, _cpu_sks) = KEY_CACHE.get_from_params(param);
-                         let gpu_sks = CudaServerKey::new(&cks, &streams);
-                         let oprf_pk = OprfPrivateKey::new(&cks);
-                         let compressed_oprf_sk =
-@@ -256,7 +253,7 @@ pub mod cuda {
-                     });
-                 }
-                 BenchmarkType::Throughput => {
--                    let (cks, cpu_sks) = KEY_CACHE.get_from_params(param, IntegerKeyKind::Radix);
-+                    let (cks, cpu_sks) = KEY_CACHE.get_from_params(param);
-                     let gpu_sks_vec = cuda_local_keys(&cks);
-                     let cpu_oprf_pk = OprfPrivateKey::new(&cks);
-                     let cpu_oprf_sk = OprfServerKey::new(&cpu_oprf_pk, &cks).unwrap();
+@@ -1,6 +1,6 @@
+ # This file was autogenerated by uv via the following command:
+-#    make compile_python_requirements
++#    make compile_python_requirements # uv pip compile --universal --python-version 3.12 --generate-hashes
+ pip==26.2.2 \
+     --hash=sha256:3a8e5c800492787f33a4114ef54444546c340df428974ebba17e0fd47e11af2f \
+     --hash=sha256:fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70
+-    # via -r ci/pip_requirements.in
++    # via -r pip_requirements.in
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4233** (closed): chore(ci): enable the possibility of having local deps in dev depende… (@SouchonTheo)
-- **PR #4231** (2026-11-27): chore(data-extractor): replace chrono with jiff (@nsarlin-zama)
-- **PR #4229** (closed): chore(test): move test result types to the tfhe-test-results crate (@SouchonTheo)
-- **PR #4228** (2026-11-26): fix(hpu): retry on DMA queue open to load FPGAs (@pgardratzama)
-- **PR #4224** (2026-11-26): chore(deps): ignore chrono unmaintained warning (@nsarlin-zama)
-- **PR #4220** (2026-11-25): fix: remove in python ci parser the slab.toml parsing (@SouchonTheo)
+- **PR #4271** (closed): chore: bump bincode from 1.3.3 to 3.0.0 in /utils/tfhe-forward-compat-matrices/compat_nightly (@dependabot[bot])
+- **PR #4270** (closed): chore: bump bincode from 1.3.3 to 3.0.0 in /utils/tfhe-backward-compat-data/crates/generate_1_9 (@dependabot[bot])
+- **PR #4268** (closed): chore: bump bincode from 1.3.3 to 3.0.0 in /utils/tfhe-backward-compat-data/crates/generate_1_8 (@dependabot[bot])
+- **PR #4266** (closed): chore: bump bincode from 1.3.3 to 3.0.0 in /utils/tfhe-backward-compat-data/crates/generate_1_6 (@dependabot[bot])
+- **PR #4264** (closed): chore: bump bincode from 1.3.3 to 3.0.0 in /utils/tfhe-backward-compat-data/crates/generate_1_5 (@dependabot[bot])
+- **PR #4262** (closed): chore: bump bincode from 1.3.3 to 3.0.0 in /utils/tfhe-backward-compat-data/crates/generate_1_4 (@dependabot[bot])
 
 ---
 
@@ -2323,32 +2162,43 @@ Make things related to CRT gated behing experimental feature
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. integer)!: split CRT and make it experimental
+## X. add dependabot for python
 
 **RULE**:
-When implementing operations in `tfhe-benchmark/benches/integer/aes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/dependabot.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `977e617f`: integer)!: split CRT and make it experimental. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ebb631f8`: add dependabot for python. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe-benchmark/benches/integer/aes.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/dependabot.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    use tfhe::integer::RadixClientKey;
-        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
-            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param);
+# The ci_lint workflow checks with 'make check_dependabot_coverage' that the directories
+# listed below track all the manifests of their ecosystem, a manifest added elsewhere
+# has to be listed here, see scripts/check_dependabot_coverage.py
+
+  # Python requirements lock files (*requirements.txt) are generated from their
+  # *requirements.in sources by uv, see scripts/python_requirements.sh, hence the uv
+  # ecosystem: the pip one runs pip-tools, which cannot generate lock files valid on all
+  # platforms. Dependabot runs 'uv pip compile' itself, from the listed directory, with
+  # the options it finds in the header of the lock file, and its pull requests have to
+  # pass 'make check_python_requirements'.
+  # Requirements files must not be in a directory directly below a listed one:
+  # Dependabot reads those from the listed directory as well, under another path, which
+  # ends up in the lock file, see scripts/check_dependabot_coverage.py.
+  # Security updates are another matter: for requirements files, Dependabot generates
+  # them with pip-tools, as the pip ecosystem does, even with this entry. This is not
+  # documented but observed. When such a pull request fails the lock files 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    use tfhe::integer::{IntegerKeyKind, RadixClientKey};
-        let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
-            let (cpu_cks, _) = KEY_CACHE.get_from_params(atomic_param, IntegerKeyKind::Radix);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `977e617f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ebb631f8` are properly handled with clean fallback behavior.

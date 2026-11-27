@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T20:38:15.410Z",
-  "total_cycles_completed": 13160,
-  "total_learnings_persisted": 13160,
-  "total_rules_promoted": 11875,
+  "last_updated": "2026-11-27T20:47:02.829Z",
+  "total_cycles_completed": 13162,
+  "total_learnings_persisted": 13162,
+  "total_rules_promoted": 11877,
   "history": [
-    {
-      "timestamp": "2026-11-27T03:43:48.240Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T03:43:55.049Z",
-      "repository": "react-native-webrtc/react-native-webrtc",
-      "learningId": "learn-github-react-native-webrtc-react-native-webrtc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T03:43:58.332Z",
       "repository": "loft-sh/vcluster",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T20:38:15.410Z",
       "repository": "jellyfin/Swiftfin",
       "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T20:47:01.317Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T20:47:02.829Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

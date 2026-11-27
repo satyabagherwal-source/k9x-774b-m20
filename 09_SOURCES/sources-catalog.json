@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "977e617f",
+    "sourceVersion": "ebb631f8",
     "license": "NOASSERTION",
-    "contentHash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
-    "lastHarvestedAt": "2026-11-27T16:30:27.333Z",
+    "contentHash": "d44a52c9ce52c117033b7363c234b5d3cf121bef7b24282ada67488232a19ada",
+    "lastHarvestedAt": "2026-11-27T20:47:02.823Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "fa2f007e",
+    "sourceVersion": "72791552",
     "license": "Apache-2.0",
-    "contentHash": "4afd110e62a51d96ef8429e02070a960f93573e17cff45f0fb869fa9ddc97adb",
-    "lastHarvestedAt": "2026-11-27T02:49:46.937Z",
+    "contentHash": "75c95a8af85b27cc1509216654deca7f90e5109dc8615a78af345e7cdaed868c",
+    "lastHarvestedAt": "2026-11-27T20:47:01.311Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

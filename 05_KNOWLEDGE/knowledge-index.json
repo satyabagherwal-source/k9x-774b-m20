@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T20:38:23.244Z",
+  "last_updated": "2026-11-27T20:47:09.210Z",
   "total_verified_learnings": 9146,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26748,
+  "total_items": 26753,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213606,8 +213606,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "977e617f",
-      "content_hash": "ebd824c3a12c2ddede38d44daabcfa311cf6a8a74ddd315a0141941283e4204b",
+      "source_version": "ebb631f8",
+      "content_hash": "d44a52c9ce52c117033b7363c234b5d3cf121bef7b24282ada67488232a19ada",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213710,6 +213710,11 @@
           "number": 10929,
           "title": "!: split CRT and make it experimental",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10963,
+          "title": "add dependabot for python",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213717,7 +213722,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T16:30:27.058Z",
+      "verified_at": "2026-11-27T20:47:02.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213759,10 +213764,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "977e617f",
-      "content_hash": "2455f65adf21e978959de50bb1c8702073083b9f30445c3d6e9caeb4de5b3434",
+      "source_version": "ebb631f8",
+      "content_hash": "005af89b09995588b3099bec3722db966b27aae8c371329a861e31e3d6a2cd53",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T16:30:27.808Z"
+      "persisted_at": "2026-11-27T20:47:03.267Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213771,10 +213776,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "977e617f",
-      "content_hash": "4bbaee44bc955bcec653a825b843fe92d65d3ed4ac97f3e97532170cb1c02267",
+      "source_version": "ebb631f8",
+      "content_hash": "e50c3f651374d77a3aee0401fd51d9b0cf249325751020e7ed2cc8fbf5d3405d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T16:30:28.021Z"
+      "persisted_at": "2026-11-27T20:47:03.457Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -222059,8 +222064,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "fa2f007e",
-      "content_hash": "4afd110e62a51d96ef8429e02070a960f93573e17cff45f0fb869fa9ddc97adb",
+      "source_version": "72791552",
+      "content_hash": "75c95a8af85b27cc1509216654deca7f90e5109dc8615a78af345e7cdaed868c",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -222128,6 +222133,11 @@
           "number": 10814,
           "title": "support cancelling paused tasks and drain paused subtasks before reverting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10962,
+          "title": "fix affinity cleanup after out-of-place MV cutover",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222135,7 +222145,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T02:49:46.593Z",
+      "verified_at": "2026-11-27T20:47:01.050Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222189,10 +222199,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "fa2f007e",
-      "content_hash": "05d39b6af9807e84b1d355a8f5284ff6707f5213e6147152239cde91ca24dc27",
+      "source_version": "72791552",
+      "content_hash": "fbf5d0caf2013f0f532e7066c5fcb262ded32a9c19babc6eb12811becb3c8fb2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T02:49:47.727Z"
+      "persisted_at": "2026-11-27T20:47:02.014Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -222276,9 +222286,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "493159d2dd32529f8cb0e12cdcdbb9731ec5e732be74dbe6882142b72a621986",
+      "content_hash": "7f4c873efe507faaa10ffea72ebedfbf1560ee587cd4969b406b7ff22dc4ed50",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T02:49:52.276Z"
+      "persisted_at": "2026-11-27T20:47:07.280Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -230416,9 +230426,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "97ece8ccb4a6b9ce98816619379d3cd5831eec189864fedd3d6981bff90aa7b1",
+      "content_hash": "e6d1cdabfbb2b575a180219172f012663343ef9dcf0eaa26a3a67e919acb84c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:38:23.026Z"
+      "persisted_at": "2026-11-27T20:47:09.016Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230428,9 +230438,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec2577a925ca39dbe8b1118c9a6270db06d69e40becb269cda56582ff5a6e8c2",
+      "content_hash": "9cd6a81b4db525c83690c34375b031fc5e5424f707e431f348abbb49f69deeaf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T20:38:23.244Z"
+      "persisted_at": "2026-11-27T20:47:09.210Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -278017,9 +278027,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "0959425cc133352c5fcb588e7877e05029ce0b1a7532b54422f71a9a9a825046",
+      "content_hash": "6dc350a2e912a4a635dd59e876d34164a9449ef7494354b1e40e4b293924cf13",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T16:30:32.498Z"
+      "persisted_at": "2026-11-27T20:47:07.983Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -278029,9 +278039,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "678f4a343dac734761c16b59385e4e0253a31bee1aca6e2c7106fa9eec199b52",
+      "content_hash": "a3f2972bc7d17a656356a77cc349151726ddf4ac539aef842e77caae46445285",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T16:30:32.708Z"
+      "persisted_at": "2026-11-27T20:47:08.195Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -350555,13 +350565,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1GFE-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-CQ9T-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a087a9b10f4b67dad160d57a8dc61476f745932c8b7ae926a016c7f91827b5c",
+      "content_hash": "3b129939942106c0563903043f43d2a94809306a90474c2df060f5f950eaf2bb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T20:38:22.827Z"
+      "persisted_at": "2026-11-27T20:47:08.801Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -361724,10 +361734,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pingcap-tidb-architecture-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Architecture Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "fa2f007e",
-      "content_hash": "13d638292ef163863b4b38eb2c2760daaa88c83b796a2b621c323c4404f8cae7",
+      "source_version": "72791552",
+      "content_hash": "71bb15d3a4109fc63dbe93ead8ce345d59f7a80790a5838695d60615af5d6c3c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T02:49:47.483Z"
+      "persisted_at": "2026-11-27T20:47:01.811Z"
     },
     "candidate_directive-dxf-support-cancelling-paused-tasks-and-drain-paused-subtasks-before-reverting": {
       "item_id": "candidate_directive-dxf-support-cancelling-paused-tasks-and-drain-paused-subtasks-before-reverting",
@@ -361749,9 +361759,9 @@
       "title": "Architecture Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f1262c4740be91a6fece1f155bbb44687a15af71c501737960344f60e95382b",
+      "content_hash": "3a273eff284dd499d0766d7cc1dfaede414fbe8bb8d5c2674f814b11dfe40254",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T02:49:52.041Z"
+      "persisted_at": "2026-11-27T20:47:07.076Z"
     },
     "candidate_directive-analyzer-preserve-incomplete-protected-write-scans-skip-ci": {
       "item_id": "candidate_directive-analyzer-preserve-incomplete-protected-write-scans-skip-ci",
@@ -367335,6 +367345,70 @@
       "content_hash": "2b24a79ecf3a50384e5bdc8d3d78e16132b30fab63013fed8b47891c911d0cd5",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T20:38:20.435Z"
+    },
+    "rule-10962": {
+      "learning_id": "rule-10962",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10962,
+      "title": "fix affinity cleanup after out-of-place MV cutover",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "72791552",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T20:47:01.050Z"
+    },
+    "candidate_directive-fix-affinity-cleanup-after-out-of-place-mv-cutover": {
+      "item_id": "candidate_directive-fix-affinity-cleanup-after-out-of-place-mv-cutover",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CKOZ-fix-affinity-cleanup-after-out-of-place-mv-cutover.md",
+      "title": "fix affinity cleanup after out-of-place MV cutover",
+      "repository": "pingcap/tidb",
+      "source_version": "72791552",
+      "content_hash": "606329428647d6d65ea3f9062c8c240c936a90302cdb3540416cd383c9d122b2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T20:47:01.576Z"
+    },
+    "rule-10963": {
+      "learning_id": "rule-10963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10963,
+      "title": "add dependabot for python",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "ebb631f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T20:47:02.562Z"
+    },
+    "candidate_directive-add-dependabot-for-python": {
+      "item_id": "candidate_directive-add-dependabot-for-python",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CPHJ-add-dependabot-for-python.md",
+      "title": "add dependabot for python",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ec5a529701b5912c84ec697e4d0e1d7ff1447e46db1139dbc0359daba4c0f1b4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T20:47:07.786Z"
+    },
+    "candidate_directive-ddl-fix-affinity-cleanup-after-out-of-place-mv-cutover": {
+      "item_id": "candidate_directive-ddl-fix-affinity-cleanup-after-out-of-place-mv-cutover",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-COS6-ddl-fix-affinity-cleanup-after-out-of-place-mv-cutover.md",
+      "title": "ddl: fix affinity cleanup after out-of-place MV cutover",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b04f5a7f672fd458051913e660ea68effde9edafe486e376e7bc1524897a543b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T20:47:06.874Z"
     }
   },
   "ai-builder-brain": {

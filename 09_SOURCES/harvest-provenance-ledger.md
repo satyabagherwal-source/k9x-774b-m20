@@ -13901,3 +13901,5 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5feb8f1e` | Multi-dimensional audit evidence | 2026-11-27T20:20:02.958Z |
 | `learn-dom-d-3686f390` | `project://hf-openuncensored-inkling-2-mini-uncensored` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openuncensored-inkling-2-mini-uncensored-learnings.md` | 2026-11-27T20:20:43.119Z |
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `ca2e7c55` | Multi-dimensional audit evidence | 2026-11-27T20:38:15.404Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `72791552` | Multi-dimensional audit evidence | 2026-11-27T20:47:01.311Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ebb631f8` | Multi-dimensional audit evidence | 2026-11-27T20:47:02.823Z |

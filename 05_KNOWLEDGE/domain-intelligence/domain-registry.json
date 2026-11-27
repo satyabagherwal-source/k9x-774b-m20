@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T20:38:23.026Z",
+  "last_updated": "2026-11-27T20:47:09.016Z",
   "total_records": 2855,
   "domains": {
     "A": {
@@ -10704,8 +10704,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "2455f65adf21e978959de50bb1c8702073083b9f30445c3d6e9caeb4de5b3434",
-      "created_at": "2026-11-27T16:30:27.808Z"
+      "content_hash": "005af89b09995588b3099bec3722db966b27aae8c371329a861e31e3d6a2cd53",
+      "created_at": "2026-11-27T20:47:03.267Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -15646,8 +15646,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "97ece8ccb4a6b9ce98816619379d3cd5831eec189864fedd3d6981bff90aa7b1",
-      "created_at": "2026-11-27T20:38:23.026Z"
+      "content_hash": "e6d1cdabfbb2b575a180219172f012663343ef9dcf0eaa26a3a67e919acb84c0",
+      "created_at": "2026-11-27T20:47:09.016Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -27851,8 +27851,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "0959425cc133352c5fcb588e7877e05029ce0b1a7532b54422f71a9a9a825046",
-      "created_at": "2026-11-27T16:30:32.498Z"
+      "content_hash": "6dc350a2e912a4a635dd59e876d34164a9449ef7494354b1e40e4b293924cf13",
+      "created_at": "2026-11-27T20:47:07.983Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -47270,8 +47270,8 @@
       "title": "Architecture Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pingcap-tidb-architecture-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "13d638292ef163863b4b38eb2c2760daaa88c83b796a2b621c323c4404f8cae7",
-      "created_at": "2026-11-27T02:49:47.483Z"
+      "content_hash": "71bb15d3a4109fc63dbe93ead8ce345d59f7a80790a5838695d60615af5d6c3c",
+      "created_at": "2026-11-27T20:47:01.811Z"
     },
     "domain_intelligence-architecture-intelligence-pingcap-tidb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-pingcap-tidb-learnings-core-invariants",
@@ -47279,8 +47279,8 @@
       "title": "Architecture Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pingcap-tidb-learnings-architecture-intelligence-pingcap-tidb-learnings-core-inv.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "9f1262c4740be91a6fece1f155bbb44687a15af71c501737960344f60e95382b",
-      "created_at": "2026-11-27T02:49:52.041Z"
+      "content_hash": "3a273eff284dd499d0766d7cc1dfaede414fbe8bb8d5c2674f814b11dfe40254",
+      "created_at": "2026-11-27T20:47:07.076Z"
     },
     "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sfu-db-connector-x-learnings-core-invariants",
