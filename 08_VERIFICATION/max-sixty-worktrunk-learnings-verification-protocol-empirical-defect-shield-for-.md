@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T14:04:20.901Z",
+  "timestamp": "2026-11-27T14:17:03.483Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-max-sixty-worktrunk-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [max-sixty-worktrunk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T14:04:20.901Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T14:17:03.483Z`  
 > **Learning ID**: `LEARN-EVO-max-sixty-worktrunk-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `3d80ecb8`  
+> **Source Version**: `541579bf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T14:04:01.648Z  
+> **Timestamp**: 2026-11-27T14:16:51.918Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T14:04:01.643Z  
+> **Harvest Timestamp**: 2026-11-27T14:16:51.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12754 stars
+- **Stars / Engagement**: 12789 stars
 
 ---
 
@@ -2042,109 +2042,690 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d80ecb8` (2026-11-26)
-**Commit Message**: fix(test): let a caught SIGINT reach the hook trap on macOS sh (#4920)
+### Incident Patch 1: `0fba1cb9` (2026-11-27)
+**Commit Message**: fix(config): report a bare root's missing default-branch worktree without panicking (#4925)
 
-**File**: `src/signal_forwarder.rs` (modified, +3/-1)
+At a bare repository's root, `wt config create --project` panicked in
+debug builds and printed a generic `✗ Command failed` gutter in release
+builds when no worktree held the default branch. This PR replaces that
+with an error and hint that name the default branch. Three new
+integration snapshots cover the cases; before the fix, all three
+panicked. A fourth covers an empty `WORKTRUNK_PROJECT_CONFIG_PATH`,
+which also makes `project_config_path()` return `None`.
+
+**Why it broke.** The bare-root branch returned a two-line `anyhow!`
+error. `main.rs`'s renderer treats a multi-line error with no context as
+a bug: it hits `debug_assert!(false, "Multiline error without
+CommandError or context")` and otherwise falls back to `Command failed`
+with the text in a gutter. Nothing tested this path. The wording was
+also wrong. `project_config_path()` returns `None` here when no worktree
+holds the default branch, which includes repos that already have
+feature-branch worktrees. Those users were told the repo "has no linked
+worktrees yet", and following the hint by switching to another branch
+didn't help.
+
+**
+
+**File**: `src/commands/config/create.rs` (modified, +48/-10)
 ```diff
-@@ -624,7 +624,9 @@ mod tests {
-         command
-             .args([
-                 "-c",
--                "trap 'echo child-handled >&2; exit 0' INT; echo ready > \"$1\"; while :; do sleep 0.01; done",
-+                // Background sleep: macOS bash 3.2 can drop one SIGINT across the
-+                // fork of a foreground `sleep` (#4748). `wait` runs the trap.
-+                "trap 'echo child-handled >&2; exit 0' INT; echo ready > \"$1\"; while :; do sleep 0.01 & wait $!; done",
-                 "sh",
-             ])
-             .arg(&marker);
+@@ -6,9 +6,11 @@ use anyhow::Context;
+ use color_print::cformat;
+ use std::path::PathBuf;
+ use worktrunk::config::{ConfigFileKind, require_config_path};
+-use worktrunk::git::Repository;
++use worktrunk::git::{Repository, WorktrunkError};
+ use worktrunk::path::format_path_for_display;
+-use worktrunk::styling::{eprintln, hint_message, info_message, success_message};
++use worktrunk::styling::{
++    eprintln, error_message, hint_message, info_message, success_message, suggest_command,
++};
+ 
+ /// Example user configuration file content (displayed in help with values uncommented)
+ const USER_CONFIG_EXAMPLE: &str = include_str!("../../../dev/config.example.toml");
+@@ -43,16 +45,52 @@ pub(super) fn comment_out_config(content: &str) -> String {
+ pub fn handle_config_create(project: bool) -> anyhow::Result<()> {
+     if project {
+         let repo = Repository::current()?;
+-        let config_path = repo.project_config_path()?.ok_or_else(|| {
++        let Some(config_path) = repo.project_config_path()? else {
++            // An empty override disables project config before any worktree
++            // is consulted, so no worktree state explains the `None`.
++            if std::env::var_os("WORKTRUNK_PROJECT_CONFIG_PATH").is_some_and(|p| p.is_empty()) {
++                eprintln!(
++                    "{}",
++                    error_message(cformat!(
++                        "Cannot create project config — <bold>WORKTRUNK_PROJECT_CONFIG_PATH</> is empty, which disables project config"
++                    ))
++                );
++                eprintln!(
++                    "{}",
++                    hint_message(cformat!(
++                        "Unset <underline>WORKTRUNK_PROJECT_CONFIG_PATH</> or set it to a file path"
++                    ))
++                );
++                return Err(WorktrunkError::AlreadyDisplayed { exit_code: 1 }.into());
++            }
+             if repo.is_bare().unwrap_or(false) {
+-                anyhow::anyhow!(
+-                    "Bare repository has no linked worktrees yet.\n\
+-                     Run `wt switch <branch>` to create a worktree first, then run `wt config create --project` from inside it."
+-                )
+-            } else {
+-                anyhow::anyhow!("Cannot determine project config location — no worktree found")
++                // At a bare root the project config path is the default
++                // branch's worktree, so a worktree on another branch doesn't
++                // supply one; running from inside that worktree does.
++                let (error, hint) = match repo.default_branch() {
++                    Some(branch) => {
++                        let switch = suggest_command("switch", &[&branch], &[]);
++                        (
++                            cformat!(
++                                "Cannot create project config — no worktree holds the default branch <bold>{branch}</>"
++                            ),
++                            cformat!(
++                                "Run from inside a worktree, or to create the default branch's worktree, run <underline>{switch}</>"
++                            ),
++                        )
++                    }
++                    None => (
++                        "Cannot create project config — could not determine the default branch"
++                            .to_string(),
++                        "Run from inside a worktree".to_string(),
++                    ),
++                };
++                eprintln!("{}", error_message(error));
++                eprintln!("{}", hint_message(hint));
++                return Err(WorktrunkError::AlreadyDisplayed { exit_code: 1 }.into());
+             }
+-        })?;
++            anyhow::bail!("Cannot determine project config location — no worktree found");
++        };
+         let user_config_exists = require_config_path().map(|p| p.exists()).unwrap_or(false);
+         create_config_file(
+             config_path,
 ```
 
-**File**: `tests/common/mod.rs` (modified, +11/-0)
+**File**: `tests/integration_tests/bare_repository.rs` (modified, +58/-0)
 ```diff
-@@ -31,6 +31,17 @@ use worktrunk::path::to_posix_path;
- #[cfg(unix)]
- pub const FOREGROUND_TRACE_FILTER: &str = "worktrunk::wt_trace=debug,worktrunk::trace::emit=debug";
- 
-+/// Foreground wait whose INT trap runs under macOS `/bin/sh` (bash 3.2).
-+///
-+/// `while :; do sleep 0.1; done` can drop one SIGINT: the signal arrives after
-+/// bash has forked the next `sleep` and before `wait_for` runs the trap
-+/// (#4748). Waiting on a background `sleep` makes SIGINT interrupt the `wait`
-+/// builtin, which runs the trap. One keypress still stops the child.
-+#[cfg(unix)]
-+pub fn sigint_observable_wait(interval: &str) -> String {
-+    format!("while :; do sleep {interval} & wait $!; done")
+@@ -2445,3 +2445,61 @@ mod bare_repo_prompt_pty {
+         });
+     }
+ }
++
++#[derive(Clone, Copy)]
++enum BareCreateSetup {
++    NoWorktrees,
++    FeatureWorktree,
++    NoDefaultBranch,
++    /// `main` has a worktree, but an empty `WORKTRUNK_PROJECT_CONFIG_PATH`
++    /// disables project config before any worktree is consulted.
++    EmptyOverride,
 +}
 +
- /// Child readiness may precede the parent's spawn return. Caught-signal tests
- /// wait for wt to commit admission before delivering ordinary terminal input.
- #[cfg(unix)]
++/// `wt config create --project` at a bare repo's root has nowhere to write
++/// when no worktree holds the default branch, whether or not other worktrees
++/// exist. The error names that state and both ways out. An empty
++/// `WORKTRUNK_PROJECT_CONFIG_PATH` is reported as such, not as a missing
++/// worktree.
++#[rstest]
++#[case::no_worktrees("no_worktrees", BareCreateSetup::NoWorktrees)]
++#[case::only_a_feature_worktree("only_feature_worktree", BareCreateSetup::FeatureWorktree)]
++#[case::no_default_branch("no_default_branch", BareCreateSetup::NoDefaultBranch)]
++#[case::empty_override("empty_override", BareCreateSetup::EmptyOverride)]
++fn test_bare_repo_config_create_project_without_default_branch_worktree(
++    #[case] name: &str,
++    #[case] setup: BareCreateSetup,
++) {
++    let test = bare_repo_without_worktrees();
++    let bare = test.bare_repo_path();
++    match setup {
++        BareCreateSetup::NoWorktrees => {}
++        BareCreateSetup::FeatureWorktree => {
++            test.run_git_in(bare, &["worktree", "add", "feature", "feature"]);
++        }
++        // Detached HEAD and no conventionally named branch: nothing names a
++        // default branch.
++        BareCreateSetup::NoDefaultBranch => {
++            test.run_git_in(bare, &["update-ref", "--no-deref", "HEAD", "feature"]);
++            test.run_git_in(bare, &["branch", "-m", "main", "other"]);
++        }
++        BareCreateSetup::EmptyOverride => {
++            test.run_git_in(bare, &["worktree", "add", "main", "main"]);
++        }
++    }
++
++    let settings = setup_temp_snapshot_settings(test.temp_path());
++    settings.bind(|| {
++        let mut cmd = wt_command();
++        test.configure_wt_cmd(&mut cmd);
++        if matches!(setup, BareCreateSetup::EmptyOverride) {
++            cmd.env("WORKTRUNK_PROJECT_CONFIG_PATH", "");
++        }
++        cmd.args(["config", "create", "--project"])
++            .current_dir(test.bare_repo_path());
++
++        assert_cmd_snapshot!(format!("bare_repo_config_create_project_{name}"), cmd);
++    });
++    assert!(!test.bare_repo_path().join(".config").exists());
++    assert!(!test.bare_repo_path().join("main/.config").exists());
++}
 ```
 
-**File**: `tests/integration_tests/for_each.rs` (modified, +2/-1)
+**File**: `tests/snapshots/integration__integration_tests__bare_repository__bare_repo_config_create_project_empty_override.snap` (added, +58/-0)
 ```diff
-@@ -345,7 +345,8 @@ fn test_for_each_stops_on_caught_ctrl_c(repo: TestRepo) {
-     let marker_dir = worktrunk::testing::tempdir().unwrap();
-     let pid_file = marker_dir.path().join("pid");
-     let script = format!(
--        "trap 'exit 0' INT; touch {dir}/\"$(basename \"$PWD\")\"; echo $$ > {pid}; while :; do sleep 0.1; done",
-+        "trap 'exit 0' INT; touch {dir}/\"$(basename \"$PWD\")\"; echo $$ > {pid}; {wait}",
-+        wait = crate::common::sigint_observable_wait("0.1"),
-         dir = shell_escape::unix::escape(marker_dir.path().join("visited").to_string_lossy()),
-         pid = shell_escape::unix::escape(pid_file.to_string_lossy()),
-     );
+@@ -0,0 +1,58 @@
++---
++source: tests/integration_tests/bare_repository.rs
++info:
++  program: wt
++  args:
++    - config
++    - create
++    - "--project"
++  env:
++    COLUMNS: "500"
++    GIT_ALLOW_PROTOCOL: file
++    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
++    GIT_AUTHOR_EMAIL: test@example.com
++    GIT_AUTHOR_NAME: Test User
++    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
++    GIT_COMMITTER_EMAIL: test@example.com
++    GIT_COMMITTER_NAME: Test User
++    GIT_CONFIG_COUNT: "2"
++    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
++    GIT_CONFIG_KEY_0: user.useConfigOnly
++    GIT_CONFIG_KEY_1: rerere.enabled
++    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
++    GIT_CONFIG_VALUE_0: "true"
++    GIT_CONFIG_VALUE_1: "false"
++    GIT_TERMINAL_PROMPT: "0"
++    LANG: C
++    LC_ALL: C
++    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
++    TERM: alacritty
++    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
++    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
++    WORKTRUNK_PROJECT_CONFIG_PATH: "[TEST_PROJECT_CONFIG]"
++    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
++    WORKTRUNK_TEST_BASH_INSTALLED: "0"
++    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
++    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
++    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
++    WORKTRUNK_TEST_EPOCH: "1735776000"
++    WORKTRUNK_TEST_FISH_INSTALLED: "0"
++    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
++    WORKTRUNK_TEST_NUSHELL_ENV: "0"
++    WORKTRUNK_TEST_OMP_INSTALLED: "0"
++    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
++    WORKTRUNK_TEST_PARENT_SHELL: ""
++    WORKTRUNK_TEST_PI_INSTALLED: "0"
++    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
++    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
++    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
++    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
++    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
++---
++success: false
++exit_code: 1
++----- stdout -----
++
++----- stderr -----
++✗ Cannot create project config — WORKTRUNK_PROJECT_CONFIG_PATH is empty, which disables project config
++↳ Unset WORKTRUNK_PROJECT_CONFIG_PATH or set it to a file path
 ```
 
-**File**: `tests/integration_tests/remove.rs` (modified, +3/-2)
+**File**: `tests/snapshots/integration__integration_tests__bare_repository__bare_repo_config_create_project_no_default_branch.snap` (added, +57/-0)
 ```diff
-@@ -1407,8 +1407,9 @@ fn test_remove_interrupt_stops_batch(
- fn test_remove_ctrl_c_caught_by_hook_stops_batch(mut repo: TestRepo, #[case] hook_exit: i32) {
-     let pid_file = repo.root_path().join("hook-pid");
-     let hook = format!(
--        "trap 'exit {hook_exit}' INT; echo $$ > {}; while :; do sleep 0.1; done",
--        shell_escape::unix::escape(pid_file.to_string_lossy())
-+        "trap 'exit {hook_exit}' INT; echo $$ > {}; {}",
-+        shell_escape::unix::escape(pid_file.to_string_lossy()),
-+        crate::common::sigint_observable_wait("0.1"),
-     );
-     repo.write_project_config(&format!("pre-remove = {hook:?}"));
-     repo.commit("Add pre-remove hook that catches Ctrl-C");
+@@ -0,0 +1,57 @@
++---
++source: tests/integration_tests/bare_repository.rs
++info:
++  program: wt
++  args:
++    - config
++    - create
++    - "--project"
++  env:
++    COLUMNS: "500"
++    GIT_ALLOW_PROTOCOL: file
++    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
++    GIT_AUTHOR_EMAIL: test@example.com
++    GIT_AUTHOR_NAME: Test User
++    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
++    GIT_COMMITTER_EMAIL: test@example.com
++    GIT_COMMITTER_NAME: Test User
++    GIT_CONFIG_COUNT: "2"
++    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
++    GIT_CONFIG_KEY_0: user.useConfigOnly
++    GIT_CONFIG_KEY_1: rerere.enabled
++    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
++    GIT_CONFIG_VALUE_0: "true"
++    GIT_CONFIG_VALUE_1: "false"
++    GIT_TERMINAL_PROMPT: "0"
++    LANG: C
++    LC_ALL: C
++    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
++    TERM: alacritty
++    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
++    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
++    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
++    WORKTRUNK_TEST_BASH_INSTALLED: "0"
++    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
++    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
++    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
++    WORKTRUNK_TEST_EPOCH: "1735776000"
++    WORKTRUNK_TEST_FISH_INSTALLED: "0"
++    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
++    WORKTRUNK_TEST_NUSHELL_ENV: "0"
++    WORKTRUNK_TEST_OMP_INSTALLED: "0"
++    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
++    WORKTRUNK_TEST_PARENT_SHELL: ""
++    WORKTRUNK_TEST_PI_INSTALLED: "0"
++    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
++    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
++    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
++    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
++    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
++---
++success: false
++exit_code: 1
++----- stdout -----
++
++----- stderr -----
++✗ Cannot create project config — could not determine the default branch
++↳ Run from inside a worktree
 ```
 
-**File**: `tests/integration_tests/step_alias.rs` (modified, +1/-1)
+**File**: `tests/snapshots/integration__integration_tests__bare_repository__bare_repo_config_create_project_no_worktrees.snap` (added, +57/-0)
 ```diff
-@@ -1436,7 +1436,7 @@ fn test_alias_group_sigint_does_not_escalate(
- #[cfg(unix)]
- fn test_alias_last_step_keeps_status_after_caught_ctrl_c(repo: TestRepo) {
-     repo.write_test_config(
--        "[aliases]\nsignal-test = \"trap 'echo handled > int; while [ ! -e release ]; do sleep 0.01; done; exit 0' INT; echo $$ > pid; while :; do sleep 0.1; done\"\n",
-+        "[aliases]\nsignal-test = \"trap 'echo handled > int; while [ ! -e release ]; do sleep 0.01; done; exit 0' INT; echo $$ > pid; while :; do sleep 0.1 & wait $!; done\"\n",
-     );
-     let stderr_path = repo.root_path().join("stderr");
-     let stderr = std::fs::File::create(&stderr_path).unwrap();
+@@ -0,0 +1,57 @@
++---
++source: tests/integration_tests/bare_repository.rs
++info:
++  program: wt
++  args:
++    - config
++    - create
++    - "--project"
++  env:
++    COLUMNS: "500"
++    GIT_ALLOW_PROTOCOL: file
++    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
++    GIT_AUTHOR_EMAIL: test@example.com
++    GIT_AUTHOR_NAME: Test User
++    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
++    GIT_COMMITTER_EMAIL: test@example.com
++    GIT_COMMITTER_NAME: Test User
++    GIT_CONFIG_COUNT: "2"
++    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
++    GIT_CONFIG_KEY_0: user.useConfigOnly
++    GIT_CONFIG_KEY_1: rerere.enabled
++    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
++    GIT_CONFIG_VALUE_0: "true"
++    GIT_CONFIG_VALUE_1: "false"
++    GIT_TERMINAL_PROMPT: "0"
++    LANG: C
++    LC_ALL: C
++    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
++    TERM: alacritty
++    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
++    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
++    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
++    WORKTRUNK_TEST_BASH_INSTALLED: "0"
++    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
++    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
++    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
++    WORKTRUNK_TEST_EPOCH: "1735776000"
++    WORKTRUNK_TEST_FISH_INSTALLED: "0"
++    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
++    WORKTRUNK_TEST_NUSHELL_ENV: "0"
++    WORKTRUNK_TEST_OMP_INSTALLED: "0"
++    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
++    WORKTRUNK_TEST_PARENT_SHELL: ""
++    WORKTRUNK_TEST_PI_INSTALLED: "0"
++    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
++    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
++    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
++    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
++    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
++---
++success: false
++exit_code: 1
++----- stdout -----
++
++----- stderr -----
++✗ Cannot create project config — no worktree holds the default branch main
++↳ Run from inside a worktree, or to create the default branch's worktree, run wt switch main
 ```
 
-**File**: `tests/integration_tests/user_hooks.rs` (modified, +1/-1)
+**File**: `tests/snapshots/integration__integration_tests__bare_repository__bare_repo_config_create_project_only_feature_worktree.snap` (added, +57/-0)
 ```diff
-@@ -665,7 +665,7 @@ fn test_pre_merge_pipeline_aborts_on_signal_exit(repo: TestRepo) {
- fn test_post_start_pipeline_stops_on_caught_ctrl_c(repo: TestRepo) {
-     repo.write_project_config(
-         r#"post-start = [
--    "trap 'exit 130' INT; echo $$ > hook-pid; while :; do sleep 0.1; done",
-+    "trap 'exit 130' INT; echo $$ > hook-pid; while :; do sleep 0.1 & wait $!; done",
-     "echo after > after.log",
- ]
- "#,
+@@ -0,0 +1,57 @@
++---
++source: tests/integration_tests/bare_repository.rs
++info:
++  program: wt
++  args:
++    - config
++    - create
++    - "--project"
++  env:
++    COLUMNS: "500"
++    GIT_ALLOW_PROTOCOL: file
++    GIT_AUTHOR_DATE: "2025-01-01T00:00:00Z"
++    GIT_AUTHOR_EMAIL: test@example.com
++    GIT_AUTHOR_NAME: Test User
++    GIT_COMMITTER_DATE: "2025-01-01T00:00:00Z"
++    GIT_COMMITTER_EMAIL: test@example.com
++    GIT_COMMITTER_NAME: Test User
++    GIT_CONFIG_COUNT: "2"
++    GIT_CONFIG_GLOBAL: /nonexistent/wt/gitconfig
++    GIT_CONFIG_KEY_0: user.useConfigOnly
++    GIT_CONFIG_KEY_1: rerere.enabled
++    GIT_CONFIG_SYSTEM: /nonexistent/wt/gitconfig
++    GIT_CONFIG_VALUE_0: "true"
++    GIT_CONFIG_VALUE_1: "false"
++    GIT_TERMINAL_PROMPT: "0"
++    LANG: C
++    LC_ALL: C
++    LLVM_PROFILE_FILE: "[LLVM_PROFILE_FILE]"
++    TERM: alacritty
++    WORKTRUNK_APPROVALS_PATH: "[TEST_APPROVALS]"
++    WORKTRUNK_CONFIG_PATH: "[TEST_CONFIG]"
++    WORKTRUNK_SYSTEM_CONFIG_PATH: "[TEST_SYSTEM_CONFIG]"
++    WORKTRUNK_TEST_BASH_INSTALLED: "0"
++    WORKTRUNK_TEST_CLAUDE_INSTALLED: "0"
++    WORKTRUNK_TEST_CODEX_INSTALLED: "0"
++    WORKTRUNK_TEST_DELAYED_STREAM_MS: "-1"
++    WORKTRUNK_TEST_EPOCH: "1735776000"
++    WORKTRUNK_TEST_FISH_INSTALLED: "0"
++    WORKTRUNK_TEST_GEMINI_INSTALLED: "0"
++    WORKTRUNK_TEST_NUSHELL_ENV: "0"
++    WORKTRUNK_TEST_OMP_INSTALLED: "0"
++    WORKTRUNK_TEST_OPENCODE_INSTALLED: "0"
++    WORKTRUNK_TEST_PARENT_SHELL: ""
++    WORKTRUNK_TEST_PI_INSTALLED: "0"
++    WORKTRUNK_TEST_POWERSHELL_ENV: "0"
++    WORKTRUNK_TEST_POWERSHELL_INSTALLED: "0"
++    WORKTRUNK_TEST_PROBE_TIMEOUT_MS: "60000"
++    WORKTRUNK_TEST_SKIP_URL_HEALTH_CHECK: "1"
++    WORKTRUNK_TEST_ZSH_INSTALLED: "0"
++---
++success: false
++exit_code: 1
++----- stdout -----
++
++----- stderr -----
++✗ Cannot create project config — no worktree holds the default branch main
++↳ Run from inside a worktree, or to create the default branch's worktree, run wt switch main
+```
+
+---
+
+### Incident Patch 2: `413cda94` (2026-11-27)
+**Commit Message**: fix(shell): report a failed directory change from the PowerShell wrapper (#4926)
+
+After a `cd` directive, the PowerShell wrapper reported success even
+when the directory change failed, for example after `wt switch` to a
+worktree whose directory had been removed. The shell stayed where it was
+and `$LASTEXITCODE` was still 0. This PR makes the wrapper report 1 in
+that case, matching the bash, zsh and fish wrappers, which return `cd`'s
+status. Nushell raises the `cd` error instead.
+
+**Cause.** After `Set-Location`, the wrapper ran `$exitCode =
+$LASTEXITCODE`
+([`templates/powershell.ps1`](https://github.com/max-sixty/worktrunk/blob/deec05a63bc3a67021a321eb5516f16de5d7dbdc/templates/powershell.ps1#L53-L56)).
+`Set-Location` is a cmdlet and never sets `$LASTEXITCODE`, so the line
+just copied wt's own status back. The wrapper now checks `$?` after
+`Set-Location` and sets 1 when wt itself succeeded. A non-zero status
+from wt still wins, as before.
+
+**Test.** The new `test_powershell_wrapper_reports_failed_cd` runs the
+generated wrapper under `pwsh` with a mock `wt` that writes a missing
+directory to the cd file and exits 0. It asserts `$LASTEXITCODE` is 1
+and the location is unchanged. It f
+
+**File**: `src/shell/snapshots/worktrunk__shell__tests__init_powershell.snap` (modified, +9/-7)
+```diff
+@@ -55,8 +55,10 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
+                 $target = Get-Content -LiteralPath $cdFile -Raw
+                 if ($target) {
+                     Set-Location -LiteralPath $target
+-                    if ($exitCode -eq 0) {
+-                        $exitCode = $LASTEXITCODE
++                    # Set-Location is a cmdlet: a failure clears $? but leaves
++                    # $LASTEXITCODE at wt's own status.
++                    if (-not $? -and $exitCode -eq 0) {
++                        $exitCode = 1
+                     }
+                 }
+             }
+@@ -72,13 +74,13 @@ if ((Get-Command wt -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN) {
+         # stray exit-code line (e.g. `0`) after the real command output — that
+         # corrupts captures like `$out = wt list --format json`. Setting
+         # $global:LASTEXITCODE is what propagates the failure; the Write-Error
+-        # below surfaces a visible error record. Note: because this is a simple
+-        # function, Write-Error does NOT set the caller's $?, so don't rely on
+-        # $? reflecting a wt failure.
++        # below only records it in $Error, printing nothing. Note: because this
++        # is a simple function, Write-Error does NOT set the caller's $?, so
++        # don't rely on $? reflecting a wt failure.
+         $global:LASTEXITCODE = $exitCode
+         if ($exitCode -ne 0) {
+-            # Surface a visible error record without throwing (does not set the
+-            # caller's $? from a simple function; $LASTEXITCODE carries the code)
++            # SilentlyContinue keeps the record out of the output and does not
++            # throw; $LASTEXITCODE carries the code
+             Write-Error "wt exited with code $exitCode" -ErrorAction SilentlyContinue
+         }
+     }
+```
+
+**File**: `templates/powershell.ps1` (modified, +9/-7)
+```diff
+@@ -51,8 +51,10 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
+                 $target = Get-Content -LiteralPath $cdFile -Raw
+                 if ($target) {
+                     Set-Location -LiteralPath $target
+-                    if ($exitCode -eq 0) {
+-                        $exitCode = $LASTEXITCODE
++                    # Set-Location is a cmdlet: a failure clears $? but leaves
++                    # $LASTEXITCODE at wt's own status.
++                    if (-not $? -and $exitCode -eq 0) {
++                        $exitCode = 1
+                     }
+                 }
+             }
+@@ -68,13 +70,13 @@ if ((Get-Command {{ cmd }} -ErrorAction SilentlyContinue) -or $env:WORKTRUNK_BIN
+         # stray exit-code line (e.g. `0`) after the real command output — that
+         # corrupts captures like `$out = wt list --format json`. Setting
+         # $global:LASTEXITCODE is what propagates the failure; the Write-Error
+-        # below surfaces a visible error record. Note: because this is a simple
+-        # function, Write-Error does NOT set the caller's $?, so don't rely on
+-        # $? reflecting a wt failure.
++        # below only records it in $Error, printing nothing. Note: because this
++        # is a simple function, Write-Error does NOT set the caller's $?, so
++        # don't rely on $? reflecting a wt failure.
+         $global:LASTEXITCODE = $exitCode
+         if ($exitCode -ne 0) {
+-            # Surface a visible error record without throwing (does not set the
+-            # caller's $? from a simple function; $LASTEXITCODE carries the code)
++            # SilentlyContinue keeps the record out of the output and does not
++            # throw; $LASTEXITCODE carries the code
+             Write-Error "wt exited with code $exitCode" -ErrorAction SilentlyContinue
+         }
+     }
+```
+
+**File**: `tests/integration_tests/shell_powershell.rs` (modified, +52/-0)
+```diff
+@@ -236,6 +236,58 @@ exit $LASTEXITCODE
+     assert_eq!(std::fs::read_dir(&temp_path).unwrap().count(), 0);
+ }
+ 
++/// A directive naming a directory that no longer exists leaves the shell where
++/// it was, so the wrapper reports failure even though `wt` itself exited 0, as
++/// the bash, zsh and fish wrappers do.
++#[test]
++fn test_powershell_wrapper_reports_failed_cd() {
++    let temp_dir = worktrunk::testing::test_tempdir();
++    let missing = temp_dir.path().join("removed-worktree");
++
++    let mock_bin = temp_dir.path().join("mock-wt.ps1");
++    std::fs::write(
++        &mock_bin,
++        r#"
++if ($env:COMPLETE) { exit 0 }
++[IO.File]::WriteAllText($env:WORKTRUNK_DIRECTIVE_CD_FILE, $env:WORKTRUNK_TEST_TARGET)
++exit 0
++"#,
++    )
++    .unwrap();
++
++    let wrapper = ShellInit::with_prefix(Shell::PowerShell, "wt".to_string())
++        .generate()
++        .unwrap();
++    let mock_bin_escaped = mock_bin.display().to_string().replace('\'', "''");
++    let script = format!(
++        r#"
++$env:WORKTRUNK_BIN = '{mock_bin_escaped}'
++{wrapper}
++$before = (Get-Location).Path
++wt switch feature
++$code = $LASTEXITCODE
++Write-Output "code=$code"
++Write-Output "moved=$((Get-Location).Path -ne $before)"
++"#
++    );
++
++    let output = Command::new("pwsh")
++        .args(["-NoProfile", "-NonInteractive", "-Command", &script])
++        .env("WORKTRUNK_TEST_TARGET", &missing)
++        .output()
++        .expect("Failed to run pwsh");
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(
++        stdout.contains("code=1"),
++        "a failed cd must set $LASTEXITCODE to 1.\nstdout: {stdout}\nstderr: {stderr}",
++    );
++    assert!(
++        stdout.contains("moved=False"),
++        "the shell must stay put.\nstdout: {stdout}\nstderr: {stderr}",
++    );
++}
++
+ /// Write a `wt` into `dir` that appends `<label> <args>` to the file named by
+ /// `WORKTRUNK_TEST_CALL_LOG`, so the log shows which `wt` each call reached.
+ fn write_logging_wt(dir: &std::path::Path, label: &str) {
+```
+
+---
+
+### Incident Patch 3: `541579bf` (2026-11-27)
+**Commit Message**: fix(remove): scrub inherited git discovery vars when stopping fsmonitor (#4923)
+
+**File**: `src/git/remove.rs` (modified, +3/-0)
+```diff
+@@ -158,9 +158,12 @@ const FSMONITOR_LSOF_TIMEOUT: Duration = Duration::from_secs(2);
+ /// only ever reach that worktree's own daemon, never another worktree's.
+ pub fn stop_fsmonitor_daemon(worktree: &WorkingTree) {
+     // Graceful path first: a healthy daemon exits cleanly on this IPC request.
++    // `worktree` is a `wt`-chosen worktree, so an inherited `GIT_DIR` would
++    // address the invoking worktree's daemon instead.
+     let _ = Cmd::new("git")
+         .args(["fsmonitor--daemon", "stop"])
+         .current_dir(worktree.path())
++        .scrub_git_discovery_env()
+         .context(crate::git::repository::path_to_logging_context(
+             worktree.path(),
+         ))
+```
+
+**File**: `tests/integration_tests/remove.rs` (modified, +66/-0)
+```diff
+@@ -4930,6 +4930,72 @@ fn test_remove_drains_trash_under_inherited_git_dir(mut repo: TestRepo) {
+     });
+ }
+ 
++/// `wt remove` stops the removed worktree's fsmonitor daemon with that
++/// worktree as cwd, so the stop must not forward an inherited `GIT_DIR`. A
++/// `!wt` alias from linked worktree `l1` exports `GIT_DIR` as `l1`'s private
++/// gitdir, and `git fsmonitor--daemon stop` run in `l2` with that `GIT_DIR`
++/// stops `l1`'s daemon and leaves `l2`'s running.
++///
++/// A `git` shim on `PATH` records the `GIT_DIR` the stop receives and exits
++/// without contacting a daemon.
++#[rstest]
++#[cfg(unix)]
++fn test_remove_fsmonitor_stop_drops_inherited_git_dir(mut repo: TestRepo) {
++    use std::os::unix::fs::PermissionsExt;
++
++    let l1 = repo.add_worktree("l1");
++    let l2 = repo.add_worktree("l2");
++    let l1_git_dir = fs::read_to_string(l1.join(".git")).unwrap();
++    let l1_git_dir = l1_git_dir.trim().strip_prefix("gitdir: ").unwrap();
++
++    let scratch = crate::common::test_tempdir();
++    let marker = scratch.path().join("stop-git-dir");
++    let bin_dir = scratch.path().join("bin");
++    fs::create_dir(&bin_dir).unwrap();
++    let shim = bin_dir.join("git");
++    fs::write(
++        &shim,
++        format!(
++            r#"#!/bin/sh
++if [ "$1 $2" = 'fsmonitor--daemon stop' ]; then
++  printf '%s' "$GIT_DIR" > {marker}
++  exit 0
++fi
++exec {real_git} "$@"
++"#,
++            marker = shell_escape::unix::escape(marker.to_string_lossy()),
++            real_git = shell_escape::unix::escape(which::which("git").unwrap().to_string_lossy()),
++        ),
++    )
++    .unwrap();
++    fs::set_permissions(&shim, fs::Permissions::from_mode(0o755)).unwrap();
++    let mut path = vec![bin_dir];
++    path.extend(std::env::split_paths(&std::env::var_os("PATH").unwrap()));
++
++    let output = repo
++        .wt_command()
++        .current_dir(&l1)
++        .args(["remove", "l2"])
++        .env("PATH", std::env::join_paths(path).unwrap())
++        .env("GIT_DIR", l1_git_dir)
++        .output()
++        .unwrap();
++    assert!(
++        output.status.success(),
++        "wt remove failed: {}",
++        String::from_utf8_lossy(&output.stderr)
++    );
++
++    let seen = fs::read_to_string(&marker)
++        .unwrap_or_else(|e| panic!("no fsmonitor daemon stop ran for {}: {e}", l2.display()));
++    assert_eq!(
++        seen,
++        "",
++        "fsmonitor daemon stop in {} inherited GIT_DIR",
++        l2.display()
++    );
++}
++
+ /// `wt remove -vv` resolves every fsmonitor daemon in ONE `lsof` spawn and
+ /// traces the sweep.
+ ///
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4926** (2026-11-27): fix(shell): report a failed directory change from the PowerShell wrapper (@worktrunk-bot)
+- **PR #4925** (2026-11-27): fix(config): report a bare root's missing default-branch worktree without panicking (@worktrunk-bot)
+- **PR #4924** (2026-11-27): chore: bump jdx/packslip from 1.11.4 to 1.11.5 (@dependabot[bot])
+- **PR #4923** (2026-11-27): fix(remove): scrub inherited git discovery vars when stopping fsmonitor (@chuenchen309)
 - **PR #4920** (2026-11-26): fix(test): let a caught SIGINT reach the hook trap on macOS sh (@Jack-mi)
 - **PR #4919** (2026-11-26): chore: correct stale doc comments and drop the numstat parser's dead graph handling (@worktrunk-bot)
-- **PR #4917** (2026-11-25): ci: bound apt-get in test-setup and the remaining workflows so a wedged mirror fails in 5 min (@worktrunk-bot)
-- **PR #4914** (2026-11-25): docs: correct stale file pointers in AGENTS.md and skills, and stale doc comments (@worktrunk-bot)
-- **PR #4913** (2026-11-25): refactor(switch): drop the GitLab fork namespace display that never fired (@worktrunk-bot)
-- **PR #4912** (2026-11-25): chore: bump taiki-e/install-action from 2.90.6 to 2.90.8 (@dependabot[bot])
 
 ---
 
@@ -2164,33 +2745,63 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test): let a caught SIGINT reach the hook trap on macOS sh
+## X. config): report a bare root's missing default-branch worktree without panicking
 
 **RULE**:
-When implementing operations in `src/signal_forwarder.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/config/create.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d80ecb8`: test): let a caught SIGINT reach the hook trap on macOS sh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0fba1cb9`: config): report a bare root's missing default-branch worktree without panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/signal_forwarder.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/config/create.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // Background sleep: macOS bash 3.2 can drop one SIGINT across the
-                // fork of a foreground `sleep` (#4748). `wait` runs the trap.
-                "trap 'echo child-handled >&2; exit 0' INT; echo ready > \"$1\"; while :; do sleep 0.01 & wait $!; done",
+use worktrunk::git::{Repository, WorktrunkError};
+use worktrunk::styling::{
+    eprintln, error_message, hint_message, info_message, success_message, suggest_command,
+};
+        let Some(config_path) = repo.project_config_path()? else {
+            // An empty override disables project config before any worktree
+            // is consulted, so no worktree state explains the `None`.
+            if std::env::var_os("WORKTRUNK_PROJECT_CONFIG_PATH").is_some_and(|p| p.is_empty()) {
+                eprintln!(
+                    "{}",
+                    error_message(cformat!(
+                        "Cannot create project config — <bold>WORKTRUNK_PROJECT_CONFIG_PATH</> is empty, which disables project config"
+                    ))
+                );
+                eprintln!(
+                    "{}",
+                    hint_message(cformat!(
+                        "Unset <underline>WORKTRUNK_PROJECT_CONFIG_PATH</> or set it to a file path"
+                    ))
+                );
+                return Err(WorktrunkError::AlreadyDisplayed { exit_code: 1 }.into());
+            }
+                // At a bare root the project config path is the default
+                // branch's wor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                "trap 'echo child-handled >&2; exit 0' INT; echo ready > \"$1\"; while :; do sleep 0.01; done",
+use worktrunk::git::Repository;
+use worktrunk::styling::{eprintln, hint_message, info_message, success_message};
+        let config_path = repo.project_config_path()?.ok_or_else(|| {
+                anyhow::anyhow!(
+                    "Bare repository has no linked worktrees yet.\n\
+                     Run `wt switch <branch>` to create a worktree first, then run `wt config create --project` from inside it."
+                )
+            } else {
+                anyhow::anyhow!("Cannot determine project config location — no worktree found")
+        })?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d80ecb8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0fba1cb9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

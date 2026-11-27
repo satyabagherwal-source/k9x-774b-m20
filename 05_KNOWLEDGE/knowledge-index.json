@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T14:07:07.316Z",
+  "last_updated": "2026-11-27T14:17:06.049Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26608,
+  "total_items": 26611,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "91b272899999f1e51dad6d6716bde7ec3445beddaae79e031bd13839a05f1db7",
+      "content_hash": "e402286ca60e15f5c91ea33578f574b586b7a084f70656dfddd31684444a8588",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:55:33.994Z"
+      "persisted_at": "2026-11-27T14:17:06.049Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "18233f1e7e5da0f9db145c3ac3ac7d202231dec4979a95d353145eba301812f9",
+      "content_hash": "37dea5212c7671bb54028eab2f5678b798fa1f8cda3e3b5527de4e4f21cade19",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T14:07:07.041Z"
+      "persisted_at": "2026-11-27T14:17:04.771Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "53eabe827ab92a4686581619d35bf44a06e8db63b7280e8b99acd7384c5399b7",
+      "content_hash": "b7152e8d74bd29c37f39c7729bdaeee07abb409527f48426c6858a8802e5f000",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T14:07:07.316Z"
+      "persisted_at": "2026-11-27T14:17:04.966Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -241280,8 +241280,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "3d80ecb8",
-      "content_hash": "6239bcf4b665504a0b2dc6a976f7a8c80b37f15df35cf7368994506f3a01dab7",
+      "source_version": "541579bf",
+      "content_hash": "1c8c9664684cde12c9ada336193476cb1871c84b4be04db4c5a1df52083920dc",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -241334,6 +241334,11 @@
           "number": 10698,
           "title": "let a caught SIGINT reach the hook trap on macOS sh",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10914,
+          "title": "report a bare root's missing default-branch worktree without panicking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241341,7 +241346,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T14:04:02.623Z",
+      "verified_at": "2026-11-27T14:16:52.881Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241383,10 +241388,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "repository": "max-sixty/worktrunk",
-      "source_version": "3d80ecb8",
-      "content_hash": "d7a341c8942a0de866e82b3aa3245ead4969e4304663cebe4be81d0fa095102e",
+      "source_version": "541579bf",
+      "content_hash": "b30f67c6636f11f3b9cc4291e80d0171eb01d7224363826d1479f50cdb36e713",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T14:04:03.370Z"
+      "persisted_at": "2026-11-27T14:16:53.604Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk",
@@ -241395,10 +241400,10 @@
       "relative_path": "08_VERIFICATION/max-sixty-worktrunk-verification-protocol-empirical-defect-shield-for-max-sixty-.md",
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk",
       "repository": "max-sixty/worktrunk",
-      "source_version": "3d80ecb8",
-      "content_hash": "dbe9e5432a0a5cf4a73c4bbbcc109ab53cedb5a78b4588a449d1a7e7a687937c",
+      "source_version": "541579bf",
+      "content_hash": "11a647e0797aeea15afec0f9a3ff481bc9d1f21babad3b3d4c70d32f4196651f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:04:03.580Z"
+      "persisted_at": "2026-11-27T14:16:53.802Z"
     },
     "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars": {
       "item_id": "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars",
@@ -241420,9 +241425,9 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "226e7438e05bca1c69c6ed9217af6b56c4a4887a97845953cb03f5f70f27d422",
+      "content_hash": "f3186078ff547e80f66e83f97b2d2b788eca3c91cf6f339a3166b50a33ec5662",
       "domain_letter": "D",
-      "persisted_at": "2026-11-26T14:04:21.240Z"
+      "persisted_at": "2026-11-27T14:17:03.833Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings",
@@ -241432,9 +241437,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty-worktrunk-learnings",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "549b294c8ffcf14a884a1b11eac6deee273df79c9f55f61040f2a8cf3711f939",
+      "content_hash": "1d049895c424594a55b519f6f796f61177ac90e865f8e03ac28f5445727795ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T14:04:21.441Z"
+      "persisted_at": "2026-11-27T14:17:04.041Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
@@ -358321,13 +358326,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NF93-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-F49S-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9aaa5917d9113a8784574d596b1635691e77214f3b3f520244e236cef032c010",
+      "content_hash": "cb040a12278718d3157199efd029a5479a1599409a8bde6712b2bb5d96028ad4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T13:55:33.501Z"
+      "persisted_at": "2026-11-27T14:17:05.635Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358337,9 +358342,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1f1b31639e2f9d83f7ca83e1449dd4f409a72326a4a165c4026aeac5ef9846e",
+      "content_hash": "457a6851ecc231992fc4cad221276caba2313c9f8c6cb7ce1fc69755fb94a96a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T13:55:33.754Z"
+      "persisted_at": "2026-11-27T14:17:05.837Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -361228,13 +361233,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-2A6E-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-F3G5-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4de3b1adf9dc65650135f46501c221d51aed411ca483f06fc9bd27e32e3073d7",
+      "content_hash": "7cbc9e25e470aae738274ecaa4cfa19aab74ff24811059f63b54a8bb5003f692",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T14:07:06.764Z"
+      "persisted_at": "2026-11-27T14:17:04.568Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -365289,6 +365294,44 @@
       "content_hash": "057bfc20a83f4903d46de0fff84d4886ff9e1c9b862aa65e6a40300682eb1f1c",
       "domain_letter": "D",
       "persisted_at": "2026-11-27T14:07:04.133Z"
+    },
+    "rule-10914": {
+      "learning_id": "rule-10914",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10914,
+      "title": "report a bare root's missing default-branch worktree without panicking",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "541579bf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T14:16:52.881Z"
+    },
+    "candidate_directive-report-a-bare-root-s-missing-default-branch-worktree-without-panicking": {
+      "item_id": "candidate_directive-report-a-bare-root-s-missing-default-branch-worktree-without-panicking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EUTX-report-a-bare-root-s-missing-default-branch-worktree-without-panicking.md",
+      "title": "report a bare root's missing default-branch worktree without panicking",
+      "repository": "max-sixty/worktrunk",
+      "source_version": "541579bf",
+      "content_hash": "eea8bdd755a9ceb32543ba76305133db9a9b36a625aabda5658799253d1243db",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T14:16:53.400Z"
+    },
+    "candidate_directive-config-report-a-bare-root-s-missing-default-branch-worktree-without-panicking": {
+      "item_id": "candidate_directive-config-report-a-bare-root-s-missing-default-branch-worktree-without-panicking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F2PZ-config-report-a-bare-root-s-missing-default-branch-worktree-without-panicking.md",
+      "title": "config): report a bare root's missing default-branch worktree without panicking",
+      "repository": "max-sixty-worktrunk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b17e994e37840bd85892c18f353fc8d3f432413dba1d1c0add0494b1560ad672",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T14:17:03.627Z"
     }
   },
   "ai-builder-brain": {

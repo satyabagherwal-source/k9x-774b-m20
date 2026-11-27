@@ -13833,3 +13833,4 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `4aea0221` | Multi-dimensional audit evidence | 2026-11-27T13:55:26.618Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `fdc8041b` | Multi-dimensional audit evidence | 2026-11-27T14:05:10.676Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `2b63882d` | Multi-dimensional audit evidence | 2026-11-27T14:06:59.256Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `541579bf` | Multi-dimensional audit evidence | 2026-11-27T14:16:53.143Z |

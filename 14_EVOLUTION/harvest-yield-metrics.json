@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T14:06:59.271Z",
-  "total_cycles_completed": 13099,
-  "total_learnings_persisted": 13099,
-  "total_rules_promoted": 11826,
+  "last_updated": "2026-11-27T14:16:53.153Z",
+  "total_cycles_completed": 13100,
+  "total_learnings_persisted": 13100,
+  "total_rules_promoted": 11827,
   "history": [
-    {
-      "timestamp": "2026-11-26T23:11:40.757Z",
-      "repository": "BuilderIO/builder",
-      "learningId": "learn-github-builderio-builder",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:11:48.302Z",
       "repository": "SeekStorm/SeekStorm",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T14:06:59.271Z",
       "repository": "Automattic/harper",
       "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T14:16:53.153Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-SKEP",
-    "timestamp": "2026-11-26T06:43:59.185Z",
-    "repository": "zenbu-labs/terminal-browser",
-    "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "062c639bcf4f29f1b3a6bb9ffa7e0652da2992dfd3963415fb892e5c6d5ce125",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-SOWZ",
     "timestamp": "2026-11-26T06:44:05.027Z",
     "repository": "sozercan/kaset",
@@ -7490,6 +7475,21 @@
     "repository": "Automattic/harper",
     "learningId": "learn-github-automattic-harper",
     "contentHash": "5afd887e05026cf1161abffc73ec693bda1867149970439c63413f345688037a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-EUMH",
+    "timestamp": "2026-11-27T14:16:53.129Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "1c8c9664684cde12c9ada336193476cb1871c84b4be04db4c5a1df52083920dc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "3d80ecb8",
+    "sourceVersion": "541579bf",
     "license": "Apache-2.0",
-    "contentHash": "6239bcf4b665504a0b2dc6a976f7a8c80b37f15df35cf7368994506f3a01dab7",
-    "lastHarvestedAt": "2026-11-26T14:04:02.897Z",
+    "contentHash": "1c8c9664684cde12c9ada336193476cb1871c84b4be04db4c5a1df52083920dc",
+    "lastHarvestedAt": "2026-11-27T14:16:53.143Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {

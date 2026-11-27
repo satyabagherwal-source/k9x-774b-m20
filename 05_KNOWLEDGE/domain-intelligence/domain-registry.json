@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T14:07:07.041Z",
+  "last_updated": "2026-11-27T14:17:05.837Z",
   "total_records": 2838,
   "domains": {
     "A": {
@@ -9571,8 +9571,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "18233f1e7e5da0f9db145c3ac3ac7d202231dec4979a95d353145eba301812f9",
-      "created_at": "2026-11-27T14:07:07.041Z"
+      "content_hash": "37dea5212c7671bb54028eab2f5678b798fa1f8cda3e3b5527de4e4f21cade19",
+      "created_at": "2026-11-27T14:17:04.771Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18795,8 +18795,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "d7a341c8942a0de866e82b3aa3245ead4969e4304663cebe4be81d0fa095102e",
-      "created_at": "2026-11-26T14:04:03.370Z"
+      "content_hash": "b30f67c6636f11f3b9cc4291e80d0171eb01d7224363826d1479f50cdb36e713",
+      "created_at": "2026-11-27T14:16:53.604Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -18804,8 +18804,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "226e7438e05bca1c69c6ed9217af6b56c4a4887a97845953cb03f5f70f27d422",
-      "created_at": "2026-11-26T14:04:21.240Z"
+      "content_hash": "f3186078ff547e80f66e83f97b2d2b788eca3c91cf6f339a3166b50a33ec5662",
+      "created_at": "2026-11-27T14:17:03.833Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -46785,8 +46785,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "e1f1b31639e2f9d83f7ca83e1449dd4f409a72326a4a165c4026aeac5ef9846e",
-      "created_at": "2026-11-27T13:55:33.754Z"
+      "content_hash": "457a6851ecc231992fc4cad221276caba2313c9f8c6cb7ce1fc69755fb94a96a",
+      "created_at": "2026-11-27T14:17:05.837Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

@@ -13800,3 +13800,4 @@
 | `CYCLE-20261127-N9XM` | `2026-11-27T13:55:26.602Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10911` | Yes (`3375ecdc...`) |
 | `CYCLE-20261127-ZSLD` | `2026-11-27T14:05:10.657Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10912` | Yes (`bae4568b...`) |
 | `CYCLE-20261127-24DH` | `2026-11-27T14:06:59.237Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10913` | Yes (`5afd887e...`) |
+| `CYCLE-20261127-EUMH` | `2026-11-27T14:16:53.129Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10914` | Yes (`1c8c9664...`) |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T14:07:03.737Z",
+  "updated_at": "2026-11-27T14:17:03.340Z",
   "stats": {
-    "total_discovered": 10353,
+    "total_discovered": 10354,
     "approved_pending_harvest": 9823,
     "harvested_count": 0,
-    "rejected_count": 530,
+    "rejected_count": 531,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9827,
+      "COMMUNITY_AND_EXPERT": 9828,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -224083,6 +224083,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
         "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-EA01814846C8": {
+      "id": "SRC-EA01814846C8",
+      "url": "https://github.com/max-sixty/worktrunk/blob/deec05a63bc3a67021a321eb5516f16de5d7dbdc/templates/powershell.ps1",
+      "title": "https://github.com/max-sixty/worktrunk/blob/deec05a63bc3a67021a321eb5516f16de5d7dbdc/templates/powershell.ps1",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T14:17:03.340Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
+        "fileName": "max-sixty-worktrunk-learnings.md"
       }
     }
   }

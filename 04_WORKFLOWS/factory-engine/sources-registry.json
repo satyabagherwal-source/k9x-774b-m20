@@ -57,8 +57,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T13:36:51.891Z",
-    "lastVerified": "2026-11-27T13:36:51.891Z",
+    "lastChecked": "2026-11-27T14:17:02.961Z",
+    "lastVerified": "2026-11-27T14:17:02.961Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T14:07:02.970Z",
-    "lastVerified": "2026-11-27T14:07:02.970Z",
+    "lastChecked": "2026-11-27T14:17:02.970Z",
+    "lastVerified": "2026-11-27T14:17:02.970Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -667,9 +667,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-27T09:17:36.179Z",
+    "lastChecked": "2026-11-27T14:16:57.976Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-27T09:17:36.180Z"
+    "lastVerified": "2026-11-27T14:16:57.976Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -870,14 +870,14 @@
     "officialUrl": "https://github.com/max-sixty/worktrunk",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T14:04:01.643Z",
-    "lastVerified": "2026-11-26T14:04:01.643Z",
+    "lastChecked": "2026-11-27T14:16:51.802Z",
+    "lastVerified": "2026-11-27T14:16:51.802Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "6239bcf4b665504a0b2dc6a976f7a8c80b37f15df35cf7368994506f3a01dab7",
+    "contentHash": "1c8c9664684cde12c9ada336193476cb1871c84b4be04db4c5a1df52083920dc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2202,9 +2202,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-11-26T19:16:19.212Z",
+    "lastChecked": "2026-11-27T14:17:00.418Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-11-26T19:16:19.212Z"
+    "lastVerified": "2026-11-27T14:17:00.418Z"
   },
   "metalbear-co-mirrord": {
     "name": "metalbear-co/mirrord",
@@ -5956,9 +5956,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-26T20:22:55.126Z",
+    "lastChecked": "2026-11-27T14:16:55.569Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-26T20:22:55.126Z"
+    "lastVerified": "2026-11-27T14:16:55.569Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -9165,9 +9165,9 @@
   "mochidiffusion-mochidiffusion": {
     "name": "MochiDiffusion",
     "officialUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
-    "lastChecked": "2026-11-25T05:10:29.324Z",
+    "lastChecked": "2026-11-27T14:16:52.966Z",
     "revisionIdentifier": "e9e0d755",
-    "lastVerified": "2026-11-25T05:10:29.324Z"
+    "lastVerified": "2026-11-27T14:16:52.966Z"
   },
   "google-tcmalloc": {
     "name": "tcmalloc",
@@ -9845,9 +9845,9 @@
   "yuripinto-xseo": {
     "name": "xseo",
     "officialUrl": "https://github.com/yuripinto/xseo",
-    "lastChecked": "2026-11-24T04:20:16.054Z",
+    "lastChecked": "2026-11-27T14:16:50.470Z",
     "revisionIdentifier": "d335452f68",
-    "lastVerified": "2026-11-24T04:20:16.054Z"
+    "lastVerified": "2026-11-27T14:16:50.470Z"
   },
   "modelcontextprotocol-kotlin-sdk": {
     "name": "modelcontextprotocol/kotlin-sdk",
