@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T22:36:17.986Z",
+  "updated_at": "2026-11-27T22:46:00.713Z",
   "stats": {
-    "total_discovered": 10592,
-    "approved_pending_harvest": 10054,
+    "total_discovered": 10594,
+    "approved_pending_harvest": 10056,
     "harvested_count": 0,
     "rejected_count": 538,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10062,
+      "COMMUNITY_AND_EXPERT": 10064,
       "OFFICIAL_DOCUMENTATION": 292,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -229285,6 +229285,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
         "fileName": "chaos-mesh-chaos-mesh-learnings.md"
+      }
+    },
+    "SRC-6BF217439B30": {
+      "id": "SRC-6BF217439B30",
+      "url": "https://github.com/holynewbie",
+      "title": "https://github.com/holynewbie",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:46:00.608Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-4D315F19BAD9": {
+      "id": "SRC-4D315F19BAD9",
+      "url": "https://github.com/kucherenko/jscpd/issues/1324",
+      "title": "https://github.com/kucherenko/jscpd/issues/1324",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:46:00.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
+        "fileName": "kucherenko-jscpd-learnings.md"
       }
     }
   }

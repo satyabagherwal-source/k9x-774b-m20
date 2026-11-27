@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T22:36:14.005Z",
+  "last_updated": "2026-11-27T22:45:56.516Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "6cb594bcfe24b405e591a6b320af1d50c82e211113cfb920b03a7aec1ea2fa9e",
-      "verified_at": "2026-11-26T21:17:41.333Z",
+      "content_hash": "d673b782f45b940d8fff8c5278b2d8b7ef5685a41d33063d65d63c68ac8fcc8b",
+      "verified_at": "2026-11-27T22:45:56.515Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T21:17:41.333Z"
+      "last_updated": "2026-11-27T22:45:56.515Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "5b0850656e2643d84ab50df348d14cdddba046fa43a8d4573a0af12fe4b61760",
-      "verified_at": "2026-11-24T14:50:30.645Z",
+      "content_hash": "532ee2adbfa40d3873f688b4b8f7a3092ff6a5253718d7a69be87d950d02a9b5",
+      "verified_at": "2026-11-27T22:45:40.890Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:50:30.645Z"
+      "last_updated": "2026-11-27T22:45:40.890Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",

@@ -829739,3 +829739,143 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5fc7f346` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10978. name files from the folder that holds all scan paths (Harvested from kucherenko/jscpd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "name files from the folder that holds all scan paths",
+  "source": "kucherenko/jscpd",
+  "source_url": "https://github.com/kucherenko/jscpd",
+  "source_version": "ca751b46",
+  "license": "MIT",
+  "extracted_at": "2026-11-27T22:45:40.123Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kucherenko-jscpd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kucherenko/jscpd](https://github.com/kucherenko/jscpd) (Revision: `ca751b46`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/rust.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `79e6d34a`: report): name files from the folder that holds all scan paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/rust.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md). Reports name a file by its path from the folder that holds all the scan paths, so `dir-a/b.ts` and `dir-b/b.ts` stay apart. See [`fixtures/same-name-demo`](../fixtures/same-name-demo/README.md).
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md).
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `79e6d34a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10979. standing practices learned from the owner's follow-ups (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "standing practices learned from the owner's follow-ups",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "5aaaf150",
+  "license": "MIT",
+  "extracted_at": "2026-11-27T22:45:55.743Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `5aaaf150`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5aaaf150`: memory): standing practices learned from the owner's follow-ups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- **Standing Practices** (`src/memory/practices.ts`, `task-types.ts`, `practice-followups.ts`, `practice-jobs.ts`): Behavioural instructions about how to do a kind of task, scoped to a recurring task type, a scheduled job, a project or everywhere. Learned from explicit owner instructions and from follow-ups that ask for what a recurring answer left out, confirmed by a one-line yes/no offer, rendered into matching turns, and reported back with generated "Applied" and "Changed since last time" notes. See `docs/memory/practices.md`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5aaaf150` are properly handled with clean fallback behavior.

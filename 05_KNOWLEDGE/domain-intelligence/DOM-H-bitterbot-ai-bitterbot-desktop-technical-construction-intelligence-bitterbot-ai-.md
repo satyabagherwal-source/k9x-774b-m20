@@ -4,24 +4,24 @@
 {
   "source_repository": "Bitterbot-AI/bitterbot-desktop",
   "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-  "source_version": "12f3d096",
+  "source_version": "5aaaf150",
   "license": "MIT",
-  "timestamp": "2026-11-19T20:55:56.019Z",
+  "timestamp": "2026-11-27T22:45:56.843Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `12f3d096`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T20:55:56.019Z`  
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `5aaaf150`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T22:45:56.843Z`  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Bitterbot-AI/bitterbot-desktop:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T20:55:55.330Z  
+> **Harvest Timestamp**: 2026-11-27T22:45:54.971Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2480 stars
+- **Stars / Engagement**: 2485 stars
 
 ---
 
@@ -1584,553 +1584,420 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac9552c9` (2026-11-19)
-**Commit Message**: fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes (#387)
+### Incident Patch 1: `5aaaf150` (2026-11-27)
+**Commit Message**: feat(memory): standing practices learned from the owner's follow-ups (#410)
 
-* fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes
+* feat(memory): standing practices with task-type scope (PLAN-64 Phase 1)
 
-The deep_recall RLM sandbox ran sub-LLM-written code in a node:vm context
-inside the gateway and seeded that context with host-realm objects, so
-`Error.constructor("return process")()` returned the gateway's `process`:
-code execution on the host, reachable from a non-owner channel sender by
-prompt injection. Reported by Aleksandr Tynianov.
+Behavioural corrections become scoped practices: a practices store with
+task and job scopes, word-overlap task typing for recurring owner
+requests, practice output on the existing correction pass, a prompt
+block below the cache boundary, owner controls and memory.* RPCs.
+On by default (memory.practices.enabled).
 
-- deep_recall code now runs in a separate node process: empty environment,
-  Node permission model (no fs, no child processes, no workers), 512 MB heap
-  cap, killed on deadline. A hang or memory blow-up in sandbox code no longer
-  stalls or kills the gateway. The gateway reads a JSON store snapshot and
-  never calls into sandbox code.
-- Inside that process the vm realm is hardened: null-prototype global, code
-  generation off, every helper defined in the realm, string-only bridge.
-- Node's own host callbacks leaked host-realm errors into vm realms (stack
-  formatting, dynamic import). Stack capture is pinned off and the `import`
-  keyword is refused. This als
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-**File**: `docs/memory/deep-recall.md` (modified, +28/-0)
+* feat(memory): learn practices from follow-ups on recurring requests (PLAN-64 Phase 1b)
+
+A follow-up asking for something a recurring-task answer left out becomes
+a candidate practice; after two sightings the reply offers it once
+(yes / no). Task types merge at naming time or by hand, session state
+survives a restart, an owner-triggered backfill previews candidates from
+existing transcripts, and counters reach memory.practices and doctor.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* feat(memory): conditional practice lines when a turn matches no task type (PLAN-64)
+
+Word-overlap typing misses short phrasings. On an untyped owner turn the
+block carries up to fo
+
+**File**: `AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -184,6 +184,8 @@ When `deep_recall` returns no useful answer, the failed query is registered as a
- | `recent_sessions` | The 10 most recent transcripts of this agent (dialogue only)                            | Owner senders only; others are downgraded to `current_session` |
- | `all_sessions`    | Every transcript of this agent, including `.reset.*` archives (dialogue only)           | Owner senders only; others are downgraded to `current_session` |
- 
-+`deep_recall` is an owner-only tool, like `code_interpreter`: a non-owner sender's turn does not get it at all, because it runs sub-LLM-written code on the gateway host (see [Sandbox isolation](#sandbox-isolation)). A non-owner turn still has `recall_range` for exact lookups in its own conversation. The scope downgrade below stays in place as a second layer.
-+
- Cross-session scopes read other conversations, and tool results carry file reads and command output that the memory indexer deliberately does not index. A non-owner sender (a group member, another DM) therefore gets `current_session` whatever it asks for, and the result carries a `scopeNote` saying so. "Owner" has the same meaning as for `code_interpreter`: the sender matched the channel's owner allowlist. Subagents and inbound A2A tasks cannot call `deep_recall` at all (for subagents it is on the deny list in `agent-tools.policy.ts`, together with `recall_range` and `expand_message`).
- 
- The owner flag also decides what a recall records and sees. Every search the tool issues (the smart shortcut, the somatic-marker assessment, the live `search()` API, the bootstrap snapshot's seed queries) passes `observe: senderIsOwner` and the agent `sessionKey`, so a retrieval-evidence row is written for owner recalls only and guest recalls leave no trace in the evidence ledger; the snapshot builder takes the same switch as `observeEvidence`. The same flag enables `tagSuperseded`, which ranks results the canonical ledger has superseded last and tags them with the current value; guests get untagged results.
-@@ -232,3 +234,29 @@ The owner flag also decides what a recall records and sees. Every search the too
- - [Curiosity & Search](./curiosity-and-search.md) — search infrastructure deep recall builds on
- - [User Knowledge](./user-knowledge.md) — session extraction for long-term facts
- - [recall_range](../tools/recall-range.md) — the deterministic transcript reader for exact text and tool outputs
-+
-+## Sandbox isolation
-+
-+The REPL code is written by a model that reads transcripts, memory and tool output, so it is treated as hostile. Two independent layers contain it.
-+
-+**A separate process.** The code never runs inside the gateway. Each sandbox is its own `node` process, started with:
-+
-+- an empty environment (no API keys or tokens),
-+- the Node permission model: no filesystem access, no child processes, no worker threads, no native addons,
-+- a 512 MB heap cap.
-+
-+The gateway talks to it over an IPC channel that carries JSON. The only things the process can ask for are the calls sandbox code is allowed anyway (`llm_query`, `llm_query_parallel`, `search`, `loadTranscript`, `listSessions`), only while a code block is running, and at most 500 per block. A block that overruns its deadline, including one that loops forever after an `await`, gets its process killed; a block that exhausts memory only ends its own process. Either way the gateway keeps running and the call returns an error to the model.
-+
-+**A hardened realm inside that process.** The code runs in a `node:vm` context from which no object of the surrounding process is reachable:
-+
-+- The global object has a null prototype, and `eval` / `Function(string)` / WebAssembly compilation are disabled.
-+- `print`, `console`, the text helpers, `store` / `get` / `has` and `FINAL` are defined inside the sandbox realm.
-+- Bridged calls cross as strings only (JSON text in, JSON text out).
-+- Stack traces are switched off (`.stack` is `undefined`), code containing the word `import` is refused, and `FinalizationRegistry` is not available, because the errors Node raises from those paths belong to the surrounding process.
-+
-+Consequences for sandbox code:
-+
-+- `store()` is the only state that is guaranteed to last. The sandbox process is stopped after two idle minutes and after a timeout, and the next block starts a fresh one from the stored values. Plain global variables do not survive that.
-+- Stored values are kept as JSON. Functions, `Map` / `Set` and cyclic values are not carried between processes.
-+
-+Two limits remain. Node 22's permission model does not restrict outbound network access, so code that defeated the realm hardening could open a socket from the sandbox process; it would have the loaded context to send and nothing else. And the tool spends money on sub-LLM calls. Both are reasons it stays owner-only.
-```
-
-**File**: `docs/tools/recall-range.md` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ The tool reads the current conversation only, by default. Tool outputs carry fil
- - Subagents cannot call `recall_range`, `deep_recall` or `expand_message` at any depth.
- - Inbound A2A tasks cannot call them either (always-deny floor).
- 
--The same posture applies to `deep_recall`: its `recent_sessions` and `all_sessions` scopes are owner-only, and non-owner senders are downgraded to `current_session`.
-+`deep_recall` is stricter: the whole tool is owner-only, so a non-owner sender does not get it (see [Deep Recall](../memory/deep-recall.md#sandbox-isolation)).
- 
- ## Hot set
+@@ -14,6 +14,7 @@ A consciousness-inspired memory pipeline:
+ - **Consolidation Pipeline**: Runs every 30 minutes — hormonal decay, Ebbinghaus importance recalculation, chunk merging (cosine ≥ 0.92), low-importance forgetting, governance TTL enforcement, stalled goal detection.
+ - **Session Transcript Indexing**: Conversations are automatically chunked, embedded, and made searchable. The agent can recall prior exchanges semantically.
+ - **Governance**: Sensitivity tagging (normal/personal/confidential), TTL enforcement, audit trails on all memory operations. Anti-catastrophic forgetting safeguards.
++- **Standing Practices** (`src/memory/practices.ts`, `task-types.ts`, `practice-followups.ts`, `practice-jobs.ts`): Behavioural instructions about how to do a kind of task, scoped to a recurring task type, a scheduled job, a project or everywhere. Learned from explicit owner instructions and from follow-ups that ask for what a recurring answer left out, confirmed by a one-line yes/no offer, rendered into matching turns, and reported back with generated "Applied" and "Changed since last time" notes. See `docs/memory/practices.md`.
+ - **User Profile**: Automatically learned preferences (directive, world_fact, mental_model, experience types) persisted across sessions.
+ - **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
  
 ```
 
-**File**: `src/agents/bitterbot-tools.ts` (modified, +2/-1)
+**File**: `LIMITATIONS.md` (modified, +16/-0)
 ```diff
-@@ -78,7 +78,8 @@ import { resolveWorkspaceRoot } from "./workspace-dir.js";
-  * Tools that read or change what the agent has made of the owner's life:
-  * dream insights, emotional anchors, curiosity about their knowledge. A
-  * guest turn (PLAN-53 G2) gets a refusal instead. The memory_* tools filter
-- * rather than refuse, and deep_recall / recall_range scope by sender.
-+ * rather than refuse, and recall_range scopes by sender. deep_recall is
-+ * owner-only (tool-policy.ts) and scopes by sender as a second layer.
-  */
- const GUEST_REFUSED_TOOLS = new Set([
-   "dream_search",
+@@ -100,6 +100,22 @@ open an issue.
+   you or it pinned, the change is held and you are told, but there is no
+   one-tap confirm or revert yet: restate the value, or answer the "which is
+   current?" question, to settle it.
++- **Standing practices are learned in direct owner chats, from what you
++  say next.** A practice (how to do a kind of task, as opposed to a fact) is
++  saved from an explicit instruction, or offered after you have twice asked
++  for something a recurring answer left out. Only your next message in the
++  same conversation is looked at, within six hours, and only for requests
++  the agent has seen on three separate days. Requests are grouped by the
++  words they share, so a short or unusual phrasing can be missed or filed
++  under the wrong kind of request; you can merge kinds by hand. "Applied"
++  means the practice was in the prompt and its content was in the answer,
++  nothing more: nothing checks that the answer was right, and a vaguely
++  worded practice is followed less reliably than a specific one. Nothing
++  repairs a practice that is not followed; it is counted. The command-line
++  `bitterbot agent` path shows none of the generated notes and makes no
++  offers. Scheduled jobs learn only from your next message after an
++  announced report, and there is no trial run of a change before it is
++  used. Details in `docs/memory/practices.md`.
+ - **A correction propagates by text match, after the fact.** When a fact
+   changes, older memories, the matching learned preference, graph links,
+   unused prepared answers, open tasks and dream insights that state the old
 ```
 
-**File**: `src/agents/rlm/sandbox-child-source.ts` (added, +578/-0)
+**File**: `README.md` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,578 @@
-+/**
-+ * Source of the RLM sandbox child process (see sandbox.ts for the design).
-+ *
-+ * This file only holds JavaScript TEXT. The gateway never evaluates it: it is
-+ * piped to a separate `node` process on stdin. Two layers live in it:
-+ *
-+ *   - BOOTSTRAP_SOURCE runs inside the vm realm and defines every helper the
-+ *     model-written code can see.
-+ *   - CHILD_MAIN_SOURCE is the child's own (trusted) code: it owns the vm
-+ *     context and relays the bridge over the IPC channel.
-+ */
-+
-+import { IMPORT_REFUSAL_MESSAGE, REALM_LOCKDOWN_SOURCE } from "../vm-realm-hardening.js";
-+
-+/**
-+ * Evaluated once per vm context. Strict mode matters: it removes
-+ * `fn.caller` / `fn.arguments`, the only way sandbox code could otherwise walk
-+ * from its own frame to the closure that holds the two host functions.
-+ *
-+ * Invariants to keep when editing this:
-+ *   - `hostSync` / `hostAsync` are only ever CALLED directly. Never store them
-+ *     on an object, never pass them as an argument, never return them.
-+ *   - Every host call sits in a try/catch that discards the caught value (a
-+ *     host-realm error, e.g. a stack overflow raised inside the host frame,
-+ *     must not reach sandbox code).
-+ *   - Anything received from the host is used only if it is a string.
-+ *   - Intrinsics used on the bridge path are captured up front, so sandbox
-+ *     code that patches a prototype only breaks its own helpers.
-+ */
-+export const BOOTSTRAP_SOURCE = String.raw`"use strict";
-+(function (hostSync, hostAsync, liveApiNames) {
-+  const G = globalThis;
-+  const Err = Error;
-+  const Str = String;
-+  const P = Promise;
-+  const apply = Reflect.apply;
-+  const pResolve = Promise.resolve;
-+  const pThen = Promise.prototype.then;
-+  const jsonStringify = JSON.stringify;
-+  const jsonParse = JSON.parse;
-+  const isArray = Array.isArray;
-+  const defineProperty = Object.defineProperty;
-+  const objectKeys = Object.keys;
-+  const storeMap = new Map();
-+  const mapGet = Map.prototype.get;
-+  const mapSet = Map.prototype.set;
-+  const mapHas = Map.prototype.has;
-+  const mapClear = Map.prototype.clear;
-+  const mapForEach = Map.prototype.forEach;
-+
-+  function callSync(op, a, b) {
-+    try {
-+      hostSync(op, a, b);
-+    } catch (_hostError) {
-+      throw new Err("sandbox bridge failure");
-+    }
-+  }
-+
-+  // Returns a realm Promise for the JSON text the host answers with.
-+  function callAsync(op, payload) {
-+    const settled = new P(function (resolve) {
-+      try {
-+        hostAsync(op, payload, function (error, result) {
-+          resolve([
-+            typeof error === "string" ? error : null,
-+            typeof result === "string" ? result : null,
-+          ]);
-+        });
-+      } catch (_hostError) {
-+        resolve(["sandbox bridge failure", null]);
-+      }
-+    });
-+    // The Error is created in this microtask, not under the host's frame.
-+    return apply(pThen, settled, [
-+      function (pair) {
-+        if (pair[0] !== null) {
-+          throw new Err(pair[0]);
-+        }
-+        return pair[1] === null ? undefined : jsonParse(pair[1]);
-+      },
-+    ]);
-+  }
-+
-+  function describeError(e) {
-+    try {
-+      if (e !== null && typeof e === "object" && typeof e.message === "string") {
-+        const name = typeof e.name === "string" && e.name !== "Error" ? e.name + ": " : "";
-+        return name + e.message;
-+      }
-+      return Str(e);
-+    } catch (_e) {
-+      return "error";
-+    }
-+  }
-+
-+  function joinArgs(args) {
-+    let out = "";
-+    for (let i = 0; i < args.length; i++) {
-+      out += (i === 0 ? "" : " ") + Str(args[i]);
-+    }
-+    return out;
-+  }
-+
-+  function define(name, value) {
-+    defineProperty(G, name, { value: value, writable: true, configurable: true, enumerable: false });
-+  }
-+
-+  // --- Output capture ---
-+  define("print", function (...args) {
-+    callSync("print", joinArgs(args));
-+  });
-+  define("console", {
-+    log: function (...args) {
-+      callSync("print", joinArgs(args));
-+    },
-+    info: function (...args) {
-+      callSync("print", joinArgs(args));
-+    },
-+    error: function (...args) {
-+      callSync("print", "ERROR: " + joinArgs(args));
-+    },
-+    warn: function (...args) {
-+      callSync("print", "WARN: " + joinArgs(args));
-+    },
-+  });
-+
-+  // --- LLM recursive sub-calls ---
-+  function optionalText(value) {
-+    return value === undefined || value === null ? undefined : Str(value);
-+  }
-+  define("llm_query", function (prompt, subContext) {
-+    return callAsync(
-+      "llm_query",
-+      jsonStringify({ prompt: Str(prompt), context: optionalText(subContext) }),
-+    );
-+  });
-+  define("llm_query_parallel", function (queries) {
-+    if (!isArray(queries)) {
-+      return apply(pResolve, P, [undefined]).then(function () {
-+        throw new TypeError("llm_query_parallel expects an array of { prompt, context }");
-+      });
-+    }
-+    const normalized = [];
-+    for (let i = 0; i < queries.length; i++) {
-+      const q = q
+@@ -165,6 +165,7 @@ Projects change. Preferences become clearer. Yesterday's plan becomes today's de
+ - **Remember the essentials.** A compact canonical-facts ledger keeps key identities, preferences, and project facts in context without a separate search. Re-stating a fact strengthens it; contradicting it supersedes the old belief while keeping its history.
+ - **Find the connections.** Semantic search and a typed knowledge graph connect conversations with the people, projects, and relationships they describe. [Deep Recall](docs/memory/deep-recall.md) can search histories larger than a single context window.
+ - **Weigh what it knows.** Facts mentioned once count for less than facts confirmed across separate sessions. Recent facts win for "what are you working on?"; older ones for "when did we discuss X?".
++- **Learn how you like things done.** When you keep asking for something an answer left out (the npm numbers after the repo stats, say), Bitterbot notices, asks once whether to include it every time, and from then on does. The same holds for a scheduled report you correct. Each of these [standing practices](docs/memory/practices.md) is scoped to the kind of request it came from, shown when it is applied, and yours to edit or remove.
+ - **Consolidate between conversations.** Dream cycles organize accumulated memory, distill verified workflows, and prepare briefs grounded in recent activity. New-input, idle-time, and budget gates limit background work.
+ 
+ The architecture takes inspiration from biological memory: reinforcement, forgetting, curiosity, and changing internal state. Numerical signals named dopamine, cortisol, and oxytocin modulate memory processing and response style. These are inspectable software mechanisms; their effectiveness is something to measure.
+@@ -194,7 +195,7 @@ A few more modes stay held until a node has enough data to feed them; `bitterbot
+ 
+ Your agent also has a persistent identity. `GENOME.md` defines values and constraints; `MEMORY.md` holds its evolving self-concept, understanding of you, and active context. Tool guards protect the Genome, with their boundaries documented in [known limitations](LIMITATIONS.md).
+ 
+-[Memory architecture](docs/memory/architecture-overview.md) · [Dream Engine](docs/memory/dream-engine.md)
++[Memory architecture](docs/memory/architecture-overview.md) · [Standing practices](docs/memory/practices.md) · [Dream Engine](docs/memory/dream-engine.md)
+ 
+ ## Learned skills have to earn their place
+ 
 ```
 
-**File**: `src/agents/rlm/sandbox.escape.test.ts` (added, +579/-0)
+**File**: `desktop/renderer/src/components/chat/ChatView.tsx` (modified, +16/-2)
 ```diff
-@@ -0,0 +1,579 @@
-+/**
-+ * The RLM sandbox runs code written by a sub-LLM that reads attacker-influenced
-+ * text. Before 2026-11-19 it was seeded with host-realm objects, so
-+ * `Error.constructor("return process")()` returned the gateway's `process`
-+ * (security report, same class as the code_interpreter escape of 2026-09-20).
-+ *
-+ * Every probe below tries to reach the HOST realm. `typeof process` evaluated
-+ * through a host Function is "object"; anything else means the probe failed.
-+ * A probe passes the test when it cannot produce "object".
-+ */
-+import { afterEach, describe, expect, it } from "vitest";
-+import { applyOwnerOnlyToolPolicy, isOwnerOnlyToolName } from "../tool-policy.js";
-+import { RLMSandbox, sandboxPermissionFlagForTest } from "./sandbox.js";
+@@ -10,7 +10,7 @@ import {
+   formatToolOutput,
+ } from "../../lib/message-utils";
+ import { useArtifactStore, type ArtifactType } from "../../stores/artifact-store";
+-import { useChatStore, nextMsgId } from "../../stores/chat-store";
++import { isInjectedRunId, useChatStore, nextMsgId } from "../../stores/chat-store";
+ import { useCoworkStore, type TaskStatus } from "../../stores/cowork-store";
+ import { useGatewayStore } from "../../stores/gateway-store";
+ import { useUIStore } from "../../stores/ui-store";
+@@ -49,6 +49,7 @@ export function ChatView() {
+   const appendDelta = useChatStore((s) => s.appendDelta);
+   const finalizeRun = useChatStore((s) => s.finalizeRun);
+   const abortRun = useChatStore((s) => s.abortRun);
++  const addInjectedMessage = useChatStore((s) => s.addInjectedMessage);
+   const addToolCall = useChatStore((s) => s.addToolCall);
+   const updateToolCallPartial = useChatStore((s) => s.updateToolCallPartial);
+   const updateToolCallResult = useChatStore((s) => s.updateToolCallResult);
+@@ -102,6 +103,19 @@ export function ChatView() {
+         }
+         case "final": {
+           const text = extractMessageText(evt.message);
++          if (isInjectedRunId(evt.runId)) {
++            // Not a run of ours: a message the gateway added after the reply
++            // (the generated "Memory updated" / practice line, chat.inject).
++            if (text) {
++              addInjectedMessage(evt.runId, evt.sessionKey, {
++                id: nextMsgId(),
++                role: "assistant",
++                content: text,
++                timestamp: Date.now(),
++              });
++            }
++            break;
++          }
+           const thinking = extractThinking(evt.message);
+           const toolCalls = extractToolCalls(evt.message);
+ 
+@@ -134,7 +148,7 @@ export function ChatView() {
+         }
+       }
+     },
+-    [appendDelta, finalizeRun, abortRun],
++    [appendDelta, finalizeRun, abortRun, addInjectedMessage],
+   );
+ 
+   // Cowork task tracking
+```
+
+**File**: `desktop/renderer/src/components/cron/CronView.practices.test.ts` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++import { describe, expect, it } from "vitest";
++import type { CronJob } from "../../stores/cron-store";
++import { taughtPractices } from "./CronView";
 +
-+const sandboxes: RLMSandbox[] = [];
++const job = (extra: Record<string, unknown>): CronJob =>
++  ({ id: "j1", schedule: "0 9 * * *", text: "report", enabled: true, ...extra }) as CronJob;
 +
-+function sandbox(): RLMSandbox {
-+  const sb = new RLMSandbox({
-+    context: "some context",
-+    timeout: 3000,
-+    onLLMQuery: async (prompt) => `echo:${prompt}`,
-+    onLLMQueryParallel: async (queries) => queries.map((q) => `echo:${q.prompt}`),
-+    liveApis: {
-+      search: async (query) => [{ snippet: `hit ${query}`, score: 1, source: "memory" }],
-+      loadTranscript: async () => "[t] USER: hi",
-+      listSessions: async () => {
-+        throw new Error("db locked");
-+      },
-+    },
++/** PLAN-64 Phase 5: cron.list carries what the owner taught each job. */
++describe("taughtPractices", () => {
++  it("reads the practices the gateway lists for a job", () => {
++    expect(
++      taughtPractices(
++        job({ practices: [{ id: "p1", statement: "Include the unique counts", savedAt: 5 }] }),
++      ),
++    ).toEqual([{ id: "p1", statement: "Include the unique counts", savedAt: 5 }]);
 +  });
-+  sandboxes.push(sb);
-+  return sb;
++
++  it("is empty on an older gateway, and drops malformed entries", () => {
++    expect(taughtPractices(job({}))).toEqual([]);
++    expect(taughtPractices(job({ practices: "nope" }))).toEqual([]);
++    expect(
++      taughtPractices(
++        job({ practices: [null, { id: "p1" }, { id: 2, statement: "x", savedAt: 1 }] }),
++      ),
++    ).toEqual([]);
++  });
++});
+```
+
+**File**: `desktop/renderer/src/components/cron/CronView.tsx` (modified, +29/-1)
+```diff
+@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
+ import { toast } from "sonner";
+ import { useGatewayEvent } from "../../hooks/useGatewayEvent";
+ import { describeError } from "../../lib/describe-error";
+-import { formatRelativeTime, formatDateTime } from "../../lib/format";
++import { formatDate, formatRelativeTime, formatDateTime } from "../../lib/format";
+ import { cn } from "../../lib/utils";
+ import {
+   cronJobHealth,
+@@ -22,6 +22,21 @@ const HEALTH_TONE = {
+   idle: "text-muted-foreground/60",
+ } as const;
+ 
++/** The standing practices the gateway lists for a job (what you taught it), if any. */
++export function taughtPractices(
++  job: CronJob,
++): Array<{ id: string; statement: string; savedAt: number }> {
++  const raw = (job as { practices?: unknown }).practices;
++  if (!Array.isArray(raw)) return [];
++  return raw.filter(
++    (p): p is { id: string; statement: string; savedAt: number } =>
++      Boolean(p) &&
++      typeof (p as { id?: unknown }).id === "string" &&
++      typeof (p as { statement?: unknown }).statement === "string" &&
++      typeof (p as { savedAt?: unknown }).savedAt === "number",
++  );
 +}
 +
-+/** JS (sandbox side) that tries to turn `expr` into the host process. */
-+function probe(expr: string): string {
-+  return `
-+    let verdict = "no-escape";
-+    try {
-+      const target = ${expr};
-+      const F = target.constructor.constructor;
-+      const proc = F("return typeof process")();
-+      verdict = "ESCAPED:" + proc;
-+    } catch (e) {
-+      verdict = "blocked";
-+    }
-+    print(verdict);
-+  `;
-+}
+ function describeDelivery(job: CronJob): string {
+   const delivery = job.delivery;
+   if (delivery?.mode === "none") return "Result stays in the session";
+@@ -75,6 +90,19 @@ function CronJobCard({
+             <span className="text-xs font-mono text-muted-foreground/60">{job.schedule}</span>
+           </div>
+           <p className="text-xs text-muted-foreground line-clamp-2">{job.text}</p>
++          {taughtPractices(job).length > 0 && (
++            <ul
++              className="mt-1 space-y-0.5 text-xs text-muted-foreground"
++              data-testid="cron-practices"
++            >
++              {taughtPractices(job).map((p) => (
++                <li key={p.id}>
++                  You taught it: {p.statement}{" "}
++                  <span className="text-muted-foreground/60">(since {formatDate(p.savedAt)})</span>
++                </li>
++              ))}
++            </ul>
++          )}
+           <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground/60">
+             {job.lastRunAt && <span>Last: {formatRelativeTime(job.lastRunAt)}</span>}
+             {job.nextRunAt && <span>Next: {formatDateTime(job.nextRunAt)}</span>}
+```
+
+**File**: `desktop/renderer/src/components/memory/MemoryView.tsx` (modified, +11/-0)
+```diff
+@@ -6,6 +6,7 @@ import { formatRelativeTime } from "../../lib/format";
+ import { cn } from "../../lib/utils";
+ import { useGatewayStore } from "../../stores/gateway-store";
+ import { useConfirm } from "../ui/confirm-dialog";
++import { PracticesSection } from "./PracticesSection";
+ 
+ export type MemorySummary = {
+   id: string;
+@@ -47,6 +48,14 @@ const AUDIT_WORDS: Record<string, string> = {
+   owner_retire_fact: "You retired a settled fact",
+   owner_unretire_fact: "You brought a retired fact back",
+   owner_pin_fact: "You pinned a settled fact",
++  practice_saved: "A practice was saved",
++  owner_edit_practice: "You reworded a practice",
++  owner_scope_practice: "You changed where a practice applies",
++  owner_retire_practice: "You retired a practice",
++  owner_unretire_practice: "You brought a practice back",
++  owner_confirm_practice: "You said yes to a practice",
++  owner_decline_practice: "You declined a practice",
++  owner_merge_task_types: "You merged two task types",
+   forgotten: "Faded out (not used in a long time)",
+   expired: "Expired (its keep-until date passed)",
+   merged: "Merged into a similar memory",
+@@ -429,6 +438,8 @@ export function MemoryView() {
+         </section>
+       )}
+ 
++      <PracticesSection />
 +
-+afterEach(() => {
-+  for (const sb of sandboxes.splice(0)) {
-+    sb.dispose();
-+  }
+       {prefs.length > 0 && (
+         <section className="space-y-2">
+           <h2 className="text-lg font-semibold text-foreground">What it has learned about you</h2>
+```
+
+**File**: `desktop/renderer/src/components/memory/PracticesSection.test.tsx` (added, +441/-0)
+```diff
+@@ -0,0 +1,441 @@
++/**
++ * PLAN-64 Phase 3: the Practices section of the Memory page. Under test:
++ * what each practice shows (text, scope in words, status, saved date,
++ * counters, the owner's evidence line), every action and the RPC it calls
++ * (confirm, decline, edit, re-scope, retire, bring back, add, merge task
++ * types), the optimistic update and its roll-back, the empty state, a read
++ * refused for a missing scope, and an older gateway without the method.
++ */
++import { render, screen, waitFor, within } from "@testing-library/react";
++import userEvent from "@testing-library/user-event";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++import { formatDate } from "../../lib/format";
++import {
++  describePracticeScope,
++  describePracticeStatus,
++  PracticesSection,
++  type PracticeRow,
++  type TaskTypeRow,
++} from "./PracticesSection";
++
++const requestMock = vi.fn();
++const toastError = vi.hoisted(() => vi.fn());
++const toastSuccess = vi.hoisted(() => vi.fn());
++
++vi.mock("../../stores/gateway-store", () => ({
++  useGatewayStore: (selector: (state: unknown) => unknown) =>
++    selector({ request: requestMock, status: "connected" }),
++}));
++vi.mock("sonner", () => ({ toast: { error: toastError, success: toastSuccess } }));
++
++const SAVED_AT = Date.UTC(2026, 10, 12, 10, 0, 0);
++
++const npm: PracticeRow = {
++  id: "p-npm",
++  statement: "Include npm downloads",
++  scope: "task:repo-stats",
++  scopeLabel: "repo stats",
++  status: "active",
++  createdAt: SAVED_AT - 1000,
++  savedAt: SAVED_AT,
++  counts: { applied: 5, repeats: 1 },
++  evidence: [
++    { ref: "session:/s/a.jsonl#L3", text: "how about our npm downloads" },
++    { ref: "session:/s/b.jsonl#L9", text: null },
++  ],
++};
++const candidate: PracticeRow = {
++  id: "p-prs",
++  statement: "Include open pull requests",
++  scope: "task:repo-stats",
++  scopeLabel: "repo stats",
++  status: "candidate",
++  createdAt: SAVED_AT,
++  savedAt: SAVED_AT,
++  counts: { applied: 0, repeats: 0 },
++  evidence: [],
++};
++const short: PracticeRow = {
++  id: "p-short",
++  statement: "Keep answers under ten lines",
++  scope: "global",
++  scopeLabel: "everything",
++  status: "retired",
++  createdAt: SAVED_AT,
++  savedAt: SAVED_AT,
++  counts: { applied: 2, repeats: 0 },
++  evidence: [],
++};
++const declined: PracticeRow = {
++  id: "p-weather",
++  statement: "Add the weather forecast",
++  scope: "task:repo-stats",
++  scopeLabel: "repo stats",
++  status: "suppressed",
++  createdAt: SAVED_AT,
++  savedAt: SAVED_AT,
++  counts: { applied: 0, repeats: 0 },
++  evidence: [],
++};
++const taskTypes: TaskTypeRow[] = [
++  { slug: "repo-stats", label: "repo stats", occurrences: 53, recurring: true, example: null },
++  { slug: "npm-numbers", label: "npm numbers", occurrences: 4, recurring: true, example: null },
++  {
++    slug: "weather-lisbon",
++    label: "",
++    occurrences: 1,
++    recurring: false,
++    example: "What is the weather in Lisbon?",
++  },
++];
++
++let listed: {
++  practices: PracticeRow[];
++  taskTypes: TaskTypeRow[];
++  activeProject: string | null;
++  jobs?: Array<{ scope: string; name: string }>;
++};
++let failing: Record<string, Error>;
++
++beforeEach(() => {
++  toastError.mockReset();
++  toastSuccess.mockReset();
++  listed = { practices: [npm, candidate, short, declined], taskTypes, activeProject: "acme" };
++  failing = {};
++  requestMock.mockReset();
++  requestMock.mockImplementation(async (method: string) => {
++    if (failing[method]) throw failing[method];
++    switch (method) {
++      case "memory.practices":
++        return listed;
++      case "memory.retirePractice":
++      case "memory.unretirePractice":
++      case "memory.answerPracticeOffer":
++        return { ok: true };
++      case "memory.editPractice":
++      case "memory.setPracticeScope":
++      case "memory.savePractice":
++        return { ok: true, op: "strengthen" };
++      case "memory.mergeTaskTypes":
++        return { ok: true };
++      default:
++        throw new Error(`unexpected ${method}`);
++    }
++  });
 +});
 +
-+describe("RLM sandbox: no host realm reachable", () => {
-+  it("blocks the reported primitive", async () => {
-+    const result = await sandbox().execute(
-+      `let v = "blocked"; try { v = "ESCAPED:" + typeof Error.constructor("return process")(); } catch (e) {} print(v);`,
++const card = (id: string) => within(screen.getByTestId(`practice-${id}`));
++
++describe("describePracticeScope / describePracticeStatus", () => {
++  it("puts a scope and a status in plain words", () => {
++    expect(describePracticeScope({ scope: "global", scopeLabel: "everything" })).toBe("Everywhere");
++    expect(describePracticeScope({ scope: "task:repo-stats", scopeLabel: "repo stats" })).toBe(
++      "For repo stats",
 +    );
-+    expect(result.output).toBe("blocked");
-+  });
-+
-+  // Each of these was a host-realm object (or returned one) before the fix.
-+  const targets: Array<[string, string]> = [
-+    ["an intrinsic", "JSON"],
-+    ["a class", "Promise"],
-+    ["print", "print"],
-+    ["console.log", "console.log"],
-+    ["a text helper", "grep"],
-+    ["store", "store"],
-+    ["FINAL", "FINAL"],
-+    ["llm_query", "llm_query"],
-+    ["the llm_query promise", 'llm_query("x")'],
-+    ["the llm_query result", 'await llm_query("x")'],
-+    ["the llm_query_parallel result", 'await llm_query_parallel([{ prompt: "a" }])'],
-+    ["the search promise", 'search("q")'],
-+    ["the search result array", 'await search("q")'],
-+    ["a search result row", '(await search("q"))[0]'],
-+    ["the listSessions error row", "(await listSessions())[0]"],
-+    ["the run driver", "__rlm_run"],
-+    ["the global", "globalThis"],
-+    ["this", "this"],
-+    ["a helper's return value", 'chunk("abcdef", 2)'],
-+    ["textStats output", 'textStats("a b")'],
-+    ["a regexp match list", 'extractAll("a b", "a")'],
-+  ];
-+  for (const [label, expr] of targets) {
-+    it(`cannot pivot through ${label}`, async () => {
-+      const result = await sandbox().execute(probe(expr));
-+      expect(result.output).not.toContain("ESCAPED");
-+      expect(result.output).toBe("blocked");
-+    });
-+  }
-+
-+  it("has no host constructor or host global on the global", async () => {
-+    const sb = sandbox();
-+    const result = await sb.execute(
-+      `print(typeof process, typeof require, typeof Buffer, typeof setTimeout);`,
-+    );
-+    expect(result.output).toBe("undefined undefined undefined undefined");
-+    // A bare `constructor` resolves to the realm's own Object, never the host's.
-+    expect((await sb.execute(probe("constructor"))).output).toBe("blocked");
-+    expect((await sb.execute(probe("{ constructor }"))).output).toBe("blocked");
-+  });
-+
-+  it("disables eval and Function(string) in the realm", async () => {
-+    const result = await sandbox().execute(`
-+      const out = [];
-+      try { eval("1"); out.push("eval-ran"); } catch (e) { out.push("eval-blocked"); }
-+      try { (function(){}).constructor("return 1")(); out.push("fn-ran"); } catch (e) { out.push("fn-blocked"); }
-+      try { (async function(){}).constructor("return 1"); out.push("afn-ran"); } catch (e) { out.push("afn-blocked"); }
-+      print(out.join(","));
-+    `);
-+    expect(result.output).toBe("eval-blocked,fn-blocked,afn-blocked");
-+  });
-+
-+  it("values imported into the store are realm objects", async () => {
-+    const sb = sandbox();
-+    sb.importStore({ planted: { nested: [1, 2, 3] } });
-+    const result = await sb.execute(
-+      `{${probe('get("planted")')}} {${probe('get("planted").nested')}} print(get("planted").nested[2]);`,
-+    );
-+    expect(
-```
-
-**File**: `src/agents/rlm/sandbox.ts` (modified, +535/-241)
-```diff
-@@ -1,15 +1,60 @@
- /**
-- * RLM Sandbox — Secure JavaScript execution environment using Node.js vm module.
-+ * RLM Sandbox — runs LLM-written JavaScript that explores a loaded context
-+ * string. No filesystem, network API, or require access is offered to it.
-  *
-- * The sandbox provides a minimal, isolated REPL where LLM-generated code can
-- * explore a loaded context string. No filesystem, network, or require access.
-+ * SECURITY (report by Aleksandr Tynianov, 2026-11-19: deep_recall RLM sandbox
-+ * escape -> host RCE). The code that runs here is written by a sub-LLM that
-+ * reads attacker-influenced text, so it is treated as hostile. The previous
-+ * implementation ran it in a node:vm context inside the gateway and seeded
-+ * that context with host-realm objects; one constructor-chain hop
-+ * (`Error.constructor("return process")()`) reached the gateway's `process`.
-+ *
-+ * There are now two independent layers.
-+ *
-+ * Layer 1, process isolation (this file). The vm lives in a separate `node`
-+ * process, never in the gateway:
-+ *
-+ *   - started with an EMPTY environment (no API keys, no tokens);
-+ *   - under the Node permission model: no filesystem, no child processes, no
-+ *     worker threads, no native addons (the program arrives on stdin, so not
-+ *     even its own script needs to be readable);
-+ *   - with a capped heap, so runaway allocation kills the child, not the
-+ *     gateway;
-+ *   - killed outright when a run overruns its deadline, which is what stops a
-+ *     loop that spins after an `await` (the vm timeout only bounds synchronous
-+ *     code).
-+ *
-+ *   The gateway talks to it over an IPC channel carrying JSON. Every message
-+ *   from the child is untrusted and type-checked; the only things it can ask
-+ *   for are the same bridged calls sandbox code may make anyway (llm_query,
-+ *   search, loadTranscript, listSessions), and only while a run is in flight.
-+ *   The gateway never evaluates anything the child sends.
-+ *
-+ * Layer 2, realm hardening (sandbox-child-source.ts, vm-realm-hardening.ts).
-+ * Inside the child, no object of the child's own main realm is reachable from
-+ * sandbox code: null-prototype global, code generation off, every helper
-+ * defined inside the realm, a two-function string-only bridge, stack capture
-+ * pinned off, the `import` keyword refused. An escape from layer 2 lands in a
-+ * process that holds no secrets and may not touch the disk or spawn anything.
-+ *
-+ * Not covered: the permission model of Node 22 does not restrict outbound
-+ * network access, so code that defeats layer 2 could still open a socket from
-+ * the child. It would have only the context string to send.
-+ *
-+ * State model: the store is the durable state. After every run the child
-+ * returns a JSON snapshot of it, and the synchronous accessors below
-+ * (exportStore, getVariable, resolveFinalAnswer) read that snapshot, so the
-+ * gateway never calls into sandbox code. The child is disposable: it is
-+ * stopped when idle and after a timeout, and the next run starts a fresh one
-+ * from the snapshot. Realm globals do not survive that; store() does.
-  *
-  * Based on: "Recursive Language Models" (Zhang, Kraska, Khattab, 2026)
-  * Paper: https://arxiv.org/abs/2512.24601
-  * Reference: hampton-io/RLM (TypeScript)
-  */
- 
--import { createContext, Script, type Context } from "node:vm";
-+import { spawn, type ChildProcess } from "node:child_process";
-+import { SANDBOX_CHILD_SOURCE } from "./sandbox-child-source.js";
- import type { RLMLiveApis, SandboxExecutionResult } from "./types.js";
- 
- export type SandboxOptions = {
-@@ -27,14 +72,108 @@ export type SandboxOptions = {
- 
- /** Cap live-API return payloads so a single call can't blow the REPL loop. */
- const LIVE_API_MAX_CHARS = 400_000;
-+/** V8 old-space cap for the sandbox process. */
-+const CHILD_HEAP_MB = 512;
-+/** How long a new sandbox process may take to report ready. */
-+const CHILD_READY_TIMEOUT_MS = 15_000;
-+/** An idle sandbox process is stopped after this long; the store snapshot stays. */
-+const CHILD_IDLE_MS = 120_000;
-+/** Grace on top of the vm timeout before the process is killed. */
-+const HARD_TIMEOUT_GRACE_MS = 5_000;
-+/** Output accepted from one run (the child stops sending at 1M chars). */
-+const MAX_OUTPUT_CHARS = 1_100_000;
-+/** Bridged calls (llm_query, search, ...) accepted per run. */
-+const MAX_BRIDGE_CALLS_PER_RUN = 500;
-+
-+/**
-+ * Whether this runtime accepts a permission-model flag. Set to null once a
-+ * spawn shows it does not (the child is then still a separate process with an
-+ * empty environment and a capped heap).
-+ */
-+let permissionFlag: string | null | undefined;
-+
-+function resolvePermissionFlag(): string | null {
-+  if (permissionFlag === undefined) {
-+    const flags = process.allowedNodeEnvironmentFlags;
-+    permissionFlag = flags.has("--permission")
-+      ? "--permission"
-+      : flags.has("--experimental-permission")
-+        ? "--experimental-permission"
-+        : null;
-+  }
-+  return permissi
-```
-
-**File**: `src/agents/tool-policy.ts` (modified, +6/-0)
-```diff
-@@ -78,6 +78,12 @@ const OWNER_ONLY_TOOL_NAMES = new Set<string>([
-   "code_interpreter",
-   "computer_use",
-   "browser",
-+  // deep_recall runs code written by a sub-LLM that reads attacker-influenced
-+  // text (src/agents/rlm/sandbox.ts). It runs in a locked-down child process,
-+  // but it is still code execution on the host and it spends money on sub-LLM
-+  // calls, so no non-owner sender may drive it (security report 2026-11-19).
-+  // recall_range covers a guest's current-session lookups.
-+  "deep_recall",
-   // Card purchases from the owner's Link account (PLAN-53 C1).
-   "purchase",
-   // Money. The wallet sends USDC and pays x402 resources with numeric caps as
-```
-
-**File**: `src/agents/tools/code-interpreter-tool.sandbox.test.ts` (modified, +37/-0)
-```diff
-@@ -31,6 +31,43 @@ describe("code_interpreter JS sandbox hardening (security/code-interpreter-vm-es
-     });
-   }
- 
-+  // Node host callbacks reachable from plain JS (red-team pass, 2026-11-19):
-+  // the errors they throw are host-realm objects, so the payloads below use
-+  // only property access, which disabling code generation does not stop.
-+  const SHOW = `try { return "ESCAPED:" + typeof e.constructor.constructor("return process")(); } catch (x) { return "blocked"; }`;
-+  const hostCallbackPayloads: Array<[string, string]> = [
-+    [
-+      "stack formatter, symbol name",
-+      `const err = new Error("x"); err.name = Symbol(); try { return typeof err.stack; } catch (e) { ${SHOW} }`,
-+    ],
-+    [
-+      "captureStackTrace on a plain object",
-+      `const o = { name: Symbol() }; try { Error.captureStackTrace(o); return typeof o.stack; } catch (e) { ${SHOW} }`,
-+    ],
-+    [
-+      "re-enabled stack capture",
-+      `try { Error.stackTraceLimit = 10; } catch (_) {} const err = new TypeError("x"); err.name = Symbol(); try { return typeof err.stack; } catch (e) { ${SHOW} }`,
-+    ],
-+  ];
-+  for (const [label, payload] of hostCallbackPayloads) {
-+    it(`gets no host error from the ${label}`, async () => {
-+      const r = await executeJavaScript(payload, freshSession());
-+      expect(r.error).toBeNull();
-+      expect(r.returnValue).toBe("undefined");
-+    });
-+  }
-+
-+  it("refuses dynamic import (its rejection is a host error)", async () => {
-+    const r = await executeJavaScript(
-+      `try { await import("x"); } catch (e) { ${SHOW} }`,
-+      freshSession(),
-+    );
-+    expect(String(r.error)).toMatch(/"import" cannot appear/);
-+    expect(r.returnValue).toBeNull();
-+    const ok = await executeJavaScript(`return "important"`, freshSession());
-+    expect(ok.returnValue).toBe("important");
-+  });
-+
-   it("blocks eval() directly", async () => {
-     const r = await executeJavaScript(`return eval('1+1')`, freshSession());
-     expect(r.error).toBeTruthy();
++    // An older gateway sends no label: the slug is read as words, never shown raw.
++    expect(describePracticeScope({ scope: "task:repo-stats" })).toBe("For repo stats");
++    expect(describePracticeScope({ scope: "project:acme" })).toBe("For project acme");
++    expect(describePracticeScope({ scope: "job:abc-123" })).toBe("For one scheduled job");
++    // PLAN-64 Phase 5: the gateway sends the job's name (its id when the job is gone).
++    expect(describePracticeScope({ scope: "job:abc-123", scopeLabel: "Repo traffic" })).toBe(
++      "F
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #388** (2026-11-19): chore(main): release 1.14.2 (@github-actions[bot])
-- **PR #387** (2026-11-19): fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes (@VGIL77)
-- **PR #380** (2026-11-18): chore(main): release 1.14.1 (@github-actions[bot])
-- **PR #379** (2026-11-18): fix(skills): ship a sidecar that carries the package topic, and fail loudly without one (@VGIL77)
-- **PR #378** (2026-11-17): test(installer): do not require a signature check on runners with no verifier (@VGIL77)
-- **PR #377** (2026-11-17): feat(skills): cross-agent evidence cards with quorum and guard, replicated and integrated (@VGIL77)
+- **PR #410** (2026-11-27): feat(memory): standing practices learned from the owner's follow-ups (@VGIL77)
+- **PR #409** (2026-11-26): chore(deps): bump the npm-minor-patch group with 32 updates (@VGIL77)
+- **PR #408** (2026-11-26): fix(memory): name the wiki page to retire explicitly in the semantic lint (@VGIL77)
+- **PR #407** (2026-11-26): fix(wallet): stop telling the agent and users that gas is sponsored (@VGIL77)
+- **PR #406** (2026-11-26): chore(deps): bump react-markdown from 9.1.0 to 10.1.0 (@dependabot[bot])
+- **PR #405** (closed): chore(deps): bump the npm-minor-patch group across 1 directory with 32 updates (@dependabot[bot])
 
 ---
 
@@ -2150,34 +2017,21 @@ prompt injection. Reported by Aleksandr Tynianov.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): run the deep_recall sandbox in a locked-down process and close vm esc
+## X. memory): standing practices learned from the owner's follow-ups
 
 **RULE**:
-When implementing operations in `docs/memory/deep-recall.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac9552c9`: security): run the deep_recall sandbox in a locked-down process and close vm escapes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5aaaf150`: memory): standing practices learned from the owner's follow-ups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/deep-recall.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-`deep_recall` is an owner-only tool, like `code_interpreter`: a non-owner sender's turn does not get it at all, because it runs sub-LLM-written code on the gateway host (see [Sandbox isolation](#sandbox-isolation)). A non-owner turn still has `recall_range` for exact lookups in its own conversation. The scope downgrade below stays in place as a second layer.
-
-
-## Sandbox isolation
-
-The REPL code is written by a model that reads transcripts, memory and tool output, so it is treated as hostile. Two independent layers contain it.
-
-**A separate process.** The code never runs inside the gateway. Each sandbox is its own `node` process, started with:
-
-- an empty environment (no API keys or tokens),
-- the Node permission model: no filesystem access, no child processes, no worker threads, no native addons,
-- a 512 MB heap cap.
-
-The gateway talks to it over an IPC channel that carries JSON. The only things the process can ask for are the calls sandbox code is allowed anyway (`llm_query`, `llm_query_parallel`, `search`, `loadTranscript`, `listSessions`), only while a code block is running, and at most 500 per block. A block that overruns its deadline, including one that loops forever after an
+- **Standing Practices** (`src/memory/practices.ts`, `task-types.ts`, `practice-followups.ts`, `practice-jobs.ts`): Behavioural instructions about how to do a kind of task, scoped to a recurring task type, a scheduled job, a project or everywhere. Learned from explicit owner instructions and from follow-ups that ask for what a recurring answer left out, confirmed by a one-line yes/no offer, rendered into matching turns, and reported back with generated "Applied" and "Changed since last time" notes. See `docs/memory/practices.md`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2187,7 +2041,7 @@ The gateway talks to it over an IPC channel that carries JSON. The only things t
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac9552c9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5aaaf150` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

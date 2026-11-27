@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:36:20.920Z",
+  "last_updated": "2026-11-27T22:46:04.831Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T22:14:18.497Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-27T22:36:19.911Z",
+      "processed_at": "2026-11-27T22:46:03.592Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -858,7 +858,7 @@
       "staged_for_review": 1
     },
     "kucherenko-jscpd-learnings.md": {
-      "processed_at": "2026-11-24T14:50:48.118Z",
+      "processed_at": "2026-11-27T22:46:00.432Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2233,7 +2233,7 @@
       "staged_for_review": 1
     },
     "bitterbot-ai-bitterbot-desktop-learnings.md": {
-      "processed_at": "2026-11-26T21:17:45.321Z",
+      "processed_at": "2026-11-27T22:46:02.231Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5130,
+  "total_dossiers_evaluated": 5133,
   "total_canonical_promoted": 586,
-  "total_staged_for_review": 3876
+  "total_staged_for_review": 3879
 }

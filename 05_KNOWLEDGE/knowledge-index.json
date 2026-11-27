@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T22:36:20.745Z",
+  "last_updated": "2026-11-27T22:46:04.597Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26795,
+  "total_items": 26801,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "80d53c2e8984a96c75abba4264c2b26ac5220dd1532ae5ffba09a0906af0b9b0",
+      "content_hash": "0ab5fb93cebf73299f68f4f398ecf824569c77da0ab5bbd2b35a23d31748f46b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T22:36:20.500Z"
+      "persisted_at": "2026-11-27T22:46:04.309Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "be2aad3c5c04a31743c7497c0a4a3a9f8298e4f291e23ea819a494b5971b832a",
+      "content_hash": "4ca223fe19b522c4444c5447112477969efbfe00f2e61687acf6731352880397",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T22:36:20.745Z"
+      "persisted_at": "2026-11-27T22:46:04.597Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114801,10 +114801,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kucherenko-jscpd-technical-construction-intelligence-kucherenko-jscpd-core-invar.md",
       "title": "Technical Construction Intelligence: kucherenko/jscpd Core Invariants",
       "repository": "kucherenko/jscpd",
-      "source_version": "28d22360",
-      "content_hash": "f6658f6e63007637b809e919890a7c498cccd1dc427f35a5b5b9269ce1ad1fe2",
+      "source_version": "ca751b46",
+      "content_hash": "19518623701914ac0412b465fa5ec53fb5cf8ee2ffed626dfc323fae20a73787",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:50:31.040Z"
+      "persisted_at": "2026-11-27T22:45:41.529Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd",
@@ -114813,10 +114813,10 @@
       "relative_path": "08_VERIFICATION/kucherenko-jscpd-verification-protocol-empirical-defect-shield-for-kucherenko-js.md",
       "title": "Verification Protocol: Empirical Defect Shield for kucherenko/jscpd",
       "repository": "kucherenko/jscpd",
-      "source_version": "28d22360",
-      "content_hash": "5b2aa834977a538ac9134eb9efe44b4d9c5e93db56299143e7583bb0bf8168c5",
+      "source_version": "ca751b46",
+      "content_hash": "2c9bee976ae7ac4d2a13a4bb00b89f876411d91974405f72a9182801658caaa4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:50:31.237Z"
+      "persisted_at": "2026-11-27T22:45:41.837Z"
     },
     "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359": {
       "item_id": "candidate_directive-docs-fix-api-links-for-library-types-named-like-global-types-53359",
@@ -114862,9 +114862,9 @@
       "title": "Technical Construction Intelligence: kucherenko-jscpd-learnings Core Invariants",
       "repository": "kucherenko-jscpd-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a43b78b0150eabda75a7432eec1dd3d1c9f2483abf96f435ede1d9f6d8078b6",
+      "content_hash": "585d4ea1cc0c623d0ae5cb1adeaa850523cf2d2d0495fb4413387811c0649cfb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:50:48.810Z"
+      "persisted_at": "2026-11-27T22:46:01.671Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kucherenko-jscpd-learnings",
@@ -114874,9 +114874,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kucherenko-jscpd-learnings",
       "repository": "kucherenko-jscpd-learnings",
       "source_version": "HEAD",
-      "content_hash": "9325d6a659cca4ff8876518cfe56da467b63072dd77d4243f46659403099853a",
+      "content_hash": "dc7e91a535867fbe8580353754b46f7e2f2ca07c9aaa56c77f91a0bf90ec4552",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:50:48.992Z"
+      "persisted_at": "2026-11-27T22:46:01.955Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-ggu",
@@ -219388,8 +219388,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "498590e2",
-      "content_hash": "6cb594bcfe24b405e591a6b320af1d50c82e211113cfb920b03a7aec1ea2fa9e",
+      "source_version": "5aaaf150",
+      "content_hash": "d673b782f45b940d8fff8c5278b2d8b7ef5685a41d33063d65d63c68ac8fcc8b",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -219467,6 +219467,11 @@
           "number": 10779,
           "title": "bump the npm-minor-patch group with 32 updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10979,
+          "title": "standing practices learned from the owner's follow-ups",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219474,7 +219479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T21:17:41.051Z",
+      "verified_at": "2026-11-27T22:45:56.158Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219516,10 +219521,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-bitterbot-ai-bitterbot-desktop-technical-construction-intelligence-bitterbot-ai-.md",
       "title": "Technical Construction Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "12f3d096",
-      "content_hash": "7024abe2763bf9fbf3e059acd3181c609aa12dd3b33066b68b64d04fb0ac9bd7",
+      "source_version": "5aaaf150",
+      "content_hash": "df91c598908e30a7559c406c8acfd0cf113d424aaf83c2b51d0abfe94e96e13b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T20:55:56.168Z"
+      "persisted_at": "2026-11-27T22:45:57.121Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop",
@@ -219529,9 +219534,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for bitterbot-ai-bitterbot-desktop-learnings",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fcfc493c7ec727826c322807a619b372f87e1115358e37f1528cffaabd95461",
+      "content_hash": "105bad51e4b01b77de6b1ca3b9a65acfbc07a2390754fa0a1d889d67afe5655b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:17:46.628Z"
+      "persisted_at": "2026-11-27T22:46:03.314Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -219577,9 +219582,9 @@
       "title": "Technical Construction Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "086f62f9e8a989fca211abc545be31ce0f016a0c3978e346bcb47c3f5e76fa10",
+      "content_hash": "9dd42b6a3f6413513ea031059cb4ad965442d8ae63dcf9df460b287b7aae2db5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T00:49:24.360Z"
+      "persisted_at": "2026-11-27T22:46:03.032Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-timm-mobilenetv3_small_100-lamb_in1k-learning",
@@ -309267,8 +309272,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "28d22360",
-      "content_hash": "5b0850656e2643d84ab50df348d14cdddba046fa43a8d4573a0af12fe4b61760",
+      "source_version": "ca751b46",
+      "content_hash": "532ee2adbfa40d3873f688b4b8f7a3092ff6a5253718d7a69be87d950d02a9b5",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -309291,6 +309296,11 @@
           "number": 10284,
           "title": "review of #1307",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10978,
+          "title": "name files from the folder that holds all scan paths",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -309298,7 +309308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:50:30.403Z",
+      "verified_at": "2026-11-27T22:45:40.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -361543,13 +361553,13 @@
       "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-95EF-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-LNUN-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
       "title": "renderer): refuse last-error reads off the engine owner thread",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "979e426be081b70c895ebda10d8c7034c9b90fd6a4bd1055e1048831625ad58a",
+      "content_hash": "e21a56b21f0808f73d571f47412434f6782dfbf3db79b43672d44b03565fef03",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T22:36:20.259Z"
+      "persisted_at": "2026-11-27T22:46:04.038Z"
     },
     "candidate_directive-put-log-each-put-hop-decision-at-info": {
       "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
@@ -368027,6 +368037,82 @@
       "content_hash": "f9d16f07a4a02eb7f8e685b7a4e2f438e60f94db6565600fadd8a33e463df749",
       "domain_letter": "A",
       "persisted_at": "2026-11-27T22:36:18.516Z"
+    },
+    "rule-10978": {
+      "learning_id": "rule-10978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10978,
+      "title": "name files from the folder that holds all scan paths",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "ca751b46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T22:45:40.537Z"
+    },
+    "candidate_directive-name-files-from-the-folder-that-holds-all-scan-paths": {
+      "item_id": "candidate_directive-name-files-from-the-folder-that-holds-all-scan-paths",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L696-name-files-from-the-folder-that-holds-all-scan-paths.md",
+      "title": "name files from the folder that holds all scan paths",
+      "repository": "kucherenko/jscpd",
+      "source_version": "ca751b46",
+      "content_hash": "5a1a3ad525654e672bc46958976d47f41971fef7525f2fc2f769af4c125fc39a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T22:45:41.234Z"
+    },
+    "rule-10979": {
+      "learning_id": "rule-10979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10979,
+      "title": "standing practices learned from the owner's follow-ups",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "5aaaf150",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T22:45:56.158Z"
+    },
+    "candidate_directive-standing-practices-learned-from-the-owner-s-follow-ups": {
+      "item_id": "candidate_directive-standing-practices-learned-from-the-owner-s-follow-ups",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LIAY-standing-practices-learned-from-the-owner-s-follow-ups.md",
+      "title": "standing practices learned from the owner's follow-ups",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "5aaaf150",
+      "content_hash": "c8d214a3de4dd594bf438ddc906faf2b364d266e705462945c3978810553556d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T22:45:56.849Z"
+    },
+    "candidate_directive-report-name-files-from-the-folder-that-holds-all-scan-paths": {
+      "item_id": "candidate_directive-report-name-files-from-the-folder-that-holds-all-scan-paths",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LLT9-report-name-files-from-the-folder-that-holds-all-scan-paths.md",
+      "title": "report): name files from the folder that holds all scan paths",
+      "repository": "kucherenko-jscpd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf61d8de715676ad72811b494260b5ef38751db71f0d6f87d8af0e8b30c4e631",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T22:46:01.396Z"
+    },
+    "candidate_directive-memory-standing-practices-learned-from-the-owner-s-follow-ups": {
+      "item_id": "candidate_directive-memory-standing-practices-learned-from-the-owner-s-follow-ups",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LMV3-memory-standing-practices-learned-from-the-owner-s-follow-ups.md",
+      "title": "memory): standing practices learned from the owner's follow-ups",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "29332af021f8e3ce311584ec9059a281c3d87ab78bc5b92ca16b6da6b21a6652",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T22:46:02.757Z"
     }
   },
   "ai-builder-brain": {

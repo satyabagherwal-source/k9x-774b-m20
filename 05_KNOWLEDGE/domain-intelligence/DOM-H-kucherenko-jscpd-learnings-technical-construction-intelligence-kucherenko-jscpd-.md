@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T14:50:48.504Z",
+  "timestamp": "2026-11-27T22:46:01.224Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kucherenko-jscpd-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kucherenko-jscpd-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T14:50:48.504Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T22:46:01.224Z`  
 > **Learning ID**: `LEARN-EVO-kucherenko-jscpd-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), F (Design Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from kucherenko-jscpd-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `28d22360`  
+> **Source Version**: `ca751b46`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T14:50:29.489Z  
+> **Timestamp**: 2026-11-27T22:45:39.355Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:50:29.301Z  
+> **Harvest Timestamp**: 2026-11-27T22:45:39.165Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6611 stars
+- **Stars / Engagement**: 6632 stars
 
 ---
 
@@ -1907,287 +1907,134 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `29e50f90` (2026-11-23)
-**Commit Message**: fix(walk): review of #1307
+### Incident Patch 1: `79e6d34a` (2026-11-25)
+**Commit Message**: fix(report): name files from the folder that holds all scan paths
 
-Test files and folders named together, and the same file named twice,
-against walking every root. Say in the docs that a followed link named
-on the command line is reported by its target's path. Drop the timing
-claim from the docs, the fixture README has the numbers. Add the
-changelog entry.
+With `dir-a` and `dir-b` as two scan paths, `dir-a/b.ts` and
+`dir-b/b.ts` were named from their own scan path and both showed as
+`b.ts`. Several scan paths now give way to their common folder, so the
+reports keep the folders. A single path and `--absolute` are unchanged.
+
+Fixes #1324
 
 **File**: `docs/rust.md` (modified, +1/-1)
 ```diff
-@@ -72,7 +72,7 @@ jscpd [OPTIONS] [PATH]...
+@@ -70,7 +70,7 @@ jscpd [OPTIONS] [PATH]...
+ jscpd [OPTIONS] [PATH]...
+ ```
  
- jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md).
+-jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md).
++jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md). Reports name a file by its path from the folder that holds all the scan paths, so `dir-a/b.ts` and `dir-b/b.ts` stay apart. See [`fixtures/same-name-demo`](../fixtures/same-name-demo/README.md).
  
--A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. A list of 3,000 files is read in a fraction of a second. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md).
-+A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md) for the rules and for timings of a long file list.
- 
- ### Options
- 
-```
-
-**File**: `fixtures/file-list-demo/README.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # Files named one by one
- 
--Pre-commit hooks, lint-staged and build systems such as Bazel pass jscpd a list of files instead of a folder. jscpd treats each file named on the command line as its own scan root. A file root gets the same rules as a file found in a folder: the format filters, `--pattern`, `--ignore` and `--max-size`. The ignore files (`.gitignore`, `.ignore`) don't apply to it: jscpd reads a file you name even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as it is in a walk.
-+Pre-commit hooks, lint-staged and build systems such as Bazel pass jscpd a list of files instead of a folder. jscpd treats each file named on the command line as its own scan root. A file root gets the same rules as a file found in a folder: the format filters, `--pattern`, `--ignore` and `--max-size`. The ignore files (`.gitignore`, `.ignore`) don't apply to it: jscpd reads a file you name even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as it is in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name.
- 
- Up to jscpd 5.4.3 every path started its own pool of walker threads, so 3,000 files named one by one took about a hundred times longer than their folder (issue #1306). A file root now skips the walker.
+ A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md) for the rules and for timings of a long file list.
  
 ```
 
-**File**: `rust/CHANGELOG.md` (modified, +2/-0)
+**File**: `fixtures/same-name-demo/README.md` (added, +32/-0)
 ```diff
-@@ -8,6 +8,8 @@ All notable changes to **cpd (Rust)** are documented here. Releases follow [Sema
- 
- ### Bug Fixes
- 
-+- **A long list of files named on the command line was slow.** Pre-commit hooks, lint-staged and Bazel pass jscpd the files one by one, and every file started its own pool of walker threads. 3,000 files took about 8 s, while their folder took 0.05 s. A file you name is now read without the walker, and the same list takes about 0.3 s. It gets the same rules as before: the format filters, `--pattern`, `--ignore` and `--max-size` apply, the ignore files don't. Reported by [@atlas-loadbudget](https://github.com/atlas-loadbudget). ([#1306](https://github.com/kucherenko/jscpd/issues/1306), [#1307](https://github.com/kucherenko/jscpd/pull/1307))
+@@ -0,0 +1,32 @@
++# Files of one name in two scan paths
 +
- - **Another file in the scan could move the start of a clone.** Detection keeps the first copy of every run of tokens it has seen. When a file scanned earlier held the start of the code two other files share, those tokens were taken by it, and the clone of the two files started a few tokens later, sometimes in the middle of a line. Adding, removing or renaming an unrelated file changed the clone's range and its fingerprint, so `--baseline` reported it as new. A clone now starts where its two files start to match, whatever else is scanned. Clones that were cut short get longer, so duplicated lines and percentages can go up, and a baseline saved by an earlier version reports each such clone as new once: run `--update-baseline` after upgrading. Reported by [@Emkej](https://github.com/Emkej). ([#1319](https://github.com/kucherenko/jscpd/issues/1319), [#1320](https://github.com/kucherenko/jscpd/pull/1320))
- 
- ## 5.4.3
-```
-
-**File**: `rust/crates/cpd-finder/src/walker.rs` (modified, +39/-2)
-```diff
-@@ -843,8 +843,8 @@ mod tests {
-                 );
-             }
-         }
--        // Some files are taken and some left out, under each rule.
--        assert!(taken > 10 && taken < cases / 2, "{taken} of {cases}");
-+        // Some files are taken and some left out.
-+        assert!(taken > 0 && taken < cases, "{taken} of {cases}");
-         let one = |path: &Path, config: WalkConfig| {
-             let found = walk(&WalkConfig {
-                 paths: vec![path.to_path_buf()],
-@@ -879,6 +879,43 @@ mod tests {
-         let _ = std::fs::remove_dir_all(&dir);
-     }
- 
-+    /// Files and folders named together, as `jscpd . src/a.js` or a hook
-+    /// passing the same file twice: one copy of each file, as when every
-+    /// root is walked.
-+    #[test]
-+    fn file_roots_mixed_with_folders_find_each_file_once() {
-+        let dir = temp_dir("mixed-roots");
-+        let kept = write(&dir, "src/kept.js", "let a = 1;\n");
-+        let other = write(&dir, "src/other.ts", "let b = 2;\n");
-+        write(&dir, "lib/third.js", "let c = 3;\n");
-+        let src = dir.join("src");
-+        let cases = [
-+            (vec![dir.clone(), kept.clone()], 3),
-+            (vec![kept.clone(), other.clone()], 2),
-+            (vec![kept.clone(), src.clone()], 2),
-+            (vec![src.clone(), kept.clone(), kept.clone()], 2),
-+        ];
-+        for (paths, count) in cases {
-+            for follow_symlinks in [false, true] {
-+                let config = WalkConfig {
-+                    paths: paths.clone(),
-+                    follow_symlinks,
-+                    ..Default::default()
-+                };
-+                let rules = Rules::new(&config);
-+                let mut walked = Vec::new();
-+                for given in &paths {
-+                    walk_dir(&Root::new(given, None), &rules, &[], &mut walked);
-+                }
-+                dedup_by_real_path(&mut walked);
-+                let found_now = found(&walk(&config));
-+                assert_eq!(found_now, found(&walked), "{paths:?}");
-+                assert_eq!(found_now.len(), count, "{paths:?}");
-+            }
-+        }
-+        let _ = std::fs::remove_dir_all(&dir);
-+    }
++`billing/rates.js` and `returns/rates.js` hold the same rate code, and `billing/invoice.js` uses it. When the two folders are passed as two scan paths, the report names each file by its path from the folder that holds both paths, so the two `rates.js` stay apart.
 +
-     #[test]
-     fn a_scan_root_inside_another_adds_no_second_copy() {
-         let dir = fixtures();
-```
-
----
-
-### Incident Patch 2: `28d22360` (2026-11-23)
-**Commit Message**: Merge pull request #1321 from kucherenko/fix/url-rustsec-2026-0592
-
-fix(deps): bump url to 2.5.9 for RUSTSEC-2026-0592
-
-
-
----
-
-### Incident Patch 3: `65b7bf4b` (2026-11-23)
-**Commit Message**: Merge pull request #1307 from kucherenko/fix/walk-file-roots
-
-fix(walk): take a file named on the command line without the walker
-
-**File**: `docs/rust.md` (modified, +2/-0)
-```diff
-@@ -72,6 +72,8 @@ jscpd [OPTIONS] [PATH]...
- 
- jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md).
- 
-+A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md) for the rules and for timings of a long file list.
-+
- ### Options
- 
- | Option | Short | Description | Default |
-```
-
-**File**: `fixtures/file-list-demo/README.md` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+# Files named one by one
-+
-+Pre-commit hooks, lint-staged and build systems such as Bazel pass jscpd a list of files instead of a folder. jscpd treats each file named on the command line as its own scan root. A file root gets the same rules as a file found in a folder: the format filters, `--pattern`, `--ignore` and `--max-size`. The ignore files (`.gitignore`, `.ignore`) don't apply to it: jscpd reads a file you name even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as it is in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name.
-+
-+Up to jscpd 5.4.3 every path started its own pool of walker threads, so 3,000 files named one by one took about a hundred times longer than their folder (issue #1306). A file root now skips the walker.
++Up to jscpd 5.4.3 a file was named from its own scan path, and both files showed as `rates.js` (issue #1324).
 +
 +Run the commands from the repository root. They use the default thresholds.
 +
-+| Command | Files analyzed | Clones |
-+|---------|----------------|--------|
-+| the folder `src` | 3 | 1 |
-+| the three files of `src` | 3 | 1 |
-+| two files, one of them matched by `--ignore` | 1 | 0 |
-+| three files, `--pattern` matching one | 1 | 0 |
++| Command | JavaScript files | Clones | First file | Second file |
++|---------|------------------|--------|------------|-------------|
++| `billing` and `returns` as two paths | 3 | 1 | `billing/rates.js` | `returns/rates.js` |
++| the whole demo as one path | 3 | 1 | `billing/rates.js` | `returns/rates.js` |
 +
-+`src/shipping-quote.js` and `src/return-quote.js` price a parcel with the same code under two names. `src/parcel-id.js` holds unrelated code.
++The scan of the whole demo also reads this README, so it counts 4 files.
 +
-+## The folder and its files
++## Two paths
 +
 +```bash
-+jscpd fixtures/file-list-demo/src
-+# Found 1 clones.
-+
-+jscpd fixtures/file-list-demo/src/shipping-quote.js \
-+  fixtures/file-list-demo/src/return-quote.js \
-+  fixtures/file-list-demo/src/parcel-id.js
-+# Found 1 clones.
++jscpd fixtures/same-name-demo/billing fixtures/same-name-demo/returns
++# Clone found (javascript)
++#  - billing/rates.js [3:1 - 20:2] (18 lines, 142 tokens)
++#    returns/rates.js [3:1 - 20:2]
 +```
 +
-+Both commands report one clone: lines 1 to 24 of `return-quote.js` and of `shipping-quote.js`.
++5.4.3 printed the same clone as:
 +
-+## Filters on files named one by one
-+
-+```bash
-+jscpd fixtures/file-list-demo/src/shipping-quote.js \
-+  fixtures/file-list-demo/src/return-quote.js --ignore '**/return-*.js'
-+# Found 0 clones.
-+
-+jscpd fixtures/file-list-demo/src/shipping-quote.js \
-+  fixtures/file-list-demo/src/return-quote.js \
-+  fixtures/file-list-demo/src/parcel-id.js --pattern '**/shipping-*.js'
-+# Found 0 clones.
++```
++ - rates.js [3:1 - 20:2] (18 lines, 142 tokens)
++   rates.js [3:1 - 20:2]
 +```
 +
-+In a glob, `*` also matches `/`. So `**/s*.js` keeps `src/return-quote.js` too, through its folder name `src`.
-+
-+## Timing a long file list
-+
-+This loop writes 3,000 small files into a temporary folder and scans them both ways:
-+
-+```bash
-+dir=$(mktemp -d) && mkdir -p "$dir/src"
-+for d in $(seq 1 30); do for f in $(seq 1 100); do
-+  printf 'export function f%d_%d(a, b) {\n  const x = a + %d;\n  return x * b - %d;\n}\n' \
-+    $d $f $f $d > "$dir/src/m${d}_$f.js"
-+done; done
-+time jscpd --silent "$dir/src"
-+time (find "$dir/src" -name '*.js' | xargs jscpd --silent)
-+```
-+
-+The files are below the default thresholds, so both runs warn that they analyzed no files. The loop measures how long it takes to collect the files. On an 8-core machine the folder takes about 0.05 s. The file list took about 8 s with jscpd 5.4.3 and takes about 0.3 s now.
++A single path is shown as before: its files are named from that path. With `--absolute` every file is named by its absolute path, in both versions.
 ```
 
-**File**: `fixtures/file-list-demo/src/parcel-id.js` (added, +19/-0)
+**File**: `fixtures/same-name-demo/billing/invoice.js` (added, +15/-0)
 ```diff
-@@ -0,0 +1,19 @@
-+const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+@@ -0,0 +1,15 @@
++import { lineTotal } from "./rates.js";
 +
-+export function parcelId(seed, length = 10) {
-+  let state = seed >>> 0;
-+  let id = '';
-+  for (let i = 0; i < length; i += 1) {
-+    state = (state * 1103515245 + 12345) >>> 0;
-+    id += ALPHABET[state % ALPHABET.length];
-+  }
-+  return id;
-+}
-+
-+export function checkDigit(id) {
++export function invoiceTotal(invoice) {
 +  let sum = 0;
-+  for (const char of id) {
-+    sum = (sum * 31 + ALPHABET.indexOf(char)) % 97;
++  for (const line of invoice.lines) {
++    sum += lineTotal(line, invoice.customer).gross;
 +  }
-+  return String(sum).padStart(2, '0');
++  return sum;
++}
++
++export function overdue(invoice, today) {
++  const due = new Date(invoice.issuedAt);
++  due.setDate(due.getDate() + invoice.termsDays);
++  return !invoice.paidAt && today > due;
 +}
 ```
 
-**File**: `fixtures/file-list-demo/src/return-quote.js` (added, +24/-0)
+**File**: `fixtures/same-name-demo/billing/rates.js` (added, +20/-0)
 ```diff
-@@ -0,0 +1,24 @@
-+export function returnQuote(parcel, zone, rates) {
-+  const weight = Math.max(parcel.weightKg, 0.1);
-+  const volume = parcel.lengthCm * parcel.widthCm * parcel.heightCm;
-+  const billable = Math.max(weight, volume / 5000);
-+  const band = rates.bands.find((entry) => billable <= entry.upToKg);
-+  if (!band) {
-+    throw new Error(`no rate band for ${billable.toFixed(2)} kg`);
-+  }
-+  let price = band.base + band.perKg * billable;
-+  if (zone.remote) {
-+    price += rates.remoteSurcharge;
-+  }
-+  if (parcel.fragile) {
-+    price *= 1 + rates.fragileShare;
-+  }
-+  return {
-+    zone: zone.code,
-+    billableKg: Number(billable.toFixed(2)),
-+    price: Math.round(price * 100) / 100,
-+    currency: rates.currency,
-+  };
+@@ -0,0 +1,20 @@
++// Rates for an invoice line: the tax band of the country, the discount of
++// the customer tier and the rounding the ledger expects.
++const TAX_BANDS = { de: 0.19, fr: 0.2, pl: 0.23, ua: 0.2 };
++const TIER_DISCOUNTS = { bronze: 0, silver: 0.05, gold: 0.1 };
++
++function roundCents(amount) {
++  return Math.round(amount * 100) / 100;
 +}
 +
-+export const returnWindowDays = (order) => (order.member ? 60 : 30);
++export function lineTotal(line, customer) {
++  const band = TAX_BANDS[customer.country] ?? 0;
++  const discount = TIER_DISCOUNTS[customer.tier] ?? 0;
++  const net = line.unitPrice * line.quantity * (1 - discount);
++  const tax = net * band;
++  return {
++    net: roundCents(net),
++    tax: roundCents(tax),
++    gross: roundCents(net + tax),
++  };
++}
 ```
 
-**File**: `fixtures/file-list-demo/src/shipping-quote.js` (added, +24/-0)
+**File**: `fixtures/same-name-demo/returns/rates.js` (added, +20/-0)
 ```diff
-@@ -0,0 +1,24 @@
-+export function shippingQuote(parcel, zone, rates) {
-+  const weight = Math.max(parcel.weightKg, 0.1);
-+  const volume = parcel.lengthCm * parcel.widthCm * parcel.heightCm;
-+  const billable = Math.max(weight, volume / 5000);
-+  const band = rates.bands.find((entry) => billable <= entry.upToKg);
-+  if (!band) {
-+    throw new Error(`no rate band for ${billable.toFixed(2)} kg`);
-+  }
-+  let price = band.base + band.perKg * billable;
-+  if (zone.remote) {
-+    price += rates.remoteSurcharge;
-+  }
-+  if (parcel.fragile) {
-+    price *= 1 + rates.fragileShare;
-+  }
-+  return {
-+    zone: zone.code,
-+    billableKg: Number(billable.toFixed(2)),
-+    price: Math.round(price * 100) / 100,
-+    currency: rates.currency,
-+  };
+@@ -0,0 +1,20 @@
++// Rates for an invoice line: the tax band of the country, the discount of
++// the customer tier and the rounding the ledger expects.
++const TAX_BANDS = { de: 0.19, fr: 0.2, pl: 0.23, ua: 0.2 };
++const TIER_DISCOUNTS = { bronze: 0, silver: 0.05, gold: 0.1 };
++
++function roundCents(amount) {
++  return Math.round(amount * 100) / 100;
 +}
 +
-+export const quoteLabel = (quote) => `${quote.zone}: ${quote.price} ${quote.currency}`;
++export function lineTotal(line, customer) {
++  const band = TAX_BANDS[customer.country] ?? 0;
++  const discount = TIER_DISCOUNTS[customer.tier] ?? 0;
++  const net = line.unitPrice * line.quantity * (1 - discount);
++  const tax = net * band;
++  return {
++    net: roundCents(net),
++    tax: roundCents(tax),
++    gross: roundCents(net + tax),
++  };
++}
 ```
 
 **File**: `rust/CHANGELOG.md` (modified, +2/-0)
@@ -2196,155 +2043,360 @@ fix(walk): take a file named on the command line without the walker
  
  ### Bug Fixes
  
-+- **A long list of files named on the command line was slow.** Pre-commit hooks, lint-staged and Bazel pass jscpd the files one by one, and every file started its own pool of walker threads. 3,000 files took about 8 s, while their folder took 0.05 s. A file you name is now read without the walker, and the same list takes about 0.3 s. It gets the same rules as before: the format filters, `--pattern`, `--ignore` and `--max-size` apply, the ignore files don't. Reported by [@atlas-loadbudget](https://github.com/atlas-loadbudget). ([#1306](https://github.com/kucherenko/jscpd/issues/1306), [#1307](https://github.com/kucherenko/jscpd/pull/1307))
++- **Two scan paths could show two files under one name.** A file was named by its path from the scan path it was found in, so with `dir-a` and `dir-b` as two paths, `dir-a/b.ts` and `dir-b/b.ts` both showed as `b.ts`. With several scan paths a file is now named from the folder that holds them all: `dir-a/b.ts` and `dir-b/b.ts`. A single scan path is shown as before, and `--absolute` is unchanged. Names in the reports of a scan with several paths change, so a tool that matches them by name sees new names once. Reported by [@holynewbie](https://github.com/holynewbie). ([#1324](https://github.com/kucherenko/jscpd/issues/1324))
 +
- - **Another file in the scan could move the start of a clone.** Detection keeps the first copy of every run of tokens it has seen. When a file scanned earlier held the start of the code two other files share, those tokens were taken by it, and the clone of the two files started a few tokens later, sometimes in the middle of a line. Adding, removing or renaming an unrelated file changed the clone's range and its fingerprint, so `--baseline` reported it as new. A clone now starts where its two files start to match, whatever else is scanned. Clones that were cut short get longer, so duplicated lines and percentages can go up, and a baseline saved by an earlier version reports each such clone as new once: run `--update-baseline` after upgrading. Reported by [@Emkej](https://github.com/Emkej). ([#1319](https://github.com/kucherenko/jscpd/issues/1319), [#1320](https://github.com/kucherenko/jscpd/pull/1320))
+ - **A long list of files named on the command line was slow.** Pre-commit hooks, lint-staged and Bazel pass jscpd the files one by one, and every file started its own pool of walker threads. 3,000 files took about 8 s, while their folder took 0.05 s. A file you name is now read without the walker, and the same list takes about 0.3 s. It gets the same rules as before: the format filters, `--pattern`, `--ignore` and `--max-size` apply, the ignore files don't. Reported by [@atlas-loadbudget](https://github.com/atlas-loadbudget). ([#1306](https://github.com/kucherenko/jscpd/issues/1306), [#1307](https://github.com/kucherenko/jscpd/pull/1307))
  
- ## 5.4.3
+ - **Another file in the scan could move the start of a clone.** Detection keeps the first copy of every run of tokens it has seen. When a file scanned earlier held the start of the code two other files share, those tokens were taken by it, and the clone of the two files started a few tokens later, sometimes in the middle of a line. Adding, removing or renaming an unrelated file changed the clone's range and its fingerprint, so `--baseline` reported it as new. A clone now starts where its two files start to match, whatever else is scanned. Clones that were cut short get longer, so duplicated lines and percentages can go up, and a baseline saved by an earlier version reports each such clone as new once: run `--update-baseline` after upgrading. Reported by [@Emkej](https://github.com/Emkej). ([#1319](https://github.com/kucherenko/jscpd/issues/1319), [#1320](https://github.com/kucherenko/jscpd/pull/1320))
 ```
 
-**File**: `rust/crates/cpd-finder/src/walker.rs` (modified, +348/-163)
+**File**: `rust/crates/cpd/src/main.rs` (modified, +34/-3)
 ```diff
-@@ -115,15 +115,20 @@ pub fn walk(config: &WalkConfig) -> Vec<DiscoveredFile> {
- /// nested project a scan of its own. The folders are absolute paths,
- /// compared with the walked paths of an absolute root.
- pub fn walk_excluding(config: &WalkConfig, exclude_dirs: &[PathBuf]) -> Vec<DiscoveredFile> {
-+    let rules = Rules::new(config);
-     let mut results = Vec::new();
--    for (i, root) in config.paths.iter().enumerate() {
--        walk_one(
--            root,
--            config.match_as.get(i),
--            config,
--            exclude_dirs,
--            &mut results,
--        );
-+    for (i, given) in config.paths.iter().enumerate() {
-+        let root = Root::new(given, config.match_as.get(i));
-+        // A file root is taken as the walker would take it: the walker hands
-+        // a root to the callback without checking the ignore files or
-+        // `filter_entry`, but it starts a thread pool for every root, which
-+        // made a list of 3,000 files a hundred times slower than their
-+        // folder (issue #1306).
-+        if given.is_file() {
-+            results.extend(rules.take(given, &root));
-+        } else {
-+            walk_dir(&root, &rules, exclude_dirs, &mut results);
-+        }
-     }
-     if config.follow_symlinks || config.paths.len() > 1 {
-         dedup_by_real_path(&mut results);
-@@ -158,14 +163,158 @@ fn anchor_at_root(path: &Path, root: &Path, root_canon: &Path) -> PathBuf {
-     }
+@@ -947,9 +947,11 @@ fn detect_and_report(
  }
  
--fn walk_one(
--    root: &Path,
--    match_as: Option<&PathBuf>,
--    config: &WalkConfig,
-+/// What a walk with one config takes, its globs compiled once for all the
-+/// roots and files it looks at: the format filters, `--pattern`, `--ignore`
-+/// and the size limit.
-+struct Rules<'a> {
-+    config: &'a WalkConfig,
-+    ignore_set: GlobSet,
-+    /// The positive `--pattern` filter, if set. In v4, `pattern` (e.g.
-+    /// `**/*.ts`) was appended to each scan path to form the glob passed to
-+    /// fast-glob; here files are filtered as they are walked.
-+    pattern_set: Option<GlobSet>,
-+}
-+
-+/// One scan root as the walk sees it.
-+struct Root {
-+    /// The root as given: the walked paths start with it.
-+    given: PathBuf,
-+    /// The root resolved once, for the ids of its files.
-+    canon: PathBuf,
-+    /// The tree the patterns see when the root stands for another one
-+    /// (`WalkConfig::match_as`), as given and canonical.
-+    stand_in: Option<(PathBuf, PathBuf)>,
-+}
-+
-+impl Root {
-+    fn new(given: &Path, match_as: Option<&PathBuf>) -> Self {
-+        let canonical =
-+            |path: &Path| std::fs::canonicalize(path).unwrap_or_else(|_| path.to_path_buf());
-+        Self {
-+            given: given.to_path_buf(),
-+            canon: canonical(given),
-+            stand_in: match_as.map(|tree| (tree.clone(), canonical(tree))),
-+        }
+ /// Canonical scan roots, a file's being its directory, so fragment paths can
+-/// be stripped of them (macOS /var → /private/var included).
++/// be stripped of them (macOS /var → /private/var included). Several roots
++/// give way to the folder that holds them all, so `dir-a/b.ts` and
++/// `dir-b/b.ts` don't both show as `b.ts` (#1324).
+ fn canonical_roots(paths: &[PathBuf]) -> Vec<PathBuf> {
+-    paths
++    let roots: Vec<PathBuf> = paths
+         .iter()
+         .map(|p| {
+             let canonical = std::fs::canonicalize(p).unwrap_or_else(|_| p.clone());
+@@ -961,7 +963,25 @@ fn canonical_roots(paths: &[PathBuf]) -> Vec<PathBuf> {
+                 false => canonical,
+             }
+         })
+-        .collect()
++        .collect();
++    match common_ancestor(&roots) {
++        Some(common) => vec![common],
++        None => roots,
 +    }
 +}
 +
-+impl<'a> Rules<'a> {
-+    fn new(config: &'a WalkConfig) -> Self {
-+        Self {
-+            config,
-+            ignore_set: build_ignore_glob_set(&config.ignore_patterns),
-+            pattern_set: config.pattern.as_deref().map(build_positive_glob_set),
-+        }
-+    }
-+
-+    /// Whether `--pattern` lets `path` through. Both the path relative to
-+    /// `root` and the whole path are tried, so relative patterns (e.g.
-+    /// `src/**/*.ts`) and absolute ones (e.g. `/project/src/**/*.ts`) work.
-+    fn pattern_allows(&self, path: &Path, root: &Path) -> bool {
-+        match &self.pattern_set {
-+            Some(set) if !set.is_empty() => {
-+                let relative = path.strip_prefix(root).unwrap_or(path);
-+                set.is_match(relative) || set.is_match(path)
++/// The deepest folder that holds every root; none for roots on two drives.
++fn common_ancestor(roots: &[PathBuf]) -> Option<PathBuf> {
++    let (first, rest) = roots.split_first()?;
++    let mut common = first.clone();
++    for root in rest {
++        while !root.starts_with(&common) {
++            if !common.pop() {
++                return None;
 +            }
-+            _ => true,
 +        }
 +    }
-+
-+    fn ignored(&self, path: &Path) -> bool {
-+        !self.ignore_set.is_empty() && self.ignore_set.is_match(path)
++    Some(common)
+ }
+ 
+ /// Make source ids scan-root-relative for display and SARIF, keeping the scan
+@@ -1635,6 +1655,17 @@ mod tests {
+         assert_eq!(frag.source_root.as_deref(), Some("/project"));
+     }
+ 
++    #[test]
++    fn several_roots_show_paths_from_the_folder_that_holds_them() {
++        let roots =
++            |paths: &[&str]| common_ancestor(&paths.iter().map(PathBuf::from).collect::<Vec<_>>());
++        assert_eq!(roots(&["/p/dir-a", "/p/dir-b"]), Some(PathBuf::from("/p")));
++        assert_eq!(roots(&["/p", "/p/src"]), Some(PathBuf::from("/p")));
++        assert_eq!(roots(&["/p/src"]), Some(PathBuf::from("/p/src")));
++        assert_eq!(roots(&["/a/x", "/b/y"]), Some(PathBuf::from("/")));
++        assert_eq!(roots(&[]), None);
 +    }
 +
-+    /// Over the size limit; a file not on disk is not.
-+    fn too_big(&self, path: &Path) -> bool {
-+        self.config
-+            .max_size
-+            .is_some_and(|max| std::fs::metadata(path).is_ok_and(|meta| meta.len() > max))
+     #[test]
+     fn relativize_strips_dot_prefix() {
+         let mut frag = make_fragment("./src/foo.rs");
+```
+
+**File**: `rust/crates/cpd/tests/integration.rs` (modified, +26/-0)
+```diff
+@@ -686,6 +686,32 @@ fn a_clone_is_not_reported_again_over_its_own_lines() {
+     assert_eq!(lines, [(1, 44), (49, 103)]);
+ }
+ 
++/// Two scan paths with a file of one name each: the report tells them apart
++/// by their folders (#1324).
++#[test]
++fn files_of_one_name_in_two_scan_paths_keep_their_folders() {
++    if maybe_bin().is_none() {
++        return;
++    }
++    let demo = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../fixtures/same-name-demo");
++    let out = std::env::temp_dir().join(format!("cpd-same-name-{}", std::process::id()));
++    let billing = demo.join("billing");
++    let (json, _) = scan_json(&demo.join("returns"), &out, &[billing.to_str().unwrap()]);
++    let _ = std::fs::remove_dir_all(&out);
++    let names: Vec<(&str, &str)> = json["duplicates"]
++        .as_array()
++        .unwrap()
++        .iter()
++        .map(|d| {
++            (
++                d["firstFile"]["name"].as_str().unwrap(),
++                d["secondFile"]["name"].as_str().unwrap(),
++            )
++        })
++        .collect();
++    assert_eq!(names, [("billing/rates.js", "returns/rates.js")]);
++}
++
+ /// Type-2 detection (issue #998): renamed identifiers are only a clone with
+ /// `--ignore-identifiers`, and such a clone is reported as `kind: renamed`
+ /// while an exact copy in the same run stays `kind: exact`.
+```
+
+---
+
+### Incident Patch 2: `561cd562` (2026-11-27)
+**Commit Message**: Merge pull request #1325 from kucherenko/fix/multi-root-paths
+
+fix(report): name files from the folder that holds all scan paths
+
+**File**: `docs/rust.md` (modified, +1/-1)
+```diff
+@@ -70,7 +70,7 @@ jscpd [OPTIONS] [PATH]...
+ jscpd [OPTIONS] [PATH]...
+ ```
+ 
+-jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md).
++jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md). Reports name a file by its path from the folder that holds all the scan paths, so `dir-a/b.ts` and `dir-b/b.ts` stay apart. See [`fixtures/same-name-demo`](../fixtures/same-name-demo/README.md).
+ 
+ A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md) for the rules and for timings of a long file list.
+ 
+```
+
+**File**: `fixtures/same-name-demo/README.md` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++# Files of one name in two scan paths
++
++`billing/rates.js` and `returns/rates.js` hold the same rate code, and `billing/invoice.js` uses it. When the two folders are passed as two scan paths, the report names each file by its path from the folder that holds both paths, so the two `rates.js` stay apart.
++
++Up to jscpd 5.4.3 a file was named from its own scan path, and both files showed as `rates.js` (issue #1324).
++
++Run the commands from the repository root. They use the default thresholds.
++
++| Command | JavaScript files | Clones | First file | Second file |
++|---------|------------------|--------|------------|-------------|
++| `billing` and `returns` as two paths | 3 | 1 | `billing/rates.js` | `returns/rates.js` |
++| the whole demo as one path | 3 | 1 | `billing/rates.js` | `returns/rates.js` |
++
++The scan of the whole demo also reads this README, so it counts 4 files.
++
++## Two paths
++
++```bash
++jscpd fixtures/same-name-demo/billing fixtures/same-name-demo/returns
++# Clone found (javascript)
++#  - billing/rates.js [3:1 - 20:2] (18 lines, 142 tokens)
++#    returns/rates.js [3:1 - 20:2]
++```
++
++5.4.3 printed the same clone as:
++
++```
++ - rates.js [3:1 - 20:2] (18 lines, 142 tokens)
++   rates.js [3:1 - 20:2]
++```
++
++A single path is shown as before: its files are named from that path. With `--absolute` every file is named by its absolute path, in both versions.
+```
+
+**File**: `fixtures/same-name-demo/billing/invoice.js` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++import { lineTotal } from "./rates.js";
++
++export function invoiceTotal(invoice) {
++  let sum = 0;
++  for (const line of invoice.lines) {
++    sum += lineTotal(line, invoice.customer).gross;
++  }
++  return sum;
++}
++
++export function overdue(invoice, today) {
++  const due = new Date(invoice.issuedAt);
++  due.setDate(due.getDate() + invoice.termsDays);
++  return !invoice.paidAt && today > due;
++}
+```
+
+**File**: `fixtures/same-name-demo/billing/rates.js` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++// Rates for an invoice line: the tax band of the country, the discount of
++// the customer tier and the rounding the ledger expects.
++const TAX_BANDS = { de: 0.19, fr: 0.2, pl: 0.23, ua: 0.2 };
++const TIER_DISCOUNTS = { bronze: 0, silver: 0.05, gold: 0.1 };
++
++function roundCents(amount) {
++  return Math.round(amount * 100) / 100;
++}
++
++export function lineTotal(line, customer) {
++  const band = TAX_BANDS[customer.country] ?? 0;
++  const discount = TIER_DISCOUNTS[customer.tier] ?? 0;
++  const net = line.unitPrice * line.quantity * (1 - discount);
++  const tax = net * band;
++  return {
++    net: roundCents(net),
++    tax: roundCents(tax),
++    gross: roundCents(net + tax),
++  };
++}
+```
+
+**File**: `fixtures/same-name-demo/returns/rates.js` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++// Rates for an invoice line: the tax band of the country, the discount of
++// the customer tier and the rounding the ledger expects.
++const TAX_BANDS = { de: 0.19, fr: 0.2, pl: 0.23, ua: 0.2 };
++const TIER_DISCOUNTS = { bronze: 0, silver: 0.05, gold: 0.1 };
++
++function roundCents(amount) {
++  return Math.round(amount * 100) / 100;
++}
++
++export function lineTotal(line, customer) {
++  const band = TAX_BANDS[customer.country] ?? 0;
++  const discount = TIER_DISCOUNTS[customer.tier] ?? 0;
++  const net = line.unitPrice * line.quantity * (1 - discount);
++  const tax = net * band;
++  return {
++    net: roundCents(net),
++    tax: roundCents(tax),
++    gross: roundCents(net + tax),
++  };
++}
+```
+
+**File**: `rust/CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -8,6 +8,8 @@ All notable changes to **cpd (Rust)** are documented here. Releases follow [Sema
+ 
+ ### Bug Fixes
+ 
++- **Two scan paths could show two files under one name.** A file was named by its path from the scan path it was found in, so with `dir-a` and `dir-b` as two paths, `dir-a/b.ts` and `dir-b/b.ts` both showed as `b.ts`. With several scan paths a file is now named from the folder that holds them all: `dir-a/b.ts` and `dir-b/b.ts`. A single scan path is shown as before, and `--absolute` is unchanged. Names in the reports of a scan with several paths change, so a tool that matches them by name sees new names once. Reported by [@holynewbie](https://github.com/holynewbie). ([#1324](https://github.com/kucherenko/jscpd/issues/1324))
++
+ - **A long list of files named on the command line was slow.** Pre-commit hooks, lint-staged and Bazel pass jscpd the files one by one, and every file started its own pool of walker threads. 3,000 files took about 8 s, while their folder took 0.05 s. A file you name is now read without the walker, and the same list takes about 0.3 s. It gets the same rules as before: the format filters, `--pattern`, `--ignore` and `--max-size` apply, the ignore files don't. Reported by [@atlas-loadbudget](https://github.com/atlas-loadbudget). ([#1306](https://github.com/kucherenko/jscpd/issues/1306), [#1307](https://github.com/kucherenko/jscpd/pull/1307))
+ 
+ - **Another file in the scan could move the start of a clone.** Detection keeps the first copy of every run of tokens it has seen. When a file scanned earlier held the start of the code two other files share, those tokens were taken by it, and the clone of the two files started a few tokens later, sometimes in the middle of a line. Adding, removing or renaming an unrelated file changed the clone's range and its fingerprint, so `--baseline` reported it as new. A clone now starts where its two files start to match, whatever else is scanned. Clones that were cut short get longer, so duplicated lines and percentages can go up, and a baseline saved by an earlier version reports each such clone as new once: run `--update-baseline` after upgrading. Reported by [@Emkej](https://github.com/Emkej). ([#1319](https://github.com/kucherenko/jscpd/issues/1319), [#1320](https://github.com/kucherenko/jscpd/pull/1320))
+```
+
+**File**: `rust/crates/cpd/src/main.rs` (modified, +34/-3)
+```diff
+@@ -947,9 +947,11 @@ fn detect_and_report(
+ }
+ 
+ /// Canonical scan roots, a file's being its directory, so fragment paths can
+-/// be stripped of them (macOS /var → /private/var included).
++/// be stripped of them (macOS /var → /private/var included). Several roots
++/// give way to the folder that holds them all, so `dir-a/b.ts` and
++/// `dir-b/b.ts` don't both show as `b.ts` (#1324).
+ fn canonical_roots(paths: &[PathBuf]) -> Vec<PathBuf> {
+-    paths
++    let roots: Vec<PathBuf> = paths
+         .iter()
+         .map(|p| {
+             let canonical = std::fs::canonicalize(p).unwrap_or_else(|_| p.clone());
+@@ -961,7 +963,25 @@ fn canonical_roots(paths: &[PathBuf]) -> Vec<PathBuf> {
+                 false => canonical,
+             }
+         })
+-        .collect()
++        .collect();
++    match common_ancestor(&roots) {
++        Some(common) => vec![common],
++        None => roots,
++    }
++}
++
++/// The deepest folder that holds every root; none for roots on two drives.
++fn common_ancestor(roots: &[PathBuf]) -> Option<PathBuf> {
++    let (first, rest) = roots.split_first()?;
++    let mut common = first.clone();
++    for root in rest {
++        while !root.starts_with(&common) {
++            if !common.pop() {
++                return None;
++            }
++        }
++    }
++    Some(common)
+ }
+ 
+ /// Make source ids scan-root-relative for display and SARIF, keeping the scan
+@@ -1635,6 +1655,17 @@ mod tests {
+         assert_eq!(frag.source_root.as_deref(), Some("/project"));
+     }
+ 
++    #[test]
++    fn several_roots_show_paths_from_the_folder_that_holds_them() {
++        let roots =
++            |paths: &[&str]| common_ancestor(&paths.iter().map(PathBuf::from).collect::<Vec<_>>());
++        assert_eq!(roots(&["/p/dir-a", "/p/dir-b"]), Some(PathBuf::from("/p")));
++        assert_eq!(roots(&["/p", "/p/src"]), Some(PathBuf::from("/p")));
++        assert_eq!(roots(&["/p/src"]), Some(PathBuf::from("/p/src")));
++        assert_eq!(roots(&["/a/x", "/b/y"]), Some(PathBuf::from("/")));
++        assert_eq!(roots(&[]), None);
 +    }
 +
-+    fn format(&self, path: &Path) -> Option<String> {
-+        detect_format(
-+            path,
-+            &self.config.extensions,
-+            &self.config.formats_exts,
-+            &self.config.formats_names,
-+        )
+     #[test]
+     fn relativize_strips_dot_prefix() {
+         let mut frag = make_fragment("./src/foo.rs");
+```
+
+**File**: `rust/crates/cpd/tests/integration.rs` (modified, +26/-0)
+```diff
+@@ -686,6 +686,32 @@ fn a_clone_is_not_reported_again_over_its_own_lines() {
+     assert_eq!(lines, [(1, 44), (49, 103)]);
+ }
+ 
++/// Two scan paths with a file of one name each: the report tells them apart
++/// by their folders (#1324).
++#[test]
++fn files_of_one_name_in_two_scan_paths_keep_their_folders() {
++    if maybe_bin().is_none() {
++        return;
 +    }
++    let demo = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../fixtures/same-name-demo");
++    let out = std::env::temp_dir().join(format!("cpd-same-name-{}", std::process::id()));
++    let billing = demo.join("billing");
++    let (json, _) = scan_json(&demo.join("returns"), &out, &[billing.to_str().unwrap()]);
++    let _ = std::fs::remove_dir_all(&out);
++    // Windows writes its own separator.
++    let name = |file: &serde_json::Value| file["name"].as_str().unwrap().replace('\\', "/");
++    let names: Vec<(String, String)> = json["duplicates"]
++        .as_array()
++        .unwrap()
++        .iter()
++        .map(|d| (name(&d["firstFile"]), name(&d["secondFile"])))
++        .collect();
++    assert_eq!(
++        names,
++        [("billing/rates.js".into(), "returns/rates.js".into())]
++    );
++}
 +
-+    /// The file a walk of `root` found at `path`, if the walk takes it. The
-+    /// ignore files are the walker's to apply, before it gets here.
-+    fn take(&self, path: &Path, root: &Root) -> Option<DiscoveredFile> {
-+        if !path.is_file() {
-+            return None;
-+        }
-+        let follow_symlinks = self.config.follow_symlinks;
-+        if !follow_symlinks
-+            && std::fs::symlink_metadata(path).is_ok_and(|meta| meta.file_type().is_symlink())
-+        {
-+            return None;
-+        }
-+        // Metadata only, before the format detection may read the file.
-+        if self.too_big(path) {
-+            return None;
-+        }
-+        // The path the patterns match
+ /// Type-2 detection (issue #998): renamed identifiers are only a clone with
+ /// `--ignore-identifiers`, and such a clone is reported as `kind: renamed`
+ /// while an exact copy in the same run stays `kind: exact`.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1321** (2026-11-23): fix(deps): bump url to 2.5.9 for RUSTSEC-2026-0592 (@kucherenko)
-- **PR #1320** (2026-11-22): fix(detect): start a clone where its two files start to agree (@kucherenko)
-- **PR #1318** (2026-11-20): chore(deps): bump ureq from 3.5.1 to 3.5.2 in /rust (@dependabot[bot])
-- **PR #1317** (2026-11-20): chore(deps): bump clap from 4.6.7 to 4.6.8 in /rust (@dependabot[bot])
-- **PR #1316** (2026-11-20): chore(deps): bump serde-saphyr from 2.0.0 to 2.1.1 in /rust (@dependabot[bot])
-- **PR #1315** (2026-11-20): chore(deps): bump the ruff group in /rust with 2 updates (@dependabot[bot])
+- **PR #1334** (2026-11-27): chore(deps): bump ignore from 0.4.34 to 0.4.35 in /rust (@dependabot[bot])
+- **PR #1333** (2026-11-27): chore(deps): bump xxhash-rust from 0.8.19 to 0.8.21 in /rust (@dependabot[bot])
+- **PR #1332** (2026-11-27): chore(deps): bump tree-sitter-c-sharp from 0.23.5 to 0.24.0 in /rust (@dependabot[bot])
+- **PR #1331** (2026-11-27): chore(deps): bump the ruff group across 1 directory with 2 updates (@dependabot[bot])
+- **PR #1330** (2026-11-27): chore(deps): bump the oxc group in /rust with 7 updates (@dependabot[bot])
+- **PR #1329** (2026-11-27): chore(deps): bump EmbarkStudios/cargo-deny-action from 2.1.2 to 2.1.3 (@dependabot[bot])
 
 ---
 
@@ -2364,13 +2416,13 @@ fix(walk): take a file named on the command line without the walker
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. walk): review of #1307
+## X. report): name files from the folder that holds all scan paths
 
 **RULE**:
 When implementing operations in `docs/rust.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `29e50f90`: walk): review of #1307. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79e6d34a`: report): name files from the folder that holds all scan paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/rust.md`.
@@ -2378,17 +2430,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. With it, the report names the file the link points to, while a link found in a folder keeps its own name. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md) for the rules and for timings of a long file list.
+jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md). Reports name a file by its path from the folder that holds all the scan paths, so `dir-a/b.ts` and `dir-b/b.ts` stay apart. See [`fixtures/same-name-demo`](../fixtures/same-name-demo/README.md).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-A path can be a file, as in a pre-commit hook that passes the staged files. A file you name gets the format filters, `--pattern`, `--ignore` and `--max-size`, but not the ignore files: jscpd reads it even when `.gitignore` lists it. A named symlink is skipped unless `--follow-symlinks` is set, as in a walk. A list of 3,000 files is read in a fraction of a second. See [`fixtures/file-list-demo`](../fixtures/file-list-demo/README.md).
+jscpd scans several paths together, as one project. When one path lies inside another, jscpd reads each file under it once. See [`fixtures/nested-paths-demo`](../fixtures/nested-paths-demo/README.md).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `29e50f90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79e6d34a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

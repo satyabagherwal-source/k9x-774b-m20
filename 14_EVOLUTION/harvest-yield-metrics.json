@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:36:14.002Z",
-  "total_cycles_completed": 13180,
-  "total_learnings_persisted": 13180,
-  "total_rules_promoted": 11892,
+  "last_updated": "2026-11-27T22:45:56.512Z",
+  "total_cycles_completed": 13182,
+  "total_learnings_persisted": 13182,
+  "total_rules_promoted": 11894,
   "history": [
-    {
-      "timestamp": "2026-11-27T04:54:08.170Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:02:36.504Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T05:02:38.970Z",
       "repository": "apache/maka",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-27T22:36:14.002Z",
       "repository": "chaos-mesh/chaos-mesh",
       "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:45:40.886Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:45:56.512Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

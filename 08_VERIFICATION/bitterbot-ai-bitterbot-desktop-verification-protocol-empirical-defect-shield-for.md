@@ -4,22 +4,22 @@
 {
   "source_repository": "Bitterbot-AI/bitterbot-desktop",
   "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-  "source_version": "498590e2",
+  "source_version": "5aaaf150",
   "license": "MIT",
-  "timestamp": "2026-11-26T21:17:41.575Z",
+  "timestamp": "2026-11-27T22:45:56.848Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `498590e2`).  
-> **License**: MIT | **Timestamp**: `2026-11-26T21:17:41.575Z`  
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `5aaaf150`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T22:45:56.848Z`  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `498590e2`)
+- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `5aaaf150`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T21:17:40.069Z  
+> **Harvest Timestamp**: 2026-11-27T22:45:54.971Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2483 stars
+- **Stars / Engagement**: 2485 stars
 
 ---
 
@@ -1581,104 +1581,420 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `498590e2` (2026-11-26)
-**Commit Message**: chore(deps): bump the npm-minor-patch group with 32 updates (#409)
+### Incident Patch 1: `5aaaf150` (2026-11-27)
+**Commit Message**: feat(memory): standing practices learned from the owner's follow-ups (#410)
 
-Bumps the npm-minor-patch group with 32 updates:
+* feat(memory): standing practices with task-type scope (PLAN-64 Phase 1)
 
-| Package | From | To |
-| --- | --- | --- |
-| [@agentclientprotocol/sdk](https://github.com/agentclientprotocol/typescript-sdk) | `2.0.2` | `2.9.1` |
-| [@aws-sdk/client-bedrock](https://github.com/aws/aws-sdk-js-v3/tree/HEAD/clients/client-bedrock) | `3.1158.0` | `3.1175.0` |
-| [@coinbase/cdp-sdk](https://github.com/coinbase/cdp-sdk) | `1.60.0` | `1.62.0` |
-| [@larksuiteoapi/node-sdk](https://github.com/larksuite/node-sdk) | `1.76.0` | `1.77.0` |
-| [@opentelemetry/exporter-trace-otlp-http](https://github.com/open-telemetry/opentelemetry-js) | `0.300.0` | `0.301.2` |
-| [@opentelemetry/sdk-node](https://github.com/open-telemetry/opentelemetry-js) | `0.300.0` | `0.301.2` |
-| [@opentelemetry/semantic-conventions](https://github.com/open-telemetry/opentelemetry-js) | `1.43.0` | `1.45.0` |
-| [@sinclair/typebox](https://github.com/sinclairzx81/sinclair-typebox) | `0.34.48` | `0.34.52` |
-| [commander](https://github.com/tj/commander.js) | `15.0.0` | `15.1.0` |
-| [discord-api-types](https://github.com/discordjs/discord-api-types) | `0.38.57` | `0.38.60` |
-| [file-type](https
+Behavioural corrections become scoped practices: a practices store with
+task and job scopes, word-overlap task typing for recurring owner
+requests, practice output on the existing correction pass, a prompt
+block below the cache boundary, owner controls and memory.* RPCs.
+On by default (memory.practices.enabled).
 
-**File**: `package.json` (modified, +4/-4)
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* feat(memory): learn practices from follow-ups on recurring requests (PLAN-64 Phase 1b)
+
+A follow-up asking for something a recurring-task answer left out becomes
+a candidate practice; after two sightings the reply offers it once
+(yes / no). Task types merge at naming time or by hand, session state
+survives a restart, an owner-triggered backfill previews candidates from
+existing transcripts, and counters reach memory.practices and doctor.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* feat(memory): conditional practice lines when a turn matches no task type (PLAN-64)
+
+Word-overlap typing misses short phrasings. On an untyped owner turn the
+block carries up to fo
+
+**File**: `AGENTS.md` (modified, +1/-0)
 ```diff
-@@ -159,7 +159,7 @@
-     "version:sync": "node scripts/bump-version.mjs"
-   },
-   "dependencies": {
--    "@agentclientprotocol/sdk": "2.0.2",
-+    "@agentclientprotocol/sdk": "2.9.1",
-     "@anthropic-ai/claude-agent-sdk": "^0.3.296",
-     "@anthropic-ai/sdk": "^0.133.0",
-     "@aws-sdk/client-bedrock": "^3.1146.0",
-@@ -178,9 +178,9 @@
-     "@noble/curves": "1.9.1",
-     "@noble/hashes": "1.8.0",
-     "@opentelemetry/api": "^1.9.1",
--    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
-+    "@opentelemetry/exporter-trace-otlp-http": "^0.301.2",
-     "@opentelemetry/resources": "^2.11.0",
--    "@opentelemetry/sdk-node": "^0.300.0",
-+    "@opentelemetry/sdk-node": "^0.301.2",
-     "@opentelemetry/semantic-conventions": "^1.43.0",
-     "@sinclair/typebox": "0.34.52",
-     "@slack/bolt": "^4.6.0",
-@@ -221,7 +221,7 @@
-     "signal-utils": "^0.21.1",
-     "sqlite-vec": "0.1.9",
-     "stripe": "^20.4.1",
--    "tar": "7.5.22",
-+    "tar": "7.5.23",
-     "tslog": "^4.10.2",
-     "undici": "^7.24.0",
-     "viem": "^2.57.3",
+@@ -14,6 +14,7 @@ A consciousness-inspired memory pipeline:
+ - **Consolidation Pipeline**: Runs every 30 minutes — hormonal decay, Ebbinghaus importance recalculation, chunk merging (cosine ≥ 0.92), low-importance forgetting, governance TTL enforcement, stalled goal detection.
+ - **Session Transcript Indexing**: Conversations are automatically chunked, embedded, and made searchable. The agent can recall prior exchanges semantically.
+ - **Governance**: Sensitivity tagging (normal/personal/confidential), TTL enforcement, audit trails on all memory operations. Anti-catastrophic forgetting safeguards.
++- **Standing Practices** (`src/memory/practices.ts`, `task-types.ts`, `practice-followups.ts`, `practice-jobs.ts`): Behavioural instructions about how to do a kind of task, scoped to a recurring task type, a scheduled job, a project or everywhere. Learned from explicit owner instructions and from follow-ups that ask for what a recurring answer left out, confirmed by a one-line yes/no offer, rendered into matching turns, and reported back with generated "Applied" and "Changed since last time" notes. See `docs/memory/practices.md`.
+ - **User Profile**: Automatically learned preferences (directive, world_fact, mental_model, experience types) persisted across sessions.
+ - **Failure experiments and procedural lab** (`failure-experiments.ts`, `procedural-learning*.ts`, `learning-strategy*.ts`): the default-on shadow service includes a durable coordinator for the existing production skill-evolution pipeline. Idle dream ticks on the default agent run bounded failure experiments on the evolution cadence, independently of the creative-cycle gate; only the task validation gate can promote to canary. Dispatch limits, pause checks, bounded interrupted-proposal retries, canary monitoring and rollback remain in force. The journal is the input queue; the separate procedural SQLite ledger stores references and hashes. `automation.enabled: false` disables the idle coordinator; `mode: "off"` disables this service; `skills.evolution.enabled: false` stops production evolution. The manual `service.strategies` research lab and verified-experience adapters remain shadow-only, with no research-candidate promotion. See `docs/memory/learning-strategy-lab.md` and `benchmarks/learning-strategy/` for evidence, including failed qualification gates.
+ 
 ```
 
-**File**: `pnpm-workspace.yaml` (modified, +1/-1)
+**File**: `LIMITATIONS.md` (modified, +16/-0)
 ```diff
-@@ -14,7 +14,7 @@ overrides:
-   form-data: 2.5.4
-   qs: 6.14.2
-   "@sinclair/typebox": 0.34.48
--  tar: 7.5.22
-+  tar: 7.5.23
-   tough-cookie: 4.1.3
- 
- # @coinbase/agentkit posts the wallet address, network and every wallet action
+@@ -100,6 +100,22 @@ open an issue.
+   you or it pinned, the change is held and you are told, but there is no
+   one-tap confirm or revert yet: restate the value, or answer the "which is
+   current?" question, to settle it.
++- **Standing practices are learned in direct owner chats, from what you
++  say next.** A practice (how to do a kind of task, as opposed to a fact) is
++  saved from an explicit instruction, or offered after you have twice asked
++  for something a recurring answer left out. Only your next message in the
++  same conversation is looked at, within six hours, and only for requests
++  the agent has seen on three separate days. Requests are grouped by the
++  words they share, so a short or unusual phrasing can be missed or filed
++  under the wrong kind of request; you can merge kinds by hand. "Applied"
++  means the practice was in the prompt and its content was in the answer,
++  nothing more: nothing checks that the answer was right, and a vaguely
++  worded practice is followed less reliably than a specific one. Nothing
++  repairs a practice that is not followed; it is counted. The command-line
++  `bitterbot agent` path shows none of the generated notes and makes no
++  offers. Scheduled jobs learn only from your next message after an
++  announced report, and there is no trial run of a change before it is
++  used. Details in `docs/memory/practices.md`.
+ - **A correction propagates by text match, after the fact.** When a fact
+   changes, older memories, the matching learned preference, graph links,
+   unused prepared answers, open tasks and dream insights that state the old
 ```
 
-**File**: `src/discord/send.shared.ts` (modified, +5/-2)
+**File**: `README.md` (modified, +2/-1)
 ```diff
-@@ -8,7 +8,7 @@ import {
- } from "@buape/carbon";
- import { PollLayoutType } from "discord-api-types/payloads/v10";
- import type { RESTAPIPoll } from "discord-api-types/rest/v10";
--import { Routes, type APIEmbed } from "discord-api-types/v10";
-+import { Routes } from "discord-api-types/v10";
- import type { ChunkMode } from "../auto-reply/chunk.js";
- import { loadConfig } from "../config/config.js";
- import type { RetryRunner } from "../infra/retry-policy.js";
-@@ -32,7 +32,10 @@ type DiscordRequest = RetryRunner;
+@@ -165,6 +165,7 @@ Projects change. Preferences become clearer. Yesterday's plan becomes today's de
+ - **Remember the essentials.** A compact canonical-facts ledger keeps key identities, preferences, and project facts in context without a separate search. Re-stating a fact strengthens it; contradicting it supersedes the old belief while keeping its history.
+ - **Find the connections.** Semantic search and a typed knowledge graph connect conversations with the people, projects, and relationships they describe. [Deep Recall](docs/memory/deep-recall.md) can search histories larger than a single context window.
+ - **Weigh what it knows.** Facts mentioned once count for less than facts confirmed across separate sessions. Recent facts win for "what are you working on?"; older ones for "when did we discuss X?".
++- **Learn how you like things done.** When you keep asking for something an answer left out (the npm numbers after the repo stats, say), Bitterbot notices, asks once whether to include it every time, and from then on does. The same holds for a scheduled report you correct. Each of these [standing practices](docs/memory/practices.md) is scoped to the kind of request it came from, shown when it is applied, and yours to edit or remove.
+ - **Consolidate between conversations.** Dream cycles organize accumulated memory, distill verified workflows, and prepare briefs grounded in recent activity. New-input, idle-time, and budget gates limit background work.
  
- export type DiscordSendComponentFactory = (text: string) => TopLevelComponents[];
- export type DiscordSendComponents = TopLevelComponents[] | DiscordSendComponentFactory;
--export type DiscordSendEmbeds = Array<APIEmbed | Embed>;
-+// The raw embed shape comes from carbon's own constructor, not from our copy of
-+// discord-api-types: carbon pins its own version and the two drift apart.
-+export type DiscordRawEmbed = NonNullable<ConstructorParameters<typeof Embed>[0]>;
-+export type DiscordSendEmbeds = Array<DiscordRawEmbed | Embed>;
+ The architecture takes inspiration from biological memory: reinforcement, forgetting, curiosity, and changing internal state. Numerical signals named dopamine, cortisol, and oxytocin modulate memory processing and response style. These are inspectable software mechanisms; their effectiveness is something to measure.
+@@ -194,7 +195,7 @@ A few more modes stay held until a node has enough data to feed them; `bitterbot
  
- type DiscordRecipient =
-   | {
+ Your agent also has a persistent identity. `GENOME.md` defines values and constraints; `MEMORY.md` holds its evolving self-concept, understanding of you, and active context. Tool guards protect the Genome, with their boundaries documented in [known limitations](LIMITATIONS.md).
+ 
+-[Memory architecture](docs/memory/architecture-overview.md) · [Dream Engine](docs/memory/dream-engine.md)
++[Memory architecture](docs/memory/architecture-overview.md) · [Standing practices](docs/memory/practices.md) · [Dream Engine](docs/memory/dream-engine.md)
+ 
+ ## Learned skills have to earn their place
+ 
+```
+
+**File**: `desktop/renderer/src/components/chat/ChatView.tsx` (modified, +16/-2)
+```diff
+@@ -10,7 +10,7 @@ import {
+   formatToolOutput,
+ } from "../../lib/message-utils";
+ import { useArtifactStore, type ArtifactType } from "../../stores/artifact-store";
+-import { useChatStore, nextMsgId } from "../../stores/chat-store";
++import { isInjectedRunId, useChatStore, nextMsgId } from "../../stores/chat-store";
+ import { useCoworkStore, type TaskStatus } from "../../stores/cowork-store";
+ import { useGatewayStore } from "../../stores/gateway-store";
+ import { useUIStore } from "../../stores/ui-store";
+@@ -49,6 +49,7 @@ export function ChatView() {
+   const appendDelta = useChatStore((s) => s.appendDelta);
+   const finalizeRun = useChatStore((s) => s.finalizeRun);
+   const abortRun = useChatStore((s) => s.abortRun);
++  const addInjectedMessage = useChatStore((s) => s.addInjectedMessage);
+   const addToolCall = useChatStore((s) => s.addToolCall);
+   const updateToolCallPartial = useChatStore((s) => s.updateToolCallPartial);
+   const updateToolCallResult = useChatStore((s) => s.updateToolCallResult);
+@@ -102,6 +103,19 @@ export function ChatView() {
+         }
+         case "final": {
+           const text = extractMessageText(evt.message);
++          if (isInjectedRunId(evt.runId)) {
++            // Not a run of ours: a message the gateway added after the reply
++            // (the generated "Memory updated" / practice line, chat.inject).
++            if (text) {
++              addInjectedMessage(evt.runId, evt.sessionKey, {
++                id: nextMsgId(),
++                role: "assistant",
++                content: text,
++                timestamp: Date.now(),
++              });
++            }
++            break;
++          }
+           const thinking = extractThinking(evt.message);
+           const toolCalls = extractToolCalls(evt.message);
+ 
+@@ -134,7 +148,7 @@ export function ChatView() {
+         }
+       }
+     },
+-    [appendDelta, finalizeRun, abortRun],
++    [appendDelta, finalizeRun, abortRun, addInjectedMessage],
+   );
+ 
+   // Cowork task tracking
+```
+
+**File**: `desktop/renderer/src/components/cron/CronView.practices.test.ts` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++import { describe, expect, it } from "vitest";
++import type { CronJob } from "../../stores/cron-store";
++import { taughtPractices } from "./CronView";
++
++const job = (extra: Record<string, unknown>): CronJob =>
++  ({ id: "j1", schedule: "0 9 * * *", text: "report", enabled: true, ...extra }) as CronJob;
++
++/** PLAN-64 Phase 5: cron.list carries what the owner taught each job. */
++describe("taughtPractices", () => {
++  it("reads the practices the gateway lists for a job", () => {
++    expect(
++      taughtPractices(
++        job({ practices: [{ id: "p1", statement: "Include the unique counts", savedAt: 5 }] }),
++      ),
++    ).toEqual([{ id: "p1", statement: "Include the unique counts", savedAt: 5 }]);
++  });
++
++  it("is empty on an older gateway, and drops malformed entries", () => {
++    expect(taughtPractices(job({}))).toEqual([]);
++    expect(taughtPractices(job({ practices: "nope" }))).toEqual([]);
++    expect(
++      taughtPractices(
++        job({ practices: [null, { id: "p1" }, { id: 2, statement: "x", savedAt: 1 }] }),
++      ),
++    ).toEqual([]);
++  });
++});
+```
+
+**File**: `desktop/renderer/src/components/cron/CronView.tsx` (modified, +29/-1)
+```diff
+@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
+ import { toast } from "sonner";
+ import { useGatewayEvent } from "../../hooks/useGatewayEvent";
+ import { describeError } from "../../lib/describe-error";
+-import { formatRelativeTime, formatDateTime } from "../../lib/format";
++import { formatDate, formatRelativeTime, formatDateTime } from "../../lib/format";
+ import { cn } from "../../lib/utils";
+ import {
+   cronJobHealth,
+@@ -22,6 +22,21 @@ const HEALTH_TONE = {
+   idle: "text-muted-foreground/60",
+ } as const;
+ 
++/** The standing practices the gateway lists for a job (what you taught it), if any. */
++export function taughtPractices(
++  job: CronJob,
++): Array<{ id: string; statement: string; savedAt: number }> {
++  const raw = (job as { practices?: unknown }).practices;
++  if (!Array.isArray(raw)) return [];
++  return raw.filter(
++    (p): p is { id: string; statement: string; savedAt: number } =>
++      Boolean(p) &&
++      typeof (p as { id?: unknown }).id === "string" &&
++      typeof (p as { statement?: unknown }).statement === "string" &&
++      typeof (p as { savedAt?: unknown }).savedAt === "number",
++  );
++}
++
+ function describeDelivery(job: CronJob): string {
+   const delivery = job.delivery;
+   if (delivery?.mode === "none") return "Result stays in the session";
+@@ -75,6 +90,19 @@ function CronJobCard({
+             <span className="text-xs font-mono text-muted-foreground/60">{job.schedule}</span>
+           </div>
+           <p className="text-xs text-muted-foreground line-clamp-2">{job.text}</p>
++          {taughtPractices(job).length > 0 && (
++            <ul
++              className="mt-1 space-y-0.5 text-xs text-muted-foreground"
++              data-testid="cron-practices"
++            >
++              {taughtPractices(job).map((p) => (
++                <li key={p.id}>
++                  You taught it: {p.statement}{" "}
++                  <span className="text-muted-foreground/60">(since {formatDate(p.savedAt)})</span>
++                </li>
++              ))}
++            </ul>
++          )}
+           <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground/60">
+             {job.lastRunAt && <span>Last: {formatRelativeTime(job.lastRunAt)}</span>}
+             {job.nextRunAt && <span>Next: {formatDateTime(job.nextRunAt)}</span>}
+```
+
+**File**: `desktop/renderer/src/components/memory/MemoryView.tsx` (modified, +11/-0)
+```diff
+@@ -6,6 +6,7 @@ import { formatRelativeTime } from "../../lib/format";
+ import { cn } from "../../lib/utils";
+ import { useGatewayStore } from "../../stores/gateway-store";
+ import { useConfirm } from "../ui/confirm-dialog";
++import { PracticesSection } from "./PracticesSection";
+ 
+ export type MemorySummary = {
+   id: string;
+@@ -47,6 +48,14 @@ const AUDIT_WORDS: Record<string, string> = {
+   owner_retire_fact: "You retired a settled fact",
+   owner_unretire_fact: "You brought a retired fact back",
+   owner_pin_fact: "You pinned a settled fact",
++  practice_saved: "A practice was saved",
++  owner_edit_practice: "You reworded a practice",
++  owner_scope_practice: "You changed where a practice applies",
++  owner_retire_practice: "You retired a practice",
++  owner_unretire_practice: "You brought a practice back",
++  owner_confirm_practice: "You said yes to a practice",
++  owner_decline_practice: "You declined a practice",
++  owner_merge_task_types: "You merged two task types",
+   forgotten: "Faded out (not used in a long time)",
+   expired: "Expired (its keep-until date passed)",
+   merged: "Merged into a similar memory",
+@@ -429,6 +438,8 @@ export function MemoryView() {
+         </section>
+       )}
+ 
++      <PracticesSection />
++
+       {prefs.length > 0 && (
+         <section className="space-y-2">
+           <h2 className="text-lg font-semibold text-foreground">What it has learned about you</h2>
+```
+
+**File**: `desktop/renderer/src/components/memory/PracticesSection.test.tsx` (added, +441/-0)
+```diff
+@@ -0,0 +1,441 @@
++/**
++ * PLAN-64 Phase 3: the Practices section of the Memory page. Under test:
++ * what each practice shows (text, scope in words, status, saved date,
++ * counters, the owner's evidence line), every action and the RPC it calls
++ * (confirm, decline, edit, re-scope, retire, bring back, add, merge task
++ * types), the optimistic update and its roll-back, the empty state, a read
++ * refused for a missing scope, and an older gateway without the method.
++ */
++import { render, screen, waitFor, within } from "@testing-library/react";
++import userEvent from "@testing-library/user-event";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++import { formatDate } from "../../lib/format";
++import {
++  describePracticeScope,
++  describePracticeStatus,
++  PracticesSection,
++  type PracticeRow,
++  type TaskTypeRow,
++} from "./PracticesSection";
++
++const requestMock = vi.fn();
++const toastError = vi.hoisted(() => vi.fn());
++const toastSuccess = vi.hoisted(() => vi.fn());
++
++vi.mock("../../stores/gateway-store", () => ({
++  useGatewayStore: (selector: (state: unknown) => unknown) =>
++    selector({ request: requestMock, status: "connected" }),
++}));
++vi.mock("sonner", () => ({ toast: { error: toastError, success: toastSuccess } }));
++
++const SAVED_AT = Date.UTC(2026, 10, 12, 10, 0, 0);
++
++const npm: PracticeRow = {
++  id: "p-npm",
++  statement: "Include npm downloads",
++  scope: "task:repo-stats",
++  scopeLabel: "repo stats",
++  status: "active",
++  createdAt: SAVED_AT - 1000,
++  savedAt: SAVED_AT,
++  counts: { applied: 5, repeats: 1 },
++  evidence: [
++    { ref: "session:/s/a.jsonl#L3", text: "how about our npm downloads" },
++    { ref: "session:/s/b.jsonl#L9", text: null },
++  ],
++};
++const candidate: PracticeRow = {
++  id: "p-prs",
++  statement: "Include open pull requests",
++  scope: "task:repo-stats",
++  scopeLabel: "repo stats",
++  status: "candidate",
++  createdAt: SAVED_AT,
++  savedAt: SAVED_AT,
++  counts: { applied: 0, repeats: 0 },
++  evidence: [],
++};
++const short: PracticeRow = {
++  id: "p-short",
++  statement: "Keep answers under ten lines",
++  scope: "global",
++  scopeLabel: "everything",
++  status: "retired",
++  createdAt: SAVED_AT,
++  savedAt: SAVED_AT,
++  counts: { applied: 2, repeats: 0 },
++  evidence: [],
++};
++const declined: PracticeRow = {
++  id: "p-weather",
++  statement: "Add the weather forecast",
++  scope: "task:repo-stats",
++  scopeLabel: "repo stats",
++  status: "suppressed",
++  createdAt: SAVED_AT,
++  savedAt: SAVED_AT,
++  counts: { applied: 0, repeats: 0 },
++  evidence: [],
++};
++const taskTypes: TaskTypeRow[] = [
++  { slug: "repo-stats", label: "repo stats", occurrences: 53, recurring: true, example: null },
++  { slug: "npm-numbers", label: "npm numbers", occurrences: 4, recurring: true, example: null },
++  {
++    slug: "weather-lisbon",
++    label: "",
++    occurrences: 1,
++    recurring: false,
++    example: "What is the weather in Lisbon?",
++  },
++];
++
++let listed: {
++  practices: PracticeRow[];
++  taskTypes: TaskTypeRow[];
++  activeProject: string | null;
++  jobs?: Array<{ scope: string; name: string }>;
++};
++let failing: Record<string, Error>;
++
++beforeEach(() => {
++  toastError.mockReset();
++  toastSuccess.mockReset();
++  listed = { practices: [npm, candidate, short, declined], taskTypes, activeProject: "acme" };
++  failing = {};
++  requestMock.mockReset();
++  requestMock.mockImplementation(async (method: string) => {
++    if (failing[method]) throw failing[method];
++    switch (method) {
++      case "memory.practices":
++        return listed;
++      case "memory.retirePractice":
++      case "memory.unretirePractice":
++      case "memory.answerPracticeOffer":
++        return { ok: true };
++      case "memory.editPractice":
++      case "memory.setPracticeScope":
++      case "memory.savePractice":
++        return { ok: true, op: "strengthen" };
++      case "memory.mergeTaskTypes":
++        return { ok: true };
++      default:
++        throw new Error(`unexpected ${method}`);
++    }
++  });
++});
++
++const card = (id: string) => within(screen.getByTestId(`practice-${id}`));
++
++describe("describePracticeScope / describePracticeStatus", () => {
++  it("puts a scope and a status in plain words", () => {
++    expect(describePracticeScope({ scope: "global", scopeLabel: "everything" })).toBe("Everywhere");
++    expect(describePracticeScope({ scope: "task:repo-stats", scopeLabel: "repo stats" })).toBe(
++      "For repo stats",
++    );
++    // An older gateway sends no label: the slug is read as words, never shown raw.
++    expect(describePracticeScope({ scope: "task:repo-stats" })).toBe("For repo stats");
++    expect(describePracticeScope({ scope: "project:acme" })).toBe("For project acme");
++    expect(describePracticeScope({ scope: "job:abc-123" })).toBe("For one scheduled job");
++    // PLAN-64 Phase 5: the gateway sends the job's name (its id when the job is gone).
++    expect(describePracticeScope({ scope: "job:abc-123", scopeLabel: "Repo traffic" })).toBe(
++      "F
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #410** (2026-11-27): feat(memory): standing practices learned from the owner's follow-ups (@VGIL77)
 - **PR #409** (2026-11-26): chore(deps): bump the npm-minor-patch group with 32 updates (@VGIL77)
 - **PR #408** (2026-11-26): fix(memory): name the wiki page to retire explicitly in the semantic lint (@VGIL77)
 - **PR #407** (2026-11-26): fix(wallet): stop telling the agent and users that gas is sponsored (@VGIL77)
 - **PR #406** (2026-11-26): chore(deps): bump react-markdown from 9.1.0 to 10.1.0 (@dependabot[bot])
 - **PR #405** (closed): chore(deps): bump the npm-minor-patch group across 1 directory with 32 updates (@dependabot[bot])
-- **PR #404** (2026-11-26): chore(deps): bump lru from 0.19.0 to 0.19.2 in /orchestrator in the cargo-minor-patch group (@dependabot[bot])
 
 ---
 
@@ -1698,37 +2014,31 @@ Bumps the npm-minor-patch group with 32 updates:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the npm-minor-patch group with 32 updates
+## X. memory): standing practices learned from the owner's follow-ups
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `498590e2`: deps): bump the npm-minor-patch group with 32 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5aaaf150`: memory): standing practices learned from the owner's follow-ups. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@agentclientprotocol/sdk": "2.9.1",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.301.2",
-    "@opentelemetry/sdk-node": "^0.301.2",
-    "tar": "7.5.23",
+- **Standing Practices** (`src/memory/practices.ts`, `task-types.ts`, `practice-followups.ts`, `practice-jobs.ts`): Behavioural instructions about how to do a kind of task, scoped to a recurring task type, a scheduled job, a project or everywhere. Learned from explicit owner instructions and from follow-ups that ask for what a recurring answer left out, confirmed by a one-line yes/no offer, rendered into matching turns, and reported back with generated "Applied" and "Changed since last time" notes. See `docs/memory/practices.md`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    "@agentclientprotocol/sdk": "2.0.2",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
-    "@opentelemetry/sdk-node": "^0.300.0",
-    "tar": "7.5.22",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `498590e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5aaaf150` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

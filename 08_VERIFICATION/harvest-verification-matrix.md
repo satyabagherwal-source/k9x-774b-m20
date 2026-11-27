@@ -13888,3 +13888,5 @@
 | `CYCLE-20261127-GP7V` | `2026-11-27T22:14:12.907Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10975` | Yes (`dd10e7a1...`) |
 | `CYCLE-20261127-RZVM` | `2026-11-27T22:22:59.938Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10976` | Yes (`dfa11d5d...`) |
 | `CYCLE-20261127-90KF` | `2026-11-27T22:36:13.983Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10977` | Yes (`bd78262e...`) |
+| `CYCLE-20261127-L5Z7` | `2026-11-27T22:45:40.867Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10978` | Yes (`532ee2ad...`) |
+| `CYCLE-20261127-LI18` | `2026-11-27T22:45:56.492Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10979` | Yes (`d673b782...`) |

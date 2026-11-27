@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "498590e2",
+    "sourceVersion": "5aaaf150",
     "license": "MIT",
-    "contentHash": "6cb594bcfe24b405e591a6b320af1d50c82e211113cfb920b03a7aec1ea2fa9e",
-    "lastHarvestedAt": "2026-11-26T21:17:41.312Z",
+    "contentHash": "d673b782f45b940d8fff8c5278b2d8b7ef5685a41d33063d65d63c68ac8fcc8b",
+    "lastHarvestedAt": "2026-11-27T22:45:56.505Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "28d22360",
+    "sourceVersion": "ca751b46",
     "license": "MIT",
-    "contentHash": "5b0850656e2643d84ab50df348d14cdddba046fa43a8d4573a0af12fe4b61760",
-    "lastHarvestedAt": "2026-11-24T14:50:30.628Z",
+    "contentHash": "532ee2adbfa40d3873f688b4b8f7a3092ff6a5253718d7a69be87d950d02a9b5",
+    "lastHarvestedAt": "2026-11-27T22:45:40.879Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {

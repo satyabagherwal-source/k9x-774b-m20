@@ -53,22 +53,21 @@
     "revisionIdentifier": "b0144700"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-27T22:05:19.983Z",
-    "lastVerified": "2026-11-27T22:05:19.983Z",
+    "lastChecked": "2026-11-27T22:45:54.971Z",
+    "lastVerified": "2026-11-27T22:45:54.971Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "6cb594bcfe24b405e591a6b320af1d50c82e211113cfb920b03a7aec1ea2fa9e",
+    "contentHash": "d673b782f45b940d8fff8c5278b2d8b7ef5685a41d33063d65d63c68ac8fcc8b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "498590e2"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -92,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T22:36:17.408Z",
-    "lastVerified": "2026-11-27T22:36:17.408Z",
+    "lastChecked": "2026-11-27T22:46:00.196Z",
+    "lastVerified": "2026-11-27T22:46:00.196Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -480,8 +479,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T18:26:04.260Z",
-    "lastVerified": "2026-11-27T18:26:04.260Z",
+    "lastChecked": "2026-11-27T22:45:44.458Z",
+    "lastVerified": "2026-11-27T22:45:44.458Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2426,12 +2425,12 @@
     "lastVerified": "2026-11-26T19:07:36.433Z"
   },
   "kubeedge-kubeedge": {
-    "name": "kubeedge/kubeedge",
+    "name": "kubeedge",
     "officialUrl": "https://github.com/kubeedge/kubeedge",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T04:45:27.459Z",
-    "lastVerified": "2026-11-27T04:45:27.459Z",
+    "lastChecked": "2026-11-27T22:45:42.093Z",
+    "lastVerified": "2026-11-27T22:45:42.093Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubeedge-kubeedge",
@@ -2440,7 +2439,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e13e8b4d"
   },
   "aleo-labs-protocol-snarkos": {
     "name": "snarkOS",
@@ -4908,22 +4908,21 @@
     "revisionIdentifier": "4c10ba4b"
   },
   "kucherenko-jscpd": {
-    "name": "jscpd",
+    "name": "kucherenko/jscpd",
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T22:38:44.350Z",
-    "lastVerified": "2026-11-26T22:38:44.350Z",
+    "lastChecked": "2026-11-27T22:45:39.165Z",
+    "lastVerified": "2026-11-27T22:45:39.165Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "5b0850656e2643d84ab50df348d14cdddba046fa43a8d4573a0af12fe4b61760",
+    "contentHash": "532ee2adbfa40d3873f688b4b8f7a3092ff6a5253718d7a69be87d950d02a9b5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "28d22360"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
     "name": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -5716,9 +5715,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-11-27T03:35:16.910Z",
+    "lastChecked": "2026-11-27T22:45:47.289Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-11-27T03:35:16.910Z"
+    "lastVerified": "2026-11-27T22:45:47.289Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -10313,9 +10312,9 @@
   "kdchang-reactjs101": {
     "name": "reactjs101",
     "officialUrl": "https://github.com/kdchang/reactjs101",
-    "lastChecked": "2026-11-25T14:14:24.994Z",
+    "lastChecked": "2026-11-27T22:45:39.198Z",
     "revisionIdentifier": "9a6f238b",
-    "lastVerified": "2026-11-25T14:14:24.994Z"
+    "lastVerified": "2026-11-27T22:45:39.198Z"
   },
   "aliarifsoydas-sitemap-checker": {
     "name": "sitemap-checker",
@@ -10863,9 +10862,9 @@
   "santifer-santifer-irepair": {
     "name": "santifer-irepair",
     "officialUrl": "https://github.com/santifer/santifer-irepair",
-    "lastChecked": "2026-11-24T14:33:13.867Z",
+    "lastChecked": "2026-11-27T22:45:36.690Z",
     "revisionIdentifier": "5c1ce0b2",
-    "lastVerified": "2026-11-24T14:33:13.867Z"
+    "lastVerified": "2026-11-27T22:45:36.690Z"
   },
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",

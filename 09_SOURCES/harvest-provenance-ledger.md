@@ -13921,3 +13921,5 @@ Every entry in this ledger must capture:
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `c35d78d6` | Multi-dimensional audit evidence | 2026-11-27T22:14:12.919Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `b27b96a3` | Multi-dimensional audit evidence | 2026-11-27T22:22:59.950Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `5fc7f346` | Multi-dimensional audit evidence | 2026-11-27T22:36:13.996Z |
+| `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `ca751b46` | Multi-dimensional audit evidence | 2026-11-27T22:45:40.879Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5aaaf150` | Multi-dimensional audit evidence | 2026-11-27T22:45:56.505Z |

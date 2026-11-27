@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-D34X",
-    "timestamp": "2026-11-26T11:39:52.737Z",
-    "repository": "DefGuard/defguard",
-    "learningId": "learn-github-defguard-defguard",
-    "contentHash": "e32925dfa5b054e0a9ea3cfe7d7cfdc4b17383951f11bd714e7ea7e9a647237e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-D4WK",
-    "timestamp": "2026-11-26T11:39:55.028Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "7fb4ff4a74cb436c73e237ec57b16b566973c96b53d56c0a32854e9ddccdf7ae",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-PCWI",
     "timestamp": "2026-11-26T11:49:25.266Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7460,36 @@
     "repository": "chaos-mesh/chaos-mesh",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
     "contentHash": "bd78262ebe31bcc7efd5f3a58efa1a67fa6c30ca6c1e8fcaed11f108205c2f9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-L5Z7",
+    "timestamp": "2026-11-27T22:45:40.867Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "532ee2adbfa40d3873f688b4b8f7a3092ff6a5253718d7a69be87d950d02a9b5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-LI18",
+    "timestamp": "2026-11-27T22:45:56.492Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "d673b782f45b940d8fff8c5278b2d8b7ef5685a41d33063d65d63c68ac8fcc8b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
