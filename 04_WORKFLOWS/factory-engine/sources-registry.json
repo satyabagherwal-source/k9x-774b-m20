@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T20:47:06.158Z",
-    "lastVerified": "2026-11-27T20:47:06.158Z",
+    "lastChecked": "2026-11-27T20:57:51.324Z",
+    "lastVerified": "2026-11-27T20:57:51.324Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -194,12 +194,12 @@
     "revisionIdentifier": "9fb6a904"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T20:20:01.358Z",
-    "lastVerified": "2026-11-27T20:20:01.358Z",
+    "lastChecked": "2026-11-27T20:57:51.316Z",
+    "lastVerified": "2026-11-27T20:57:51.316Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -208,7 +208,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5feb8f1e"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1440,8 +1441,8 @@
     "officialUrl": "https://github.com/zeromicro/go-zero",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T02:58:19.108Z",
-    "lastVerified": "2026-11-27T02:58:19.108Z",
+    "lastChecked": "2026-11-27T20:57:43.810Z",
+    "lastVerified": "2026-11-27T20:57:43.810Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zeromicro-go-zero",
@@ -1883,8 +1884,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T16:41:37.027Z",
-    "lastVerified": "2026-11-27T16:41:37.027Z",
+    "lastChecked": "2026-11-27T20:57:46.282Z",
+    "lastVerified": "2026-11-27T20:57:46.282Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -4194,8 +4195,8 @@
     "officialUrl": "https://github.com/fujiapple852/trippy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T20:40:17.329Z",
-    "lastVerified": "2026-11-26T20:40:17.329Z",
+    "lastChecked": "2026-11-27T20:57:36.237Z",
+    "lastVerified": "2026-11-27T20:57:36.237Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fujiapple852-trippy",
@@ -4959,9 +4960,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-27T01:46:40.294Z",
+    "lastChecked": "2026-11-27T20:57:48.647Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-27T01:46:40.294Z"
+    "lastVerified": "2026-11-27T20:57:48.647Z"
   },
   "actix-actix-web": {
     "name": "actix/actix-web",
@@ -10116,9 +10117,9 @@
   "exyte-popupview": {
     "name": "PopupView",
     "officialUrl": "https://github.com/exyte/PopupView",
-    "lastChecked": "2026-11-25T12:19:21.314Z",
+    "lastChecked": "2026-11-27T20:57:41.167Z",
     "revisionIdentifier": "f8769ffd",
-    "lastVerified": "2026-11-25T12:19:21.314Z"
+    "lastVerified": "2026-11-27T20:57:41.167Z"
   },
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",
@@ -10600,9 +10601,9 @@
   "sundios-seo-dashboard": {
     "name": "SEO-Dashboard",
     "officialUrl": "https://github.com/sundios/SEO-Dashboard",
-    "lastChecked": "2026-11-24T12:53:53.113Z",
+    "lastChecked": "2026-11-27T20:57:38.682Z",
     "revisionIdentifier": "8ca76eb6",
-    "lastVerified": "2026-11-24T12:53:53.113Z"
+    "lastVerified": "2026-11-27T20:57:38.682Z"
   },
   "touchlab-droidconkotlin": {
     "name": "DroidconKotlin",
