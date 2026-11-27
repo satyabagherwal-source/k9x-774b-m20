@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T13:26:51.393Z",
+  "timestamp": "2026-11-27T07:22:10.944Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-genkit-ai-genkit-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [genkit-ai-genkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T13:26:51.393Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:22:10.944Z`  
 > **Learning ID**: `LEARN-EVO-genkit-ai-genkit-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from genkit-ai-genkit-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `4537d179`  
+> **Source Version**: `049b39cf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T13:26:45.015Z  
+> **Timestamp**: 2026-11-27T07:22:04.206Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T13:26:45.010Z  
+> **Harvest Timestamp**: 2026-11-27T07:22:04.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6624 stars
+- **Stars / Engagement**: 6628 stars
 
 ---
 
@@ -1967,1157 +1967,73 @@ async function recordInternal(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4537d179` (2026-11-25)
-**Commit Message**: feat(go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability (#6858)
+### Incident Patch 1: `049b39cf` (2026-11-26)
+**Commit Message**: docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridges (#7345)
 
-**File**: `go/ai/exp/agent.go` (modified, +60/-5)
+**File**: `.agents/rules/go.md` (added, +6/-0)
 ```diff
-@@ -707,9 +707,13 @@ func (s *SessionRunner[State]) snapshotTurnEnd(ctx context.Context, finishReason
- 			}, nil
- 		})
- 	if err != nil {
--		logger.Error(ctx, "agent failed to save snapshot",
--			"parentId", parentID,
--			"error", err)
-+		// A deleted session is not a failure: the work simply stops being
-+		// persisted.
-+		if !errors.Is(err, ErrSessionDeleted) {
-+			logger.Error(ctx, "agent failed to save snapshot",
-+				"parentId", parentID,
-+				"error", err)
-+		}
- 		return ""
- 	}
- 
-@@ -967,6 +971,51 @@ func (a *Agent[State]) Abort(ctx context.Context, snapshotID string) (SnapshotSt
- 	return abortPendingSnapshot(ctx, a.store, snapshotID)
- }
- 
-+// DeleteSession permanently removes every persisted snapshot of a session. A
-+// detached run still in flight is aborted first, so the work stops rather than
-+// continuing against data that is going away. It reports whether anything was
-+// removed and is idempotent: a session with no persisted data is not an error.
-+//
-+// Resuming by session ID afterwards starts a fresh session, and resuming by
-+// snapshot ID fails with [ErrSnapshotNotFound]. A run that is still going when
-+// the session is deleted stops persisting instead of failing; it cannot bring
-+// the session back. Traces, logs, and durable streams live outside the store
-+// and are not touched.
-+//
-+// This is an in-process API only: no companion action or route is registered
-+// for it, so put it behind your own authorization.
-+//
-+// It returns FAILED_PRECONDITION on a client-managed agent or when the store
-+// does not implement [SessionDeleter], and INVALID_ARGUMENT when sessionID is
-+// empty.
-+func (a *Agent[State]) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
-+	if a.store == nil {
-+		return false, status.Errorf(ErrSessionStoreNotConfigured, "agent %q: DeleteSession requires a session store", a.Name())
-+	}
-+	if sessionID == "" {
-+		return false, status.Errorf(status.ErrInvalidArgument, "agent %q: DeleteSession: sessionID is required", a.Name())
-+	}
-+	deleter, ok := a.store.(SessionDeleter)
-+	if !ok {
-+		return false, status.Errorf(status.ErrFailedPrecondition, "agent %q: the session store does not support DeleteSession", a.Name())
-+	}
-+	// Stop an in-flight detached run first. Best effort: a failure here is
-+	// logged and the delete goes on, because the store also tells the run's
-+	// subscription its row is gone and rejects writers that continue the
-+	// deleted chain.
-+	latest, err := getLatestSnapshotMetadata(ctx, a.store, sessionID)
-+	if err != nil {
-+		logger.Warn(ctx, "agent: could not look up the session's latest snapshot before deleting it",
-+			"sessionId", sessionID, "error", err)
-+	} else if latest != nil && latest.Status == SnapshotStatusPending {
-+		if _, err := abortPendingSnapshot(ctx, a.store, latest.SnapshotID); err != nil {
-+			logger.Warn(ctx, "agent: could not abort the session's pending snapshot before deleting it",
-+				"snapshotId", latest.SnapshotID, "error", err)
-+		}
-+	}
-+	return deleter.DeleteSession(ctx, sessionID)
-+}
+@@ -0,0 +1,6 @@
++---
++trigger: model_decision
++description: 'Conventions for go/ (Go SDK, plugins, registry/actions, schema generation, GoDoc, and testing). Load before planning, writing, or reviewing changes under go/.'
++---
 +
- // --- api.BidiAction implementation ---
- 
- // Agent is itself an [api.BidiAction]: transports that accept an
-@@ -2214,7 +2263,12 @@ func (rt *agentRuntime[State]) finalizePendingSnapshot(
- 
- 	_, err := rt.cfg.store.SaveSnapshot(ctx, pending.SnapshotID,
- 		func(existing *SessionSnapshot[State]) (*SessionSnapshot[State], error) {
--			if existing != nil && existing.Status.Terminal() {
-+			if existing == nil {
-+				// The pending row is gone: its session was deleted while the
-+				// work ran. Writing would bring the session back.
-+				return nil, nil
-+			}
-+			if existing.Status.Terminal() {
- 				// Already settled (a retried finalize, or a writer that
- 				// landed a terminal status directly): the row describes
- 				// itself, so leave it.
-@@ -2235,7 +2289,8 @@ func (rt *agentRuntime[State]) finalizePendingSnapshot(
- 				UpdatedAt:    now,
- 			}, nil
- 		})
--	if err != nil {
-+	// A deleted session is not a failure: the run simply stops persisting.
-+	if err != nil && !errors.Is(err, ErrSessionDeleted) {
- 		logger.Error(ctx, "agent: failed to finalize pending snapshot",
- 			"snapshotId", pending.SnapshotID, "error", err)
- 	}
++Read `go/AGENTS.md` before planning, writing, or reviewing changes under `go/`.
 ```
 
-**File**: `go/ai/exp/agent_test.go` (modified, +166/-0)
+**File**: `.agents/rules/js.md` (added, +6/-0)
 ```diff
-@@ -9431,3 +9431,169 @@ func TestAgent_Usage(t *testing.T) {
- 		}
- 	})
- }
+@@ -0,0 +1,6 @@
++---
++trigger: model_decision
++description: 'Conventions for js/ (JS SDK, plugins, builds, JSDocs, and testing). Load before planning, writing, or reviewing changes under js/.'
++---
 +
-+// defineQuickDeleteAgent registers a trivial agent that completes each turn at once.
-+func defineQuickDeleteAgent(t *testing.T, name string, store SessionStore[testState]) *Agent[testState] {
-+	t.Helper()
-+	opts := []AgentOption[testState]{}
-+	if store != nil {
-+		opts = append(opts, WithSessionStore(store))
-+	}
-+	return DefineCustomAgent(newTestRegistry(t), name,
-+		func(ctx context.Context, resp Responder, sess *SessionRunner[testState]) (*AgentResult, error) {
-+			return nil, sess.Run(ctx, func(ctx context.Context, input *AgentInput) (*TurnResult, error) {
-+				sess.AddMessages(ai.NewModelTextMessage("done"))
-+				return nil, nil
-+			})
-+		},
-+		opts...,
-+	)
-+}
-+
-+func TestAgent_DeleteSession_CompletedSession(t *testing.T) {
-+	ctx := context.Background()
-+	store := newTestInMemStore[testState]()
-+	agent := defineQuickDeleteAgent(t, "deleteCompleted", store)
-+
-+	out, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("hi")})
-+	if err != nil {
-+		t.Fatalf("Run: %v", err)
-+	}
-+	if out.SessionID == "" || out.SnapshotID == "" {
-+		t.Fatalf("output has no session/snapshot ID: %+v", out)
-+	}
-+
-+	removed, err := agent.DeleteSession(ctx, out.SessionID)
-+	if err != nil || !removed {
-+		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
-+	}
-+	if got, err := store.GetSnapshot(ctx, out.SnapshotID); err != nil || got != nil {
-+		t.Errorf("snapshot survived the delete: %v, %v", got, err)
-+	}
-+	// Idempotent.
-+	if removed, err := agent.DeleteSession(ctx, out.SessionID); err != nil || removed {
-+		t.Errorf("second DeleteSession = %v, %v; want false, nil", removed, err)
-+	}
-+	// Resuming by snapshot ID now fails; by session ID it starts fresh.
-+	if _, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("again")}, WithSnapshotID[testState](out.SnapshotID)); err == nil {
-+		t.Error("resume by snapshot ID after delete succeeded, want an error")
-+	}
-+	fresh, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("again")}, WithSessionID[testState](out.SessionID))
-+	if err != nil {
-+		t.Fatalf("resume by session ID: %v", err)
-+	}
-+	row, err := store.GetSnapshot(ctx, fresh.SnapshotID)
-+	if err != nil || row == nil || row.ParentID != "" {
-+		t.Errorf("resumed session row = %+v, %v; want a fresh root", row, err)
-+	}
-+}
-+
-+func TestAgent_DeleteSession_AbortsPendingRunAndDoesNotResurrect(t *testing.T) {
-+	ctx := context.Background()
-+	reg := newTestRegistry(t)
-+	store := newTestInMemStore[testState]()
-+	store.saved = make(chan string, 64)
-+	agent, entered, release := defineGatedAgent(t, reg, "deletePending", store)
-+
-+	task, err := agent.RunDetached(ctx, &AgentInput{Message: ai.NewUserTextMessage("go")})
-+	if err != nil {
-+		t.Fatalf("RunDetached: %v", err)
-+	}
-+	select {
-+	case <-entered:
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("background work did not start")
-+	}
-+	pending, err := store.GetSnapshot(ctx, task.SnapshotID())
-+	if err != nil || pending == nil || pending.Status != SnapshotStatusPending {
-+		t.Fatalf("pending row = %+v, %v", pending, err)
-+	}
-+
-+	if removed, err := agent.DeleteSession(ctx, pending.SessionID); err != nil || !removed {
-+		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
-+	}
-+
-+	// Let the worker finish whichever way it will. Its last write is the
-+	// finalize of the pending row, so wait for that attempt rather than sleeping;
-+	// nothing may be written back.
-+	for len(store.saved) > 0 {
-+		<-store.saved
-+	}
-+	close(release)
-+	deadline := time.After(5 * time.Second)
-+settled:
-+	for {
-+		select {
-+		case id := <-store.saved:
-+			if id == task.SnapshotID() {
-+				break settled
-+			}
-+		case <-deadline:
-+			t.Fatal("worker never finalized the deleted pending row")
-+		}
-+	}
-+	if n := store.snapshotCount(); n != 0 {
-+		t.Errorf("store holds %d rows after the delete, want 0 (session came back)", n)
-+	}
-+}
-+
-+func TestAgent_DeleteSession_Errors(t *testing.T) {
-+	ctx := context.Background()
-+
-+	t.Run("client-managed agent", func(t *testing.T) {
-+		agent := defineQuickDeleteAgent(t, "deleteNoStore", nil)
-+		if _, err := agent.DeleteSession(ctx, "s"); !errors.Is(err, ErrSessionStoreNotConfigured) {
-+			t.Errorf("error = %v, want ErrSessionStoreNotConfigured", err)
-+		}
-+	})
-+
-+	t.Run("store without the capability", func(t *testing.T) {
-+		// Embedding the interface hides DeleteSession.
-+		agent := defineQuickDeleteAgent(t, "deleteUnsupported", struct{ SessionStore[testState] }{newTestInMemStore[testState]()})
-+		if _, err := agent.DeleteSession(ctx, "s"); !errors.Is(err, status.ErrFailedPrecondition) {
-+			t.Errorf("error = %v, want FAILED_PRECONDITION", err)
-+		}
-+	})
-+
-+	t.Run("empty session ID", func(t *testing.T) {
-+		agent := defineQuickDeleteAgent(t, "deleteEmptyID", newTestInMemStore[testState]())
-+		if _, err := agent.DeleteSession(ctx, ""); !errors.Is(err, status.ErrInvalidArgument) {
-+			t.Errorf("error = %v, want INVALID_ARGUMENT", err)
-+		}
-+	})
-+}
-+
-
++Read `js/AGENTS.md` before planning, writing, or reviewing changes under `js/`.
 ```
 
-**File**: `go/ai/exp/errors.go` (modified, +6/-0)
+**File**: `AGENTS.md` (added, +12/-0)
 ```diff
-@@ -34,4 +34,10 @@ var (
- 	// Every store implementation rejects this: a snapshot with no session cannot
- 	// be resolved back to a conversation.
- 	ErrSessionIDRequired = status.ErrInvalidArgument.Subtype("session ID is required")
+@@ -0,0 +1,12 @@
++# Genkit Monorepo Guide
 +
-+	// ErrSessionDeleted means a snapshot was written that continues the chain
-+	// of a session removed with [Agent.DeleteSession]. Stores reject it so a
-+	// late writer cannot bring the session back; the runtime treats it as "stop
-+	// persisting" rather than a failure.
-+	ErrSessionDeleted = status.ErrFailedPrecondition.Subtype("session deleted")
- )
++`js/`, `genkit-tools/`, and `go/` are separate workspaces with independent lockfiles and builds. Read the area guide before planning, editing, or reviewing changes:
++
++- `js/` (JS SDK & plugins): `js/AGENTS.md`
++- `genkit-tools/` (CLI, MCP, telemetry server, shared schemas): `genkit-tools/AGENTS.md`
++- `go/` (Go SDK & plugins): `go/AGENTS.md`
++
++## Repo-Wide Checks
++
++- Run `pnpm format` from the repo root to apply Prettier formatting and add missing `Copyright <year> Google LLC` Apache-2.0 headers (`pnpm format:check` to verify; `go fmt -C go ./...` for Go).
++- Use Conventional Commit and PR headers (`<= 120` chars, non-empty scope per `commitlint.config.js`) with scopes prefixed by the workspace directory, e.g. `fix(js/ai): ...`, `fix(genkit-tools/cli): ...`, or `feat(go/ai): ...`.
 ```
 
-**File**: `go/ai/exp/handle.go` (modified, +47/-0)
+**File**: `js/AGENTS.md` (added, +13/-0)
 ```diff
-@@ -104,6 +104,15 @@ type AgentTransport interface {
- 	Run(ctx context.Context, input *AgentInput, init *AgentInit[json.RawMessage], cb func(context.Context, json.RawMessage) error) (*AgentOutput[json.RawMessage], error)
- }
- 
-+// SessionDeleteTransport is the optional part of an [AgentTransport] that can
-+// delete a session. Only an in-process transport offers it: deletion has no
-+// companion action, so nothing serves it over the wire. A handle whose
-+// transport lacks it refuses [AgentHandle.DeleteSession] with
-+// FAILED_PRECONDITION.
-+type SessionDeleteTransport interface {
-+	DeleteSession(ctx context.Context, sessionID string) (bool, error)
-+}
+@@ -0,0 +1,13 @@
++# Genkit JS - Developer Guide
 +
- // SnapshotTransport is the optional part of an [AgentTransport] that reaches
- // the agent's snapshot lifecycle. A handle whose transport lacks it refuses
- // snapshot operations with FAILED_PRECONDITION. A method may also refuse with
-@@ -215,6 +224,8 @@ func (a *Agent[State]) Handle() *AgentHandle {
- 			getSnapshot: a.getSnapshot,
- 			wait:        a.wait,
- 			abort:       a.abort,
++This document defines module, documentation, and testing conventions for contributors and AI coding agents working under `js/` (`core`, `ai`, `genkit`, `plugins/*`, and `testapps/*`).
 +
-+			deleteSession: a.DeleteSession,
- 		},
- 	}
- }
-@@ -533,6 +544,29 @@ func (h *AgentHandle) Abort(ctx context.Context, snapshotID string) (SnapshotSta
- 	return resp.Status, nil
- }
- 
-+// DeleteSession permanently removes every persisted snapshot of a session, as
-+// [Agent.DeleteSession] does, and reports whether anything was removed. It
-+// works only on a handle for an agent in this process ([Agent.Handle]): the
-+// operation has no companion action on purpose, so a handle from [LookupAgent]
-+// or a remote one returns FAILED_PRECONDITION.
-+//
-+// It also returns FAILED_PRECONDITION when the agent has no session store or
-+// its store cannot delete, and INVALID_ARGUMENT when sessionID is empty.
-+func (h *AgentHandle) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
-+	if h == nil {
-+		return false, nilHandleError("DeleteSession")
-+	}
-+	if sessionID == "" {
-+		return false, status.Errorf(status.ErrInvalidArgument, "agent %q: DeleteSession: sessionID is required", h.name)
-+	}
-+	dt, ok := h.transport.(SessionDeleteTransport)
-+	if !ok {
-+		return false, status.Errorf(status.ErrFailedPrecondition,
-+			"agent %q: its transport cannot delete a session", h.name)
-+	}
-+	return dt.DeleteSession(ctx, sessionID)
-+}
++## 1. Imports & Documentation
 +
- // snapshotTransport returns the handle's transport as a [SnapshotTransport],
- // or the refusal for one that reaches no snapshot lifecycle. verb names what
- // the caller wanted to do with a snapshot.
-@@ -566,6 +600,10 @@ type actionTransport struct {
- 	getSnapshot api.Action
- 	wait        api.Action
- 	abort       api.Action
-+	// deleteSession is set only for an in-process agent ([Agent.Handle]): no
-+	// companion action exists for deletion on purpose, so a handle that
-+	// reaches the agent through actions cannot delete a session.
-+	deleteSession func(ctx context.Context, sessionID string) (bool, error)
- }
- 
- func (t *actionTransport) Run(ctx context.Context, input *AgentInput, init *AgentInit[json.RawMessage], cb func(context.Context, json.RawMessage) error) (*AgentOutput[json.RawMessage], error) {
-@@ -632,6 +670,15 @@ func (t *actionTransport) Abort(ctx context.Context, req *AgentAbortRequest) (*A
- 	return callJSON[AgentAbortResponse](ctx, t.name, t.abort, "abort", req)
- }
- 
-+// DeleteSession implements [SessionDeleteTransport].
-+func (t *actionTransport) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
-+	if t.deleteSession == nil {
-+		return false, status.Errorf(status.ErrFailedPrecondition,
-+			"agent %q: deleting a session is not available through this handle: it is an in-process API with no companion action", t.name)
-+	}
-+	return t.deleteSession(ctx, sessionID)
-+}
++- **Relative imports**: Use explicit `.js` extensions on all relative file imports in source files (e.g., `from './foo.js'`).
++- **JSDocs & examples**: Document exported SDK members with JSDoc comments (`CONTRIBUTING.md`). In JSDoc `@example` blocks, READMEs, and samples, use `@genkit-ai/google-genai` (e.g., `googleAI.model('gemini-flash-latest')` or current models in `js/plugins/google-genai/src/googleai/gemini.ts`) rather than the legacy `@genkit-ai/googleai` package or deprecated model IDs.
 +
- // callJSON dispatches req to act, one of the agent's companion actions, and
- // decodes the result into Resp. what names the exchange in the marshal and
- // unmarshal errors; a dispatch error is returned as is, so its status stays
-```
-
-**File**: `go/ai/exp/handle_test.go` (modified, +43/-0)
-```diff
-@@ -1009,3 +1009,46 @@ func TestAgentHandle_MetadataOnlyPrefersTheStoreCapability(t *testing.T) {
- 			store.metadataReads, store.latestMetadataReads, store.fullReads, store.latestFullReads)
- 	}
- }
++## 2. Testing & Verification
 +
-+func TestAgentHandle_DeleteSession(t *testing.T) {
-+	ctx := context.Background()
-+
-+	t.Run("local handle deletes through the agent", func(t *testing.T) {
-+		store := newTestInMemStore[testState]()
-+		agent := defineQuickDeleteAgent(t, "handleDelete", store)
-+		out, err := agent.Run(ctx, &AgentInput{Message: ai.NewUserTextMessage("hi")})
-+		if err != nil {
-+			t.Fatalf("Run: %v", err)
-+		}
-+		removed, err := agent.Handle().DeleteSession(ctx, out.SessionID)
-+		if err != nil || !removed {
-+			t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
-+		}
-+		if n := store.snapshotCount(); n != 0 {
-+			t.Errorf("store holds %d rows, want 0", n)
-+		}
-+	})
-+
-+	t.Run("registry handle has no route", func(t *testing.T) {
-+		reg := newTestRegistry(t)
-+		defineGatedAgent(t, reg, "handleDeleteRemote", newTestInMemStore[testState]())
-+		_, err := LookupAgent(reg, "handleDeleteRemote").DeleteSession(ctx, "s")
-+		if !errors.Is(err, status.ErrFailedPrecondition) {
-+			t.Errorf("error = %v, want FAILED_PRECONDITION", err)
-+		}
-+	})
-+
-+	t.Run("empty session ID", func(t *testing.T) {
-+		agent := defineQuickDeleteAgent(t, "handleDeleteEmpty", newTestInMemStore[testState]())
-+		if _, err := agent.Handle().DeleteSession(ctx, ""); !errors.Is(err, status.ErrInvalidArgument) {
-+			t.Errorf("error = %v, want INVALID_ARGUMENT", err)
-+		}
-+	})
-+
-+	t.Run("nil handle", func(t *testing.T) {
-+		var h *AgentHandle
-+		if _, err := h.DeleteSession(ctx, "s"); err == nil {
-+			t.Error("nil handle returned no error")
-+		}
-+	})
-+}
-```
-
-**File**: `go/ai/exp/localstore/file.go` (modified, +100/-3)
-```diff
-@@ -94,6 +94,13 @@ type FileSessionStore[State any] struct {
- 	// snapshot files to detect cross-process status changes; <= 0 disables it.
- 	poll time.Duration
- 	subs map[string]*snapshotSubs
-+	// deleted holds the snapshots removed by DeleteSession, keyed by prefix and
-+	// snapshot ID, so a late writer continuing a deleted chain is rejected even
-+	// after a fresh root snapshot reuses the session ID; see SaveSnapshot. It
-+	// grows by one entry per deleted snapshot for the life of the store.
-+	// In-process only: a writer in another process sharing the directory is not
-+	// stopped.
-+	deleted map[string]struct{}
- 	// pollCancel stops the background poller. It is non-nil exactly while the
- 	// poller runs: while at least one subscription is active and poll > 0.
- 	pollCancel context.CancelFunc
-@@ -166,6 +173,7 @@ func NewFileSessionStore[State any](dir string, opts ...FileStoreOption) (*FileS
- 		prefixFn: resolved.prefixFn,
- 		poll:     poll,
- 		subs:     make(map[string]*snapshotSubs),
-+		deleted:  make(map[string]struct{}),
- 	}, nil
- }
- 
-@@ -255,6 +263,14 @@ func (s *FileSessionStore[State]) SaveSnapshot(
- 	if next.Status == "" {
- 		next.Status = exp.SnapshotStatusCompleted
- 	}
-+	// A late writer continuing a deleted chain (or rewriting one of its rows)
-+	// must not bring the session back, even if a fresh root has since reused the
-+	// session ID.
-+	_, rowGone := s.deleted[tombstoneKey(prefix, id)]
-+	_, parentGone := s.deleted[tombstoneKey(prefix, next.ParentID)]
-+	if rowGone || (next.ParentID != "" && parentGone) {
-+		return nil, status.Errorf(exp.ErrSessionDeleted, "session %q was deleted", next.SessionID)
-+	}
- 
- 	if err := s.writeAt(prefix, next); err != nil {
- 		return nil, err
-@@ -275,6 +291,61 @@ func (s *FileSessionStore[State]) SaveSnapshot(
- 	return next, nil
- }
- 
-+// tombstoneKey identifies a deleted snapshot within its tenant prefix.
-+func tombstoneKey(prefix, snapshotID string) string {
-+	return prefix + "\x00" + snapshotID
-+}
-+
-+// DeleteSession removes every snapshot file of the session, and its pointer,
-+// under the call's prefix directory, per [exp.SessionDeleter]. Matching rows
-+// are found by scanning the prefix directory, so the cost grows with the
-+// number of rows in the prefix. Subscribers of a removed snapshot see
-+// [exp.SnapshotStatusAborted] before their channel closes. Deletion across
-+// processes sharing the directory is best effort: a row another process writes
-+// after the scan is not removed.
-+func (s *FileSessionStore[State]) DeleteSession(ctx context.Context, sessionID string) (bool, error) {
-+	if sessionID == "" {
-+		return false, status.Errorf(exp.ErrSessionIDRequired, "DeleteSession requires a session ID")
-+	}
-+	if err := validateSessionID(sessionID); err != nil {
-+		return false, err
-+	}
-+	prefix, err := s.derivePrefix(ctx)
-+	if err != nil {
-+		return false, err
-+	}
-+
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+
-+	names, err := s.snapshotFileNames(s.prefixDir(prefix))
-+	if err != nil {
-+		return false, err
-+	}
-+	removed := false
-+	for _, name := range names {
-+		path := filepath.Join(s.prefixDir(prefix), name)
-+		var header snapshotHeader
-+		if ok, err := readJSONAt(path, &header); err != nil || !ok || header.SessionID != sessionID {
-+			// Unreadable, vanished, or another session's row: not ours to remove.
-+			continue
-+		}
-+		if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
-+			return removed, fmt.Errorf("FileSessionStore: remove %s: %w", path, err)
-+		}
-+		removed = true
-+		snapshotID := strings.TrimSuffix(name, ".json")
-+		s.deleted[tombstoneKey(prefix, snapshotID)] = struct{}{}
-+		s.endSubsLocked(snapshotID, exp.SnapshotStatusAborted)
-+	}
-+	if err := os.Remove(s.pointerPathFor(prefix, sessionID)); err == nil {
-+		removed = true
-+	} else if !errors.Is(err, os.ErrNotExist) {
-+		return removed, fmt.Errorf("FileSessionStore: remove pointer: %w", err)
-+	}
-+	return removed, nil
-+}
-+
- // snapshotHeader is the subset of snapshot fields needed to pick a session's
- // latest row during the scan. Decoding only these avoids materializing every
- // row's full conversation state; only the winning row is fully decoded.
-@@ -746,6 +817,25 @@ func (s *FileSessionStore[State]) removeSub(snapshotID string, ch chan exp.Snaps
- 	close(ch)
- }
- 
-+// endSubsLocked delivers a final status to every subscriber of snapshotID and
-+// closes their channels, dropping the snapshot's bookkeeping (and stopping the
-+// poller once no subscriptions remain). Used when the row is gone. Caller must
-+// hold s.mu.
-+func (s *FileSessionStore[State]) endSubsLocked(snapshotID string, status exp.SnapshotStatus) {
-+	sub := s.subs[snapshotID]
-+	if sub == nil {
-+		return
-+	}
-+	for _, ch := range sub.chans {
-+		coalesceSend(ch, status)
-+		close(ch)
-+	}
-+	delete(s.subs, snapshotID)
-+	if len(s.subs) == 0 {
-+		s.stopPollerLocked()
-+	}
-+}
-+
- // maybeNotifyLocked fans status out to snapshotID's subscribers, but only when
- // it differs from the value they last saw. It is the shared dedup gate
-```
-
-**File**: `go/ai/exp/localstore/file_test.go` (modified, +75/-0)
-```diff
-@@ -771,3 +771,78 @@ func TestFileSessionStore_PathUnsafeSessionIDRejected(t *testing.T) {
- 		})
- 	}
- }
-+
-+type deleteTenantKey struct{}
-+
-+func TestFileSessionStore_Delete_TenantPrefix(t *testing.T) {
-+	// The same session ID under two tenants: deleting it for one must not touch
-+	// the other.
-+	store, err := NewFileSessionStore[testState](t.TempDir(), WithSnapshotPathPrefix(func(ctx context.Context) string {
-+		tenant, _ := ctx.Value(deleteTenantKey{}).(string)
-+		return tenant
-+	}))
-+	if err != nil {
-+		t.Fatalf("NewFileSessionStore: %v", err)
-+	}
-+	alice := context.WithValue(context.Background(), deleteTenantKey{}, "alice")
-+	bob := context.WithValue(context.Background(), deleteTenantKey{}, "bob")
-+	for _, ctx := range []context.Context{alice, bob} {
-+		now := time.Now()
-+		if _, err := store.SaveSnapshot(ctx, "snap",
-+			func(_ *exp.SessionSnapshot[testState]) (*exp.SessionSnapshot[testState], error) {
-+				return &exp.SessionSnapshot[testState]{SessionID: "shared", CreatedAt: now, UpdatedAt: now}, nil
-+			}); err != nil {
-+			t.Fatalf("SaveSnapshot: %v", err)
-+		}
-+	}
-+
-+	if removed, err := store.DeleteSession(alice, "shared"); err != nil || !removed {
-+		t.Fatalf("DeleteSession(alice) = %v, %v; want true, nil", removed, err)
-+	}
-+	if got, err := store.GetLatestSnapshot(alice, "shared"); err != nil || got != nil {
-+		t.Errorf("alice still sees the session: %v, %v", got, err)
-+	}
-+	if got, err := store.GetLatestSnapshot(bob, "shared"); err != nil || got == nil {
-+		t.Errorf("bob lost his session: %v, %v", got, err)
-+	}
-+}
-+
-+func TestFileSessionStore_Delete_SeenByAnotherStoreInstance(t *testing.T) {
-+	// A delete made through one store instance (standing in for another
-+	// process) ends a subscription held on a different instance: the poller
-+	// sees the file vanish and reports the run as aborted.
-+	dir := t.TempDir()
-+	watcher, err := NewFileSessionStore[testState](dir, WithPollInterval(10*time.Millisecond))
-+	if err != nil {
-+		t.Fatalf("NewFileSessionStore: %v", err)
-+	}
-+	deleter, err := NewFileSessionStore[testState](dir)
-+	if err != nil {
-+		t.Fatalf("NewFileSessionStore: %v", err)
-+	}
-+	ctx := context.Background()
-+	now := time.Now()
-+	if _, err := watcher.SaveSnapshot(ctx, "p1",
-+		func(_ *exp.SessionSnapshot[testState]) (*exp.SessionSnapshot[testState], error) {
-+			return &exp.SessionSnapshot[testState]{SessionID: "sess", Status: exp.SnapshotStatusPending, CreatedAt: now, UpdatedAt: now}, nil
-+		}); err != nil {
-+		t.Fatalf("SaveSnapshot: %v", err)
-+	}
-+
-+	subCtx, cancel := context.WithCancel(ctx)
-+	defer cancel()
-+	ch := watcher.OnSnapshotStatusChange(subCtx, "p1")
-+	<-ch // pending
-+
-+	if removed, err := deleter.DeleteSession(ctx, "sess"); err != nil || !removed {
-+		t.Fatalf("DeleteSession = %v, %v; want true, nil", removed, err)
-+	}
-+	select {
-+	case got := <-ch:
-+		if got != exp.SnapshotStatusAborted {
-+			t.Errorf("status = %q, want aborted", got)
-+		}
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("the other instance's subscription was not ended by the delete")
-+	}
-+}
-```
-
-**File**: `go/ai/exp/localstore/inmemory.go` (modified, +54/-1)
-```diff
-@@ -47,21 +47,28 @@ var (
- // is lost when the process exits; use [FileSessionStore] or a real backend
- // when persistence is needed.
- //
--// It implements [exp.SessionStore] and [exp.SnapshotSubscriber].
-+// It implements [exp.SessionStore], [exp.SnapshotSubscriber] and
-+// [exp.SessionDeleter].
- type InMemorySessionStore[State any] struct {
- 	// mu is RWMutex so GetSnapshot (which JSON-marshals while holding the
- 	// lock) can run concurrently with other readers. All writers (Save,
- 	// Abort, OnSnapshotStatusChange, removeSub) take the full Lock().
- 	mu        sync.RWMutex
- 	snapshots map[string]*exp.SessionSnapshot[State]
- 	subs      map[string][]chan exp.SnapshotStatus
-+	// deleted holds the IDs of snapshots removed by DeleteSession, so a late
-+	// writer continuing a deleted chain is rejected even after a fresh root
-+	// snapshot reuses the session ID; see SaveSnapshot. It grows by one ID per
-+	// deleted snapshot for the life of the store, which is the process.
-+	deleted map[string]struct{}
- }
- 
- // NewInMemorySessionStore creates a new in-memory snapshot store.
- func NewInMemorySessionStore[State any]() *InMemorySessionStore[State] {
- 	return &InMemorySessionStore[State]{
- 		snapshots: make(map[string]*exp.SessionSnapshot[State]),
- 		subs:      make(map[string][]chan exp.SnapshotStatus),
-+		deleted:   make(map[string]struct{}),
- 	}
- }
- 
-@@ -216,6 +223,12 @@ func (s *InMemorySessionStore[State]) SaveSnapshot(
- 	if next.Status == "" {
- 		next.Status = exp.SnapshotStatusCompleted
- 	}
-+	// A late writer continuing a deleted chain (or rewriting one of its rows)
-+	// must not bring the session back, even if a fresh root has since reused the
-+	// session ID.
-+	if s.isDeleted(id, next.ParentID) {
-+		return nil, status.Errorf(exp.ErrSessionDeleted, "session %q was deleted", next.SessionID)
-+	}
- 
- 	copied, err := copySnapshot(next)
- 	if err != nil {
-@@ -252,6 +265,46 @@ func (s *InMemorySessionStore[State]) OnSnapshotStatusChange(ctx context.Context
- 	return ch
- }
- 
-+// DeleteSession removes every snapshot of the session, per
-+// [exp.SessionDeleter]. Subscribers of a removed snapshot see
-+// [exp.SnapshotStatusAborted] before their channel closes.
-+func (s *InMemorySessionStore[State]) DeleteSession(_ context.Context, sessionID string) (bool, error) {
-+	if sessionID == "" {
-+		return false, status.Errorf(exp.ErrSessionIDRequired, "DeleteSession requires a session ID")
-+	}
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+
-+	removed := false
-+	for id, snap := range s.snapshots {
-+		if snap.SessionID != sessionID {
-+			continue
-+		}
-+		delete(s.snapshots, id)
-+		s.deleted[id] = struct{}{}
-+		removed = true
-+		for _, ch := range s.subs[id] {
-+			coalesceSend(ch, exp.SnapshotStatusAborted)
-+			close(ch)
-+		}
-+		delete(s.subs, id)
-+	}
-+	return removed, nil
-+}
-+
-+// isDeleted reports whether a write for snapshot id with the given parent
-+// touches a snapshot removed by DeleteSession. Caller must hold s.mu.
-+func (s *InMemorySessionStore[State]) isDeleted(id, parentID string) bool {
-+	if _, gone := s.deleted[id]; gone {
-+		return true
-+	}
-+	if parentID == "" {
-+		return false
-+	}
-+	_, gone := s.deleted[parentID]
-+	return gone
-+}
-+
- // removeSub detaches a subscriber and closes its channel.
- func (s *InMemorySessionStore[State]) removeSub(snapshotID string, ch chan exp.SnapshotStatus) {
- 	s.mu.Lock()
-```
-
----
-
-### Incident Patch 2: `78a83b38` (2026-11-25)
-**Commit Message**: feat(js/plugins/anthropic): add Claude 5.5 and Fable models, drop retired ones (#7311)
-
-**File**: `js/plugins/anthropic/README.md` (modified, +50/-22)
-```diff
-@@ -15,10 +15,30 @@ It supersedes the earlier community package `genkitx-anthropic` and is now maint
- 
- ## Supported models
- 
--The plugin supports the most recent Anthropic models like **Claude Haiku 4.5**,
--**Claude Sonnet 4.5**, and **Claude Opus 4.5**. Additionally, the plugin
--supports all of the
--[non-retired older models](https://platform.claude.com/docs/en/about-claude/model-deprecations#model-status).
-+The plugin ships model definitions for every generally available Claude model
-+on the Claude API. (The Claude Mythos models, which are limited to verified
-+organizations, aren't listed; you can still use them by ID.)
-+
-+| Family | Model IDs |
-+| ------ | --------- |
-+| Claude Fable | `claude-fable-5-2`, `claude-fable-5-1`, `claude-fable-5` |
-+| Claude Opus | `claude-opus-5-5`, `claude-opus-5`, `claude-opus-4-8`, `claude-opus-4-7`, `claude-opus-4-6`, `claude-opus-4-5` |
-+| Claude Sonnet | `claude-sonnet-5-5`, `claude-sonnet-5`, `claude-sonnet-4-6` |
-+| Claude Haiku | `claude-haiku-5-5`, `claude-haiku-4-5` |
-+
-+All of them accept text and image input, tools, system prompts and multi-turn
-+conversations. Native structured (JSON) output needs the beta API surface
-+(`apiVersion: 'beta'`); on the stable surface, asking a listed model for JSON or
-+schema output throws an error.
-+
-+Retired models (Claude Sonnet 4.5, Claude Opus 4.1, Claude Opus 4, Claude
-+Sonnet 4 and older) are no longer listed. You can still pass any other model
-+ID, for example `anthropic.model("claude-some-new-model")`; IDs the plugin
-+doesn't know are
-+treated as text-only, so schema output for them is done through prompt
-+instructions. See
-+[model deprecations](https://platform.claude.com/docs/en/about-claude/model-deprecations#model-status)
-+for lifecycle dates.
- 
- ## Installation
- 
-@@ -39,7 +59,7 @@ import { anthropic } from "@genkit-ai/anthropic";
- const ai = genkit({
-   plugins: [anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })],
-   // specify a default model for generate here if you wish:
--  model: anthropic.model("claude-sonnet-4-5"),
-+  model: anthropic.model("claude-sonnet-5-5"),
- });
- ```
- 
-@@ -49,7 +69,7 @@ The simplest way to generate text is by using the `generate` method:
- 
- ```typescript
- const response = await ai.generate({
--  model: anthropic.model("claude-haiku-4-5"),
-+  model: anthropic.model("claude-haiku-5-5"),
-   prompt: "Tell me a joke.",
- });
- 
-@@ -70,30 +90,38 @@ const response = await ai.generate({
- console.log(response.text);
- ```
- 
--### Extended thinking
-+### Thinking
- 
--Claude 4.5 models can expose their internal reasoning. Enable it per-request
--with the Anthropic thinking config and read the reasoning from the response:
-+Claude models can expose a summary of their reasoning. On current models
-+(Claude Opus 4.6 and later, Claude Sonnet 4.6 and later, the Fable models and
-+Claude Haiku 5.5), use adaptive thinking and steer how much the model thinks
-+with `output_config.effort`: `low`, `medium`, `high`, `xhigh` or `max`. See
-+[effort](https://platform.claude.com/docs/en/build-with-claude/effort) for
-+per-model support.
- 
- ```typescript
- const response = await ai.generate({
-   prompt: "Walk me through your reasoning for Fermat’s little theorem.",
-   config: {
-     thinking: {
--      enabled: true,
--      budgetTokens: 4096, // Must be >= 1024 and less than max_tokens
-+      adaptive: true,
-+      display: "summarized", // return a readable summary of the reasoning
-     },
-+    output_config: { effort: "high" },
-   },
- });
- 
- console.log(response.text); // Final assistant answer
- console.log(response.reasoning); // Summarized thinking steps
- ```
- 
--When thinking is enabled, request bodies sent through the plugin include the
--`thinking` payload (`{ type: 'enabled', budget_tokens: … }`) that Anthropic's
--API expects, and streamed responses deliver `reasoning` parts as they arrive so
--you can render the chain-of-thought incrementally.
-+Older models (Claude Haiku 4.5, Claude Opus 4.5) use a
-+fixed thinking budget instead: `thinking: { enabled: true, budgetTokens: 2048 }`
-+(at least 1024 and less than `max_tokens`). Claude Opus 4.7, Claude Sonnet 5
-+and every later model reject `budgetTokens`.
-+
-+Streamed responses deliver `reasoning` parts as they arrive so you can render
-+the reasoning incrementally.
- 
- ### Document Citations
- 
-@@ -106,7 +134,7 @@ helper to create citable documents. For more details, see the
- import { anthropic, anthropicDocument } from "@genkit-ai/anthropic";
- 
- const response = await ai.generate({
--  model: anthropic.model("claude-sonnet-4-5"),
-+  model: anthropic.model("claude-sonnet-5-5"),
-   messages: [
-     {
-       role: "user",
-@@ -161,7 +189,7 @@ messages, user messages, tools, and media.
- import { anthropic, cacheControl } from "@genkit-ai/anthropic";
- 
- const response = await ai.generate({
--  model: anthropic.model("claude-sonnet-4-5"),
-+  model: anthropic.model("claude-sonnet-5-5"),
-   system: {
-     text: longSystemPrompt,
-     metadata: { ...cacheControl() }, // default: ephemeral
-```
-
-**File**: `js/plugins/anthropic/src/index.ts` (modified, +3/-3)
-```diff
-@@ -104,7 +104,7 @@ function validateApiKey(options?: PluginOptions): void {
-  * });
-  *
-  * // Access models via the plugin's model() method:
-- * const model = anthropic.model('claude-sonnet-4');
-+ * const model = anthropic.model('claude-sonnet-5-5');
-  * ```
-  */
- function anthropicPlugin(options?: PluginOptions): GenkitPluginV2 {
-@@ -168,7 +168,7 @@ export type AnthropicPlugin = {
- 
- /**
-  * Anthropic AI plugin for Genkit.
-- * Includes Claude models (3, 3.5, and 4 series).
-+ * Includes the current Claude models.
-  */
- export const anthropic = anthropicPlugin as AnthropicPlugin;
- (anthropic as any).model = (
-@@ -189,7 +189,7 @@ export const anthropic = anthropicPlugin as AnthropicPlugin;
-  * import { anthropic, anthropicDocument } from '@genkit-ai/anthropic';
-  *
-  * const { text } = await ai.generate({
-- *   model: anthropic.model('claude-sonnet-4-5'),
-+ *   model: anthropic.model('claude-sonnet-5-5'),
-  *   messages: [{
-  *     role: 'user',
-  *     content: [
-```
-
-**File**: `js/plugins/anthropic/src/models.ts` (modified, +11/-8)
-```diff
-@@ -61,8 +61,8 @@ function parseRetryAfterMs(value: string): number | undefined {
- type ConfigSchemaType = AnthropicConfigSchemaType;
- 
- /**
-- * Generic Claude model info for unknown/unsupported models.
-- * Used when a model name is not in KNOWN_CLAUDE_MODELS.
-+ * Model info for model names that are not in KNOWN_MODELS. Output is text
-+ * only, so Genkit puts any output schema into the prompt as instructions.
-  */
- export const GENERIC_MODEL_INFO: ModelInfo = {
-   supports: {
-@@ -75,7 +75,8 @@ export const GENERIC_MODEL_INFO: ModelInfo = {
- };
- 
- /**
-- * Advanced Claude model info for models that support JSON output.
-+ * Model info for the models in KNOWN_MODELS: text and image input, tool use,
-+ * system prompts, multi-turn, and native structured (JSON) output.
-  */
- export const ADVANCED_MODEL_INFO: ModelInfo = {
-   supports: {
-@@ -104,18 +105,20 @@ function commonRef(
- }
- 
- const KNOWN_MODELS = {
-+  'claude-fable-5-2': commonRef('claude-fable-5-2', ADVANCED_MODEL_INFO),
-+  'claude-fable-5-1': commonRef('claude-fable-5-1', ADVANCED_MODEL_INFO),
-   'claude-fable-5': commonRef('claude-fable-5', ADVANCED_MODEL_INFO),
-+  'claude-opus-5-5': commonRef('claude-opus-5-5', ADVANCED_MODEL_INFO),
-+  'claude-opus-5': commonRef('claude-opus-5', ADVANCED_MODEL_INFO),
-   'claude-opus-4-8': commonRef('claude-opus-4-8', ADVANCED_MODEL_INFO),
-   'claude-opus-4-7': commonRef('claude-opus-4-7', ADVANCED_MODEL_INFO),
-   'claude-opus-4-6': commonRef('claude-opus-4-6', ADVANCED_MODEL_INFO),
-   'claude-opus-4-5': commonRef('claude-opus-4-5', ADVANCED_MODEL_INFO),
--  'claude-haiku-4-5': commonRef('claude-haiku-4-5', ADVANCED_MODEL_INFO),
-+  'claude-sonnet-5-5': commonRef('claude-sonnet-5-5', ADVANCED_MODEL_INFO),
-   'claude-sonnet-5': commonRef('claude-sonnet-5', ADVANCED_MODEL_INFO),
-   'claude-sonnet-4-6': commonRef('claude-sonnet-4-6', ADVANCED_MODEL_INFO),
--  'claude-sonnet-4-5': commonRef('claude-sonnet-4-5', ADVANCED_MODEL_INFO),
--  'claude-opus-4-1': commonRef('claude-opus-4-1', ADVANCED_MODEL_INFO),
--  'claude-sonnet-4': commonRef('claude-sonnet-4'),
--  'claude-opus-4': commonRef('claude-opus-4'),
-+  'claude-haiku-5-5': commonRef('claude-haiku-5-5', ADVANCED_MODEL_INFO),
-+  'claude-haiku-4-5': commonRef('claude-haiku-4-5', ADVANCED_MODEL_INFO),
- } as const;
- export type KnownClaudeModels = keyof typeof KNOWN_MODELS;
- export type ClaudeModelName = `claude-${string}`;
-```
-
-**File**: `js/plugins/anthropic/src/types.ts` (modified, +1/-1)
-```diff
-@@ -175,7 +175,7 @@ export const AnthropicConfigSchema = GenerationCommonConfigSchema.extend({
-   ),
-   output_config: z
-     .object({
--      effort: z.enum(['low', 'medium', 'high', 'xhigh']).optional(),
-+      effort: z.enum(['low', 'medium', 'high', 'xhigh', 'max']).optional(),
-       task_budget: z
-         .object({
-           type: z.literal('tokens').default('tokens'),
-```
-
-**File**: `js/plugins/anthropic/src/utils.ts` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ import type { CacheControlEphemeral } from '@anthropic-ai/sdk/resources/messages
-  * import { anthropic, cacheControl } from '@genkit-ai/anthropic';
-  *
-  * const response = await ai.generate({
-- *   model: anthropic.model('claude-sonnet-4-5'),
-+ *   model: anthropic.model('claude-sonnet-5-5'),
-  *   system: {
-  *     text: longSystemPrompt,
-  *     metadata: { ...cacheControl() }  // default ephemeral
-```
-
-**File**: `js/plugins/anthropic/tests/effort_param_test.ts` (modified, +35/-0)
-```diff
-@@ -171,6 +171,41 @@ describe('Effort Parameter Tests', () => {
-     );
-   });
- 
-+  test('should pass output_config.effort with max value', async () => {
-+    const mockClient = createMockAnthropicClient({
-+      messageResponse: createMockAnthropicMessage({
-+        text: 'Response with max effort',
-+      }),
-+    });
-+
-+    const plugin = createPlugin({
-+      apiVersion: 'beta',
-+      mockClient,
-+    });
-+
-+    const ai = createGenkitInstance(plugin);
-+
-+    await ai.generate({
-+      model: 'anthropic/claude-opus-5-5',
-+      prompt: 'Generate the most thorough response',
-+      config: {
-+        output_config: {
-+          effort: 'max',
-+        },
-+      },
-+    });
-+
-+    verifyApiCalled(mockClient, 'beta');
-+    const apiRequest = getApiRequest(mockClient, 'beta');
-+
-+    assert.ok(apiRequest.output_config, 'Request should have output_config');
-+    assert.strictEqual(
-+      apiRequest.output_config.effort,
-+      'max',
-+      'effort should be set to max'
-+    );
-+  });
-+
-   test('should pass output_config.effort with medium value', async () => {
-     const mockClient = createMockAnthropicClient({
-       messageResponse: createMockAnthropicMessage({
-```
-
-**File**: `js/plugins/anthropic/tests/index_test.ts` (modified, +40/-7)
-```diff
-@@ -19,7 +19,7 @@ import { genkit, type ActionMetadata } from 'genkit';
- import type { ModelInfo } from 'genkit/model';
- import { describe, it } from 'node:test';
- import anthropic from '../src/index.js';
--import { TEST_ONLY } from '../src/models.js';
-+import { TEST_ONLY, type KnownClaudeModels } from '../src/models.js';
- import { PluginOptions, __testClient } from '../src/types.js';
- 
- import { createMockAnthropicClient } from './mocks/anthropic-client.js';
-@@ -133,8 +133,8 @@ describe('Anthropic Plugin', () => {
-           id: 'claude-haiku-4-5-latest',
-           display_name: 'Claude 4.5 Haiku Latest',
-         },
--        { id: 'claude-sonnet-4-5', display_name: 'Claude 4.5 Sonnet' },
--        { id: 'claude-sonnet-4', display_name: 'Claude 4 Sonnet' },
-+        { id: 'claude-sonnet-4-6', display_name: 'Claude Sonnet 4.6' },
-+        { id: 'claude-opus-5-5', display_name: 'Claude Opus 5.5' },
-         { id: 'claude-new-5-20251212', display_name: 'Claude New 5' },
-         { id: 'claude-experimental-latest' },
-       ],
-@@ -159,12 +159,12 @@ describe('Anthropic Plugin', () => {
-       'Latest variant should be listed separately'
-     );
-     assert.ok(
--      names.includes('anthropic/claude-sonnet-4-5'),
--      'Unknown Claude 4.5 Sonnet should be listed with full model ID'
-+      names.includes('anthropic/claude-sonnet-4-6'),
-+      'Known Claude Sonnet 4.6 model should be listed with full model ID'
-     );
-     assert.ok(
--      names.includes('anthropic/claude-sonnet-4'),
--      'Known Claude Sonnet 4 model should be listed with full model ID'
-+      names.includes('anthropic/claude-opus-5-5'),
-+      'Known Claude Opus 5.5 model should be listed with full model ID'
-     );
-     assert.ok(
-       names.includes('anthropic/claude-new-5-20251212'),
-@@ -186,6 +186,13 @@ describe('Anthropic Plugin', () => {
-       (model) => model.name === 'anthropic/claude-new-5-20251212'
-     );
-     assert.ok(newModelMetadata, 'New model metadata should exist');
-+    const newModelInfo = getModelInfo(newModelMetadata);
-+    assert.deepStrictEqual(
-+      newModelInfo?.supports?.output,
-+      ['text'],
-+      'Unknown models should fall back to text-only output'
-+    );
-+    assert.strictEqual(newModelInfo?.supports?.constrained, undefined);
- 
-     const experimentalMetadata = models.find(
-       (model) => model.name === 'anthropic/claude-experimental-latest'
-@@ -234,6 +241,32 @@ describe('Anthropic Plugin', () => {
-   });
- });
- 
-+describe('Known model list', () => {
-+  const CURRENT_MODELS: KnownClaudeModels[] = [
-+    'claude-fable-5-2',
-+    'claude-fable-5-1',
-+    'claude-fable-5',
-+    'claude-opus-5-5',
-+    'claude-opus-5',
-+    'claude-opus-4-8',
-+    'claude-opus-4-7',
-+    'claude-opus-4-6',
-+    'claude-opus-4-5',
-+    'claude-sonnet-5-5',
-+    'claude-sonnet-5',
-+    'claude-sonnet-4-6',
-+    'claude-haiku-5-5',
-+    'claude-haiku-4-5',
-+  ];
-+
-+  it('lists exactly the current models', () => {
-+    assert.deepStrictEqual(
-+      Object.keys(KNOWN_MODELS).sort(),
-+      [...CURRENT_MODELS].sort()
-+    );
-+  });
-+});
-+
- describe('Per-request API key support', () => {
-   it('should not throw when initialized with apiKey: false', () => {
-     const originalApiKey = process.env.ANTHROPIC_API_KEY;
-```
-
-**File**: `js/plugins/anthropic/tests/live_test.ts` (modified, +8/-8)
-```diff
-@@ -76,7 +76,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
-     });
- 
-     const result = await ai.generate({
--      model: 'anthropic/claude-sonnet-4-5',
-+      model: 'anthropic/claude-sonnet-5-5',
-       prompt:
-         'Generate a fictional person with name "Alice", age 30, and city "New York". Return only the JSON.',
-       output: { schema, format: 'json', constrained: true },
-@@ -111,7 +111,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
-     });
- 
-     const result = await ai.generate({
--      model: anthropic.model('claude-sonnet-4-5'),
-+      model: anthropic.model('claude-sonnet-5-5'),
-       messages: [
-         {
-           role: 'user',
-@@ -170,7 +170,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
-     const streamedChunks: string[] = [];
- 
-     const result = await ai.generate({
--      model: anthropic.model('claude-sonnet-4-5'),
-+      model: anthropic.model('claude-sonnet-5-5'),
-       messages: [
-         {
-           role: 'user',
-@@ -218,7 +218,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
-     });
- 
-     const result = await ai.generate({
--      model: anthropic.model('claude-sonnet-4-5'),
-+      model: anthropic.model('claude-sonnet-5-5'),
-       messages: [
-         {
-           role: 'user',
-@@ -270,7 +270,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
-     });
- 
-     const result = await ai.generate({
--      model: anthropic.model('claude-sonnet-4-5'),
-+      model: anthropic.model('claude-sonnet-5-5'),
-       messages: [
-         {
-           role: 'user',
-@@ -363,7 +363,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
-     });
- 
-     const result = await ai.generate({
--      model: anthropic.model('claude-sonnet-4-5'),
-+      model: anthropic.model('claude-sonnet-5-5'),
-       messages: [
-         {
-           role: 'user',
-@@ -478,7 +478,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
-     await assert.rejects(
-       async () => {
-         await ai.generate({
--          model: anthropic.model('claude-sonnet-4-5'),
-+          model: anthropic.model('claude-sonnet-5-5'),
-           messages: [
-             {
-               role: 'user',
-@@ -537,7 +537,7 @@ describe('Live Anthropic API Tests', { skip: !API_KEY }, () => {
-       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
- 
-     const result = await ai.generate({
--      model: anthropic.model('claude-sonnet-4-5'),
-+      model: anthropic.model('claude-sonnet-5-5'),
-       messages: [
-         {
-           role: 'user',
++- **Unit tests (`tests/*_test.ts`)**: Place unit tests in `tests/*_test.ts`.
++- **Verification**: Run `pnpm build:js` and `pnpm test:js` from the repo root (or `pnpm build` and `pnpm test` in a package directory; rebuild via `pnpm build:js` when editing `core`, `ai`, or `genkit`).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7355** (2026-11-25): fix(go/plugins/compat_oai): filter unlabelled SSE streams and bare CR line endings (@adesinah)
-- **PR #7346** (closed): feat(js)!: make packages ESM-only and build with TypeScript 7 tsc (drop tsup) (@pavelgj)
-- **PR #7335** (closed): build(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 in /go (@dependabot[bot])
-- **PR #7334** (closed): build(deps): bump go.opentelemetry.io/otel/sdk from 1.36.0 to 1.47.0 in /go/samples/mcp-git-pr-explainer (@dependabot[bot])
-- **PR #7333** (closed): build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 in /go (@dependabot[bot])
-- **PR #7330** (2026-11-24): fix(tests): await streaming assertions in flow_server_test (@MichaelDoyle)
+- **PR #7376** (closed): fix(js/core): move `@genkit-ai/firebase` to an optional peer dependency (@genkit-bot)
+- **PR #7361** (2026-11-26): build(js): compile with TypeScript 7 (native tsc) (@pavelgj)
+- **PR #7360** (2026-11-26): feat(js)!: make packages ESM-only and build with tsc (drop tsup) (@pavelgj)
+- **PR #7359** (2026-11-26): feat(js)!: require Node.js 22.12+ (@pavelgj)
+- **PR #7358** (2026-11-26): fix(js): ESM-safe imports (node:util in logging, anthropic SDK deep import, explicit index imports) (@pavelgj)
+- **PR #7357** (2026-11-26): test(js): migrate remaining jest plugin tests to vitest (@pavelgj)
 
 ---
 
@@ -3137,59 +2053,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability
+## X. docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridge
 
 **RULE**:
-When implementing operations in `go/ai/exp/agent.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.agents/rules/go.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4537d179`: go/ai/exp): add Agent.DeleteSession and the SessionDeleter store capability. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `049b39cf`: docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/ai/exp/agent.go`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/rules/go.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-		// A deleted session is not a failure: the work simply stops being
-		// persisted.
-		if !errors.Is(err, ErrSessionDeleted) {
-			logger.Error(ctx, "agent failed to save snapshot",
-				"parentId", parentID,
-				"error", err)
-		}
-// DeleteSession permanently removes every persisted snapshot of a session. A
-// detached run still in flight is aborted first, so the work stops rather than
-// continuing against data that is going away. It reports whether anything was
-// removed and is idempotent: a session with no persisted data is not an error.
-//
-// Resuming by session ID afterwards starts a fresh session, and resuming by
-// snapshot ID fails with [ErrSnapshotNotFound]. A run that is still going when
-// the session is deleted stops persisting instead of failing; it cannot bring
-// the session back. Traces, logs, and durable streams live outside the store
-// and are not touched.
-//
-// This is an in-process API only: no companion action or route is registered
-// for it, so put it behind your own authorization.
-//
-// It returns FAILED_PRECONDITION on a client-managed agent or when the store
-// does not implement [SessionDeleter], and INVALID_ARGUMENT when sessionID is
-// empty.
-func (a *A
+---
+trigger: model_decision
+description: 'Conventions for go/ (Go SDK, plugins, registry/actions, schema generation, GoDoc, and testing). Load before planning, writing, or reviewing changes under go/.'
+---
+
+Read `go/AGENTS.md` before planning, writing, or reviewing changes under `go/`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-		logger.Error(ctx, "agent failed to save snapshot",
-			"parentId", parentID,
-			"error", err)
-			if existing != nil && existing.Status.Terminal() {
-	if err != nil {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4537d179` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `049b39cf` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

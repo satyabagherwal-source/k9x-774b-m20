@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T14:24:03.534Z",
+  "timestamp": "2026-11-27T07:22:09.769Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-skyhook-io-radar-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [skyhook-io-radar-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T14:24:03.534Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:22:09.769Z`  
 > **Learning ID**: `LEARN-EVO-skyhook-io-radar-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `bf2f2dc1`  
+> **Source Version**: `1a8e9c9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T14:23:54.279Z  
+> **Timestamp**: 2026-11-27T07:22:00.046Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T14:23:54.272Z  
+> **Harvest Timestamp**: 2026-11-27T07:22:00.040Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4231 stars
+- **Stars / Engagement**: 4243 stars
 
 ---
 
@@ -1958,6 +1958,7 @@ import (
 	"net/netip"
 	"strings"
 
+	"github.com/skyhook-io/radar/pkg/k8score"
 	"github.com/skyhook-io/radar/pkg/resourceid"
 )
 
@@ -2049,7 +2050,7 @@ func match(q Query, c candidate) (int, []MatchedField, []MatchSnippet, bool) {
 // matchesModifiers reports whether a candidate passes the query's hard
 // filters (kind:, ns:, label:, image:). It reads identity only, never Content.
 func matchesModifiers(q Query, c candidate) bool {
-	if len(q.KindFilter) > 0 && !kindMatches(c.Kind, c.Group, c.Resource, q.KindFilter) {
+	if len(q.KindFilter) > 0 && !q.kindMatches(c.Kind, c.Group, c.Resource, q.KindFilter) {
 		return false
 	}
 	if len(q.NSFilter) > 0 && !sliceContainsFold(q.NSFilter, c.Namespace) {
@@ -2305,25 +2306,14 @@ func kindMatches(kind, group, resource string, filters []string) bool {
 	return false
 }
 
-func sliceContainsFold(haystack []string, needle string) bool {
-	for _, h := range haystack {
-		if strings.EqualFold(h, needle) {
-			return true
-		}
-	}
-	return false
-}
+// shortNameKey names a discovered kubectl short name for one kind in one group.
+type shortNameKey struct{ name, group, kind string }
 
-func anyContainsFold(haystack []string, needle string) bool {
-	low := strings.ToLower(needle)
-	for _, h := range haystack {
-		if strings.Contains(strings.ToLower(h), low) {
-			return true
-		}
-	}
-	return false
-}
-
+func indexShortNames(resources []k8score.APIResource) map[shortNameKey]bool {
+	index := map[shortNameKey]bool{}
+	for _, ar := range resources {
+		for _, name := range ar.ShortNames {
+			index[shortNameKey{strings.ToLower(name), ar.Group, 
 ```
 
 ### Core Architecture Module: `internal/server/ai_engine.go`
@@ -2450,1233 +2440,1324 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fca91040` (2026-11-25)
-**Commit Message**: Answer Flux dependsOn in Related Resources, not only on the Topology screen (#2819)
+### Incident Patch 1: `ffea62d3` (2026-11-26)
+**Commit Message**: Flux: show whether the source is ahead of what is applied, and build Activity from status.history (#2632)
 
-## Summary
+## Description
 
-A Flux Kustomization or HelmRelease named in another one's
-`spec.dependsOn` now appears in Related Resources:
-- **The dependent** lists it under **Depends On**.
-- **The object depended on** lists the dependent under **Required By**,
-a reverse lookup that no Flux view offered before.
+On a Flux Kustomization or HelmRelease detail page, shows whether the
+source has something newer than what Flux applied, builds the Activity
+tab from Flux's own `status.history`, and names HelmRelease upgrades in
+the timeline (#2631).
 
-AI context and MCP `get_resource` list both directions too.
+### What changes
 
-#2630 drew this relationship in the display builder, which serves the
-Topology screen, the GitOps tree and MCP `get_topology`. Related
-Resources comes from the relation families in `pkg/relations`, though,
-and no family read `spec.dependsOn`. So the Topology screen showed the
-edge while the drawer for the same object didn't.
+**Revision chain** (`pkg/gitops/insights/flux_chain.go`,
+`GitOpsStatusStrip`)
+- `Source <rev> · fetched <age> → Applied <rev> · next run in ~Nm → N
+objects` under the header. When the two revisions differ, the Applied
+step uses the warning tone and a `Pending: source is ahead of what is
+applied` badge appears. When the chain shows, the old single `Revision:`
+span is hidden so the revision isn't shown twice. Argo is unchanged.
+- **Primary source** by kind: the Kustomization's `sourceRef`, the
+HelmRelease's `chartRef`, or the generated HelmChart
+(`status.helmChart`) for an inline chart; never the HelmRepository,
+whose revision is an index digest.
+- **Applied**: Kustomization `status.lastAppliedRevision`; HelmRelease
+the deployed history entry's `ociDigest`, or its `chartVersion` when the
+source is a HelmChart.
+- *
 
-**For OSS users:** this helps anyone running Flux, locally or
-in-cluster. On clusters without Flux it does nothing: the family covers
-only Flux Kustomizations and HelmReleases, adds no watches or
-permissions, and changes no API shape.
-
-| Dependent (`radar-review-2819/radar-review-app`) | Depended on
-(`flux-system/radar-review-base`) |
-|---|---|
-| ![Depends On lists both Kustomizations it waits for, across
-namespaces](https://
-
-**File**: `docs/ownership.md` (modified, +1/-0)
+**File**: `docs/gitops.md` (modified, +4/-0)
 ```diff
-@@ -142,6 +142,7 @@ The families so far:
- | `FluxSources` | Flux Kustomizations, HelmReleases, HelmCharts → the GitRepository, OCIRepository, Bucket, ExternalArtifact, HelmRepository or HelmChart they build from, in any namespace (an inline HelmRelease also declares the HelmChart the controller recorded); up the artifact chain, ExternalArtifacts → the ArtifactGenerator their `spec.sourceRef` names (another producer isn't followed), and ArtifactGenerators → the GitRepository, OCIRepository, Bucket, HelmChart or ExternalArtifact their `spec.sources` list | `families.go` |
- | `NodeClasses` | Karpenter NodePools → their provider's NodeClass, or EKS Auto Mode's (`IsTarget`: each provider defines its own kind) | `families.go` |
- | `ClusterClasses` | Cluster API Clusters → the ClusterClass their topology names, in any namespace | `families.go` |
-+| `FluxDependsOn` | A Flux Kustomization or HelmRelease → the object of its own kind it waits for through `spec.dependsOn`, in any namespace (an entry without a namespace means the object's own); Depends On on the waiting object, Required By on the one it waits for | `families.go` |
- | `KnativeEventDestinations` | Knative Triggers, event sources and Channels → where they send events (subscriber, sink, backing channel), in any namespace: core Services and any kind in a Knative group, such as JobSink | `families.go` |
- | `KnativeTriggerBrokers` | Knative Triggers → the Broker they subscribe to (`brokerRef` in any namespace, or the older same-namespace `broker`) | `families.go` |
- | `KnativeRouteRevisions` | Knative Routes → the Revisions their status sends traffic to | `families.go` |
+@@ -36,6 +36,8 @@ Click any row to open a detail page with three top-level tabs.
+ 
+ The revision and its controller's activity time are separate facts. Flux Kustomizations show their latest recorded apply: **Last applied** when it succeeded, or **Last apply attempt** when it did not. Flux re-applies on every interval, so a successful re-apply with no changes also moves **Last applied**. A source, dependency or build failure before apply may not add a history entry, so the time can stay on the previous apply while the Kustomization reports a failure. Flux HelmReleases show **Last deployed** for the currently deployed chart, even if a newer upgrade failed. Argo Applications show **Last checked**, when Argo compared the application with Git. These dates are not Git commit ages. Missing dates are left out, including when an older Radar cannot supply the required history.
+ 
++For a Flux Kustomization or HelmRelease the strip under the header reads as a chain: **Source** (what the primary source has fetched, and when) → **Applied** (the last successful apply; a Kustomization records it only after the apply and its health checks pass) → the number of objects it manages, from `status.inventory` (a HelmRelease without one shows no count). The primary source is the Kustomization's `sourceRef`, the HelmRelease's `chartRef`, or for an inline chart the generated HelmChart (not the HelmRepository, whose revision is an index digest). Digests are compared by value, so `v1@sha256:abc` and `sha256:abc` match; a HelmChart is compared by chart version. A HelmRelease compared by digest shows its deployed chart version with the digest beside it. Before the first apply the chain shows the fetched source alone. A HelmRelease with no deployed release in `status.history` (for example, a failed first install) also shows the fetched source alone. When the two differ, the Applied step turns amber and **Pending: source is ahead of the last successful apply** appears; while the object is suspended that wait is expected, so the step stays neutral and reads **Source is ahead (suspended)**. When Flux recorded an applied revision but Radar can't read what was applied (a HelmRelease whose deployed release has no OCI digest, such as a chart from an ExternalArtifact or a release made before Flux recorded digests), the strip keeps the plain **Revision** line and says nothing about freshness. When Radar can't tell, because the source isn't readable by you, isn't on this cluster, or either side is missing, the chain shows the Applied step alone and says nothing about freshness. While its latest reconcile succeeded (Ready is True), a Kustomization also shows **next run in ~Nm**: its last successful apply plus `spec.interval`. It is an estimate: a new source revision starts a run sooner. It is hidden while suspended, once the time has passed, and whenever the latest reconcile did not succeed, because Flux then retries on `spec.retryInterval` or a dependency's requeue, and a failure before apply leaves no history entry to count from.
++
+ Flux resource drawers show the configured reconciliation interval or **Paused**. They do not calculate a next-run countdown from the last reconciliation request: that request does not establish the controller's schedule. Argo's drawer also omits a countdown because its configured reconciliation interval is not available in the Application status.
+ 
+ Helm **History** keeps the recorded start time of each attempt beside its release status, including failed installs and upgrades. **Current Release** still describes the deployed snapshot. The requested chart version constraint remains in the drawer's **Chart** section and the Resources **Version** cell tooltip. Flux revision and additional-info sections retain **Last handled manual request** as the raw acknowledgement token, which may be arbitrary text rather than a date.
+@@ -74,6 +76,8 @@ OutOfSync alerts in the Issues band at the top of the page are clickable — the
+ 
+ Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline. History `rollbackable` only reports whether an entry has an ID and recorded source(s); auto-sync, lifecycle, in-flight operations and RBAC are separate checks.
+ 
++For Flux, the rows come from the object's own `status.history`, newest first. A Kustomization row is one rendered manifest set and outcome, as Flux records them: the revision it last reconciled, when it was first and last reconciled, how long the last run took (**took**), how many runs it had and whether they succeeded (**Applied** or **Failed** with Flux's status). Flux keys an entry on the manifest digest and the outcome, so a new commit that renders the same manifests updates the existing row, and the same manifests failing and succeeding are two rows. Flux keeps the last 5 entries. A HelmRelease row 
 ```
 
-**File**: `packages/k8s-ui/src/components/resources/renderers/FluxHelmReleaseRenderer.tsx` (modified, +1/-21)
+**File**: `docs/integrations.md` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,6 @@
- import type { ReactNode } from 'react'
- import { FluxHealthCheckExprs } from './FluxHealthCheckExprs'
--import { Package, Settings, CheckCircle2, History, FileCode2, GitBranch } from 'lucide-react'
-+import { Package, Settings, CheckCircle2, History, FileCode2 } from 'lucide-react'
- import { clsx } from 'clsx'
- import { Section, PropertyList, Property, ConditionsSection, ProblemAlerts, ResourceLink } from '../../ui/drawer-components'
- import { GitOpsStatusBadge, ManagedResourcesList, SyncCountdown } from '../../gitops'
-@@ -79,9 +79,6 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
-   const values = spec.values || {}
-   const valueKeys = Object.keys(values)
+@@ -930,7 +930,7 @@ These are dependencies, not owners: topology draws each source upstream, with
+ the edge pointing into the object that reads it. A link does not prove that Flux
+ permits the reference or has produced an artifact.
  
--  // Dependencies
--  const dependsOn: Array<{ name: string; namespace?: string }> = spec.dependsOn || []
--
-   // Chart reference
-   const chartRef = spec.chart?.spec || {}
-   const sourceRef = chartRef.sourceRef || {}
-@@ -138,23 +135,6 @@ export function FluxHelmReleaseRenderer({ data, onNavigate, renderValuesReferenc
-         </PropertyList>
-       </Section>
+-**Diagnosis**: Conditions extracted to issues (Ready=False, Stalled=True, Reconciling=True). Per-resource diff and recent events not yet available for Flux (HelmRelease-installed resources don't carry `last-applied-configuration`; tracked in [#601](https://github.com/skyhook-io/radar/issues/601)).
++**Diagnosis**: Conditions extracted to issues (Ready=False, Stalled=True, Reconciling=True). The Activity tab lists `status.history` and the root's recent notable events; the timeline names a HelmRelease's chart and release change. Per-resource diff not yet available for Flux (HelmRelease-installed resources don't carry `last-applied-configuration`; tracked in [#601](https://github.com/skyhook-io/radar/issues/601)).
  
--      {/* Dependencies */}
--      {dependsOn.length > 0 && (
--        <Section title={`Dependencies (${dependsOn.length})`} icon={GitBranch}>
--          <div className="flex flex-wrap gap-1">
--            {dependsOn.map((dep, idx) => (
--              <ResourceLink
--                key={idx}
--                name={dep.name}
--                kind="helmreleases"
--                namespace={dep.namespace || data.metadata?.namespace || ''}
--                onNavigate={onNavigate}
--              />
--            ))}
--          </div>
--        </Section>
--      )}
--
-       {/* Values */}
-       {(valuesFrom.length > 0 || valueKeys.length > 0) && (
-         <Section title="Values" icon={FileCode2} defaultExpanded={valuesFrom.length > 0}>
+ ### Flux Operator
+ 
 ```
 
-**File**: `packages/k8s-ui/src/components/resources/renderers/KustomizationRenderer.tsx` (modified, +3/-23)
+**File**: `internal/k8s/history.go` (modified, +51/-11)
 ```diff
-@@ -1,6 +1,6 @@
--import { Layers, FolderTree, GitBranch } from 'lucide-react'
-+import { Layers, FolderTree } from 'lucide-react'
- import { FluxHealthCheckExprs } from './FluxHealthCheckExprs'
--import { Section, PropertyList, Property, ConditionsSection, ProblemAlerts, ResourceLink } from '../../ui/drawer-components'
-+import { Section, PropertyList, Property, ConditionsSection, ProblemAlerts } from '../../ui/drawer-components'
- import { GitOpsStatusBadge, ManagedResourcesList, SyncCountdown } from '../../gitops'
- import { fluxConditionsToGitOpsStatus, parseFluxInventory, type FluxCondition } from '../../../types/gitops'
- import { TimeValue } from '../../ui/ScheduleValue'
-@@ -12,7 +12,7 @@ interface KustomizationRendererProps {
-   onNavigate?: (ref: { kind: string; namespace: string; name: string }) => void
- }
- 
--export function KustomizationRenderer({ data, onNavigate }: KustomizationRendererProps) {
-+export function KustomizationRenderer({ data }: KustomizationRendererProps) {
-   const status = data.status || {}
-   const spec = data.spec || {}
-   const conditions = (status.conditions || []) as FluxCondition[]
-@@ -62,9 +62,6 @@ export function KustomizationRenderer({ data, onNavigate }: KustomizationRendere
-     })
-   }
- 
--  // Dependencies
--  const dependsOn: Array<{ name: string; namespace?: string }> = spec.dependsOn || []
--
-   // Source reference
-   const sourceRef = spec.sourceRef || {}
- 
-@@ -119,23 +116,6 @@ export function KustomizationRenderer({ data, onNavigate }: KustomizationRendere
-         </PropertyList>
-       </Section>
- 
--      {/* Dependencies */}
--      {dependsOn.length > 0 && (
--        <Section title={`Dependencies (${dependsOn.length})`} icon={GitBranch}>
--          <div className="flex flex-wrap gap-1">
--            {dependsOn.map((dep, idx) => (
--              <ResourceLink
--                key={idx}
--                name={dep.name}
--                kind="kustomizations"
--                namespace={dep.namespace || data.metadata?.namespace || ''}
--                onNavigate={onNavigate}
--              />
--            ))}
--          </div>
--        </Section>
--      )}
--
-       {/* Health checks */}
-       {spec.healthChecks && spec.healthChecks.length > 0 && (
-         <Section title={`Health Checks (${spec.healthChecks.length})`} defaultExpanded={false}>
-```
-
-**File**: `pkg/gitops/insights/flux_sources.go` (modified, +10/-17)
-```diff
-@@ -48,26 +48,19 @@ func attachFluxBlocker(issue Issue, root *unstructured.Unstructured, tree *gitop
- 	if tree == nil {
- 		return issue
- 	}
--	switch issue.Reason {
--	case "SourceNotReady", "ArtifactFailed", "DependencyNotReady":
--	default:
--		return issue
--	}
- 	direct := map[Ref]bool{}
--	for _, source := range gitops.FluxSourceReferences(root) {
--		if issue.Reason == "DependencyNotReady" {
--			break
-+	switch issue.Reason {
-+	case "SourceNotReady", "ArtifactFailed":
-+		for _, source := range gitops.FluxSourceReferences(root) {
-+			direct[Ref(source.Ref)] = true
+@@ -3097,16 +3097,56 @@ func diffFluxHelmRelease(oldObj, newObj any) ([]FieldChange, []string) {
  		}
--		direct[Ref{Group: source.Group, Kind: source.Kind, Namespace: source.Namespace, Name: source.Name}] = true
--	}
--	// Inventory ownership can replace a dependsOn edge without erasing the declaration.
--	deps, _, _ := unstructured.NestedSlice(root.Object, "spec", "dependsOn")
--	for _, raw := range deps {
--		dep, ok := raw.(map[string]any)
--		if issue.Reason != "DependencyNotReady" || !ok || gitops.StringValue(dep["name"]) == "" {
--			continue
-+	case "DependencyNotReady":
-+		// Inventory ownership can replace a dependsOn edge without erasing the declaration.
-+		for _, dep := range gitops.FluxDependsOn(root) {
-+			direct[Ref(dep)] = true
- 		}
--		direct[Ref{Group: tree.Root.Ref.Group, Kind: tree.Root.Ref.Kind, Namespace: firstNonEmpty(gitops.StringValue(dep["namespace"]), root.GetNamespace()), Name: gitops.StringValue(dep["name"])}] = true
-+	default:
-+		return issue
  	}
- 	quoted := fluxQuotedReference.FindAllStringSubmatch(issue.Message, -1)
- 	sourceMessage := strings.ToLower(issue.Message)
+ 
+-	// Check last applied revision (Helm chart version)
+-	oldRevision, _, _ := unstructured.NestedInt64(oldStatus, "lastAppliedRevision")
+-	newRevision, _, _ := unstructured.NestedInt64(newStatus, "lastAppliedRevision")
+-	if oldRevision != newRevision && newRevision != 0 {
+-		changes = append(changes, FieldChange{
+-			Path:     "status.lastAppliedRevision",
+-			OldValue: oldRevision,
+-			NewValue: newRevision,
+-		})
+-		summary = append(summary, fmt.Sprintf("revision: %d→%d", oldRevision, newRevision))
++	// The newest status.history entry names the release; it is what current
++	// Flux records, so its summary line wins over lastAppliedRevision's.
++	historyChanged := false
++	if newHistory := gitops.FluxHelmHistory(newHR); len(newHistory) > 0 {
++		n := newHistory[0]
++		outcome := ""
++		if n.Status != "" && n.Status != "deployed" {
++			outcome = ", " + n.Status
++		}
++		newValue := fmt.Sprintf("%s (release %d)", n.ChartVersion, n.Version)
++		if oldHistory := gitops.FluxHelmHistory(oldHR); len(oldHistory) == 0 {
++			historyChanged = true
++			changes = append(changes, FieldChange{Path: "status.history[0]", NewValue: newValue})
++			summary = append(summary, fmt.Sprintf("chart %s (release %d%s)", n.ChartVersion, n.Version, outcome))
++		} else if o := oldHistory[0]; o.Version != n.Version || o.ChartVersion != n.ChartVersion {
++			historyChanged = true
++			changes = append(changes, FieldChange{Path: "status.history[0]", OldValue: fmt.Sprintf("%s (release %d)", o.ChartVersion, o.Version), NewValue: newValue})
++			summary = append(summary, fmt.Sprintf("chart %s → %s (release %d → %d%s)", o.ChartVersion, n.ChartVersion, o.Version, n.Version, outcome))
++		} else if o.Status != n.Status && n.Status != "" {
++			// Helm keeps the release number while an upgrade moves from
++			// pending-upgrade to its outcome.
++			historyChanged = true
++			changes = append(changes, FieldChange{Path: "status.history[0]", OldValue: fmt.Sprintf("%s (release %d, %s)", o.ChartVersion, o.Version, o.Status), NewValue: fmt.Sprintf("%s (release %d, %s)", n.ChartVersion, n.Version, n.Status)})
++			summary = append(summary, fmt.Sprintf("chart %s (release %d, %s)", n.ChartVersion, n.Version, n.Status))
++		}
++	}
++
++	// Check last applied revision: a chart version string on current Flux,
++	// an integer on objects from older API versions.
++	appliedChanged := false
++	oldApplied, _, _ := unstructured.NestedString(oldStatus, "lastAppliedRevision")
++	newApplied, _, _ := unstructured.NestedString(newStatus, "lastAppliedRevision")
++	if newApplied != "" {
++		if oldApplied != newApplied {
++			appliedChanged = true
++			changes = append(changes, FieldChange{Path: "status.lastAppliedRevision", OldValue: oldApplied, NewValue: newApplied})
++			if !historyChanged {
++				summary = append(summary, fmt.Sprintf("revision: %s→%s", oldApplied, newApplied))
++			}
++		}
++	} else {
++		oldRevision, _, _ := unstructured.NestedInt64(oldStatus, "lastAppliedRevision")
++		newRevision, _, _ := unstructured.NestedInt64(newStatus, "lastAppliedRevision")
++		if oldRevision != newRevision && newRevision != 0 {
++			appliedChanged = true
++			changes = append(changes, FieldChange{Path: "status.lastAppliedRevision", OldValue: oldRevision, NewValue: newRevision})
++			if !historyChanged {
++				summary = append(summary, fmt.Sprintf("revision: %d→%d", oldRevision, newRevision))
++			}
++		}
+ 	}
+ 
+ 	// Check last released revision
+@@ -3118,7 +3158,7 @@ func diffFluxHelmRelease(oldObj, newObj any) ([]FieldChange, []string) {
+ 			OldValue: oldReleased,
+ 			NewValue: newReleased,
+ 		})
+-		if oldRevision == newRevision { // Only show if not already showing applied revision
++		if !appliedChanged && !historyChanged { // Only show if not already showing the release change
+ 			summary = append(summary, fmt.Sprintf("released: rev %d→%d", oldReleased, newReleased))
+ 		}
+ 	}
 ```
 
-**File**: `pkg/gitops/source_refs.go` (modified, +34/-0)
+**File**: `internal/k8s/history_flux_test.go` (added, +101/-0)
 ```diff
-@@ -82,6 +82,40 @@ func FluxSourceReferences(root *unstructured.Unstructured) []FluxSourceRef {
- 	return append([]FluxSourceRef{{Ref: resourceid.NewRef(group, kind, namespace, name), Role: role, Path: strings.Join(fields, ".")}}, chartRefs...)
- }
- 
-+// FluxDependsOn reads a Kustomization's or HelmRelease's spec.dependsOn: each
-+// entry names an object of the root's own kind and API group, the only
-+// targets Flux accepts there, in the root's namespace unless the entry names
-+// another. An entry without a name, or naming the root itself, names nothing.
-+func FluxDependsOn(root *unstructured.Unstructured) []resourceid.Ref {
-+	if root == nil {
-+		return nil
-+	}
-+	kind := resourceid.GroupKind{Group: resourceid.GroupFromAPIVersion(root.GetAPIVersion()), Kind: root.GetKind()}
-+	if kind != fluxKustomizationKind && kind != fluxHelmReleaseKind {
-+		return nil
-+	}
-+	entries, _, _ := unstructured.NestedSlice(root.Object, "spec", "dependsOn")
-+	var refs []resourceid.Ref
-+	for _, entry := range entries {
-+		dep, ok := entry.(map[string]any)
-+		if !ok {
-+			continue
-+		}
-+		name, namespace := StringValue(dep["name"]), StringValue(dep["namespace"])
-+		if name == "" {
-+			continue
-+		}
-+		if namespace == "" {
-+			namespace = root.GetNamespace()
-+		}
-+		if namespace == root.GetNamespace() && name == root.GetName() {
-+			continue
-+		}
-+		refs = append(refs, resourceid.NewRef(kind.Group, kind.Kind, namespace, name))
-+	}
-+	return refs
+@@ -0,0 +1,101 @@
++package k8s
++
++import (
++	"strings"
++	"testing"
++
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++)
++
++func fluxHelmRelease(status map[string]any) *unstructured.Unstructured {
++	return &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": "helm.toolkit.fluxcd.io/v2", "kind": "HelmRelease",
++		"metadata": map[string]any{"namespace": "team", "name": "app"},
++		"status":   status,
++	}}
 +}
 +
- func isSourceMap(raw any) bool { _, ok := raw.(map[string]any); return ok }
- 
- // externalArtifactGenerator follows an ExternalArtifact to the ArtifactGenerator
++func helmEntry(version int64, chart, lastDeployed string) map[string]any {
++	return map[string]any{"version": version, "chartVersion": chart, "status": "deployed", "lastDeployed": lastDeployed}
++}
++
++func diffPath(diff *DiffInfo, path string) bool {
++	if diff == nil {
++		return false
++	}
++	for _, f := range diff.Fields {
++		if f.Path == path {
++			return true
++		}
++	}
++	return false
++}
++
++func TestFluxHelmReleaseDiffNamesChartChange(t *testing.T) {
++	oldHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(58, "5.4.0", "2026-11-09T09:00:00Z")}})
++	newHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z"), helmEntry(58, "5.4.0", "2026-11-09T09:00:00Z")}})
++	diff := ComputeDiff("HelmRelease", oldHR, newHR)
++	if !diffPath(diff, "status.history[0]") || !strings.Contains(diff.Summary, "chart 5.4.0 → 5.5.0 (release 58 → 59)") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffReadsStringAppliedRevision(t *testing.T) {
++	diff := ComputeDiff("HelmRelease", fluxHelmRelease(map[string]any{"lastAppliedRevision": "5.4.0"}), fluxHelmRelease(map[string]any{"lastAppliedRevision": "5.5.0"}))
++	if !diffPath(diff, "status.lastAppliedRevision") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffKeepsInt64AppliedRevision(t *testing.T) {
++	diff := ComputeDiff("HelmRelease", fluxHelmRelease(map[string]any{"lastAppliedRevision": int64(3)}), fluxHelmRelease(map[string]any{"lastAppliedRevision": int64(4)}))
++	if !diffPath(diff, "status.lastAppliedRevision") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffIgnoresUnchangedHistory(t *testing.T) {
++	oldHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z")}})
++	newHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(59, "5.5.0", "2026-11-10T10:00:00Z")}})
++	if diffPath(ComputeDiff("HelmRelease", oldHR, newHR), "status.history[0]") {
++		t.Fatal("unchanged release reported as a chart change")
++	}
++}
++
++func TestFluxHelmReleaseDiffNamesReleaseOutcome(t *testing.T) {
++	failed := helmEntry(60, "5.6.0", "2026-11-11T09:00:00Z")
++	failed["status"] = "failed"
++	oldHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z")}})
++	newHR := fluxHelmRelease(map[string]any{"history": []any{failed, helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z")}})
++	if diff := ComputeDiff("HelmRelease", oldHR, newHR); diff == nil || !strings.Contains(diff.Summary, "chart 5.5.0 → 5.6.0 (release 59 → 60, failed)") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffNamesFirstInstall(t *testing.T) {
++	newHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(1, "5.5.0", "2026-11-10T09:00:00Z")}})
++	diff := ComputeDiff("HelmRelease", fluxHelmRelease(map[string]any{}), newHR)
++	if !diffPath(diff, "status.history[0]") || !strings.Contains(diff.Summary, "chart 5.5.0 (release 1)") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffNamesTheChangeOnce(t *testing.T) {
++	oldHR := fluxHelmRelease(map[string]any{"lastAppliedRevision": "5.4.0", "history": []any{helmEntry(58, "5.4.0", "2026-11-09T09:00:00Z")}})
++	newHR := fluxHelmRelease(map[string]any{"lastAppliedRevision": "5.5.0", "history": []any{helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z")}})
++	diff := ComputeDiff("HelmRelease", oldHR, newHR)
++	if !diffPath(diff, "status.lastAppliedRevision") || strings.Contains(diff.Summary, "revision: 5.4.0→5.5.0") || !strings.Contains(diff.Summary, "chart 5.4.0 → 5.5.0") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffNamesStatusChangeOnSameRelease(t *testing.T) {
++	pending := helmEntry(60, "5.6.0", "2026-11-11T09:00:00Z")
++	pending["status"] = "pending-upgrade"
++	failed := helmEntry(60, "5.6.0", "2026-11-11T09:00:00Z")
++	failed["status"] = "failed"
++	diff := ComputeDiff("HelmRelease", fluxHelmRelease(map[string]any{"history": []any{pending}}), fluxHelmRelease(map[string]any{"history": []any{failed}}))
++	if !diffPath(diff, "status.history[0]") || !strings.Contains(diff.Summary, "chart 5.6.0 (release 60, failed)") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
 ```
 
-**File**: `pkg/gitops/source_refs_test.go` (modified, +36/-0)
+**File**: `internal/server/gitops_handlers_test.go` (modified, +38/-0)
 ```diff
-@@ -51,6 +51,42 @@ func TestFluxSourceReferencesRejectInvalidDeclarations(t *testing.T) {
+@@ -15,7 +15,9 @@ import (
+ 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
++	fakediscovery "k8s.io/client-go/discovery/fake"
+ 	"k8s.io/client-go/kubernetes/fake"
++	k8stesting "k8s.io/client-go/testing"
+ 
+ 	"github.com/skyhook-io/radar/internal/auth"
+ 	"github.com/skyhook-io/radar/internal/k8s"
+@@ -429,6 +431,42 @@ func TestWriteGitOpsBuildErrorRefusesNonGitOpsRoot(t *testing.T) {
  	}
  }
  
-+func TestFluxDependsOn(t *testing.T) {
-+	if got := FluxDependsOn(nil); len(got) != 0 {
-+		t.Fatalf("nil root declares %v", got)
++func TestFluxChainHidesUnreadableSource(t *testing.T) {
++	fd := &fakediscovery.FakeDiscovery{Fake: &k8stesting.Fake{}}
++	fd.Resources = []*metav1.APIResourceList{{GroupVersion: "source.toolkit.fluxcd.io/v1", APIResources: []metav1.APIResource{
++		{Name: "gitrepositories", Kind: "GitRepository", Namespaced: true, Verbs: metav1.Verbs{"get", "list", "watch"}},
++	}}}
++	restore, err := k8s.SetTestResourceDiscovery(fd)
++	if err != nil {
++		t.Fatal(err)
 +	}
-+	for _, tc := range []struct{ group, version, kind string }{
-+		{"kustomize.toolkit.fluxcd.io", "v1", "Kustomization"},
-+		{"helm.toolkit.fluxcd.io", "v2", "HelmRelease"},
++	t.Cleanup(restore)
++	s := &Server{permCache: auth.NewPermissionCache()}
++	s.permCache.Set("chain-user", nil, &auth.UserPermissions{AllowedNamespaces: []string{"team"}})
++	s.permCache.Get("chain-user", nil).SetCanI("get", "source.toolkit.fluxcd.io", "gitrepositories", "team", false)
++	req := &gitopsRequest{AllowedNamespaces: []string{"team"}}
++	root := &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": "kustomize.toolkit.fluxcd.io/v1", "kind": "Kustomization",
++		"metadata": map[string]any{"namespace": "team", "name": "app"},
++		"spec":     map[string]any{"sourceRef": map[string]any{"kind": "GitRepository", "name": "repo"}},
++		"status":   map[string]any{"lastAppliedRevision": "main@sha1:aaa"},
++	}}
++	tree := &gitopstree.ResourceTree{
++		Root: gitopstree.Node{ID: "root", Role: gitopstree.RoleRoot},
++		Nodes: []gitopstree.Node{
++			{ID: "root", Role: gitopstree.RoleRoot},
++			{ID: "repo", Role: gitopstree.RoleDeclared, Dependency: true, Ref: gitopstree.ResourceRef{Group: "source.toolkit.fluxcd.io", Kind: "GitRepository", Namespace: "team", Name: "repo"}, Data: map[string]any{"artifactRevision": "main@sha1:bbb"}},
++		},
++		Edges: []gitopstree.Edge{{Source: "repo", Target: "root", Type: gitopstree.EdgeSource}},
++	}
++	r := httptest.NewRequest(http.MethodGet, "/api/gitops/tree", nil)
++	r = r.WithContext(auth.ContextWithUser(r.Context(), &auth.User{Username: "chain-user"}))
++	summary := gitopsinsights.Build(root, s.filterGitOpsTreeForUser(r, req, tree), nil).Summary
++	if summary.SourceRevision != "" || summary.Pending != nil || summary.AppliedRevision != "main@sha1:aaa" {
++		t.Fatalf("hidden source fed the chain: %+v", summary)
++	}
++}
++
+ func TestWriteGitOpsPermissionDenied(t *testing.T) {
+ 	original := apierrors.NewForbidden(schema.GroupResource{Group: "source.toolkit.fluxcd.io", Resource: "gitrepositories"}, "repo", fmt.Errorf("User opaque-user cannot get resource"))
+ 	denied := &gitops.PermissionDenied{Verb: "get", Group: "source.toolkit.fluxcd.io", Resource: "gitrepositories", Namespace: "sources", Err: original}
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/SyncCountdown.test.ts` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { expect, it } from 'vitest'
++import { parseInterval } from './SyncCountdown'
++
++it('parses Go durations as Flux writes them', () => {
++  expect(parseInterval('5m')).toBe(300)
++  expect(parseInterval('1h30m')).toBe(5400)
++  expect(parseInterval('30s')).toBe(30)
++  expect(parseInterval('1.5m')).toBe(90)
++  expect(parseInterval('1500ms')).toBe(1.5)
++  expect(parseInterval('1m30.5s')).toBe(90.5)
++})
++
++it('refuses what is not a duration', () => {
++  expect(parseInterval('')).toBeNull()
++  expect(parseInterval('0s')).toBeNull()
++  expect(parseInterval('10')).toBeNull()
++  expect(parseInterval('5d')).toBeNull()
++  expect(parseInterval('m5')).toBeNull()
++})
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/SyncCountdown.tsx` (modified, +8/-32)
+```diff
+@@ -86,42 +86,18 @@ export function SyncCountdown({ interval, lastSyncTime, suspended, compact = fal
+   )
+ }
+ 
++const UNIT_SECONDS: Record<string, number> = { h: 3600, m: 60, s: 1, ms: 0.001 }
++
+ /**
+- * Parses a Kubernetes duration string (e.g., "5m", "1h30m", "30s") into seconds
++ * Parses a Go duration as Flux's interval fields accept it ("5m", "1h30m",
++ * "1.5m", "1500ms") into seconds; null for anything else.
+  */
+-function parseInterval(interval: string): number | null {
+-  if (!interval) return null
+-
++export function parseInterval(interval: string): number | null {
++  if (!/^(\d+(\.\d+)?(ms|h|m|s))+$/.test(interval)) return null
+   let totalSeconds = 0
+-  let index = 0
+-
+-  while (index < interval.length) {
+-    const start = index
+-    while (index < interval.length) {
+-      const code = interval.charCodeAt(index)
+-      if (code < 48 || code > 57) break
+-      index += 1
+-    }
+-    if (start === index) {
+-      index += 1
+-      continue
+-    }
+-    const value = parseInt(interval.slice(start, index), 10)
+-    const unit = interval[index]
+-    if (unit === 'h') {
+-      totalSeconds += value * 3600
+-      index += 1
+-    } else if (unit === 'm') {
+-      totalSeconds += value * 60
+-      index += 1
+-    } else if (unit === 's') {
+-      totalSeconds += value
+-      index += 1
+-    } else if (index < interval.length) {
+-      index += 1
+-    }
++  for (const [, value, unit] of interval.matchAll(/(\d+(?:\.\d+)?)(ms|h|m|s)/g)) {
++    totalSeconds += Number(value) * UNIT_SECONDS[unit]
+   }
+-
+   return totalSeconds > 0 ? totalSeconds : null
+ }
+ 
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/insights/GitOpsActivityInsightView.test.tsx` (modified, +32/-0)
+```diff
+@@ -57,6 +57,38 @@ describe('GitOpsActivityInsightView rollback', () => {
+   })
+ })
+ 
++describe('Flux Activity rows', () => {
++  it('shows runs, duration and events', () => {
++    const html = render({
++      summary: { tool: 'fluxcd', kind: 'Kustomization', namespace: 'team', name: 'app' },
++      history: [
++        { kind: 'revision', id: 'sha256:y', revision: 'main@sha1:ccc', phase: 'Applied', runs: 2, duration: '984.729484ms', deployedAt: '2026-11-08T10:00:00Z' },
++        { kind: 'event', id: 'HealthCheckFailed', phase: 'Warning', message: 'timeout waiting for app', deployedAt: '2026-11-10T11:00:00Z' },
++        { kind: 'revision', id: 'sha256:x', revision: 'main@sha1:bbb', phase: 'Applied', runs: 12, duration: '1.102930992s', firstAt: '2026-11-09T10:00:00Z', deployedAt: '2026-11-10T10:00:00Z' },
++      ],
++    })
++    expect(html).toContain('>Applied<')
++    expect(html).toContain('12 runs')
++    expect(html).toContain('took 1.1s')
++    expect(html).toContain('first ')
++    expect(html).toContain('took 985ms')
++    expect(html).not.toContain('984.729484ms')
++    expect(html).toContain('HealthCheckFailed')
++    expect(html).toContain('timeout waiting for app')
++  })
++})
++
++describe('GitOpsActivityInsightView condition rows', () => {
++  it('titles a failing condition by its type, not by the phase its chip repeats', () => {
++    const html = render({
++      summary: { tool: 'fluxcd', kind: 'Kustomization', namespace: 'flux-system', name: 'apps' },
++      history: [{ kind: 'condition', id: 'Ready', phase: 'Failed', message: 'kustomize build failed' }],
++    } as GitOpsInsight)
++    expect(html).toContain('Ready condition')
++    expect(html).not.toMatch(/>Failed<\/span>\s*<[^>]*>[^<]*Failed/)
++  })
++})
++
+ // Without patch access the user can't disable auto-sync either, so the role
+ // reason comes before the auto-sync advice.
+ it('names a role denial ahead of the auto-sync advice on Rollback', async () => {
+```
+
+---
+
+### Incident Patch 2: `55412b85` (2026-11-26)
+**Commit Message**: Send NKP clusters to the NKP connect steps; name the basePath fix (#2959)
+
+On Nutanix NKP, Radar is installed from the NKP partner catalog and
+configured in NKP, served at `/radar`. The "Radar Cloud" dialog doesn't
+send those installs to Radar Cloud's NKP steps: it opens the plain
+connect page or the generic steps, which say to commit a values patch to
+Git. On NKP that edit is undone, and the generic patch kept `basePath:
+/radar`, so the chart refused it with "basePath is not supported with
+cloud.enabled=true ... unset one of them". A catalog default can't be
+unset.
+
+**What changes**
+- `cloud_connect_self.go`: on an NKP cluster, `/api/cloud/connect/self`
+returns `platform: "nkp"` and a `wizardUrl` that opens Radar Cloud's NKP
+steps (`/install?clusters=many&platform=nkp`), whatever the install
+inspection found. Every other cluster gets the same answer as before.
+- NKP is recognized by `k8s.IsNKP`, the check behind the platform shown
+on the home page (the `kommander-flux` namespace), now exported. It
+reads as Radar's own ServiceAccount, not as the signed-in user, who may
+not be able to list namespaces.
+- `CloudFunnelButton.tsx`: on NKP the dialog says NKP manages this Radar
+and that 
+
+**File**: `deploy/helm/radar/templates/deployment.yaml` (modified, +4/-1)
+```diff
+@@ -85,7 +85,10 @@
+ {{- end }}
+ {{- end }}
+ {{- if and $basePath .Values.cloud.enabled }}
+-{{- fail "basePath is not supported with cloud.enabled=true: Radar Cloud owns the URL path, and the binary refuses the combination at startup — unset one of them" }}
++{{- /* Radar Cloud reaches Radar at the root path, and the binary refuses a
++       prefix in Cloud mode. Installs that set basePath by default (NKP's
++       catalog) can't unset it, only override it, so name the override. */}}
++{{- fail (printf "basePath %q is not supported with cloud.enabled=true. To connect this Radar to Radar Cloud, set basePath: \"\" (an empty string), or turn Radar Cloud off with cloud.enabled: false." $basePath) }}
+ {{- end }}
+ {{- /* URLs registered at the IdP have to carry the prefix: Radar's OIDC routes
+        move under it, and an unprefixed URI is not routed here, so login fails
+```
+
+**File**: `deploy/helm/radar/tests/cloud_base_path_test.yaml` (added, +37/-0)
+```diff
+@@ -0,0 +1,37 @@
++suite: basePath with Radar Cloud
++templates:
++  - deployment.yaml
++release:
++  name: radar
++  namespace: radar
++tests:
++  # NKP's catalog sets basePath: /radar as a default that settings can only
++  # override, so the message names the override rather than "unset".
++  - it: names the override when basePath is set with Radar Cloud
++    set:
++      basePath: /radar
++      cloud:
++        enabled: true
++        hubURL: https://hub.example.com
++        enrollment:
++          key: rhe_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789_-abcd
++    asserts:
++      - failedTemplate:
++          errorMessage: 'basePath "/radar" is not supported with cloud.enabled=true. To connect this Radar to Radar Cloud, set basePath: "" (an empty string), or turn Radar Cloud off with cloud.enabled: false.'
++
++  - it: renders with Radar Cloud when basePath is overridden with an empty string
++    set:
++      basePath: ""
++      cloud:
++        enabled: true
++        hubURL: https://hub.example.com
++        enrollment:
++          key: rhe_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789_-abcd
++    asserts:
++      - notFailedTemplate: {}
++      - notContains:
++          path: spec.template.spec.containers[0].args
++          content: --base-path=/radar
++      - contains:
++          path: spec.template.spec.containers[0].args
++          content: --cloud-enrollment-key-file=/etc/radar/cloud-enrollment/key
+```
+
+**File**: `deploy/helm/radar/values.yaml` (modified, +2/-1)
+```diff
+@@ -289,7 +289,8 @@ service:
+ # URL path prefix that Radar itself serves under, e.g. /radar. Set this when
+ # your ingress forwards a subpath through to the service without stripping it.
+ # Leave empty for root serving or for ingresses that rewrite /radar -> /.
+-# Cannot be combined with cloud.enabled — Radar Cloud owns the URL path.
++# Must be "" with cloud.enabled, since Radar Cloud reaches Radar at the root
++# path. Where a default sets it (NKP sets /radar), override it with "".
+ basePath: ""
+ 
+ # Hostnames that Radar answers when auth.mode is none, besides localhost, IP
+```
+
+**File**: `internal/k8s/cluster_detection.go` (modified, +8/-5)
+```diff
+@@ -211,7 +211,7 @@ func GetClusterInfo(ctx context.Context) (*ClusterInfo, error) {
+ 
+ // GetClusterPlatform attempts to detect the Kubernetes platform/provider
+ func GetClusterPlatform(ctx context.Context) (string, error) {
+-	if isNKP(ctx) {
++	if IsNKP(ctx) {
+ 		return "nkp", nil
+ 	}
+ 
+@@ -258,10 +258,13 @@ func GetClusterPlatform(ctx context.Context) (string, error) {
+ 	return "generic", nil
+ }
+ 
+-// isNKP trusts the namespace cache only once it holds namespaces: an empty
+-// list may just be unsynced. Otherwise it asks the API once per cluster, with
+-// a short limit so cluster info never waits on a slow namespace read.
+-func isNKP(ctx context.Context) bool {
++// IsNKP reports whether the cluster has the NKP namespace, as Radar's own
++// ServiceAccount sees it, whatever the signed-in user may read. A denied read
++// counts as no. It trusts the namespace cache only once it holds namespaces:
++// an empty list may just be unsynced. Otherwise it asks the API once per
++// cluster, with a short limit so cluster info never waits on a slow
++// namespace read.
++func IsNKP(ctx context.Context) bool {
+ 	if cache := GetResourceCache(); cache != nil {
+ 		if nsLister := cache.Namespaces(); nsLister != nil {
+ 			if nsList, err := nsLister.List(labels.Everything()); err == nil && len(nsList) > 0 {
+```
+
+**File**: `internal/k8s/cluster_detection_test.go` (modified, +2/-2)
+```diff
+@@ -288,7 +288,7 @@ func TestInvalidatePlatformCacheRetiresInflightNKPRead(t *testing.T) {
+ 	unblock := func() { once.Do(func() { close(release) }) }
+ 	defer unblock()
+ 	finished := make(chan bool, 1)
+-	go func() { finished <- isNKP(context.Background()) }()
++	go func() { finished <- IsNKP(context.Background()) }()
+ 	<-entered
+ 	invalidated := make(chan struct{})
+ 	go func() { InvalidatePlatformCache(); close(invalidated) }()
+@@ -298,7 +298,7 @@ func TestInvalidatePlatformCacheRetiresInflightNKPRead(t *testing.T) {
+ 		t.Fatal("platform invalidation waited for a Kubernetes read")
+ 	}
+ 	unblock()
+-	if <-finished || isNKP(context.Background()) || reads.Load() != 2 {
++	if <-finished || IsNKP(context.Background()) || reads.Load() != 2 {
+ 		t.Fatal("stale namespace lookup survived invalidation")
+ 	}
+ }
+```
+
+**File**: `internal/server/cloud_connect_self.go` (modified, +27/-0)
+```diff
+@@ -33,6 +33,10 @@ type cloudConnectSelf struct {
+ 	Release        string `json:"release,omitempty"`
+ 	DeploymentName string `json:"deploymentName,omitempty"`
+ 	Chart          string `json:"chart,omitempty"`
++	// Platform is "nkp" on a Nutanix NKP cluster, where Radar comes from
++	// NKP's catalog and is configured in NKP, so the link opens Radar
++	// Cloud's NKP steps.
++	Platform string `json:"platform,omitempty"`
+ 	// Controller names the GitOps object that owns this install, when one does.
+ 	Controller    string       `json:"controller,omitempty"`
+ 	ControllerRef *subject.Ref `json:"controllerRef,omitempty"`
+@@ -60,6 +64,7 @@ func (s *Server) handleCloudConnectSelf(w http.ResponseWriter, r *http.Request)
+ 	defer cancel()
+ 
+ 	self := s.inspectSelfInstall(ctx, r, os.Getenv("MY_POD_NAMESPACE"), os.Getenv("MY_DEPLOYMENT_NAME"))
++	s.routeNKP(ctx, &self)
+ 	w.Header().Set("Cache-Control", "no-store")
+ 	s.writeJSON(w, self)
+ }
+@@ -161,6 +166,28 @@ func (s *Server) inspectSelfInstall(ctx context.Context, r *http.Request, namesp
+ 	return self
+ }
+ 
++// routeNKP sends an NKP cluster's Radar to Radar Cloud's NKP steps, whatever
++// the install inspection found. The NKP check reads as Radar's own
++// ServiceAccount: the signed-in user may not be able to list namespaces, and
++// the dashboard already shows every user the platform.
++func (s *Server) routeNKP(ctx context.Context, self *cloudConnectSelf) {
++	if !k8s.IsNKP(ctx) {
++		return
++	}
++	self.Platform = "nkp"
++	self.WizardURL = s.nkpConnectURL()
++}
++
++// nkpConnectURL opens Radar Cloud's NKP steps: settings pasted into the Radar
++// app's workspace configuration in NKP. They cover the whole workspace, so
++// the link names no namespace or release.
++func (s *Server) nkpConnectURL() string {
++	q := cloudFunnelUTM("wizard-install-link-nkp-install")
++	q.Set("clusters", "many")
++	q.Set("platform", "nkp")
++	return s.cloudConnectCfg.HubAppURL + "/install?" + q.Encode()
++}
++
+ // verifiedController returns the candidate whose ownership was confirmed
+ // against the live object, or nil when none was. Candidate order reflects
+ // discovery, not confidence.
+```
+
+**File**: `internal/server/cloud_connect_self_test.go` (modified, +73/-0)
+```diff
+@@ -1,13 +1,21 @@
+ package server
+ 
+ import (
++	"context"
++	"encoding/json"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"net/url"
+ 	"strings"
+ 	"testing"
+ 
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/rest"
++
+ 	"github.com/skyhook-io/radar/internal/cloudinstall"
++	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/pkg/subject"
+ )
+ 
+@@ -131,3 +139,68 @@ func TestVerifiedControllerIgnoresCandidateOrder(t *testing.T) {
+ 		t.Fatal("a stale-only candidate list must not yield an owner")
+ 	}
+ }
++
++// setSelfServiceAccount installs Radar's own client, answering only the NKP
++// namespace read, so a test can tell it apart from the signed-in user's.
++func setSelfServiceAccount(t *testing.T, nkp bool) {
++	t.Helper()
++	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.URL.Path != "/api/v1/namespaces/kommander-flux" || !nkp {
++			http.NotFound(w, r)
++			return
++		}
++		w.Header().Set("Content-Type", "application/json")
++		_ = json.NewEncoder(w).Encode(corev1.Namespace{
++			TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Namespace"},
++			ObjectMeta: metav1.ObjectMeta{Name: "kommander-flux"},
++		})
++	}))
++	t.Cleanup(api.Close)
++	client, err := kubernetes.NewForConfig(&rest.Config{Host: api.URL})
++	if err != nil {
++		t.Fatalf("create Kubernetes client: %v", err)
++	}
++	// Hide the shared fixture's cache: its namespace list would answer the
++	// NKP question before the ServiceAccount client is asked.
++	restore := k8s.SwapResourceCacheForTest(nil)
++	k8s.SetTestClient(client)
++	k8s.InvalidatePlatformCache()
++	t.Cleanup(func() {
++		restore()
++		k8s.InvalidatePlatformCache()
++	})
++}
++
++func TestRouteNKPSendsNKPClustersToTheNKPSteps(t *testing.T) {
++	s := &Server{cloudConnectCfg: CloudConnectConfig{HubAppURL: "https://app.radarhq.io"}}
++	flux := "https://app.radarhq.io/install?existing=1&method=flux&ns=ws&release=ws-radar"
++	for _, tc := range []struct {
++		name string
++		nkp  bool
++		in   cloudConnectSelf
++	}{
++		{name: "NKP, install recognized", nkp: true, in: cloudConnectSelf{Ownership: "gitops", WizardURL: flux}},
++		{name: "NKP, install not recognized", nkp: true, in: cloudConnectSelf{Ownership: "unknown"}},
++		{name: "not NKP", nkp: false, in: cloudConnectSelf{Ownership: "gitops", WizardURL: flux}},
 +	} {
-+		t.Run(tc.kind, func(t *testing.T) {
-+			root := &unstructured.Unstructured{Object: map[string]any{
-+				"apiVersion": tc.group + "/" + tc.version, "kind": tc.kind,
-+				"metadata": map[string]any{"namespace": "team", "name": "app"},
-+				"spec": map[string]any{"dependsOn": []any{
-+					map[string]any{"name": "base"},
-+					map[string]any{"name": "app"},
-+					map[string]any{"name": ""},
-+					map[string]any{"namespace": "shared"},
-+					"invalid",
-+					map[string]any{"name": "app", "namespace": "shared"},
-+				}},
-+			}}
-+			want := []resourceid.Ref{
-+				resourceid.NewRef(tc.group, tc.kind, "team", "base"),
-+				resourceid.NewRef(tc.group, tc.kind, "shared", "app"),
++		t.Run(tc.name, func(t *testing.T) {
++			setSelfServiceAccount(t, tc.nkp)
++			self := tc.in
++			s.routeNKP(context.Background(), &self)
++			if !tc.nkp {
++				if self.Platform != "" || self.WizardURL != flux {
++					t.Fatalf("non-NKP cluster changed: %#v", self)
++				}
++				return
 +			}
-+			if got := FluxDependsOn(root); !reflect.DeepEqual(got, want) {
-+				t.Fatalf("dependencies = %v, want %v", got, want)
++			u, err := url.Parse(self.WizardURL)
++			if err != nil {
++				t.Fatal(err)
 +			}
-+			root.SetAPIVersion("custom.example/v1")
-+			if got := FluxDependsOn(root); len(got) != 0 {
-+				t.Fatalf("foreign %s declares %v", tc.kind, got)
++			q := u.Query()
++			if self.Platform != "nkp" || u.Path != "/install" || q.Get("platform") != "nkp" || q.Get("clusters") != "many" || q.Has("existing") {
++				t.Fatalf("NKP cluster got %#v", self)
 +			}
 +		})
 +	}
 +}
-+
- func TestInlineHelmReleaseUsesRecordedChart(t *testing.T) {
- 	root := &unstructured.Unstructured{Object: map[string]any{
- 		"apiVersion": "helm.toolkit.fluxcd.io/v2", "kind": "HelmRelease",
 ```
 
-**File**: `pkg/gitops/tree/flux.go` (modified, +2/-27)
+**File**: `web/src/api/client.ts` (modified, +3/-0)
 ```diff
-@@ -28,12 +28,6 @@ const (
- 
- func fluxRelatedResources(root *unstructured.Unstructured) []relatedResource {
- 	var out []relatedResource
--	rootRef := ResourceRef{
--		Group:     apiGroup(root),
--		Kind:      root.GetKind(),
--		Namespace: root.GetNamespace(),
--		Name:      root.GetName(),
--	}
- 
- 	for _, source := range gitops.FluxSourceReferences(root) {
- 		out = append(out, relatedResource{
-@@ -43,28 +37,9 @@ func fluxRelatedResources(root *unstructured.Unstructured) []relatedResource {
- 		})
- 	}
- 
--	deps, _, _ := unstructured.NestedSlice(root.Object, "spec", "dependsOn")
--	for _, item := range deps {
--		m, ok := item.(map[string]any)
--		if !ok {
--			continue
--		}
--		name := gitops.StringValue(m["name"])
--		if name == "" {
--			continue
--		}
--		namespace := gitops.StringValue(m["namespace"])
--		if namespace == "" {
--			namespace = root.GetNamespace()
--		}
--		ref := ResourceRef{
--			Group:     rootRef.Group,
--			Kind:      rootRef.Kind,
--			Namespace: namespace,
--			Name:      name,
--		}
-+	for _, dep := range gitops.FluxDependsOn(root) {
- 		out = append(out, relatedResource{
--			Ref:  ref,
-+			Ref:  ResourceRef{Group: dep.Group, Kind: dep.Kind, Namespace: dep.Namespace, Name: dep.Name},
- 			Type: EdgeDependsOn,
- 			Data: map[string]any{"relationship": "depends on"},
- 		})
-```
-
-**File**: `pkg/relations/families.go` (modified, +30/-2)
-```diff
-@@ -251,8 +251,8 @@ var FluxSources = &Family{
- 	Name:          "fluxSources",
- 	Projection:    project("configures", true, "Dependencies,ConfigRefs", "Consumers,Dependents"),
- 	Sources: []Source{
--		{Kind: resourceid.GroupKind{Group: "kustomize.toolkit.fluxcd.io", Kind: "Kustomization"}, Targets: []resourceid.GroupKind{fluxSource("GitRepository"), fluxSource("OCIRepository"), fluxSource("Bucket"), fluxSource("ExternalArtifact")}},
--		{Kind: resourceid.GroupKind{Group: "helm.toolkit.fluxcd.io", Kind: "HelmRelease"}},
-+		{Kind: fluxKustomization, Targets: []resourceid.GroupKind{fluxSource("GitRepository"), fluxSource("OCIRepository"), fluxSource("Bucket"), fluxSource("ExternalArtifact")}},
-+		{Kind: fluxHelmRelease},
- 		{Kind: fluxSource("HelmChart"), Targets: []resourceid.GroupKind{fluxSource("HelmRepository"), fluxSource("GitRepository"), fluxSource("Bucket")}},
- 		{Kind: fluxSource("ExternalArtifact"), Targets: []resourceid.GroupKind{fluxArtifactGenerator}},
- 		{Kind: fluxArtifactGenerator, Targets: []resourceid.GroupKind{fluxSource("GitRepository"), fluxSource("OCIRepository"), fluxSource("Bucket"), fluxSource("HelmChart"), fluxSource("ExternalArtifact")}},
-@@ -269,6 +269,34 @@ var FluxSources = &Family{
- 	},
+@@ -2616,6 +2616,9 @@ export interface CloudConnectSelf {
+     namespace?: string
+     name: string
+   }
++  // 'nkp' when Nutanix NKP manages this install: wizardUrl then opens Radar
++  // Cloud's NKP steps. Older Radar omits it.
++  platform?: 'nkp'
+   wizardUrl?: string
  }
  
-+// FluxDependsOn is the family of the Kustomization or HelmRelease a Flux
-+// Kustomization or HelmRelease waits for through spec.dependsOn: an object of
-+// its own kind, in any namespace.
-+var FluxDependsOn = &Family{
-+	ScanRationale: "Indexing a Flux object's dependsOn exceeds the per-update admission bar (BenchmarkRelationIndexUpdate), as its sourceRef does.",
-+	Name:          "fluxDependsOn",
-+	Projection:    project("uses", false, "Dependencies", "Dependents"),
-+	Sources: []Source{
-+		{Kind: fluxKustomization, Targets: []resourceid.GroupKind{fluxKustomization}},
-+		{Kind: fluxHelmRelease, Targets: []resourceid.GroupKind{fluxHelmRelease}},
-+	},
-+	Targets:        []resourceid.GroupKind{fluxKustomization, fluxHelmRelease},
-+	CrossNamespace: true,
-+	Declared: func(obj runtime.Object, visit func(Declaration)) error {
-+		if u, ok := obj.(*unstructured.Unstructured); ok {
-+			for _, r := range gitops.FluxDependsOn(u) {
-+				visit(Declaration{Target: r, Path: "spec.dependsOn[]"})
-+			}
-+		}
-+		return nil
-+	},
+```
+
+---
+
+### Incident Patch 3: `24f9fc8f` (2026-11-26)
+**Commit Message**: Build every Helm operation from the request's connection (#2869)
+
+Helm in Radar re-read the kubeconfig file to reach the cluster, while
+the rest of Radar uses the connection it loaded. If the file changed
+while Radar ran, Helm could read or change releases on a different
+cluster from the one on screen, and a Helm read that straddled a cluster
+switch could combine one cluster's release Secrets with another's
+namespaces, permissions or resource health. This builds every
+cluster-facing Helm operation from one Kubernetes connection, taken once
+when the operation starts. Part of moving each cluster connection's
+state into one object. No wire change.
+
+**Change.**
+- **One connection per Helm operation.** A request bound to a connection
+(writes, since #2833) uses that connection; an unbound read takes the
+installed connection once at its entry point. Release storage (the
+release Secrets), namespace authorization, discovery, Flux ownership,
+resource health, release history and the Helm SDK's action configuration
+all come from it. This covers the REST Helm routes, the MCP Helm tools,
+Issues' Helm release collection and Upgrade readiness's Helm collector.
+- **Permissions for a bound read.** A
+
+**File**: `cmd/explorer/cloud_cmd.go` (modified, +3/-2)
+```diff
+@@ -629,12 +629,13 @@ func buildLocalInstallClients(kubeconfig, contextName string) (localInstallClien
+ 	if err := helm.InitializeWithRESTConfig(clients.RESTConfig); err != nil {
+ 		return localInstallClients{}, fmt.Errorf("helm init: %w", err)
+ 	}
++	driver := helm.GetClient(context.Background())
+ 	return localInstallClients{
+ 		Kubernetes: clients.Kubernetes,
+ 		Dynamic:    clients.Dynamic,
+ 		Discovery:  clients.Discovery,
+-		Helm:       helm.GetClient(),
+-		Releases:   helm.GetClient(),
++		Helm:       driver,
++		Releases:   driver,
+ 	}, nil
+ }
+ 
+```
+
+**File**: `docs/connection-lifecycle.md` (modified, +4/-4)
+```diff
+@@ -10,12 +10,12 @@ Bound writes are the routes wrapped with `bindWrite` in `internal/server/server.
+ - **Drain** keeps running on the connection it was admitted to, even if Radar switches meanwhile. Exec and port-forward sessions end when Radar switches.
+ - **Code that only has a context** (MCP tools, reachability) gets its clients from `k8s.ClientFromContext` / `DynamicClientFromContext`, which return the bound connection's clients when the request was admitted with one.
+ - **CloudNativePG** captures its clients and caches in one step and checks there that the connection is still the bound one (`k8s.StillBound`).
+-- **Helm** install, upgrade (including source upgrades and values edits), rollback, uninstall and source association, streaming variants included, use the REST config captured at admission. The permission preflight checks that the admitted connection is still serving, because it reads shared capabilities; after that, Helm stays on the admitted cluster even if Radar switches while a repository downloads.
++- **Helm** captures one connection for a release read or write. Namespace authorization, release Secrets, discovery, Flux ownership and live resource health come from that connection. Install, upgrade, rollback, uninstall and source association (including streaming requests) use the REST config captured at write admission. Editing a kubeconfig file while Radar runs takes effect for Helm on the next connection. Exec credentials and token files still refresh through client-go.
+ - **CAPI connect** takes its client snapshot, then checks that the admitted connection is still serving: a switch before the check is refused, and one after it can't change the snapshot.
+ - **Velero** checks the Velero server's state in the shared cache, which a switch completing mid-request could replace; the write itself stays on the admitted connection.
+ - **Diagnose** (the in-product agent) is fenced by its runs: every switch marks all runs stale (`RunManager.OnContextSwitch`), and a stale run takes no further turns, so an investigation of one cluster can't continue, or apply a fix, on another.
+ 
+-Not bound: external MCP callers name no connection, so each tool call uses the connection serving when it starts. Velero's download requests (run messages, contents, logs) aren't bound. An interrupted Helm action is not recovered.
++External MCP callers name no connection. Each Helm write or preview uses the connection serving when the call starts. An uninstall confirmation also requires the admission that issued its preview, even after a reconnect under the same context name. Velero's download requests (run messages, contents, logs) aren't bound. An interrupted Helm action is not recovered.
+ 
+ **Only when Radar serves from a kubeconfig.** An in-cluster Radar can't change clusters (no kubeconfig contexts; CAPI connect is refused in-cluster), and during a rolling update two of its pods, each with its own IDs, answer the same browser. It publishes no ID and ignores one a request names; its writes still run on one captured set of clients.
+ 
+@@ -48,9 +48,9 @@ sequenceDiagram
+     Note over Radar: 2. before-switch callbacks: Diagnose runs marked stale,<br/>Argo CD connection reset · in-flight operations cancelled
+     Note over Radar: 3. sessions stopped: port-forwards, exec terminals
+     Radar->>Radar: 4. retire K7QXM2RDTA-1 · writes get 503
+-    Radar->>A: 4. tear down: cost source, Prometheus, traffic, Helm,<br/>metrics history, PolicyReport index, DynamicResourceCache,<br/>ResourceDiscovery, ResourceCache, timeline
++    Radar->>A: 4. tear down: cost source, Prometheus, traffic,<br/>metrics history, PolicyReport index, DynamicResourceCache,<br/>ResourceDiscovery, ResourceCache, timeline
+     Note over Radar: 5. install B's clients · restore the namespace scope ·<br/>drop capability, permission, server-version and platform caches
+-    Radar->>B: 6. build: timeline, ResourceCache + ResourceDiscovery,<br/>DynamicResourceCache, then metrics history, Helm,<br/>traffic, Prometheus in the background
++    Radar->>B: 6. build: timeline, ResourceCache + ResourceDiscovery,<br/>DynamicResourceCache, then metrics history,<br/>traffic, Prometheus in the background
+     alt build fails
+       Radar-->>Tab: disconnected · no ID · "Back to A"
+     else build succeeds
+```
+
+**File**: `docs/mcp.md` (modified, +3/-3)
+```diff
+@@ -398,9 +398,9 @@ directly. A completed rollback returns `revision`, `targetRevision` and
+ 
+ Without `confirm`, uninstall returns a preview with `revision`, a `confirm` token
+ and the release status. Pass the token back as `confirm` to execute. It expires
+-after five minutes, is bound to the caller, cluster and release state, and is
+-single-use: a retried confirm, such as after a client timeout, is refused. If the
+-release changed, preview again.
++after five minutes and can be used once, by the same caller on the same serving
++connection. If the release changes or Radar reconnects, preview again, even if
++the kubeconfig context still has the same name.
+ 
+ The preview follows Helm's own rules:
+ 
+```
+
+**File**: `internal/app/bootstrap.go` (modified, +2/-2)
+```diff
+@@ -330,7 +330,7 @@ func BuildTimelineStoreConfig(cfg AppConfig) (timeline.StoreConfig, error) {
+ 	}
+ }
+ 
+-// RegisterCallbacks registers Helm, timeline, traffic, and Prometheus reset/reinit
++// RegisterCallbacks initializes Helm repository settings and registers timeline, traffic, and Prometheus reset/reinit
+ // functions used for both initial cluster initialization and context switching,
+ // and prepares local per-context integration settings. Must be called before
+ // InitializeCluster; callers pass the returned config to CreateServer.
+@@ -340,7 +340,7 @@ func RegisterCallbacks(cfg AppConfig, timelineStoreCfg timeline.StoreConfig) App
+ 	if err != nil {
+ 		log.Fatalf("Invalid startup configuration: %v", err)
+ 	}
+-	k8s.RegisterHelmFuncs(helm.ResetClient, helm.ReinitClient)
++	helm.Initialize()
+ 
+ 	RegisterLastContextMemory(cfg)
+ 
+```
+
+**File**: `internal/helm/chart_sources_test.go` (modified, +2/-2)
+```diff
+@@ -102,7 +102,7 @@ func chartSourceTestServer(t *testing.T, versions ...string) *httptest.Server {
+ func newChartSourceTestClient(t *testing.T) *Client {
+ 	t.Helper()
+ 	dir := t.TempDir()
+-	return &Client{settings: &cli.EnvSettings{RepositoryConfig: filepath.Join(dir, "repositories.yaml"), RepositoryCache: dir}}
++	return &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{RepositoryConfig: filepath.Join(dir, "repositories.yaml"), RepositoryCache: dir}}}
+ }
+ 
+ func TestEnsureClassicRepositoryDoesNotHoldMutexAcrossNetwork(t *testing.T) {
+@@ -381,7 +381,7 @@ func TestRepositoryConfigurationPersistsAcrossClientRestart(t *testing.T) {
+ 	if _, err := c.ensureClassicRepository(server.URL, "repo"); err != nil {
+ 		t.Fatal(err)
+ 	}
+-	restarted := &Client{settings: &cli.EnvSettings{RepositoryConfig: c.settings.RepositoryConfig, RepositoryCache: c.settings.RepositoryCache}}
++	restarted := &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{RepositoryConfig: c.settings.RepositoryConfig, RepositoryCache: c.settings.RepositoryCache}}}
+ 	versions, err := restarted.sourceVersions(ChartSourceCandidate{Type: "repository", Reference: "repo", URL: server.URL}, "app")
+ 	if err != nil || len(versions) != 1 || versions[0] != "1.2.3" {
+ 		t.Fatalf("restart recovery = %+v, %v", versions, err)
+```
+
+**File**: `internal/helm/client.go` (modified, +135/-220)
+```diff
+@@ -75,9 +75,14 @@ var httpClient = &http.Client{
+ 
+ // Client provides access to Helm releases
+ type Client struct {
+-	mu         sync.RWMutex
+-	settings   *cli.EnvSettings
+-	kubeconfig string
++	*repositorySettings
++	conn       *k8s.Connection
++	restConfig *rest.Config
 +}
 +
-+var (
-+	fluxKustomization = resourceid.GroupKind{Group: "kustomize.toolkit.fluxcd.io", Kind: "Kustomization"}
-+	fluxHelmRelease   = resourceid.GroupKind{Group: "helm.toolkit.fluxcd.io", Kind: "HelmRelease"}
++type repositorySettings struct {
++	mu       sync.RWMutex
++	settings *cli.EnvSettings
+ 	// chartPathLocator is a test seam for chart transport. Production callers
+ 	// leave it nil and use locateChartPath, which wires Helm's registry client
+ 	// for OCI references.
+@@ -86,17 +91,11 @@ type Client struct {
+ 	ociTags ociTagLister
+ 	// listings shares recent classic-index downloads between version listings.
+ 	listings recentIndexes
+-	// restConfig, when set, is the explicit rest.Config all actions target —
+-	// used by callers that resolve the cluster themselves before Radar's k8s
+-	// singleton is up (the CLI install driver), so Helm can't diverge onto a
+-	// different kubeconfig current-context than the caller's own client.
+-	restConfig *rest.Config
+ }
+ 
+ var (
+ 	globalClient *Client
+ 	clientOnce   sync.Once
+-	helmClientMu sync.Mutex
+ )
+ 
+ // ensureHelmWritablePaths sets HELM_CACHE_HOME, HELM_CONFIG_HOME, and HELM_DATA_HOME
+@@ -139,22 +138,14 @@ func isDirWritable(dir string) bool {
+ }
+ 
+ // Initialize sets up the global Helm client
+-func Initialize(kubeconfig string) error {
+-	var initErr error
++func Initialize() {
+ 	clientOnce.Do(func() {
+ 		ensureHelmWritablePaths()
+ 		settings := cli.New()
+-		if kubeconfig != "" {
+-			settings.KubeConfig = kubeconfig
+-		}
+-		globalClient = &Client{
+-			settings:   settings,
+-			kubeconfig: kubeconfig,
+-		}
++		globalClient = &Client{repositorySettings: &repositorySettings{settings: settings}}
+ 		log.Printf("Helm client initialized (cache=%s, config=%s, data=%s)",
+ 			settings.RepositoryCache, settings.RepositoryConfig, settings.PluginsDirectory)
+ 	})
+-	return initErr
+ }
+ 
+ // InitializeWithRESTConfig sets up the global Helm client to operate against an
+@@ -166,86 +157,91 @@ func InitializeWithRESTConfig(restCfg *rest.Config) error {
+ 	clientOnce.Do(func() {
+ 		ensureHelmWritablePaths()
+ 		globalClient = &Client{
+-			settings:   cli.New(),
+-			restConfig: restCfg,
++			repositorySettings: &repositorySettings{settings: cli.New()},
++			restConfig:         restCfg,
+ 		}
+ 	})
+ 	return nil
+ }
+ 
+-// GetClient returns the global Helm client
+-func GetClient() *Client {
+-	return globalClient
++// GetClient captures the request's connection while sharing the process's
++// repository settings and index. It returns the global client directly if it
++// was initialized with an explicit REST config. It returns nil before
++// initialization or if the connection has neither a REST config nor a client.
++func GetClient(ctx context.Context) *Client {
++	if globalClient == nil {
++		return nil
++	}
++	if globalClient.restConfig != nil {
++		return globalClient
++	}
++	conn := k8s.BoundOrCurrent(ctx)
++	if conn.Config() == nil && conn.Client() == nil {
++		return nil
++	}
++	return globalClient.forConnection(conn)
++}
++
++func (c *Client) forConnection(conn *k8s.Connection) *Client {
++	return &Client{repositorySettings: c.repositorySettings, conn: conn}
++}
++
++func (c *Client) capture(ctx context.Context) (*Client, context.Context) {
++	if c.restConfig != nil {
++		return c, k8s.WithConnection(ctx, nil)
++	}
++	if conn := k8s.ConnectionFrom(ctx); conn != nil {
++		if c.conn == conn {
++			return c, ctx
++		}
++		return c.forConnection(conn), ctx
++	}
++	if c.conn != nil {
++		return c, k8s.WithConnection(ctx, c.conn)
++	}
++	ctx = k8s.CaptureConnection(ctx)
++	return c.forConnection(k8s.ConnectionFrom(ctx)), ctx
++}
++
++func (c *Client) config() *rest.Config {
++	if c.restConfig != nil {
++		return c.restConfig
++	}
++	return c.conn.Config()
+ }
+ 
+ // NewStandaloneClient returns a Helm client bound to an explicit rest.Config,
+ // independent of the process-global client. Every action configuration it
+-// builds targets exactly this config (restConfig wins in restClientGetter), so
++// builds targets exactly this config, so
+ // a later kubeconfig context switch in the host process cannot retarget its
+ // writes — the property the Cloud install flow depends on while a prepared
+ // install waits for Hub approval.
+ func NewStandaloneClient(restCfg *rest.Config) *Client {
+ 	ensureHelmWritablePaths()
+ 	return &Client{
+-		settings:   cli.New(),
+-		restConfig: rest.CopyConfig(restCfg),
++		repositorySettings: &repositorySettings{settings: cli.New()},
++		restConfig:         rest.CopyConfig(restCfg),
+ 	}
+ }
+ 
+-// ResetClient clears the Helm client instance
+-// This must be called before ReinitClient when switching contexts
+-func ResetClient() {
+-	helmClientMu.Lock()
+-	defer helmClientMu.Unlock()
+-
+-	globalClient = nil
+-	clientOnce = sync.Once{}
+-}
+-
+-// ReinitClient reinitializes the Helm client after a context switch
+-// Must call ResetClient first
+-func ReinitClient(kubeconfig string) error {
+-	return Initialize(kubeconfig)
+-}
+-
+ // getActionConfig creates a new action 
+```
+
+**File**: `internal/helm/client_test.go` (modified, +24/-22)
+```diff
+@@ -18,6 +18,8 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/skyhook-io/radar/internal/k8s"
++
+ 	"github.com/skyhook-io/radar/pkg/helmhistory"
+ 
+ 	"helm.sh/helm/v3/pkg/action"
+@@ -779,8 +781,8 @@ spec:
+             port: 8080
+ `
+ 
+-	left, _ := parseManifestResourceObjects(oldManifest, "demo")
+-	right, _ := parseManifestResourceObjects(newManifest, "demo")
++	left, _ := parseManifestResourceObjects(k8s.Current(), oldManifest, "demo")
++	right, _ := parseManifestResourceObjects(k8s.Current(), newManifest, "demo")
+ 	removed, added, common := diffResourceRefs(resourceRefsFromRendered(left), resourceRefsFromRendered(right))
+ 	modified, unchanged := diffRenderedResourceObjects(common, left, right)
+ 
+@@ -848,8 +850,8 @@ spec:
+         image: nginx:1.25
+ `
+ 
+-	left, _ := parseManifestResourceObjects(oldManifest, "demo")
+-	right, _ := parseManifestResourceObjects(newManifest, "demo")
++	left, _ := parseManifestResourceObjects(k8s.Current(), oldManifest, "demo")
++	right, _ := parseManifestResourceObjects(k8s.Current(), newManifest, "demo")
+ 	_, _, common := diffResourceRefs(resourceRefsFromRendered(left), resourceRefsFromRendered(right))
+ 	modified, unchanged := diffRenderedResourceObjects(common, left, right)
+ 
+@@ -883,8 +885,8 @@ spec:
+   size: medium
+ `
+ 
+-	left, _ := parseManifestResourceObjects(oldManifest, "demo")
+-	right, _ := parseManifestResourceObjects(newManifest, "demo")
++	left, _ := parseManifestResourceObjects(k8s.Current(), oldManifest, "demo")
++	right, _ := parseManifestResourceObjects(k8s.Current(), newManifest, "demo")
+ 	_, _, common := diffResourceRefs(resourceRefsFromRendered(left), resourceRefsFromRendered(right))
+ 	modified, unchanged := diffRenderedResourceObjects(common, left, right)
+ 
+@@ -916,8 +918,8 @@ spec:
+   size: medium
+ `
+ 
+-	left, _ := parseManifestResourceObjects(oldManifest, "demo")
+-	right, _ := parseManifestResourceObjects(newManifest, "demo")
++	left, _ := parseManifestResourceObjects(k8s.Current(), oldManifest, "demo")
++	right, _ := parseManifestResourceObjects(k8s.Current(), newManifest, "demo")
+ 	_, _, common := diffResourceRefs(resourceRefsFromRendered(left), resourceRefsFromRendered(right))
+ 	modified, unchanged := diffRenderedResourceObjects(common, left, right)
+ 
+@@ -930,7 +932,7 @@ spec:
+ }
+ 
+ func TestParseManifestResourceObjectsUsesMetadataName(t *testing.T) {
+-	resources, parseErrors := parseManifestResourceObjects(`apiVersion: apps/v1
++	resources, parseErrors := parseManifestResourceObjects(k8s.Current(), `apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: cart
+@@ -955,7 +957,7 @@ spec:
+ }
+ 
+ func TestParseManifestResourceObjectsKeepsClusterScopedNamespaceEmpty(t *testing.T) {
+-	resources, parseErrors := parseManifestResourceObjects(`apiVersion: rbac.authorization.k8s.io/v1
++	resources, parseErrors := parseManifestResourceObjects(k8s.Current(), `apiVersion: rbac.authorization.k8s.io/v1
+ kind: ClusterRole
+ metadata:
+   name: chart-reader
+@@ -975,7 +977,7 @@ rules: []
+ }
+ 
+ func TestParseManifestResourceObjectsReportsParseErrors(t *testing.T) {
+-	resources, parseErrors := parseManifestResourceObjects(`apiVersion: v1
++	resources, parseErrors := parseManifestResourceObjects(k8s.Current(), `apiVersion: v1
+ kind: ConfigMap
+ metadata:
+   name: good
+@@ -1066,7 +1068,7 @@ func TestExtractHookDiagnosticsSurfacesFailedHookDeletePolicy(t *testing.T) {
+ 		},
+ 	}
+ 
+-	hooks := extractHooks(rel)
++	hooks := extractHooks(k8s.Current(), rel)
+ 	diagnostics := extractHookDiagnostics(hooks)
+ 
+ 	if len(hooks) != 1 {
+@@ -1099,7 +1101,7 @@ func TestExtractHooksOmitsZeroTimes(t *testing.T) {
+ 		},
+ 	}
+ 
+-	hooks := extractHooks(rel)
++	hooks := extractHooks(k8s.Current(), rel)
+ 	if len(hooks) != 1 {
+ 		t.Fatalf("len(hooks) = %d, want 1", len(hooks))
+ 	}
+@@ -1128,7 +1130,7 @@ metadata:
+ 			},
+ 		},
+ 	}
+-	hooks := extractHooks(rel)
++	hooks := extractHooks(k8s.Current(), rel)
+ 	detail := &HelmReleaseDetail{
+ 		Name:            rel.Name,
+ 		Namespace:       rel.Namespace,
+@@ -1531,10 +1533,10 @@ generated: "2026-10-16T00:00:00Z"
+ 		t.Fatal(err)
+ 	}
+ 
+-	client := &Client{settings: &cli.EnvSettings{
++	client := &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{
+ 		RepositoryConfig: repoFile,
+ 		RepositoryCache:  cacheDir,
+-	}}
++	}}}
+ 	rel := &release.Release{
+ 		Name: "monitoring",
+ 		Chart: &chart.Chart{Metadata: &chart.Metadata{
+@@ -1584,7 +1586,7 @@ generated: "2026-10-14T00:00:00Z"
+ `), 0o600); err != nil {
+ 		t.Fatal(err)
+ 	}
+-	client := &Client{settings: &cli.EnvSettings{RepositoryConfig: repoFile, RepositoryCache: cacheDir}}
++	client := &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{RepositoryConfig: repoFile, RepositoryCache: cacheDir}}}
+ 
+ 	rel := &release.Release{
+ 		Name: "cloudnative-pg",
+@@ -1651,10 +1653,10 @@ entries:
+ 		writeIndex(name, versions)
+ 	}
+ 
+-	return &Client{settings: &cli.EnvSettings{
++	return &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{
+ 		RepositoryConfig: repoFile,
+ 		RepositoryCache
+```
+
+**File**: `internal/helm/connection_read_test.go` (added, +166/-0)
+```diff
+@@ -0,0 +1,166 @@
++package helm
++
++import (
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"sync/atomic"
++	"testing"
++
++	"github.com/go-chi/chi/v5"
++	"github.com/skyhook-io/radar/internal/k8s"
++	pkgauth "github.com/skyhook-io/radar/pkg/auth"
++	"helm.sh/helm/v3/pkg/release"
++	authv1 "k8s.io/api/authorization/v1"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/kubernetes/fake"
++	"k8s.io/client-go/rest"
 +)
 +
- // NodeClasses is the family of the NodeClass a Karpenter NodePool's nodes
- // are launched from, whichever provider defines it: a Karpenter provider's,
- // or EKS Auto Mode's NodeClass.
-```
-
----
-
-### Incident Patch 2: `e34e1c92` (2026-11-25)
-**Commit Message**: Keep Related Resources quiet while Radar warms up, and refresh the open view (#2917)
-
-## Summary
-
-Right after Radar starts, its informers take tens of seconds to a few
-minutes to sync on a CRD-heavy cluster. Until then, Related Resources
-listed every kind still loading as a warning, and the open drawer never
-refreshed:
-
-> Couldn't check GlobalAccelerator (still loading),
-WorkflowArtifactGCTask (still loading), WorkflowEventBinding (still
-loading), … (dozens of kinds)
-
-On a ConfigMap or Pod, which have no children, this created a Children
-section whose only content was that list. The "Radar doesn't collect…"
-hint likewise named every uncollected kind; one test cluster had 162.
-
-Now:
-- **Startup loading** is a short hint beside the Children (or Managed
-By) label, not body text.
-- **Every kind list** names three and counts the rest.
-- **The open view refreshes itself** until loading finishes.
-
-The server's coverage answer is unchanged, so MCP, the cascade-delete
-dialog and other readers still see every gap.
-
-**For OSS users:** visible right after every Radar start, locally and
-in-cluster, and in Radar Hub's embedded views. No API, permission or
-default changes.
-
-| Before (main, at sta
-
-**File**: `packages/k8s-ui/src/components/ui/drawer-components.test.tsx` (modified, +70/-7)
-```diff
-@@ -156,12 +156,16 @@ describe('RelatedResourcesSection ownership', () => {
-     }
-   })
- 
--  it('says outright when children could not be checked for an unusual reason, even with none found', () => {
-+  it('keeps loading in the hint beside a Children section', () => {
-     const loading = renderToString(
--      <RelatedResourcesSection relationships={{ ownership: { children: { complete: false, notChecked: [{ kind: 'Pod', namespace: 'shop', reason: 'kind_sync_pending' }] } } }} />,
-+      <RelatedResourcesSection kind="deployments" relationships={{ ownership: { children: { complete: false, notChecked: [{ kind: 'Pod', namespace: 'shop', reason: 'kind_sync_pending' }] } } }} />,
-     )
-     expect(loading).toContain('Children')
--    expect(loading).toContain('Couldn&#x27;t check Pod (still loading).')
-+    expect(loading).toContain('aria-label="Radar is still loading Pod objects, so children of that kind aren&#x27;t listed yet."')
-+    expect(loading).toContain('No children among the kinds Radar checked.')
-+  })
-+
-+  it('keeps routine collection limits in the hint', () => {
-     const routine = renderToString(
-       <RelatedResourcesSection relationships={{ ownership: { children: { complete: false, notChecked: [{ kind: 'Lease', namespace: 'shop', reason: 'radar_kind_not_collected' }] } } }} />,
-     )
-@@ -186,6 +190,57 @@ describe('RelatedResourcesSection ownership', () => {
-     expect(elsewhere).not.toContain('Couldn&#x27;t check')
-   })
- 
-+  it('hides a 90-kind warmup on a leaf and counts it beside Children on a parent', () => {
-+    const notChecked = Array.from({ length: 90 }, (_, i) => ({ kind: `Pending${i}`, reason: 'kind_sync_pending' }))
-+    const ownership = { children: { complete: false, notChecked } }
-+    const leaf = renderToString(<RelatedResourcesSection kind="configmaps" relationships={{ owner: rs, ownership }} />)
-+    expect(leaf).toContain('Owner')
-+    expect(leaf).not.toContain('Children')
-+    const parent = renderToString(<RelatedResourcesSection kind="deployments" relationships={{ ownership }} />)
-+    expect(parent).toContain('No children among the kinds Radar checked.')
-+    expect(parent).toContain('aria-label="Radar is still loading 90 resource kinds (Pending0, Pending1, Pending2 and 87 more), so children of those kinds aren&#x27;t listed yet."')
-+    expect(parent).not.toContain('Pending3')
-+  })
-+
-+  it('groups and bounds warnings by reason while keeping uncollected kinds in the hint', () => {
-+    const notChecked = [
-+      ...['A', 'B', 'C', 'D', 'E'].map(kind => ({ kind, reason: 'radar_forbidden' })),
-+      { kind: 'B', namespace: 'other', reason: 'radar_forbidden' },
-+      { kind: 'F', reason: 'kind_sync_timed_out' },
-+      { kind: 'L', reason: 'kind_sync_failed' },
-+      { kind: 'G', reason: 'kind_not_watchable' },
-+      ...['H', 'I', 'J', 'K'].map(kind => ({ kind, reason: 'radar_kind_not_collected' })),
-+    ]
-+    const html = renderToString(<RelatedResourcesSection kind="configmaps" relationships={{ ownership: { children: { complete: false, notChecked } } }} />)
-+    expect(html).toContain('>Couldn&#x27;t check A, B, C and 2 more (Radar may not list it); F and L (loading is overdue); G (its API can&#x27;t be watched).</div>')
-+    expect(html).toContain('aria-label="Radar doesn&#x27;t collect objects of 4 kinds (H, I, J and 1 more), so none of those are listed."')
-+  })
-+
-+  it('merges warnings with the same wording and preserves distinct reasons for the same kind', () => {
-+    const notChecked = [
-+      { group: 'apps', kind: 'Deployment', namespace: 'shop', reason: 'radar_forbidden' },
-+      { group: 'apps', kind: 'Deployment', namespace: 'ops', reason: 'radar_credentials_rejected' },
-+      { group: 'apps', kind: 'StatefulSet', reason: 'radar_credentials_rejected' },
-+      { group: 'apps', kind: 'Deployment', namespace: 'dev', reason: 'future_read_code' },
-+      { kind: 'Pod', reason: 'read_error' },
-+    ]
-+    const html = renderToString(<RelatedResourcesSection relationships={{ ownership: { children: { complete: false, notChecked } } }} />)
-+    expect(html).toContain('>Couldn&#x27;t check Deployment and StatefulSet (Radar may not list it); Deployment and Pod (the read failed).</div>')
-+  })
-+
-+  it('distinguishes kinds sharing a name across groups and collapses namespaces', () => {
-+    const notChecked = [
-+      { kind: 'Service', namespace: 'first', reason: 'kind_sync_pending' },
-+      { kind: 'Service', namespace: 'second', reason: 'kind_sync_pending' },
-+      { kind: 'Service', group: 'serving.knative.dev', reason: 'kind_sync_pending' },
-+      { kind: 'Cluster', group: 'postgresql.cnpg.io', reason: 'radar_forbidden' },
-+      { kind: 'Cluster', group: 'cluster.x-k8s.io', reason: 'kind_sync_timed_out' },
-+    ]
-+    const html = renderToString(<RelatedResourcesSection relationships={{ ownership: { children: { complete: false, notChecked } } }} />)
-+    expect(html).toContain('Radar is still loading Service (core) and Service (serving.knative.de
-```
-
-**File**: `packages/k8s-ui/src/components/ui/drawer-components.tsx` (modified, +64/-37)
-```diff
-@@ -1,5 +1,5 @@
- import { dedupeResourceRefs, omitResourceRefs, resourceRefKey } from '../../utils/resource-refs'
--import { gapReasonText } from '../../utils/read-actions'
-+import { canonicalReadCode, gapReasonText } from '../../utils/read-actions'
- import { customResourceDefinitionRef, getCRDDefinitionsSnapshot, subscribeCRDDefinitions } from '../../utils/navigation'
- import { Disclosure } from './Disclosure'
- import { createContext, useContext, useState, useSyncExternalStore } from 'react'
-@@ -845,7 +845,7 @@ export type CopyHandler = (text: string, key: string) => void
- // RELATED RESOURCES SECTION
- // ============================================================================
- 
--import type { TimelineEvent, Relationships, ResourceRef, OwnershipCoverage, ManagerAnswer } from '../../types'
-+import type { TimelineEvent, Relationships, ResourceRef, OwnershipCoverage, OwnershipGap, ManagerAnswer } from '../../types'
- import { isChangeEvent, isK8sEvent } from '../../types'
- import { Info, Link } from 'lucide-react'
- import { formatRelativeAgeTime } from '../../utils/format'
-@@ -1061,35 +1061,73 @@ export function ownerNote(coverage: OwnershipCoverage | undefined): Relationship
-   return undefined
- }
- 
--// childrenNote says what a Children list may be missing. Kinds Radar doesn't
--// collect are a hint, since most lists miss a few; kinds it couldn't check
--// for any other reason, a list cut short, and places the viewer may not read
--// are said outright.
--function childrenNote(coverage: OwnershipCoverage | undefined): RelationshipNote | undefined {
--  const children = coverage?.children
--  if (!children) return undefined
--  const uncollected = new Set<string>()
--  let someNamespaces = false
-+function boundedKinds(kinds: string[], conjunction: 'and' | 'or') {
-+  if (kinds.length > 3) return `${kinds.slice(0, 3).join(', ')} and ${kinds.length - 3} more`
-+  if (kinds.length === 1) return kinds[0]
-+  return `${kinds.slice(0, -1).join(', ')} ${conjunction} ${kinds[kinds.length - 1]}`
-+}
-+
-+function coverageGapNote(gaps: OwnershipGap[], relation: 'children' | 'managers') {
-+  const groups = new Map<string, Set<string>>()
-+  for (const { kind, group = '' } of gaps) {
-+    if (!kind) continue
-+    if (!groups.has(kind)) groups.set(kind, new Set())
-+    groups.get(kind)!.add(group)
-+  }
-+
-+  const byReason = new Map<string, Set<string>>()
-   let undiscovered = false
--  const pressing = new Map<string, string>()
--  for (const g of children.notChecked ?? []) {
--    if (!g.kind) undiscovered = true
--    else if (g.reason === 'radar_kind_not_collected') uncollected.add(g.kind)
--    else if (g.reason === 'radar_namespace_not_collected') someNamespaces = true
--    else if (!pressing.has(g.kind)) pressing.set(g.kind, gapReasonText(g.reason))
-+  for (const { kind, group = '', reason } of gaps) {
-+    if (!kind) {
-+      undiscovered = true
-+      continue
-+    }
-+    const label = groups.get(kind)!.size > 1 ? `${kind} (${group || 'core'})` : kind
-+    const code = String(canonicalReadCode(reason))
-+    if (!byReason.has(code)) byReason.set(code, new Set())
-+    byReason.get(code)!.add(label)
-   }
--  const note: RelationshipNote = {}
-+
-   const hint: string[] = []
--  if (uncollected.size > 0) hint.push(`Radar doesn't collect ${joinOr(Array.from(uncollected))} objects, so none of those are listed.`)
--  if (someNamespaces) hint.push("Radar doesn't collect every namespace, so children in the others aren't listed.")
-+  const warnings = new Map<string, Set<string>>()
-+  const children = relation === 'children'
-+  for (const [reason, labels] of byReason) {
-+    const kinds = [...labels]
-+    if (reason === 'kind_sync_pending') {
-+      const names = boundedKinds(kinds, 'and')
-+      const loading = kinds.length <= 3 ? `${names} objects` : `${kinds.length} resource kinds (${names})`
-+      const which = kinds.length === 1 ? 'that kind' : 'those kinds'
-+      hint.push(`Radar is still loading ${loading}, so ${relation} of ${which} aren't ${children ? 'listed yet' : 'checked yet'}.`)
-+    } else if (reason === 'radar_kind_not_collected' || (!children && reason === 'read_error')) {
-+      const verb = reason === 'read_error' ? "couldn't search" : "doesn't collect"
-+      const objects = kinds.length <= 3 ? `${boundedKinds(kinds, 'or')} objects` : `objects of ${kinds.length} kinds (${boundedKinds(kinds, 'or')})`
-+      hint.push(`Radar ${verb} ${objects}, so ${children ? 'none of those are listed' : "those managers aren't checked"}.`)
-+    } else if (children && reason === 'radar_namespace_not_collected') {
-+      hint.push("Radar doesn't collect every namespace, so children in the others aren't listed.")
-+    } else {
-+      const text = gapReasonText(reason)
-+      const combined = warnings.get(text) ?? new Set<string>()
-+      for (const label of labels) combined.add(label)
-+      warnings.set(text, combined)
-+    }
-+  }
-   // An API group whose discovery fails, often a metrics API with no server
-   // behind it, leaves every answer 
-```
-
-**File**: `web/src/api/client.pendingOwnership.test.tsx` (added, +197/-0)
-```diff
-@@ -0,0 +1,197 @@
-+// @vitest-environment jsdom
-+import { act } from 'react'
-+import { createRoot } from 'react-dom/client'
-+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
-+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-+import type { OwnershipCoverage } from '@skyhook-io/k8s-ui/types'
-+import { useResourceWithRelationships } from './client'
-+import { getApiBase, setApiBase } from './config'
-+
-+const pending = 'kind_sync_pending'
-+const settled = { children: { complete: true } }
-+const loading = { children: { complete: false, notChecked: [{ kind: 'Pod', reason: pending }] } }
-+
-+let client: QueryClient
-+let host: HTMLDivElement
-+let root: ReturnType<typeof createRoot>
-+let originalBase: string
-+let ownership: Partial<OwnershipCoverage>
-+let requests: number[]
-+let status: number
-+
-+beforeEach(() => {
-+  vi.useFakeTimers()
-+  vi.setSystemTime(0)
-+  vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
-+  client = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false } } })
-+  host = document.createElement('div')
-+  root = createRoot(host)
-+  originalBase = getApiBase()
-+  ownership = loading
-+  requests = []
-+  status = 200
-+  vi.stubGlobal('fetch', vi.fn(async () => {
-+    requests.push(Date.now())
-+    if (status !== 200) return Response.json({ error: 'read failed' }, { status })
-+    return Response.json({ resource: {}, relationships: { ownership } })
-+  }))
-+})
-+
-+afterEach(() => {
-+  act(() => root.unmount())
-+  client.clear()
-+  setApiBase(originalBase)
-+  focusManager.setFocused(undefined)
-+  vi.unstubAllGlobals()
-+  vi.useRealTimers()
-+})
-+
-+const key = ['resource', 'pods', 'shop', 'web', '']
-+const eightPolls = [5000, 15_000, 35_000, 65_000, 95_000, 125_000, 155_000, 185_000]
-+
-+function Probe({ poll }: { poll?: boolean }) {
-+  const result = useResourceWithRelationships('pods', 'shop', 'web', '', { pollPendingOwnership: poll })
-+  return <span>{result.data?.relationships?.ownership?.children?.complete ? 'complete' : 'partial'}</span>
-+}
-+
-+async function observe(poll?: boolean) {
-+  await act(async () => {
-+    root.render(<QueryClientProvider client={client}><Probe poll={poll} /></QueryClientProvider>)
-+  })
-+}
-+
-+async function advance(ms: number) {
-+  await act(async () => { await vi.advanceTimersByTimeAsync(ms) })
-+}
-+
-+it.each<[string, OwnershipCoverage]>([
-+  ['ownership', { ...settled, unavailableReason: pending }],
-+  ['owner', { ...settled, ownerReason: pending }],
-+  ['manages', { ...settled, manages: { membership: 'unreadable', unavailableReason: pending } }],
-+  ['managers', { ...settled, managers: { notChecked: [{ kind: 'Application', reason: pending }] } }],
-+  ['manager chain stop', {
-+    ...settled,
-+    manager: {
-+      state: 'unknown',
-+      direct: { object: { kind: 'Pod', namespace: 'shop', name: 'web' } },
-+      chainEnd: 'unfollowed',
-+      stop: { at: { kind: 'ReplicaSet', namespace: 'shop', name: 'web-rs' }, state: 'unknown', reason: pending },
-+    },
-+  }],
-+  ['children', loading],
-+])('polls pending %s coverage and stops on an answer containing only other gaps', async (_, initial) => {
-+  ownership = initial
-+  await observe(true)
-+  ownership = { children: { complete: false, notChecked: [{ kind: 'Pod', reason: 'kind_sync_timed_out' }] } }
-+  await advance(240_000)
-+  expect(requests).toEqual([0, 5000])
-+})
-+
-+it('stops after eight foreground polls and starts again when the cached resource reopens', async () => {
-+  await observe(true)
-+  const query = client.getQueryCache().find({ queryKey: key, exact: true })
-+  expect(query).toBeDefined()
-+  await advance(240_000)
-+  expect(requests).toEqual([0, ...eightPolls])
-+
-+  await act(async () => root.render(<QueryClientProvider client={client}>{null}</QueryClientProvider>))
-+  await advance(1000)
-+  await observe(true)
-+  expect(client.getQueryCache().find({ queryKey: key, exact: true })).toBe(query)
-+  await advance(240_000)
-+  expect(requests).toEqual([0, ...eightPolls, 241_000, ...eightPolls.map(t => t + 241_000)])
-+})
-+
-+it('gives a new cluster a fresh budget on the same mounted observer and query key', async () => {
-+  setApiBase('/c/first/api')
-+  await observe(true)
-+  const query = client.getQueryCache().find({ queryKey: key, exact: true })
-+  expect(query).toBeDefined()
-+  await advance(240_000)
-+  expect(requests).toEqual([0, ...eightPolls])
-+
-+  expect(fetch).toHaveBeenLastCalledWith('/c/first/api/resources/pods/shop/web', expect.anything())
-+  setApiBase('/c/second/api')
-+  await observe(true)
-+  await act(async () => { await client.invalidateQueries({ queryKey: key, exact: true }) })
-+  expect(client.getQueryCache().find({ queryKey: key, exact: true })).toBe(query)
-+  await advance(240_000)
-+  expect(requests).toEqual([0, ...eightPolls, 240_000, ...eightPolls.map(t => t + 240_000)])
-+  expect(fetch).toHaveBeenLastCalledWith('/c/second/api/resources/pods/shop/web', expect.anything())
-+})
-+
-+it('starts a new episode after the pending gap c
-```
-
-**File**: `web/src/api/client.ts` (modified, +78/-17)
-```diff
-@@ -37,7 +37,7 @@ import type {
-   YamlDocumentIdentity,
-   YamlSchemaLoadResult,
- } from '@skyhook-io/k8s-ui'
--import { focusManager, useInfiniteQuery, useQuery, useMutation, useQueryClient, skipToken, type QueryClient } from '@tanstack/react-query'
-+import { focusManager, onlineManager, useInfiniteQuery, useQuery, useMutation, useQueryClient, skipToken, type QueryClient } from '@tanstack/react-query'
- import { showApiError, showApiSuccess, showApiNotice } from '../components/ui/Toast'
- import { useIsAuthEnabled, useNamespacedCapabilities } from '../contexts/CapabilitiesContext'
- import { applyTabPick, cleanPick, ownsTabPick, pruneTabPick, withActives, writeTabPick } from '../utils/namespacePick'
-@@ -3219,29 +3219,90 @@ export function useResourceAvailability(kind: string, namespace: string, name: s
-   });
- }
- 
-+function hasPendingOwnership(data?: ResourceWithRelationships): boolean {
-+  const coverage = data?.relationships?.ownership;
-+  if (!coverage) return false;
-+  const pending = "kind_sync_pending";
-+  return coverage.unavailableReason === pending ||
-+    coverage.ownerReason === pending ||
-+    coverage.manager?.stop?.reason === pending ||
-+    coverage.manages?.unavailableReason === pending ||
-+    !!coverage.managers?.notChecked?.some(gap => gap.reason === pending) ||
-+    !!coverage.children?.notChecked?.some(gap => gap.reason === pending);
-+}
-+
- // Hook that returns full response with relationships explicitly
- export function useResourceWithRelationships<T>(
-   kind: string,
-   namespace: string,
-   name: string,
-   group?: string,
--  options?: { cacheScope?: string },
-+  options?: { cacheScope?: string; pollPendingOwnership?: boolean },
- ) {
--  return useQuery<ResourceWithRelationships<T>>({
--    queryKey: ["resource", kind, namespace, name, group, ...(options?.cacheScope ? [options.cacheScope] : [])],
--    queryFn: () => fetchResourceWithRelationships<T>(kind, namespace, name, group),
--    enabled: Boolean(kind && name),
--    refetchInterval: (query) => goneRecheckInterval(query, undefined),
--    // Deep-linked detail views can mount while the kind's informer is still
--    // completing its initial sync: keep polling instead of erroring out.
--    retry: (failureCount, error) => {
--      if (isStillLoadingError(error)) return true;
--      if (isKindSyncFailed(error)) return false;
--      return failureCount < 1; // one retry, 4xx included, unlike the QueryClient default
--    },
--    retryDelay: (failureCount, error) =>
--      isStillLoadingError(error) ? 2000 : Math.min(1000 * 2 ** failureCount, 30000),
--  });
-+  const client = useQueryClient();
-+  const cacheScope = options?.cacheScope;
-+  const resourceOptions = useMemo(
-+    () => resourceQueryOptions<T>(kind, namespace, name, group, { cacheScope }),
-+    [kind, namespace, name, group, cacheScope],
-+  );
-+  const query = useQuery<ResourceWithRelationships<T>>({ ...resourceOptions, refetchIntervalInBackground: false });
-+  const { refetch } = query;
-+  const poll = options?.pollPendingOwnership;
-+  const apiBase = getApiBase();
-+
-+  useEffect(() => {
-+    if (!poll || !resourceOptions.enabled) return;
-+    const cache = client.getQueryCache();
-+    const { queryHash } = client.defaultQueryOptions(resourceOptions);
-+    let attempts = 0;
-+    let timer: ReturnType<typeof setTimeout> | undefined;
-+
-+    function schedule() {
-+      clearTimeout(timer);
-+      timer = undefined;
-+      const state = cache.get<ResourceWithRelationships<T>>(queryHash)?.state;
-+      if (!state || state.error || !hasPendingOwnership(state.data)) {
-+        attempts = 0;
-+        return;
-+      }
-+      // A hidden or offline view waits without timers; focus and reconnect
-+      // resume it below.
-+      if (!focusManager.isFocused() || !onlineManager.isOnline()) return;
-+      if (state.fetchStatus !== "idle" || attempts >= 8) return;
-+      timer = setTimeout(() => {
-+        timer = undefined;
-+        if (apiBase !== getApiBase()) return;
-+        attempts++;
-+        void refetch({ cancelRefetch: false });
-+      }, Math.min(5000 * 2 ** attempts, 30_000));
-+    }
-+
-+    // Other observers and SSE can change this answer, including after the last
-+    // poll. Only this view's timer spends attempts; a settled answer resets them.
-+    const unsubscribe = cache.subscribe(event => {
-+      if ((event.type === "updated" || event.type === "removed") && event.query.queryHash === queryHash) schedule();
-+    });
-+    // Redundant focus or online events must not restart a running countdown.
-+    const resume = () => {
-+      if (!focusManager.isFocused() || !onlineManager.isOnline()) {
-+        clearTimeout(timer);
-+        timer = undefined;
-+      } else if (timer === undefined) {
-+        schedule();
-+      }
-+    };
-+    const unsubscribeFocus = focusManager.subscribe(resume);
-+    const unsubscribeOnline = onlineManager.subscribe(resume);
-+    schedule();
-+    return () => {
-+      unsubscribe();
-+      unsubscribeFocus();
-+      unsubscribeOnline();
-+      clearTi
-```
-
-**File**: `web/src/components/workload/WorkloadView.pendingOwnership.test.tsx` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+// @vitest-environment jsdom
-+import { renderToString } from 'react-dom/server'
-+import { MemoryRouter } from 'react-router-dom'
-+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-+import { DockProvider, ToastProvider } from '@skyhook-io/k8s-ui'
-+import { expect, it, vi } from 'vitest'
-+import * as api from '../../api/client'
-+import { WorkloadView, WorkloadViewRoute } from './WorkloadView'
-+
-+it.each([
-+  ['full-page route', undefined, true],
-+  ['active drawer layer', true, true],
-+  ['prewarm or outgoing drawer layer', false, false],
-+] as const)('sets ownership polling for the %s', (_, active, expected) => {
-+  const client = new QueryClient()
-+  const hook = vi.spyOn(api, 'useResourceWithRelationships')
-+  try {
-+    renderToString(
-+      <QueryClientProvider client={client}>
-+        <ToastProvider><DockProvider>
-+          <MemoryRouter initialEntries={['/workload/configmaps/shop/settings']}>
-+            {active === undefined
-+              ? <WorkloadViewRoute />
-+              : <WorkloadView kind="configmaps" namespace="shop" name="settings" group="" onBack={() => {}} active={active} />}
-+          </MemoryRouter>
-+        </DockProvider></ToastProvider>
-+      </QueryClientProvider>,
-+    )
-+    expect(hook).toHaveBeenCalledWith('configmaps', 'shop', 'settings', '', { pollPendingOwnership: expected })
-+  } finally {
-+    hook.mockRestore()
-+    client.clear()
-+  }
-+})
-```
-
-**File**: `web/src/components/workload/WorkloadView.tsx` (modified, +3/-1)
-```diff
-@@ -649,7 +649,9 @@ export function WorkloadView({
-     isFetching: resourceFetching,
-     error: resourceError,
-     refetch: refetchResource,
--  } = useResourceWithRelationships<any>(apiKind, namespace, name, rest.group)
-+  } = useResourceWithRelationships<any>(apiKind, namespace, name, rest.group, {
-+    pollPendingOwnership: rest.active !== false,
-+  })
-   const resource = resourceResponse?.resource
-   const relationships = resourceResponse?.relationships
-   useRefreshRevisionsOnNewRollout(
-```
-
----
-
-### Incident Patch 3: `5f87badd` (2026-11-25)
-**Commit Message**: Start a debug container from Pod details (#2889)
-
-A working application shell can still lack a diagnostic tool. Choose
-**Debug** alongside **Terminal** on a running Pod, or open the same
-chooser when an ordinary terminal reports that its container has no
-shell. The chooser preselects the target, shows the effective server
-debug image, and accepts an image override for this session. Leaving the
-default untouched lets the server resolve `--debug-image`.
-
-Radar opens a dock tab as soon as Kubernetes accepts the ephemeral
-container. It shows kubelet pull and startup failures, connects
-automatically on recovery, and explains when a bad image name requires a
-new session. A terminated container and a denied status read have
-distinct outcomes. Checking status or reconnecting a terminal never adds
-another container.
-
-The action requires a running application container or native sidecar,
-`get pods`, `create pods/exec`, and `update pods/ephemeralcontainers` in
-the Pod’s namespace. The caller’s Kubernetes identity performs the
-write. Reviewed requests pin the Pod UID and cluster connection, refuse
-a stopped target, and retain uncertain outcomes across navigation.
-Hosted views and older servers
-
-**File**: `deploy/helm/radar/README.md` (modified, +12/-0)
-```diff
-@@ -588,6 +588,7 @@ Disabled by default for security:
- |---------|-------|-------------|
- | Secrets | `rbac.secrets: true` | View secrets in resource list. Also granted by `rbac.helm` (Helm stores releases in Secrets), by auth (`auth.mode` other than `none`), and in cloud mode, where every Secret read is re-checked against the requesting user's own RBAC. The grant is cluster-wide `get/list/watch` on all Secrets; `rbac.secrets: false` does not remove it in those modes. |
- | Terminal | `rbac.podExec: true` | Shell access to pods |
-+| Pod Debug | A namespaced grant to `update` core `pods/ephemeralcontainers`, in addition to terminal access and `get pods` | Add an ephemeral toolbox container and open its terminal |
- | Port Forward | `rbac.portForward: true` | Port forwarding to pods. Also the fallback for traffic sources (Hubble/Caretta) — Radar dials the relay/metrics Service directly first, so in-cluster installs only need this when a NetworkPolicy or routing blocks Radar's namespace from reaching the service |
- | Logs | `rbac.podLogs: true` | View pod logs (**enabled by default**) |
- | Helm Write | `rbac.helm: true` | Install/upgrade/rollback/uninstall Helm releases. Installs with auth and Cloud off: grants Radar's ServiceAccount create/update/patch/delete on all resource types, since Helm runs as it. Under auth or cloud-mode Helm runs as the signed-in user, so the ServiceAccount gets no write grant; instead a split helm add-on ClusterRole is emitted — `radar-helm` (member-safe: CRDs, storage, namespaces) and `radar-helm-admin` (owner-only: RBAC, webhooks, ApiServices) |
-@@ -596,6 +597,17 @@ Disabled by default for security:
- | Admission policies view | `rbac.viewAdmissionPolicies: true` | Show native validating and mutating admission policies and bindings in the resource browser. Off by default for no-auth installs because the declarations expose admission-control coverage and gaps. Auto-enabled under auth or cloud mode, where reads are re-checked per user. |
- | Node runtime evidence | `rbac.viewNodeRuntime: true` | Let upgrade-impact checks inspect kubelet metrics and effective configuration through `nodes/proxy`. Off by default because this exposes node-level runtime and configuration details to anyone who can reach a no-auth Radar install. Under auth, grant `get` on `nodes/proxy` to each Kubernetes identity that should inspect this evidence. |
- 
-+For Pod Debug, bind the extra `pods/ephemeralcontainers` permission in the target namespace. With authentication off, bind Radar’s ServiceAccount. With per-user authentication, grant the signed-in user or their group. Pod Debug is available in standalone and in-cluster Radar. The Radar Hub UI omits both the Pod action and the missing-shell recovery action.
-+
-+For example, add the separate grant for an existing per-user group in one namespace:
-+
-+```sh
-+kubectl -n payments create role pod-debugger --verb=update --resource=pods/ephemeralcontainers
-+kubectl -n payments create rolebinding pod-debugger --role=pod-debugger --group=payments-oncall
-+```
-+
-+With authentication off, use `--serviceaccount=<radar-namespace>:<radar-serviceaccount>` in place of `--group`. These commands add only the ephemeral-container permission.
-+
- ### MCP container commands
- 
- `mcp.execTools` registers `exec_pod`, and `mcp.httpTools` independently registers
-```
-
-**File**: `docs/configuration.md` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ installed version. Several flags also take a persistent default from `~/.radar/c
- | `--disable-helm-write` | `false` | Disable release writes, per-release source updates, values previews and `manage_helm`; also global repository/OCI changes without auth. Signed-in global source management and Cloud install/upgrade continue |
- | `--disable-local-terminal` | `false` | Disable the host local terminal |
- | `--disable-auto-port-forward` | `false` | Never open a port-forward on Radar's own initiative (metrics, traffic, cost and Argo CD discovery). Port-forwards you start still work. See [Automatic port-forwarding](#automatic-port-forwarding) |
--| `--debug-image` | `busybox:latest` | Image for ephemeral debug containers and node debug pods. If built-in restricted PodSecurity rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default; point at a compatible mirror for air-gapped / private-registry clusters. |
-+| `--debug-image` | `busybox:latest` | Default image for ephemeral debug containers and node debug pods. On a running Pod, **Debug** opens a target container and image chooser. The chooser shows this default. Leave it unchanged or clear the field to use the server setting. If built-in restricted PodSecurity rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default; point at a compatible mirror for air-gapped / private-registry clusters. |
- | `--list-page-size` | `0` (off) | Paginate the initial LIST of high-cardinality kinds (Pods, ReplicaSets) at this size. Helps very large clusters that fail to sync; only used when WatchList streaming is unavailable. Try `2000`. |
- | `--context-switch-timeout` | See description | Overrides the target connectivity check (normally 5s, or 11s with a kubeconfig exec credential plugin). Synchronous switches and in-cluster recovery use a 30s initialization deadline by default. Setting this option overrides that deadline too. Widen on high-latency control planes — see [Tuning for slow clusters](#tuning-for-slow-or-high-latency-clusters). Env: `RADAR_CONTEXT_SWITCH_TIMEOUT`. |
- | `--first-paint-backstop` | `5m` | Hard upper bound on the initial critical-cache sync wait before Radar falls through to a partial-data render. Env: `RADAR_FIRST_PAINT_BACKSTOP`. |
-```
-
-**File**: `docs/in-cluster.md` (modified, +3/-1)
-```diff
-@@ -451,7 +451,9 @@ rbac:
-   helm: false         # Enable Helm write operations (broad permissions)
- ```
- 
--The terminal's **Debug** action launches a throwaway container (ephemeral container on a pod, or a privileged pod on a node) using `busybox:latest` by default. If the built-in restricted Pod Security Standard rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default, so custom images used in restricted namespaces must work as a non-root user. In air-gapped or private-registry clusters where the default image can't be pulled, point it at a reachable mirror:
-+Pod **Debug** requires `get pods`, `create pods/exec`, and a separate `update pods/ephemeralcontainers` grant in the Pod’s namespace. The chart’s `rbac.podExec` grants exec only. Use a namespaced Role and RoleBinding for Radar’s ServiceAccount when authentication is off, or for the signed-in user or group when per-user authentication is enabled. The Pod action and the missing-shell recovery action are available in standalone and in-cluster Radar. Both are intentionally disabled in the Radar Hub UI.
-+
-+The **Debug** action launches a throwaway container (ephemeral container on a pod, or a privileged pod on a node) using `busybox:latest` by default. If the built-in restricted Pod Security Standard rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default, so custom images used in restricted namespaces must work as a non-root user. In air-gapped or private-registry clusters where the default image can't be pulled, point it at a reachable mirror:
- 
- ```yaml
- # values.yaml
-```
-
-**File**: `internal/k8s/capabilities.go` (modified, +22/-12)
-```diff
-@@ -114,16 +114,18 @@ func (r *PermissionCheckResult) CredentialRejectedNamespaces(resource string, na
- // Capabilities represents the features available based on RBAC permissions
- type Capabilities struct {
- 	ConfigManagement       string                   `json:"configManagement"`
--	Exec                   bool                     `json:"exec"`           // Can create pods/exec (terminal feature)
--	LocalTerminal          bool                     `json:"localTerminal"`  // Local terminal available (not in-cluster, not disabled)
--	LocalShell             string                   `json:"localShell"`     // Shell family where a hand-off command runs: "powershell" on Windows, else "posix"
--	Logs                   bool                     `json:"logs"`           // Can get pods/log (log viewer)
--	PortForward            bool                     `json:"portForward"`    // Can create pods/portforward
--	Secrets                bool                     `json:"secrets"`        // Can list secrets
--	SecretsUpdate          bool                     `json:"secretsUpdate"`  // Can update secrets (inline editing)
--	HelmWrite              bool                     `json:"helmWrite"`      // Helm write ops (detected via secrets/create as sentinel RBAC check)
--	NodeWrite              bool                     `json:"nodeWrite"`      // Can patch nodes (cordon/uncordon/drain)
--	WorkloadWrites         WorkloadWritePermissions `json:"workloadWrites"` // Can patch workload kinds (restart/scale controls)
-+	Exec                   bool                     `json:"exec"` // Can create pods/exec (terminal feature)
-+	PodDebugImage          string                   `json:"podDebugImage,omitempty"`
-+	PodDebug               bool                     `json:"podDebug,omitempty"` // Scoped to the requested namespace.
-+	LocalTerminal          bool                     `json:"localTerminal"`      // Local terminal available (not in-cluster, not disabled)
-+	LocalShell             string                   `json:"localShell"`         // Shell family where a hand-off command runs: "powershell" on Windows, else "posix"
-+	Logs                   bool                     `json:"logs"`               // Can get pods/log (log viewer)
-+	PortForward            bool                     `json:"portForward"`        // Can create pods/portforward
-+	Secrets                bool                     `json:"secrets"`            // Can list secrets
-+	SecretsUpdate          bool                     `json:"secretsUpdate"`      // Can update secrets (inline editing)
-+	HelmWrite              bool                     `json:"helmWrite"`          // Helm write ops (detected via secrets/create as sentinel RBAC check)
-+	NodeWrite              bool                     `json:"nodeWrite"`          // Can patch nodes (cordon/uncordon/drain)
-+	WorkloadWrites         WorkloadWritePermissions `json:"workloadWrites"`     // Can patch workload kinds (restart/scale controls)
- 	MCPReadOnly            bool                     `json:"mcpReadOnly"`
- 	MCPExecTools           bool                     `json:"mcpExecTools"`
- 	MCPHelmTools           bool                     `json:"mcpHelmTools"` // Native Helm MCP tool registered; target Kubernetes permissions still required
-@@ -283,6 +285,7 @@ type WorkloadWriteCapabilityErrors struct {
- }
- 
- type NamespaceCapabilityErrors struct {
-+	PodDebug       bool
- 	Exec           bool
- 	Logs           bool
- 	PortForward    bool
-@@ -292,6 +295,7 @@ type NamespaceCapabilityErrors struct {
- 
- // NamespaceCapabilities holds the effective capabilities for a specific namespace.
- type NamespaceCapabilities struct {
-+	PodDebug       bool                      `json:"podDebug"`
- 	Exec           bool                      `json:"exec"`
- 	Logs           bool                      `json:"logs"`
- 	PortForward    bool                      `json:"portForward"`
-@@ -600,7 +604,10 @@ func CheckNamespaceCapabilities(ctx context.Context, namespace string) (*Namespa
- 
- 	var checks []capCheck
- 	if !ForceDisableExec {
--		checks = append(checks, capCheck{resource: "pods/exec", verb: "create", result: &result.Exec, apiError: &result.Errors.Exec})
-+		checks = append(checks,
-+			capCheck{resource: "pods/exec", verb: "create", result: &result.Exec, apiError: &result.Errors.Exec},
-+			capCheck{resource: "pods/ephemeralcontainers", verb: "update", result: &result.PodDebug, apiError: &result.Errors.PodDebug},
-+		)
- 	}
- 	checks = append(checks,
- 		capCheck{resource: "pods/log", verb: "get", result: &result.Logs, apiError: &result.Errors.Logs},
-@@ -851,7 +858,10 @@ func CheckNamespaceCapabilitiesForUser(ctx context.Context, username string, gro
- 
- 	var checks []capCheck
- 	if !ForceDisableExec {
--		checks = append(checks, capCheck{resource: "pods/exec", verb: "create", result: &result.Exec, apiError: &result.Errors.Exec})
-+		checks = append(checks,
-+			capCheck{resource: "pods/exec", verb: "create", result: &result.Exec, apiError: &result.Errors.Exec},
-+			capCheck{resource: "pods/ephemeralcontain
-```
-
-**File**: `internal/k8s/ephemeral.go` (modified, +0/-6)
-```diff
-@@ -2,7 +2,6 @@ package k8s
- 
- import (
- 	"context"
--	"time"
- 
- 	corev1 "k8s.io/api/core/v1"
- 	"k8s.io/client-go/kubernetes"
-@@ -28,8 +27,3 @@ func CreateEphemeralContainerWithClient(ctx context.Context, opts EphemeralConta
- 	}
- 	return k8score.CreateEphemeralContainer(ctx, client, opts)
- }
--
--// WaitForEphemeralContainer polls until an ephemeral container reaches Running state or timeout.
--func WaitForEphemeralContainer(ctx context.Context, namespace, podName, containerName string, timeout time.Duration) error {
--	return k8score.WaitForEphemeralContainer(ctx, GetClient(), namespace, podName, containerName, timeout)
--}
-```
-
-**File**: `internal/server/capabilities_test.go` (modified, +22/-0)
-```diff
-@@ -82,3 +82,25 @@ func TestMergeNamespaceCapabilitiesHelmWrite(t *testing.T) {
- 		t.Fatal("a clean namespace deny should override a global Helm write grant")
- 	}
- }
-+
-+func TestPodDebugNeedsBothNamespacePermissions(t *testing.T) {
-+	t.Setenv("RADAR_CLOUD_MODE", "false")
-+	for _, exec := range []bool{false, true} {
-+		for _, update := range []bool{false, true} {
-+			caps := &k8s.Capabilities{Exec: true, PodDebug: true}
-+			mergeNamespaceCapabilities(caps, &k8s.NamespaceCapabilities{Exec: exec, PodDebug: update})
-+			if caps.PodDebug != (exec && update) {
-+				t.Errorf("exec=%v, update ephemeralcontainers=%v: podDebug=%v", exec, update, caps.PodDebug)
++func TestGetReleaseUsesRequestConnection(t *testing.T) {
++	t.Cleanup(k8s.SnapshotTestConnection())
++	Initialize()
++	t.Cleanup(ResetTestClient)
++	install := func(name string, revision int) *atomic.Int32 {
++		t.Helper()
++		var requests atomic.Int32
++		rel := helmTestRelease("payments", "team-a", revision, release.StatusDeployed, name)
++		secret := helmReleaseSecret(t, "team-a", rel, true)
++		api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			requests.Add(1)
++			w.Header().Set("Content-Type", "application/json")
++			switch r.URL.Path {
++			case "/version":
++				writeTestJSON(t, w, map[string]string{"gitVersion": "v1.34.0"})
++			case "/api/v1/namespaces/team-a/secrets":
++				writeTestJSON(t, w, corev1.SecretList{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "SecretList"}, Items: []corev1.Secret{*secret}})
++			default:
++				t.Errorf("unexpected request on %s: %s", name, r.URL)
++				http.NotFound(w, r)
 +			}
++		}))
++		t.Cleanup(api.Close)
++		cfg := &rest.Config{Host: api.URL}
++		if _, err := k8s.InstallTestServingConnection(name, cfg, nil, fake.NewSimpleClientset().Discovery()); err != nil {
++			t.Fatal(err)
 +		}
++		return &requests
++	}
++	install("cluster-a", 1)
++	admission, err := k8s.CaptureServingConnection()
++	if err != nil {
++		t.Fatal(err)
++	}
++	ctx := admission.Bind(t.Context())
++	bRequests := install("cluster-b", 2)
++	client := GetClient(t.Context())
++	for _, scenario := range []struct {
++		name string
++		user *pkgauth.User
++	}{
++		{name: "GetRelease"},
++		{name: "GetReleaseAsUser", user: &pkgauth.User{Username: "alice"}},
++	} {
++		t.Run(scenario.name, func(t *testing.T) {
++			var detail *HelmReleaseDetail
++			var err error
++			if scenario.user == nil {
++				detail, err = client.GetRelease(ctx, "team-a", "payments", nil)
++			} else {
++				detail, err = client.GetReleaseAsUser(ctx, "team-a", "payments", scenario.user, nil)
++			}
++			if err != nil {
++				t.Fatal(err)
++			}
++			if detail.Revision != 1 || detail.Description != "cluster-a" {
++				t.Fatalf("got release revision %d from %s, want revision 1 from cluster-a", detail.Revision, detail.Description)
++			}
++		})
++	}
++	if n := bRequests.Load(); n != 0 {
++		t.Errorf("got %d requests to cluster-b, want none", n)
 +	}
 +}
 +
-+func TestPodDebugHiddenInCloudMode(t *testing.T) {
-+	t.Setenv("RADAR_CLOUD_MODE", "true")
-+	caps := &k8s.Capabilities{}
-+	mergeNamespaceCapabilities(caps, &k8s.NamespaceCapabilities{Exec: true, PodDebug: true})
-+	if caps.PodDebug {
-+		t.Fatal("hosted view offered the direct debug action")
-+	}
-+}
-```
-
-**File**: `internal/server/exec.go` (modified, +36/-17)
-```diff
-@@ -337,11 +337,13 @@ func (s *Server) handlePodExec(w http.ResponseWriter, r *http.Request) {
- 	// kubectl does. Pod-fetch failure is non-fatal: log, assume Linux, and let
- 	// the apiserver apply its own containers[0] default.
- 	var podOS string
-+	var podUID types.UID
- 	if overrideShell == "" || container == "" {
- 		pod, err := client.CoreV1().Pods(namespace).Get(r.Context(), podName, metav1.GetOptions{})
- 		if err != nil {
- 			log.Printf("[exec] pod fetch failed for %s/%s (OS detection + container defaulting skipped): %v", k8s.SanitizeForLog(namespace), k8s.SanitizeForLog(podName), err)
- 		} else {
-+			podUID = pod.UID
- 			if overrideShell == "" {
- 				podOS = detectPodOS(r.Context(), pod, nodeLabelsLookupFor(client))
- 			}
-@@ -438,7 +440,7 @@ func (s *Server) handlePodExec(w http.ResponseWriter, r *http.Request) {
- 					log.Printf("[exec] WARNING: error looks shell-related but isShellNotFoundError did not match — kubelet error text may have drifted; update isShellNotFoundError patterns if this recurs. errMsg=%q", errMsg)
- 				}
- 				log.Printf("Exec failed (%s): %v", errorType, err)
--				sendWSErrorWithType(conn, errorType, errMsg)
-+				sendWSErrorWithType(conn, errorType, errMsg, podUID)
- 			}
- 			// Give browser time to process the error message before closing.
- 			// Without this delay, conn.Close() tears down TCP before the
-@@ -493,18 +495,20 @@ cleanup:
- }
- 
- func sendWSError(conn *websocket.Conn, msg string) {
--	sendWSErrorWithType(conn, "exec_error", msg)
-+	sendWSErrorWithType(conn, "exec_error", msg, "")
- }
- 
- // sendWSErrorWithType sends an error with a specific error type to help frontend distinguish error causes
--func sendWSErrorWithType(conn *websocket.Conn, errorType, msg string) {
-+func sendWSErrorWithType(conn *websocket.Conn, errorType, msg string, podUID types.UID) {
- 	errMsg := struct {
--		Type      string `json:"type"`
--		ErrorType string `json:"errorType,omitempty"`
--		Data      string `json:"data"`
-+		Type      string    `json:"type"`
-+		ErrorType string    `json:"errorType,omitempty"`
-+		PodUID    types.UID `json:"podUID,omitempty"`
-+		Data      string    `json:"data"`
- 	}{
- 		Type:      "error",
- 		ErrorType: errorType,
-+		PodUID:    podUID,
- 		Data:      msg,
- 	}
- 	data, err := json.Marshal(errMsg)
-@@ -705,8 +709,10 @@ func (s *Server) handleNodeDebugCleanup(w http.ResponseWriter, r *http.Request)
- 
- // DebugContainerRequest is the request body for creating a debug container
- type DebugContainerRequest struct {
--	TargetContainer string `json:"targetContainer,omitempty"`
--	Image           string `json:"image,omitempty"`
-+	PodUID            types.UID `json:"uid,omitempty"`
-+	TargetContainer   string    `json:"targetContainer,omitempty"`
-+	Image             string    `json:"image,omitempty"`
-+	ReturnImmediately bool      `json:"returnImmediately,omitempty"`
- }
- 
- // DebugContainerResponse is the response after creating a debug container
-@@ -740,17 +746,29 @@ func (s *Server) handleCreateDebugContainer(w http.ResponseWriter, r *http.Reque
- 	ec, err := k8s.CreateEphemeralContainerWithClient(r.Context(), k8s.EphemeralContainerOptions{
- 		Namespace:       namespace,
- 		PodName:         podName,
-+		PodUID:          req.PodUID,
- 		TargetContainer: req.TargetContainer,
- 		Image:           s.resolveDebugImage(req.Image),
- 	}, client)
- 	if err != nil {
- 		errMsg := err.Error()
--		if strings.Contains(errMsg, "not found") {
-+		if apierrors.IsForbidden(err) {
-+			s.writeError(w, http.StatusForbidden, errMsg)
-+			return
++func TestInventoryStaysOnRequestConnection(t *testing.T) {
++	for _, bound := range []bool{true, false} {
++		name := "captured at entry"
++		if bound {
++			name = "already bound"
 +		}
-+		if apierrors.IsConflict(err) {
-+			s.writeError(w, http.StatusConflict, errMsg)
-+			return
-+		}
-+		if apierrors.IsNotFound(err) {
- 			s.writeError(w, http.StatusNotFound, errMsg)
- 			return
- 		}
--		if strings.Contains(errMsg, "ephemeral containers are disabled") ||
--			strings.Contains(errMsg, "ephemeralcontainers") {
-+		if apierrors.IsInvalid(err) || apierrors.IsBadRequest(err) {
-+			s.writeError(w, http.StatusBadRequest, errMsg)
-+			return
-+		}
-+		if strings.Contains(errMsg, "ephemeral containers are disabled") {
- 			s.writeError(w, http.StatusBadRequest, "ephemeral containers are not enabled on this cluster")
- 			return
- 		}
-@@ -759,12 +777,13 @@ func (s *Server) handleCreateDebugContainer(w http.ResponseWriter, r *http.Reque
- 		return
- 	}
- 
--	// Wait for container to be running (with timeout)
--	err = k8s.WaitForEphemeralContainer(r.Context(), namespace, podName, ec.Name, 30*time.Second)
--	status := "running"
--	if err != nil {
--		status = "pending"
--		log.Printf("[exec] Debug container %s created but not yet running: %v", ec.Name, err)
-+	status := "pending"
-+	if !req.ReturnImmediately {
-+		if err = k8score.WaitForEphemeralContainer(r.Context(), client, namespace, podName, ec.Name, 30*time.Second); err == nil {
-+			status = "running"
-+		} else {
-+			log.Printf("[exec] Debug container %s created but not yet running: %v", ec.Name, err)
-+		}
- 	}
- 
- 	s.writeJSON(w, DebugContainerResponse{
-```
-
-**File**: `internal/server/server.go` (modified, +4/-0)
-```diff
-@@ -1656,6 +1656,9 @@ func (s *Server) handleCapabilities(w http.ResponseWriter, r *http.Request) {
- 			log.Printf("[capabilities] namespace-scoped check for %q failed: %v", ns, err)
- 		} else if nsCaps != nil {
- 			mergeNamespaceCapabilities(caps, nsCaps)
-+			if caps.PodDebug {
-+				caps.PodDebugImage = s.resolveDebugImage("")
++		t.Run(name, func(t *testing.T) {
++			t.Cleanup(k8s.SnapshotTestConnection())
++			var namespaces, reviews, secrets, other atomic.Int32
++			secret := helmReleaseSecret(t, "team-a", crossNamespaceRelease(), true)
++			a := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.Header().Set("Content-Type", "application/json")
++				switch r.URL.Path {
++				case "/api/v1/namespaces":
++					namespaces.Add(1)
++					writeTestJSON(t, w, corev1.NamespaceList{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "NamespaceList"}, Items: []corev1.Namespace{{ObjectMeta: metav1.ObjectMeta{Name: "team-a"}}}})
++				case "/apis/authorization.k8s.io/v1/selfsubjectaccessreviews":
++					reviews.Add(1)
++					writeTestJSON(t, w, authv1.SelfSubjectAccessReview{TypeMeta: metav1.TypeMeta{APIVersion: "authorization.k8s.io/v1", Kind: "SelfSubjectAccessReview"}, Status: authv1.SubjectAccessReviewStatus{Allowed: false}})
++				case "/api/v1/namespaces/team-a/secrets":
++					secrets.Add(1)
++					writeTestJSON(t, w, corev1.SecretList{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "SecretList"}, Items: []corev1.Secret{*secret}})
++				default:
++					t.Errorf("unexpected A request %s", r.URL)
++					http.NotFound(w, r)
++				}
++			}))
++			t.Cleanup(a.Close)
++			b := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { other.Add(1); http.NotFound(w, r) }))
++			t.Cleanup(b.Close)
++			install := func(host string) {
++				cfg := &rest.Config{Host: host, ContentConfig: rest.ContentConfig{ContentType: "application/json"}}
++				if _, err := k8s.InstallTestServingConnection("prod", cfg, nil, fake.NewSimpleClientset().Discovery()); err != nil {
++					t.Fatal(err)
++				}
++				k8s.SetTestClient(kubernetes.NewForConfigOrDie(cfg))
 +			}
- 			if nsCaps.Errors != (k8s.NamespaceCapabilityErrors{}) {
- 				caps.ChecksIncomplete = true
- 			}
-@@ -1717,6 +1720,7 @@ func (s *Server) handleCapabilities(w http.ResponseWriter, r *http.Request) {
- }
- 
- func mergeNamespaceCapabilities(caps *k8s.Capabilities, nsCaps *k8s.NamespaceCapabilities) {
-+	caps.PodDebug = !cloudMode() && nsCaps.Exec && nsCaps.PodDebug
- 	caps.Exec = mergeNamespaceCapability(caps.Exec, nsCaps.Exec, nsCaps.Errors.Exec)
- 	caps.Logs = mergeNamespaceCapability(caps.Logs, nsCaps.Logs, nsCaps.Errors.Logs)
- 	caps.PortForward = mergeNamespaceCapability(caps.PortForward, nsCaps.PortForward, nsCaps.Errors.PortForward)
++			install(a.URL)
++			useCrossNamespaceCache(t)
++			t.Cleanup(k8s.SnapshotTestConnection())
++			Initialize()
++			t.Cleanup(ResetTestClient)
++			request := httptest.NewRequest(http.MethodGet, "/helm/inventory", nil)
++			if bound {
++				admission, err := k8s.CaptureServingConnec
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2917** (2026-11-25): Keep Related Resources quiet while Radar warms up, and refresh the open view (@nadaverell)
-- **PR #2916** (2026-11-25): Keep Pod terminal tabs in sync with their active container (@nadaverell)
-- **PR #2915** (2026-11-25): Stop the export workload-budget test from flaking under load (@nadaverell)
-- **PR #2912** (2026-11-25): Let users stop or terminate a running Argo Workflow from its page (@nadaverell)
-- **PR #2911** (2026-11-25): Preserve Pod terminal input and reopen running debug containers (@nadaverell)
-- **PR #2908** (2026-11-25): deps: batch weekly Dependabot updates (2026-11-25) (@nadaverell)
+- **PR #2959** (2026-11-26): Send NKP clusters to the NKP connect steps; name the basePath fix (@hisco)
+- **PR #2957** (2026-11-27): Check live Kubernetes permissions for Cloud Owner grants (@nadaverell)
+- **PR #2956** (2026-11-26): feat(resources): match kubectl short names in kind filter and command palette (@rvandernoort)
+- **PR #2953** (2026-11-26): Build with Go 1.27 and keep JSON responses as fast as on Go 1.26 (@nadaverell)
+- **PR #2946** (2026-11-26): Group related issues in application panels and expand linked issues (@nadaverell)
+- **PR #2944** (2026-11-26): Align the OpenObserve metrics settings with the other connection forms (@arlenvasconcelos)
 
 ---
 
@@ -3696,21 +3777,21 @@ Hosted views and older servers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Answer Flux dependsOn in Related Resources, not only on the Topology screen
+## X. Flux: show whether the source is ahead of what is applied, and build Activity fr
 
 **RULE**:
-When implementing operations in `docs/ownership.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/gitops.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fca91040`: Answer Flux dependsOn in Related Resources, not only on the Topology screen. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ffea62d3`: Flux: show whether the source is ahead of what is applied, and build Activity from status.history. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/ownership.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gitops.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| `FluxDependsOn` | A Flux Kustomization or HelmRelease → the object of its own kind it waits for through `spec.dependsOn`, in any namespace (an entry without a namespace means the object's own); Depends On on the waiting object, Required By on the one it waits for | `families.go` |
+For a Flux Kustomization or HelmRelease the strip under the header reads as a chain: **Source** (what the primary source has fetched, and when) → **Applied** (the last successful apply; a Kustomization records it only after the apply and its health checks pass) → the number of objects it manages, from `status.inventory` (a HelmRelease without one shows no count). The primary source is the Kustomization's `sourceRef`, the HelmRelease's `chartRef`, or for an inline chart the generated HelmChart (not the HelmRepository, whose revision is an index digest). Digests are compared by value, so `v1@sha256:abc` and `sha256:abc` match; a HelmChart is compared by chart version. A HelmRelease compared by digest shows its deployed chart version with the digest beside it. Before the first apply the chain shows the fetched source alone. A HelmRelease with no deployed release in `status.history` (for example, a failed first install) also shows the fetched source alone. When the two differ, the Applied step turns amber and **Pending: source is ahead of the last successful apply** appears; while the object is suspended that wait is expected, so the step stays neutral and reads **Source is ahead (susp
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3720,7 +3801,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fca91040` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ffea62d3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -13743,3 +13743,6 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `c07795fa` | Multi-dimensional audit evidence | 2026-11-27T07:03:49.835Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `8a314aed` | Multi-dimensional audit evidence | 2026-11-27T07:03:52.507Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-27T07:13:34.913Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-27T07:21:51.750Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `1a8e9c9a` | Multi-dimensional audit evidence | 2026-11-27T07:22:01.246Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `049b39cf` | Multi-dimensional audit evidence | 2026-11-27T07:22:05.366Z |

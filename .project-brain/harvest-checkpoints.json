@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T07:13:34.922Z",
+  "last_updated": "2026-11-27T07:22:05.379Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "4a6c6b8566e61d02576f3b8aff5b3762af16098999d30872bdaa3d624a376b50",
-      "verified_at": "2026-11-26T14:33:49.107Z",
+      "content_hash": "47173e1c788f50a07c6b71e7165031e5289058df7c3a8aee2f666a36688b4baa",
+      "verified_at": "2026-11-27T07:22:01.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T14:33:49.107Z"
+      "last_updated": "2026-11-27T07:22:01.258Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "f529789080e29ac9bdbdef4b31c6d47d232f234ec70abde0b53e235b119079c0",
-      "verified_at": "2026-11-26T13:26:46.144Z",
+      "content_hash": "d5f12e4fd00f650a548feb7278e9a92cb8dcab3b651f9a30cb02fc8cd30305c5",
+      "verified_at": "2026-11-27T07:22:05.379Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T13:26:46.144Z"
+      "last_updated": "2026-11-27T07:22:05.379Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -18996,14 +18996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "content_hash": "445f0d9b055eca73c6aa3937ab6c1ec0b5ac6ccf7d05aeed05e7b5bb8630c1ac",
-      "verified_at": "2026-11-23T21:56:58.509Z",
+      "content_hash": "4685e8634809ad2e38db37995e606bd712356a9e5b60ba9f291374b7c25cbee3",
+      "verified_at": "2026-11-27T07:21:51.764Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T21:56:58.509Z"
+      "last_updated": "2026-11-27T07:21:51.764Z"
     },
     "Abiray/MiniMax-H3-Image-GGUF": {
       "repository": "Abiray/MiniMax-H3-Image-GGUF",

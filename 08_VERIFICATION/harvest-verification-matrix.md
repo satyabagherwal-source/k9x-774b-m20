@@ -13710,3 +13710,6 @@
 | `CYCLE-20261127-XXRW` | `2026-11-27T07:03:49.820Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10846` | Yes (`b497c7da...`) |
 | `CYCLE-20261127-XZU6` | `2026-11-27T07:03:52.494Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10847` | Yes (`0131b285...`) |
 | `CYCLE-20261127-AH8C` | `2026-11-27T07:13:34.908Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`faa68d6a...`) |
+| `CYCLE-20261127-L4LD` | `2026-11-27T07:21:51.745Z` | `autotrust/AutoTrust-Decider-Pro-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`4685e863...`) |
+| `CYCLE-20261127-LBWZ` | `2026-11-27T07:22:01.235Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10848` | Yes (`47173e1c...`) |
+| `CYCLE-20261127-LF3D` | `2026-11-27T07:22:05.353Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10849` | Yes (`d5f12e4f...`) |

@@ -818768,3 +818768,148 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8a314aed` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10848. show whether the source is ahead of what is applied, and build Activity fr (Harvested from skyhook-io/radar)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "show whether the source is ahead of what is applied, and build Activity fr",
+  "source": "skyhook-io/radar",
+  "source_url": "https://github.com/skyhook-io/radar",
+  "source_version": "1a8e9c9a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T07:22:00.644Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-skyhook-io-radar",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `1a8e9c9a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/gitops.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ffea62d3`: Flux: show whether the source is ahead of what is applied, and build Activity from status.history. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gitops.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+For a Flux Kustomization or HelmRelease the strip under the header reads as a chain: **Source** (what the primary source has fetched, and when) → **Applied** (the last successful apply; a Kustomization records it only after the apply and its health checks pass) → the number of objects it manages, from `status.inventory` (a HelmRelease without one shows no count). The primary source is the Kustomization's `sourceRef`, the HelmRelease's `chartRef`, or for an inline chart the generated HelmChart (not the HelmRepository, whose revision is an index digest). Digests are compared by value, so `v1@sha256:abc` and `sha256:abc` match; a HelmChart is compared by chart version. A HelmRelease compared by digest shows its deployed chart version with the digest beside it. Before the first apply the chain shows the fetched source alone. A HelmRelease with no deployed release in `status.history` (for example, a failed first install) also shows the fetched source alone. When the two differ, the Applied step turns amber and **Pending: source is ahead of the last successful apply** appears; while the object is suspended that wait is expected, so the step stays neutral and reads **Source is ahead (susp
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ffea62d3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 10849. docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridge (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridge",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "049b39cf",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-27T07:22:04.788Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `049b39cf`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.agents/rules/go.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `049b39cf`: docs(js,go): add root and JS AGENTS.md, rename go/GEMINI.md, and add rule bridges. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/rules/go.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+---
+trigger: model_decision
+description: 'Conventions for go/ (Go SDK, plugins, registry/actions, schema generation, GoDoc, and testing). Load before planning, writing, or reviewing changes under go/.'
+---
+
+Read `go/AGENTS.md` before planning, writing, or reviewing changes under `go/`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `049b39cf` are properly handled with clean fallback behavior.

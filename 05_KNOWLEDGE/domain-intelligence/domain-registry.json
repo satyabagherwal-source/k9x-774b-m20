@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T07:13:40.818Z",
+  "last_updated": "2026-11-27T07:22:11.288Z",
   "total_records": 2815,
   "domains": {
     "A": {
@@ -18685,8 +18685,8 @@
       "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
       "repository": "genkit-ai/genkit",
-      "content_hash": "b0b5cd559390eab923b6479d2eb236189ac12f87716ba9721e2251c9c95944ac",
-      "created_at": "2026-11-26T13:26:46.542Z"
+      "content_hash": "f6834d1ff33c4f528b9155e297c393fd29dac6d16ec596bf40ee7d5a5b863e1e",
+      "created_at": "2026-11-27T07:22:05.810Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
@@ -19552,8 +19552,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-nvfp4-research-knowledge-intelligence-autotrust-autotrust-d.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
-      "content_hash": "b66354545170e7dd4c338b01a51bea491db14fdbb48ba9668f9afcff7cdabdbc",
-      "created_at": "2026-11-23T21:56:58.710Z"
+      "content_hash": "c0b3a20e0712990ea61604aa2ca490317abe2632f3388d38b13a2ad49d8a93d4",
+      "created_at": "2026-11-27T07:21:51.977Z"
     },
     "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants",
@@ -19612,8 +19612,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-nvfp4-learnings-research-knowledge-intelligence-hf-autotrus.md",
       "repository": "hf-autotrust-jev-35b-nvfp4-learnings",
-      "content_hash": "19ef45483c49cf5d633d4a32fbaf3b16de5e7f27684e3c1704ef0a572c37fed0",
-      "created_at": "2026-11-23T21:57:10.458Z"
+      "content_hash": "1ec320f17c9083e9b7a694cf485f4d4da5e6ffb505fb7f26625ef72423649c2a",
+      "created_at": "2026-11-27T07:22:09.083Z"
     },
     "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants",
@@ -33495,8 +33495,8 @@
       "title": "Technical Construction Intelligence: genkit-ai-genkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-learnings-technical-construction-intelligence-genkit-ai-genkit-.md",
       "repository": "genkit-ai-genkit-learnings",
-      "content_hash": "3c0baa282cf8be4bbd31cf4bf79be92366948dd21b8384a5f7f1154bf38bebc8",
-      "created_at": "2026-11-26T13:26:51.701Z"
+      "content_hash": "a0bcbb123c9d011c5a1737a246ef5040bcfd2e222293eb6a74d38c8119636f8c",
+      "created_at": "2026-11-27T07:22:11.288Z"
     },
     "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants",
@@ -37370,8 +37370,8 @@
       "title": "Research & Knowledge Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-skyhook-io-radar-research-knowledge-intelligence-skyhook-io-radar-core-invariant.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "58b0533fba9a06d1ab0f4479722deda46654e2382da04744e636d4eb11556459",
-      "created_at": "2026-11-24T20:04:23.556Z"
+      "content_hash": "48b00c23bf161e8d80714b29ddb76d0024ac41e488a2cd92123fb07975ec46af",
+      "created_at": "2026-11-27T07:22:01.705Z"
     },
     "DOM-D-6E87E9F5": {
       "record_id": "DOM-D-6E87E9F5",
@@ -37421,8 +37421,8 @@
       "title": "Research & Knowledge Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-skyhook-io-radar-learnings-research-knowledge-intelligence-skyhook-io-radar-lear.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "6bcebd6180ee194808719bcf29cb9d575037e4c2bef252135e2f5706bb28e7b2",
-      "created_at": "2026-11-24T20:04:29.015Z"
+      "content_hash": "bd6757fcbc97880e01811cd3ca0363f34474335a5c2bce0f6b6a20fed1784b91",
+      "created_at": "2026-11-27T07:22:10.106Z"
     },
     "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-jhspetersson-fselect-core-invariants",

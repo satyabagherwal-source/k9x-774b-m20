@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `ce0c9eba`  
+> **Source Version**: `1a8e9c9a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T14:33:47.394Z  
+> **Timestamp**: 2026-11-27T07:22:00.046Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T14:33:47.385Z  
+> **Harvest Timestamp**: 2026-11-27T07:22:00.040Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4236 stars
+- **Stars / Engagement**: 4243 stars
 
 ---
 
@@ -1933,6 +1933,7 @@ import (
 	"net/netip"
 	"strings"
 
+	"github.com/skyhook-io/radar/pkg/k8score"
 	"github.com/skyhook-io/radar/pkg/resourceid"
 )
 
@@ -2024,7 +2025,7 @@ func match(q Query, c candidate) (int, []MatchedField, []MatchSnippet, bool) {
 // matchesModifiers reports whether a candidate passes the query's hard
 // filters (kind:, ns:, label:, image:). It reads identity only, never Content.
 func matchesModifiers(q Query, c candidate) bool {
-	if len(q.KindFilter) > 0 && !kindMatches(c.Kind, c.Group, c.Resource, q.KindFilter) {
+	if len(q.KindFilter) > 0 && !q.kindMatches(c.Kind, c.Group, c.Resource, q.KindFilter) {
 		return false
 	}
 	if len(q.NSFilter) > 0 && !sliceContainsFold(q.NSFilter, c.Namespace) {
@@ -2280,25 +2281,14 @@ func kindMatches(kind, group, resource string, filters []string) bool {
 	return false
 }
 
-func sliceContainsFold(haystack []string, needle string) bool {
-	for _, h := range haystack {
-		if strings.EqualFold(h, needle) {
-			return true
-		}
-	}
-	return false
-}
+// shortNameKey names a discovered kubectl short name for one kind in one group.
+type shortNameKey struct{ name, group, kind string }
 
-func anyContainsFold(haystack []string, needle string) bool {
-	low := strings.ToLower(needle)
-	for _, h := range haystack {
-		if strings.Contains(strings.ToLower(h), low) {
-			return true
-		}
-	}
-	return false
-}
-
+func indexShortNames(resources []k8score.APIResource) map[shortNameKey]bool {
+	index := map[shortNameKey]bool{}
+	for _, ar := range resources {
+		for _, name := range ar.ShortNames {
+			index[shortNameKey{strings.ToLower(name), ar.Group, 
 ```
 
 ### Core Architecture Module: `internal/server/ai_engine.go`
@@ -2425,586 +2415,1324 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce0c9eba` (2026-11-26)
-**Commit Message**: Build with Go 1.27 and keep JSON responses as fast as on Go 1.26 (#2953)
+### Incident Patch 1: `ffea62d3` (2026-11-26)
+**Commit Message**: Flux: show whether the source is ahead of what is applied, and build Activity from status.history (#2632)
 
-## Summary
+## Description
 
-Builds Radar with Go 1.27 without paying for Go 1.27's JSON regression
-on large responses.
+On a Flux Kustomization or HelmRelease detail page, shows whether the
+source has something newer than what Flux applied, builds the Activity
+tab from Flux's own `status.history`, and names HelmRelease upgrades in
+the timeline (#2631).
 
-Go 1.27 reimplements `encoding/json` on top of `encoding/json/v2`. Its
-`Encoder` encodes into a buffer from a shared pool that throws away a
-large buffer once small encodes have used it a few times in a row
-(`jsontext/pools.go`). Kubernetes types call `json.Marshal` on small
-values from their own `MarshalJSON` methods (`IntOrString` does), so
-every large list response hands its buffer to those small calls, loses
-it, and grows a new one from 64 bytes. On a 3,200-pod test cluster,
-stock Go 1.27 used **+38% process CPU** and **2.6× the allocations** of
-Go 1.26 for the same requests, and full pod lists got 13% slower.
+### What changes
 
-`writeJSON` now encodes with `encoding/json/v2`'s `MarshalWrite` and
-`json.DefaultOptionsV1()` into a buffer Radar owns, taken from a pool of
-four slots that keeps buffers up to 16 MiB. That avoids the evicting
-pool, and the output is byte-for-byte what Go 1.27's
-`json.NewEncoder(w).Encode` writes.
+**Revision chain** (`pkg/gitops/insights/flux_chain.go`,
+`GitOpsStatusStrip`)
+- `Source <rev> · fetched <age> → Applied <rev> · next run in ~Nm → N
+objects` under the header. When the two revisions differ, the Applied
+step uses the warning tone and a `Pending: source is ahead of what is
+applied` badge appears. When the chain shows, the old single `Revision:`
+span is hidden so the revision isn't shown twice. Argo is unchanged.
+- **Primary source** by kind: the Kustomization's `sourceRef`, the
+HelmRelease's `chartRef`, or the generated HelmChart
+(`status.helmChart`) for an inline chart; never the HelmRepository,
+whose revision is an index digest.
+- **Applied**: Kustomization `status.lastAppliedRevision`; HelmRelease
+the deployed history entry's `ociDigest`, or its `chartVersion` when the
+source is a HelmChart.
+- *
 
-## What changed
-
-**JSON responses (`internal/server/server.go`).** `writeJSON` encodes
-the whole v
-
-**File**: `.github/workflows/appimage-smoke.yml` (modified, +1/-1)
+**File**: `docs/gitops.md` (modified, +4/-0)
 ```diff
-@@ -43,7 +43,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
+@@ -36,6 +36,8 @@ Click any row to open a detail page with three top-level tabs.
  
-       - name: Set up Node.js
-         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +6/-5)
-```diff
-@@ -125,6 +125,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
-+          # Exercise pkg with the Go version Radar Hub uses.
-           go-version: '1.26'
-           cache: false
+ The revision and its controller's activity time are separate facts. Flux Kustomizations show their latest recorded apply: **Last applied** when it succeeded, or **Last apply attempt** when it did not. Flux re-applies on every interval, so a successful re-apply with no changes also moves **Last applied**. A source, dependency or build failure before apply may not add a history entry, so the time can stay on the previous apply while the Kustomization reports a failure. Flux HelmReleases show **Last deployed** for the currently deployed chart, even if a newer upgrade failed. Argo Applications show **Last checked**, when Argo compared the application with Git. These dates are not Git commit ages. Missing dates are left out, including when an older Radar cannot supply the required history.
  
-@@ -177,7 +178,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       - name: Restore Go caches
-@@ -226,7 +227,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       - name: Restore Go caches
-@@ -264,7 +265,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       - name: Restore Go caches
-@@ -293,7 +294,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
- 
-       - name: Restore Go caches
-@@ -357,7 +358,7 @@ jobs:
-       - uses: actions/checkout@v7
-       - uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
-       - name: Restore Go caches
-         uses: ./.github/actions/go-cache-restore
-```
-
-**File**: `.github/workflows/codeql.yml` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ jobs:
-         if: matrix.language == 'go'
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Initialize CodeQL
-         uses: github/codeql-action/init@v4
-```
-
-**File**: `.github/workflows/helm-refresh-windows.yml` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ jobs:
-       - uses: actions/checkout@v7
-       - uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache-dependency-path: go.sum
-       - name: Test Windows cache file sharing
-         run: go test ./internal/helm/repository_cache_windows.go ./internal/helm/repository_cache_windows_test.go -count=1 -timeout 30s
-```
-
-**File**: `.github/workflows/release-desktop.yml` (modified, +11/-5)
-```diff
-@@ -28,7 +28,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@v6
-@@ -81,8 +81,12 @@ jobs:
-       - name: Build macOS .app (universal)
-         run: cd cmd/desktop && wails build -platform darwin/universal -ldflags "-X main.version=${GITHUB_REF_NAME#v}"
- 
--      - name: Update bundle identifier
--        run: plutil -replace CFBundleIdentifier -string "io.skyhook.radar" build/bin/radar-desktop.app/Contents/Info.plist
-+      # Go 1.27 binaries need macOS 13; declaring it lets macOS refuse the app
-+      # with a clear message instead of a crash at launch.
-+      - name: Update bundle identifier and minimum macOS
-+        run: |
-+          plutil -replace CFBundleIdentifier -string "io.skyhook.radar" build/bin/radar-desktop.app/Contents/Info.plist
-+          plutil -replace LSMinimumSystemVersion -string "13.0" build/bin/radar-desktop.app/Contents/Info.plist
- 
-       - name: Codesign with Developer ID
-         run: |
-@@ -161,7 +165,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@v6
-@@ -267,7 +271,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
- 
-       - name: Set up Node.js
-         uses: actions/setup-node@v6
-@@ -495,6 +499,8 @@ jobs:
-             desc "Kubernetes visibility — topology, traffic, and Helm management"
-             homepage "https://github.com/skyhook-io/radar"
- 
-+            depends_on macos: :ventura
++For a Flux Kustomization or HelmRelease the strip under the header reads as a chain: **Source** (what the primary source has fetched, and when) → **Applied** (the last successful apply; a Kustomization records it only after the apply and its health checks pass) → the number of objects it manages, from `status.inventory` (a HelmRelease without one shows no count). The primary source is the Kustomization's `sourceRef`, the HelmRelease's `chartRef`, or for an inline chart the generated HelmChart (not the HelmRepository, whose revision is an index digest). Digests are compared by value, so `v1@sha256:abc` and `sha256:abc` match; a HelmChart is compared by chart version. A HelmRelease compared by digest shows its deployed chart version with the digest beside it. Before the first apply the chain shows the fetched source alone. A HelmRelease with no deployed release in `status.history` (for example, a failed first install) also shows the fetched source alone. When the two differ, the Applied step turns amber and **Pending: source is ahead of the last successful apply** appears; while the object is suspended that wait is expected, so the step stays neutral and reads **Source is ahead (suspended)**. When Flux recorded an applied revision but Radar can't read what was applied (a HelmRelease whose deployed release has no OCI digest, such as a chart from an ExternalArtifact or a release made before Flux recorded digests), the strip keeps the plain **Revision** line and says nothing about freshness. When Radar can't tell, because the source isn't readable by you, isn't on this cluster, or either side is missing, the chain shows the Applied step alone and says nothing about freshness. While its latest reconcile succeeded (Ready is True), a Kustomization also shows **next run in ~Nm**: its last successful apply plus `spec.interval`. It is an estimate: a new source revision starts a run sooner. It is hidden while suspended, once the time has passed, and whenever the latest reconcile did not succeed, because Flux then retries on `spec.retryInterval` or a dependency's requeue, and a failure before apply leaves no history entry to count from.
 +
-             app "Radar.app"
+ Flux resource drawers show the configured reconciliation interval or **Paused**. They do not calculate a next-run countdown from the last reconciliation request: that request does not establish the controller's schedule. Argo's drawer also omits a countdown because its configured reconciliation interval is not available in the Application status.
  
-             # No caveats needed — app is signed and notarized
+ Helm **History** keeps the recorded start time of each attempt beside its release status, including failed installs and upgrades. **Current Release** still describes the deployed snapshot. The requested chart version constraint remains in the drawer's **Chart** section and the Resources **Version** cell tooltip. Flux revision and additional-info sections retain **Last handled manual request** as the raw acknowledgement token, which may be arbitrary text rather than a date.
+@@ -74,6 +76,8 @@ OutOfSync alerts in the Issues band at the top of the page are clickable — the
+ 
+ Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline. History `rollbackable` only reports whether an entry has an ID and recorded source(s); auto-sync, lifecycle, in-flight operations and RBAC are separate checks.
+ 
++For Flux, the rows come from the object's own `status.history`, newest first. A Kustomization row is one rendered manifest set and outcome, as Flux records them: the revision it last reconciled, when it was first and last reconciled, how long the last run took (**took**), how many runs it had and whether they succeeded (**Applied** or **Failed** with Flux's status). Flux keys an entry on the manifest digest and the outcome, so a new commit that renders the same manifests updates the existing row, and the same manifests failing and succeeding are two rows. Flux keeps the last 5 entries. A HelmRelease row 
 ```
 
-**File**: `.github/workflows/release-image.yml` (modified, +1/-1)
+**File**: `docs/integrations.md` (modified, +1/-1)
 ```diff
-@@ -52,7 +52,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
+@@ -930,7 +930,7 @@ These are dependencies, not owners: topology draws each source upstream, with
+ the edge pointing into the object that reads it. A link does not prove that Flux
+ permits the reference or has produced an artifact.
  
-       - name: Set up Node.js
-         uses: actions/setup-node@v6
+-**Diagnosis**: Conditions extracted to issues (Ready=False, Stalled=True, Reconciling=True). Per-resource diff and recent events not yet available for Flux (HelmRelease-installed resources don't carry `last-applied-configuration`; tracked in [#601](https://github.com/skyhook-io/radar/issues/601)).
++**Diagnosis**: Conditions extracted to issues (Ready=False, Stalled=True, Reconciling=True). The Activity tab lists `status.history` and the root's recent notable events; the timeline names a HelmRelease's chart and release change. Per-resource diff not yet available for Flux (HelmRelease-installed resources don't carry `last-applied-configuration`; tracked in [#601](https://github.com/skyhook-io/radar/issues/601)).
+ 
+ ### Flux Operator
+ 
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +1/-1)
+**File**: `internal/k8s/history.go` (modified, +51/-11)
 ```diff
-@@ -41,7 +41,7 @@ jobs:
-       - name: Set up Go
-         uses: actions/setup-go@v7
-         with:
--          go-version: '1.26'
-+          go-version: '1.27'
-           cache: false
+@@ -3097,16 +3097,56 @@ func diffFluxHelmRelease(oldObj, newObj any) ([]FieldChange, []string) {
+ 		}
+ 	}
  
-       # CI runs claim setup-go's default cache key with linux/amd64 objects only,
+-	// Check last applied revision (Helm chart version)
+-	oldRevision, _, _ := unstructured.NestedInt64(oldStatus, "lastAppliedRevision")
+-	newRevision, _, _ := unstructured.NestedInt64(newStatus, "lastAppliedRevision")
+-	if oldRevision != newRevision && newRevision != 0 {
+-		changes = append(changes, FieldChange{
+-			Path:     "status.lastAppliedRevision",
+-			OldValue: oldRevision,
+-			NewValue: newRevision,
+-		})
+-		summary = append(summary, fmt.Sprintf("revision: %d→%d", oldRevision, newRevision))
++	// The newest status.history entry names the release; it is what current
++	// Flux records, so its summary line wins over lastAppliedRevision's.
++	historyChanged := false
++	if newHistory := gitops.FluxHelmHistory(newHR); len(newHistory) > 0 {
++		n := newHistory[0]
++		outcome := ""
++		if n.Status != "" && n.Status != "deployed" {
++			outcome = ", " + n.Status
++		}
++		newValue := fmt.Sprintf("%s (release %d)", n.ChartVersion, n.Version)
++		if oldHistory := gitops.FluxHelmHistory(oldHR); len(oldHistory) == 0 {
++			historyChanged = true
++			changes = append(changes, FieldChange{Path: "status.history[0]", NewValue: newValue})
++			summary = append(summary, fmt.Sprintf("chart %s (release %d%s)", n.ChartVersion, n.Version, outcome))
++		} else if o := oldHistory[0]; o.Version != n.Version || o.ChartVersion != n.ChartVersion {
++			historyChanged = true
++			changes = append(changes, FieldChange{Path: "status.history[0]", OldValue: fmt.Sprintf("%s (release %d)", o.ChartVersion, o.Version), NewValue: newValue})
++			summary = append(summary, fmt.Sprintf("chart %s → %s (release %d → %d%s)", o.ChartVersion, n.ChartVersion, o.Version, n.Version, outcome))
++		} else if o.Status != n.Status && n.Status != "" {
++			// Helm keeps the release number while an upgrade moves from
++			// pending-upgrade to its outcome.
++			historyChanged = true
++			changes = append(changes, FieldChange{Path: "status.history[0]", OldValue: fmt.Sprintf("%s (release %d, %s)", o.ChartVersion, o.Version, o.Status), NewValue: fmt.Sprintf("%s (release %d, %s)", n.ChartVersion, n.Version, n.Status)})
++			summary = append(summary, fmt.Sprintf("chart %s (release %d, %s)", n.ChartVersion, n.Version, n.Status))
++		}
++	}
++
++	// Check last applied revision: a chart version string on current Flux,
++	// an integer on objects from older API versions.
++	appliedChanged := false
++	oldApplied, _, _ := unstructured.NestedString(oldStatus, "lastAppliedRevision")
++	newApplied, _, _ := unstructured.NestedString(newStatus, "lastAppliedRevision")
++	if newApplied != "" {
++		if oldApplied != newApplied {
++			appliedChanged = true
++			changes = append(changes, FieldChange{Path: "status.lastAppliedRevision", OldValue: oldApplied, NewValue: newApplied})
++			if !historyChanged {
++				summary = append(summary, fmt.Sprintf("revision: %s→%s", oldApplied, newApplied))
++			}
++		}
++	} else {
++		oldRevision, _, _ := unstructured.NestedInt64(oldStatus, "lastAppliedRevision")
++		newRevision, _, _ := unstructured.NestedInt64(newStatus, "lastAppliedRevision")
++		if oldRevision != newRevision && newRevision != 0 {
++			appliedChanged = true
++			changes = append(changes, FieldChange{Path: "status.lastAppliedRevision", OldValue: oldRevision, NewValue: newRevision})
++			if !historyChanged {
++				summary = append(summary, fmt.Sprintf("revision: %d→%d", oldRevision, newRevision))
++			}
++		}
+ 	}
+ 
+ 	// Check last released revision
+@@ -3118,7 +3158,7 @@ func diffFluxHelmRelease(oldObj, newObj any) ([]FieldChange, []string) {
+ 			OldValue: oldReleased,
+ 			NewValue: newReleased,
+ 		})
+-		if oldRevision == newRevision { // Only show if not already showing applied revision
++		if !appliedChanged && !historyChanged { // Only show if not already showing the release change
+ 			summary = append(summary, fmt.Sprintf("released: rev %d→%d", oldReleased, newReleased))
+ 		}
+ 	}
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+**File**: `internal/k8s/history_flux_test.go` (added, +101/-0)
 ```diff
-@@ -61,7 +61,7 @@ For detailed architecture, API reference, and release process, see [DEVELOPMENT.
+@@ -0,0 +1,101 @@
++package k8s
++
++import (
++	"strings"
++	"testing"
++
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++)
++
++func fluxHelmRelease(status map[string]any) *unstructured.Unstructured {
++	return &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": "helm.toolkit.fluxcd.io/v2", "kind": "HelmRelease",
++		"metadata": map[string]any{"namespace": "team", "name": "app"},
++		"status":   status,
++	}}
++}
++
++func helmEntry(version int64, chart, lastDeployed string) map[string]any {
++	return map[string]any{"version": version, "chartVersion": chart, "status": "deployed", "lastDeployed": lastDeployed}
++}
++
++func diffPath(diff *DiffInfo, path string) bool {
++	if diff == nil {
++		return false
++	}
++	for _, f := range diff.Fields {
++		if f.Path == path {
++			return true
++		}
++	}
++	return false
++}
++
++func TestFluxHelmReleaseDiffNamesChartChange(t *testing.T) {
++	oldHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(58, "5.4.0", "2026-11-09T09:00:00Z")}})
++	newHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z"), helmEntry(58, "5.4.0", "2026-11-09T09:00:00Z")}})
++	diff := ComputeDiff("HelmRelease", oldHR, newHR)
++	if !diffPath(diff, "status.history[0]") || !strings.Contains(diff.Summary, "chart 5.4.0 → 5.5.0 (release 58 → 59)") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffReadsStringAppliedRevision(t *testing.T) {
++	diff := ComputeDiff("HelmRelease", fluxHelmRelease(map[string]any{"lastAppliedRevision": "5.4.0"}), fluxHelmRelease(map[string]any{"lastAppliedRevision": "5.5.0"}))
++	if !diffPath(diff, "status.lastAppliedRevision") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffKeepsInt64AppliedRevision(t *testing.T) {
++	diff := ComputeDiff("HelmRelease", fluxHelmRelease(map[string]any{"lastAppliedRevision": int64(3)}), fluxHelmRelease(map[string]any{"lastAppliedRevision": int64(4)}))
++	if !diffPath(diff, "status.lastAppliedRevision") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffIgnoresUnchangedHistory(t *testing.T) {
++	oldHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z")}})
++	newHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(59, "5.5.0", "2026-11-10T10:00:00Z")}})
++	if diffPath(ComputeDiff("HelmRelease", oldHR, newHR), "status.history[0]") {
++		t.Fatal("unchanged release reported as a chart change")
++	}
++}
++
++func TestFluxHelmReleaseDiffNamesReleaseOutcome(t *testing.T) {
++	failed := helmEntry(60, "5.6.0", "2026-11-11T09:00:00Z")
++	failed["status"] = "failed"
++	oldHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z")}})
++	newHR := fluxHelmRelease(map[string]any{"history": []any{failed, helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z")}})
++	if diff := ComputeDiff("HelmRelease", oldHR, newHR); diff == nil || !strings.Contains(diff.Summary, "chart 5.5.0 → 5.6.0 (release 59 → 60, failed)") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffNamesFirstInstall(t *testing.T) {
++	newHR := fluxHelmRelease(map[string]any{"history": []any{helmEntry(1, "5.5.0", "2026-11-10T09:00:00Z")}})
++	diff := ComputeDiff("HelmRelease", fluxHelmRelease(map[string]any{}), newHR)
++	if !diffPath(diff, "status.history[0]") || !strings.Contains(diff.Summary, "chart 5.5.0 (release 1)") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffNamesTheChangeOnce(t *testing.T) {
++	oldHR := fluxHelmRelease(map[string]any{"lastAppliedRevision": "5.4.0", "history": []any{helmEntry(58, "5.4.0", "2026-11-09T09:00:00Z")}})
++	newHR := fluxHelmRelease(map[string]any{"lastAppliedRevision": "5.5.0", "history": []any{helmEntry(59, "5.5.0", "2026-11-10T09:00:00Z")}})
++	diff := ComputeDiff("HelmRelease", oldHR, newHR)
++	if !diffPath(diff, "status.lastAppliedRevision") || strings.Contains(diff.Summary, "revision: 5.4.0→5.5.0") || !strings.Contains(diff.Summary, "chart 5.4.0 → 5.5.0") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
++
++func TestFluxHelmReleaseDiffNamesStatusChangeOnSameRelease(t *testing.T) {
++	pending := helmEntry(60, "5.6.0", "2026-11-11T09:00:00Z")
++	pending["status"] = "pending-upgrade"
++	failed := helmEntry(60, "5.6.0", "2026-11-11T09:00:00Z")
++	failed["status"] = "failed"
++	diff := ComputeDiff("HelmRelease", fluxHelmRelease(map[string]any{"history": []any{pending}}), fluxHelmRelease(map[string]any{"history": []any{failed}}))
++	if !diffPath(diff, "status.history[0]") || !strings.Contains(diff.Summary, "chart 5.6.0 (release 60, failed)") {
++		t.Fatalf("diff = %+v", diff)
++	}
++}
+```
+
+**File**: `internal/server/gitops_handlers_test.go` (modified, +38/-0)
+```diff
+@@ -15,7 +15,9 @@ import (
+ 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
++	fakediscovery "k8s.io/client-go/discovery/fake"
+ 	"k8s.io/client-go/kubernetes/fake"
++	k8stesting "k8s.io/client-go/testing"
  
- ### Prerequisites
+ 	"github.com/skyhook-io/radar/internal/auth"
+ 	"github.com/skyhook-io/radar/internal/k8s"
+@@ -429,6 +431,42 @@ func TestWriteGitOpsBuildErrorRefusesNonGitOpsRoot(t *testing.T) {
+ 	}
+ }
  
--- Go 1.26+
-+- Go 1.27+
- - Node.js 24+
- - npm
- - Access to a Kubernetes cluster (minikube, kind, or remote)
++func TestFluxChainHidesUnreadableSource(t *testing.T) {
++	fd := &fakediscovery.FakeDiscovery{Fake: &k8stesting.Fake{}}
++	fd.Resources = []*metav1.APIResourceList{{GroupVersion: "source.toolkit.fluxcd.io/v1", APIResources: []metav1.APIResource{
++		{Name: "gitrepositories", Kind: "GitRepository", Namespaced: true, Verbs: metav1.Verbs{"get", "list", "watch"}},
++	}}}
++	restore, err := k8s.SetTestResourceDiscovery(fd)
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(restore)
++	s := &Server{permCache: auth.NewPermissionCache()}
++	s.permCache.Set("chain-user", nil, &auth.UserPermissions{AllowedNamespaces: []string{"team"}})
++	s.permCache.Get("chain-user", nil).SetCanI("get", "source.toolkit.fluxcd.io", "gitrepositories", "team", false)
++	req := &gitopsRequest{AllowedNamespaces: []string{"team"}}
++	root := &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": "kustomize.toolkit.fluxcd.io/v1", "kind": "Kustomization",
++		"metadata": map[string]any{"namespace": "team", "name": "app"},
++		"spec":     map[string]any{"sourceRef": map[string]any{"kind": "GitRepository", "name": "repo"}},
++		"status":   map[string]any{"lastAppliedRevision": "main@sha1:aaa"},
++	}}
++	tree := &gitopstree.ResourceTree{
++		Root: gitopstree.Node{ID: "root", Role: gitopstree.RoleRoot},
++		Nodes: []gitopstree.Node{
++			{ID: "root", Role: gitopstree.RoleRoot},
++			{ID: "repo", Role: gitopstree.RoleDeclared, Dependency: true, Ref: gitopstree.ResourceRef{Group: "source.toolkit.fluxcd.io", Kind: "GitRepository", Namespace: "team", Name: "repo"}, Data: map[string]any{"artifactRevision": "main@sha1:bbb"}},
++		},
++		Edges: []gitopstree.Edge{{Source: "repo", Target: "root", Type: gitopstree.EdgeSource}},
++	}
++	r := httptest.NewRequest(http.MethodGet, "/api/gitops/tree", nil)
++	r = r.WithContext(auth.ContextWithUser(r.Context(), &auth.User{Username: "chain-user"}))
++	summary := gitopsinsights.Build(root, s.filterGitOpsTreeForUser(r, req, tree), nil).Summary
++	if summary.SourceRevision != "" || summary.Pending != nil || summary.AppliedRevision != "main@sha1:aaa" {
++		t.Fatalf("hidden source fed the chain: %+v", summary)
++	}
++}
++
+ func TestWriteGitOpsPermissionDenied(t *testing.T) {
+ 	original := apierrors.NewForbidden(schema.GroupResource{Group: "source.toolkit.fluxcd.io", Resource: "gitrepositories"}, "repo", fmt.Errorf("User opaque-user cannot get resource"))
+ 	denied := &gitops.PermissionDenied{Verb: "get", Group: "source.toolkit.fluxcd.io", Resource: "gitrepositories", Namespace: "sources", Err: original}
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/SyncCountdown.test.ts` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++import { expect, it } from 'vitest'
++import { parseInterval } from './SyncCountdown'
++
++it('parses Go durations as Flux writes them', () => {
++  expect(parseInterval('5m')).toBe(300)
++  expect(parseInterval('1h30m')).toBe(5400)
++  expect(parseInterval('30s')).toBe(30)
++  expect(parseInterval('1.5m')).toBe(90)
++  expect(parseInterval('1500ms')).toBe(1.5)
++  expect(parseInterval('1m30.5s')).toBe(90.5)
++})
++
++it('refuses what is not a duration', () => {
++  expect(parseInterval('')).toBeNull()
++  expect(parseInterval('0s')).toBeNull()
++  expect(parseInterval('10')).toBeNull()
++  expect(parseInterval('5d')).toBeNull()
++  expect(parseInterval('m5')).toBeNull()
++})
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/SyncCountdown.tsx` (modified, +8/-32)
+```diff
+@@ -86,42 +86,18 @@ export function SyncCountdown({ interval, lastSyncTime, suspended, compact = fal
+   )
+ }
+ 
++const UNIT_SECONDS: Record<string, number> = { h: 3600, m: 60, s: 1, ms: 0.001 }
++
+ /**
+- * Parses a Kubernetes duration string (e.g., "5m", "1h30m", "30s") into seconds
++ * Parses a Go duration as Flux's interval fields accept it ("5m", "1h30m",
++ * "1.5m", "1500ms") into seconds; null for anything else.
+  */
+-function parseInterval(interval: string): number | null {
+-  if (!interval) return null
+-
++export function parseInterval(interval: string): number | null {
++  if (!/^(\d+(\.\d+)?(ms|h|m|s))+$/.test(interval)) return null
+   let totalSeconds = 0
+-  let index = 0
+-
+-  while (index < interval.length) {
+-    const start = index
+-    while (index < interval.length) {
+-      const code = interval.charCodeAt(index)
+-      if (code < 48 || code > 57) break
+-      index += 1
+-    }
+-    if (start === index) {
+-      index += 1
+-      continue
+-    }
+-    const value = parseInt(interval.slice(start, index), 10)
+-    const unit = interval[index]
+-    if (unit === 'h') {
+-      totalSeconds += value * 3600
+-      index += 1
+-    } else if (unit === 'm') {
+-      totalSeconds += value * 60
+-      index += 1
+-    } else if (unit === 's') {
+-      totalSeconds += value
+-      index += 1
+-    } else if (index < interval.length) {
+-      index += 1
+-    }
++  for (const [, value, unit] of interval.matchAll(/(\d+(?:\.\d+)?)(ms|h|m|s)/g)) {
++    totalSeconds += Number(value) * UNIT_SECONDS[unit]
+   }
+-
+   return totalSeconds > 0 ? totalSeconds : null
+ }
+ 
+```
+
+**File**: `packages/k8s-ui/src/components/gitops/insights/GitOpsActivityInsightView.test.tsx` (modified, +32/-0)
+```diff
+@@ -57,6 +57,38 @@ describe('GitOpsActivityInsightView rollback', () => {
+   })
+ })
+ 
++describe('Flux Activity rows', () => {
++  it('shows runs, duration and events', () => {
++    const html = render({
++      summary: { tool: 'fluxcd', kind: 'Kustomization', namespace: 'team', name: 'app' },
++      history: [
++        { kind: 'revision', id: 'sha256:y', revision: 'main@sha1:ccc', phase: 'Applied', runs: 2, duration: '984.729484ms', deployedAt: '2026-11-08T10:00:00Z' },
++        { kind: 'event', id: 'HealthCheckFailed', phase: 'Warning', message: 'timeout waiting for app', deployedAt: '2026-11-10T11:00:00Z' },
++        { kind: 'revision', id: 'sha256:x', revision: 'main@sha1:bbb', phase: 'Applied', runs: 12, duration: '1.102930992s', firstAt: '2026-11-09T10:00:00Z', deployedAt: '2026-11-10T10:00:00Z' },
++      ],
++    })
++    expect(html).toContain('>Applied<')
++    expect(html).toContain('12 runs')
++    expect(html).toContain('took 1.1s')
++    expect(html).toContain('first ')
++    expect(html).toContain('took 985ms')
++    expect(html).not.toContain('984.729484ms')
++    expect(html).toContain('HealthCheckFailed')
++    expect(html).toContain('timeout waiting for app')
++  })
++})
++
++describe('GitOpsActivityInsightView condition rows', () => {
++  it('titles a failing condition by its type, not by the phase its chip repeats', () => {
++    const html = render({
++      summary: { tool: 'fluxcd', kind: 'Kustomization', namespace: 'flux-system', name: 'apps' },
++      history: [{ kind: 'condition', id: 'Ready', phase: 'Failed', message: 'kustomize build failed' }],
++    } as GitOpsInsight)
++    expect(html).toContain('Ready condition')
++    expect(html).not.toMatch(/>Failed<\/span>\s*<[^>]*>[^<]*Failed/)
++  })
++})
++
+ // Without patch access the user can't disable auto-sync either, so the role
+ // reason comes before the auto-sync advice.
+ it('names a role denial ahead of the auto-sync advice on Rollback', async () => {
 ```
 
 ---
 
-### Incident Patch 2: `691fa362` (2026-11-25)
-**Commit Message**: Move the built-in workload action handlers out of server.go (no functional change) (#2921)
+### Incident Patch 2: `55412b85` (2026-11-26)
+**Commit Message**: Send NKP clusters to the NKP connect steps; name the basePath fix (#2959)
 
-## Summary
+On Nutanix NKP, Radar is installed from the NKP partner catalog and
+configured in NKP, served at `/radar`. The "Radar Cloud" dialog doesn't
+send those installs to Radar Cloud's NKP steps: it opens the plain
+connect page or the generic steps, which say to commit a values patch to
+Git. On NKP that edit is undone, and the generic patch kept `basePath:
+/radar`, so the chart refused it with "basePath is not supported with
+cloud.enabled=true ... unset one of them". A catalog default can't be
+unset.
 
-A pure move, with no functional change. The built-in workload and
-CronJob action handlers leave `internal/server/server.go`, now 6,400
-lines, for `internal/server/workload_actions.go`. That puts them next to
-the other per-action handler files (`workload_restart.go`,
-`workload_images_handlers.go`, `rollouts_handlers.go`,
-`node_handlers.go`, `workflow_stop.go`).
+**What changes**
+- `cloud_connect_self.go`: on an NKP cluster, `/api/cloud/connect/self`
+returns `platform: "nkp"` and a `wizardUrl` that opens Radar Cloud's NKP
+steps (`/install?clusters=many&platform=nkp`), whatever the install
+inspection found. Every other cluster gets the same answer as before.
+- NKP is recognized by `k8s.IsNKP`, the check behind the platform shown
+on the home page (the `kommander-flux` namespace), now exported. It
+reads as Radar's own ServiceAccount, not as the signed-in user, who may
+not be able to list namespaces.
+- `CloudFunnelButton.tsx`: on NKP the dialog says NKP manages this Radar
+and that 
 
-## What changed
-
-- **Moved byte for byte:**
-  - CronJob trigger, suspend and resume
-  - Deployment pause and resume
-  - scale
-- revisions and rollback, with the `rollbackableWorkloadKinds` gate,
-`errCodeWorkloadPaused`, and the rollback error mapping
-
-That's 359 lines. Only the package clause and import blocks are new;
-`server.go` drops the now-unused `pkg/rollouts` import.
-- **Unchanged:** route registrations stay in `server.go`, and so does
-every request, response and Kubernetes call.
-- **Docs:** CLAUDE.md now names the new file as the home of
-`rollbackableWorkloadKinds`, and `docs/STRUCTURE.md` lists it.
-
-## Testing
-
-- **Byte-identical move, checked by script:** the lines removed from
-`server.go`, minus one blank separa
-
-**File**: `CLAUDE.md` (modified, +1/-1)
+**File**: `deploy/helm/radar/templates/deployment.yaml` (modified, +4/-1)
 ```diff
-@@ -147,7 +147,7 @@ After `make <name>-demo`, run `kubectl config use-context kind-radar-<name>-demo
- - MCP: `/mcp` (Streamable HTTP — POST for JSON-RPC, GET for SSE)
- - Sealed Secrets: `GET /api/sealedsecrets/controller?sealedSecretNamespace=` — the controller serving that namespace (not `namespace`, the filter the totals honour), chosen from its Deployment flags (caller's `get deployments` in its namespace), sealing-key names and `tls.crt` dates ordered by the controller's own key order (caller's `list secrets` there; never key material, labels or annotations) and the SealedSecret totals the caller can list. A denied part is a state in a 200 (`controllerState` / `keysState`), never a whole-response 403; `ambiguous` is the same for every caller and names no candidate; `atKubesealDefault` is set even for a denied controller. `GET /api/sealedsecrets/cert?sealedSecretNamespace=` returns that controller's public certificate `{certPem, certFingerprint, controller}` from its fixed `/v1/cert.pem` (409 `ambiguous`/`unknown` rather than a guess; auth on: `get services/proxy` on the kubeseal Service-and-port name; capability `sealedSecretsCert`). Rules in docs/integrations.md (Bitnami Sealed Secrets)
- - Helm: `/api/helm/releases/...`. `/api/helm/inventory` (+ `/{namespace}/{name}`) is the list as far as the caller's access reaches: where the read of Helm's release Secrets is denied, rows come from the stamps on objects the caller can read, through `search.Scan`'s per-user gates, and never from a Secret. See [docs/helm.md](docs/helm.md#without-access-to-secrets)
--- Workloads: `/api/workloads/{kind}/{ns}/{name}/...` (logs, restart, scale, pause, resume, revisions, rollback, images, history). With `workloadRestartPreconditions`, `restart` accepts an optional reviewed-restart body (`{uid, resourceVersion?}`); an empty request keeps the unconditional restart. The contract and refusal codes are on `handleRestartWorkload` in `internal/server/workload_restart.go`. `pause`/`resume` set `spec.paused` and accept Deployment only (400 otherwise). `revisions`/`rollback` accept Deployment, StatefulSet, DaemonSet and **Rollout**, gated by `rollbackableWorkloadKinds` in `server.go`; `images` accepts the same four through a separate map, `workloadImageRoots` in `pkg/k8score/workload_images.go` (a new kind needs both), uses compare-and-swap JSON Patch, and follows a Rollout's `workloadRef`. `history` is the workload's own timeline and never includes sibling workloads — scope rules live in `workload_history.go` and `pkg/timeline`'s `ResourceScope`
-+- Workloads: `/api/workloads/{kind}/{ns}/{name}/...` (logs, restart, scale, pause, resume, revisions, rollback, images, history). With `workloadRestartPreconditions`, `restart` accepts an optional reviewed-restart body (`{uid, resourceVersion?}`); an empty request keeps the unconditional restart. The contract and refusal codes are on `handleRestartWorkload` in `internal/server/workload_restart.go`. `pause`/`resume` set `spec.paused` and accept Deployment only (400 otherwise). `revisions`/`rollback` accept Deployment, StatefulSet, DaemonSet and **Rollout**, gated by `rollbackableWorkloadKinds` in `internal/server/workload_actions.go`; `images` accepts the same four through a separate map, `workloadImageRoots` in `pkg/k8score/workload_images.go` (a new kind needs both), uses compare-and-swap JSON Patch, and follows a Rollout's `workloadRef`. `history` is the workload's own timeline and never includes sibling workloads — scope rules live in `workload_history.go` and `pkg/timeline`'s `ResourceScope`
- - Argo Rollouts: `/api/rollouts/{ns}/{name}/{abort,retry,promote,promote-full,skip-step}` (POST) + `/capabilities` (GET); rollback/history deliberately live on the `/workloads` routes. The status verbs patch the `rollouts/status` subresource, so capabilities SAR `rollouts` **and** `rollouts/status` separately — `patch rollouts` does not imply `patch rollouts/status`. Promotion waits for the controller to observe the current pod template, so `promote-full` can return **503** (`ErrControllerNotCaughtUp`) and is safe to retry; for a `workloadRef` Rollout the caller must be able to `get` the referenced workload. Engine `pkg/rollouts`, handlers `internal/server/rollouts_handlers.go`
- - GitOps write evidence: `POST /api/gitops/write-evidence` `{kind, group, namespace, name, paths[], owner?}` reads the target (and its GitOps owner) as the caller and returns, per field path, whether it is in last-applied, which field managers own it and whether an ignore rule covers it, plus the owner's sync policy — never raw managedFields/last-applied. Classification is the pure `evaluateGitOpsWriteGuard` in k8s-ui (`utils/gitops-write-guard.ts`); Set image and Diagnose Apply show it via `GitOpsWriteWarning` + `web/src/hooks/useGitOpsWriteGuard.ts`. Copy never promises a change won't be reverted. See docs/gitops.md
- - GitOps controller actions: `/api/argo/applications/...` (sync, refresh, terminate, suspend, resume, rollb
+@@ -85,7 +85,10 @@
+ {{- end }}
+ {{- end }}
+ {{- if and $basePath .Values.cloud.enabled }}
+-{{- fail "basePath is not supported with cloud.enabled=true: Radar Cloud owns the URL path, and the binary refuses the combination at startup — unset one of them" }}
++{{- /* Radar Cloud reaches Radar at the root path, and the binary refuses a
++       prefix in Cloud mode. Installs that set basePath by default (NKP's
++       catalog) can't unset it, only override it, so name the override. */}}
++{{- fail (printf "basePath %q is not supported with cloud.enabled=true. To connect this Radar to Radar Cloud, set basePath: \"\" (an empty string), or turn Radar Cloud off with cloud.enabled: false." $basePath) }}
+ {{- end }}
+ {{- /* URLs registered at the IdP have to carry the prefix: Radar's OIDC routes
+        move under it, and an unprefixed URI is not routed here, so login fails
 ```
 
-**File**: `docs/STRUCTURE.md` (modified, +1/-0)
+**File**: `deploy/helm/radar/tests/cloud_base_path_test.yaml` (added, +37/-0)
 ```diff
-@@ -66,6 +66,7 @@ radar/
- │   │   ├── portforward.go     # Port forwarding sessions
- │   │   ├── resource_counts.go # Resource counting
- │   │   ├── dashboard.go       # Dashboard summary endpoint
-+│   │   ├── workload_actions.go # Built-in workload and CronJob actions: scale, pause/resume, revisions/rollback, CronJob trigger/suspend/resume
- │   │   ├── argo_handlers.go   # ArgoCD sync/refresh/terminate/suspend/resume/rollback/selective-sync
- │   │   ├── flux_handlers.go   # FluxCD reconcile/suspend/resume/sync-with-source
- │   │   ├── gitops_handlers.go # /api/gitops/tree + /api/gitops/insights handlers
+@@ -0,0 +1,37 @@
++suite: basePath with Radar Cloud
++templates:
++  - deployment.yaml
++release:
++  name: radar
++  namespace: radar
++tests:
++  # NKP's catalog sets basePath: /radar as a default that settings can only
++  # override, so the message names the override rather than "unset".
++  - it: names the override when basePath is set with Radar Cloud
++    set:
++      basePath: /radar
++      cloud:
++        enabled: true
++        hubURL: https://hub.example.com
++        enrollment:
++          key: rhe_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789_-abcd
++    asserts:
++      - failedTemplate:
++          errorMessage: 'basePath "/radar" is not supported with cloud.enabled=true. To connect this Radar to Radar Cloud, set basePath: "" (an empty string), or turn Radar Cloud off with cloud.enabled: false.'
++
++  - it: renders with Radar Cloud when basePath is overridden with an empty string
++    set:
++      basePath: ""
++      cloud:
++        enabled: true
++        hubURL: https://hub.example.com
++        enrollment:
++          key: rhe_AbCdEfGhIjKlMnOpQrStUvWxYz0123456789_-abcd
++    asserts:
++      - notFailedTemplate: {}
++      - notContains:
++          path: spec.template.spec.containers[0].args
++          content: --base-path=/radar
++      - contains:
++          path: spec.template.spec.containers[0].args
++          content: --cloud-enrollment-key-file=/etc/radar/cloud-enrollment/key
 ```
 
-**File**: `internal/server/server.go` (modified, +0/-361)
+**File**: `deploy/helm/radar/values.yaml` (modified, +2/-1)
 ```diff
-@@ -77,7 +77,6 @@ import (
- 	"github.com/skyhook-io/radar/pkg/rbac"
- 	"github.com/skyhook-io/radar/pkg/readreason"
- 	"github.com/skyhook-io/radar/pkg/resourceid"
--	"github.com/skyhook-io/radar/pkg/rollouts"
- 	topology "github.com/skyhook-io/radar/pkg/topology"
- 	"github.com/skyhook-io/radar/pkg/urlutil"
- )
-@@ -4776,366 +4775,6 @@ func (s *Server) handleCascadeDeletePreview(w http.ResponseWriter, r *http.Reque
- 	s.writeJSON(w, preview)
+@@ -289,7 +289,8 @@ service:
+ # URL path prefix that Radar itself serves under, e.g. /radar. Set this when
+ # your ingress forwards a subpath through to the service without stripping it.
+ # Leave empty for root serving or for ingresses that rewrite /radar -> /.
+-# Cannot be combined with cloud.enabled — Radar Cloud owns the URL path.
++# Must be "" with cloud.enabled, since Radar Cloud reaches Radar at the root
++# path. Where a default sets it (NKP sets /radar), override it with "".
+ basePath: ""
+ 
+ # Hostnames that Radar answers when auth.mode is none, besides localhost, IP
+```
+
+**File**: `internal/k8s/cluster_detection.go` (modified, +8/-5)
+```diff
+@@ -211,7 +211,7 @@ func GetClusterInfo(ctx context.Context) (*ClusterInfo, error) {
+ 
+ // GetClusterPlatform attempts to detect the Kubernetes platform/provider
+ func GetClusterPlatform(ctx context.Context) (string, error) {
+-	if isNKP(ctx) {
++	if IsNKP(ctx) {
+ 		return "nkp", nil
+ 	}
+ 
+@@ -258,10 +258,13 @@ func GetClusterPlatform(ctx context.Context) (string, error) {
+ 	return "generic", nil
  }
  
--// handleTriggerCronJob creates a Job from a CronJob. The optional body
--// {"jobName": "..."} names the Job; without it the API server generates
--// "<cronjob>-manual-xxxxx" (advertised as features.cronJobTriggerJobName).
--func (s *Server) handleTriggerCronJob(w http.ResponseWriter, r *http.Request) {
--	namespace := chi.URLParam(r, "namespace")
--	name := chi.URLParam(r, "name")
--
--	// A pointer so a JSON null, which decodes without error, can be refused.
--	req := &struct {
--		JobName string `json:"jobName"`
--	}{}
--	if err := decodeBoundedJSONBody(w, r, 4096, &req); err != nil && !errors.Is(err, io.EOF) {
--		var tooLarge *http.MaxBytesError
--		if errors.As(err, &tooLarge) {
--			s.writeError(w, http.StatusRequestEntityTooLarge, "trigger request is too large")
--			return
--		}
--		s.writeError(w, http.StatusBadRequest, "invalid request body: "+err.Error())
--		return
--	}
--	if req == nil {
--		s.writeError(w, http.StatusBadRequest, "invalid request body: the body must be a JSON object")
--		return
--	}
--
--	auth.AuditLog(r, namespace, name)
--	client := s.getDynamicClientForRequest(r)
--	if client == nil {
--		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
--		return
--	}
--	result, err := k8s.TriggerCronJobWithClient(r.Context(), namespace, name, req.JobName, client)
--	if err != nil {
--		if errors.Is(err, k8score.ErrInvalidJobName) {
--			s.writeError(w, http.StatusBadRequest, err.Error())
--			return
--		}
--		if apierrors.IsAlreadyExists(err) {
--			s.writeError(w, http.StatusConflict, err.Error())
--			return
--		}
--		if apierrors.IsInvalid(err) || apierrors.IsBadRequest(err) {
--			s.writeError(w, http.StatusBadRequest, err.Error())
--			return
--		}
--		if apierrors.IsForbidden(err) {
--			s.writeError(w, http.StatusForbidden, err.Error())
--			return
--		}
--		if strings.Contains(err.Error(), "not found") {
--			s.writeError(w, http.StatusNotFound, err.Error())
--			return
--		}
--		log.Printf("[cronjob] Failed to trigger %s/%s: %v", namespace, name, err)
--		s.writeError(w, http.StatusInternalServerError, err.Error())
--		return
--	}
--
--	s.writeJSON(w, map[string]any{
--		"message": "Job created successfully",
--		"jobName": result.GetName(),
--	})
--}
--
--// handleSuspendCronJob suspends a CronJob
--func (s *Server) handleSuspendCronJob(w http.ResponseWriter, r *http.Request) {
--	namespace := chi.URLParam(r, "namespace")
--	name := chi.URLParam(r, "name")
--
--	auth.AuditLog(r, namespace, name)
--	client := s.getDynamicClientForRequest(r)
--	if client == nil {
--		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
--		return
--	}
--	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, true, client)
--	if err != nil {
--		if strings.Contains(err.Error(), "not found") {
--			s.writeError(w, http.StatusNotFound, err.Error())
--			return
--		}
--		s.writeError(w, http.StatusInternalServerError, err.Error())
--		return
--	}
--
--	s.writeJSON(w, map[string]string{"message": "CronJob suspended"})
--}
--
--// handleResumeCronJob resumes a suspended CronJob
--func (s *Server) handleResumeCronJob(w http.ResponseWriter, r *http.Request) {
--	namespace := chi.URLParam(r, "namespace")
--	name := chi.URLParam(r, "name")
--
--	auth.AuditLog(r, namespace, name)
--	client := s.getDynamicClientForRequest(r)
--	if client == nil {
--		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
--		return
--	}
--	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, false, client)
--	if err != nil {
--		if strings.Contains(err.Error(), "not found") {
--			s.writeError(w, http.StatusNotFound, err.Error())
--			return
--		}
--		s.writeError(w, http.StatusInternalServerError, err.Error())
--		return
--	}
--
--	s.writeJSON(w, map[string]string{"message": "CronJob resumed"})
--}
--
--// handlePauseDeployment holds a Deployment's pod template changes without rolling them out.
--func (s *Server) handlePauseDeployment(w http.ResponseWriter, r *http.Request) {
--	s.setDeploymentPaused(w, r, true)
--}
--
--// handleResumeDeployment lets a paused Deployment roll out its pod template again.
--func (s *Server) handleResumeDeployment(w http.ResponseWriter, r *http.Request) {
--	s.setDeploymentPaused(w, r, false)
--}
--
--// setDeploymentPaused patches as the caller, so Kubernetes RBAC decides, and it
--// returns 403 when the caller can't patch the Deployment. Without authentication
--// it acts with Radar's own identity, and requireSameOrigin keeps a page on another
--// site from reaching it.
--func (s *Serve
+-// isNKP trusts the namespace cache only once it holds namespaces: an empty
+-// list may just be unsynced. Otherwise it asks the API once per cluster, with
+-// a short limit so cluster info never waits on a slow namespace read.
+-func isNKP(ctx context.Context) bool {
++// IsNKP reports whether the cluster has the NKP namespace, as Radar's own
++// ServiceAccount sees it, whatever the signed-in user may read. A denied read
++// counts as no. It trusts the namespace cache only once it holds namespaces:
++// an empty list may just be unsynced. Otherwise it asks the API once per
++// cluster, with a short limit so cluster info never waits on a slow
++// namespace read.
++func IsNKP(ctx context.Context) bool {
+ 	if cache := GetResourceCache(); cache != nil {
+ 		if nsLister := cache.Namespaces(); nsLister != nil {
+ 			if nsList, err := nsLister.List(labels.Everything()); err == nil && len(nsList) > 0 {
 ```
 
-**File**: `internal/server/workload_actions.go` (added, +378/-0)
+**File**: `internal/k8s/cluster_detection_test.go` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,378 @@
-+package server
+@@ -288,7 +288,7 @@ func TestInvalidatePlatformCacheRetiresInflightNKPRead(t *testing.T) {
+ 	unblock := func() { once.Do(func() { close(release) }) }
+ 	defer unblock()
+ 	finished := make(chan bool, 1)
+-	go func() { finished <- isNKP(context.Background()) }()
++	go func() { finished <- IsNKP(context.Background()) }()
+ 	<-entered
+ 	invalidated := make(chan struct{})
+ 	go func() { InvalidatePlatformCache(); close(invalidated) }()
+@@ -298,7 +298,7 @@ func TestInvalidatePlatformCacheRetiresInflightNKPRead(t *testing.T) {
+ 		t.Fatal("platform invalidation waited for a Kubernetes read")
+ 	}
+ 	unblock()
+-	if <-finished || isNKP(context.Background()) || reads.Load() != 2 {
++	if <-finished || IsNKP(context.Background()) || reads.Load() != 2 {
+ 		t.Fatal("stale namespace lookup survived invalidation")
+ 	}
+ }
+```
+
+**File**: `internal/server/cloud_connect_self.go` (modified, +27/-0)
+```diff
+@@ -33,6 +33,10 @@ type cloudConnectSelf struct {
+ 	Release        string `json:"release,omitempty"`
+ 	DeploymentName string `json:"deploymentName,omitempty"`
+ 	Chart          string `json:"chart,omitempty"`
++	// Platform is "nkp" on a Nutanix NKP cluster, where Radar comes from
++	// NKP's catalog and is configured in NKP, so the link opens Radar
++	// Cloud's NKP steps.
++	Platform string `json:"platform,omitempty"`
+ 	// Controller names the GitOps object that owns this install, when one does.
+ 	Controller    string       `json:"controller,omitempty"`
+ 	ControllerRef *subject.Ref `json:"controllerRef,omitempty"`
+@@ -60,6 +64,7 @@ func (s *Server) handleCloudConnectSelf(w http.ResponseWriter, r *http.Request)
+ 	defer cancel()
+ 
+ 	self := s.inspectSelfInstall(ctx, r, os.Getenv("MY_POD_NAMESPACE"), os.Getenv("MY_DEPLOYMENT_NAME"))
++	s.routeNKP(ctx, &self)
+ 	w.Header().Set("Cache-Control", "no-store")
+ 	s.writeJSON(w, self)
+ }
+@@ -161,6 +166,28 @@ func (s *Server) inspectSelfInstall(ctx context.Context, r *http.Request, namesp
+ 	return self
+ }
+ 
++// routeNKP sends an NKP cluster's Radar to Radar Cloud's NKP steps, whatever
++// the install inspection found. The NKP check reads as Radar's own
++// ServiceAccount: the signed-in user may not be able to list namespaces, and
++// the dashboard already shows every user the platform.
++func (s *Server) routeNKP(ctx context.Context, self *cloudConnectSelf) {
++	if !k8s.IsNKP(ctx) {
++		return
++	}
++	self.Platform = "nkp"
++	self.WizardURL = s.nkpConnectURL()
++}
 +
-+import (
++// nkpConnectURL opens Radar Cloud's NKP steps: settings pasted into the Radar
++// app's workspace configuration in NKP. They cover the whole workspace, so
++// the link names no namespace or release.
++func (s *Server) nkpConnectURL() string {
++	q := cloudFunnelUTM("wizard-install-link-nkp-install")
++	q.Set("clusters", "many")
++	q.Set("platform", "nkp")
++	return s.cloudConnectCfg.HubAppURL + "/install?" + q.Encode()
++}
++
+ // verifiedController returns the candidate whose ownership was confirmed
+ // against the live object, or nil when none was. Candidate order reflects
+ // discovery, not confidence.
+```
+
+**File**: `internal/server/cloud_connect_self_test.go` (modified, +73/-0)
+```diff
+@@ -1,13 +1,21 @@
+ package server
+ 
+ import (
++	"context"
 +	"encoding/json"
-+	"errors"
-+	"fmt"
-+	"io"
-+	"log"
-+	"net/http"
-+	"strings"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"net/url"
+ 	"strings"
+ 	"testing"
+ 
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/rest"
 +
-+	"github.com/go-chi/chi/v5"
-+	"github.com/skyhook-io/radar/internal/auth"
+ 	"github.com/skyhook-io/radar/internal/cloudinstall"
 +	"github.com/skyhook-io/radar/internal/k8s"
-+	"github.com/skyhook-io/radar/pkg/k8score"
-+	"github.com/skyhook-io/radar/pkg/rollouts"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+)
+ 	"github.com/skyhook-io/radar/pkg/subject"
+ )
+ 
+@@ -131,3 +139,68 @@ func TestVerifiedControllerIgnoresCandidateOrder(t *testing.T) {
+ 		t.Fatal("a stale-only candidate list must not yield an owner")
+ 	}
+ }
 +
-+// handleTriggerCronJob creates a Job from a CronJob. The optional body
-+// {"jobName": "..."} names the Job; without it the API server generates
-+// "<cronjob>-manual-xxxxx" (advertised as features.cronJobTriggerJobName).
-+func (s *Server) handleTriggerCronJob(w http.ResponseWriter, r *http.Request) {
-+	namespace := chi.URLParam(r, "namespace")
-+	name := chi.URLParam(r, "name")
-+
-+	// A pointer so a JSON null, which decodes without error, can be refused.
-+	req := &struct {
-+		JobName string `json:"jobName"`
-+	}{}
-+	if err := decodeBoundedJSONBody(w, r, 4096, &req); err != nil && !errors.Is(err, io.EOF) {
-+		var tooLarge *http.MaxBytesError
-+		if errors.As(err, &tooLarge) {
-+			s.writeError(w, http.StatusRequestEntityTooLarge, "trigger request is too large")
++// setSelfServiceAccount installs Radar's own client, answering only the NKP
++// namespace read, so a test can tell it apart from the signed-in user's.
++func setSelfServiceAccount(t *testing.T, nkp bool) {
++	t.Helper()
++	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.URL.Path != "/api/v1/namespaces/kommander-flux" || !nkp {
++			http.NotFound(w, r)
 +			return
 +		}
-+		s.writeError(w, http.StatusBadRequest, "invalid request body: "+err.Error())
-+		return
-+	}
-+	if req == nil {
-+		s.writeError(w, http.StatusBadRequest, "invalid request body: the body must be a JSON object")
-+		return
-+	}
-+
-+	auth.AuditLog(r, namespace, name)
-+	client := s.getDynamicClientForRequest(r)
-+	if client == nil {
-+		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
-+		return
-+	}
-+	result, err := k8s.TriggerCronJobWithClient(r.Context(), namespace, name, req.JobName, client)
++		w.Header().Set("Content-Type", "application/json")
++		_ = json.NewEncoder(w).Encode(corev1.Namespace{
++			TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Namespace"},
++			ObjectMeta: metav1.ObjectMeta{Name: "kommander-flux"},
++		})
++	}))
++	t.Cleanup(api.Close)
++	client, err := kubernetes.NewForConfig(&rest.Config{Host: api.URL})
 +	if err != nil {
-+		if errors.Is(err, k8score.ErrInvalidJobName) {
-+			s.writeError(w, http.StatusBadRequest, err.Error())
-+			return
-+		}
-+		if apierrors.IsAlreadyExists(err) {
-+			s.writeError(w, http.StatusConflict, err.Error())
-+			return
-+		}
-+		if apierrors.IsInvalid(err) || apierrors.IsBadRequest(err) {
-+			s.writeError(w, http.StatusBadRequest, err.Error())
-+			return
-+		}
-+		if apierrors.IsForbidden(err) {
-+			s.writeError(w, http.StatusForbidden, err.Error())
-+			return
-+		}
-+		if strings.Contains(err.Error(), "not found") {
-+			s.writeError(w, http.StatusNotFound, err.Error())
-+			return
-+		}
-+		log.Printf("[cronjob] Failed to trigger %s/%s: %v", namespace, name, err)
-+		s.writeError(w, http.StatusInternalServerError, err.Error())
-+		return
++		t.Fatalf("create Kubernetes client: %v", err)
 +	}
-+
-+	s.writeJSON(w, map[string]any{
-+		"message": "Job created successfully",
-+		"jobName": result.GetName(),
++	// Hide the shared fixture's cache: its namespace list would answer the
++	// NKP question before the ServiceAccount client is asked.
++	restore := k8s.SwapResourceCacheForTest(nil)
++	k8s.SetTestClient(client)
++	k8s.InvalidatePlatformCache()
++	t.Cleanup(func() {
++		restore()
++		k8s.InvalidatePlatformCache()
 +	})
 +}
 +
-+// handleSuspendCronJob suspends a CronJob
-+func (s *Server) handleSuspendCronJob(w http.ResponseWriter, r *http.Request) {
-+	namespace := chi.URLParam(r, "namespace")
-+	name := chi.URLParam(r, "name")
-+
-+	auth.AuditLog(r, namespace, name)
-+	client := s.getDynamicClientForRequest(r)
-+	if client == nil {
-+		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
-+		return
++func TestRouteNKPSendsNKPClustersToTheNKPSteps(t *testing.T) {
++	s := &Server{cloudConnectCfg: CloudConnectConfig{HubAppURL: "https://app.radarhq.io"}}
++	flux := "https://app.radarhq.io/install?existing=1&method=flux&ns=ws&release=ws-radar"
++	for _, tc := range []struct {
++		name string
++		nkp  bool
++		in   cloudConnectSelf
++	}{
++		{name: "NKP, install recognized", nkp: true, in: cloudConnectSelf{Ownership: "gitops", WizardURL: flux}},
++		{name: "NKP, install not recognized", nkp: true, in: cloudConnectSelf{Ownership: "unknown"}},
++		{name: "not NKP", nkp: false, in: cloudConnectSelf{Ownership: "gitops", WizardURL: flux}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			setSelfServiceAccount(t, tc.nkp)
++			self := tc.in
++			s.routeNKP(context.Background(), &self)
++			if !tc.nkp {
++				if self.Platform != "" || self.WizardURL != flux {
++					t.Fatalf("non-NKP cluster changed: %#v", self)
++				}
++				return
++			}
++			u, err := url.Parse(self.WizardURL)
++			if err != nil {
++				t.Fatal(err)
++			}
++			q := u.Query()
++			if self.Platform != "nkp" || u.Path != "/install" || q.Get("platform") != "nkp" || q.Get("clusters") != "many" || q.Has("existing") {
++				t.Fatalf("NKP cluster got %#v", self)
++			}
++		})
 +	}
-+	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, true, client)
-+	if err != nil {
-+		if strings.Contains(err.Error(), "not found") {
-+			s.writeError(w, http.StatusNotFound, err.Error())
-+			return
++}
+```
+
+**File**: `web/src/api/client.ts` (modified, +3/-0)
+```diff
+@@ -2616,6 +2616,9 @@ export interface CloudConnectSelf {
+     namespace?: string
+     name: string
+   }
++  // 'nkp' when Nutanix NKP manages this install: wizardUrl then opens Radar
++  // Cloud's NKP steps. Older Radar omits it.
++  platform?: 'nkp'
+   wizardUrl?: string
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `24f9fc8f` (2026-11-26)
+**Commit Message**: Build every Helm operation from the request's connection (#2869)
+
+Helm in Radar re-read the kubeconfig file to reach the cluster, while
+the rest of Radar uses the connection it loaded. If the file changed
+while Radar ran, Helm could read or change releases on a different
+cluster from the one on screen, and a Helm read that straddled a cluster
+switch could combine one cluster's release Secrets with another's
+namespaces, permissions or resource health. This builds every
+cluster-facing Helm operation from one Kubernetes connection, taken once
+when the operation starts. Part of moving each cluster connection's
+state into one object. No wire change.
+
+**Change.**
+- **One connection per Helm operation.** A request bound to a connection
+(writes, since #2833) uses that connection; an unbound read takes the
+installed connection once at its entry point. Release storage (the
+release Secrets), namespace authorization, discovery, Flux ownership,
+resource health, release history and the Helm SDK's action configuration
+all come from it. This covers the REST Helm routes, the MCP Helm tools,
+Issues' Helm release collection and Upgrade readiness's Helm collector.
+- **Permissions for a bound read.** A
+
+**File**: `cmd/explorer/cloud_cmd.go` (modified, +3/-2)
+```diff
+@@ -629,12 +629,13 @@ func buildLocalInstallClients(kubeconfig, contextName string) (localInstallClien
+ 	if err := helm.InitializeWithRESTConfig(clients.RESTConfig); err != nil {
+ 		return localInstallClients{}, fmt.Errorf("helm init: %w", err)
+ 	}
++	driver := helm.GetClient(context.Background())
+ 	return localInstallClients{
+ 		Kubernetes: clients.Kubernetes,
+ 		Dynamic:    clients.Dynamic,
+ 		Discovery:  clients.Discovery,
+-		Helm:       helm.GetClient(),
+-		Releases:   helm.GetClient(),
++		Helm:       driver,
++		Releases:   driver,
+ 	}, nil
+ }
+ 
+```
+
+**File**: `docs/connection-lifecycle.md` (modified, +4/-4)
+```diff
+@@ -10,12 +10,12 @@ Bound writes are the routes wrapped with `bindWrite` in `internal/server/server.
+ - **Drain** keeps running on the connection it was admitted to, even if Radar switches meanwhile. Exec and port-forward sessions end when Radar switches.
+ - **Code that only has a context** (MCP tools, reachability) gets its clients from `k8s.ClientFromContext` / `DynamicClientFromContext`, which return the bound connection's clients when the request was admitted with one.
+ - **CloudNativePG** captures its clients and caches in one step and checks there that the connection is still the bound one (`k8s.StillBound`).
+-- **Helm** install, upgrade (including source upgrades and values edits), rollback, uninstall and source association, streaming variants included, use the REST config captured at admission. The permission preflight checks that the admitted connection is still serving, because it reads shared capabilities; after that, Helm stays on the admitted cluster even if Radar switches while a repository downloads.
++- **Helm** captures one connection for a release read or write. Namespace authorization, release Secrets, discovery, Flux ownership and live resource health come from that connection. Install, upgrade, rollback, uninstall and source association (including streaming requests) use the REST config captured at write admission. Editing a kubeconfig file while Radar runs takes effect for Helm on the next connection. Exec credentials and token files still refresh through client-go.
+ - **CAPI connect** takes its client snapshot, then checks that the admitted connection is still serving: a switch before the check is refused, and one after it can't change the snapshot.
+ - **Velero** checks the Velero server's state in the shared cache, which a switch completing mid-request could replace; the write itself stays on the admitted connection.
+ - **Diagnose** (the in-product agent) is fenced by its runs: every switch marks all runs stale (`RunManager.OnContextSwitch`), and a stale run takes no further turns, so an investigation of one cluster can't continue, or apply a fix, on another.
+ 
+-Not bound: external MCP callers name no connection, so each tool call uses the connection serving when it starts. Velero's download requests (run messages, contents, logs) aren't bound. An interrupted Helm action is not recovered.
++External MCP callers name no connection. Each Helm write or preview uses the connection serving when the call starts. An uninstall confirmation also requires the admission that issued its preview, even after a reconnect under the same context name. Velero's download requests (run messages, contents, logs) aren't bound. An interrupted Helm action is not recovered.
+ 
+ **Only when Radar serves from a kubeconfig.** An in-cluster Radar can't change clusters (no kubeconfig contexts; CAPI connect is refused in-cluster), and during a rolling update two of its pods, each with its own IDs, answer the same browser. It publishes no ID and ignores one a request names; its writes still run on one captured set of clients.
+ 
+@@ -48,9 +48,9 @@ sequenceDiagram
+     Note over Radar: 2. before-switch callbacks: Diagnose runs marked stale,<br/>Argo CD connection reset · in-flight operations cancelled
+     Note over Radar: 3. sessions stopped: port-forwards, exec terminals
+     Radar->>Radar: 4. retire K7QXM2RDTA-1 · writes get 503
+-    Radar->>A: 4. tear down: cost source, Prometheus, traffic, Helm,<br/>metrics history, PolicyReport index, DynamicResourceCache,<br/>ResourceDiscovery, ResourceCache, timeline
++    Radar->>A: 4. tear down: cost source, Prometheus, traffic,<br/>metrics history, PolicyReport index, DynamicResourceCache,<br/>ResourceDiscovery, ResourceCache, timeline
+     Note over Radar: 5. install B's clients · restore the namespace scope ·<br/>drop capability, permission, server-version and platform caches
+-    Radar->>B: 6. build: timeline, ResourceCache + ResourceDiscovery,<br/>DynamicResourceCache, then metrics history, Helm,<br/>traffic, Prometheus in the background
++    Radar->>B: 6. build: timeline, ResourceCache + ResourceDiscovery,<br/>DynamicResourceCache, then metrics history,<br/>traffic, Prometheus in the background
+     alt build fails
+       Radar-->>Tab: disconnected · no ID · "Back to A"
+     else build succeeds
+```
+
+**File**: `docs/mcp.md` (modified, +3/-3)
+```diff
+@@ -398,9 +398,9 @@ directly. A completed rollback returns `revision`, `targetRevision` and
+ 
+ Without `confirm`, uninstall returns a preview with `revision`, a `confirm` token
+ and the release status. Pass the token back as `confirm` to execute. It expires
+-after five minutes, is bound to the caller, cluster and release state, and is
+-single-use: a retried confirm, such as after a client timeout, is refused. If the
+-release changed, preview again.
++after five minutes and can be used once, by the same caller on the same serving
++connection. If the release changes or Radar reconnects, preview again, even if
++the kubeconfig context still has the same name.
+ 
+ The preview follows Helm's own rules:
+ 
+```
+
+**File**: `internal/app/bootstrap.go` (modified, +2/-2)
+```diff
+@@ -330,7 +330,7 @@ func BuildTimelineStoreConfig(cfg AppConfig) (timeline.StoreConfig, error) {
+ 	}
+ }
+ 
+-// RegisterCallbacks registers Helm, timeline, traffic, and Prometheus reset/reinit
++// RegisterCallbacks initializes Helm repository settings and registers timeline, traffic, and Prometheus reset/reinit
+ // functions used for both initial cluster initialization and context switching,
+ // and prepares local per-context integration settings. Must be called before
+ // InitializeCluster; callers pass the returned config to CreateServer.
+@@ -340,7 +340,7 @@ func RegisterCallbacks(cfg AppConfig, timelineStoreCfg timeline.StoreConfig) App
+ 	if err != nil {
+ 		log.Fatalf("Invalid startup configuration: %v", err)
+ 	}
+-	k8s.RegisterHelmFuncs(helm.ResetClient, helm.ReinitClient)
++	helm.Initialize()
+ 
+ 	RegisterLastContextMemory(cfg)
+ 
+```
+
+**File**: `internal/helm/chart_sources_test.go` (modified, +2/-2)
+```diff
+@@ -102,7 +102,7 @@ func chartSourceTestServer(t *testing.T, versions ...string) *httptest.Server {
+ func newChartSourceTestClient(t *testing.T) *Client {
+ 	t.Helper()
+ 	dir := t.TempDir()
+-	return &Client{settings: &cli.EnvSettings{RepositoryConfig: filepath.Join(dir, "repositories.yaml"), RepositoryCache: dir}}
++	return &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{RepositoryConfig: filepath.Join(dir, "repositories.yaml"), RepositoryCache: dir}}}
+ }
+ 
+ func TestEnsureClassicRepositoryDoesNotHoldMutexAcrossNetwork(t *testing.T) {
+@@ -381,7 +381,7 @@ func TestRepositoryConfigurationPersistsAcrossClientRestart(t *testing.T) {
+ 	if _, err := c.ensureClassicRepository(server.URL, "repo"); err != nil {
+ 		t.Fatal(err)
+ 	}
+-	restarted := &Client{settings: &cli.EnvSettings{RepositoryConfig: c.settings.RepositoryConfig, RepositoryCache: c.settings.RepositoryCache}}
++	restarted := &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{RepositoryConfig: c.settings.RepositoryConfig, RepositoryCache: c.settings.RepositoryCache}}}
+ 	versions, err := restarted.sourceVersions(ChartSourceCandidate{Type: "repository", Reference: "repo", URL: server.URL}, "app")
+ 	if err != nil || len(versions) != 1 || versions[0] != "1.2.3" {
+ 		t.Fatalf("restart recovery = %+v, %v", versions, err)
+```
+
+**File**: `internal/helm/client.go` (modified, +135/-220)
+```diff
+@@ -75,9 +75,14 @@ var httpClient = &http.Client{
+ 
+ // Client provides access to Helm releases
+ type Client struct {
+-	mu         sync.RWMutex
+-	settings   *cli.EnvSettings
+-	kubeconfig string
++	*repositorySettings
++	conn       *k8s.Connection
++	restConfig *rest.Config
++}
++
++type repositorySettings struct {
++	mu       sync.RWMutex
++	settings *cli.EnvSettings
+ 	// chartPathLocator is a test seam for chart transport. Production callers
+ 	// leave it nil and use locateChartPath, which wires Helm's registry client
+ 	// for OCI references.
+@@ -86,17 +91,11 @@ type Client struct {
+ 	ociTags ociTagLister
+ 	// listings shares recent classic-index downloads between version listings.
+ 	listings recentIndexes
+-	// restConfig, when set, is the explicit rest.Config all actions target —
+-	// used by callers that resolve the cluster themselves before Radar's k8s
+-	// singleton is up (the CLI install driver), so Helm can't diverge onto a
+-	// different kubeconfig current-context than the caller's own client.
+-	restConfig *rest.Config
+ }
+ 
+ var (
+ 	globalClient *Client
+ 	clientOnce   sync.Once
+-	helmClientMu sync.Mutex
+ )
+ 
+ // ensureHelmWritablePaths sets HELM_CACHE_HOME, HELM_CONFIG_HOME, and HELM_DATA_HOME
+@@ -139,22 +138,14 @@ func isDirWritable(dir string) bool {
+ }
+ 
+ // Initialize sets up the global Helm client
+-func Initialize(kubeconfig string) error {
+-	var initErr error
++func Initialize() {
+ 	clientOnce.Do(func() {
+ 		ensureHelmWritablePaths()
+ 		settings := cli.New()
+-		if kubeconfig != "" {
+-			settings.KubeConfig = kubeconfig
+-		}
+-		globalClient = &Client{
+-			settings:   settings,
+-			kubeconfig: kubeconfig,
+-		}
++		globalClient = &Client{repositorySettings: &repositorySettings{settings: settings}}
+ 		log.Printf("Helm client initialized (cache=%s, config=%s, data=%s)",
+ 			settings.RepositoryCache, settings.RepositoryConfig, settings.PluginsDirectory)
+ 	})
+-	return initErr
+ }
+ 
+ // InitializeWithRESTConfig sets up the global Helm client to operate against an
+@@ -166,86 +157,91 @@ func InitializeWithRESTConfig(restCfg *rest.Config) error {
+ 	clientOnce.Do(func() {
+ 		ensureHelmWritablePaths()
+ 		globalClient = &Client{
+-			settings:   cli.New(),
+-			restConfig: restCfg,
++			repositorySettings: &repositorySettings{settings: cli.New()},
++			restConfig:         restCfg,
+ 		}
+ 	})
+ 	return nil
+ }
+ 
+-// GetClient returns the global Helm client
+-func GetClient() *Client {
+-	return globalClient
++// GetClient captures the request's connection while sharing the process's
++// repository settings and index. It returns the global client directly if it
++// was initialized with an explicit REST config. It returns nil before
++// initialization or if the connection has neither a REST config nor a client.
++func GetClient(ctx context.Context) *Client {
++	if globalClient == nil {
++		return nil
++	}
++	if globalClient.restConfig != nil {
++		return globalClient
++	}
++	conn := k8s.BoundOrCurrent(ctx)
++	if conn.Config() == nil && conn.Client() == nil {
++		return nil
++	}
++	return globalClient.forConnection(conn)
++}
++
++func (c *Client) forConnection(conn *k8s.Connection) *Client {
++	return &Client{repositorySettings: c.repositorySettings, conn: conn}
++}
++
++func (c *Client) capture(ctx context.Context) (*Client, context.Context) {
++	if c.restConfig != nil {
++		return c, k8s.WithConnection(ctx, nil)
++	}
++	if conn := k8s.ConnectionFrom(ctx); conn != nil {
++		if c.conn == conn {
++			return c, ctx
 +		}
-+		s.writeError(w, http.StatusInternalServerError, err.Error())
-+		return
++		return c.forConnection(conn), ctx
 +	}
-+
-+	s.writeJSON(w, map[string]string{"message": "CronJob suspended"})
++	if c.conn != nil {
++		return c, k8s.WithConnection(ctx, c.conn)
++	}
++	ctx = k8s.CaptureConnection(ctx)
++	return c.forConnection(k8s.ConnectionFrom(ctx)), ctx
 +}
 +
-+// handleResumeCronJob resumes a suspended CronJob
-+func (s *Server) handleResumeCronJob(w http.ResponseWriter, r *http.Request) {
-+	namespace := chi.URLParam(r, "namespace")
-+	name := chi.URLParam(r, "name")
-+
-+	auth.AuditLog(r, namespace, name)
-+	client := s.getDynamicClientForRequest(r)
-+	if client == nil {
-+		s.writeError(w, http.StatusServiceUnavailable, "cluster client not available — check cluster connection")
-+		return
++func (c *Client) config() *rest.Config {
++	if c.restConfig != nil {
++		return c.restConfig
 +	}
-+	err := k8s.SetCronJobSuspendWithClient(r.Context(), namespace, name, false, client)
-+	if err != nil {
-+		if strings.Contains(err.Error(), "not found") {
-+			s.writeError(w, http.StatusNotFound, err.Error())
-+			return
++	return c.conn.Config()
+ }
+ 
+ // NewStandaloneClient returns a Helm client bound to an explicit rest.Config,
+ // independent of the process-global client. Every action configuration it
+-// builds targets exactly this config (restConfig wins in restClientGetter), so
++// builds targets exactly this config, so
+ // a later kubeconfig context switch in the host process cannot retarget its
+ // writes — the property the Cloud install flow depends on while a prepared
+ // install waits for Hub approval.
+ func NewStandaloneClient(restCfg *rest.Config) *Client {
+ 	ensureHelmWritablePaths()
+ 	return &Client{
+-		settings:   cli.New(),
+-		restConfig: rest.CopyConfig(restCfg),
++		repositorySettings: &repositorySettings{settings: cli.New()},
++		restConfig:         rest.CopyConfig(restCfg),
+ 	}
+ }
+ 
+-// ResetClient clears the Helm client instance
+-// This must be called before ReinitClient when switching contexts
+-func ResetClient() {
+-	helmClientMu.Lock()
+-	defer helmClientMu.Unlock()
+-
+-	globalClient = nil
+-	clientOnce = sync.Once{}
+-}
+-
+-// ReinitClient reinitializes the Helm client after a context switch
+-// Must call ResetClient first
+-func ReinitClient(kubeconfig string) error {
+-	return Initialize(kubeconfig)
+-}
+-
+ // getActionConfig creates a new action 
+```
+
+**File**: `internal/helm/client_test.go` (modified, +24/-22)
+```diff
+@@ -18,6 +18,8 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/skyhook-io/radar/internal/k8s"
++
+ 	"github.com/skyhook-io/radar/pkg/helmhistory"
+ 
+ 	"helm.sh/helm/v3/pkg/action"
+@@ -779,8 +781,8 @@ spec:
+             port: 8080
+ `
+ 
+-	left, _ := parseManifestResourceObjects(oldManifest, "demo")
+-	right, _ := parseManifestResourceObjects(newManifest, "demo")
++	left, _ := parseManifestResourceObjects(k8s.Current(), oldManifest, "demo")
++	right, _ := parseManifestResourceObjects(k8s.Current(), newManifest, "demo")
+ 	removed, added, common := diffResourceRefs(resourceRefsFromRendered(left), resourceRefsFromRendered(right))
+ 	modified, unchanged := diffRenderedResourceObjects(common, left, right)
+ 
+@@ -848,8 +850,8 @@ spec:
+         image: nginx:1.25
+ `
+ 
+-	left, _ := parseManifestResourceObjects(oldManifest, "demo")
+-	right, _ := parseManifestResourceObjects(newManifest, "demo")
++	left, _ := parseManifestResourceObjects(k8s.Current(), oldManifest, "demo")
++	right, _ := parseManifestResourceObjects(k8s.Current(), newManifest, "demo")
+ 	_, _, common := diffResourceRefs(resourceRefsFromRendered(left), resourceRefsFromRendered(right))
+ 	modified, unchanged := diffRenderedResourceObjects(common, left, right)
+ 
+@@ -883,8 +885,8 @@ spec:
+   size: medium
+ `
+ 
+-	left, _ := parseManifestResourceObjects(oldManifest, "demo")
+-	right, _ := parseManifestResourceObjects(newManifest, "demo")
++	left, _ := parseManifestResourceObjects(k8s.Current(), oldManifest, "demo")
++	right, _ := parseManifestResourceObjects(k8s.Current(), newManifest, "demo")
+ 	_, _, common := diffResourceRefs(resourceRefsFromRendered(left), resourceRefsFromRendered(right))
+ 	modified, unchanged := diffRenderedResourceObjects(common, left, right)
+ 
+@@ -916,8 +918,8 @@ spec:
+   size: medium
+ `
+ 
+-	left, _ := parseManifestResourceObjects(oldManifest, "demo")
+-	right, _ := parseManifestResourceObjects(newManifest, "demo")
++	left, _ := parseManifestResourceObjects(k8s.Current(), oldManifest, "demo")
++	right, _ := parseManifestResourceObjects(k8s.Current(), newManifest, "demo")
+ 	_, _, common := diffResourceRefs(resourceRefsFromRendered(left), resourceRefsFromRendered(right))
+ 	modified, unchanged := diffRenderedResourceObjects(common, left, right)
+ 
+@@ -930,7 +932,7 @@ spec:
+ }
+ 
+ func TestParseManifestResourceObjectsUsesMetadataName(t *testing.T) {
+-	resources, parseErrors := parseManifestResourceObjects(`apiVersion: apps/v1
++	resources, parseErrors := parseManifestResourceObjects(k8s.Current(), `apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: cart
+@@ -955,7 +957,7 @@ spec:
+ }
+ 
+ func TestParseManifestResourceObjectsKeepsClusterScopedNamespaceEmpty(t *testing.T) {
+-	resources, parseErrors := parseManifestResourceObjects(`apiVersion: rbac.authorization.k8s.io/v1
++	resources, parseErrors := parseManifestResourceObjects(k8s.Current(), `apiVersion: rbac.authorization.k8s.io/v1
+ kind: ClusterRole
+ metadata:
+   name: chart-reader
+@@ -975,7 +977,7 @@ rules: []
+ }
+ 
+ func TestParseManifestResourceObjectsReportsParseErrors(t *testing.T) {
+-	resources, parseErrors := parseManifestResourceObjects(`apiVersion: v1
++	resources, parseErrors := parseManifestResourceObjects(k8s.Current(), `apiVersion: v1
+ kind: ConfigMap
+ metadata:
+   name: good
+@@ -1066,7 +1068,7 @@ func TestExtractHookDiagnosticsSurfacesFailedHookDeletePolicy(t *testing.T) {
+ 		},
+ 	}
+ 
+-	hooks := extractHooks(rel)
++	hooks := extractHooks(k8s.Current(), rel)
+ 	diagnostics := extractHookDiagnostics(hooks)
+ 
+ 	if len(hooks) != 1 {
+@@ -1099,7 +1101,7 @@ func TestExtractHooksOmitsZeroTimes(t *testing.T) {
+ 		},
+ 	}
+ 
+-	hooks := extractHooks(rel)
++	hooks := extractHooks(k8s.Current(), rel)
+ 	if len(hooks) != 1 {
+ 		t.Fatalf("len(hooks) = %d, want 1", len(hooks))
+ 	}
+@@ -1128,7 +1130,7 @@ metadata:
+ 			},
+ 		},
+ 	}
+-	hooks := extractHooks(rel)
++	hooks := extractHooks(k8s.Current(), rel)
+ 	detail := &HelmReleaseDetail{
+ 		Name:            rel.Name,
+ 		Namespace:       rel.Namespace,
+@@ -1531,10 +1533,10 @@ generated: "2026-10-16T00:00:00Z"
+ 		t.Fatal(err)
+ 	}
+ 
+-	client := &Client{settings: &cli.EnvSettings{
++	client := &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{
+ 		RepositoryConfig: repoFile,
+ 		RepositoryCache:  cacheDir,
+-	}}
++	}}}
+ 	rel := &release.Release{
+ 		Name: "monitoring",
+ 		Chart: &chart.Chart{Metadata: &chart.Metadata{
+@@ -1584,7 +1586,7 @@ generated: "2026-10-14T00:00:00Z"
+ `), 0o600); err != nil {
+ 		t.Fatal(err)
+ 	}
+-	client := &Client{settings: &cli.EnvSettings{RepositoryConfig: repoFile, RepositoryCache: cacheDir}}
++	client := &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{RepositoryConfig: repoFile, RepositoryCache: cacheDir}}}
+ 
+ 	rel := &release.Release{
+ 		Name: "cloudnative-pg",
+@@ -1651,10 +1653,10 @@ entries:
+ 		writeIndex(name, versions)
+ 	}
+ 
+-	return &Client{settings: &cli.EnvSettings{
++	return &Client{repositorySettings: &repositorySettings{settings: &cli.EnvSettings{
+ 		RepositoryConfig: repoFile,
+ 		RepositoryCache
+```
+
+**File**: `internal/helm/connection_read_test.go` (added, +166/-0)
+```diff
+@@ -0,0 +1,166 @@
++package helm
++
++import (
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"sync/atomic"
++	"testing"
++
++	"github.com/go-chi/chi/v5"
++	"github.com/skyhook-io/radar/internal/k8s"
++	pkgauth "github.com/skyhook-io/radar/pkg/auth"
++	"helm.sh/helm/v3/pkg/release"
++	authv1 "k8s.io/api/authorization/v1"
++	corev1 "k8s.io/api/core/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/kubernetes/fake"
++	"k8s.io/client-go/rest"
++)
++
++func TestGetReleaseUsesRequestConnection(t *testing.T) {
++	t.Cleanup(k8s.SnapshotTestConnection())
++	Initialize()
++	t.Cleanup(ResetTestClient)
++	install := func(name string, revision int) *atomic.Int32 {
++		t.Helper()
++		var requests atomic.Int32
++		rel := helmTestRelease("payments", "team-a", revision, release.StatusDeployed, name)
++		secret := helmReleaseSecret(t, "team-a", rel, true)
++		api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			requests.Add(1)
++			w.Header().Set("Content-Type", "application/json")
++			switch r.URL.Path {
++			case "/version":
++				writeTestJSON(t, w, map[string]string{"gitVersion": "v1.34.0"})
++			case "/api/v1/namespaces/team-a/secrets":
++				writeTestJSON(t, w, corev1.SecretList{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "SecretList"}, Items: []corev1.Secret{*secret}})
++			default:
++				t.Errorf("unexpected request on %s: %s", name, r.URL)
++				http.NotFound(w, r)
++			}
++		}))
++		t.Cleanup(api.Close)
++		cfg := &rest.Config{Host: api.URL}
++		if _, err := k8s.InstallTestServingConnection(name, cfg, nil, fake.NewSimpleClientset().Discovery()); err != nil {
++			t.Fatal(err)
 +		}
-+		s.writeError(w, http.StatusInternalServerError, err.Error())
-+		return
++		return &requests
 +	}
-+
-+	s.writeJSON(w, map[string]string{"message": "CronJob resumed"})
++	install("cluster-a", 1)
++	admission, err := k8s.CaptureServingConnection()
++	if err != nil {
++		t.Fatal(err)
++	}
++	ctx := admission.Bind(t.Context())
++	bRequests := install("cluster-b", 2)
++	client := GetClient(t.Context())
++	for _, scenario := range []struct {
++		name string
++		user *pkgauth.User
++	}{
++		{name: "GetRelease"},
++		{name: "GetReleaseAsUser", user: &pkgauth.User{Username: "alice"}},
++	} {
++		t.Run(scenario.name, func(t *testing.T) {
++			var detail *HelmReleaseDetail
++			var err error
++			if scenario.user == nil {
++				detail, err = client.GetRelease(ctx, "team-a", "payments", nil)
++			} else {
++				detail, err = client.GetReleaseAsUser(ctx, "team-a", "payments", scenario.user, nil)
++			}
++			if err != nil {
++				t.Fatal(err)
++			}
++			if detail.Revision != 1 || detail.Description != "cluster-a" {
++				t.Fatalf("got release revision %d from %s, want revision 1 from cluster-a", detail.Revision, detail.Description)
++			}
++		})
++	}
++	if n := bRequests.Load(); n != 0 {
++		t.Errorf("got %d requests to cluster-b, want none", n)
++	}
 +}
 +
-+// handlePauseDeployment holds a Deployment's pod template changes without rolling them out.
-+func (s *Server) handlePauseDeployment(w http.ResponseWriter, r *http.Request) {
-+	s.setDeploymentPaused(w, r, true)
-+}
-+
-+// handleResumeDeployment lets a paused Deployment roll out its pod template again.
-+func (s *Server) handleResumeDeployment(w http.ResponseWriter, r *http.Request) {
-+	s.setDeploymentPaused(w, r, false)
-+}
-+
-+// setDeploymentPaused patches as the caller, so Kubernetes RBAC decides, and it
-+// returns 403 when the caller can't patch the Deployment. Without authentication
-+// it acts with Radar's own identity, and requireSameOrigin keeps a page on another
-+// site from reaching it.
-+func (s *Server) setDeploymentPaused(w http.ResponseWriter, r *http.Re
++func TestInventoryStaysOnRequestConnection(t *testing.T) {
++	for _, bound := range []bool{true, false} {
++		name := "captured at entry"
++		if bound {
++			name = "already bound"
++		}
++		t.Run(name, func(t *testing.T) {
++			t.Cleanup(k8s.SnapshotTestConnection())
++			var namespaces, reviews, secrets, other atomic.Int32
++			secret := helmReleaseSecret(t, "team-a", crossNamespaceRelease(), true)
++			a := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.Header().Set("Content-Type", "application/json")
++				switch r.URL.Path {
++				case "/api/v1/namespaces":
++					namespaces.Add(1)
++					writeTestJSON(t, w, corev1.NamespaceList{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "NamespaceList"}, Items: []corev1.Namespace{{ObjectMeta: metav1.ObjectMeta{Name: "team-a"}}}})
++				case "/apis/authorization.k8s.io/v1/selfsubjectaccessreviews":
++					reviews.Add(1)
++					writeTestJSON(t, w, authv1.SelfSubjectAccessReview{TypeMeta: metav1.TypeMeta{APIVersion: "authorization.k8s.io/v1", Kind: "SelfSubjectAccessReview"}, Status: authv1.SubjectAccessReviewStatus{Allowed: false}})
++				case "/api/v1/namespaces/team-a/secrets":
++					secrets.Add(1)
++					writeTestJSON(t, w, corev1.SecretList{TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "SecretList"}, Items: []corev1.Secret{*secret}})
++				default:
++					t.Errorf("unexpected A request %s", r.URL)
++					http.NotFound(w, r)
++				}
++			}))
++			t.Cleanup(a.Close)
++			b := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { other.Add(1); http.NotFound(w, r) }))
++			t.Cleanup(b.Close)
++			install := func(host string) {
++				cfg := &rest.Config{Host: host, ContentConfig: rest.ContentConfig{ContentType: "application/json"}}
++				if _, err := k8s.InstallTestServingConnection("prod", cfg, nil, fake.NewSimpleClientset().Discovery()); err != nil {
++					t.Fatal(err)
++				}
++				k8s.SetTestClient(kubernetes.NewForConfigOrDie(cfg))
++			}
++			install(a.URL)
++			useCrossNamespaceCache(t)
++			t.Cleanup(k8s.SnapshotTestConnection())
++			Initialize()
++			t.Cleanup(ResetTestClient)
++			request := httptest.NewRequest(http.MethodGet, "/helm/inventory", nil)
++			if bound {
++				admission, err := k8s.CaptureServingConnec
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2959** (2026-11-26): Send NKP clusters to the NKP connect steps; name the basePath fix (@hisco)
+- **PR #2957** (2026-11-27): Check live Kubernetes permissions for Cloud Owner grants (@nadaverell)
+- **PR #2956** (2026-11-26): feat(resources): match kubectl short names in kind filter and command palette (@rvandernoort)
 - **PR #2953** (2026-11-26): Build with Go 1.27 and keep JSON responses as fast as on Go 1.26 (@nadaverell)
 - **PR #2946** (2026-11-26): Group related issues in application panels and expand linked issues (@nadaverell)
 - **PR #2944** (2026-11-26): Align the OpenObserve metrics settings with the other connection forms (@arlenvasconcelos)
-- **PR #2938** (2026-11-26): Share the revision-locked settings file (@nadaverell)
-- **PR #2937** (2026-11-26): Keep acronyms whole in generated labels; share shellWord (@nadaverell)
-- **PR #2936** (2026-11-26): Share workspace summary cards and conditions; CNPG uses them (@nadaverell)
 
 ---
 
@@ -3024,28 +3752,28 @@ every request, response and Kubernetes call.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build with Go 1.27 and keep JSON responses as fast as on Go 1.26
+## X. Flux: show whether the source is ahead of what is applied, and build Activity fr
 
 **RULE**:
-When implementing operations in `.github/workflows/appimage-smoke.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/gitops.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce0c9eba`: Build with Go 1.27 and keep JSON responses as fast as on Go 1.26. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ffea62d3`: Flux: show whether the source is ahead of what is applied, and build Activity from status.history. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/appimage-smoke.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gitops.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          go-version: '1.27'
+For a Flux Kustomization or HelmRelease the strip under the header reads as a chain: **Source** (what the primary source has fetched, and when) → **Applied** (the last successful apply; a Kustomization records it only after the apply and its health checks pass) → the number of objects it manages, from `status.inventory` (a HelmRelease without one shows no count). The primary source is the Kustomization's `sourceRef`, the HelmRelease's `chartRef`, or for an inline chart the generated HelmChart (not the HelmRepository, whose revision is an index digest). Digests are compared by value, so `v1@sha256:abc` and `sha256:abc` match; a HelmChart is compared by chart version. A HelmRelease compared by digest shows its deployed chart version with the digest beside it. Before the first apply the chain shows the fetched source alone. A HelmRelease with no deployed release in `status.history` (for example, a failed first install) also shows the fetched source alone. When the two differ, the Applied step turns amber and **Pending: source is ahead of the last successful apply** appears; while the object is suspended that wait is expected, so the step stays neutral and reads **Source is ahead (susp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          go-version: '1.26'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce0c9eba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ffea62d3` are properly handled with clean fallback behavior.

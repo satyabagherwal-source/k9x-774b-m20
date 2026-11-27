@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
   "source_version": "hf-autotrust-jev-35b-nvfp4",
   "license": "Open-Source",
-  "timestamp": "2026-11-23T21:56:58.709Z",
+  "timestamp": "2026-11-27T07:21:51.977Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [autotrust/AutoTrust-Decider-Pro-35B-NVFP4](https://huggingface.co/autotrust/JEV-35B-NVFP4) (Revision: `hf-autotru`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-23T21:56:58.709Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T07:21:51.977Z`  
 > **Learning ID**: `learn-huggingface-autotrust-jev-35b-nvfp4`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/JEV-35B-NVFP4](https://huggingface.co/autotrust/JEV-35B-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T21:56:57.835Z  
+> **Harvest Timestamp**: 2026-11-27T07:21:51.102Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 220674 downloads | 173 likes
+- **Stars / Engagement**: 182577 downloads | 173 likes
 
 ---
 

@@ -1425,8 +1425,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "445f0d9b055eca73c6aa3937ab6c1ec0b5ac6ccf7d05aeed05e7b5bb8630c1ac",
-    "lastHarvestedAt": "2026-11-23T21:56:58.501Z",
+    "contentHash": "4685e8634809ad2e38db37995e606bd712356a9e5b60ba9f291374b7c25cbee3",
+    "lastHarvestedAt": "2026-11-27T07:21:51.750Z",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4"
   },
   "leonxlnx-taste-skill": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "ce0c9eba",
+    "sourceVersion": "1a8e9c9a",
     "license": "Apache-2.0",
-    "contentHash": "4a6c6b8566e61d02576f3b8aff5b3762af16098999d30872bdaa3d624a376b50",
-    "lastHarvestedAt": "2026-11-26T14:33:49.079Z",
+    "contentHash": "47173e1c788f50a07c6b71e7165031e5289058df7c3a8aee2f666a36688b4baa",
+    "lastHarvestedAt": "2026-11-27T07:22:01.246Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "4537d179",
+    "sourceVersion": "049b39cf",
     "license": "Apache-2.0",
-    "contentHash": "f529789080e29ac9bdbdef4b31c6d47d232f234ec70abde0b53e235b119079c0",
-    "lastHarvestedAt": "2026-11-26T13:26:46.127Z",
+    "contentHash": "d5f12e4fd00f650a548feb7278e9a92cb8dcab3b651f9a30cb02fc8cd30305c5",
+    "lastHarvestedAt": "2026-11-27T07:22:05.366Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {

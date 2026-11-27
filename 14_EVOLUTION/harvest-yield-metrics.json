@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T07:13:34.919Z",
-  "total_cycles_completed": 13014,
-  "total_learnings_persisted": 13014,
-  "total_rules_promoted": 11757,
+  "last_updated": "2026-11-27T07:22:05.376Z",
+  "total_cycles_completed": 13017,
+  "total_learnings_persisted": 13017,
+  "total_rules_promoted": 11759,
   "history": [
-    {
-      "timestamp": "2026-11-26T18:05:45.670Z",
-      "repository": "pubkey/rxdb",
-      "learningId": "learn-github-pubkey-rxdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T18:05:53.062Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T18:14:23.697Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T18:14:26.986Z",
       "repository": "Orange-OpenSource/hurl",
@@ -1403,6 +1382,27 @@
       "repository": "openbmb/MiniCPM-V-4.7-1B",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T07:21:51.762Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T07:22:01.256Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T07:22:05.376Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
