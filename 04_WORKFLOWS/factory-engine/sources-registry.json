@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T19:18:20.875Z",
-    "lastVerified": "2026-11-27T19:18:20.875Z",
+    "lastChecked": "2026-11-27T19:27:03.542Z",
+    "lastVerified": "2026-11-27T19:27:03.542Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -399,12 +399,12 @@
     "revisionIdentifier": "40d4f79e"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T18:43:57.103Z",
-    "lastVerified": "2026-11-27T18:43:57.103Z",
+    "lastChecked": "2026-11-27T19:27:03.533Z",
+    "lastVerified": "2026-11-27T19:27:03.533Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -413,7 +413,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7af329a5"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -555,8 +556,8 @@
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T01:16:59.422Z",
-    "lastVerified": "2026-11-27T01:16:59.422Z",
+    "lastChecked": "2026-11-27T19:26:56.127Z",
+    "lastVerified": "2026-11-27T19:26:56.127Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -998,8 +999,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T15:09:15.776Z",
-    "lastVerified": "2026-11-27T15:09:15.776Z",
+    "lastChecked": "2026-11-27T19:26:58.611Z",
+    "lastVerified": "2026-11-27T19:26:58.611Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -3591,14 +3592,14 @@
     "officialUrl": "https://github.com/GitoxideLabs/gitoxide",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T19:07:36.246Z",
-    "lastVerified": "2026-11-26T19:07:36.246Z",
+    "lastChecked": "2026-11-27T19:26:54.059Z",
+    "lastVerified": "2026-11-27T19:26:54.059Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "c19ef42d7c3f92f9bcc569c7424c2919576778d0d39fdc851b34b41c432a3eb3",
+    "contentHash": "5b7656e23bd55ba2408f1789483acb1492a10cd377c70381ecb6b6d729019f0d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4337,8 +4338,8 @@
     "officialUrl": "https://github.com/risingwavelabs/risingwave",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T00:16:05.253Z",
-    "lastVerified": "2026-11-27T00:16:05.253Z",
+    "lastChecked": "2026-11-27T19:27:01.040Z",
+    "lastVerified": "2026-11-27T19:27:01.040Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-risingwavelabs-risingwave",
@@ -9930,9 +9931,9 @@
   "bernaferrari-figmatocode": {
     "name": "FigmaToCode",
     "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
-    "lastChecked": "2026-11-25T10:35:12.778Z",
+    "lastChecked": "2026-11-27T19:26:53.478Z",
     "revisionIdentifier": "f5c4831d",
-    "lastVerified": "2026-11-25T10:35:12.778Z"
+    "lastVerified": "2026-11-27T19:26:53.478Z"
   },
   "crawlseo-crawlseo": {
     "name": "crawlseo",
@@ -10429,9 +10430,9 @@
   "manojahi-serpiq": {
     "name": "serpiq",
     "officialUrl": "https://github.com/manojahi/serpiq",
-    "lastChecked": "2026-11-24T11:21:46.526Z",
+    "lastChecked": "2026-11-27T19:26:50.926Z",
     "revisionIdentifier": "f3330d7e",
-    "lastVerified": "2026-11-24T11:21:46.526Z"
+    "lastVerified": "2026-11-27T19:26:50.926Z"
   },
   "simonschubert-kai": {
     "name": "Kai",

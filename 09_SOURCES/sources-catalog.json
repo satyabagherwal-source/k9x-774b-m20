@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "2bcb31df",
+    "sourceVersion": "d26fc7e4",
     "license": "Apache-2.0",
-    "contentHash": "c19ef42d7c3f92f9bcc569c7424c2919576778d0d39fdc851b34b41c432a3eb3",
-    "lastHarvestedAt": "2026-11-26T19:07:37.581Z",
+    "contentHash": "5b7656e23bd55ba2408f1789483acb1492a10cd377c70381ecb6b6d729019f0d",
+    "lastHarvestedAt": "2026-11-27T19:26:55.513Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {

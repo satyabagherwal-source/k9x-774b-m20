@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T19:18:24.614Z",
+  "last_updated": "2026-11-27T19:27:06.817Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26725,
+  "total_items": 26728,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219777,9 +219777,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "963dbda0fb0de3bb935e8eb2e5b67ca9ff3b76ea0ab34881d1b91e2472263661",
+      "content_hash": "bd3ab6824a1ca2e602469ffe0b8dcff75a2377bad60e4365a200d75a0b348752",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:18:24.351Z"
+      "persisted_at": "2026-11-27T19:27:06.596Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -219789,9 +219789,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac2f333146ba16b225c0df4122a03c0800e89d13b70687fb87ea73e087535c77",
+      "content_hash": "e6ed0e4e8856b4db6552c8bde54dc02279896156139ef15224612e7bceb0e31f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:18:24.614Z"
+      "persisted_at": "2026-11-27T19:27:06.817Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -230401,9 +230401,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "88b1c58d507460d4d3d41300368cf6dac5f222c3ec47a96bc18afdd4320ad8aa",
+      "content_hash": "bebc78b09232a249f21b6aa163ce50de7d3a2f737c987e09a876058e48e5a268",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:07:51.959Z"
+      "persisted_at": "2026-11-27T19:27:05.565Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -230413,9 +230413,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d2cc22893b83ae607e3eb361d97ac58b0661d5e0438cb5f5c1f8cbd1e511653",
+      "content_hash": "ab452c25505fe7f030163186dd31d6f2394cbd96947785a979ffa84524517945",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:07:52.136Z"
+      "persisted_at": "2026-11-27T19:27:05.782Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -249245,8 +249245,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "2bcb31df",
-      "content_hash": "c19ef42d7c3f92f9bcc569c7424c2919576778d0d39fdc851b34b41c432a3eb3",
+      "source_version": "d26fc7e4",
+      "content_hash": "5b7656e23bd55ba2408f1789483acb1492a10cd377c70381ecb6b6d729019f0d",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -249319,6 +249319,11 @@
           "number": 10761,
           "title": "make histogram diffs match `git diff --histogram`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10955,
+          "title": "avoid symlink probes during incremental status",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -249326,7 +249331,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T19:07:37.251Z",
+      "verified_at": "2026-11-27T19:26:55.214Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249368,10 +249373,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "a825f86d",
-      "content_hash": "851a7467f23fc146d0078213fb746a45677871bf5096dd41a525f699859688ba",
+      "source_version": "d26fc7e4",
+      "content_hash": "1bd8f258b6f966742e7e18357ec2dccd7321ca3ef03ceb32e102b470d5b8dac8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:09:04.037Z"
+      "persisted_at": "2026-11-27T19:26:56.025Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide",
@@ -249380,10 +249385,10 @@
       "relative_path": "08_VERIFICATION/gitoxidelabs-gitoxide-verification-protocol-empirical-defect-shield-for-gitoxide.md",
       "title": "Verification Protocol: Empirical Defect Shield for GitoxideLabs/gitoxide",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "2bcb31df",
-      "content_hash": "6cbda3ce153cd7aa95ded7d989f691b23424f301f3f60f5b51d9208a1564ccb7",
+      "source_version": "d26fc7e4",
+      "content_hash": "ca78933260b2476f057e830f3434a136bf3bab191a1cfafe41f7beefbbf5ee04",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T19:07:38.319Z"
+      "persisted_at": "2026-11-27T19:26:56.246Z"
     },
     "learn-github-melnixdev-seo-crawl-audit": {
       "learning_id": "learn-github-melnixdev-seo-crawl-audit",
@@ -249560,9 +249565,9 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf7f4faa1bf3a3ccc644a2d4b84bc7a46fcca5eb9477c99cf178fc04d08e8d4f",
+      "content_hash": "286d8a6b093923b6b3af733b8c8e1f930ce09637b80c8320e35e8276dcf39886",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T12:09:19.495Z"
+      "persisted_at": "2026-11-27T19:27:04.453Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide-learning",
@@ -249572,9 +249577,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gitoxidelabs-gitoxide-learnings",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "e03e4ffcdbba2243f496123fe27e1f08785b2c028b27ef6f1d325ccc40efd2d2",
+      "content_hash": "e40b5566be5f09af155631ba29634ce988ed9f50b4e624be15b861b8becbd7e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T19:07:53.903Z"
+      "persisted_at": "2026-11-27T19:27:04.677Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv": {
       "item_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv",
@@ -350520,13 +350525,13 @@
       "item_id": "candidate_directive-bump-version-number",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6LOT-bump-version-number.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HSOZ-bump-version-number.md",
       "title": "Bump version number",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff1b18f7a430c4a40b8aebfc9cfa28367a7eac0923332fc69e06d4b0677196ee",
+      "content_hash": "d3342b6141d5ffeadb88192b63c2b9df4535a4e9293261962c3dbc026a9b4dfe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-27T19:18:24.077Z"
+      "persisted_at": "2026-11-27T19:27:06.371Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-core-invari",
@@ -366995,6 +367000,44 @@
       "content_hash": "8b2179faad897de494580ed515abed55c21e900762fdf3c405a3898612cf2ad6",
       "domain_letter": "K",
       "persisted_at": "2026-11-27T19:18:21.766Z"
+    },
+    "rule-10955": {
+      "learning_id": "rule-10955",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10955,
+      "title": "avoid symlink probes during incremental status",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "d26fc7e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T19:26:55.215Z"
+    },
+    "candidate_directive-avoid-symlink-probes-during-incremental-status": {
+      "item_id": "candidate_directive-avoid-symlink-probes-during-incremental-status",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HKJF-avoid-symlink-probes-during-incremental-status.md",
+      "title": "avoid symlink probes during incremental status",
+      "repository": "GitoxideLabs/gitoxide",
+      "source_version": "d26fc7e4",
+      "content_hash": "61b2a4bffc82e5c660196116fd56f47f8e03f5dd2c48e9ea4d82c2ee117833e7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T19:26:55.807Z"
+    },
+    "candidate_directive-gix-tix-avoid-symlink-probes-during-incremental-status": {
+      "item_id": "candidate_directive-gix-tix-avoid-symlink-probes-during-incremental-status",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HR1G-gix-tix-avoid-symlink-probes-during-incremental-status.md",
+      "title": "gix-tix): avoid symlink probes during incremental status",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2dd015535b2693d2a07c900585ebb9f249167a70d88ffd810154e40c81eb67f7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T19:27:04.232Z"
     }
   },
   "ai-builder-brain": {

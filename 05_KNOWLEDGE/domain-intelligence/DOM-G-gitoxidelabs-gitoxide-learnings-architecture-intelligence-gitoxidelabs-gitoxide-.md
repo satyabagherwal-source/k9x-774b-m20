@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-25T12:09:19.161Z",
+  "timestamp": "2026-11-27T19:27:04.084Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gitoxidelabs-gitoxide-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gitoxidelabs-gitoxide-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-25T12:09:19.161Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T19:27:04.084Z`  
 > **Learning ID**: `LEARN-EVO-gitoxidelabs-gitoxide-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), E (Creative Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gitoxidelabs-gitoxide-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `a825f86d`  
+> **Source Version**: `d26fc7e4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T12:09:02.411Z  
+> **Timestamp**: 2026-11-27T19:26:54.194Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T12:09:02.406Z  
+> **Harvest Timestamp**: 2026-11-27T19:26:54.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A tasteful, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12171 stars
+- **Stars / Engagement**: 12178 stars
 
 ---
 
@@ -1641,15 +1641,13 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3241** (2026-11-24): **move experimental APIs to parallel major-zero releases**
-  *Symptoms*: Sibling PR: https://github.com/GitoxideLabs/cargo-smart-release/pull/171  ---  Cargo cannot resolve disjoint minor-series pins of a major-positive crate in one dependency graph. Publish experimental APIs in parallel `0.x` series so downstream libraries can select the APIs they need by version and resolve different experimental series alongside the stable crate.  Keep the `unstable` switch for workspace builds and let cargo smart-release translate those path dependencies for publication. Re-export `SharedPermissions` and `Retries` from the paired stable `gix-fs` release to preserve their type identity across both series. 
+- **Issue #3251** (2026-11-25): **Evaluate replacing delta's git2 usage with Gitoxide; benchmark build times and config/discovery performance**
+  *Symptoms*: ## Motivation  [delta](https://github.com/dandavison/delta) is a widely used Rust Git diff renderer that currently depends on `git2` (libgit2). Its direct use appears comparatively narrow: repository discovery and Git configuration access, rather than computing diffs. This makes it a useful real-world candidate for evaluating a migration to Gitoxide, especially `gix-discover` and `gix-config` / the relevant `gix` APIs.  Source: [delta's Git configuration module](https://github.com/dandavison/delta/blob/main/src/git_config/mod.rs). It uses `git2::Repository::discover`, `repo.config()`, `git2::Config::open_default`, configuration snapshots, and typed configuration getters.  A migration could potentially reduce build complexity/time by removing native libgit2 and its dependencies, and improve repository discovery or configuration-read performance. These are **hypotheses to measure**, not established improvements.  ## Proposed investigation  - Establish whether Gitoxide already offers the configuration and repository-discovery behavior delta needs, including configuration precedence, includes/conditional includes, environment overrides, typed access, and discovery edge cases. - Prototype the replacement in delta or a representative standalone benchmark, preserving existing behavior. - **Measure compile times** before and after: clean build, incremental build, and ideally dependency compilation separately, on the same toolchain, hardware, and feature configuration. Report reproduc
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"3422bfe91f6692e3a1b0fe84786dcacbd3ba766a","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-24T15:19:02.317464Z">2026-11-24T15:19:02.317464Z</relative-time> | `3422bfe` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as rea
+  > Looked into it via https://github.com/Byron/delta/tree/git2-to-gix, but concluded that it needs stashing support to fully replace `git2`. There is also `gitu` which needs most of the features.  Without a full replacement, it's not making anything better.  Lastly, I noticed that `gix` comes with a couple of dependencies that one won't need to interact with a repo in basic ways.
 
-- **Issue #3240** (2026-11-24): **validate pack offsets on lookup**
-  *Symptoms*: Supersedes https://github.com/GitoxideLabs/gitoxide/pull/3239 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"baf3a2ea73bcbdf1c8ddb02669ee2ab30a178a8d","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-24T09:32:16.416698Z">2026-11-24T09:32:16.416698Z</relative-time> | `baf3a2e` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Commen
+- **Issue #3246** (2026-11-25): **fix(gix-imara-diff): make histogram diffs match `git diff --histogram`**
+  *Symptoms*: This pull request was written by Claude Code, an AI agent, which also made the change and ran the checks below. It is opened from the GitHub account of daniel-kindl.  ### Motivation  Diffy (https://github.com/daniel-kindl/diffy) is a code review desktop app. It stores review comments at hunk positions, so it needs hunks identical to `git diff --histogram`, with Git as its test oracle. In a comparison of 3,732 file pairs from git.git, tokio and ripgrep, gix-imara-diff was the closest crate, with 5 pairs that differ from Git 2.55.0. This change makes it identical on each of them.  ### Changes  The histogram diff and its postprocessing differed from Git's `xdiff/` in four steps (line numbers for 0.3.4 and Git 2.55.0):  | Step | Before | Git | |------|--------|-----| | 1. Skip after a match | skips later occurrences while the old-file position is not greater than `end2`, the match end in the new file (`src/histogram/lcs.rs:135`) | compares with `ae`, the match end in the old file (`xdiff/xhistogram.c:212`) | | 2. Occurrence limit | `MAX_CHAIN_LEN` is 63 (`src/histogram.rs:14`) | accepts up to 64 occurrences (`xdiff/xhistogram.c:289`, `:294`) | | 3. Common prefix and suffix | stripped before the histogram diff (`src/lib.rs:276-277`) | not stripped for histogram (`xdiff/xprepare.c:461`) | | 4. Diff again after a slide | none | diffs a group again with Myers if it moved and the group in the other file isn't empty, for histogram only (`xdiff/xdiffi.c:921-955`, added in Git 2.54 by e4
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1666,820 +1664,833 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3befd38c` (2026-11-24)
-**Commit Message**: fix(gix-testtools): confine Git discovery to scripted fixtures
+### Incident Patch 1: `5e1c01c5` (2026-11-25)
+**Commit Message**: fix(gix-tix): avoid symlink probes during incremental status
+
+The incremental changes pane matches refreshed paths against cached
+rows using `core.ignoreCase`. Looking up all filesystem capabilities
+for this setting can create a temporary symlink, whose removal
+schedules another refresh.
+
+Read the case setting directly in `update_worktree_changes`. The
+regression exercises a scoped refresh under a configuration filter
+and checks that the worktree directory's timestamp does not change.
+
+Port of 3f2e561 from `tix-improvements` to this branch's incremental
+status path.
+
+**File**: `gix-tix/spec.md` (modified, +2/-0)
+```diff
+@@ -2333,6 +2333,8 @@ views.
+   object-type hints are advisory; status refresh uses every reported path regardless
+   of its hints. Ignored directories stay excluded even when a negated pattern
+   matches a descendant, such as `!out/` beneath an ignored build tree.
++- The changes pane reads `core.ignoreCase` directly when matching refreshed
++  paths against cached rows, keeping symlink probes out of the worktree event stream.
+ - Worktree updates retain the history selection and restore changed-path
+   selection by raw path and relative viewport position. They never select the
+   newest commit merely because status changed.
+```
+
+**File**: `gix-tix/src/lib.rs` (modified, +36/-1)
+```diff
+@@ -8448,7 +8448,10 @@ fn update_worktree_changes(
+             load_unstaged_changes_without_lines(repository, patterns)?,
+             line_diff_pool,
+         )?;
+-        let ignore_case = repository.filesystem_options()?.ignore_case;
++        let ignore_case = repository
++            .config_snapshot()
++            .boolean("core.ignoreCase")
++            .unwrap_or_default();
+         replace_cached_changes(repository, cached, unstaged, |change| {
+             change.group == ChangeGroup::Unstaged
+                 && scopes
+@@ -12225,6 +12228,38 @@ added
+         Ok(())
+     }
+ 
++    #[cfg(unix)]
++    #[test]
++    fn incremental_worktree_status_does_not_write_to_the_worktree() -> gix_error::TestResult {
++        let (root, ()) = gix_testtools::scripted_fixture_read_only_with_post("history.sh", 2, |state| {
++            if let gix_testtools::FixtureState::Uninitialized(path) = state {
++                std::fs::File::open(path)?.set_modified(std::time::UNIX_EPOCH + Duration::from_secs(1_000_000_000))?;
++            }
++            Ok(())
++        })?;
++        let repo = test_repository::open(&root)?;
++        let options = repo
++            .open_options()
++            .clone_without_trust()
++            .filter_config_section(|_| false);
++        let repo = gix::open_opts(&root, options)?;
++        let mut pool = LineDiffPool::new(&root, false, 1);
++        let mut cached = load_worktree_changes(&repo, &mut pool)?;
++        let parts = WorktreeStatusParts {
++            staged: false,
++            scopes: HashSet::from([BString::from("main")]),
++        };
++        let before = std::fs::metadata(&root)?.modified()?;
++        let full_refresh = update_worktree_changes(&repo, &mut cached, &parts, &mut pool)?;
++        assert!(!full_refresh, "the fixture exercises scoped status");
++        assert_eq!(
++            std::fs::metadata(&root)?.modified()?,
++            before,
++            "refreshing the changes pane must not create temporary entries that invalidate the monitor"
++        );
++        Ok(())
++    }
++
+     #[test]
+     fn incremental_worktree_status_matches_a_full_refresh() -> gix_testtools::Result {
+         let fixture = gix_testtools::scripted_fixture_writable("history.sh")?;
+```
+
+---
+
+### Incident Patch 2: `2ee206d3` (2026-11-23)
+**Commit Message**: fix(gix): resolve branch tracking refs without loading remote URLs
+
+Instead of constructing remotes internally which can fail on malformed
+but unrelated fields, read everything directly while applying the usual
+trust filter.
 
 <!-- agent -->
-When a fixture is generated inside a checkout, Git can discover the
-checkout and read its local config. A checkout-local `pack.threads`
-setting can then break `git index-pack` during fixture generation.
+A malformed push URL could prevent `@{upstream}` and `gix status
+--ahead-behind` from resolving an otherwise valid local tracking ref.
+Resolve fetch and push tracking names from configuration without
+constructing a remote, while honoring the repository configuration
+section filter and leaving remote-backed push selection unchanged.
 
-Set `GIT_CEILING_DIRECTORIES` to the fixture directory's parent when
-launching the script. Git can still discover repositories inside the
-fixture from nested directories. Test both discovery boundaries.
+For upstreams, use the first configured merge ref and the first
+matching fetch mapping, honor exclusions, and fall back to the merge
+ref for the `.` remote when there is no mapping. Check tracking names
+and revision selectors against Git.
 
 Assisted-by: GPT 6.2 Sol
 Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
 
-**File**: `tests/tools/src/lib.rs` (modified, +10/-3)
+**File**: `gitoxide-core/src/repository/status.rs` (modified, +2/-8)
 ```diff
-@@ -38,6 +38,7 @@
- //! and set `init.defaultBranch=main` and `core.longpaths=true`. The latter lets Git for Windows use long paths
- //! without depending on external configuration. A script's own `GIT_CONFIG_COUNT` entries coexist with this
- //! configuration, with isolation taking precedence for shared keys. Explicit `git -c` options can override isolation.
-+//! Fixture scripts stop Git's upward repository discovery at the fixture root.
- //! Bash fixtures trace commands to a separate descriptor so redirected stderr baselines remain unchanged.
- //! Bash older than 4.1 reports failed commands instead. Captured diagnostics are printed only on failure.
- //!
-@@ -2026,7 +2027,9 @@ pub fn git(current_dir: impl AsRef<Path>, arguments: &str) -> Result<String> {
-     Ok(String::from_utf8(output.stdout)?)
- }
- 
--/// Prepare an isolated Git command in `current_dir`, using the same environment as fixture scripts.
-+/// Prepare an isolated Git command in `current_dir`.
-+///
-+/// Repository discovery may walk above `current_dir`, which allows commands from fixture subdirectories.
- ///
- /// The inherited environment is captured at construction, so subsequent process-wide changes
- /// cannot bypass the command's isolation before it is spawned.
-@@ -2450,8 +2453,12 @@ fn configure_command<'a, I: IntoIterator<Item = S>, S: AsRef<OsStr>>(
-     args: I,
-     script_result_directory: &Path,
- ) -> &'a mut std::process::Command {
--    configure_git_environment(cmd, script_result_directory)
--        .args(args)
-+    configure_git_environment(cmd, script_result_directory);
-+    if let Some(parent) = script_result_directory.parent() {
-+        // Git may discover a repository in the fixture itself, including from its subdirectories.
-+        cmd.env("GIT_CEILING_DIRECTORIES", parent);
-+    }
-+    cmd.args(args)
-         .current_dir(script_result_directory)
-         .env("GIT_DEFAULT_HASH", object_hash.to_string())
- }
+@@ -232,14 +232,8 @@ fn print_ahead_behind(repo: &gix::Repository, out: &mut dyn io::Write) -> Result
+     let Some(mut branch) = repo.head()?.try_into_referent() else {
+         return Ok(());
+     };
+-    let direction = gix::remote::Direction::Fetch;
+-    let upstream_name = if branch.remote_name(direction).is_some_and(|name| name == ".") {
+-        // A local upstream uses branch.<name>.merge directly, without a fetch refspec mapping.
+-        branch.remote_ref_name(direction)
+-    } else {
+-        branch.remote_tracking_ref_name(direction)
+-    };
+-    let Some(upstream_name) = upstream_name
++    let Some(upstream_name) = branch
++        .remote_tracking_ref_name(gix::remote::Direction::Fetch)
+         .transpose()
+         .or_raise(|| message("Could not resolve the current branch's upstream"))?
+     else {
 ```
 
-**File**: `tests/tools/src/tests.rs` (modified, +27/-0)
+**File**: `gix/src/repository/config/branch.rs` (modified, +197/-94)
 ```diff
-@@ -85,6 +85,33 @@ fn configure_command_clears_external_config() -> TestResult {
-     Ok(())
- }
+@@ -1,14 +1,15 @@
+ use std::collections::BTreeSet;
+ 
+-use crate::error::{ErrorExt, ResultExt, bail, message, validation};
++use crate::error::{ResultExt, bail, message, validation};
+ use gix_ref::{FullName, FullNameRef};
++use gix_refspec::{RefSpec, RefSpecRef, parse::Operation};
+ 
+ use crate::{
+     Result,
+-    bstr::{BStr, ByteSlice},
++    bstr::{BStr, BString, ByteSlice},
+     config::{
+         cache::util::ApplyLeniencyDefault,
+-        tree::{Branch, Push},
++        tree::{Branch, Push, Remote},
+     },
+     push, remote,
+ };
+@@ -40,123 +41,165 @@ impl crate::Repository {
+     /// The value is also fast to retrieve compared to its tracking branch.
+     ///
+     /// See also [`Reference::remote_ref_name()`](crate::Reference::remote_ref_name()).
++    ///
++    /// # Example
++    ///
++    /// Given this Git configuration:
++    ///
++    /// ```gitconfig
++    /// [branch "main"]
++    ///     remote = origin
++    ///     merge = refs/heads/topic
++    /// [remote "origin"]
++    ///     url = https://example.com/project.git
++    ///     fetch = +refs/heads/*:refs/remotes/origin/*
++    ///     push = refs/heads/main:refs/heads/publish
++    /// ```
++    ///
++    /// Passing `refs/heads/main` as `name` returns `Some(Ok(...))` with a different name for each direction:
++    ///
++    /// * `Fetch` returns `refs/heads/topic`: the configured merge ref.
++    /// * `Push` returns `refs/heads/publish`: the destination selected by the push refspec.
++    ///
++    /// Neither result is mapped to a local `refs/remotes/origin/*` tracking ref.
+     #[doc(alias = "branch_upstream_name", alias = "git2")]
+     pub fn branch_remote_ref_name(&self, name: &FullNameRef, direction: remote::Direction) -> Option<Result<FullName>> {
+         match direction {
+-            remote::Direction::Fetch => {
+-                let short_name = name.shorten();
+-                self.config
+-                    .resolved
+-                    .string_filter_by(
+-                        "branch",
+-                        Some(short_name),
+-                        Branch::MERGE.name,
+-                        self.filter_config_section(),
+-                    )
+-                    .map(|name| {
+-                        if name.starts_with(b"refs/") {
+-                            crate::config::tree::branch::Merge::try_into_fullrefname(name)
+-                        } else {
+-                            gix_ref::Category::LocalBranch.to_full_name(name.as_bstr()).or_error()
+-                        }
+-                        .or_raise(|| validation("The configured name of the remote ref to merge wasn't valid"))
+-                    })
+-            }
++            remote::Direction::Fetch => self.branch_merge_ref_name(name).transpose(),
+             remote::Direction::Push => {
+                 let remote = match self.branch_remote_or_default(name, direction)? {
+                     Ok(r) => r,
+                     Err(err) => return Some(Err(err)),
+                 };
+-                if remote.push_specs.is_empty() {
+-                    let push_default = match self.push_default() {
+-                        Ok(v) => v,
+-                        Err(err) => return Some(Err(err)),
+-                    };
+-                    match push_default {
+-                        push::Default::Nothing => None,
+-                        push::Default::Current | push::Default::Matching => Some(Ok(name.to_owned())),
+-                        push::Default::Upstream => self.branch_remote_ref_name(name, remote::Direction::Fetch),
+-                        push::Default::Simple => match self.branch_remote_ref_name(name, remote::Direction::Fetch)? {
+-                            Ok(fetch_ref) if fetch_ref.as_ref() == name => Some(Ok(fetch_ref)),
+-                            Err(err) => Some(Err(err)),
+-                            Ok(_different_fetch_ref) => None,
+-                        },
+-                    }
+-                } else {
+-                    matching_remote(name, remote.push_specs.iter()).map(|res| res.or_error())
+-                }
++                self.push_remote_ref_name(name, remote.push_specs.iter().map(RefSpec::to_ref))
++                    .map(|out| out.map(|(remote_ref, _)| remote_ref))
++                    .transpose()
+             }
+         }
+     }
+ 
+     /// Return the validated name of the reference that tracks the corresponding reference of `name` on the remote for
+     /// `direction`. Note that a branch with that name might not actually exist.
+     ///
+-    /// * with `remote` being [remote::Direction::Fetch], we return the tracking branch that is on the destination
++    /// * For [remote::Direction::Fetch], we return the tracking branch that is on the destination
+     ///   side of a `src:dest` refspec. For instance, with `name` being `main` and the default refspec
+     ///   `refs/heads/*:refs/remotes/origin/*`, `refs/heads/main` would match and produce `refs/remotes/origin/main`.
+-    /// * with `remote` being [remote::Direction::Push], 
+```
+
+**File**: `gix/src/repository/config/remote.rs` (modified, +3/-3)
+```diff
+@@ -21,12 +21,12 @@ impl crate::Repository {
+     /// # Ok(()) }
+     /// ```
+     pub fn remote_names(&self) -> remote::Names {
++        let filter = self.filter_config_section();
+         self.config
+             .resolved
+             .sections_by_name(Remote.name())
+             .map(|it| {
+-                let filter = self.filter_config_section();
+-                it.filter(move |s| filter(s.meta()))
++                it.filter(|s| filter(s.meta()))
+                     .filter_map(|section| section.header().subsection_name().map(ToOwned::to_owned))
+                     .collect()
+             })
+@@ -66,7 +66,7 @@ impl crate::Repository {
+             .then(|| {
+                 self.config
+                     .resolved
+-                    .string_filter(Remote::PUSH_DEFAULT, &mut self.filter_config_section())
++                    .string_filter(Remote::PUSH_DEFAULT, self.filter_config_section())
+             })
+             .flatten();
+         name.or_else(|| {
+```
+
+**File**: `gix/tests/fixtures/make_head_upstream.sh` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++#!/usr/bin/env bash
++set -eu -o pipefail
++
++# Main has two commits of its own, and its upstream topic has one.
++git init -q unconfigured
++(
++  cd unconfigured
++  git commit -q --allow-empty -m root
++  git branch topic
++  git commit -q --allow-empty -m ahead-one
++  git commit -q --allow-empty -m ahead-two
++  git switch -q topic
++  git commit -q --allow-empty -m behind
++  git switch -q main
++  git update-ref refs/tracking/topic topic
++  git update-ref refs/tracking/fallback main
++)
++
++for repo in local mapped local-mapped; do
++  cp -R unconfigured "$repo"
++done
++
++git -C local config branch.main.remote .
++git -C local config --add branch.main.merge refs/heads/topic
++git -C local config --add branch.main.merge refs/heads/main
++git -C local-mapped config branch.main.remote .
++git -C local-mapped config branch.main.merge refs/heads/topic
++git -C local-mapped config remote...fetch refs/heads/topic:refs/tracking/fallback
++
++# Upstream lookup uses the first merge entry and the first matching fetch
++# refspec. A literal object in a fetch spec cannot supply an unrelated upstream.
++git -C mapped config branch.main.remote origin
++git -C mapped config --add branch.main.merge refs/heads/topic
++git -C mapped config --add branch.main.merge refs/heads/main
++git -C mapped config --add remote.origin.fetch "$(git -C mapped rev-parse HEAD):refs/tracking/fallback"
++git -C mapped config --add remote.origin.fetch '+refs/heads/*:refs/tracking/*'
++git -C mapped config --add remote.origin.fetch '+refs/heads/topic:refs/tracking/fallback'
++# This malformed push URL is irrelevant to resolving a local tracking ref.
++git -C mapped config remote.origin.pushurl ssh://host
++
++cp -R mapped excluded
++git -C excluded config --add remote.origin.fetch '^refs/heads/topic'
++cp -R mapped gone
++git -C gone update-ref -d refs/tracking/topic
++
++for repo in local mapped local-mapped; do
++  git -C "$repo" rev-parse --symbolic-full-name --verify '@{upstream}' >"$repo/.git/upstream-baseline"
++done
+```
+
+**File**: `gix/tests/gix/repository/config/remote.rs` (modified, +20/-0)
+```diff
+@@ -412,6 +412,26 @@ mod branch_remote {
+         Ok(())
+     }
+ 
++    #[test]
++    fn push_tracking_does_not_require_a_usable_remote_url() -> TestResult {
++        let repo = named_subrepo_opts(
++            "make_remote_config_repos.sh",
++            "fetch",
++            gix::open::Options::isolated().config_overrides([
++                "remote.remote_repo.pushurl=ssh://host",
++                "remote.remote_repo.push=refs/heads/main:refs/heads/publish",
++            ]),
++        )?;
++        assert!(repo.find_remote("remote_repo").is_err(), "the push URL is malformed");
++        assert_eq!(
++            repo.branch_remote_tracking_ref_name("refs/heads/main".try_into()?, remote::Direction::Push)
++                .expect("the push destination has a local tracking ref")?,
++            "refs/remotes/remote_repo/publish",
++            "mapping the push destination does not need the remote URL"
++        );
++        Ok(())
++    }
++
+     #[test]
+     fn push_mapped() -> TestResult {
+         let repo = repo("push-mapped")?;
+```
+
+**File**: `gix/tests/gix/repository/revision.rs` (modified, +60/-0)
+```diff
+@@ -1,5 +1,65 @@
+ use gix_testtools::TestResult;
  
 +#[test]
-+fn configure_command_limits_repository_discovery_to_the_fixture() -> TestResult {
-+    let parent = tempfile::tempdir()?;
-+    git(parent.path(), "init")?;
-+    git(parent.path(), "config fixture.scope parent")?;
-+    let fixture = parent.path().join("fixture");
-+    let nested = fixture.join("nested");
-+    std::fs::create_dir_all(&nested)?;
++fn upstream_tracking_ref_names_match_git() -> TestResult {
++    use gix::sec::Trust;
 +
-+    let mut cmd = git_command(&fixture);
-+    let result = configure_command(&mut cmd, object_hash(), ["config", "--get", "fixture.scope"], &fixture).output()?;
-+    assert_eq!(result.status.code(), Some(1), "Git must skip the parent config");
++    let fixture = "make_head_upstream.sh";
++    let direction = gix::remote::Direction::Fetch;
++    for trust in [Trust::Full, Trust::Reduced] {
++        for case in ["local", "mapped", "local-mapped"] {
++            let repo =
++                crate::util::named_subrepo_opts(fixture, case, crate::util::restricted().with_enforced_trust(trust))?;
++            let head = repo.head_ref()?.expect("checked out branch");
++            let tracking = head.remote_tracking_ref_name(direction).transpose()?;
++            if trust == Trust::Reduced {
++                assert_eq!(
++                    tracking, None,
++                    "the default filter rejects local tracking configuration"
++                );
++                assert!(
++                    repo.rev_parse_single("@{upstream}").is_err(),
++                    "the same filter applies to revspecs"
++                );
++                continue;
++            }
++            let expected = std::fs::read_to_string(repo.git_dir().join("upstream-baseline"))?;
++            let name = tracking.expect("Git resolves an upstream");
++            assert_eq!(
++                name,
++                expected.trim_end(),
++                "{case} with {trust:?} trust: upstream matches Git"
++            );
++            assert_eq!(
++                repo.rev_parse_single("@{upstream}")?,
++                repo.find_reference(name.as_ref())?.peel_to_id()?,
++                "{case} with {trust:?} trust: the revision selector resolves through the same lookup"
++            );
++            if case == "mapped" {
++                assert!(
++                    repo.find_remote("origin").is_err(),
++                    "the fixture's malformed push URL prevents constructing the remote"
++                );
++            }
++        }
++    }
 +
-+    git(&fixture, "init")?;
-+    git(&fixture, "config fixture.scope fixture")?;
-+    let mut cmd = git_command(&fixture);
-+    let result = configure_command(&mut cmd, object_hash(), ["config", "--get", "fixture.scope"], &fixture)
-+        .current_dir(nested)
-+        .output()?;
++    let repo = crate::util::named_subrepo_opts(fixture, "excluded", crate::util::restricted())?;
 +    assert!(
-+        result.status.success(),
-+        "Git can discover a repository inside the fixture"
++        repo.branch_remote_tracking_ref_name("refs/heads/main".try_into()?, direction)
++            .is_none(),
++        "a negative fetch refspec can exclude a configured upstream"
 +    );
-+    assert_eq!(result.stdout.to_str()?.trim(), "fixture");
++    let repo = crate::util::named_subrepo_opts(fixture, "gone", crate::util::restricted())?;
++    assert_eq!(
++        repo.branch_remote_tracking_ref_name("refs/heads/main".try_into()?, direction)
++            .expect("the upstream is configured")?,
++        "refs/tracking/topic",
++        "the resolver returns the configured name even when the ref is missing"
++    );
 +    Ok(())
 +}
 +
  #[test]
- fn configure_command_keeps_destructive_git_operations_in_the_fixture() -> TestResult {
-     let fixture = tempfile::TempDir::new()?;
+ fn corrupt_commit_graph_parents_retry_the_current_commit() -> TestResult {
+     use gix::revision::walk::Sorting;
 ```
 
----
-
-### Incident Patch 2: `fff99b82` (2026-11-24)
-**Commit Message**: fix(gix-transport): preserve Git SSH argument boundaries
-
-I changes service program and path to execute to one argument, and quotes it,
-possibly with special git quoting.
-Let's see if this is the solution or causes new problems elsewhere.
-Only on Winodws fortunately.
-
-<!-- agent -->
-On Windows, the MSYS2 runtime can expand an SSH destination before
-OpenSSH checks whether it looks like an option. Use Git-compatible
-Windows quoting for both the SSH feature probe and the connection.
-
-Pass the service and the single-quoted repository path together as one
-remote command, as Git does in `connect.c`. This keeps the path's
-quoting through local argument parsing and into the remote shell.
-Document the caller's quoting responsibility in `gix-url` and escape
-raw arguments at the transport trace sites.
-
-Assisted-by: GPT 6.2 Sol
-Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
-
-**File**: `gix-command/src/prepare.rs` (modified, +1/-1)
+**File**: `gix/tests/gix/revision/spec/from_bytes/mod.rs` (modified, +59/-35)
 ```diff
-@@ -179,7 +179,7 @@ impl Prepare {
-     pub fn spawn(self) -> std::io::Result<std::process::Child> {
-         let mut cmd =
-             Command::try_from(self).map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidInput, err))?;
--        gix_trace::debug!(program = ?cmd.get_program(), args = ?cmd.get_args().collect::<Vec<_>>());
-+        gix_trace::debug_command!(cmd);
-         cmd.spawn()
+@@ -124,48 +124,72 @@ mod sibling_branch {
      }
- }
-```
-
-**File**: `gix-transport/src/client/blocking_io/file.rs` (modified, +62/-20)
-```diff
-@@ -120,8 +120,11 @@ impl SpawnProcessOnDemand {
-             });
-         }
-         let repo_path = if self.ssh_cmd.is_some() {
--            cmd.args.push(service.as_str().into());
--            gix_quote::single(self.path.as_ref()).to_os_str_lossy().into_owned()
-+            // SSH forwards a shell command, including the path's quotes, to the remote host.
-+            let mut command = OsString::from(service.as_str());
-+            command.push(" ");
-+            command.push(&*gix_quote::single(self.path.as_ref()).to_os_str_lossy());
-+            command
-         } else {
-             self.path.to_os_str_lossy().into_owned()
-         };
-@@ -279,7 +282,12 @@ impl client::blocking_io::Transport for SpawnProcessOnDemand {
-             cmd.stdin = Stdio::piped();
-             cmd.stdout = Stdio::piped();
  
--            let mut cmd = std::process::Command::try_from(cmd).map_err(|err| client::Error::InvokeProgram {
-+            let prepared = if ssh_kind.is_some() {
-+                cmd.into_command_with_git_quoting()
-+            } else {
-+                cmd.try_into()
-+            };
-+            let mut cmd = prepared.map_err(|err| client::Error::InvokeProgram {
-                 source: std::io::Error::new(std::io::ErrorKind::InvalidInput, err),
-                 command: command.to_owned(),
-             })?;
-@@ -291,15 +299,15 @@ impl client::blocking_io::Transport for SpawnProcessOnDemand {
-         };
- 
-         let mut cmd = into_std_command(cmd, &cmd_name)?;
--        gix_trace::debug!(command = ?cmd, "gix_transport::SpawnProcessOnDemand");
-+        gix_trace::debug_command!(cmd, "gix_transport::SpawnProcessOnDemand");
-         let mut child = match cmd.spawn() {
-             Ok(child) => child,
-             Err(err) if ssh_kind.is_none() && err.kind() == std::io::ErrorKind::NotFound => {
-                 // The service program wasn't found in `PATH`, but as `git` itself can be found,
-                 // the service can still be run through it (#2313).
-                 let (cmd, cmd_name) = self.prepare_fallback_command(service);
-                 let mut cmd = into_std_command(cmd, &cmd_name)?;
--                gix_trace::debug!(command = ?cmd, "gix_transport::SpawnProcessOnDemand (fallback)");
-+                gix_trace::debug_command!(cmd, "gix_transport::SpawnProcessOnDemand (fallback)");
-                 cmd.spawn().map_err(|err| client::Error::InvokeProgram {
-                     source: err,
-                     command: cmd_name,
-@@ -431,15 +439,15 @@ mod tests {
-                 for (url, expected) in [
-                     (
-                         "git@forge.com:/path/repo",
--                        &["ssh", "git@forge.com", "git-upload-pack", "'/path/repo'"][..],
-+                        &["ssh", "git@forge.com", "git-upload-pack '/path/repo'"][..],
-                     ),
-                     (
-                         "git@forge.com:path/repo",
--                        &["ssh", "git@forge.com", "git-upload-pack", "'path/repo'"][..],
-+                        &["ssh", "git@forge.com", "git-upload-pack 'path/repo'"][..],
-                     ),
-                     (
-                         "ssh://git@forge.com/path/repo",
--                        &["ssh", "git@forge.com", "git-upload-pack", "'/path/repo'"][..],
-+                        &["ssh", "git@forge.com", "git-upload-pack '/path/repo'"][..],
-                     ),
-                 ] {
-                     let url = gix_url::parse(url)?;
-@@ -453,6 +461,50 @@ mod tests {
-                 Ok(())
-             }
- 
-+            #[test]
-+            fn remote_command_preserves_shell_quoting_in_one_argument() -> gix_testtools::TestResult {
-+                if gix_testtools::run_in_isolated_process()? {
-+                    return Ok(());
+     fn push_tracking_matches_git(setup: &str) -> TestResult {
++        use gix::{bstr::BStr, sec::Trust};
++
+         let fixture = gix_testtools::scripted_fixture_read_only("make_push_tracking_revspecs.sh")?;
+         for mode in ["upstream", "current", "matching", "simple", "refspec"] {
+-            let repo = gix::open_opts(fixture.join(format!("{setup}-{mode}")), crate::restricted())?;
+-            let expected = std::fs::read_to_string(repo.workdir().expect("non-bare fixture").join("tracking-ref"))?;
++            let case = format!("{setup}-{mode}");
++            let path = fixture.join(&case);
++            let expected = std::fs::read_to_string(path.join("tracking-ref"))?;
+             let expected = expected.trim_end();
+-            for branch in ["", "HEAD", "main"] {
+-                let parsed = parse_spec(format!("{branch}@{{push}}"), &repo);
+-                assert_eq!(
+-                    parsed.is_ok(),
+-                    !expected.is_empty(),
+-                    "{setup}-{mode}: tracking availability"
+-                );
+-                for op in ["p", "P"] {
+-                    let spec = format!("{branch}@{{{op}}}");
+-                    let short = repo.rev_parse(spec.as_str());
+-                    assert_eq!(
+-                        short.as_deref().ok(),
+-                        parsed.as_deref().ok(),
+-                        "{setup}-{mode}: {spec} resolves the same commit as @{{push}}"
+-                    );
++            let expected = (!expected.is_empty()).then(|| BStr::new(expected));
++            let branch = "refs/heads/main".try_into()?;
++            let reduced = gix::open_opts(&path, crate::restricted().with_enforced_trust(Trust::Reduced))?;
++            assert_eq!(
++                reduced
++                    .branch_remote_tracking_ref_name(branch, gix::remote::Direction::Push)
++                    .transpose()?,
++                None,
++                "{case}: the default filter rejects reduced-trust push tracking configuration"
++            );
++            for trust in [Trust::Full, Trust::Reduced] {
++                let mut options = crate::restricted().with_enforced_trust(trust);
++                if trust == Trust::Reduced {
++                    options = options.filter_config_section(|meta| {
++                        meta.source == gix::config::Source::Local || gix::config::section::is_trusted(meta)
++                    });
 +                }
-+                let root = gix_testtools::tempfile::tempdir()?;
-+                let _cwd = gix_testtools::set_current_dir(root.path())?;
-+                for kind in [
-+                    ssh::ProgramKind::Ssh,
-+                    ssh::ProgramKind::Plink,
-+                    ssh::ProgramKind::Putty,
-+                    ssh::ProgramKind::TortoisePlink,
-+                    ssh::ProgramKind::Simple,
-+                ] {
-+                    for service in [crate::Service::UploadPack, crate::Service::ReceivePack] {
-+                        let transport = ssh::connect(
-+                            "user@host:team/repo.git;echo harmless'!".try_into()?,
-+                            Protocol::V1,
-+                            ssh::connect::Options {
-+                                command: Some(r#"printf '<%s>\n' "$@""#.into()),
-+                                kind: Some(kind),
-+                                ..Default::default()
-+                            },
-+                            false,
-+                        )?;
-+                        let cmd = transport.prepare_command(service)?.0;
-+                        let remote_command = format!(r"{} 'team/repo.git;echo harmless'\''
-```
-
-**File**: `gix-transport/src/client/blocking_io/ssh/mod.rs` (modified, +2/-2)
-```diff
-@@ -192,7 +192,7 @@ fn determine_client_kind(
-     let mut kind = known_kind.unwrap_or_else(|| ProgramKind::from(ssh_cmd));
-     if known_kind.is_none() && kind == ProgramKind::Simple {
-         let mut cmd = build_client_feature_check_command(ssh_cmd, url, disallow_shell)?;
--        gix_trace::debug!(cmd = ?cmd, "invoking `ssh` for feature check");
-+        gix_trace::debug_command!(cmd, "invoking `ssh` for feature check");
-         kind = if cmd.status().ok().is_some_and(|status| status.success()) {
-             ProgramKind::Ssh
-         } else {
-@@ -221,7 +221,7 @@ fn build_client_feature_check_command(ssh_cmd: &OsStr, url: &Url, disallow_shell
-     if disallow_shell {
-         prepare.use_shell = false;
-     }
--    prepare.try_into().map_err(Error::PrepareCommand)
-+    prepare.into_command_with_git_quoting().map_err(Error::PrepareCommand)
- }
- 
- #[cfg(test)]
-```
-
-**File**: `gix-url/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -112,6 +112,8 @@ pub fn expand_path(user: Option<&expand_path::ForUser>, path: &BStr) -> Result<P
- ///
- /// This type only expresses known *syntactic* risk. It does not cover other risks, such as passing a personal access
- /// token as a username rather than a password in an application that logs usernames.
-+/// The caller must preserve the argument literally when invoking the program. MSYS2/Cygwin programs on Windows
-+/// require additional quoting to prevent the runtime from expanding arguments or removing quotes.
- #[derive(Debug, PartialEq, Eq, Copy, Clone)]
- pub enum ArgumentSafety<'a> {
-     /// May be safe. There is nothing to pass, so there is nothing dangerous.
++                let repo = gix::open_opts(&path, options)?;
++                for branch in ["", "HEAD", "main"] {
++                    let spec = format!("{branch}@{{push}}");
++                    let parsed = parse_spec(&spec, &repo);
+                     assert_eq!(
+-                        short
+-                            .as_ref()
+-                            .ok()
+-                            .and_then(|spec| spec.first_reference())
+-                            .map(gix::Reference::name),
+-                        parsed
+-                            .as_ref()
+-                            .ok()
+-                            .and_then(|spec| spec.first_reference())
+-                            .map(gix::Reference::name),
+-                        "{setup}-{mode}: {spec} resolves Git's push-tracking reference"
++                        parsed.as_ref().ok().map(|spec| spec
++                            .first_reference()
++                            .expect("a successful push selector resolves a tracking reference")
++                            .name()
++                            .as_bstr()),
++                        expected,
++                        "{case} ({trust:?}): {spec} matches Git's symbolic result"
+                     );
++                    for op in ["p", "P"] {
++                        let spec = format!("{branch}@{{{op}}}");
++                        let short = repo.rev_parse(spec.as_str());
++                        assert_eq!(
++                            short.as_deref().ok(),
++                            parsed.as_deref().ok(),
++                            "{case} ({trust:?}): {spec} resolves the same commit as @{{push}}"
++                        );
++                        assert_eq!(
++                            short
++                                .as_ref()
++                                .ok()
++                                .and_then(|spec| spec.first_reference())
++                                .map(|reference| reference.name().as_bstr()),
++                            expected,
++                            "{case} ({trust:?}): {spec} resolves the same tracking reference as @{{push}}"
++                        );
++                    }
+                 }
++                assert_eq!(
++                    repo.branch_remote_tracking_ref_name(branch, gix::remote::Direction::Push)
++                        .transpose()?
++                        .as_ref()
++                        .map(gix::refs::FullName::as_bstr),
++                    expected,
++  
 ```
 
 ---
 
-### Incident Patch 3: `860ec3d2` (2026-11-23)
-**Commit Message**: fix(gix-command): prepare Git-compatible Windows arguments
+### Incident Patch 3: `54cf2414` (2026-11-25)
+**Commit Message**: fix(gix)!: distinguish remote selectors from symbolic names
 
-Looked at it carefully, improved some details to make them easier to follow,
-and rubber-stamped the tests and the actual quoting implementation.
+Rubber-stamped the tests, but took a long time to rework
+`remote::Name`, also adding `remote::ConfiguredName`.
+Overall, this API is far more capable, while supporting dot-remotes.
 
 <!-- agent -->
-Git's MSVC quoting protects arguments that MSYS2 and Cygwin could
-expand before the called program sees them. Make that quoting available
-to callers without inspecting executable images or changing the normal
-argument handling of native helpers.
+A branch's remote selector can name a configured remote even if it
+looks like a URL or path. Check for a trusted `[remote "…"]` subsection
+before interpreting the selector as a destination. Use the exact
+subsection bytes for lookup, refspec and proxy settings, and saving, so
+URL-shaped and non-UTF-8 names round-trip without changing identity.
 
-Prefer an explicit path's `.exe` sibling before shebang dispatch. Keep
-the bundled Git shell's MSYS2 quoting and Rust's batch file escaping.
-Reject literal double quotes for custom transports under `noglob`,
-where a runtime could otherwise change the argument boundaries. Escape
-raw arguments in trace output and exercise the behavior on Windows.
+Resolve `remote = .` to the opened repository's Git directory, not the
+process working directory. For linked worktrees this preserves the
+opened worktree's `HEAD` while sharing refs and objects. A `[remote "."]`
+subsection can supply refspecs or override the destination with an
+explicit URL. `Repository::remote_at(".")` still takes a relative path.
+Keep URLs inferred from subsection names implicit on save unless the
+remote is renamed and the destination needs to be preserved explicitly.
 
-**File**: `gix-command/src/lib.rs` (modified, +32/-7)
+Validate newly assigned symbolic names under `refs/remotes/` and retain
+their original bytes when writin
+
+**File**: `gix-ref/src/store/file/transaction/prepare.rs` (modified, +5/-1)
 ```diff
-@@ -28,6 +28,8 @@ use bstr::{BString, ByteSlice};
- pub mod parse;
- 
- mod prepare;
-+#[cfg(windows)]
-+mod windows;
- 
- ///
- pub mod shebang {
-@@ -65,8 +67,10 @@ pub mod shebang {
- /// after creating it with [`prepare()`].
- ///
- /// Convert it to [`std::process::Command`] with [`TryFrom::try_from()`] to finish preparation
--/// without spawning. Preparation reports an error when shell quoting or namespace conversion
--/// requires an encoding the platform cannot represent.
-+/// without spawning. Preparation reports an error when argument quoting or namespace conversion
-+/// requires an encoding the selected parser or platform cannot represent.
-+/// On Windows, arguments to the bundled Git shell can use `CommandExt::raw_arg`, so
-+/// `Command::get_args()` can include command-line quoting rather than only the decoded contents.
- pub struct Prepare {
-     /// The command to invoke, either directly or with a shell depending on `use_shell`.
-     pub command: OsString,
-@@ -160,21 +164,39 @@ fn is_bare_command(command: &Path) -> bool {
-     command.components().take(2).count() == 1
- }
- 
-+/// Return `Some(path)` if appending `.exe` to `command` yields a path to a file, as in Rust's
-+/// Windows process launcher for explicit paths. For example, `bin/ssh` returns `Some(bin/ssh.exe)`
-+/// if `bin/ssh.exe` is a file, even if `bin/ssh` also exists.
-+///
-+/// Return `None` if there is no such file, if `command` already has an `.exe` extension (ignoring
-+/// ASCII case), or if it ends in a [Windows path separator](prepare::has_trailing_windows_separator).
-+fn win_exe_suffix_lookup(command: &Path) -> Option<PathBuf> {
-+    if prepare::has_trailing_windows_separator(command)
-+        || command
-+            .extension()
-+            .is_some_and(|ext| ext.as_encoded_bytes().eq_ignore_ascii_case(b"exe"))
-+    {
-+        return None;
-+    }
-+    let mut executable = command.as_os_str().to_owned();
-+    executable.push(".exe");
-+    let executable = PathBuf::from(executable);
-+    executable.is_file().then_some(executable)
-+}
-+
- /// Try to find `command` in `joined_paths` using [`split_paths()`].
- /// Commands with an explicit extension are matched verbatim. Otherwise, `.exe` is preferred over an extensionless file.
- /// Note that just like Git, no lookup is performed if a slash or backslash is in `command`.
- fn win_path_lookup(command: &Path, joined_paths: &std::ffi::OsStr) -> Option<PathBuf> {
-     fn lookup(root: &Path, command: &Path, has_extension: bool) -> Option<PathBuf> {
--        let mut path = root.join(command);
-+        let path = root.join(command);
-         if has_extension {
-             return path.is_file().then_some(path);
-         }
- 
--        path.set_extension("exe");
--        if path.is_file() {
--            return Some(path);
-+        if let Some(executable) = win_exe_suffix_lookup(&path) {
-+            return Some(executable);
-         }
--        path.set_extension("");
-         path.is_file().then_some(path)
-     }
-     if !is_bare_command(command) {
-@@ -212,6 +234,9 @@ pub fn extract_interpreter(executable: &Path) -> Option<shebang::Data> {
- /// - `stderr` is inherited to allow the command to provide context to the user
- ///
- /// On Windows, terminal Windows will be suppressed automatically.
-+/// Explicit program paths also prefer an existing `.exe` sibling, matching Rust's process launcher.
-+/// The bundled Git shell receives MSYS2 quoting. For external Git transports use
-+/// [`Prepare::into_command_with_git_quoting()`] to enable Git's additional Windows quoting.
- ///
- /// ### Warning
- ///
-```
-
-**File**: `gix-command/src/prepare.rs` (modified, +74/-21)
-```diff
-@@ -8,7 +8,9 @@ use std::{
- use bstr::ByteSlice;
- use gix_error::Result;
- 
--use crate::{Context, Prepare, extract_interpreter, is_bare_command, split_paths, win_path_lookup};
-+use crate::{
-+    Context, Prepare, extract_interpreter, is_bare_command, split_paths, win_exe_suffix_lookup, win_path_lookup,
-+};
- 
- /// Builder
- impl Prepare {
-@@ -177,16 +179,39 @@ impl Prepare {
-     pub fn spawn(self) -> std::io::Result<std::process::Child> {
-         let mut cmd =
-             Command::try_from(self).map_err(|err| std::io::Error::new(std::io::ErrorKind::InvalidInput, err))?;
--        gix_trace::debug!(cmd = ?cmd);
-+        gix_trace::debug!(program = ?cmd.get_program(), args = ?cmd.get_args().collect::<Vec<_>>());
-         cmd.spawn()
-     }
- }
- 
- impl TryFrom<Prepare> for Command {
-     type Error = gix_error::Error;
- 
--    fn try_from(mut prep: Prepare) -> Result<Self> {
-+    fn try_from(prep: Prepare) -> Result<Self> {
-+        prep.into_command(false)
-+    }
-+}
-+
-+/// Lifecycle
-+impl Prepare {
-+    /// Finish preparation using Git for Windows' additional argument quoting on Windows.
-+    ///
-+    /// Use this for external Git transports whose arguments may be parsed again by MSYS2 or Cygwin.
-+    /// As with the bundled shell, `Command::get_args()` includes quoting for arguments passed with `raw_arg`.
-+    /// For other programs, disabling globbing in `MSYS` or `CYGWIN` can make literal double quotes
-+    /// ambiguous, so preparation rejects them in that mode.
-+    /// On other platforms this is identical to converting with [`Command::try_from()`].
-+    pub fn into_command_with_git_quoting(self) -> Result<Command> {
-+        self.into_command(true)
-+    }
-+
-+    fn into_command(self, git_quoting: bool) -> Result<Command> {
-+        #[cfg(not(windows))]
-+        let _ = git_quoting;
-+        let mut prep = self;
-         let mut inline_env = Vec::new();
-+        #[cfg(windows)]
-+        let mut bundled_shell = false;
-         let mut cmd = if prep.use_shell {
-             let split_args = prep
-                 .allow_manual_arg_splitting
-@@ -213,7 +238,15 @@ impl TryFrom<Prepare> for Command {
-                 None => {
-                     let mut cmd = match prep.shell_program {
-                         Some(shell) => Command::new(shell),
--                        None => gix_path::env::shell_command(),
-+                        None => {
-+                            let shell = gix_path::env::shell_command();
-+                            #[cfg(windows)]
-+                            {
-+                                // Discovery returns a full path for Git's MSYS2 shell or its shim.
-+                                bundled_shell = Path::new(shell.get_program()).is_absolute();
-+                            }
-+                            shell
+@@ -174,7 +174,11 @@ impl Transaction<'_, '_> {
+                 if (is_effective && !direct_to_packed_refs) || is_symbolic {
+                     lock.with_mut(|file| match new {
+                         Target::Object(oid) => writeln!(file, "{oid}"),
+-                        Target::Symbolic(name) => writeln!(file, "ref: {}", name.0),
++                        Target::Symbolic(name) => {
++                            file.write_all(b"ref: ")?;
++                            file.write_all(name.as_bstr())?;
++                            file.write_all(b"\n")
 +                        }
-                     };
-                     // Passed as `command_name` after `-c <script>`; the shell uses it
-                     // as `$0`, which prefixes its own diagnostic messages. If the
-@@ -250,6 +283,9 @@ impl TryFrom<Prepare> for Command {
-         } else {
-             Command::new(prep.command)
-         };
-+        cmd.args(prep.args);
-+        #[cfg(windows)]
-+        let mut cmd = crate::windows::quote_arguments(cmd, git_quoting, bundled_shell, &prep.env, &inline_env)?;
-         // We never want to have terminals pop-up on Windows if this runs from a GUI application.
-         #[cfg(windows)]
-         {
-@@ -260,8 +296,7 @@ impl TryFrom<Prepare> for Command {
-         cmd.stdin(prep.stdin)
-             .stdout(prep.stdout)
-             .stderr(prep.stderr)
--            .envs(prep.env)
--            .args(prep.args);
-+            .envs(prep.env);
-         if let Some(ctx) = prep.context {
-             if let Some(git_dir) = ctx.git_dir {
-                 cmd.env("GIT_DIR", &git_dir);
-@@ -307,18 +342,7 @@ impl TryFrom<Prepare> for Command {
- /// arguments. If `PATH` does not resolve a bare command, the missing program remains anchored in its first entry
- /// so Rust's broader Windows lookup cannot find it elsewhere.
- fn windows_command(command: OsString, env: &[(OsString, OsString)], inline_env: &[(String, OsString)]) -> Command {
--    let explicit_joined_paths = inline_env
--        .iter()
--        .rev()
--        .find(|(name, _)| name.eq_ignore_ascii_case("PATH"))
--        .map(|(_, value)| value.as_os_str())
--        .or_else(|| {
--            env.iter()
--                .rev()
--                .find(|(name, _)| name.to_str().is_some_and(|name| name.eq_ignore_ascii_case("PATH")))
--                .map(|(_, value)| value.as_os_str())
--        });
--    let joined_paths = explicit_joined_paths
-+    let joined_paths = windows_env_override("PATH", env, inline_env)
-         .map(Cow::Borrowed)
-         .or_else(|| std::env::var_os("PATH").map(Cow::Owned));
-     let looked_up = joined_paths
-@@ -329,15 +353,20 @@ fn windows_command(command: OsString, env: &[(OsString, OsString)], inline_env:
-         Some(program) => Cow::Owned(program),
+                     })
+                     .or_raise(|| message("Could not write loose reference"))?;
+                     Some(lock.close().or_raise(|| message("Could not close reference lock"))?)
 ```
 
-**File**: `gix-command/src/windows.rs` (added, +182/-0)
+**File**: `gix-ref/tests/refs/file/transaction/prepare_and_commit/create_or_update/mod.rs` (modified, +25/-0)
 ```diff
-@@ -0,0 +1,182 @@
-+use std::{
-+    borrow::Cow,
-+    ffi::{OsStr, OsString},
-+    os::windows::{ffi::OsStrExt, ffi::OsStringExt, process::CommandExt},
-+    path::Path,
-+    process::Command,
-+};
-+
-+use gix_error::{Result, bail, validation};
-+
-+/// Apply Git's extra quoting without probing the executable.
-+pub(super) fn quote_arguments(
-+    cmd: Command,
-+    git_quoting: bool,
-+    bundled_shell: bool,
-+    env: &[(OsString, OsString)],
-+    inline_env: &[(String, OsString)],
-+) -> Result<Command> {
-+    let glob = |key| {
-+        crate::prepare::windows_env_override(key, env, inline_env)
-+            .map(Cow::Borrowed)
-+            .or_else(|| std::env::var_os(key).map(Cow::Owned))
-+            .as_deref()
-+            .is_none_or(glob_enabled)
-+    };
-+    let quote: fn(&OsStr) -> Option<OsString> = if bundled_shell {
-+        if !cmd.get_args().any(needs_msys_quoting) {
-+            return Ok(cmd);
-+        }
-+        if glob("MSYS") {
-+            quote_for_msys_glob
-+        } else {
-+            quote_for_msys_noglob
-+        }
-+    } else if git_quoting {
-+        let has_double_quote = cmd.get_args().any(|arg| arg.as_encoded_bytes().contains(&b'"'));
-+        let needs_quoting = cmd.get_args().any(needs_msvc_quoting);
-+        if !(has_double_quote || needs_quoting) || may_be_batch_file(cmd.get_program()) {
-+            return Ok(cmd);
-+        }
-+        // The noglob parser does not decode the backslash escapes used by the Windows C runtime.
-+        // Without identifying the executable, reject an argument that could lose its quote boundary.
-+        if has_double_quote && (!glob("MSYS") || !glob("CYGWIN")) {
-+            bail!(validation(
-+                "cannot pass literal double quotes to a Windows Git transport with globbing disabled"
-+            ));
-+        }
-+        if !needs_quoting {
-+            return Ok(cmd);
-+        }
-+        quote_for_msvc
-+    } else {
-+        return Ok(cmd);
-+    };
-+
-+    let mut quoted = Command::new(cmd.get_program());
-+    for arg in cmd.get_args() {
-+        if let Some(arg) = quote(arg) {
-+            quoted.raw_arg(arg);
-+        } else {
-+            quoted.arg(arg);
-+        }
-+    }
-+    Ok(quoted)
-+}
-+
-+fn may_be_batch_file(program: &OsStr) -> bool {
-+    // Rust uses a separate, safer encoder for batch files. In particular, raw_arg would bypass
-+    // its escaping of percent signs and its checks for line breaks.
-+    let has_suffix = |name: &OsStr, suffix: &[u8]| {
-+        let bytes = name.as_encoded_bytes();
-+        bytes
-+            .get(bytes.len().saturating_sub(suffix.len())..)
-+            .is_some_and(|tail| tail.eq_ignore_ascii_case(suffix))
-+    };
-+    !has_suffix(program, b".exe")
-+        && std::path::absolute(Path::new(program)).map_or(true, |path| {
-+            has_suffix(path.as_os_str(), b".cmd") || has_suffix(path.as_os_str(), b".bat")
-+        })
-+}
-+
-+fn needs_msvc_quoting(arg: &OsStr) -> bool {
-+    let bytes = arg.as_encoded_bytes();
-+    // Spaces and tabs already make Rust wrap the entire argument in double quotes.
-+    !bytes.iter().any(|byte| matches!(byte, b' ' | b'\t')) && bytes.iter().any(|&byte| requires_quotes(byte))
-+}
-+
-+fn needs_msys_quoting(arg: &OsStr) -> bool {
-+    arg.as_encoded_bytes()
-+        .iter()
-+        .any(|&byte| byte == b'\\' || requires_quotes(byte))
-+}
-+
-+fn requires_quotes(byte: u8) -> bool {
-+    // As in Git's quote_arg_msvc(), also quote characters that trigger argument expansion.
-+    // Include bracket and tilde expansion to preserve the SSH destination literally.
-+    matches!(
-+        byte,
-+        b'\n' | b'\r' | 0x0b | 0x0c | b'"' | b'\'' | b'*' | b'?' | b'[' | b'{' | b'~'
-+    )
-+}
-+
-+/// The last glob, noglob or -glob setting controls Windows argument expansion.
-+fn glob_enabled(options: &OsStr) -> bool {
-+    let mut quoted = false;
-+    let mut glob = true;
-+    for option in options.as_encoded_bytes().split(|&byte| {
-+        if byte == b'"' {
-+            quoted = !quoted;
-+        }
-+        !quoted && matches!(byte, b' ' | b'\t')
-+    }) {
-+        let split = option
-+            .iter()
-+            .position(|&b| b == b'=')
-+            .or_else(|| option.iter().position(|&b| b == b':'));
-+        let (name, value) = split.map_or((option, None), |at| (&option[..at], Some(&option[at + 1..])));
-+        if name.eq_ignore_ascii_case(b"glob") {
-+            glob = value.is_none_or(|value| value.iter().any(|&byte| byte != b'"'));
-+        } else if name.eq_ignore_ascii_case(b"noglob") || name.eq_ignore_ascii_case(b"-glob") {
-+            glob = false;
-+        }
-+    }
-+    glob
-+}
-+
-+const DOUBLE: u16 = b'"' as u16;
-+const SINGLE: u16 = b'\'' as u16;
-+const SLASH: u16 = b'\\' as u16;
-+
-+fn quote_for_msvc(arg: &OsStr) -> Option<OsString> {
-+    if !needs_msvc_quoting(arg) {
-+        return None;
-+    }
-+    let mut quoted = vec![DOUBLE];
-+    let mut slashes = 0;
-+    for c in arg.encode_wide() {
-+        if c == SLASH {
-+            slashes += 1;
-+        } else {
-+ 
-```
-
-**File**: `gix-command/tests/command/main.rs` (modified, +2/-0)
-```diff
-@@ -158,3 +158,5 @@ mod command_line;
- mod context;
- mod prepare;
- mod spawn;
-+#[cfg(windows)]
-+mod windows;
-```
-
-**File**: `gix-command/tests/command/windows.rs` (added, +179/-0)
-```diff
-@@ -0,0 +1,179 @@
-+use bstr::ByteSlice;
-+use gix_testtools::TestResult;
-+
-+#[test]
-+fn git_style_quoting_preserves_msys_ssh_arguments() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let printf = gix_path::env::installation_program("printf").expect("Git for Windows provides MSYS printf");
-+    let root = gix_testtools::tempfile::tempdir()?;
-+    let _cwd = gix_testtools::set_current_dir(root.path())?;
-+    std::fs::write(root.path().join("hostname.invalid"), [])?;
-+    let args = [
-+        "{first,second}",
-+        "host*.invalid",
-+        "host?ame.invalid",
-+        "host[n]ame.invalid",
-+        "O'Brien.invalid",
-+        "git-upload-pack 'team/repo with spaces.git'",
-+        r"git-upload-pack 'team/O'\''Brien.git'",
-+    ];
-+    let expected = format!("<{}>", args.join("><"));
-+    for mode in ["glob", "noglob"] {
-+        let output = gix_command::prepare(&printf)
-+            .env("MSYS", mode)
-+            .arg("<%s>")
-+            .args(args)
-+            .into_command_with_git_quoting()?
-+            .output()?;
-+        assert!(
-+            output.status.success(),
-+            "the MSYS argument recorder completes in mode {mode}"
-+        );
-+        assert_eq!(
-+            output.stdout.as_bstr(),
-+            expected.as_bytes().as_bstr(),
-+            "the SSH destination stays literal and the remote command arrives in one argument"
-+        );
-+    }
-+    Ok(())
-+}
-+
-+#[test]
-+fn explicit_msys_ssh_path_can_omit_exe_suffix() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let ssh = gix_path::env::installation_program("ssh").expect("Git for Windows provides MSYS ssh");
-+    let mut cmd = gix_command::prepare(ssh.with_extension(""))
-+        .env("MSYS", "glob")
-+        .args(["-F", "/dev/null", "-G", "{first,second}"])
-+        .stderr(std::process::Stdio::piped())
-+        .into_command_with_git_quoting()?;
-+    assert_eq!(cmd.get_program(), ssh, "the .exe sibling selected at launch is used");
-+    let output = cmd.output()?;
-+    assert!(
-+        !output.status.success(),
-+        "the invalid hostname is rejected during the configuration probe"
-+    );
-+    assert!(
-+        output.stderr.contains_str("hostname contains invalid characters"),
-+        "OpenSSH sees the literal brace argument without a connection attempt"
-+    );
-+    Ok(())
-+}
-+
-+#[test]
-+fn bundled_msys_shell_preserves_positional_arguments() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let args = ["{first,second}", "'repo name'", r"C:\example directory\", r#"a"b"#];
-+    let expected = format!("<{}>", args.join("><"));
-+    for mode in ["glob", "noglob"] {
-+        let output = gix_command::prepare(r#"printf '<%s>' "$@""#)
-+            .with_shell()
-+            .env("MSYS", mode)
-+            .args(args)
-+            .spawn()?
-+            .wait_with_output()?;
-+        assert!(output.status.success(), "the bundled shell completes in mode {mode}");
-+        assert_eq!(
-+            output.stdout.as_bstr(),
-+            expected.as_bytes().as_bstr(),
-+            "the shell preserves its positional arguments"
-+        );
-+    }
-+    Ok(())
-+}
-+
-+#[test]
-+fn native_fallback_shell_retains_standard_argument_encoding() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let root = gix_testtools::tempfile::tempdir()?;
-+    let _env = gix_testtools::Env::new().set("GIT_EXEC_PATH", root.path().to_string_lossy());
-+    std::fs::copy(std::env::current_exe()?, root.path().join("sh.exe"))?;
-+    assert_eq!(
-+        gix_path::env::shell(),
-+        "sh.exe",
-+        "the fixture disables bundled shell discovery"
-+    );
-+
-+    let arg = r"C:\example directory\";
-+    let script = r#"printf '%s' "$1" "$@""#;
-+    let cmd = std::process::Command::try_from(
-+        gix_command::prepare(script)
-+            .with_shell()
-+            .env("PATH", root.path())
-+            .arg(arg),
-+    )?;
-+    assert_eq!(cmd.get_program(), "sh.exe", "Rust resolves the fallback shell at spawn");
-+    assert_eq!(
-+        cmd.get_args().collect::<Vec<_>>(),
-+        ["-c", script, "sh.exe", arg],
-+        "the native fallback receives ordinary Windows arguments"
-+    );
-+    Ok(())
-+}
-+
-+#[test]
-+fn explicit_shell_does_not_discover_git_shell() -> TestResult {
-+    if gix_testtools::run_in_isolated_process()? {
-+        return Ok(());
-+    }
-+    let root = gix_testtools::tempfile::tempdir()?;
-+    let shell = std::env::current_exe()?;
-+    {
-+        let _env = gix_testtools::Env::new().set("GIT_EXEC_PATH", root.path().to_string_lossy());
-+        let cmd = std::process::Command::try_from(
-+            gix_command::prepare("echo hello")
-+                .with_shell()
-+                .with_shell_program(&shell),
-+        )?;
-+        assert_eq!(cmd.get_program(), shell, "the explicit absolute shell is used directly");
-+    }
-```
-
-**File**: `gix-credentials/src/program/mod.rs` (modified, +5/-2)
-```diff
-@@ -172,6 +172,9 @@ mod tests {
+@@ -757,6 +757,31 @@ fn cancellation_after_preparation_leaves_no_change() -> TestResult {
+     Ok(())
+ }
  
-     #[test]
-     fn git_program_with_spaces_is_quoted_in_external_name_shell_scripts() -> gix_testtools::TestResult {
-+        if gix_testtools::run_in_isolated_process()? {
-+            return Ok(());
-+        }
-         let cmd = super::external_name_command(
-             Path::new(r"C:\Program Files\Git\mingw64\bin\git.exe"),
-             "manager --config=~/credentials".into(),
-@@ -186,11 +189,11 @@ mod tests {
-         assert_eq!(
-             script,
-             OsStr::new(if cfg!(windows) {
--                r#"'C:/Program Files/Git/mingw64/bin/git.exe' credential-manager --config=~/credentials "$@""#
-+                r#""'C:/Program Files/Git/mingw64/bin/git.exe' credential-manager --config=~/credentials \"$@\"""#
-             } else {
-                 r#"'C:\Program Files\Git\mingw64\bin\git.exe' credential-manager --config=~/credentials "$@""#
-             }),
--            "the Git executable is a single shell token even when its path contains spaces"
-+            "the Git executable stays a single shell token through runtime quoting even when its path contains spaces"
++#[test]
++fn symbolic_reference_preserves_target_bytes() -> TestResult {
++    let (_keep, store) = empty_store()?;
++    let referent = b"refs/remotes/team/\xff/main".as_bstr();
++    store
++        .transaction()
++        .prepare(
++            [RefEdit::update(
++                "HEAD".try_into()?,
++                Target::Symbolic(referent.try_into()?),
++                PreviousValue::MustNotExist,
++                "",
++            )],
++            Fail::Immediately,
++            Fail::Immediately,
++        )?
++        .commit(committer().to_ref(&mut TimeBuf::default()))?;
++    assert_eq!(
++        std::fs::read(store.git_dir().join("HEAD"))?,
++        b"ref: refs/remotes/team/\xff/main\n",
++        "the loose symbolic reference stores the exact target bytes"
++    );
++    Ok(())
++}
++
+ #[test]
+ fn symbolic_reference_writes_reflog_if_previous_value_is_set() -> TestResult {
+     let (_keep, store) = empty_store()?;
+```
+
+**File**: `gix-tix/src/history.rs` (modified, +0/-1)
+```diff
+@@ -1553,7 +1553,6 @@ fn snapshot_inner(
+     let fetch_remote = active_branch
+         .as_ref()
+         .and_then(|branch| repo.branch_remote_name(branch.shorten(), gix::remote::Direction::Fetch))
+-        .map(|name| name.as_bstr().to_owned())
+         .or_else(|| repo.remote_default_name(gix::remote::Direction::Fetch));
+     let pins = pins
+         .into_iter()
+```
+
+**File**: `gix-tix/src/lib.rs` (modified, +14/-1)
+```diff
+@@ -5831,7 +5831,6 @@ fn active_branch_name(refs: &history::RefSnapshot) -> Option<BString> {
+ fn push_remote_name(repository: &gix::Repository, branch: &BStr) -> BString {
+     repository
+         .branch_remote_name(branch, gix::remote::Direction::Push)
+-        .map(|name| name.as_bstr().to_owned())
+         .or_else(|| repository.remote_default_name(gix::remote::Direction::Push))
+         .unwrap_or_else(|| "origin".into())
+ }
+@@ -10447,6 +10446,20 @@ mod tests {
          );
-         Ok(())
+         drop(repository);
+ 
++        assert!(git(&["config", "branch.main.remote", "./direct.git"])?.success());
++        let repository = test_repository::open(fixture.path())?;
++        assert_eq!(
++            history::snapshot(&repository, &[], &[], false)?.fetch_remote,
++            Some(BString::from("./direct.git")),
++            "a direct destination takes precedence over the default named remote for fetch"
++        );
++        assert_eq!(
++            push_remote_name(&repository, b"main".as_bstr()),
++            "./direct.git",
++            "a direct destination takes precedence over the default named remote for push"
++        );
++        drop(repository);
++
+         assert!(git(&["config", "--unset", "branch.main.remote"])?.success());
+         let repository = test_repository::open(fixture.path())?;
+         assert_eq!(
+```
+
+**File**: `gix-tix/src/ref_tree.rs` (modified, +3/-1)
+```diff
+@@ -1508,7 +1508,9 @@ pub(crate) fn resolve_remote_deletions(
+     for tracking in tracking_references {
+         match repository.upstream_branch_and_remote_for_tracking_branch(tracking.as_ref()) {
+             Ok(Some((upstream, remote))) => {
+-                let Some(name) = remote.name() else { continue };
++                let Some(name) = remote.name() else {
++                    continue;
++                };
+                 groups.entry(name.as_bstr().to_owned()).or_default().push(upstream);
+             }
+             Ok(None) => {}
+```
+
+**File**: `gix/src/clone/access.rs` (modified, +3/-1)
+```diff
+@@ -26,9 +26,11 @@ impl PrepareFetch {
+     /// Set the remote's name to the given value after it was configured using the function provided via
+     /// [`configure_remote()`](Self::configure_remote()).
+     ///
++    /// The name is written to config and, in a non-bare clone, used under `refs/remotes/`.
++    /// It must be valid in that ref namespace; `.` and URLs are not accepted as names.
+     /// If not set here, it defaults to `origin` or the value of `clone.defaultRemoteName`.
+     pub fn with_remote_name(mut self, name: impl Into<BString>) -> Result<Self> {
+-        self.remote_name = Some(crate::remote::name::validated(name)?);
++        self.remote_name = Some(crate::remote::Name::symbol(name)?);
+         Ok(self)
      }
+ 
+```
+
+**File**: `gix/src/clone/fetch/mod.rs` (modified, +32/-36)
+```diff
+@@ -45,27 +45,21 @@ impl PrepareFetch {
+             snapshot.append_config(&self.config_overrides, gix_config::Source::Api)?;
+         }
+ 
+-        let remote_name = match self.remote_name.as_ref() {
+-            Some(name) => name.to_owned(),
+-            None => repo
+-                .config
+-                .resolved
+-                .string(crate::config::tree::Clone::DEFAULT_REMOTE_NAME)
+-                .map(|n| crate::config::tree::Clone::DEFAULT_REMOTE_NAME.try_into_symbolic_name(n))
+-                .transpose()?
+-                .unwrap_or_else(|| {
+-                    crate::config::tree::Clone::DEFAULT_REMOTE_NAME
+-                        .default_value_or_panic()
+-                        .into()
+-                }),
++        let remote_name = match &self.remote_name {
++            Some(name) => name.clone(),
++            None => {
++                let key = &crate::config::tree::Clone::DEFAULT_REMOTE_NAME;
++                let name = repo
++                    .config
++                    .resolved
++                    .string(key)
++                    .unwrap_or_else(|| key.default_value_or_panic().into());
++                key.try_into_symbolic_name(name)?
++            }
+         };
++        let remote_name_bytes = remote_name.as_bstr();
+ 
+         let mut remote = repo.remote_at(self.url.clone())?;
+-        let branch_prefix = if repo.is_bare() {
+-            "refs/heads/".to_owned()
+-        } else {
+-            format!("refs/remotes/{remote_name}/")
+-        };
+ 
+         // For shallow clones without custom configuration, we'll use a single-branch refspec
+         // to match git's behavior (matching git's single-branch behavior for shallow clones).
+@@ -146,28 +140,30 @@ impl PrepareFetch {
+         // Set up refspec based on whether we're doing a single-branch shallow clone,
+         // which requires a single ref to match Git unless it's overridden.
+         if remote.fetch_specs.is_empty() && self.revision.is_none() {
++            let branch_prefix = if repo.is_bare() {
++                Category::LocalBranch.prefix().to_owned()
++            } else {
++                remote::remote_tracking_ref(remote_name_bytes, b"")
++            };
+             if let Some(target_ref) = &target_ref {
+                 // Single-branch refspec for shallow clones
+-                let destination = match target_ref.category_and_short_name() {
++                let mut spec = crate::bstr::BString::from("+");
++                spec.push_str(target_ref.as_bstr());
++                spec.push(b':');
++                match target_ref.category_and_short_name() {
+                     Some((Category::LocalBranch, short_name)) => {
+-                        format!("{branch_prefix}{short_name}")
++                        spec.push_str(&branch_prefix);
++                        spec.push_str(short_name);
+                     }
+-                    _ => target_ref.to_string(),
+-                };
+-                remote = remote
+-                    .with_refspecs(
+-                        Some(format!("+{target_ref}:{destination}").as_str()),
+-                        remote::Direction::Fetch,
+-                    )
+-                    .expect("valid refspec");
++                    _ => spec.push_str(target_ref.as_bstr()),
++                }
++                remote = remote.with_refspecs(Some(spec), remote::Direction::Fetch)?;
+             } else if !use_single_branch_for_shallow {
+                 // Wildcard refspec for non-shallow clones or when target couldn't be determined
+-                remote = remote
+-                    .with_refspecs(
+-                        Some(format!("+refs/heads/*:{branch_prefix}*").as_str()),
+-                        remote::Direction::Fetch,
+-                    )
+-                    .expect("valid static spec");
++                let mut spec = crate::bstr::BString::from("+refs/heads/*:");
++                spec.push_str(&branch_prefix);
++                spec.push(b'*');
++                remote = remote.with_refspecs(Some(spec), remote::Direction::Fetch)?;
+             }
+         }
+ 
+@@ -323,12 +319,12 @@ impl PrepareFetch {
+         if let Some(config) = config {
+             util::append_config_to_repo_config(&mut repo, config)?;
+         }
+-        util::update_remote_head(&repo, &outcome.ref_map, reflog_message.as_ref(), remote_name.as_ref())?;
++        util::update_remote_head(&repo, &outcome.ref_map, reflog_message.as_ref(), remote_name_bytes)?;
+         util::update_head(
+             &mut repo,
+             &outcome.ref_map,
+             reflog_message.as_ref(),
+-            remote_name.as_ref(),
++            remote_name_bytes,
+             self.ref_name.as_ref(),
+             self.revision.as_ref(),
+         )?;
+```
+
+**File**: `gix/src/clone/fetch/util.rs` (modified, +4/-5)
+```diff
+@@ -8,7 +8,7 @@ use gix_ref::{
+ 
+ use crate::{
+     Error, Repository, Result,
+-    bstr::{BStr, BString, ByteSlice},
++    bstr::{BStr, ByteSlice},
+ };
+ 
+ enum WriteMode {
+@@ -17,11 +17,11 @@ enum WriteMode {
+ }
+ pub fn append_remote_to_local_config_file(
+     remote: &mut crate::Remote<'_>,
+-    remote_name: BString,
++    remote_name: crate::remote::Name,
+ ) -> Result<gix_config::File> {
+     let mut config = gix_config::File::new(local_config_meta(remote.repo));
+     remote
+-        .save_as_to(remote_name, &mut config)
++        .save_as_validated(remote_name, &mut config)
+         .or_raise(|| message("Failed to store configured remote in memory"))?;
+ 
+     write_to_local_config(&config, WriteMode::Append)
+@@ -189,8 +189,7 @@ pub(super) fn update_remote_head(
+     let Some(tracking_branch) = mapping.local.as_ref() else {
+         return Ok(());
+     };
+-    let head_name =
+-        gix_ref::FullName::try_from(BString::from(format!("refs/remotes/{remote_name}/HEAD"))).or_error()?;
++    let head_name = gix_ref::FullName::try_from(crate::remote::remote_tracking_ref(remote_name, b"HEAD")).or_error()?;
+     repo.edit_reference(gix_ref::transaction::RefEdit::update_with_log(
+         head_name.clone(),
+         gix_ref::FullName::try_from(tracking_branch.clone()).or_error()?,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3246** (2026-11-25): fix(gix-imara-diff): make histogram diffs match `git diff --histogram` (@daniel-kindl)
 - **PR #3241** (2026-11-24): move experimental APIs to parallel major-zero releases (@Byron)
 - **PR #3240** (2026-11-24): validate pack offsets on lookup (@Byron)
 - **PR #3239** (closed): perf(gix-odb): validate pack offsets on lookup (@Havunen)
 - **PR #3238** (2026-11-23): Upgrade `sirocco` to 0.4 (@srijs)
 - **PR #3237** (2026-11-24): fix(gix-ignore): drop a `` that ends an ignore file without `
 `, like Git. (@AbuYahya94)
-- **PR #3236** (2026-11-23): Preserve shallow boundaries during ordinary fetch (@Byron)
 
 ---
 
@@ -2499,42 +2510,32 @@ raw arguments in trace output and exercise the behavior on Windows.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gix-testtools): confine Git discovery to scripted fixtures
+## X. gix-tix): avoid symlink probes during incremental status
 
 **RULE**:
-When implementing operations in `tests/tools/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gix-tix/spec.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3befd38c`: gix-testtools): confine Git discovery to scripted fixtures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e1c01c5`: gix-tix): avoid symlink probes during incremental status. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/tools/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix-tix/spec.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Fixture scripts stop Git's upward repository discovery at the fixture root.
-/// Prepare an isolated Git command in `current_dir`.
-///
-/// Repository discovery may walk above `current_dir`, which allows commands from fixture subdirectories.
-    configure_git_environment(cmd, script_result_directory);
-    if let Some(parent) = script_result_directory.parent() {
-        // Git may discover a repository in the fixture itself, including from its subdirectories.
-        cmd.env("GIT_CEILING_DIRECTORIES", parent);
-    }
-    cmd.args(args)
+- The changes pane reads `core.ignoreCase` directly when matching refreshed
+  paths against cached rows, keeping symlink probes out of the worktree event stream.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Prepare an isolated Git command in `current_dir`, using the same environment as fixture scripts.
-    configure_git_environment(cmd, script_result_directory)
-        .args(args)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3befd38c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e1c01c5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

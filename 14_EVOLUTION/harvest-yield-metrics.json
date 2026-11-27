@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T19:18:17.213Z",
-  "total_cycles_completed": 13146,
-  "total_learnings_persisted": 13146,
-  "total_rules_promoted": 11867,
+  "last_updated": "2026-11-27T19:26:55.521Z",
+  "total_cycles_completed": 13147,
+  "total_learnings_persisted": 13147,
+  "total_rules_promoted": 11868,
   "history": [
-    {
-      "timestamp": "2026-11-27T02:40:44.111Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T02:41:00.054Z",
       "repository": "gluesql/gluesql",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T19:18:17.213Z",
       "repository": "nginx/kubernetes-ingress",
       "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T19:26:55.521Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

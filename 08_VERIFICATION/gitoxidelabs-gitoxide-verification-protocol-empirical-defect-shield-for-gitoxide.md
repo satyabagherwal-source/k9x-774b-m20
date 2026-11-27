@@ -4,22 +4,22 @@
 {
   "source_repository": "GitoxideLabs/gitoxide",
   "source_url": "https://github.com/GitoxideLabs/gitoxide",
-  "source_version": "2bcb31df",
+  "source_version": "d26fc7e4",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T19:07:37.871Z",
+  "timestamp": "2026-11-27T19:26:55.806Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gitoxidelabs-gitoxide",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide) (Revision: `2bcb31df`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T19:07:37.871Z`  
+> **Provenance**: Harvested from [GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide) (Revision: `d26fc7e4`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T19:26:55.806Z`  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `GitoxideLabs/gitoxide` (Commit: `2bcb31df`)
+- **Target Repository**: `GitoxideLabs/gitoxide` (Commit: `d26fc7e4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T19:07:36.246Z  
+> **Harvest Timestamp**: 2026-11-27T19:26:54.059Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A tasteful, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12176 stars
+- **Stars / Engagement**: 12178 stars
 
 ---
 
@@ -1647,1283 +1647,823 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c726fd41` (2026-11-25)
-**Commit Message**: fix(gix-imara-diff): make histogram diffs match `git diff --histogram`
+### Incident Patch 1: `5e1c01c5` (2026-11-25)
+**Commit Message**: fix(gix-tix): avoid symlink probes during incremental status
 
-The histogram diff and its postprocessing differed from Git's `xdiff/` in four steps,
-so hunks could differ from `git diff --histogram` for the same input:
+The incremental changes pane matches refreshed paths against cached
+rows using `core.ignoreCase`. Looking up all filesystem capabilities
+for this setting can create a temporary symlink, whose removal
+schedules another refresh.
 
-1. After a match, skip later occurrences of its first line up to the end of the match in
-   the old file, like `xdiff/xhistogram.c`. The comparison used the end in the new file.
-2. Accept lines with up to 64 occurrences as anchors, like Git, instead of 63. The list
-   pool needs one more size class to hold `MAX_CHAIN_LEN + 1` positions.
-3. Don't strip the common prefix and suffix before a histogram diff. Git doesn't, and
-   stripping changes which lines histogram anchors.
-4. Diff a change group again with Myers if it moved while sliding and the group in the
-   other file isn't empty, for histogram diffs only, as Git 2.54 does in
-   `xdl_change_compact()`.
+Read the case setting directly in `update_worktree_changes`. The
+regression exercises a scoped refresh under a configuration filter
+and checks that the worktree directory's timestamp does not change.
 
-`make_histogram_baseline.sh` has one case for each step, and its reverse. The tests
-compare the hunks with Git's, with and without the indent heuristic. Each case fails
-without its step.
+Port of 3f2e561 from `tix-improvements` to this branch's incremental
+status path.
 
-The motivation is Diffy (https://github.com/daniel-kindl/diffy), a review app that stores
-comments at hunk positions a
-
-**File**: `gix-imara-diff/src/histogram.rs` (modified, +1/-1)
+**File**: `gix-tix/spec.md` (modified, +2/-0)
 ```diff
-@@ -11,7 +11,7 @@ mod list_pool;
- 
- /// Maximum number of occurrences tracked for a single token.
- /// Tokens appearing more frequently fall back to Myers algorithm.
--const MAX_CHAIN_LEN: u32 = 63;
-+const MAX_CHAIN_LEN: u32 = 64;
- 
- /// State for computing histogram-based diffs.
- struct Histogram {
+@@ -2333,6 +2333,8 @@ views.
+   object-type hints are advisory; status refresh uses every reported path regardless
+   of its hints. Ignored directories stay excluded even when a negated pattern
+   matches a descendant, such as `!out/` beneath an ignored build tree.
++- The changes pane reads `core.ignoreCase` directly when matching refreshed
++  paths against cached rows, keeping symlink probes out of the worktree event stream.
+ - Worktree updates retain the history selection and restore changed-path
+   selection by raw path and relative viewport position. They never select the
+   newest commit merely because status changed.
 ```
 
-**File**: `gix-imara-diff/src/histogram/lcs.rs` (modified, +1/-1)
+**File**: `gix-tix/src/lib.rs` (modified, +36/-1)
 ```diff
-@@ -132,7 +132,7 @@ impl LcsSearch {
- 
-             loop {
-                 if let Some(next_token_idx) = occurrences_iter.next() {
--                    if next_token_idx > end2 {
-+                    if next_token_idx >= end1 {
-                         token_idx1 = next_token_idx;
-                         break;
-                     }
-```
-
-**File**: `gix-imara-diff/src/histogram/list_pool.rs` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ impl Default for ListHandle {
-     }
- }
- 
--const MAX_SIZE_CLASS: SizeClass = sclass_for_length(super::MAX_CHAIN_LEN - 1);
-+const MAX_SIZE_CLASS: SizeClass = sclass_for_length(super::MAX_CHAIN_LEN);
- const NUM_SIZE_CLASS: usize = MAX_SIZE_CLASS as usize + 1;
- 
- /// A memory pool for storing lists of `T`.
-```
-
-**File**: `gix-imara-diff/src/lib.rs` (modified, +7/-14)
-```diff
-@@ -147,10 +147,7 @@
- use std::ops::Range;
- use std::slice;
- 
--use crate::{
--    sources::words,
--    util::{strip_common_postfix, strip_common_prefix},
--};
-+use crate::sources::words;
- 
- pub use crate::slider_heuristic::{IndentHeuristic, IndentLevel, NoSliderHeuristic, SliderHeuristic};
- pub use intern::{InternedInput, Interner, Token, TokenSource};
-@@ -237,6 +234,8 @@ pub struct Diff {
-     /// Tracks which tokens were added to the second sequence (`after`), with
-     /// one entry for each one in the `after` sequence.
-     added: Vec<bool>,
-+    /// Whether postprocessing diffs a group again after it slid, as Git does for histogram diffs only.
-+    rediff_after_slide: bool,
- }
- 
- impl std::fmt::Debug for Diff {
-@@ -256,7 +255,7 @@ impl Diff {
- 
-     /// Computes an edit-script that transforms `before` into `after` using
-     /// the specified `algorithm`.
--    pub fn compute_with(&mut self, algorithm: Algorithm, mut before: &[Token], mut after: &[Token], num_tokens: u32) {
-+    pub fn compute_with(&mut self, algorithm: Algorithm, before: &[Token], after: &[Token], num_tokens: u32) {
-         assert!(
-             before.len() < i32::MAX as usize,
-             "imara-diff only supports up to {} tokens",
-@@ -271,16 +270,10 @@ impl Diff {
-         self.added.clear();
-         self.removed.resize(before.len(), false);
-         self.added.resize(after.len(), false);
-+        self.rediff_after_slide = algorithm == Algorithm::Histogram;
-         match algorithm {
--            Algorithm::Histogram => {
--                let common_prefix = strip_common_prefix(&mut before, &mut after) as usize;
--                let common_postfix = strip_common_postfix(&mut before, &mut after);
--                let range = common_prefix..self.removed.len() - common_postfix as usize;
--                let removed = &mut self.removed[range];
--                let range = common_prefix..self.added.len() - common_postfix as usize;
--                let added = &mut self.added[range];
--                histogram::diff(before, after, removed, added, num_tokens);
--            }
-+            // Like Git, don't strip the common prefix and suffix, as it changes which lines histogram anchors.
-+            Algorithm::Histogram => histogram::diff(before, after, &mut self.removed, &mut self.added, num_tokens),
-             // Myers trims the common ends itself, as it needs to count the tokens of the whole input first.
-             Algorithm::Myers => myers::diff(before, after, &mut self.removed, &mut self.added, false),
-             Algorithm::MyersMinimal => myers::diff(before, after, &mut self.removed, &mut self.added, true),
-```
-
-**File**: `gix-imara-diff/src/postprocess.rs` (modified, +35/-2)
-```diff
-@@ -24,6 +24,8 @@ impl Diff {
-             added: &mut self.removed,
-             removed: &mut self.added,
-             tokens: before,
-+            other_tokens: after,
-+            rediff_after_slide: self.rediff_after_slide,
-             hunk: Hunk {
-                 before: 0..0,
-                 after: 0..0,
-@@ -35,6 +37,8 @@ impl Diff {
-             added: &mut self.added,
-             removed: &mut self.removed,
-             tokens: after,
-+            other_tokens: before,
-+            rediff_after_slide: self.rediff_after_slide,
-             hunk: Hunk {
-                 before: 0..0,
-                 after: 0..0,
-@@ -62,10 +66,14 @@ impl Diff {
- struct Postprocessor<'a, H> {
-     /// The mutable array tracking which tokens were added.
-     added: &'a mut [bool],
--    /// The immutable array tracking which tokens were removed.
--    removed: &'a [bool],
-+    /// The mutable array tracking which tokens were removed, changed only to diff a group again.
-+    removed: &'a mut [bool],
-     /// The token sequence being processed.
-     tokens: &'a [Token],
-+    /// The token sequence of the other file, to diff a group again after it slid.
-+    other_tokens: &'a [Token],
-+    /// Whether to diff a group again after it slid, which Git only does for histogram diffs.
-+    rediff_after_slide: bool,
-     /// The current hunk being processed in the iteration.
-     hunk: Hunk,
-     /// The heuristic used to determine optimal hunk positions.
-@@ -80,6 +88,7 @@ impl<H: SliderHeuristic> Postprocessor<'_, H> {
-                 break;
-             }
- 
-+            let range_before_sliding = self.hunk.after.clone();
-             let mut earliest_end;
-             let mut is_modification;
-             loop {
-@@ -103,6 +112,7 @@ impl<H: SliderHeuristic> Postprocessor<'_, H> {
-             }
- 
-             if self.hunk.after.end == earliest_end {
-+                self.rediff(&range_before_sliding);
-                 continue;
-             }
-             if is_modification {
-@@ -122,9 +132,32 @@ impl<H: SliderHeuristic> Postprocessor<'_, H> {
-                     debug_assert!(success);
-                 }
-             }
-+            self.rediff(&range_before_sliding);
-         }
+@@ -8448,7 +8448,10 @@ fn update_worktree_changes(
+             load_unstaged_changes_without_lines(repository, patterns)?,
+             line_diff_pool,
+         )?;
+-        let ignore_case = repository.filesystem_options()?.ignore_case;
++        let ignore_case = repository
++            .config_snapshot()
++            .boolean("core.ignoreCase")
++            .unwrap_or_default();
+         replace_cached_changes(repository, cached, unstaged, |change| {
+             change.group == ChangeGroup::Unstaged
+                 && scopes
+@@ -12225,6 +12228,38 @@ added
+         Ok(())
      }
  
-+    /// Diff the current group again if it changed while sliding, as sliding can merge groups
-+    /// so that the merged group has lines in common with the group in the other file.
-+    /// Like Git, only do this for histogram diffs and when the group in the other file isn't empty
-+    /// (`xdl_change_compact()` in `xdiff/xdiffi.c`).
-+    fn rediff(&mut self, range_before_sliding: &std::ops::Range<u32>) {
-+        let a = self.hunk.after.clone();
-+        let b = self.hunk.before.clone();
-+        if !self.rediff_after_slide || b.is_empty() || a == *range_before_sliding {
-+            return;
-+        }
-+        let (a0, a1, b0, b1) = (a.start as usize, a.end as usize, b.start as usize, b.end as usize);
-+        self.added[a0..a1].fill(false);
-+        self.removed[b0..b1].fill(false);
-+        crate::myers::diff(
-+            &self.tokens[a0..a1],
-+            &self.other_tokens[b0..b1],
-+            &mut self.added[a0..a1],
-+            &mut self.removed[b0..b1],
-+            false,
-+        );
-+    }
-+
-     /// Slides a hunk down by one token/line, potentially merging it with a subsequent hunk.
-     fn slide_down(&mut self) -> bool {
-         let Some(&next_token) = self.tokens.get(self.hunk.after.end as usize) else {
-```
-
-**File**: `gix-imara-diff/tests/fixtures/make_histogram_baseline.sh` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+#!/usr/bin/env bash
-+set -eu -o pipefail
-+
-+# Generate with Git 2.54 or newer, which diffs a shifted histogram change group again (e417277ae9).
-+# Each case is one step of Git's histogram diff in `xdiff/` that gix-imara-diff once did differently.
-+# The inputs stay below 1024 bytes on at least one side, so `--unified=0` doesn't trim a common tail.
-+
-+# After a match, Git skips the later occurrences of its first line in the old file up to the end
-+# of the match in the old file (`xdiff/xhistogram.c`). Git matches the second "B" of the old file.
-+# Comparing with the end of the match in the new file matches the first "B" instead.
-+mkdir skip-after-match
-+printf '\nA\nB\n\nB\n\n' >skip-after-match/old
-+printf 'C\nD\n\nB\n' >skip-after-match/new
-+
-+# Git anchors on a line with up to 64 occurrences in the old file and keeps one "x". With a limit
-+# of 63, "x" can't be an anchor and the diff keeps no line.
-+mkdir occurrence-limit
-+for i in {1..64}; do
-+  printf 'x\n'
-+done >occurrence-limit/old
-+printf 'a\nb\nc\n\nd\ne\nx\nf\n' >occurrence-limit/new
-+
-+# Git doesn't strip the common prefix and suffix before a histogram diff. Stripping the final "}"
-+# makes the first "    }" the anchor, where Git anchors the second.
-+mkdir common-ends
-+printf '    }\n    }\n}\n' >common-ends/old
-+printf '        }\n    }\n}\n}\n' >common-ends/new
-+
-+# Sliding merges change groups. Git diffs a group again if it moved and the group in the other
-+# file isn't empty, for histogram only (`xdiff/xdiffi.c`). This finds the empty line that both
-+# groups have in common, so "L" becomes "R" and "Q", and "P" is removed.
-+mkdir rediff-after-slide
-+printf 'L\n\nP\nQ\n\n' >rediff-after-slide/old
-+printf 'R\nQ\n\nQ\n\n' >rediff-after-slide/new
-+
-+cases=(skip-after-match occurrence-limit common-ends rediff-after-slide)
-+for case in "${cases[@]}"; do
-+  mkdir "$case-reversed"
-+  cp "$case/new" "$case-reversed/old"
-+  cp "$case/old" "$case-reversed/new"
-+done
-+
-+baseline() {
-+  local name=$1
-+  shift
-+  # --no-index returns 1 for differences. Do not hide actual Git failures.
-+  # Zero context exposes each compacted hunk's ranges; ignore file headers and function context.
-+  git diff --no-index --no-ext-diff --no-textconv --no-color --diff-algorithm=histogram \
-+    --unified=0 "$@" -- old new >"$name.patch" || test "$?" -eq 1
-+  awk '/^@@ / {print $2, $3}' "$name.patch" >"$name.hunks"
-+}
-+
-+for case in */; do
-+  (
-+    cd "$case"
-+    baseline NoHeuristic --no-indent-heuristic
-+    baseline IndentHeuristic --indent-heuristic
-+  )
-+done
-```
-
-**File**: `gix-imara-diff/tests/integration/main.rs` (modified, +61/-0)
-```diff
-@@ -869,6 +869,67 @@ fn assert_myers_matches_git(case: &str, algorithm: Algorithm, expected: (u32, u3
-     Ok(())
- }
- 
-+#[test]
-+fn histogram_skips_occurrences_up_to_the_end_of_the_match_in_the_old_file() -> gix_testtools::TestResult {
-+    assert_histogram_matches_git("skip-after-match")
-+}
-+
-+#[test]
-+fn histogram_anchors_on_lines_with_up_to_64_occurrences() -> gix_testtools::TestResult {
-+    assert_histogram_matches_git("occurrence-limit")
-+}
-+
-+#[test]
-+fn histogram_does_not_strip_the_common_prefix_and_suffix() -> gix_testtools::TestResult {
-+    assert_histogram_matches_git("common-ends")
-+}
-+
-+#[test]
-+fn histogram_diffs_a_shifted_change_group_again() -> gix_testtools::TestResult {
-+    assert_histogram_matches_git("rediff-after-slide")
-+}
-+
-+fn assert_histogram_matches_git(case: &str) -> gix_testtools::TestResult {
-+    // Git 2.54 diffs shifted histogram change groups again.
-+    let Some(root) =
-+        gix_testtools::scripted_fixture_read_only_with_git_version("make_histogram_baseline.sh", |version| {
-+            version >= (2, 54, 0)
-+        })?
-+    else {
-+        return Ok(());
-+    };
-+    for case in [case.to_owned(), format!("{case}-reversed")] {
-+        let case_root = root.join(&case);
-+        let before = std::fs::read_to_string(case_root.join("old"))?;
-+        let after = std::fs::read_to_string(case_root.join("new"))?;
-+        let input = InternedInput::new(before.as_str(), after.as_str());
-+        for (baseline, indent_heuristic) in [("NoHeuristic", false), ("IndentHeuristic", true)] {
-+            let git_hunks = std::fs::read_to_string(case_root.join(format!("{baseline}.hunks")))?
-+                .lines()
-+                .map(|line| {
-+                    let (before, after) = line.split_once(' ').expect("Git hunk header contains both ranges");
-+                    Ok(gix_imara_diff::Hunk {
-+                        before: git_hunk_range(before)?,
-+                        after: git_hunk_range(after)?,
-+                    })
-+                })
-+                .collect::<gix_testtools::TestResult<Vec<_>>>()?;
-+            let mut diff = Diff::compute(Algorithm::Histogram, &input);
-+            if indent_heuristic {
-+                diff.postprocess_lines(&input);
-+            } else {
-+                diff.postprocess_no_heuristic(&input);
++    #[cfg(unix)]
++    #[test]
++    fn incremental_worktree_status_does_not_write_to_the_worktree() -> gix_error::TestResult {
++        let (root, ()) = gix_testtools::scripted_fixture_read_only_with_post("history.sh", 2, |state| {
++            if let gix_testtools::FixtureState::Uninitialized(path) = state {
++                std::fs::File::open(path)?.set_modified(std::time::UNIX_EPOCH + Duration::from_secs(1_000_000_000))?;
 +            }
-+            assert_eq!(
-+                diff.hunks().collect::<Vec<_>>(),
-+                git_hunks,
-+                "{case}: histogram with {baseline} must match Git's exact hunk placement"
-+            );
-+        }
++            Ok(())
++        })?;
++        let repo = test_repository::open(&root)?;
++        let options = repo
++            .open_options()
++            .clone_without_trust()
++            .filter_config_section(|_| false);
++        let repo = gix::open_opts(&root, options)?;
++        let mut pool = LineDiffPool::new(&root, false, 1);
++        let mut cached = load_worktree_changes(&repo, &mut pool)?;
++        let parts = WorktreeStatusParts {
++            staged: false,
++            scopes: HashSet::from([BString::from("main")]),
++        };
++        let before = std::fs::metadata(&root)?.modified()?;
++        let full_refresh = update_worktree_changes(&repo, &mut cached, &parts, &mut pool)?;
++        assert!(!full_refresh, "the fixture exercises scoped status");
++        assert_eq!(
++            std::fs::metadata(&root)?.modified()?,
++            before,
++            "refreshing the changes pane must not create temporary entries that invalidate the monitor"
++        );
++        Ok(())
 +    }
-+    Ok(())
-+}
 +
- fn git_hunk_range(range: &str) -> gix_testtools::TestResult<std::ops::Range<u32>> {
-     let range = &range[1..]; // Strip the '-' or '+' sign.
-     let (start, len) = range.split_once(',').unwrap_or((range, "1"));
+     #[test]
+     fn incremental_worktree_status_matches_a_full_refresh() -> gix_testtools::Result {
+         let fixture = gix_testtools::scripted_fixture_writable("history.sh")?;
 ```
 
 ---
 
-### Incident Patch 2: `f5391535` (2026-11-25)
-**Commit Message**: fix(gix-imara-diff): reuse histogram occurrences across common-suffix splits
+### Incident Patch 2: `2ee206d3` (2026-11-23)
+**Commit Message**: fix(gix): resolve branch tracking refs without loading remote URLs
 
-Another case of extreme meat-proxying - assuming the tests cover everything.
+Instead of constructing remotes internally which can fail on malformed
+but unrelated fields, read everything directly while applying the usual
+trust filter.
 
 <!-- agent -->
-An unchanged tail of distinct pairs could defeat the cache because each token
-occurred below the seed limit. The histogram rebuilt and searched that tail
-at each split even after a unique prefix anchor made the tail ineligible.
+A malformed push URL could prevent `@{upstream}` and `gix status
+--ahead-behind` from resolving an otherwise valid local tracking ref.
+Resolve fetch and push tracking names from configuration without
+constructing a remote, while honoring the repository configuration
+section filter and leaving remote-backed push selection unchanged.
 
-Index the common suffix once after the first split and retain candidate order
-with a forward cursor for each occurrence count. Clip occurrences as the
-active range shrinks and combine suffix and prefix counts before trying seeds.
-
-With 1,000 edits before 500,000 paired lines, release compute time fell from
-1.19 s to 8.7 ms. The paired and overlapping-tail fixtures matched the Git
-checkout's hunks, as did 30,988 differential comparisons. The affected
-crate tests passed.
+For upstreams, use the first configured merge ref and the first
+matching fetch mapping, honor exclusions, and fall back to the merge
+ref for the `.` remote when there is no mapping. Check tracking names
+and revision selectors against Git.
 
 Assisted-by: GPT 6.2 Sol
 Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
 
-**File**: `gix-imara-diff/src/histogram.rs` (modified, +164/-71)
+**File**: `gitoxide-core/src/repository/status.rs` (modified, +2/-8)
 ```diff
-@@ -33,9 +33,8 @@ struct Histogram {
- /// * `added` - Output array marking added tokens
- /// * `num_tokens` - The total number of distinct tokens
- pub fn diff(before: &[Token], after: &[Token], removed: &mut [bool], added: &mut [bool], num_tokens: u32) {
--    let tail = CommonTail::find(before, after, num_tokens);
-     let mut histogram = Histogram::new(num_tokens);
--    histogram.run(before, after, removed, added, tail.as_ref());
-+    histogram.run(before, after, removed, added, true);
- }
+@@ -232,14 +232,8 @@ fn print_ahead_behind(repo: &gix::Repository, out: &mut dyn io::Write) -> Result
+     let Some(mut branch) = repo.head()?.try_into_referent() else {
+         return Ok(());
+     };
+-    let direction = gix::remote::Direction::Fetch;
+-    let upstream_name = if branch.remote_name(direction).is_some_and(|name| name == ".") {
+-        // A local upstream uses branch.<name>.merge directly, without a fetch refspec mapping.
+-        branch.remote_ref_name(direction)
+-    } else {
+-        branch.remote_tracking_ref_name(direction)
+-    };
+-    let Some(upstream_name) = upstream_name
++    let Some(upstream_name) = branch
++        .remote_tracking_ref_name(gix::remote::Direction::Fetch)
+         .transpose()
+         .or_raise(|| message("Could not resolve the current branch's upstream"))?
+     else {
+```
+
+**File**: `gix/src/repository/config/branch.rs` (modified, +197/-94)
+```diff
+@@ -1,14 +1,15 @@
+ use std::collections::BTreeSet;
  
- impl Histogram {
-@@ -70,8 +69,9 @@ impl Histogram {
-         mut after: &[Token],
-         mut removed: &mut [bool],
-         mut added: &mut [bool],
--        tail: Option<&CommonTail>,
-+        mut cache_tail_after_split: bool,
-     ) {
-+        let mut common_tail: Option<Box<CommonTail>> = None;
-         loop {
-             if before.is_empty() {
-                 added.fill(true);
-@@ -81,19 +81,12 @@ impl Histogram {
-                 return;
+-use crate::error::{ErrorExt, ResultExt, bail, message, validation};
++use crate::error::{ResultExt, bail, message, validation};
+ use gix_ref::{FullName, FullNameRef};
++use gix_refspec::{RefSpec, RefSpecRef, parse::Operation};
+ 
+ use crate::{
+     Result,
+-    bstr::{BStr, ByteSlice},
++    bstr::{BStr, BString, ByteSlice},
+     config::{
+         cache::util::ApplyLeniencyDefault,
+-        tree::{Branch, Push},
++        tree::{Branch, Push, Remote},
+     },
+     push, remote,
+ };
+@@ -40,123 +41,165 @@ impl crate::Repository {
+     /// The value is also fast to retrieve compared to its tracking branch.
+     ///
+     /// See also [`Reference::remote_ref_name()`](crate::Reference::remote_ref_name()).
++    ///
++    /// # Example
++    ///
++    /// Given this Git configuration:
++    ///
++    /// ```gitconfig
++    /// [branch "main"]
++    ///     remote = origin
++    ///     merge = refs/heads/topic
++    /// [remote "origin"]
++    ///     url = https://example.com/project.git
++    ///     fetch = +refs/heads/*:refs/remotes/origin/*
++    ///     push = refs/heads/main:refs/heads/publish
++    /// ```
++    ///
++    /// Passing `refs/heads/main` as `name` returns `Some(Ok(...))` with a different name for each direction:
++    ///
++    /// * `Fetch` returns `refs/heads/topic`: the configured merge ref.
++    /// * `Push` returns `refs/heads/publish`: the destination selected by the push refspec.
++    ///
++    /// Neither result is mapped to a local `refs/remotes/origin/*` tracking ref.
+     #[doc(alias = "branch_upstream_name", alias = "git2")]
+     pub fn branch_remote_ref_name(&self, name: &FullNameRef, direction: remote::Direction) -> Option<Result<FullName>> {
+         match direction {
+-            remote::Direction::Fetch => {
+-                let short_name = name.shorten();
+-                self.config
+-                    .resolved
+-                    .string_filter_by(
+-                        "branch",
+-                        Some(short_name),
+-                        Branch::MERGE.name,
+-                        self.filter_config_section(),
+-                    )
+-                    .map(|name| {
+-                        if name.starts_with(b"refs/") {
+-                            crate::config::tree::branch::Merge::try_into_fullrefname(name)
+-                        } else {
+-                            gix_ref::Category::LocalBranch.to_full_name(name.as_bstr()).or_error()
+-                        }
+-                        .or_raise(|| validation("The configured name of the remote ref to merge wasn't valid"))
+-                    })
+-            }
++            remote::Direction::Fetch => self.branch_merge_ref_name(name).transpose(),
+             remote::Direction::Push => {
+                 let remote = match self.branch_remote_or_default(name, direction)? {
+                     Ok(r) => r,
+                     Err(err) => return Some(Err(err)),
+                 };
+-                if remote.push_specs.is_empty() {
+-                    let push_default = match self.push_default() {
+-                        Ok(v) => v,
+-                        Err(err) => return Some(Err(err)),
+-                    };
+-                    match push_default {
+-                        push::Default::Nothing => None,
+-                        push::Default::Current | push::Default::Matching => Some(Ok(name.to_owned())),
+-                        push::Default::Upstream => self.branch_remote_ref_name(name, remote::Direction::Fetch),
+-                        push::Default::Simple => match self.branch_remote_ref_name(name, remote::Direction::Fetch)? {
+-                            Ok(fetch_ref) if fetch_ref.as_ref() == name => Some(Ok(fetch_ref)),
+-                            Err(err) => Some(Err(err)),
+-                            Ok(_different_fetch_ref) => None,
+-                        },
+-                    }
+-                } else {
+-                    matching_remote(name, remote.push_specs.iter()).map(|res| res.or_error())
+-                }
++                self.push_remote_ref_name(name, remote.push_specs.iter().map(RefSpec::to_ref))
++                    .map(|out| out.map(|(remote_ref, _)| remote_ref))
++                    .transpose()
              }
+         }
+     }
  
--            let (tail_len, tail_positions, frequent_tokens) = tail
--                .map(|tail| tail.for_len(before.len().min(after.len())))
--                .unwrap_or_default();
--            for &token in frequent_tokens {
--                self.token_occurrences[token.0 as usize].mark_overflow(&self.pool);
--            }
-+            let tail = common_tail
-+                .as_deref()
-+                .map(|tail| tail.for_len(before.len().min(after.len())));
-+            let tail_len = tail.map_or(0, |tail| tail.len as usize);
-             self.populate(&before[..before.len() - tail_len]);
--            for &distance in tail_positions.iter().rev() {
--                let position = before.len() - 1 - distance as usize;
--                let token = before[position];
--                self.token_occurrences[token.0 as usize].push(position as u32, &mut self.pool);
--            }
--            match find_lcs(before, after, after.len() - tail_len, tail_positions, self) {
-+            match find_lcs(before, after, tail, self) {
-                 // no lcs was found, that means that file1 and file2 two have nothing in common
-                 Some(lcs) if lcs.len == 0 => {
-                     added.fill(true);
-@@ -106,7 +99,7 @@ impl Histogram {
-                         &after[..lcs.after_start as usize],
-                         &mut removed[..lcs.before_start as usize],
-                         &mut added[..lcs.after_start as usize],
--                        None, // The prefixes have different endpoints from the cached suffix.
-+                        false, // The prefixes have different endpoints from the cached suffix.
-                     );
- 
-                     // this is equivalent to (tail) recursion but implement as a loop for efficiency reasons
-@@ -117,6 +110,11 @@ impl Histogram {
-                     let after_end = lcs.after_start + lcs.len;
-                     after = &after[after_end as usize..];
-                     added = &mut added[after_end as usize..];
+     /// Return the validated name of the reference that tracks the corresponding reference of `name` on the remote for
+     /// `direction`. Note that a branch with that name might not actually exist.
+     ///
+-    /// * with `remote` being [remote::Direction::Fetch], we return the tracking branch that is on the destination
++    /// * For [remote::Direction::Fetch], we return the tracking branch that is on the destination
+     ///   side of a `src:dest` refspec. For instance, with `name` being `main` and the default refspec
+     ///   `refs/heads/*:refs/remotes/origin/*`, `refs/heads/main` would match and produce `refs/remotes/origin/main`.
+-    /// * with `remote` being [remote::Direction::Push], 
+```
+
+**File**: `gix/src/repository/config/remote.rs` (modified, +3/-3)
+```diff
+@@ -21,12 +21,12 @@ impl crate::Repository {
+     /// # Ok(()) }
+     /// ```
+     pub fn remote_names(&self) -> remote::Names {
++        let filter = self.filter_config_section();
+         self.config
+             .resolved
+             .sections_by_name(Remote.name())
+             .map(|it| {
+-                let filter = self.filter_config_section();
+-                it.filter(move |s| filter(s.meta()))
++                it.filter(|s| filter(s.meta()))
+                     .filter_map(|section| section.header().subsection_name().map(ToOwned::to_owned))
+                     .collect()
+             })
+@@ -66,7 +66,7 @@ impl crate::Repository {
+             .then(|| {
+                 self.config
+                     .resolved
+-                    .string_filter(Remote::PUSH_DEFAULT, &mut self.filter_config_section())
++                    .string_filter(Remote::PUSH_DEFAULT, self.filter_config_section())
+             })
+             .flatten();
+         name.or_else(|| {
+```
+
+**File**: `gix/tests/fixtures/make_head_upstream.sh` (added, +48/-0)
+```diff
+@@ -0,0 +1,48 @@
++#!/usr/bin/env bash
++set -eu -o pipefail
 +
-+                    // A match may consume the common suffix in the first search.
-+                    if std::mem::take(&mut cache_tail_after_split) {
-+                        common_tail = CommonTail::find(before, after, self.token_occurrences.len()).map(Box::new);
++# Main has two commits of its own, and its upstream topic has one.
++git init -q unconfigured
++(
++  cd unconfigured
++  git commit -q --allow-empty -m root
++  git branch topic
++  git commit -q --allow-empty -m ahead-one
++  git commit -q --allow-empty -m ahead-two
++  git switch -q topic
++  git commit -q --allow-empty -m behind
++  git switch -q main
++  git update-ref refs/tracking/topic topic
++  git update-ref refs/tracking/fallback main
++)
++
++for repo in local mapped local-mapped; do
++  cp -R unconfigured "$repo"
++done
++
++git -C local config branch.main.remote .
++git -C local config --add branch.main.merge refs/heads/topic
++git -C local config --add branch.main.merge refs/heads/main
++git -C local-mapped config branch.main.remote .
++git -C local-mapped config branch.main.merge refs/heads/topic
++git -C local-mapped config remote...fetch refs/heads/topic:refs/tracking/fallback
++
++# Upstream lookup uses the first merge entry and the first matching fetch
++# refspec. A literal object in a fetch spec cannot supply an unrelated upstream.
++git -C mapped config branch.main.remote origin
++git -C mapped config --add branch.main.merge refs/heads/topic
++git -C mapped config --add branch.main.merge refs/heads/main
++git -C mapped config --add remote.origin.fetch "$(git -C mapped rev-parse HEAD):refs/tracking/fallback"
++git -C mapped config --add remote.origin.fetch '+refs/heads/*:refs/tracking/*'
++git -C mapped config --add remote.origin.fetch '+refs/heads/topic:refs/tracking/fallback'
++# This malformed push URL is irrelevant to resolving a local tracking ref.
++git -C mapped config remote.origin.pushurl ssh://host
++
++cp -R mapped excluded
++git -C excluded config --add remote.origin.fetch '^refs/heads/topic'
++cp -R mapped gone
++git -C gone update-ref -d refs/tracking/topic
++
++for repo in local mapped local-mapped; do
++  git -C "$repo" rev-parse --symbolic-full-name --verify '@{upstream}' >"$repo/.git/upstream-baseline"
++done
+```
+
+**File**: `gix/tests/gix/repository/config/remote.rs` (modified, +20/-0)
+```diff
+@@ -412,6 +412,26 @@ mod branch_remote {
+         Ok(())
+     }
+ 
++    #[test]
++    fn push_tracking_does_not_require_a_usable_remote_url() -> TestResult {
++        let repo = named_subrepo_opts(
++            "make_remote_config_repos.sh",
++            "fetch",
++            gix::open::Options::isolated().config_overrides([
++                "remote.remote_repo.pushurl=ssh://host",
++                "remote.remote_repo.push=refs/heads/main:refs/heads/publish",
++            ]),
++        )?;
++        assert!(repo.find_remote("remote_repo").is_err(), "the push URL is malformed");
++        assert_eq!(
++            repo.branch_remote_tracking_ref_name("refs/heads/main".try_into()?, remote::Direction::Push)
++                .expect("the push destination has a local tracking ref")?,
++            "refs/remotes/remote_repo/publish",
++            "mapping the push destination does not need the remote URL"
++        );
++        Ok(())
++    }
++
+     #[test]
+     fn push_mapped() -> TestResult {
+         let repo = repo("push-mapped")?;
+```
+
+**File**: `gix/tests/gix/repository/revision.rs` (modified, +60/-0)
+```diff
+@@ -1,5 +1,65 @@
+ use gix_testtools::TestResult;
+ 
++#[test]
++fn upstream_tracking_ref_names_match_git() -> TestResult {
++    use gix::sec::Trust;
++
++    let fixture = "make_head_upstream.sh";
++    let direction = gix::remote::Direction::Fetch;
++    for trust in [Trust::Full, Trust::Reduced] {
++        for case in ["local", "mapped", "local-mapped"] {
++            let repo =
++                crate::util::named_subrepo_opts(fixture, case, crate::util::restricted().with_enforced_trust(trust))?;
++            let head = repo.head_ref()?.expect("checked out branch");
++            let tracking = head.remote_tracking_ref_name(direction).transpose()?;
++            if trust == Trust::Reduced {
++                assert_eq!(
++                    tracking, None,
++                    "the default filter rejects local tracking configuration"
++                );
++                assert!(
++                    repo.rev_parse_single("@{upstream}").is_err(),
++                    "the same filter applies to revspecs"
++                );
++                continue;
++            }
++            let expected = std::fs::read_to_string(repo.git_dir().join("upstream-baseline"))?;
++            let name = tracking.expect("Git resolves an upstream");
++            assert_eq!(
++                name,
++                expected.trim_end(),
++                "{case} with {trust:?} trust: upstream matches Git"
++            );
++            assert_eq!(
++                repo.rev_parse_single("@{upstream}")?,
++                repo.find_reference(name.as_ref())?.peel_to_id()?,
++                "{case} with {trust:?} trust: the revision selector resolves through the same lookup"
++            );
++            if case == "mapped" {
++                assert!(
++                    repo.find_remote("origin").is_err(),
++                    "the fixture's malformed push URL prevents constructing the remote"
++                );
++            }
++        }
++    }
++
++    let repo = crate::util::named_subrepo_opts(fixture, "excluded", crate::util::restricted())?;
++    assert!(
++        repo.branch_remote_tracking_ref_name("refs/heads/main".try_into()?, direction)
++            .is_none(),
++        "a negative fetch refspec can exclude a configured upstream"
++    );
++    let repo = crate::util::named_subrepo_opts(fixture, "gone", crate::util::restricted())?;
++    assert_eq!(
++        repo.branch_remote_tracking_ref_name("refs/heads/main".try_into()?, direction)
++            .expect("the upstream is configured")?,
++        "refs/tracking/topic",
++        "the resolver returns the configured name even when the ref is missing"
++    );
++    Ok(())
++}
++
+ #[test]
+ fn corrupt_commit_graph_parents_retry_the_current_commit() -> TestResult {
+     use gix::revision::walk::Sorting;
+```
+
+**File**: `gix/tests/gix/revision/spec/from_bytes/mod.rs` (modified, +59/-35)
+```diff
+@@ -124,48 +124,72 @@ mod sibling_branch {
+     }
+ 
+     fn push_tracking_matches_git(setup: &str) -> TestResult {
++        use gix::{bstr::BStr, sec::Trust};
++
+         let fixture = gix_testtools::scripted_fixture_read_only("make_push_tracking_revspecs.sh")?;
+         for mode in ["upstream", "current", "matching", "simple", "refspec"] {
+-            let repo = gix::open_opts(fixture.join(format!("{setup}-{mode}")), crate::restricted())?;
+-            let expected = std::fs::read_to_string(repo.workdir().expect("non-bare fixture").join("tracking-ref"))?;
++            let case = format!("{setup}-{mode}");
++            let path = fixture.join(&case);
++            let expected = std::fs::read_to_string(path.join("tracking-ref"))?;
+             let expected = expected.trim_end();
+-            for branch in ["", "HEAD", "main"] {
+-                let parsed = parse_spec(format!("{branch}@{{push}}"), &repo);
+-                assert_eq!(
+-                    parsed.is_ok(),
+-                    !expected.is_empty(),
+-                    "{setup}-{mode}: tracking availability"
+-                );
+-                for op in ["p", "P"] {
+-                    let spec = format!("{branch}@{{{op}}}");
+-                    let short = repo.rev_parse(spec.as_str());
+-                    assert_eq!(
+-                        short.as_deref().ok(),
+-                        parsed.as_deref().ok(),
+-                        "{setup}-{mode}: {spec} resolves the same commit as @{{push}}"
+-                    );
++            let expected = (!expected.is_empty()).then(|| BStr::new(expected));
++            let branch = "refs/heads/main".try_into()?;
++            let reduced = gix::open_opts(&path, crate::restricted().with_enforced_trust(Trust::Reduced))?;
++            assert_eq!(
++                reduced
++                    .branch_remote_tracking_ref_name(branch, gix::remote::Direction::Push)
++                    .transpose()?,
++                None,
++                "{case}: the default filter rejects reduced-trust push tracking configuration"
++            );
++            for trust in [Trust::Full, Trust::Reduced] {
++                let mut options = crate::restricted().with_enforced_trust(trust);
++                if trust == Trust::Reduced {
++                    options = options.filter_config_section(|meta| {
++                        meta.source == gix::config::Source::Local || gix::config::section::is_trusted(meta)
++                    });
++                }
++                let repo = gix::open_opts(&path, options)?;
++                for branch in ["", "HEAD", "main"] {
++                    let spec = format!("{branch}@{{push}}");
++                    let parsed = parse_spec(&spec, &repo);
+                     assert_eq!(
+-                        short
+-                            .as_ref()
+-                            .ok()
+-                            .and_then(|spec| spec.first_reference())
+-                            .map(gix::Reference::name),
+-                        parsed
+-                            .as_ref()
+-                            .ok()
+-                            .and_then(|spec| spec.first_reference())
+-                            .map(gix::Reference::name),
+-                        "{setup}-{mode}: {spec} resolves Git's push-tracking reference"
++                        parsed.as_ref().ok().map(|spec| spec
++                            .first_reference()
++                            .expect("a successful push selector resolves a tracking reference")
++                            .name()
++                            .as_bstr()),
++                        expected,
++                        "{case} ({trust:?}): {spec} matches Git's symbolic result"
+                     );
++                    for op in ["p", "P"] {
++                        let spec = format!("{branch}@{{{op}}}");
++                        let short = repo.rev_parse(spec.as_str());
++                        assert_eq!(
++                            short.as_deref().ok(),
++                            parsed.as_deref().ok(),
++                            "{case} ({trust:?}): {spec} resolves the same commit as @{{push}}"
++                        );
++                        assert_eq!(
++                            short
++                                .as_ref()
++                                .ok()
++                                .and_then(|spec| spec.first_reference())
++                                .map(|reference| reference.name().as_bstr()),
++                            expected,
++                            "{case} ({trust:?}): {spec} resolves the same tracking reference as @{{push}}"
++                        );
 +                    }
                  }
-                 None => {
-                     // we are diffing two extremely large repetitive files
-@@ -132,105 +130,200 @@ impl Histogram {
- 
- /// The common suffix's occurrence data, indexed by distance from the end of either file.
- struct CommonTail {
--    len: usize,
--    /// The last 66 positions of each token suffice to count it even when the suffix shortens.
-+    len: u32,
-+    /// Offsets into `positions`, with one extra entry for the end of the last token's list.
-+    offsets: Vec<u32>,
-+    /// The last 66 positions of each token, sorted by distance from the end.
-     positions: Vec<u32>,
--    /// Positions belonging to tokens that can still seed a match in the full suffix.
--    seed_positions: Vec<u32>,
--    frequent_tokens: Vec<Token>,
--    /// The minimum suffix length that still contains 66 occurrences of every frequent token.
--    min_overflow_len: usize,
-+    /// The same distances grouped by each token's capped count in the full suffix.
-+    seeds_by_count: Vec<Vec<u32>>,
- }
- 
- impl CommonTail {
--    fn find(before: &[Token], after: &[Token], num_tokens: u32) -> Option<Self> {
-+    fn find(before: &[Token], after: &[Token], num_tokens: usize) -> Option<Self> {
-         let min_len = OVERFLOW_COUNT as usize;
-         if before.len().min(after.len()) < min_len || before[before.len() - min_len..] != after[after.len() - min_len..]
-         {
-             return None;
-         }
- 
-         let mut len = 0;
--        let mut counts = vec![0u8; num_tokens as usize];
--        let mut positions = Vec::new();
--        let mut frequent_tokens = Vec::new();
--        let mut min_overflow_len = 0;
--        let overflow_count = OVERFLOW_COUNT as u8;
-+        let mut counts = vec![0u8; n
-```
-
-**File**: `gix-imara-diff/src/histogram/lcs.rs` (modified, +59/-34)
-```diff
-@@ -1,29 +1,58 @@
- // Modified for gitoxide from the upstream imara-diff crate.
- // Upstream source: git cat-file -p 32d1e45d3df061e6ccba6db7fdce92db29e345d8:src/histogram/lcs.rs
- 
--use crate::histogram::{Histogram, MAX_CHAIN_LEN, MAX_SEED_OCCURRENCES};
-+use crate::histogram::{Histogram, MAX_CHAIN_LEN, MAX_SEED_OCCURRENCES, OVERFLOW_COUNT, Tail};
- use crate::intern::Token;
- 
- /// Finds the longest common subsequence (LCS) using a histogram-based approach.
- ///
--/// In the shared suffix at `seed_end`, consider seeds only at the given distances from the end.
- /// Returns `None` if the sequences are highly repetitive and should fall back to Myers.
- pub(super) fn find_lcs(
-     before: &[Token],
-     after: &[Token],
--    seed_end: usize,
--    tail_positions: &[u32],
-+    tail: Option<Tail<'_>>,
-     histogram: &mut Histogram,
- ) -> Option<Lcs> {
-     let mut search = LcsSearch {
-         lcs: Lcs::default(),
-         min_occurrences: MAX_SEED_OCCURRENCES,
--        found_cs: seed_end < after.len(),
-+        found_cs: tail.is_some(),
-     };
--    search.run(before, after, seed_end, tail_positions, histogram);
-+    let occurrences = Occurrences {
-+        prefix: histogram,
-+        tail,
-+        before_len: before.len() as u32,
-+    };
-+    search.run(before, after, &occurrences);
-+    histogram.clear();
-     if search.success() { Some(search.lcs) } else { None }
- }
- 
-+/// Occurrence data for the active before range, in prefix and suffix order.
-+struct Occurrences<'a> {
-+    prefix: &'a Histogram,
-+    tail: Option<Tail<'a>>,
-+    before_len: u32,
-+}
-+
-+impl Occurrences<'_> {
-+    #[inline]
-+    fn count(&self, token: Token) -> u32 {
-+        let prefix = self.prefix.num_token_occurrences(token);
-+        let tail = self.tail.map_or(0, |tail| tail.positions(token).len() as u32);
-+        (prefix + tail).min(OVERFLOW_COUNT)
-+    }
-+
-+    fn positions(&self, token: Token) -> impl Iterator<Item = u32> + '_ {
-+        let tail = self.tail.map_or(&[][..], |tail| tail.positions(token));
-+        self.prefix
-+            .token_occurrences(token)
-+            .iter()
-+            .copied()
-+            .chain(tail.iter().rev().map(|&distance| self.before_len - 1 - distance))
-+    }
-+}
-+
- /// Represents a longest common subsequence found by the histogram algorithm.
- #[derive(Default, Debug)]
- pub struct Lcs {
-@@ -46,38 +75,31 @@ pub struct LcsSearch {
- }
- 
- impl LcsSearch {
--    fn run(
--        &mut self,
--        before: &[Token],
--        after: &[Token],
--        seed_end: usize,
--        tail_positions: &[u32],
--        histogram: &mut Histogram,
--    ) {
-+    fn run(&mut self, before: &[Token], after: &[Token], occurrences: &Occurrences<'_>) {
-+        let seed_end = after.len() - occurrences.tail.map_or(0, |tail| tail.len as usize);
-         let seeds = &after[..seed_end];
-         let mut pos = 0;
-         while let Some(&token) = seeds.get(pos as usize) {
--            if self.can_seed(histogram.num_token_occurrences(token)) {
--                pos = self.update_lcs(pos, token, histogram, before, after);
-+            let count = occurrences.count(token);
-+            if self.can_seed(count) {
-+                pos = self.update_lcs(pos, token, count, occurrences, before, after);
-                 continue;
-             }
-             pos += 1;
-         }
--        let after_len = after.len() as u32;
--        for &distance in tail_positions.iter().rev() {
--            if pos == after_len {
--                break;
--            }
--            let seed = after_len - 1 - distance;
--            if seed >= pos {
-+        if let Some(tail) = occurrences.tail {
-+            let mut seeds = tail.seeds();
-+            let after_len = after.len() as u32;
-+            while let Some(seed) = seeds.next(after_len, pos, self.min_occurrences) {
-                 let token = after[seed as usize];
--                if self.can_seed(histogram.num_token_occurrences(token)) {
--                    pos = self.update_lcs(seed, token, histogram, before, after);
--                }
-+                let count = occurrences.count(token);
-+                pos = if self.can_seed(count) {
-+                    self.update_lcs(seed, token, count, occurrences, before, after)
-+                } else {
-+                    seed + 1
-+                };
-             }
-         }
--
--        histogram.clear();
-     }
- 
-     fn can_seed(&mut self, occurrences: u32) -> bool {
-@@ -94,16 +116,19 @@ impl LcsSearch {
-         &mut self,
-         after_pos: u32,
-         token: Token,
--        histogram: &Histogram,
-+        count: u32,
-+        histogram: &Occurrences<'_>,
-         before: &[Token],
-         after: &[Token],
-     ) -> u32 {
-         let mut next_token_idx2 = after_pos + 1;
--        let mut occurrences_iter = histogram.token_occurrences(token).iter().copied();
--        let mut token_idx1 = occurrences_iter.next().unwrap();
-+        let mut occurrences_iter = histogram.positions(token);
-+        let mut token_idx1 = occurrences_iter
-+            .ne
-```
-
-**File**: `gix-imara-diff/src/histogram/list_pool.rs` (modified, +0/-6)
-```diff
-@@ -216,12 +216,6 @@ impl ListHandle {
-         }
-     }
- 
--    /// Record that the token is too frequent to seed a match.
--    pub fn mark_overflow(&mut self, pool: &ListPool) {
--        self.generation = pool.generation;
--        self.count = OVERFLOW_COUNT;
--    }
--
-     /// Records an occurrence and stores its position if the list has room.
-     #[inline]
-     pub fn push(&mut self, element: u32, pool: &mut ListPool) {
-```
-
-**File**: `gix-imara-diff/tests/fixtures/make_histogram_baseline.sh` (modified, +6/-3)
-```diff
-@@ -41,9 +41,10 @@ else
-   printf 'B\n' >>occurrence-overflow/old
-   cp occurrence-seed-limit/new occurrence-overflow/new
- 
--  # The unique unchanged lines split edits before a shared repetitive tail. Two final
-+  # Unique unchanged lines split edits before shared tails. A line in the paired tail
-+  # occurs twice and is skipped after a unique anchor sets the cutoff to one. Two final
-   # blank lines in the mixed case can still seed a match after the prefix is gone.
--  mkdir repetitive-tail alternating-tail mixed-frequency-tail
-+  mkdir repetitive-tail alternating-tail mixed-frequency-tail paired-tail
-   for side in old new; do
-     {
-       for i in {1..8}; do
-@@ -52,9 +53,11 @@ else
-       printf '%s-last\n' "$side"
-     } >"repetitive-tail/$side"
-     cp "repetitive-tail/$side" "alternating-tail/$side"
-+    cp "repetitive-tail/$side" "paired-tail/$side"
-     for i in {1..128}; do
-       printf 'x\n' >>"repetitive-tail/$side"
-       printf '%s\n' x y >>"alternating-tail/$side"
-+      printf '%s\n' "$i" "$i" >>"paired-tail/$side"
-     done
-     cp "repetitive-tail/$side" "mixed-frequency-tail/$side"
-     printf '\n\n' >>"mixed-frequency-tail/$side"
-@@ -68,7 +71,7 @@ else
- 
-   cases=(
-     skip-after-match occurrence-limit occurrence-seed-limit occurrence-overflow
--    repetitive-tail alternating-tail mixed-frequency-tail common-ends
-+    repetitive-tail alternating-tail mixed-frequency-tail paired-tail common-ends
-   )
- fi
- 
-```
-
-**File**: `gix-imara-diff/tests/integration/main.rs` (modified, +2/-1)
-```diff
-@@ -890,7 +890,8 @@ fn histogram_skips_seeds_with_more_than_65_occurrences() -> gix_testtools::TestR
- fn histogram_preserves_hunks_before_a_repetitive_tail() -> gix_testtools::TestResult {
-     assert_histogram_matches_git("repetitive-tail")?;
-     assert_histogram_matches_git("alternating-tail")?;
--    assert_histogram_matches_git("mixed-frequency-tail")
-+    assert_histogram_matches_git("mixed-frequency-tail")?;
-+    assert_histogram_matches_git("paired-tail")
- }
- 
- #[test]
++                assert_eq!(
++                    repo.branch_remote_tracking_ref_name(branch, gix::remote::Direction::Push)
++                        .transpose()?
++                        .as_ref()
++                        .map(gix::refs::FullName::as_bstr),
++                    expected,
++  
 ```
 
 ---
 
-### Incident Patch 3: `2bcb31df` (2026-11-25)
-**Commit Message**: Merge pull request #3246 from daniel-kindl/fix-histogram-git-parity
+### Incident Patch 3: `54cf2414` (2026-11-25)
+**Commit Message**: fix(gix)!: distinguish remote selectors from symbolic names
 
-fix(gix-imara-diff): make histogram diffs match `git diff --histogram`
+Rubber-stamped the tests, but took a long time to rework
+`remote::Name`, also adding `remote::ConfiguredName`.
+Overall, this API is far more capable, while supporting dot-remotes.
 
-**File**: `gitoxide-core/src/query/engine/update.rs` (modified, +19/-44)
+<!-- agent -->
+A branch's remote selector can name a configured remote even if it
+looks like a URL or path. Check for a trusted `[remote "…"]` subsection
+before interpreting the selector as a destination. Use the exact
+subsection bytes for lookup, refspec and proxy settings, and saving, so
+URL-shaped and non-UTF-8 names round-trip without changing identity.
+
+Resolve `remote = .` to the opened repository's Git directory, not the
+process working directory. For linked worktrees this preserves the
+opened worktree's `HEAD` while sharing refs and objects. A `[remote "."]`
+subsection can supply refspecs or override the destination with an
+explicit URL. `Repository::remote_at(".")` still takes a relative path.
+Keep URLs inferred from subsection names implicit on save unless the
+remote is renamed and the destination needs to be preserved explicitly.
+
+Validate newly assigned symbolic names under `refs/remotes/` and retain
+their original bytes when writin
+
+**File**: `gix-ref/src/store/file/transaction/prepare.rs` (modified, +5/-1)
 ```diff
-@@ -8,7 +8,7 @@ use std::{
- use gix::{
-     Count, Progress, Result,
-     bstr::{BStr, BString, ByteSlice},
--    diff::{blob::platform::prepare_diff::Operation, rewrites::CopySource},
-+    diff::rewrites::CopySource,
-     error::{ResultExt, bail},
-     parallel::{InOrderIter, SequenceId},
-     prelude::ObjectIdExt,
-@@ -256,50 +256,25 @@ pub fn update(
-                                                             add_lines(&mut out, location, &lines_counter, previous_id);
-                                                         }
-                                                         (true, true) => {
--                                                            if let Ok(cache) =
--                                                                change.diff(&mut diff_cache).map(|p| p.resource_cache)
-+                                                            if let Ok(Some(counts)) = change
-+                                                                .diff(&mut diff_cache)
-+                                                                .and_then(|mut diff| diff.line_counts())
-                                                             {
--                                                                cache
--                                                                    .options
--                                                                    .skip_internal_diff_if_external_is_configured =
--                                                                    false;
--                                                                if let Ok(prep) = cache.prepare_diff() {
--                                                                    let mut nl = 0;
--                                                                    match prep.operation {
--                                                                        Operation::InternalDiff {
--                                                                            algorithm,
--                                                                            change,
--                                                                        } => {
--                                                                            let tokens = change.patch_input();
--                                                                            let diff = gix::diff::blob::Diff::compute(
--                                                                                algorithm, &tokens,
--                                                                            );
--                                                                            let added = diff.count_additions() as usize;
--                                                                            let removed =
--                                                                                diff.count_removals() as usize;
--                                                                            nl += added + removed;
--                                                                            let lines = LineStats {
--                                                                                added,
--                                                                                removed,
--                                                                                before: tokens.before.len(),
--                                                                                after: tokens.after.len(),
--                                                                            };
--                                                                            lines_counter
--                                                                                .fetch_add(nl, Ordering::SeqCst);
--                                                                            out.push(FileChange {
--                                                                                relpath: location.to_owned(),
--                                                                                mode: FileMode::Modified,
--                                                                                source_relpath: None,
--                                                                                lines: Some(lines),
--                                                                            });
--                                                                        }
--                                                                        Operation::ExternalCommand { .. } => {
--                                                                            unreachable!("disabled above")
--                                                                        }
--                                                                        Operation::SourceOrDestinationIsBinary
--                                                                        | Operation::NeitherExists => {}
--                                                  
+@@ -174,7 +174,11 @@ impl Transaction<'_, '_> {
+                 if (is_effective && !direct_to_packed_refs) || is_symbolic {
+                     lock.with_mut(|file| match new {
+                         Target::Object(oid) => writeln!(file, "{oid}"),
+-                        Target::Symbolic(name) => writeln!(file, "ref: {}", name.0),
++                        Target::Symbolic(name) => {
++                            file.write_all(b"ref: ")?;
++                            file.write_all(name.as_bstr())?;
++                            file.write_all(b"\n")
++                        }
+                     })
+                     .or_raise(|| message("Could not write loose reference"))?;
+                     Some(lock.close().or_raise(|| message("Could not close reference lock"))?)
 ```
 
-**File**: `gix-blame/src/file/function.rs` (modified, +28/-6)
+**File**: `gix-ref/tests/refs/file/transaction/prepare_and_commit/create_or_update/mod.rs` (modified, +25/-0)
 ```diff
-@@ -6,7 +6,7 @@ use gix_error::{ErrorExt, OptionExt, ResultExt, bail, message};
- use gix_hash::ObjectId;
- use gix_object::{
-     FindExt,
--    bstr::{BStr, BString},
-+    bstr::{BStr, BString, ByteSlice},
- };
- use gix_traverse::commit::find as find_commit;
- use smallvec::SmallVec;
-@@ -839,9 +839,15 @@ fn blob_changes_from_data(
-     diff_algorithm: gix_diff::blob::Algorithm,
-     stats: &mut Statistics,
- ) -> Vec<Change> {
--    use gix_diff::blob::Hunk;
-+    use gix_diff::blob::{Algorithm, Hunk};
- 
--    let input = gix_diff::blob::InternedInput::new(old_data, new_data);
-+    let trimmed_bytes = if diff_algorithm == Algorithm::Histogram {
-+        common_tail_bytes_to_trim(old_data, new_data)
-+    } else {
-+        0
-+    };
-+    let (new_data, unchanged_tail) = new_data.split_at(new_data.len() - trimmed_bytes);
-+    let input = gix_diff::blob::InternedInput::new(&old_data[..old_data.len() - trimmed_bytes], new_data);
- 
-     let mut diff = gix_diff::blob::Diff::compute(diff_algorithm, &input);
-     diff.postprocess_lines(&input);
-@@ -873,15 +879,31 @@ fn blob_changes_from_data(
-         hunks
-     });
- 
--    let total_number_of_lines = input.after.len() as u32;
--    if input.after.len() > last_seen_after_end as usize {
--        changes.push(Change::Unchanged(last_seen_after_end..total_number_of_lines));
-+    let total_number_of_lines = input.after.len() + tokens_for_diffing(unchanged_tail).tokenize().count();
-+    if total_number_of_lines > last_seen_after_end as usize {
-+        changes.push(Change::Unchanged(last_seen_after_end..total_number_of_lines as u32));
-     }
- 
-     stats.blobs_diffed += 1;
-     changes
+@@ -757,6 +757,31 @@ fn cancellation_after_preparation_leaves_no_change() -> TestResult {
+     Ok(())
  }
  
-+/// Match Git's zero-context `xdi_diff()`, which trims whole common 1 KiB blocks from the end
-+/// and keeps bytes through the first newline of those blocks to leave a complete line.
-+fn common_tail_bytes_to_trim(before: &[u8], after: &[u8]) -> usize {
-+    const BLOCK_SIZE: usize = 1024;
-+    let common_len = before
-+        .rchunks_exact(BLOCK_SIZE)
-+        .zip(after.rchunks_exact(BLOCK_SIZE))
-+        .take_while(|(before, after)| before == after)
-+        .count()
-+        * BLOCK_SIZE;
-+    let common_tail = &after[after.len() - common_len..];
-+    common_tail
-+        .find_byte(b'\n')
-+        .map_or(0, |newline| common_len - newline - 1)
++#[test]
++fn symbolic_reference_preserves_target_bytes() -> TestResult {
++    let (_keep, store) = empty_store()?;
++    let referent = b"refs/remotes/team/\xff/main".as_bstr();
++    store
++        .transaction()
++        .prepare(
++            [RefEdit::update(
++                "HEAD".try_into()?,
++                Target::Symbolic(referent.try_into()?),
++                PreviousValue::MustNotExist,
++                "",
++            )],
++            Fail::Immediately,
++            Fail::Immediately,
++        )?
++        .commit(committer().to_ref(&mut TimeBuf::default()))?;
++    assert_eq!(
++        std::fs::read(store.git_dir().join("HEAD"))?,
++        b"ref: refs/remotes/team/\xff/main\n",
++        "the loose symbolic reference stores the exact target bytes"
++    );
++    Ok(())
 +}
 +
- fn find_path_entry_in_commit(
-     odb: &impl gix_object::Find,
-     commit: &gix_hash::oid,
+ #[test]
+ fn symbolic_reference_writes_reflog_if_previous_value_is_set() -> TestResult {
+     let (_keep, store) = empty_store()?;
 ```
 
-**File**: `gix-blame/tests/blame.rs` (modified, +1/-0)
+**File**: `gix-tix/src/history.rs` (modified, +0/-1)
 ```diff
-@@ -309,6 +309,7 @@ mktest!(switched_lines, "switched-lines", 4);
- mktest!(added_line_before_changed_line, "added-line-before-changed-line", 3);
- mktest!(same_line_changed_twice, "same-line-changed-twice", 2);
- mktest!(coalesce_adjacent_hunks, "coalesce-adjacent-hunks", 1);
-+mktest!(histogram_trims_common_tail, "histogram-common-tail", 3);
- 
- mktest!(sub_directory, "sub-directory/sub-directory", 3);
- 
+@@ -1553,7 +1553,6 @@ fn snapshot_inner(
+     let fetch_remote = active_branch
+         .as_ref()
+         .and_then(|branch| repo.branch_remote_name(branch.shorten(), gix::remote::Direction::Fetch))
+-        .map(|name| name.as_bstr().to_owned())
+         .or_else(|| repo.remote_default_name(gix::remote::Direction::Fetch));
+     let pins = pins
+         .into_iter()
 ```
 
-**File**: `gix-blame/tests/fixtures/make_blame_repo.sh` (modified, +13/-2)
+**File**: `gix-tix/src/lib.rs` (modified, +14/-1)
 ```diff
-@@ -128,7 +128,15 @@ git commit -q -m c4.4
+@@ -5831,7 +5831,6 @@ fn active_branch_name(refs: &history::RefSnapshot) -> Option<BString> {
+ fn push_remote_name(repository: &gix::Repository, branch: &BStr) -> BString {
+     repository
+         .branch_remote_name(branch, gix::remote::Direction::Push)
+-        .map(|name| name.as_bstr().to_owned())
+         .or_else(|| repository.remote_default_name(gix::remote::Direction::Push))
+         .unwrap_or_else(|| "origin".into())
+ }
+@@ -10447,6 +10446,20 @@ mod tests {
+         );
+         drop(repository);
  
- echo -e "  line 1\n\n  line 2\n\n  line 3" > empty-lines-histogram.txt
- cp empty-lines-histogram.txt empty-lines-myers.txt
--git add empty-lines-histogram.txt empty-lines-myers.txt
-+# Inserting a second "b" leaves 512 "a" lines at the end, exactly one common block
-+# for Git's zero-context diff to trim before matching lines for blame.
-+{
-+  printf 'b\n'
-+  for i in {1..513}; do
-+    printf 'a\n'
-+  done
-+} >histogram-common-tail.txt
-+git add empty-lines-histogram.txt empty-lines-myers.txt histogram-common-tail.txt
- git commit -q -m c4.5
- 
- echo -e "line 0\nline 2\nline 3" > sub-directory/sub-directory.txt
-@@ -155,7 +163,9 @@ git commit -q -m c5.3
- 
- echo -e "  line 1\n\n  line in between\n\n  line 2\n\n  line in between\n\n  line 3" > empty-lines-histogram.txt
- cp empty-lines-histogram.txt empty-lines-myers.txt
--git add empty-lines-histogram.txt empty-lines-myers.txt
-+awk '{ print } NR == 2 { print "b" }' histogram-common-tail.txt >histogram-common-tail.tmp
-+mv histogram-common-tail.tmp histogram-common-tail.txt
-+git add empty-lines-histogram.txt empty-lines-myers.txt histogram-common-tail.txt
- git commit -q -m c5.4
- 
- mv before-second-rename.txt after-second-rename.txt
-@@ -303,6 +313,7 @@ git blame --porcelain file-changed-in-two-branches.txt > .git/file-changed-in-tw
- git blame --porcelain file-topo-order-different-than-date-order.txt > .git/file-topo-order-different-than-date-order.baseline
- 
- git blame --porcelain empty-lines-histogram.txt > .git/empty-lines-histogram.baseline
-+git blame --porcelain histogram-common-tail.txt > .git/histogram-common-tail.baseline
- 
- git config --local diff.algorithm myers
- 
-```
-
-**File**: `gix-diff/Cargo.toml` (modified, +6/-0)
-```diff
-@@ -51,6 +51,12 @@ harness = false
- required-features = ["blob"]
- path = "./benches/blob.rs"
- 
-+[[bench]]
-+name = "histogram"
-+harness = false
-+required-features = ["blob"]
-+path = "./benches/histogram.rs"
-+
- [[bench]]
- name = "rewrite-tracker"
- harness = false
-```
-
-**File**: `gix-diff/benches/histogram.rs` (added, +227/-0)
-```diff
-@@ -0,0 +1,227 @@
-+//! Histogram computation on pre-interned lines and postprocessing of shifted groups.
-+//! Run `cargo bench -p gix-diff --bench histogram` or add `-- --test` for a correctness check.
-+//! To compare revisions, apply the same benchmark code to both and set `CRITERION_HOME` to the same
-+//! absolute directory. Keep separate Cargo target directories for each revision.
-+//! Run with `-- --save-baseline main` on the baseline and `-- --baseline main` on the comparison.
-+
-+use std::{fmt::Write, hint::black_box, time::Duration};
-+
-+use criterion::{
-+    BatchSize, BenchmarkGroup, BenchmarkId, Criterion, Throughput, criterion_group, criterion_main,
-+    measurement::WallTime,
-+};
-+use gix_diff::blob::{Algorithm, Diff, InternedInput};
-+
-+fn histogram(c: &mut Criterion) {
-+    let mut group = c.benchmark_group("histogram");
-+    group
-+        .warm_up_time(Duration::from_secs(1))
-+        .measurement_time(Duration::from_secs(2))
-+        .sample_size(30);
-+
-+    benchmark(
-+        &mut group,
-+        BenchmarkId::new("source-like", "2048-functions"),
-+        source_like(2_048),
-+        (128, 192),
-+    );
-+    benchmark(
-+        &mut group,
-+        BenchmarkId::new("sparse-edits-no-shared-tail", 8_192),
-+        separated_replacements(8_192, 16),
-+        (16, 16),
-+    );
-+    benchmark(
-+        &mut group,
-+        BenchmarkId::new("dense-edits-no-shared-tail", 4_000),
-+        separated_replacements(4_000, 2_000),
-+        (2_000, 2_000),
-+    );
-+
-+    // Each suffix token can seed a match, but the separated edits offer rarer anchors.
-+    for (case, edits, pairs, old_end, new_end) in [
-+        ("paired-tail", 250, 62_500, "", ""),
-+        ("paired-tail", 500, 125_000, "", ""),
-+        (
-+            "paired-tail-changed-end",
-+            128,
-+            25_000,
-+            "old final line\n",
-+            "new final line\n",
-+        ),
-+        ("paired-tail-appended-line", 128, 25_000, "", "new final line\n"),
-+    ] {
-+        let (mut before, mut after) = separated_replacements(edits * 2, edits);
-+        let mut tail = String::new();
-+        for pair in 0..pairs {
-+            writeln!(tail, "pair {pair}\npair {pair}").expect("writing to a string cannot fail");
-+        }
-+        before.push_str(&tail);
-+        after.push_str(&tail);
-+        before.push_str(old_end);
-+        after.push_str(new_end);
-+        benchmark(
-+            &mut group,
-+            BenchmarkId::new(case, pairs * 2),
-+            (before, after),
-+            (
-+                edits + u32::from(!old_end.is_empty()),
-+                edits + u32::from(!new_end.is_empty()),
-+            ),
++        assert!(git(&["config", "branch.main.remote", "./direct.git"])?.success());
++        let repository = test_repository::open(fixture.path())?;
++        assert_eq!(
++            history::snapshot(&repository, &[], &[], false)?.fetch_remote,
++            Some(BString::from("./direct.git")),
++            "a direct destination takes precedence over the default named remote for fetch"
 +        );
-+    }
++        assert_eq!(
++            push_remote_name(&repository, b"main".as_bstr()),
++            "./direct.git",
++            "a direct destination takes precedence over the default named remote for push"
++        );
++        drop(repository);
 +
-+    // The alternating lines exceed the seed cutoff. The blanks in the mixed tail can seed a match.
-+    for (case, tail) in [
-+        ("alternating-tail", "x\ny\n".repeat(125_000)),
-+        ("mixed-tail", "x\n".repeat(249_998) + "\n\n"),
-+    ] {
-+        let (mut before, mut after) = separated_replacements(1_000, 500);
-+        before.push_str(&tail);
-+        after.push_str(&tail);
-+        benchmark(&mut group, BenchmarkId::new(case, 250_000), (before, after), (500, 500));
-+    }
-+
-+    let (mut before, mut after) = separated_replacements(128, 64);
-+    let tail_lines = 25_000;
-+    // The suffix appears unique when considered alone. Each token also occurs in the old prefix.
-+    for line in (0..tail_lines).rev() {
-+        writeln!(before, "tail {line}").expect("writing to a string cannot fail");
-+    }
-+    before.push_str("old fence\n");
-+    after.push_str("new fence\n");
-+    let start = after.len();
-+    for line in 0..tail_lines {
-+        writeln!(after, "tail {line}").expect("writing to a string cannot fail");
-+    }
-+    before.push_str(&after[start..]);
-+    benchmark(
-+        &mut group,
-+        BenchmarkId::new("overlapping-tail", tail_lines),
-+        (before, after),
-+        (tail_lines + 65, 65),
-+    );
-+    postprocess_shifted_groups(&mut group);
-+    group.finish();
-+}
-+
-+fn postprocess_shifted_groups(group: &mut BenchmarkGroup<'_, WallTime>) {
-+    const LARGE_GROUP_LINES: u32 = 100_000;
-+    const SMALL_GROUPS: u32 = 1_000;
-+    let (mut before, mut after) = (String::new(), String::new());
-+    for block in 0..=SMALL_GROUPS {
-+        let lines = if block == 0 { LARGE_GROUP_LINES } else { 1 };
-+        for line in 0..lines {
-+            writeln!(before, "old {block}/{line}").expect("writing to a string cannot fail");
-+            writeln!(after, "new {block}/{line}").expect("writing to a string cannot fail");
-+        }
-+        // The duplicate line lets the replacement slide, causing a re-diff before the guard.
-+        writeln!(before, "x {block}\nx {block}\nguard {block}").expect("writing to a string cannot fail");
-+        writeln!(after, "x {block}\ny {block}\nguard {block}").expect("writing to a string cannot fail");
-+    }
-+    let input = InternedInput::new(before.as_str(), after.as_str());
-+    let fresh_diff = || Diff::compute(Algorithm::Histogram,
+         assert!(git(&["config", "--unset", "branch.main.remote"])?.success());
+         let repository = test_repository::open(fixture.path())?;
+         assert_eq!(
 ```
 
-**File**: `gix-imara-diff/src/histogram.rs` (modified, +339/-12)
+**File**: `gix-tix/src/ref_tree.rs` (modified, +3/-1)
 ```diff
-@@ -9,9 +9,11 @@ use crate::myers;
- mod lcs;
- mod list_pool;
- 
--/// Maximum number of occurrences tracked for a single token.
--/// Tokens appearing more frequently fall back to Myers algorithm.
--const MAX_CHAIN_LEN: u32 = 63;
-+/// Git's histogram chain limit. A seed may occur once more than this, but a match
-+/// must contain a token at or below the limit to avoid falling back to Myers.
-+const MAX_CHAIN_LEN: u32 = 64;
-+const MAX_SEED_OCCURRENCES: u32 = MAX_CHAIN_LEN + 1;
-+const OVERFLOW_COUNT: u32 = MAX_SEED_OCCURRENCES + 1;
- 
- /// State for computing histogram-based diffs.
- struct Histogram {
-@@ -31,8 +33,11 @@ struct Histogram {
- /// * `added` - Output array marking added tokens
- /// * `num_tokens` - The total number of distinct tokens
- pub fn diff(before: &[Token], after: &[Token], removed: &mut [bool], added: &mut [bool], num_tokens: u32) {
-+    if before == after {
-+        return;
-+    }
-     let mut histogram = Histogram::new(num_tokens);
--    histogram.run(before, after, removed, added);
-+    histogram.run(before, after, removed, added, true);
- }
- 
- impl Histogram {
-@@ -47,21 +52,29 @@ impl Histogram {
-         self.pool.clear();
-     }
- 
--    fn token_occurrences(&self, token: Token) -> &[u32] {
--        self.token_occurrences[token.0 as usize].as_slice(&self.pool)
-+    fn token_occurrences(&self, token: Token, count: u32) -> &[u32] {
-+        self.token_occurrences[token.0 as usize].as_slice(count, &self.pool)
-     }
- 
-     fn num_token_occurrences(&self, token: Token) -> u32 {
--        self.token_occurrences[token.0 as usize].len(&self.pool)
-+        self.token_occurrences[token.0 as usize].count(&self.pool)
-     }
- 
--    fn populate(&mut self, file: &[Token]) {
-+    fn populate(&mut self, file: &[Token], start: usize) {
-         for (i, &token) in file.iter().enumerate() {
--            self.token_occurrences[token.0 as usize].push(i as u32, &mut self.pool);
-+            self.token_occurrences[token.0 as usize].push((i + start) as u32, &mut self.pool);
-         }
-     }
- 
--    fn run(&mut self, mut before: &[Token], mut after: &[Token], mut removed: &mut [bool], mut added: &mut [bool]) {
-+    fn run(
-+        &mut self,
-+        mut before: &[Token],
-+        mut after: &[Token],
-+        mut removed: &mut [bool],
-+        mut added: &mut [bool],
-+        mut cache_after_split: bool,
-+    ) {
-+        let mut common_block: Option<Box<CommonBlock>> = None;
-         loop {
-             if before.is_empty() {
-                 added.fill(true);
-@@ -71,8 +84,17 @@ impl Histogram {
-                 return;
+@@ -1508,7 +1508,9 @@ pub(crate) fn resolve_remote_deletions(
+     for tracking in tracking_references {
+         match repository.upstream_branch_and_remote_for_tracking_branch(tracking.as_ref()) {
+             Ok(Some((upstream, remote))) => {
+-                let Some(name) = remote.name() else { continue };
++                let Some(name) = remote.name() else {
++                    continue;
++                };
+                 groups.entry(name.as_bstr().to_owned()).or_default().push(upstream);
              }
+             Ok(None) => {}
+```
+
+**File**: `gix/src/clone/access.rs` (modified, +3/-1)
+```diff
+@@ -26,9 +26,11 @@ impl PrepareFetch {
+     /// Set the remote's name to the given value after it was configured using the function provided via
+     /// [`configure_remote()`](Self::configure_remote()).
+     ///
++    /// The name is written to config and, in a non-bare clone, used under `refs/remotes/`.
++    /// It must be valid in that ref namespace; `.` and URLs are not accepted as names.
+     /// If not set here, it defaults to `origin` or the value of `clone.defaultRemoteName`.
+     pub fn with_remote_name(mut self, name: impl Into<BString>) -> Result<Self> {
+-        self.remote_name = Some(crate::remote::name::validated(name)?);
++        self.remote_name = Some(crate::remote::Name::symbol(name)?);
+         Ok(self)
+     }
  
--            self.populate(before);
--            match find_lcs(before, after, self) {
-+            let block = common_block
-+                .as_deref()
-+                .and_then(|block| block.for_lengths(before.len(), after.len()));
-+            if let Some(block) = block {
-+                let end = before.len() - block.index.before_end_distance as usize;
-+                self.populate(&before[..end - block.len as usize], 0);
-+                self.populate(&before[end..], end);
-+            } else {
-+                self.populate(before, 0);
+```
+
+**File**: `gix/src/clone/fetch/mod.rs` (modified, +32/-36)
+```diff
+@@ -45,27 +45,21 @@ impl PrepareFetch {
+             snapshot.append_config(&self.config_overrides, gix_config::Source::Api)?;
+         }
+ 
+-        let remote_name = match self.remote_name.as_ref() {
+-            Some(name) => name.to_owned(),
+-            None => repo
+-                .config
+-                .resolved
+-                .string(crate::config::tree::Clone::DEFAULT_REMOTE_NAME)
+-                .map(|n| crate::config::tree::Clone::DEFAULT_REMOTE_NAME.try_into_symbolic_name(n))
+-                .transpose()?
+-                .unwrap_or_else(|| {
+-                    crate::config::tree::Clone::DEFAULT_REMOTE_NAME
+-                        .default_value_or_panic()
+-                        .into()
+-                }),
++        let remote_name = match &self.remote_name {
++            Some(name) => name.clone(),
++            None => {
++                let key = &crate::config::tree::Clone::DEFAULT_REMOTE_NAME;
++                let name = repo
++                    .config
++                    .resolved
++                    .string(key)
++                    .unwrap_or_else(|| key.default_value_or_panic().into());
++                key.try_into_symbolic_name(name)?
 +            }
-+            match find_lcs(before, after, block, self) {
-                 // no lcs was found, that means that file1 and file2 two have nothing in common
-                 Some(lcs) if lcs.len == 0 => {
-                     added.fill(true);
-@@ -85,6 +107,7 @@ impl Histogram {
-                         &after[..lcs.after_start as usize],
-                         &mut removed[..lcs.before_start as usize],
-                         &mut added[..lcs.after_start as usize],
-+                        false, // The cache uses the original file endpoints.
-                     );
+         };
++        let remote_name_bytes = remote_name.as_bstr();
  
-                     // this is equivalent to (tail) recursion but implement as a loop for efficiency reasons
-@@ -95,6 +118,11 @@ impl Histogram {
-                     let after_end = lcs.after_start + lcs.len;
-                     after = &after[after_end as usize..];
-                     added = &mut added[after_end as usize..];
-+
-+                    // The first match may already consume a long common block.
-+                    if std::mem::take(&mut cache_after_split) {
-+                        common_block = CommonBlock::find(before, after, self.token_occurrences.len()).map(Box::new);
-+                    }
-                 }
-                 None => {
-                     // we are diffing two extremely large repetitive files
-@@ -107,3 +135,302 @@ impl Histogram {
+         let mut remote = repo.remote_at(self.url.clone())?;
+-        let branch_prefix = if repo.is_bare() {
+-            "refs/heads/".to_owned()
+-        } else {
+-            format!("refs/remotes/{remote_name}/")
+-        };
+ 
+         // For shallow clones without custom configuration, we'll use a single-branch refspec
+         // to match git's behavior (matching git's single-branch behavior for shallow clones).
+@@ -146,28 +140,30 @@ impl PrepareFetch {
+         // Set up refspec based on whether we're doing a single-branch shallow clone,
+         // which requires a single ref to match Git unless it's overridden.
+         if remote.fetch_specs.is_empty() && self.revision.is_none() {
++            let branch_prefix = if repo.is_bare() {
++                Category::LocalBranch.prefix().to_owned()
++            } else {
++                remote::remote_tracking_ref(remote_name_bytes, b"")
++            };
+             if let Some(target_ref) = &target_ref {
+                 // Single-branch refspec for shallow clones
+-                let destination = match target_ref.category_and_short_name() {
++                let mut spec = crate::bstr::BString::from("+");
++                spec.push_str(target_ref.as_bstr());
++                spec.push(b':');
++                match target_ref.category_and_short_name() {
+                     Some((Category::LocalBranch, short_name)) => {
+-                        format!("{branch_prefix}{short_name}")
++                        spec.push_str(&branch_prefix);
++                        spec.push_str(short_name);
+                     }
+-                    _ => target_ref.to_string(),
+-                };
+-                remote = remote
+-                    .with_refspecs(
+-                        Some(format!("+{target_ref}:{destination}").as_str()),
+-                        remote::Direction::Fetch,
+-                    )
+-                    .expect("valid refspec");
++                    _ => spec.push_str(target_ref.as_bstr()),
++                }
++                remote = remote.with_refspecs(Some(spec), remote::Direction::Fetch)?;
+             } else if !use_single_branch_for_shallow {
+                 // Wildcard refspec for non-shallow clones or when target couldn't be determined
+-                remote = remote
+-                    .with_refspecs(
+-                        Some(format!("+refs/heads/*:{branch_prefix}*").as_str()),
+-                        remote::Direction::Fetch,
+-                    )
+-                    .expect("valid static spec");
++                let mut spec = crate::bstr::BString::from("+refs/heads/*:");
++                spec.push_str(&branch_prefix);
++                spec.push(b'*');
++                remote = remote.with_refspecs(Some(spec), remote::Direction::Fetch)?;
+             }
          }
-     }
- }
-+
-+/// Occurrence data for a common block, indexed by distance from its end.
-+struct CommonBlock {
-+    before_end_distance: u32,
-+    after_end_distance: u32,
-+    len: u32,
-+    /// Offsets into `positions`, with one extra entry for the end of the last token's list.
-+    offsets: Vec<u32>,
-+    /// The last 66 positions of each token, sorted by distance from the end.
-+    positions: Vec<u32>,
-+    /// The same distances grouped by each token's capped count in the full blo
+ 
+@@ -323,12 +319,12 @@ impl PrepareFetch {
+         if let Some(config) = config {
+             util::append_config_to_repo_config(&mut repo, config)?;
+         }
+-        util::update_remote_head(&repo, &outcome.ref_map, reflog_message.as_ref(), remote_name.as_ref())?;
++        util::update_remote_head(&repo, &outcome.ref_map, reflog_message.as_ref(), remote_name_bytes)?;
+         util::update_head(
+             &mut repo,
+             &outcome.ref_map,
+             reflog_message.as_ref(),
+-            remote_name.as_ref(),
++            remote_name_bytes,
+             self.ref_name.as_ref(),
+             self.revision.as_ref(),
+         )?;
 ```
 
-**File**: `gix-imara-diff/src/histogram/lcs.rs` (modified, +110/-23)
+**File**: `gix/src/clone/fetch/util.rs` (modified, +4/-5)
 ```diff
-@@ -1,22 +1,97 @@
- // Modified for gitoxide from the upstream imara-diff crate.
- // Upstream source: git cat-file -p 32d1e45d3df061e6ccba6db7fdce92db29e345d8:src/histogram/lcs.rs
+@@ -8,7 +8,7 @@ use gix_ref::{
  
--use crate::histogram::{Histogram, MAX_CHAIN_LEN};
-+use crate::histogram::{Block, Histogram, MAX_CHAIN_LEN, MAX_SEED_OCCURRENCES, OVERFLOW_COUNT};
- use crate::intern::Token;
+ use crate::{
+     Error, Repository, Result,
+-    bstr::{BStr, BString, ByteSlice},
++    bstr::{BStr, ByteSlice},
+ };
  
- /// Finds the longest common subsequence (LCS) using a histogram-based approach.
- ///
- /// Returns `None` if the sequences are highly repetitive and should fall back to Myers.
--pub(super) fn find_lcs(before: &[Token], after: &[Token], histogram: &mut Histogram) -> Option<Lcs> {
-+pub(super) fn find_lcs(
-+    before: &[Token],
-+    after: &[Token],
-+    block: Option<Block<'_>>,
-+    histogram: &mut Histogram,
-+) -> Option<Lcs> {
-     let mut search = LcsSearch {
-         lcs: Lcs::default(),
--        min_occurrences: MAX_CHAIN_LEN + 1,
--        found_cs: false,
-+        min_occurrences: MAX_SEED_OCCURRENCES,
-+        found_cs: block.is_some(),
+ enum WriteMode {
+@@ -17,11 +17,11 @@ enum WriteMode {
+ }
+ pub fn append_remote_to_local_config_file(
+     remote: &mut crate::Remote<'_>,
+-    remote_name: BString,
++    remote_name: crate::remote::Name,
+ ) -> Result<gix_config::File> {
+     let mut config = gix_config::File::new(local_config_meta(remote.repo));
+     remote
+-        .save_as_to(remote_name, &mut config)
++        .save_as_validated(remote_name, &mut config)
+         .or_raise(|| message("Failed to store configured remote in memory"))?;
+ 
+     write_to_local_config(&config, WriteMode::Append)
+@@ -189,8 +189,7 @@ pub(super) fn update_remote_head(
+     let Some(tracking_branch) = mapping.local.as_ref() else {
+         return Ok(());
      };
--    search.run(before, after, histogram);
-+    let after_len = after.len() as u32;
-+    if let Some(block) = block {
-+        let occurrences = CachedOccurrences {
-+            histogram,
-+            block,
-+            end: before.len() as u32 - block.index.before_end_distance,
-+        };
-+        let end = after_len - block.index.after_end_distance;
-+        let mut pos = search.scan(before, after, &occurrences, 0, end - block.len);
-+        let mut seeds = block.seeds(before.len() as u32);
-+        while let Some(seed) = seeds.next(end, pos, search.min_occurrences) {
-+            let token = after[seed as usize];
-+            let count = occurrences.count(token);
-+            pos = if search.can_seed(count) {
-+                search.update_lcs(seed, token, count, &occurrences, before, after)
-+            } else {
-+                seed + 1
-+            };
-+        }
-+        search.scan(before, after, &occurrences, pos.max(end), after_len);
-+    } else {
-+        search.scan(before, after, histogram, 0, after_len);
-+    }
-+    histogram.clear();
-     if search.success() { Some(search.lcs) } else { None }
- }
- 
-+trait Occurrences {
-+    fn count(&self, token: Token) -> u32;
-+    fn positions(&self, token: Token, count: u32) -> impl Iterator<Item = u32> + '_;
-+}
-+
-+impl Occurrences for Histogram {
-+    #[inline]
-+    fn count(&self, token: Token) -> u32 {
-+        self.num_token_occurrences(token)
-+    }
-+
-+    fn positions(&self, token: Token, count: u32) -> impl Iterator<Item = u32> + '_ {
-+        self.token_occurrences(token, count).iter().copied()
-+    }
-+}
-+
-+struct CachedOccurrences<'a> {
-+    histogram: &'a Histogram,
-+    block: Block<'a>,
-+    end: u32,
-+}
-+
-+impl Occurrences for CachedOccurrences<'_> {
-+    #[inline]
-+    fn count(&self, token: Token) -> u32 {
-+        let outside = self.histogram.num_token_occurrences(token);
-+        let inside = self.block.positions(token).len() as u32;
-+        (outside + inside).min(OVERFLOW_COUNT)
-+    }
-+
-+    fn positions(&self, token: Token, count: u32) -> impl Iterator<Item = u32> + '_ {
-+        let inside = self.block.positions(token);
-+        let outside = self.histogram.token_occurrences(token, count - inside.len() as u32);
-+        let prefix_len = if self.block.index.before_end_distance == 0 {
-+            outside.len()
-+        } else {
-+            outside.partition_point(|&pos| pos < self.end - self.block.len)
-+        };
-+        let (prefix, suffix) = outside.split_at(prefix_len);
-+        prefix
-+            .iter()
-+            .copied()
-+            .chain(inside.iter().rev().map(|&distance| self.end - 1 - distance))
-+            .chain(suffix.iter().copied())
-+    }
-+}
-+
- /// Represents a longest common subsequence found by the histogram algorithm.
- #[derive(Default, Debug)]
- pub struct Lcs {
-@@ -39,41 +114,53 @@ pub struct LcsSearch {
- }
- 
- impl LcsSearch {
--    fn run(&mut self, before: &[Token], after: &[Token], histogram: &mut Histogram) {
--        let mut pos = 0;
--        while let Some(&token) = after.get(pos as usize) {
--            if histogram.num_token_occurrences(token) != 0 {
--                self.found_cs = true;
--                if histogram.num_token_occurrences(token) <= self.min_occurrences {
--                    pos = self.update_lcs(pos, token, histogram, before, after);
--                    continue;
--                }
-+    fn scan(
-+        &mut self,
-+        before: &[Token],
-+        after: &[Token],
-+        occurrences: &impl Occurrences,
-+        mut pos: u32,
-+        seed_end: u32,
-+    ) -> u32 {
-+        let seeds = &after[..seed_end as usize];
-+        while let Some(&token) = seeds.get(pos as usize) {
-+            let count = occurrences.count(token);
-+            if self.can_seed(count) {
-+                pos = self.update_lcs(pos, token, count, occurrences, before, after);
-+                continue;
-             }
--
-             pos += 1;
-         }
-+        pos
-+    }
- 
--        histogram.clear();
-+   
+-    let head_name =
+-        gix_ref::FullName::try_from(BString::from(format!("refs/remotes/{remote_name}/HEAD"))).or_error()?;
++    let head_name = gix_ref::FullName::try_from(crate::remote::remote_tracking_ref(remote_name, b"HEAD")).or_error()?;
+     repo.edit_reference(gix_ref::transaction::RefEdit::update_with_log(
+         head_name.clone(),
+         gix_ref::FullName::try_from(tracking_branch.clone()).or_error()?,
 ```
 
 #### Recent Merged Pull Requests:
@@ -2953,31 +2493,32 @@ fix(gix-imara-diff): make histogram diffs match `git diff --histogram`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gix-imara-diff): make histogram diffs match `git diff --histogram`
+## X. gix-tix): avoid symlink probes during incremental status
 
 **RULE**:
-When implementing operations in `gix-imara-diff/src/histogram.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gix-tix/spec.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c726fd41`: gix-imara-diff): make histogram diffs match `git diff --histogram`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e1c01c5`: gix-tix): avoid symlink probes during incremental status. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix-imara-diff/src/histogram.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix-tix/spec.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-const MAX_CHAIN_LEN: u32 = 64;
+- The changes pane reads `core.ignoreCase` directly when matching refreshed
+  paths against cached rows, keeping symlink probes out of the worktree event stream.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-const MAX_CHAIN_LEN: u32 = 63;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c726fd41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e1c01c5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
