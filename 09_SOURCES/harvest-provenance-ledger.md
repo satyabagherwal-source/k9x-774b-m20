@@ -13799,3 +13799,4 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `be2a5221` | Multi-dimensional audit evidence | 2026-11-27T10:51:52.452Z |
 | `learn-github-melnixdev-seo-crawl-audit` | `https://github.com/MelnixDev/seo-crawl-audit` | `c4836429` | Multi-dimensional audit evidence | 2026-11-27T10:51:56.099Z |
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `343ee79d` | Multi-dimensional audit evidence | 2026-11-27T10:51:56.632Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `83b4c539` | Multi-dimensional audit evidence | 2026-11-27T11:03:06.711Z |

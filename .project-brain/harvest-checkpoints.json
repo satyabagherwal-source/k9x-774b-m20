@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T10:51:56.647Z",
+  "last_updated": "2026-11-27T11:03:06.723Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "37cf85b82bd0c44a2ade9cfb87f32da1f028bd181d6eb0023cc3f98cf7f09174",
-      "verified_at": "2026-11-26T10:30:54.090Z",
+      "content_hash": "7cfd284d2d79928942c16363d58e390954ed2b66bc3a9c2d60cb768182d3f4cf",
+      "verified_at": "2026-11-27T11:03:06.722Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T10:30:54.090Z"
+      "last_updated": "2026-11-27T11:03:06.722Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T10:52:01.057Z",
-    "lastVerified": "2026-11-27T10:52:01.057Z",
+    "lastChecked": "2026-11-27T11:03:10.461Z",
+    "lastVerified": "2026-11-27T11:03:10.461Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -290,9 +290,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-27T10:26:03.596Z",
+    "lastChecked": "2026-11-27T11:03:10.452Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-27T10:26:03.596Z"
+    "lastVerified": "2026-11-27T11:03:10.452Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -610,9 +610,9 @@
   "surrealdb-surrealdb": {
     "name": "surrealdb",
     "officialUrl": "https://github.com/surrealdb/surrealdb",
-    "lastChecked": "2026-11-26T16:40:39.573Z",
+    "lastChecked": "2026-11-27T11:03:08.068Z",
     "revisionIdentifier": "1b73f91b",
-    "lastVerified": "2026-11-26T16:40:39.573Z"
+    "lastVerified": "2026-11-27T11:03:08.068Z"
   },
   "hf-baai-bge-small-en-v1.5": {
     "name": "BAAI/bge-small-en-v1.5",
@@ -1449,8 +1449,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T06:06:07.398Z",
-    "lastVerified": "2026-11-27T06:06:07.398Z",
+    "lastChecked": "2026-11-27T11:03:05.446Z",
+    "lastVerified": "2026-11-27T11:03:05.446Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -4747,9 +4747,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-26T17:39:18.925Z",
+    "lastChecked": "2026-11-27T11:03:02.957Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-26T17:39:18.925Z"
+    "lastVerified": "2026-11-27T11:03:02.957Z"
   },
   "typedb-typedb": {
     "name": "typedb",
@@ -8396,9 +8396,9 @@
   "louiscad-splitties": {
     "name": "Splitties",
     "officialUrl": "https://github.com/LouisCAD/Splitties",
-    "lastChecked": "2026-11-25T02:10:23.778Z",
+    "lastChecked": "2026-11-27T11:03:00.466Z",
     "revisionIdentifier": "1ed56ba2",
-    "lastVerified": "2026-11-25T02:10:23.778Z"
+    "lastVerified": "2026-11-27T11:03:00.466Z"
   },
   "killercup-cargo-edit": {
     "name": "cargo-edit",
@@ -9082,14 +9082,14 @@
     "officialUrl": "https://github.com/apache/arrow",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-26T10:30:52.570Z",
-    "lastVerified": "2026-11-26T10:30:52.570Z",
+    "lastChecked": "2026-11-27T11:02:59.088Z",
+    "lastVerified": "2026-11-27T11:02:59.088Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-arrow",
-    "contentHash": "37cf85b82bd0c44a2ade9cfb87f32da1f028bd181d6eb0023cc3f98cf7f09174",
+    "contentHash": "7cfd284d2d79928942c16363d58e390954ed2b66bc3a9c2d60cb768182d3f4cf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9511,9 +9511,9 @@
   "istifano-seo-auditor": {
     "name": "seo-auditor",
     "officialUrl": "https://github.com/ISTIFANO/seo-auditor",
-    "lastChecked": "2026-11-24T01:15:31.156Z",
+    "lastChecked": "2026-11-27T11:02:57.970Z",
     "revisionIdentifier": "87ba51e6",
-    "lastVerified": "2026-11-24T01:15:31.156Z"
+    "lastVerified": "2026-11-27T11:02:57.970Z"
   },
   "github-copilotforxcode": {
     "name": "CopilotForXcode",

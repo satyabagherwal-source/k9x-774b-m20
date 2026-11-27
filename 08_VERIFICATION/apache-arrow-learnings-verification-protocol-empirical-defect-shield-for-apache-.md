@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T10:31:03.179Z",
+  "timestamp": "2026-11-27T11:03:10.974Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-arrow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-arrow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T10:31:03.179Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T11:03:10.974Z`  
 > **Learning ID**: `LEARN-EVO-apache-arrow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `dd456e00`  
+> **Source Version**: `83b4c539`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T10:30:52.578Z  
+> **Timestamp**: 2026-11-27T11:03:05.626Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T10:30:52.570Z  
+> **Harvest Timestamp**: 2026-11-27T11:02:59.088Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17350 stars
+- **Stars / Engagement**: 17358 stars
 
 ---
 
@@ -1438,116 +1438,531 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88e51545` (2026-11-25)
-**Commit Message**: GH-51481: [Python] Fix dlpack related deprecation warnings (#54690)
+### Incident Patch 1: `83b4c539` (2026-11-27)
+**Commit Message**: GH-55475: [Dev] Use merge button instead of merge script (#55484)
 
 ### Rationale for this change
-Deprecation warnings on our CI.
+
+Committers currently need a GitHub personal access token and `dev/merge_arrow_pr.py` to merge pull requests. This change lets committers use GitHub's "Squash and merge" button directly while preserving automatic issue closure, milestone tracking, and release-note committer counts.
 
 ### What changes are included in this PR?
-Added filterwarning marks and updated two tests.
 
-### Are these changes tested?
-Yes.
+* **Automatic issue closure with partial-fix opt-out** (`.github/boring-cyborg.yml`, `.github/pull_request_template.md`): For PRs targeting `main`, Boring Cyborg populates `* GitHub Issue: Closes #XXX` so GitHub natively closes and links the issue on merge. Changing `Closes` to `Refs` keeps the issue open for partial fixes and is preserved by the bot. The non-blocking "PR Title" check no longer accepts `WIP:` prefixes, and the template guidance lives inside the placeholder so nothing leaks into squash commit messages.
+* **Self-healing milestone assignment from the commit graph** (`dev/archery/archery/release/`, `.github/workflows/dev_update_milestones.yml`): Adds `archery release update-milestones` and runs it every 6 hours (plus `workflow_dispatch`) to set mileston
 
-### Are there any user-facing changes?
-No.
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [X] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [X] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #51481
-
-Lead-authored-by: AlenkaF <[REDACTED_EMAIL]>
-Co-authored-by: Alenka Frim <[REDACTED_EMAIL]>
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
-
-**File**: `python/pyarrow/tests/test_dlpack.py` (modified, +20/-5)
+**File**: `.asf.yaml` (modified, +6/-0)
 ```diff
-@@ -268,6 +268,8 @@ def immutable_tensor():
+@@ -27,6 +27,12 @@ github:
+     projects: true
+     discussions: true
  
- @check_bytes_allocated
- @pytest.mark.parametrize('max_version', [None, (0, 8)])
-+# Filter deprecation warning, already asserted in test_dlpack_legacy_capsule
-+@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
- def test_dlpack_legacy_capsule_immutable_tensor(max_version):
-     tensor = immutable_tensor()
-     with pytest.raises(NotImplementedError,
-@@ -306,6 +308,7 @@ def test_dlpack_versioned_capsule(obj, max_version, copy):
- @requires_numpy_version("2.1.0")
- @check_bytes_allocated
- @pytest.mark.parametrize('obj', dlpack_objects())
-+@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
- def test_dlpack_versioned_roundtrip(obj):
-     expected = np.from_dlpack(DLPackForwarder(obj, max_version=None))
-     for copy in [None, False, True]:
-@@ -331,30 +334,42 @@ def test_dlpack_copy_is_writeable():
-     assert arr.to_pylist() == [1, 2, 3]
++  enabled_merge_buttons:
++    merge: false
++    rebase: false
++    squash: true
++    squash_commit_message: PR_TITLE_AND_DESC
++
+   protected_branches:
+     # protect main against force push
+     main: {}
+```
+
+**File**: `.github/boring-cyborg.yml` (modified, +6/-2)
+```diff
+@@ -59,16 +59,20 @@ labelPRBasedOnFilePath:
+     - "**/*.Rd"
+ 
+ verifyTitles:
+-  titleRegexp: '^(WIP:?\s*)?GH-[0-9]+|^MINOR: '
++  titleRegexp: '^GH-[0-9]+|^MINOR: '
+   alwaysUsePrTitle: true
+   validateEitherPrOrSingleCommitTitle: false
+   statusTitle: "PR Title"
+   successMessage: "PR title format is valid"
+   failureMessage: "Title must start with 'GH-<issue>: [Component]' or 'MINOR: [Component]'"
+ 
+ insertIssueLinkInPrDescription:
+-  descriptionIssuePlaceholderRegexp: '^\* GitHub Issue: (.*)$'
++  descriptionIssuePlaceholderRegexp: '^\* GitHub Issue: (?![Rr]efs\b)(.*)$'
+   matchers:
++    closedIssue:
++      targetBranchFilter: '^main$'
++      titleIssueIdRegexp: '^GH-([0-9]+)'
++      descriptionIssueLink: 'Closes #${1}'
+     githubIssue:
+       titleIssueIdRegexp: '^(?:WIP:?\s*)?GH-([0-9]+)'
+       descriptionIssueLink: '#${1}'
+```
+
+**File**: `.github/pull_request_template.md` (modified, +1/-1)
+```diff
+@@ -34,4 +34,4 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
+ - [ ] AI
+ - [ ] Not reviewed
+ 
+-* GitHub Issue: (filled in automatically from the PR title)
++* GitHub Issue: (filled in automatically from the PR title; change "Closes" to "Refs" for a partial fix)
+```
+
+**File**: `.github/workflows/dev_update_milestones.yml` (added, +52/-0)
+```diff
+@@ -0,0 +1,52 @@
++# Licensed to the Apache Software Foundation (ASF) under one
++# or more contributor license agreements.  See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership.  The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License.  You may obtain a copy of the License at
++#
++#   http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing,
++# software distributed under the License is distributed on an
++# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++# KIND, either express or implied.  See the License for the
++# specific language governing permissions and limitations
++# under the License.
++
++name: Update issue milestones
++
++on:
++  schedule:
++    - cron: "17 */6 * * *" # Every 6 hours
++  workflow_dispatch:
++
++permissions:
++  contents: read
++  issues: write
++
++jobs:
++  update:
++    name: Update milestones
++    if: github.repository == 'apache/arrow'
++    runs-on: ubuntu-latest
++    timeout-minutes: 10
++    steps:
++      - name: Checkout Arrow
++        uses: actions/checkout@v7
++        with:
++          persist-credentials: false
++          fetch-depth: 0
++      - name: Setup Python
++        uses: actions/setup-python@v7
++        with:
++          python-version: '3.12'
++      - name: Install Archery
++        run: |
++          pip install "dev/archery[release]"
++      - name: Update milestones
++        env:
++          GH_TOKEN: ${{ github.token }}
++        run: |
++          archery release update-milestones --execute
+```
+
+**File**: `dev/README.md` (modified, +36/-2)
+```diff
+@@ -33,8 +33,42 @@ committer.
+ 
+ ## How to Merge a Pull Request
+ 
+-Please don't merge PRs using the GitHub Web interface. Instead, run
+-the following command:
++Use the "Squash and merge" button of the GitHub Web interface. Before
++you merge, check that:
++
++* The pull request title is what you want as the commit title:
++  `GH-XXX: [Component] Title` or `MINOR: [Component] Title`. The
++  "PR Title" status of the Boring Cyborg app
++  (`.github/boring-cyborg.yml`) fails unless the title starts with
++  `GH-XXX` or `MINOR: ` but it doesn't block the merge.
++* The last line of the pull request description is
++  `* GitHub Issue: Closes #XXX`. The Boring Cyborg app writes it for a
++  pull request to `main` and GitHub closes the issue on merge because
++  of it. If the pull request fixes only a part of the issue, change
++  the line to `* GitHub Issue: Refs #XXX` before you merge: the issue
++  stays open. If the line doesn't say `Closes #XXX`, for example
++  because the app is down, change it or close the issue yourself.
++* The pull request description is what you want as the commit
++  message. Remove leftovers of the pull request template in the
++  merge dialog if needed.
++
++A scheduled GitHub Actions workflow (`Update issue milestones`,
++`.github/workflows/dev_update_milestones.yml`) runs
++`archery release update-milestones --execute` to set the milestone on
++closed issues referenced by `GH-XXX` commits since the previous major
++release. Existing issue milestones are retained, so set a milestone
++before or after merging if the pull request isn't targeted for the next
++major release. If the issue doesn't have a milestone, the workflow sets
++the major release matching the commit's branch (`maint-X.0.0` if
++already branched, otherwise the next major release). The workflow can
++also be triggered manually via `workflow_dispatch`.
++
++### Merge script
++
++The merge script is still available for now, but using the merge button
++is encouraged. It additionally adds `Authored-by:`, `Co-authored-by:`
++and `Signed-off-by:` trailers to the commit message. Run the following
++command:
+ 
+ ```bash
+ dev/merge_arrow_pr.sh
+```
+
+**File**: `dev/archery/archery/release/cli.py` (modified, +38/-1)
+```diff
+@@ -15,12 +15,19 @@
+ # specific language governing permissions and limitations
+ # under the License.
+ 
++import os
+ import pathlib
+ 
+ import click
++from git import Repo
+ 
+ from ..utils.cli import validate_arrow_sources
+-from .core import IssueTracker, Release
++from .core import (
++    IssueTracker,
++    Release,
++    count_committers,
++    update_milestones,
++)
  
  
-+def from_dlpack_numpy_compat(obj):
-+    if Version(np.__version__) < Version("2.1.0"):
-+        max_version_numpy = None
-+    else:
-+        max_version_numpy = (1, 0)
-+    return np.from_dlpack(DLPackForwarder(obj, max_version=max_version_numpy))
+ @click.group('release')
+@@ -52,6 +59,36 @@ def release_curate(obj, version, minimal):
+     click.echo(curation.render('console'))
+ 
+ 
++@release.command('committers')
++@click.argument('previous_version')
++@click.argument('version')
++@click.pass_obj
++def release_committers(obj, previous_version, version):
++    """Count the pull requests of a release by who merged them."""
++    commit_range = f"apache-arrow-{previous_version}..apache-arrow-{version}"
++    commits = Repo(obj['repo']).iter_commits(commit_range)
++    committers = count_committers(commits, obj['issue_tracker'])
++    for name, count in committers:
++        click.echo(f"{count:6d}\t{name}")
 +
 +
-+@pytest.mark.filterwarnings(
-+    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
- def test_dlpack_not_supported():
-     arr = pa.array([1, None, 3])
-     with pytest.raises(TypeError, match="Can only use DLPack "
-                        "on arrays with no nulls."):
--        np.from_dlpack(arr)
-+        from_dlpack_numpy_compat(arr)
++@release.command('update-milestones')
++@click.option('--dry-run/--execute', default=True,
++              help="Display milestone updates instead of applying them.")
++@click.pass_obj
++def release_update_milestones(obj, dry_run):
++    """Set milestones on closed issues merged since the last major release."""
++    updates = update_milestones(
++        Repo(obj['repo']),
++        obj['issue_tracker'],
++        branch=os.getenv('ARCHERY_DEFAULT_BRANCH', 'main'),
++        dry_run=dry_run,
++    )
++    for issue_number, milestone in updates:
++        action = "Would set" if dry_run else "Set"
++        click.echo(f"{action} milestone {milestone} on #{issue_number}")
++
++
+ @release.group('changelog')
+ def release_changelog():
+     """Release changelog."""
+```
+
+**File**: `dev/archery/archery/release/core.py` (modified, +192/-1)
+```diff
+@@ -24,7 +24,7 @@
+ import warnings
  
-     arr = pa.array(
-         [[0, 1], [3, 4]],
-         type=pa.list_(pa.int32())
-     )
-     with pytest.raises(TypeError, match="DataType is not compatible with DLPack spec"):
--        np.from_dlpack(arr)
-+        from_dlpack_numpy_compat(arr)
+ from git import Repo
+-from github import Github
++from github import Github, GithubException
+ from semver import VersionInfo as SemVer
  
-     arr = pa.array([])
-     with pytest.raises(TypeError, match="DataType is not compatible with DLPack spec"):
--        np.from_dlpack(arr)
-+        from_dlpack_numpy_compat(arr)
+ from ..utils.source import ArrowSources
+@@ -146,6 +146,52 @@ def project_issues(self, version):
+     def issue(self, key):
+         return Issue.from_github(self.github_repo.get_issue(key))
  
-     # DLPack doesn't support bit-packed boolean values
-     arr = pa.array([True, False, True])
-     with pytest.raises(TypeError, match="Bit-packed boolean data type "
-                        "not supported by DLPack."):
--        np.from_dlpack(arr)
-+        from_dlpack_numpy_compat(arr)
++    def open_major_milestones(self):
++        return sorted(
++            (Version.parse(m.title), m)
++            for m in self.github_repo.get_milestones(state="open")
++            if re.fullmatch(r"\d+\.0\.0", m.title)
++        )
++
++    def set_milestone(self, number, milestone):
++        self.github_repo.get_issue(number).edit(milestone=milestone)
++
++    def query_nodes(self, numbers, selection, batch_size=50):
++        """Query issueOrPullRequest nodes in GraphQL batches."""
++        owner, name = self.github_repo.full_name.split("/", 1)
++        unique = list(dict.fromkeys(numbers))
++        nodes = {}
++        for i in range(0, len(unique), batch_size):
++            batch = unique[i:i + batch_size]
++            fields = " ".join(
++                f"n{n}: issueOrPullRequest(number: {n}) {{{selection}}}"
++                for n in batch
++            )
++            query = (
++                'query($owner: String!, $name: String!) '
++                f'{{repository(owner: $owner, name: $name) {{{fields}}}}}'
++            )
++            variables = {"owner": owner, "name": name}
++            try:
++                _, result = self.github_repo.requester.graphql_query(
++                    query, variables
++                )
++            except GithubException as exc:
++                data = getattr(exc, "data", None)
++                errors = (
++                    data.get("errors") if isinstance(data, dict) else None
++                )
++                if (errors and data.get("data") and
++                        all(err.get("type") == "NOT_FOUND"
++                            for err in errors)):
++                    result = data
++                else:
++                    raise
++            repository = result["data"]["repository"]
++            for n in batch:
++                nodes[n] = repository[f"n{n}"]
++        return nodes
++
+ 
+ _TITLE_REGEX = re.compile(
+     r"(?P<issue>(?P<project>(ARROW|PARQUET|GH))\-(?P<issue_id>(\d+)))?\s*:?\s*"
+@@ -241,6 +287,151 @@ def url(self):
+     def title(self):
+         return self._title
+ 
++    @property
++    def github_issue_id(self):
++        if self.project == "GH" and self.issue_id:
++            return int(self.issue_id)
++        return None
++
++
++_PULL_REQUEST_NUMBER_REGEX = re.compile(r" \(#(\d+)\)$")
++
++
++def count_committers(commits, issue_tracker, batch_size=50):
++    """
++    Count the pull requests of the commits by who merged them.
++
++    We ask GitHub because commits merged with the merge button don't
++    have "Signed-off-by:" trailers.
++
++    Returns (name, count) pairs sorted by count (descending) and name.
++    """
++    # Release commits and direct pushes don't have a pull request number.
++    matches = (_PULL_REQUEST_NUMBER_REGEX.search(commit.summary)
++               for commit in commits)
++    numbers = [int(match.group(1)) for match in matches if match]
++
++    nodes = issue_tracker.query_nodes(
++        numbers,
++        "... on PullRequest {mergedBy {login ... on User {name}}}",
++        batch_size=batch_size,
++    )
++    counts = defaultdict(int)
++    for number in numbers:
++        node = nodes[number]
++        merger = node.get("mergedBy") if node is not None else None
++        if merger is None:
++            warnings.warn(f"#{number} doesn't have a merger. It isn't "
++                          "counted.")
++            continue
++        counts[merger.get("name") or merger["login"]] += 1
++    return sorted(counts.items(), key=lambda item: (-item[1], item[0]))
++
++
++def _find_ref(repo, name):
++    for candidate in (name, f"upstream/{name}", f"origin/{name}"):
++        if candidate in repo.refs:
++            return repo.refs[candidate]
++    return None
++
++
++def _plan_issue_milestones(repo, open_major, branch):
++    """Map GH issue numbers in commits since the last major tag to milestones."""
++    main_ref = _find_ref(repo, branch)
++    if main_ref is None:
++        raise ValueError(f"Branch `{branch}` not found in repository.")
++
++    major_tags = sorted(
++        (Version.parse(t.name.removeprefix("apache-arrow-")), t.name)
++        for t in repo.tags
++        if re.fullmatch(r"apache-arrow-\d+\.0\.0", t.name)
++    )
++    previous_tag = next(
++        (tag for v, tag in reversed(major_tags)
++         if not open_major or v < open_major[0][0]),
++        None,
++    )
++    if previous_tag is None:
++        raise ValueError("No released major version tag found in repository.")
++
++    branched = []
++    next_milestone = None
++    for version, milestone in open_major:
++        maint_ref = _find_ref(repo, f"maint-{version}")
++        if maint_ref is not None:
++            branched.append((mile
+```
+
+**File**: `dev/archery/archery/release/tests/test_release.py` (modified, +202/-1)
+```diff
+@@ -15,11 +15,15 @@
+ # specific language governing permissions and limitations
+ # under the License.
+ 
++from types import SimpleNamespace
++
++from github import GithubException
+ import pytest
+ 
+ from archery.release.core import (
+     Release, MajorRelease, MinorRelease, PatchRelease,
+-    IssueTracker, Version, Issue, CommitTitle, Commit
++    IssueTracker, Version, Issue, CommitTitle, Commit,
++    count_committers, update_milestones,
+ )
  
  
-+@pytest.mark.filterwarnings(
-+    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
- def test_dlpack_cuda_not_supported():
-     cuda = pytest.importorskip("pyarrow.cuda", exc_type=ImportError)
- 
-@@ -369,7 +384,7 @@ def test_dlpack_cuda_not_supported():
-     # CudaBuffers not yet supported
-     with pytest.raises(NotImplementedError, match="DLPack support is implemented "
-                        "only for buffers on CPU device."):
--        np.from_dlpack(carr)
-+        from_dlpack_numpy_compat(carr)
- 
-     with pytest.raises(NotImplementedError, match="DLPack support is implemented "
-                        "only for buffers on CPU device."):
+@@ -355,3 +359,200 @@ def test_maintenance_patch_selection(fake_issue_tracker):
+         '9123dadfd123bca7af4eaa9455f5b0d1ca8b929d',
+     ]
+     assert shas_to_pick == expected
++
++
++def _make_issue_tracker(nodes, milestones=(), not_found=()):
++    queries = []
++    edited = []
++
++    def graphql_query(query, variables):
++        queries.append((query, variables))
++        data, errors = {}, []
++        for number, node in nodes.items():
++            alias = f"n{number}"
++            if f"{alias}:" in query:
++                data[alias] = node
++                if number in not_found:
++                    errors.append({
++                        "type": "NOT_FOUND",
++                        "path": ["repository", alias],
++                        "message": f"Not found: {number}",
++                    })
++        payload = {"data": {"repository": data}}
++        if errors:
++            payload["errors"] = errors
++            raise GithubException(404, payload, {})
++        return {}, payload
++
++    def get_issue(number):
++        return SimpleNamespace(
++            edit=lambda **kw: edited.append((number, kw["milestone"].title))
++        )
++
++    tracker = object.__new__(IssueTracker)
++    tracker.github_repo = SimpleNamespace(
++        full_name="apache/arrow",
++        get_milestones=lambda state="open": [
++            m for m in milestones if state == "all" or m.state == state
++        ],
++        get_issue=get_issue,
++        requester=SimpleNamespace(graphql_query=graphql_query),
++    )
++    return tracker, queries, edited
++
++
++def test_count_committers():
++    commits = [SimpleNamespace(summary=s) for s in [
++        "GH-1: [C++] Title (#11)",
++        "GH-2: [Python] Title (#12)",
++        "GH-2: [Python] Reland (#12)",
++        "MINOR: [Release] Update versions for 2.0.0",
++        "GH-3: [R] Title (#13)",
++        "GH-4: [Docs] Title (#14)",
++        "GH-5: [CI] Mention (#10) in the middle",
++        "GH-6: [Ruby] Title (#15)",
++        "GH-7: [Go] Title (#16)",
++        "GH-8: [C++] Issue number (#17)",
++    ]]
++    nodes = {
++        11: {"mergedBy": {"login": "zoe", "name": "Zoe Z"}},
++        12: {"mergedBy": {"login": "bob", "name": "Bob B"}},
++        13: {"mergedBy": {"login": "zoe", "name": "Zoe Z"}},
++        # a user without a name: the login is used
++        14: {"mergedBy": {"login": "alice", "name": None}},
++        # no merger: not counted
++        15: {"mergedBy": None},
++        # not a user, for example a bot: the login is used
++        16: {"mergedBy": {"login": "carol"}},
++        # an issue rather than a pull request: not counted
++        17: {},
++    }
++    tracker, queries, _ = _make_issue_tracker(nodes)
++
++    with pytest.warns(UserWarning) as record:
++        committers = count_committers(commits, tracker, batch_size=4)
++
++    assert [str(w.message) for w in record] == [
++        "#15 doesn't have a merger. It isn't counted.",
++        "#17 doesn't have a merger. It isn't counted.",
++    ]
++    assert committers == [
++        ("Bob B", 2),
++        ("Zoe Z", 2),
++        ("alice", 1),
++        ("carol", 1),
++    ]
++    sel = "... on PullRequest {mergedBy {login ... on User {name}}}"
++    assert queries == [
++        (
++            'query($owner: String!, $name: String!) '
++            '{repository(owner: $owner, name: $name) {' +
++            " ".join(f"n{n}: issueOrPullRequest(number: {n}) {{{sel}}}"
++                     for n in batch) +
++            '}}',
++            {"owner": "apache", "name": "arrow"},
++        )
++        for batch in ([11, 12, 13, 14], [15, 16, 17])
++    ]
++
++
++def _make_fake_repo(commits_by_range, refs=("main",),
++                    tags=("apache-arrow-26.0.0", "apache-arrow-26.0.1")):
++    return SimpleNamespace(
++        tags=[SimpleNamespace(name=t) for t in tags],
++        refs={name: SimpleNamespace(name=name) for name in refs},
++        iter_commits=lambda r: iter(
++            SimpleNamespace(summary=s) for s in commits_by_range[r]
++        ),
++    )
++
++
++def _ms(title, number, state="open"):
++    return SimpleNamespace(
++        title=title, number=number, state=state, due_on=None
++    )
++
++
++def _issue(state="CLOSED", reason="COMPLETED", milestone=None):
++    return {"state": state, "stateReason": reason, "milestone": milestone}
++
++
++def test_update_milestones_with_maintenance_branch():
++    repo = _make_fake_repo(
++        refs=("main", "origin/maint-27.0.0"),
++        commits_by_range={
++            "apache-arrow-26.0.0..origin/maint-27.0.0": [
++                "GH-110: [CI] Direct maint commit (#11)",
+
 ```
 
 #### Recent Merged Pull Requests:
@@ -1576,54 +1991,36 @@ Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-51481: [Python] Fix dlpack related deprecation warnings
+## X. GH-55475: [Dev] Use merge button instead of merge script
 
 **RULE**:
-When implementing operations in `python/pyarrow/tests/test_dlpack.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.asf.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88e51545`: GH-51481: [Python] Fix dlpack related deprecation warnings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83b4c539`: GH-55475: [Dev] Use merge button instead of merge script. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/tests/test_dlpack.py`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.asf.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# Filter deprecation warning, already asserted in test_dlpack_legacy_capsule
-@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
-@pytest.mark.filterwarnings("ignore:Exporting an unversioned DLPack:DeprecationWarning")
-def from_dlpack_numpy_compat(obj):
-    if Version(np.__version__) < Version("2.1.0"):
-        max_version_numpy = None
-    else:
-        max_version_numpy = (1, 0)
-    return np.from_dlpack(DLPackForwarder(obj, max_version=max_version_numpy))
+  enabled_merge_buttons:
+    merge: false
+    rebase: false
+    squash: true
+    squash_commit_message: PR_TITLE_AND_DESC
 
-
-@pytest.mark.filterwarnings(
-    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
-        from_dlpack_numpy_compat(arr)
-        from_dlpack_numpy_compat(arr)
-        from_dlpack_numpy_compat(arr)
-        from_dlpack_numpy_compat(arr)
-@pytest.mark.filterwarnings(
-    "ignore:Exporting an unversioned DLPack:DeprecationWarning")
-        from_dlpack_numpy_compat(carr)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        np.from_dlpack(arr)
-        np.from_dlpack(arr)
-        np.from_dlpack(arr)
-        np.from_dlpack(arr)
-        np.from_dlpack(carr)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88e51545` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83b4c539` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

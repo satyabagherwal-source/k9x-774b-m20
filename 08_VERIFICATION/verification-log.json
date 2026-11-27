@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-C7PK",
-    "timestamp": "2026-11-26T04:39:17.768Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "eadcb5997c4f975ddc635bb6ca1fbab0daf808f2702036ab0717784445b87a24",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-N0PM",
     "timestamp": "2026-11-26T04:47:41.914Z",
     "repository": "Edge0/Edge0-145B-NVFP4",
@@ -7490,6 +7475,21 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "learningId": "learn-github-crosspaste-crosspaste-desktop",
     "contentHash": "d58328dee28e6e8007160050bafc9cff47cee18885e03fe937925bddb0980afb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-HNM1",
+    "timestamp": "2026-11-27T11:03:06.697Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "7cfd284d2d79928942c16363d58e390954ed2b66bc3a9c2d60cb768182d3f4cf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

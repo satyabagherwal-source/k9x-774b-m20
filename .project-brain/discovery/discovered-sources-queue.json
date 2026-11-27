@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T10:52:03.273Z",
+  "updated_at": "2026-11-27T11:03:10.831Z",
   "stats": {
-    "total_discovered": 10292,
-    "approved_pending_harvest": 9763,
+    "total_discovered": 10293,
+    "approved_pending_harvest": 9764,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9767,
+      "COMMUNITY_AND_EXPERT": 9768,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -222748,6 +222748,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md",
         "fileName": "crosspaste-crosspaste-desktop-learnings.md"
+      }
+    },
+    "SRC-3E98262A08CF": {
+      "id": "SRC-3E98262A08CF",
+      "url": "https://arrow.apache.org/docs/de",
+      "title": "https://arrow.apache.org/docs/de",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T11:03:10.830Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
       }
     }
   }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T10:52:03.749Z",
-  "total_records": 2827,
+  "last_updated": "2026-11-27T11:03:12.958Z",
+  "total_records": 2829,
   "domains": {
     "A": {
       "total": 23,
@@ -1251,7 +1251,7 @@
       ]
     },
     "G": {
-      "total": 486,
+      "total": 488,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1738,7 +1738,9 @@
         "domain_intelligence-architecture-intelligence-litmuschaos-litmus-core-invariants",
         "domain_intelligence-architecture-intelligence-litmuschaos-litmus-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-core-invariants",
-        "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-abue-ammar-tinycast-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-apache-arrow-core-invariants",
+        "domain_intelligence-architecture-intelligence-apache-arrow-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9560,8 +9562,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d53ca86a44be304b984d4a375630bdb11a5b878ec9b5a5eb02673cc189f48279",
-      "created_at": "2026-11-27T08:58:57.562Z"
+      "content_hash": "731446c5ccae66c17a837c1eeb64f1230b38833c4f6611b861a1fc6d337b53f9",
+      "created_at": "2026-11-27T11:03:12.041Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -46774,8 +46776,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "8003b97206e889b539faf8f2cdb86579fca11aed340ea9e8914a23996ec93bf9",
-      "created_at": "2026-11-27T08:46:49.684Z"
+      "content_hash": "b5224e14d70fbf6023936452de7254944d31e24d464198aa5fa6f60df5b11ee1",
+      "created_at": "2026-11-27T11:03:12.958Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",
@@ -47743,6 +47745,24 @@
       "repository": "oxc-project-oxc-learnings",
       "content_hash": "07774261b76683e5bc982956d1dc9f85bf646ffa4baac9b00b349e8690958730",
       "created_at": "2026-11-27T09:44:59.200Z"
+    },
+    "domain_intelligence-architecture-intelligence-apache-arrow-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-apache-arrow-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: apache/arrow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-apache-arrow-architecture-intelligence-apache-arrow-core-invariants.md",
+      "repository": "apache/arrow",
+      "content_hash": "8a0e3ab8b386245ca8f94141d968f45c2b3c6ae2f7307f386f786c0db565ed42",
+      "created_at": "2026-11-27T11:03:07.134Z"
+    },
+    "domain_intelligence-architecture-intelligence-apache-arrow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-apache-arrow-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: apache-arrow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-apache-arrow-learnings-architecture-intelligence-apache-arrow-learnings-core-inv.md",
+      "repository": "apache-arrow-learnings",
+      "content_hash": "bab24869d4edc11e8af1627c8447fb9f8a3fe60429fb2a87faa76cb17b3dc680",
+      "created_at": "2026-11-27T11:03:11.250Z"
     }
   }
 }

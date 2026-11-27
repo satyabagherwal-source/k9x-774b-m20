@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T10:51:56.644Z",
-  "total_cycles_completed": 13066,
-  "total_learnings_persisted": 13066,
-  "total_rules_promoted": 11795,
+  "last_updated": "2026-11-27T11:03:06.720Z",
+  "total_cycles_completed": 13067,
+  "total_learnings_persisted": 13067,
+  "total_rules_promoted": 11796,
   "history": [
-    {
-      "timestamp": "2026-11-26T20:59:31.445Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T20:59:33.820Z",
       "repository": "svenstaro/miniserve",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T10:51:56.644Z",
       "repository": "CrossPaste/crosspaste-desktop",
       "learningId": "learn-github-crosspaste-crosspaste-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T11:03:06.720Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
