@@ -13785,3 +13785,4 @@
 | `CYCLE-20261127-A1AF` | `2026-11-27T12:21:10.023Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10897` | Yes (`d9d130e1...`) |
 | `CYCLE-20261127-A5GO` | `2026-11-27T12:21:15.432Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10898` | Yes (`2de16b4c...`) |
 | `CYCLE-20261127-ABHR` | `2026-11-27T12:21:23.247Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10899` | Yes (`58369d31...`) |
+| `CYCLE-20261127-OQNF` | `2026-11-27T12:32:36.075Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10900` | Yes (`38a06a56...`) |

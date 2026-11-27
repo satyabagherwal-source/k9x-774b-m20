@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T12:21:23.277Z",
+  "last_updated": "2026-11-27T12:32:36.113Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "5372326bc413354af31bd7847202d1f226f55d8bd576fd06045ae273f5da2081",
-      "verified_at": "2026-11-26T12:20:00.420Z",
+      "content_hash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
+      "verified_at": "2026-11-27T12:32:36.112Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T12:20:00.420Z"
+      "last_updated": "2026-11-27T12:32:36.112Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

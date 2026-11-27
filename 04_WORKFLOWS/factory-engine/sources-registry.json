@@ -93,8 +93,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T12:21:26.645Z",
-    "lastVerified": "2026-11-27T12:21:26.645Z",
+    "lastChecked": "2026-11-27T12:32:43.060Z",
+    "lastVerified": "2026-11-27T12:32:43.060Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -405,8 +405,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T11:54:27.129Z",
-    "lastVerified": "2026-11-27T11:54:27.129Z",
+    "lastChecked": "2026-11-27T12:32:43.048Z",
+    "lastVerified": "2026-11-27T12:32:43.048Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1391,9 +1391,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-26T17:57:03.239Z",
+    "lastChecked": "2026-11-27T12:32:40.639Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-26T17:57:03.239Z"
+    "lastVerified": "2026-11-27T12:32:40.639Z"
   },
   "sharkdp-fd": {
     "name": "fd",
@@ -2271,8 +2271,8 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-27T07:30:36.315Z",
-    "lastVerified": "2026-11-27T07:30:36.315Z",
+    "lastChecked": "2026-11-27T12:32:38.281Z",
+    "lastVerified": "2026-11-27T12:32:38.281Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -5360,12 +5360,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "aws-aws-cdk": {
-    "name": "aws/aws-cdk",
+    "name": "aws-cdk",
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-26T18:58:55.809Z",
-    "lastVerified": "2026-11-26T18:58:55.809Z",
+    "lastChecked": "2026-11-27T12:32:35.671Z",
+    "lastVerified": "2026-11-27T12:32:35.671Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
@@ -5374,7 +5374,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ff323598"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -8754,9 +8755,9 @@
   "mohamedrejeb-compose-rich-editor": {
     "name": "compose-rich-editor",
     "officialUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
-    "lastChecked": "2026-11-25T03:36:46.094Z",
+    "lastChecked": "2026-11-27T12:32:33.127Z",
     "revisionIdentifier": "3254ff75",
-    "lastVerified": "2026-11-25T03:36:46.094Z"
+    "lastVerified": "2026-11-27T12:32:33.127Z"
   },
   "oxc-project-oxc": {
     "name": "oxc-project/oxc",
@@ -9454,14 +9455,14 @@
     "officialUrl": "https://github.com/tuist/tuist",
     "sourceType": "github",
     "technology": "Elixir",
-    "lastChecked": "2026-11-26T12:19:59.182Z",
-    "lastVerified": "2026-11-26T12:19:59.182Z",
+    "lastChecked": "2026-11-27T12:32:34.348Z",
+    "lastVerified": "2026-11-27T12:32:34.348Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tuist-tuist",
-    "contentHash": "5372326bc413354af31bd7847202d1f226f55d8bd576fd06045ae273f5da2081",
+    "contentHash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "recentFixesCount": 22,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9677,8 +9678,8 @@
     "officialUrl": "https://github.com/seo-skills/seo-audit-skill",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-24T02:30:56.973Z",
-    "lastVerified": "2026-11-24T02:30:56.973Z",
+    "lastChecked": "2026-11-27T12:32:30.570Z",
+    "lastVerified": "2026-11-27T12:32:30.570Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seo-skills-seo-audit-skill",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-45LV",
-    "timestamp": "2026-11-26T05:57:00.643Z",
-    "repository": "Abiray/MiniMax-H3-Image-GGUF",
-    "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
-    "contentHash": "cb3d3604b2fd1858cee0cf1b83cc08d1aa6c3251d3ad7eade44b9b70c63ab6d8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-4CZS",
     "timestamp": "2026-11-26T05:57:10.216Z",
     "repository": "envoyproxy/envoy",
@@ -7490,6 +7475,21 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "58369d3145a0f127dbcf448c65f2e7afef2f3bdc17117d38d9b0100ed77e8a38",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-OQNF",
+    "timestamp": "2026-11-27T12:32:36.075Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

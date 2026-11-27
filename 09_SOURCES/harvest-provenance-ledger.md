@@ -13818,3 +13818,4 @@ Every entry in this ledger must capture:
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `f9797ded` | Multi-dimensional audit evidence | 2026-11-27T12:21:10.039Z |
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `0f0c3c6d` | Multi-dimensional audit evidence | 2026-11-27T12:21:15.446Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `df7ba30c` | Multi-dimensional audit evidence | 2026-11-27T12:21:23.263Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `99a394b3` | Multi-dimensional audit evidence | 2026-11-27T12:32:36.093Z |

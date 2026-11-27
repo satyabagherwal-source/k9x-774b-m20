@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T12:21:29.586Z",
+  "last_updated": "2026-11-27T12:32:49.115Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26568,
+  "total_items": 26571,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "15ab5e90238de1dc76da0b95fb2ddac39ec5af103c26e22b352e3872acda14c8",
+      "content_hash": "8ce190596a0d70523d8ae5c25fd6945ed3214be20f6f67d0f203a6366c94526b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T11:54:33.194Z"
+      "persisted_at": "2026-11-27T12:32:48.876Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "21de691bd609b22819a1e1ac5eb78cbca1873016a1d93d6d6bddc22bca79c9bf",
+      "content_hash": "0639d928a150801b4fba8d2a27f4d5cbf333ce1c219a1d63b3dd8ba7ece18b01",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:54:33.424Z"
+      "persisted_at": "2026-11-27T12:32:49.115Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8c6512fa46196badd4e0d4d3f2bd43f1833e13ca289d40df146de80db110563",
+      "content_hash": "a5cce246e96df1bbc180d273d21423568fa01fa6a88f790be96bf579d5980c09",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T11:54:31.690Z"
+      "persisted_at": "2026-11-27T12:32:47.355Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -248506,8 +248506,8 @@
       "slug": "tuist-tuist",
       "platform": "github",
       "source_url": "https://github.com/tuist/tuist",
-      "source_version": "5482e782",
-      "content_hash": "5372326bc413354af31bd7847202d1f226f55d8bd576fd06045ae273f5da2081",
+      "source_version": "99a394b3",
+      "content_hash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
       "dossier_path": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "promoted_rules": [
@@ -248555,6 +248555,11 @@
           "number": 10672,
           "title": "serve the GPUI web edge at /app",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10900,
+          "title": "send security and incident reports to [REDACTED_EMAIL]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -248562,7 +248567,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T12:20:00.140Z",
+      "verified_at": "2026-11-27T12:32:35.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248604,10 +248609,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "repository": "tuist/tuist",
-      "source_version": "5482e782",
-      "content_hash": "bab0459e5107ce2b1b1555af3536d2cbf33b5bd661c45fdbcd614c67374ee229",
+      "source_version": "99a394b3",
+      "content_hash": "863a4f333d0bd09f553b2d8bf184810284e0259be717de61ef580d78e2b61705",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T12:20:00.859Z"
+      "persisted_at": "2026-11-27T12:32:36.730Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist",
@@ -248616,10 +248621,10 @@
       "relative_path": "08_VERIFICATION/tuist-tuist-verification-protocol-empirical-defect-shield-for-tuist-tuist.md",
       "title": "Verification Protocol: Empirical Defect Shield for tuist/tuist",
       "repository": "tuist/tuist",
-      "source_version": "5482e782",
-      "content_hash": "47e9a162dd7ef4190406ac5cb202bd3383ec66a546a219b01af1452688070e9f",
+      "source_version": "99a394b3",
+      "content_hash": "1b9fa3ef596a97b9e0b7d956e100de3a05d1055a8d8924573e134f895fb0b1f4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:20:01.076Z"
+      "persisted_at": "2026-11-27T12:32:37.227Z"
     },
     "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -248927,9 +248932,9 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "f90a441f319bc3ead4088a57660d59e5265538c6993fdb2d51dd1cb7258d3c05",
+      "content_hash": "474a24075d4a28ca66c46d3a35da43bc17a832da4a0304a32e726a7a3b82c1e1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T12:20:20.261Z"
+      "persisted_at": "2026-11-27T12:32:45.395Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings",
@@ -248939,9 +248944,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tuist-tuist-learnings",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "9bbd465f1e41d9b43b4e0bb4a6530009b738bd659d711565b291faf514cab1a2",
+      "content_hash": "0e8cce6c0c83f99b82d926a8ae2b48674f77cd1cdf5d1a0ac2865058cfd958c1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T12:20:20.461Z"
+      "persisted_at": "2026-11-27T12:32:45.903Z"
     },
     "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation": {
       "item_id": "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation",
@@ -300991,9 +300996,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa080fb604a4664613f389c0752365db1b16022560823126e225aeba0373718a",
+      "content_hash": "6a7965e72444a95ed70c6e756dc106945a7e3032489e0975c389241abbcfdf07",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T11:54:32.928Z"
+      "persisted_at": "2026-11-27T12:32:48.595Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -303545,10 +303550,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/tuist-tuist-agent-contract-tuist-tuist-autonomous-specialist-persona.md",
       "title": "Agent Contract: tuist/tuist Autonomous Specialist Persona",
       "repository": "tuist/tuist",
-      "source_version": "d7dac153",
-      "content_hash": "6ca4c1f568d300112c2bd10e6f34e2d0fc14eb140945980f9b020ce90d2e93aa",
+      "source_version": "99a394b3",
+      "content_hash": "b136dd693d9b672b7e47b45e571554a04737d9df4f803e3976d3dd1c2b7c8050",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T18:44:07.047Z"
+      "persisted_at": "2026-11-27T12:32:36.996Z"
     },
     "candidate_directive-add-introspection-benchmarks": {
       "item_id": "candidate_directive-add-introspection-benchmarks",
@@ -303594,9 +303599,9 @@
       "title": "Agent Contract: tuist-tuist-learnings Autonomous Specialist Persona",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9648a5c66a121edbfbe6d5f802a4acd0b440ff11548947f5763cb9d5c621525",
+      "content_hash": "622ead7f48412f4a24f18ccf9c42a040245f3f2d9d018a606184ec0f61249991",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T18:44:15.423Z"
+      "persisted_at": "2026-11-27T12:32:45.668Z"
     },
     "candidate_directive-docs-add-latest-release-badge-to-readme": {
       "item_id": "candidate_directive-docs-add-latest-release-badge-to-readme",
@@ -358246,13 +358251,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BRKL-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OYXP-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0a6934b4837f0e50bebec8163155875397a517bbb67da0738ba4c70141ae559",
+      "content_hash": "c9460a5f28e837d0fe9423d685bde6de9659ce22a649678df3b7c9b0dd0b8147",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T11:54:31.131Z"
+      "persisted_at": "2026-11-27T12:32:46.819Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358262,9 +358267,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2ab05a1e9cb52df390df27b92aa45916c387f271bf2173e0fcfa4905399f057",
+      "content_hash": "ff9dcd668aa87b32cce10a3bec8fa0bf3ea0e64838c4a650fd9133dd1bbb256a",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T11:54:31.408Z"
+      "persisted_at": "2026-11-27T12:32:47.089Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362732,13 +362737,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BSQC-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-P03G-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "976de6cb3cc5c1808a5d17c11718e899dc5acc46c779a03be65aa34ecc5e648c",
+      "content_hash": "2cfaef3d14c754401ab4a1445a8db53aa2c8e3b4008ee237ca4736326948c5b5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T11:54:32.629Z"
+      "persisted_at": "2026-11-27T12:32:48.317Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -364704,6 +364709,44 @@
       "content_hash": "29be233cfd67d12aebe2c94287c3bab2353161c74ded404e54ace72165a490d3",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T12:21:27.168Z"
+    },
+    "rule-10900": {
+      "learning_id": "rule-10900",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10900,
+      "title": "send security and incident reports to [REDACTED_EMAIL]",
+      "source_url": "https://github.com/tuist/tuist",
+      "source_version": "99a394b3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T12:32:35.758Z"
+    },
+    "candidate_directive-send-security-and-incident-reports-to-redacted_email": {
+      "item_id": "candidate_directive-send-security-and-incident-reports-to-redacted_email",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OQXB-send-security-and-incident-reports-to-redacted_email.md",
+      "title": "send security and incident reports to [REDACTED_EMAIL]",
+      "repository": "tuist/tuist",
+      "source_version": "99a394b3",
+      "content_hash": "51ea0a42fb0a117a0ead2777af70347977fb0a917bbf886676afee89d639df61",
+      "domain_letter": "M",
+      "persisted_at": "2026-11-27T12:32:36.433Z"
+    },
+    "candidate_directive-docs-send-security-and-incident-reports-to-redacted_email": {
+      "item_id": "candidate_directive-docs-send-security-and-incident-reports-to-redacted_email",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OXMO-docs-send-security-and-incident-reports-to-redacted_email.md",
+      "title": "docs: send security and incident reports to [REDACTED_EMAIL]",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "61883dd56a4fd3592d2c9b95ab05649cc8c48ee90f5b2145a9c678c4c4b6efcc",
+      "domain_letter": "M",
+      "persisted_at": "2026-11-27T12:32:45.122Z"
     }
   },
   "ai-builder-brain": {

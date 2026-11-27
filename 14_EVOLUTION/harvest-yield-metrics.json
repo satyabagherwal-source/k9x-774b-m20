@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T12:21:23.273Z",
-  "total_cycles_completed": 13084,
-  "total_learnings_persisted": 13084,
-  "total_rules_promoted": 11811,
+  "last_updated": "2026-11-27T12:32:36.107Z",
+  "total_cycles_completed": 13085,
+  "total_learnings_persisted": 13085,
+  "total_rules_promoted": 11812,
   "history": [
-    {
-      "timestamp": "2026-11-26T22:21:49.416Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T22:30:12.213Z",
       "repository": "inclusionAI/LingSante-3.1-flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T12:21:23.273Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T12:32:36.107Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

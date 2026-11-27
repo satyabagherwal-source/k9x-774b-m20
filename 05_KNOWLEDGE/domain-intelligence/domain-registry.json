@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T12:21:29.387Z",
+  "last_updated": "2026-11-27T12:32:48.595Z",
   "total_records": 2834,
   "domains": {
     "A": {
@@ -21170,8 +21170,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "bab0459e5107ce2b1b1555af3536d2cbf33b5bd661c45fdbcd614c67374ee229",
-      "created_at": "2026-11-26T12:20:00.859Z"
+      "content_hash": "863a4f333d0bd09f553b2d8bf184810284e0259be717de61ef580d78e2b61705",
+      "created_at": "2026-11-27T12:32:36.730Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -21197,8 +21197,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "f90a441f319bc3ead4088a57660d59e5265538c6993fdb2d51dd1cb7258d3c05",
-      "created_at": "2026-11-26T12:20:20.261Z"
+      "content_hash": "474a24075d4a28ca66c46d3a35da43bc17a832da4a0304a32e726a7a3b82c1e1",
+      "created_at": "2026-11-27T12:32:45.395Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -33964,8 +33964,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "aa080fb604a4664613f389c0752365db1b16022560823126e225aeba0373718a",
-      "created_at": "2026-11-27T11:54:32.928Z"
+      "content_hash": "6a7965e72444a95ed70c6e756dc106945a7e3032489e0975c389241abbcfdf07",
+      "created_at": "2026-11-27T12:32:48.595Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46781,8 +46781,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f2ab05a1e9cb52df390df27b92aa45916c387f271bf2173e0fcfa4905399f057",
-      "created_at": "2026-11-27T11:54:31.408Z"
+      "content_hash": "ff9dcd668aa87b32cce10a3bec8fa0bf3ea0e64838c4a650fd9133dd1bbb256a",
+      "created_at": "2026-11-27T12:32:47.089Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

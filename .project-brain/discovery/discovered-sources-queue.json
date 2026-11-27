@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T12:12:37.500Z",
+  "updated_at": "2026-11-27T12:32:44.777Z",
   "stats": {
-    "total_discovered": 10326,
-    "approved_pending_harvest": 9797,
+    "total_discovered": 10342,
+    "approved_pending_harvest": 9813,
     "harvested_count": 0,
     "rejected_count": 529,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9800,
+      "COMMUNITY_AND_EXPERT": 9816,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -223496,6 +223496,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
         "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-7A27D6B4DC47": {
+      "id": "SRC-7A27D6B4DC47",
+      "url": "https://tuist.dev/tuist/tuist/tests/test-runs/01a21c49-d762-7b0f-972f-7cab127a2a95",
+      "title": "https://tuist.dev/tuist/tuist/tests/test-runs/01a21c49-d762-7b0f-972f-7cab127a2a95",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:43.381Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-EE561197119E": {
+      "id": "SRC-EE561197119E",
+      "url": "https://github.com/tuist/tuist/commit/fdf46fcc2aa9efcc66f76e96595d66ac02135f1f",
+      "title": "https://github.com/tuist/tuist/commit/fdf46fcc2aa9efcc66f76e96595d66ac02135f1f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:43.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-0D89D3FD9D27": {
+      "id": "SRC-0D89D3FD9D27",
+      "url": "https://tuist.dev/tuist/tuist/tests/test-runs/01a21c49-064c-7267-b2f8-d4fe06f6cde9",
+      "title": "https://tuist.dev/tuist/tuist/tests/test-runs/01a21c49-064c-7267-b2f8-d4fe06f6cde9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:43.564Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-5E4184A65587": {
+      "id": "SRC-5E4184A65587",
+      "url": "https://tuist.dev/tuist/tuist/tests/test-runs/01a21c49-4ac0-794b-a18a-ced5c181be33",
+      "title": "https://tuist.dev/tuist/tuist/tests/test-runs/01a21c49-4ac0-794b-a18a-ced5c181be33",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:43.651Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-60A7E71713E1": {
+      "id": "SRC-60A7E71713E1",
+      "url": "https://tuist.dev/tuist/tuist/tests/test-runs/13337aff-f662-4022-b0e3-8e6bc696923f",
+      "title": "https://tuist.dev/tuist/tuist/tests/test-runs/13337aff-f662-4022-b0e3-8e6bc696923f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:43.737Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-B1FFD409085D": {
+      "id": "SRC-B1FFD409085D",
+      "url": "https://github.com/tuist/tuist/commi",
+      "title": "https://github.com/tuist/tuist/commi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:43.839Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-FC26B6B9A1FC": {
+      "id": "SRC-FC26B6B9A1FC",
+      "url": "https://tuist.dev/tuist/tuist/previews/01a2190f-d692-7a3c-b271-dc1452429420",
+      "title": "https://tuist.dev/tuist/tuist/previews/01a2190f-d692-7a3c-b271-dc1452429420",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:43.936Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-D04589B0D3C9": {
+      "id": "SRC-D04589B0D3C9",
+      "url": "https://tuist.dev/tuist/tuist/previews/01a2190f-d692-7a3c-b271-dc1452429420%60",
+      "title": "https://tuist.dev/tuist/tuist/previews/01a2190f-d692-7a3c-b271-dc1452429420%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-A210929E84AA": {
+      "id": "SRC-A210929E84AA",
+      "url": "https://github.com/tuist/tuist/commit/90da2de2fe00576bb7f18683cd4b93b57a8ac752",
+      "title": "https://github.com/tuist/tuist/commit/90da2de2fe00576bb7f18683cd4b93b57a8ac752",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-F1728D812681": {
+      "id": "SRC-F1728D812681",
+      "url": "https://tuist.dev/tuist/tuist/tests/test-runs/6e6391df-8107-4bb6-b445-5658d2012493",
+      "title": "https://tuist.dev/tuist/tuist/tests/test-runs/6e6391df-8107-4bb6-b445-5658d2012493",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-25DA040DE5F8": {
+      "id": "SRC-25DA040DE5F8",
+      "url": "https://github.com/tuist/tuist/commit/38189d6fe6db58d00079be684fa0ecd283a55b19",
+      "title": "https://github.com/tuist/tuist/commit/38189d6fe6db58d00079be684fa0ecd283a55b19",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-3799FA3B27B8": {
+      "id": "SRC-3799FA3B27B8",
+      "url": "https://tuist.dev/tuist/tuist/tests/test-runs/01a21929-778e-7a76-ab14-5dc591a15b85",
+      "title": "https://tuist.dev/tuist/tuist/tests/test-runs/01a21929-778e-7a76-ab14-5dc591a15b85",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.390Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-984751CEAC8C": {
+      "id": "SRC-984751CEAC8C",
+      "url": "https://ampcode.com/threads/T-01a21c2d-a221-7654-8c24-a1f7e713cd5f",
+      "title": "https://ampcode.com/threads/T-01a21c2d-a221-7654-8c24-a1f7e713cd5f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.516Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-A135E07E8C0E": {
+      "id": "SRC-A135E07E8C0E",
+      "url": "https://security.tuist.dev/",
+      "title": "https://security.tuist.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.600Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-B0294FC5A8C2": {
+      "id": "SRC-B0294FC5A8C2",
+      "url": "https://ampcode.com/threads/T-01a21cbe-07a6-77b5-a2c2-f43c7cbfdd92",
+      "title": "https://ampcode.com/threads/T-01a21cbe-07a6-77b5-a2c2-f43c7cbfdd92",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.688Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-2BD79A96A544": {
+      "id": "SRC-2BD79A96A544",
+      "url": "https://ampcode.com/threads/T-01a21ca3-bbc1-7688-add2-c351eba683bc",
+      "title": "https://ampcode.com/threads/T-01a21ca3-bbc1-7688-add2-c351eba683bc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T12:32:44.777Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
       }
     }
   }

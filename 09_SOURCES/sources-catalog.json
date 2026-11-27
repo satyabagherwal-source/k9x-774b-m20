@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "5482e782",
+    "sourceVersion": "99a394b3",
     "license": "NOASSERTION",
-    "contentHash": "5372326bc413354af31bd7847202d1f226f55d8bd576fd06045ae273f5da2081",
-    "lastHarvestedAt": "2026-11-26T12:20:00.398Z",
+    "contentHash": "38a06a565ef4567059baa80735b9fda78f33b0ec43c875931cd41b95af7c501d",
+    "lastHarvestedAt": "2026-11-27T12:32:36.093Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {
