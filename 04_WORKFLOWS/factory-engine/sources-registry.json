@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T23:21:57.645Z",
-    "lastVerified": "2026-11-27T23:21:57.645Z",
+    "lastChecked": "2026-11-27T23:30:43.441Z",
+    "lastVerified": "2026-11-27T23:30:43.441Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -193,12 +193,12 @@
     "revisionIdentifier": "9fb6a904"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T22:54:49.531Z",
-    "lastVerified": "2026-11-27T22:54:49.531Z",
+    "lastChecked": "2026-11-27T23:30:36.503Z",
+    "lastVerified": "2026-11-27T23:30:36.503Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -207,7 +207,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "23809a00"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -935,9 +936,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-27T19:18:13.144Z",
+    "lastChecked": "2026-11-27T23:30:31.349Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-27T19:18:13.144Z"
+    "lastVerified": "2026-11-27T23:30:31.349Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -2795,9 +2796,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-11-27T05:30:08.166Z",
+    "lastChecked": "2026-11-27T23:30:28.974Z",
     "revisionIdentifier": "18fcfdda",
-    "lastVerified": "2026-11-27T05:30:08.166Z"
+    "lastVerified": "2026-11-27T23:30:28.974Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -5180,22 +5181,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "grpc-grpc-rust": {
-    "name": "grpc-rust",
+    "name": "grpc/grpc-rust",
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T23:32:11.913Z",
-    "lastVerified": "2026-11-26T23:32:11.913Z",
+    "lastChecked": "2026-11-27T23:30:25.679Z",
+    "lastVerified": "2026-11-27T23:30:25.679Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "3c67d06edbab827a18824373dc8d0d74421cdc216d9feac02e118dc0472a873d",
+    "contentHash": "d916cda6bde86a3c505fd1cc4bac969f8d77c9113616d962357f8cacf2b4fedf",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "39b3ea7c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",
@@ -6035,14 +6035,14 @@
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-27T04:27:23.574Z",
-    "lastVerified": "2026-11-27T04:27:23.574Z",
+    "lastChecked": "2026-11-27T23:30:38.960Z",
+    "lastVerified": "2026-11-27T23:30:38.960Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "160b41f568d6c8169bd7bb31f7b5f04fe5c2ee4eb28dfc26aeccadb583b5f9ae",
+    "contentHash": "fcf6cc008bbb49bd6a114d1422a4e0ef7721d3dbbd903ea49a10d41a19c66feb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10417,14 +10417,14 @@
     "officialUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-25T15:00:35.819Z",
-    "lastVerified": "2026-11-25T15:00:35.819Z",
+    "lastChecked": "2026-11-27T23:30:32.221Z",
+    "lastVerified": "2026-11-27T23:30:32.221Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-shifthackz-sdai-kmp",
-    "contentHash": "16d8784f4dabf21140c4b6ce086e6f7020593a816d958f2d95b41ec4223fa9b9",
+    "contentHash": "8c37a9bff060d8c0c67c6168ae2e82f2ea071edf3cb9b1693e299e7fc9d9b1c4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10970,9 +10970,9 @@
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-selenium",
     "officialUrl": "https://github.com/scrapy-plugins/scrapy-selenium",
-    "lastChecked": "2026-11-24T15:17:11.197Z",
+    "lastChecked": "2026-11-27T23:30:23.812Z",
     "revisionIdentifier": "0eef52b5",
-    "lastVerified": "2026-11-24T15:17:11.197Z"
+    "lastVerified": "2026-11-27T23:30:23.812Z"
   },
   "shubham0812-swiftui-animations": {
     "name": "SwiftUI-Animations",

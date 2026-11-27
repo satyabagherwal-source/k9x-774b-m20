@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T23:22:03.333Z",
+  "last_updated": "2026-11-27T23:30:46.307Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26818,
+  "total_items": 26827,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212614,8 +212614,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "39b3ea7c",
-      "content_hash": "3c67d06edbab827a18824373dc8d0d74421cdc216d9feac02e118dc0472a873d",
+      "source_version": "c7e68c59",
+      "content_hash": "d916cda6bde86a3c505fd1cc4bac969f8d77c9113616d962357f8cacf2b4fedf",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -212648,6 +212648,11 @@
           "number": 10556,
           "title": "Drop Eq bound for ResolverUpdateAttributes values",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10987,
+          "title": "don't end a cancelled request with END_STREAM",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212655,7 +212660,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-25T23:11:42.608Z",
+      "verified_at": "2026-11-27T23:30:26.775Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212697,10 +212702,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-architecture-intelligence-grpc-grpc-rust-core-invariants.md",
       "title": "Architecture Intelligence: grpc/grpc-rust Core Invariants",
       "repository": "grpc/grpc-rust",
-      "source_version": "39b3ea7c",
-      "content_hash": "bf98406ccfc9a9c5235fd4d618348e17aa39dba0820a2c675b284f18a6d99678",
+      "source_version": "c7e68c59",
+      "content_hash": "ea371af7db9699bbeaebd3072889dc4d3902b06d5f8efb2354c58ae6528ead69",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T23:11:43.245Z"
+      "persisted_at": "2026-11-27T23:30:27.468Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust",
@@ -212709,10 +212714,10 @@
       "relative_path": "08_VERIFICATION/grpc-grpc-rust-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for grpc/grpc-rust",
       "repository": "grpc/grpc-rust",
-      "source_version": "39b3ea7c",
-      "content_hash": "26b43ad2fac7a530794dd118f68e6b6cd85f9eaa05f4321bb1e54cb7b7e4b0f4",
+      "source_version": "c7e68c59",
+      "content_hash": "e1b7338051b59ce9d370593817ba1872d61281324657f9245669da2bb3a12118",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:11:43.436Z"
+      "persisted_at": "2026-11-27T23:30:27.660Z"
     },
     "learn-github-mattermost-mattermost": {
       "learning_id": "learn-github-mattermost-mattermost",
@@ -213108,9 +213113,9 @@
       "title": "Architecture Intelligence: grpc-grpc-rust-learnings Core Invariants",
       "repository": "grpc-grpc-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "d184d6197f2b0303d8407c34beaf89e30a485c1ad820cc2d4e4f1dadb7107b0b",
+      "content_hash": "fca6bc6a2ab45c562fa1d3590030623ca5c9733e7bd2f335611edec652fc62ca",
       "domain_letter": "G",
-      "persisted_at": "2026-11-25T23:12:01.621Z"
+      "persisted_at": "2026-11-27T23:30:44.122Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust-learnings",
@@ -213120,9 +213125,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for grpc-grpc-rust-learnings",
       "repository": "grpc-grpc-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3cde0d51c465671391fbd9825c4f182ec1176ded1f4a41269587b13f97ca698",
+      "content_hash": "c8f9b2197f96f535aed275c84fb853dc470e5bf67a74e7d932725f62c89770d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T23:12:01.792Z"
+      "persisted_at": "2026-11-27T23:30:44.316Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
@@ -235357,8 +235362,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "039ba60f",
-      "content_hash": "160b41f568d6c8169bd7bb31f7b5f04fe5c2ee4eb28dfc26aeccadb583b5f9ae",
+      "source_version": "1a278de9",
+      "content_hash": "fcf6cc008bbb49bd6a114d1422a4e0ef7721d3dbbd903ea49a10d41a19c66feb",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -235436,6 +235441,11 @@
           "number": 10827,
           "title": "flaky join operator yield tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10989,
+          "title": "Create partition page builders on first use",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235443,7 +235453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T04:27:24.572Z",
+      "verified_at": "2026-11-27T23:30:39.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235485,10 +235495,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "repository": "trinodb/trino",
-      "source_version": "039ba60f",
-      "content_hash": "9d99a817944ea97256672a028dd90f9a007a991663beff8fddd32832674940d5",
+      "source_version": "1a278de9",
+      "content_hash": "cfda5fb62b5e7303a3ff925cd9cd027ee6f62c147a076acacf3643e206667a78",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T04:27:25.464Z"
+      "persisted_at": "2026-11-27T23:30:40.550Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino",
@@ -235497,10 +235507,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "039ba60f",
-      "content_hash": "673191e5919d56c33c7eebce5f49900a6976271ccffa62cba482de7607857208",
+      "source_version": "1a278de9",
+      "content_hash": "ecb21d89afdf13fe26cd229ca25f04a4a0a7758694e1d8261308bf7394d36f25",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T04:27:25.687Z"
+      "persisted_at": "2026-11-27T23:30:40.744Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -243359,13 +243369,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "slug": "shifthackz-sdai-kmp",
+      "slug": "shifthackz-stable-diffusion-kmp",
       "platform": "github",
-      "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
-      "source_version": "7d074972",
-      "content_hash": "a2f2e44c1f0e06e7b833d81c0c970fbc32cd4ae9c3331901f7644f92e4a59ba6",
-      "dossier_path": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "1596e0b5",
+      "content_hash": "8c37a9bff060d8c0c67c6168ae2e82f2ea071edf3cb9b1693e299e7fc9d9b1c4",
+      "dossier_path": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
       "promoted_rules": [
         {
           "number": 8552,
@@ -243391,6 +243401,11 @@
           "number": 10545,
           "title": "Add hosted upscaler model catalogs",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10988,
+          "title": "native reproducibility and prepare SDAI 1.3.1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243398,7 +243413,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T13:55:18.743Z",
+      "verified_at": "2026-11-27T23:30:33.141Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243449,13 +243464,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shifthackz-sdai-kmp",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shifthackz-sdai-kmp-verification-protocol-empirical-defect-shield-for-shifthackz.md",
+      "relative_path": "08_VERIFICATION/shifthackz-stable-diffusion-kmp-verification-protocol-empirical-defect-shield-fo.md",
       "title": "Verification Protocol: Empirical Defect Shield for ShiftHackZ/SDAI-KMP",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "source_version": "7d074972",
-      "content_hash": "a5b37f74206412689617826e76e5b37e580efef8ee44e594e5c7819ee0fb439b",
+      "source_version": "1596e0b5",
+      "content_hash": "4b273979a24ff5192fcc0f54a64cebd2208ad64c6e09ff1b0a97ea55e94c65ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T13:55:19.580Z"
+      "persisted_at": "2026-11-27T23:30:34.034Z"
     },
     "learn-github-nolabs-ai-nono": {
       "learning_id": "learn-github-nolabs-ai-nono",
@@ -257552,9 +257567,9 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f7d7bcbda4c8a8765c665b9502273c4abcd5998bceef1d267b387599a288aed",
+      "content_hash": "b95456dfd8af10c5a72d5680aa39baf64f060fe19508ae054d3a328ba2c4849c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T04:27:32.795Z"
+      "persisted_at": "2026-11-27T23:30:46.128Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings",
@@ -257564,9 +257579,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trinodb-trino-learnings",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2a955f3998197a0865d16053de2176aa32b7152da7af1255efcec07884992ae",
+      "content_hash": "4ecff1937a2032caa1708692243758f21e49c2c38ad641b2741a90956304c3da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T04:27:33.020Z"
+      "persisted_at": "2026-11-27T23:30:46.307Z"
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -258638,9 +258653,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for shifthackz-stable-diffusion-kmp-learnings",
       "repository": "shifthackz-stable-diffusion-kmp-learnings",
       "source_version": "HEAD",
-      "content_hash": "4268a6c365600d6c388e555e38eab6df565c3b4575be2a1a5f625ca001965c35",
+      "content_hash": "154a7af754027c391a0f9dd365b82055c08d059d78cb295f82d5972c7bd139d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-25T15:00:49.443Z"
+      "persisted_at": "2026-11-27T23:30:45.320Z"
     },
     "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-saltstack-salt-learnings-core-invariants",
@@ -368366,6 +368381,120 @@
       "content_hash": "bb9684e99659afc3cd05b45cb47b046e647d9619fe50ea92627b569e3a05dbe6",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T23:22:01.496Z"
+    },
+    "rule-10987": {
+      "learning_id": "rule-10987",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10987,
+      "title": "don't end a cancelled request with END_STREAM",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "c7e68c59",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T23:30:26.775Z"
+    },
+    "candidate_directive-don-t-end-a-cancelled-request-with-end_stream": {
+      "item_id": "candidate_directive-don-t-end-a-cancelled-request-with-end_stream",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6QTK-don-t-end-a-cancelled-request-with-end_stream.md",
+      "title": "don't end a cancelled request with END_STREAM",
+      "repository": "grpc/grpc-rust",
+      "source_version": "c7e68c59",
+      "content_hash": "7e980167165184661a08e2acc415ae619dc5eec0c121cadc96978b6c2fbb8ecd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T23:30:27.276Z"
+    },
+    "rule-10988": {
+      "learning_id": "rule-10988",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10988,
+      "title": "native reproducibility and prepare SDAI 1.3.1",
+      "source_url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+      "source_version": "1596e0b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T23:30:33.141Z"
+    },
+    "candidate_directive-native-reproducibility-and-prepare-sdai-1-3-1": {
+      "item_id": "candidate_directive-native-reproducibility-and-prepare-sdai-1-3-1",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-74GG-native-reproducibility-and-prepare-sdai-1-3-1.md",
+      "title": "native reproducibility and prepare SDAI 1.3.1",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0802686986e15cfca3ef4d0b538cf6bb61bbacbc7a5887736d1dca947ba4bf37",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T23:30:44.944Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-shifthackz-sdai-kmp-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-shifthackz-sdai-kmp-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-shifthackz-stable-diffusion-kmp-research-knowledge-intelligence-shifthackz-sdai-.md",
+      "title": "Research & Knowledge Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "source_version": "1596e0b5",
+      "content_hash": "77464ab873704f79e54f79029fc77fe9540515d73b8b28badc37a1c179ac7524",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T23:30:33.847Z"
+    },
+    "rule-10989": {
+      "learning_id": "rule-10989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10989,
+      "title": "Create partition page builders on first use",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "1a278de9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T23:30:39.878Z"
+    },
+    "candidate_directive-create-partition-page-builders-on-first-use": {
+      "item_id": "candidate_directive-create-partition-page-builders-on-first-use",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7587-create-partition-page-builders-on-first-use.md",
+      "title": "Create partition page builders on first use",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "05a8eaae03d65b80c9566919f18f52e2c103d305faba39eb75e5c07b13c744d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T23:30:45.946Z"
+    },
+    "candidate_directive-codec-don-t-end-a-cancelled-request-with-end_stream": {
+      "item_id": "candidate_directive-codec-don-t-end-a-cancelled-request-with-end_stream",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-73NV-codec-don-t-end-a-cancelled-request-with-end_stream.md",
+      "title": "codec): don't end a cancelled request with END_STREAM",
+      "repository": "grpc-grpc-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "612ee0965852b353376a93f59d6a241c5f6c74f04d372c6a6cb713523a298384",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T23:30:43.918Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-shifthackz-stable-diffusion-kmp-learnings-research-knowledge-intelligence-shifth.md",
+      "title": "Research & Knowledge Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2d6b78feec1df3a22d672a2a528847b2270c396c0fbfe8c4c9981e1505c50ea0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-27T23:30:45.127Z"
     }
   },
   "ai-builder-brain": {

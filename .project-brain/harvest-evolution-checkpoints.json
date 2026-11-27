@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:22:03.538Z",
+  "last_updated": "2026-11-27T23:30:46.478Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T23:04:22.728Z",
@@ -758,7 +758,7 @@
       "staged_for_review": 1
     },
     "trinodb-trino-learnings.md": {
-      "processed_at": "2026-11-27T04:27:32.037Z",
+      "processed_at": "2026-11-27T23:30:45.502Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -898,7 +898,7 @@
       "staged_for_review": 1
     },
     "grpc-grpc-rust-learnings.md": {
-      "processed_at": "2026-11-25T23:12:01.010Z",
+      "processed_at": "2026-11-27T23:30:43.581Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3128,7 +3128,7 @@
       "staged_for_review": 1
     },
     "shifthackz-stable-diffusion-kmp-learnings.md": {
-      "processed_at": "2026-11-25T15:00:48.243Z",
+      "processed_at": "2026-11-27T23:30:44.495Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4058,7 +4058,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 5145,
+  "total_dossiers_evaluated": 5148,
   "total_canonical_promoted": 587,
-  "total_staged_for_review": 3889
+  "total_staged_for_review": 3892
 }

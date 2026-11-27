@@ -13900,3 +13900,6 @@
 | `CYCLE-20261127-K9P9` | `2026-11-27T23:12:58.653Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10985` | Yes (`f5c2a3f1...`) |
 | `CYCLE-20261127-VQGK` | `2026-11-27T23:21:53.588Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10986` | Yes (`fc0ca59a...`) |
 | `CYCLE-20261127-VQT2` | `2026-11-27T23:21:54.038Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`d0392915...`) |
+| `CYCLE-20261127-6QMM` | `2026-11-27T23:30:27.022Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10987` | Yes (`d916cda6...`) |
+| `CYCLE-20261127-6VJ3` | `2026-11-27T23:30:33.375Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10988` | Yes (`8c37a9bf...`) |
+| `CYCLE-20261127-70Q8` | `2026-11-27T23:30:40.112Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10989` | Yes (`fcf6cc00...`) |

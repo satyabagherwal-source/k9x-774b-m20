@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `39b3ea7c`  
+> **Source Version**: `c7e68c59`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T23:11:41.723Z  
+> **Timestamp**: 2026-11-27T23:30:25.823Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:11:41.718Z  
+> **Harvest Timestamp**: 2026-11-27T23:30:25.679Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12578 stars
+- **Stars / Engagement**: 12595 stars
 
 ---
 
@@ -2034,726 +2034,180 @@ enum SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39b3ea7c` (2026-11-25)
-**Commit Message**: grpc: Drop Eq bound for ResolverUpdateAttributes values (#3074)
+### Incident Patch 1: `c7e68c59` (2026-11-27)
+**Commit Message**: fix(codec): don't end a cancelled request with END_STREAM (#2985)
 
-Extract a generic internal RawAttributes<V> implementation parameterized
-over the stored trait object (dyn AnyAttribute vs dyn EqAttribute) so
-only Eq-capable attribute collections require stored values to implement
-Eq.
+Related: #2930 and #2983
 
-Keep Attributes as a wrapper around RawAttributes<dyn EqAttribute> for
-now for compatibility, but over time we'd expect the symbol to go away
-completely.
+Doesn't fix #2983, where poll_frame isn't called at all. Both come from
+the cancellation being checked only in poll_frame.
 
-With the dropped Eq bound, the pointer-equality Eq in ConfigSelectorAttr
-can be removed.
+<!--
+Thank you for your Pull Request. Please provide a description above and
+review
+the requirements below.
 
-**File**: `grpc/src/attributes.rs` (modified, +176/-70)
+If this change is intended for tonic `v0.14.x` please make this PR
+against that branch
+otherwise, it may not get included in a relase for a long time.
+
+Bug fixes and new features should include tests.
+
+Contributors guide:
+https://github.com/grpc/grpc-rust/blob/master/CONTRIBUTING.md
+-->
+
+## Motivation
+
+<!--
+Explain the context and why you're making that change. What is the
+problem
+you're trying to solve? If a new feature is being added, describe the
+intended
+use case that feature fulfills.
+-->
+
+Bug: a cancelled request can still end with END_STREAM instead of
+RST_STREAM. `EncodeBody::poll_frame` checks the cancellation before it
+polls the request stream, so a cancellation that lands in between,
+followed by the stream ending, ends the body normally.
+
+This affects #2930: grpc's tonic transport cancels and then closes the
+request stream when a client send fails, an
+
+**File**: `tonic/src/codec/encode.rs` (modified, +88/-16)
 ```diff
-@@ -49,94 +49,112 @@ use std::collections::BTreeSet;
- use std::fmt::Debug;
- use std::sync::Arc;
- 
--/// Ensures only types that support comparison can be inserted into the
--/// Attributes struct. This allows the use of value-based equality rather than
--/// relying on pointer comparisons.
--trait AttributeTrait: Any + Send + Sync + Debug {
--    fn any_ref(&self) -> &dyn Any;
--    fn dyn_eq(&self, other: &dyn AttributeTrait) -> bool;
-+/// Base trait for values stored in [`RawAttributes`] when value equality is
-+/// not required.
-+pub(crate) trait AnyAttribute: Any + Send + Sync + Debug {}
-+
-+impl<T: Any + Send + Sync + Debug> AnyAttribute for T {}
-+
-+/// Ensures only types that support comparison can be inserted into [`Eq`]-based
-+/// attribute collections. This allows the use of value-based equality rather
-+/// than relying on pointer comparisons.
-+pub(crate) trait EqAttribute: AnyAttribute {
-+    fn dyn_eq(&self, other: &dyn EqAttribute) -> bool;
-+}
-+
-+impl<T: Any + Send + Sync + Eq + Debug> EqAttribute for T {
-+    fn dyn_eq(&self, other: &dyn EqAttribute) -> bool {
-+        (other as &dyn Any).downcast_ref::<T>() == Some(self)
-+    }
-+}
-+
-+/// Trait implemented by the unsized trait object types backing
-+/// [`RawAttributes`]. This trait exists "outside" the dyn and is resolved at
-+/// compile time. That's in contrast to AnyAttribute and EqAttribute which are
-+/// used with dyn to have indirect calls at runtime.
-+pub(crate) trait ErasedAttribute: Send + Sync + Debug + 'static {
-+    fn as_any(&self) -> &dyn Any;
- }
- 
--impl<T: Any + Send + Sync + Eq + Debug> AttributeTrait for T {
--    fn any_ref(&self) -> &dyn Any {
-+impl ErasedAttribute for dyn AnyAttribute {
-+    fn as_any(&self) -> &dyn Any {
-         self
-     }
-+}
- 
--    fn dyn_eq(&self, other: &dyn AttributeTrait) -> bool {
--        if let Some(other) = other.any_ref().downcast_ref::<T>() {
--            self == other
--        } else {
--            false
--        }
-+impl ErasedAttribute for dyn EqAttribute {
-+    fn as_any(&self) -> &dyn Any {
-+        self
+@@ -345,6 +345,25 @@ impl EncodeState {
      }
  }
  
--/// A node in the persistent list backing [`Attributes`].
-+/// A node in the persistent list backing [`RawAttributes`].
- ///
- /// Each node points to the next (older) node, allowing structural sharing
--/// between `Attributes` instances.
--struct Node {
--    value: Arc<dyn AttributeTrait>,
--    next: Option<Arc<Node>>,
-+/// between `RawAttributes` instances.
-+struct Node<V: ?Sized> {
-+    value: Arc<V>,
-+    next: Option<Arc<Node<V>>>,
- }
++fn is_cancelled(
++    cancellation_fut: Pin<&mut Option<WaitForCancellationFutureOwned>>,
++    cx: &mut Context<'_>,
++) -> bool {
++    cancellation_fut
++        .as_pin_mut()
++        .is_some_and(|fut| fut.poll(cx).is_ready())
++}
++
++fn cancelled_status() -> Status {
++    #[cfg_attr(not(feature = "h2"), allow(unused_mut))]
++    let mut status = Status::cancelled("client cancelled");
++    // h2 inspects the error's source chain to determine the RST code, so we
++    // set it here.
++    #[cfg(feature = "h2")]
++    status.set_source(std::sync::Arc::new(H2Error::from(H2Reason::CANCEL)));
++    status
++}
++
+ impl<T, U> Body for EncodeBody<T, U>
+ where
+     T: Encoder<Error = Status>,
+@@ -361,23 +380,10 @@ where
+         self: Pin<&mut Self>,
+         cx: &mut Context<'_>,
+     ) -> Poll<Option<Result<Frame<Self::Data>, Self::Error>>> {
+-        let self_proj = self.project();
+-
+-        if let Some(cancellation_fut) = self_proj.cancellation_fut.as_pin_mut()
+-            && let Poll::Ready(()) = cancellation_fut.poll(cx)
+-        {
+-            #[cfg(feature = "h2")]
+-            let status = {
+-                let mut status = Status::cancelled("client cancelled");
+-                // h2 inspects the error's source chain to determine the RST
+-                // code, so we set it here.
+-                status.set_source(std::sync::Arc::new(H2Error::from(H2Reason::CANCEL)));
+-                status
+-            };
++        let mut self_proj = self.project();
  
--/// A collection of attributes indexed by their type.
-+/// Shared persistent-list implementation for type-keyed attribute collections.
- ///
--/// `Attributes` provides a map-like interface where values are keyed by their
--/// TypeId.
--///
--/// Equality and ordering of `Attributes` are structural.
--/// This means two `Attributes` maps are equal if they contain the same set of
--/// values, compared by value (via `Eq` trait).
--/// Stored types must implement `Any + Send + Sync + Eq + Debug`.
--///
--/// # Warning
--///
--/// This collection is intended to store a small number of values (few hundreds)
--/// and is optimized for memory usage. It is **not** optimized for query speed.
--#[derive(Clone, Default)]
--pub struct Attributes {
--    head: Option<Arc<Node>>,
-+/// Parameterized over the erased trait object `V` (`dyn AnyAttribute` or
-+/// `dyn EqAttribute`) so only [`Eq`]-capable attribute collections require
-+/// stored values to implement [`Eq`].
-+pub(crate) struct RawAttributes<V: ?Sized> {
-+    head: Option<Arc<Node<V>>>,
- }
+-            #[cfg(not(feature = "h2"))]
+-            let status = Status::cancelled("client cancelled");
+-            return Poll::Ready(Some(Err(status)));
++        if is_cancelled(self_proj.cancellation_fut.as_mut(), cx) {
++            return Poll::Ready(Some(Err(cancelled_status())));
+         }
  
--impl Attributes {
-+impl<V: ?Sized> Clone for RawAttributes<V> {
-+    fn clone(&self) -> Self {
-+        Self {
-+            head: self.head.clone(),
+         match ready!(self_proj.inner.poll_next(cx)) {
+@@ -389,6 +395,12 @@ where
+                     Some(Ok(Frame::trailers(status.to_header_map()?))).into()
+                 }
+             },
++            // The request may have been cancelled after the check above and its
++            // source then ended.  Ending the body here would end the stream
++            // gracefully instead of resetting it.
++            None if is_cancelled(self_proj.cancellation_fut.as_mut(), cx) => {
++                Some(Err(cancelled_status())).into()
++            }
+             None => self_proj
+                 .state
+                 .trailers()
+@@ -449,4 +461,64 @@ mod tests {
+             "Buffer must contain only initialized zero bytes."
+         );
+     }
++
++    struct BytesEncoder;
++
++    impl Encoder for BytesEncoder {
++        type Item = Bytes;
++        type Error = Status;
++
++        fn encode(&mut self, item: Self::Item, dst: &mut EncodeBuf<'_>) -> Result<(), Self::Error> {
++            dst.put(item);
++            Ok(())
 +        }
 +    }
-+}
 +
-+impl<V: ?Sized> Default for RawAttributes<V> {
-+    fn default() -> Self {
-+        Self { head: None }
++    /// A request source that ends, first cancelling the request if `cancel` is
++    /// set.  This is how a cancellation that races the end of the source looks
++    /// to `poll_frame`: not cancelled when it checks, cancelled once the source
++    /// has ended.
++    struct EndingSource {
++        cancel: Option<CancellationToken>,
 +    }
-+}
 +
-+impl<V: ?Sized + ErasedAttribute> RawAttributes<V> {
-     /// Constructs a new, empty instance.
--    pub fn new() -> Self {
-+    pub(crate) fn new() -> Self {
-         Self::default()
-     }
- 
--    /// Adds a value to the attributes.
--    /// Returns a new Attributes object with the value added.
--    /// If a value of the same type already exists, it is replaced.
--    pub fn add<T: Send + Sync + Eq + Debug + 'static>(&self, value: T) -> Self {
--        Attributes {
-+    fn add_arc(&self, value: Arc<V>) -> Self {
-+        Self {
-             head: Some(Arc::new(Node {
--                value: Arc::new(value),
-+                value,
-                 next: self.head.clone(),
-             })),
-         }
-     }
- 
--    /// Gets a reference to a value of type T.
--    pub fn get<T: 'static>(&self) -> Option<&T> {
-+    /// Gets a reference to a value of type `T`.
-+    pub(crate) fn get<T: 'static>(&self) -> Option<&T> {
-         let mut current = self.head.as_deref();
-         while let Some(node) = current {
--            if let Some(v) = node.value.any_ref().downcast_ref::<T>() {
-+            if let Some(v) = node.value.as_any().downcast_ref::<T>() {
-   
-```
-
-**File**: `grpc/src/client/name_resolution/config_selector.rs` (modified, +3/-15)
-```diff
-@@ -122,23 +122,11 @@ impl ResolverUpdate {
-     }
++    impl Stream for EndingSource {
++        type Item = Result<Bytes, Status>;
++
++        fn poll_next(mut self: Pin<&mut Self>, _: &mut Context<'_>) -> Poll<Option<Self::Item>> {
++            if let Some(token) = self.cancel.take() {
++                token.cancel();
++            }
++            Poll::Ready(None)
++        }
++    }
++
++    fn poll_ending_body(cancel: bool) -> Poll<Option<Result<Frame<Bytes>, Status>>> {
++        let token = CancellationToken::new();
++        let source = EndingSource {
++            cancel: cancel.then(|| token.clone()),
++        };
++        let mut body = std::pin::pin!(EncodeBody::new_client_with_cancellation(
++            BytesEncoder,
++            source,
++            None,
++            None,
++            Some(token),
++        ));
++        body.as_mut()
++            .poll_frame(&mut Context::from_waker(std::task::Waker::noop()))
++    }
++
++    #[test]
++    fn client_body_ends_when_source_ends() {
++        assert!(matches!(poll_ending_body(false), Poll::Ready(None)));
++    }
++
++    #[test]
++    fn client_body_fails_when_cancelled_as_source_ends() {
++        let Poll::Ready(Some(Err(status))) = poll_ending_body(true) else {
++            panic!("expected the body to fail");
++        };
++        assert_eq!(status.code(), crate::Code::Cancelled);
++    }
  }
- 
--/// Wrapper that allows an `Arc<dyn ConfigSelector>` to be stored in
--/// [`ResolverUpdateAttributes`](crate::client::name_resolution::ResolverUpdateAttributes),
--/// which requires values to implement [`Eq`].
--///
--/// Equality is based on pointer identity: two wrappers are equal if and only
--/// if they point to the same `ConfigSelector` allocation.
--#[derive(Debug, Clone)]
-+/// Private key wrapper so callers cannot access the stored [`ConfigSelector`]
-+/// directly through [`ResolverUpdate::attributes`].
-+#[derive(Debug)]
- struct ConfigSelectorAttr(Arc<dyn ConfigSelector>);
- 
--impl PartialEq for ConfigSelectorAttr {
--    fn eq(&self, other: &Self) -> bool {
--        Arc::ptr_eq(&self.0, &other.0)
--    }
--}
--
--impl Eq for ConfigSelectorAttr {}
--
- #[cfg(test)]
- mod tests {
-     use std::net::SocketAddr;
-```
-
-**File**: `grpc/src/client/name_resolution/mod.rs` (modified, +13/-3)
-```diff
-@@ -40,7 +40,9 @@ use percent_encoding::percent_decode_str;
- use percent_encoding::utf8_percent_encode;
- use url::Url;
- 
-+use crate::attributes::AnyAttribute;
- use crate::attributes::Attributes;
-+use crate::attributes::RawAttributes;
- use crate::client::service_config::ParseResult;
- use crate::client::service_config::ServiceConfig;
- use crate::core::Address;
-@@ -301,7 +303,7 @@ pub struct ResolverUpdate {
- ///
- /// Each type may appear at most once.
- #[derive(Clone, Debug, Default)]
--pub struct ResolverUpdateAttributes(Attributes);
-+pub struct ResolverUpdateAttributes(RawAttributes<dyn AnyAttribute>);
- 
- impl ResolverUpdateAttributes {
-     /// Constructs a new, empty instance.
-@@ -313,7 +315,7 @@ impl ResolverUpdateAttributes {
-     /// `ResolverUpdateAttributes` with the value added.
-     ///
-     /// If a value of the same type already exists, it is replaced.
--    pub fn add<T: Send + Sync + Eq + Debug + 'static>(&self, value: T) -> Self {
-+    pub fn add<T: Send + Sync + Debug + 'static>(&self, value: T) -> Self {
-         Self(self.0.add(value))
-     }
- 
-@@ -682,12 +684,19 @@ mod test {
- 
-     #[test]
-     fn test_resolver_update_attributes() {
-+        #[derive(Debug)]
-+        struct NonEqValue(f64);
-+
-         let attrs = ResolverUpdateAttributes::new();
-         assert_eq!(attrs.get::<i32>(), None);
- 
--        let attrs = attrs.add(10i32).add("hello".to_string());
-+        let attrs = attrs
-+            .add(10i32)
-+            .add("hello".to_string())
-+            .add(NonEqValue(2.5));
-         assert_eq!(attrs.get::<i32>(), Some(&10));
-         assert_eq!(attrs.get::<String>(), Some(&"hello".to_string()));
-+        assert_eq!(attrs.get::<NonEqValue>().unwrap().0, 2.5);
- 
-         // Replacing an existing type overwrites its value.
-         let replaced = attrs.add(20i32);
-@@ -698,6 +707,7 @@ mod test {
-         let removed = replaced.remove::<i32>();
-         assert_eq!(removed.get::<i32>(), None);
-         assert_eq!(removed.get::<String>(), Some(&"hello".to_string()));
-+        assert_eq!(removed.get::<NonEqValue>().unwrap().0, 2.5);
- 
-         // ResolverUpdate::with_endpoints preserves ResolverUpdateAttributes.
-         let update = ResolverUpdate {
-```
-
----
-
-### Incident Patch 2: `c1a82489` (2026-11-25)
-**Commit Message**: grpc-rls: vendor RLS protos and enable codegen (#3067)
-
-Contributes to: #2768
-
-Vendors the Route Lookup Service (RLS) protocol definitions from
-`grpc/grpc-proto` into a new `grpc-rls` crate and wires them into
-build-time protobuf codegen as the first step toward implementing the
-`rls_experimental` load balancing policy.
-
-**File**: `grpc-rls/Cargo.toml` (modified, +10/-0)
-```diff
-@@ -10,6 +10,8 @@ Route Lookup Service (RLS) load balancing for the Rust gRPC implementation.
- """
- edition = "2024"
- rust-version.workspace = true
-+# Not published yet: the build.rs codegen requires protoc (and a C++ build of
-+# `protoc-gen-grpc-rust`), which doesn't fit docs.rs / crates.io publishing.
- publish = false
- 
- [lints]
-@@ -19,4 +21,12 @@ workspace = true
- allowed_external_types = []
- 
- [dependencies]
-+grpc = { version = "0.10.0", path = "../grpc", default-features = false }
-+grpc-protobuf = { version = "0.10.0", path = "../grpc-protobuf" }
-+protobuf = "4.36.2-release"
-+protobuf-well-known-types = "0.36.2-release"
- rand = { version = "0.10", default-features = false, features = ["thread_rng"] }
-+
-+[build-dependencies]
-+grpc-protobuf-build = { version = "0.10.0", path = "../grpc-protobuf-build" }
-+protobuf-well-known-types = "0.36.2-release"
-```
-
-**File**: `grpc-rls/build.rs` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+/*
-+ *
-+ * Copyright 2026 gRPC authors.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a copy
-+ * of this software and associated documentation files (the "Software"), to
-+ * deal in the Software without restriction, including without limitation the
-+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-+ * sell copies of the Software, and to permit persons to whom the Software is
-+ * furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-+ * IN THE SOFTWARE.
-+ *
-+ */
-+
-+//! Build-time RLS codegen.
-+//!
-+//! Generates the protobuf messages and the `RouteLookupService` client stub for
-+//! the vendored `grpc.lookup.v1` protos under `third_party/grpc-proto/` into
-+//! `OUT_DIR`. See `src/lib.rs` for how the generated code is pulled in.
-+
-+fn main() {
-+    println!("cargo:rerun-if-changed=build.rs");
-+
-+    let dependencies = protobuf_well_known_types::get_dependency("protobuf_well_known_types")
-+        .into_iter()
-+        .map(Into::into)
-+        .collect();
-+
-+    // Protos vendored from grpc/grpc-proto and kept in sync by
-+    // `tools/sync-grpc-proto.sh`. RLS only acts as a client of the lookup
-+    // service, so no server code is generated.
-+    grpc_protobuf_build::CodeGen::new()
-+        .include("third_party/grpc-proto")
-+        .inputs([
-+            "grpc/lookup/v1/rls.proto",
-+            "grpc/lookup/v1/rls_config.proto",
-+        ])
-+        .dependencies(dependencies)
-+        .client_only()
-+        .compile()
-+        .unwrap();
-+}
-```
-
-**File**: `grpc-rls/src/lib.rs` (modified, +75/-0)
-```diff
-@@ -30,3 +30,78 @@
-     reason = "no caller until RLS control channel is implemented."
- )]
- mod adaptive;
-+
-+/// Module `generated` contains the generated Protobuf messages and the
-+/// `RouteLookupService` client stub for the `grpc.lookup.v1` package. They are
-+/// an implementation detail consumed only within grpc-rls. The blanket `allow`
-+/// covers machine-generated code, which `build.rs` writes into `OUT_DIR`.
-+#[allow(
-+    missing_docs,
-+    missing_debug_implementations,
-+    unreachable_pub,
-+    non_camel_case_types,
-+    non_snake_case,
-+    non_upper_case_globals,
-+    unused,
-+    clippy::all,
-+    // Denied by the workspace lints but not covered by `clippy::all`.
-+    clippy::uninlined_format_args
-+)]
-+mod generated {
-+    grpc::include_proto!("grpc/lookup/v1", "rls");
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    //! Sanity checks that the generated RLS modules are importable and usable:
-+    //! construct a message, then round-trip it through the protobuf wire format.
-+    //!
-+    //! This lives as an in-crate unit test rather than a doctest because the
-+    //! `generated` module is private — doctests compile as an external crate
-+    //! and can only reach the public API.
-+
-+    use crate::generated::grpc_lookup_v1_rls_config_proto::RouteLookupClusterSpecifier;
-+    use crate::generated::grpc_lookup_v1_rls_config_proto::RouteLookupConfig;
-+    use crate::generated::grpc_lookup_v1_rls_proto::RouteLookupRequest;
-+    use crate::generated::grpc_lookup_v1_rls_proto::RouteLookupResponse;
-+
-+    /// Encodes then decodes a message. `serialize` / `parse` are methods of the
-+    /// `protobuf::Message` trait (in scope via the `M: protobuf::Message` bound).
-+    fn round_trip<M: protobuf::Message>(msg: &M) -> M {
-+        M::parse(&msg.serialize().expect("serialize")).expect("parse")
-+    }
-+
-+    #[test]
-+    fn rls_route_lookup_request_round_trip() {
-+        let mut req = RouteLookupRequest::new();
-+        req.set_target_type("grpc");
-+        req.set_stale_header_data("stale-data");
-+        let decoded = round_trip(&req);
-+        assert_eq!(decoded.target_type().as_bytes(), b"grpc");
-+        assert_eq!(decoded.stale_header_data().as_bytes(), b"stale-data");
-+    }
-+
-+    #[test]
-+    fn rls_route_lookup_response_round_trip() {
-+        let mut resp = RouteLookupResponse::new();
-+        resp.set_header_data("rls-header");
-+        resp.targets_mut().push("target-a");
-+        let decoded = round_trip(&resp);
-+        assert_eq!(decoded.header_data().as_bytes(), b"rls-header");
-+        assert_eq!(decoded.targets().len(), 1);
-+        assert_eq!(decoded.targets().get(0).unwrap().as_bytes(), b"target-a");
-+    }
-+
-+    #[test]
-+    fn rls_route_lookup_config_round_trip() {
-+        let mut cfg = RouteLookupConfig::new();
-+        cfg.set_lookup_service("rls.example.com:443");
-+        let mut spec = RouteLookupClusterSpecifier::new();
-+        spec.set_route_lookup_config(cfg);
-+        let decoded = round_trip(&spec);
-+        assert_eq!(
-+            decoded.route_lookup_config().lookup_service().as_bytes(),
-+            b"rls.example.com:443"
-+        );
-+    }
-+}
-```
-
-**File**: `grpc-rls/third_party/grpc-proto/LICENSE` (added, +202/-0)
-```diff
-@@ -0,0 +1,202 @@
-+
-+                                 Apache License
-+                           Version 2.0, January 2004
-+                        http://www.apache.org/licenses/
-+
-+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
-+
-+   1. Definitions.
-+
-+      "License" shall mean the terms and conditions for use, reproduction,
-+      and distribution as defined by Sections 1 through 9 of this document.
-+
-+      "Licensor" shall mean the copyright owner or entity authorized by
-+      the copyright owner that is granting the License.
-+
-+      "Legal Entity" shall mean the union of the acting entity and all
-+      other entities that control, are controlled by, or are under common
-+      control with that entity. For the purposes of this definition,
-+      "control" means (i) the power, direct or indirect, to cause the
-+      direction or management of such entity, whether by contract or
-+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
-+      outstanding shares, or (iii) beneficial ownership of such entity.
-+
-+      "You" (or "Your") shall mean an individual or Legal Entity
-+      exercising permissions granted by this License.
-+
-+      "Source" form shall mean the preferred form for making modifications,
-+      including but not limited to software source code, documentation
-+      source, and configuration files.
-+
-+      "Object" form shall mean any form resulting from mechanical
-+      transformation or translation of a Source form, including but
-+      not limited to compiled object code, generated documentation,
-+      and conversions to other media types.
-+
-+      "Work" shall mean the work of authorship, whether in Source or
-+      Object form, made available under the License, as indicated by a
-+      copyright notice that is included in or attached to the work
-+      (an example is provided in the Appendix below).
-+
-+      "Derivative Works" shall mean any work, whether in Source or Object
-+      form, that is based on (or derived from) the Work and for which the
-+      editorial revisions, annotations, elaborations, or other modifications
-+      represent, as a whole, an original work of authorship. For the purposes
-+      of this License, Derivative Works shall not include works that remain
-+      separable from, or merely link (or bind by name) to the interfaces of,
-+      the Work and Derivative Works thereof.
-+
-+      "Contribution" shall mean any work of authorship, including
-+      the original version of the Work and any modifications or additions
-+      to that Work or Derivative Works thereof, that is intentionally
-+      submitted to Licensor for inclusion in the Work by the copyright owner
-+      or by an individual or Legal Entity authorized to submit on behalf of
-+      the copyright owner. For the purposes of this definition, "submitted"
-+      means any form of electronic, verbal, or written communication sent
-+      to the Licensor or its representatives, including but not limited to
-+      communication on electronic mailing lists, source code control systems,
-+      and issue tracking systems that are managed by, or on behalf of, the
-+      Licensor for the purpose of discussing and improving the Work, but
-+      excluding communication that is conspicuously marked or otherwise
-+      designated in writing by the copyright owner as "Not a Contribution."
-+
-+      "Contributor" shall mean Licensor and any individual or Legal Entity
-+      on behalf of whom a Contribution has been received by Licensor and
-+      subsequently incorporated within the Work.
-+
-+   2. Grant of Copyright License. Subject to the terms and conditions of
-+      this License, each Contributor hereby grants to You a perpetual,
-+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-+      copyright license to reproduce, prepare Derivative Works of,
-+      publicly display, publicly perform, sublicense, and distribute the
-+      Work and such Derivative Works in Source or Object form.
-+
-+   3. Grant of Patent License. Subject to the terms and conditions of
-+      this License, each Contributor hereby grants to You a perpetual,
-+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-+      (except as stated in this section) patent license to make, have made,
-+      use, offer to sell, sell, import, and otherwise transfer the Work,
-+      where such license applies only to those patent claims licensable
-+      by such Contributor that are necessarily infringed by their
-+      Contribution(s) alone or by combination of their Contribution(s)
-+      with the Work to which such Contribution(s) was submitted. If You
-+      institute patent litigation against any entity (including a
-+      cross-claim or counterclaim in a lawsuit) alleging that the Work
-+      or a Contribution incorporated within the Work constitutes direct
-+      or contributory patent infringement, then any patent licenses
-+      granted to You under this License for that Work shal
-```
-
-**File**: `grpc-rls/third_party/grpc-proto/grpc/lookup/v1/rls.proto` (added, +68/-0)
-```diff
-@@ -0,0 +1,68 @@
-+// Copyright 2020 The gRPC Authors
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+syntax = "proto3";
-+
-+package grpc.lookup.v1;
-+
-+import "google/protobuf/any.proto";
-+
-+option go_package = "google.golang.org/grpc/lookup/grpc_lookup_v1";
-+option java_multiple_files = true;
-+option java_package = "io.grpc.lookup.v1";
-+option java_outer_classname = "RlsProto";
-+
-+message RouteLookupRequest {
-+  // Target type allows the client to specify what kind of target format it
-+  // would like from RLS to allow it to find the regional server, e.g. "grpc".
-+  string target_type = 3;
-+  // Possible reasons for making a request.
-+  enum Reason {
-+    REASON_UNKNOWN = 0;  // Unused
-+    REASON_MISS = 1;     // No data available in local cache
-+    REASON_STALE = 2;    // Data in local cache is stale
-+  }
-+  // Reason for making this request.
-+  Reason reason = 5;
-+  // For REASON_STALE, the header_data from the stale response, if any.
-+  string stale_header_data = 6;
-+  // Map of key values extracted via key builders for the gRPC or HTTP request.
-+  map<string, string> key_map = 4;
-+  // Application-specific optional extensions.
-+  repeated google.protobuf.Any extensions = 7;
-+
-+  reserved 1, 2;
-+  reserved "server", "path";
-+}
-+
-+message RouteLookupResponse {
-+  // Prioritized list (best one first) of addressable entities to use
-+  // for routing, using syntax requested by the request target_type.
-+  // The targets will be tried in order until a healthy one is found.
-+  repeated string targets = 3;
-+  // Optional header value to pass along to AFE in the X-Google-RLS-Data header.
-+  // Cached with "target" and sent with all requests that match the request key.
-+  // Allows the RLS to pass its work product to the eventual target.
-+  string header_data = 2;
-+  // Application-specific optional extensions.
-+  repeated google.protobuf.Any extensions = 4;
-+
-+  reserved 1;
-+  reserved "target";
-+}
-+
-+service RouteLookupService {
-+  // Lookup returns a target for a single key.
-+  rpc RouteLookup(RouteLookupRequest) returns (RouteLookupResponse) {}
-+}
-```
-
-**File**: `grpc-rls/third_party/grpc-proto/grpc/lookup/v1/rls_config.proto` (added, +230/-0)
-```diff
-@@ -0,0 +1,230 @@
-+// Copyright 2020 The gRPC Authors
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+syntax = "proto3";
-+
-+package grpc.lookup.v1;
-+
-+import "google/protobuf/duration.proto";
-+
-+option go_package = "google.golang.org/grpc/lookup/grpc_lookup_v1";
-+option java_multiple_files = true;
-+option java_package = "io.grpc.lookup.v1";
-+option java_outer_classname = "RlsConfigProto";
-+
-+// Extract a key based on a given name (e.g. header name or query parameter
-+// name).  The name must match one of the names listed in the "name" field.  If
-+// the "required_match" field is true, one of the specified names must be
-+// present for the keybuilder to match.
-+message NameMatcher {
-+  // The name that will be used in the RLS key_map to refer to this value.
-+  // If required_match is true, you may omit this field or set it to an empty
-+  // string, in which case the matcher will require a match, but won't update
-+  // the key_map.
-+  string key = 1;
-+
-+  // Ordered list of names (headers or query parameter names) that can supply
-+  // this value; the first one with a non-empty value is used.
-+  repeated string names = 2;
-+
-+  // If true, make this extraction required; the key builder will not match
-+  // if no value is found.
-+  bool required_match = 3;
-+}
-+
-+// A GrpcKeyBuilder applies to a given gRPC service, name, and headers.
-+message GrpcKeyBuilder {
-+  // To match, one of the given Name fields must match; the service and method
-+  // fields are specified as fixed strings.  The service name is required and
-+  // includes the proto package name.  The method name may be omitted, in
-+  // which case any method on the given service is matched.
-+  message Name {
-+    string service = 1;
-+    string method = 2;
-+  }
-+  repeated Name names = 1;
-+
-+  // If you wish to include the host, service, or method names as keys in the
-+  // generated RouteLookupRequest, specify key names to use in the extra_keys
-+  // submessage. If a key name is empty, no key will be set for that value.
-+  // If this submessage is specified, the normal host/path fields will be left
-+  // unset in the RouteLookupRequest. We are deprecating host/path in the
-+  // RouteLookupRequest, so services should migrate to the ExtraKeys approach.
-+  message ExtraKeys {
-+    string host = 1;
-+    string service = 2;
-+    string method = 3;
-+  }
-+  ExtraKeys extra_keys = 3;
-+
-+  // Extract keys from all listed headers.
-+  // For gRPC, it is an error to specify "required_match" on the NameMatcher
-+  // protos.
-+  repeated NameMatcher headers = 2;
-+
-+  // You can optionally set one or more specific key/value pairs to be added to
-+  // the key_map.  This can be useful to identify which builder built the key,
-+  // for example if you are suppressing the actual method, but need to
-+  // separately cache and request all the matched methods.
-+  map<string, string> constant_keys = 4;
-+}
-+
-+// An HttpKeyBuilder applies to a given HTTP URL and headers.
-+//
-+// Path and host patterns use the matching syntax from gRPC transcoding to
-+// extract named key/value pairs from the path and host components of the URL:
-+// https://github.com/googleapis/googleapis/blob/master/google/api/http.proto
-+//
-+// It is invalid to specify the same key name in multiple places in a pattern.
-+//
-+// For a service where the project id can be expressed either as a subdomain or
-+// in the path, separate HttpKeyBuilders must be used:
-+//     host_pattern: 'example.com' path_pattern: '/{id}/{object}/**'
-+//     host_pattern: '{id}.example.com' path_pattern: '/{object}/**'
-+// If the host is exactly 'example.com', the first path segment will be used as
-+// the id and the second segment as the object. If the host has a subdomain, the
-+// subdomain will be used as the id and the first segment as the object. If
-+// neither pattern matches, no keys will be extracted.
-+message HttpKeyBuilder {
-+  // host_pattern is an ordered list of host template patterns for the desired
-+  // value.  If any host_pattern values are specified, then at least one must
-+  // match, and the last one wins and sets any specified variables.  A host
-+  // consists of labels separated by dots. Each label is matched against the
-+  // label in the pattern as follows:
-+  //   - "*": Matches any single label.
-+  //   - "**": Matches zero or more labels (first or last part of host only).
-+  //   - "{<name>=...}": One or more label capture, where "..." can be any
-+  //      template that does not include a capt
-```
-
-**File**: `tools/sync-grpc-proto.sh` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ curl -Ls https://github.com/grpc/grpc-proto/archive/master.tar.gz | tar xz -C "$
- base="$tmpdir/grpc-proto-master"
- 
- # Copy protos in 'proto' from grpc-proto for these projects
--for project in interop grpc-benchmark; do
-+for project in interop grpc-benchmark grpc-rls; do
-   while read -r proto; do
-     [ -f "$base/$proto" ] && cp "$base/$proto" "$project/third_party/grpc-proto/$proto"
-     echo "$proto"
 ```
 
 #### Recent Merged Pull Requests:
@@ -2782,83 +2236,75 @@ build-time protobuf codegen as the first step toward implementing the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. grpc: Drop Eq bound for ResolverUpdateAttributes values
+## X. codec): don't end a cancelled request with END_STREAM
 
 **RULE**:
-When implementing operations in `grpc/src/attributes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tonic/src/codec/encode.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39b3ea7c`: grpc: Drop Eq bound for ResolverUpdateAttributes values. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7e68c59`: codec): don't end a cancelled request with END_STREAM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/attributes.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tonic/src/codec/encode.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Base trait for values stored in [`RawAttributes`] when value equality is
-/// not required.
-pub(crate) trait AnyAttribute: Any + Send + Sync + Debug {}
-
-impl<T: Any + Send + Sync + Debug> AnyAttribute for T {}
-
-/// Ensures only types that support comparison can be inserted into [`Eq`]-based
-/// attribute collections. This allows the use of value-based equality rather
-/// than relying on pointer comparisons.
-pub(crate) trait EqAttribute: AnyAttribute {
-    fn dyn_eq(&self, other: &dyn EqAttribute) -> bool;
+fn is_cancelled(
+    cancellation_fut: Pin<&mut Option<WaitForCancellationFutureOwned>>,
+    cx: &mut Context<'_>,
+) -> bool {
+    cancellation_fut
+        .as_pin_mut()
+        .is_some_and(|fut| fut.poll(cx).is_ready())
 }
 
-impl<T: Any + Send + Sync + Eq + Debug> EqAttribute for T {
-    fn dyn_eq(&self, other: &dyn EqAttribute) -> bool {
-        (other as &dyn Any).downcast_ref::<T>() == Some(self)
-    }
+fn cancelled_status() -> Status {
+    #[cfg_attr(not(feature = "h2"), allow(unused_mut))]
+    let mut status = Status::cancelled("client cancelled");
+    // h2 inspects the error's source chain to determine the RST code, so we
+    // set it here.
+    #[cfg(feature = "h2")]
+    status.set_source(std::sync::Arc::new(H2Error::from(H2Reason::CANCEL)));
+    status
 }
 
-/// Trait implemented by the unsized trait object types backing
-/// [`RawAttributes`]. This trait exists "outside" the dyn and is resolved at
-/// compile time. That's in contrast to AnyAttribute and EqAttribute which are
-/// used with dyn to have indirect calls at runtime.
-pub(crate) trait ErasedAttribute: Send + Sync + Debug + 'static {
-    fn as_any(&self) -> &dyn Any;
-impl ErasedAttribute for dyn AnyAttribute {
-    fn as_any(&self) -> &dyn Any {
-}
-impl ErasedAttribute for dyn EqAttribute 
+        let mut self_proj = self.project();
+        if is_cancelled(self_proj.cancellation_fut.as_mut(), cx) {
+            return Poll::Ready(Some(Err(cancelled_status())));
+            // The request may have been cancelled after the check above and its
+            // source then ended.  Ending the body here would end the stream
+            // gracefully instead of resetting it.
+            None if is_cancelled(self_proj.cancellation_fut.as_mut(), cx) => {
+                Some(Err(cancelled_status())).into()
+            }
+
+    struct BytesEncoder;
+
+    impl Encoder for BytesEncoder {
+        type Item 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Ensures only types that support comparison can be inserted into the
-/// Attributes struct. This allows the use of value-based equality rather than
-/// relying on pointer comparisons.
-trait AttributeTrait: Any + Send + Sync + Debug {
-    fn any_ref(&self) -> &dyn Any;
-    fn dyn_eq(&self, other: &dyn AttributeTrait) -> bool;
-impl<T: Any + Send + Sync + Eq + Debug> AttributeTrait for T {
-    fn any_ref(&self) -> &dyn Any {
-    fn dyn_eq(&self, other: &dyn AttributeTrait) -> bool {
-        if let Some(other) = other.any_ref().downcast_ref::<T>() {
-            self == other
-        } else {
-            false
-        }
-/// A node in the persistent list backing [`Attributes`].
-/// between `Attributes` instances.
-struct Node {
-    value: Arc<dyn AttributeTrait>,
-    next: Option<Arc<Node>>,
-/// A collection of attributes indexed by their type.
-/// `Attributes` provides a map-like interface where values are keyed by their
-/// TypeId.
-///
-/// Equality and ordering of `Attributes` are structural.
-/// This means two `Attributes` maps are equal if they contain the same set of
-/// values, compared by value (via `Eq` trait).
-/// Stored types must implement `Any + Send + Sync + Eq + Debug`.
-/
+        let self_proj = self.project();
+
+        if let Some(cancellation_fut) = self_proj.cancellation_fut.as_pin_mut()
+            && let Poll::Ready(()) = cancellation_fut.poll(cx)
+        {
+            #[cfg(feature = "h2")]
+            let status = {
+                let mut status = Status::cancelled("client cancelled");
+                // h2 inspects the error's source chain to determine the RST
+                // code, so we set it here.
+                status.set_source(std::sync::Arc::new(H2Error::from(H2Reason::CANCEL)));
+                status
+            };
+            #[cfg(not(feature = "h2"))]
+            let status = Status::cancelled("client cancelled");
+            return Poll::Ready(Some(Err(status)));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39b3ea7c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7e68c59` are properly handled with clean fallback behavior.

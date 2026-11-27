@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T23:22:01.183Z",
+  "updated_at": "2026-11-27T23:30:44.687Z",
   "stats": {
-    "total_discovered": 10630,
-    "approved_pending_harvest": 10090,
+    "total_discovered": 10633,
+    "approved_pending_harvest": 10093,
     "harvested_count": 0,
     "rejected_count": 540,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10099,
+      "COMMUNITY_AND_EXPERT": 10102,
       "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -230107,6 +230107,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
         "fileName": "bitterbot-ai-bitterbot-desktop-learnings.md"
+      }
+    },
+    "SRC-C605ECBC7750": {
+      "id": "SRC-C605ECBC7750",
+      "url": "https://github.com/grpc/grpc-rust/blob/master/CONTRIBUTING.md",
+      "title": "https://github.com/grpc/grpc-rust/blob/master/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T23:30:43.659Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
+        "fileName": "grpc-grpc-rust-learnings.md"
+      }
+    },
+    "SRC-E53602919B36": {
+      "id": "SRC-E53602919B36",
+      "url": "https://f-droid.org/docs/Reproducible_Builds",
+      "title": "https://f-droid.org/docs/Reproducible_Builds",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T23:30:44.616Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
+      }
+    },
+    "SRC-E465D8505C39": {
+      "id": "SRC-E465D8505C39",
+      "url": "https://reproducible-builds.org/docs/build-path",
+      "title": "https://reproducible-builds.org/docs/build-path",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T23:30:44.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md",
+        "fileName": "shifthackz-stable-diffusion-kmp-learnings.md"
       }
     }
   }

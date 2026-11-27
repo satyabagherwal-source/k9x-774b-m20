@@ -13933,3 +13933,6 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `0360c971` | Multi-dimensional audit evidence | 2026-11-27T23:12:58.666Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `186d3ea3` | Multi-dimensional audit evidence | 2026-11-27T23:21:53.606Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `7df21566` | Multi-dimensional audit evidence | 2026-11-27T23:21:54.053Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `c7e68c59` | Multi-dimensional audit evidence | 2026-11-27T23:30:27.033Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/Stable-Diffusion-KMP` | `1596e0b5` | Multi-dimensional audit evidence | 2026-11-27T23:30:33.389Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `1a278de9` | Multi-dimensional audit evidence | 2026-11-27T23:30:40.123Z |

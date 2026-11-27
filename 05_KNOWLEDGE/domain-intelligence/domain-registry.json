@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T23:22:03.111Z",
-  "total_records": 2862,
+  "last_updated": "2026-11-27T23:30:46.128Z",
+  "total_records": 2864,
   "domains": {
     "A": {
       "total": 27,
@@ -76,7 +76,7 @@
       ]
     },
     "D": {
-      "total": 1050,
+      "total": 1052,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1127,7 +1127,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-708b-a41b-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-openuncensored-inkling-2-mini-uncensored-core-in",
         "DOM-D-3686F390",
-        "domain_intelligence-research-knowledge-intelligence-hf-openuncensored-inkling-2-mini-uncensored-lear"
+        "domain_intelligence-research-knowledge-intelligence-hf-openuncensored-inkling-2-mini-uncensored-lear",
+        "domain_intelligence-research-knowledge-intelligence-shifthackz-sdai-kmp-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-i"
       ]
     },
     "E": {
@@ -10612,8 +10614,8 @@
       "title": "Architecture Intelligence: grpc/grpc-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-architecture-intelligence-grpc-grpc-rust-core-invariants.md",
       "repository": "grpc/grpc-rust",
-      "content_hash": "bf98406ccfc9a9c5235fd4d618348e17aa39dba0820a2c675b284f18a6d99678",
-      "created_at": "2026-11-25T23:11:43.245Z"
+      "content_hash": "ea371af7db9699bbeaebd3072889dc4d3902b06d5f8efb2354c58ae6528ead69",
+      "created_at": "2026-11-27T23:30:27.468Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants",
@@ -10648,8 +10650,8 @@
       "title": "Architecture Intelligence: grpc-grpc-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-learnings-architecture-intelligence-grpc-grpc-rust-learnings-core.md",
       "repository": "grpc-grpc-rust-learnings",
-      "content_hash": "d184d6197f2b0303d8407c34beaf89e30a485c1ad820cc2d4e4f1dadb7107b0b",
-      "created_at": "2026-11-25T23:12:01.621Z"
+      "content_hash": "fca6bc6a2ab45c562fa1d3590030623ca5c9733e7bd2f335611edec652fc62ca",
+      "created_at": "2026-11-27T23:30:44.122Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
@@ -17120,8 +17122,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "9d99a817944ea97256672a028dd90f9a007a991663beff8fddd32832674940d5",
-      "created_at": "2026-11-27T04:27:25.464Z"
+      "content_hash": "cfda5fb62b5e7303a3ff925cd9cd027ee6f62c147a076acacf3643e206667a78",
+      "created_at": "2026-11-27T23:30:40.550Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -23802,8 +23804,8 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
       "repository": "trinodb-trino-learnings",
-      "content_hash": "9f7d7bcbda4c8a8765c665b9502273c4abcd5998bceef1d267b387599a288aed",
-      "created_at": "2026-11-27T04:27:32.795Z"
+      "content_hash": "b95456dfd8af10c5a72d5680aa39baf64f060fe19508ae054d3a328ba2c4849c",
+      "created_at": "2026-11-27T23:30:46.128Z"
     },
     "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
@@ -48382,6 +48384,24 @@
       "confidence": 0.83,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-27T22:55:24.907Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-shifthackz-sdai-kmp-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-shifthackz-sdai-kmp-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-shifthackz-stable-diffusion-kmp-research-knowledge-intelligence-shifthackz-sdai-.md",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "content_hash": "77464ab873704f79e54f79029fc77fe9540515d73b8b28badc37a1c179ac7524",
+      "created_at": "2026-11-27T23:30:33.847Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-shifthackz-stable-diffusion-kmp-learnings-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: shifthackz-stable-diffusion-kmp-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-shifthackz-stable-diffusion-kmp-learnings-research-knowledge-intelligence-shifth.md",
+      "repository": "shifthackz-stable-diffusion-kmp-learnings",
+      "content_hash": "2d6b78feec1df3a22d672a2a528847b2270c396c0fbfe8c4c9981e1505c50ea0",
+      "created_at": "2026-11-27T23:30:45.127Z"
     }
   }
 }

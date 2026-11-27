@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-STXH",
-    "timestamp": "2026-11-26T12:20:06.917Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "4ebd2f99a753d22b617dc3b9011742b7868a32498a598f717692ac2f0e8b4523",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-T0K7",
-    "timestamp": "2026-11-26T12:20:15.511Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "628de032bc98c23623a5e0047622bc7d36e9ce148639a5b27d6f716a0e45b2c6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-45LA",
-    "timestamp": "2026-11-26T12:28:55.246Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "a2e4c1539fb3530f946c7cb4c1c6f1bed264ed79cae62aa3fd0faea6a53e7586",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-47MG",
     "timestamp": "2026-11-26T12:28:57.880Z",
     "repository": "Folkbench/folkbench",
@@ -7492,6 +7447,51 @@
     "contentHash": "d0392915ce2d2023731838cade3f19390413bc97e74cd93e40b252ebad261273",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6QMM",
+    "timestamp": "2026-11-27T23:30:27.022Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "d916cda6bde86a3c505fd1cc4bac969f8d77c9113616d962357f8cacf2b4fedf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-6VJ3",
+    "timestamp": "2026-11-27T23:30:33.375Z",
+    "repository": "ShiftHackZ/SDAI-KMP",
+    "learningId": "learn-github-shifthackz-sdai-kmp",
+    "contentHash": "8c37a9bff060d8c0c67c6168ae2e82f2ea071edf3cb9b1693e299e7fc9d9b1c4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-70Q8",
+    "timestamp": "2026-11-27T23:30:40.112Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "fcf6cc008bbb49bd6a114d1422a4e0ef7721d3dbbd903ea49a10d41a19c66feb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

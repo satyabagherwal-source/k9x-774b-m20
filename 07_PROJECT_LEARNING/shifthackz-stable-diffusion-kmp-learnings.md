@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md`  
 > **Source**: github ([https://github.com/ShiftHackZ/Stable-Diffusion-KMP](https://github.com/ShiftHackZ/Stable-Diffusion-KMP))  
-> **Source Version**: `7d074972`  
+> **Source Version**: `1596e0b5`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-25T15:00:35.827Z  
+> **Timestamp**: 2026-11-27T23:30:32.226Z  
 > **Learning ID**: `learn-github-shifthackz-sdai-kmp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shifthackz-stable-diffusion-kmp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ShiftHackZ/Stable-Diffusion-KMP](https://github.com/ShiftHackZ/Stable-Diffusion-KMP))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T15:00:35.819Z  
+> **Harvest Timestamp**: 2026-11-27T23:30:32.221Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Stable Diffusion AI client app for Android and iOS
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1299 stars
+- **Stars / Engagement**: 1300 stars
 
 ---
 
@@ -803,91 +803,402 @@ Please make the ONNX sampling steps and CFG scale values persistent.**
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d074972` (2026-11-24)
-**Commit Message**: Add hosted upscaler model catalogs
+### Incident Patch 1: `04ff9d96` (2026-11-26)
+**Commit Message**: Fix native reproducibility and prepare SDAI 1.3.1 (#801)
 
-**File**: `docs/upscaler-esrgan.json` (added, +18/-0)
+* Fix MNN build ID and strengthen FOSS reproducibility checks
+
+* Bump SDAI version to 1.3.1 (222)
+
+* Grant FOSS build users access to release tooling
+
+* Isolate FOSS build user configuration directories
+
+* Keep varied rebuild source timestamps before generated outputs
+
+* Separate Gradle capacity from FOSS native worker variation
+
+* Use all available processors for both FOSS builds
+
+* Use native storage for FOSS reproducibility builds
+
+* Remove clock interception from FOSS rebuilds
+
+**File**: `.github/workflows/release_android.yml` (modified, +30/-6)
 ```diff
-@@ -0,0 +1,18 @@
-+[
-+  {
-+    "id": "upscaler_realesrgan_x4plus",
-+    "name": "Real-ESRGAN x4plus",
-+    "size": "64 MB",
-+    "sources": [
-+      "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth"
-+    ]
-+  },
-+  {
-+    "id": "upscaler_realesrgan_anime_6b",
-+    "name": "Real-ESRGAN x4plus Anime 6B",
-+    "size": "17 MB",
-+    "sources": [
-+      "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth"
-+    ]
-+  }
-+]
+@@ -137,24 +137,44 @@ jobs:
+         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+         with:
+           ref: ${{ needs.plan.outputs.source_sha }}
+-          path: source
++          path: ${{ matrix.source_path }}
+           fetch-depth: 0
+           submodules: recursive
+           persist-credentials: false
+ 
+       - name: Install pinned native Linux toolchain
++        env:
++          FLAVOR: ${{ matrix.flavor }}
++          SDK_PATH: ${{ matrix.sdk_path }}
++          REPRO_PROFILE: ${{ matrix.repro_profile }}
+         run: |
+-          # Keep NDK header paths consistent with the F-Droid build environment.
+-          test ! -e /opt/android-sdk
+-          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/android-sdk
+-          bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools" /opt/android-sdk
++          # The second build must not reuse the first build's SDK/NDK path.
++          test ! -e "$SDK_PATH"
++          sudo install -d -o "$(id -u)" -g "$(id -g)" "$SDK_PATH"
++          tools_path="$RUNNER_TEMP/release-tools"
++          if [[ "$FLAVOR" == foss ]]; then
++            sudo apt-get update
++            sudo apt-get install --no-install-recommends -y acl e2fsprogs
++          fi
++          if [[ "$FLAVOR" == foss && "$REPRO_PROFILE" == varied ]]; then
++            tools_path="$RUNNER_TEMP/independent-toolchain-with-a-longer-path"
++            sudo locale-gen en_US.UTF-8
++          fi
++          bash ci/scripts/release/setup.sh build "$tools_path" "$SDK_PATH"
+ 
+       - name: Build unsigned artifact
+         env:
+           FLAVOR: ${{ matrix.flavor }}
+           FORMAT: ${{ matrix.format }}
+           SOURCE_SHA: ${{ needs.plan.outputs.source_sha }}
+-        run: bash ci/scripts/release/build.sh source "$FLAVOR" "$FORMAT" "$RUNNER_TEMP/output" "$SOURCE_SHA"
++          SOURCE_PATH: ${{ matrix.source_path }}
++          REPRO_PROFILE: ${{ matrix.repro_profile }}
++        run: |
++          if [[ "$FLAVOR" == foss ]]; then
++            bash ci/scripts/release/run_build.sh "$SOURCE_PATH" "$FLAVOR" "$FORMAT" "$RUNNER_TEMP/output" "$SOURCE_SHA" "$REPRO_PROFILE"
++          else
++            bash ci/scripts/release/build.sh "$SOURCE_PATH" "$FLAVOR" "$FORMAT" "$RUNNER_TEMP/output" "$SOURCE_SHA"
++          fi
+ 
+       - name: Preserve unsigned output and build evidence
+         if: always()
+@@ -311,6 +331,10 @@ jobs:
+         run: |
+           bash ci/scripts/release/sign.sh "$FLAVOR" "$FORMAT" "verified/unsigned.$FORMAT" "$RUNNER_TEMP/signed" "$VERSION_NAME"
+           cp verified/metadata.json verified/toolchain.json verified/submodules.txt "$RUNNER_TEMP/signed/"
++          if [[ "$FLAVOR" == foss ]]; then
++            cp verified/build-environments.json "$RUNNER_TEMP/signed/"
++            cp verified/native-reproducibility.json "$RUNNER_TEMP/signed/"
++          fi
+           cp verified/native-diagnostics.zip "$RUNNER_TEMP/signed/sdai-$FLAVOR-$FORMAT-$VERSION_NAME-native-diagnostics.zip"
+ 
+       - name: Verify signed APK against the independent rebuild
 ```
 
-**File**: `docs/upscaler-mnn.json` (added, +10/-0)
+**File**: `CITATION.cff` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,10 @@
-+[
-+  {
-+    "id": "upscaler_mnn_anime_6b",
-+    "name": "Real-ESRGAN Anime 6B (MNN)",
-+    "size": "17 MB",
-+    "sources": [
-+      "https://huggingface.co/tumuyan2/realsr-models/resolve/2d6ddae2f31157ab1f750b5678c4cbf88e4d7ec4/models-MNNSR/RealESRGAN_x4plus_anime_6B-x4.mnn?download=true"
-+    ]
-+  }
-+]
+@@ -2,8 +2,8 @@ cff-version: 1.2.0
+ message: "If you use this software, please cite it using the metadata below."
+ title: "SDAI"
+ type: software
+-version: "1.3.0"
+-date-released: "2026-11-24"
++version: "1.3.1"
++date-released: "2026-11-25"
+ abstract: >-
+   SDAI is an independent, open-source AI image generation client for
+   Android and iOS. It provides a unified mobile workflow for self-hosted
 ```
 
----
-
-### Incident Patch 2: `115883ca` (2026-11-24)
-**Commit Message**: Publish the blog JSON feed
-
-**File**: `docs/blog.json` (added, +27/-0)
+**File**: `README.md` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,27 @@
-+---
-+layout: null
-+---
-+{%- assign posts = site.pages | where: 'layout', 'blog-post' | sort: 'date' | reverse -%}
-+{% capture front_matter_end %}
-+---
-+{% endcapture -%}
-+{
-+  "posts": [
-+    {%- for post in posts -%}
-+      {%- capture source -%}{% include_relative {{ post.path }} %}{%- endcapture -%}
-+      {%- assign prefix = source | split: front_matter_end | first | append: front_matter_end -%}
-+      {%- assign article = source | remove_first: prefix | strip -%}
-+      {
-+        "slug": {{ post.dir | split: '/' | last | jsonify }},
-+        "title": {{ post.title | jsonify }},
-+        "summary": {{ post.description | jsonify }},
-+        "publishedOn": {{ post.date | date: '%Y-%m-%d' | jsonify }},
-+        "category": {{ post.category | jsonify }},
-+        "url": {{ post.url | absolute_url | jsonify }},
-+        "coverUrl": {{ post.url | append: post.cover | absolute_url | jsonify }},
-+        "coverDescription": {{ post.cover_alt | jsonify }},
-+        "markdown": {{ article | jsonify }}
-+      }{% unless forloop.last %},{% endunless %}
-+    {%- endfor -%}
-+  ]
-+}
+@@ -287,25 +287,25 @@ Machine-readable citation metadata is available in [`CITATION.cff`](CITATION.cff
+ 
+ If you mention SDAI in research, articles, benchmarks, tutorials, app collections, or public project documentation, please cite it as:
+ 
+-> SDAI, version 1.3.0, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/SDAI-KMP
++> SDAI, version 1.3.1, an open-source cross-platform AI image generation client by Dmytro Moroz (Moroz Inc.). https://github.com/ShiftHackZ/SDAI-KMP
+ 
+ BibTeX:
+ 
+ ```bibtex
+ @software{Moroz_SDAI_2026,
+   author = {Moroz, Dmytro},
+-  date = {2026-11-22},
++  date = {2026-11-25},
+   license = {AGPL-3.0-only},
+   month = nov,
+   title = {{SDAI}},
+   url = {https://github.com/ShiftHackZ/SDAI-KMP},
+-  version = {1.3.0},
++  version = {1.3.1},
+   year = {2026}
+ }
+ ```
+ 
+ APA:
+ 
+ ```
+-Moroz, D. (2026). SDAI (Version 1.3.0) [Computer software]. https://github.com/ShiftHackZ/SDAI-KMP
++Moroz, D. (2026). SDAI (Version 1.3.1) [Computer software]. https://github.com/ShiftHackZ/SDAI-KMP
+ ```
+```
+
+**File**: `app/ios/iosApp.xcodeproj/project.pbxproj` (modified, +4/-4)
+```diff
+@@ -334,7 +334,7 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CODE_SIGN_IDENTITY = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 221;
++				CURRENT_PROJECT_VERSION = 222;
+ 				DEVELOPMENT_TEAM = 383EQFRA4A;
+ 				ENABLE_PREVIEWS = YES;
+ 				FRAMEWORK_SEARCH_PATHS = (
+@@ -349,7 +349,7 @@
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
+-				MARKETING_VERSION = 1.3.0;
++				MARKETING_VERSION = 1.3.1;
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+ 					"-framework",
+@@ -370,7 +370,7 @@
+ 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+ 				CODE_SIGN_IDENTITY = "Apple Development";
+ 				CODE_SIGN_STYLE = Automatic;
+-				CURRENT_PROJECT_VERSION = 221;
++				CURRENT_PROJECT_VERSION = 222;
+ 				DEVELOPMENT_TEAM = 383EQFRA4A;
+ 				ENABLE_PREVIEWS = YES;
+ 				FRAMEWORK_SEARCH_PATHS = (
+@@ -385,7 +385,7 @@
+ 					"$(inherited)",
+ 					"@executable_path/Frameworks",
+ 				);
+-				MARKETING_VERSION = 1.3.0;
++				MARKETING_VERSION = 1.3.1;
+ 				OTHER_LDFLAGS = (
+ 					"$(inherited)",
+ 					"-framework",
+```
+
+**File**: `feature/mnn/src/androidMain/cpp/CMakeLists.txt` (modified, +3/-0)
+```diff
+@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.22.1)
+ project(sdai_mnn_runtime LANGUAGES C CXX)
+ set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
++# Build IDs hash debug inputs before stripping and can retain build-path variance.
++# Apply before adding any dependency targets, as recommended by F-Droid.
++add_link_options("LINKER:--build-id=none")
+ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384")
+ 
+ # Keep source locations and debug/build-id inputs independent of checkout paths.
+```
+
+**File**: `gradle/libs.versions.toml` (modified, +2/-2)
+```diff
+@@ -1,7 +1,7 @@
+ [versions]
+ jacoco = "0.8.16"
+-versionName = "1.3.0"
+-versionCode = "221"
++versionName = "1.3.1"
++versionCode = "222"
+ targetSdk = "36"
+ compileSdk = "36"
+ minSdk = "24"
+```
+
+**File**: `scripts/release/README.md` (modified, +63/-8)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ [Android Release](../../.github/workflows/release_android.yml) builds selected Android
+ artifacts on native Ubuntu 24.04 x86-64 GitHub runners. FOSS artifacts are built twice
+-on separate fresh runners and must be byte-identical. Full and Play Store artifacts
++on separate fresh runners with different source and SDK paths and must be byte-identical. Full and Play Store artifacts
+ are built once. Every output must have the expected package, version and embedded
+ Git revision before signing. Signing is enabled
+ by default; no separate unsigned run or existing-release reference is required.
+@@ -105,14 +105,61 @@ installing the pinned SDK. Android archive checksums were calculated from the
+ official downloads and cross-checked against Google's repository metadata. JDK,
+ Gradle and bundletool checksum sources are recorded in the profile.
+ 
+-Build jobs install the SDK at `/opt/android-sdk`, matching the F-Droid build
+-environment. Native debug information can include NDK header paths, which can
+-affect linker build IDs even after debug sections are stripped from the APK.
++The first build installs the SDK at `/opt/android-sdk`, matching the F-Droid build
++environment. The FOSS rebuild uses `/opt/independent-android-sdk` and a different,
++longer checkout path. Both use fresh runners and Gradle homes. Verification requires
++the recorded source and SDK paths to differ, so repeating an identical environment
++cannot silently replace this check. Native debug information can include NDK
++header paths, which can affect linker build IDs even after stripping the APK.
+ Signing and verification jobs use their own temporary SDK directory.
+ 
+-Gradle runs with a 4 GiB heap, at most two workers, no parallel project execution,
+-and the Kotlin compiler inside the Gradle process. Native Ninja compilation is limited
+-to two workers, including direct Ninja invocations from AGP. Each selected output
++The two FOSS builds also use different real users, home directories, hostnames,
++JDK/Gradle/temp paths, locales, timezones, umasks and Python hash seeds.
++Both builds use the native system clock, with `SOURCE_DATE_EPOCH` fixed at the
++source commit time. Runtime clock changes are outside this comparison's coverage.
++Both builds use fresh native ext4 volumes,
++populated in ascending and descending creation order respectively. Before building,
++the helpers verify the copied Git source and record the actual directory traversal
++order; verification requires those witnesses to differ. The rebuild sets source
++mtimes one day before the commit time, preserving tracked bytes, executable bits
++and symlinks. Source mtimes must precede newly generated Ninja manifests. Owned
++volumes are unmounted and removed on exit. Linux is required for this preparation.
++Verification requires the recorded differences;
++a missing variation fails the gate. Full and Play Store retain their single build.
++
++Follow [F-Droid's reproducible-build guidance](https://f-droid.org/docs/Reproducible_Builds/)
++and the [Reproducible Builds build-path guidance](https://reproducible-builds.org/docs/build-path/)
++when adding native modules: pin downloaded sources and tools, map source/build/NDK
++paths before adding dependency targets, and avoid embedded timestamps and host paths.
++The FOSS native checker discovers ELF magic bytes in every archive entry, including
++extensionless executables and native files stored in assets. There is no library,
++module or ABI allowlist. It records and compares complete ELF hashes, build IDs
++and ABI identities. A deterministic build ID is allowed; any differing ELF byte
++fails the whole-archive comparison. Adding a native dependency requires no checker
++registration. Build-time regression tests discover the actual FOSS ELF inventory
++and verify detection of a byte change in each file and an arbitrary extensionless
++ELF path. These are checker tests using compiled native inputs, not application QA.
++
++The release init script applies `-Werror=date-time` to C and C++ compilation in
++every Android CMake and ndk-build module, including modules added later. Expanding
++`__DATE__`, `__TIME__` or `__TIMESTAMP__` fails the FOSS build. The package gate
++compares all APK/AAB bytes: DEX, manifests, resources, assets, native libraries,
++archive ordering and ZIP metadata. It never strips or normalizes an artifact to
++force equality. APK signing also retains the independent signature-copy check.
++Gradle rejects dynamic and changing dependencies in every project's dependency
++and buildscript configurations through `failOnNonReproducibleResolution()`.
++
++These checks cover the selected toolchain and exercised path variations. They do
++not prove equivalence under every possible environment or replace an independent
++F-Droid recipe rebuild. When a comparison fails, inspect `reproducibility-diff.json`
++and use `diffoscope` on the retained artifacts; fix the differing build input
++before signing. Keep the signed-versus-independent-APK signature-copy ga
+```
+
+**File**: `scripts/release/build.sh` (modified, +79/-3)
+```diff
+@@ -28,22 +28,94 @@ if grep -Eq '^[-+U]' "${RUNNER_TEMP:-/tmp}/sdai-submodules.txt"; then
+ fi
+ 
+ export TZ=UTC LC_ALL=C.UTF-8 LANG=C.UTF-8
++export SDAI_RELEASE_FLAVOR="$flavor"
++export SDAI_NATIVE_WORKERS=2
++export SDAI_GRADLE_WORKERS=2
++gradle_jvm_args='-Xmx4g -XX:MaxMetaspaceSize=1024m -Dfile.encoding=UTF-8'
++gradle_reporting=()
++if [[ "$flavor" == foss ]]; then
++    gradle_reporting=(--console=plain --info)
++    # Both FOSS builds use all available processors for Gradle and native jobs.
++    SDAI_GRADLE_WORKERS="$(getconf _NPROCESSORS_ONLN)"
++    SDAI_NATIVE_WORKERS="$SDAI_GRADLE_WORKERS"
++    case "${SDAI_REPRO_PROFILE:?FOSS reproducibility profile required}" in
++        baseline)
++            umask 022
++            export PYTHONHASHSEED=1
++            ;;
++        varied)
++            umask 077
++            export TZ=Pacific/Honolulu LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
++            export PYTHONHASHSEED=8675309
++            ;;
++        *) echo 'Unknown FOSS reproducibility profile' >&2; exit 1 ;;
++    esac
++    export TMPDIR="${RUNNER_TEMP:?Runner temp required}/build-tmp-$SDAI_REPRO_PROFILE"
++    mkdir -p "$TMPDIR"
++    locale charmap >/dev/null
++    gradle_jvm_args+=" -Djava.io.tmpdir=$TMPDIR"
++fi
+ export SOURCE_DATE_EPOCH
+ SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
+-export CMAKE_BUILD_PARALLEL_LEVEL=2
++export CMAKE_BUILD_PARALLEL_LEVEL="$SDAI_NATIVE_WORKERS"
+ export SDAI_REAL_NINJA="${ANDROID_HOME}/cmake/3.22.1/bin/ninja"
+ export SDAI_NINJA_WRAPPER="${script_dir}/ninja.sh"
+ export SDAI_RELEASE_PROFILE="${script_dir}/toolchain.json"
+ mkdir -p "$output_dir"
+ output_dir="$(cd "$output_dir" && pwd)"
++if [[ "$flavor" == foss ]]; then
++    python3 - "$source_dir" "$ANDROID_HOME" "$expected_sha" "$output_dir" <<'PY'
++import json
++import os
++from datetime import datetime, timezone
++from pathlib import Path
++import pwd
++import socket
++import sys
++
++source, sdk, sha, output = sys.argv[1:]
++preparation = json.loads((Path(source) / ".git/sdai-repro-inputs.json").read_text())
++current_umask = os.umask(0)
++os.umask(current_umask)
++(Path(output) / "build-environment.json").write_text(json.dumps({
++    "source_path": str(Path(source).resolve()),
++    "sdk_path": str(Path(sdk).resolve()),
++    "source_sha": sha,
++    "source_date_epoch": int(os.environ["SOURCE_DATE_EPOCH"]),
++    "repro_profile": os.environ["SDAI_REPRO_PROFILE"],
++    "reordered_directories": preparation["reordered_directories"],
++    "filesystem": preparation["filesystem"],
++    "creation_order": preparation["creation_order"],
++    "directory_order_sha256": preparation["directory_order_sha256"],
++    "java_path": str(Path(os.environ["JAVA_HOME"]).resolve()),
++    "gradle_path": str(Path(os.environ["GRADLE_USER_HOME"]).resolve()),
++    "home_path": str(Path.home()),
++    "temp_path": str(Path(os.environ["TMPDIR"]).resolve()),
++    "user": pwd.getpwuid(os.getuid()).pw_name,
++    "hostname": socket.gethostname(),
++    "timezone": os.environ["TZ"],
++    "locale": os.environ["LC_ALL"],
++    "python_hash_seed": os.environ["PYTHONHASHSEED"],
++    "workers": int(os.environ["SDAI_NATIVE_WORKERS"]),
++    "gradle_workers": int(os.environ["SDAI_GRADLE_WORKERS"]),
++    "umask": oct(current_umask),
++    "source_mtime": (Path(source) / "gradle/libs.versions.toml").stat().st_mtime_ns,
++    "wall_clock_date": datetime.now(timezone.utc).date().isoformat(),
++}, indent=2) + "\n")
++PY
++fi
+ 
+ # No restored task outputs or compiler caches participate in either build.
++if [[ "$flavor" == foss ]]; then
++    printf 'Build profile: %s; Gradle workers: %s; native jobs: %s\n' \
++        "$SDAI_REPRO_PROFILE" "$SDAI_GRADLE_WORKERS" "$SDAI_NATIVE_WORKERS"
++fi
+ /usr/bin/time -v "$SDAI_GRADLE" ":app:${task}" \
+     --init-script "${script_dir}/release.init.gradle" \
+     --no-daemon --no-parallel --no-build-cache --no-configuration-cache \
+-    --max-workers=2 --stacktrace \
++    --max-workers="$SDAI_GRADLE_WORKERS" --stacktrace "${gradle_reporting[@]}" \
+     -Dorg.gradle.java.home="$JAVA_HOME" \
+-    '-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1024m -Dfile.encoding=UTF-8' \
++    "-Dorg.gradle.jvmargs=$gradle_jvm_args" \
+     -Dorg.gradle.vfs.watch=false \
+     -Pkotlin.compiler.execution.strategy=in-process \
+     -Porg.gradle.java.installations.auto-download=false \
+@@ -63,6 +135,10 @@ mapfile -t artifacts < <(find "$artifact_dir" -maxdepth 1 -type f -name "*.${for
+ [[ "${#artifacts[@]}" == 1 ]] || { echo 'Expected exactly one unsigned artifact' >&2; exit 1; }
+ cp "${artifacts[0]}" "${output_dir}/unsigned.${format}"
+ cp "${script_dir}/toolchain.json" "${output_dir}/toolchain.json"
++if [[ "$flavor" == foss ]]; then
++    SDAI_NATIVE_TEST_PACKAGE="${output_dir}/unsigned.${format}" \
++        python3 -m unittest discover -s "$script_dir" -p test_native_reproducibility_checker.py
++fi
+ python3 "${script_dir}/native_symbols.py" "$source_dir" "${output_dir}/unsigned.${format}" \
+     "${output_dir}/native-diagnostics.zip" --flavor "$flavor" \
+     --source-sha "$expected
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #796** (2026-11-24): Add native Blog to Settings (@ShiftHackZ)
-- **PR #795** (2026-11-24): Add native FAQ to Settings (@ShiftHackZ)
-- **PR #794** (2026-11-24): Announce SDAI 1.3.0 on the website (@ShiftHackZ)
-- **PR #793** (2026-11-23): Add SDAI website blog and shared page templates (@ShiftHackZ)
-- **PR #792** (closed): Bump gradle-wrapper from 8.13 to 9.9.2 (@dependabot[bot])
-- **PR #791** (closed): Bump ktor from 3.5.0 to 3.6.1 (@dependabot[bot])
+- **PR #804** (2026-11-27): Shard Dokka generation and cache API contract inputs (@ShiftHackZ)
+- **PR #803** (2026-11-27): Optimize Dokka generation with aggregate-only output and caching (@ShiftHackZ)
+- **PR #802** (closed): Bump agp from 8.13.2 to 9.5.3 (@dependabot[bot])
+- **PR #801** (2026-11-26): Fix native reproducibility and prepare SDAI 1.3.1 (@ShiftHackZ)
+- **PR #799** (closed): Bump com.mikepenz:multiplatform-markdown-renderer-m3 from 0.40.2 to 0.46.0 (@dependabot[bot])
+- **PR #798** (closed): Bump coil from 3.3.0 to 3.6.3 (@dependabot[bot])
 
 ---
 
@@ -907,45 +1218,57 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add hosted upscaler model catalogs
+## X. native reproducibility and prepare SDAI 1.3.1
 
 **RULE**:
-When implementing operations in `docs/upscaler-esrgan.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release_android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d074972`: Add hosted upscaler model catalogs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `04ff9d96`: native reproducibility and prepare SDAI 1.3.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/upscaler-esrgan.json`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release_android.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-[
-  {
-    "id": "upscaler_realesrgan_x4plus",
-    "name": "Real-ESRGAN x4plus",
-    "size": "64 MB",
-    "sources": [
-      "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth"
-    ]
-  },
-  {
-    "id": "upscaler_realesrgan_anime_6b",
-    "name": "Real-ESRGAN x4plus Anime 6B",
-    "size": "17 MB",
-    "sources": [
-      "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth"
-    ]
-  }
-]
+          path: ${{ matrix.source_path }}
+        env:
+          FLAVOR: ${{ matrix.flavor }}
+          SDK_PATH: ${{ matrix.sdk_path }}
+          REPRO_PROFILE: ${{ matrix.repro_profile }}
+          # The second build must not reuse the first build's SDK/NDK path.
+          test ! -e "$SDK_PATH"
+          sudo install -d -o "$(id -u)" -g "$(id -g)" "$SDK_PATH"
+          tools_path="$RUNNER_TEMP/release-tools"
+          if [[ "$FLAVOR" == foss ]]; then
+            sudo apt-get update
+            sudo apt-get install --no-install-recommends -y acl e2fsprogs
+          fi
+          if [[ "$FLAVOR" == foss && "$REPRO_PROFILE" == varied ]]; then
+            tools_path="$RUNNER_TEMP/independent-toolchain-with-a-longer-path"
+            sudo locale-gen en_US.UTF-8
+          fi
+          bash ci/scripts/release/setup.sh build "$tools_path" "$SDK_PATH"
+          SOURCE_PATH: ${{ matrix.source_path }}
+          REPRO_PROFILE: ${{ matrix.repro_profile }}
+        run: |
+          if [[ "$FLAVOR" == foss ]]; then
+            bash ci/scripts/release/run_build.sh "$SOURCE_PATH" "$FLAVOR" "$FORMAT" "$RUNNER_TEMP/output" "$SOURCE_SHA" "$REPRO_PROFILE"
+          else
+            bash ci/scripts/rele
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+          path: source
+          # Keep NDK header paths consistent with the F-Droid build environment.
+          test ! -e /opt/android-sdk
+          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/android-sdk
+          bash ci/scripts/release/setup.sh build "$RUNNER_TEMP/release-tools" /opt/android-sdk
+        run: bash ci/scripts/release/build.sh source "$FLAVOR" "$FORMAT" "$RUNNER_TEMP/output" "$SOURCE_SHA"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d074972` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `04ff9d96` are properly handled with clean fallback behavior.

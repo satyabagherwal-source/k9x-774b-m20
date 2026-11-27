@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T23:21:54.107Z",
-  "total_cycles_completed": 13191,
-  "total_learnings_persisted": 13191,
-  "total_rules_promoted": 11901,
+  "last_updated": "2026-11-27T23:30:40.128Z",
+  "total_cycles_completed": 13194,
+  "total_learnings_persisted": 13194,
+  "total_rules_promoted": 11904,
   "history": [
-    {
-      "timestamp": "2026-11-27T05:30:20.481Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:39:35.880Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:39:47.701Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T05:39:51.374Z",
       "repository": "ydb-platform/ydb",
@@ -1403,6 +1382,27 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:30:27.038Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:30:33.395Z",
+      "repository": "ShiftHackZ/SDAI-KMP",
+      "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T23:30:40.128Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

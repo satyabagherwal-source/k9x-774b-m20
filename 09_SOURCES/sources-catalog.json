@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "039ba60f",
+    "sourceVersion": "1a278de9",
     "license": "Apache-2.0",
-    "contentHash": "160b41f568d6c8169bd7bb31f7b5f04fe5c2ee4eb28dfc26aeccadb583b5f9ae",
-    "lastHarvestedAt": "2026-11-27T04:27:24.879Z",
+    "contentHash": "fcf6cc008bbb49bd6a114d1422a4e0ef7721d3dbbd903ea49a10d41a19c66feb",
+    "lastHarvestedAt": "2026-11-27T23:30:40.123Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "39b3ea7c",
+    "sourceVersion": "c7e68c59",
     "license": "MIT",
-    "contentHash": "3c67d06edbab827a18824373dc8d0d74421cdc216d9feac02e118dc0472a873d",
-    "lastHarvestedAt": "2026-11-25T23:11:42.838Z",
+    "contentHash": "d916cda6bde86a3c505fd1cc4bac969f8d77c9113616d962357f8cacf2b4fedf",
+    "lastHarvestedAt": "2026-11-27T23:30:27.033Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -8593,10 +8593,10 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
-    "sourceVersion": "7d074972",
+    "sourceVersion": "1596e0b5",
     "license": "AGPL-3.0",
-    "contentHash": "16d8784f4dabf21140c4b6ce086e6f7020593a816d958f2d95b41ec4223fa9b9",
-    "lastHarvestedAt": "2026-11-25T15:00:37.361Z",
+    "contentHash": "8c37a9bff060d8c0c67c6168ae2e82f2ea071edf3cb9b1693e299e7fc9d9b1c4",
+    "lastHarvestedAt": "2026-11-27T23:30:33.389Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
   },
   "android-kotlin-multiplatform-samples": {
