@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T13:37:00.010Z",
+  "last_updated": "2026-11-27T13:46:47.533Z",
   "total_records": 2838,
   "domains": {
     "A": {
@@ -11299,8 +11299,8 @@
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "repository": "langchain4j/langchain4j",
-      "content_hash": "9d9cd14137da07dd321b4c721e02898d725bb85bc7d64df74017b84e371a2aa2",
-      "created_at": "2026-11-26T18:50:27.478Z"
+      "content_hash": "bb8785c27ce2556f1ce429203875396b5acecfff7dbdfdf16f5235ba7ea8a74f",
+      "created_at": "2026-11-27T13:46:40.281Z"
     },
     "DOM-D-9936936B": {
       "record_id": "DOM-D-9936936B",
@@ -29380,8 +29380,8 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-learnings-technical-construction-intelligence-langchain4.md",
       "repository": "langchain4j-langchain4j-learnings",
-      "content_hash": "0435e7b2c9b75a5c6077b83e26caf87af1f5acd4a727e5d1b4d8b8132fec047b",
-      "created_at": "2026-11-26T18:50:31.582Z"
+      "content_hash": "2d0fa2a0cb85bb642aa1ff9f26b9dcedff3f622cf5ac15d475008d05bbf9d3d5",
+      "created_at": "2026-11-27T13:46:44.453Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fastvideo-fasth3-omni-comfy-core-invariants",
@@ -33968,8 +33968,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "6a7965e72444a95ed70c6e756dc106945a7e3032489e0975c389241abbcfdf07",
-      "created_at": "2026-11-27T12:32:48.595Z"
+      "content_hash": "fba457f1337350b09ab0983f0d1657c0b91a4f5d736a01a6e0384f7ac0086512",
+      "created_at": "2026-11-27T13:46:47.533Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -46785,8 +46785,8 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zulip-zulip-learnings-content-information-intelligence-zulip-zulip-learnings-cor.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "acb5a8c547df8296e6be6316631b9f138f25178b2db35784dcc0bcab0953fe23",
-      "created_at": "2026-11-27T13:37:00.010Z"
+      "content_hash": "2a8193857d1563d9efa721467b45f7b0b5e39182b331454200a53e11c56b155e",
+      "created_at": "2026-11-27T13:46:45.961Z"
     },
     "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-feathersjs-feathers-core-invariants",

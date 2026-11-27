@@ -4,24 +4,24 @@
 {
   "source_repository": "langchain4j/langchain4j",
   "source_url": "https://github.com/langchain4j/langchain4j",
-  "source_version": "50c1a5c5",
+  "source_version": "fbb7c9e0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-26T18:50:27.274Z",
+  "timestamp": "2026-11-27T13:46:40.007Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-langchain4j-langchain4j",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `50c1a5c5`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-26T18:50:27.274Z`  
+> **Provenance**: Harvested from [langchain4j/langchain4j](https://github.com/langchain4j/langchain4j) (Revision: `fbb7c9e0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T13:46:40.007Z`  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), B (Product Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from langchain4j/langchain4j:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T18:50:25.824Z  
+> **Harvest Timestamp**: 2026-11-27T13:46:37.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13447 stars
+- **Stars / Engagement**: 13452 stars
 
 ---
 
@@ -831,11 +831,11 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7283** (2026-11-27): **[BUG] Streamable HTTP: subscriptions/listen is not re-established when its connection fails**
+  *Symptoms*: **Describe the bug** With `StreamableHttpMcpTransport` and the modern protocol (2026-07-28), the `subscriptions/listen` stream is not re-established when its connection fails (e.g. the MCP server restarts). The client does not reconnect or re-subscribe, so it stops receiving `notifications/tools/list_changed` and keeps returning the cached tool list.  From the source: - `DefaultMcpClient.startListChangeSubscriptions()` only logs when the listen request completes or fails (`List-change subscription failed`). - `StreamableHttpMcpTransport` never invokes the callback registered via `onFailure(...)` (the field is set but never read), so the client's reconnect handler does not run. - The client re-subscribes only if a health check happens to fail and the reconnect that follows succeeds, which depends on timing.  **Log and Stack trace** When the server restarts, the listen stream fails and the client only logs a warning. No reconnect or re-subscribe follows: ``` WARN  d.l.mcp.client.DefaultMcpClient : List-change subscription failed  reactor.netty.http.client.PrematureCloseException: Connection prematurely closed DURING response     Suppressed: The stacktrace has been enhanced by Reactor, refer to additional information below: Error has been observed at the following site(s):     *__checkpoint ⇢ Body from POST https://<mcp-server>/mcp [DefaultClientResponse]     *__checkpoint ⇢ Request to POST https://<mcp-server>/mcp [DefaultWebClient] ```  **To Reproduce** ```java StreamableHttpM
+
 - **Issue #7122** (2026-11-18): **[BUG] OpenAiTokenCountEstimator cannot be created for GPT-6 model names**
   *Symptoms*: **Describe the bug**  `new OpenAiTokenCountEstimator("gpt-6.1-sol")` throws an exception instead of returning an estimator. The `String` constructor selects `O200K_BASE` only for names starting with `o` or `gpt-4.` or `gpt-5`, so GPT-6 names fall through to `ENCODING_REGISTRY.getEncodingForModel(modelName)`, which jtokkit cannot resolve. `OpenAiChatModelName` has no GPT-6 constant, so the `String` constructor is the only way to use such a deployment.  **Log and Stack trace**  ``` java.lang.IllegalArgumentException: Model 'gpt-6.1-sol' is unknown to jtokkit 	at dev.langchain4j.model.openai.OpenAiTokenCountEstimator.<init>(OpenAiTokenCountEstimator.java:69) ```  **To Reproduce**  ```java // same for gpt-6-sol, gpt-6.1-sol, etc. new OpenAiTokenCountEstimator("gpt-6.1-sol"); ```  **Expected behavior**  The estimator is created and counts tokens with the o200k_base encoding.  **Please complete the following information:** - LangChain4j version: 1.23.0-beta33 (`main`) - LLM(s) used: OpenAI gpt-6.1-sol - Java version: 25 - Spring Boot version (if applicable): N/A  **Additional context**  Adding GPT-6 constants to `OpenAiChatModelName` is a separate change and not needed to fix this.  NOTE: this bug report is basically a copy of [Issue 5918](https://github.com/langchain4j/langchain4j/issues/5918) and [Issue 7121](https://github.com/langchain4j/langchain4j/issues/7121), which relate to missing models in Azure.
-
-- **Issue #7042** (2026-11-10): **[BUG] A parent listener with inheritedBySubagents() never sees an MCP or A2A subagent**
-  *Symptoms*: <!-- Please provide as many details as possible, this will help us to deliver a fix as soon as possible. Thank you! -->  **Describe the bug**  DefaultMcpClientBuilder.setParent() (and the A2A one) don't call registerInheritedParentListener(parent.listener()) like the other agent types do, so a parent listener with inheritedBySubagents() never sees an MCP or A2A subagent. **Log and Stack trace** <!-- Please provide a log and a stack trace (with exception), if applicable. -->  **To Reproduce** <!-- Please provide a relevant code snippets to reproduce this bug. -->  **Expected behavior** <!-- A clear and concise description of what you expected to happen. -->  **Please complete the following information:** - LangChain4j version: - LLM(s) used:  - Java version:  - Spring Boot version (if applicable):   **Additional context** <!-- Add any other context about the problem here. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -852,171 +852,222 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c5e5ed2` (2026-11-26)
-**Commit Message**: fix(agentic): pass a parallel mapper item after a framework argument (#7280)
+### Incident Patch 1: `1549577d` (2026-11-27)
+**Commit Message**: fix(tika): preserve published deprecation version (#7324)
 
 ## Issue
-Closes #7279
+
+Closes #7323.
 
 ## Change
-A parallel mapper passed each item to the first argument of its
-subagent, even when that argument is provided by the framework, like the
-`AgenticScope` or the `InvocationParameters`. A subagent declaring such
-an argument before the one receiving the item failed with
-`MissingArgumentException`.
 
-`MapperAgentInvoker` now passes the item to the first argument whose
-name does not start with `@`, the prefix of the arguments the framework
-provides (`@AgenticScope`, `@MemoryId`, `@LoopCounter`,
-`@InvocationParameters`). A subagent whose first argument is not one of
-them behaves as before.
+Keep `ApacheTikaDocumentParser.DEFAULT_CONTENT_HANDLER_SUPPLIER`'s
+deprecation version at `1.24.1`, matching the published `1.24.1-beta34`
+parser artifact. Main currently says `1.25.0`, so the normal Revapi
+check against `RELEASE` fails on
+`java.annotation.attributeValueChanged`.
 
-`ParallelMapperFrameworkArgumentTest` covers an `AgenticScope` before
-the item, after the item, two framework arguments before the item, and a
-subagent with only an `AgenticScope`. The two cases with a framework
-argument first fail on `main` with the `MissingArgumentException` above,
-and all 4 pass with the fix.
+This is one annotation-value correction, not a parser behavior change.
+It does not suppress an API difference, change the comparison version or
+alter the MCP fix in #7322.
 
-Local verification: `langchain4j-agentic` unit tests 685/685 green;
-`spotless:check` and `revapi:check` green.
+## Verification
 
-## General checklist
-- [X] There are no breaking changes (API, behaviour
+The existing Revapi check fails on unmodified main with the exact
+`since` mismatch and passes with this correction. The five-module
+dependency reactor also passes `verify`, including the existing 46 Tika
+parser tests, core tests, coverage checks and Revapi checks against the
+released artifacts:
 
-**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java` (modified, +14/-3)
-```diff
-@@ -1,6 +1,7 @@
- package dev.langchain4j.agentic.internal;
- 
- import dev.langchain4j.agentic.agent.MissingArgumentException;
-+import dev.langchain4j.agentic.planner.AgentArgument;
- import dev.langchain4j.agentic.scope.AgenticScope;
- import java.util.Map;
- 
-@@ -20,14 +21,24 @@ public class MapperAgentInvoker extends AbstractAgentInvoker {
-     public MapperAgentInvoker(AgentInvoker delegate, Object item, int instanceIndex, String outputKeyPrefix) {
-         super(delegate.method(), delegate);
-         this.item = item;
--        this.injectionKey = delegate.arguments().isEmpty()
--                ? null
--                : delegate.arguments().get(0).name();
-+        this.injectionKey = itemArgumentName(delegate);
-         this.instanceName = delegate.name() + "_" + instanceIndex;
-         this.instanceAgentId = delegate.agentId() + "_" + instanceIndex;
-         this.instanceOutputKey = outputKeyPrefix + "_" + instanceIndex;
-     }
- 
-+    /**
-+     * The item is passed to the first argument of the subagent that is not provided by the framework, like its
-+     * {@link AgenticScope} or its memory id, whose names start with {@code @}, so that such an argument can come first.
-+     */
-+    private static String itemArgumentName(AgentInvoker delegate) {
-+        return delegate.arguments().stream()
-+                .map(AgentArgument::name)
-+                .filter(name -> !name.startsWith("@"))
-+                .findFirst()
-+                .orElse(null);
-+    }
-+
-     @Override
-     public String name() {
-         return instanceName;
+```sh
+mvn -pl :langchain4j-document-parser-apache-tika -am verify \
+  -DskipITs -DembeddingsSkipDownload=true
 ```
 
-**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/ParallelMapperFrameworkArgumentTest.java` (added, +82/-0)
+No new Java unit test was added: the regression is checked by the
+existing artifact-to-artifact API gate, rather than a test that
+hard-codes the annotation string. Provider-backed integration tests were
+not run.
+
+A full-r
+
+**File**: `document-parsers/langchain4j-document-parser-apache-tika/src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,82 @@
-+package dev.langchain4j.agentic;
+@@ -81,7 +81,7 @@ public class ApacheTikaDocumentParser implements DocumentParser {
+      * To extract all the text, use {@link Builder#maxCharacters(Integer)} with {@code -1}:
+      * {@code ApacheTikaDocumentParser.builder().maxCharacters(-1).build()}.
+      */
+-    @Deprecated(since = "1.25.0")
++    @Deprecated(since = "1.24.1")
+     public static final Supplier<ContentHandler> DEFAULT_CONTENT_HANDLER_SUPPLIER =
+             () -> new BodyContentHandler(NO_WRITE_LIMIT);
+ 
+```
+
+---
+
+### Incident Patch 2: `b5ca5fbb` (2026-11-27)
+**Commit Message**: fix(mcp): preserve invocation context when listing resource templates (#7322)
+
+## Issue
+
+Closes #7320.
+
+## Change
+
+Pass the synthetic `list_resources` tool's invocation context to
+`listResourceTemplates`, as is already done for `listResources`. The
+existing context-aware client overload carries it through pagination,
+listeners and the request metadata supplier.
+
+Previously, templates were fetched through the no-argument overload, so
+their `McpCallContext.invocationContext()` was null even during an AI
+Service invocation. A loopback HTTP regression observes four missing
+metadata values across two template pages and two invocations before the
+fix; the corresponding resource-list values are present.
+
+Tests cover both clients receiving the context, the legacy null-context
+entry point, and the public presenter with a real `DefaultMcpClient` and
+paginated Streamable HTTP responses. The HTTP test checks metadata in
+actual request bodies, output descriptions and both page cursors.
+Resource caching is explicitly disabled for the test. This change does
+not partition caches or establish any new tenant-authorization
+guarantee.
+
+## Verification
+
+The three regressions fail against the original e
+
+**File**: `langchain4j-mcp/src/main/java/dev/langchain4j/mcp/resourcesastools/ListResourcesToolExecutor.java` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@ private String doExecute(InvocationContext invocationContext) {
+                         resource.description(),
+                         resource.mimeType()));
+             }
+-            for (McpResourceTemplate template : client.listResourceTemplates()) {
++            for (McpResourceTemplate template : client.listResourceTemplates(invocationContext)) {
+                 descriptions.add(new ResourceDescription(
+                         client.key(),
+                         null,
+```
+
+**File**: `langchain4j-mcp/src/test/java/dev/langchain4j/mcp/resourcesastools/ListResourcesToolExecutorTest.java` (added, +169/-0)
+```diff
+@@ -0,0 +1,169 @@
++package dev.langchain4j.mcp.resourcesastools;
 +
 +import static org.assertj.core.api.Assertions.assertThat;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.never;
++import static org.mockito.Mockito.verify;
++import static org.mockito.Mockito.when;
 +
-+import dev.langchain4j.agentic.scope.AgenticScope;
-+import dev.langchain4j.invocation.InvocationParameters;
-+import dev.langchain4j.service.V;
++import com.sun.net.httpserver.HttpExchange;
++import com.sun.net.httpserver.HttpServer;
++import dev.langchain4j.internal.Json;
++import dev.langchain4j.invocation.InvocationContext;
++import dev.langchain4j.mcp.client.DefaultMcpClient;
++import dev.langchain4j.mcp.client.McpClient;
++import dev.langchain4j.mcp.client.transport.http.StreamableHttpMcpTransport;
++import dev.langchain4j.service.tool.ToolExecutor;
++import java.io.IOException;
++import java.net.InetSocketAddress;
++import java.nio.charset.StandardCharsets;
++import java.time.Duration;
 +import java.util.List;
++import java.util.Map;
++import java.util.UUID;
++import java.util.concurrent.CopyOnWriteArrayList;
 +import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.Timeout;
 +
-+/**
-+ * A parallel mapper passes each item to the first argument of its subagent that is not provided by the framework, so
-+ * the subagent can declare an argument like its {@link AgenticScope} before the one receiving the item.
-+ */
-+class ParallelMapperFrameworkArgumentTest {
++class ListResourcesToolExecutorTest {
 +
-+    public static class ScopeFirstDoubler {
++    @Test
++    void forwards_invocation_context_to_both_lists_on_every_client() {
++        InvocationContext context = InvocationContext.builder().build();
++        McpClient first = mock(McpClient.class);
++        McpClient second = mock(McpClient.class);
++        for (McpClient client : List.of(first, second)) {
++            when(client.listResources(context)).thenReturn(List.of());
++            when(client.listResourceTemplates(context)).thenReturn(List.of());
++        }
 +
-+        @Agent(description = "Doubles a number", outputKey = "doubled")
-+        public int doubleIt(AgenticScope agenticScope, @V("number") int number) {
-+            return number * 2;
++        ToolExecutor executor = presenter().createListResourcesExecutor(List.of(first, second));
++        assertThat(executor.executeWithContext(null, context).resultText()).isEqualTo("[]");
++
++        for (McpClient client : List.of(first, second)) {
++            verify(client).listResources(context);
++            verify(client).listResourceTemplates(context);
++            verify(client, never()).listResourceTemplates();
 +        }
 +    }
 +
-+    public static class ScopeLastDoubler {
++    @Test
++    void legacy_execution_keeps_null_context_for_both_lists() {
++        McpClient client = mock(McpClient.class);
++        when(client.listResources(null)).thenReturn(List.of());
++        when(client.listResourceTemplates(null)).thenReturn(List.of());
 +
-+        @Agent(description = "Doubles a number", outputKey = "doubled")
-+        public int doubleIt(@V("number") int number, AgenticScope agenticScope) {
-+            return number * 2;
-+        }
-+    }
++        assertThat(presenter().createListResourcesExecutor(List.of(client)).execute(null, null))
++                .isEqualTo("[]");
 +
-+    public static class ParametersAndScopeFirstDoubler {
-+
-+        @Agent(description = "Doubles a number", outputKey = "doubled")
-+        public int doubleIt(
-+                InvocationParameters invocationParameters, AgenticScope agenticScope, @V("number") int number) {
-+            return number * 2;
-+        }
-+    }
-+
-+    public static class ScopeOnlyAgent {
-+
-+        @Agent(description = "Reads the number of the scope", outputKey = "read")
-+        public int read(AgenticScope agenticScope) {
-+            return (int) agenticScope.readState("number", 0);
-+        }
-+    }
-+
-+    public interface Mapper {
-+
-+        @Agent
-+        List<Integer> mapAll(@V("numbers") List<Integer> numbers);
++        verify(client).listResources(null);
++        verify(client).listResourceTemplates(null);
++        verify(client, never()).listResourceTemplates();
 +    }
 +
 +    @Test
-+    void item_is_passed_to_the_argument_after_the_agentic_scope() {
-+        assertThat(mapper(new ScopeFirstDoubler()).mapAll(List.of(1, 2, 3))).containsExactly(2, 4, 6);
-+    }
++    @Timeout(20)
++    void invocation_metadata_reaches_every_resource_and_template_page() throws Exception {
++        List<ObservedRequest> requests = new CopyOnWriteArrayList<>();
++        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
++        server.createContext("/mcp", exchange -> respond(exchange, requests));
++        server.start();
++        try (McpClient client = new DefaultMcpClient.Builder()
++                .key("test")
++                .transport(StreamableHttpMcpTransport.builder()
++                        .url("http://127.0.0.1:" + server.getAddress().getPort() + "/mcp")
++                        .setHttpVersion1_1()
++                        .build())
++                .protocolVersion("2025-11-25")
++                .initializationTimeout(Duration.ofSeconds(3))
++                .resourcesTimeout(Duration.ofSeconds(3))
++                .autoHealthCheck(false)
++                .cacheResourceList(false)
++                .metaSupplier(context -> context.invocationContext() == null
++                        ? Map.of()
++                        : Map.of(
++                                "test/invocation",
++                                context.invocationContext().invocationId().toString()))
++                .build()) {
++            ToolExecutor executor = presenter().createListResourcesExecutor(List.of(client));
++            InvocationContext first = InvocationContext.builder()
++                    .invocationId(UUID.fromString("00000000-0000-0000-0000-000000000001"))
++                    .build();
++            InvocationContext second = InvocationContext.builder()
++                    .invocationId(UUID.fromString("00000000-0000-0000-0000-000000000002"))
++                    .build();
 +
-+    @Test
-+    void item_is_passed_to_the_argument_before_the_agentic_scope() {
-+        assertThat(mapper(new ScopeLastDoubler()).mapAll(List.of(1, 2, 3))).containsExactly(2, 4, 6);
-+    }
++            for (InvocationContext context : List.of(first, second)) {
++                String result = executor.executeWithContext(null, context).resultText();
++                assertThat(result).contains("resource-first", "resource-next", "template-first", "template-next");
++            }
 +
-+    @Test
-+    void item_is_passed_to_the_argument_after_several_framework_arguments() {
-+        assertThat(mapper(new ParametersAndScopeFirstDoubler()).mapAll(List.of(1, 2)))
-+                .containsExactly(2, 4);
-+    }
-+
-+    @Test
-+    void subagent_with_only_framework_arguments_is_invoked_once_per_item() {
-+        assertThat(mapper(new ScopeOnlyAgent()).mapAll(List.of(1, 2))).containsExactly(0, 0);
-+    }
-+
-+    private static Mapper mapper(Object subagent) {
-+        return AgenticServices.parallelMapperBuilder(Mapper.class)
-+                .subAgents(subagent)
-+                .build();
-+    }
-+}
++            for (String method : List.of("resources/list", "resources/templates/list")) {
++                assertThat(requests.stream().filter(request -> method.equals(request.method())))
++                        .extracting(ObservedRequest::invocation)
++                        .containsExactly(
++                                first.invocationId().toStrin
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7329** (2026-11-27): MCP: encode registry query parameters (@CryoThrust)
+- **PR #7327** (2026-11-27): MCP: avoid mutating registry client headers (@CryoThrust)
+- **PR #7324** (2026-11-27): fix(tika): preserve published deprecation version (@CryoThrust)
+- **PR #7322** (2026-11-27): fix(mcp): preserve invocation context when listing resource templates (@CryoThrust)
+- **PR #7314** (2026-11-27): Show the full stack of BlockHound violations in non-blocking test failures (@dliubarskyi)
 - **PR #7310** (2026-11-26): OpenAI Official and Azure OpenAI streaming: create the StreamingHandle before subscribing (@dliubarskyi)
-- **PR #7309** (2026-11-26): Create class-based A2A and MCP client agents through the agent instance factory (@mariofusco)
-- **PR #7304** (2026-11-26): SQL content retriever ITs: check that no data changed, not that the result is empty (@dliubarskyi)
-- **PR #7300** (2026-11-26): Apache PDFBox document parser: a page with more characters than maxCharacters fails early (@dliubarskyi)
-- **PR #7299** (closed): [DO NOT MERGE] CI only: google-genai ITs for #6772 (@dliubarskyi)
-- **PR #7293** (2026-11-25): SQL and Hibernate content retrievers: no NPE when the model returns no text, fail loudly when it was cut off or filtered (@dliubarskyi)
 
 ---
 
@@ -1036,46 +1087,31 @@ Local verification: `langchain4j-agentic` unit tests 685/685 green;
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agentic): pass a parallel mapper item after a framework argument
+## X. tika): preserve published deprecation version
 
 **RULE**:
-When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `document-parsers/langchain4j-document-parser-apache-tika/src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c5e5ed2`: agentic): pass a parallel mapper item after a framework argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1549577d`: tika): preserve published deprecation version. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/MapperAgentInvoker.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `document-parsers/langchain4j-document-parser-apache-tika/src/main/java/dev/langchain4j/data/document/parser/apache/tika/ApacheTikaDocumentParser.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import dev.langchain4j.agentic.planner.AgentArgument;
-        this.injectionKey = itemArgumentName(delegate);
-    /**
-     * The item is passed to the first argument of the subagent that is not provided by the framework, like its
-     * {@link AgenticScope} or its memory id, whose names start with {@code @}, so that such an argument can come first.
-     */
-    private static String itemArgumentName(AgentInvoker delegate) {
-        return delegate.arguments().stream()
-                .map(AgentArgument::name)
-                .filter(name -> !name.startsWith("@"))
-                .findFirst()
-                .orElse(null);
-    }
-
+    @Deprecated(since = "1.24.1")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        this.injectionKey = delegate.arguments().isEmpty()
-                ? null
-                : delegate.arguments().get(0).name();
+    @Deprecated(since = "1.25.0")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c5e5ed2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1549577d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

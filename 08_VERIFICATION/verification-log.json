@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-6KYK",
-    "timestamp": "2026-11-26T06:26:53.468Z",
-    "repository": "oshai/kotlin-logging",
-    "learningId": "learn-github-oshai-kotlin-logging",
-    "contentHash": "9b77a41a56726bcfb6d9eea39f556df3520ee95c3a7430b7e4247d32d0ff0858",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-HGGE",
     "timestamp": "2026-11-26T06:35:20.846Z",
     "repository": "n4ze3m/tiny-voca",
@@ -7490,6 +7475,21 @@
     "repository": "alibaba/zvec",
     "learningId": "learn-github-alibaba-zvec",
     "contentHash": "8ae27b8b5c05997a346eaac0862735e7eb3e9066b5c4c814944e49872d8616cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-BZCB",
+    "timestamp": "2026-11-27T13:46:39.659Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "afa15b35aefc4f696d7e7259149a69c4f9a45e59708d836996fa5c3bb520d99c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

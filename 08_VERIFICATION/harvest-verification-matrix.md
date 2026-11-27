@@ -13796,3 +13796,4 @@
 | `CYCLE-20261127-HSAG` | `2026-11-27T13:23:10.840Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7973` | Yes (`8116d396...`) |
 | `CYCLE-20261127-ZACD` | `2026-11-27T13:36:47.389Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10908` | Yes (`50b38533...`) |
 | `CYCLE-20261127-ZFA8` | `2026-11-27T13:36:53.792Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10909` | Yes (`8ae27b8b...`) |
+| `CYCLE-20261127-BZCB` | `2026-11-27T13:46:39.659Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10910` | Yes (`afa15b35...`) |

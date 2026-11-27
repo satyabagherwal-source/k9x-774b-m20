@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "50c1a5c5",
+    "sourceVersion": "fbb7c9e0",
     "license": "Apache-2.0",
-    "contentHash": "0d9fa632c99de93ef312ab6cd941002577f67f37fbedcb40e46d764dc6df4cc2",
-    "lastHarvestedAt": "2026-11-26T18:50:27.029Z",
+    "contentHash": "afa15b35aefc4f696d7e7259149a69c4f9a45e59708d836996fa5c3bb520d99c",
+    "lastHarvestedAt": "2026-11-27T13:46:39.677Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {

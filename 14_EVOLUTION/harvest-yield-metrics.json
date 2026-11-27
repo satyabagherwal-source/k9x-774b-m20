@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T13:36:53.817Z",
-  "total_cycles_completed": 13095,
-  "total_learnings_persisted": 13095,
-  "total_rules_promoted": 11822,
+  "last_updated": "2026-11-27T13:46:39.692Z",
+  "total_cycles_completed": 13096,
+  "total_learnings_persisted": 13096,
+  "total_rules_promoted": 11823,
   "history": [
-    {
-      "timestamp": "2026-11-26T22:59:57.339Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T23:00:02.646Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-27T13:36:53.817Z",
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T13:46:39.692Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

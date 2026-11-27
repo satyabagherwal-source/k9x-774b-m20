@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T13:37:00.212Z",
+  "last_updated": "2026-11-27T13:46:48.044Z",
   "total_verified_learnings": 9144,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26599,
+  "total_items": 26602,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8ce190596a0d70523d8ae5c25fd6945ed3214be20f6f67d0f203a6366c94526b",
+      "content_hash": "123daa806a7d76da83a7cc791ae2a93bb32dba0a68ca066f75d55047a671f687",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T12:32:48.876Z"
+      "persisted_at": "2026-11-27T13:46:47.808Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0639d928a150801b4fba8d2a27f4d5cbf333ce1c219a1d63b3dd8ba7ece18b01",
+      "content_hash": "993b44b82260b3d97145b44e80b5c84df07ea4b163fa7a41dcf606f792ffbd5c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T12:32:49.115Z"
+      "persisted_at": "2026-11-27T13:46:48.044Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112210,9 +112210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba2b62f1d8e4acfa41ebac9a4a2f2f22ea085656a88f6ff850059c7a81f919c1",
+      "content_hash": "bd42f5cdc68fe743c2002f169ec7c618a092ad9ef9a5da5f476eaff0db588df4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T13:37:00.212Z"
+      "persisted_at": "2026-11-27T13:46:46.258Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -216525,8 +216525,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "50c1a5c5",
-      "content_hash": "0d9fa632c99de93ef312ab6cd941002577f67f37fbedcb40e46d764dc6df4cc2",
+      "source_version": "fbb7c9e0",
+      "content_hash": "afa15b35aefc4f696d7e7259149a69c4f9a45e59708d836996fa5c3bb520d99c",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -216574,6 +216574,11 @@
           "number": 10758,
           "title": "pass a parallel mapper item after a framework argument",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10910,
+          "title": "preserve published deprecation version",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216581,7 +216586,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T18:50:26.772Z",
+      "verified_at": "2026-11-27T13:46:39.333Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216623,10 +216628,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "repository": "langchain4j/langchain4j",
-      "source_version": "50c1a5c5",
-      "content_hash": "9d9cd14137da07dd321b4c721e02898d725bb85bc7d64df74017b84e371a2aa2",
+      "source_version": "fbb7c9e0",
+      "content_hash": "bb8785c27ce2556f1ce429203875396b5acecfff7dbdfdf16f5235ba7ea8a74f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T18:50:27.478Z"
+      "persisted_at": "2026-11-27T13:46:40.281Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j",
@@ -216635,10 +216640,10 @@
       "relative_path": "08_VERIFICATION/langchain4j-langchain4j-verification-protocol-empirical-defect-shield-for-langch.md",
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j/langchain4j",
       "repository": "langchain4j/langchain4j",
-      "source_version": "50c1a5c5",
-      "content_hash": "b77f52dc6ba20b61ad31857503cf914428048def7a77cb08985cf2b158af413d",
+      "source_version": "fbb7c9e0",
+      "content_hash": "ac881aa08aa9c27000946f55353f94fe49f48fd6e5f443303ab6e7dd3fe10f28",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:50:27.702Z"
+      "persisted_at": "2026-11-27T13:46:40.561Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
@@ -283871,9 +283876,9 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "0435e7b2c9b75a5c6077b83e26caf87af1f5acd4a727e5d1b4d8b8132fec047b",
+      "content_hash": "2d0fa2a0cb85bb642aa1ff9f26b9dcedff3f622cf5ac15d475008d05bbf9d3d5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T18:50:31.582Z"
+      "persisted_at": "2026-11-27T13:46:44.453Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni",
@@ -283883,9 +283888,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j-langchain4j-learnings",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "38c9a93481a008fc44010b6cf19578fbb8d28ddbe073eb391a06f707f08a9e46",
+      "content_hash": "05ab764e744c51701017dd49eb4b346eba667801c6add5b82d540b8fc8696305",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T18:50:31.786Z"
+      "persisted_at": "2026-11-27T13:46:44.732Z"
     },
     "learn-huggingface-fastvideo-fasth3-omni-comfy": {
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
@@ -301041,9 +301046,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a7965e72444a95ed70c6e756dc106945a7e3032489e0975c389241abbcfdf07",
+      "content_hash": "fba457f1337350b09ab0983f0d1657c0b91a4f5d736a01a6e0384f7ac0086512",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T12:32:48.595Z"
+      "persisted_at": "2026-11-27T13:46:47.533Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -358301,13 +358306,13 @@
       "item_id": "candidate_directive-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZJX4-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-C3ZC-markdown-fix-image-syntax-for-unpreviewable-uploads-rendering-as-text.md",
       "title": "markdown: Fix image syntax for unpreviewable uploads rendering as text.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "824ea4f23bde9f358c04b777294ec3ada6397edf93a0430e79a0f7c4f3d5b89c",
+      "content_hash": "cf56c63bde03b400728463222bc78521d2d7cb8a6a41da15bd2e0c71ee8cb04c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T13:36:59.803Z"
+      "persisted_at": "2026-11-27T13:46:45.678Z"
     },
     "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-zulip-zulip-learnings-core-invariants",
@@ -358317,9 +358322,9 @@
       "title": "Content & Information Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "acb5a8c547df8296e6be6316631b9f138f25178b2db35784dcc0bcab0953fe23",
+      "content_hash": "2a8193857d1563d9efa721467b45f7b0b5e39182b331454200a53e11c56b155e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-27T13:37:00.010Z"
+      "persisted_at": "2026-11-27T13:46:45.961Z"
     },
     "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables": {
       "item_id": "candidate_directive-ts-sdk-fix-ctx-from-in-a-submodule-view-for-explicitly-named-tables",
@@ -362787,13 +362792,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-P03G-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-C56K-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2cfaef3d14c754401ab4a1445a8db53aa2c8e3b4008ee237ca4736326948c5b5",
+      "content_hash": "b0827fcc1e0c1ac83b0bb9faf5610249545a2b5a5adfaaa853ef93137a076f33",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T12:32:48.317Z"
+      "persisted_at": "2026-11-27T13:46:47.229Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -365153,6 +365158,44 @@
       "content_hash": "32c83223de2076d04826587a47efc15e4ce5dc577365b502bf7728162e273063",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T13:36:58.695Z"
+    },
+    "rule-10910": {
+      "learning_id": "rule-10910",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10910,
+      "title": "preserve published deprecation version",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "fbb7c9e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T13:46:39.333Z"
+    },
+    "candidate_directive-preserve-published-deprecation-version": {
+      "item_id": "candidate_directive-preserve-published-deprecation-version",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BZLZ-preserve-published-deprecation-version.md",
+      "title": "preserve published deprecation version",
+      "repository": "langchain4j/langchain4j",
+      "source_version": "fbb7c9e0",
+      "content_hash": "f7bbe16fe55570eadb599cf36b289b2ff739e3e2d6c5ef3995c9d1865eaefb30",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T13:46:40.008Z"
+    },
+    "candidate_directive-tika-preserve-published-deprecation-version": {
+      "item_id": "candidate_directive-tika-preserve-published-deprecation-version",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C2T1-tika-preserve-published-deprecation-version.md",
+      "title": "tika): preserve published deprecation version",
+      "repository": "langchain4j-langchain4j-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5e74a692c1924bd8a8649c54d547302a35cb37f3a9ee678e834757977bd4d2eb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T13:46:44.150Z"
     }
   },
   "ai-builder-brain": {
