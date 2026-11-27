@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "f814a86f",
+    "sourceVersion": "b71d43c2",
     "license": "MPL-2.0",
-    "contentHash": "d0d3f2c72c9d15d09059ff111557a48d657a965e0b95d3102bcbea070cc97f17",
-    "lastHarvestedAt": "2026-11-26T23:32:24.540Z",
+    "contentHash": "35265a76ed857642bddc401ae0a5f7421e19ecf2f883552fafacfd0a2ffd4a33",
+    "lastHarvestedAt": "2026-11-27T17:32:16.903Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -8123,10 +8123,10 @@
     "repository": "vanniktech/gradle-maven-publish-plugin",
     "platform": "github",
     "sourceUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-    "sourceVersion": "054fe435",
+    "sourceVersion": "f256317e",
     "license": "Apache-2.0",
-    "contentHash": "cd78ac081d752be6de828347c2ab5683b27a9514de67995877f09fd8222e38e7",
-    "lastHarvestedAt": "2026-11-25T07:48:40.273Z",
+    "contentHash": "020f628bef35792dc3f126dc7b12bdb66bc7bdde4de5faa9e7c2333fa9f142b9",
+    "lastHarvestedAt": "2026-11-27T17:32:14.749Z",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin"
   },
   "mohamedrejeb-calf": {
@@ -13628,5 +13628,15 @@
     "contentHash": "db84edd88f1328b483a566294f515120a4331eb50b5f9f98e1cdec52c2f2be12",
     "lastHarvestedAt": "2026-11-27T08:58:12.141Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-2-design"
+  },
+  "hf-ai-sage-gigachat4-708b-a41b": {
+    "repository": "ai-sage/GigaChat4-708B-A41B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ai-sage/GigaChat4-708B-A41B",
+    "sourceVersion": "hf-ai-sage-gigachat4-708b-a41b",
+    "license": "Open-Source",
+    "contentHash": "d6417b48a2c18e925b831796244419d54a4f9b35e78d9d61230136dce87409fa",
+    "lastHarvestedAt": "2026-11-27T17:32:04.980Z",
+    "learningId": "learn-huggingface-ai-sage-gigachat4-708b-a41b"
   }
 }

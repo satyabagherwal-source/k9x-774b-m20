@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-27T16:52:44.848Z",
+  "updated_at": "2026-11-27T17:32:58.207Z",
   "statistics": {
-    "total_nodes": 582,
+    "total_nodes": 583,
     "total_edges": 238,
     "domain_distribution": {
-      "D": 349,
+      "D": 350,
       "M": 1,
       "H": 111,
       "J": 22,
@@ -12988,6 +12988,28 @@
       ],
       "created_at": "2026-11-27T16:52:44.848Z",
       "updated_at": "2026-11-27T16:52:44.848Z"
+    },
+    "DOM-D-33234269": {
+      "id": "DOM-D-33234269",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): ai-sage/GigaChat4-708B-A41B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-ai-sage-gigachat4-708b-a41b/hf-ai-sage-gigachat4-708b-a41b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T17:32:20.816Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ai-sage-gigachat4-708b-a41b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-27T17:32:58.207Z",
+      "updated_at": "2026-11-27T17:32:58.207Z"
     }
   },
   "edges": [

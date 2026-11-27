@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T17:19:32.233Z",
-  "total_cycles_completed": 13124,
-  "total_learnings_persisted": 13124,
-  "total_rules_promoted": 11847,
+  "last_updated": "2026-11-27T17:32:16.919Z",
+  "total_cycles_completed": 13127,
+  "total_learnings_persisted": 13127,
+  "total_rules_promoted": 11849,
   "history": [
-    {
-      "timestamp": "2026-11-27T00:50:22.373Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T00:58:50.060Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T00:58:56.135Z",
-      "repository": "software-mansion/react-native-gesture-handler",
-      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T00:59:04.983Z",
       "repository": "trailbaseio/trailbase",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T17:19:32.233Z",
       "repository": "linkerd/linkerd2",
       "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:32:04.988Z",
+      "repository": "ai-sage/GigaChat4-708B-A41B",
+      "learningId": "learn-huggingface-ai-sage-gigachat4-708b-a41b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:32:14.756Z",
+      "repository": "vanniktech/gradle-maven-publish-plugin",
+      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T17:32:16.919Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

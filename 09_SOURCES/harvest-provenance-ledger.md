@@ -13861,3 +13861,7 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `699ed4b3` | Multi-dimensional audit evidence | 2026-11-27T17:01:53.920Z |
 | `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `078e9839` | Multi-dimensional audit evidence | 2026-11-27T17:19:20.153Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `ea2cdc13` | Multi-dimensional audit evidence | 2026-11-27T17:19:32.227Z |
+| `learn-huggingface-ai-sage-gigachat4-708b-a41b` | `https://huggingface.co/ai-sage/GigaChat4-708B-A41B` | `hf-ai-sage` | Multi-dimensional audit evidence | 2026-11-27T17:32:04.980Z |
+| `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `f256317e` | Multi-dimensional audit evidence | 2026-11-27T17:32:14.749Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `b71d43c2` | Multi-dimensional audit evidence | 2026-11-27T17:32:16.903Z |
+| `learn-dom-d-33234269` | `project://hf-ai-sage-gigachat4-708b-a41b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md` | 2026-11-27T17:32:58.210Z |

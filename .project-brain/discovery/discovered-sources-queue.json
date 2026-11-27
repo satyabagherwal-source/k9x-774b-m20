@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T17:19:37.582Z",
+  "updated_at": "2026-11-27T17:33:01.347Z",
   "stats": {
-    "total_discovered": 10498,
-    "approved_pending_harvest": 9966,
+    "total_discovered": 10502,
+    "approved_pending_harvest": 9970,
     "harvested_count": 0,
     "rejected_count": 532,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 9972,
+      "COMMUNITY_AND_EXPERT": 9976,
       "OFFICIAL_DOCUMENTATION": 288,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -227259,6 +227259,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
         "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-B8DACB31753E": {
+      "id": "SRC-B8DACB31753E",
+      "url": "https://huggingface.co/ai-sage/GigaChat4-708B-A41B",
+      "title": "https://huggingface.co/ai-sage/GigaChat4-708B-A41B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:32:58.262Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md",
+        "fileName": "hf-ai-sage-gigachat4-708b-a41b-learnings.md"
+      }
+    },
+    "SRC-1605A36B2775": {
+      "id": "SRC-1605A36B2775",
+      "url": "https://github.com/opentofu/opentofu/issues/3879",
+      "title": "https://github.com/opentofu/opentofu/issues/3879",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:33:01.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-56A016537762": {
+      "id": "SRC-56A016537762",
+      "url": "https://github.com/opentofu/opentofu/issues/4621",
+      "title": "https://github.com/opentofu/opentofu/issues/4621",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:33:01.234Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
+      }
+    },
+    "SRC-5B562D8D6C82": {
+      "id": "SRC-5B562D8D6C82",
+      "url": "https://github.com/opentofu/opentofu/pull/4845",
+      "title": "https://github.com/opentofu/opentofu/pull/4845",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T17:33:01.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
+        "fileName": "opentofu-opentofu-learnings.md"
       }
     }
   }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T17:19:39.608Z",
-  "total_records": 2843,
+  "last_updated": "2026-11-27T17:33:02.039Z",
+  "total_records": 2846,
   "domains": {
     "A": {
       "total": 25,
@@ -74,7 +74,7 @@
       ]
     },
     "D": {
-      "total": 1044,
+      "total": 1047,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -1119,7 +1119,10 @@
         "DOM-D-457F0DDF",
         "DOM-D-ACBB63D0",
         "DOM-D-4E0DE84A",
-        "DOM-D-CFD4C4AD"
+        "DOM-D-CFD4C4AD",
+        "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-708b-a41b-core-invariants",
+        "DOM-D-33234269",
+        "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-708b-a41b-learnings-core-in"
       ]
     },
     "E": {
@@ -11154,8 +11157,8 @@
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "repository": "opentofu/opentofu",
-      "content_hash": "0b1bba8cb0e7c3f559c679d50c6426d06ee1dce24b8608984330ba3ec4e1c010",
-      "created_at": "2026-11-26T23:32:25.051Z"
+      "content_hash": "f8d835edf60980b3ec43d4de19eece49ce935702cda850e15594ec2709a9b485",
+      "created_at": "2026-11-27T17:32:17.535Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -28760,8 +28763,8 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-learnings-architecture-intelligence-opentofu-opentofu-learning.md",
       "repository": "opentofu-opentofu-learnings",
-      "content_hash": "1ecbed5a8bab660722211a8f6f08a2b25175dd4ed09b1a37efbb80382281efff",
-      "created_at": "2026-11-26T23:32:29.281Z"
+      "content_hash": "436a3747ecaed1d2d89fc59dd3ab2e4b2631c5ad68255878e6606a634d079005",
+      "created_at": "2026-11-27T17:33:02.039Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core",
@@ -34939,8 +34942,8 @@
       "title": "Deployment & Operations Intelligence: vanniktech/gradle-maven-publish-plugin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-vanniktech-gradle-maven-publish-plugin-deployment-operations-intelligence-vannik.md",
       "repository": "vanniktech/gradle-maven-publish-plugin",
-      "content_hash": "aab923d3e0c282e7e2a6cf552f3545d8fd9beace635c600cd0033609bb83d48f",
-      "created_at": "2026-11-25T07:48:40.877Z"
+      "content_hash": "86d9764a71206e2e67e6aba3df52eb7a63c11db92e780d795ddba3f43f0b8356",
+      "created_at": "2026-11-27T17:32:15.366Z"
     },
     "domain_intelligence-quality-verification-intelligence-sigstore-cosign-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sigstore-cosign-core-invariants",
@@ -34957,8 +34960,8 @@
       "title": "Deployment & Operations Intelligence: vanniktech-gradle-maven-publish-plugin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-vanniktech-gradle-maven-publish-plugin-learnings-deployment-operations-intellige.md",
       "repository": "vanniktech-gradle-maven-publish-plugin-learnings",
-      "content_hash": "16705091560a6ea690e483da86fcd553ead699385fa356ce947f5c12fcb2a931",
-      "created_at": "2026-11-25T07:48:53.424Z"
+      "content_hash": "56df420d2e53b75652d3da5235490a79ba9467597300d0f4966cb4c4a01d9094",
+      "created_at": "2026-11-27T17:33:00.035Z"
     },
     "domain_intelligence-quality-verification-intelligence-sigstore-cosign-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sigstore-cosign-learnings-core-invariants",
@@ -48035,6 +48038,66 @@
       "repository": "flox-flox-learnings",
       "content_hash": "caf535606bdbf54aa2c64b7e10e47123f83c2eb3414704a2ec57865089205fb1",
       "created_at": "2026-11-27T17:01:58.054Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-708b-a41b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-ai-sage-gigachat4-708b-a41b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: ai-sage/GigaChat4-708B-A41B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ai-sage-gigachat4-708b-a41b-research-knowledge-intelligence-ai-sage-gigachat4.md",
+      "repository": "ai-sage/GigaChat4-708B-A41B",
+      "content_hash": "b239e9f59e320ed034379c57a53ba3dc2c858f4a43aebb9f3cc2df6b3f43e04b",
+      "created_at": "2026-11-27T17:32:05.306Z"
+    },
+    "DOM-D-33234269": {
+      "record_id": "DOM-D-33234269",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): ai-sage/GigaChat4-708B-A41B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ai-sage/GigaChat4-708B-A41B](https://huggingface.co/ai-sage/GigaChat4-708B-A41B))  \n> **Source Version**: `hf-ai-sage-g`  \n> **License**: Open-Sou",
+      "content_hash": "5380bfb391bdec4f11e1acf2f4807fbea3ed13f70b8bd76da5b4dc92454c3186",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md`  \n> **Source**: huggingface ([https://h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md`  \n> **Source**: huggingface ([https://h",
+      "provenance": {
+        "source_uri": "project://hf-ai-sage-gigachat4-708b-a41b/hf-ai-sage-gigachat4-708b-a41b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-27T17:32:20.816Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-ai-sage-gigachat4-708b-a41b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-ai-sage-gigachat4-708b-a41b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T17:32:58.161Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-708b-a41b-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ai-sage-gigachat4-708b-a41b-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-ai-sage-gigachat4-708b-a41b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ai-sage-gigachat4-708b-a41b-learnings-research-knowledge-intelligence-hf-ai-s.md",
+      "repository": "hf-ai-sage-gigachat4-708b-a41b-learnings",
+      "content_hash": "840329a7c81f015c69a72e32a575c75b7877b36b2898901bec19497addf7f575",
+      "created_at": "2026-11-27T17:32:58.670Z"
     }
   }
 }

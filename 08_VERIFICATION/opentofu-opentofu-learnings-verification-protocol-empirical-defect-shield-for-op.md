@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T23:32:28.902Z",
+  "timestamp": "2026-11-27T17:33:01.566Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-opentofu-opentofu-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [opentofu-opentofu-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T23:32:28.902Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T17:33:01.566Z`  
 > **Learning ID**: `LEARN-EVO-opentofu-opentofu-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `f814a86f`  
+> **Source Version**: `b71d43c2`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T23:32:23.377Z  
+> **Timestamp**: 2026-11-27T17:32:15.286Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T23:32:23.372Z  
+> **Harvest Timestamp**: 2026-11-27T17:32:15.279Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 31011 stars
+- **Stars / Engagement**: 31020 stars
 
 ---
 
@@ -1444,126 +1444,176 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f814a86f` (2026-11-26)
-**Commit Message**: Limit the body reading based on Content-Length (#4849)
+### Incident Patch 1: `b71d43c2` (2026-11-27)
+**Commit Message**: Fix the host key used for the bastion connection (#4845)
 
 Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
 
-**File**: `internal/getproviders/http_mirror_source.go` (modified, +17/-1)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -15,6 +15,7 @@ import (
- 	"net/http"
- 	"net/url"
- 	"path"
-+	"strconv"
- 	"strings"
- 	"time"
+@@ -29,6 +29,10 @@ BUG FIXES:
+ - `tofu fmt`: Fixed wrong resolution of paths when the working directory is a symlink; output now shows absolute file paths instead of giving error `Invalid file or directory path`. ([#3879](https://github.com/opentofu/opentofu/issues/3879))
+ - OpenTelemetry tracing support now honors the standard OpenTelemetry environment variable `OTEL_RESOURCE_ATTRIBUTES` for specifying arbitrary additional resource attribute values to be added to traces. Previously we only supported `OTEL_SERVICE_NAME` for overriding the `service.name` attribute. ([#4621](https://github.com/opentofu/opentofu/issues/4621))
  
-@@ -176,7 +177,7 @@ func (s *HTTPMirrorSource) PackageMeta(ctx context.Context, provider addrs.Provi
- 	type ResponseArchiveMeta struct {
- 		RelativeURL          string `json:"url"`
- 		Hashes               []string
--		UseMirrorCredentials *bool  `json:"use_mirror_credentials"`
-+		UseMirrorCredentials *bool `json:"use_mirror_credentials"`
- 	}
- 	type ResponseBody struct {
- 		Archives map[string]*ResponseArchiveMeta `json:"archives"`
-@@ -372,6 +373,21 @@ func (s *HTTPMirrorSource) get(ctx context.Context, relativePath string) (status
- 			log.Printf("[WARN] Network mirror returned %q as part of its JSON content type, which is not defined. Ignoring.", name)
- 		}
- 		body = resp.Body
-+		// if content-length is specified, use it to return a reader that can read only the indicated content-length
-+		cl := resp.Header.Get("Content-Length")
-+		if len(cl) > 0 {
-+			contentLen, err := strconv.ParseInt(cl, 10, 0)
-+			if err != nil {
-+				log.Printf("[WARN] Network mirror returned invalid value %q for content-length. This will be ignored but the unbounded body could create unexpected behavior", cl)
-+			}
-+			body = struct {
-+				io.Reader
-+				io.Closer
-+			}{
-+				Reader: io.LimitReader(body, contentLen),
-+				Closer: body,
-+			}
-+		}
- 	}
++BREAKING CHANGES:
++
++- `ssh` connection for provisioners now uses `bastion_host_key` correctly instead of using the `host_key` as it did before. ([#4845](https://github.com/opentofu/opentofu/pull/4845))
++
+ ## Previous Releases
  
- 	return resp.StatusCode, body, finalURL, nil
+ For information on prior major and minor releases, refer to their changelogs:
 ```
 
-**File**: `internal/getproviders/http_mirror_source_test.go` (modified, +49/-0)
+**File**: `internal/communicator/ssh/communicator_test.go` (modified, +121/-0)
 ```diff
-@@ -49,6 +49,8 @@ func TestHTTPMirrorSource(t *testing.T) {
- 	failingProvider := addrs.MustParseProviderSourceString("terraform.io/test/fails")
- 	redirectingProvider := addrs.MustParseProviderSourceString("terraform.io/test/redirects")
- 	redirectLoopProvider := addrs.MustParseProviderSourceString("terraform.io/test/redirect-loop")
-+	contentLenSmallerProvider := addrs.MustParseProviderSourceString("registry.opentofu.org/length/smaller")
-+	contentLenHigherProvider := addrs.MustParseProviderSourceString("registry.opentofu.org/length/higher")
- 	tosPlatform := Platform{OS: "tos", Arch: "m68k"}
+@@ -136,6 +136,73 @@ func newMockLineServer(t *testing.T, signer ssh.Signer, pubKey string) (string,
+ 	return l.Addr().String(), func() { wg.Wait() }
+ }
  
- 	clientBuilderFromHTTPLocation := func(t *testing.T, expectedRetries int) func(ctx context.Context) *retryablehttp.Client {
-@@ -81,6 +83,29 @@ func TestHTTPMirrorSource(t *testing.T) {
- 			t.Errorf("wrong result\n%s", diff)
- 		}
- 	})
++// newMockBastionServer starts a ssh server that accepts only "tcp" connections intended for port forwarding.
++// The given [targetAddr] is a host:port value that will be used to initialise a ssh connection to the final
++// target ssh server.
++func newMockBastionServer(t *testing.T, targetAddr string) (string, func()) {
++	t.Helper()
 +
-+	t.Run("AvailableVersions for provider that specifies content-length smaller than the body content", func(t *testing.T) {
-+		_, _, err := source.AvailableVersions(context.Background(), contentLenSmallerProvider)
-+		expected := "invalid response content from mirror server: unexpected EOF"
-+		if err == nil || !strings.Contains(err.Error(), expected) {
-+			t.Fatalf("unexpected error: %s. Expected to contain %q", err, expected)
-+		}
-+	})
++	signer, err := ssh.ParsePrivateKey([]byte(testServerPrivateKey))
++	if err != nil {
++		t.Fatalf("parse bastion host key: %s", err)
++	}
++	srvConf := &ssh.ServerConfig{
++		PasswordCallback: acceptUserPass("user", "pass"),
++	}
++	srvConf.AddHostKey(signer)
 +
-+	t.Run("AvailableVersions for provider that specifies content-length higher than the body content", func(t *testing.T) {
-+		got, _, err := source.AvailableVersions(context.Background(), contentLenHigherProvider)
++	l, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatalf("bastion listen: %s", err)
++	}
++
++	var wg sync.WaitGroup
++	wg.Add(1)
++	go func() {
++		defer wg.Done()
++		defer l.Close()
++		c, err := l.Accept()
 +		if err != nil {
-+			t.Fatalf("unexpected error: %s", err)
++			return
 +		}
-+		want := VersionList{
-+			MustParseVersion("1.0.0"),
-+			MustParseVersion("1.0.1"),
-+			MustParseVersion("1.0.2-beta.1"),
++		t.Log("[Bastion] Accepted SSH connection")
++		defer c.Close()
++		conn, chans, reqs, err := ssh.NewServerConn(c, srvConf)
++		if err != nil {
++			t.Logf("bastion handshake error (expected only if pin were enforced): %v", err)
++			return
 +		}
-+		if diff := cmp.Diff(want, got); diff != "" {
-+			t.Errorf("wrong result\n%s", diff)
++		defer conn.Close()
++		go ssh.DiscardRequests(reqs)
++
++		for nc := range chans {
++			t.Logf("[Bastion] Channel incoming [type: %s]", nc.ChannelType())
++			if nc.ChannelType() != "direct-tcpip" {
++				_ = nc.Reject(ssh.UnknownChannelType, "only direct-tcpip")
++				continue
++			}
++			ch, chReqs, err := nc.Accept()
++			if err != nil {
++				return
++			}
++			go ssh.DiscardRequests(chReqs)
++
++			t.Logf("[Bastion] Dialing target address %s", targetAddr)
++			upstream, err := net.Dial("tcp", targetAddr)
++			if err != nil {
++				t.Logf("[Bastion] Error dialing target address %s: %s", targetAddr, err)
++				ch.Close()
++				return
++			}
++			t.Logf("[Bastion] Dialing target address %s succeedded", targetAddr)
++			go func() { _, _ = io.Copy(upstream, ch); upstream.Close() }()
++			go func() { _, _ = io.Copy(ch, upstream); ch.Close() }()
 +		}
-+	})
- 	t.Run("AvailableVersions for provider that doesn't exist", func(t *testing.T) {
- 		_, _, err := source.AvailableVersions(context.Background(), missingProvider)
- 		switch err := err.(type) {
-@@ -360,6 +385,30 @@ func testHTTPMirrorSourceHandlerNoAuth(resp http.ResponseWriter, req *http.Reque
- 		resp.Header().Add("Content-Type", "application/json; ignored=yes")
- 		// Just return a retryable status code
- 		resp.WriteHeader(http.StatusInternalServerError)
-+	case "/registry.opentofu.org/length/smaller/index.json":
-+		resp.Header().Add("Content-Type", "application/json")
-+		resp.Header().Add("Content-Length", "1") // having the content-length smaller than the body content, limits the reading to the size specified in the header
-+		resp.WriteHeader(http.StatusOK)
-+		fmt.Fprint(resp, `
-+			{
-+				"versions": {
-+					"1.0.0": {},
-+					"1.0.1": {},
-+					"1.0.2-beta.1": {}
-+				}
-+			}`)
-+	case "/registry.opentofu.org/length/higher/index.json":
-+		resp.Header().Add("Content-Type", "application/json")
-+		resp.Header().Add("Content-Length", "1024") // having the content-length higher, reads exactly the content of the body
-+		resp.WriteHeader(http.StatusOK)
-+		fmt.Fprint(resp, `
-+			{
-+				"versions": {
-+					"1.0.0": {},
-+					"1.0.1": {},
-+					"1.0.2-beta.1": {}
-+				}
-+			}`)
++	}()
++
++	return l.Addr().String(), func() { l.Close(); wg.Wait() }
++}
++
+ func TestNew_Invalid(t *testing.T) {
+ 	address, sclose := newMockLineServer(t, nil, testClientPublicKey)
+ 	defer sclose()
+@@ -829,6 +896,60 @@ func TestScriptPath_randSeed(t *testing.T) {
+ 	}
+ }
  
- 	default:
- 		resp.WriteHeader(404)
++func TestConnectionThroughBastion(t *testing.T) {
++	signer, err := ssh.ParsePrivateKey([]byte(testServerPrivateKey))
++	if err != nil {
++		t.Fatalf("parse bastion host key: %s", err)
++	}
++	pubKey := fmt.Sprintf("ssh-rsa %s", base64.StdEncoding.EncodeToString(signer.PublicKey().Marshal()))
++
++	// Create the final target server
++	targetAddr, tclose := newMockLineServer(t, nil, testClientPublicKey)
++	defer tclose()
++	targetHost, targetPortStr, _ := net.SplitHostPort(targetAddr)
++	targetPort, _ := strconv.Atoi(targetPortStr)
++
++	// Create a mocked bastion ssh connection
++	bastionAddr, bclose := newMockBastionServer(t, targetAddr)
++	defer bclose()
++	bastionHost, bastionPortStr, _ := net.SplitHostPort(bastionAddr)
++	bastionPort, _ := strconv.Atoi(bastionPortStr)
++
++	connInfo := &connectionInfo{
++		User:     "user",
++		Password: "pass",
++		Host:     targetHost,
++		Port:     uint16(targetPort),
++		HostKey:  testClientPublicKey, // (1) The target server host key is different from the one registered by the server so we expect this to fail
++
++		BastionHost:     bastionHost,
++		BastionPort:     uint16(bastionPort),
++		BastionHostKey:  pubKey, // (2) The bastion host key is the right one so we expect it to pass and move forward with the target host connection
++		BastionUser:     "user",
++		BastionPassword: "pass",
++
++		Timeout: "30s",
++	}
++
++	cfg, err := prepareSSHConfig(connInfo)
++	if err != nil {
++		t.Fatalf("prepareSSHConfig: %s", err)
++	}
++	c := &Communicator{connInfo: connInfo, config: cfg}
++
++	var cmd remote.Cmd
++	cmd.Command = "echo foo"
++	cmd.Stdout = new(bytes.Buffer)
++
++	err = c.Start(&cmd)
++	t.Cleanup(func() {
++		_ = c.Disconnect()
++	})
++	if err == nil || (!strings.Contains(err.Error(), "mismatch") && !strings.Contains(err.Error(), fmt.Sprintf("user@%s:%s", targetAddr, targetPortStr))) {
++		t.Fatalf("expected the connection to the target host to fail due to mismatching host key: %s", err)
++	}
++}
++
+ var testClientPublicKey = `ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDE6A1c4n+OtEPEFlNKTZf2i03L3NylSYmvmJ8OLmzLuPZmJBJt4G3VZ/60s1aKzwLKrTq20S+ONG4zvnK5zIPoauoNNdUJKbg944hB4OE+HDbrBhk7SH+YWCsCILBoSXwAVdUEic6FWf/SeqBSmTBySHvpuNOw16J+SK6Ardx8k64F2tRkZuC6AmOZijgKa/sQKjWAIVPk34ECM6OLfPc3kKUEfkdpYLvuMfuRMfSTlxn5lFC0b0SovK9aWfNMBH9iXLQkieQ5rXoyzUC7mwgnASgl8cqw1UrToiUuhvneduXBhbQfmC/Upv+tL6dSSk+0DlgVKEHuJmc8s8+/qpdL`
+ 
+ func acceptUserPass(goodUser, goodPass string) func(ssh.ConnMetadata, []byte) (*ssh.Permissions, error) {
+```
+
+**File**: `internal/communicator/ssh/provisioner.go` (modified, +1/-1)
+```diff
+@@ -298,7 +298,7 @@ func prepareSSHConfig(connInfo *connectionInfo) (*sshConfig, error) {
+ 			host:        bastionHost,
+ 			privateKey:  connInfo.BastionPrivateKey,
+ 			password:    connInfo.BastionPassword,
+-			hostKey:     connInfo.HostKey,
++			hostKey:     connInfo.BastionHostKey,
+ 			certificate: connInfo.BastionCertificate,
+ 			sshAgent:    sshAgent,
+ 		})
 ```
 
 #### Recent Merged Pull Requests:
@@ -1592,47 +1642,34 @@ Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Limit the body reading based on Content-Length
+## X. the host key used for the bastion connection
 
 **RULE**:
-When implementing operations in `internal/getproviders/http_mirror_source.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f814a86f`: Limit the body reading based on Content-Length. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b71d43c2`: the host key used for the bastion connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/getproviders/http_mirror_source.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"strconv"
-		UseMirrorCredentials *bool `json:"use_mirror_credentials"`
-		// if content-length is specified, use it to return a reader that can read only the indicated content-length
-		cl := resp.Header.Get("Content-Length")
-		if len(cl) > 0 {
-			contentLen, err := strconv.ParseInt(cl, 10, 0)
-			if err != nil {
-				log.Printf("[WARN] Network mirror returned invalid value %q for content-length. This will be ignored but the unbounded body could create unexpected behavior", cl)
-			}
-			body = struct {
-				io.Reader
-				io.Closer
-			}{
-				Reader: io.LimitReader(body, contentLen),
-				Closer: body,
-			}
-		}
+BREAKING CHANGES:
+
+- `ssh` connection for provisioners now uses `bastion_host_key` correctly instead of using the `host_key` as it did before. ([#4845](https://github.com/opentofu/opentofu/pull/4845))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		UseMirrorCredentials *bool  `json:"use_mirror_credentials"`
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f814a86f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b71d43c2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

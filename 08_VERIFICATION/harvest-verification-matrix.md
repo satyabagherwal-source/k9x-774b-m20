@@ -13828,3 +13828,7 @@
 | `CYCLE-20261127-B23Z` | `2026-11-27T17:01:53.903Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10932` | Yes (`07608754...`) |
 | `CYCLE-20261127-XHE1` | `2026-11-27T17:19:20.137Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10933` | Yes (`37663716...`) |
 | `CYCLE-20261127-XQPK` | `2026-11-27T17:19:32.216Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10934` | Yes (`7637d125...`) |
+| `CYCLE-20261127-DVJB` | `2026-11-27T17:32:04.967Z` | `ai-sage/GigaChat4-708B-A41B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ai-sage-gigachat4-708b-a41b-learnings.md` | Yes (`d6417b48...`) |
+| `CYCLE-20261127-E32O` | `2026-11-27T17:32:14.736Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10935` | Yes (`020f628b...`) |
+| `CYCLE-20261127-E4QC` | `2026-11-27T17:32:16.884Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10936` | Yes (`35265a76...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T17:32:58.210Z` | `hf-ai-sage-gigachat4-708b-a41b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-33234269` [Domain D] | Yes (`5380bfb3...`) |

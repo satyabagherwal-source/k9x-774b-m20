@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261126-BKL1",
-    "timestamp": "2026-11-26T08:22:44.725Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "1cb0e6aa05252c8c2f798d254f08f5486280739ff279e0de5c80728909252496",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-GIF6",
-    "timestamp": "2026-11-26T08:26:35.202Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "3f8da7855f37b0bdfa7449474e8b16344f9b3d8782e9cc224884dc28041ff74f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261126-T9AL",
-    "timestamp": "2026-11-26T08:36:29.901Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "359fdfa8ee5667525a12dabf1b21885590a344dfcd632f9d49bcf2d2bbf2cb75",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261126-THHV",
     "timestamp": "2026-11-26T08:36:40.531Z",
     "repository": "sqlpage/SQLPage",
@@ -7490,6 +7445,51 @@
     "repository": "linkerd/linkerd2",
     "learningId": "learn-github-linkerd-linkerd2",
     "contentHash": "7637d1254d83eda11f1eaa9ffbedb01c4a5b427170d10b39addd1bcf75e5e277",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-DVJB",
+    "timestamp": "2026-11-27T17:32:04.967Z",
+    "repository": "ai-sage/GigaChat4-708B-A41B",
+    "learningId": "learn-huggingface-ai-sage-gigachat4-708b-a41b",
+    "contentHash": "d6417b48a2c18e925b831796244419d54a4f9b35e78d9d61230136dce87409fa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-E32O",
+    "timestamp": "2026-11-27T17:32:14.736Z",
+    "repository": "vanniktech/gradle-maven-publish-plugin",
+    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+    "contentHash": "020f628bef35792dc3f126dc7b12bdb66bc7bdde4de5faa9e7c2333fa9f142b9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261127-E4QC",
+    "timestamp": "2026-11-27T17:32:16.884Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "35265a76ed857642bddc401ae0a5f7421e19ecf2f883552fafacfd0a2ffd4a33",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

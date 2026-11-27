@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T17:19:40.263Z",
+  "last_updated": "2026-11-27T17:33:02.613Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-27T17:10:43.541Z",
@@ -198,7 +198,7 @@
       "staged_for_review": 1
     },
     "opentofu-opentofu-learnings.md": {
-      "processed_at": "2026-11-26T23:32:28.595Z",
+      "processed_at": "2026-11-27T17:33:00.619Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -863,7 +863,7 @@
       "staged_for_review": 1
     },
     "vanniktech-gradle-maven-publish-plugin-learnings.md": {
-      "processed_at": "2026-11-25T07:48:52.614Z",
+      "processed_at": "2026-11-27T17:32:58.999Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -4041,9 +4041,14 @@
       "processed_at": "2026-11-27T12:03:49.412Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-ai-sage-gigachat4-708b-a41b-learnings.md": {
+      "processed_at": "2026-11-27T17:32:58.211Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 5031,
-  "total_canonical_promoted": 582,
-  "total_staged_for_review": 3786
+  "total_dossiers_evaluated": 5034,
+  "total_canonical_promoted": 583,
+  "total_staged_for_review": 3788
 }
