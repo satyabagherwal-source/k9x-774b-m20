@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-24T13:48:12.157Z",
+  "timestamp": "2026-11-27T22:55:27.884Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-shardingsphere-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-shardingsphere-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-24T13:48:12.157Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T22:55:27.884Z`  
 > **Learning ID**: `LEARN-EVO-apache-shardingsphere-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source**: github ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
-> **Source Version**: `00f96061`  
+> **Source Version**: `0d76e38a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-24T13:47:28.831Z  
+> **Timestamp**: 2026-11-27T22:54:48.032Z  
 > **Learning ID**: `learn-github-apache-shardingsphere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T13:47:28.825Z  
+> **Harvest Timestamp**: 2026-11-27T22:54:48.026Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20836 stars
+- **Stars / Engagement**: 20841 stars
 
 ---
 
@@ -1459,15 +1459,11 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40545** (2026-11-24): **Fix prepared statement parameter index validation**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ### Summary  This PR fixes PreparedStatement accepting out-of-range parameter indexes. The concrete statement class reuses the parsed parameter count and throws a standard SQLException before modifying the parameter list, preserving valid bindings and batching behavior.  ### Result  Review Result: Mergeable  No blocking issues or required changes found. This assessment covers code correctness only.  ### Evidence  - All 59 relevant tests passed at the reviewed head, with 4/4 branches covered in the new validation method. - All 4 changed Java files passed Spotless and Checkstyle. - Adding throws SQLException may require exception handling updates in external source code that calls setters through concrete implementation types. External downstream compilation was not verified.  ### Coverage  [PR #40545](https://github.com/apache/shardingsphere/pull/40545), head `f6ee5a8a8ded`: all 4 changed files and related call paths reviewed. Two independent reviews and coordinator verification complet
+- **Issue #40557** (2026-11-27): **Support index DDL parsing across SQL dialects**
+  *Symptoms*: Changes proposed in this pull request:  - Decode Unicode-escaped index, table, and column names in openGauss `CREATE INDEX` statements while preserving quoting and source positions. - Restore parser and binder coverage for index DDL. Use PostgreSQL's ordinal statistics syntax, openGauss's schema-qualified `SET TABLESPACE` syntax, and the documented `box(location, location)` GiST expression. [PostgreSQL ALTER INDEX](https://www.postgresql.org/docs/18/sql-alterindex.html) · [PostgreSQL CREATE INDEX](https://www.postgresql.org/docs/18/sql-createindex.html) · [openGauss ALTER INDEX](https://docs.opengauss.org/en/docs/latest/sql_reference/alter_index.html) - Require named `ALTER INDEX` and `DROP INDEX` fixtures to assert that the expected index segments are present.  ---  Before submitting this PR, I confirm that:  - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [x] I have added or updated unit tests for my changes, if applicable. - [x] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/
 
-- **Issue #40543** (2026-11-23): **Use AST and dialect options for PostgreSQL SQL handling**
-  *Symptoms*: Follow-up to #40533.  Changes proposed in this pull request:  - Resolve the proposed-row alias for insert conflict binding through the dialect SQL option. PostgreSQL exposes `excluded`, and openGauss keeps its existing duplicate-key assignment behavior. - Carry the PostgreSQL `TABLE` shorthand from the parsed projection AST through binding and encrypted SQL rewrite. The SQL builder reads the resulting token metadata. - Cover the dialect option, parser metadata, and encrypted rewrite with tests.  ---  Before submitting this PR, I confirm that:  - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [x] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [x] I have updated the relevant documentation, if applicable. - [x] I have added or updated unit tests for my changes, if applicable. - [x] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [x] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  Documentation and release notes are not applicable to this behavior-preserving refactor. The code-correctness 
-  **Post-Mortem & Fix Analysis**:
-  > ### Summary  The change carries PostgreSQL `TABLE` shorthand metadata from the parsed AST through binding and encrypted SQL rewrite. The insert binder uses the dialect SQL option for proposed-row aliases and resolves it once per conflict insert.  ### Result  Review Result: Mergeable  No blocking code-correctness issues were found in the review round.  ### Evidence  - The parser and projection binder preserve the shorthand marker. The encrypted rewrite regression test verifies the generated `SELECT … FROM` SQL. - PostgreSQL binding continues to resolve `EXCLUDED`. The openGauss option retains whole-row projection and its existing duplicate-key binding behavior. - `./mvnw clean install -B -T1C -Pcheck` passed, including 2,109 PostgreSQL parser cases and 193 encryption rewrite cases.  ### Coverage  One review round covered all 17 changed files in `23ff77a48e91`. The verdict covers code correctness and local verification. 
+- **Issue #40556** (2026-11-27): **Refactor Oracle parameter marker handling**
+  *Symptoms*: Changes proposed in this pull request:  - Preserve Oracle bind parameter markers in analytic function arguments, window frame bounds, `TRIM` operands, and `MODEL` rule expressions. - Cover the parsed parameter metadata in the existing Oracle regression fixtures.  ---  Before submitting this PR, I confirm that:  - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [x] I have updated the relevant documentation, if applicable. - [x] I have added or updated unit tests for my changes, if applicable. - [x] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [x] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  Local verification passed for 2,069 Oracle parser IT cases, 33 Oracle binder IT cases, and scoped Spotless and Checkstyle checks.  Codex assisted with the Oracle parser and regression fixture changes.  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1484,385 +1480,476 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00f96061` (2026-11-24)
-**Commit Message**: Fix prepared statement parameter index validation (#40545)
+### Incident Patch 1: `0d76e38a` (2026-11-27)
+**Commit Message**: Support index DDL parsing across SQL dialects (#40557)
 
-* Fix prepared statement parameter index validation
-
-* Use native SQLException for invalid parameter indexes
-
-* Remove custom parameter index error codes
-
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractPreparedStatementAdapter.java` (modified, +48/-41)
+**File**: `RELEASE-NOTES.md` (modified, +1/-0)
 ```diff
-@@ -49,167 +49,167 @@ public abstract class AbstractPreparedStatementAdapter extends AbstractUnsupport
-     private final List<Object> parameters = new ArrayList<>();
-     
-     @Override
--    public final void setNull(final int parameterIndex, final int sqlType) {
-+    public final void setNull(final int parameterIndex, final int sqlType) throws SQLException {
-         setParameter(parameterIndex, null);
-     }
-     
-     @Override
--    public final void setNull(final int parameterIndex, final int sqlType, final String typeName) {
-+    public final void setNull(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
-         setParameter(parameterIndex, null);
-     }
-     
-     @Override
--    public final void setBoolean(final int parameterIndex, final boolean x) {
-+    public final void setBoolean(final int parameterIndex, final boolean x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setByte(final int parameterIndex, final byte x) {
-+    public final void setByte(final int parameterIndex, final byte x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setShort(final int parameterIndex, final short x) {
-+    public final void setShort(final int parameterIndex, final short x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setInt(final int parameterIndex, final int x) {
-+    public final void setInt(final int parameterIndex, final int x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setLong(final int parameterIndex, final long x) {
-+    public final void setLong(final int parameterIndex, final long x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setFloat(final int parameterIndex, final float x) {
-+    public final void setFloat(final int parameterIndex, final float x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setDouble(final int parameterIndex, final double x) {
-+    public final void setDouble(final int parameterIndex, final double x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setString(final int parameterIndex, final String x) {
-+    public final void setString(final int parameterIndex, final String x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setBigDecimal(final int parameterIndex, final BigDecimal x) {
-+    public final void setBigDecimal(final int parameterIndex, final BigDecimal x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setDate(final int parameterIndex, final Date x) {
-+    public final void setDate(final int parameterIndex, final Date x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setDate(final int parameterIndex, final Date x, final Calendar cal) {
-+    public final void setDate(final int parameterIndex, final Date x, final Calendar cal) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setTime(final int parameterIndex, final Time x) {
-+    public final void setTime(final int parameterIndex, final Time x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setTime(final int parameterIndex, final Time x, final Calendar cal) {
-+    public final void setTime(final int parameterIndex, final Time x, final Calendar cal) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setTimestamp(final int parameterIndex, final Timestamp x) {
-+    public final void setTimestamp(final int parameterIndex, final Timestamp x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setTimestamp(final int parameterIndex, final Timestamp x, final Calendar cal) {
-+    public final void setTimestamp(final int parameterIndex, final Timestamp x, final Calendar cal) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setBytes(final int parameterIndex, final byte[] x) {
-+    public final void setBytes(final int parameterIndex, final byte[] x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setBlob(final int parameterIndex, final Blob x) {
-+    public final void setBlob(final int parameterIndex, final Blob x) throws SQLException {
-         setParameter(parameterIndex, x);
-     }
-     
-     @Override
--    public final void setBlob(fin
+@@ -179,6 +179,7 @@
+ 1. SQL Parser: Support Oracle `ORDER BY` after `FOR UPDATE` and `HAVING` without `GROUP BY` - [#39877](https://github.com/apache/shardingsphere/pull/39877)
+ 1. SQL Parser: Support Oracle parenthesized `WITH` queries and qualified PL/SQL collection types - [#39914](https://github.com/apache/shardingsphere/pull/39914)
+ 1. SQL Parser: Support Oracle `DROP UNUSED COLUMNS` syntax - [#39917](https://github.com/apache/shardingsphere/pull/39917)
++1. SQL Parser: Support Unicode-escaped index names, table names, and direct column references in openGauss `CREATE INDEX` statements - [#40557](https://github.com/apache/shardingsphere/pull/40557)
+ 1. SQL Binder: Support select order by index bind metadata - [#38386](https://github.com/apache/shardingsphere/pull/38386)
+ 1. SQL Binder: Support SQL bind when with temp table name is same with physical table - [#38411](https://github.com/apache/shardingsphere/pull/38411)
+ 1. SQL Binder: Support PostgreSQL whole-row projection binding - [#39276](https://github.com/apache/shardingsphere/pull/39276)
 ```
 
-**File**: `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSpherePreparedStatement.java` (modified, +8/-0)
+**File**: `parser/sql/engine/dialect/opengauss/src/main/java/org/apache/shardingsphere/sql/parser/engine/opengauss/visitor/statement/OpenGaussStatementVisitor.java` (modified, +51/-0)
 ```diff
-@@ -174,6 +174,14 @@ private boolean isStatementsCacheable() {
-                 && !HintManager.isInstantiated();
-     }
-     
-+    @Override
-+    protected void setParameter(final int parameterIndex, final Object value) throws SQLException {
-+        int parameterCount = getParameterMetaData().getParameterCount();
-+        ShardingSpherePreconditions.checkState(parameterIndex >= 1 && parameterIndex <= parameterCount,
-+                () -> new SQLException(String.format("Parameter index '%d' is out of range. Number of parameters: %d.", parameterIndex, parameterCount)));
-+        super.setParameter(parameterIndex, value);
-+    }
-+    
-     @Override
-     public ResultSet executeQuery() throws SQLException {
-         try {
-```
-
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/adapter/PreparedStatementAdapterTest.java` (modified, +25/-25)
-```diff
-@@ -71,73 +71,73 @@ void setUp() throws SQLException {
-         when(connection.getContextManager().getMetaDataContexts().getMetaData().getProps()).thenReturn(new ConfigurationProperties(new Properties()));
-         when(connection.getContextManager().getMetaDataContexts().getMetaData().getDatabase(
-                 connection.getCurrentDatabaseName()).getProtocolType()).thenReturn(TypedSPILoader.getService(DatabaseType.class, "SQL92"));
--        shardingSpherePreparedStatement = new ShardingSpherePreparedStatement(connection, "SELECT 1", null);
-+        shardingSpherePreparedStatement = new ShardingSpherePreparedStatement(connection, "SELECT ?, ?, ?, ?, ?", null);
-     }
-     
-     @Test
--    void assertSetNull() {
-+    void assertSetNull() throws SQLException {
-         shardingSpherePreparedStatement.setNull(1, Types.VARCHAR);
-         shardingSpherePreparedStatement.setNull(2, Types.VARCHAR, "");
-         assertParameter(shardingSpherePreparedStatement, 1, null);
-         assertParameter(shardingSpherePreparedStatement, 2, null);
-     }
-     
-     @Test
--    void assertSetBoolean() {
-+    void assertSetBoolean() throws SQLException {
-         shardingSpherePreparedStatement.setBoolean(1, true);
-         assertParameter(shardingSpherePreparedStatement, 1, true);
-     }
-     
-     @Test
--    void assertSetByte() {
-+    void assertSetByte() throws SQLException {
-         shardingSpherePreparedStatement.setByte(1, (byte) 0);
-         assertParameter(shardingSpherePreparedStatement, 1, (byte) 0);
-     }
-     
-     @Test
--    void assertSetShort() {
-+    void assertSetShort() throws SQLException {
-         shardingSpherePreparedStatement.setShort(1, (short) 0);
-         assertParameter(shardingSpherePreparedStatement, 1, (short) 0);
-     }
-     
-     @Test
--    void assertSetInt() {
-+    void assertSetInt() throws SQLException {
-         shardingSpherePreparedStatement.setInt(1, 0);
-         assertParameter(shardingSpherePreparedStatement, 1, 0);
-     }
-     
-     @Test
--    void assertSetLong() {
-+    void assertSetLong() throws SQLException {
-         shardingSpherePreparedStatement.setLong(1, 0L);
-         assertParameter(shardingSpherePreparedStatement, 1, 0L);
-     }
-     
-     @Test
--    void assertSetFloat() {
-+    void assertSetFloat() throws SQLException {
-         shardingSpherePreparedStatement.setFloat(1, 0.0F);
-         assertParameter(shardingSpherePreparedStatement, 1, 0.0F);
-     }
-     
-     @Test
--    void assertSetDouble() {
-+    void assertSetDouble() throws SQLException {
-         shardingSpherePreparedStatement.setDouble(1, 0.0D);
-         assertParameter(shardingSpherePreparedStatement, 1, 0.0D);
-     }
-     
-     @Test
--    void assertSetString() {
-+    void assertSetString() throws SQLException {
-         shardingSpherePreparedStatement.setString(1, "0");
-         assertParameter(shardingSpherePreparedStatement, 1, "0");
-     }
-     
-     @Test
--    void assertSetBigDecimal() {
-+    void assertSetBigDecimal() throws SQLException {
-         shardingSpherePreparedStatement.setBigDecimal(1, BigDecimal.ZERO);
-         assertParameter(shardingSpherePreparedStatement, 1, BigDecimal.ZERO);
-     }
-     
-     @Test
--    void assertSetDate() {
-+    void assertSetDate() throws SQLException {
-         Date date = new Date(0L);
-         shardingSpherePreparedStatement.setDate(1, date);
-         shardingSpherePreparedStatement.setDate(2, date, Calendar.getInstance());
-@@ -146,7 +146,7 @@ void assertSetDate() {
-     }
-     
-     @Test
--    void assertSetTime() {
-+    void assertSetTime() throws SQLException {
-         Time time = new Time(0L);
-         shardingSpherePreparedStatement.setTime(1, time);
-         shardingSpherePreparedStatement.setTime(2, time, Calendar.getInstance());
-@@ -155,7 +155,7 @@ void assertSetTime() {
-     }
-     
-     @Test
--    void assertSetTimestamp() {
-+    void assertSetTimestamp() throws SQLException {
-         Timestamp timestamp = new Timestamp(0L);
-         shardingSpherePreparedStatement.setTimestamp(1, timestamp);
-         shardingSpherePreparedStatement.setTimestamp(2, timestamp, Calendar.getInstance());
-@@ -164,13 +164,13 @@ void assertSetTimestamp() {
-     }
-     
-     @Test
--    void assertSetBytes() {
-+    void assertSetBytes() throws SQLException {
-         shardingSpherePreparedStatement.setBytes(1, new byte[]{});
-         assertParameter(shardingSpherePreparedStatement, 1, new byte[]{});
-     }
-     
-     @Test
--    void assertSetBlob() throws IOException {
-+    void assertSetBlob() throws IOException, SQLException {
-         try (InputStream inputStream = new ByteArrayInputStream(new byte[]{})) {
-             shardingSpherePreparedStatement.setBlob(1, (Blob) null);
-             shardingSpherePreparedStatement.setBlob(2, inputStream);
-@@ -182,7 +182,7 @@ void assertSetBlob() throws IOException {
-     }
-     
-     @Test
--    void assertSetClob() {
-+    void assertSetClob() throws SQLException {
-         Reader reader = new StringReader("value");
-         sh
-```
-
-**File**: `jdbc/src/test/java/org/apache/shardingsphere/driver/jdbc/core/statement/ShardingSpherePreparedStatementTest.java` (modified, +65/-12)
-```diff
-@@ -18,12 +18,12 @@
- package org.apache.shardingsphere.driver.jdbc.core.statement;
- 
- import lombok.SneakyThrows;
--import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.DialectDatabaseMetaData;
+@@ -26,6 +26,7 @@
+ import org.antlr.v4.runtime.tree.TerminalNode;
+ import org.apache.shardingsphere.database.connector.core.metadata.database.enums.NullsOrderType;
  import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
- import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
- import org.apache.shardingsphere.database.exception.core.SQLExceptionTransformEngine;
- import org.apache.shardingsphere.database.exception.core.exception.syntax.database.UnknownDatabaseException;
- import org.apache.shardingsphere.distsql.statement.type.rul.sql.ParseStatement;
-+import org.apache.shardingsphere.driver.executor.engine.batch.preparedstatement.DriverExecuteBatchExecutor;
- import org.apache.shardingsphere.driver.executor.engine.facade.DriverExecutorFacade;
- import org.apache.shardingsphere.driver.jdbc.core.connection.ShardingSphereConnection;
- import org.apache.shardingsphere.driver.jdbc.core.resultset.GeneratedKeysResultSet;
-@@ -81,11 +81,69 @@
- import static org.mockito.Mockito.mockConstruction;
- import static org.mockito.Mockito.mockStatic;
- import static org.mockito.Mockito.never;
-+import static org.mockito.Mockito.spy;
- import static org.mockito.Mockito.verify;
- import static org.mockito.Mockito.when;
-+import static org.mockito.Mockito.withSettings;
++import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
+ import org.apache.shardingsphere.sql.parser.api.ASTNode;
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParser.AExprContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParser.AexprConstContext;
+@@ -125,6 +126,7 @@
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParser.WindowSpecificationContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParser.WithClauseContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParserBaseVisitor;
++import org.apache.shardingsphere.sql.parser.engine.exception.SQLParsingException;
+ import org.apache.shardingsphere.sql.parser.statement.core.enums.AggregationType;
+ import org.apache.shardingsphere.sql.parser.statement.core.enums.CombineType;
+ import org.apache.shardingsphere.sql.parser.statement.core.enums.JoinType;
+@@ -221,6 +223,7 @@
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Optional;
++import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import java.util.stream.Collectors;
  
- class ShardingSpherePreparedStatementTest {
+@@ -231,8 +234,14 @@
+ @Getter(AccessLevel.PROTECTED)
+ public abstract class OpenGaussStatementVisitor extends OpenGaussStatementParserBaseVisitor<ASTNode> {
      
-+    @ParameterizedTest(name = "parameter index {0}")
-+    @MethodSource("provideInvalidParameterIndexes")
-+    void assertSetObjectWithInvalidIndex(final int parameterIndex) throws SQLException {
-+        ShardingSpherePreparedStatement preparedStatement = createPreparedStatementWithParameters();
-+        preparedStatement.setObject(1, 10);
-+        preparedStatement.setObject(2, 10);
-+        preparedStatement.setObject(3, null);
-+        SQLException actual = assertThrows(SQLException.class, () -> preparedStatement.setObject(parameterIndex, 1));
-+        assertThat(actual.getMessage(), is(String.format("Parameter index '%d' is out of range. Number of parameters: 3.", parameterIndex)));
-+        assertThat(preparedStatement.getParameters(), is(Arrays.asList(10, 10, null)));
++    private static final String INVALID_UNICODE_ESCAPE_CHARACTERS = "0123456789ABCDEFabcdef+'\" \t\n\r\f";
++    
+     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+     
++    private static final Pattern UNICODE_ESCAPE_PATTERN = Pattern.compile("[0-9A-Fa-f]{4}|\\+[0-9A-Fa-f]{6}");
++    
++    private static final Pattern UNPAIRED_SURROGATE_PATTERN = Pattern.compile("[\\uD800-\\uDFFF]");
++    
+     private final DatabaseType databaseType;
+     
+     private final Collection<ParameterMarkerSegment> parameterMarkerSegments = new LinkedList<>();
+@@ -251,10 +260,52 @@ public final ASTNode visitNumberLiterals(final NumberLiteralsContext ctx) {
+     
+     @Override
+     public final ASTNode visitIdentifier(final IdentifierContext ctx) {
++        if (null != ctx.UNICODE_ESCAPE()) {
++            return visitUnicodeIdentifier(ctx);
++        }
+         UnreservedWordContext unreservedWord = ctx.unreservedWord();
+         return null == unreservedWord ? new IdentifierValue(ctx.getText()) : visit(unreservedWord);
+     }
+     
++    private IdentifierValue visitUnicodeIdentifier(final IdentifierContext ctx) {
++        String quoted = ctx.IDENTIFIER_().getText();
++        ShardingSpherePreconditions.checkState('"' == quoted.charAt(0), () -> new SQLParsingException("Unicode identifiers must be quoted"));
++        ShardingSpherePreconditions.checkState(ctx.UNICODE_ESCAPE().getSymbol().getStopIndex() + 1 == ctx.IDENTIFIER_().getSymbol().getStartIndex(),
++                () -> new SQLParsingException("Unicode escape prefix must immediately precede the quoted identifier"));
++        char escape = null == ctx.uescape() ? '\\' : getUnicodeEscapeCharacter(ctx.uescape().STRING_().getText());
++        return IdentifierValue.fromDecodedQuotedName(decodeUnicodeIdentifier(quoted.substring(1, quoted.length() - 1), escape));
 +    }
 +    
-+    private ShardingSpherePreparedStatement createPreparedStatementWithParameters() throws SQLException {
-+        SQLStatement sqlStatement = spy(new SQLStatement(TypedSPILoader.getService(DatabaseType.class, "SQL92")));
-+        when(sqlStatement.getParameterCount()).thenReturn(3);
-+        return createPreparedStatementWithSQLStatement(sqlStatement);
++    private char getUnicodeEscapeCharacter(final String literal) {
++        ShardingSpherePreconditions.checkState(3 == literal.length(), () -> new SQLParsingException("UESCAPE requires a single character"));
++        char result = literal.charAt(1);
++        ShardingSpherePreconditions.checkState(INVALID_UNICODE_ESCAPE_CHARACTERS.indexOf(result) < 0, () -> new SQLParsingException("Invalid Unicode escape character"));
++        return result;
 +    }
 +    
-+    private static Stream<Integer> provideInvalidParameterIndexes() {
-+        return Stream.of(-1, 0, 4);
++    private String decodeUnicodeIdentifier(final String value, final char escape) {
++        StringBuilder result = new StringBuilder(value.length());
++        Matcher matcher = UNICODE_ESCAPE_PATTERN.matcher(value);
++        int index = 0;
++        while (index < value.length()) {
++            char each = value.charAt(index++);
++            if (escape != each) {
++                result.append(each);
++            } else if (index < value.length() && escape == value.charAt(index)) {
++                result.append(each);
++                index++;
++            } else {
++                ShardingSpherePreconditions.checkState(matcher.region(index, value.length()).lookingAt(), () -> new SQLParsingException("Invalid Unicode escape in identifier"));
++                int codePoint = Integer.parseInt(matcher.group(), 16);
++                ShardingSpherePreconditions.checkState(0 != codePoint && Character.isValidCodePoint(codePoint), () -> new SQLParsingException("Invalid Unicode code point in identifier"));
++                result.appendCodePoint(codePoint);
++                index = matcher.end();
+```
+
+**File**: `parser/sql/engine/dialect/opengauss/src/main/java/org/apache/shardingsphere/sql/parser/engine/opengauss/visitor/statement/type/OpenGaussDDLStatementVisitor.java` (modified, +1/-1)
+```diff
+@@ -571,7 +571,7 @@ public ASTNode visitIndexParams(final IndexParamsContext ctx) {
+         CollectionValue<ColumnSegment> result = new CollectionValue<>();
+         for (IndexElemContext each : ctx.indexElem()) {
+             if (null != each.colId()) {
+-                result.getValue().add(new ColumnSegment(each.colId().start.getStartIndex(), each.colId().stop.getStopIndex(), new IdentifierValue(each.colId().getText())));
++                result.getValue().add(new ColumnSegment(each.colId().start.getStartIndex(), each.colId().stop.getStopIndex(), (IdentifierValue) visit(each.colId().identifier())));
+             }
+             if (null != each.functionExprWindowless()) {
+                 FunctionSegment functionSegment = (FunctionSegment) visit(each.functionExprWindowless());
+```
+
+**File**: `test/it/binder/src/test/resources/cases/ddl/create-index.xml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@
+                 </table-bound>
+             </simple-table>
+         </table>
+-        <index name="idx_name" start-index="13" stop-index="20" />
++        <index name="idx_user_bt" start-index="13" stop-index="23" />
+         <column start-index="56" stop-index="62" name="user_id">
+             <column-bound>
+                 <original-database name="foo_db_1" />
+```
+
+**File**: `test/it/binder/src/test/resources/sqls/ddl/create-index.xml` (modified, +1/-3)
+```diff
+@@ -17,7 +17,5 @@
+   -->
+ 
+ <sql-cases>
+-    <!-- TODO should assert index for all databases (only Oracle can support parse index right now)
+-    <sql-case id="create_index_with_schema" value="CREATE INDEX idx_user_id ON public.t_order USING btree (user_id ASC NULLS LAST) TABLESPACE pg_default" db-types="PostgreSQL,openGauss" />
+-    -->
++    <sql-case id="create_index_with_schema" value="CREATE INDEX idx_user_bt ON public.t_order USING btree (user_id ASC NULLS LAST) TABLESPACE pg_default" db-types="PostgreSQL,openGauss" />
+ </sql-cases>
+```
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/asserts/statement/ddl/standard/type/AlterIndexStatementAssert.java` (modified, +7/-2)
+```diff
+@@ -19,6 +19,7 @@
+ 
+ import lombok.AccessLevel;
+ import lombok.NoArgsConstructor;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.index.IndexSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.statement.type.ddl.index.AlterIndexStatement;
+ import org.apache.shardingsphere.test.it.sql.parser.internal.asserts.SQLCaseAssertContext;
+@@ -60,8 +61,12 @@ private static void assertTable(final SQLCaseAssertContext assertContext, final
+     }
+     
+     private static void assertIndex(final SQLCaseAssertContext assertContext, final AlterIndexStatement actual, final AlterIndexStatementTestCase expected) {
+-        if (actual.getIndex().isPresent()) {
+-            IndexAssert.assertIs(assertContext, actual.getIndex().get(), expected.getIndex());
++        Optional<IndexSegment> actualIndexSegment = actual.getIndex();
++        if (null == expected.getIndex()) {
++            assertFalse(actualIndexSegment.isPresent(), assertContext.getText("Actual index segment should not exist."));
++        } else {
++            assertTrue(actualIndexSegment.isPresent(), assertContext.getText("Actual index segment should exist."));
++            IndexAssert.assertIs(assertContext, actualIndexSegment.get(), expected.getIndex());
+         }
+     }
+ }
+```
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/asserts/statement/ddl/standard/type/DropIndexStatementAssert.java` (modified, +1/-0)
+```diff
+@@ -66,6 +66,7 @@ private static void assertTables(final SQLCaseAssertContext assertContext, final
+     }
+     
+     private static void assertIndex(final SQLCaseAssertContext assertContext, final DropIndexStatement actual, final DropIndexStatementTestCase expected) {
++        assertThat(assertContext.getText("Index segment count assertion error: "), actual.getIndexes().size(), is(expected.getIndexes().size()));
+         int count = 0;
+         for (IndexSegment each : actual.getIndexes()) {
+             IndexAssert.assertIs(assertContext, each, expected.getIndexes().get(count));
+```
+
+**File**: `test/it/parser/src/main/resources/case/ddl/alter-index.xml` (modified, +20/-3)
+```diff
+@@ -67,14 +67,17 @@
+     </alter-index>
+     
+     <alter-index sql-case-id="alter_index_rebuild">
++        <index name="order_index" start-index="12" stop-index="22" />
+         <table name="t_order" start-index="27" stop-index="33" />
+     </alter-index>
+     
+     <alter-index sql-case-id="alter_index_with_quota_bracket">
++        <index name="order_index" start-delimiter="[" end-delimiter="]" start-index="12" stop-index="24" />
+         <table name="t_order" start-delimiter="[" end-delimiter="]" start-index="29" stop-index="37" />
+     </alter-index>
+ 
+     <alter-index sql-case-id="alter_index_with_reorganize">
++        <index name="order_index" start-index="12" stop-index="22" />
+         <table name="t_order" start-index="27" stop-index="33" />
+     </alter-index>
+ 
+@@ -142,9 +145,23 @@
+         <index name="prod_idx" start-index="12" stop-index="19" />
+     </alter-index>
+     
+-    <alter-index sql-case-id="alter_index_alter_column" />
+-    <alter-index sql-case-id="alter_index_with_schema" />
+-    <alter-index sql-case-id="alter_index_set_tablespace" />
++    <alter-index sql-case-id="alter_index_alter_column">
++        <index name="t_order_idx" start-index="12" stop-index="22" />
++    </alter-index>
++    <alter-index sql-case-id="alter_index_with_schema">
++        <index name="t_order_idx" start-index="12" stop-index="29">
++            <owner name="public" start-index="12" stop-index="17" />
++        </index>
++    </alter-index>
++    <alter-index sql-case-id="alter_index_set_tablespace">
++        <index name="distributors" start-index="12" stop-index="23" />
++    </alter-index>
++
++    <alter-index sql-case-id="alter_index_set_tablespace_with_schema">
++        <index name="t_order_idx" start-index="12" stop-index="29">
++            <owner name="public" start-index="12" stop-index="17" />
++        </index>
++    </alter-index>
+ 
+     <alter-index sql-case-id="alter_index_rebuild_basic">
+         <index name="idx_product_id" start-index="12" stop-index="25" />
+```
+
+---
+
+### Incident Patch 2: `0e01f329` (2026-11-27)
+**Commit Message**: Refactor Oracle parameter marker handling (#40556)
+
+* Refactor Oracle parameter marker handling
+
+* Fix Oracle bind marker ownership and grouping
+
+**File**: `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/OracleStatementVisitor.java` (modified, +59/-7)
+```diff
+@@ -24,6 +24,7 @@
+ import org.antlr.v4.runtime.misc.Interval;
+ import org.antlr.v4.runtime.tree.ParseTree;
+ import org.antlr.v4.runtime.tree.TerminalNode;
++import org.antlr.v4.runtime.tree.Trees;
+ import org.apache.shardingsphere.database.connector.core.metadata.database.enums.NullsOrderType;
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
+ import org.apache.shardingsphere.sql.parser.api.ASTNode;
+@@ -219,7 +220,7 @@ public abstract class OracleStatementVisitor extends OracleStatementBaseVisitor<
+     
+     private final Collection<ParameterMarkerSegment> globalParameterMarkerSegments = new LinkedList<>();
+     
+-    private final Collection<ParameterMarkerSegment> statementParameterMarkerSegments = new LinkedList<>();
++    private Collection<ParameterMarkerSegment> statementParameterMarkerSegments = new LinkedList<>();
+     
+     private final List<SQLStatementSegment> sqlStatementsInPlsql = new ArrayList<>();
+     
+@@ -265,6 +266,9 @@ private int countParameterMarkers(final String sql) {
+             if (advanceInAlternativeQuotedText(sql, state)) {
+                 continue;
+             }
++            if (advanceInQuotedIdentifier(sql, state)) {
++                continue;
++            }
+             if (advanceInOrToggleStringLiteral(sql, state)) {
+                 continue;
+             }
+@@ -354,6 +358,22 @@ private char getAlternativeQuoteCloseDelimiter(final char quoteDelimiter) {
+         }
+     }
+     
++    private boolean advanceInQuotedIdentifier(final String sql, final ParameterMarkerScanState state) {
++        if (state.inStringLiteral || '"' != sql.charAt(state.index)) {
++            return false;
++        }
++        while (++state.index < sql.length()) {
++            char ch = sql.charAt(state.index);
++            if ('\\' == ch) {
++                state.index++;
++            } else if ('"' == ch) {
++                state.index++;
++                break;
++            }
++        }
++        return true;
 +    }
 +    
-+    @Test
-+    void assertSetObjectWithoutParameters() throws SQLException {
-+        ShardingSpherePreparedStatement preparedStatement = createPreparedStatement();
-+        SQLException actual = assertThrows(SQLException.class, () -> preparedStatement.setObject(1, 1));
-+        assertThat(actual.getMessage(), is("Parameter index '1' is out of range. Number of parameters: 0."));
-+        assertTrue(preparedStatement.getParameters().isEmpty());
+     private boolean advanceInOrToggleStringLiteral(final String sql, final ParameterMarkerScanState state) {
+         if (sql.charAt(state.index) != '\'') {
+             return false;
+@@ -893,6 +913,21 @@ public ASTNode visitPseudorecord(final PseudorecordContext ctx) {
+         return result;
+     }
+     
++    /**
++     * Register parameter markers from a parse subtree.
++     *
++     * @param context parse subtree
++     * @return registered marker expressions
++     */
++    protected final Collection<ParameterMarkerExpressionSegment> registerParameterMarkers(final ParseTree context) {
++        Collection<ParseTree> markerNodes = Trees.findAllRuleNodes(context, OracleStatementParser.RULE_parameterMarker);
++        Collection<ParameterMarkerExpressionSegment> result = new ArrayList<>(markerNodes.size());
++        for (ParseTree each : markerNodes) {
++            result.add(createParameterMarkerExpressionSegment((ParameterMarkerContext) each));
++        }
++        return result;
 +    }
 +    
-+    @Test
-+    void assertSetObjectOutOfOrderAndRepeatedly() throws SQLException {
-+        ShardingSpherePreparedStatement preparedStatement = createPreparedStatementWithParameters();
-+        preparedStatement.setObject(3, "foo_status");
-+        assertThat(preparedStatement.getParameters(), is(Arrays.asList(null, null, "foo_status")));
-+        preparedStatement.setObject(1, 10);
-+        preparedStatement.setObject(2, 10);
-+        preparedStatement.setObject(1, 11);
-+        preparedStatement.setObject(3, null);
-+        assertThat(preparedStatement.getParameters(), is(Arrays.asList(11, 10, null)));
-+    }
-+    
-+    @Test
-+    void assertAddBatchAfterInvalidParameterIndex() throws SQLException, ReflectiveOperationException {
-+        ShardingSpherePreparedStatement preparedStatement = createPreparedStatementWithParameters();
-+        DriverExecuteBatchExecutor batchExecutor = mock(DriverExecuteBatchExecutor.class);
-+        Plugins.getMemberAccessor().set(ShardingSpherePreparedStatement.class.getDeclaredField("executeBatchExecutor"), preparedStatement, batchExecutor);
-+        preparedStatement.setObject(1, 10);
-+        preparedStatement.setObject(2, 10);
-+        preparedStatement.setObject(3, null);
-+        assertThrows(SQLException.class, () -> preparedStatement.setObject(4, 1));
-+        preparedStatement.addBatch();
-+        verify(batchExecutor).addBatch(argThat(actual -> actual.getParameters().equals(Arrays.asList(10, 10, null))), same(preparedStatement.getUsedDatabase()));
-+        assertTrue(preparedStatement.getParameters().isEmpty());
-+    }
-+    
-     @Test
-     void assertGetQueryTimeoutBeforeExecution() throws SQLException {
-         ShardingSpherePreparedStatement preparedStatement = createPreparedStatement();
-@@ -256,12 +314,10 @@ void assertExecuteUpdateWhenPostgreSQLTra
+     protected ParameterMarkerExpressionSegment createParameterMarkerExpressionSegment(final ParameterMarkerContext ctx) {
+         return createParameterMarkerExpressionSegment((ParameterMarkerValue) visit(ctx), ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex());
+     }
+@@ -1028,11 +1063,7 @@ public ASTNode visitAnalyticFunction(final AnalyticFunctionContext ctx) {
+     }
+     
+     private Collection<ExpressionSegment> getAnalyticFunctionParameters(final AnalyticFunctionContext ctx) {
+-        Collection<ExpressionSegment> result = new LinkedList<>();
+-        List<ExprContext> exprContexts = ctx.expr();
+-        if (!exprContexts.isEmpty()) {
+-            result.add((ExpressionSegment) visit(exprContexts.get(0)));
+-        }
++        Collection<ExpressionSegment> result = getExpressions(ctx.expr());
+         if (null != ctx.leadLagInfo()) {
+             for (ExprContext each : ctx.leadLagInfo().expr()) {
+                 result.add((ExpressionSegment) visit(each));
+@@ -1150,7 +1181,7 @@ protected Collection<ExpressionSegment> getPartitionListSegments(final QueryPart
+     
+     @Override
+     public ASTNode visitWindowingClause(final WindowingClauseContext ctx) {
+-        return new CommonExpressionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), getOriginalText(ctx), Collections.emptyList());
++        return new CommonExpressionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), getOriginalText(ctx), getExpressions(ctx.expr()));
+     }
+     
+     @Override
+@@ -1555,6 +1586,9 @@ public ASTNode visitFirstOrLastValueFunction(final FirstOrLastValueFunctionConte
+     @Override
+     public ASTNode visitTrimFunction(final TrimFunctionContext ctx) {
+         FunctionSegment result = new FunctionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), ctx.TRIM().getText(), getOriginalText(ctx));
++        if (null != ctx.trimOperands()) {
++            result.getParameters().addAll(registerParameterMarkers(ctx.trim
+```
+
+**File**: `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/type/OracleDMLStatementVisitor.java` (modified, +5/-1)
+```diff
+@@ -78,6 +78,7 @@
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.ModelClauseContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.ModelColumnClausesContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.ModelColumnContext;
++import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.ModelExprContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.MultiColumnForLoopContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.MultiTableElementContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.MultiTableInsertIntoClauseContext;
+@@ -932,6 +933,9 @@ public ASTNode visitModelClause(final ModelClauseContext ctx) {
+                 result.getCellAssignmentSelects().add(extractSelectSubqueryValueFromMultiColumnForLoop(each.multiColumnForLoop()));
+             }
+         }
++        for (ModelExprContext each : ctx.mainModel().modelRulesClause().modelExpr()) {
++            registerParameterMarkers(each);
++        }
+         return result;
+     }
+     
+@@ -1646,7 +1650,7 @@ private Collection<OrderByItemSegment> generateOrderByItemSegmentsFromExpression
+     
+     @Override
+     public ASTNode visitSubquery(final SubqueryContext ctx) {
+-        return visit(ctx.selectSubquery());
++        return visitScalarSubquery(ctx.selectSubquery());
+     }
+     
+     @Override
+```
+
+**File**: `test/it/parser/src/main/resources/case/dml/select.xml` (modified, +51/-2)
+```diff
+@@ -8097,7 +8097,7 @@
+         </order-by>
+     </select>
+     
+-    <select sql-case-id="select_oracle_model_cv_parameter">
++    <select sql-case-id="select_oracle_model_cv_parameter" parameters="2" parameter-marker-count="1">
+         <from>
+             <simple-table name="t_product" start-index="40" stop-index="48" />
+         </from>
+@@ -8115,7 +8115,7 @@
+         </order-by>
+     </select>
+     
+-    <select sql-case-id="select_oracle_model_partition_cv_parameter">
++    <select sql-case-id="select_oracle_model_partition_cv_parameter" parameters="1" parameter-marker-count="1">
+         <from>
+             <simple-table name="t_product" start-index="52" stop-index="60" />
+         </from>
+@@ -8136,6 +8136,55 @@
+         </order-by>
+     </select>
+ 
++    <select sql-case-id="select_oracle_analytic_window_and_trim_parameters" parameters="2, 1, 1, x" parameter-marker-count="4">
++        <projections start-index="7" stop-index="123">
++            <expression-projection text="NTH_VALUE(&quot;pri?ce&quot;, ?) OVER (ORDER BY product_id ROWS BETWEEN ? PRECEDING AND ? FOLLOWING)" start-index="7" stop-index="96">
++                <expr>
++                    <function function-name="NTH_VALUE" text="NTH_VALUE(&quot;pri?ce&quot;, ?) OVER (ORDER BY product_id ROWS BETWEEN ? PRECEDING AND ? FOLLOWING)" start-index="7" stop-index="96">
++                        <parameter>
++                            <column name="pri?ce" start-delimiter="&quot;" end-delimiter="&quot;" start-index="17" stop-index="24" />
++                        </parameter>
++                        <parameter>
++                            <parameter-marker-expression parameter-index="0" start-index="27" stop-index="27" />
++                        </parameter>
++                        <window-item start-index="30" stop-index="96">
++                            <order-by start-index="36" stop-index="54">
++                                <column-item name="product_id" order-direction="ASC" start-index="45" stop-index="54" />
++                            </order-by>
++                            <frame>
++                                <common-expression text="ROWS BETWEEN ? PRECEDING AND ? FOLLOWING" start-index="56" stop-index="95">
++                                    <children>
++                                        <expression>
++                                            <parameter-marker-expression parameter-index="1" start-index="69" stop-index="69" />
++                                        </expression>
++                                        <expression>
++                                            <parameter-marker-expression parameter-index="2" start-index="85" stop-index="85" />
++                                        </expression>
++                                    </children>
++                                </common-expression>
++                            </frame>
++                        </window-item>
++                    </function>
++                </expr>
++            </expression-projection>
++            <expression-projection text="TRIM(? FROM product_name)" start-index="99" stop-index="123">
++                <expr>
++                    <function function-name="TRIM" text="TRIM(? FROM product_name)" start-index="99" stop-index="123">
++                        <parameter>
++                            <parameter-marker-expression parameter-index="3" start-index="104" stop-index="104" />
++                        </parameter>
++                        <parameter>
++                            <column name="product_name" start-index="111" stop-index="122" />
++                        </parameter>
++                    </function>
++                </expr>
++            </expression-projection>
++        </projections>
++        <from>
++            <simple-table name="t_product" start-index="130" stop-index="138" />
++        </from>
++    </select>
++
+     <select sql-case-id="select_with_trim_function_multi">
+         <projections start-index="7" stop-index="203" literal-start-index="7" literal-stop-index="203">
+             <expression-projection text="TRIM('  derby ')" start-index="7" stop-index="22" literal-start-index="7" literal-stop-index="22">
+```
+
+**File**: `test/it/parser/src/main/resources/sql/supported/dml/select.xml` (modified, +1/-0)
+```diff
+@@ -286,6 +286,7 @@
+     <sql-case id="select_with_order_by_index_oracle" value="SELECT * FROM t_order ORDER BY 1 NULLS LAST" db-types="Oracle" />
+     <sql-case id="select_is_nan_oracle" value="SELECT to_binary_float('NaN') FROM dual WHERE to_binary_float('NaN') IS NAN" db-types="Oracle" />
+     <sql-case id="select_group_by_rollup_oracle_with_rollup" value="SELECT department_id, COUNT(*) FROM employees GROUP BY ROLLUP(department_id)" db-types="Oracle" />
++    <sql-case id="select_oracle_analytic_window_and_trim_parameters" value="SELECT NTH_VALUE(&quot;pri?ce&quot;, ?) OVER (ORDER BY product_id ROWS BETWEEN ? PRECEDING AND ? FOLLOWING), TRIM(? FROM product_name) FROM t_product" db-types="Oracle" case-types="PLACEHOLDER" />
+     <sql-case id="select_with_trim_function_multi" value="select TRIM('  derby '), TRIM(BOTH ' ' FROM '  derby '), TRIM(TRAILING ' ' FROM '  derby '), TRIM(cast (null as char(1)) FROM '  derby '), TRIM(' ' FROM cast(null as varchar(30))), TRIM('y' FROM ' derby') FROM employees" db-types="Oracle" />
+     <sql-case id="select_with_trim_function_simple" value="SELECT TRIM( '.,! ' FROM '     #     test    .') AS Result" db-types="SQLServer" />
+     <sql-case id="select_oracle_quantified_some_subquery" value="SELECT user_id FROM t_user WHERE user_id = SOME (SELECT user_id FROM t_order)" db-types="Oracle" />
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40557** (2026-11-27): Support index DDL parsing across SQL dialects (@strongduanmu)
+- **PR #40556** (2026-11-27): Refactor Oracle parameter marker handling (@strongduanmu)
+- **PR #40553** (2026-11-26): Allow requested recommended skill availability warnings (@terrymanu)
+- **PR #40551** (2026-11-24): Clarify standard capability reuse before adding mechanisms (@terrymanu)
 - **PR #40545** (2026-11-24): Fix prepared statement parameter index validation (@terrymanu)
 - **PR #40543** (2026-11-23): Use AST and dialect options for PostgreSQL SQL handling (@strongduanmu)
-- **PR #40539** (2026-11-22): Fix Oracle unparenthesized function binding for dummy table queries (@terrymanu)
-- **PR #40538** (2026-11-21): Fix PostgreSQL keyword identifier compatibility (@terrymanu)
-- **PR #40537** (2026-11-21): Add regression coverage for unsupported Javadoc parameter nullability (@terrymanu)
-- **PR #40536** (2026-11-21): Align SQL federation XML loading with existing JAXB tests (@terrymanu)
 
 ---
 
@@ -1882,58 +1969,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. prepared statement parameter index validation
+## X. Support index DDL parsing across SQL dialects
 
 **RULE**:
-When implementing operations in `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractPreparedStatementAdapter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RELEASE-NOTES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00f96061`: prepared statement parameter index validation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d76e38a`: Support index DDL parsing across SQL dialects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `jdbc/src/main/java/org/apache/shardingsphere/driver/jdbc/adapter/AbstractPreparedStatementAdapter.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE-NOTES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    public final void setNull(final int parameterIndex, final int sqlType) throws SQLException {
-    public final void setNull(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
-    public final void setBoolean(final int parameterIndex, final boolean x) throws SQLException {
-    public final void setByte(final int parameterIndex, final byte x) throws SQLException {
-    public final void setShort(final int parameterIndex, final short x) throws SQLException {
-    public final void setInt(final int parameterIndex, final int x) throws SQLException {
-    public final void setLong(final int parameterIndex, final long x) throws SQLException {
-    public final void setFloat(final int parameterIndex, final float x) throws SQLException {
-    public final void setDouble(final int parameterIndex, final double x) throws SQLException {
-    public final void setString(final int parameterIndex, final String x) throws SQLException {
-    public final void setBigDecimal(final int parameterIndex, final BigDecimal x) throws SQLException {
-    public final void setDate(final int parameterIndex, final Date x) throws SQLException {
-    public final void setDate(final
+1. SQL Parser: Support Unicode-escaped index names, table names, and direct column references in openGauss `CREATE INDEX` statements - [#40557](https://github.com/apache/shardingsphere/pull/40557)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    public final void setNull(final int parameterIndex, final int sqlType) {
-    public final void setNull(final int parameterIndex, final int sqlType, final String typeName) {
-    public final void setBoolean(final int parameterIndex, final boolean x) {
-    public final void setByte(final int parameterIndex, final byte x) {
-    public final void setShort(final int parameterIndex, final short x) {
-    public final void setInt(final int parameterIndex, final int x) {
-    public final void setLong(final int parameterIndex, final long x) {
-    public final void setFloat(final int parameterIndex, final float x) {
-    public final void setDouble(final int parameterIndex, final double x) {
-    public final void setString(final int parameterIndex, final String x) {
-    public final void setBigDecimal(final int parameterIndex, final BigDecimal x) {
-    public final void setDate(final int parameterIndex, final Date x) {
-    public final void setDate(final int parameterIndex, final Date x, final Calendar cal) {
-    public final void setTime(final int parameterIndex, final Time x) {
-    public final void setTime(final int parameterIndex, final Time x, final Calendar cal) {
-    public final vo
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00f96061` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d76e38a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

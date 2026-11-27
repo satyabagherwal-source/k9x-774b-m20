@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T21:39:14.171Z",
+  "timestamp": "2026-11-27T22:55:29.804Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T21:39:14.171Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T22:55:29.804Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `1441b6a4`  
+> **Source Version**: `23809a00`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T21:39:07.882Z  
+> **Timestamp**: 2026-11-27T22:54:49.537Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T21:39:07.876Z  
+> **Harvest Timestamp**: 2026-11-27T22:54:49.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3876 stars
+- **Stars / Engagement**: 3877 stars
 
 ---
 
@@ -2304,341 +2304,219 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1441b6a4` (2026-11-27)
-**Commit Message**: fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (#5124)
+### Incident Patch 1: `23809a00` (2026-11-27)
+**Commit Message**: fix: write nested JSONL values as JSON text (#5125 follow-up) (#5127)
 
-* fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns
+* fix: write nested JSONL values as JSON text; qualify sqlp help (#5125 follow-up)
 
-#5122: when every column is a pivot or --index column, the default
---values (all remaining columns) was empty and Polars failed with
-"`pivot` called without `values` columns". With len (the default then),
-count the first pivot column, as `--values <on-col> --agg len` does; any
-other aggregation now stops with an error asking for --values.
+#5125 made the JSONL/NDJSON input conversion infer its schema from the
+whole file. A key that first appears late now becomes a column, but if its
+value is an object or array, the CSV writer rejected the nested column:
+"CSV format does not support nested data". On 29.0.0 such a key was
+silently dropped, so this was a regression from #5125. A nested value in
+the first rows already failed on 29.0.0.
 
-#5123: a generated column named <value><sep><pivot value> (or just the
-pivot value) could equal an --index column's name, e.g. `name` x `null`
--> `name_null` on readstat --sentinels-as output, and the pivot failed
-with a Polars Duplicate error. Pivot on temporary copies of the index
-columns, then give them back their names; a clashing generated column
-takes the first free `<name>_<n>` from 2, with a warning. Two generated
-names that coincide still stop the pivot, now with a qsv error.
+The conversion now infers once and, when a column is nested (struct, list
+or array), re-reads the file with an explicit schema that types those
+columns as String, so they hold the value's JSON text (as sqlp's
+read_ndjson() schema_overrides => VARCHAR does). A .pschema.json still
+decides the columns.
+
+sqlp help: only a query that selects a late read_ndjson() key fails, and a
+.pschema.json can type a column as a date before CAST runs.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #5124 [skip ci]
+* docs(changelog): cite #5127
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-author
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/qsv/qsv-pivotp.json` (modified, +2/-2)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +2/-2)
 ```diff
-@@ -29,7 +29,7 @@
+@@ -117,7 +117,7 @@
        {
-         "flag": "--col-separator",
-         "type": "string",
--        "description": "The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode)",
-+        "description": "The separator in generated column names in case of multiple --values columns. A generated name that equals an index column's takes a _2 (_3, ...) suffix, with a warning. (pivot mode only; ignored in group-by mode)",
-         "default": "_"
+         "flag": "--try-parsedates",
+         "type": "flag",
+-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
++        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
        },
        {
-@@ -113,7 +113,7 @@
-       {
-         "flag": "--values",
-         "type": "string",
--        "description": "The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. In group-by mode, if omitted, a single \"count\" column is produced."
-+        "description": "The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. If no columns remain, len (the default then) counts the rows of each cell; any other aggregation needs --values. In group-by mode, if omitted, a single \"count\" column is produced."
-       }
-     ]
-   },
+         "flag": "--wnull-value",
+@@ -249,7 +249,7 @@
+       "command": "qsv sqlp SKIP_INPUT \"select * from read_csv('data.csv', separator => ';', comment_prefix => '#', has_header => false)\""
+     },
+     {
+-      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file. By default only the first 100 rows are used, and a key that first appears later fails the query with \"extra field in NDJSON data\":",
++      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so keys that first appear late can be queried. By default only the first 100 rows are used, and selecting a key that first appears later (e.g. with select *) fails with \"extra field in NDJSON data\":",
+       "command": "qsv sqlp SKIP_INPUT \"select * from read_ndjson('events.jsonl', infer_schema_length => NULL)\""
+     },
+     {
 ```
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
  
  ### Fixed
-+- `pivotp`: when every column was a pivot or `--index` column, the default `--values` (all remaining columns) was empty, and the pivot failed with a raw Polars error ("`pivot` called without `values` columns"). `pivotp region --index sex` now counts the rows of each cell, as `--values region --agg len` already did. Any aggregation other than `len` (the default here) stops with an error asking for `--values`. Fixes [#5122](https://github.com/dathere/qsv/issues/5122). ([#5124](https://github.com/dathere/qsv/pull/5124))
-+- `pivotp`: a generated pivot column could take the name of an `--index` column, and the pivot failed with "Duplicate: column with name '...' has more than one occurrence". Generated columns are named `<value column><--col-separator><pivot value>` (or just the pivot value with one value column), so `readstat --sentinels-as` output, where `name` sits next to `name_null`, hit this when `name_null` was the `--index`, `name` a value column, and the pivot column had empty cells. Such a generated column is now renamed to the first free `<name>_<n>` (from 2), with a warning on stderr (unless `--quiet`). Two generated names that coincide (e.g. `a_b` × `c` and `a` × `b_c`) still stop the pivot, now with an error suggesting `--col-separator` or `--values`. Fixes [#5123](https://github.com/dathere/qsv/issues/5123). ([#5124](https://github.com/dathere/qsv/pull/5124))
++- JSONL/NDJSON inputs: object and array values are written as their JSON text (e.g. `{"k": 1}`, `["a", "b"]`), so a file with nested values converts instead of failing with "CSV format does not support nested data". This also covers a nested key that first appears after the first 100 rows, which #5125's whole-file inference would otherwise have turned into that error (before #5125 such a key was silently dropped). A `.pschema.json` still decides the columns. The `sqlp` help also notes that only a query selecting a late `read_ndjson()` key fails, and that a `.pschema.json` can type a column as a date before `CAST` runs. ([#5127](https://github.com/dathere/qsv/pull/5127))
+ - `pivotp`: when every column was a pivot or `--index` column, the default `--values` (all remaining columns) was empty, and the pivot failed with a raw Polars error ("`pivot` called without `values` columns"). `pivotp region --index sex` now counts the rows of each cell, as `--values region --agg len` already did. Any aggregation other than `len` (the default here) stops with an error asking for `--values`. Fixes [#5122](https://github.com/dathere/qsv/issues/5122). ([#5124](https://github.com/dathere/qsv/pull/5124))
+ - `pivotp`: a generated pivot column could take the name of an `--index` column, and the pivot failed with "Duplicate: column with name '...' has more than one occurrence". Generated columns are named `<value column><--col-separator><pivot value>` (or just the pivot value with one value column), so `readstat --sentinels-as` output, where `name` sits next to `name_null`, hit this when `name_null` was the `--index`, `name` a value column, and the pivot column had empty cells. Such a generated column is now renamed to the first free `<name>_<n>` (from 2), with a warning on stderr (unless `--quiet`). Two generated names that coincide (e.g. `a_b` × `c` and `a` × `b_c`) still stop the pivot, now with an error suggesting `--col-separator` or `--values`. Fixes [#5123](https://github.com/dathere/qsv/issues/5123). ([#5124](https://github.com/dathere/qsv/pull/5124))
  - `joinp`: `--nulls` did the opposite of its help for text keys. Empty text join keys matched without `--nulls` and stopped matching with it, and empty numeric keys never matched. In the standard joins (not cross, non-equi or asof), `--nulls` now makes empty keys match each other, including a quoted `""` and an unquoted empty. Without it they never match, whatever the key's type. Outer joins still output such rows, unmatched, with their key values unchanged. `--ignore-leading-zeros` (`-z`) now keeps a key's last zero, so `000` becomes `0` and still matches `0`, but no longer becomes empty and matches an empty key. The `--ignore-errors` help now says that in the standard joins, a key that can't be parsed, like an empty one, matches only with `--nulls`. **Behavior change:** an inner join on a text key no longer pairs rows whose keys are both empty unless `--nulls` is given. ([#5116](https://github.com/dathere/qsv/pull/5116))
- - `sqlp`, `joinp`, `pivotp`: the `--ignore-errors` help said rows that can't be parsed are skipped (in `sqlp` and `joinp`, the whole batch around them). Polars instead reads such a value as empty (null) and keeps its row, so `COUNT(*)` and `len` still count it. The help now says so. ([#5114](https://github.com/dathere/qsv/pull/5114))
- - `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
 ```
 
-**File**: `docs/help/pivotp.md` (modified, +2/-2)
+**File**: `docs/help/sqlp.md` (modified, +4/-3)
 ```diff
-@@ -57,11 +57,11 @@ qsv pivotp --help
- | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+@@ -258,8 +258,9 @@ qsv sqlp SKIP_INPUT "select * from read_csv('data.csv', separator => ';', commen
+ 
+ > read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
+ > infer_schema_length, ignore_errors and include_file_paths.
+-> Infer the schema from the whole file. By default only the first 100 rows are used, and
+-> a key that first appears later fails the query with "extra field in NDJSON data":
++> Infer the schema from the whole file, so keys that first appear late can be queried.
++> By default only the first 100 rows are used, and selecting a key that first appears
++> later (e.g. with select *) fails with "extra field in NDJSON data":
+ 
+ ```console
+ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
+@@ -365,7 +366,7 @@ qsv sqlp --help
+ 
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
  |--------|------|-------------|--------|
- | &nbsp;`‑i,`<br>`‑‑index`&nbsp; | string | The column(s) to use as the index (row labels). Specify multiple columns by separating them with a comma. The output will have one row for each unique combination of the index's values. In pivot mode, if None, all remaining columns not specified on --on and --values will be used; at least one of --index and --values must be specified. Required in group-by mode. |  |
--| &nbsp;`‑v,`<br>`‑‑values`&nbsp; | string | The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. In group-by mode, if omitted, a single "count" column is produced. |  |
-+| &nbsp;`‑v,`<br>`‑‑values`&nbsp; | string | The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. If no columns remain, len (the default then) counts the rows of each cell; any other aggregation needs --values. In group-by mode, if omitted, a single "count" column is produced. |  |
- | &nbsp;`‑a,`<br>`‑‑agg`&nbsp; | string | The aggregation function to use: first - First value encountered last - Last value encountered sum - Sum of values min - Minimum value max - Maximum value mean - Average value median - Median value quantile@<p> - Quantile at probability p in [0, 1] using linear interpolation. Alias: q@<p>. Examples: quantile@0.95, q@0.5 (q@0.5 is equivalent to median for even-length groups). len - Count of values item - Get single value from group. Raises error if there are multiple values. smart - use value column data type & statistics to pick an aggregation. Always uses type, cardinality, sparsity, CV, sign distribution (n_negative/n_positive), and sort_order from streaming stats. High variability means a CV above 100% (stddev > mean). When the stats cache includes non-streaming stats (from a prior `stats --everything` or `stats --mode`), also uses mode_count. With a single --values column, smart first runs moarstats --advanced to enrich the input's stats cache (writing <stem>.stats.csv, .stats.csv.json and .stats.csv.data.jsonl beside it) unless the cache already has those stats. This one-time pass reads the whole file; skip it with --no-moarstats. It is also skipped with an explicit --delimiter, stdin and special formats. The moarstats stats used are outlier profile, Pearson skewness, MAD/stddev ratio, median/mean ratio and quartile coefficient of dispersion (the two ratios only for positive data), moment skewness (\|G1\| >= 1 picks median; Pearson skewness is the fallback), kurtosis, bimodality (bimodality coefficient >= 0.60 with negative excess kurtosis), entropy and Gini coefficient. A single-value column uses first. The choice depends on the data, so pass an explicit --agg to pin a result across qsv versions. For Date/DateTime values, checks sparsity and sort order. Will only work if there is one value column, otherwise it falls back to `first` | `smart` |
- | &nbsp;`‑‑sort‑columns`&nbsp; | flag | Sort the transposed columns by name. (pivot mode only) |  |
- | &nbsp;`‑‑maintain‑order`&nbsp; | flag | Accepted for compatibility. Output is always in first-appearance order: rows follow their index values' first appearance and pivoted columns their <on-cols> values' first appearance. |  |
--| &nbsp;`‑‑col‑separator`&nbsp; | string | The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode) | `_` |
-+| &nbsp;`‑‑col‑separator`&nbsp; | string | The separator in generated column names in case of multiple --values columns. A generated name that equals an index column's takes a _2 (_3, ...) suffix, with a warning. (pivot mode only; ignored in group-by mode) | `_` |
- | &nbsp;`‑‑validate`&nbsp; | flag | Report the pivot column(s)' cardinality before pivoting. Informational only - it does not refuse a pivot; --max-columns does that. (pivot mode only) |  |
- | &nbsp;`‑‑max‑columns`&nbsp; | integer | Maximum number of columns the pivot may create before it is refused. Guards against pivoting on a high-cardinality column, which can exhaust memory. Unlike --validate, this ALWAYS runs. Set to 0 for no limit, for a deliberately wide pivot. (pivot mode only; ignored in group-by mode) | `100000` |
- | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse columns as dates. |  |
+-| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
++| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
 ```
 
-**File**: `src/cmd/pivotp.rs` (modified, +93/-11)
+**File**: `src/cmd/sqlp.rs` (modified, +8/-6)
 ```diff
-@@ -48,6 +48,8 @@ pivotp options:
-                             will be computed.
-                             In pivot mode, if None, all remaining columns not specified on --on and --index
-                             will be used; at least one of --index and --values must be specified.
-+                            If no columns remain, len (the default then) counts the rows of each
-+                            cell; any other aggregation needs --values.
-                             In group-by mode, if omitted, a single "count" column is produced.
-     -a, --agg <func>        The aggregation function to use:
-                               first - First value encountered
-@@ -96,6 +98,8 @@ pivotp options:
-                             order: rows follow their index values' first appearance and
-                             pivoted columns their <on-cols> values' first appearance.
-     --col-separator <arg>   The separator in generated column names in case of multiple --values columns.
-+                            A generated name that equals an index column's takes a _2 (_3, ...)
-+                            suffix, with a warning.
-                             (pivot mode only; ignored in group-by mode) [default: _]
-     --validate              Report the pivot column(s)' cardinality before pivoting. Informational
-                             only - it does not refuse a pivot; --max-columns does that.
-@@ -1094,6 +1098,20 @@ fn log_mixed_sign(stats: &StatsData) {
+@@ -137,8 +137,9 @@ Examples:
+ 
+   # read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
+   # infer_schema_length, ignore_errors and include_file_paths.
+-  # Infer the schema from the whole file. By default only the first 100 rows are used, and
+-  # a key that first appears later fails the query with "extra field in NDJSON data":
++  # Infer the schema from the whole file, so keys that first appear late can be queried.
++  # By default only the first 100 rows are used, and selecting a key that first appears
++  # later (e.g. with select *) fails with "extra field in NDJSON data":
+   $ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
+   # Type a column, and read a nested object as its JSON text. CSV output can't hold nested
+   # data, so this avoids the "CSV format does not support nested data" error:
+@@ -224,10 +225,11 @@ sqlp options:
+                               that you may want to try to set `--ignore-errors` to relax
+                               the CSV parsing of dates.
+                               Polars reads slash, dash and dot dates as day-first, so
+-                              01/05/2024 becomes 2024-05-01. Without this option, the
+-                              column stays a string, and CAST(col AS DATE) of a string
+-                              reads only year-first dates (2024-05-01, 2024/5/1): it
+-                              fails on 01/05/2024, and TRY_CAST returns NULL.
++                              01/05/2024 becomes 2024-05-01. Without this option (and
++                              without a .pschema.json that types the column as a date),
++                              the column stays a string, and CAST(col AS DATE) of a
++                              string reads only year-first dates (2024-05-01, 2024/5/1):
++                              it fails on 01/05/2024, and TRY_CAST returns NULL.
+                               For month-first (US) dates, leave this off and use
+                               STRPTIME(col, '%m/%d/%Y') in the query instead.
+     --infer-len <arg>         The number of rows to scan when inferring the schema of the CSV.
+```
+
+**File**: `src/util/special_format.rs` (modified, +23/-3)
+```diff
+@@ -333,11 +333,13 @@ pub fn convert_special_format(
+     format: SpecialFormat,
+     delim: u8,
+ ) -> Result<PathBuf, Box<dyn std::error::Error>> {
++    use std::sync::Arc;
++
+     use polars::{
+         io::avro::AvroReader,
+         prelude::{
+-            CsvWriter, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
+-            ParquetReader, PlRefPath, SerReader, SerWriter,
++            CsvWriter, DataType, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
++            ParquetReader, PlRefPath, Schema, SerReader, SerWriter,
+         },
+     };
+ 
+@@ -379,7 +381,25 @@ pub fn convert_special_format(
+             } else {
+                 // Infer from every row: Polars raises on a key that first appears past the
+                 // inference window (pola-rs/polars#31139), and before that it dropped the key.
+-                lf.with_infer_schema_length(None).finish()?
++                let mut inferred = lf.clone().with_infer_schema_length(None).finish()?;
++                let schema = inferred.collect_schema()?;
++                if schema.iter_values().any(DataType::is_nested) {
++                    // CSV can't hold nested data, so read nested values as their JSON text.
++                    let as_text: Schema = schema
++                        .iter()
++                        .map(|(name, dtype)| {
++                            let dtype = if dtype.is_nested() {
++                                DataType::String
++                            } else {
++                                dtype.clone()
++                            };
++                            (name.clone(), dtype)
++                        })
++                        .collect();
++                    lf.with_schema(Some(Arc::new(as_text))).finish()?
++                } else {
++                    inferred
++                }
+             }
+             .collect()?
+         },
+```
+
+**File**: `tests/test_slice.rs` (modified, +26/-0)
+```diff
+@@ -742,6 +742,32 @@ fn slice_from_jsonl_with_late_key() {
      );
  }
  
-+/// Polars names the pivoted columns `<value col><sep><pivot value>`, so two of them can
-+/// coincide (`a_b` x `c` and `a` x `b_c` are both `a_b_c`). A clash with an index column can't
-+/// happen here: the pivot runs on renamed copies of the index columns (#5123).
-+fn pivot_name_clash(err: PolarsError) -> crate::CliError {
-+    match err {
-+        PolarsError::Duplicate(msg) => crate::CliError::IncorrectUsage(format!(
-+            "The pivot would output two columns with the same name ({msg}): two generated column \
-+             names coincide. Set a different --col-separator, or pass --values <cols> to pick the \
-+             value columns."
-+        )),
-+        other => other.into(),
-+    }
++#[cfg(feature = "polars")]
++#[test]
++fn slice_from_jsonl_nested_values_as_json_text() {
++    // CSV can't hold nested data, so a JSONL object or array value is written as its JSON text,
++    // whether it appears in the first rows or (now that the whole file is inferred) only later.
++    // Before, an early nested value failed the conversion and a late one was dropped.
++    let wrk = Workdir::new("slice_from_jsonl_nested_values_as_json_text");
++    let mut jsonl: String = (1..150)
++        .map(|i| format!("{{\"id\":{i},\"tags\":[\"t{i}\"]}}\n"))
++        .collect();
++    jsonl.push_str("{\"id\":150,\"tags\":[],\"late\":{\"k\":1}}\n");
++    wrk.create_from_string("nested.jsonl", &jsonl);
++
++    let mut cmd = wrk.command("slice");
++    cmd.arg("nested.jsonl").args(["--start", "148"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["id", "tags", "late"],
++            svec!["149", r#"["t149"]"#, ""],
++            svec!["150", "[]", r#"{"k": 1}"#],
++        ]
++    );
 +}
 +
- pub fn run(argv: &[&str]) -> CliResult<()> {
-     let args: Args = util::get_args(USAGE, argv)?;
- 
-@@ -1346,13 +1364,24 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             .map(std::string::String::as_str)
-             .collect();
- 
--        Some(
--            all_cols
--                .iter()
--                .filter(|c| !on_set.contains(c.as_str()) && !index_set.contains(c.as_str()))
--                .cloned()
--                .collect(),
--        )
-+        let remaining: Vec<String> = all_cols
-+            .iter()
-+            .filter(|c| !on_set.contains(c.as_str()) && !index_set.contains(c.as_str()))
-+            .cloned()
-+            .collect();
-+        if remaining.is_empty() {
-+            // Every column is a pivot or index column (#5122). Len counts rows whatever the
-+            // column, so count the first pivot column, as `--values <on-col>` does.
-+            if agg_kind != AggKind::Len {
-+                return fail_incorrectusage_clierror!(
-+                    "No columns are left to aggregate: every column is in <on-cols> or --index. \
-+                     Pass --values <cols>, or use --agg len to count rows."
-+                );
-+            }
-+            Some(vec![oc[0].clone()])
-+        } else {
-+            Some(remaining)
-+        }
-     } else {
-         // Group-by mode without --values: no value columns, just count rows
-         None
-@@ -1431,7 +1460,20 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         let separator = PlSmallStr::from_str(&args.flag_col_separator);
- 
-         let on_selector = cols(on_cols.iter().map(std::string::String::as_str));
--        let index_selector = cols(actual_index_cols.iter().map(std::string::String::as_str));
-+        // Pivot on copies of the index columns, under names no input or generated column takes,
-+        // so a generated name equal to an index column's (`name` x `null` -> `name_null`) can't
-+        // clash inside Polars. Such names get a suffix after the pivot (#5123).
-+        let temp_index_cols: Vec<String> = (0..actual_index_cols.len())
-+            .map(|i| format!("\u{1}qsv_pivotp_index_{i}"))
-+            .collect();
-+        lf = lf.with_columns(
-+            actual_index_cols
-+                .iter()
-+                .zip(&temp_index_cols)
-+                .map(|(c, t)| col(c.as_str()).alias(t.as_str()))
-+                .collect::<Vec<_>>(),
-+        );
-+        let index_selector = cols(temp_index_cols.iter().map(std::string::String::as_str));
-         let values_selector = cols(actual_value_cols.iter().map(std::string::String::as_str));
-         let column_naming = PivotColumnNaming::default();
- 
-@@ -1452,7 +1494,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-             // 2.4 GB vs 0.88 GB. group_by_stable keeps first-appearanc
-```
-
-**File**: `tests/test_pivotp.rs` (modified, +146/-0)
-```diff
-@@ -3241,3 +3241,149 @@ fn pivotp_sniff_preamble_skips_preamble_rows() {
-     assert_eq!(got[0][..3], svec!["id", "n1", "n2"]);
-     assert_eq!(got[1][..3], svec!["1", "10", "0"]);
- }
-+
-+// With every column in <on-cols> or --index, the default --values is empty: len counts rows of
-+// each cell, the same as `--values <on-col>`, instead of failing in Polars (#5122).
-+#[test]
-+fn pivotp_no_remaining_values_counts_rows() {
-+    let wrk = Workdir::new("pivotp_no_remaining_values_counts_rows");
-+    wrk.create(
-+        "ct.csv",
-+        vec![
-+            svec!["region", "sex"],
-+            svec!["N", "M"],
-+            svec!["N", "F"],
-+            svec!["S", "M"],
-+        ],
-+    );
-+    let expected = vec![
-+        svec!["sex", "N", "S"],
-+        svec!["M", "1", "1"],
-+        svec!["F", "1", "0"],
-+    ];
-+    for extra in [
-+        &["--agg", "len"][..],
-+        &[],
-+        &["--values", "region", "--agg", "len"],
-+    ] {
-+        let mut cmd = wrk.command("pivotp");
-+        cmd.args(["region", "--index", "sex"])
-+            .args(extra)
-+            .arg("ct.csv");
-+        let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+        assert_eq!(got, expected, "args: {extra:?}");
-+    }
-+}
-+
-+// Any aggregation other than len needs a value column; say so instead of a Polars error (#5122).
-+#[test]
-+fn pivotp_no_remaining_values_other_agg_errors() {
-+    let wrk = Workdir::new("pivotp_no_remaining_values_other_agg_errors");
-+    wrk.create(
-+        "ct.csv",
-+        vec![svec!["region", "sex"], svec!["N", "M"], svec!["S", "F"]],
-+    );
-+    let mut cmd = wrk.command("pivotp");
-+    cmd.args(["region", "--index", "sex", "--agg", "sum", "ct.csv"]);
-+    let out = cmd.output().unwrap();
-+    let stderr = String::from_utf8_lossy(&out.stderr);
-+    assert!(!out.status.success(), "{stderr}");
-+    assert!(
-+        stderr.contains("No columns are left to aggregate"),
-+        "{stderr}"
-+    );
-+    assert!(!stderr.contains("Polars error"), "{stderr}");
-+}
-+
-+// A generated column whose name equals an --index column's takes a `_<n>` suffix, with a
-+// warning, instead of failing in Polars (#5123).
-+#[test]
-+fn pivotp_generated_name_clashes_with_index() {
-+    let wrk = Workdir::new("pivotp_generated_name_clashes_with_index");
-+    wrk.create(
-+        "multi.csv",
-+        vec![
-+            svec!["id", "name", "name_null", "r"],
-+            svec!["1", "Ana", "", ""],
-+            svec!["2", "Bo", "NA", "8"],
-+        ],
-+    );
-+    wrk.create(
-+        "single.csv",
-+        vec![
-+            svec!["k", "p", "v"],
-+            svec!["x", "k", "1"],
-+            svec!["y", "z", "2"],
-+        ],
-+    );
-+    let cases: [(&[&str], Vec<Vec<String>>, &str); 2] = [
-+        // several value columns: `name` x pivot value `null` -> `name_null`
-+        (
-+            &["r", "--index", "name_null", "--agg", "len", "multi.csv"],
-+            vec![
-+                svec!["name_null", "id_null", "id_8", "name_null_2", "name_8"],
-+                svec!["", "1", "0", "1", "0"],
-+                svec!["NA", "0", "1", "0", "1"],
-+            ],
-+            "\"name_null\" to \"name_null_2\"",
-+        ),
-+        // one value column: the pivot value `k` -> `k`
-+        (
-+            &[
-+                "p",
-+                "--index",
-+                "k",
-+                "--values",
-+                "v",
-+                "--agg",
-+                "sum",
-+                "single.csv",
-+            ],
-+            vec![
-+                svec!["k", "k_2", "z"],
-+                svec!["x", "1", "0"],
-+                svec!["y", "0", "2"],
-+            ],
-+            "\"k\" to \"k_2\"",
-+        ),
-+    ];
-+    for (args, expected, warning) in cases {
-+        let mut cmd = wrk.command("pivotp");
-+        cmd.args(args);
-+        let out = cmd.output().unwrap();
-+        let stderr = String::from_utf8_lossy(&out.stderr);
-+        assert!(out.status.success(), "{args:?}: {stderr}");
-+        assert!(stderr.contains(warning), "{args:?}: {stderr}");
-+        let got: Vec<Vec<String>> = csv::ReaderBuilder::new()
-+            .has_headers(false)
-+            .from_reader(&out.stdout[..])
-+            .records()
-+            .map(|r| r.unwrap().iter().map(String::from).collect())
-+            .collect();
-+        assert_eq!(got, expected, "{args:?}");
-+    }
-+}
-+
-+// Two generated names that coincide (`a_b` x `c` and `a` x `b_c` are both `a_b_c`) can't be
-+// fixed by renaming the index, so that stays a qsv usage error, not a raw Polars error.
-+#[test]
-+fn pivotp_generated_names_clash_with_each_other() {
-+    let wrk = Workdir::new("pivotp_generated_names_clash_with_each_other");
-+    wrk.create(
-+        "gen.csv",
-+        vec![
-+            svec!["i", "a_b", "a", "p"],
-+            svec!["x", "1", "2", "c"],
-+            svec!["y", "3", "4", "b_c"],
-+        ],
-+    );
-+    let mut cmd = wrk.command("pivotp");
-+    cmd.args(["p", "--index", "i", "--agg", "sum", "gen.csv"]);
-+    let out = cmd.outpu
+ #[cfg(feature = "polars")]
+ #[test]
+ fn slice_from_avro() {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5127** (2026-11-27): fix: write nested JSONL values as JSON text (#5125 follow-up) (@jqnatividad)
+- **PR #5125** (2026-11-27): deps: bump Polars to upstream 4ba28fb (41 commits past py-2.2.0) (@jqnatividad)
 - **PR #5124** (2026-11-27): fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (@jqnatividad)
 - **PR #5121** (2026-11-27): deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (@jqnatividad)
 - **PR #5120** (2026-11-27): build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (@dependabot[bot])
 - **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
-- **PR #5118** (2026-11-26): fix(joinp): drop temporary transformed key columns by name, before --sql-filter (@jqnatividad)
-- **PR #5117** (2026-11-26): fix(joinp): --coalesce keeps right-only keys with key transformations (@jqnatividad)
 
 ---
 
@@ -2658,33 +2536,33 @@ Co-author
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pivotp): count rows when no columns remain for --values; rename clashing generat
+## X. write nested JSONL values as JSON text (#5125 follow-up)
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-pivotp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1441b6a4`: pivotp): count rows when no columns remain for --values; rename clashing generated columns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23809a00`: write nested JSONL values as JSON text (#5125 follow-up). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-pivotp.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "The separator in generated column names in case of multiple --values columns. A generated name that equals an index column's takes a _2 (_3, ...) suffix, with a warning. (pivot mode only; ignored in group-by mode)",
-        "description": "The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. If no columns remain, len (the default then) counts the rows of each cell; any other aggregation needs --values. In group-by mode, if omitted, a single \"count\" column is produced."
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so keys that first appear late can be queried. By default only the first 100 rows are used, and selecting a key that first appears later (e.g. with select *) fails with \"extra field in NDJSON data\":",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "description": "The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode)",
-        "description": "The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. In group-by mode, if omitted, a single \"count\" column is produced."
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file. By default only the first 100 rows are used, and a key that first appears later fails the query with \"extra field in NDJSON data\":",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1441b6a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23809a00` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

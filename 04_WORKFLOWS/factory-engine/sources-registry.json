@@ -91,8 +91,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T22:46:00.196Z",
-    "lastVerified": "2026-11-27T22:46:00.196Z",
+    "lastChecked": "2026-11-27T22:54:54.275Z",
+    "lastVerified": "2026-11-27T22:54:54.275Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -193,22 +193,21 @@
     "revisionIdentifier": "9fb6a904"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T22:14:14.323Z",
-    "lastVerified": "2026-11-27T22:14:14.323Z",
+    "lastChecked": "2026-11-27T22:54:49.531Z",
+    "lastVerified": "2026-11-27T22:54:49.531Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "fd5c67d74181ffa86fecd8ab1f1d016c713126446d3dc30f65ec032a92079550",
+    "contentHash": "07c258d242460e69131ad13ab01c7afff9bcf3255b1815a3aa72f8aba0d0a0cf",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1441b6a4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -569,12 +568,12 @@
     "revisionIdentifier": "faa99854"
   },
   "nolabs-ai-nono": {
-    "name": "nolabs-ai/nono",
+    "name": "nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T18:35:03.631Z",
-    "lastVerified": "2026-11-27T18:35:03.631Z",
+    "lastChecked": "2026-11-27T22:54:40.988Z",
+    "lastVerified": "2026-11-27T22:54:40.988Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -583,7 +582,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ec255726"
   },
   "vectifyai-pageindex": {
     "name": "PageIndex",
@@ -2512,9 +2512,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-27T04:53:57.389Z",
+    "lastChecked": "2026-11-27T22:54:38.359Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-27T04:53:57.389Z"
+    "lastVerified": "2026-11-27T22:54:38.359Z"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -4963,12 +4963,12 @@
     "lastVerified": "2026-11-27T20:57:48.647Z"
   },
   "actix-actix-web": {
-    "name": "actix/actix-web",
+    "name": "actix-web",
     "officialUrl": "https://github.com/actix/actix-web",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-26T22:50:51.048Z",
-    "lastVerified": "2026-11-26T22:50:51.048Z",
+    "lastChecked": "2026-11-27T22:54:30.860Z",
+    "lastVerified": "2026-11-27T22:54:30.860Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actix-actix-web",
@@ -4977,7 +4977,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "91254d42"
   },
   "hf-zai-org-glm-5.2": {
     "name": "zai-org/GLM-5.2",
@@ -5762,13 +5763,13 @@
     "officialUrl": "https://github.com/apache/shardingsphere",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-27T03:44:02.029Z",
-    "lastVerified": "2026-11-27T03:44:02.029Z",
+    "lastChecked": "2026-11-27T22:54:48.026Z",
+    "lastVerified": "2026-11-27T22:54:48.026Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
-    "promotedRulesCount": 0,
+    "contentHash": "7926a23d6f81649ed8572e6cb9627441759b4a7abe2b3b508d47ea62cfcfb3ea",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -10324,12 +10325,12 @@
     "lastVerified": "2026-11-27T18:34:51.711Z"
   },
   "zoontek-react-native-bootsplash": {
-    "name": "zoontek/react-native-bootsplash",
+    "name": "react-native-bootsplash",
     "officialUrl": "https://github.com/zoontek/react-native-bootsplash",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-25T14:23:50.575Z",
-    "lastVerified": "2026-11-25T14:23:50.575Z",
+    "lastChecked": "2026-11-27T22:54:35.779Z",
+    "lastVerified": "2026-11-27T22:54:35.779Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zoontek-react-native-bootsplash",
@@ -10338,7 +10339,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8eda4c0b"
   },
   "samvelik-sitemap-checker": {
     "name": "sitemap-checker",
@@ -10878,14 +10880,14 @@
     "officialUrl": "https://github.com/scrapy/scrapy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T14:41:48.871Z",
-    "lastVerified": "2026-11-24T14:41:48.871Z",
+    "lastChecked": "2026-11-27T22:54:37.825Z",
+    "lastVerified": "2026-11-27T22:54:37.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "d80755e52f6d22a0e3e61beaf69a7dde748fd0e47bed8b3100d917d04e36ed35",
+    "contentHash": "819fe15b21fa3a37662f94ccd7050bb0f47b0119cac0ac86c4f6bee9b9fec65d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

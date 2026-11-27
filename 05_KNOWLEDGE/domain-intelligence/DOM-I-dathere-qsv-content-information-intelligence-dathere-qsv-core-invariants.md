@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "5108f34d",
+  "source_version": "23809a00",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-25T23:11:57.810Z",
+  "timestamp": "2026-11-27T22:54:51.122Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `5108f34d`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-25T23:11:57.810Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `23809a00`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T22:54:51.122Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-25T23:11:56.458Z  
+> **Harvest Timestamp**: 2026-11-27T22:54:49.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3858 stars
+- **Stars / Engagement**: 3877 stars
 
 ---
 
@@ -2272,11 +2272,11 @@ mod tests;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5105** (2026-11-24): **moarstats, pragmastat and scoresql reuse a stats cache without checking how it was parsed**
-  *Symptoms*: Follow-up to #5104 (#4610), from its "Known gaps".  A stats cache is located by input path and validated by mtime, not by the options the input was parsed with. `util::stats_cache::stats_cache_parsing_opts_match` closes that gap for the `get_stats_records` loaders, which serve `schema`, `tojsonl`, `pivotp`, `viz`, `sortcheck` and others. It checks `--no-headers`, `--delimiter`, `--prefer-dmy`, `--flexible`, sniffed preamble rows and, since #5104, `--quote`/`--escape`/`--no-quoting`.  Three commands read the cache files themselves and skip that check:  | command | reads | checks today | |---|---|---| | `moarstats` | the baseline `<stem>.stats.csv` (then rewrites it and regenerates the `.data.jsonl`) | freshness, qsv version, `QSV_STATS_SEPARATOR`, percentile coverage | | `pragmastat` | `<stem>.stats.csv.data.jsonl` | mtime only | | `scoresql` | `<stem>.stats.csv.data.jsonl` | mtime only |  So a cache computed under other parsing options than the command reads with is used anyway. The two repros below use `--quote`, and the same applies to `--flexible` and the other options above.  ### Repro: `moarstats` republishes stats of another reading ```bash printf "a,b\n'p,9\nq',1\nr,2\ns,3\nt,4\n" > d.csv qsv stats --quote "'" --stats-jsonl d.csv > /dev/null qsv moarstats d.csv qsv select field,max d.stats.csv     # b max = 4 qsv stats --force d.csv | qsv select field,max    # read with the default quoting: b max = 9 ``` `moarstats` adds its columns to the `'`-quoted baseline, and it r
+- **Issue #5123** (2026-11-27): **pivotp: default --values can produce an output name that collides with an --index column ("Duplicate: column with name ... has more than one occurrence")**
+  *Symptoms*: ## Problem  Without `--values`, every remaining column is a value column, and Polars names the outputs `<value col>_<pivot value>`. If one of those names equals an `--index` column name, the pivot fails:  ```console $ qsv readstat --sentinels-as value resources/test/readstat_sentinels.sav -o survey.csv $ cat survey.csv id,income,income_null,rating,rating_null,name,name_null,plain 1.0,1500.5,,3.0,,Ana,,1.0 2.0,,99,,8,,NA,2.0 3.0,,950,4.0,,Cy,,3.0 4.0,,,,9,,,4.0 $ qsv pivotp rating_null --index name_null survey.csv Polars error: Duplicate(ErrString("column with name 'name_null' has more than one occurrence")) ```  The value column `name` with the pivot value `null` (the empty `rating_null` cells) produces `name_null`, the name of the `--index` column. `readstat --sentinels-as` creates `<col>_null` columns next to `<col>`, so this layout is common for files converted from SPSS/Stata/SAS.  With explicit `--values`, it works:  ```console $ qsv pivotp rating_null --index name_null --values income survey.csv name_null,null,8,9 ... ```  ## Expected  The output column names never collide with the index columns. For example, qsv could detect the collision and add a suffix to the generated names, or stop with a qsv error that names the colliding column and suggests `--values`.  Found while writing the wiki page "qsv for SAS / Stata / SPSS Users". qsv 29.0.0, master `5feb8f1ec`.
 
-- **Issue #4829** (2026-10-16): **schema: --enum-threshold ignored when no column is under it (every column gets a full enum)**
-  *Symptoms*: ## Summary  `qsv schema --enum-threshold N` is supposed to limit `enum` constraints to columns with at most N distinct values. But when **no** column has between 2 and N distinct values, **every** column gets a complete `enum`, however many distinct values it has. When at least one column does qualify, the threshold works as documented. So whether a column gets an `enum` depends on the *other* columns in the file.  Found while reviewing #4827.  ## Repro (qsv 25.0.0 / master)  ```sh # every column is above the threshold -> every column gets a full enum { echo id,txt; for i in $(seq 1 80); do echo "$i,v$i"; done; } > hc.csv qsv schema hc.csv --enum-threshold 50 jq -c '.properties|map_values(.enum|length)' hc.csv.schema.json # {"id":80,"txt":80}  # add one column with 3 distinct values -> the threshold suddenly applies { echo id,txt,cat; for i in $(seq 1 80); do echo "$i,v$i,c$((i%3))"; done; } > mx.csv qsv schema mx.csv jq -c '.properties|map_values(.enum|length)' mx.csv.schema.json # {"id":0,"txt":0,"cat":3} ```  Similarly, `--enum-threshold 1` (where no column with more than one value can qualify) enumerates every column instead of none.  ## Cause  `build_low_cardinality_column_selector_arg` returns `""` when no column qualifies. `get_unique_values` then calls `SelectColumns::parse("")`, which means "select all columns", so `frequency` gathers values for every column, and an `enum` is emitted for each one (80 values each in the first repro, even though the threshold is 50).  
+- **Issue #5122** (2026-11-27): **pivotp: --agg len without --values fails with a raw Polars error when no columns remain**
+  *Symptoms*: ## Problem  When every column is used as `<on-cols>` or `--index`, there is nothing left for `--values` to default to, and `pivotp` stops with a raw Polars error instead of a qsv message:  ```console $ printf 'region,sex\nN,M\nN,F\nS,M\n' > ct.csv $ qsv pivotp region --index sex --agg len ct.csv Polars error: InvalidOperation(ErrString("`pivot` called without `values` columns.")) ```  The help says `--values` defaults to "all remaining columns not specified on --on and --index", and that `len` is a "Count of values". For a crosstab-style count (SPSS `CROSSTABS`, Stata `tabulate a b`) a user expects counts here.  The form that works today is to repeat the `on` column as the values:  ```console $ qsv pivotp region --index sex --values region --agg len ct.csv ```  ## Expected  One of: - with `--agg len` and no remaining columns, count rows per index/on combination; or - a clear qsv error that names the problem and suggests `--values <on-col>`.  Found while writing the wiki page "qsv for SAS / Stata / SPSS Users". qsv 29.0.0, master `5feb8f1ec`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2293,344 +2293,30 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5108f34d` (2026-11-25)
-**Commit Message**: fix(joinp): make --nulls match empty join keys, as documented (#5116)
+### Incident Patch 1: `23809a00` (2026-11-27)
+**Commit Message**: fix: write nested JSONL values as JSON text (#5125 follow-up) (#5127)
 
-* fix(joinp): make --nulls match empty join keys, as documented
+* fix: write nested JSONL values as JSON text; qualify sqlp help (#5125 follow-up)
 
---nulls was wired only to with_missing_is_null, so it read empty fields as
-null, and Polars joins never match nulls. Empty text keys therefore matched
-without --nulls and stopped matching with it; empty numeric keys never matched.
+#5125 made the JSONL/NDJSON input conversion infer its schema from the
+whole file. A key that first appears late now becomes a column, but if its
+value is an object or array, the CSV writer rejected the nested column:
+"CSV format does not support nested data". On 29.0.0 such a key was
+silently dropped, so this was a regression from #5125. A nested value in
+the first rows already failed on 29.0.0.
 
-Now --nulls sets join_nulls, and without it, empty text join keys are read as
-null so they never match.
+The conversion now infers once and, when a column is nested (struct, list
+or array), re-reads the file with an explicit schema that types those
+columns as String, so they hold the value's JSON text (as sqlp's
+read_ndjson() schema_overrides => VARCHAR does). A .pschema.json still
+decides the columns.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #5116 in CHANGELOG
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(joinp): keep empty key values; match quoted "" under --nulls
-
-The first fix overwrote empty text keys with null, so outer joins wrote them
-as --null-value and --sql-filter no longer saw ''. Now, without --nulls, rows
-with an empty text key are dropped only from the side whose unmatched rows
-aren't output, and a full join appends the right side's empty-key rows
-unmatched. Key values are unchanged.
-
-With --nulls, a quoted "" text key is made null before the key
-transformations, so it matches an unquoted empty key.
-
-The --nulls help is scoped to the standard joins, and --ignore-er
-
-**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +2/-2)
-```diff
-@@ -106,7 +106,7 @@
-       {
-         "flag": "--ignore-errors",
-         "type": "flag",
--        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
-+        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, and in the standard joins, a null join key, like an empty one, matches only with --nulls. If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
-       },
-       {
-         "flag": "--ignore-leading-zeros",
-@@ -174,7 +174,7 @@
-       {
-         "flag": "--nulls",
-         "type": "flag",
--        "description": "When set, joins will work on empty fields. Otherwise, empty fields are completely ignored."
-+        "description": "When set, unquoted empty fields are read as null (so they are written as the --null-value string), and in the standard joins, empty join keys match each other. Otherwise, rows with an empty key never match there (outer joins keep them, unmatched). The key matching doesn't apply to cross, non-equi or asof joins."
-       },
-       {
-         "flag": "--output",
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
- 
- ### Fixed
-+- `joinp`: `--nulls` did the opposite of its help for text keys. Empty text join keys matched without `--nulls` and stopped matching with it, and empty numeric keys never matched. In the standard joins (not cross, non-equi or asof), `--nulls` now makes empty keys match each other, including a quoted `""` and an unquoted empty. Without it they never match, whatever the key's type. Outer joins still output such rows, unmatched, with their key values unchanged. `--ignore-leading-zeros` (`-z`) now keeps a key's last zero, so `000` becomes `0` and still matches `0`, but no longer becomes empty and matches an empty key. The `--ignore-errors` help now says that in the standard joins, a key that can't be parsed, like an empty one, matches only with `--nulls`. **Behavior change:** an inner join on a text key no longer pairs rows whose keys are both empty unless `--nulls` is given. ([#5116](https://github.com/dathere/qsv/pull/5116))
- - `sqlp`, `joinp`, `pivotp`: the `--ignore-errors` help said rows that can't be parsed are skipped (in `sqlp` and `joinp`, the whole batch around them). Polars instead reads such a value as empty (null) and keeps its row, so `COUNT(*)` and `len` still count it. The help now says so. ([#5114](https://github.com/dathere/qsv/pull/5114))
- - `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
- - `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
-```
-
-**File**: `docs/help/joinp.md` (modified, +2/-2)
-```diff
-@@ -64,7 +64,7 @@ qsv joinp --help
- | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
- |--------|------|-------------|--------|
- | &nbsp;`‑‑maintain‑order`&nbsp; | string | Which row order to preserve, if any. Valid values are: none, left, right, left_right, right_left Defaults to "none", which lets the engine emit rows in whatever order it finishes them - faster on large joins, but the output is NOT reproducible: the same invocation can return the same rows in a different order each run. "left" orders by the left row only, so when one left row matches several right rows those matches are tied and their relative order is still unspecified. Use "left_right" (or "right_left") for a fully deterministic, byte-repeatable order. Only inner, left, right and full joins can maintain order; cross, non-equi and asof joins ignore this option. | `none` |
--| &nbsp;`‑‑nulls`&nbsp; | flag | When set, joins will work on empty fields. Otherwise, empty fields are completely ignored. |  |
-+| &nbsp;`‑‑nulls`&nbsp; | flag | When set, unquoted empty fields are read as null (so they are written as the --null-value string), and in the standard joins, empty join keys match each other. Otherwise, rows with an empty key never match there (outer joins keep them, unmatched). The key matching doesn't apply to cross, non-equi or asof joins. |  |
- | &nbsp;`‑‑streaming`&nbsp; | flag | Write the join result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory: it uses less memory but is slower. An --output file is written beside its target and only moved into place if the join succeeds; overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links, and briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a join that fails part-way leaves its output cut short; check the exit code. |  |
- 
- <a name="polars-csv-parsing-options"></a>
-@@ -77,7 +77,7 @@ qsv joinp --help
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
- | &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
- | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
--| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
-+| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, and in the standard joins, a null join key, like an empty one, matches only with --nulls. If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
- | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
- 
- <a name="asof-join-options"></a>
-```
-
-**File**: `src/cmd/joinp.rs` (modified, +104/-17)
-```diff
-@@ -109,8 +109,12 @@ joinp options:
-                             Only inner, left, right and full joins can maintain order;
-                             cross, non-equi and asof joins ignore this option.
-                             [default: none]
--    --nulls                When set, joins will work on empty fields.
--                           Otherwise, empty fields are completely ignored.
-+    --nulls                When set, unquoted empty fields are read as null (so
-+                           they are written as the --null-value string), and in
-+                           the standard joins, empty join keys match each other.
-+                           Otherwise, rows with an empty key never match there
-+                           (outer joins keep them, unmatched). The key matching
-+                           doesn't apply to cross, non-equi or asof joins.
-     --streaming            Write the join result as it is computed, batch by batch, instead
-                            of collecting the whole result in memory first. Use this when the
-                            result is too big for memory: it uses less memory but is slower.
-@@ -153,8 +157,9 @@ joinp options:
-     --no-optimizations     Disable non-default join optimizations. This will make joins slower.
-                            Only use this when you get join errors.                           
-     --ignore-errors        Read CSV values that can't be parsed as their column's type
--                           as empty (null) instead of failing. Their rows are kept (a
--                           null join key matches nothing). If not set, the join will fail.
-+                           as empty (null) instead of failing. Their rows are kept, and
-+                           in the standard joins, a null join key, like an empty one,
-+                           matches only with --nulls. If not set, the join will fail.
-                            To get more detailed error messages, set the environment variable
-                            POLARS_BACKTRACE_IN_ERR=1 before running the join.
-     --decimal-comma        Use comma as the decimal separator when parsing & writing CSVs.
-@@ -604,6 +609,7 @@ struct JoinStruct {
-     decimal_comma:        bool,
-     ignore_case:          bool,
-     ignore_leading_zeros: bool,
-+    nulls:                bool,
- }
- 
- impl JoinStruct {
-@@ -633,13 +639,58 @@ impl JoinStruct {
-             .map(polars::lazy::dsl::col)
-             .collect();
- 
-+        let equi_join = special_join == SpecialJoin::None && jointype != JoinType::Cross;
-+        let mut left_text_keys: Vec<&str> = Vec::new();
-+        let mut right_text_keys: Vec<&str> = Vec::new();
-+        if equi_join {
-+            let schema = self.left_lf.collect_schema()?;
-+            left_text_keys = left_col_names
-+                .iter()
-+                .copied()
-+                .filter(|n| schema.get(n) == Some(&DataType::String))
-+                .collect();
-+            let schema = self.right_lf.collect_schema()?;
-+            right_text_keys = right_col_names
-+                .iter()
-+                .copied()
-+                .filter(|n| schema.get(n) == Some(&DataType::String))
-+                .collect();
-+        }
-+
-+        // --nulls reads unquoted empty fields as null, but a quoted "" stays "". Make text keys
-+        // "" null too, so both spellings match. This runs before the key transformations, so
-+        // --ignore-leading-zeros still lets "0" and "000" match.
-+        if self.nulls {
-+            for (lf, keys) in [
-+                (&mut self.left_lf, &left_text_keys),
-+                (&mut self.right_lf, &right_text_keys),
-+            ] {
-+                if !keys.is_empty() {
-+                    let nulled: Vec<Expr> = keys
-+                        .iter()
-+                        .map(|k| {
-+                            when(col(*k).eq(lit("")))
-+                                .then(lit(NULL).cast(DataType::String))
-+                                .otherwise(col(*k))
-+                                .alias(*k)
-+                        })
-+                        .collect();
-+                    *lf = lf.clone().with_columns(nulled);
-+                }
-+            }
-+        }
-+
-         // Handle ignore_case, ignore_leading_zeros, and unicode normalization transformations
-         let keys_transformed =
-             if self.ignore_case || self.ignore_leading_zeros || normalization_form.is_some() {
-                 let transform_col = |col: Expr| {
-                     let mut transformed = col.cast(DataType::String);
-                     if self.ignore_leading_zeros {
--                        transformed = transformed.str().replace_all(lit(r"^0+"), lit(""), false);
-+                        // keep the last zero, so "000" becomes "0", not an empty key
-+                        transformed =
-+                            transformed
-+                                .str()
-+                                .replace_all(lit(r"(?
-```
-
-**File**: `tests/test_joinp.rs` (modified, +131/-0)
-```diff
-@@ -3648,3 +3648,134 @@ fn joinp_sql_filter_copy_to_disabled_by_envvar() {
-     );
-     assert!(!out.exists(), "COPY wrote {}", out.display());
- }
-+
-+// --nulls makes empty join keys match each other; without it they never match,
-+// whether the key column is read as text or as a number. Either way the key values
-+// themselves are not changed.
-+#[test]
-+fn joinp_nulls_controls_empty_key_matches() {
-+    let wrk = Workdir::new("joinp_nulls_controls_empty_key_matches");
-+    wrk.create_from_string("text1.csv", "k,a\nx,1\n,2\n");
-+    wrk.create_from_string("text2.csv", "k,b\nx,p\n,q\n");
-+    wrk.create_from_string("quoted2.csv", "k,b\nx,p\n\"\",q\n");
-+    wrk.create_from_string("int1.csv", "k,a\n1,x\n,w\n");
-+    wrk.create_from_string("int2.csv", "k,b\n1,p\n,q\n");
-+    wrk.create_from_string("zeros1.csv", "k,a\n0,x\n,y\nab,z\n");
-+    wrk.create_from_string("zeros2.csv", "k,b\n000,p\n,q\ncd,r\n");
-+
-+    let join = |name: &str, left: &str, right: &str, extra: &[&str]| -> Vec<Vec<String>> {
-+        let mut cmd = wrk.command("joinp");
-+        cmd.args(["k", left, "k", right, "--maintain-order", "left_right"])
-+            .args(extra);
-+        let got: Vec<Vec<String>> = wrk.read_stdout(&mut cmd);
-+        eprintln!("{name}: {got:?}");
-+        got
-+    };
-+
-+    let text = |extra: &[&str]| join(&extra.join(" "), "text1.csv", "text2.csv", extra);
-+    assert_eq!(text(&[]), vec![svec!["k", "a", "b"], svec!["x", "1", "p"]]);
-+    assert_eq!(
-+        text(&["--nulls"]),
-+        vec![
-+            svec!["k", "a", "b"],
-+            svec!["x", "1", "p"],
-+            svec!["", "2", "q"]
-+        ]
-+    );
-+    // outer joins keep the empty-key rows, unmatched, with their keys as read
-+    assert_eq!(
-+        text(&["--left", "--null-value", "NA"]),
-+        vec![
-+            svec!["k", "a", "b"],
-+            svec!["x", "1", "p"],
-+            svec!["", "2", "NA"]
-+        ]
-+    );
-+    assert_eq!(
-+        text(&[
-+            "--left",
-+            "--sql-filter",
-+            "SELECT * FROM join_result WHERE k = ''"
-+        ]),
-+        vec![svec!["k", "a", "b"], svec!["", "2", ""]]
-+    );
-+    assert_eq!(
-+        text(&["--right"]),
-+        vec![
-+            svec!["a", "k", "b"],
-+            svec!["1", "x", "p"],
-+            svec!["", "", "q"]
-+        ]
-+    );
-+    assert_eq!(
-+        text(&["--full", "--null-value", "NA"]),
-+        vec![
-+            svec!["k", "a", "k_right", "b"],
-+            svec!["x", "1", "x", "p"],
-+            svec!["", "2", "NA", "NA"],
-+            svec!["NA", "NA", "", "q"]
-+        ]
-+    );
-+    assert_eq!(
-+        text(&["--full", "--coalesce"]),
-+        vec![
-+            svec!["k", "a", "b"],
-+            svec!["x", "1", "p"],
-+            svec!["", "2", ""],
-+            svec!["", "", "q"]
-+        ]
-+    );
-+    assert_eq!(
-+        text(&["--left-anti"]),
-+        vec![svec!["k", "a"], svec!["", "2"]]
-+    );
-+    assert_eq!(
-+        text(&["--left-semi"]),
-+        vec![svec!["k", "a"], svec!["x", "1"]]
-+    );
-+    // key transformations don't make empty text keys match either
-+    assert_eq!(
-+        text(&["-i"]),
-+        vec![svec!["k", "a", "k_right", "b"], svec!["x", "1", "x", "p"]]
-+    );
-+
-+    // an unquoted empty key and a quoted "" match each other with --nulls
-+    assert_eq!(
-+        join("quoted", "text1.csv", "quoted2.csv", &["--nulls"]),
-+        vec![
-+            svec!["k", "a", "b"],
-+            svec!["x", "1", "p"],
-+            svec!["", "2", "q"]
-+        ]
-+    );
-+
-+    assert_eq!(
-+        join("int", "int1.csv", "int2.csv", &[]),
-+        vec![svec!["k", "a", "b"], svec!["1", "x", "p"]]
-+    );
-+    assert_eq!(
-+        join("int --nulls", "int1.csv", "int2.csv", &["--nulls"]),
-+        vec![
-+            svec!["k", "a", "b"],
-+            svec!["1", "x", "p"],
-+            svec!["", "w", "q"]
-+        ]
-+    );
-+
-+    // text keys with -z: "0" and "000" still match, but "000" isn't made empty, so it
-+    // doesn't match an empty key
-+    assert_eq!(
-+        join("zeros", "zeros1.csv", "zeros2.csv", &["-z"]),
-+        vec![svec!["k", "a", "k_right", "b"], svec!["0", "x", "000", "p"]]
-+    );
-+    // -z strips leading zeros before a line break inside a quoted key too
-+    wrk.create_from_string("nl1.csv", "k,a\n\"00\nA\",x\n");
-+    wrk.create_from_string("nl2.csv", "k,b\n\"\nA\",p\n");
-+    assert_eq!(
-+        join("newline", "nl1.csv", "nl2.csv", &["-z"]),
-+        vec![
-+            svec!["k", "a", "k_right", "b"],
-+            svec!["00\nA", "x", "\nA", "p"]
-+        ]
-+    );
-+}
-```
-
----
-
-### Incident Patch 2: `8df40458` (2026-11-25)
-**Commit Message**: docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null (#5114)
-
-* docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null
-
-The help said rows that can't be parsed are skipped (in sqlp and joinp,
-the whole batch around them). Polars' ignore_errors reads such a value
-as null and keeps the row: with a bad value after the --infer-len
-sample, sqlp's COUNT(*) is 2011 against COUNT(v) 2010, joinp outputs
-all 2011 rows with v empty in one, and pivotp's len counts the row.
+sqlp help: only a query that selects a late read_ndjson() key fails, and a
+.pschema.json can type a column as a date before CAST runs.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs: cite #5114 in CHANGELOG
+* docs(changelog): cite #5127
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2638,43 +2324,26 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/qsv/qsv-joinp.json` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +2/-2)
 ```diff
-@@ -106,7 +106,7 @@
+@@ -117,7 +117,7 @@
        {
-         "flag": "--ignore-errors",
+         "flag": "--try-parsedates",
          "type": "flag",
--        "description": "Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
-+        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
+-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
++        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
        },
        {
-         "flag": "--ignore-leading-zeros",
-```
-
-**File**: `.claude/skills/qsv/qsv-pivotp.json` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@
-       {
-         "flag": "--ignore-errors",
-         "type": "flag",
--        "description": "Skip rows that can't be parsed."
-+        "description": "Read values that can't be parsed as empty (null) instead of failing. Their rows are kept."
-       },
-       {
-         "flag": "--index",
-```
-
-**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@
-       {
-         "flag": "--ignore-errors",
-         "type": "flag",
--        "description": "Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as Polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query."
-+        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, so COUNT(*) still counts them. If not set, the query will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query."
-       },
-       {
-         "flag": "--infer-len",
+         "flag": "--wnull-value",
+@@ -249,7 +249,7 @@
+       "command": "qsv sqlp SKIP_INPUT \"select * from read_csv('data.csv', separator => ';', comment_prefix => '#', has_header => false)\""
+     },
+     {
+-      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file. By default only the first 100 rows are used, and a key that first appears later fails the query with \"extra field in NDJSON data\":",
++      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so keys that first appear late can be queried. By default only the first 100 rows are used, and selecting a key that first appears later (e.g. with select *) fails with \"extra field in NDJSON data\":",
+       "command": "qsv sqlp SKIP_INPUT \"select * from read_ndjson('events.jsonl', infer_schema_length => NULL)\""
+     },
+     {
 ```
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
@@ -2683,76 +2352,160 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
  - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
  
  ### Fixed
-+- `sqlp`, `joinp`, `pivotp`: the `--ignore-errors` help said rows that can't be parsed are skipped (in `sqlp` and `joinp`, the whole batch around them). Polars instead reads such a value as empty (null) and keeps its row, so `COUNT(*)` and `len` still count it. The help now says so. ([#5114](https://github.com/dathere/qsv/pull/5114))
- - `moarstats`, `pragmastat`, `scoresql`: a stats cache computed under other CSV parsing options than the command reads the input with (another `--delimiter`, `--no-headers`, `--flexible`, sniffed preamble, or `stats --quote`/`--escape`/`--no-quoting`) was reused anyway, since these commands read the cache files directly and checked only their age. `moarstats`, and `pragmastat` when it appends to the stats CSV, extended such a baseline with statistics of another reading, e.g. a column's `max` of 4 where the input as read holds a 9. `pragmastat --standalone` skipped numeric columns the cache had typed as text. All three now apply the parsing-options check the other cache readers use: they recompute the baseline, or `pragmastat --standalone` ignores the cache. Fixes [#5105](https://github.com/dathere/qsv/issues/5105) ([#5106](https://github.com/dathere/qsv/pull/5106)).
- - `writestat`: numbers very close to 0 were lost without a warning. A SAS transport (`.xpt`) file wrote a non-zero number closer to 0 than ±5.4e-79 (16^-65, the smallest IBM float) as missing, or as 0 below ±2.2e-308, and `writestat` checked only the ±7.2e75 end of the range. Such numbers are now refused like the large ones, and with `--lossy` the warning names them. An SPSS portable (`.por`) file can hold them, but its writer lost precision from about 1e-56 and wrote numbers below about 4e-73 as 0 (or -0). It now writes them as a mantissa and a negative power of 30, and its reader rebuilds values below about 1e-292 without losing digits. The `.por` writer and reader fixes are in our `polars-readstat-rs` fork, [dathere/polars_readstat@18551f9](https://github.com/dathere/polars_readstat/commit/18551f90697b23e677c5e17a0fe8f03ad710d90b), also offered upstream in [jrothbaum/polars_readstat#72](https://github.com/jrothbaum/polars_readstat/pull/72). Fixes [#5094](https://github.com/dathere/qsv/issues/5094). ([#5103](https://github.com/dathere/qsv/pull/5103))
- - `synthesize`: an `ordered` relationship read its source dates only as RFC 3339 or `YYYY-MM-DD`, so on columns `stats` types as dates in other forms (`04/18/2019 09:55:45 PM`, `2022-01-21 13:47:00`) it found no rows with both dates and was dropped with only a log warning, leaving the columns independent and out of order. Source dates are now read with the parser `stats` uses, honoring `--prefer-dmy`/`QSV_PREFER_DMY`, by `ordered` groups and by `--discover-relationships`. **Behavior change:** such groups now apply, so their output changes. ([#5085](https://github.com/dathere/qsv/pull/5085))
++- JSONL/NDJSON inputs: object and array values are written as their JSON text (e.g. `{"k": 1}`, `["a", "b"]`), so a file with nested values converts instead of failing with "CSV format does not support nested data". This also covers a nested key that first appears after the first 100 rows, which #5125's whole-file inference would otherwise have turned into that error (before #5125 such a key was silently dropped). A `.pschema.json` still decides the columns. The `sqlp` help also notes that only a query selecting a late `read_ndjson()` key fails, and that a `.pschema.json` can type a column as a date before `CAST` runs. ([#5127](https://github.com/dathere/qsv/pull/5127))
+ - `pivotp`: when every column was a pivot or `--index` column, the default `--values` (all remaining columns) was empty, and the pivot failed with a raw Polars error ("`pivot` called without `values` columns"). `pivotp region --index sex` now counts the rows of each cell, as `--values region --agg len` already did. Any aggregation other than `len` (the default here) stops with an error asking for `--values`. Fixes [#5122](https://github.com/dathere/qsv/issues/5122). ([#5124](https://github.com/dathere/qsv/pull/5124))
+ - `pivotp`: a generated pivot column could take the name of an `--index` column, and the pivot failed with "Duplicate: column with name '...' has more than one occurrence". Generated columns are named `<value column><--col-separator><pivot value>` (or just the pivot value with one value column), so `readstat --sentinels-as` output, where `name` sits next to `name_null`, hit this when `name_null` was the `--index`, `name` a value column, and the pivot column had empty cells. Such a generated column is now renamed to the first free `<name>_<n>` (from 2), with a warning on stderr (unless `--quiet`). Two generated names that coincide (e.g. `a_b` × `c` and `a` × `b_c`) still stop the pivot, now with an error suggesting `--col-separator` or `--values`. Fixes [#5123](https://github.com/dathere/qsv/issues/5123). ([#5124](https://github.com/dathere/qsv/pull/5124))
+ - `joinp`: `--nulls` did the opposite of its help for text keys. Empty text join keys matched without `--nulls` and stopped matching with it, and empty numeric keys never matched. In the standard joins (not cross, non-equi or asof), `--nulls` now makes empty keys match each other, including a quoted `""` and an unquoted empty. Without it they never match, whatever the key's type. Outer joins still output such rows, unmatched, with their key values unchanged. `--ignore-leading-zeros` (`-z`) now keeps a key's last zero, so `000` becomes `0` and still matches `0`, but no longer becomes empty and matches an empty key. The `--ignore-errors` help now says that in the standard joins, a key that can't be parsed, like an empty one, matches only with `--nulls`. **Behavior change:** an inner join on a text key no longer pairs rows whose keys are both empty unless `--nulls` is given. ([#5116](https://github.com/dathere/qsv/pull/5116))
 ```
 
-**File**: `docs/help/joinp.md` (modified, +1/-1)
+**File**: `docs/help/sqlp.md` (modified, +4/-3)
 ```diff
-@@ -77,7 +77,7 @@ qsv joinp --help
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. | `10000` |
- | &nbsp;`‑‑cache‑schema`&nbsp; | integer | Create and cache Polars schema JSON files. Ignored when --infer-len is 0.<br>-2: treat all columns as String. A Polars schema file is created & cached.<br>-1: treat all columns as String. No Polars schema file is created.<br>0: do not cache Polars schema. Uses --infer-len to infer schema.<br>1: cache Polars schema with the following behavior:<ul><li>If schema file exists and is newer than input: use cached schema</li><li>If schema file missing/outdated and stats cache exists: derive schema from stats and cache it</li><li>If no schema or stats cache: infer schema using --infer-len and cache the result</li></ul> Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.csv.pschema.json).<br>NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. | `0` |
- | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors. |  |
--| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
-+| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join. |  |
- | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
+@@ -258,8 +258,9 @@ qsv sqlp SKIP_INPUT "select * from read_csv('data.csv', separator => ';', commen
  
- <a name="asof-join-options"></a>
-```
-
-**File**: `docs/help/pivotp.md` (modified, +1/-1)
-```diff
-@@ -67,7 +67,7 @@ qsv pivotp --help
- | &nbsp;`‑‑try‑parsedates`&nbsp; | flag | When set, will attempt to parse columns as dates. |  |
- | &nbsp;`‑‑infer‑len`&nbsp; | integer | Number of rows to scan when inferring schema. Set to 0 to scan entire file. | `10000` |
- | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as decimal separator when READING the input. Note that you will need to specify an alternate --delimiter. |  |
--| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Skip rows that can't be parsed. |  |
-+| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read values that can't be parsed as empty (null) instead of failing. Their rows are kept. |  |
- | &nbsp;`‑‑grand‑total`&nbsp; | flag | Append a grand total row summing all numeric non-index columns. The first index column will contain "Grand <total-label>". |  |
- | &nbsp;`‑‑subtotal`&nbsp; | flag | Insert subtotal rows after each group in the first index column. The second index column will contain the total label. Requires 2+ index columns. (pivot mode only) |  |
- | &nbsp;`‑‑total‑label`&nbsp; | string | Custom label for total rows. | `Total` |
-```
-
-**File**: `docs/help/sqlp.md` (modified, +1/-1)
-```diff
-@@ -371,7 +371,7 @@ qsv sqlp --help
+ > read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
+ > infer_schema_length, ignore_errors and include_file_paths.
+-> Infer the schema from the whole file. By default only the first 100 rows are used, and
+-> a key that first appears later fails the query with "extra field in NDJSON data":
++> Infer the schema from the whole file, so keys that first appear late can be queried.
++> By default only the first 100 rows are used, and selecting a key that first appears
++> later (e.g. with select *) fails with "extra field in NDJSON data":
+ 
+ ```console
+ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
+@@ -365,7 +366,7 @@ qsv sqlp --help
+ 
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+-| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
++| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
  | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
- | &nbsp;`‑‑no‑optimizations`&nbsp; | flag | Disable non-default query optimizations. This will make queries slower. Use this when you get query errors or to force CSV parsing when there is only one input file, no CSV parsing options are used and its not a SQL script. |  |
- | &nbsp;`‑‑truncate‑ragged‑lines`&nbsp; | flag | Truncate ragged lines when parsing CSVs. If set, rows with more columns than the header will be truncated. If not set, the query will fail. Use this only when you get an error about ragged lines. |  |
--| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as Polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query. |  |
-+| &nbsp;`‑‑ignore‑errors`&nbsp; | flag | Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, so COUNT(*) still counts them. If not set, the query will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the query. |  |
- | &nbsp;`‑‑rnull‑values`&nbsp; | string | The comma-delimited list of case-sensitive strings to consider as null values when READING CSV files (e.g. NULL, NONE, <empty string>). Use "<empty string>" to consider an empty string a null value. | `<empty string>` |
- | &nbsp;`‑‑decimal‑comma`&nbsp; | flag | Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option. |  |
- 
 ```
 
-**File**: `src/cmd/joinp.rs` (modified, +3/-4)
+**File**: `src/cmd/sqlp.rs` (modified, +8/-6)
 ```diff
-@@ -152,10 +152,9 @@ joinp options:
-                            [default: 0]
-     --no-optimizations     Disable non-default join optimizations. This will make joins slower.
-                            Only use this when you get join errors.                           
--    --ignore-errors        Ignore errors when parsing CSVs. If set, rows with errors
--                           will be skipped. If not set, the query will fail.
--                           Only use this when debugging queries, as polars does batched
--                           parsing and will skip the entire batch where the error occurred.
-+    --ignore-errors        Read CSV values that can't be parsed as their column's type
-+                           as empty (null) instead of failing. Their rows are kept (a
-+                           null join key matches nothing). If not set, the join will fail.
-                            To get more detailed error messages, set the environment variable
-                            POLARS_BACKTRACE_IN_ERR=1 before running the join.
-     --decimal-comma        Use comma as the decimal separator when parsing & writing CSVs.
+@@ -137,8 +137,9 @@ Examples:
+ 
+   # read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
+   # infer_schema_length, ignore_errors and include_file_paths.
+-  # Infer the schema from the whole file. By default only the first 100 rows are used, and
+-  # a key that first appears later fails the query with "extra field in NDJSON data":
++  # Infer the schema from the whole file, so keys that first appear late can be queried.
++  # By default only the first 100 rows are used, and selecting a key that first appears
++  # later (e.g. with select *) fails with "extra field in NDJSON data":
+   $ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
+   # Type a column, and read a nested object as its JSON text. CSV output can't hold nested
+   # data, so this avoids the "CSV format does not support nested data" error:
+@@ -224,10 +225,11 @@ sqlp options:
+                               that you may want to try to set `--ignore-errors` to relax
+                               the CSV parsing of dates.
+                               Polars reads slash, dash and dot dates as day-first, so
+-                              01/05/2024 becomes 2024-05-01. Without this option, the
+-                              column stays a string, and CAST(col AS DATE) of a string
+-                              reads only year-first dates (2024-05-01, 2024/5/1): it
+-                              fails on 01/05/2024, and TRY_CAST returns NULL.
++                              01/05/2024 becomes 2024-05-01. Without this option (and
++                              without a .pschema.json that types the column as a date),
++                              the column stays a string, and CAST(col AS DATE) of a
++                              string reads only year-first dates (2024-05-01, 2024/5/1):
++                              it fails on 01/05/2024, and TRY_CAST returns NULL.
+                               For month-first (US) dates, leave this off and use
+                               STRPTIME(col, '%m/%d/%Y') in the query instead.
+     --infer-len <arg>         The number of rows to scan when inferring the schema of the CSV.
+```
+
+**File**: `src/util/special_format.rs` (modified, +23/-3)
+```diff
+@@ -333,11 +333,13 @@ pub fn convert_special_format(
+     format: SpecialFormat,
+     delim: u8,
+ ) -> Result<PathBuf, Box<dyn std::error::Error>> {
++    use std::sync::Arc;
++
+     use polars::{
+         io::avro::AvroReader,
+         prelude::{
+-            CsvWriter, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
+-            ParquetReader, PlRefPath, SerReader, SerWriter,
++            CsvWriter, DataType, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
++            ParquetReader, PlRefPath, Schema, SerReader, SerWriter,
+         },
+     };
+ 
+@@ -379,7 +381,25 @@ pub fn convert_special_format(
+             } else {
+                 // Infer from every row: Polars raises on a key that first appears past the
+                 // inference window (pola-rs/polars#31139), and before that it dropped the key.
+-                lf.with_infer_schema_length(None).finish()?
++                let mut inferred = lf.clone().with_infer_schema_length(None).finish()?;
++                let schema = inferred.collect_schema()?;
++                if schema.iter_values().any(DataType::is_nested) {
++                    // CSV can't hold nested data, so read nested values as their JSON text.
++                    let as_text: Schema = schema
++                        .iter()
++                        .map(|(name, dtype)| {
++                            let dtype = if dtype.is_nested() {
++                                DataType::String
++                            } else {
++                                dtype.clone()
++                            };
++                            (name.clone(), dtype)
++                        })
++                        .collect();
++                    lf.with_schema(Some(Arc::new(as_text))).finish()?
++                } else {
++                    inferred
++                }
+             }
+             .collect()?
+         },
+```
+
+**File**: `tests/test_slice.rs` (modified, +26/-0)
+```diff
+@@ -742,6 +742,32 @@ fn slice_from_jsonl_with_late_key() {
+     );
+ }
+ 
++#[cfg(feature = "polars")]
++#[test]
++fn slice_from_jsonl_nested_values_as_json_text() {
++    // CSV can't hold nested data, so a JSONL object or array value is written as its JSON text,
++    // whether it appears in the first rows or (now that the whole file is inferred) only later.
++    // Before, an early nested value failed the conversion and a late one was dropped.
++    let wrk = Workdir::new("slice_from_jsonl_nested_values_as_json_text");
++    let mut jsonl: String = (1..150)
++        .map(|i| format!("{{\"id\":{i},\"tags\":[\"t{i}\"]}}\n"))
++        .collect();
++    jsonl.push_str("{\"id\":150,\"tags\":[],\"late\":{\"k\":1}}\n");
++    wrk.create_from_string("nested.jsonl", &jsonl);
++
++    let mut cmd = wrk.command("slice");
++    cmd.arg("nested.jsonl").args(["--start", "148"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["id", "tags", "late"],
++            svec!["149", r#"["t149"]"#, ""],
++            svec!["150", "[]", r#"{"k": 1}"#],
++        ]
++    );
++}
++
+ #[cfg(feature = "polars")]
+ #[test]
+ fn slice_from_avro() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5116** (2026-11-25): fix(joinp): make --nulls match empty join keys, as documented (@jqnatividad)
-- **PR #5115** (2026-11-25): test(mcp): classify stats/validate --quote as not a path (@jqnatividad)
-- **PR #5114** (2026-11-25): docs(sqlp,joinp,pivotp): --ignore-errors keeps rows, reading bad values as null (@jqnatividad)
-- **PR #5112** (2026-11-25): feat: add timebucketp, Polars-powered time-window aggregation (@jqnatividad)
-- **PR #5111** (2026-11-24): deps: bump Polars to upstream rev 08b2814 (@jqnatividad)
-- **PR #5110** (2026-11-24): deps: drop unused direct deps bytemuck and spreadsheet-ods (@jqnatividad)
+- **PR #5127** (2026-11-27): fix: write nested JSONL values as JSON text (#5125 follow-up) (@jqnatividad)
+- **PR #5125** (2026-11-27): deps: bump Polars to upstream 4ba28fb (41 commits past py-2.2.0) (@jqnatividad)
+- **PR #5124** (2026-11-27): fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (@jqnatividad)
+- **PR #5121** (2026-11-27): deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (@jqnatividad)
+- **PR #5120** (2026-11-27): build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (@dependabot[bot])
+- **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
 
 ---
 
@@ -2772,33 +2525,33 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. joinp): make --nulls match empty join keys, as documented
+## X. write nested JSONL values as JSON text (#5125 follow-up)
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-joinp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5108f34d`: joinp): make --nulls match empty join keys, as documented. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23809a00`: write nested JSONL values as JSON text (#5125 follow-up). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-joinp.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept, and in the standard joins, a null join key, like an empty one, matches only with --nulls. If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
-        "description": "When set, unquoted empty fields are read as null (so they are written as the --null-value string), and in the standard joins, empty join keys match each other. Otherwise, rows with an empty key never match there (outer joins keep them, unmatched). The key matching doesn't apply to cross, non-equi or asof joins."
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so keys that first appear late can be queried. By default only the first 100 rows are used, and selecting a key that first appears later (e.g. with select *) fails with \"extra field in NDJSON data\":",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "description": "Read CSV values that can't be parsed as their column's type as empty (null) instead of failing. Their rows are kept (a null join key matches nothing). If not set, the join will fail. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join."
-        "description": "When set, joins will work on empty fields. Otherwise, empty fields are completely ignored."
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file. By default only the first 100 rows are used, and a key that first appears later fails the query with \"extra field in NDJSON data\":",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5108f34d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23809a00` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

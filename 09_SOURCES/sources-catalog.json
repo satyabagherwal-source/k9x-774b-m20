@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "1441b6a4",
+    "sourceVersion": "23809a00",
     "license": "NOASSERTION",
-    "contentHash": "fd5c67d74181ffa86fecd8ab1f1d016c713126446d3dc30f65ec032a92079550",
-    "lastHarvestedAt": "2026-11-27T21:39:09.137Z",
+    "contentHash": "07c258d242460e69131ad13ab01c7afff9bcf3255b1815a3aa72f8aba0d0a0cf",
+    "lastHarvestedAt": "2026-11-27T22:54:50.857Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "ace4d4f2",
+    "sourceVersion": "0d76e38a",
     "license": "Apache-2.0",
-    "contentHash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
-    "lastHarvestedAt": "2026-11-27T03:44:02.659Z",
+    "contentHash": "7926a23d6f81649ed8572e6cb9627441759b4a7abe2b3b508d47ea62cfcfb3ea",
+    "lastHarvestedAt": "2026-11-27T22:54:49.329Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "531bc329",
+    "sourceVersion": "d2052b86",
     "license": "BSD-3-Clause",
-    "contentHash": "d80755e52f6d22a0e3e61beaf69a7dde748fd0e47bed8b3100d917d04e36ed35",
-    "lastHarvestedAt": "2026-11-24T14:41:50.166Z",
+    "contentHash": "819fe15b21fa3a37662f94ccd7050bb0f47b0119cac0ac86c4f6bee9b9fec65d",
+    "lastHarvestedAt": "2026-11-27T22:54:39.244Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {

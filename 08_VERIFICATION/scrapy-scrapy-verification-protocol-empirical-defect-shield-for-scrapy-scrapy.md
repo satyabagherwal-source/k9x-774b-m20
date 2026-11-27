@@ -4,22 +4,22 @@
 {
   "source_repository": "scrapy/scrapy",
   "source_url": "https://github.com/scrapy/scrapy",
-  "source_version": "531bc329",
+  "source_version": "d2052b86",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-24T14:41:50.425Z",
+  "timestamp": "2026-11-27T22:54:39.496Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-scrapy-scrapy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [scrapy/scrapy](https://github.com/scrapy/scrapy) (Revision: `531bc329`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-24T14:41:50.425Z`  
+> **Provenance**: Harvested from [scrapy/scrapy](https://github.com/scrapy/scrapy) (Revision: `d2052b86`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-27T22:54:39.496Z`  
 > **Learning ID**: `learn-github-scrapy-scrapy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `scrapy/scrapy` (Commit: `531bc329`)
+- **Target Repository**: `scrapy/scrapy` (Commit: `d2052b86`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapy-scrapy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapy/scrapy](https://github.com/scrapy/scrapy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T14:41:48.871Z  
+> **Harvest Timestamp**: 2026-11-27T22:54:37.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Scrapy, a fast high-level web crawling & scraping framework for Python.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 65560 stars
+- **Stars / Engagement**: 65662 stars
 
 ---
 
@@ -1918,16 +1918,14 @@ class DownloaderMiddlewareManager(MiddlewareManager):  # pylint: disable=abstrac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #8525** (2026-11-27): **Sitemap raises a bare StopIteration for a whitespace-only or comment-only sitemap**
+  *Symptoms*: ### Description  `Sitemap` raises a bare `StopIteration` with no message when the sitemap body contains only whitespace or only XML comments, instead of a clear error or the graceful handling that empty sitemaps get. A `SitemapSpider` that downloads such a sitemap fails in its parse callback with an unhandled `StopIteration`.  ### Steps to Reproduce  1. `from scrapy.utils._sitemap import Sitemap` 2. `Sitemap(b"   \n  ")` (or `Sitemap(b"<!-- a comment -->")`) 3. Observe a bare `StopIteration`.  **Expected behavior:** A clear error (for example, a `ValueError` or an `XMLSyntaxError`), or the sitemap being ignored the same way an empty body is ignored by `SitemapSpider` with an "Ignoring invalid sitemap" warning.  **Actual behavior:** A bare `StopIteration` with no message escapes from `Sitemap.__init__`.  **Reproduces how often:** Always for these inputs.  ### Versions  Scrapy master at commit 00acf3f31a322871a47aead5fec610d900263103 (2026-11-19).  ### Additional context  In `scrapy/utils/_sitemap.py`, `Sitemap.__init__` calls `next(self.xmliter)` with no guard. With the parser options used (`remove_comments=True`, `remove_blank_text=True`), a whitespace-only or comment-only document yields no events at all, so `next()` raises `StopIteration`. A truly empty body raises `XMLSyntaxError` from lxml instead, and `SitemapSpider._parse_sitemap` already guards empty bodies with `if not body`, so only these whitespace-only and comment-only bodies slip through to the crash. A likely fix
+
 - **Issue #8489** (2026-11-13): **Stop passing media_downloaded() errors to media_failed().**
   *Symptoms*: Broken after `addCallbacks()` to `addCallback()`+`addErrback()` to `try/finally` rewrites.  - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/scrapy/scrapy/pull/8489?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 100.00%. Comparing base ([`0d4b674`](https://app.codecov.io/gh/scrapy/scrapy/commit/0d4b674ed976a9bead536d3039cb29e57bf2753e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)) to head ([`c181bea`](https://app.codecov.io/gh/scrapy/scrapy/commit/c181bead61c7d3ac428b47d5a413ec8b0fc7e983?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)). :warning: Report is 1 commits behind head on master. :white_check_mark: All tests successful. No failed tests found.  <details><summary>Additional details and impacted files</summary>    ```diff @@
   > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>1 warning</b></summary>  > :warning: **5 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure them. > > [Learn more about system calls](https://codspeed.io/docs/instruments/cpu?utm_source=github&utm_medium=comment-v2&utm_content=significant_sys_time#system-calls) > > [See affected benchmarks](https://app.codspeed.io/scrapy/scrapy/branches/wRAR%3Amedia-failed-scope?q=has%3Asignificant_sys_time&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  </details>   `✅ 44` untouched benchmarks   `⏩ 9` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>wRAR:media-failed-scope</code> (c181bea) with <code>master</code> (0d4b674)</sub>  <a href="https://app.codspeed.io/scrapy/scrapy/bra
-
-- **Issue #8423** (2026-10-28): **Fix deprecations in fixtures for pytest 9.2.0.**
-  *Symptoms*:   - [x] I have read the [contributing guide](https://docs.scrapy.org/en/master/contributing.html) and [set up pre-commit](https://docs.scrapy.org/en/master/contributing.html#pre-commit). 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/scrapy/scrapy/pull/8423?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 100.00%. Comparing base ([`00ca2a9`](https://app.codecov.io/gh/scrapy/scrapy/commit/00ca2a9c07ba3c0423fb95daa46c077de555c595?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)) to head ([`5f39c58`](https://app.codecov.io/gh/scrapy/scrapy/commit/5f39c589a53719dfc53d7d1785bf7029a81ff2f1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapy)). :white_check_mark: All tests successful. No failed tests found.  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff             @@ ##         
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1944,116 +1942,360 @@ class DownloaderMiddlewareManager(MiddlewareManager):  # pylint: disable=abstrac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `531bc329` (2026-11-23)
-**Commit Message**: Close the reactorless loop of AsyncCrawlerProcess instances never started (#8528)
+### Incident Patch 1: `d2052b86` (2026-11-27)
+**Commit Message**: Ignore sitemaps without a root element instead of raising StopIteration (#8532)
 
-**File**: `scrapy/crawler.py` (modified, +17/-7)
+* Ignore sitemaps without a root element instead of raising StopIteration
+
+Sitemap.__init__ called next() on the iterparse iterator unguarded. A body
+that is only whitespace, only comments, or plain text produces no parse
+events, so a bare StopIteration escaped from Sitemap() and from
+SitemapSpider._parse_sitemap.
+
+Set Sitemap.type to an empty string in that case, so SitemapSpider logs
+"Ignoring invalid sitemap" exactly as it does for an empty body or a
+non-sitemap root element.
+
+Fixes #8525
+
+* Address review: drop the comment, trim the spider test, test a bare XML declaration
+
+**File**: `scrapy/utils/_sitemap.py` (modified, +5/-1)
 ```diff
-@@ -6,6 +6,7 @@
- import pprint
- import signal
- import warnings
-+import weakref
- from abc import ABC, abstractmethod
- from functools import partial
- from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
-@@ -1069,6 +1070,14 @@ def start(
-         reactor.run(installSignalHandlers=install_signal_handlers)  # blocking call
+@@ -40,7 +40,11 @@ def __init__(self, xmltext: str | bytes):
+             remove_pis=True,
+             events=("start", "end"),
+         )
+-        _, root = next(self.xmliter)
++        try:
++            _, root = next(self.xmliter)
++        except StopIteration:
++            self.type = ""
++            return
+         self.type = self._get_tag_name(root)
  
- 
-+def _close_reactorless(
-+    loop: asyncio.AbstractEventLoop, hook: ReactorImportHook
-+) -> None:
-+    # loop.close() can raise, so we uninstall the hook first
-+    uninstall_reactor_import_hook(hook)
-+    loop.close()
-+
-+
- class AsyncCrawlerProcess(CrawlerProcessBase, AsyncCrawlerRunner):
-     """
-     A class to run multiple scrapy crawlers in a process simultaneously.
-@@ -1109,7 +1118,6 @@ def __init__(
-         super().__init__(settings, install_root_handler)
-         logger.debug("Using AsyncCrawlerProcess")
-         self._reactorless_loop: asyncio.AbstractEventLoop | None = None
--        self._reactor_import_hook: ReactorImportHook | None = None
-         # The event loop, or the reactor with its event loop, is set up here
-         # and not in start(), because crawl() needs it to create tasks.
-         # The ASYNCIO_EVENT_LOOP setting cannot be overridden by add-ons and
-@@ -1127,7 +1135,13 @@ def __init__(
-             self._reactorless_loop = (
-                 load_object(loop_path)() if loop_path else asyncio.new_event_loop()
-             )
--            self._reactor_import_hook = install_reactor_import_hook()
-+            # Also covers instances that are never started.
-+            self._close_reactorless = weakref.finalize(
-+                self,
-+                _close_reactorless,
-+                self._reactorless_loop,
-+                install_reactor_import_hook(),
-+            )
-         elif is_reactor_installed():
-             # The user could install a reactor before this class is instantiated.
-             # We need to make sure the reactor is the correct one and the loop
-@@ -1284,13 +1298,9 @@ def _close_loop(self) -> None:
-             loop.run_until_complete(loop.shutdown_asyncgens())
-             loop.run_until_complete(loop.shutdown_default_executor())
-         finally:
--            # loop.close() can raise, so we uninstall the hook first
--            if self._reactor_import_hook:  # pragma: no branch
--                uninstall_reactor_import_hook(self._reactor_import_hook)
--                self._reactor_import_hook = None
-             self._reactorless_main_task = None
--            loop.close()
-             self._reactorless_loop = None
-+            self._close_reactorless()
- 
-     @staticmethod
-     def _cancel_all_tasks(loop: asyncio.AbstractEventLoop) -> None:
+     def __iter__(self) -> Iterator[dict[str, Any]]:
 ```
 
-**File**: `tests/test_crawler.py` (modified, +17/-0)
+**File**: `tests/test_spider_sitemap.py` (modified, +19/-0)
 ```diff
-@@ -1,6 +1,7 @@
- from __future__ import annotations
+@@ -621,6 +621,25 @@ def test_parse_sitemap_empty_body(self, caplog: pytest.LogCaptureFixture) -> Non
+             )
+         ]
  
- import asyncio
-+import gc
- import logging
- import re
- import signal
-@@ -1086,6 +1087,22 @@ async def test_async_crawler_process_force_stop_reactorless_without_loop(
-     await crawler.stop_async(mode="force")
- 
- 
-+def test_async_crawler_process_unstarted_reactorless_loop_closed(
-+    reactor_pytest: str,
-+) -> None:
-+    if reactor_pytest != "none":
-+        pytest.skip("This test is only for --reactor=none")
++    def test_parse_sitemap_without_root_element(
++        self, caplog: pytest.LogCaptureFixture
++    ) -> None:
++        r = XmlResponse(url="http://www.example.com/sitemap.xml", body=b"   \n  ")
++        spider = self.spider_class("example.com")
 +
-+    crawler_process = AsyncCrawlerProcess(
-+        {"TWISTED_REACTOR_ENABLED": False, "LOG_INSTALL_ROOT_HANDLER": False},
++        caplog.clear()
++        with caplog.at_level(WARNING):
++            results = list(spider._parse_sitemap(r))
++
++        assert not results
++        assert caplog.record_tuples == [
++            (
++                "scrapy.spiders.sitemap",
++                WARNING,
++                "Ignoring invalid sitemap: <200 http://www.example.com/sitemap.xml>",
++            )
++        ]
++
+     def test_parse_sitemap_not_sitemap(self):
+         body = b"""<?xml version="1.0" encoding="UTF-8"?>
+     <some attr="string">
+```
+
+**File**: `tests/test_utils_sitemap.py` (modified, +16/-0)
+```diff
+@@ -339,3 +339,19 @@ def test_sitemap_non_string_tag():
+     """
+     results = list(Sitemap(b"<url>&k;"))
+     assert results == []
++
++
++@pytest.mark.parametrize(
++    "body",
++    [
++        b"   \n  ",
++        b"<!-- a comment -->",
++        b"\n<!-- one -->\n<!-- two -->\n",
++        b"not xml at all",
++        b"<?xml version='1.0' encoding='UTF-8'?>",
++    ],
++)
++def test_sitemap_without_root_element(body: bytes) -> None:
++    s = Sitemap(body)
++    assert s.type == ""
++    assert list(s) == []
+```
+
+---
+
+### Incident Patch 2: `e68d0e38` (2026-11-27)
+**Commit Message**: Allow configured URL schemes in commands (#8520)
+
+* Allow configured URL schemes in commands
+
+* Reject URLs with disabled download handlers
+
+**File**: `scrapy/commands/__init__.py` (modified, +9/-1)
+```diff
+@@ -21,7 +21,8 @@
+ from scrapy.spiderloader import get_spider_loader
+ from scrapy.utils.conf import arglist_to_dict, feed_process_params_from_cli
+ from scrapy.utils.deprecate import method_is_overridden
+-from scrapy.utils.python import global_object_name
++from scrapy.utils.python import global_object_name, without_none_values
++from scrapy.utils.url import _is_url
+ 
+ if TYPE_CHECKING:
+     from collections.abc import Iterable
+@@ -34,6 +35,13 @@
+ logger = logging.getLogger(__name__)
+ 
+ 
++def _is_valid_url_arg(args: list[str], settings: Settings) -> bool:
++    return len(args) == 1 and _is_url(
++        args[0],
++        schemes=without_none_values(settings.getwithbase("DOWNLOAD_HANDLERS")),
 +    )
-+    loop = crawler_process._reactorless_loop
-+    assert loop is not None
-+    del crawler_process
-+    gc.collect()
-+    assert loop.is_closed()
 +
 +
- @pytest.mark.only_asyncio
- @coroutine_test
- async def test_async_crawler_process_force_stop_reactorless_with_task(
+ def _add_curl_option(parser: argparse.ArgumentParser) -> None:
+     """Register the ``--curl`` option on commands that accept a URL."""
+     parser.add_argument(
+```
+
+**File**: `scrapy/commands/fetch.py` (modified, +8/-4)
+```diff
+@@ -4,9 +4,12 @@
+ from argparse import Namespace  # noqa: TC003
+ from typing import TYPE_CHECKING, Any
+ 
+-from w3lib.url import is_url
+-
+-from scrapy.commands import ScrapyCommand, _add_curl_option, _request_from_curl
++from scrapy.commands import (
++    ScrapyCommand,
++    _add_curl_option,
++    _is_valid_url_arg,
++    _request_from_curl,
++)
+ from scrapy.exceptions import UsageError
+ from scrapy.http import Request, Response
+ from scrapy.utils._datatypes import SequenceExclude
+@@ -83,7 +86,8 @@ def run(self, args: list[str], opts: Namespace) -> None:
+                 dont_filter=True,
+             )
+         else:
+-            if len(args) != 1 or not is_url(args[0]):
++            assert self.settings is not None
++            if not _is_valid_url_arg(args, self.settings):
+                 raise UsageError
+             request = Request(
+                 args[0],
+```
+
+**File**: `scrapy/commands/parse.py` (modified, +8/-3)
+```diff
+@@ -8,9 +8,13 @@
+ 
+ from itemadapter import ItemAdapter
+ from twisted.internet.defer import Deferred, maybeDeferred
+-from w3lib.url import is_url
+ 
+-from scrapy.commands import BaseRunSpiderCommand, _add_curl_option, _request_from_curl
++from scrapy.commands import (
++    BaseRunSpiderCommand,
++    _add_curl_option,
++    _is_valid_url_arg,
++    _request_from_curl,
++)
+ from scrapy.exceptions import UsageError
+ from scrapy.http import Request, Response
+ from scrapy.utils import _colorize
+@@ -413,7 +417,8 @@ def run(self, args: list[str], opts: argparse.Namespace) -> None:
+                 raise UsageError("--curl cannot be combined with a URL argument")
+             request = _request_from_curl(opts.curl)
+         else:
+-            if not len(args) == 1 or not is_url(args[0]):
++            assert self.settings is not None
++            if not _is_valid_url_arg(args, self.settings):
+                 raise UsageError
+             request = Request(args[0])
+         url = request.url
+```
+
+**File**: `scrapy/utils/url.py` (modified, +5/-1)
+```diff
+@@ -8,7 +8,7 @@
+ import re
+ import warnings
+ from typing import TYPE_CHECKING, TypeAlias
+-from urllib.parse import ParseResult, urljoin, urlunparse
++from urllib.parse import ParseResult, urljoin, urlsplit, urlunparse
+ 
+ import w3lib.url
+ from w3lib.url import any_to_uri, parse_url, safe_url_string
+@@ -25,6 +25,10 @@
+ UrlT: TypeAlias = str | bytes | ParseResult
+ 
+ 
++def _is_url(url: str, *, schemes: Iterable[str]) -> bool:
++    return urlsplit(url).scheme.lower() in schemes
++
++
+ def _parse_url(url: UrlT | Request | Response) -> ParseResult:
+     if isinstance(url, (bytes, ParseResult)):
+         return parse_url(url)
+```
+
+**File**: `tests/test_command_fetch.py` (modified, +37/-1)
+```diff
+@@ -15,7 +15,9 @@
+ 
+ 
+ class TestFetchCommand:
+-    @pytest.mark.parametrize("args", [(), ("not-a-url",), ("a:b", "c:d")])
++    @pytest.mark.parametrize(
++        "args", [(), ("not-a-url",), ("custom://example.com",), ("a:b", "c:d")]
++    )
+     def test_bad_arguments(self, args: tuple[str, ...]) -> None:
+         returncode, out, _ = proc("fetch", *args)
+         assert returncode == 2
+@@ -25,6 +27,10 @@ def test_output(self, mockserver: MockServer) -> None:
+         _, out, _ = proc("fetch", mockserver.url("/text"))
+         assert out.strip() == "Works"
+ 
++    def test_data_url(self) -> None:
++        _, out, _ = proc("fetch", "data:text/plain,Works")
++        assert out.strip() == "Works"
++
+     def test_redirect_default(self, mockserver: MockServer) -> None:
+         _, out, _ = proc("fetch", mockserver.url("/redirect"))
+         assert out.strip() == "Redirected here"
+@@ -70,6 +76,7 @@ def test_curl_invalid(self) -> None:
+ class TestFetchCommandWithSpider(TestProjectBase):
+     @pytest.fixture(autouse=True)
+     def create_files(self, proj_path: Path) -> None:
++        proj_mod_path = proj_path / self.project_name
+         (proj_path / self.project_name / "spiders" / "myspider.py").write_text(
+             """
+ import scrapy
+@@ -80,6 +87,35 @@ class MySpider(scrapy.Spider):
+ """,
+             encoding="utf-8",
+         )
++        (proj_mod_path / "downloadhandler.py").write_text(
++            """
++from scrapy.http import Response
++
++
++class CustomDownloadHandler:
++    async def download_request(self, request):
++        return Response(request.url, body=b"Works", request=request)
++""",
++            encoding="utf-8",
++        )
++        self._append_settings(
++            proj_mod_path,
++            f'\nDOWNLOAD_HANDLERS = {{"custom": "{self.project_name}.downloadhandler.CustomDownloadHandler"}}\n',
++        )
++
++    def test_custom_scheme(self, proj_path: Path) -> None:
++        _, out, _ = proc("fetch", "custom://example.com", cwd=proj_path)
++        assert out.strip() == "Works"
++
++    @pytest.mark.parametrize("scheme", ["ftp", "custom"])
++    def test_disabled_scheme(self, scheme: str, proj_path: Path) -> None:
++        self._append_settings(
++            proj_path / self.project_name,
++            f"\nDOWNLOAD_HANDLERS[{scheme!r}] = None\n",
++        )
++        returncode, out, _ = proc("fetch", f"{scheme}://example.com", cwd=proj_path)
++        assert returncode == 2
++        assert "Usage" in out
+ 
+     def test_spider(self, proj_path: Path, mockserver: MockServer) -> None:
+         _, out, err = proc(
+```
+
+**File**: `tests/test_command_parse.py` (modified, +37/-1)
+```diff
+@@ -204,10 +204,23 @@ def process_item(self, item):
+             encoding="utf-8",
+         )
+ 
++        (proj_mod_path / "downloadhandler.py").write_text(
++            """
++from scrapy.http import Response
++
++
++class CustomDownloadHandler:
++    async def download_request(self, request):
++        return Response(request.url, body=b"", request=request)
++""",
++            encoding="utf-8",
++        )
++
+         with (proj_mod_path / "settings.py").open("a", encoding="utf-8") as f:
+             f.write(
+                 f"""
+ ITEM_PIPELINES = {{'{self.project_name}.pipelines.MyPipeline': 1}}
++DOWNLOAD_HANDLERS = {{"custom": "{self.project_name}.downloadhandler.CustomDownloadHandler"}}
+ """
+             )
+ 
+@@ -245,6 +258,27 @@ def test_invalid_url(self, proj_path: Path) -> None:
+         )
+         assert code != 0
+ 
++    def test_custom_scheme(self, proj_path: Path) -> None:
++        returncode, out, err = proc(
++            "parse",
++            "--spider",
++            self.spider_name,
++            "custom://example.com",
++            cwd=proj_path,
++        )
++        assert returncode == 0, err
++        assert "{'foo': 'bar'}" in out
++
++    @pytest.mark.parametrize("scheme", ["ftp", "custom"])
++    def test_disabled_scheme(self, scheme: str, proj_path: Path) -> None:
++        self._append_settings(
++            proj_path / self.project_name,
++            f"\nDOWNLOAD_HANDLERS[{scheme!r}] = None\n",
++        )
++        returncode, out, _ = proc("parse", f"{scheme}://example.com", cwd=proj_path)
++        assert returncode == 2
++        assert "Usage" in out
++
+     def test_curl(self, proj_path: Path, mockserver: MockServer) -> None:
+         _, _, stderr = proc(
+             "parse",
+@@ -601,7 +635,9 @@ def test_output_flag(self, proj_path: Path, mockserver: MockServer) -> None:
+         content = '[\n{},\n{"foo": "bar"}\n]'
+         assert file_path.read_text(encoding="utf-8") == content
+ 
+-    @pytest.mark.parametrize("args", [(), ("not-a-url",), ("a:b", "c:d")])
++    @pytest.mark.parametrize(
++        "args", [(), ("not-a-url",), ("unknown://example.com",), ("a:b", "c:d")]
++    )
+     def test_bad_arguments(self, args: tuple[str, ...], proj_path: Path) -> None:
+         returncode, out, _ = proc("parse", *args, cwd=proj_path)
+         assert returncode == 2
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8534** (closed): Fix typos in SEP-007 (@annihilatorofgod-commits)
-- **PR #8533** (closed): Use replacement dumps_kwargs when serializing data in JsonRequest.replace() (@seragAhmed)
-- **PR #8531** (closed): fix(sitemap): handle whitespace and comment-only sitemaps gracefully (#8525) (@MilindChatrabhuji)
-- **PR #8530** (closed): fix(sitemap): ignore bodies with no root element (@MeGaurav4)
-- **PR #8529** (closed): Count a feed that cannot be opened as failed instead of losing the error (@qianeric-backup)
-- **PR #8528** (2026-11-23): Close the reactorless loop of AsyncCrawlerProcess instances never started (@AdrianAtZyte)
+- **PR #8546** (closed): Support proxies in H2DownloadHandler (@tugayabdulla)
+- **PR #8545** (closed): Use replacement dumps_kwargs when serializing data in JsonRequest.replace() (@UsmanGhias)
+- **PR #8544** (closed): Fix LogStats final rates for crawls over a day (@adityajai119)
+- **PR #8543** (closed): Fix LogStats final rates for crawls over a day (@adityajai119)
+- **PR #8542** (closed): Fix S3FilesStore.close() race with _get_aio_client() (@meat-daemon-404)
+- **PR #8541** (closed): Index lowercase header names in Headers for O(1) case-insensitive lookups (@alexander-src)
 
 ---
 
@@ -2073,53 +2315,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Close the reactorless loop of AsyncCrawlerProcess instances never started
+## X. Ignore sitemaps without a root element instead of raising StopIteration
 
 **RULE**:
-When implementing operations in `scrapy/crawler.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scrapy/utils/_sitemap.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `531bc329`: Close the reactorless loop of AsyncCrawlerProcess instances never started. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d2052b86`: Ignore sitemaps without a root element instead of raising StopIteration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scrapy/crawler.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scrapy/utils/_sitemap.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import weakref
-def _close_reactorless(
-    loop: asyncio.AbstractEventLoop, hook: ReactorImportHook
-) -> None:
-    # loop.close() can raise, so we uninstall the hook first
-    uninstall_reactor_import_hook(hook)
-    loop.close()
-
-
-            # Also covers instances that are never started.
-            self._close_reactorless = weakref.finalize(
-                self,
-                _close_reactorless,
-                self._reactorless_loop,
-                install_reactor_import_hook(),
-            )
-            self._close_reactorless()
+        try:
+            _, root = next(self.xmliter)
+        except StopIteration:
+            self.type = ""
+            return
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-        self._reactor_import_hook: ReactorImportHook | None = None
-            self._reactor_import_hook = install_reactor_import_hook()
-            # loop.close() can raise, so we uninstall the hook first
-            if self._reactor_import_hook:  # pragma: no branch
-                uninstall_reactor_import_hook(self._reactor_import_hook)
-                self._reactor_import_hook = None
-            loop.close()
+        _, root = next(self.xmliter)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `531bc329` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d2052b86` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

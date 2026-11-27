@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T22:46:04.597Z",
+  "last_updated": "2026-11-27T22:55:30.442Z",
   "total_verified_learnings": 9147,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26801,
+  "total_items": 26807,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112125,10 +112125,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-content-information-intelligence-dathere-qsv-core-invariants.md",
       "title": "Content & Information Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "5108f34d",
-      "content_hash": "d83e294ec6fb0f0f409a8ccece6d0afb04c1acc91a0dd543e4934400241fafe6",
+      "source_version": "23809a00",
+      "content_hash": "33a99bf18db88a8f096b7b07534ff5ffb5711a73e2a4c9e844cf25c0a9744f2d",
       "domain_letter": "I",
-      "persisted_at": "2026-11-25T23:11:57.987Z"
+      "persisted_at": "2026-11-27T22:54:51.342Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv",
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "1441b6a4",
-      "content_hash": "7bab072226ddbb930c27fc83d97b39090ce0ee90a36626afbd3fb2f7715e478c",
+      "source_version": "23809a00",
+      "content_hash": "89cc16743f3da4a393db5d69fbe8067980bbfd7e1de575797800aa3a7f2d4e33",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T21:39:09.797Z"
+      "persisted_at": "2026-11-27T22:54:51.556Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112162,9 +112162,9 @@
       "title": "Content & Information Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "e331797199142b117529f4f3f87076df4fc29d61037dca48f47d8edc255191c7",
+      "content_hash": "f82950581b00b998ecdb16c0c3f683e258c09c8c133146f5cdc231cd9b55f575",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T22:48:43.467Z"
+      "persisted_at": "2026-11-27T22:55:30.204Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv-learnings",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb6ff1a37405a9e40cfacf4edc761baba6996aa2d037c666ce8c69ee3e3377ba",
+      "content_hash": "bf6f588731a0db5f51a5473d562ec804cf598eb32c4c1554891763ce3dbd521a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T21:39:14.738Z"
+      "persisted_at": "2026-11-27T22:55:30.442Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -220834,8 +220834,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "1441b6a4",
-      "content_hash": "fd5c67d74181ffa86fecd8ab1f1d016c713126446d3dc30f65ec032a92079550",
+      "source_version": "23809a00",
+      "content_hash": "07c258d242460e69131ad13ab01c7afff9bcf3255b1815a3aa72f8aba0d0a0cf",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -221088,6 +221088,11 @@
           "number": 10970,
           "title": "count rows when no columns remain for --values; rename clashing generat",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10982,
+          "title": "write nested JSONL values as JSON text (#5125 follow-up)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221095,7 +221100,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T21:39:08.869Z",
+      "verified_at": "2026-11-27T22:54:50.572Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256703,8 +256708,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "ace4d4f2",
-      "content_hash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
+      "source_version": "0d76e38a",
+      "content_hash": "7926a23d6f81649ed8572e6cb9627441759b4a7abe2b3b508d47ea62cfcfb3ea",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -256757,6 +256762,11 @@
           "number": 10484,
           "title": "Clarify standard capability reuse before adding mechanisms",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10981,
+          "title": "Support index DDL parsing across SQL dialects",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -256764,7 +256774,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T03:44:02.390Z",
+      "verified_at": "2026-11-27T22:54:49.035Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256818,10 +256828,10 @@
       "relative_path": "08_VERIFICATION/apache-shardingsphere-verification-protocol-empirical-defect-shield-for-apache-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/shardingsphere",
       "repository": "apache/shardingsphere",
-      "source_version": "ace4d4f2",
-      "content_hash": "9ca07223a4659c29e456f99e753f2ff9be88ebe6cf66de0780a43b29dd47aa86",
+      "source_version": "0d76e38a",
+      "content_hash": "170db92b88f1ee99df24d55d65c9b425c000fa5ddbce22b824110b7126bb70d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T03:44:03.422Z"
+      "persisted_at": "2026-11-27T22:54:50.043Z"
     },
     "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection": {
       "item_id": "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection",
@@ -256903,9 +256913,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-shardingsphere-learnings",
       "repository": "apache-shardingsphere-learnings",
       "source_version": "HEAD",
-      "content_hash": "692f389fede45df2acecf978fe95351cf9926fd3a7e3f14e7f54adba0a43785c",
+      "content_hash": "232c30cc90e224bdf952adb6583ac1d2cdb9f5e144cfe958693bf6ef8236d57f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T13:48:12.765Z"
+      "persisted_at": "2026-11-27T22:55:28.530Z"
     },
     "learn-huggingface-liconstudio-minimax-h3-vbvr": {
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
@@ -261764,8 +261774,8 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "531bc329",
-      "content_hash": "d80755e52f6d22a0e3e61beaf69a7dde748fd0e47bed8b3100d917d04e36ed35",
+      "source_version": "d2052b86",
+      "content_hash": "819fe15b21fa3a37662f94ccd7050bb0f47b0119cac0ac86c4f6bee9b9fec65d",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
@@ -261783,6 +261793,11 @@
           "number": 10282,
           "title": "Close the reactorless loop of AsyncCrawlerProcess instances never started",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10980,
+          "title": "Ignore sitemaps without a root element instead of raising StopIteration",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -261790,7 +261805,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T14:41:49.946Z",
+      "verified_at": "2026-11-27T22:54:38.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261832,10 +261847,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-technical-construction-intelligence-scrapy-scrapy-core-invariants.md",
       "title": "Technical Construction Intelligence: scrapy/scrapy Core Invariants",
       "repository": "scrapy/scrapy",
-      "source_version": "531bc329",
-      "content_hash": "8c401326dac5054b9e97f2963aefeacf428ab02ebfdc76cfd055723fe730047c",
+      "source_version": "d2052b86",
+      "content_hash": "f056e10067560d579d9429459f9761512e978baadb5cdb4e986f4205f24ed90b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:41:50.596Z"
+      "persisted_at": "2026-11-27T22:54:39.717Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy",
@@ -261844,10 +261859,10 @@
       "relative_path": "08_VERIFICATION/scrapy-scrapy-verification-protocol-empirical-defect-shield-for-scrapy-scrapy.md",
       "title": "Verification Protocol: Empirical Defect Shield for scrapy/scrapy",
       "repository": "scrapy/scrapy",
-      "source_version": "531bc329",
-      "content_hash": "665078de4238929f441976597e0e1ba9d6b09d6c3d2507a8e195cb18be8b1f58",
+      "source_version": "d2052b86",
+      "content_hash": "4cdedc8e4f9077a3a8ac7b0fe6ccba027657121a3fe297e73ab878115ddec30d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:41:50.779Z"
+      "persisted_at": "2026-11-27T22:54:39.949Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-astral-sh-uv-learnings",
@@ -261869,9 +261884,9 @@
       "title": "Technical Construction Intelligence: scrapy-scrapy-learnings Core Invariants",
       "repository": "scrapy-scrapy-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6206af0444b1098b397260477ad187a86069411cee76ef2f5f10e94610869a0",
+      "content_hash": "6bcd659c4dc8b42dfcd0ab22a36c0112f447f1383840457a994df632c93d7720",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T14:42:02.918Z"
+      "persisted_at": "2026-11-27T22:55:26.117Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-scrapy-scrapy-learnings",
@@ -261881,9 +261896,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for scrapy-scrapy-learnings",
       "repository": "scrapy-scrapy-learnings",
       "source_version": "HEAD",
-      "content_hash": "a59a898611e81d456f718fae4183914984e8a691a51edce17c5d9a5bf074511e",
+      "content_hash": "d08ebf71ed9b27df1e89e1e07ba166c696a85550641ba0baf825ea3d435805bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T14:42:03.085Z"
+      "persisted_at": "2026-11-27T22:55:26.358Z"
     },
     "rule-8738": {
       "learning_id": "rule-8738",
@@ -275623,10 +275638,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-technical-construction-intelligence-apache-shardingsphere-.md",
       "title": "Technical Construction Intelligence: apache/shardingsphere Core Invariants",
       "repository": "apache/shardingsphere",
-      "source_version": "0d551770",
-      "content_hash": "2c7f48c2b130d65059a2a57cd2f907bcb04aed7e4c7444844c79d23de8f40324",
+      "source_version": "0d76e38a",
+      "content_hash": "cf6d1adb3388ba0d2c8386fc6d8fffdb55a4aa7b9dae5324c1e996bb6ea7561f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-23T17:20:52.359Z"
+      "persisted_at": "2026-11-27T22:54:49.822Z"
     },
     "rule-8907": {
       "learning_id": "rule-8907",
@@ -291404,9 +291419,9 @@
       "title": "Technical Construction Intelligence: apache-shardingsphere-learnings Core Invariants",
       "repository": "apache-shardingsphere-learnings",
       "source_version": "HEAD",
-      "content_hash": "3617aa422064860e35d94577881f971d4c7b34daa0c553be0b673448bd071309",
+      "content_hash": "cddaea0578ee4ec9e5e17f4690abd1d3f19e6fd323005c082dff3a39d8ba437e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T23:26:56.656Z"
+      "persisted_at": "2026-11-27T22:55:28.291Z"
     },
     "rule-9152": {
       "learning_id": "rule-9152",
@@ -368113,6 +368128,84 @@
       "content_hash": "29332af021f8e3ce311584ec9059a281c3d87ab78bc5b92ca16b6da6b21a6652",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T22:46:02.757Z"
+    },
+    "rule-10980": {
+      "learning_id": "rule-10980",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10980,
+      "title": "Ignore sitemaps without a root element instead of raising StopIteration",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "d2052b86",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T22:54:38.953Z"
+    },
+    "candidate_directive-ignore-sitemaps-without-a-root-element-instead-of-raising-stopiteration": {
+      "item_id": "candidate_directive-ignore-sitemaps-without-a-root-element-instead-of-raising-stopiteration",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XPD0-ignore-sitemaps-without-a-root-element-instead-of-raising-stopiteration.md",
+      "title": "Ignore sitemaps without a root element instead of raising StopIteration",
+      "repository": "scrapy-scrapy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bd5ce9e252f644d2d2ad08e20ec309e8a1ee21557d1b0bd32e2bd15a7d760842",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T22:55:25.871Z"
+    },
+    "rule-10981": {
+      "learning_id": "rule-10981",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10981,
+      "title": "Support index DDL parsing across SQL dialects",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "0d76e38a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T22:54:49.035Z"
+    },
+    "candidate_directive-support-index-ddl-parsing-across-sql-dialects": {
+      "item_id": "candidate_directive-support-index-ddl-parsing-across-sql-dialects",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XR1I-support-index-ddl-parsing-across-sql-dialects.md",
+      "title": "Support index DDL parsing across SQL dialects",
+      "repository": "apache-shardingsphere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "649108e395ef37ebe0637695b6e3aebdf756f2154a6f585dc85b8ba22c7bdf1a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T22:55:28.049Z"
+    },
+    "rule-10982": {
+      "learning_id": "rule-10982",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10982,
+      "title": "write nested JSONL values as JSON text (#5125 follow-up)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "23809a00",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T22:54:50.572Z"
+    },
+    "candidate_directive-write-nested-jsonl-values-as-json-text-5125-follow-up": {
+      "item_id": "candidate_directive-write-nested-jsonl-values-as-json-text-5125-follow-up",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XSIN-write-nested-jsonl-values-as-json-text-5125-follow-up.md",
+      "title": "write nested JSONL values as JSON text (#5125 follow-up)",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3a6774fae843bca7f4b9723e0fe30760d4a6950b6e3c833dd65035d7e34b75ce",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-27T22:55:29.962Z"
     }
   },
   "ai-builder-brain": {

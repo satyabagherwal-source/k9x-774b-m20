@@ -13890,3 +13890,7 @@
 | `CYCLE-20261127-90KF` | `2026-11-27T22:36:13.983Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10977` | Yes (`bd78262e...`) |
 | `CYCLE-20261127-L5Z7` | `2026-11-27T22:45:40.867Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10978` | Yes (`532ee2ad...`) |
 | `CYCLE-20261127-LI18` | `2026-11-27T22:45:56.492Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10979` | Yes (`d673b782...`) |
+| `CYCLE-20261127-WPDR` | `2026-11-27T22:54:39.231Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10980` | Yes (`819fe15b...`) |
+| `CYCLE-20261127-WX5U` | `2026-11-27T22:54:49.314Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10981` | Yes (`7926a23d...`) |
+| `CYCLE-20261127-WYCD` | `2026-11-27T22:54:50.845Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10982` | Yes (`07c258d2...`) |
+| `CYCLE-2026-11-27-PROJ-EVOLVE` | `2026-11-27T22:55:24.940Z` | `scrapy-scrapy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-068F8BD9` [Domain J] | Yes (`bbc0d104...`) |

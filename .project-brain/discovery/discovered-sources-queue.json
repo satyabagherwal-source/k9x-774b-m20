@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T22:46:00.713Z",
+  "updated_at": "2026-11-27T22:55:29.466Z",
   "stats": {
-    "total_discovered": 10594,
-    "approved_pending_harvest": 10056,
+    "total_discovered": 10607,
+    "approved_pending_harvest": 10068,
     "harvested_count": 0,
-    "rejected_count": 538,
+    "rejected_count": 539,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10064,
-      "OFFICIAL_DOCUMENTATION": 292,
+      "COMMUNITY_AND_EXPERT": 10076,
+      "OFFICIAL_DOCUMENTATION": 293,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
       "SECURITY_ADVISORIES": 57,
@@ -229329,6 +229329,285 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
         "fileName": "kucherenko-jscpd-learnings.md"
+      }
+    },
+    "SRC-BC9A68A7F6B4": {
+      "id": "SRC-BC9A68A7F6B4",
+      "url": "http://www.example.com/sitemap.xml",
+      "title": "http://www.example.com/sitemap.xml",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-27T22:55:25.443Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
+        "fileName": "scrapy-scrapy-learnings.md"
+      }
+    },
+    "SRC-81B3B8F2D350": {
+      "id": "SRC-81B3B8F2D350",
+      "url": "https://www.postgresql.org/docs/18/sql-alterindex.html",
+      "title": "https://www.postgresql.org/docs/18/sql-alterindex.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:26.712Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-81FA822077F7": {
+      "id": "SRC-81FA822077F7",
+      "url": "https://www.postgresql.org/docs/18/sql-createindex.html",
+      "title": "https://www.postgresql.org/docs/18/sql-createindex.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:26.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-9C1C0878D6B7": {
+      "id": "SRC-9C1C0878D6B7",
+      "url": "https://docs.opengauss.org/en/docs/latest/sql_reference/alter_index.html",
+      "title": "https://docs.opengauss.org/en/docs/latest/sql_reference/alter_index.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:26.886Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-D4C039960011": {
+      "id": "SRC-D4C039960011",
+      "url": "https://shardingsphere.apache.org/community/en/involved/contribute",
+      "title": "https://shardingsphere.apache.org/community/en/involved/contribute",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:27.019Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-36FD155C41FD": {
+      "id": "SRC-36FD155C41FD",
+      "url": "https://github.com/apache/shardingsphere/pull/39877",
+      "title": "https://github.com/apache/shardingsphere/pull/39877",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:27.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-6F2B9242D83A": {
+      "id": "SRC-6F2B9242D83A",
+      "url": "https://github.com/apache/shardingsphere/pull/39914",
+      "title": "https://github.com/apache/shardingsphere/pull/39914",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:27.282Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-44DF717F5A8E": {
+      "id": "SRC-44DF717F5A8E",
+      "url": "https://github.com/apache/shardingsphere/pull/39917",
+      "title": "https://github.com/apache/shardingsphere/pull/39917",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:27.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-ACC079EB101A": {
+      "id": "SRC-ACC079EB101A",
+      "url": "https://github.com/apache/shardingsphere/pull/40557",
+      "title": "https://github.com/apache/shardingsphere/pull/40557",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:27.457Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-5735DA7C0FB7": {
+      "id": "SRC-5735DA7C0FB7",
+      "url": "https://github.com/apache/shardingsphere/pull/38386",
+      "title": "https://github.com/apache/shardingsphere/pull/38386",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:27.544Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-4F5A9A133C97": {
+      "id": "SRC-4F5A9A133C97",
+      "url": "https://github.com/apache/shardingsphere/pull/38411",
+      "title": "https://github.com/apache/shardingsphere/pull/38411",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:27.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-5EB76A83242B": {
+      "id": "SRC-5EB76A83242B",
+      "url": "https://github.com/apache/shardingsphere/pull/39276",
+      "title": "https://github.com/apache/shardingsphere/pull/39276",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:27.719Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-98FD5E2D466E": {
+      "id": "SRC-98FD5E2D466E",
+      "url": "https://github.com/dathere/qsv/pull/5127",
+      "title": "https://github.com/dathere/qsv/pull/5127",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T22:55:29.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

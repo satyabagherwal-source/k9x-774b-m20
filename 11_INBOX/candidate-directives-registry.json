@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:46:04.038Z",
+  "last_updated": "2026-11-27T22:55:29.962Z",
   "directives": [
     {
       "id": "CD-001",
@@ -72996,6 +72996,57 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0B16EC-renderer-refuse-last-error-reads-off-the.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-XPD0",
+      "directive_title": "Ignore sitemaps without a root element instead of raising StopIteration",
+      "source_repo": "scrapy-scrapy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XPD0-ignore-sitemaps-without-a-root-element-instead-of-raising-stopiteration.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-XR1I",
+      "directive_title": "Support index DDL parsing across SQL dialects",
+      "source_repo": "apache-shardingsphere-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XR1I-support-index-ddl-parsing-across-sql-dialects.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-XSIN",
+      "directive_title": "write nested JSONL values as JSON text (#5125 follow-up)",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XSIN-write-nested-jsonl-values-as-json-text-5125-follow-up.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-7DCB71",
+      "directive_title": "Support index DDL parsing across SQL dialects",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "apache-shardingsphere",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7DCB71-support-index-ddl-parsing-across-sql-dia.md",
+      "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-REV-05FA97",
+      "directive_title": "write nested JSONL values as JSON text (#5125 follow-up)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dathere-qsv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-05FA97-write-nested-jsonl-values-as-json-text-5.md",
       "staged_date": "2026-11-27"
     }
   ]

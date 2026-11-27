@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T22:45:56.512Z",
-  "total_cycles_completed": 13182,
-  "total_learnings_persisted": 13182,
-  "total_rules_promoted": 11894,
+  "last_updated": "2026-11-27T22:54:50.863Z",
+  "total_cycles_completed": 13185,
+  "total_learnings_persisted": 13185,
+  "total_rules_promoted": 11897,
   "history": [
-    {
-      "timestamp": "2026-11-27T05:02:38.970Z",
-      "repository": "apache/maka",
-      "learningId": "learn-github-apache-maka",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:11:13.884Z",
-      "repository": "LoyalAI/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T05:11:20.915Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T05:11:29.003Z",
       "repository": "kividbio/kividb",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-27T22:45:56.512Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:54:39.249Z",
+      "repository": "scrapy/scrapy",
+      "learningId": "learn-github-scrapy-scrapy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:54:49.334Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T22:54:50.863Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

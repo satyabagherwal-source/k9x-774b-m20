@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T22:45:56.516Z",
+  "last_updated": "2026-11-27T22:54:50.866Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "fd5c67d74181ffa86fecd8ab1f1d016c713126446d3dc30f65ec032a92079550",
-      "verified_at": "2026-11-27T21:39:09.145Z",
+      "content_hash": "07c258d242460e69131ad13ab01c7afff9bcf3255b1815a3aa72f8aba0d0a0cf",
+      "verified_at": "2026-11-27T22:54:50.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T21:39:09.145Z"
+      "last_updated": "2026-11-27T22:54:50.865Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "08fc35df2f26931698ef239fdcc1c85646307f6136947593db0d284e57621b8c",
-      "verified_at": "2026-11-27T03:44:02.719Z",
+      "content_hash": "7926a23d6f81649ed8572e6cb9627441759b4a7abe2b3b508d47ea62cfcfb3ea",
+      "verified_at": "2026-11-27T22:54:49.337Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-27T03:44:02.719Z"
+      "last_updated": "2026-11-27T22:54:49.337Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -13671,14 +13671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapy-scrapy",
-      "content_hash": "d80755e52f6d22a0e3e61beaf69a7dde748fd0e47bed8b3100d917d04e36ed35",
-      "verified_at": "2026-11-24T14:41:50.182Z",
+      "content_hash": "819fe15b21fa3a37662f94ccd7050bb0f47b0119cac0ac86c4f6bee9b9fec65d",
+      "verified_at": "2026-11-27T22:54:39.252Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T14:41:50.182Z"
+      "last_updated": "2026-11-27T22:54:39.252Z"
     },
     "krzysztofzablocki/Inject": {
       "repository": "krzysztofzablocki/Inject",

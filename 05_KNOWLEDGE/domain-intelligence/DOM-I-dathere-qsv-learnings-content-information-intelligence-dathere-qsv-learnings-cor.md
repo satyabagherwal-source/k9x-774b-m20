@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T22:48:43.190Z",
+  "timestamp": "2026-11-27T22:55:29.804Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T22:48:43.190Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T22:55:29.804Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere-qsv-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `778227f6`  
+> **Source Version**: `23809a00`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T22:48:37.260Z  
+> **Timestamp**: 2026-11-27T22:54:49.537Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T22:48:37.254Z  
+> **Harvest Timestamp**: 2026-11-27T22:54:49.531Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3838 stars
+- **Stars / Engagement**: 3877 stars
 
 ---
 
@@ -479,8 +479,14 @@ export function spawnWithTimeout(options: SpawnWithTimeoutOptions): Promise<Spaw
  * Shared utility functions for QSV MCP Server
  */
 
+import { realpathSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
+import {
+  SENSITIVE_HOME_DIRS,
+  SENSITIVE_HOME_FILES,
+  normalizeForCaseFs,
+} from "./tool-constants.js";
 
 /**
  * Expand tilde (~) in paths to the user's home directory
@@ -734,6 +740,55 @@ export function reservedCachePathError(outputPath: string): string {
   );
 }
 
+/**
+ * Return the SENSITIVE_HOME_DIRS / SENSITIVE_HOME_FILES entry that `target`
+ * falls under, or undefined if it is not protected. `target` must already be
+ * realpath'd.
+ *
+ * Each protected path is compared in BOTH its logical home-relative form and
+ * its realpath'd form: a symlinked `~/.ssh -> /private/secret` would otherwise
+ * slip through, since `target` resolves to /private/secret while the
+ * unresolved blocked path stays ~/.ssh. (roborev commit 49361f5 review)
+ */
+export function findSensitiveHomeEntry(target: string): string | undefined {
+  const home = homedir();
+  let canonHome: string;
+  try {
+    canonHome = realpathSync.native(home);
+  } catch {
+    canonHome = home;
+  }
+  const normTarget = normalizeForCaseFs(target);
+  const sep = process.platform === "win32" ? "\\" : "/";
+  const blockedForms = (entry: string): Set<string> => {
+    const logical = resolve(canonHome, entry);
+    // A missing entry still has a canonical form via its nearest existing
+    // ancestor: with ~/.config -> /dotfiles/config and no ~/.config/autostart
+    // yet, a write lands in /dotfiles/config/autostart.
+    let ancestor = logical;
+    const missing: string[] = [];
+    let canonical = logical;
+    for (;;) {
+      try {
+        canonical = join(realpathSync.native(ancestor), ...missing);
+        break;
+      } catch {
+        const parent = dirname(ancestor);
+        if (parent === ancestor) break;
+        missing.unshift(basename(ancestor));
+        ancestor = parent;
+      }
+    }
+    return new Set([normalizeForCaseFs(logical), normalizeForCaseFs(canonical)]);
+  };
+  for (const dir of SENSITIVE_HOME_DIRS) {
+    for (const blocked of blockedForms(dir)) {
+      if (normTarget === blocked || normTarget.startsWith(blocked + sep)) {
+        return dir;
+      }
+    }
+  }
+  for 
 ```
 
 ### Core Architecture Module: `.claude/skills/src/wink-nlp-utils.d.ts`
@@ -2231,11 +2286,11 @@ mod tests;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4829** (2026-10-16): **schema: --enum-threshold ignored when no column is under it (every column gets a full enum)**
-  *Symptoms*: ## Summary  `qsv schema --enum-threshold N` is supposed to limit `enum` constraints to columns with at most N distinct values. But when **no** column has between 2 and N distinct values, **every** column gets a complete `enum`, however many distinct values it has. When at least one column does qualify, the threshold works as documented. So whether a column gets an `enum` depends on the *other* columns in the file.  Found while reviewing #4827.  ## Repro (qsv 25.0.0 / master)  ```sh # every column is above the threshold -> every column gets a full enum { echo id,txt; for i in $(seq 1 80); do echo "$i,v$i"; done; } > hc.csv qsv schema hc.csv --enum-threshold 50 jq -c '.properties|map_values(.enum|length)' hc.csv.schema.json # {"id":80,"txt":80}  # add one column with 3 distinct values -> the threshold suddenly applies { echo id,txt,cat; for i in $(seq 1 80); do echo "$i,v$i,c$((i%3))"; done; } > mx.csv qsv schema mx.csv jq -c '.properties|map_values(.enum|length)' mx.csv.schema.json # {"id":0,"txt":0,"cat":3} ```  Similarly, `--enum-threshold 1` (where no column with more than one value can qualify) enumerates every column instead of none.  ## Cause  `build_low_cardinality_column_selector_arg` returns `""` when no column qualifies. `get_unique_values` then calls `SelectColumns::parse("")`, which means "select all columns", so `frequency` gathers values for every column, and an `enum` is emitted for each one (80 values each in the first repro, even though the threshold is 50).  
+- **Issue #5123** (2026-11-27): **pivotp: default --values can produce an output name that collides with an --index column ("Duplicate: column with name ... has more than one occurrence")**
+  *Symptoms*: ## Problem  Without `--values`, every remaining column is a value column, and Polars names the outputs `<value col>_<pivot value>`. If one of those names equals an `--index` column name, the pivot fails:  ```console $ qsv readstat --sentinels-as value resources/test/readstat_sentinels.sav -o survey.csv $ cat survey.csv id,income,income_null,rating,rating_null,name,name_null,plain 1.0,1500.5,,3.0,,Ana,,1.0 2.0,,99,,8,,NA,2.0 3.0,,950,4.0,,Cy,,3.0 4.0,,,,9,,,4.0 $ qsv pivotp rating_null --index name_null survey.csv Polars error: Duplicate(ErrString("column with name 'name_null' has more than one occurrence")) ```  The value column `name` with the pivot value `null` (the empty `rating_null` cells) produces `name_null`, the name of the `--index` column. `readstat --sentinels-as` creates `<col>_null` columns next to `<col>`, so this layout is common for files converted from SPSS/Stata/SAS.  With explicit `--values`, it works:  ```console $ qsv pivotp rating_null --index name_null --values income survey.csv name_null,null,8,9 ... ```  ## Expected  The output column names never collide with the index columns. For example, qsv could detect the collision and add a suffix to the generated names, or stop with a qsv error that names the colliding column and suggests `--values`.  Found while writing the wiki page "qsv for SAS / Stata / SPSS Users". qsv 29.0.0, master `5feb8f1ec`.
 
-- **Issue #4783** (2026-10-10): **validate --split-ragged: compressed inputs write split files to the current dir, and can overwrite another input's**
-  *Symptoms*: `validate --split-ragged` writes `<input>.valid`, `<input>.invalid` and `<input>.validation-errors.tsv` next to a plain input. For `.sz` and `.zip` inputs, which `process_input` unpacks into a temp dir, it writes them into the **current directory** instead, under the input's path relative to that temp dir. So where the files land depends on the input's format, and they can collide.  ### Reproduce (qsv at `257ae7b38`) Split files land in three different places: ```sh mkdir jan feb mar run printf 'x,y\n1,2\n3\n' > jan/data.csv; cp jan/data.csv feb/data.csv; cp jan/data.csv mar/data.csv qsv snappy compress feb/data.csv -o feb/data.csv.sz; rm feb/data.csv (cd mar && zip -q data.zip data.csv && rm data.csv) cd run && qsv validate --split-ragged ../jan/data.csv ../feb/data.csv.sz ../mar/data.zip ``` ``` jan/data.csv.valid, .invalid, .validation-errors.tsv        # plain: next to the input run/data.csv.valid, .invalid, .validation-errors.tsv        # .sz: cwd run/data/data.csv.valid, .invalid, .validation-errors.tsv   # zip: cwd/<archive name>/ ``` A plain file and a `.sz` file in the same folder **overwrite each other's split files, silently**: ```sh printf 'x,y\n1,2\n3\n' > data.csv printf 'x,y\n5,6\n7,8,9\n' > other.csv qsv snappy compress other.csv -o data.csv.sz qsv validate --split-ragged data.csv data.csv.sz cat data.csv.valid      # x,y / 5,6        ← data.csv's 1,2 is gone cat data.csv.invalid    # x,y / 7,8,9      ← data.csv's 3 is gone ``` Both runs print `Wrote data.csv.
+- **Issue #5122** (2026-11-27): **pivotp: --agg len without --values fails with a raw Polars error when no columns remain**
+  *Symptoms*: ## Problem  When every column is used as `<on-cols>` or `--index`, there is nothing left for `--values` to default to, and `pivotp` stops with a raw Polars error instead of a qsv message:  ```console $ printf 'region,sex\nN,M\nN,F\nS,M\n' > ct.csv $ qsv pivotp region --index sex --agg len ct.csv Polars error: InvalidOperation(ErrString("`pivot` called without `values` columns.")) ```  The help says `--values` defaults to "all remaining columns not specified on --on and --index", and that `len` is a "Count of values". For a crosstab-style count (SPSS `CROSSTABS`, Stata `tabulate a b`) a user expects counts here.  The form that works today is to repeat the `on` column as the values:  ```console $ qsv pivotp region --index sex --values region --agg len ct.csv ```  ## Expected  One of: - with `--agg len` and no remaining columns, count rows per index/on combination; or - a clear qsv error that names the problem and suggests `--values <on-col>`.  Found while writing the wiki page "qsv for SAS / Stata / SPSS Users". qsv 29.0.0, master `5feb8f1ec`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2252,27 +2307,30 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `778227f6` (2026-11-21)
-**Commit Message**: fix(mcp): ignore output_file with a note for commands that can't write one (#5092)
+### Incident Patch 1: `23809a00` (2026-11-27)
+**Commit Message**: fix: write nested JSONL values as JSON text (#5125 follow-up) (#5127)
 
-* fix(mcp): ignore output_file with a note instead of refusing it
+* fix: write nested JSONL values as JSON text; qualify sqlp help (#5125 follow-up)
 
-For skills with no output option, output_file is dropped and the result
-qsv printed is returned with a note, so a client that passes output_file
-by habit gets the answer on the first try.
+#5125 made the JSONL/NDJSON input conversion infer its schema from the
+whole file. A key that first appears late now becomes a column, but if its
+value is an object or array, the CSV writer rejected the nested column:
+"CSV format does not support nested data". On 29.0.0 such a key was
+silently dropped, so this was a regression from #5125. A nested value in
+the first rows already failed on 29.0.0.
+
+The conversion now infers once and, when a column is nested (struct, list
+or array), re-reads the file with an explicit schema that types those
+columns as String, so they hold the value's JSON text (as sqlp's
+read_ndjson() schema_overrides => VARCHAR does). A .pschema.json still
+decides the columns.
+
+sqlp help: only a query that selects a late read_ndjson() key fails, and a
+.pschema.json can type a column as a date before CAST runs.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(mcp): drop an ignored output_file before path checks; note in its own block
-
-Addresses roborev job 6705: a missing parent dir or reserved name in an
-ignored output_file no longer fails the call, the note no longer breaks
-JSON output (count --json), and it no longer claims nothing was written
-to that path.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(mcp): cite #5092 in CHANGELOG [skip ci]
+* docs(changelog): cite #5127
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
@@ -2280,395 +2338,188 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-sqlp.json` (modified, +2/-2)
 ```diff
-@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -117,7 +117,7 @@
+       {
+         "flag": "--try-parsedates",
+         "type": "flag",
+-        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
++        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+       },
+       {
+         "flag": "--wnull-value",
+@@ -249,7 +249,7 @@
+       "command": "qsv sqlp SKIP_INPUT \"select * from read_csv('data.csv', separator => ';', comment_prefix => '#', has_header => false)\""
+     },
+     {
+-      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file. By default only the first 100 rows are used, and a key that first appears later fails the query with \"extra field in NDJSON data\":",
++      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so keys that first appear late can be queried. By default only the first 100 rows are used, and selecting a key that first appears later (e.g. with select *) fails with \"extra field in NDJSON data\":",
+       "command": "qsv sqlp SKIP_INPUT \"select * from read_ndjson('events.jsonl', infer_schema_length => NULL)\""
+     },
+     {
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `sqlp`, `joinp --sql-filter`, `profile`, `scoresql`: new `QSV_SQL_DISABLE_FILE_WRITES` environment variable. When set, Polars SQL's `COPY ... TO` fails with "writing files is disabled by QSV_SQL_DISABLE_FILE_WRITES" and writes nothing; reading files and `--output` are unaffected. Without it, `COPY ... TO` can write any path the query names. The qsv MCP server sets it in plugin mode (Cowork and the Claude Code plugin). ([#5081](https://github.com/dathere/qsv/pull/5081))
  
  ### Fixed
- - **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
--- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
-+- **`output_file` no longer loses the result of commands that can't write one.** Passing it to `count`, `headers`, `split` or another skill without an output option reported "Successfully wrote output to" a file qsv never wrote, and dropped what qsv printed. The server now ignores `output_file` for these commands, returns the result and adds a note saying so in a separate content block (#5089, #5092).
- - **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
- 
- ## [29.0.1] - 2026-11-21
++- JSONL/NDJSON inputs: object and array values are written as their JSON text (e.g. `{"k": 1}`, `["a", "b"]`), so a file with nested values converts instead of failing with "CSV format does not support nested data". This also covers a nested key that first appears after the first 100 rows, which #5125's whole-file inference would otherwise have turned into that error (before #5125 such a key was silently dropped). A `.pschema.json` still decides the columns. The `sqlp` help also notes that only a query selecting a late `read_ndjson()` key fails, and that a `.pschema.json` can type a column as a date before `CAST` runs. ([#5127](https://github.com/dathere/qsv/pull/5127))
+ - `pivotp`: when every column was a pivot or `--index` column, the default `--values` (all remaining columns) was empty, and the pivot failed with a raw Polars error ("`pivot` called without `values` columns"). `pivotp region --index sex` now counts the rows of each cell, as `--values region --agg len` already did. Any aggregation other than `len` (the default here) stops with an error asking for `--values`. Fixes [#5122](https://github.com/dathere/qsv/issues/5122). ([#5124](https://github.com/dathere/qsv/pull/5124))
+ - `pivotp`: a generated pivot column could take the name of an `--index` column, and the pivot failed with "Duplicate: column with name '...' has more than one occurrence". Generated columns are named `<value column><--col-separator><pivot value>` (or just the pivot value with one value column), so `readstat --sentinels-as` output, where `name` sits next to `name_null`, hit this when `name_null` was the `--index`, `name` a value column, and the pivot column had empty cells. Such a generated column is now renamed to the first free `<name>_<n>` (from 2), with a warning on stderr (unless `--quiet`). Two generated names that coincide (e.g. `a_b` × `c` and `a` × `b_c`) still stop the pivot, now with an error suggesting `--col-separator` or `--values`. Fixes [#5123](https://github.com/dathere/qsv/issues/5123). ([#5124](https://github.com/dathere/qsv/pull/5124))
+ - `joinp`: `--nulls` did the opposite of its help for text keys. Empty text join keys matched without `--nulls` and stopped matching with it, and empty numeric keys never matched. In the standard joins (not cross, non-equi or asof), `--nulls` now makes empty keys match each other, including a quoted `""` and an unquoted empty. Without it they never match, whatever the key's type. Outer joins still output such rows, unmatched, with their key values unchanged. `--ignore-leading-zeros` (`-z`) now keeps a key's last zero, so `000` becomes `0` and still matches `0`, but no longer becomes empty and matches an empty key. The `--ignore-errors` help now says that in the standard joins, a key that can't be parsed, like an empty one, matches only with `--nulls`. **Behavior change:** an inner join on a text key no longer pairs rows whose keys are both empty unless `--nulls` is given. ([#5116](https://github.com/dathere/qsv/pull/5116))
 ```
 
-**File**: `.claude/skills/src/tool-handlers.ts` (modified, +14/-7)
+**File**: `docs/help/sqlp.md` (modified, +4/-3)
 ```diff
-@@ -769,6 +769,16 @@ export async function handleToolCall(
-       return errorResult("Error: input_file parameter is required (unless using help=true to view command documentation)");
-     }
+@@ -258,8 +258,9 @@ qsv sqlp SKIP_INPUT "select * from read_csv('data.csv', separator => ';', commen
  
-+    // qsv would never write it, and the result would claim it was written and
-+    // drop what qsv printed; drop it before path checks that could reject it
-+    let ignoredOutputNote = "";
-+    if (outputFile && !isHelpRequest && !skillTakesOutputFile(skill)) {
-+      ignoredOutputNote =
-+        `Note: qsv ${commandName} has no output file option, so the output_file parameter was ignored. ` +
-+        `Commands that write their own files take a destination parameter (see help=true).`;
-+      outputFile = undefined;
-+    }
+ > read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
+ > infer_schema_length, ignore_errors and include_file_paths.
+-> Infer the schema from the whole file. By default only the first 100 rows are used, and
+-> a key that first appears later fails the query with "extra field in NDJSON data":
++> Infer the schema from the whole file, so keys that first appear late can be queried.
++> By default only the first 100 rows are used, and selecting a key that first appears
++> later (e.g. with select *) fails with "extra field in NDJSON data":
+ 
+ ```console
+ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
+@@ -365,7 +366,7 @@ qsv sqlp --help
+ 
+ | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type | Description | Default |
+ |--------|------|-------------|--------|
+-| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
++| &nbsp;`‑‑try‑parsedates`&nbsp; | flag | Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead. |  |
+ | &nbsp;`‑‑infer‑len`&nbsp; | integer | The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: can be slow). | `10000` |
+ | &nbsp;`‑‑cache‑schema`&nbsp; | flag | Create and cache Polars schema JSON files. If the schema file/s exists, it will load the schema instead of inferring it (ignoring --infer-len) and attempt to use it for each corresponding Polars "table" with the same file stem. If specified and the schema file/s do not exist, it will check if a stats cache is available. If so, it will use it to derive a Polars schema and save it. If there's no stats cache, it will infer the schema using --infer-len and save the inferred schemas. Date columns in formats Polars can't parse are saved as String, as are day-first dates unless QSV_PREFER_DMY is set. Each schema file is named after the full input file name, with ".pschema.json" appended (data.csv's Polars schema file will be data.csv.pschema.json) NOTE: You can edit the generated schema files to change the Polars schema and cast columns to the desired data type. Float columns are saved as Float64. For example, to save memory you can narrow a Float64 column to Float32 by changing its "Float64" type to "Float32" in the schema file, at the cost of precision (Float32 holds only about 7 significant digits). You can also cast a Float to a Decimal with a desired precision and scale. (e.g. instead of "Float64", use {"Decimal": [10, 3]}) The valid types are: `Boolean`, `UInt8`, `UInt16`, `UInt32`, `UInt64`, `Int8`, `Int16`, `Int32`, `Int64`, `Float32`, `Float64`, `String`, `Date`, `Datetime`, `Duration`, `Time`, `Null`, `Categorical`, `Decimal` and `Enum`. |  |
+ | &nbsp;`‑‑streaming`&nbsp; | flag | Write the query result as it is computed, batch by batch, instead of collecting the whole result in memory first. Use this when the result is too big for memory. Works with the csv, jsonl, parquet and arrow formats; json and avro output still collect the whole result. Queries already run on Polars' streaming engine either way. An --output file is written beside its target and only moved into place if the query succeeds. Overwriting an existing file copies the result into it, so it keeps its owner, group, mode and links; that briefly needs disk space for two copies. On stdout, rows are sent as they are computed, so a query that fails part-way leaves its output cut short; check sqlp's exit code before using it. |  |
+```
+
+**File**: `src/cmd/sqlp.rs` (modified, +8/-6)
+```diff
+@@ -137,8 +137,9 @@ Examples:
+ 
+   # read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides,
+   # infer_schema_length, ignore_errors and include_file_paths.
+-  # Infer the schema from the whole file. By default only the first 100 rows are used, and
+-  # a key that first appears later fails the query with "extra field in NDJSON data":
++  # Infer the schema from the whole file, so keys that first appear late can be queried.
++  # By default only the first 100 rows are used, and selecting a key that first appears
++  # later (e.g. with select *) fails with "extra field in NDJSON data":
+   $ qsv sqlp SKIP_INPUT "select * from read_ndjson('events.jsonl', infer_schema_length => NULL)"
+   # Type a column, and read a nested object as its JSON text. CSV output can't hold nested
+   # data, so this avoids the "CSV format does not support nested data" error:
+@@ -224,10 +225,11 @@ sqlp options:
+                               that you may want to try to set `--ignore-errors` to relax
+                               the CSV parsing of dates.
+                               Polars reads slash, dash and dot dates as day-first, so
+-                              01/05/2024 becomes 2024-05-01. Without this option, the
+-                              column stays a string, and CAST(col AS DATE) of a string
+-                              reads only year-first dates (2024-05-01, 2024/5/1): it
+-                              fails on 01/05/2024, and TRY_CAST returns NULL.
++                              01/05/2024 becomes 2024-05-01. Without this option (and
++                              without a .pschema.json that types the column as a date),
++                              the column stays a string, and CAST(col AS DATE) of a
++                              string reads only year-first dates (2024-05-01, 2024/5/1):
++                              it fails on 01/05/2024, and TRY_CAST returns NULL.
+                               For month-first (US) dates, leave this off and use
+                               STRPTIME(col, '%m/%d/%Y') in the query instead.
+     --infer-len <arg>         The number of rows to scan when inferring the schema of the CSV.
+```
+
+**File**: `src/util/special_format.rs` (modified, +23/-3)
+```diff
+@@ -333,11 +333,13 @@ pub fn convert_special_format(
+     format: SpecialFormat,
+     delim: u8,
+ ) -> Result<PathBuf, Box<dyn std::error::Error>> {
++    use std::sync::Arc;
 +
-     // Resolve file paths using filesystem provider if available (skip for help requests)
-     if (filesystemProvider && inputFile) {
-       try {
-@@ -866,13 +876,6 @@ export async function handleToolCall(
-       return errorResult(`Error: output_file can't be the input file for ${commandName}; it would be emptied.`);
-     }
+     use polars::{
+         io::avro::AvroReader,
+         prelude::{
+-            CsvWriter, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
+-            ParquetReader, PlRefPath, SerReader, SerWriter,
++            CsvWriter, DataType, IpcReader, JsonReader, LazyFileListReader, LazyJsonLineReader,
++            ParquetReader, PlRefPath, Schema, SerReader, SerWriter,
+         },
+     };
  
--    // qsv would never write it, yet the result would claim it was written
--    if (outputFile && !isHelpRequest && !skillTakesOutputFile(skill)) {
--      return errorResult(
--        `Error: qsv ${commandName} has no output file option, so output_file can't be used. ` +
--          `It writes its own files; set its destination parameter instead (see help=true).`,
--      );
--    }
- 
-     // DuckDB/Parquet-first interception for sqlp queries. The orchestration
-     // (multi-table detection, Parquet conversion, DuckDB attempt, fallback
-@@ -1000,6 +1003,10 @@ export async function handleToolCall(
-           console.error(`[MCP Tools] Could not append moarstats note to result: unexpected content structure`);
-         }
-       }
-+      // a separate block keeps qsv's output (e.g. count --json) parseable
-+      if (ignoredOutputNote) {
-+        formattedResult.content.push({ type: "text", text: ignoredOutputNote });
-+      }
-       // Attach pipeline metadata for reproducibility manifest.
-       // Note: formatToolResult can return isError (e.g., temp file I/O failure)
-       // even though the qsv command itself succeeded — derive success from the result.
-```
-
-**File**: `.claude/skills/tests/qsv-integration.test.ts` (modified, +22/-7)
-```diff
-@@ -1130,7 +1130,7 @@ test('qsv split succeeds although it writes only its own files', { skip: !QSV_AV
-   }
- });
- 
--test('output_file is refused for a command that has no output file option', { skip: !QSV_AVAILABLE }, async () => {
-+test('output_file is ignored, with a note, for a command that has no output file option', { skip: !QSV_AVAILABLE }, async () => {
-   const testDir = await createTestDir();
-   const loader = new SkillLoader();
-   const executor = new SkillExecutor();
-@@ -1139,18 +1139,33 @@ test('output_file is refused for a command that has no output file option', { sk
-     await loader.loadAll();
-     const csvPath = await createTestCSV(testDir, 'test.csv', 'id,name\n1,a\n2,b\n');
-     const provider = new FilesystemResourceProvider({ workingDirectory: testDir, allowedDirectories: [testDir] });
-+    const ignored = join(testDir, 'out.csv');
- 
--    const result = await handleToolCall(
--      'qsv_split',
--      { input_file: csvPath, outdir: join(testDir, 'parts'), size: 1, output_file: join(testDir, 'out.csv') },
-+    // a missing parent dir in the ignored path must not fail the call
-+    const count = await handleToolCall(
-+      'qsv_count',
-+      { input_file: csvPath, json: true, output_file: join(testDir, 'nope', 'out.csv') },
-       executor,
-       loader,
-       provider,
-     );
-+    assert.ok(!count.isError, count.content[0].text);
-+    assert.strictEqual(JSON.parse(count.content[0].text ?? '').count, 2);
-+    assert.match(count.content[1]?.text ?? '', /output_file parameter was ignored/);
- 
--    assert.ok(result.isError);
--    assert.match(result.content[0].text ?? '', /has no output file option/);
--    await assert.rejects(stat(join(testDir, 'parts')));
-+    const outdir = join(testDir, 'parts');
-+    const split = await handleToolCall(
-+      'qsv_split',
-+      { input_file: csvPath, outdir, size: 1, output_file: ignored },
-+      executor,
-+      loader,
-+      provider,
-+    );
-+    assert.ok(!split.isError, split.content[0].text);
-+    assert.match(split.content[0].text ?? '', /qsv split completed/);
-+    assert.match(split.content[1]?.text ?? '', /output_file parameter was ignored/);
-+    assert.strictEqual((await readdir(outdir)).length, 2);
-+    await assert.rejects(stat(ignored));
-   } finally {
-     await cleanupTestDir(testDir);
-   }
-```
-
----
-
-### Incident Patch 2: `76048351` (2026-11-21)
-**Commit Message**: fix(synthesize): cap ordered members only by the members a row leaves filled (#5091)
-
-* fix(synthesize): cap ordered members only by the members a row leaves filled
-
-Each member's upper bound was capped by every later member's, even in
-rows where those are blank, so a blank close date held every open case's
-opened date at or below the last close date. Caps are now computed per
-blank pattern from the members it leaves filled; a blank member keeps
-the chain in order but has no range of its own. The pattern is drawn
-before the values, so a chain with one pattern still takes no extra
-draw. (roborev 6697)
-
-Also regenerate the help files the README synthesize entry feeds, and
-say that the relationships kept are the ones a dictionary declares or
---discover-relationships finds. (roborev 6700)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs: cite #5091 in CHANGELOG [skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(synthesize): don't round a blank ordered member or cap by its grid
-
-A blank member prints nothing, so its grid no longer floors the cap it
-carries back from the next filled member, nor rounds the chain's value
-forward. An Integer member blank between
-
-**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "qsv-synthesize",
-   "version": "29.0.0",
--  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic fake-rs fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.",
-+  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type, and keeps the relationships between columns it declares (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`).",
-   "category": "generation",
-   "command": {
-     "subcommand": "synthesize",
-```
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
- 
- ### Changed
--- `synthesize`: `ordered` relationship members now keep their own blanks. Before, a chain was blank whole when its anchor was and filled whole otherwise, so a follower blank more often than its anchor (a `closed_date` left blank while a case is open) was never blank in the output. The fit now counts, in its existing pass over the source, how often each combination of blank members occurs, and each synthetic row draws one. Rows blank in every member stay blank whole, and the members left filled stay in order, a blank one between them included. This applies to declared relationships too. A chain whose members are blank in the same rows writes the same bytes as before, while a seeded run of one whose blanks differ writes different rows. `--discover-relationships` no longer requires `ordered` dates to be blank in the same rows, so it can now find pairs like NYC 311's Created Date ≤ Due Date (Due Date blank in 66% of rows). Saved models hold the blank combinations, so the model format is version 5 and models saved before this change must be fitted again. ([#5090](https://github.com/dathere/qsv/pull/5090))
-+- `synthesize`: `ordered` relationship members now keep their own blanks. Before, a chain was blank whole when its anchor was and filled whole otherwise, so a follower blank more often than its anchor (a `closed_date` left blank while a case is open) was never blank in the output. The fit now counts, in its existing pass over the source, how often each combination of blank members occurs, and each synthetic row draws one. Rows blank in every member stay blank whole, and the members left filled stay in order, a blank one between them included. A member's range is capped only by the later members left filled in that row, so a blank close date doesn't hold back the open dates of open cases. This applies to declared relationships too. A chain whose members are blank in the same rows writes the same bytes as before, while a seeded run of one whose blanks differ writes different rows. `--discover-relationships` no longer requires `ordered` dates to be blank in the same rows, so it can now find pairs like NYC 311's Created Date ≤ Due Date (Due Date blank in 66% of rows). Saved models hold the blank combinations, so the model format is version 5 and models saved before this change must be fitted again. ([#5090](https://github.com/dathere/qsv/pull/5090), [#5091](https://github.com/dathere/qsv/pull/5091))
- - **deps: Polars bumped to upstream rev [`93d31f0`](https://github.com/pola-rs/polars/commit/93d31f095fe3247677895b67d32f681b89e1e103)** (91 commits past `2d9938d`; crates stay 0.55.1). Some `sqlp` results that already worked change:
-   - `DELETE` now changes the table for the statements after it ([#30869](https://github.com/pola-rs/polars/pull/30869)). Before, `DELETE FROM t WHERE ...; SELECT COUNT(*) FROM t;` still counted the deleted rows.
-   - A NULL length makes `LEFT` and `SUBSTRING` NULL ([#30934](https://github.com/pola-rs/polars/pull/30934)); `LEFT` used to return the whole string. `SPLIT_PART` of NULL is NULL ([#30936](https://github.com/pola-rs/polars/pull/30936)).
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -96,7 +96,7 @@
- | [split](docs/help/split.md)<br>📇🏎️ | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
- | [sqlp](docs/help/sqlp.md)✨<br>📇🗄️🐻‍❄️🚀🪄 | <a name="sqlp_deeplink"></a>Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
- | [stats](docs/help/stats.md)<br>📇🤯🏎️👆🪄 | <a name="stats_deeplink"></a>Compute up to 48 [summary statistics](docs/STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)).<br>Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
--| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type and keeps relationships between columns (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`). |
-+| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type, and keeps the relationships between columns it declares (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`). |
- | [table](docs/help/table.md)<br>🤯 | Align output of a CSV using [elastic tabstops](https://github.com/BurntSushi/tabwriter) for viewing; or to create an "aligned TSV" file or Fixed Width Format file. To interactively view a CSV, use the `lens` command. |
- | [template](docs/help/template.md)<br>📇🚀🔣📚⛩️ ![CKAN](docs/images/ckan.png) | Renders a template using CSV data with the [MiniJinja](https://docs.rs/minijinja/latest/minijinja/) template engine ([Example](https://github.com/dathere/qsv/blob/4645ec07b5befe3b0c0e49bf0f547315d0d7514b/src/cmd/template.rs#L18-L44)). |
- | [to](docs/help/to.md)✨<br>🗄️🐻‍❄️🚀 | Convert CSV files to [Parquet](https://parquet.apache.org), [PostgreSQL](https://www.postgresql.org), [SQLite](https://www.sqlite.org/index.html), Excel (XLSX), [LibreOffice Calc](https://www.libreoffice.org/discover/calc/) (ODS) and [Data Package](https://datahub.io/docs/data-packages/tabular). |
-```
-
-**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@
- | [split](split.md)<br>[📇](#legend "uses an index when available.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.") | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
- | [sqlp](sqlp.md)<br>[📇](#legend "uses an index when available.")[🗄️](#legend "Extended input support.")[🐻‍❄️](#legend "command powered/accelerated by  vectorized query engine.")[🚀](#legend "multithreaded even without an index.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
- | [stats](stats.md)<br>[📇](#legend "uses an index when available.")[🤯](#legend "loads entire CSV into memory, though `dedup`, `stats` & `transpose` have \"streaming\" modes as well.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Compute up to 48 [summary statistics](../STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)). Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
--| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped. |
-+| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type, and keeps the relationships between columns it declares (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`). |
- | [table](table.md)<br>[🤯](#legend "loads entire CSV into memory, though `dedup`, `stats` & `transpose` have \"streaming\" modes as well.") | Align output of a CSV using [elastic tabstops](https://github.com/BurntSushi/tabwriter) for viewing; or to create an "aligned TSV" file or Fixed Width Format file. To interactively view a CSV, use the `lens` command. |
- | [template](template.md)<br>[📇](#legend "uses an index when available.")[🚀](#legend "multithreaded even without an index.")[🔣](#legend "requires UTF-8 encoded input.")[📚](#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.")[⛩️](#legend "uses MiniJinja template engine.") [![CKAN](../images/ckan.png)](#legend "has CKAN-aware integrati
-```
-
-**File**: `docs/help/synthesize.md` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- # synthesize
- 
--> Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.
-+> Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type, and keeps the relationships between columns it declares (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`).
- 
- **[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/synthesize/mod.rs](https://github.com/dathere/qsv/blob/master/src/cmd/synthesize/mod.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🎲](TableOfContents.md#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](TableOfContents.md#legend "command uses Natural Language Processing or Generative AI.")
- 
-```
-
-**File**: `src/cmd/synthesize/group_generator.rs` (modified, +44/-47)
-```diff
-@@ -66,19 +66,20 @@ pub(crate) enum GroupGenerator {
-         /// `member_cols[i]` to `member_cols[i + 1]`, clamped to >= 0. Length is
-         /// `member_cols.len() - 1`.
-         gap_buckets:      Vec<Vec<(f64, f64)>>,
--        /// Per-member `[lo, hi]` in the same domain as the buckets, with each
--        /// `hi` capped by every later member's. Each follower is clamped into
--        /// its range (then kept >= its predecessor, which the cap keeps in
--        /// range), so anchor + gap can't reach a follower's real extremes once
--        /// `--min-count` has trimmed them.
--        member_ranges:    Vec<(f64, f64)>,
-+        /// Per blank pattern, per-member `[lo, hi]` in the same domain as the
-+        /// buckets, with each `hi` capped by every later member the pattern
-+        /// leaves filled; a blank member's range is otherwise unbounded. Each
-+        /// follower is clamped into its range (then kept >= its predecessor,
-+        /// which the cap keeps in range), so anchor + gap can't reach a
-+        /// follower's real extremes once `--min-count` has trimmed them.
-+        pattern_ranges:   Vec<Vec<(f64, f64)>>,
-         /// Share of source rows where every member is blank; such a row is
-         /// emitted blank without drawing any value.
-         null_ratio:       f64,
-         /// Which members are blank in the other rows, as seen in the source:
-         /// `blank_patterns[p][k]` is true when member `k` is blank. The chain
--        /// is drawn whole and then blanked, so the members left filled stay in
--        /// order.
-+        /// is drawn whole, its blank members unprinted, so the members left
-+        /// filled stay in order.
-         blank_patterns:   Vec<Vec<bool>>,
-         /// Normalized cumulative weights of `blank_patterns`, ascending, last
-         /// element == 1.0. A single pattern takes no draw.
-@@ -147,7 +148,7 @@ impl GroupGenerator {
-                 date_format,
-                 anchor_buckets,
-                 gap_buckets,
--                member_ranges,
-+                pattern_ranges,
-                 null_ratio,
-                 blank_patterns,
-                 blank_cumulative,
-@@ -158,65 +159,61 @@ impl GroupGenerator {
-                 if draw_null(*null_ratio, rng) {
-                     return member_cols.iter().map(|&c| (c, String::new())).collect();
-                 }
--                // The anchor's upper bound is capped by every follower's (see
--                // `resolve_ordered`), so the chain can always stay in range.
--                let mut value = sample_bucket(anchor_buckets, rng).min(member_ranges[0].1);
-+                // A chain with one pattern takes no draw, so one whose members
-+                // are blank in the same rows keeps the draws it had when a
-+                // blank anchor blanked the chain.
-+                let p = if blank_patterns.len() > 1 {
-+                    let r = rng.random_range(0.0..1.0);
-+                    blank_cumulative
-+                        .partition_point(|&c| c < r)
-+                        .min(blank_patterns.len() - 1)
+@@ -379,7 +381,25 @@ pub fn convert_special_format(
+             } else {
+                 // Infer from every row: Polars raises on a key that first appears past the
+                 // inference window (pola-rs/polars#31139), and before that it dropped the key.
+-                lf.with_infer_schema_length(None).finish()?
++                let mut inferred = lf.clone().with_infer_schema_length(None).finish()?;
++                let schema = inferred.collect_schema()?;
++                if schema.iter_values().any(DataType::is_nested) {
++                    // CSV can't hold nested data, so read nested values as their JSON text.
++                    let as_text: Schema = schema
++                        .iter()
++                        .map(|(name, dtype)| {
++                            let dtype = if dtype.is_nested() {
++                                DataType::String
++                            } else {
++                                dtype.clone()
++                            };
++                            (name.clone(), dtype)
++                        })
++                        .collect();
++                    lf.with_schema(Some(Arc::new(as_text))).finish()?
 +                } else {
-+                    0
-+                };
-+                let (blanks, ranges) = (&blank_patterns[p], &pattern_ranges[p]);
-+                let text = |value: f64, i: usize| {
-+                    if blanks[i] {
-+                        String::new()
-+                    } else {
-+                        format_ordered(value, *kind, is_int[i], decimals[i], date_format.as_ref())
-+                    }
-+                };
-+                // The anchor's upper bound is capped by every filled
-+                // follower's (see `resolve_ordered`), so the chain can always
-+                // stay in range.
-+                let mut value = sample_bucket(anchor_buckets, rng).min(ranges[0].1);
-                 // Chain from the value actually emitted: a member is printed
-                 // rounded to its grid (whole numbers for Integer, its source
-                 // decimals for Float), so the next member must build on the
-                 // rounded value or it can print below it. A follower rounds no
-                 // lower than its predecessor, or a coarser grid can print it
-                 // below a finer one (1.24 at one decimal is 1.2). That stays
-                 // within range: the predecessor's cap is at most this
--                // member's grid-floored cap.
-+                // member's grid-floored cap. A blank member prints nothing,
-+                // so it isn't rounded: its grid must not move the members
-+                // after it.
-                 let quantize = |v: f64, i: usize, floor: f64| {
--                    round_at_least(v, floor, member_grid(*kind, is_int[i], decimals[i]))
-+                    if blanks[i] {
-+                        v
-+                    } else {
-+                        round_at_least(v, floor, member_grid(*kind, is_int[i], decimals[i]))
-+                    }
-                 };
-                 value = quant
-```
-
-**File**: `src/cmd/synthesize/model.rs` (modified, +7/-3)
-```diff
-@@ -241,7 +241,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-             date_format,
-             anchor_buckets,
-             gap_buckets,
--            member_ranges,
-+            pattern_ranges,
-             null_ratio,
-             blank_patterns,
-             blank_cumulative,
-@@ -258,14 +258,18 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-             if n == 0
-                 || is_int.len() != n
-                 || decimals.len() != n
--                || member_ranges.len() != n
-                 || gap_buckets.len() != n - 1
-                 || anchor_buckets.is_empty()
-                 || gap_buckets.iter().any(Vec::is_empty)
-             {
-                 return bad("an ordered group with inconsistent members");
-             }
--            if member_ranges.iter().any(|(lo, hi)| lo > hi) {
-+            if pattern_ranges.len() != blank_patterns.len()
-+                || pattern_ranges.iter().any(|r| r.len() != n)
-+            {
-+                return bad("an ordered group with inconsistent members");
-+            }
-+            if pattern_ranges.iter().flatten().any(|(lo, hi)| lo > hi) {
-                 return bad("an ordered range whose low end is above its high end");
-             }
-             check_date_format(date_format.as_ref())
-```
-
-**File**: `src/cmd/synthesize/relationships.rs` (modified, +24/-1)
-```diff
-@@ -524,6 +524,7 @@ fn resolve_ordered(
-         return Ok(None);
-     }
-     let mut member_ranges: Vec<(f64, f64)> = ranges.into_iter().flatten().collect();
-+    let own_ranges = member_ranges.clone();
-     // Members are non-decreasing, so no member may exceed any later member's
-     // upper bound. Cap each upper bound by the ones after it; otherwise the
-     // order floor (`max(prev)`) would push a follower past its trimmed range.
-@@ -666,6 +667,28 @@ fn resolve_ordered(
-     if let Some(last) = blank_cumulative.last_mut() {
-         *last = 1.0;
-     }
-+    // Each pattern caps a member only by the members it leaves filled after
-+    // it: a blank close date must not hold back the open dates of open cases.
-+    // A blank member has no range or grid of its own (it prints nothing, so
-+    // the generator doesn't round it): it only carries the next filled
-+    // member's cap back through the chain.
-+    let pattern_ranges: Vec<Vec<(f64, f64)>> = blank_patterns
-+        .iter()
-+        .map(|blanks| {
-+            let mut caps = own_ranges.clone();
-+            let mut later = f64::MAX;
-+            for i in (0..caps.len()).rev() {
-+                if blanks[i] {
-+                    caps[i] = (f64::MIN, later);
-+                } else {
-+                    let hi = caps[i].1.min(later);
-+                    caps[i].1 = if hi < f64::MAX { floor_grid(i, hi) } else { hi };
-+                    later = caps[i].1;
++                    inferred
 +                }
-+            }
-+            caps
-+        })
-+        .collect();
-     let date_format = ordered_date_format(&member_cols, params, kind);
+             }
+             .collect()?
+         },
+```
+
+**File**: `tests/test_slice.rs` (modified, +26/-0)
+```diff
+@@ -742,6 +742,32 @@ fn slice_from_jsonl_with_late_key() {
+     );
+ }
  
-     log::info!(
-@@ -680,7 +703,7 @@ fn resolve_ordered(
-         date_format,
-         anchor_buckets,
-         gap_buckets,
--        member_ranges,
-+        pattern_ranges,
-         null_ratio,
-         blank_patterns,
-         blank_cumulative,
++#[cfg(feature = "polars")]
++#[test]
++fn slice_from_jsonl_nested_values_as_json_text() {
++    // CSV can't hold nested data, so a JSONL object or array value is written as its JSON text,
++    // whether it appears in the first rows or (now that the whole file is inferred) only later.
++    // Before, an early nested value failed the conversion and a late one was dropped.
++    let wrk = Workdir::new("slice_from_jsonl_nested_values_as_json_text");
++    let mut jsonl: String = (1..150)
++        .map(|i| format!("{{\"id\":{i},\"tags\":[\"t{i}\"]}}\n"))
++        .collect();
++    jsonl.push_str("{\"id\":150,\"tags\":[],\"late\":{\"k\":1}}\n");
++    wrk.create_from_string("nested.jsonl", &jsonl);
++
++    let mut cmd = wrk.command("slice");
++    cmd.arg("nested.jsonl").args(["--start", "148"]);
++    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
++    assert_eq!(
++        got,
++        vec![
++            svec!["id", "tags", "late"],
++            svec!["149", r#"["t149"]"#, ""],
++            svec!["150", "[]", r#"{"k": 1}"#],
++        ]
++    );
++}
++
+ #[cfg(feature = "polars")]
+ #[test]
+ fn slice_from_avro() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5092** (2026-11-21): fix(mcp): ignore output_file with a note for commands that can't write one (@jqnatividad)
-- **PR #5091** (2026-11-21): fix(synthesize): cap ordered members only by the members a row leaves filled (@jqnatividad)
-- **PR #5090** (2026-11-21): feat(synthesize): ordered relationship members keep their own blanks (@jqnatividad)
-- **PR #5089** (2026-11-21): fix(mcp): don't report an error for commands that write only their own files (@jqnatividad)
-- **PR #5088** (2026-11-21): docs(synthesize): name both blank limits for discovered ordered pairs (@jqnatividad)
-- **PR #5087** (2026-11-21): fix(mcp): run .sql scripts on sqlp; allow nested ~/ and to parquet dirs (@jqnatividad)
+- **PR #5127** (2026-11-27): fix: write nested JSONL values as JSON text (#5125 follow-up) (@jqnatividad)
+- **PR #5125** (2026-11-27): deps: bump Polars to upstream 4ba28fb (41 commits past py-2.2.0) (@jqnatividad)
+- **PR #5124** (2026-11-27): fix(pivotp): count rows when no columns remain for --values; rename clashing generated columns (@jqnatividad)
+- **PR #5121** (2026-11-27): deps: bump polars-readstat-rs to 0.27.1 (rebased fork) (@jqnatividad)
+- **PR #5120** (2026-11-27): build(deps): bump anthropics/claude-code-action from 1.0.286 to 1.0.289 (@dependabot[bot])
+- **PR #5119** (2026-11-26): refactor: replace deprecated filetime calls with std::fs (@jqnatividad)
 
 ---
 
@@ -2688,31 +2539,33 @@ forward. An Integer member blank between
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): ignore output_file with a note for commands that can't write one
+## X. write nested JSONL values as JSON text (#5125 follow-up)
 
 **RULE**:
-When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/qsv/qsv-sqlp.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `778227f6`: mcp): ignore output_file with a note for commands that can't write one. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23809a00`: write nested JSONL values as JSON text (#5125 follow-up). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-sqlp.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`output_file` no longer loses the result of commands that can't write one.** Passing it to `count`, `headers`, `split` or another skill without an output option reported "Successfully wrote output to" a file qsv never wrote, and dropped what qsv printed. The server now ignores `output_file` for these commands, returns the result and adds a note saying so in a separate content block (#5089, #5092).
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option (and without a .pschema.json that types the column as a date), the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file, so keys that first appear late can be queried. By default only the first 100 rows are used, and selecting a key that first appears later (e.g. with select *) fails with \"extra field in NDJSON data\":",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
+        "description": "Automatically try to parse dates/datetimes and time. If parsing fails, columns remain as strings. Note that if dates are not well-formatted in your CSV, that you may want to try to set `--ignore-errors` to relax the CSV parsing of dates. Polars reads slash, dash and dot dates as day-first, so 01/05/2024 becomes 2024-05-01. Without this option, the column stays a string, and CAST(col AS DATE) of a string reads only year-first dates (2024-05-01, 2024/5/1): it fails on 01/05/2024, and TRY_CAST returns NULL. For month-first (US) dates, leave this off and use STRPTIME(col, '%m/%d/%Y') in the query instead."
+      "description": "read_ndjson() takes Polars' scan_ndjson options the same way: schema, schema_overrides, infer_schema_length, ignore_errors and include_file_paths. Infer the schema from the whole file. By default only the first 100 rows are used, and a key that first appears later fails the query with \"extra field in NDJSON data\":",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `778227f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23809a00` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

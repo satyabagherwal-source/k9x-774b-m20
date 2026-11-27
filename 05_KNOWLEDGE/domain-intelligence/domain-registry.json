@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T22:46:04.309Z",
-  "total_records": 2861,
+  "last_updated": "2026-11-27T22:55:30.204Z",
+  "total_records": 2862,
   "domains": {
     "A": {
       "total": 27,
@@ -2631,7 +2631,7 @@
       ]
     },
     "J": {
-      "total": 62,
+      "total": 63,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -2694,7 +2694,8 @@
         "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-core-invar",
         "domain_intelligence-search-distribution-intelligence-serpapi-google-search-results-python-learnings-",
         "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-learnings-core-"
+        "domain_intelligence-search-distribution-intelligence-gatenlp-ultimate-sitemap-parser-learnings-core-",
+        "DOM-J-068F8BD9"
       ]
     },
     "K": {
@@ -8649,8 +8650,8 @@
       "title": "Content & Information Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-content-information-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "d83e294ec6fb0f0f409a8ccece6d0afb04c1acc91a0dd543e4934400241fafe6",
-      "created_at": "2026-11-25T23:11:57.987Z"
+      "content_hash": "33a99bf18db88a8f096b7b07534ff5ffb5711a73e2a4c9e844cf25c0a9744f2d",
+      "created_at": "2026-11-27T22:54:51.342Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -8667,8 +8668,8 @@
       "title": "Content & Information Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-learnings-content-information-intelligence-dathere-qsv-learnings-cor.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "e331797199142b117529f4f3f87076df4fc29d61037dca48f47d8edc255191c7",
-      "created_at": "2026-11-21T22:48:43.467Z"
+      "content_hash": "f82950581b00b998ecdb16c0c3f683e258c09c8c133146f5cdc231cd9b55f575",
+      "created_at": "2026-11-27T22:55:30.204Z"
     },
     "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -24623,8 +24624,8 @@
       "title": "Technical Construction Intelligence: scrapy/scrapy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-technical-construction-intelligence-scrapy-scrapy-core-invariants.md",
       "repository": "scrapy/scrapy",
-      "content_hash": "8c401326dac5054b9e97f2963aefeacf428ab02ebfdc76cfd055723fe730047c",
-      "created_at": "2026-11-24T14:41:50.596Z"
+      "content_hash": "f056e10067560d579d9429459f9761512e978baadb5cdb4e986f4205f24ed90b",
+      "created_at": "2026-11-27T22:54:39.717Z"
     },
     "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-scrapy-scrapy-learnings-core-invariants",
@@ -24632,8 +24633,8 @@
       "title": "Technical Construction Intelligence: scrapy-scrapy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-scrapy-scrapy-learnings-technical-construction-intelligence-scrapy-scrapy-learni.md",
       "repository": "scrapy-scrapy-learnings",
-      "content_hash": "f6206af0444b1098b397260477ad187a86069411cee76ef2f5f10e94610869a0",
-      "created_at": "2026-11-24T14:42:02.918Z"
+      "content_hash": "6bcd659c4dc8b42dfcd0ab22a36c0112f447f1383840457a994df632c93d7720",
+      "created_at": "2026-11-27T22:55:26.117Z"
     },
     "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-duongductrong-snapzy-core-invariants",
@@ -27114,8 +27115,8 @@
       "title": "Technical Construction Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-technical-construction-intelligence-apache-shardingsphere-.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "2c7f48c2b130d65059a2a57cd2f907bcb04aed7e4c7444844c79d23de8f40324",
-      "created_at": "2026-11-23T17:20:52.359Z"
+      "content_hash": "cf6d1adb3388ba0d2c8386fc6d8fffdb55a4aa7b9dae5324c1e996bb6ea7561f",
+      "created_at": "2026-11-27T22:54:49.822Z"
     },
     "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",
@@ -30976,8 +30977,8 @@
       "title": "Technical Construction Intelligence: apache-shardingsphere-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-learnings-technical-construction-intelligence-apache-shard.md",
       "repository": "apache-shardingsphere-learnings",
-      "content_hash": "3617aa422064860e35d94577881f971d4c7b34daa0c553be0b673448bd071309",
-      "created_at": "2026-11-18T23:26:56.656Z"
+      "content_hash": "cddaea0578ee4ec9e5e17f4690abd1d3f19e6fd323005c082dff3a39d8ba437e",
+      "created_at": "2026-11-27T22:55:28.291Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants",
@@ -48339,6 +48340,48 @@
       "repository": "chaos-mesh-chaos-mesh-learnings",
       "content_hash": "f9d16f07a4a02eb7f8e685b7a4e2f438e60f94db6565600fadd8a33e463df749",
       "created_at": "2026-11-27T22:36:18.516Z"
+    },
+    "DOM-J-068F8BD9": {
+      "record_id": "DOM-J-068F8BD9",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Ignore sitemaps without a root element instead of raising StopIteration",
+      "content": "When implementing operations in `scrapy/utils/_sitemap.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapy/scrapy. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "bbc0d1040ebb3b6d5b0dde8ce3d81e29161e3bc1c3b36ca4a53f2f1b295421e6",
+      "summary": "Prevents defects observed in production commit `d2052b86`: Ignore sitemaps without a root element instead of raising StopIteration. Unvalida -> When implementing operations in `scrapy/utils/_sitemap.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and",
+      "provenance": {
+        "source_uri": "project://scrapy-scrapy/scrapy-scrapy-learnings.md",
+        "source_version": "d2052b86",
+        "observed_at": "2026-11-27T22:54:37.959Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (scrapy-scrapy)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of scrapy-scrapy"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.83,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-27T22:55:24.907Z"
     }
   }
 }

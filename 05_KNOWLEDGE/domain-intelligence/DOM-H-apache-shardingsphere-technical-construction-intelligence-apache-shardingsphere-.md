@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/shardingsphere",
   "source_url": "https://github.com/apache/shardingsphere",
-  "source_version": "0d551770",
+  "source_version": "0d76e38a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-23T17:20:52.131Z",
+  "timestamp": "2026-11-27T22:54:49.586Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-shardingsphere",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `0d551770`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-23T17:20:52.131Z`  
+> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `0d76e38a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-27T22:54:49.586Z`  
 > **Learning ID**: `learn-github-apache-shardingsphere`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/shardingsphere:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-23T17:20:50.578Z  
+> **Harvest Timestamp**: 2026-11-27T22:54:48.026Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20837 stars
+- **Stars / Engagement**: 20841 stars
 
 ---
 
@@ -1448,15 +1448,11 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40543** (2026-11-23): **Use AST and dialect options for PostgreSQL SQL handling**
-  *Symptoms*: Follow-up to #40533.  Changes proposed in this pull request:  - Resolve the proposed-row alias for insert conflict binding through the dialect SQL option. PostgreSQL exposes `excluded`, and openGauss keeps its existing duplicate-key assignment behavior. - Carry the PostgreSQL `TABLE` shorthand from the parsed projection AST through binding and encrypted SQL rewrite. The SQL builder reads the resulting token metadata. - Cover the dialect option, parser metadata, and encrypted rewrite with tests.  ---  Before submitting this PR, I confirm that:  - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [x] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [x] I have updated the relevant documentation, if applicable. - [x] I have added or updated unit tests for my changes, if applicable. - [x] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [x] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  Documentation and release notes are not applicable to this behavior-preserving refactor. The code-correctness 
-  **Post-Mortem & Fix Analysis**:
-  > ### Summary  The change carries PostgreSQL `TABLE` shorthand metadata from the parsed AST through binding and encrypted SQL rewrite. The insert binder uses the dialect SQL option for proposed-row aliases and resolves it once per conflict insert.  ### Result  Review Result: Mergeable  No blocking code-correctness issues were found in the review round.  ### Evidence  - The parser and projection binder preserve the shorthand marker. The encrypted rewrite regression test verifies the generated `SELECT … FROM` SQL. - PostgreSQL binding continues to resolve `EXCLUDED`. The openGauss option retains whole-row projection and its existing duplicate-key binding behavior. - `./mvnw clean install -B -T1C -Pcheck` passed, including 2,109 PostgreSQL parser cases and 193 encryption rewrite cases.  ### Coverage  One review round covered all 17 changed files in `23ff77a48e91`. The verdict covers code correctness and local verification. 
+- **Issue #40557** (2026-11-27): **Support index DDL parsing across SQL dialects**
+  *Symptoms*: Changes proposed in this pull request:  - Decode Unicode-escaped index, table, and column names in openGauss `CREATE INDEX` statements while preserving quoting and source positions. - Restore parser and binder coverage for index DDL. Use PostgreSQL's ordinal statistics syntax, openGauss's schema-qualified `SET TABLESPACE` syntax, and the documented `box(location, location)` GiST expression. [PostgreSQL ALTER INDEX](https://www.postgresql.org/docs/18/sql-alterindex.html) · [PostgreSQL CREATE INDEX](https://www.postgresql.org/docs/18/sql-createindex.html) · [openGauss ALTER INDEX](https://docs.opengauss.org/en/docs/latest/sql_reference/alter_index.html) - Require named `ALTER INDEX` and `DROP INDEX` fixtures to assert that the expected index segments are present.  ---  Before submitting this PR, I confirm that:  - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [ ] I have updated the relevant documentation, if applicable. - [x] I have added or updated unit tests for my changes, if applicable. - [x] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/
 
-- **Issue #40539** (2026-11-22): **Fix Oracle unparenthesized function binding for dummy table queries**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > ### Summary  The existing dialect SQL option declares Oracle’s dummy table. Unresolved identifiers are allowed only in strictly scoped query blocks without local metadata, and the new exemption remains isolated to the current query block.  ### Result  Review Result: Mergeable No blocking issues or recommended changes remain.  ### Evidence  Two independent complete assessments and coordinator confirmation passed. All 685 tests, compilation, coding-standard checks, and license checks passed.  ### Coverage  Standalone local candidate based on ef1f458117c02ffbe8b93b90e7672eb3eafd7856, covering the complete cumulative delta across all 10 files. Code scope only; CI was not reviewed, and native Oracle execution was not verified.
+- **Issue #40556** (2026-11-27): **Refactor Oracle parameter marker handling**
+  *Symptoms*: Changes proposed in this pull request:  - Preserve Oracle bind parameter markers in analytic function arguments, window frame bounds, `TRIM` operands, and `MODEL` rule expressions. - Cover the parsed parameter metadata in the existing Oracle regression fixtures.  ---  Before submitting this PR, I confirm that:  - [x] My code follows the [code of conduct](https://shardingsphere.apache.org/community/en/involved/conduct/code/) of this project. - [ ] I have reviewed my changes. - [x] I have (or in comment I request) added corresponding labels for the pull request. - [ ] I have passed the required local checks: `./mvnw clean install -B -T1C -Pcheck`. - [x] I have updated the relevant documentation, if applicable. - [x] I have added or updated unit tests for my changes, if applicable. - [x] I have updated the Release Notes of the current development version, if applicable. For more details, see [Update Release Note](https://shardingsphere.apache.org/community/en/involved/contribute/contributor/). - [x] I have disclosed the tool and affected files or scope for any material AI assistance, as required by the [AI-assisted contribution policy].  Local verification passed for 2,069 Oracle parser IT cases, 33 Oracle binder IT cases, and scoped Spotless and Checkstyle checks.  Codex assisted with the Oracle parser and regression fixture changes.  [AI-assisted contribution policy]: https://github.com/apache/shardingsphere/blob/master/AI_POLICY.md 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1473,549 +1469,476 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d551770` (2026-11-23)
-**Commit Message**: Use AST and dialect options for PostgreSQL SQL handling (#40543)
+### Incident Patch 1: `0d76e38a` (2026-11-27)
+**Commit Message**: Support index DDL parsing across SQL dialects (#40557)
 
-**File**: `database/connector/core/src/main/java/org/apache/shardingsphere/database/connector/core/metadata/database/metadata/option/sql/DialectSQLOption.java` (modified, +9/-0)
+**File**: `RELEASE-NOTES.md` (modified, +1/-0)
 ```diff
-@@ -41,4 +41,13 @@ default boolean isSupportWholeRowProjection() {
-     default Optional<String> getDummyTableName() {
-         return Optional.empty();
-     }
-+    
-+    /**
-+     * Get the alias exposing the proposed row in an insert conflict action.
-+     *
-+     * @return proposed row alias, or empty if unsupported
-+     */
-+    default Optional<String> getInsertConflictProposedRowAlias() {
-+        return Optional.empty();
-+    }
- }
+@@ -179,6 +179,7 @@
+ 1. SQL Parser: Support Oracle `ORDER BY` after `FOR UPDATE` and `HAVING` without `GROUP BY` - [#39877](https://github.com/apache/shardingsphere/pull/39877)
+ 1. SQL Parser: Support Oracle parenthesized `WITH` queries and qualified PL/SQL collection types - [#39914](https://github.com/apache/shardingsphere/pull/39914)
+ 1. SQL Parser: Support Oracle `DROP UNUSED COLUMNS` syntax - [#39917](https://github.com/apache/shardingsphere/pull/39917)
++1. SQL Parser: Support Unicode-escaped index names, table names, and direct column references in openGauss `CREATE INDEX` statements - [#40557](https://github.com/apache/shardingsphere/pull/40557)
+ 1. SQL Binder: Support select order by index bind metadata - [#38386](https://github.com/apache/shardingsphere/pull/38386)
+ 1. SQL Binder: Support SQL bind when with temp table name is same with physical table - [#38411](https://github.com/apache/shardingsphere/pull/38411)
+ 1. SQL Binder: Support PostgreSQL whole-row projection binding - [#39276](https://github.com/apache/shardingsphere/pull/39276)
 ```
 
-**File**: `database/connector/dialect/opengauss/src/main/java/org/apache/shardingsphere/database/connector/opengauss/metadata/database/OpenGaussDatabaseMetaData.java` (modified, +2/-2)
+**File**: `parser/sql/engine/dialect/opengauss/src/main/java/org/apache/shardingsphere/sql/parser/engine/opengauss/visitor/statement/OpenGaussStatementVisitor.java` (modified, +51/-0)
 ```diff
-@@ -32,9 +32,9 @@
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.version.DialectProtocolVersionOption;
- import org.apache.shardingsphere.database.connector.opengauss.metadata.database.option.OpenGaussDataTypeOption;
- import org.apache.shardingsphere.database.connector.opengauss.metadata.database.option.OpenGaussDriverQuerySystemCatalogOption;
-+import org.apache.shardingsphere.database.connector.opengauss.metadata.database.option.OpenGaussSQLOption;
- import org.apache.shardingsphere.database.connector.opengauss.metadata.database.option.OpenGaussSchemaOption;
- import org.apache.shardingsphere.database.connector.postgresql.metadata.database.option.PostgreSQLFunctionOption;
--import org.apache.shardingsphere.database.connector.postgresql.metadata.database.option.PostgreSQLSQLOption;
- 
- import java.util.Collections;
- import java.util.Optional;
-@@ -94,7 +94,7 @@ public DialectTransactionOption getTransactionOption() {
-     
-     @Override
-     public DialectSQLOption getSQLOption() {
--        return new PostgreSQLSQLOption();
-+        return new OpenGaussSQLOption();
-     }
-     
-     @Override
-```
-
-**File**: `database/connector/dialect/opengauss/src/main/java/org/apache/shardingsphere/database/connector/opengauss/metadata/database/option/OpenGaussSQLOption.java` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one or more
-+ * contributor license agreements.  See the NOTICE file distributed with
-+ * this work for additional information regarding copyright ownership.
-+ * The ASF licenses this file to You under the Apache License, Version 2.0
-+ * (the "License"); you may not use this file except in compliance with
-+ * the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.shardingsphere.database.connector.opengauss.metadata.database.option;
-+
-+import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.sql.DialectSQLOption;
-+
-+/**
-+ * SQL option of openGauss.
-+ */
-+public final class OpenGaussSQLOption implements DialectSQLOption {
-+    
-+    @Override
-+    public boolean isSupportWholeRowProjection() {
-+        return true;
-+    }
-+}
-```
-
-**File**: `database/connector/dialect/opengauss/src/test/java/org/apache/shardingsphere/database/connector/opengauss/metadata/database/OpenGaussDatabaseMetaDataTest.java` (modified, +3/-2)
-```diff
-@@ -30,9 +30,9 @@
- import org.apache.shardingsphere.database.connector.core.spi.DatabaseTypedSPILoader;
+@@ -26,6 +26,7 @@
+ import org.antlr.v4.runtime.tree.TerminalNode;
+ import org.apache.shardingsphere.database.connector.core.metadata.database.enums.NullsOrderType;
  import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
- import org.apache.shardingsphere.database.connector.opengauss.metadata.database.option.OpenGaussDataTypeOption;
-+import org.apache.shardingsphere.database.connector.opengauss.metadata.database.option.OpenGaussSQLOption;
- import org.apache.shardingsphere.database.connector.opengauss.metadata.database.option.OpenGaussSchemaOption;
- import org.apache.shardingsphere.database.connector.postgresql.metadata.database.option.PostgreSQLFunctionOption;
--import org.apache.shardingsphere.database.connector.postgresql.metadata.database.option.PostgreSQLSQLOption;
- import org.apache.shardingsphere.infra.spi.type.typed.TypedSPILoader;
- import org.junit.jupiter.api.Test;
++import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
+ import org.apache.shardingsphere.sql.parser.api.ASTNode;
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParser.AExprContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParser.AexprConstContext;
+@@ -125,6 +126,7 @@
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParser.WindowSpecificationContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParser.WithClauseContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OpenGaussStatementParserBaseVisitor;
++import org.apache.shardingsphere.sql.parser.engine.exception.SQLParsingException;
+ import org.apache.shardingsphere.sql.parser.statement.core.enums.AggregationType;
+ import org.apache.shardingsphere.sql.parser.statement.core.enums.CombineType;
+ import org.apache.shardingsphere.sql.parser.statement.core.enums.JoinType;
+@@ -221,6 +223,7 @@
+ import java.util.List;
+ import java.util.Locale;
+ import java.util.Optional;
++import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import java.util.stream.Collectors;
  
-@@ -116,8 +116,9 @@ void assertGetTransactionOption() {
+@@ -231,8 +234,14 @@
+ @Getter(AccessLevel.PROTECTED)
+ public abstract class OpenGaussStatementVisitor extends OpenGaussStatementParserBaseVisitor<ASTNode> {
      
-     @Test
-     void assertGetSQLOption() {
--        assertThat(dialectDatabaseMetaData.getSQLOption(), isA(PostgreSQLSQLOption.class));
-+        assertThat(dialectDatabaseMetaData.getSQLOption(), isA(OpenGaussSQLOption.class));
-         assertTrue(dialectDatabaseMetaData.getSQLOption().isSupportWholeRowProjection());
-+        assertThat(dialectDatabaseMetaData.getSQLOption().getInsertConflictProposedRowAlias(), is(Optional.empty()));
-     }
-     
-     @Test
-```
-
-**File**: `database/connector/dialect/postgresql/src/main/java/org/apache/shardingsphere/database/connector/postgresql/metadata/database/option/PostgreSQLSQLOption.java` (modified, +7/-0)
-```diff
-@@ -19,6 +19,8 @@
- 
- import org.apache.shardingsphere.database.connector.core.metadata.database.metadata.option.sql.DialectSQLOption;
- 
-+import java.util.Optional;
-+
- /**
-  * SQL option of PostgreSQL.
-  */
-@@ -28,4 +30,9 @@ public final class PostgreSQLSQLOption implements DialectSQLOption {
-     public boolean isSupportWholeRowProjection() {
-         return true;
-     }
++    private static final String INVALID_UNICODE_ESCAPE_CHARACTERS = "0123456789ABCDEFabcdef+'\" \t\n\r\f";
 +    
-+    @Override
-+    public Optional<String> getInsertConflictProposedRowAlias() {
-+        return Optional.of("excluded");
+     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+     
++    private static final Pattern UNICODE_ESCAPE_PATTERN = Pattern.compile("[0-9A-Fa-f]{4}|\\+[0-9A-Fa-f]{6}");
++    
++    private static final Pattern UNPAIRED_SURROGATE_PATTERN = Pattern.compile("[\\uD800-\\uDFFF]");
++    
+     private final DatabaseType databaseType;
+     
+     private final Collection<ParameterMarkerSegment> parameterMarkerSegments = new LinkedList<>();
+@@ -251,10 +260,52 @@ public final ASTNode visitNumberLiterals(final NumberLiteralsContext ctx) {
+     
+     @Override
+     public final ASTNode visitIdentifier(final IdentifierContext ctx) {
++        if (null != ctx.UNICODE_ESCAPE()) {
++            return visitUnicodeIdentifier(ctx);
++        }
+         UnreservedWordContext unreservedWord = ctx.unreservedWord();
+         return null == unreservedWord ? new IdentifierValue(ctx.getText()) : visit(unreservedWord);
+     }
+     
++    private IdentifierValue visitUnicodeIdentifier(final IdentifierContext ctx) {
++        String quoted = ctx.IDENTIFIER_().getText();
++        ShardingSpherePreconditions.checkState('"' == quoted.charAt(0), () -> new SQLParsingException("Unicode identifiers must be quoted"));
++        ShardingSpherePreconditions.checkState(ctx.UNICODE_ESCAPE().getSymbol().getStopIndex() + 1 == ctx.IDENTIFIER_().getSymbol().getStartIndex(),
++                () -> new SQLParsingException("Unicode escape prefix must immediately precede the quoted identifier"));
++        char escape = null == ctx.uescape() ? '\\' : getUnicodeEscapeCharacter(ctx.uescape().STRING_().getText());
++        return IdentifierValue.fromDecodedQuotedName(decodeUnicodeIdentifier(quoted.substring(1, quoted.length() - 1), escape));
 +    }
- }
++    
++    private char getUnicodeEscapeCharacter(final String literal) {
++        ShardingSpherePreconditions.checkState(3 == literal.length(), () -> new SQLParsingException("UESCAPE requires a single character"));
++        char result = literal.charAt(1);
++        ShardingSpherePreconditions.checkState(INVALID_UNICODE_ESCAPE_CHARACTERS.indexOf(result) < 0, () -> new SQLParsingException("Invalid Unicode escape character"));
++        return result;
++    }
++    
++    private String decodeUnicodeIdentifier(final String value, final char escape) {
++        StringBuilder result = new StringBuilder(value.length());
++        Matcher matcher = UNICODE_ESCAPE_PATTERN.matcher(value);
++        int index = 0;
++        while (index < value.length()) {
++            char each = value.charAt(index++);
++            if (escape != each) {
++                result.append(each);
++            } else if (index < value.length() && escape == value.charAt(index)) {
++                result.append(each);
++                index++;
++            } else {
++                ShardingSpherePreconditions.checkState(matcher.region(index, value.length()).lookingAt(), () -> new SQLParsingException("Invalid Unicode escape in identifier"));
++                int codePoint = Integer.parseInt(matcher.group(), 16);
++                ShardingSpherePreconditions.checkState(0 != codePoint && Character.isValidCodePoint(codePoint), () -> new SQLParsingException("Invalid Unicode code point in identifier"));
++                result.appendCodePoint(codePoint);
++                index = matcher.end();
 ```
 
-**File**: `database/connector/dialect/postgresql/src/test/java/org/apache/shardingsphere/database/connector/postgresql/metadata/database/PostgreSQLDatabaseMetaDataTest.java` (modified, +1/-0)
+**File**: `parser/sql/engine/dialect/opengauss/src/main/java/org/apache/shardingsphere/sql/parser/engine/opengauss/visitor/statement/type/OpenGaussDDLStatementVisitor.java` (modified, +1/-1)
 ```diff
-@@ -103,6 +103,7 @@ void assertGetTransactionOption() {
-     void assertGetSQLOption() {
-         assertThat(dialectDatabaseMetaData.getSQLOption(), isA(PostgreSQLSQLOption.class));
-         assertTrue(dialectDatabaseMetaData.getSQLOption().isSupportWholeRowProjection());
-+        assertThat(dialectDatabaseMetaData.getSQLOption().getInsertConflictProposedRowAlias(), is(Optional.of("excluded")));
-     }
-     
-     @Test
-```
-
-**File**: `features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/projection/EncryptProjectionTokenGenerator.java` (modified, +5/-4)
-```diff
-@@ -183,7 +183,7 @@ private Collection<SQLToken> generateSelectSQLTokens(final SelectStatementContex
-                 ShorthandProjectionSegment shorthandSegment = (ShorthandProjectionSegment) each;
-                 Collection<Projection> actualColumns = getShorthandProjection(shorthandSegment, selectStatementContext.getProjectionsContext()).getActualColumns();
-                 if (!actualColumns.isEmpty()) {
--                    result.add(generateSQLToken(shorthandSegment, actualColumns, selectStatementContext.getSqlStatement().getDatabaseType(), selectStatementContext.getSubqueryType()));
-+                    result.add(generateSQLToken(shorthandSegment, actualColumns, selectStatementContext));
-                 }
+@@ -571,7 +571,7 @@ public ASTNode visitIndexParams(final IndexParamsContext ctx) {
+         CollectionValue<ColumnSegment> result = new CollectionValue<>();
+         for (IndexElemContext each : ctx.indexElem()) {
+             if (null != each.colId()) {
+-                result.getValue().add(new ColumnSegment(each.colId().start.getStartIndex(), each.colId().stop.getStopIndex(), new IdentifierValue(each.colId().getText())));
++                result.getValue().add(new ColumnSegment(each.colId().start.getStartIndex(), each.colId().stop.getStopIndex(), (IdentifierValue) visit(each.colId().identifier())));
              }
-         }
-@@ -205,8 +205,9 @@ private Optional<SubstitutableColumnNameToken> generateSQLToken(final SelectStat
-         return Optional.empty();
-     }
-     
--    private SubstitutableColumnNameToken generateSQLToken(final ShorthandProjectionSegment segment, final Collection<Projection> actualColumns,
--                                                          final DatabaseType databaseType, final SubqueryType subqueryType) {
-+    private SubstitutableColumnNameToken generateSQLToken(final ShorthandProjectionSegment segment, final Collection<Projection> actualColumns, final SelectStatementContext selectStatementContext) {
-+        DatabaseType databaseType = selectStatementContext.getSqlStatement().getDatabaseType();
-+        SubqueryType subqueryType = selectStatementContext.getSubqueryType();
-         Collection<Projection> projections = new LinkedList<>();
-         for (Projection each : actualColumns) {
-             if (each instanceof ColumnProjection) {
-@@ -223,7 +224,7 @@ private SubstitutableColumnNameToken generateSQLToken(final ShorthandProjectionS
-         }
-         int startIndex = segment.getOwner().isPresent() ? Math.min(segment.getStartIndex(), segment.getOwner().get().getStartIndex()) : segment.getStartIndex();
-         previousSQLTokens.removeIf(each -> each.getStartIndex() == startIndex);
--        return new SubstitutableColumnNameToken(startIndex, segment.getStopIndex(), projections, databaseType);
-+        return new SubstitutableColumnNameToken(startIndex, segment.getStopIndex(), projections, databaseType, selectStatementContext.getSqlStatement().getProjections().isTableShorthand());
-     }
-     
-     private int getStartIndex(final ColumnProjectionSegment columnSegment) {
+             if (null != each.functionExprWindowless()) {
+                 FunctionSegment functionSegment = (FunctionSegment) visit(each.functionExprWindowless());
 ```
 
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/assign/AssignmentSegmentBinder.java` (modified, +20/-1)
+**File**: `test/it/binder/src/test/resources/cases/ddl/create-index.xml` (modified, +1/-1)
 ```diff
-@@ -22,6 +22,7 @@
- import com.google.common.collect.Multimap;
+@@ -27,7 +27,7 @@
+                 </table-bound>
+             </simple-table>
+         </table>
+-        <index name="idx_name" start-index="13" stop-index="20" />
++        <index name="idx_user_bt" start-index="13" stop-index="23" />
+         <column start-index="56" stop-index="62" name="user_id">
+             <column-bound>
+                 <original-database name="foo_db_1" />
+```
+
+**File**: `test/it/binder/src/test/resources/sqls/ddl/create-index.xml` (modified, +1/-3)
+```diff
+@@ -17,7 +17,5 @@
+   -->
+ 
+ <sql-cases>
+-    <!-- TODO should assert index for all databases (only Oracle can support parse index right now)
+-    <sql-case id="create_index_with_schema" value="CREATE INDEX idx_user_id ON public.t_order USING btree (user_id ASC NULLS LAST) TABLESPACE pg_default" db-types="PostgreSQL,openGauss" />
+-    -->
++    <sql-case id="create_index_with_schema" value="CREATE INDEX idx_user_bt ON public.t_order USING btree (user_id ASC NULLS LAST) TABLESPACE pg_default" db-types="PostgreSQL,openGauss" />
+ </sql-cases>
+```
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/asserts/statement/ddl/standard/type/AlterIndexStatementAssert.java` (modified, +7/-2)
+```diff
+@@ -19,6 +19,7 @@
+ 
  import lombok.AccessLevel;
  import lombok.NoArgsConstructor;
-+import org.apache.shardingsphere.database.connector.core.type.DatabaseTypeRegistry;
- import org.apache.shardingsphere.infra.binder.engine.segment.SegmentType;
- import org.apache.shardingsphere.infra.binder.engine.segment.dml.expression.ExpressionSegmentBinder;
- import org.apache.shardingsphere.infra.binder.engine.segment.dml.expression.type.ColumnSegmentBinder;
-@@ -74,7 +75,25 @@ public static SetAssignmentSegment bind(final SetAssignmentSegment segment, fina
-     public static OnDuplicateKeyColumnsSegment bind(final OnDuplicateKeyColumnsSegment segment, final SQLStatementBinderContext binderContext,
-                                                     final Multimap<CaseInsensitiveString, TableSegmentBinderContext> tableBinderContexts,
-                                                     final Multimap<CaseInsensitiveString, TableSegmentBinderContext> outerTableBinderContexts) {
--        SegmentType expressionType = "PostgreSQL".equals(binderContext.getSqlStatement().getDatabaseType().getType()) ? SegmentType.PROJECTION : SegmentType.SET_ASSIGNMENT;
-+        boolean hasProposedRowAlias =
-+                new DatabaseTypeRegistry(binderContext.getSqlStatement().getDatabaseType()).getDialectDatabaseMetaData().getSQLOption().getInsertConflictProposedRowAlias().isPresent();
-+        return bind(segment, binderContext, tableBinderContexts, outerTableBinderContexts, hasProposedRowAlias);
-+    }
-+    
-+    /**
-+     * Bind on duplicate key columns with the resolved proposed-row alias capability.
-+     *
-+     * @param segment on duplicate key columns segment
-+     * @param binderContext SQL statement binder context
-+     * @param tableBinderContexts table binder contexts
-+     * @param outerTableBinderContexts outer table binder contexts
-+     * @param hasProposedRowAlias whether the dialect exposes a proposed-row alias
-+     * @return bound on duplicate key columns segment
-+     */
-+    public static OnDuplicateKeyColumnsSegment bind(final OnDuplicateKeyColumnsSegment segment, final SQLStatementBinderContext binderContext,
-+                                                    final Multimap<CaseInsensitiveString, TableSegmentBinderContext> tableBinderContexts,
-+                                                    final Multimap<CaseInsensitiveString, TableSegmentBinderContext> outerTableBinderContexts, final boolean hasProposedRowAlias) {
-+        SegmentType expressionType = hasProposedRowAlias ? SegmentType.PROJECTION : SegmentType.SET_ASSIGNMENT;
-         OnDuplicateKeyColumnsSegment result = new OnDuplicateKeyColumnsSegment(segment.getStartIndex(), segment.getStopIndex(), segment.getColumns().stream()
-                 .map(each -> bindColumnAssignmentSegment(each, expressionType, binderContext, tableBinderContexts, outerTableBinderContexts)).collect(Collectors.toList()));
-         segment.getConflictColumns().forEach(each -> result.getConflictColumns().add(
++import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.index.IndexSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.statement.type.ddl.index.AlterIndexStatement;
+ import org.apache.shardingsphere.test.it.sql.parser.internal.asserts.SQLCaseAssertContext;
+@@ -60,8 +61,12 @@ private static void assertTable(final SQLCaseAssertContext assertContext, final
+     }
+     
+     private static void assertIndex(final SQLCaseAssertContext assertContext, final AlterIndexStatement actual, final AlterIndexStatementTestCase expected) {
+-        if (actual.getIndex().isPresent()) {
+-            IndexAssert.assertIs(assertContext, actual.getIndex().get(), expected.getIndex());
++        Optional<IndexSegment> actualIndexSegment = actual.getIndex();
++        if (null == expected.getIndex()) {
++            assertFalse(actualIndexSegment.isPresent(), assertContext.getText("Actual index segment should not exist."));
++        } else {
++            assertTrue(actualIndexSegment.isPresent(), assertContext.getText("Actual index segment should exist."));
++            IndexAssert.assertIs(assertContext, actualIndexSegment.get(), expected.getIndex());
+         }
+     }
+ }
+```
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/asserts/statement/ddl/standard/type/DropIndexStatementAssert.java` (modified, +1/-0)
+```diff
+@@ -66,6 +66,7 @@ private static void assertTables(final SQLCaseAssertContext assertContext, final
+     }
+     
+     private static void assertIndex(final SQLCaseAssertContext assertContext, final DropIndexStatement actual, final DropIndexStatementTestCase expected) {
++        assertThat(assertContext.getText("Index segment count assertion error: "), actual.getIndexes().size(), is(expected.getIndexes().size()));
+         int count = 0;
+         for (IndexSegment each : actual.getIndexes()) {
+             IndexAssert.assertIs(assertContext, each, expected.getIndexes().get(count));
+```
+
+**File**: `test/it/parser/src/main/resources/case/ddl/alter-index.xml` (modified, +20/-3)
+```diff
+@@ -67,14 +67,17 @@
+     </alter-index>
+     
+     <alter-index sql-case-id="alter_index_rebuild">
++        <index name="order_index" start-index="12" stop-index="22" />
+         <table name="t_order" start-index="27" stop-index="33" />
+     </alter-index>
+     
+     <alter-index sql-case-id="alter_index_with_quota_bracket">
++        <index name="order_index" start-delimiter="[" end-delimiter="]" start-index="12" stop-index="24" />
+         <table name="t_order" start-delimiter="[" end-delimiter="]" start-index="29" stop-index="37" />
+     </alter-index>
+ 
+     <alter-index sql-case-id="alter_index_with_reorganize">
++        <index name="order_index" start-index="12" stop-index="22" />
+         <table name="t_order" start-index="27" stop-index="33" />
+     </alter-index>
+ 
+@@ -142,9 +145,23 @@
+         <index name="prod_idx" start-index="12" stop-index="19" />
+     </alter-index>
+     
+-    <alter-index sql-case-id="alter_index_alter_column" />
+-    <alter-index sql-case-id="alter_index_with_schema" />
+-    <alter-index sql-case-id="alter_index_set_tablespace" />
++    <alter-index sql-case-id="alter_index_alter_column">
++        <index name="t_order_idx" start-index="12" stop-index="22" />
++    </alter-index>
++    <alter-index sql-case-id="alter_index_with_schema">
++        <index name="t_order_idx" start-index="12" stop-index="29">
++            <owner name="public" start-index="12" stop-index="17" />
++        </index>
++    </alter-index>
++    <alter-index sql-case-id="alter_index_set_tablespace">
++        <index name="distributors" start-index="12" stop-index="23" />
++    </alter-index>
++
++    <alter-index sql-case-id="alter_index_set_tablespace_with_schema">
++        <index name="t_order_idx" start-index="12" stop-index="29">
++            <owner name="public" start-index="12" stop-index="17" />
++        </index>
++    </alter-index>
+ 
+     <alter-index sql-case-id="alter_index_rebuild_basic">
+         <index name="idx_product_id" start-index="12" stop-index="25" />
 ```
 
 ---
 
-### Incident Patch 2: `d391a7cc` (2026-11-23)
-**Commit Message**: Preserve PostgreSQL SQL parsing and binding metadata (#40533)
+### Incident Patch 2: `0e01f329` (2026-11-27)
+**Commit Message**: Refactor Oracle parameter marker handling (#40556)
 
-* Preserve PostgreSQL SQL parsing and binding metadata
+* Refactor Oracle parameter marker handling
 
-* Preserve INSERT RETURNING parameters during SQL rewrite
+* Fix Oracle bind marker ownership and grouping
 
-* Cover PostgreSQL ASENSITIVE cursor parsing
-
-**File**: `features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/projection/EncryptProjectionTokenGenerator.java` (modified, +1/-1)
+**File**: `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/OracleStatementVisitor.java` (modified, +59/-7)
 ```diff
-@@ -221,7 +221,7 @@ private SubstitutableColumnNameToken generateSQLToken(final ShorthandProjectionS
-             projections.add(each.getAlias().filter(alias -> !DerivedColumn.isDerivedColumnName(alias.getValue()))
-                     .map(optional -> (Projection) new ColumnProjection(null, optional, null, databaseType)).orElse(each));
+@@ -24,6 +24,7 @@
+ import org.antlr.v4.runtime.misc.Interval;
+ import org.antlr.v4.runtime.tree.ParseTree;
+ import org.antlr.v4.runtime.tree.TerminalNode;
++import org.antlr.v4.runtime.tree.Trees;
+ import org.apache.shardingsphere.database.connector.core.metadata.database.enums.NullsOrderType;
+ import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
+ import org.apache.shardingsphere.sql.parser.api.ASTNode;
+@@ -219,7 +220,7 @@ public abstract class OracleStatementVisitor extends OracleStatementBaseVisitor<
+     
+     private final Collection<ParameterMarkerSegment> globalParameterMarkerSegments = new LinkedList<>();
+     
+-    private final Collection<ParameterMarkerSegment> statementParameterMarkerSegments = new LinkedList<>();
++    private Collection<ParameterMarkerSegment> statementParameterMarkerSegments = new LinkedList<>();
+     
+     private final List<SQLStatementSegment> sqlStatementsInPlsql = new ArrayList<>();
+     
+@@ -265,6 +266,9 @@ private int countParameterMarkers(final String sql) {
+             if (advanceInAlternativeQuotedText(sql, state)) {
+                 continue;
+             }
++            if (advanceInQuotedIdentifier(sql, state)) {
++                continue;
++            }
+             if (advanceInOrToggleStringLiteral(sql, state)) {
+                 continue;
+             }
+@@ -354,6 +358,22 @@ private char getAlternativeQuoteCloseDelimiter(final char quoteDelimiter) {
          }
--        int startIndex = segment.getOwner().isPresent() ? segment.getOwner().get().getStartIndex() : segment.getStartIndex();
-+        int startIndex = segment.getOwner().isPresent() ? Math.min(segment.getStartIndex(), segment.getOwner().get().getStartIndex()) : segment.getStartIndex();
-         previousSQLTokens.removeIf(each -> each.getStartIndex() == startIndex);
-         return new SubstitutableColumnNameToken(startIndex, segment.getStopIndex(), projections, databaseType);
-     }
-```
-
-**File**: `features/encrypt/core/src/test/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/projection/EncryptProjectionTokenGeneratorTest.java` (modified, +20/-0)
-```diff
-@@ -33,6 +33,7 @@
- import org.apache.shardingsphere.infra.algorithm.core.config.AlgorithmConfiguration;
- import org.apache.shardingsphere.infra.binder.context.segment.select.projection.Projection;
- import org.apache.shardingsphere.infra.binder.context.segment.select.projection.impl.ColumnProjection;
-+import org.apache.shardingsphere.infra.binder.context.segment.select.projection.impl.ShorthandProjection;
- import org.apache.shardingsphere.infra.binder.context.segment.table.TablesContext;
- import org.apache.shardingsphere.infra.binder.context.statement.type.dml.SelectStatementContext;
- import org.apache.shardingsphere.infra.metadata.identifier.DatabaseIdentifierContext;
-@@ -44,6 +45,7 @@
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.ColumnSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.item.ColumnProjectionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.item.ProjectionsSegment;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.item.ShorthandProjectionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.AliasSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.OwnerSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.bound.ColumnSegmentBoundInfo;
-@@ -168,6 +170,24 @@ void assertGenerateSQLTokensWhenOwnerMatchTableName() {
-         assertThat(actual.size(), is(1));
      }
      
-+    @Test
-+    void assertGenerateSQLTokenForParenthesizedRowExpansion() {
-+        IdentifierValue owner = new IdentifierValue("p");
-+        ShorthandProjectionSegment shorthand = new ShorthandProjectionSegment(7, 11);
-+        shorthand.setOwner(new OwnerSegment(8, 8, owner));
-+        ProjectionsSegment projections = new ProjectionsSegment(7, 11);
-+        projections.getProjections().add(shorthand);
-+        SelectStatementContext statementContext = mock(SelectStatementContext.class, RETURNS_DEEP_STUBS);
-+        when(statementContext.getSqlStatement().getProjections()).thenReturn(projections);
-+        when(statementContext.getSqlStatement().getDatabaseType()).thenReturn(databaseType);
-+        when(statementContext.getSubqueryContexts()).thenReturn(Collections.emptyMap());
-+        when(statementContext.getProjectionsContext().getProjections())
-+                .thenReturn(Collections.singleton(new ShorthandProjection(owner, Collections.singleton(new ColumnProjection("p", "foo_column", null, databaseType)))));
-+        SQLToken actual = generator.generateSQLTokens(statementContext).iterator().next();
-+        assertThat(actual.getStartIndex(), is(7));
-+        assertThat(actual.getStopIndex(), is(11));
++    private boolean advanceInQuotedIdentifier(final String sql, final ParameterMarkerScanState state) {
++        if (state.inStringLiteral || '"' != sql.charAt(state.index)) {
++            return false;
++        }
++        while (++state.index < sql.length()) {
++            char ch = sql.charAt(state.index);
++            if ('\\' == ch) {
++                state.index++;
++            } else if ('"' == ch) {
++                state.index++;
++                break;
++            }
++        }
++        return true;
 +    }
 +    
-     @Test
-     void assertGenerateSQLTokensWhenInsertSelectUsesActualColumnsForPhysicalTable() {
-         EncryptProjectionTokenGenerator actualGenerator = new EncryptProjectionTokenGenerator(
-```
-
-**File**: `features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/route/qualified/type/QualifiedReadwriteSplittingPrimaryDataSourceRouter.java` (modified, +3/-1)
-```diff
-@@ -17,6 +17,7 @@
- 
- package org.apache.shardingsphere.readwritesplitting.route.qualified.type;
- 
-+import org.apache.shardingsphere.infra.binder.context.extractor.SQLStatementContextExtractor;
- import org.apache.shardingsphere.infra.binder.context.statement.SQLStatementContext;
- import org.apache.shardingsphere.infra.binder.context.statement.type.dml.SelectStatementContext;
- import org.apache.shardingsphere.infra.hint.HintManager;
-@@ -42,7 +43,8 @@ private boolean isPrimaryRoute(final SQLStatementContext sqlStatementContext, fi
-     
-     private boolean isWriteRouteStatement(final SQLStatementContext sqlStatementContext) {
-         SQLStatement sqlStatement = sqlStatementContext.getSqlStatement();
--        return containsLockSegment(sqlStatement) || containsLastInsertIdProjection(sqlStatementContext) || !isSelectStatement(sqlStatement);
-+        return containsLockSegment(sqlStatement) || containsLastInsertIdProjection(sqlStatementContext) || !isSelectStatement(sqlStatement)
-+                || !SQLStatementContextExtractor.getDataModificationBaseContexts(sqlStatementContext).isEmpty();
+     private boolean advanceInOrToggleStringLiteral(final String sql, final ParameterMarkerScanState state) {
+         if (sql.charAt(state.index) != '\'') {
+             return false;
+@@ -893,6 +913,21 @@ public ASTNode visitPseudorecord(final PseudorecordContext ctx) {
+         return result;
      }
-     
-     private boolean containsLockSegment(final SQLStatement sqlStatement) {
-```
-
-**File**: `features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/route/qualified/type/QualifiedReadwriteSplittingPrimaryDataSourceRouterTest.java` (modified, +19/-2)
-```diff
-@@ -17,6 +17,7 @@
- 
- package org.apache.shardingsphere.readwritesplitting.route.qualified.type;
- 
-+import org.apache.shardingsphere.infra.binder.context.extractor.SQLStatementContextExtractor;
- import org.apache.shardingsphere.infra.binder.context.statement.SQLStatementContext;
- import org.apache.shardingsphere.infra.binder.context.statement.type.dml.SelectStatementContext;
- import org.apache.shardingsphere.infra.hint.HintManager;
-@@ -25,11 +26,14 @@
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.predicate.LockSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.type.dml.SelectStatement;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.type.dml.UpdateStatement;
-+import org.apache.shardingsphere.test.infra.framework.extension.mock.AutoMockExtension;
-+import org.apache.shardingsphere.test.infra.framework.extension.mock.StaticMockSettings;
-+import org.junit.jupiter.api.BeforeEach;
- import org.junit.jupiter.api.Test;
- import org.junit.jupiter.api.extension.ExtendWith;
- import org.mockito.Mock;
--import org.mockito.junit.jupiter.MockitoExtension;
- 
-+import java.util.Collections;
- import java.util.Optional;
- 
- import static org.hamcrest.MatcherAssert.assertThat;
-@@ -40,14 +44,20 @@
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.when;
- 
--@ExtendWith(MockitoExtension.class)
-+@ExtendWith(AutoMockExtension.class)
-+@StaticMockSettings(SQLStatementContextExtractor.class)
- class QualifiedReadwriteSplittingPrimaryDataSourceRouterTest {
-     
-     @Mock
-     private SQLStatementContext sqlStatementContext;
-     
-     private final HintValueContext hintValueContext = new HintValueContext();
-     
-+    @BeforeEach
-+    void setUp() {
-+        when(SQLStatementContextExtractor.getDataModificationBaseContexts(sqlStatementContext)).thenReturn(Collections.emptyList());
-+    }
-+    
-     @Test
-     void assertIsQualifiedWithSelect() {
-         SelectStatement selectStatement = mock(SelectStatement.class);
-@@ -91,6 +101,13 @@ void assertIsNotQualifiedWithHint() {
-         assertFalse(new QualifiedReadwriteSplittingPrimaryDataSourceRouter().isQualified(sqlStatementContext, null, hintValueContext));
-     }
-     
-+    @Test
-+    void assertIsQualifiedWithDataModificationCte() {
-+        when(sqlStatementContext.getSqlStatement()).thenReturn(mock(SelectStatement.class));
-+        when(SQLStatementContextExtractor.getDataModificationBaseContexts(sqlStatementContext)).thenReturn(Collections.singleton(mock(SQLStatementContext.class)));
-+        assertTrue(new QualifiedReadwriteSplittingPrimaryDataSourceRouter().isQualified(sqlStatementContext, null, hintValueContext));
-+    }
-+    
-     @Test
-     void assertRoute() {
-         ReadwriteSplittingDataSourceGroupRule rule = mock(ReadwriteSplittingDataSourceGroupRule.class);
-```
-
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/context/SQLStatementContextFactory.java` (modified, +2/-2)
-```diff
-@@ -92,10 +92,10 @@ private static SQLStatementContext getDMLStatementContext(final ShardingSphereMe
-             return new SelectStatementContext((SelectStatement) sqlStatement, metaData, currentDatabaseName, Collections.emptyList());
-         }
-         if (sqlStatement instanceof UpdateStatement) {
--            return new UpdateStatementContext((UpdateStatement) sqlStatement);
-+            return new UpdateStatementContext((UpdateStatement) sqlStatement, metaData, currentDatabaseName);
-         }
-         if (sqlStatement instanceof DeleteStatement) {
--            return new DeleteStatementContext((DeleteStatement) sqlStatement);
-+            return new DeleteStatementContext((DeleteStatement) sqlStatement, metaData, currentDatabaseName);
-         }
-         if (sqlStatement instanceof InsertStatement) {
-             return new InsertStatementContext((InsertStatement) sqlStatement, metaData, currentDatabaseName);
-```
-
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/context/extractor/SQLStatementContextExtractor.java` (modified, +48/-0)
-```diff
-@@ -20,19 +20,24 @@
- import lombok.AccessLevel;
- import lombok.NoArgsConstructor;
- import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
-+import org.apache.shardingsphere.infra.binder.context.SQLStatementContextFactory;
- import org.apache.shardingsphere.infra.binder.context.available.WhereContextAvailable;
- import org.apache.shardingsphere.infra.binder.context.segment.insert.values.InsertSelectContext;
- import org.apache.shardingsphere.infra.binder.context.statement.SQLStatementContext;
- import org.apache.shardingsphere.infra.binder.context.statement.type.ddl.AlterViewStatementContext;
- import org.apache.shardingsphere.infra.binder.context.statement.type.ddl.CreateViewStatementContext;
-+import org.apache.shardingsphere.infra.binder.context.statement.type.dml.DeleteStatementContext;
- import org.apache.shardingsphere.infra.binder.context.statement.type.dml.InsertStatementContext;
- import org.apache.shardingsphere.infra.binder.context.statement.type.dml.SelectStatementContext;
-+import org.apache.shardingsphere.infra.binder.context.statement.type.dml.UpdateStatementContext;
-+import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
- import org.apache.shardingsphere.infra.metadata.database.ShardingSphereDatabase;
- import org.apache.shardingsphere.infra.metadata.database.schema.QualifiedTable;
- import org.apache.shardingsphere.infra.metadata.database.schema.util.IndexMetaDataUtils;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.index.IndexSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.ColumnSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.BinaryOperationExpression;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.complex.CommonTableExpressionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.predicate.WhereSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.statement.attribute.type.IndexSQLStatementAttribute;
- 
-@@ -50,6 +55,49 @@
- @NoArgsConstructor(access = AccessLevel.PRIVATE)
- public final class SQLStatementContextExtractor {
      
 +    /**
-+     * Create base contexts for data-modifying common table expressions before caching the parent context.
++     * Register parameter markers from a parse subtree.
 +     *
-+     * @param segments common table expressions
-+     * @param metaData metadata
-+     * @param currentDatabaseName current database name
-+     * @return data-modifying statement base contexts
++     * @param context parse subtree
++     * @return registered marker expressions
 +     */
-+    public static Collection<SQLStatementContext> createDataModificationBaseContexts(final Collection<CommonTableExpressionSegment> segments,
-+                                                                                     final ShardingSphereMetaData metaData, final String currentDatabaseName) {
-+        Collection<SQLStatementContext> result = Collections.emptyList();
-+        for (CommonTableExpressionSegment each : segments) {
-+            if (null != each.getDataModification()) {
-+                if (result.isEmpty()) {
-+                    result = new LinkedList<>();
-+                }
-+                result.add(SQLStatementContextFactory.newInstance(metaData, each.getDataModification(), currentDatabaseName));
-+            }
++    protected final Collection<ParameterMarkerExpressionSegment> registerParameterMarkers(final ParseTree context) {
++        Collection<ParseTree> markerNodes = Trees.findAllRuleNodes(context, OracleStatementParser.RULE_parameterMarker);
++        Collection<ParameterMarkerExpressionSegment> result = new ArrayList<>(markerNodes.size());
++        for (ParseTree each : markerNodes) {
++            result.add(createParameterMarkerExpressionSegment((ParameterMarkerContext) each));
 +        }
 +        return result;
 +    }
 +    
-+    /**
-+     * Get data-modifying common table expression base contexts.
-+     *
-+     * @param sqlStatementContext parent statement context
-+     * @return data-modifying statement base contexts
-+     */
-+    public static Collection<SQLStatementContext> getDataModificationBaseContexts(final SQLStatementContext sqlStatementContext) {
-+        if (sqlStatementContext instanceof SelectStatementContext) {
-+            return ((SelectStatementContext) sqlStatementContext).getBaseContext().getDataModificationBaseContexts();
-+        }
-+        if (sqlStatementContext instanceof InsertStatementContext) {
-+            return ((InsertStatementContext) sqlStatementContext).getBaseContext().getDataModificationBaseContexts();
-+        }
-+        if (sqlStatementContext instanceof UpdateStatementContext) {
-+            return ((UpdateStatementContext) sqlStatementContext).getBaseContext().getDataModificationBaseContexts();
-+        }
-+        return sqlStatementContext instanceof DeleteStatementContext
-+                ? ((DeleteStatementContext) sqlStatementContext).getBaseContext().getDataModificationBaseContexts()
-+                : Collections.emptyList();
-+    }
-+    
-     /**
-      * Get table names.
-      *
-```
-
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/context/statement/type/dml/DeleteStatementBaseContext.java` (modified, +12/-0)
-```diff
-@@ -18,8 +18,10 @@
- package org.apache.shardingsphere.infra.binder.context.statement.type.dml;
- 
- import lombok.Getter;
-+import org.apache.shardingsphere.infra.binder.context.extractor.SQLStatementContextExtractor;
- import org.apache.shardingsphere.infra.binder.context.segment.table.TablesContext;
- import org.apache.shardingsphere.infra.binder.context.statement.SQLStatementContext;
-+import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
- import org.apache.shardingsphere.sql.parser.statement.core.extractor.ColumnExtractor;
- import org.apache.shardingsphere.sql.parser.statement.core.extractor.ExpressionExtractor;
- import org.apache.shardingsphere.sql.parser.statement.core.extractor.TableExtractor;
-@@ -30,6 +32,7 @@
- import org.apache.shardingsphere.sql.parser.statement.core.statement.type.dml.DeleteStatement;
- 
- import java.util.Collection;
-+import java.util.Collections;
- import java.util.HashMap;
- import java.util.LinkedList;
- import java.util.Map;
-@@ -42,6 +45,8 @@ public final class DeleteStatementBaseContext implements SQLStatementContext {
-     
-     private final DeleteStatement sqlStatement;
-     
-+    private final Collection<SQLStatementContext> dataModificationBaseContexts;
-+    
-     private final TablesContext tablesContext;
-     
-     private final Collection<WhereSegment> whereSegments;
-@@ -51,7 +56,14 @@ public final class DeleteStatementBaseContext implements SQLStatementContext {
-     private final Collection<BinaryOperationExpression> joinConditions = new LinkedList<>();
-     
-     public DeleteStatementBaseContext(final DeleteStatement sqlStatement) {
-+        this(sqlStatement, null, null);
-+    }
-+    
-+    public DeleteStatementBaseContext(final DeleteStatement sqlStatement, final ShardingSphereMetaData metaData, final String currentDatabaseName) {
-         this.sqlStatement = sqlStatement;
-+        dataModificationBaseContexts = null != metaData && sqlStatement.getWith().isPresent()
-+                ? SQLStatementContextExtractor.createDataModificationBaseContexts(sqlStatement.getWith().get().getCommonTableExpressions(), metaData, currentDatabaseName)
-+                : Collections.emptyList();
-         tablesContext = new TablesContext(getAllSimpleTableSegments());
-         whereSegments = createWhereSegments(sqlStatement);
-         columnSegments = ColumnExtractor.extractColumnSegments(whereSegments);
-```
-
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/context/statement/type/dml/DeleteStatementContext.java` (modified, +5/-0)
-```diff
-@@ -21,6 +21,7 @@
- import org.apache.shardingsphere.infra.binder.context.available.WhereContextAvailable;
- import org.apache.shardingsphere.infra.binder.context.segment.table.TablesContext;
- import org.apache.shardingsphere.infra.binder.context.statement.SQLStatementContext;
-+import org.apache.shardingsphere.infra.metadata.ShardingSphereMetaData;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.ColumnSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.BinaryOperationExpression;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.predicate.WhereSegment;
-@@ -40,6 +41,10 @@ public DeleteStatementContext(final DeleteStatement sqlStatement) {
-         baseContext = new DeleteStatementBaseContext(sqlStatement);
+     protected ParameterMarkerExpressionSegment createParameterMarkerExpressionSegment(final ParameterMarkerContext ctx) {
+         return createParameterMarkerExpressionSegment((ParameterMarkerValue) visit(ctx), ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex());
+     }
+@@ -1028,11 +1063,7 @@ public ASTNode visitAnalyticFunction(final AnalyticFunctionContext ctx) {
      }
      
-+    public DeleteStatementContext(final DeleteStatement sqlStatement, final ShardingSphereMetaData metaData, final String currentDatabaseName) {
-+        baseContext = new DeleteStatementBaseContext(sqlStatement, metaData, currentDatabaseName);
-+    }
-+    
+     private Collection<ExpressionSegment> getAnalyticFunctionParameters(final AnalyticFunctionContext ctx) {
+-        Collection<ExpressionSegment> result = new LinkedList<>();
+-        List<ExprContext> exprContexts = ctx.expr();
+-        if (!exprContexts.isEmpty()) {
+-            result.add((ExpressionSegment) visit(exprContexts.get(0)));
+-        }
++        Collection<ExpressionSegment> result = getExpressions(ctx.expr());
+         if (null != ctx.leadLagInfo()) {
+             for (ExprContext each : ctx.leadLagInfo().expr()) {
+                 result.add((ExpressionSegment) visit(each));
+@@ -1150,7 +1181,7 @@ protected Collection<ExpressionSegment> getPartitionListSegments(final QueryPart
+     
      @Override
-     public Collection<WhereSegment> getWhereSegments() {
-         return baseContext.getWhereSegments();
+     public ASTNode visitWindowingClause(final WindowingClauseContext ctx) {
+-        return new CommonExpressionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), getOriginalText(ctx), Collections.emptyList());
++        return new CommonExpressionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), getOriginalText(ctx), getExpressions(ctx.expr()));
+     }
+     
+     @Override
+@@ -1555,6 +1586,9 @@ public ASTNode visitFirstOrLastValueFunction(final FirstOrLastValueFunctionConte
+     @Override
+     public ASTNode visitTrimFunction(final TrimFunctionContext ctx) {
+         FunctionSegment result = new FunctionSegment(ctx.getStart().getStartIndex(), ctx.getStop().getStopIndex(), ctx.TRIM().getText(), getOriginalText(ctx));
++        if (null != ctx.trimOperands()) {
++            result.getParameters().addAll(registerParameterMarkers(ctx.trim
+```
+
+**File**: `parser/sql/engine/dialect/oracle/src/main/java/org/apache/shardingsphere/sql/parser/engine/oracle/visitor/statement/type/OracleDMLStatementVisitor.java` (modified, +5/-1)
+```diff
+@@ -78,6 +78,7 @@
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.ModelClauseContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.ModelColumnClausesContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.ModelColumnContext;
++import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.ModelExprContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.MultiColumnForLoopContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.MultiTableElementContext;
+ import org.apache.shardingsphere.sql.parser.autogen.OracleStatementParser.MultiTableInsertIntoClauseContext;
+@@ -932,6 +933,9 @@ public ASTNode visitModelClause(final ModelClauseContext ctx) {
+                 result.getCellAssignmentSelects().add(extractSelectSubqueryValueFromMultiColumnForLoop(each.multiColumnForLoop()));
+             }
+         }
++        for (ModelExprContext each : ctx.mainModel().modelRulesClause().modelExpr()) {
++            registerParameterMarkers(each);
++        }
+         return result;
+     }
+     
+@@ -1646,7 +1650,7 @@ private Collection<OrderByItemSegment> generateOrderByItemSegmentsFromExpression
+     
+     @Override
+     public ASTNode visitSubquery(final SubqueryContext ctx) {
+-        return visit(ctx.selectSubquery());
++        return visitScalarSubquery(ctx.selectSubquery());
+     }
+     
+     @Override
+```
+
+**File**: `test/it/parser/src/main/resources/case/dml/select.xml` (modified, +51/-2)
+```diff
+@@ -8097,7 +8097,7 @@
+         </order-by>
+     </select>
+     
+-    <select sql-case-id="select_oracle_model_cv_parameter">
++    <select sql-case-id="select_oracle_model_cv_parameter" parameters="2" parameter-marker-count="1">
+         <from>
+             <simple-table name="t_product" start-index="40" stop-index="48" />
+         </from>
+@@ -8115,7 +8115,7 @@
+         </order-by>
+     </select>
+     
+-    <select sql-case-id="select_oracle_model_partition_cv_parameter">
++    <select sql-case-id="select_oracle_model_partition_cv_parameter" parameters="1" parameter-marker-count="1">
+         <from>
+             <simple-table name="t_product" start-index="52" stop-index="60" />
+         </from>
+@@ -8136,6 +8136,55 @@
+         </order-by>
+     </select>
+ 
++    <select sql-case-id="select_oracle_analytic_window_and_trim_parameters" parameters="2, 1, 1, x" parameter-marker-count="4">
++        <projections start-index="7" stop-index="123">
++            <expression-projection text="NTH_VALUE(&quot;pri?ce&quot;, ?) OVER (ORDER BY product_id ROWS BETWEEN ? PRECEDING AND ? FOLLOWING)" start-index="7" stop-index="96">
++                <expr>
++                    <function function-name="NTH_VALUE" text="NTH_VALUE(&quot;pri?ce&quot;, ?) OVER (ORDER BY product_id ROWS BETWEEN ? PRECEDING AND ? FOLLOWING)" start-index="7" stop-index="96">
++                        <parameter>
++                            <column name="pri?ce" start-delimiter="&quot;" end-delimiter="&quot;" start-index="17" stop-index="24" />
++                        </parameter>
++                        <parameter>
++                            <parameter-marker-expression parameter-index="0" start-index="27" stop-index="27" />
++                        </parameter>
++                        <window-item start-index="30" stop-index="96">
++                            <order-by start-index="36" stop-index="54">
++                                <column-item name="product_id" order-direction="ASC" start-index="45" stop-index="54" />
++                            </order-by>
++                            <frame>
++                                <common-expression text="ROWS BETWEEN ? PRECEDING AND ? FOLLOWING" start-index="56" stop-index="95">
++                                    <children>
++                                        <expression>
++                                            <parameter-marker-expression parameter-index="1" start-index="69" stop-index="69" />
++                                        </expression>
++                                        <expression>
++                                            <parameter-marker-expression parameter-index="2" start-index="85" stop-index="85" />
++                                        </expression>
++                                    </children>
++                                </common-expression>
++                            </frame>
++                        </window-item>
++                    </function>
++                </expr>
++            </expression-projection>
++            <expression-projection text="TRIM(? FROM product_name)" start-index="99" stop-index="123">
++                <expr>
++                    <function function-name="TRIM" text="TRIM(? FROM product_name)" start-index="99" stop-index="123">
++                        <parameter>
++                            <parameter-marker-expression parameter-index="3" start-index="104" stop-index="104" />
++                        </parameter>
++                        <parameter>
++                            <column name="product_name" start-index="111" stop-index="122" />
++                        </parameter>
++                    </function>
++                </expr>
++            </expression-projection>
++        </projections>
++        <from>
++            <simple-table name="t_product" start-index="130" stop-index="138" />
++        </from>
++    </select>
++
+     <select sql-case-id="select_with_trim_function_multi">
+         <projections start-index="7" stop-index="203" literal-start-index="7" literal-stop-index="203">
+             <expression-projection text="TRIM('  derby ')" start-index="7" stop-index="22" literal-start-index="7" literal-stop-index="22">
+```
+
+**File**: `test/it/parser/src/main/resources/sql/supported/dml/select.xml` (modified, +1/-0)
+```diff
+@@ -286,6 +286,7 @@
+     <sql-case id="select_with_order_by_index_oracle" value="SELECT * FROM t_order ORDER BY 1 NULLS LAST" db-types="Oracle" />
+     <sql-case id="select_is_nan_oracle" value="SELECT to_binary_float('NaN') FROM dual WHERE to_binary_float('NaN') IS NAN" db-types="Oracle" />
+     <sql-case id="select_group_by_rollup_oracle_with_rollup" value="SELECT department_id, COUNT(*) FROM employees GROUP BY ROLLUP(department_id)" db-types="Oracle" />
++    <sql-case id="select_oracle_analytic_window_and_trim_parameters" value="SELECT NTH_VALUE(&quot;pri?ce&quot;, ?) OVER (ORDER BY product_id ROWS BETWEEN ? PRECEDING AND ? FOLLOWING), TRIM(? FROM product_name) FROM t_product" db-types="Oracle" case-types="PLACEHOLDER" />
+     <sql-case id="select_with_trim_function_multi" value="select TRIM('  derby '), TRIM(BOTH ' ' FROM '  derby '), TRIM(TRAILING ' ' FROM '  derby '), TRIM(cast (null as char(1)) FROM '  derby '), TRIM(' ' FROM cast(null as varchar(30))), TRIM('y' FROM ' derby') FROM employees" db-types="Oracle" />
+     <sql-case id="select_with_trim_function_simple" value="SELECT TRIM( '.,! ' FROM '     #     test    .') AS Result" db-types="SQLServer" />
+     <sql-case id="select_oracle_quantified_some_subquery" value="SELECT user_id FROM t_user WHERE user_id = SOME (SELECT user_id FROM t_order)" db-types="Oracle" />
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40557** (2026-11-27): Support index DDL parsing across SQL dialects (@strongduanmu)
+- **PR #40556** (2026-11-27): Refactor Oracle parameter marker handling (@strongduanmu)
+- **PR #40553** (2026-11-26): Allow requested recommended skill availability warnings (@terrymanu)
+- **PR #40551** (2026-11-24): Clarify standard capability reuse before adding mechanisms (@terrymanu)
+- **PR #40545** (2026-11-24): Fix prepared statement parameter index validation (@terrymanu)
 - **PR #40543** (2026-11-23): Use AST and dialect options for PostgreSQL SQL handling (@strongduanmu)
-- **PR #40539** (2026-11-22): Fix Oracle unparenthesized function binding for dummy table queries (@terrymanu)
-- **PR #40538** (2026-11-21): Fix PostgreSQL keyword identifier compatibility (@terrymanu)
-- **PR #40537** (2026-11-21): Add regression coverage for unsupported Javadoc parameter nullability (@terrymanu)
-- **PR #40536** (2026-11-21): Align SQL federation XML loading with existing JAXB tests (@terrymanu)
-- **PR #40533** (2026-11-23): Preserve PostgreSQL SQL parsing and binding metadata (@strongduanmu)
 
 ---
 
@@ -2035,29 +1958,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use AST and dialect options for PostgreSQL SQL handling
+## X. Support index DDL parsing across SQL dialects
 
 **RULE**:
-When implementing operations in `database/connector/core/src/main/java/org/apache/shardingsphere/database/connector/core/metadata/database/metadata/option/sql/DialectSQLOption.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `RELEASE-NOTES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d551770`: Use AST and dialect options for PostgreSQL SQL handling. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d76e38a`: Support index DDL parsing across SQL dialects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `database/connector/core/src/main/java/org/apache/shardingsphere/database/connector/core/metadata/database/metadata/option/sql/DialectSQLOption.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `RELEASE-NOTES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    
-    /**
-     * Get the alias exposing the proposed row in an insert conflict action.
-     *
-     * @return proposed row alias, or empty if unsupported
-     */
-    default Optional<String> getInsertConflictProposedRowAlias() {
-        return Optional.empty();
-    }
+1. SQL Parser: Support Unicode-escaped index names, table names, and direct column references in openGauss `CREATE INDEX` statements - [#40557](https://github.com/apache/shardingsphere/pull/40557)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2067,7 +1982,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d551770` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d76e38a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -13923,3 +13923,7 @@ Every entry in this ledger must capture:
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `5fc7f346` | Multi-dimensional audit evidence | 2026-11-27T22:36:13.996Z |
 | `learn-github-kucherenko-jscpd` | `https://github.com/kucherenko/jscpd` | `ca751b46` | Multi-dimensional audit evidence | 2026-11-27T22:45:40.879Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5aaaf150` | Multi-dimensional audit evidence | 2026-11-27T22:45:56.505Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `d2052b86` | Multi-dimensional audit evidence | 2026-11-27T22:54:39.244Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `0d76e38a` | Multi-dimensional audit evidence | 2026-11-27T22:54:49.329Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `23809a00` | Multi-dimensional audit evidence | 2026-11-27T22:54:50.857Z |
+| `learn-dom-j-068f8bd9` | `project://scrapy-scrapy` | `d2052b86` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/scrapy-scrapy-learnings.md` | 2026-11-27T22:55:24.940Z |
