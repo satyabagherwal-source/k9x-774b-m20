@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-26T21:09:06.416Z",
+  "timestamp": "2026-11-27T01:25:36.847Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-26T21:09:06.416Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T01:25:36.847Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `33bbc74e`  
+> **Source Version**: `f1ef04b9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-26T21:09:00.185Z  
+> **Timestamp**: 2026-11-27T01:25:30.454Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-26T21:09:00.177Z  
+> **Harvest Timestamp**: 2026-11-27T01:25:30.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3136 stars
+- **Stars / Engagement**: 3135 stars
 
 ---
 
@@ -1763,13 +1763,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6404** (2026-11-26): **build: sync main to 0.2.167 after release**
-  *Symptoms*: Syncs main's version files to the published release **v0.2.167** (freenet 0.2.167, fdev 0.3.329).  release.yml ships the soaked commit plus a version bump on `release/v0.2.167`, which never reaches main by itself. This PR is that bump regenerated on main by `.github/workflows/release-sync.yml`. It touches only version files and lockfiles. See docs/RELEASING.md, 'Merge-back'.
+- **Issue #6408** (2026-11-26): **fix: demote a native role only when rescues are a real share of its outcomes**
+  *Symptoms*: **DO NOT MERGE until the v0.2.167 settled read confirms (Ian-approved plan).**  ## Problem  At 100% native, the QUIC-native demotion (3 distinct-peer rescues inside the 6 h strike window, cleared by a success in the same role) demotes more nodes than it did at 25%. Field read for 0.2.167, 17:13Z to 21:44Z on 2026-11-26 (4.5 h, 285k snapshots, 1,060 nodes, rollout ramp included): 63 acceptor-role demotions on 62 nodes (5.8%) and 40 joiner-role demotions on 40 nodes (3.8%).  Rescue share of the role's native outcomes (rescues / (rescues + successes)) in the 6 h before each demotion: - joiner: p10/p50/p90 = 0.36 / 0.50 / 1.0 (these nodes really fail about half their native setups); - acceptor: p10/p25/p50/p75/p90 = 0.17 / 0.22 / 0.30 / 0.50 / 0.57, against a healthy baseline of about 0.04 (joiner 0.075).  About half the acceptor demotions are therefore nodes that completed three rescues in a row among 10 to 25 setups at a modest rescue share.  ## Approach  The streak stays the trigger. When it is full, the role is demoted only if rescues are at least `DEMOTION_MIN_RESCUE_SHARE_PERCENT` (30) of that role's native outcomes inside `STRIKE_WINDOW`. Otherwise the streak is cleared and the event is counted in a new counter, `connect_native_demotion_guard_spared_{joiner,acceptor}`. Each role keeps a bounded ring (`DEMOTION_OUTCOME_RING` = 256, oldest evicted first) of its rescues and successes.  The guard only holds a demotion back, so demotion stays lower-only and fail-safe: an empty 
   **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, testing.md **Files reviewed:** 4  The PR is an automated release version sync. It bumps `freenet` to 0.2.167 and `fdev` to 0.3.329, and updates the matching binstall `pkg-url` segments and the `freenet` dependency version in `crates/fdev/Cargo.toml`. It also updates both lockfiles. It touches no source code, tests or workflows.  The bump is consistent across all four files. The `build:` prefix in the title is a valid conventional-commit type.  No rule violations detected.  <!-- warning-count: 0 -->  --- *Rule review against `.claude/rules/`. WARNING findings turn the `rule-review/warnings` status red.*
+  > Closing without merge: plan changed. Demotion will be removed rather than guarded (decision for Phase D; whether to remove it already before D is being evaluated from the 0.2.167 settled read). The branch stays for reference.
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md, transport.md **Files reviewed:** 5  - **Regression test:** The `fix:` PR adds tests that exercise the new guard.   - They cover the exact 30% boundary: 3 of 10 demotes and 3 of 11 does not.   - They cover a node with no successes at all.   - They cover a share that rises after a spared streak.   - They cover outcomes at the window edge, just inside it and just outside it.   - They cover the ring bound and eviction.   - They cover both roles through `NativeConnectState`.   - They cover the metrics snapshot, its JSON field and its reset. - **Cleanup bounds:** The new `outcomes` ring is bounded by age (`STRIKE_WINDOW`) and by size (`DEMOTION_OUTCOME_RING`). It adds no unbounded exemption. - **Docs:** `.claude/rules/transport.md` and `docs/architecture/transport/rules-reference.md` were updated in the same PR, so no stale documentation. - **Time and ra
 
-- **Issue #6403** (2026-11-26): **fix(get): a relay holding the contract serves it at HTL 0**
-  *Symptoms*: ## Problem A relay holding a GET's contract answered NotFound when the request reached it with HTL 0, because `drive_relay_get_inner` checked `htl == 0` before the local lookup. In a placement-gap sim trace one GET reached the holder exactly at HTL 0 and failed.  ## Approach HTL bounds forwarding only, so the guard now follows the local-hit arm. At HTL 0 the relay serves, in order: a fresh copy (same `check_local_with_interest_gate` rule as any other HTL), then the in-mesh stale-but-hosted fallback copy (the same copy the routing-exhausted arm already serves; at HTL 0 routing is exhausted by definition), then NotFound as before. HTL 0 never forwards.  Behaviour notes: a Found at HTL 0 now ends the search at the HTL-1 node that forwarded to this peer, where it would previously have retried or consulted advertisements after the NotFound. Each HTL-0 arrival costs one extra contract-handler query (the local lookup that used to be skipped).  ## Testing - `test_get_reaching_holder_at_htl_zero_is_answered_found` (sim): seeded single copy, `ring_max_htl` swept 1..=4, two seedings (no local interest: fallback path; local interest: fresh path). Asserts no GET ends NotFound at the holder at HTL 0, and that a requester actually received the contract (stored state, GetSuccess). Red on the original driver for both seedings, red when Found sends at HTL 0 are dropped, green with the fix. - Source pin `htl_zero_relay_serves_a_held_copy_before_answering_not_found`; the `relay_send_found` / `ca
+- **Issue #6405** (2026-11-26): **chore(put): log each PUT hop decision at INFO**
+  *Symptoms*: ## Problem A gateway logging at INFO printed "PUT relay: processing Request" and nothing after it, because the forward was logged at DEBUG (compiled out in release builds). That read as "the PUT never left the node" and misled an investigation. Probe answers of holder_found=true for brand-new keys also left no record of why the peer counted as a holder.  ## Approach One INFO line per hop decision, emitted from `operations/put/path_log.rs` using fields already computed at each site: - `put_hop_forwarded`: next hop, its distance to the key, this node's distance, and that the router chose it. - `put_hop_finalized`: the reason (terminus guard, no next hop, HTL 0, below the streaming threshold) and whether a replicate copy was sent, and to whom. - `put_summary_first_outcome`: holder found or not, the probed peer and its distance, and whether the full-state PUT followed. - `put_probe_answered`: which source made the answering node count as receiving updates (subscription lease, local subscription, or both), with lease age.  These replace the DEBUG `relay_put_forward` line, the streaming "piped stream forwarding" line, the two bootstrap-gateway lines, the #4363 terminus line and the `relay_put_complete` line. A grep of the repos, skills, dashboards and the telemetry collector found no consumer of the removed text. Each line fires once per hop per PUT and is subject to the existing per-callsite rate limit.  One non-logging change: `drive_relay_probe` now takes its holder decision fro
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1786,101 +1787,475 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33bbc74e` (2026-11-26)
-**Commit Message**: build: sync main to 0.2.167 after release (#6404)
+### Incident Patch 1: `f1ef04b9` (2026-11-26)
+**Commit Message**: chore(put): log each PUT hop decision at INFO (#6405)
 
-Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `crates/core/src/operations/put.rs` (modified, +1/-0)
 ```diff
-@@ -1899,7 +1899,7 @@ dependencies = [
+@@ -10,6 +10,7 @@
+ //! consume them.
  
- [[package]]
- name = "fdev"
--version = "0.3.328"
-+version = "0.3.329"
- dependencies = [
-  "anyhow",
-  "axum",
-@@ -2078,7 +2078,7 @@ dependencies = [
+ pub(crate) mod op_ctx_task;
++mod path_log;
+ pub(crate) mod stream_admission;
  
- [[package]]
- name = "freenet"
--version = "0.2.166"
-+version = "0.2.167"
- dependencies = [
-  "aes-gcm",
-  "ahash",
+ pub(crate) use self::messages::{PutMsg, PutStreamingPayload};
 ```
 
-**File**: `apps/freenet-ping/Cargo.lock` (modified, +1/-1)
+**File**: `crates/core/src/operations/put/op_ctx_task.rs` (modified, +306/-60)
 ```diff
-@@ -1715,7 +1715,7 @@ dependencies = [
+@@ -991,6 +991,16 @@ async fn try_summary_first_put(
+     let reply = match round_trip {
+         Ok(Ok(reply)) => reply,
+         Ok(Err(err)) => {
++            super::path_log::log_summary_first_outcome(
++                client_tx,
++                key,
++                "probe_failed",
++                None,
++                Some(target_addr),
++                target.location(),
++                crate::ring::Location::from(&key),
++                true,
++            );
+             tracing::debug!(
+                 tx = %client_tx,
+                 probe_tx = %probe_tx,
+@@ -1029,6 +1039,16 @@ async fn try_summary_first_put(
+             ..
+         })) => (holder_found, hop_count, holder_summary, reverse_delta),
+         _other => {
++            super::path_log::log_summary_first_outcome(
++                client_tx,
++                key,
++                "unexpected_reply",
++                None,
++                Some(target_addr),
++                target.location(),
++                crate::ring::Location::from(&key),
++                true,
++            );
+             tracing::debug!(
+                 tx = %client_tx,
+                 probe_tx = %probe_tx,
+@@ -1041,6 +1061,16 @@ async fn try_summary_first_put(
+     };
  
- [[package]]
- name = "freenet"
--version = "0.2.166"
-+version = "0.2.167"
- dependencies = [
-  "aes-gcm",
-  "ahash",
+     if !holder_found {
++        super::path_log::log_summary_first_outcome(
++            client_tx,
++            key,
++            "new_contract",
++            Some(false),
++            Some(target_addr),
++            target.location(),
++            crate::ring::Location::from(&key),
++            true,
++        );
+         tracing::debug!(
+             tx = %client_tx,
+             contract = %key,
+@@ -1060,6 +1090,16 @@ async fn try_summary_first_put(
+         // Wire invariant violation (`holder_found` without `holder_summary`)
+         // — treat defensively as a probe failure rather than trust a
+         // malformed/unexpected reply.
++        super::path_log::log_summary_first_outcome(
++            client_tx,
++            key,
++            "missing_holder_summary",
++            Some(true),
++            Some(target_addr),
++            target.location(),
++            crate::ring::Location::from(&key),
++            true,
++        );
+         tracing::warn!(
+             tx = %client_tx,
+             contract = %key,
+@@ -1131,6 +1171,16 @@ async fn try_summary_first_put(
+     // instead — the same recovery the delta-computation-failure arm uses.
+     // See `crate::ring::delta_incompat`.
+     if op_manager.ring.delta_incompat.suppress_deltas(key.id()) {
++        super::path_log::log_summary_first_outcome(
++            client_tx,
++            key,
++            "delta_suppressed_incompat",
++            Some(true),
++            Some(target_addr),
++            target.location(),
++            crate::ring::Location::from(&key),
++            true,
++        );
+         tracing::debug!(
+             tx = %client_tx,
+             contract = %key,
+@@ -1156,6 +1206,16 @@ async fn try_summary_first_put(
+     {
+         Ok(delta) => delta,
+         Err(err) => {
++            super::path_log::log_summary_first_outcome(
++                client_tx,
++                key,
++                "delta_failed",
++                Some(true),
++                Some(target_addr),
++                target.location(),
++                crate::ring::Location::from(&key),
++                true,
++            );
+             tracing::debug!(
+                 tx = %client_tx,
+                 contract = %key,
+@@ -1210,6 +1270,16 @@ async fn try_summary_first_put(
+     };
+ 
+     record_put_probe_outcome(false, delta_bytes);
++    super::path_log::log_summary_first_outcome(
++        client_tx,
++        key,
++        "reconciled_existing",
++        Some(true),
++        Some(target_addr),
++        target.location(),
++        crate::ring::Location::from(&key),
++        false,
++    );
+ 
+     SummaryFirstOutcome::ReconciledExisting {
+         target: target.clone(),
+@@ -2153,6 +2223,7 @@ where
+         None
+     };
+ 
++    let mut hop_source = super::path_log::HopSource::Router;
+     let (next_peer, next_addr) = match next_hop {
+         Some(peer) => {
+             // Greedy-routing terminus guard (#4363): finalize here only
+@@ -2184,21 +2255,14 @@ where
+                 .and_then(|p| p.location());
+             let next_hop_loc = peer.location();
+             if put_routing_should_terminate(upstream_loc, own_loc, next_hop_loc, target) {
+-                tracing::info!(
+-                    tx = %incoming_tx,
+-                    contract = %key,
+-                    upstream_location = ?upstream_loc.map(|l| l.as_f64()),
+-                    own_location = ?own_loc.map(|l| l.as_f64()),
+-                    next_hop_location = ?next_hop_loc.map(|l| l.as_f64()),
+-                    target_location = %target.as_f64(),
+-                    phase = "relay_put_terminus",
+-                    "PUT relay: chain descended here and next hop moves away; finalizing here (#4363)"
+-                );
+                 // Finalize the operation at t
 ```
 
-**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+**File**: `crates/core/src/operations/put/path_log.rs` (added, +344/-0)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "freenet"
--version = "0.2.166"
-+version = "0.2.167"
- edition = "2024"
- rust-version = "1.85"
- publish = true
+@@ -0,0 +1,344 @@
++//! One INFO line per PUT hop decision.
++//!
++//! Why: a relay's PUT forward used to be logged at DEBUG only, which release
++//! builds compile out, and a gateway logging at INFO therefore showed the
++//! request arriving and nothing after it. That reads exactly like "the PUT
++//! never left this node" and led an investigation to the wrong conclusion.
++//! These lines make each hop's decision visible at INFO.
++//!
++//! Volume: each helper is called at most once per hop per PUT (a decision, not
++//! a message or a fragment), the same cadence as the existing
++//! `PUT relay: processing Request` line. These helpers add no limiter of their
++//! own, but the process-wide per-callsite limiter (`util/rate_limit_layer.rs`,
++//! 30 events/s per callsite by default) still applies, and `log_forwarded` is one
++//! callsite shared by the streaming and non-streaming drivers, so a node past
++//! 30 forwarded PUT hops a second drops the excess (counted in the limiter's
++//! periodic summary line).
++//!
++//! Fields are limited to values the drivers already hold. The geometrically
++//! closest candidate is not logged: finding it needs a second routing pass over
++//! the ring, which this hot path does not do.
++
++use std::net::SocketAddr;
++
++use freenet_stdlib::prelude::ContractKey;
++
++use crate::message::Transaction;
++use crate::ring::Location;
++
++/// Ring distance from `loc` to `target`, or `None` when the location is unknown.
++fn distance_to(loc: Option<Location>, target: Location) -> Option<f64> {
++    loc.map(|l| l.distance(target).as_f64())
++}
++
++fn loc_f64(loc: Option<Location>) -> Option<f64> {
++    loc.map(|l| l.as_f64())
++}
++
++/// Where a forwarded PUT's next hop came from.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(super) enum HopSource {
++    /// `Ring::closest_potentially_hosting`, the router's pick.
++    Router,
++    /// Empty ring: a configured bootstrap gateway.
++    BootstrapGateway,
++}
++
++impl HopSource {
++    fn label(self) -> &'static str {
++        match self {
++            HopSource::Router => "router_closest_potentially_hosting",
++            HopSource::BootstrapGateway => "bootstrap_gateway",
++        }
++    }
++}
++
++/// Why a PUT stopped at this node.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(super) enum FinalizeReason {
++    /// Greedy-routing terminus guard (#4363): the chain descended here and the
++    /// best next hop moves away from the key.
++    TerminusGuard,
++    /// No candidate next hop and no bootstrap gateway.
++    NoNextHop,
++    /// The hop budget is spent.
++    HtlZero,
++    /// A next hop exists but the payload is under the streaming threshold, so
++    /// the streaming driver does not pipe it.
++    BelowStreamingThreshold,
++}
++
++impl FinalizeReason {
++    fn label(self) -> &'static str {
++        match self {
++            FinalizeReason::TerminusGuard => "terminus_guard",
++            FinalizeReason::NoNextHop => "no_next_hop",
++            FinalizeReason::HtlZero => "htl_zero",
++            FinalizeReason::BelowStreamingThreshold => "below_streaming_threshold",
++        }
++    }
++
++    /// The reason for a hop with no next hop to forward to.
++    pub(super) fn for_missing_next_hop(htl: usize) -> Self {
++        if htl == 0 {
++            FinalizeReason::HtlZero
++        } else {
++            FinalizeReason::NoNextHop
++        }
++    }
++}
++
++/// This hop forwarded the PUT.
++#[allow(clippy::too_many_arguments)]
++pub(super) fn log_forwarded(
++    tx: Transaction,
++    key: ContractKey,
++    streaming: bool,
++    new_htl: usize,
++    next_hop_addr: SocketAddr,
++    next_hop_loc: Option<Location>,
++    own_loc: Option<Location>,
++    target: Location,
++    source: HopSource,
++) {
++    tracing::info!(
++        tx = %tx,
++        contract = %key,
++        streaming,
++        htl = new_htl,
++        next_hop = %next_hop_addr,
++        next_hop_location = ?loc_f64(next_hop_loc),
++        next_hop_distance = ?distance_to(next_hop_loc, target),
++        own_location = ?loc_f64(own_loc),
++        own_distance = ?distance_to(own_loc, target),
++        target_location = %target.as_f64(),
++        hop_source = source.label(),
++        phase = "put_hop_forwarded",
++        "PUT hop: forwarded"
++    );
++}
++
++/// This hop finalized the PUT instead of forwarding it.
++///
++/// `replicate_to` is the peer a terminus replication copy was addressed to and
++/// `replicate_sent` whether that copy went out (it is skipped for payloads that
++/// need streaming and can fail to dispatch).
++#[allow(clippy::too_many_arguments)]
++pub(super) fn log_finalized(
++    tx: Transaction,
++    key: ContractKey,
++    streaming: bool,
++    reason: FinalizeReason,
++    htl: usize,
++    upstream_loc: Option<Location>,
++    own_loc: Option<Location>,
++    next_hop_loc: Option<Location>,
++    target: Location,
++    replicate_to: Option<SocketAddr>,
++    replicate_sent: bool,
++) {
++    tracing::info!(
++        tx = %tx,
++        contract = %key,
++        streaming,
++        reason = reason.label(),
 ```
 
-**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
+**File**: `crates/core/src/ring.rs` (modified, +9/-0)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "fdev"
--version = "0.3.328"
-+version = "0.3.329"
- edition = "2024"
- rust-version = "1.85"
- publish = true
-@@ -14,12 +14,12 @@ readme = "README.md"
- # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
- # would expand to the fdev crate version and 404. release.yml rewrites the
- # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
--pkg-url = "{ repo }/releases/download/v0.2.166/fdev-{ target }.tar.gz"
-+pkg-url = "{ repo }/releases/download/v0.2.167/fdev-{ target }.tar.gz"
- pkg-fmt = "tgz"
- bin-dir = "fdev"
+@@ -135,6 +135,7 @@ pub(crate) use hosting::MAX_DEFAULT_HOSTING_BUDGET_BYTES;
+ pub(crate) use hosting::MIN_DEFAULT_HOSTING_BUDGET_BYTES;
+ #[cfg(test)]
+ pub(crate) use hosting::PROVISIONAL_RETRY_INTERVAL;
++pub(crate) use hosting::ReceivingUpdatesSource;
+ /// Single source of truth for the default hosted-contract-state budget.
+ /// `config::default_max_hosting_storage()` resolves to this so the
+ /// operator-facing default and the in-code fallback can never drift. The
+@@ -5164,6 +5165,14 @@ impl Ring {
+         self.hosting_manager.is_receiving_updates(contract)
+     }
  
- [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
--pkg-url = "{ repo }/releases/download/v0.2.166/fdev-{ target }.zip"
-+pkg-url = "{ repo }/releases/download/v0.2.167/fdev-{ target }.zip"
- pkg-fmt = "zip"
- bin-dir = "fdev.exe"
++    /// Diagnostic breakdown of [`Self::is_receiving_updates`].
++    pub(crate) fn receiving_updates_source(
++        &self,
++        contract: &ContractKey,
++    ) -> ReceivingUpdatesSource {
++        self.hosting_manager.receiving_updates_source(contract)
++    }
++
+     /// Get contracts that need subscription renewal.
+     ///
+     /// Returns contracts where:
+```
+
+**File**: `crates/core/src/ring/hosting.rs` (modified, +106/-0)
+```diff
+@@ -616,6 +616,42 @@ impl LocalSubscribers {
+     }
+ }
  
-@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
- hex = { workspace = true }
++/// Why a node counts as receiving updates for a contract (see
++/// [`HostingManager::receiving_updates_source`]).
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub(crate) struct ReceivingUpdatesSource {
++    /// Age of the live network subscription lease (since its first subscribe,
++    /// preserved across renewals), or `None` when there is no live lease.
++    pub lease_age: Option<Duration>,
++    /// Time until the live lease expires unless renewed.
++    pub lease_remaining: Option<Duration>,
++    /// The live lease is provisional (empty-ring bootstrap-gateway answer).
++    pub lease_provisional: bool,
++    /// Local WebSocket clients subscribed to the contract.
++    pub local_clients: usize,
++    /// Local delegate subscriptions, counted as local demand (#4669).
++    pub local_delegates: usize,
++}
++
++impl ReceivingUpdatesSource {
++    pub(crate) fn is_receiving(&self) -> bool {
++        self.lease_age.is_some() || self.local_clients + self.local_delegates > 0
++    }
++
++    /// Which condition fired: a network lease, local demand, both, or neither.
++    pub(crate) fn label(&self) -> &'static str {
++        match (
++            self.lease_age.is_some(),
++            self.local_clients + self.local_delegates > 0,
++        ) {
++            (true, true) => "lease_and_local_subscription",
++            (true, false) => "subscription_lease",
++            (false, true) => "local_subscription",
++            (false, false) => "none",
++        }
++    }
++}
++
+ /// Manages contract hosting and subscription state.
+ ///
+ /// # Subscription Model
+@@ -3173,6 +3209,40 @@ impl HostingManager {
+         self.is_subscribed(contract) || self.has_client_subscriptions(contract.id())
+     }
  
- # internal
--freenet = { path = "../core", version = "0.2.166", features = ["testing"] }
-+freenet = { path = "../core", version = "0.2.167", features = ["testing"] }
- freenet-stdlib = { workspace = true }
++    /// Which of the conditions behind [`Self::is_receiving_updates`] hold, for
++    /// diagnostics. Read-only: [`Self::is_receiving_updates`] does not use it,
++    /// so its behaviour is unchanged. `is_receiving()` on the result agrees with
++    /// it (pinned by `receiving_updates_source_agrees_with_is_receiving_updates`).
++    pub(crate) fn receiving_updates_source(
++        &self,
++        contract: &ContractKey,
++    ) -> ReceivingUpdatesSource {
++        let now = self.time_source.now();
++        let lease = self
++            .active_subscriptions
++            .get(contract)
++            .filter(|lease| lease.expires_at > now)
++            .map(|lease| {
++                (
++                    now.saturating_duration_since(lease.subscribed_since),
++                    lease.expires_at.saturating_duration_since(now),
++                    lease.provisional,
++                )
++            });
++        let (local_clients, local_delegates) = self
++            .client_subscriptions
++            .get(contract.id())
++            .map(|s| (s.clients.len(), s.delegates))
++            .unwrap_or((0, 0));
++        ReceivingUpdatesSource {
++            lease_age: lease.map(|l| l.0),
++            lease_remaining: lease.map(|l| l.1),
++            lease_provisional: lease.is_some_and(|l| l.2),
++            local_clients,
++            local_delegates,
++        }
++    }
++
+     /// Mark a contract as accessed by a local client (HTTP/WebSocket).
+     ///
+     /// Only contracts with this flag get subscription renewal and trusted
+@@ -5043,6 +5113,42 @@ mod tests {
+         assert!(manager.is_receiving_updates(&contract));
+     }
  
- [dev-dependencies]
++    /// `receiving_updates_source` is a diagnostic view of `is_receiving_updates`
++    /// and must agree with it in every state.
++    #[test]
++    fn receiving_updates_source_agrees_with_is_receiving_updates() {
++        let manager = HostingManager::new(DEFAULT_HOSTING_BUDGET_BYTES);
++        let contract = make_contract_key(1);
++        let check = |m: &HostingManager, label: &str| {
++            let src = m.receiving_updates_source(&contract);
++            assert_eq!(
++                src.is_receiving(),
++                m.is_receiving_updates(&contract),
++                "{label}"
++            );
++            src
++        };
++        assert_eq!(check(&manager, "idle").label(), "none");
++        manager.record_contract_access(contract, 1000, AccessType::Put, HostingCause::Other);
++        assert_eq!(check(&manager, "cache only").label(), "none");
++        manager.subscribe(contract);
++        let src = check(&manager, "lease");
++        assert_eq!(src.label(), "subscription_lease");
++        assert!(src.lease_age.is_some() && src.lease_remaining.is_some());
++        let client_id = crate::client_events::ClientId::next();
++        manager.add_client_subscription(contract.id(), client_id);
++        assert_eq!(
++            check(&manager, "both").label(),
++            "lease_and_local_subscription"
++        );
++        let other = make_contract_key(2);
++        manager.add_client_subscription(other.id(), crate::client_events::ClientId::next());
++        let src = manager.receiving_updates_source(&other);
++        assert_eq!(src.label(), "local_subscription");
++    
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6408** (closed): fix: demote a native role only when rescues are a real share of its outcomes (@sanity)
+- **PR #6405** (2026-11-26): chore(put): log each PUT hop decision at INFO (@sanity)
 - **PR #6404** (2026-11-26): build: sync main to 0.2.167 after release (@sanity)
 - **PR #6403** (2026-11-26): fix(get): a relay holding the contract serves it at HTL 0 (@sanity)
 - **PR #6401** (2026-11-26): test: default simulations to QUIC data (prefer, 100%) (@sanity)
 - **PR #6400** (2026-11-26): ci: bump freenet-git mirror-repo.yml pin 61d5fea -> 7a85b99 (@sanity)
-- **PR #6398** (2026-11-26): feat(transport): floor release, native connect at 100 percent with gateway admission on (@sanity)
-- **PR #6397** (2026-11-26): chore: add GET hop diagnostics to existing telemetry events (@sanity)
 
 ---
 
@@ -1900,33 +2275,31 @@ Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.co
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: sync main to 0.2.167 after release
+## X. put): log each PUT hop decision at INFO
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/core/src/operations/put.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33bbc74e`: build: sync main to 0.2.167 after release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1ef04b9`: put): log each PUT hop decision at INFO. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/operations/put.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.3.329"
-version = "0.2.167"
+mod path_log;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.3.328"
-version = "0.2.166"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33bbc74e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1ef04b9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

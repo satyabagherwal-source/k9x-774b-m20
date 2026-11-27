@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-27T01:16:55.779Z",
+  "last_updated": "2026-11-27T01:25:31.744Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "396ac043b84988e16f903b08622b7cf52890274ae4611fbdf10ae8e605a0df53",
-      "verified_at": "2026-11-26T21:09:01.726Z",
+      "content_hash": "5409351c1e632b981eee27a9847800376aa334abf831f26f9c1274044422cfa7",
+      "verified_at": "2026-11-27T01:25:31.743Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-26T21:09:01.726Z"
+      "last_updated": "2026-11-27T01:25:31.743Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -8001,14 +8001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zseven-w-openpencil",
-      "content_hash": "2585546ecff5595e5ce4f0c36ede38a7d0f4e63dcb50336000c9069c74face50",
-      "verified_at": "2026-11-24T17:13:41.824Z",
+      "content_hash": "05e34a0fb4938b19d894028179576d8e43f69344c1e1db538f751e81120319e8",
+      "verified_at": "2026-11-27T01:25:26.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-24T17:13:41.824Z"
+      "last_updated": "2026-11-27T01:25:26.417Z"
     },
     "diggerhq/digger": {
       "repository": "diggerhq/digger",
@@ -19491,14 +19491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inworld-voice-isolator",
-      "content_hash": "d5f76d7b944a68e3eb6a847b84921fda7a4c0cb6097af5236c23851ce716cb56",
-      "verified_at": "2026-11-23T16:28:39.182Z",
+      "content_hash": "e36190d68a52278a82385ad823ccc7c4cedced56e9ffe3d714f1230ed3588d74",
+      "verified_at": "2026-11-27T01:25:19.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-23T16:28:39.182Z"
+      "last_updated": "2026-11-27T01:25:19.976Z"
     },
     "Reson8/Rumble-2-Flash": {
       "repository": "Reson8/Rumble-2-Flash",

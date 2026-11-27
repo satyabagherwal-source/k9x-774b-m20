@@ -13657,3 +13657,6 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `920720a2` | Multi-dimensional audit evidence | 2026-11-27T01:06:47.149Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `41016e77` | Multi-dimensional audit evidence | 2026-11-27T01:06:53.473Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-27T01:16:55.766Z |
+| `learn-huggingface-inworld-voice-isolator` | `https://huggingface.co/inworld/voice-isolator` | `hf-inworld` | Multi-dimensional audit evidence | 2026-11-27T01:25:19.959Z |
+| `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `638fd3b6` | Multi-dimensional audit evidence | 2026-11-27T01:25:26.390Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `f1ef04b9` | Multi-dimensional audit evidence | 2026-11-27T01:25:31.721Z |

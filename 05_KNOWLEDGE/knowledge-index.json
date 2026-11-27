@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T01:17:09.514Z",
+  "last_updated": "2026-11-27T01:25:37.406Z",
   "total_verified_learnings": 9138,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26292,
+  "total_items": 26298,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "efc18811cbe897af6a55dcee874757cb152fc409568cd8cb7690e1353c8b7196",
+      "content_hash": "a41178378b2480a3cf11b8e6d6d8bf19c1c3ff9065480ce82365a374228dfdc3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T22:51:03.782Z"
+      "persisted_at": "2026-11-27T01:25:36.318Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6606a1a1f102fbf140c886d991fdf080d9d043988c38d9bdf94aa3bf0dadf108",
+      "content_hash": "cb5cf3101502bfd95111acefd93dcfe7e1239689b22798e1e760e487dcc19b36",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T22:51:04.006Z"
+      "persisted_at": "2026-11-27T01:25:36.527Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "33bbc74e",
-      "content_hash": "01ce5e4cb1e92d6bedd9c2c42bbf200b6463331e74a148c428dc81f8b5d168c0",
+      "source_version": "f1ef04b9",
+      "content_hash": "22c2a1871dce9e3f02bd7a9db88ab4c56111438ec86d139a985ed1a66d41420e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T21:09:02.307Z"
+      "persisted_at": "2026-11-27T01:25:32.193Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "33bbc74e",
-      "content_hash": "e42569cd80e053aa787ccdf75dc6df38180c4fbb9eb2c1d4433007047bf442df",
+      "source_version": "f1ef04b9",
+      "content_hash": "1edbb07a11e289aa63f1f1194e66dfc15e9fd9f0f9d47f8af6e092214df2e35c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:09:02.574Z"
+      "persisted_at": "2026-11-27T01:25:32.398Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "760e5bcbe0b1196904513305606fff659dc0003a0a809c0597c02cdbe72b966e",
+      "content_hash": "b350f4928528d4e6ebcce10f3dc5bb2a25fb93e223d868a4bb43e47571f08da9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-26T21:09:06.859Z"
+      "persisted_at": "2026-11-27T01:25:37.194Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "f3e9d715fac698aaa51d20ea72ea0e08cdb5543a37b170500a5b1af29041a5e7",
+      "content_hash": "3cde9293696ced70ef5fd50b26b2f40e6715108c349710535735af3eff70ec05",
       "domain_letter": "K",
-      "persisted_at": "2026-11-26T21:09:07.125Z"
+      "persisted_at": "2026-11-27T01:25:37.406Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -221276,8 +221276,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "33bbc74e",
-      "content_hash": "396ac043b84988e16f903b08622b7cf52890274ae4611fbdf10ae8e605a0df53",
+      "source_version": "f1ef04b9",
+      "content_hash": "5409351c1e632b981eee27a9847800376aa334abf831f26f9c1274044422cfa7",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -221465,6 +221465,11 @@
           "number": 10778,
           "title": "sync main to 0.2.167 after release",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10809,
+          "title": "log each PUT hop decision at INFO",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221472,7 +221477,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-26T21:09:01.355Z",
+      "verified_at": "2026-11-27T01:25:31.455Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -298780,7 +298785,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inworld/voice-isolator",
       "source_version": "hf-inworld-voice-isolator",
-      "content_hash": "d5f76d7b944a68e3eb6a847b84921fda7a4c0cb6097af5236c23851ce716cb56",
+      "content_hash": "e36190d68a52278a82385ad823ccc7c4cedced56e9ffe3d714f1230ed3588d74",
       "dossier_path": "07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md",
       "promoted_rules": [],
@@ -298789,7 +298794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-23T16:28:38.940Z",
+      "verified_at": "2026-11-27T01:25:19.669Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -298806,9 +298811,9 @@
       "title": "Research & Knowledge Intelligence: inworld/voice-isolator Core Invariants",
       "repository": "inworld/voice-isolator",
       "source_version": "hf-inworld-voice-isolator",
-      "content_hash": "619106391468e2faf34e078cbe9f6ed1f1d1782b92865b020af76e9b90e6380b",
+      "content_hash": "ec7dea1836624066ab82ae2d18f32c23f0b4dfc3ec435c2529390839e2315ffe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T16:28:39.389Z"
+      "persisted_at": "2026-11-27T01:25:20.210Z"
     },
     "rule-9327": {
       "learning_id": "rule-9327",
@@ -298870,9 +298875,9 @@
       "title": "Research & Knowledge Intelligence: hf-inworld-voice-isolator-learnings Core Invariants",
       "repository": "hf-inworld-voice-isolator-learnings",
       "source_version": "HEAD",
-      "content_hash": "54c7a815b22ca83a79f3f5f46a348f48ee47c4322af3c06bba0946e222a9e233",
+      "content_hash": "b15bf1753200921f49dfc4778c7c6bbba6c67efa054fa89a682bcc2eec63bccb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-23T16:28:51.274Z"
+      "persisted_at": "2026-11-27T01:25:35.533Z"
     },
     "candidate_directive-fix-typos": {
       "item_id": "candidate_directive-fix-typos",
@@ -322550,8 +322555,8 @@
       "slug": "zseven-w-openpencil",
       "platform": "github",
       "source_url": "https://github.com/ZSeven-W/openpencil",
-      "source_version": "c939f85c",
-      "content_hash": "2585546ecff5595e5ce4f0c36ede38a7d0f4e63dcb50336000c9069c74face50",
+      "source_version": "638fd3b6",
+      "content_hash": "05e34a0fb4938b19d894028179576d8e43f69344c1e1db538f751e81120319e8",
       "dossier_path": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md",
       "promoted_rules": [
@@ -322564,6 +322569,11 @@
           "number": 10312,
           "title": "bump url to 2.5.9 and heapless to 0.9.4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10808,
+          "title": "refuse last-error reads off the engine owner thread",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -322571,7 +322581,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-24T17:13:41.541Z",
+      "verified_at": "2026-11-27T01:25:26.118Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -322613,10 +322623,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-technical-construction-intelligence-zseven-w-openpencil-core.md",
       "title": "Technical Construction Intelligence: ZSeven-W/openpencil Core Invariants",
       "repository": "ZSeven-W/openpencil",
-      "source_version": "c939f85c",
-      "content_hash": "370bd681e35c7a3601075ef81983b9946082581a10db130d10b943f7ff2cb9de",
+      "source_version": "638fd3b6",
+      "content_hash": "582ce40a5092226dfe94f6e02b4c5e81328b631ea216776587d8a14b0ffb8b49",
       "domain_letter": "H",
-      "persisted_at": "2026-11-24T17:13:42.361Z"
+      "persisted_at": "2026-11-27T01:25:26.888Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil",
@@ -322625,10 +322635,10 @@
       "relative_path": "08_VERIFICATION/zseven-w-openpencil-verification-protocol-empirical-defect-shield-for-zseven-w-o.md",
       "title": "Verification Protocol: Empirical Defect Shield for ZSeven-W/openpencil",
       "repository": "ZSeven-W/openpencil",
-      "source_version": "c939f85c",
-      "content_hash": "13d92380065add80f40913c00060bb79fbd730fe8536d509332d1602f06d73b1",
+      "source_version": "638fd3b6",
+      "content_hash": "d083100078a0315b12660b0a0c573c177d6bcd5f3d7655fc16a7196132a120ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-24T17:13:42.602Z"
+      "persisted_at": "2026-11-27T01:25:27.112Z"
     },
     "rule-9880": {
       "learning_id": "rule-9880",
@@ -360655,6 +360665,82 @@
       "content_hash": "071d7f04c04ed9432b9c6c2851afb785a0ee23fa504102004c57e13d32681bba",
       "domain_letter": "H",
       "persisted_at": "2026-11-27T01:06:57.350Z"
+    },
+    "rule-10808": {
+      "learning_id": "rule-10808",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10808,
+      "title": "refuse last-error reads off the engine owner thread",
+      "source_url": "https://github.com/ZSeven-W/openpencil",
+      "source_version": "638fd3b6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T01:25:26.118Z"
+    },
+    "candidate_directive-refuse-last-error-reads-off-the-engine-owner-thread": {
+      "item_id": "candidate_directive-refuse-last-error-reads-off-the-engine-owner-thread",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-URRF-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "title": "refuse last-error reads off the engine owner thread",
+      "repository": "ZSeven-W/openpencil",
+      "source_version": "638fd3b6",
+      "content_hash": "b3e004fb03cf14ea9187b0c1204eea3aad6a005d8caa8e2195eb8b0f62495ad2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T01:25:26.671Z"
+    },
+    "rule-10809": {
+      "learning_id": "rule-10809",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10809,
+      "title": "log each PUT hop decision at INFO",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "f1ef04b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T01:25:31.455Z"
+    },
+    "candidate_directive-log-each-put-hop-decision-at-info": {
+      "item_id": "candidate_directive-log-each-put-hop-decision-at-info",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UVV2-log-each-put-hop-decision-at-info.md",
+      "title": "log each PUT hop decision at INFO",
+      "repository": "freenet/freenet-core",
+      "source_version": "f1ef04b9",
+      "content_hash": "e984fb0f0c7e74ae2a1ab5cb75d67e548071e4ecc540e42ad4d306f7dc86272c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T01:25:31.986Z"
+    },
+    "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread": {
+      "item_id": "candidate_directive-renderer-refuse-last-error-reads-off-the-engine-owner-thread",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UZ1G-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "title": "renderer): refuse last-error reads off the engine owner thread",
+      "repository": "zseven-w-openpencil-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cd5c1761075e4b1976c4139b2fc2f9889601f1444bf0ba9bc3e4f626c19b7f0e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T01:25:36.103Z"
+    },
+    "candidate_directive-put-log-each-put-hop-decision-at-info": {
+      "item_id": "candidate_directive-put-log-each-put-hop-decision-at-info",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UZPU-put-log-each-put-hop-decision-at-info.md",
+      "title": "put): log each PUT hop decision at INFO",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "547586e78038533badc79b21813d25320e7027f6cbf52cfcf4f89937c41c3eb7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-27T01:25:36.982Z"
     }
   },
   "ai-builder-brain": {

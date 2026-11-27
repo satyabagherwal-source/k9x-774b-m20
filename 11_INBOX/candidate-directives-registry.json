@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T01:17:08.940Z",
+  "last_updated": "2026-11-27T01:25:36.982Z",
   "directives": [
     {
       "id": "CD-001",
@@ -68035,6 +68035,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-201C73-daemon-drain-buffered-watcher-changes-be.md",
       "staged_date": "2026-11-27"
+    },
+    {
+      "id": "CD-URRF",
+      "directive_title": "refuse last-error reads off the engine owner thread",
+      "source_repo": "ZSeven-W/openpencil",
+      "source_commit": "638fd3b6",
+      "staged_file": "11_INBOX/candidate-directives/CD-URRF-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-UVV2",
+      "directive_title": "log each PUT hop decision at INFO",
+      "source_repo": "freenet/freenet-core",
+      "source_commit": "f1ef04b9",
+      "staged_file": "11_INBOX/candidate-directives/CD-UVV2-log-each-put-hop-decision-at-info.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-UZ1G",
+      "directive_title": "renderer): refuse last-error reads off the engine owner thread",
+      "source_repo": "zseven-w-openpencil-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UZ1G-renderer-refuse-last-error-reads-off-the-engine-owner-thread.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-UZPU",
+      "directive_title": "put): log each PUT hop decision at INFO",
+      "source_repo": "freenet-freenet-core-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-UZPU-put-log-each-put-hop-decision-at-info.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-27",
+      "domain_letter": "H"
     }
   ]
 }

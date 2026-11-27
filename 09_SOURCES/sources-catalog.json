@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "33bbc74e",
+    "sourceVersion": "f1ef04b9",
     "license": "NOASSERTION",
-    "contentHash": "396ac043b84988e16f903b08622b7cf52890274ae4611fbdf10ae8e605a0df53",
-    "lastHarvestedAt": "2026-11-26T21:09:01.701Z",
+    "contentHash": "5409351c1e632b981eee27a9847800376aa334abf831f26f9c1274044422cfa7",
+    "lastHarvestedAt": "2026-11-27T01:25:31.721Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5253,10 +5253,10 @@
     "repository": "ZSeven-W/openpencil",
     "platform": "github",
     "sourceUrl": "https://github.com/ZSeven-W/openpencil",
-    "sourceVersion": "c939f85c",
+    "sourceVersion": "638fd3b6",
     "license": "MIT",
-    "contentHash": "2585546ecff5595e5ce4f0c36ede38a7d0f4e63dcb50336000c9069c74face50",
-    "lastHarvestedAt": "2026-11-24T17:13:41.805Z",
+    "contentHash": "05e34a0fb4938b19d894028179576d8e43f69344c1e1db538f751e81120319e8",
+    "lastHarvestedAt": "2026-11-27T01:25:26.390Z",
     "learningId": "learn-github-zseven-w-openpencil"
   },
   "diggerhq-digger": {
@@ -12935,8 +12935,8 @@
     "sourceUrl": "https://huggingface.co/inworld/voice-isolator",
     "sourceVersion": "hf-inworld-voice-isolator",
     "license": "Open-Source",
-    "contentHash": "d5f76d7b944a68e3eb6a847b84921fda7a4c0cb6097af5236c23851ce716cb56",
-    "lastHarvestedAt": "2026-11-23T16:28:39.174Z",
+    "contentHash": "e36190d68a52278a82385ad823ccc7c4cedced56e9ffe3d714f1230ed3588d74",
+    "lastHarvestedAt": "2026-11-27T01:25:19.959Z",
     "learningId": "learn-huggingface-inworld-voice-isolator"
   },
   "hf-reson8-rumble-2-flash": {

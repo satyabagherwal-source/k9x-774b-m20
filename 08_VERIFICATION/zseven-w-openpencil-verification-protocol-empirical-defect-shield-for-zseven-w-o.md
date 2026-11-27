@@ -4,22 +4,22 @@
 {
   "source_repository": "ZSeven-W/openpencil",
   "source_url": "https://github.com/ZSeven-W/openpencil",
-  "source_version": "c939f85c",
+  "source_version": "638fd3b6",
   "license": "MIT",
-  "timestamp": "2026-11-24T17:13:42.130Z",
+  "timestamp": "2026-11-27T01:25:26.670Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zseven-w-openpencil",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil) (Revision: `c939f85c`).  
-> **License**: MIT | **Timestamp**: `2026-11-24T17:13:42.130Z`  
+> **Provenance**: Harvested from [ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil) (Revision: `638fd3b6`).  
+> **License**: MIT | **Timestamp**: `2026-11-27T01:25:26.670Z`  
 > **Learning ID**: `learn-github-zseven-w-openpencil`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ZSeven-W/openpencil` (Commit: `c939f85c`)
+- **Target Repository**: `ZSeven-W/openpencil` (Commit: `638fd3b6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-24T17:13:40.408Z  
+> **Harvest Timestamp**: 2026-11-27T01:25:25.141Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7355 stars
+- **Stars / Engagement**: 7381 stars
 
 ---
 
@@ -1806,439 +1806,113 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e094beac` (2026-11-22)
-**Commit Message**: fix(deps): bump url to 2.5.9 and heapless to 0.9.4
+### Incident Patch 1: `638fd3b6` (2026-11-25)
+**Commit Message**: fix(renderer): refuse last-error reads off the engine owner thread
 
-cargo-deny now rejects url 2.5.8 (RUSTSEC-2026-0592, stack overflow in
-Url::origin on nested blob: URLs) and heapless 0.8.0 (nine unsound
-advisories). jian moves rstar to 0.14, which pulls heapless 0.9.4.
+op_last_error was the one engine call that skipped the owner-thread
+check. The error slot is a RefCell the owner writes after every failed
+call, so a shell reading it from another thread raced that write. It
+now returns WrongThread like the rest of the ABI, as the threading
+contract in op_engine.h already promises.
 
-**File**: `Cargo.lock` (modified, +29/-19)
+**File**: `crates/op-engine-ffi/include/op_engine.h` (modified, +2/-1)
 ```diff
-@@ -1642,7 +1642,7 @@ dependencies = [
-  "libc",
-  "option-ext",
-  "redox_users 0.5.2",
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
+@@ -219,7 +219,8 @@ OpStatus op_create(const OpCreateDesc *desc, OpEngine **out);
+ OpStatus op_destroy(OpEngine *engine);
  
- [[package]]
-@@ -1788,7 +1788,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
+ /* Copy the last error into a caller-owned byte buffer. With a NULL
+- * engine, reports the op_create error. */
++ * engine, reports the op_create error; a non-NULL engine must be called
++ * on its owner thread (OpStatus_WrongThread otherwise). */
+ OpStatus op_last_error(OpEngine *engine, uint8_t *buffer, size_t length, size_t *required);
  
- [[package]]
-@@ -1976,9 +1976,9 @@ checksum = "aa9a19cbb55df58761df49b23516a86d432839add4af60fc256da840f66ed35b"
- 
- [[package]]
- name = "form_urlencoded"
--version = "1.2.2"
-+version = "1.2.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
- dependencies = [
-  "percent-encoding",
- ]
-@@ -2411,9 +2411,9 @@ dependencies = [
- 
- [[package]]
- name = "heapless"
--version = "0.8.0"
-+version = "0.9.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0bfb9eb618601c89945a70e254898da93b13be0388091d42117462b265bb3fad"
-+checksum = "411fdef4df93751117bd9ef8caa0e7f99c65dafec5bd84313eb8e2fdd75e32f2"
- dependencies = [
-  "hash32",
-  "stable_deref_trait",
-@@ -3668,7 +3668,7 @@ version = "0.50.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
- dependencies = [
-- "windows-sys 0.59.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -5175,6 +5175,15 @@ dependencies = [
-  "libredox",
- ]
- 
-+[[package]]
-+name = "ordered-float"
-+version = "5.5.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7f59006ce1e204c30956638535b74d317bca99477b9356dfaec54c37f6f600ab"
-+dependencies = [
-+ "num-traits",
-+]
-+
- [[package]]
- name = "ordered-stream"
- version = "0.2.0"
-@@ -5192,7 +5201,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
- dependencies = [
-  "libc",
-- "windows-sys 0.45.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -6064,12 +6073,13 @@ dependencies = [
- 
- [[package]]
- name = "rstar"
--version = "0.12.2"
-+version = "0.14.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "421400d13ccfd26dfa5858199c30a5d76f9c54e0dba7575273025b43c5175dbb"
-+checksum = "d95c33d01e9acee7be3363f99e9ef88b1a587186e81e03843fbe39d77d9a0c1f"
- dependencies = [
-  "heapless",
-  "num-traits",
-+ "ordered-float",
-  "smallvec",
- ]
- 
-@@ -6111,7 +6121,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys 0.12.1",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -6169,7 +6179,7 @@ dependencies = [
-  "security-framework 3.7.0",
-  "security-framework-sys",
-  "webpki-root-certs",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -6789,7 +6799,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
- dependencies = [
-  "libc",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -6827,7 +6837,7 @@ dependencies = [
-  "cfg-if",
-  "libc",
-  "psm",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -7025,7 +7035,7 @@ dependencies = [
-  "getrandom 0.4.2",
-  "once_cell",
-  "rustix 1.1.6",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -7560,7 +7570,7 @@ checksum = "f2f6fb2847f6742cd76af783a2a2c49e9375d0a111c7bef6f71cd9e738c72d6e"
- dependencies = [
-  "memoffset",
-  "tempfile",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
-@@ -7634,9 +7644,9 @@ dependencies = [
- 
- [[package]]
- name = "url"
--version = "2.5.8"
-+version = "2.5.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
-+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- dependencies = [
-  "form_urlencoded",
-  "idna",
-@@ -8118,7 +8128,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.48.0",
-+ "windows-sys 0.61.2",
- ]
- 
- [[package]]
+ /* Select GPU mode using a borrowed platform surface. */
 ```
 
-**File**: `vendor/jian` (modified, +1/-1)
+**File**: `crates/op-engine-ffi/src/lib.rs` (modified, +7/-1)
 ```diff
-@@ -1 +1 @@
--Subproject commit a588d459a49c1dfb23284147dab8e78cfccb522b
-+Subproject commit 7d8163aca071829f589720e42f323dba91d0f4a2
-```
-
----
-
-### Incident Patch 2: `8c119f40` (2026-11-22)
-**Commit Message**: fix(sdk): check connector plugin files in the selective install smoke
-
-The verifier was ported from op-codex and still required Codex's
-.agents/plugins/marketplace.json, which no connector ships, so every
-connector release stopped before publishing. Require each connector's
-own MCP launcher (and WorkBuddy's marketplace manifest) instead.
-
-**File**: `packages/op-doubao/scripts/verify-selective-install.mjs` (modified, +2/-2)
-```diff
-@@ -59,8 +59,8 @@ async function verifySelection(platform, dependencies, root) {
-       throw new Error(`${platform.id}: expected ${expected}, installed ${installed.join(', ') || 'nothing'}`);
+@@ -276,7 +276,8 @@ pub unsafe extern "C" fn op_destroy(engine: *mut OpEngine) -> OpStatus {
+ ///
+ /// # Safety
+ ///
+-/// A non-null `engine` must be live; output pointers must cover their sizes.
++/// A non-null `engine` must be live and called on its owner thread; output
++/// pointers must cover their sizes.
+ #[no_mangle]
+ pub unsafe extern "C" fn op_last_error(
+     engine: *mut OpEngine,
+@@ -297,6 +298,11 @@ pub unsafe extern "C" fn op_last_error(
+         };
      }
-     const installedRoot = await realpath(join(directory, 'node_modules', '@zseven-w', 'doubao-openpencil'));
--    if (!(await stat(join(installedRoot, '.agents', 'plugins', 'marketplace.json'))).isFile()) {
--      throw new Error(`${platform.id}: installed root package is missing .agents/plugins/marketplace.json`);
-+    if (!(await stat(join(installedRoot, 'plugins', 'openpencil', 'scripts', 'launch-mcp'))).isFile()) {
-+      throw new Error(`${platform.id}: installed root package is missing plugins/openpencil/scripts/launch-mcp`);
-     }
-     const cli = spawnSync(process.execPath, [join(installedRoot, 'bin', 'doubao-openpencil.mjs'), '--version'], {
-       cwd: directory,
-```
-
-**File**: `packages/op-qoder/scripts/verify-selective-install.mjs` (modified, +2/-2)
-```diff
-@@ -59,8 +59,8 @@ async function verifySelection(platform, dependencies, root) {
-       throw new Error(`${platform.id}: expected ${expected}, installed ${installed.join(', ') || 'nothing'}`);
-     }
-     const installedRoot = await realpath(join(directory, 'node_modules', '@zseven-w', 'qoder-openpencil'));
--    if (!(await stat(join(installedRoot, '.agents', 'plugins', 'marketplace.json'))).isFile()) {
--      throw new Error(`${platform.id}: installed root package is missing .agents/plugins/marketplace.json`);
-+    if (!(await stat(join(installedRoot, 'plugins', 'openpencil', 'scripts', 'launch-mcp'))).isFile()) {
-+      throw new Error(`${platform.id}: installed root package is missing plugins/openpencil/scripts/launch-mcp`);
-     }
-     const cli = spawnSync(process.execPath, [join(installedRoot, 'bin', 'qoder-openpencil.mjs'), '--version'], {
-       cwd: directory,
-```
-
-**File**: `packages/op-qwenwork/scripts/verify-selective-install.mjs` (modified, +2/-2)
-```diff
-@@ -59,8 +59,8 @@ async function verifySelection(platform, dependencies, root) {
-       throw new Error(`${platform.id}: expected ${expected}, installed ${installed.join(', ') || 'nothing'}`);
-     }
-     const installedRoot = await realpath(join(directory, 'node_modules', '@zseven-w', 'qwenwork-openpencil'));
--    if (!(await stat(join(installedRoot, '.agents', 'plugins', 'marketplace.json'))).isFile()) {
--      throw new Error(`${platform.id}: installed root package is missing .agents/plugins/marketplace.json`);
-+    if (!(await stat(join(installedRoot, 'plugins', 'openpencil', 'scripts', 'launch-mcp'))).isFile()) {
-+      throw new Error(`${platform.id}: installed root package is missing plugins/openpencil/scripts/launch-mcp`);
-     }
-     const cli = spawnSync(process.execPath, [join(installedRoot, 'bin', 'qwenwork-openpencil.mjs'), '--version'], {
-       cwd: directory,
-```
-
-**File**: `packages/op-workbuddy/scripts/verify-selective-install.mjs` (modified, +5/-2)
-```diff
-@@ -59,8 +59,11 @@ async function verifySelection(platform, dependencies, root) {
-       throw new Error(`${platform.id}: expected ${expected}, installed ${installed.join(', ') || 'nothing'}`);
-     }
-     const installedRoot = await realpath(join(directory, 'node_modules', '@zseven-w', 'workbuddy-openpencil'));
--    if (!(await stat(join(installedRoot, '.agents', 'plugins', 'marketplace.json'))).isFile()) {
--      throw new Error(`${platform.id}: installed root package is missing .agents/plugins/marketplace.json`);
-+    if (!(await stat(join(installedRoot, 'plugins', 'openpencil', 'scripts', 'launch-mcp'))).isFile()) {
-+      throw new Error(`${platform.id}: installed root package is missing plugins/openpencil/scripts/launch-mcp`);
+     let engine = unsafe { &*engine };
++    // The error slot is a `RefCell` the owner writes after every failed
++    // call; reading it from another thread would race that write.
++    if !engine.on_owner_thread() {
++        return OpStatus::WrongThread;
 +    }
-+    if (!(await stat(join(installedRoot, '.workbuddy-plugin', 'marketplace.json'))).isFile()) {
-+      throw new Error(`${platform.id}: installed root package is missing .workbuddy-plugin/marketplace.json`);
+     let message = engine.last_error();
+     match unsafe { write_bytes(message.as_bytes(), buffer, length, required) } {
+         Ok(()) => OpStatus::Ok,
+```
+
+**File**: `crates/op-engine-ffi/src/lifecycle_engine.rs` (modified, +7/-2)
+```diff
+@@ -37,6 +37,11 @@ impl OpEngine {
+         }
      }
-     const cli = spawnSync(process.execPath, [join(installedRoot, 'bin', 'workbuddy-openpencil.mjs'), '--version'], {
-       cwd: directory,
-```
-
----
-
-### Incident Patch 3: `4d8ce07b` (2026-11-22)
-**Commit Message**: fix(renderer): keep faded-in leaves recoverable across preview and export
-
-Leaves authored at opacity 0 now carry that alpha on their composite
-layer instead of baking it into paint, so motion can fade them in; the
-painter skips a zero layer, so they cost nothing until visible. jian
-rebakes leaf paint for every other value. The Preview focus caret and
-Lottie export read the effective (painted) alpha, and the preview tests
-assert it.
-
-**File**: `crates/op-pen-loader/src/layout_scene.rs` (modified, +6/-2)
-```diff
-@@ -214,8 +214,12 @@ pub(crate) fn node_payload_to_scene(
-     // independently. Non-Normal node blending already requires the same
-     // isolation layer, so it carries local opacity there even for leaves. Keep
-     // ordinary leaves on the direct-paint path to avoid allocating a layer.
--    let isolates_output =
--        blend_mode != ImageBlendMode::Normal || (!node.children.is_empty() && local_opacity < 1.0);
-+    // A fully transparent leaf is the exception: baking alpha 0 into its paint
-+    // would leave motion nothing to fade in, while a zero composite layer is
-+    // skipped by the painter and costs nothing until it becomes visible.
-+    let isolates_output = blend_mode != ImageBlendMode::Normal
-+        || (!node.children.is_empty() && local_opacity < 1.0)
-+        || (node.children.is_empty() && local_opacity <= 0.0);
-     let paint_opacity = if isolates_output {
-         inherited_paint_opacity
-     } else {
-```
-
-**File**: `crates/op-preview-core/src/session_paint.rs` (modified, +5/-1)
-```diff
-@@ -717,5 +717,9 @@ fn widget_field_foreground(node: &SceneNode) -> Color {
-     );
-     // Scene fill/stroke already carry direct-paint opacity; the contrast-derived
-     // caret does not, so fold it exactly once through the shared widget policy.
--    Color::from_jian(with_visual_opacity(visual.foreground, node.opacity))
-+    // Effective opacity also covers a leaf held transparent on its layer.
-+    Color::from_jian(with_visual_opacity(
-+        visual.foreground,
-+        node.effective_opacity(),
-+    ))
- }
-```
-
-**File**: `crates/op-preview-core/src/tests_animation.rs` (modified, +2/-2)
-```diff
-@@ -36,7 +36,7 @@ fn opacity(session: &PreviewSession) -> f32 {
-         .active_page()
-         .and_then(|page| page.find("box"))
-         .expect("box")
--        .opacity
-+        .effective_opacity()
- }
  
- fn tap(session: &mut PreviewSession) {
-@@ -382,7 +382,7 @@ fn every_builtin_property_applies_through_r6_invalidation() {
-         .active_page()
-         .and_then(|page| page.find("box"))
-         .expect("box");
--    assert!((box_node.opacity - 0.5).abs() < 0.001);
-+    assert!((box_node.effective_opacity() - 0.5).abs() < 0.001);
-     assert!((box_node.rotation - std::f32::consts::FRAC_PI_4).abs() < 0.001);
-     assert_eq!(box_node.corner_radius, 5.0);
-     assert_eq!(
++    /// Whether the calling thread is the one that created this engine.
++    pub(crate) fn on_owner_thread(&self) -> bool {
++        self.owner == std::thread::current().id()
++    }
++
+     /// Clone of the last call error (for `op_last_error`).
+     pub(crate) fn last_error(&self) -> String {
+         self.last_error.borrow().clone()
+@@ -65,7 +70,7 @@ pub(crate) unsafe fn call_session(
+         return OpStatus::InvalidArg;
+     }
+     let engine = unsafe { &*pointer };
+-    if engine.owner != std::thread::current().id() || engine.in_call.get() {
++    if !engine.on_owner_thread() || engine.in_call.get() {
+         return OpStatus::WrongThread;
+     }
+     if engine.poisoned.get() {
+@@ -124,7 +129,7 @@ pub(crate) unsafe fn destroy_engine(pointer: *mut OpEngine) -> OpStatus {
+         return OpStatus::InvalidArg;
+     }
+     let engine = unsafe { &*pointer };
+-    if engine.owner != std::thread::current().id() || engine.in_call.get() {
++    if !engine.on_owner_thread() || engine.in_call.get() {
+         return OpStatus::WrongThread;
+     }
+     engine.in_call.set(true);
 ```
 
-**File**: `crates/op-preview-core/src/tests_binding_overlay.rs` (modified, +6/-6)
+**File**: `crates/op-engine-ffi/tests/abi.rs` (modified, +6/-0)
 ```diff
-@@ -266,7 +266,7 @@ fn non_content_bindings_apply_to_the_preview_scene() {
-     let scene = session.preview_scene_for_test();
-     let card = find(&scene, "card");
-     assert!(card.hidden, "visible=false removes the node from hit/paint");
--    assert_eq!(card.opacity, 0.5);
-+    assert_eq!(card.effective_opacity(), 0.5);
-     let fill = card.fill.expect("bound fill");
-     assert_eq!((fill.r, fill.g, fill.b), (1.0, 0.0, 0.0));
-     assert_eq!(card.bounds.origin.x, 24.0);
-@@ -545,13 +545,13 @@ fn scroll_phase_updates_namespace_and_moves_only_unpinned_content() {
-         "ordinary content moves with the scroll offset"
-     );
-     assert!(
--        body.opacity > 0.0 && body.opacity < 1.0,
-+        body.effective_opacity() > 0.0 && body.effective_opacity() < 1.0,
-         "$scroll.progress drives the PaintOnly binding"
-     );
-     assert!(
--        (body.opacity - (1.0 / 3.0)).abs() < 0.01,
-+        (body.effective_opacity() - (1.0 / 3.0)).abs() < 0.01,
-         "offset=60 and maxOffset=180 produce progress=1/3, got {}",
--        body.opacity
-+        body.effective_opacity()
-     );
-     assert_eq!(
-         session
-@@ -575,7 +575,7 @@ fn scroll_phase_updates_namespace_and_moves_only_unpinned_content() {
-         "Ended changes direction to none"
-     );
-     assert_eq!(
--        find(&session.preview_scene_for_test(), "body").opacity,
-+        find(&session.preview_scene_for_test(), "body").effective_opacity(),
-         0.0,
-         "ScrollPhase::Ended is consumed by the $scroll producer"
-     );
-@@ -614,7 +614,7 @@ fn scroll_binding_rejects_relayout_and_warns_once_without_ancestor() {
-         "a top-level binding is never orphaned: it binds to the page scroll"
-     );
-     assert_eq!(
--        find(&session.preview_scene_for_test(), "orphan").opacity,
-+        find(&session.preview_scene_for_test(), "orphan").effective_opacity(),
-         0.0,
-         "an unscrolled page evaluates $scroll.progress to 0"
-     );
-```
-
-**File**: `crates/op-preview-core/src/tests_generated_controls.rs` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ fn scene_snapshot(scene: &LayoutScene) -> BTreeMap<String, Value> {
-         for node in nodes {
-             out.insert(node.id.clone(), json!({
-                 "text":node.text, "fill":format!("{:?}",node.fill),
--                "opacity":node.opacity, "hidden":node.hidden, "rotation":node.rotation,
-+                "opacity":node.effective_opacity(), "hidden":node.hidden, "rotation":node.rotation,
-                 "rect":[node.bounds.origin.x,node.bounds.origin.y,node.bounds.size.x,node.bounds.size.y]
-             }));
-             collect(&node.children, out);
-```
-
-**File**: `crates/op-preview-core/src/tests_motion.rs` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@ fn color(session: &PreviewSession, id: &str) -> op_editor_ui::Color {
- }
- 
- fn opacity(session: &PreviewSession, id: &str) -> f32 {
--    node(session, id).opacity
-+    node(session, id).effective_opacity()
- }
- 
- #[test]
-```
-
-**File**: `crates/op-preview-core/src/tests_motion_golden.rs` (modified, +1/-1)
-```diff
-@@ -603,7 +603,7 @@ fn node_json(node: &SceneNode, out: &mut serde_json::Map<String, Value>) {
-                 "y": node.bounds.origin.y,
-                 "w": node.bounds.size.x,
-                 "h": node.bounds.size.y,
--                "opacity": node.opacity,
-+                "opacity": node.effective_opacity(),
-                 "fill": node.fill.map(color_json),
-                 "stroke": node.stroke.as_ref().map(|stroke| color_json(stroke.color)),
-                 "cornerRadius": node.corner_radius,
-```
-
-**File**: `crates/op-preview-core/src/tests_motion_viewport.rs` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ fn opacity(session: &PreviewSession, id: &str) -> f32 {
-         .active_page()
-         .and_then(|page| page.find(id))
-         .expect("scene node")
--        .opacity
-+        .effective_opacity()
- }
- 
- fn assert_mid(value: f32, what: &str) {
+@@ -157,6 +157,12 @@ fn engine_is_bound_to_its_creator_thread() {
+     });
+     let status = handle.join().unwrap();
+     assert_eq!(status, OpStatus::WrongThread);
++    // So is reading the error slot, which the owner writes after a call.
++    let handle = std::thread::spawn(move || {
++        let mut required = 0usize;
++        unsafe { op_last_error(raw as *mut OpEngine, ptr::null_mut(), 0, &mut required) }
++    });
++    assert_eq!(handle.join().unwrap(), OpStatus::WrongThread);
+     // Destroying from the wrong thread is also refused.
+     let handle = std::thread::spawn(move || unsafe { op_destroy(raw as *mut OpEngine) });
+     assert_eq!(handle.join().unwrap(), OpStatus::WrongThread);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #303** (closed): fix(editor): include an arc's full extent in svg path bounds (@jain05vaibhav)
+- **PR #302** (closed): fix(editor): parse every css colour form in svg import (@jain05vaibhav)
+- **PR #299** (2026-11-25): fix(renderer): refuse last-error reads off the engine owner thread (@wilderchavezl)
 - **PR #295** (closed): chore(release): update Nix release manifest for v0.8.6 (@Kayshen-X)
 - **PR #294** (closed): docs(readme): sync README.zh.md with README.md (@PerryLink)
 - **PR #293** (2026-11-20): fix(agent): find a brief's opening sentence at any sentence boundary (@wilderchavezl)
-- **PR #292** (2026-11-20): fix(renderer): reject cpu frame strides whose buffer size overflows (@wilderchavezl)
-- **PR #291** (2026-11-20): test(renderer): read gpu probe pixels in bottom-left gl rows (@wilderchavezl)
-- **PR #290** (2026-11-20): test(collab): write trust fixtures with explicit 0644 permissions (@wilderchavezl)
 
 ---
 
@@ -2258,77 +1932,32 @@ assert it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump url to 2.5.9 and heapless to 0.9.4
+## X. renderer): refuse last-error reads off the engine owner thread
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/op-engine-ffi/include/op_engine.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e094beac`: deps): bump url to 2.5.9 and heapless to 0.9.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `638fd3b6`: renderer): refuse last-error reads off the engine owner thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-engine-ffi/include/op_engine.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "1.2.3"
-checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
-version = "0.9.4"
-checksum = "411fdef4df93751117bd9ef8caa0e7f99c65dafec5bd84313eb8e2fdd75e32f2"
- "windows-sys 0.61.2",
-[[package]]
-name = "ordered-float"
-version = "5.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f59006ce1e204c30956638535b74d317bca99477b9356dfaec54c37f6f600ab"
-dependencies = [
- "num-traits",
-]
-
- "windows-sys 0.61.2",
-version = "0.14.0"
-checksum = "d95c33d01e9acee7be3363f99e9ef88b1a587186e81e03843fbe39d77d9a0c1f"
- "ordered-float",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "2.5.9"
-checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
- "windows-sys 0.61.2",
+ * engine, reports the op_create error; a non-NULL engine must be called
+ * on its owner thread (OpStatus_WrongThread otherwise). */
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "windows-sys 0.59.0",
- "windows-sys 0.52.0",
-version = "1.2.2"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
-version = "0.8.0"
-checksum = "0bfb9eb618601c89945a70e254898da93b13be0388091d42117462b265bb3fad"
- "windows-sys 0.59.0",
- "windows-sys 0.45.0",
-version = "0.12.2"
-checksum = "421400d13ccfd26dfa5858199c30a5d76f9c54e0dba7575273025b43c5175dbb"
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.60.2",
- "windows-sys 0.60.2",
- "windows-sys 0.52.0",
- "windows-sys 0.60.2",
-version = "2.5.8"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
- "windows-sys 0.48.0",
+ * engine, reports the op_create error. */
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e094beac` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `638fd3b6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

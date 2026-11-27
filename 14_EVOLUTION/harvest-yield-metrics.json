@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T01:16:55.776Z",
-  "total_cycles_completed": 12932,
-  "total_learnings_persisted": 12932,
-  "total_rules_promoted": 11716,
+  "last_updated": "2026-11-27T01:25:31.741Z",
+  "total_cycles_completed": 12935,
+  "total_learnings_persisted": 12935,
+  "total_rules_promoted": 11718,
   "history": [
-    {
-      "timestamp": "2026-11-26T14:04:12.626Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T14:04:17.165Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-26T14:13:29.160Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-26T14:13:37.161Z",
       "repository": "sceneview/sceneview",
@@ -1403,6 +1382,27 @@
       "repository": "BAAI/bge-base-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:25:19.973Z",
+      "repository": "inworld/voice-isolator",
+      "learningId": "learn-huggingface-inworld-voice-isolator",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:25:26.414Z",
+      "repository": "ZSeven-W/openpencil",
+      "learningId": "learn-github-zseven-w-openpencil",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T01:25:31.741Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
