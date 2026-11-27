@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "e7bc9f3a",
+    "sourceVersion": "3a3d137a",
     "license": "NOASSERTION",
-    "contentHash": "5884bc74596d2e1aac98032e4b73918c3a4845a3afe1572c0d99d6baee027e51",
-    "lastHarvestedAt": "2026-11-27T18:26:15.309Z",
+    "contentHash": "93a8bb336269a70fd02336c25a917fcbd42a3e61ee8bd0f6f5cf9d0fd3e099ae",
+    "lastHarvestedAt": "2026-11-27T19:44:23.471Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -8253,10 +8253,10 @@
     "repository": "buresdv/Cork",
     "platform": "github",
     "sourceUrl": "https://github.com/buresdv/Cork",
-    "sourceVersion": "aee5584a",
+    "sourceVersion": "0330a6dc",
     "license": "NOASSERTION",
-    "contentHash": "102b491610b5b90827dd06e1dd53cf64ea26836f1d5676ade88a2a1efcc36211",
-    "lastHarvestedAt": "2026-11-22T23:57:22.920Z",
+    "contentHash": "1c4357e9d3b203a364d974a91593977ca4703d400ce3167785139f9e248f6b39",
+    "lastHarvestedAt": "2026-11-27T19:44:14.025Z",
     "learningId": "learn-github-buresdv-cork"
   },
   "productdevbook-port-killer": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-27T18:26:20.999Z",
+  "timestamp": "2026-11-27T19:44:28.612Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-27T18:26:20.999Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-27T19:44:28.612Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `e7bc9f3a`  
+> **Source Version**: `3a3d137a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-27T18:26:14.048Z  
+> **Timestamp**: 2026-11-27T19:44:22.587Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-27T18:26:14.042Z  
+> **Harvest Timestamp**: 2026-11-27T19:44:22.582Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2304,74 +2304,133 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7bc9f3a` (2026-11-27)
-**Commit Message**: chore(audit): ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]
+### Incident Patch 1: `3a3d137a` (2026-11-27)
+**Commit Message**: deps: update lock file
 
-cookie 0.16.2 comes in only via viz_static -> plotly_static -> fantoccini ->
-webdriver 0.54 (latest, still requires cookie ^0.16). The advisory affects
-PrivateJar, which sits behind cookie's opt-in `private` feature that nothing
-enables, and requires fork() without exec, which qsv never does. reqwest's
-cookie is already the patched 0.18.3.
-
-Closes #5109
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.cargo/audit.toml` (modified, +13/-0)
+**File**: `Cargo.lock` (modified, +10/-16)
 ```diff
-@@ -32,6 +32,19 @@ ignore = [
-     # askama main already swapped it for `toml` (askama-rs/askama#594); clears on
-     # the next askama release (0.16.1 is still the latest). See dathere/qsv#4860.
-     "RUSTSEC-2026-0374",
-+
-+    # ---------------------------------------------------------------------
-+    # vulnerabilities in code paths qsv does not compile or reach
-+    # ---------------------------------------------------------------------
-+
-+    # RUSTSEC-2026-0594: cookie private-cookie nonce reuse after fork().
-+    #   qsv (viz_static) -> plotly -> plotly_static -> fantoccini -> webdriver 0.54
-+    #       -> cookie 0.16.2
-+    # Only PrivateJar is affected; it is behind cookie's opt-in `private` feature,
-+    # which nothing enables (no aes-gcm/rand in the Cargo.lock entry). qsv also never
-+    # forks without exec. reqwest's cookie is already the patched 0.18.3. Clears when
-+    # webdriver (0.54.0 is still the latest) moves to cookie >=0.18.3. See dathere/qsv#5109.
-+    "RUSTSEC-2026-0594",
+@@ -999,14 +999,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "blake3"
+-version = "1.8.7"
++version = "1.8.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6d9e454fc11f76977dc803893aff6304ed33d6a26efae8696573bea74baa27ae"
++checksum = "64c0e36294adc8db531500e3f2b8ec75c4af9177271e9c6d33f93609d56e57cd"
+ dependencies = [
+  "arrayvec",
+  "cc",
+  "cfg-if",
+- "constant_time_eq 0.4.2",
++ "constant_time_eq",
+  "cpufeatures 0.3.1",
+  "memmap2",
+  "rayon-core",
+@@ -1305,9 +1305,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cc"
+-version = "1.11.3"
++version = "1.12.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
++checksum = "95e45cf2980b2d467be49a9ed942c9179b701063a7ca3d037de7ee9bd67f8d66"
+ dependencies = [
+  "find-msvc-tools",
+  "jobserver",
+@@ -1597,12 +1597,6 @@ dependencies = [
+  "unicode-xid",
  ]
  
- [yanked]
+-[[package]]
+-name = "constant_time_eq"
+-version = "0.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
+-
+ [[package]]
+ name = "constant_time_eq"
+ version = "0.6.2"
+@@ -2740,9 +2734,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "find-msvc-tools"
+-version = "0.1.15"
++version = "0.1.16"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
++checksum = "3e44f110d1777dc6559a51e7d45083945ded4f1bf3305494350f693b6d20b9c8"
+ 
+ [[package]]
+ name = "finl_unicode"
+@@ -3063,9 +3057,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "geo-types"
+-version = "0.7.20"
++version = "0.7.21"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "777d18aa0f12f8b285331cd867133ee14422b3f023f6d388034c47d43e28786a"
++checksum = "c180387602f8ab649c98dd5e9540e42cdb40a62455fc4790f4d80e15d31daac5"
+ dependencies = [
+  "approx",
+  "num-traits",
+@@ -10891,7 +10885,7 @@ checksum = "2d8dbe089cf6b0448b78f5fc50139ab5aaa40d08ac07cdc1baf2c13add35fcce"
+ dependencies = [
+  "aes",
+  "bzip2",
+- "constant_time_eq 0.6.2",
++ "constant_time_eq",
+  "crc32fast",
+  "deflate64",
+  "flate2",
 ```
 
 ---
 
-### Incident Patch 2: `56a4e145` (2026-11-26)
-**Commit Message**: chore: clippy::unnecessary_lazy_evaluations
+### Incident Patch 2: `a5825e6d` (2026-11-27)
+**Commit Message**: chore(audit): ignore unmaintained chrono, chrono-tz, humantime [skip ci]
 
-warning: unnecessary closure used with `bool::then`
-   --> src/cmd/synthesize/mod.rs:801:20
-    |
-801 |           let rate = (any_compared && synthetic_rows > 0)
-    |  ____________________^
-802 | |             .then(|| exact_matches as f64 / synthetic_rows as f64);
-    | |__________________________________________________________________^
-    |
-    = help: for further information visit https://clippy.rust-lang.org/main/index.html#unnecessary_lazy_evaluations
-    = note: `#[warn(clippy::unnecessary_lazy_evaluations)]` on by default
-help: use `then_some` instead
-    |
-802 -             .then(|| exact_matches as f64 / synthetic_rows as f64);
-802 +             .then_some(exact_matches as f64 / synthetic_rows as f64);
+Informational "unmaintained" advisories for crates pulled in by polars,
+arrow and object_store. Migrating qsv's own code off chrono would not
+remove it from the dependency tree, so these clear only upstream.
 
-**File**: `src/cmd/synthesize/mod.rs` (modified, +1/-1)
+Closes #5070
+Closes #5071
+Closes #5072
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.cargo/audit.toml` (modified, +20/-0)
 ```diff
-@@ -799,7 +799,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         let any_compared = !compared.is_empty();
-         #[allow(clippy::cast_precision_loss)]
-         let rate = (any_compared && synthetic_rows > 0)
--            .then(|| exact_matches as f64 / synthetic_rows as f64);
-+            .then_some(exact_matches as f64 / synthetic_rows as f64);
-         let report = serde_json::json!({
-             "source_rows": fitted.total_rows,
-             "synthetic_rows": synthetic_rows,
+@@ -33,6 +33,26 @@ ignore = [
+     # the next askama release (0.16.1 is still the latest). See dathere/qsv#4860.
+     "RUSTSEC-2026-0374",
+ 
++    # RUSTSEC-2026-0543: chrono is unmaintained.
++    #   qsv -> polars-* (14 crates), arrow-* (4), object_store, calamine, fake,
++    #       spreadsheet-ods, csvs_convert, qsv-dateparser -> chrono
++    # Also used directly by qsv. Migrating qsv itself (e.g. to jiff) would not drop
++    # it from the tree; clears only once polars and arrow move off chrono.
++    # See dathere/qsv#5070.
++    "RUSTSEC-2026-0543",
++
++    # RUSTSEC-2026-0555: chrono-tz is unmaintained.
++    #   qsv -> polars-arrow (and the rest of polars) -> chrono-tz
++    # Also used directly by qsv (clitypes, datefmt, sample). Clears with chrono above.
++    # See dathere/qsv#5071.
++    "RUSTSEC-2026-0555",
++
++    # RUSTSEC-2026-0542: humantime is unmaintained.
++    #   qsv -> polars-io -> object_store -> humantime
++    # The advisory says humantime wraps chrono, but the locked 2.4.0 has no
++    # dependencies. Clears when object_store drops humantime. See dathere/qsv#5072.
++    "RUSTSEC-2026-0542",
++
+     # ---------------------------------------------------------------------
+     # vulnerabilities in code paths qsv does not compile or reach
+     # ---------------------------------------------------------------------
 ```
 
 #### Recent Merged Pull Requests:
@@ -2400,43 +2459,55 @@ help: use `then_some` instead
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. audit): ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]
+## X. deps: update lock file
 
 **RULE**:
-When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7bc9f3a`: audit): ignore RUSTSEC-2026-0594 (cookie 0.16.2, unreachable) [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a3d137a`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-    # ---------------------------------------------------------------------
-    # vulnerabilities in code paths qsv does not compile or reach
-    # ---------------------------------------------------------------------
-
-    # RUSTSEC-2026-0594: cookie private-cookie nonce reuse after fork().
-    #   qsv (viz_static) -> plotly -> plotly_static -> fantoccini -> webdriver 0.54
-    #       -> cookie 0.16.2
-    # Only PrivateJar is affected; it is behind cookie's opt-in `private` feature,
-    # which nothing enables (no aes-gcm/rand in the Cargo.lock entry). qsv also never
-    # forks without exec. reqwest's cookie is already the patched 0.18.3. Clears when
-    # webdriver (0.54.0 is still the latest) moves to cookie >=0.18.3. See dathere/qsv#5109.
-    "RUSTSEC-2026-0594",
+version = "1.8.8"
+checksum = "64c0e36294adc8db531500e3f2b8ec75c4af9177271e9c6d33f93609d56e57cd"
+ "constant_time_eq",
+version = "1.12.0"
+checksum = "95e45cf2980b2d467be49a9ed942c9179b701063a7ca3d037de7ee9bd67f8d66"
+version = "0.1.16"
+checksum = "3e44f110d1777dc6559a51e7d45083945ded4f1bf3305494350f693b6d20b9c8"
+version = "0.7.21"
+checksum = "c180387602f8ab649c98dd5e9540e42cdb40a62455fc4790f4d80e15d31daac5"
+ "constant_time_eq",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+version = "1.8.7"
+checksum = "6d9e454fc11f76977dc803893aff6304ed33d6a26efae8696573bea74baa27ae"
+ "constant_time_eq 0.4.2",
+version = "1.11.3"
+checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
+[[package]]
+name = "constant_time_eq"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3d52eff69cd5e647efe296129160853a42795992097e8af39800e1060caeea9b"
+
+version = "0.1.15"
+checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
+version = "0.7.20"
+checksum = "777d18aa0f12f8b285331cd867133ee14422b3f023f6d388034c47d43e28786a"
+ "constant_time_eq 0.6.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7bc9f3a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a3d137a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

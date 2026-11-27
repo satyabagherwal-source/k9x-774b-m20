@@ -92,8 +92,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-27T19:35:46.026Z",
-    "lastVerified": "2026-11-27T19:35:46.026Z",
+    "lastChecked": "2026-11-27T19:44:26.844Z",
+    "lastVerified": "2026-11-27T19:44:26.844Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -194,22 +194,21 @@
     "revisionIdentifier": "9fb6a904"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T19:07:48.775Z",
-    "lastVerified": "2026-11-27T19:07:48.775Z",
+    "lastChecked": "2026-11-27T19:44:22.582Z",
+    "lastVerified": "2026-11-27T19:44:22.582Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5884bc74596d2e1aac98032e4b73918c3a4845a3afe1572c0d99d6baee027e51",
+    "contentHash": "93a8bb336269a70fd02336c25a917fcbd42a3e61ee8bd0f6f5cf9d0fd3e099ae",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e7bc9f3a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -730,12 +729,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectcontour-contour": {
-    "name": "projectcontour/contour",
+    "name": "contour",
     "officialUrl": "https://github.com/projectcontour/contour",
     "sourceType": "github",
     "technology": "HTML",
-    "lastChecked": "2026-11-27T01:37:15.854Z",
-    "lastVerified": "2026-11-27T01:37:15.854Z",
+    "lastChecked": "2026-11-27T19:44:11.936Z",
+    "lastVerified": "2026-11-27T19:44:11.936Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectcontour-contour",
@@ -744,7 +743,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b64eea09"
   },
   "defguard-defguard": {
     "name": "defguard",
@@ -1187,8 +1187,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-27T15:27:12.761Z",
-    "lastVerified": "2026-11-27T15:27:12.761Z",
+    "lastChecked": "2026-11-27T19:44:14.568Z",
+    "lastVerified": "2026-11-27T19:44:14.568Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -3740,9 +3740,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-11-26T19:37:03.816Z",
+    "lastChecked": "2026-11-27T19:44:04.417Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-11-26T19:37:03.816Z"
+    "lastVerified": "2026-11-27T19:44:04.417Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -4469,9 +4469,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-27T00:33:07.500Z",
+    "lastChecked": "2026-11-27T19:44:17.034Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-27T00:33:07.500Z"
+    "lastVerified": "2026-11-27T19:44:17.034Z"
   },
   "timvisee-ffsend": {
     "name": "ffsend",
@@ -9968,22 +9968,21 @@
     "lastVerified": "2026-11-27T15:27:05.214Z"
   },
   "buresdv-cork": {
-    "name": "Cork",
+    "name": "buresdv/Cork",
     "officialUrl": "https://github.com/buresdv/Cork",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-25T10:57:40.717Z",
-    "lastVerified": "2026-11-25T10:57:40.717Z",
+    "lastChecked": "2026-11-27T19:44:12.572Z",
+    "lastVerified": "2026-11-27T19:44:12.572Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-buresdv-cork",
-    "contentHash": "102b491610b5b90827dd06e1dd53cf64ea26836f1d5676ade88a2a1efcc36211",
+    "contentHash": "1c4357e9d3b203a364d974a91593977ca4703d400ce3167785139f9e248f6b39",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "aee5584a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chris-c-thomas-oxideseo": {
     "name": "OxideSEO",
@@ -10457,8 +10456,8 @@
     "officialUrl": "https://github.com/tmolavi/siteprobe",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-24T11:30:10.111Z",
-    "lastVerified": "2026-11-24T11:30:10.111Z",
+    "lastChecked": "2026-11-27T19:44:06.928Z",
+    "lastVerified": "2026-11-27T19:44:06.928Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tmolavi-siteprobe",

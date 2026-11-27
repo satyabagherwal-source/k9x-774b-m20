@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-27T19:35:34.264Z",
-  "total_cycles_completed": 13148,
-  "total_learnings_persisted": 13148,
-  "total_rules_promoted": 11868,
+  "last_updated": "2026-11-27T19:44:23.476Z",
+  "total_cycles_completed": 13150,
+  "total_learnings_persisted": 13150,
+  "total_rules_promoted": 11870,
   "history": [
-    {
-      "timestamp": "2026-11-27T02:49:36.577Z",
-      "repository": "jialinyyzz/humanizer",
-      "learningId": "learn-huggingface-jialinyyzz-humanizer",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-27T02:49:38.639Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-27T02:49:46.949Z",
       "repository": "pingcap/tidb",
@@ -1403,6 +1389,20 @@
       "repository": "llamaindex/OCRia-nano-1",
       "learningId": "learn-huggingface-llamaindex-ocria-nano-1",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T19:44:14.031Z",
+      "repository": "buresdv/Cork",
+      "learningId": "learn-github-buresdv-cork",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-27T19:44:23.476Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

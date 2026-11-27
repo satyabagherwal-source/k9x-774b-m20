@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-27T19:35:48.467Z",
+  "last_updated": "2026-11-27T19:44:30.566Z",
   "total_verified_learnings": 9145,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 26728,
+  "total_items": 26730,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c4f5a13aeb1a90a78ebf536dc907dd923ebdd18d2240dd81957c4a84fce0386",
+      "content_hash": "2319f916f2c25a295449fb7940ed47f09ed1a4598c8acd10133a01ef27e9be34",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T19:07:49.833Z"
+      "persisted_at": "2026-11-27T19:44:30.381Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "309888ed7bc330eb7737b21bc653e60291813b6b1345192ae9204d73201cb48c",
+      "content_hash": "df89bc27d09313ffdfb2354d0a4140927a3c136fd276ad4bbcadb7574a099471",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T19:07:50.036Z"
+      "persisted_at": "2026-11-27T19:44:30.566Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "e7bc9f3a",
-      "content_hash": "e38bc72fd14f3a2bd2d213045224c3879f6992e384ad143123e7ee2efe3742ca",
+      "source_version": "3a3d137a",
+      "content_hash": "e53e303e3d425c87d278196357efa64ee379113ede1936963e2476bb5216d92f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T18:26:15.995Z"
+      "persisted_at": "2026-11-27T19:44:24.136Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "e74112152af0244714377e086084abbc41dfb1925adca9983b70a4a4efe4cc25",
+      "content_hash": "7b87e9aca5559621e78d387db2ccda0250f4d54ee4f628d8fcf8e8e92b62df10",
       "domain_letter": "K",
-      "persisted_at": "2026-11-27T18:26:21.590Z"
+      "persisted_at": "2026-11-27T19:44:29.197Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -220819,8 +220819,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "e7bc9f3a",
-      "content_hash": "5884bc74596d2e1aac98032e4b73918c3a4845a3afe1572c0d99d6baee027e51",
+      "source_version": "3a3d137a",
+      "content_hash": "93a8bb336269a70fd02336c25a917fcbd42a3e61ee8bd0f6f5cf9d0fd3e099ae",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -221070,7 +221070,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-27T18:26:15.029Z",
+      "verified_at": "2026-11-27T19:44:23.188Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222217,10 +222217,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "e7bc9f3a",
-      "content_hash": "1bc980e0d26d25967312d4157130489a6a4b420d3ea08d6b795d6dd2583db446",
+      "source_version": "3a3d137a",
+      "content_hash": "6d04191d39a5a5c83e97ce6b6e584d077aa0e613b60ea26712e560f39cf3ceff",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:26:15.769Z"
+      "persisted_at": "2026-11-27T19:44:23.929Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -222290,9 +222290,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "62dfebc68959131f5e33ff771a947a535fe0c8fa8df84e3f34425d234844902a",
+      "content_hash": "f8784859144f64bbc079c45f851424246c7ed4e4e0252214d6fd806048a74674",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T18:26:21.375Z"
+      "persisted_at": "2026-11-27T19:44:28.986Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -240223,13 +240223,13 @@
       "item_id": "candidate_directive-update-lock-file",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1V8V-update-lock-file.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4143-update-lock-file.md",
       "title": "update lock file",
       "repository": "dathere/qsv",
-      "source_version": "f399f9fc",
-      "content_hash": "ad1140111f7ae023485350da468196a7ca168250e723d09865900c1cbd0473ad",
+      "source_version": "3a3d137a",
+      "content_hash": "5f15815fa02ffcbe4f38176efe107d371d01b3ef58614ae1b05d88cccf652acd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-26T18:59:03.154Z"
+      "persisted_at": "2026-11-27T19:44:23.720Z"
     },
     "learn-huggingface-qwen-qwen-image-2-1-turbo": {
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
@@ -295360,13 +295360,13 @@
       "item_id": "candidate_directive-deps-update-lock-file",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PZBF-deps-update-lock-file.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4503-deps-update-lock-file.md",
       "title": "deps: update lock file",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "7dd66f85a5537cf3ba07d700bd0fa5fdf502998b71bdf0690d6387b5a5e0b04e",
+      "content_hash": "e608105b718c5860d8569b0ec64195a1f6b9887ddbd6f72c04fdd7372402bdb3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:24:30.224Z"
+      "persisted_at": "2026-11-27T19:44:28.758Z"
     },
     "rule-9244": {
       "learning_id": "rule-9244",
@@ -301261,9 +301261,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "db5df4c9b1aa2e43c2278b5b7f205f3e9c52c2fa8b6bf40e1f105c091e3f2641",
+      "content_hash": "a0785900b24c981546b5a18812e5cf2b5f963339c182f6f24902bdf6b28d7899",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T19:07:49.642Z"
+      "persisted_at": "2026-11-27T19:44:30.170Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -328878,14 +328878,19 @@
       "slug": "buresdv-cork",
       "platform": "github",
       "source_url": "https://github.com/buresdv/Cork",
-      "source_version": "aee5584a",
-      "content_hash": "102b491610b5b90827dd06e1dd53cf64ea26836f1d5676ade88a2a1efcc36211",
+      "source_version": "0330a6dc",
+      "content_hash": "1c4357e9d3b203a364d974a91593977ca4703d400ce3167785139f9e248f6b39",
       "dossier_path": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
       "promoted_rules": [
         {
           "number": 10008,
           "title": "Merge branch 'main.changed-cask-icon'",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10956,
+          "title": "^ Startup hang",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -328894,7 +328899,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T23:57:22.707Z",
+      "verified_at": "2026-11-27T19:44:13.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -328936,10 +328941,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-buresdv-cork-architecture-intelligence-buresdv-cork-core-invariants.md",
       "title": "Architecture Intelligence: buresdv/Cork Core Invariants",
       "repository": "buresdv/Cork",
-      "source_version": "aee5584a",
-      "content_hash": "cdc62a79c3174269fcba097b62adab20b85b27dbe22f4cb84971622ac657ad55",
+      "source_version": "0330a6dc",
+      "content_hash": "55bcb519e1aa0468b052702d45955b76084c8fce4e5d6d3c529576f361417de1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:57:23.335Z"
+      "persisted_at": "2026-11-27T19:44:14.489Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-buresdv-cork": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-buresdv-cork",
@@ -328948,10 +328953,10 @@
       "relative_path": "08_VERIFICATION/buresdv-cork-verification-protocol-empirical-defect-shield-for-buresdv-cork.md",
       "title": "Verification Protocol: Empirical Defect Shield for buresdv/Cork",
       "repository": "buresdv/Cork",
-      "source_version": "aee5584a",
-      "content_hash": "9432e1bbf35e73668bdd0b54bcd5b05005f3debaea9cc36eadd7e733490eb66c",
+      "source_version": "0330a6dc",
+      "content_hash": "73a1781857eee0c5c99a5349bd7f9cd45cf98c1e23000c98dbb476d535a338bc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:57:23.519Z"
+      "persisted_at": "2026-11-27T19:44:14.702Z"
     },
     "rule-10009": {
       "learning_id": "rule-10009",
@@ -329011,9 +329016,9 @@
       "title": "Architecture Intelligence: buresdv-cork-learnings Core Invariants",
       "repository": "buresdv-cork-learnings",
       "source_version": "HEAD",
-      "content_hash": "da81872a4cd2d666801cd6f6d6e3aabff53378596d2ab1bbe9a47f0ba58e0994",
+      "content_hash": "1b09cc5a553742411bf69ca1bd1b8b4e8db1e125e9c07010394195c84648246d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T23:57:30.894Z"
+      "persisted_at": "2026-11-27T19:44:27.617Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-buresdv-cork-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-buresdv-cork-learnings",
@@ -329023,9 +329028,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for buresdv-cork-learnings",
       "repository": "buresdv-cork-learnings",
       "source_version": "HEAD",
-      "content_hash": "593b093dd35788ac08fdcf2ebcfda92b5e68b63f5a95e44e12b6911c05f0070f",
+      "content_hash": "c9a18f61fbe7f9b7cae174227d8591519d0cfaeeb448b96bebd60d3d779f100b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:57:31.103Z"
+      "persisted_at": "2026-11-27T19:44:27.851Z"
     },
     "rule-10010": {
       "learning_id": "rule-10010",
@@ -363017,13 +363022,13 @@
       "item_id": "candidate_directive-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SZZN-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-45X5-ci-cache-the-pdfium-sdk-alongside-cargo-build-artifacts.md",
       "title": "ci): cache the PDFium SDK alongside Cargo build artifacts",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc82ce4dfdf78eb7960df579209a6720a65d13862a5b25b6dccfccd7f32cb43a",
+      "content_hash": "346a386ec012b18a70dd172d926cd785537a155b349c074c5ec039672a0562af",
       "domain_letter": "G",
-      "persisted_at": "2026-11-27T19:07:49.428Z"
+      "persisted_at": "2026-11-27T19:44:29.946Z"
     },
     "rule-10845": {
       "learning_id": "rule-10845",
@@ -367038,6 +367043,32 @@
       "content_hash": "2dd015535b2693d2a07c900585ebb9f249167a70d88ffd810154e40c81eb67f7",
       "domain_letter": "G",
       "persisted_at": "2026-11-27T19:27:04.232Z"
+    },
+    "rule-10956": {
+      "learning_id": "rule-10956",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10956,
+      "title": "^ Startup hang",
+      "source_url": "https://github.com/buresdv/Cork",
+      "source_version": "0330a6dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-27T19:44:13.741Z"
+    },
+    "candidate_directive-startup-hang": {
+      "item_id": "candidate_directive-startup-hang",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-43Y7-startup-hang.md",
+      "title": "^ Startup hang",
+      "repository": "buresdv-cork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "16d4297e7646e83059be390f4d8afc5e9a542ccaf10098926fa76276201cdff4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-27T19:44:27.392Z"
     }
   },
   "ai-builder-brain": {

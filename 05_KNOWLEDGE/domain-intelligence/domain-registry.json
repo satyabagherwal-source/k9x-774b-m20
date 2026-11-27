@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-27T19:35:48.267Z",
+  "last_updated": "2026-11-27T19:44:30.170Z",
   "total_records": 2852,
   "domains": {
     "A": {
@@ -12909,8 +12909,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "1bc980e0d26d25967312d4157130489a6a4b420d3ea08d6b795d6dd2583db446",
-      "created_at": "2026-11-27T18:26:15.769Z"
+      "content_hash": "6d04191d39a5a5c83e97ce6b6e584d077aa0e613b60ea26712e560f39cf3ceff",
+      "created_at": "2026-11-27T19:44:23.929Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12978,8 +12978,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "62dfebc68959131f5e33ff771a947a535fe0c8fa8df84e3f34425d234844902a",
-      "created_at": "2026-11-27T18:26:21.375Z"
+      "content_hash": "f8784859144f64bbc079c45f851424246c7ed4e4e0252214d6fd806048a74674",
+      "created_at": "2026-11-27T19:44:28.986Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -33982,8 +33982,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "db5df4c9b1aa2e43c2278b5b7f205f3e9c52c2fa8b6bf40e1f105c091e3f2641",
-      "created_at": "2026-11-27T19:07:49.642Z"
+      "content_hash": "a0785900b24c981546b5a18812e5cf2b5f963339c182f6f24902bdf6b28d7899",
+      "created_at": "2026-11-27T19:44:30.170Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
@@ -40628,8 +40628,8 @@
       "title": "Architecture Intelligence: buresdv/Cork Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-buresdv-cork-architecture-intelligence-buresdv-cork-core-invariants.md",
       "repository": "buresdv/Cork",
-      "content_hash": "cdc62a79c3174269fcba097b62adab20b85b27dbe22f4cb84971622ac657ad55",
-      "created_at": "2026-11-22T23:57:23.335Z"
+      "content_hash": "55bcb519e1aa0468b052702d45955b76084c8fce4e5d6d3c529576f361417de1",
+      "created_at": "2026-11-27T19:44:14.489Z"
     },
     "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants",
@@ -40646,8 +40646,8 @@
       "title": "Architecture Intelligence: buresdv-cork-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-buresdv-cork-learnings-architecture-intelligence-buresdv-cork-learnings-core-inv.md",
       "repository": "buresdv-cork-learnings",
-      "content_hash": "da81872a4cd2d666801cd6f6d6e3aabff53378596d2ab1bbe9a47f0ba58e0994",
-      "created_at": "2026-11-22T23:57:30.894Z"
+      "content_hash": "1b09cc5a553742411bf69ca1bd1b8b4e8db1e125e9c07010394195c84648246d",
+      "created_at": "2026-11-27T19:44:27.617Z"
     },
     "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kuberwastaken-claurst-core-invariants",

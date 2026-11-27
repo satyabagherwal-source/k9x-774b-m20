@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-27T19:27:03.948Z",
+  "updated_at": "2026-11-27T19:44:27.111Z",
   "stats": {
-    "total_discovered": 10531,
-    "approved_pending_harvest": 9998,
+    "total_discovered": 10532,
+    "approved_pending_harvest": 9999,
     "harvested_count": 0,
     "rejected_count": 533,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 10001,
+      "COMMUNITY_AND_EXPERT": 10002,
       "OFFICIAL_DOCUMENTATION": 292,
       "STANDARDS_AND_SPECIFICATIONS": 163,
       "ENGINEERING_BLOGS": 7,
@@ -227978,6 +227978,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
         "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-5FD42571B397": {
+      "id": "SRC-5FD42571B397",
+      "url": "https://github.com/user-attachments/assets/4e4d3bc9-b211-4d52-a0c8-e3fa8a011add",
+      "title": "https://github.com/user-attachments/assets/4e4d3bc9-b211-4d52-a0c8-e3fa8a011add",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-27T19:44:27.111Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/buresdv-cork-learnings.md",
+        "fileName": "buresdv-cork-learnings.md"
       }
     }
   }

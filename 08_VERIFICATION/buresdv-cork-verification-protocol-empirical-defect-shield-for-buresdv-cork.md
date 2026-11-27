@@ -4,22 +4,22 @@
 {
   "source_repository": "buresdv/Cork",
   "source_url": "https://github.com/buresdv/Cork",
-  "source_version": "aee5584a",
+  "source_version": "0330a6dc",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T23:57:23.159Z",
+  "timestamp": "2026-11-27T19:44:14.273Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-buresdv-cork",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [buresdv/Cork](https://github.com/buresdv/Cork) (Revision: `aee5584a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T23:57:23.159Z`  
+> **Provenance**: Harvested from [buresdv/Cork](https://github.com/buresdv/Cork) (Revision: `0330a6dc`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-27T19:44:14.273Z`  
 > **Learning ID**: `learn-github-buresdv-cork`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `buresdv/Cork` (Commit: `aee5584a`)
+- **Target Repository**: `buresdv/Cork` (Commit: `0330a6dc`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T23:57:21.808Z  
+> **Harvest Timestamp**: 2026-11-27T19:44:12.572Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: [NO AI] Fast GUI for Homebrew written in SwiftUI
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4733 stars
+- **Stars / Engagement**: 4740 stars
 
 ---
 
@@ -1234,15 +1234,16 @@ extension ServicesFatalError
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #696** (2026-11-23): **Adjust Cask icon to work on older systems**
+  *Symptoms*: Users on older systems (older than macOS 26) report not seeing the icon for Casks: #695  Caused by using the newer definition of the particular SFSymbol for Casks (`pointer.arrow.click.2` only works on macOS 26+).  Change the definition to work on older systems.
+  **Post-Mortem & Fix Analysis**:
+  > Changed the icon + used an older key  <img width="1052" height="854" alt="Snímek obrazovky 2026-11-22 v 18 50 29" src="https://github.com/user-attachments/assets/4e4d3bc9-b211-4d52-a0c8-e3fa8a011add" />
+  > Implemented in 4a2328a9541dbfde22952303994d293fd26e1a72
+
 - **Issue #691** (2026-10-27): **FDA Rrequest on Start Page doesn't disappear**
   *Symptoms*: ### What were you trying to do?  Grant FDA  ### What was the problem?  She section doesn't disappear when FDA is granted  ### Error logs  ```shell irrelevant ```  ### App Version  2.1.0  ### App Acquisition  Self-Compiled  ### Final checklist  - [ ] This report is about the interface, and I included screenshots of the problem
   **Post-Mortem & Fix Analysis**:
   > Fixed in 01177307672f62470af517c8b9a710dbc833b03e
-
-- **Issue #688** (2026-10-17): **Release endpoints serve the anti-LLM scraping measure randomly instead of the release**
-  *Symptoms*: ### What were you trying to do?  Download a release  ### What was the problem?  Anti-LLM measure triggered  ### Error logs  ```shell irrelevant ```  ### App Version  irrelevant  ### App Acquisition  Self-Compiled  ### Final checklist  - [ ] This report is about the interface, and I included screenshots of the problem  ### Reported by https://github.com/buresdv/Cork/issues/688
-  **Post-Mortem & Fix Analysis**:
-  > Caused by the incorrect mirroring of the main server to a replica (backup didn't have the release files synced).  Working now + set up a warning system
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1259,290 +1260,70 @@ extension ServicesFatalError
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aee5584a` (2026-11-22)
-**Commit Message**: Merge branch 'main.changed-cask-icon'
+### Incident Patch 1: `0330a6dc` (2026-11-26)
+**Commit Message**: ^ Startup hang
 
-**File**: `Modules/Packages/PackagesModels/Models/Brew Package.swift` (modified, +1/-1)
+**File**: `Modules/Packages/PackagesModels/Logic/Caches/Load Cached Package Downloads.swift` (modified, +1/-1)
 ```diff
-@@ -137,7 +137,7 @@ public struct BrewPackage: Identifiable, Equatable, Hashable, Codable, Sendable,
-             case .formula:
-                 return .init(systemName: "apple.terminal")
-             case .cask:
--                return .init(systemName: "pointer.arrow.click.2")
-+                return .init(systemName: "cursor.rays")
-             }
-         }
- 
-```
-
----
-
-### Incident Patch 2: `06106fec` (2026-11-22)
-**Commit Message**: Merge branch 'main.outdated-package-list-expansion'
-
-**File**: `Cork/Localizable.xcstrings` (modified, +10/-0)
-```diff
-@@ -98546,6 +98546,16 @@
-         }
-       }
-     },
-+    "settings.install-uninstall.expand-outdated-packages-list-by-default.toggle" : {
-+      "localizations" : {
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Expand list of outdated packages by default"
-+          }
-+        }
-+      }
-+    },
-     "settings.install-uninstall.include-greedy-packages.toggle" : {
-       "localizations" : {
-         "cs" : {
-```
-
-**File**: `Cork/Views/Settings/Panes/Installation Pane.swift` (modified, +10/-2)
-```diff
-@@ -19,6 +19,7 @@ struct InstallationAndUninstallationPane: View
-     
-     @Default(.showCompatibilityWarning) var showCompatibilityWarning: Bool
-     @Default(.includeGreedyOutdatedPackages) var includeGreedyOutdatedPackages: Bool
-+    @Default(.automaticallyExpandOutdatedPackageList) var automaticallyExpandOutdatedPackageList: Bool
- 
-     @Default(.showRealTimeTerminalOutputOfOperations) var showRealTimeTerminalOutputOfOperations: Bool
-     @Default(.openRealTimeTerminalOutputByDefault) var openRealTimeTerminalOutputByDefault: Bool
-@@ -68,9 +69,16 @@ struct InstallationAndUninstallationPane: View
- 
-                 LabeledContent
-                 {
--                    Defaults.Toggle(key: .includeGreedyOutdatedPackages)
-+                    VStack(alignment: .leading)
-                     {
--                        Text("settings.install-uninstall.include-greedy-packages.toggle")
-+                        Defaults.Toggle(key: .includeGreedyOutdatedPackages)
-+                        {
-+                            Text("settings.install-uninstall.include-greedy-packages.toggle")
-+                        }
-+                        
-+                        Defaults.Toggle(key: .automaticallyExpandOutdatedPackageList) {
-+                            Text("settings.install-uninstall.expand-outdated-packages-list-by-default.toggle")
-+                        }
-                     }
-                 } label: {
-                     Text("settings.general.outdated-packages.info-amount")
-```
-
-**File**: `Cork/Views/Start Page/Sub-Views/Outdated Packages/Outdated Package List Box.swift` (modified, +4/-45)
-```diff
-@@ -16,6 +16,8 @@ struct OutdatedPackageListBox: View
-     @Default(.displayOnlyIntentionallyInstalledPackagesByDefault) var displayOnlyIntentionallyInstalledPackagesByDefault: Bool
- 
-     @Default(.outdatedPackageInfoDisplayAmount) var outdatedPackageInfoDisplayAmount: OutdatedPackageInfoAmount
-+    
-+    @Default(.automaticallyExpandOutdatedPackageList) var automaticallyExpandOutdatedPackageList: Bool
- 
-     @InjectedObservable(\.appState) var appState: AppState
-     @InjectedObservable(\.outdatedPackagesTracker) var outdatedPackagesTracker: OutdatedPackagesTracker
-@@ -37,7 +39,7 @@ struct OutdatedPackageListBox: View
-             {
-                 VStack(alignment: .leading)
-                 {
--                    GroupBoxHeadlineGroupWithArbitraryContent(image: outdatedPackagesTracker.allDisplayableOutdatedPackages.count == 1 ? .init(systemName: "square.and.arrow.down") : .init(systemName:"square.and.arrow.down.on.square"))
-+                    GroupBoxHeadlineGroupWithArbitraryContent(image: outdatedPackagesTracker.allDisplayableOutdatedPackages.count == 1 ? .init(systemName: "square.and.arrow.down") : .init(systemName: "square.and.arrow.down.on.square"))
-                     {
-                         VStack(alignment: .leading, spacing: 5)
-                         {
-@@ -57,50 +59,7 @@ struct OutdatedPackageListBox: View
-                                 }
-                             }
- 
--                            DisclosureGroup(isExpanded: $isDropdownExpanded)
--                            {
--                                OutdatedPackagesList()
--                                /*
--                                 switch outdatedPackageListBoxType
--                                 {
--                                 case .managedOnly:
--                                     outdatedPackageListComplex(packagesToShow: packagesManagedByHomebrew)
--                                 case .unmanagedOnly:
--                                     outdatedPackageListComplex(packagesToShow: packagesThatUpdateThemselves)
--                                 case .bothManagedAndUnmanaged:
--                                     outdatedPackageListComplex(packagesToShow: packagesManagedByHomebrew)
--
--                                     if !packagesThatUpdateThemselves.isEmpty
--                                     {
--                                         DisclosureGroup(isExpanded: $isSelfUpdatingSectionExpanded)
--                                         {
--                                             outdatedPackageListComplex(packagesToShow: packagesThatUpdateThemselves)
--                                         } label: {
--                                             Text("start-page.updates.self-updating.\(packagesThatUpdateThemselves.count).list")
--                                                 .font(.subheadline)
--                                         }
--                                     }
--                                 }
--                                 */
--                            } label: {
--                                // TODO: Fix this
--                                /*
--                                 Group
--                                 {
--                                     if outdatedPackageListBoxType == .unmanagedOnly
--                                     {
--                                         Text("start-page.updates.unmanaged-only.list")
--                                     }
--                                     else
--                                     {
--                                         Text("start-page.updates.list")
--                                     }
--                                 }
--                                  */
--
--                                Text("start-page.updates.list")
--                            }
--                            .betterDisclosureGroupStyle()
-+                            OutdatedPackagesList()
-                         }
-                     }
-                 }
-```
-
-**File**: `Cork/Views/Start Page/Sub-Views/Outdated Packages/Outdated Packages List/Outdated Packages List Type/Outdated Packages List - Table.swift` (modified, +0/-1)
-```diff
-@@ -123,7 +123,6 @@ struct OutdatedPackagesList_Table: View
-                     )
-                 }
+@@ -16,7 +16,7 @@ public extension CachedDownloadsTracker
+     {
+         AppConstants.shared.logger.info("Will load cached downloaded packages")
          
--
-                 TableColumn("start-page.updates.installed-version")
-                 { outdatedPackage in
-                     Text(outdatedPackage.installedVersions.formatted(.list(type: .and)))
+-        let currentSizeOfCachedPackageFolder: Int64 = appConstants.brewCachedDownloadsPath.directorySize
++        let currentSizeOfCachedPackageFolder: Int64 = await appConstants.brewCachedDownloadsPath.directorySize()
+ 
+         AppConstants.shared.logger.info("Last size: \(self.lastSizeOfCachedPackageFolder), new size: \(currentSizeOfCachedPackageFolder)")
+ 
 ```
 
-**File**: `Cork/Views/Start Page/Sub-Views/Outdated Packages/Outdated Packages List/Outdated Packages List.swift` (modified, +58/-33)
+**File**: `Modules/Packages/PackagesModels/Logic/Package Loading/Load Up Installed Packages.swift` (modified, +3/-3)
 ```diff
-@@ -16,6 +16,11 @@ struct OutdatedPackagesList: View
-     @Default(.outdatedPackageInfoDisplayAmount) var outdatedPackageInfoDisplayAmount
+@@ -309,12 +309,12 @@ private extension BrewPackagesTracker
+                     switch packageURL.packageType
+                     {
+                     case .formula:
+-                        return packageURL.directorySize
++                        return await packageURL.directorySize()
+                     case .cask:
+                         guard let sizeOfActualApp: Int64 = await urlToVersionUsedForDeterminingActualExecutableLocation.getActualAppSize()
+                         else
+                         {
+-                            return packageURL.directorySize
++                            return await packageURL.directorySize()
+                         }
  
-     @InjectedObservable(\.outdatedPackagesTracker) var outdatedPackagesTracker: OutdatedPackagesTracker
-+    
-+    @Default(.automaticallyExpandOutdatedPackageList) var automaticallyExpandOutdatedPackageList: Bool
-+    
-+    @State private var isManagedUpdatesDropdownExpanded: Bool = false
-+    @State private var isUnmanagedUpdatesDropdownExpanded: Bool = false
- 
-     var areThereAnyHomebrewManagedUpdatesAvailable: Bool
+                         return sizeOfActualApp
+@@ -416,7 +416,7 @@ private extension URL
+     /// Get the actual size of the installed app by resolving a symlink inside a version's folder and loading the size of the app from the `Applications` directory
+     func getActualAppSize() async -> Int64?
      {
-@@ -34,45 +39,65 @@ struct OutdatedPackagesList: View
-     
-     var body: some View
-     {
--        switch outdatedPackageInfoDisplayAmount
-+        Group
-         {
--        case .none, .versionOnly:
--            
--            if areThereAnyHomebrewManagedUpdatesAvailable
--            {
--                OutdatedPackagesList_List(packageUpdatingType: .homebrew)
--            }
--            else
-+            DisclosureGroup(isExpanded: $isManagedUpdatesDropdownExpanded)
-             {
--                noManagedUpdatesAvailableMessage
--            }
--            
--            if areThereAnySelfManagedUpdatesAvailable
--            {
--                DisclosureGroup("start-page.updates.unmanaged-only.list")
-+                switch outdatedPackageInfoDisplayAmount
-                 {
--                    OutdatedPackagesList_List(packageUpdatingType: .selfUpdating)
-+                case .none, .versionOnly:
-+                    
-+                    if areThereAnyHomebrewManagedUpdatesAvailable
-+                    {
-+                        OutdatedPackagesList_List(packageUpdatingType: .homebrew)
-+                    }
-+                    else
-+                    {
-+                        noManagedUpdatesAvailableMessage
-+                    }
-+                    
-+                    if areThereAnySelfManagedUpdatesAvailable
-+                    {
-+                        DisclosureGroup(isExpanded: $isUnmanagedUpdatesDropdownExpanded)
-+                        {
-+                            OutdatedPackagesList_List(packageUpdatingType: .selfUpdating)
-+                        } label: {
-+                            Text("start-page.updates.unmanaged-only.list")
-+                        }
-+                        .betterDisclosureGroupStyle()
-+                    }
-+                case .all:
-+                    
-+                    if areThereAnyHomebrewManagedUpdatesAvailable
-+                    {
-+                        OutdatedPackagesList_Table(packageUpdatingType: .homebrew)
-+                    }
-+                    else
-+                    {
-+                        noManagedUpdatesAvailableMessage
-+                    }
-+                    
-+                    if areThereAnySelfManagedUpdatesAvailable
-+                    {
-+                        DisclosureGroup(isExpanded: $isUnmanagedUpdatesDropdownExpanded)
-+                        {
-+                            OutdatedPackagesList_Table(packageUpdatingType: .selfUpdating)
-+                        } label: {
-+                            Text("start-page.updates.unmanaged-only.list")
-+                        }
-+                        .betterDisclosureGroupStyle()
-+                    }
-                 }
--                .betterDisclosureGroupStyle()
--            }
--        case .all:
--            
--            if areThereAnyHomebrewManagedUpdatesAvailable
--            {
--                OutdatedPackagesList_Table(packageUpdatingType: .homebrew)
--            }
--            else
--            {
--                noManagedUpdatesAvailableMessage
-+            } label: {
-+                Text("start-page.updates.list")
-             }
--            
--            if areThereAnySelfManagedUpdatesAvailable
-+        }
-+        .onAppear
-+        {
-+            if automaticallyExpandOutdatedPackageList
-             {
--                DisclosureGroup("start-page.updates.unmanaged-only.list")
--                {
--                    OutdatedPackagesList_Table(packageUpdatingType: .selfUpdating)
--                }
--                .betterDisclosureGroupStyle()
-+                isManagedUpdatesDropdownExpanded = true
-+                isUnmanagedUpdatesDropdownExpanded = true
-             }
-         }
+-        return await getUrlToActualCaskExecutable().directorySize
++        return await getUrlToActualCaskExecutable().directorySize()
      }
+ }
+ 
 ```
 
-**File**: `Modules/Shared/Defaults/Settings/Packages Settings.swift` (modified, +1/-0)
+**File**: `Modules/Shared/Logic/Get Folder Size.swift` (modified, +2/-2)
 ```diff
-@@ -17,6 +17,7 @@ public extension Defaults.Keys
-     // MARK: - Outdated packages
-     /// Whether to show `--greedy` packages
-     static let includeGreedyOutdatedPackages: Key<Bool> = .init("includeGreedyOutdatedPackages", default: false)
-+    static let automaticallyExpandOutdatedPackageList: Key<Bool> = .init("automaticallyExpandOutdatedPackageList", default: false)
-     
-     // MARK: - Compatibility
-     /// Whether to warn about packages incompatible with the user's system
+@@ -9,7 +9,7 @@ import Foundation
+ 
+ public extension URL
+ {
+-    var directorySize: Int64
++    func directorySize() async -> Int64
+     {
+         let contents: [URL]
+         do
+@@ -37,7 +37,7 @@ public extension URL
+ 
+             if isDirectoryResourceValue.isDirectory == true
+             {
+-                size += url.directorySize
++                await size += url.directorySize()
+             }
+             else
+             {
 ```
 
 #### Recent Merged Pull Requests:
@@ -1571,31 +1352,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge branch 'main.changed-cask-icon'
+## X. ^ Startup hang
 
 **RULE**:
-When implementing operations in `Modules/Packages/PackagesModels/Models/Brew Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Modules/Packages/PackagesModels/Logic/Caches/Load Cached Package Downloads.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aee5584a`: Merge branch 'main.changed-cask-icon'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0330a6dc`: ^ Startup hang. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Packages/PackagesModels/Models/Brew Package.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Packages/PackagesModels/Logic/Caches/Load Cached Package Downloads.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                return .init(systemName: "cursor.rays")
+        let currentSizeOfCachedPackageFolder: Int64 = await appConstants.brewCachedDownloadsPath.directorySize()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-                return .init(systemName: "pointer.arrow.click.2")
+        let currentSizeOfCachedPackageFolder: Int64 = appConstants.brewCachedDownloadsPath.directorySize
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aee5584a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0330a6dc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
